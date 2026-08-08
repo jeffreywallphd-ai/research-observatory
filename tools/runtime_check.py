@@ -67,12 +67,14 @@ def extract_version(output: str) -> str | None:
 def installed_errors(
     contract: dict[str, Any],
     runner: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
+    platform_name: str | None = None,
 ) -> list[str]:
     errors: list[str] = []
+    effective_platform = os.name if platform_name is None else platform_name
     tools = {**contract["runtimes"], **contract["package_managers"]}
     for name, specification in tools.items():
         command = specification["command"]
-        if os.name == "nt" and command[0] == "corepack":
+        if effective_platform == "nt" and command[0] == "corepack":
             command = ["corepack.cmd", *command[1:]]
         expected = specification["version"]
         try:
