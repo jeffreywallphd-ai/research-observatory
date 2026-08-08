@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T03",
+  "commit": "23717be17f09ffe614829d7d1e1d44feff2b3d0d",
+  "baseCommit": "2f28abe2c25fdf911f338ae9e173223879964ac2",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    "CHANGELOG.md",
+    "Cargo.toml",
+    "README.md",
+    "apps/desktop/README.md",
+    "apps/desktop/component-manifest.json",
+    "docs/automation/README.md",
+    "docs/automation/build-manifests.md",
+    "docs/planning-implementation-plan.md",
+    "package.json",
+    "packaging/build-inputs.json",
+    "packaging/build-manifest.schema.json",
+    "packaging/component-manifest.schema.json",
+    "packaging/product-version.json",
+    "packaging/product-version.schema.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pyproject.toml",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/component-manifest.json",
+    "tests/foundation/README.md",
+    "tests/foundation/test_build_manifest.py",
+    "tools/README.md",
+    "tools/build_manifest.py",
+    "verification-profiles.json",
+    "workers/README.md",
+    "workers/component-manifest.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "The clean exact implementation commit passed all 14 mandatory foundation commands and all 109 foundation tests, including repository, runtime, architecture, campaign protocol, generated views, fixture, benchmark, build-manifest, ADR, CI, quality, packaging, and backlog gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest -v",
+      "exitCode": 0,
+      "result": "Eight focused tests passed for deterministic clean output, dirty and rename labeling, component regeneration, mirror/component drift, noncanonical component and lock inputs, exact schema inventory, and output confinement."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-00.S05.T03-build-manifest-exact.json",
+      "exitCode": 0,
+      "result": "The exact clean commit generated build identity 0.1.0+g23717be and a manifest binding full commit provenance, all three dependency locks, every governed schema identity/hash, the stable model-manifest set, and compatible desktop/Core API/worker component contracts."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The authoritative ledger validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "packaging/product-version.json is the sole product-version authority; package.json, pyproject.toml, Cargo.toml, and the three generated component contracts must exactly mirror version 0.1.0.",
+        "The desktop, Core API sidecar, and worker sidecar contracts all report compatibility line 0.1 and are regenerated only to canonical nonredirected destinations by the explicit --write-components operation.",
+        "The deterministic build manifest records full Git commit and commit time, clean/dirty state and dirty paths, SHA-256 identities for Cargo/pnpm/uv locks, every repository schema with stable $id, and the installed model-manifest set.",
+        "The clean exact build has identity 0.1.0+g23717be. Dirty builds add .dirty and record tracked, untracked, rename, and copy paths without wall-clock input."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Eight focused tests cover deterministic expected output and material failures for version drift, component drift, ungoverned inputs, schema-inventory drift, redirected output, and Git rename parsing.",
+        "The complete clean foundation profile passed 14 commands and 109 tests with build-manifest validation mandatory."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Strict Draft 2020-12 schemas govern product, component, and emitted build manifests; generated manifests and build input identities reject undeclared fields and noncanonical component/lock destinations.",
+        "CHANGELOG.md establishes Unreleased and dated product-version sections. Automation, component, tool, test, and repository documentation explains authority, regeneration, provenance, compatibility, and dirty-build behavior.",
+        "quality-scope.json governs the generator and tests, and verification-profiles.json makes build-manifest generation a mandatory foundation gate. No migration or user-experience contract is affected."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review must adversarially test version-authority and generated-component drift, canonical input/path confinement, deterministic hashes and set identifiers, Git dirty/rename/copy parsing, schema completeness and uniqueness, output confinement, and changelog/documentation accuracy."
+  }
+}
