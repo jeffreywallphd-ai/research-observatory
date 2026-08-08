@@ -11,6 +11,7 @@ Capability
 ```
 
 - `backlog.yaml` is authoritative for IDs, dependencies, waves, gates, status, claims, leases, and evidence references.
+- `backlog.schema.json` is its executable Draft 2020-12 structural contract; every `taskctl` command validates it before reading or mutating state.
 - `capability-plans/CAP-XX.md` resolves cross-slice and material implementation decisions.
 - `slice-plans/CAP-XX/*.md` expands the existing tasks into a coherent implementation and verification contract.
 - `review-site/` is generated from the Markdown plans and is not a parallel authority.
@@ -68,6 +69,8 @@ Any command that requests decisions or approval must print the capability page's
 
 ## Templates and validation
 
+- Backlog schema: `backlog.schema.json`
+- Backlog structural and semantic validator: `../tools/taskctl.py --file backlog.yaml validate`
 - Capability template: `capability-plans/TEMPLATE.md`
 - Capability schema: `capability-plans/capability-plan.schema.json`
 - Slice template: `slice-plans/TEMPLATE.md`
@@ -78,6 +81,12 @@ Any command that requests decisions or approval must print the capability page's
 - Site validator: `../tools/plan_review_check.py`
 
 A missing plan must be scaffolded, fully researched, decision-complete, validated, reviewed, and approved before its capability starts.
+
+Backlog validation reports JSON paths for structural/type/status/timestamp errors,
+rejects duplicate capability, slice, task, wave, and gate IDs while indexing,
+and names missing dependency targets and exact dependency-cycle paths. Do not
+edit around these checks or treat schema-only validity as permission for an
+otherwise illegal workflow transition.
 
 ## Replanning conditions
 

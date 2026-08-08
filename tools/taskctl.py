@@ -23,6 +23,8 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from jsonschema import Draft202012Validator, FormatChecker
+from jsonschema.exceptions import SchemaError, ValidationError
 
 VALID_STATUSES = {"NOT_STARTED", "READY", "IN_PROGRESS", "BLOCKED", "REVIEW", "DONE", "DEFERRED", "CANCELLED"}
 ACTIVE_PROFILES = {"LOC", "LAB", "UNI", "CLD", "ALL"}
@@ -66,8 +68,41 @@ def save_atomic(path: str, data: dict[str, Any]) -> None:
             os.unlink(temp_name)
 
 
+def _json_path(parts: Any) -> str:
+    path = "$"
+    for part in parts:
+        path += f"[{part}]" if isinstance(part, int) else f".{part}"
+    return path
+
+
+def backlog_schema_errors(data: Any, schema_path: Path | None = None) -> list[str]:
+    schema_file = schema_path or Path(__file__).resolve().parents[1] / "planning" / "backlog.schema.json"
+    try:
+        schema = json.loads(schema_file.read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+    except (OSError, json.JSONDecodeError, SchemaError) as exc:
+        return [f"Cannot load backlog schema {schema_file}: {exc}"]
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    errors: list[ValidationError] = []
+
+    def collect(error: ValidationError) -> None:
+        if error.context:
+            for nested in error.context:
+                collect(nested)
+        else:
+            errors.append(error)
+
+    for validation_error in validator.iter_errors(data):
+        collect(validation_error)
+    errors.sort(key=lambda error: (*tuple(str(part) for part in error.absolute_path), error.message))
+    return [f"{_json_path(error.absolute_path)}: {error.message}" for error in errors]
+
+
 def load(
     path: str,
+    *,
+    validate_schema: bool = True,
+    schema_path: Path | None = None,
 ) -> tuple[
     dict[str, Any],
     dict[str, dict[str, Any]],
@@ -75,7 +110,14 @@ def load(
     dict[str, dict[str, Any]],
     dict[str, dict[str, Any]],
 ]:
-    data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+    try:
+        data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Cannot load backlog {path}: {exc}") from exc
+    if validate_schema:
+        schema_errors = backlog_schema_errors(data, schema_path=schema_path)
+        if schema_errors:
+            raise SystemExit("Backlog schema validation failed:\n- " + "\n- ".join(schema_errors))
     tasks: dict[str, dict[str, Any]] = {}
     slices: dict[str, dict[str, Any]] = {}
     capabilities: dict[str, dict[str, Any]] = {}
@@ -95,7 +137,16 @@ def load(
                 if tid in tasks:
                     raise SystemExit(f"Duplicate task ID: {tid}")
                 tasks[tid] = task
-    gates = {gate["id"]: gate for gate in data.get("release_gates", [])}
+    seen_wave_ids: set[str] = set()
+    for wave in data.get("waves", []):
+        if wave["id"] in seen_wave_ids:
+            raise SystemExit(f"Duplicate wave ID: {wave['id']}")
+        seen_wave_ids.add(wave["id"])
+    gates: dict[str, dict[str, Any]] = {}
+    for gate in data.get("release_gates", []):
+        if gate["id"] in gates:
+            raise SystemExit(f"Duplicate release gate ID: {gate['id']}")
+        gates[gate["id"]] = gate
     return data, capabilities, slices, tasks, gates
 
 
@@ -123,26 +174,37 @@ def platform_matches(item: dict[str, Any], requested: str) -> bool:
 
 def dependency_graph_errors(tasks: dict[str, dict[str, Any]]) -> list[str]:
     errors: list[str] = []
-    indegree = {tid: 0 for tid in tasks}
-    reverse: dict[str, list[str]] = {tid: [] for tid in tasks}
     for tid, task in tasks.items():
         for dep in task.get("dependencies", []):
             if dep not in tasks:
                 errors.append(f"{tid}: missing dependency {dep}")
+
+    state: dict[str, int] = {}
+    stack: list[str] = []
+
+    def visit(task_id: str) -> list[str] | None:
+        state[task_id] = 1
+        stack.append(task_id)
+        for dependency in tasks[task_id].get("dependencies", []):
+            if dependency not in tasks:
                 continue
-            indegree[tid] += 1
-            reverse[dep].append(tid)
-    queue = [tid for tid, count in indegree.items() if count == 0]
-    visited = 0
-    while queue:
-        current = queue.pop()
-        visited += 1
-        for child in reverse[current]:
-            indegree[child] -= 1
-            if indegree[child] == 0:
-                queue.append(child)
-    if visited != len(tasks):
-        errors.append("Dependency cycle detected")
+            if state.get(dependency, 0) == 0:
+                cycle = visit(dependency)
+                if cycle:
+                    return cycle
+            elif state[dependency] == 1:
+                start = stack.index(dependency)
+                return [*stack[start:], dependency]
+        stack.pop()
+        state[task_id] = 2
+        return None
+
+    for task_id in sorted(tasks):
+        if state.get(task_id, 0) == 0:
+            cycle = visit(task_id)
+            if cycle:
+                errors.append(f"Dependency cycle detected: {' -> '.join(cycle)}")
+                break
     return errors
 
 

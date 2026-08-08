@@ -1041,11 +1041,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-08T17:32:55+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/cap-00-delivery-foundation
+      started_at: '2026-08-08T17:33:22+00:00'
+      updated_at: '2026-08-08T17:33:22+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1055,10 +1055,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 16cbd356f79458434af3993727701e59d9a8e02c
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-08T17:33:22+00:00'
+        expires_at: '2026-08-09T01:33:22+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
     - id: CAP-00.S04.T02
@@ -1092,7 +1095,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1137,7 +1140,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1205,7 +1208,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1251,7 +1254,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1297,7 +1300,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1371,7 +1374,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1421,7 +1424,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1472,7 +1475,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1525,7 +1528,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1624,7 +1627,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1670,7 +1673,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1714,7 +1717,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1782,7 +1785,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1828,7 +1831,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1873,7 +1876,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1940,7 +1943,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1986,7 +1989,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2034,7 +2037,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2101,7 +2104,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2148,7 +2151,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2198,7 +2201,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2268,7 +2271,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2316,7 +2319,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2364,7 +2367,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2448,7 +2451,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2494,7 +2497,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2542,7 +2545,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2611,7 +2614,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2658,7 +2661,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2702,7 +2705,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2767,7 +2770,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2815,7 +2818,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2861,7 +2864,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2926,7 +2929,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2974,7 +2977,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3022,7 +3025,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3081,7 +3084,7 @@ capabilities:
       base_sha: null
       lease: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3150,7 +3153,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3198,7 +3201,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3248,7 +3251,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3342,7 +3345,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3388,7 +3391,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3437,7 +3440,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3507,7 +3510,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3553,7 +3556,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3601,7 +3604,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3672,7 +3675,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3720,7 +3723,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3769,7 +3772,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3837,7 +3840,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3885,7 +3888,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3935,7 +3938,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4004,7 +4007,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4054,7 +4057,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4102,7 +4105,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4180,7 +4183,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4236,7 +4239,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4289,7 +4292,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4346,7 +4349,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4400,7 +4403,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4485,7 +4488,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4533,7 +4536,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4581,7 +4584,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4650,7 +4653,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4698,7 +4701,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4746,7 +4749,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4817,7 +4820,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4867,7 +4870,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4917,7 +4920,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4988,7 +4991,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5036,7 +5039,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5086,7 +5089,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5159,7 +5162,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5207,7 +5210,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5256,7 +5259,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5343,7 +5346,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5390,7 +5393,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5438,7 +5441,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5507,7 +5510,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5553,7 +5556,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5602,7 +5605,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5673,7 +5676,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5721,7 +5724,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5767,7 +5770,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5840,7 +5843,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5890,7 +5893,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5936,7 +5939,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6005,7 +6008,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6052,7 +6055,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6098,7 +6101,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6166,7 +6169,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6214,7 +6217,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6263,7 +6266,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6349,7 +6352,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6397,7 +6400,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6443,7 +6446,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6514,7 +6517,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6564,7 +6567,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6613,7 +6616,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6682,7 +6685,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6729,7 +6732,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6779,7 +6782,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6850,7 +6853,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6897,7 +6900,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -6947,7 +6950,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7020,7 +7023,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7070,7 +7073,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7120,7 +7123,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7194,7 +7197,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7244,7 +7247,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7293,7 +7296,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7379,7 +7382,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7427,7 +7430,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7475,7 +7478,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7548,7 +7551,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7598,7 +7601,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7646,7 +7649,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7717,7 +7720,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7764,7 +7767,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7813,7 +7816,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7881,7 +7884,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7929,7 +7932,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -7977,7 +7980,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8048,7 +8051,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8096,7 +8099,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8144,7 +8147,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8234,7 +8237,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8282,7 +8285,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8329,7 +8332,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8405,7 +8408,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8455,7 +8458,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8503,7 +8506,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8574,7 +8577,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8622,7 +8625,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8670,7 +8673,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8741,7 +8744,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8791,7 +8794,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8838,7 +8841,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8908,7 +8911,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -8958,7 +8961,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9008,7 +9011,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9079,7 +9082,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9127,7 +9130,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9174,7 +9177,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9262,7 +9265,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9310,7 +9313,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9358,7 +9361,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9431,7 +9434,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9481,7 +9484,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9528,7 +9531,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9599,7 +9602,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9647,7 +9650,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9696,7 +9699,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9767,7 +9770,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9817,7 +9820,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9866,7 +9869,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9939,7 +9942,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -9989,7 +9992,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10039,7 +10042,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10112,7 +10115,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10162,7 +10165,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10211,7 +10214,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10303,7 +10306,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10353,7 +10356,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10403,7 +10406,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10476,7 +10479,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10526,7 +10529,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10574,7 +10577,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10645,7 +10648,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10695,7 +10698,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10745,7 +10748,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10817,7 +10820,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10867,7 +10870,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10917,7 +10920,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -10990,7 +10993,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11040,7 +11043,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11090,7 +11093,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11162,7 +11165,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11210,7 +11213,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11260,7 +11263,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11332,7 +11335,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11382,7 +11385,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11432,7 +11435,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11520,7 +11523,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11568,7 +11571,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11615,7 +11618,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11685,7 +11688,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11735,7 +11738,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11785,7 +11788,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11857,7 +11860,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11903,7 +11906,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -11951,7 +11954,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12020,7 +12023,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12068,7 +12071,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12116,7 +12119,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12171,7 +12174,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12240,7 +12243,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12290,7 +12293,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12338,7 +12341,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12416,7 +12419,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12466,7 +12469,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12513,7 +12516,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12600,7 +12603,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12650,7 +12653,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12700,7 +12703,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12770,7 +12773,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12818,7 +12821,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12866,7 +12869,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12931,7 +12934,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -12977,7 +12980,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13023,7 +13026,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13090,7 +13093,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13139,7 +13142,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13189,7 +13192,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13259,7 +13262,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13305,7 +13308,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13353,7 +13356,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13420,7 +13423,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13466,7 +13469,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13512,7 +13515,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13596,7 +13599,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13642,7 +13645,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13688,7 +13691,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13756,7 +13759,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13802,7 +13805,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13848,7 +13851,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13913,7 +13916,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -13959,7 +13962,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14005,7 +14008,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14072,7 +14075,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14118,7 +14121,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14164,7 +14167,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14232,7 +14235,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14278,7 +14281,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14324,7 +14327,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14394,7 +14397,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14440,7 +14443,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14486,7 +14489,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14591,7 +14594,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14641,7 +14644,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14689,7 +14692,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14755,7 +14758,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14805,7 +14808,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14857,7 +14860,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14925,7 +14928,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -14976,7 +14979,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15029,7 +15032,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15102,7 +15105,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15156,7 +15159,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15212,7 +15215,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15286,7 +15289,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15338,7 +15341,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15389,7 +15392,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15460,7 +15463,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15512,7 +15515,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15560,7 +15563,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15655,7 +15658,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15708,7 +15711,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15759,7 +15762,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15827,7 +15830,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15877,7 +15880,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15925,7 +15928,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -15991,7 +15994,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16042,7 +16045,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16090,7 +16093,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16156,7 +16159,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16206,7 +16209,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16256,7 +16259,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16325,7 +16328,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16376,7 +16379,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16428,7 +16431,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16496,7 +16499,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16544,7 +16547,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16592,7 +16595,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16683,7 +16686,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16731,7 +16734,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16782,7 +16785,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16850,7 +16853,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16898,7 +16901,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -16949,7 +16952,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17017,7 +17020,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17068,7 +17071,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17116,7 +17119,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17184,7 +17187,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17234,7 +17237,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17282,7 +17285,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17355,7 +17358,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17407,7 +17410,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17455,7 +17458,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17523,7 +17526,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17571,7 +17574,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17620,7 +17623,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17713,7 +17716,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17764,7 +17767,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17815,7 +17818,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17886,7 +17889,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17938,7 +17941,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -17990,7 +17993,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18060,7 +18063,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18112,7 +18115,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18162,7 +18165,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18232,7 +18235,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18284,7 +18287,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18335,7 +18338,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18404,7 +18407,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18456,7 +18459,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18504,7 +18507,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18572,7 +18575,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18624,7 +18627,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18670,7 +18673,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18762,7 +18765,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18811,7 +18814,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18862,7 +18865,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18935,7 +18938,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18988,7 +18991,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19040,7 +19043,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19112,7 +19115,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19165,7 +19168,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19216,7 +19219,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19289,7 +19292,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19340,7 +19343,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19391,7 +19394,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19462,7 +19465,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19512,7 +19515,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19561,7 +19564,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19629,7 +19632,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19681,7 +19684,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19727,7 +19730,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19819,7 +19822,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19868,7 +19871,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19921,7 +19924,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -19992,7 +19995,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20047,7 +20050,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20100,7 +20103,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20171,7 +20174,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20225,7 +20228,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20277,7 +20280,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20347,7 +20350,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20397,7 +20400,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20449,7 +20452,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20517,7 +20520,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20569,7 +20572,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20622,7 +20625,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20692,7 +20695,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20740,7 +20743,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -20794,7 +20797,7 @@ capabilities:
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-07T00:00:00+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

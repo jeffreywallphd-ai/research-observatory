@@ -4,6 +4,86 @@
   "title": "Research Observatory implementation backlog",
   "description": "Authoritative Capability -> Slice -> Task work ledger for Research Observatory Architecture Baseline 1.3.",
   "type": "object",
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "nullableTimestamp": {
+      "anyOf": [
+        {"$ref": "#/$defs/timestamp"},
+        {"type": "null"}
+      ]
+    },
+    "nullableCommit": {
+      "anyOf": [
+        {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        {"type": "null"}
+      ]
+    },
+    "nullableLease": {
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["claimed_by", "claimed_at", "expires_at"],
+          "properties": {
+            "claimed_by": {"type": "string", "minLength": 1},
+            "claimed_at": {"$ref": "#/$defs/timestamp"},
+            "expires_at": {"$ref": "#/$defs/timestamp"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "evidenceReferences": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "taskEvidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "path", "sha256", "commit", "recorded_at"],
+        "properties": {
+          "type": {"const": "criterion-manifest"},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "recorded_at": {"$ref": "#/$defs/timestamp"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": ["reviewer", "result", "reviewed_at", "notes"],
+      "properties": {
+        "reviewer": {"type": ["string", "null"]},
+        "result": {"enum": ["approved", "changes-requested", "blocked", null]},
+        "reviewed_at": {"$ref": "#/$defs/nullableTimestamp"},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "nullableBlocker": {
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["reason", "next_action", "recorded_at", "owner"],
+          "properties": {
+            "reason": {"type": "string", "minLength": 1},
+            "next_action": {"type": "string", "minLength": 1},
+            "recorded_at": {"$ref": "#/$defs/timestamp"},
+            "owner": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
   "required": [
     "plan",
     "status_profile",
@@ -41,6 +121,7 @@
         },
         "date": {
           "type": "string",
+          "format": "date",
           "minLength": 1
         },
         "authority": {
@@ -243,13 +324,10 @@
                 ]
               },
               "approved_at": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "$ref": "#/$defs/nullableTimestamp"
               },
               "evidence": {
-                "type": "array"
+                "$ref": "#/$defs/evidenceReferences"
               },
               "notes": {
                 "type": [
@@ -474,22 +552,13 @@
                 ]
               },
               "base_sha": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "$ref": "#/$defs/nullableCommit"
               },
               "started_at": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "$ref": "#/$defs/nullableTimestamp"
               },
               "updated_at": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "$ref": "#/$defs/nullableTimestamp"
               },
               "pause_reason": {
                 "type": [
@@ -498,10 +567,7 @@
                 ]
               },
               "lease": {
-                "type": [
-                  "object",
-                  "null"
-                ]
+                "$ref": "#/$defs/nullableLease"
               }
             },
             "additionalProperties": true
@@ -534,13 +600,10 @@
                 ]
               },
               "reviewed_at": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "$ref": "#/$defs/nullableTimestamp"
               },
               "evidence": {
-                "type": "array"
+                "$ref": "#/$defs/evidenceReferences"
               },
               "notes": {
                 "type": [
@@ -677,13 +740,10 @@
                       ]
                     },
                     "reviewed_at": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "$ref": "#/$defs/nullableTimestamp"
                     },
                     "evidence": {
-                      "type": "array"
+                      "$ref": "#/$defs/evidenceReferences"
                     },
                     "notes": {
                       "type": [
@@ -895,10 +955,7 @@
                         ]
                       },
                       "base_sha": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "$ref": "#/$defs/nullableCommit"
                       },
                       "worktree": {
                         "type": [
@@ -907,40 +964,25 @@
                         ]
                       },
                       "lease": {
-                        "type": [
-                          "object",
-                          "null"
-                        ]
+                        "$ref": "#/$defs/nullableLease"
                       },
                       "started_at": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "$ref": "#/$defs/nullableTimestamp"
                       },
                       "updated_at": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "$ref": "#/$defs/nullableTimestamp"
                       },
                       "completed_at": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "$ref": "#/$defs/nullableTimestamp"
                       },
                       "blocker": {
-                        "type": [
-                          "object",
-                          "null"
-                        ]
+                        "$ref": "#/$defs/nullableBlocker"
                       },
                       "implementation_notes": {
                         "type": "string"
                       },
                       "evidence": {
-                        "type": "array"
+                        "$ref": "#/$defs/taskEvidence"
                       },
                       "verification_state": {
                         "type": [
@@ -949,7 +991,7 @@
                         ]
                       },
                       "review": {
-                        "type": "object"
+                        "$ref": "#/$defs/review"
                       },
                       "cancellation": {
                         "type": [

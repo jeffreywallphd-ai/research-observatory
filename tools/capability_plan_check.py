@@ -9,12 +9,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import jsonschema
 import yaml
-
-try:
-    import jsonschema  # type: ignore[import-untyped]
-except ImportError:  # pragma: no cover
-    jsonschema = None
 
 REQUIRED_HEADINGS = [
     "## 0. Control and authority",
@@ -83,9 +79,8 @@ def main() -> int:
         except Exception as exc:
             errors.append(f"{path.name}: {exc}")
             continue
-        if jsonschema:
-            for err in jsonschema.Draft202012Validator(schema).iter_errors(meta):
-                errors.append(f"{path.name}: schema {err.message}")
+        for err in jsonschema.Draft202012Validator(schema).iter_errors(meta):
+            errors.append(f"{path.name}: schema {err.message}")
         cid = meta.get("capability_id")
         if cid not in caps:
             errors.append(f"{path.name}: unknown capability {cid}")
