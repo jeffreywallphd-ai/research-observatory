@@ -8,7 +8,9 @@ dependencies = ["PyYAML==6.0.3"]
 
 [dependency-groups]
 dev = [
+  "beautifulsoup4==4.14.3",
   "jsonschema[format-nongpl]==4.26.0",
+  "lxml==6.0.2",
   "mypy==2.3.0",
   "ruff==0.15.22",
   "types-jsonschema==4.26.0.20260518",

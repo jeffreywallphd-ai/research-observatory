@@ -1545,11 +1545,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-08T23:11:33+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/cap-00-delivery-foundation
+      started_at: '2026-08-08T23:14:33+00:00'
+      updated_at: '2026-08-08T23:14:33+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1559,10 +1559,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 08a0212c004948af4240a6e336ef332ac8ab02b1
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-08T23:14:33+00:00'
+        expires_at: '2026-08-09T07:14:33+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
     - id: CAP-00.S06.T02
