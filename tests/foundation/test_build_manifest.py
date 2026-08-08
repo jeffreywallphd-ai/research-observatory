@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
@@ -243,6 +244,26 @@ class BuildManifestTests(unittest.TestCase):
                 "# Changelog\n\n## Notes\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n",
                 "invalid release heading",
             ),
+            "changelog-tab-level-two": (
+                "CHANGELOG.md",
+                "# Changelog\n\n##\tNotes\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n",
+                "invalid release heading",
+            ),
+            "changelog-indented-level-two": (
+                "CHANGELOG.md",
+                "# Changelog\n\n   ## Notes\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n",
+                "invalid release heading",
+            ),
+            "changelog-bare-level-two": (
+                "CHANGELOG.md",
+                "# Changelog\n\n##\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n",
+                "invalid release heading",
+            ),
+            "changelog-setext-level-two": (
+                "CHANGELOG.md",
+                "# Changelog\n\nNotes\n-----\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n",
+                "setext level-two",
+            ),
         }
         for label, (path, content, expected) in mutations.items():
             with self.subTest(label=label), tempfile.TemporaryDirectory() as temporary:
@@ -287,6 +308,43 @@ class BuildManifestTests(unittest.TestCase):
             _, _, _, errors = source_contract(root)
 
         self.assertTrue(any("must remain empty until CAP-07" in error for error in errors), errors)
+
+    def test_dangling_model_manifest_junction_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.contract_repo(temporary)
+            reserved = root / "packaging" / "model-manifests"
+            missing_target = root / "missing-model-target"
+            junction = subprocess.run(
+                ["cmd", "/c", "mklink", "/J", str(reserved), str(missing_target)],
+                capture_output=True,
+                check=False,
+            )
+            if junction.returncode != 0:
+                self.skipTest(f"junction creation unavailable: {junction.stderr!r}")
+            try:
+                _, _, _, errors = source_contract(root)
+            finally:
+                os.rmdir(reserved)
+
+        self.assertTrue(any("must not be a redirect" in error for error in errors), errors)
+
+    def test_schema_inventory_enumeration_errors_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.contract_repo(temporary)
+            hidden = root / "packages" / "hidden"
+            hidden.mkdir(parents=True)
+            (hidden / "omitted.schema.json").write_text("{}\n", encoding="utf-8")
+            real_scandir = os.scandir
+
+            def controlled_scandir(path: str | os.PathLike[str]):
+                if Path(path) == hidden:
+                    raise PermissionError("controlled unreadable directory")
+                return real_scandir(path)
+
+            with mock.patch("build_manifest.os.scandir", side_effect=controlled_scandir):
+                _, _, _, errors = source_contract(root)
+
+        self.assertTrue(any("cannot enumerate schema inventory directory" in error for error in errors), errors)
 
     def test_clean_manifest_rejects_input_status_race(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -375,6 +433,59 @@ class BuildManifestTests(unittest.TestCase):
         self.assertTrue(
             any("governed input changed" in error or "Git command is unavailable" in error for error in errors), errors
         )
+
+    def test_dirty_manifest_rechecks_late_schema_and_model_inventories(self) -> None:
+        for kind in ("schema", "model"):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as temporary:
+                root = self.contract_repo(temporary)
+                status_calls = 0
+
+                def runner(
+                    command: list[str], inventory_kind: str = kind, inventory_root: Path = root, **_: object
+                ) -> subprocess.CompletedProcess[bytes]:
+                    nonlocal status_calls
+                    arguments = command[1:]
+                    if arguments[:2] == ["rev-parse", "--verify"]:
+                        stdout = b"a" * 40 + b"\n"
+                    elif arguments[:3] == ["show", "-s", "--format=%cI"]:
+                        stdout = b"2026-08-08T17:05:34-04:00\n"
+                    elif arguments[:3] == ["show", "-s", "--format=%ct"]:
+                        stdout = b"1786223134\n"
+                    elif arguments[:2] == ["status", "--porcelain=v1"]:
+                        status_calls += 1
+                        if status_calls == 3:
+                            if inventory_kind == "schema":
+                                late = inventory_root / "packages" / "contracts" / "late.schema.json"
+                            else:
+                                late = inventory_root / "packaging" / "model-manifests" / "premature"
+                            late.parent.mkdir(parents=True, exist_ok=True)
+                            late.write_text("{}\n", encoding="utf-8")
+                        stdout = b"?? local-note.txt\0"
+                    else:
+                        return subprocess.CompletedProcess(command, 2, b"", b"unexpected Git command")
+                    return subprocess.CompletedProcess(command, 0, stdout, b"")
+
+                manifest, errors = generate_build_manifest(root, runner=runner)
+
+            self.assertIsNone(manifest)
+            self.assertTrue(any("inventory" in error or "must remain empty" in error for error in errors), errors)
+
+    def test_guarded_write_rejects_temporary_content_change(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            parent = root / "artifacts" / "tmp"
+            parent.mkdir(parents=True)
+            destination = parent / "manifest.json"
+
+            def change_temporary() -> None:
+                candidates = [path for path in parent.glob("manifest.json*") if path != destination]
+                self.assertEqual(1, len(candidates))
+                candidates[0].write_text('{"changed":true}\n', encoding="utf-8")
+
+            with self.assertRaises((OSError, ValueError)):
+                guarded_atomic_write_json(root, destination, {"safe": True}, parent, before_replace=change_temporary)
+
+            self.assertFalse(destination.exists())
 
     def test_output_rejects_redirected_scratch_root(self) -> None:
         with tempfile.TemporaryDirectory() as temporary, tempfile.TemporaryDirectory() as outside:

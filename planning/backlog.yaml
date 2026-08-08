@@ -1424,7 +1424,7 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T21:08:08+00:00'
-      updated_at: '2026-08-08T22:03:19+00:00'
+      updated_at: '2026-08-08T22:19:54+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Implementation commit 23717be passed the clean 14-command foundation profile, 109 tests, focused
@@ -1435,7 +1435,10 @@ capabilities:
 
         Second re-review fixes complete at 4a3196c: Windows input/output ancestor locks close final race windows; changelog
         order/SemVer is canonical; every pre-CAP-07 model-tree entry/redirect is denied; 14 commands, 116 tests, 15 focused
-        pass.'
+        pass.
+
+        Third re-review fixes complete at 8534749: one strict SemVer grammar across tool and schemas, canonical level-two
+        changelog hierarchy, prior handle-lock race fixes retained; 14 commands, 117 tests, 16 focused pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T03.json
@@ -1452,17 +1455,23 @@ capabilities:
         sha256: aa67ac3a1106b72f6a339d9dd19a17ff2334d773938bd5106fb7ee477c3e1931
         commit: 4a3196c892db6717d4a78933675a057c486a42a3
         recorded_at: '2026-08-08T22:00:10+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T03.review-fix-3.json
+        sha256: 0318e0bc090329e9d40fa2d07634f793fa120abd3a0f3598f9419d0ffb87c297
+        commit: 8534749677355438708f2d3e9e73d167a86e5911
+        recorded_at: '2026-08-08T22:09:44+00:00'
       review:
         reviewer: codex-review
         result: changes-requested
-        reviewed_at: '2026-08-08T22:03:19+00:00'
-        notes: Re-review of 4a3196c confirmed both race fixes, but required strict SemVer across tool/schemas and rejection
-          of noncanonical level-2 changelog headings between title, Unreleased, and dated releases.
+        reviewed_at: '2026-08-08T22:19:54+00:00'
+        notes: 'Re-review of 8534749 required: re-enumerate schema/model inventories during final stability; protect temporary
+          JSON content through replacement; recognize CommonMark ATX/setext H2 forms; reject dangling reserved-root redirects;
+          fail closed on schema traversal errors.'
       base_sha: 2f28abe2c25fdf911f338ae9e173223879964ac2
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T22:03:19+00:00'
-        expires_at: '2026-08-09T06:03:19+00:00'
+        claimed_at: '2026-08-08T22:19:54+00:00'
+        expires_at: '2026-08-09T06:19:54+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
