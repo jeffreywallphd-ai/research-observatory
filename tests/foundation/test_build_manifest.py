@@ -19,6 +19,7 @@ from build_manifest import (  # noqa: E402
     VERSION_PATH,
     VERSION_SCHEMA_PATH,
     generate_build_manifest,
+    git_blob_sha1,
     git_source,
     guarded_atomic_write_json,
     safe_output_path,
@@ -40,8 +41,10 @@ class BuildManifestTests(unittest.TestCase):
                 stdout = b"1786223134\n"
             elif len(arguments) >= 3 and arguments[:2] == ["cat-file", "blob"]:
                 stdout = (REPO / arguments[2].removeprefix("HEAD:")).read_bytes()
-            elif len(arguments) >= 4 and arguments[:2] == ["cat-file", "--filters"]:
-                stdout = (REPO / arguments[3].removeprefix("HEAD:")).read_bytes()
+            elif len(arguments) >= 3 and arguments[0] == "hash-object":
+                payload = _.get("input")
+                assert isinstance(payload, bytes)
+                stdout = git_blob_sha1(payload).encode("ascii") + b"\n"
             elif arguments[:2] == ["status", "--porcelain=v1"]:
                 stdout = status
             else:
@@ -247,8 +250,10 @@ class BuildManifestTests(unittest.TestCase):
                     stdout = b""
                 elif len(arguments) >= 3 and arguments[:2] == ["cat-file", "blob"]:
                     stdout = committed[arguments[2].removeprefix("HEAD:")]
-                elif len(arguments) >= 4 and arguments[:2] == ["cat-file", "--filters"]:
-                    stdout = committed[arguments[3].removeprefix("HEAD:")]
+                elif len(arguments) >= 3 and arguments[0] == "hash-object":
+                    payload = _.get("input")
+                    assert isinstance(payload, bytes)
+                    stdout = git_blob_sha1(payload).encode("ascii") + b"\n"
                 else:
                     return subprocess.CompletedProcess(command, 2, b"", b"unexpected Git command")
                 return subprocess.CompletedProcess(command, 0, stdout, b"")
