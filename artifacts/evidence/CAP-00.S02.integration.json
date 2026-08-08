@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-00.S02",
+  "stateCommit": "c4302761f20e5f8284328ba33f0172681fc124cb",
+  "outcome": "Human and AI contributors receive explicit boundaries, conventions, and change-control rules.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-00.S02.T01",
+      "path": "artifacts/evidence/CAP-00.S02.T01.json",
+      "sha256": "db9de309a92346e79b2b197705062f1db2a5aeb496e647ff81c09b3e651c1852",
+      "status": "DONE"
+    },
+    {
+      "taskId": "CAP-00.S02.T02",
+      "path": "artifacts/evidence/CAP-00.S02.T02.json",
+      "sha256": "f7ded184a9cedcc1ef5d3bc979ee8bf3a1132fdf6ae58352f07c60e8bddfae1e",
+      "status": "DONE"
+    },
+    {
+      "taskId": "CAP-00.S02.T03",
+      "path": "artifacts/evidence/CAP-00.S02.T03.json",
+      "sha256": "f0299783d5861208753bf0fe5a4b670ee3a86a3e70a0d5bdedaaa13648a5ed15",
+      "status": "DONE"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": "python tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "all areas/modules, default-deny dependencies, stable interfaces, and profile boundaries passed"
+    },
+    {
+      "command": "python tools/agent_protocol_check.py --repo .",
+      "exitCode": 0,
+      "result": "atomic all-slice approval and durable production-ready full-capability execution passed"
+    },
+    {
+      "command": "python tools/adr_check.py --repo . --base ae170b8 --head HEAD",
+      "exitCode": 0,
+      "result": "the complete 26-path S02 change set was inspected and every protected change was covered by indexed task-linked ADR-0001"
+    },
+    {
+      "command": "python tools/verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "all foundation validators, 25 tests, and backlog integrity passed"
+    }
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": []
+  }
+}
