@@ -620,7 +620,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-00.S01.T01
-    status: READY
+    status: NOT_STARTED
     tasks:
     - id: CAP-00.S02.T01
       capability_id: CAP-00
@@ -755,26 +755,31 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T16:27:52+00:00'
-      updated_at: '2026-08-08T16:27:52+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T16:32:29+00:00'
+      completed_at: '2026-08-08T16:32:29+00:00'
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Indexed ADR states/template/scaffold, task-linked ADR-0001, protected-path contract, change-set
+        gate, and failure tests complete at 34942ab.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S02.T03.json
+        sha256: f0299783d5861208753bf0fe5a4b670ee3a86a3e70a0d5bdedaaa13648a5ed15
+        commit: 34942ab30a6afe0f36da7ddb260bb6b9b213441a
+        recorded_at: '2026-08-08T16:32:18+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: approved
+        reviewed_at: '2026-08-08T16:32:29+00:00'
+        notes: Rigorous audit confirmed stable ADR identifiers and states, complete template/scaffold, index-record-task consistency,
+          sample task-linked ADR, self-protecting path policy, same-change Proposed/Accepted ADR coverage, unindexed/uncovered
+          denial tests, and exact change-set evidence; no unresolved finding.
       base_sha: bedabc55f7395a7a2823ddc5f9c9b5de0c7d1fc4
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T16:27:52+00:00'
-        expires_at: '2026-08-09T00:27:52+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral
