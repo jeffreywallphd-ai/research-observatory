@@ -149,6 +149,28 @@ class FixtureCorpusCheckTests(unittest.TestCase):
         self.assertTrue(any("citations are declared" in error for error in errors))
         self.assertTrue(any("bibliography is declared" in error for error in errors))
 
+    def test_normal_semantic_features_require_an_accepted_fixture(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            corpus = self.copy_corpus(temporary)
+            article_path = corpus / "fulltext" / "article.xml"
+            article = article_path.read_text(encoding="utf-8")
+            article_path.write_text(
+                article.replace("<body>", "<data>").replace("</body>", "</data>"),
+                encoding="utf-8",
+            )
+            self.update_item_digest(corpus, "fulltext/article.xml")
+            manifest_path = corpus / "manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            accepted = next(item for item in manifest["items"] if item["path"] == "fulltext/article.xml")
+            rejected = next(item for item in manifest["items"] if item["path"] == "malformed/article.xml")
+            accepted["features"].remove("structured-full-text")
+            rejected["features"].append("structured-full-text")
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+            errors = corpus_errors(corpus)
+
+        self.assertTrue(any("feature 'structured-full-text' requires outcome 'accept'" in error for error in errors))
+
     def test_manifest_and_schema_redirects_are_rejected(self) -> None:
         for control_name in ("manifest.json", "manifest.schema.json"):
             with self.subTest(control_name=control_name), tempfile.TemporaryDirectory() as temporary:
