@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 56ff71a9dac0aa672051a08824862c451422b706a20e9015af2e5985043de79a
+source_sha256: 202ac265c7435c366321ec399426b15e3e1b4cd8a60e4bad580e6e599a053236
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -804,13 +804,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S06.T01 - Install the governed Academic Minimal UI reference
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `low`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `low`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S01.T01`, `CAP-00.S02.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Store the approved style guide, workflow catalog, capability/page contracts, linked HTML prototypes, shared assets, approval record, and deterministic generator under design/ui-reference.
 
