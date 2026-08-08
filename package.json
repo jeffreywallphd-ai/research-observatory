@@ -1,0 +1,14 @@
+{
+  "name": "research-observatory",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Research Observatory monorepo",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=24.19.0 <25",
+    "pnpm": "11.20.0"
+  },
+  "scripts": {
+    "verify:foundation": "python tools/verify.py --profile foundation"
+  }
+}

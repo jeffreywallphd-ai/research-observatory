@@ -13,6 +13,8 @@ monorepo with portable boundaries for later platforms and deployment profiles.
   governance, and automation authorities.
 - Validate the bootstrap foundation with
   `python tools/verify.py --profile foundation`.
+- See [`docs/automation/toolchain.md`](docs/automation/toolchain.md) for pinned
+  runtimes, package managers, and frozen-install commands.
 
 ## Monorepo boundaries
 
