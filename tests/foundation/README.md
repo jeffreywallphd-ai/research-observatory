@@ -12,3 +12,7 @@ fail-closed behavior without resolving dependencies during the unit test.
 
 `test_backlog_views.py` verifies source-derived totals and statuses, idempotent
 no-rewrite generation, generated-file drift detection, and repair of manual edits.
+
+`test_fixture_corpus_check.py` verifies the synthetic scholarly corpus contract,
+including licensing and provenance, exact inventory, content hashes, semantic edge
+cases, malformed-input behavior, and valid PDF cross-reference integrity.

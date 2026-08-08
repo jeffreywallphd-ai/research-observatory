@@ -1,0 +1,22 @@
+TY  - JOUR
+ID  - RO-FIX-001
+TI  - Transparent Offline Pipelines for Synthetic Evidence
+AU  - Example, Amina
+AU  - Fiction, Bartosz
+JO  - Journal of Reproducible Fixtures
+PY  - 2024
+VL  - 7
+IS  - 1
+SP  - 1
+EP  - 9
+DO  - 10.99999/ro.fixture.001
+AB  - A wholly synthetic abstract used to test deterministic
+      scholarly metadata ingestion.
+KW  - fixtures
+KW  - offline
+ER  -
+
+TY  - RPRT
+ID  - RO-FIX-002-MISSING
+TI  - A Record with Deliberately Missing Optional Fields
+ER  -

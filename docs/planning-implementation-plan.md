@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 76d733b495af5cb7f4b2d175da3ba93933518c6cc18456de91f32d0be2fb6e92
+source_sha256: 4889438a08a41e4b9fbd99683746618d4d32d34b2ad6d59420daeb0fa815de1e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -690,13 +690,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S05.T01 - Create a legally redistributable miniature scholarly fixture corpus
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S04.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Small fixture set containing metadata variants, duplicates, PDFs, structured full text, tables, citations, missing fields, and malformed inputs.
 

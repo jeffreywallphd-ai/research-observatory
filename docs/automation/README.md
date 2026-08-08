@@ -8,5 +8,6 @@
 - `verification-profiles.md` - named profile composition, reports, failure behavior, release-gated profiles, and extension ownership.
 - `continuous-integration.md` - required CI jobs, immutable action pins, least privilege, local equivalents, and evidence retention.
 - `supply-chain-security.md` - pinned scanner installation, scan boundaries, release thresholds, exceptions, and sanitized evidence.
+- `fixture-corpus.md` - synthetic scholarly test assets, CC0 licensing and provenance, edge-case coverage, integrity validation, and safe update procedure.
 
 These files contain detailed procedure delegated by root `AGENTS.md`, `docs/README.md`, and `planning/README.md`. They are repository operating documents after installation from the setup pack.

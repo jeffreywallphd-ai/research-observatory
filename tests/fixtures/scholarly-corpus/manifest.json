@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "synthetic-scholarly-fixture-corpus",
+  "corpusVersion": "1.0.0",
+  "offline": true,
+  "deterministic": true,
+  "license": {
+    "spdx": "CC0-1.0",
+    "name": "CC0 1.0 Universal",
+    "canonicalUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "provenance": {
+    "origin": "repository-authored-synthetic",
+    "createdFor": "Research Observatory deterministic offline tests",
+    "createdOn": "2026-08-08",
+    "containsThirdPartyScholarlyContent": false
+  },
+  "items": [
+    {
+      "id": "RO-CORPUS-README",
+      "path": "README.md",
+      "sha256": "930db578882e3d4e8ea1805b8a184c8a8011a75ec5904d654df385833c402848",
+      "bytes": 1493,
+      "mediaType": "text/markdown",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["documentation", "license-provenance"],
+      "expectedOutcome": "accept",
+      "failureMode": null
+    },
+    {
+      "id": "RO-CORPUS-LICENSE",
+      "path": "LICENSE.txt",
+      "sha256": "60fe1884124671de186f0851f58a031e37dbb136a582eb0f413d3ff168c3f6ab",
+      "bytes": 555,
+      "mediaType": "text/plain",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["license-provenance"],
+      "expectedOutcome": "accept",
+      "failureMode": null
+    },
+    {
+      "id": "RO-CORPUS-METADATA-JSON",
+      "path": "metadata/records.json",
+      "sha256": "87341308e6061667a01edf1dc588a59764062824db7e2db620f529731a1ed8fa",
+      "bytes": 1880,
+      "mediaType": "application/json",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["metadata-json", "metadata-complete", "metadata-variant", "duplicate-identifier", "missing-fields", "unicode"],
+      "expectedOutcome": "accept",
+      "failureMode": null
+    },
+    {
+      "id": "RO-CORPUS-METADATA-RIS",
+      "path": "metadata/records.ris",
+      "sha256": "4c05915a0853b577f3e5996ad85a3268c19169da4a2604df157ab9883a7761f8",
+      "bytes": 475,
+      "mediaType": "application/x-research-info-systems",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["metadata-ris", "metadata-variant", "missing-fields"],
+      "expectedOutcome": "accept",
+      "failureMode": null
+    },
+    {
+      "id": "RO-CORPUS-METADATA-BIBTEX",
+      "path": "metadata/records.bib",
+      "sha256": "6ac7c9ea21efe9812560b9a9a36d8245d8533c3bfcfce5ae2e525c62f0812895",
+      "bytes": 537,
+      "mediaType": "application/x-bibtex",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["metadata-bibtex", "metadata-variant", "missing-fields"],
+      "expectedOutcome": "accept",
+      "failureMode": null
+    },
+    {
+      "id": "RO-CORPUS-FULLTEXT-XML",
+      "path": "fulltext/article.xml",
+      "sha256": "32a84bfb2e9ea41b9edaeec6c7a54bb347c08b4d2264cc4ee08b2005fc0191b2",
+      "bytes": 1952,
+      "mediaType": "application/xml",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["structured-full-text", "sections", "table", "citations", "bibliography"],
+      "expectedOutcome": "accept",
+      "failureMode": null
+    },
+    {
+      "id": "RO-CORPUS-FULLTEXT-TEXT",
+      "path": "fulltext/article.txt",
+      "sha256": "f38de61722bcf16ef7c94ac20650009d7f380e1bcdb1b79953c49e7ffadf562f",
+      "bytes": 544,
+      "mediaType": "text/plain",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["plain-full-text", "table", "citations", "bibliography"],
+      "expectedOutcome": "accept",
+      "failureMode": null
+    },
+    {
+      "id": "RO-CORPUS-PDF",
+      "path": "pdf/article.pdf",
+      "sha256": "da53b5c40592d4df884cd9340625148dd6ba33749313654b75f83808c44433f9",
+      "bytes": 898,
+      "mediaType": "application/pdf",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["pdf", "table", "citations", "bibliography"],
+      "expectedOutcome": "accept",
+      "failureMode": null
+    },
+    {
+      "id": "RO-CORPUS-MALFORMED-JSON",
+      "path": "malformed/records.json",
+      "sha256": "3b7a6efa29fe118391bae75a51089202e42a3345778c803afcaa0c227ec5b13c",
+      "bytes": 113,
+      "mediaType": "application/json",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["malformed-json"],
+      "expectedOutcome": "reject",
+      "failureMode": "invalid-json"
+    },
+    {
+      "id": "RO-CORPUS-MALFORMED-XML",
+      "path": "malformed/article.xml",
+      "sha256": "f0f57f0e9a5cfbf946711243b50fbd9bd74cbc45c13595d909157de86fe2073f",
+      "bytes": 142,
+      "mediaType": "application/xml",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["malformed-xml"],
+      "expectedOutcome": "reject",
+      "failureMode": "invalid-xml"
+    },
+    {
+      "id": "RO-CORPUS-MALFORMED-PDF",
+      "path": "malformed/truncated.pdf",
+      "sha256": "cd016d24e8ab5a06b5936547214a1ec9fea42ff3c385ef9c602ae5e9feb7dbb2",
+      "bytes": 91,
+      "mediaType": "application/pdf",
+      "license": "CC0-1.0",
+      "provenance": {"kind": "synthetic", "createdFor": "Research Observatory test fixture", "containsThirdPartyContent": false},
+      "features": ["malformed-pdf"],
+      "expectedOutcome": "reject",
+      "failureMode": "truncated-pdf"
+    }
+  ]
+}

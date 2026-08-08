@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.invalid/schemas/scholarly-fixture-corpus-manifest-1.0.json",
+  "title": "Synthetic scholarly fixture corpus manifest",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "corpusVersion",
+    "offline",
+    "deterministic",
+    "license",
+    "provenance",
+    "items"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "synthetic-scholarly-fixture-corpus"},
+    "corpusVersion": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "offline": {"const": true},
+    "deterministic": {"const": true},
+    "license": {
+      "type": "object",
+      "required": ["spdx", "name", "canonicalUrl"],
+      "properties": {
+        "spdx": {"const": "CC0-1.0"},
+        "name": {"const": "CC0 1.0 Universal"},
+        "canonicalUrl": {"const": "https://creativecommons.org/publicdomain/zero/1.0/"}
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["origin", "createdFor", "createdOn", "containsThirdPartyScholarlyContent"],
+      "properties": {
+        "origin": {"const": "repository-authored-synthetic"},
+        "createdFor": {"const": "Research Observatory deterministic offline tests"},
+        "createdOn": {"type": "string", "format": "date"},
+        "containsThirdPartyScholarlyContent": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "path",
+          "sha256",
+          "bytes",
+          "mediaType",
+          "license",
+          "provenance",
+          "features",
+          "expectedOutcome",
+          "failureMode"
+        ],
+        "properties": {
+          "id": {"type": "string", "pattern": "^RO-CORPUS-[A-Z0-9-]+$"},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "bytes": {"type": "integer", "minimum": 1},
+          "mediaType": {"type": "string", "minLength": 1},
+          "license": {"const": "CC0-1.0"},
+          "provenance": {
+            "type": "object",
+            "required": ["kind", "createdFor", "containsThirdPartyContent"],
+            "properties": {
+              "kind": {"const": "synthetic"},
+              "createdFor": {"const": "Research Observatory test fixture"},
+              "containsThirdPartyContent": {"const": false}
+            },
+            "additionalProperties": false
+          },
+          "features": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "expectedOutcome": {"enum": ["accept", "reject"]},
+          "failureMode": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

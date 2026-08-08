@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article article-type="research-article" fixture-id="RO-FIX-001">
+  <front>
+    <article-meta>
+      <article-id pub-id-type="doi">10.99999/ro.fixture.001</article-id>
+      <title-group>
+        <article-title>Transparent Offline Pipelines for Synthetic Evidence</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author"><name><surname>Example</surname><given-names>Amina</given-names></name></contrib>
+        <contrib contrib-type="author"><name><surname>Fiction</surname><given-names>Bartosz</given-names></name></contrib>
+      </contrib-group>
+      <abstract><p>This synthetic article exists only to exercise deterministic parsing.</p></abstract>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="s1">
+      <title>Methods</title>
+      <p>Three fictional records were processed locally. The procedure cites <xref ref-type="bibr" rid="R1">Fixture et al.</xref> and compares a boundary case <xref ref-type="bibr" rid="R2">Example, 2020</xref>.</p>
+    </sec>
+    <sec id="s2">
+      <title>Results</title>
+      <p>All numbers in <xref ref-type="table" rid="T1">Table 1</xref> are invented test values and carry no empirical meaning.</p>
+      <table-wrap id="T1">
+        <label>Table 1</label>
+        <caption><p>Synthetic parser outcomes</p></caption>
+        <table>
+          <thead><tr><th>Input</th><th>Accepted</th><th>Warnings</th></tr></thead>
+          <tbody>
+            <tr><td>Complete metadata</td><td>1</td><td>0</td></tr>
+            <tr><td>Missing fields</td><td>1</td><td>3</td></tr>
+          </tbody>
+        </table>
+      </table-wrap>
+    </sec>
+  </body>
+  <back>
+    <ref-list>
+      <ref id="R1"><mixed-citation>Fixture, F. 2022. A fictional reference for parser tests.</mixed-citation></ref>
+      <ref id="R2"><mixed-citation>Example, E. 2020. Another synthetic citation.</mixed-citation></ref>
+    </ref-list>
+  </back>
+</article>

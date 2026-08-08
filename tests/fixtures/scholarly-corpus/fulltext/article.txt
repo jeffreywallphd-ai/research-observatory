@@ -1,0 +1,18 @@
+Transparent Offline Pipelines for Synthetic Evidence
+
+ABSTRACT
+This entirely synthetic article exists only to exercise deterministic parsing.
+
+METHODS
+Three fictional records were processed locally [1]. A missing-field boundary was
+retained instead of silently completed [2].
+
+RESULTS
+Table 1. Synthetic parser outcomes
+Input              Accepted  Warnings
+Complete metadata  1         0
+Missing fields     1         3
+
+REFERENCES
+[1] Fixture, F. 2022. A fictional reference for parser tests.
+[2] Example, E. 2020. Another synthetic citation.
