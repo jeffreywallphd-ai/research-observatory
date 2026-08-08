@@ -1,0 +1,5 @@
+{
+  "records": [
+    {"fixtureId": "BROKEN-JSON", "title": "Trailing comma is intentional"},
+  ],
+  "truncated":

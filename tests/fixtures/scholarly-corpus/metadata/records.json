@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0",
+  "records": [
+    {
+      "fixtureId": "RO-FIX-001",
+      "type": "journal-article",
+      "title": "Transparent Offline Pipelines for Synthetic Evidence",
+      "authors": [
+        {"family": "Example", "given": "Amina"},
+        {"family": "Fiction", "given": "Bartosz"}
+      ],
+      "issued": "2024-02-29",
+      "containerTitle": "Journal of Reproducible Fixtures",
+      "volume": "7",
+      "issue": "1",
+      "pages": "1-9",
+      "doi": "10.99999/ro.fixture.001",
+      "abstract": "A wholly synthetic abstract used to test deterministic scholarly metadata ingestion.",
+      "keywords": ["fixtures", "offline", "provenance"],
+      "language": "en"
+    },
+    {
+      "fixtureId": "RO-FIX-001-DUP",
+      "type": "article",
+      "title": "Transparent offline pipelines for synthetic evidence.",
+      "authors": [
+        {"literal": "A. Example"},
+        {"literal": "B. Fiction"}
+      ],
+      "issued": {"dateParts": [[2024, 2, 29]]},
+      "containerTitle": "J. Reproducible Fixtures",
+      "doi": "10.99999/RO.FIXTURE.001",
+      "sourceRecordId": "duplicate-provider-record"
+    },
+    {
+      "fixtureId": "RO-FIX-002-MISSING",
+      "type": "report",
+      "title": "A Record with Deliberately Missing Optional Fields",
+      "authors": [],
+      "issued": null,
+      "containerTitle": null,
+      "abstract": null,
+      "identifiers": []
+    },
+    {
+      "fixtureId": "RO-FIX-003-UNICODE",
+      "type": "conference-paper",
+      "title": "Métodos sintéticos — reproducibility across naïve encodings",
+      "authors": [
+        {"family": "Muñoz", "given": "Zoë"},
+        {"family": "Łąka", "given": "Jan"}
+      ],
+      "issued": "2023",
+      "containerTitle": "Proceedings of the Fictional Fixture Workshop",
+      "url": "https://example.invalid/fixtures/ro-fix-003",
+      "language": "mul"
+    }
+  ]
+}

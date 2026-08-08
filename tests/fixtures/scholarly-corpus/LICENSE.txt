@@ -1,0 +1,12 @@
+Synthetic Scholarly Fixture Corpus - CC0 1.0 Universal
+
+To the extent possible under law, the repository contributors who created these
+synthetic fixture files have waived all copyright and related or neighboring
+rights to the files listed in manifest.json.
+
+SPDX-License-Identifier: CC0-1.0
+Canonical terms: https://creativecommons.org/publicdomain/zero/1.0/
+Legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode.en
+
+The fixtures are provided without warranty. They are fictional test material,
+not scholarly sources or factual claims.
