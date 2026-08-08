@@ -40,35 +40,58 @@
           },
           "prompt": {
             "type": "object",
-            "required": ["id", "version", "sha256"],
+            "required": ["id", "version", "path", "sha256"],
             "properties": {
               "id": {"type": "string", "minLength": 1},
               "version": {"type": "string", "minLength": 1},
+              "path": {"type": ["string", "null"]},
               "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
             },
+            "oneOf": [
+              {
+                "properties": {
+                  "id": {"const": "none"},
+                  "version": {"const": "not-applicable"},
+                  "path": {"const": null},
+                  "sha256": {"const": null}
+                }
+              },
+              {
+                "properties": {
+                  "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "not": {"const": "none"}},
+                  "version": {"type": "string", "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$", "not": {"const": "not-applicable"}},
+                  "path": {"type": "string", "pattern": "^evaluation/prompts/[a-z0-9][a-z0-9._-]*\\.txt$"},
+                  "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+                }
+              }
+            ],
             "additionalProperties": false
           },
           "schemas": {"type": "array", "items": {"$ref": "#/$defs/hashedPath"}},
           "baseline": {
             "type": "object",
-            "required": ["version", "sha256", "history", "currentApproval"],
+            "required": ["version", "expectedPath", "sha256", "history", "currentApproval", "currentApprovalSha256"],
             "properties": {
               "version": {"type": "integer", "minimum": 1},
+              "expectedPath": {"type": "string", "pattern": "^evaluation/baselines/[a-z0-9][a-z0-9-]*-v[0-9]+\\.json$"},
               "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
               "history": {
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "required": ["version", "sha256", "approval"],
+                  "required": ["version", "expectedPath", "sha256", "approval", "approvalSha256"],
                   "properties": {
                     "version": {"type": "integer", "minimum": 1},
+                    "expectedPath": {"type": "string", "pattern": "^evaluation/baselines/[a-z0-9][a-z0-9-]*-v[0-9]+\\.json$"},
                     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-                    "approval": {"type": ["string", "null"]}
+                    "approval": {"type": ["string", "null"]},
+                    "approvalSha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
                   },
                   "additionalProperties": false
                 }
               },
-              "currentApproval": {"type": ["string", "null"]}
+              "currentApproval": {"type": ["string", "null"]},
+              "currentApprovalSha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
             },
             "additionalProperties": false
           }

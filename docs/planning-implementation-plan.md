@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 570ff3fd9650e0e2525c5f30d68cf4287727db1d5b24557f7bcb8d4014e14c48
+source_sha256: 566f5662286203ed8528edc2d8229969ee7a7a98f26f76f9c51816c457e40c98
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -729,7 +729,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-00.S05.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / codex-review (`changes-requested`)
 
 **Objective:** Registry format for datasets, expected outputs, tolerances, model versions, prompts, schemas, and evaluation results.
 
@@ -747,6 +747,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-00.S05.T02.json` at `e207d56cb90ed4d02858737086ef1b3c6f06b299`
 
 #### - [ ] CAP-00.S05.T03 - Implement version, changelog, and build-manifest generation
 

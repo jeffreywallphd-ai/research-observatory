@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T02",
+  "commit": "e207d56cb90ed4d02858737086ef1b3c6f06b299",
+  "baseCommit": "0a598e57ed890fa408797d7aef3918c3022fd7da",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    ".gitattributes",
+    "architecture-boundaries.json",
+    "docs/adr/ADR-0002-govern-the-evaluation-registry-as-a-support-only-repository-area.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/automation/README.md",
+    "docs/automation/benchmark-registry.md",
+    "docs/planning-implementation-plan.md",
+    "evaluation/README.md",
+    "evaluation/approvals/README.md",
+    "evaluation/baselines/contract-normalized-record-v1.json",
+    "evaluation/baselines/golden-metadata-normalization-v1.json",
+    "evaluation/cases/contract-normalized-record.json",
+    "evaluation/contracts/normalized-record.schema.json",
+    "evaluation/registry.json",
+    "evaluation/registry.schema.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "tests/foundation/README.md",
+    "tests/foundation/test_adr_check.py",
+    "tests/foundation/test_benchmark_registry.py",
+    "tools/README.md",
+    "tools/benchmark_registry.py",
+    "verification-profiles.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --repo . --report artifacts\\tmp\\CAP-00.S05.T02-exact.json",
+      "exitCode": 0,
+      "result": "The exact implementation commit passed all 13 foundation commands, including the new benchmark command, 86 foundation tests, architecture, ADR, fixture, quality, packaging, generated-view, and backlog checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\benchmark_registry.py --repo . --report artifacts\\tmp\\CAP-00.S05.T02-benchmarks-exact.json",
+      "exitCode": 0,
+      "result": "The golden metadata parser and normalized-record JSON Schema contract benchmark both ran end to end with exactMatch=1 and a deterministic registry-v1 report."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_benchmark_registry -v",
+      "exitCode": 0,
+      "result": "Five focused tests passed for deterministic dual-case execution, dataset/baseline tampering, no overwrite, exact version/history/approval lineage, distinct human approval, path confinement, and safe scratch creation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\adr_check.py --repo . --base 0a598e57ed890fa408797d7aef3918c3022fd7da --head HEAD",
+      "exitCode": 0,
+      "result": "ADR-0002 is indexed, task-linked, and covers the protected architecture-boundaries.json change across all 25 changed paths."
+    },
+    {
+      "command": "git clone --no-hardlinks . artifacts/tmp/s05t02-fresh-e207d56; current Python ran the cloned fixture and benchmark tools",
+      "exitCode": 0,
+      "result": "A real fresh Windows checkout preserved every corpus byte, passed all 11 fixture hashes, created its absent ignored scratch directory safely, and passed both benchmark cases offline."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The authoritative ledger validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "evaluation/registry.json and its strict schema pin datasets, expected outputs, exact tolerances, executor/kind, model ID/version/revision, prompt ID/version/hash, input schemas, and baseline history by SHA-256.",
+        "golden-metadata-normalization-v1 executes the synthetic scholarly JSON through a deterministic normalizer and exactly matches its approved output; contract-normalized-record-v1 validates a representative record against a strict Draft 2020-12 schema and exactly matches the validation result.",
+        "The runner has no baseline update command and never writes under evaluation/baselines. It may write isolated proposals only under artifacts/tmp.",
+        "A changed baseline must increment exactly one version, append the exact prior lineage, change its hash, and reference an approved record with adjacent versions, exact hashes, rationale, time, and a human: approver distinct from the generator. Git-aware comparison detects silent edits against HEAD or the clean commit parent.",
+        "The generated evaluation report records baseline and registry versions, dataset/expected/actual hashes, tolerance, metrics, status, and diagnostic without timestamps or network input."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Five focused tests cover both expected end-to-end cases plus material hash tampering, baseline overwrite prevention, incomplete lineage, missing approval, self-approval, path traversal, report escape, and absent scratch-directory boundaries.",
+        "The full foundation suite increased to 86 tests and passes with benchmark execution mandatory."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0002 and the architecture contract establish evaluation/ as a support-only area for versioned cases, baselines, schemas, and approvals; product runtime modules cannot depend on it.",
+        "The automation, evaluation, approval, tool, and test documentation describe exact operation and the governed change process. Quality scope governs the runner and tests.",
+        "The byte-preserving .gitattributes rule fixes a dependency defect reproduced after Windows checkout; a fresh clone proves fixture and benchmark portability without changing fixture semantics."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review must adversarially test baseline-change authorization, Git lineage comparison, path/snapshot/output confinement, deterministic golden and contract execution, report claims, fresh-checkout bytes, and recommend whether ADR-0002 may move from Proposed to Accepted."
+  }
+}
