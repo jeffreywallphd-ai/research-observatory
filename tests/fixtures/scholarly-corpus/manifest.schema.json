@@ -62,7 +62,17 @@
           "path": {"type": "string", "minLength": 1},
           "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
           "bytes": {"type": "integer", "minimum": 1},
-          "mediaType": {"type": "string", "minLength": 1},
+          "mediaType": {
+            "enum": [
+              "application/json",
+              "application/pdf",
+              "application/xml",
+              "application/x-bibtex",
+              "application/x-research-info-systems",
+              "text/markdown",
+              "text/plain"
+            ]
+          },
           "license": {"const": "CC0-1.0"},
           "provenance": {
             "type": "object",

@@ -19,6 +19,35 @@ CORPUS_PATH = Path("tests/fixtures/scholarly-corpus")
 MANIFEST_NAME = "manifest.json"
 SCHEMA_NAME = "manifest.schema.json"
 EXCLUDED_FILES = {MANIFEST_NAME, SCHEMA_NAME}
+MEDIA_TYPE_BY_SUFFIX = {
+    ".bib": "application/x-bibtex",
+    ".json": "application/json",
+    ".md": "text/markdown",
+    ".pdf": "application/pdf",
+    ".ris": "application/x-research-info-systems",
+    ".txt": "text/plain",
+    ".xml": "application/xml",
+}
+FEATURE_MEDIA_TYPES = {
+    "metadata-json": {"application/json"},
+    "metadata-ris": {"application/x-research-info-systems"},
+    "metadata-bibtex": {"application/x-bibtex"},
+    "structured-full-text": {"application/xml"},
+    "plain-full-text": {"text/plain"},
+    "pdf": {"application/pdf"},
+    "malformed-json": {"application/json"},
+    "malformed-xml": {"application/xml"},
+    "malformed-pdf": {"application/pdf"},
+    "table": {"application/xml", "application/pdf", "text/plain"},
+    "citations": {"application/xml", "application/pdf", "text/plain"},
+    "bibliography": {"application/xml", "application/pdf", "text/plain"},
+}
+FEATURE_OUTCOMES = {
+    "pdf": "accept",
+    "malformed-json": "reject",
+    "malformed-xml": "reject",
+    "malformed-pdf": "reject",
+}
 REQUIRED_FEATURES = {
     "metadata-json",
     "metadata-ris",
@@ -88,13 +117,37 @@ def pdf_failure_modes(payload: bytes) -> set[str]:
     if xref_offset >= len(payload) or not payload[xref_offset:].startswith(b"xref\n"):
         modes.add("invalid-pdf-xref")
     object_offsets = {int(match.group(1)): match.start() for match in re.finditer(rb"(?m)^(\d+) 0 obj\s*$", payload)}
-    xref_match = re.search(rb"xref\n0 (\d+)\n((?:\d{10} \d{5} [fn] \n)+)", payload)
-    if xref_match is None:
+    xref_region = payload[xref_offset:]
+    header = re.match(rb"xref\r?\n0 (\d+)\r?\n", xref_region)
+    if header is None:
         modes.add("invalid-pdf-xref")
         return modes
-    entries = xref_match.group(2).splitlines()
-    for object_number, offset in object_offsets.items():
-        if object_number >= len(entries) or int(entries[object_number].split()[0]) != offset:
+    declared_count = int(header.group(1))
+    cursor = header.end()
+    entries: list[tuple[int, int, bytes]] = []
+    for _ in range(declared_count):
+        entry = re.match(rb"(\d{10}) (\d{5}) ([fn]) \r?\n", xref_region[cursor:])
+        if entry is None:
+            modes.add("invalid-pdf-xref")
+            return modes
+        entries.append((int(entry.group(1)), int(entry.group(2)), entry.group(3)))
+        cursor += entry.end()
+    if not xref_region[cursor:].startswith(b"trailer"):
+        modes.add("invalid-pdf-xref")
+    trailer_size = re.search(rb"trailer\s*<<[^>]*?/Size\s+(\d+)", xref_region[cursor:])
+    if trailer_size is None or int(trailer_size.group(1)) != declared_count:
+        modes.add("invalid-pdf-xref")
+    if not entries or entries[0] != (0, 65535, b"f"):
+        modes.add("invalid-pdf-xref")
+    expected_objects = set(range(1, declared_count))
+    if set(object_offsets) != expected_objects:
+        modes.add("invalid-pdf-xref")
+    for object_number in expected_objects:
+        if object_number >= len(entries):
+            modes.add("invalid-pdf-xref")
+            continue
+        offset, generation, state = entries[object_number]
+        if offset != object_offsets.get(object_number) or generation != 0 or state != b"n":
             modes.add("invalid-pdf-xref")
     return modes
 
@@ -124,6 +177,72 @@ def content_failure_modes(payload: bytes, media_type: str) -> set[str]:
     elif media_type == "application/x-bibtex" and ("@" not in text or text.count("{") != text.count("}")):
         return {"invalid-bibtex"}
     return set()
+
+
+def semantic_feature_errors(item: dict[str, Any], payload: bytes) -> list[str]:
+    item_id = str(item.get("id", "<unknown>"))
+    media_type = str(item.get("mediaType", ""))
+    expected = item.get("expectedOutcome")
+    features = set(item.get("features", []))
+    errors: list[str] = []
+
+    for feature in sorted(features):
+        allowed_media = FEATURE_MEDIA_TYPES.get(feature)
+        if allowed_media is not None and media_type not in allowed_media:
+            errors.append(f"{item_id}: feature {feature!r} is incompatible with {media_type!r}")
+        required_outcome = FEATURE_OUTCOMES.get(feature)
+        if required_outcome is not None and expected != required_outcome:
+            errors.append(f"{item_id}: feature {feature!r} requires outcome {required_outcome!r}")
+
+    if expected != "accept":
+        return errors
+
+    xml_root: ET.Element | None = None
+    if media_type == "application/xml":
+        try:
+            xml_root = ET.fromstring(payload)
+        except ET.ParseError:
+            return errors
+        searchable = " ".join(xml_root.itertext())
+    elif media_type == "application/pdf":
+        searchable = payload.decode("latin-1")
+    else:
+        try:
+            searchable = payload.decode("utf-8")
+        except UnicodeError:
+            return errors
+
+    if "structured-full-text" in features and (
+        xml_root is None or xml_root.tag != "article" or xml_root.find(".//body") is None
+    ):
+        errors.append(f"{item_id}: structured-full-text lacks an article body")
+    if "plain-full-text" in features and not re.search(r"(?ms)^ABSTRACT\s*$.*^METHODS\s*$", searchable):
+        errors.append(f"{item_id}: plain-full-text lacks expected scholarly sections")
+    if "table" in features:
+        has_table = xml_root is not None and xml_root.find(".//table") is not None
+        has_table = has_table or re.search(r"(?i)\btable\s+\d+\b", searchable) is not None
+        if not has_table:
+            errors.append(f"{item_id}: table is declared but no table structure or marker exists")
+    if "citations" in features:
+        has_citations = xml_root is not None and bool(xml_root.findall(".//xref[@ref-type='bibr']"))
+        has_citations = has_citations or re.search(r"\[\d+\]", searchable) is not None
+        has_citations = has_citations or len(re.findall(r"\b[A-Z][A-Za-z]+\s+20\d{2}\b", searchable)) >= 2
+        if not has_citations:
+            errors.append(f"{item_id}: citations are declared but no citation markers exist")
+    if "bibliography" in features:
+        has_bibliography = xml_root is not None and xml_root.find(".//ref-list") is not None
+        has_bibliography = has_bibliography or re.search(r"(?i)\breferences\b", searchable) is not None
+        if not has_bibliography:
+            errors.append(f"{item_id}: bibliography is declared but no reference section exists")
+    if "metadata-ris" in features:
+        records = [record for record in searchable.split("ER  -") if "TY  -" in record]
+        if len(records) < 2 or not any("AU  -" not in record or "PY  -" not in record for record in records):
+            errors.append(f"{item_id}: RIS metadata lacks variant records with missing fields")
+    if "metadata-bibtex" in features:
+        entries = [entry for entry in re.split(r"(?m)(?=^@\w+\{)", searchable) if entry.lstrip().startswith("@")]
+        if len(entries) < 2 or not any(re.search(r"(?im)^\s*author\s*=", entry) is None for entry in entries):
+            errors.append(f"{item_id}: BibTeX metadata lacks variant entries with missing fields")
+    return errors
 
 
 def feature_errors(corpus: Path, manifest: dict[str, Any]) -> list[str]:
@@ -175,8 +294,14 @@ def corpus_errors(corpus: Path) -> list[str]:
         corpus = corpus.resolve(strict=True)
     except OSError as exc:
         return [f"Cannot resolve fixture corpus {corpus}: {exc}"]
-    manifest_path = corpus / MANIFEST_NAME
-    schema_path = corpus / SCHEMA_NAME
+    manifest_path, manifest_path_error = safe_item_path(corpus, MANIFEST_NAME)
+    schema_path, schema_path_error = safe_item_path(corpus, SCHEMA_NAME)
+    control_errors = [
+        f"fixture control file: {error}" for error in (manifest_path_error, schema_path_error) if error is not None
+    ]
+    if control_errors:
+        return control_errors
+    assert manifest_path is not None and schema_path is not None
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
@@ -213,7 +338,13 @@ def corpus_errors(corpus: Path) -> list[str]:
             errors.append(f"{item['id']}: SHA-256 mismatch for {raw_path}")
         if len(payload) != item.get("bytes"):
             errors.append(f"{item['id']}: byte count mismatch for {raw_path}")
-        failure_modes = content_failure_modes(payload, item.get("mediaType", ""))
+        media_type = item.get("mediaType", "")
+        expected_media_type = MEDIA_TYPE_BY_SUFFIX.get(path.suffix.casefold())
+        if expected_media_type is None:
+            errors.append(f"{item['id']}: unsupported fixture extension {path.suffix!r}")
+        elif media_type != expected_media_type:
+            errors.append(f"{item['id']}: mediaType {media_type!r} does not match path type {expected_media_type!r}")
+        failure_modes = content_failure_modes(payload, media_type)
         expected = item.get("expectedOutcome")
         failure_mode = item.get("failureMode")
         if expected == "accept" and failure_modes:
@@ -224,11 +355,12 @@ def corpus_errors(corpus: Path) -> list[str]:
             errors.append(f"{item['id']}: rejection fixture unexpectedly passes structural validation")
         elif expected == "reject" and failure_mode not in failure_modes:
             errors.append(f"{item['id']}: expected failureMode {failure_mode!r}; observed {sorted(failure_modes)}")
+        errors.extend(semantic_feature_errors(item, payload))
 
     actual_paths = {
         path.relative_to(corpus).as_posix()
         for path in corpus.rglob("*")
-        if path.is_file() and path.name not in EXCLUDED_FILES
+        if path.is_file() and path.relative_to(corpus).as_posix() not in EXCLUDED_FILES
     }
     if declared_paths != actual_paths:
         for inventory_path in sorted(actual_paths - declared_paths):

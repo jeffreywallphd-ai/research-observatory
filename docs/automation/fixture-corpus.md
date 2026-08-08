@@ -17,6 +17,6 @@ Run the validator from the repository root:
 .venv\Scripts\python.exe tools\fixture_corpus_check.py --repo .
 ```
 
-The validator uses no network services. It verifies the schema, inventory, hashes, lengths, content structure, malformed-input behavior, and required semantic feature coverage. It is also a mandatory command in the `foundation` verification profile.
+The validator uses no network services. It confines the manifest, schema, and every fixture path to non-redirected files inside the corpus; excludes only the two root control files from inventory; and binds filename extensions, media types, declared features, and expected outcomes. It verifies hashes, lengths, JSON/XML/RIS/BibTeX structure, PDF cross-reference counts/states/generations/offsets, per-item scholarly semantics, malformed-input behavior, and required feature coverage. It is also a mandatory command in the `foundation` verification profile.
 
 When updating the corpus, keep the material synthetic, update the item digest and byte count in `manifest.json`, preserve the declared edge-case coverage, and run the focused foundation tests plus the full foundation profile. Never copy external scholarly content into this corpus.

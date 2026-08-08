@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4889438a08a41e4b9fbd99683746618d4d32d34b2ad6d59420daeb0fa815de1e
+source_sha256: cba971bda82406240de9ae91f9de968d74f334e6216f63cc4f0fdba8f5652db3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -682,7 +682,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Development begins with reusable fixtures and traceable versions rather than ad hoc documents or unverifiable demonstrations.
 
-**Wave / priority / status / review:** `W0` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W0` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
@@ -696,7 +696,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-00.S04.T03`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / codex-review (`changes-requested`)
 
 **Objective:** Small fixture set containing metadata variants, duplicates, PDFs, structured full text, tables, citations, missing fields, and malformed inputs.
 
@@ -714,6 +714,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-00.S05.T01.json` at `7a4301dbd9de0e05472fe537c92c44e02b7fdee6`
 
 #### - [ ] CAP-00.S05.T02 - Establish golden-output and benchmark registry conventions
 
