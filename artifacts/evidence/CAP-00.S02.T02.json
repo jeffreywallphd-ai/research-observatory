@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S02.T02",
+  "commit": "b8bc0062900d71757f7ece740281f4d7eee1248c",
+  "baseCommit": "8ab7c15bfc745c69833e9c61579e1e0781ff2315",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    "AGENTS.md",
+    "agent-protocol.json",
+    "docs/automation/codex-tracking-guide.md",
+    "docs/automation/project-automation-guide.md",
+    "planning/README.md",
+    "planning/backlog.yaml",
+    "tests/foundation/test_agent_protocol_check.py",
+    "tools/README.md",
+    "tools/agent_protocol_check.py",
+    "tools/verify.py"
+  ],
+  "checks": [
+    {
+      "command": "python tools/agent_protocol_check.py --repo .",
+      "exitCode": 0,
+      "result": "atomic all-slice approval, durable full-capability execution, READY-only selection, scope control, verification, review, and local-main rules passed"
+    },
+    {
+      "command": "python tools/verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "repository, runtime, architecture, agent protocol, 20 foundation tests, and backlog checks passed"
+    },
+    {
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "AGENTS.md provides the safest concise CAP start prompt and states that one approval atomically covers the capability packet and every slice plan at one immutable commit",
+        "agent-protocol.json makes READY-only selection, active-capability scope, declared checks, commit-bound evidence, independent review, local-main integration, and continuation machine-readable",
+        "tools/agent_protocol_check.py can render a READY task brief containing permitted scope, required checks, claim command, and completion protocol without oral context"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "test_repository_agent_protocol_is_complete covers the expected authority set",
+        "test_partial_slice_approval_cannot_start_campaign and test_missing_continuous_campaign_instruction_is_rejected cover material governance failures",
+        "task briefing tests prove a READY task is actionable and a BLOCKED task cannot receive a claim brief"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Planning and both delegated automation guides consistently define one durable, resumable full-capability campaign with no routine slice approval stops",
+        "The protocol preserves pause gates, no-bypass behavior, local-only integration, no implicit remote push, evidence, security/experience authority, and production qualification",
+        "The change is limited to agent workflow authorities, their machine contract, validation, tests, and claimed task state"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "A rigorous reviewer-role audit is required before the task may transition from REVIEW to DONE."
+  }
+}
