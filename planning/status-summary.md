@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 81a3ef584361bcc291789cdfbfecc0ba636ac6ec9f701d08ae1681ab7c100f75
+source_sha256: 33cc2befdca0facb7e983fe83bdd313eee4cd44fd9358a32b4b60cda96172a83
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -46,16 +46,16 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 306 |
-| `IN_PROGRESS` | 1 |
-| `DONE` | 13 |
+| `NOT_STARTED` | 305 |
+| `READY` | 1 |
+| `DONE` | 14 |
 | `DEFERRED` | 36 |
 
 ## Capability progress
 
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
-| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 4/6 | 13/19 | `CAP-00.S05.T02` |
+| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 4/6 | 14/19 | - |
 | `CAP-01` Windows-first desktop shell and supervised local runtime | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
@@ -95,6 +95,4 @@ manual_edit: prohibited
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-00.S05.T02` Establish golden-output and benchmark registry conventions | `IN_PROGRESS` | codex | `codex/cap-00-delivery-foundation` |
+No task is currently active.

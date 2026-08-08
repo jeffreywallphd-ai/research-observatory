@@ -1331,12 +1331,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T19:44:43+00:00'
-      updated_at: '2026-08-08T20:53:01+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T21:05:01+00:00'
+      completed_at: '2026-08-08T21:05:01+00:00'
       blocker: null
       implementation_notes: 'Golden parser and contract benchmark run end to end; explicit human-approved baseline lineage
         enforced; 86 foundation tests and fresh checkout pass.
@@ -1350,7 +1350,11 @@ capabilities:
 
         Complete-graph review fix: unsimplified reachable history, every merge parent, contemporaneous historical schema validation,
         graph-wide approval blob identity, and shallow-checkout denial. Exact commit passed 13 foundation commands, 100 tests,
-        and 19 focused regressions.'
+        and 19 focused regressions.
+
+        Schema-first history fix: cache snapshot validity before use, skip invalid structural replay, and return actionable
+        errors for repaired malformed historical shapes. Exact commit passed 13 foundation commands, 101 tests, and 20 focused
+        regressions.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T02.json
@@ -1372,18 +1376,21 @@ capabilities:
         sha256: 61110fabfa6105c106a9207c7d584b530d157e965eafab93048a19bb729ea499
         commit: 369abb4d638a958309240fdfb4aebe8cc0bf99c5
         recorded_at: '2026-08-08T20:46:44+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T02.review-fix-4.json
+        sha256: 16579c71452a620eeb2781a41c12eb13300a23762105b32d26d2d37e9a59652a
+        commit: 4a5fc16ee30575f6f34482ff65d4cd6281f79f82
+        recorded_at: '2026-08-08T21:00:05+00:00'
       review:
         reviewer: codex-review
-        result: changes-requested
-        reviewed_at: '2026-08-08T20:53:01+00:00'
-        notes: 'Historical replay must be schema-first and total: malformed repaired registry snapshots must report actionable
-          schema errors, never reach structural consumers, and never crash verification.'
+        result: approved
+        reviewed_at: '2026-08-08T21:05:01+00:00'
+        notes: 'Independent re-review approved exact commit 4a5fc16: strict approval/path/prompt controls, durable complete-graph
+          history, all merge parents, global approval identity, schema-first malformed snapshot handling, clones/exports,
+          and 101 foundation tests verified.'
       base_sha: 0a598e57ed890fa408797d7aef3918c3022fd7da
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T20:53:01+00:00'
-        expires_at: '2026-08-09T04:53:01+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral
@@ -1413,11 +1420,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-08T21:05:01+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

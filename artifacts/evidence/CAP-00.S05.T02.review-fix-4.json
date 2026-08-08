@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T02",
+  "commit": "4a5fc16ee30575f6f34482ff65d4cd6281f79f82",
+  "baseCommit": "369abb4d638a958309240fdfb4aebe8cc0bf99c5",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T02.review-fix-3.json",
+    "reason": "Independent re-review found that malformed historical registry shapes were consumed before schema validation and could crash durable-history verification. This manifest records schema-first snapshot validity caching, guarded replay, total structural helpers, and repaired-malformed-history regressions."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T02.review-fix-3.json",
+    "docs/automation/benchmark-registry.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_benchmark_registry.py",
+    "tools/benchmark_registry.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "The exact clean fourth review-fix commit passed all 13 foundation commands and all 101 foundation tests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_benchmark_registry -v",
+      "exitCode": 0,
+      "result": "All 20 focused tests passed, including repaired malformed historical benchmarks, schemas, baseline history, prompt, and expected-output shapes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\benchmark_registry.py --repo .",
+      "exitCode": 0,
+      "result": "Both canonical benchmarks passed after schema-first validation of the complete reachable history graph."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The authoritative backlog and complete evidence chain validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Every parsed historical revision is cached with its contemporaneous schema errors and validity state before structural data is consumed.",
+        "Invalid historical snapshots report actionable schema errors and are excluded from asset extraction and parent-edge replay; valid neighboring snapshots and approval graph identity checks continue to run.",
+        "Asset and lineage helpers defensively treat malformed collections and objects as empty rather than raising exceptions."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "A table-driven repaired-history test commits and repairs benchmarks=null, schemas=null, baseline.history=null, prompt=null, and expected=null; every case returns schema errors without crashing.",
+        "All prior merge, linear history, strict approval, baseline, prompt, confinement, no-overwrite, shallow, source-export, and Git-failure tests remain green.",
+        "All 20 focused and 101 complete foundation tests pass at the exact clean commit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Automation documentation now explicitly states that invalid historical shapes are reported and excluded from structural replay.",
+        "The superseding evidence corrects the prior claim that every historical registry was already safely validated and preserves the fourth review disposition in the task audit."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce repaired malformed historical snapshots against commit 4a5fc16ee30575f6f34482ff65d4cd6281f79f82 and confirm every prior graph-history boundary remains active."
+  }
+}
