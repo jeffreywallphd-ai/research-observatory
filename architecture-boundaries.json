@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "architecture-boundary-contract",
+  "authority": "docs/architecture/source/systems-design.md plus accepted docs/adr records",
+  "repositoryAreas": [
+    {"path": "apps", "purpose": "User-facing application composition roots."},
+    {"path": "artifacts", "purpose": "Committed validation, approval, and task evidence; generated scratch remains ignored."},
+    {"path": "design", "purpose": "Approved experience, visual, token, route, and workflow references."},
+    {"path": "docs", "purpose": "Product, architecture, governance, automation, and decision authorities."},
+    {"path": "packages", "purpose": "Portable contracts, tokens, and reusable presentation libraries."},
+    {"path": "packaging", "purpose": "Platform packaging inputs and qualification policy."},
+    {"path": "planning", "purpose": "Machine-readable backlog and approved capability and slice decisions."},
+    {"path": "services", "purpose": "Application service composition roots and replaceable infrastructure adapters."},
+    {"path": "tests", "purpose": "Foundation, contract, product, end-to-end, and packaging verification."},
+    {"path": "tools", "purpose": "Repository automation, validation, planning, and evidence control."},
+    {"path": "workers", "purpose": "Isolated idempotent CPU, GPU, and I/O activities behind stable contracts."}
+  ],
+  "modules": [
+    {
+      "path": "apps/desktop",
+      "layer": "presentation-composition",
+      "purpose": "Tauri and React desktop shell, routes, local orchestration, and remote-project client experience.",
+      "allowedDependencies": ["packages/contracts", "packages/ui-components", "packages/ui-tokens"]
+    },
+    {
+      "path": "services/core-api",
+      "layer": "application-composition",
+      "purpose": "Python modular-monolith composition root for domain use cases, ports, and local adapters.",
+      "allowedDependencies": ["packages/contracts"]
+    },
+    {
+      "path": "workers",
+      "layer": "activity-runtime",
+      "purpose": "Idempotent, checkpointed activities invoked through versioned portable contracts.",
+      "allowedDependencies": ["packages/contracts"]
+    },
+    {
+      "path": "packages/contracts",
+      "layer": "portable-contract",
+      "purpose": "Dependency-neutral schemas, APIs, commands, events, and generated-client sources.",
+      "allowedDependencies": []
+    },
+    {
+      "path": "packages/ui-tokens",
+      "layer": "presentation-contract",
+      "purpose": "Generated Academic Minimal semantic tokens with no application or infrastructure dependency.",
+      "allowedDependencies": []
+    },
+    {
+      "path": "packages/ui-components",
+      "layer": "presentation-library",
+      "purpose": "Accessible reusable components that consume governed tokens and portable view contracts.",
+      "allowedDependencies": ["packages/contracts", "packages/ui-tokens"]
+    },
+    {
+      "path": "packaging/windows",
+      "layer": "delivery",
+      "purpose": "Windows installer and update inputs assembled from built desktop, service, and worker artifacts.",
+      "allowedDependencies": ["apps/desktop", "services/core-api", "workers", "packages/contracts"]
+    },
+    {
+      "path": "tests/foundation",
+      "layer": "verification",
+      "purpose": "Repository, architecture, governance, and automation boundary tests.",
+      "allowedDependencies": ["tools", "planning", "docs", "design"]
+    },
+    {
+      "path": "tests/desktop",
+      "layer": "verification",
+      "purpose": "Desktop shell, accessibility, interaction, and platform verification.",
+      "allowedDependencies": ["apps/desktop", "packages/contracts", "packages/ui-components", "packages/ui-tokens", "design"]
+    },
+    {
+      "path": "tests/contracts",
+      "layer": "verification",
+      "purpose": "Portable schema and cross-process compatibility verification.",
+      "allowedDependencies": ["packages/contracts", "services/core-api", "workers"]
+    },
+    {
+      "path": "tests/e2e",
+      "layer": "verification",
+      "purpose": "Local workflow, denial, cancellation, restart, recovery, and cross-boundary verification.",
+      "allowedDependencies": ["apps/desktop", "services/core-api", "workers", "packages/contracts"]
+    },
+    {
+      "path": "tests/packaging",
+      "layer": "verification",
+      "purpose": "Install, upgrade, repair, rollback, removal, and signature qualification.",
+      "allowedDependencies": ["packaging/windows", "apps/desktop", "services/core-api", "workers"]
+    }
+  ],
+  "supportTargets": {
+    "tools": "Repository automation may inspect governed files but must not become a product runtime dependency.",
+    "planning": "Planning state may drive automation but product runtime code must not read or mutate the backlog.",
+    "docs": "Documentation is authority and guidance, not a runtime configuration source unless a task defines a generated contract.",
+    "design": "Approved experience references drive generation and conformance; they are not shipped as mutable application state."
+  },
+  "prohibitedDependencies": [
+    {"from": "apps/desktop", "to": "services/core-api", "reason": "The desktop consumes typed IPC/HTTP contracts and may launch a sidecar; it never imports Python service internals."},
+    {"from": "apps/desktop", "to": "workers", "reason": "Worker invocation crosses the Core API and versioned activity contracts."},
+    {"from": "services/core-api", "to": "apps/desktop", "reason": "Application and domain behavior are presentation-independent."},
+    {"from": "services/core-api", "to": "packages/ui-components", "reason": "The Core API cannot depend on presentation libraries."},
+    {"from": "services/core-api", "to": "packages/ui-tokens", "reason": "The Core API cannot depend on visual design contracts."},
+    {"from": "workers", "to": "services/core-api", "reason": "Workers implement activity contracts and cannot import the application composition root."},
+    {"from": "packages/contracts", "to": "apps/desktop", "reason": "Portable contracts are dependency-neutral."},
+    {"from": "packages/contracts", "to": "services/core-api", "reason": "Portable contracts are dependency-neutral."},
+    {"from": "packages/contracts", "to": "workers", "reason": "Portable contracts are dependency-neutral."},
+    {"from": "packages/ui-tokens", "to": "packages/ui-components", "reason": "Tokens are a lower-level presentation contract."},
+    {"from": "packages/ui-components", "to": "apps/desktop", "reason": "Reusable components cannot depend on an application composition root."}
+  ],
+  "stableInterfaces": [
+    {
+      "id": "portable-domain-contracts",
+      "owner": "packages/contracts",
+      "consumers": ["apps/desktop", "services/core-api", "workers"],
+      "contents": "Versioned schemas, commands, events, OpenAPI sources, and generated-client inputs.",
+      "changeControl": "Compatibility tests and an accepted ADR for a breaking or cross-profile semantic change."
+    },
+    {
+      "id": "desktop-core-loopback-api",
+      "owner": "services/core-api",
+      "consumers": ["apps/desktop"],
+      "contents": "Authenticated loopback handshake and typed application API; never an unauthenticated public listener.",
+      "changeControl": "Contract tests; security review and ADR for authentication, exposure, or transport changes."
+    },
+    {
+      "id": "worker-activity-contract",
+      "owner": "packages/contracts",
+      "consumers": ["services/core-api", "workers"],
+      "contents": "Versioned idempotent activity inputs, outputs, progress, cancellation, and failure classes.",
+      "changeControl": "Conformance fixtures and an ADR for durability or execution-substrate changes."
+    },
+    {
+      "id": "academic-minimal-design-contract",
+      "owner": "packages/ui-tokens",
+      "consumers": ["packages/ui-components", "apps/desktop"],
+      "contents": "Approved semantic tokens, accessibility invariants, page contracts, and workflow mappings.",
+      "changeControl": "Design-reference approval and deterministic UI conformance checks."
+    },
+    {
+      "id": "portable-project-bundle",
+      "owner": "packages/contracts",
+      "consumers": ["services/core-api"],
+      "contents": "Versioned manifest, checksums, compatibility metadata, rights policy, and migration boundary.",
+      "changeControl": "Round-trip fixtures, migration plan, and ADR for incompatible format changes."
+    }
+  ],
+  "deploymentProfiles": [
+    {
+      "id": "local",
+      "implementationPhase": "W0-W5",
+      "status": "release-authoritative-first",
+      "client": "The signed desktop application launches packaged Core API and worker sidecars.",
+      "projectAuthority": "One local Core API owns the project home, SQLite state, and encrypted object directory.",
+      "networkBoundary": "Core API binds loopback only and requires an ephemeral capability; offline use remains complete for existing local content.",
+      "infrastructureBoundary": "No Docker, PostgreSQL, Temporal, Helm, Terraform, tenancy service, or server SSO implementation."
+    },
+    {
+      "id": "university",
+      "implementationPhase": "W10",
+      "status": "deferred-behind-release-gate",
+      "client": "The same signed desktop application acts as an authenticated remote-project client with a governed cache and command queue.",
+      "projectAuthority": "One institution-controlled server project home is authoritative; the desktop never becomes a transparent multi-master.",
+      "networkBoundary": "OIDC/PKCE, project-scoped authorization, rights-aware egress, TLS, and institutional policy are mandatory.",
+      "infrastructureBoundary": "Server implementations remain absent until their wave and release gates; current work may define stable portable interfaces only."
+    },
+    {
+      "id": "cloud",
+      "implementationPhase": "W11",
+      "status": "deferred-behind-release-gate",
+      "client": "The same signed desktop application connects to a selected regional project home.",
+      "projectAuthority": "One regional tenant data plane owns each project; control-plane records remain content-opaque.",
+      "networkBoundary": "Tenant isolation, residency, metering, policy-aware egress, workload identity, and complete audit are mandatory.",
+      "infrastructureBoundary": "Multi-tenant control/data planes and elastic infrastructure remain absent until W11 approval."
+    }
+  ]
+}
