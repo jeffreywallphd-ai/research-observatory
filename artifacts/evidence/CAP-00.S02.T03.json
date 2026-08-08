@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S02.T03",
+  "commit": "34942ab30a6afe0f36da7ddb260bb6b9b213441a",
+  "baseCommit": "bedabc55f7395a7a2823ddc5f9c9b5de0c7d1fc4",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    "architecture-boundaries.json",
+    "architecture-protected-paths.json",
+    "docs/adr/ADR-0001-machine-checked-architecture-boundaries.md",
+    "docs/adr/README.md",
+    "docs/adr/TEMPLATE.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "planning/backlog.yaml",
+    "tests/foundation/test_adr_check.py",
+    "tools/README.md",
+    "tools/adr_check.py",
+    "tools/adr_new.py",
+    "tools/verify.py"
+  ],
+  "checks": [
+    {
+      "command": "python tools/adr_check.py --repo . --base HEAD~2 --head HEAD",
+      "exitCode": 0,
+      "result": "one indexed task-linked ADR passed and all 13 task change paths were inspected; protected changes were covered by changed ADR-0001"
+    },
+    {
+      "command": "python tools/verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "repository, runtime, architecture, agent protocol, ADR registry, 25 foundation tests, and backlog checks passed"
+    },
+    {
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "docs/adr/TEMPLATE.md and tools/adr_new.py create a stable task-linked Proposed ADR with context, candidates, decision, consequences, verification, and protected affected paths",
+        "docs/adr/index.json indexes sample Accepted ADR-0001 and links CAP-00.S02.T01 and CAP-00.S02.T03",
+        "tools/adr_check.py rejects unindexed records and fails a protected change unless the same change set includes an indexed Proposed or Accepted ADR whose affected_paths cover it"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "test_repository_adr_registry_and_task_links_are_valid covers the expected index and sample link",
+        "test_unindexed_adr_file_is_rejected and test_protected_change_without_changed_adr_is_rejected prove material failure paths",
+        "matching-ADR and scaffold tests prove protected-path coverage and Proposed record creation"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "docs/adr/README.md documents states, transitions, scaffold command, review requirements, protected-path CI command, and no in-place reversal of Accepted decisions",
+        "architecture-boundaries.json delegates protected-path enforcement and the architecture map links the ADR workflow",
+        "The change introduces governance automation and its tests only; it does not add application or later-wave infrastructure behavior"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "A rigorous reviewer-role audit is required before the task may transition from REVIEW to DONE."
+  }
+}
