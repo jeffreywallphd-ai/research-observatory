@@ -9,12 +9,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import jsonschema
 import yaml
-
-try:
-    import jsonschema  # type: ignore[import-untyped]
-except ImportError:  # pragma: no cover
-    jsonschema = None
 
 REQUIRED_HEADINGS = [
     "## 0. Plan control",
@@ -88,9 +84,8 @@ def main() -> int:
         except Exception as exc:
             errors.append(f"{path.relative_to(root)}: {exc}")
             continue
-        if jsonschema:
-            for err in jsonschema.Draft202012Validator(schema).iter_errors(meta):
-                errors.append(f"{path.relative_to(root)}: schema {err.message}")
+        for err in jsonschema.Draft202012Validator(schema).iter_errors(meta):
+            errors.append(f"{path.relative_to(root)}: schema {err.message}")
         sid_value, cid_value = meta.get("slice_id"), meta.get("capability_id")
         sid = sid_value if isinstance(sid_value, str) else ""
         cid = cid_value if isinstance(cid_value, str) else ""

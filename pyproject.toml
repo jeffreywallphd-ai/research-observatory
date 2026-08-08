@@ -8,8 +8,10 @@ dependencies = ["PyYAML==6.0.3"]
 
 [dependency-groups]
 dev = [
+  "jsonschema[format-nongpl]==4.26.0",
   "mypy==2.3.0",
   "ruff==0.15.22",
+  "types-jsonschema==4.26.0.20260518",
   "types-PyYAML==6.0.12.20260518",
 ]
 

@@ -19,11 +19,15 @@ Work within one approved capability campaign. Do not select unrelated globally r
 
 ```bash
 python tools/planctl.py --repo . ready CAP-XX --require-approved
+python tools/taskctl.py --file planning/backlog.yaml validate
 python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --agent <agent> --branch <branch> --base-sha <sha> --profile LOC --platform windows-x64
 python tools/taskctl.py --file planning/backlog.yaml status
 ```
 
 Use repository-specific `taskctl` subcommands for claim, evidence, review, and transition as defined by the installed tool and `planning/README.md`.
+Every subcommand first applies the committed Draft 2020-12 schema; `validate`
+then applies identity, dependency, campaign, gate, lease, evidence, and legal
+state invariants that JSON Schema cannot express by itself.
 
 ## Decision requests
 

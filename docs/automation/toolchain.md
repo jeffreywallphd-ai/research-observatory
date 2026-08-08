@@ -13,8 +13,9 @@ files repeat those values for ecosystem tooling and are checked for drift.
 | uv | 0.12.2 | `runtime-versions.json` |
 | Trivy | 0.73.0 | `security-toolchain.json` with per-platform archive and executable SHA-256 |
 
-The Python development group also pins Ruff 0.15.22, mypy 2.3.0, and
-types-PyYAML 6.0.12.20260518. `quality-scope.json` closes the Python quality
+The Python development group also pins Ruff 0.15.22, mypy 2.3.0,
+types-PyYAML 6.0.12.20260518, jsonschema 4.26.0 with its non-GPL format
+validators, and matching types-jsonschema 4.26.0.20260518. `quality-scope.json` closes the Python quality
 boundary: every `.py` file discovered beneath its application, service, package,
 worker, tool, and test roots must be explicitly listed. An unlisted addition or
 stale entry fails before formatting, lint, or type checks can run. The approved
@@ -43,6 +44,9 @@ planning commands parse the governed YAML backlog. Trivy is installed into
 ignored checkout-local state and validates its own reported version after
 checksum-verified extraction. CAP-00.S01.T03 owns runtime installation and
 developer-environment generation; CAP-00.S03.T03 owns the security scanner.
+The JSON Schema validator enforces the committed Draft 2020-12 backlog contract,
+including RFC 3339 timestamps, before `taskctl` performs graph and transition
+checks.
 
 Primary sources:
 
@@ -51,3 +55,5 @@ Primary sources:
 - https://blog.rust-lang.org/2026/06/30/Rust-1.96.1/
 - https://pnpm.io/installation
 - https://docs.astral.sh/uv/concepts/projects/sync/
+- https://pypi.org/project/jsonschema/4.26.0/
+- https://python-jsonschema.readthedocs.io/

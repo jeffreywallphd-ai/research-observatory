@@ -61,7 +61,7 @@ class RepositoryStructureTests(unittest.TestCase):
             "release_gates: []\n",
             encoding="utf-8",
         )
-        data, _, slices, _, _ = load(str(backlog))
+        data, _, slices, _, _ = load(str(backlog), validate_schema=False)
         self.assertEqual(0, slices["CAP-00.S01"]["_position"])
         save_atomic(str(backlog), data)
         serialized = backlog.read_text(encoding="utf-8")
