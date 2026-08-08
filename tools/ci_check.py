@@ -61,6 +61,10 @@ def validate_ci(repo: Path, workflow_text: str | None = None) -> list[str]:
     for fragment, message in forbidden.items():
         if fragment in lowered:
             errors.append(message)
+    if re.search(r"\bsecrets\s*(?:\.|\[)", workflow_text, flags=re.IGNORECASE):
+        message = "production or repository secrets are forbidden"
+        if message not in errors:
+            errors.append(message)
 
     allowed_actions = policy.get("allowedActions", {})
     for action, specification in allowed_actions.items():

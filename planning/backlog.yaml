@@ -806,7 +806,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S02.T03
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-00.S03.T01
       capability_id: CAP-00
@@ -896,16 +896,23 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T16:43:25+00:00'
-      updated_at: '2026-08-08T16:43:25+00:00'
+      updated_at: '2026-08-08T16:57:35+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Implementation commit 9877766 passed deterministic bootstrap, quality, foundation, portable-contract,
+        packaging-smoke, and backlog gates.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts\evidence\CAP-00.S03.T02.json
+        sha256: 6073e80a4362a7688fbf9e3c478259fa789ea5e411b508cb55db7ebd2a9f22c6
+        commit: 9877766796b94bfa63faf35c767b095191f203ab
+        recorded_at: '2026-08-08T16:54:40+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: changes-requested
+        reviewed_at: '2026-08-08T16:57:35+00:00'
+        notes: Reject bracket-style GitHub secrets context access and close the Python quality scope so tracked or newly added
+          governed Python cannot bypass format, lint, or type gates.
       base_sha: 2c518d39729fa9f41e92eaa5320f624b153e74d8
       lease:
         claimed_by: codex

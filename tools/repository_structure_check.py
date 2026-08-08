@@ -9,7 +9,6 @@ import subprocess
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-
 REQUIRED_MODULES = {
     "apps/desktop",
     "services/core-api",
@@ -59,7 +58,7 @@ def validate_repository(repo: Path, manifest_path: Path | None = None) -> list[s
         errors.append("repository-structure.json must use schema_version 1.0")
     modules = manifest.get("modules")
     if not isinstance(modules, list):
-        return errors + ["repository-structure.json modules must be an array"]
+        return [*errors, "repository-structure.json modules must be an array"]
 
     declared: dict[str, dict[str, Any]] = {}
     for index, module in enumerate(modules):
@@ -113,11 +112,11 @@ def validate_repository(repo: Path, manifest_path: Path | None = None) -> list[s
     suffixes = {str(value).lower() for value in manifest.get("forbidden_tracked_binary_suffixes", [])}
     generated_dirs = set(manifest.get("forbidden_tracked_generated_directories", []))
     for path in _candidate_files(repo):
-        relative = path.relative_to(repo)
+        tracked_relative = path.relative_to(repo)
         if path.suffix.lower() in suffixes:
-            errors.append(f"Tracked generated binary is forbidden: {relative.as_posix()}")
-        if any(part in generated_dirs for part in relative.parts[:-1]):
-            errors.append(f"Tracked file is inside a generated directory: {relative.as_posix()}")
+            errors.append(f"Tracked generated binary is forbidden: {tracked_relative.as_posix()}")
+        if any(part in generated_dirs for part in tracked_relative.parts[:-1]):
+            errors.append(f"Tracked file is inside a generated directory: {tracked_relative.as_posix()}")
 
     return errors
 

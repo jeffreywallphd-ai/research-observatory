@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Prepare, review, apply feedback, approve, validate, and gate capability planning artifacts."""
+
 from __future__ import annotations
 
 import argparse
@@ -9,7 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -210,7 +211,9 @@ def scaffold_slice(root: Path, cap: dict[str, Any], slice_: dict[str, Any]) -> P
     )
     sections = []
     for heading in headings:
-        sections.append(heading + "\n\n" + (task_lines if heading.startswith("## 9.") else "Complete this section before approval."))
+        sections.append(
+            heading + "\n\n" + (task_lines if heading.startswith("## 9.") else "Complete this section before approval.")
+        )
     body = (
         f"# {slice_['id']} - {slice_['title']}\n\n"
         "> **Generated proposed plan.** Complete this plan using the Vision, Systems Design, authoritative backlog, approved experience reference, and current primary research. It cannot authorize implementation until approved with the capability packet.\n\n"
@@ -283,11 +286,15 @@ def load_feedback(path: Path, capability: str, current_plan_hash: str) -> dict[s
     if feedback.get("capability_id") != capability:
         raise ValueError(f"Feedback is for {feedback.get('capability_id')}, not {capability}")
     if feedback.get("capability_plan_sha256") != current_plan_hash:
-        raise ValueError("Feedback was generated from a different capability-plan revision; regenerate the review site and re-export")
+        raise ValueError(
+            "Feedback was generated from a different capability-plan revision; regenerate the review site and re-export"
+        )
     return feedback
 
 
-def apply_feedback(root: Path, capability: str, feedback_path: Path, *, archive: bool = True, regenerate: bool = True) -> Path | None:
+def apply_feedback(
+    root: Path, capability: str, feedback_path: Path, *, archive: bool = True, regenerate: bool = True
+) -> Path | None:
     plan_path = capability_plan_path(root, capability)
     meta, body = frontmatter(plan_path)
     feedback = load_feedback(feedback_path, capability, sha256(plan_path))
@@ -332,14 +339,15 @@ def apply_feedback(root: Path, capability: str, feedback_path: Path, *, archive:
     if archive:
         archive_dir = root / "planning/decision-feedback" / capability
         archive_dir.mkdir(parents=True, exist_ok=True)
-        stamp = re.sub(r"[^0-9T]+", "-", str(feedback.get("reviewed_at") or datetime.now(timezone.utc).isoformat())).strip("-")[:32]
+        stamp = re.sub(r"[^0-9T]+", "-", str(feedback.get("reviewed_at") or datetime.now(UTC).isoformat())).strip("-")[
+            :32
+        ]
         archive_path = archive_dir / f"{stamp}-{sha256(feedback_path)[:12]}.json"
         shutil.copy2(feedback_path, archive_path)
 
     if regenerate:
         generate_review(root, capability)
     return archive_path
-
 
 
 def adopt_recommendations(root: Path, capability: str, *, regenerate: bool = True) -> int:
@@ -359,7 +367,9 @@ def adopt_recommendations(root: Path, capability: str, *, regenerate: bool = Tru
         candidates = decision.get("candidates") or []
         joined = " ".join([str(decision.get("title", "")), str(recommendation or ""), *map(str, candidates)]).lower()
         if any(marker in joined for marker in placeholder_markers):
-            raise ValueError(f"{decision.get('id')}: planning placeholders must be replaced by researched candidates before recommendation adoption")
+            raise ValueError(
+                f"{decision.get('id')}: planning placeholders must be replaced by researched candidates before recommendation adoption"
+            )
         if recommendation not in candidates:
             raise ValueError(f"{decision.get('id')}: recommendation is not a documented candidate")
         decision["selected_option"] = recommendation
@@ -373,18 +383,25 @@ def adopt_recommendations(root: Path, capability: str, *, regenerate: bool = Tru
     print("The capability and slice plans remain proposed until the one explicit capability approval.")
     return 0
 
+
 def approve(root: Path, capability: str, feedback_path: Path | None, approver: str, commit: str) -> int:
     plan_path = capability_plan_path(root, capability)
-    tracked_paths = [plan_path] + slice_plan_paths(root, capability)
+    tracked_paths = [plan_path, *slice_plan_paths(root, capability)]
     originals = {path: path.read_text(encoding="utf-8") for path in tracked_paths}
     try:
         if feedback_path:
             apply_feedback(root, capability, feedback_path, archive=True, regenerate=False)
         meta, body = frontmatter(plan_path)
-        unresolved = [item["id"] for item in meta.get("decisions", []) if item.get("status") != "accepted" or not item.get("selected_option")]
+        unresolved = [
+            item["id"]
+            for item in meta.get("decisions", [])
+            if item.get("status") != "accepted" or not item.get("selected_option")
+        ]
         if meta.get("open_blocking_decisions") or unresolved or meta.get("decision_completion") != "complete":
-            raise ValueError("Capability decisions are not complete. Finish the researched packet and run adopt-recommendations, or apply a complete review-site override record.")
-        approved_at = datetime.now(timezone.utc).isoformat()
+            raise ValueError(
+                "Capability decisions are not complete. Finish the researched packet and run adopt-recommendations, or apply a complete review-site override record."
+            )
+        approved_at = datetime.now(UTC).isoformat()
         meta["status"] = "approved"
         meta["approval"] = {
             "status": "approved",
@@ -460,7 +477,9 @@ def main() -> int:
             else:
                 print(f"All capability and slice planning artifacts already exist for {capability}.")
             generate_review(root, capability)
-            print("Generated placeholders remain proposed until researched. After authoring the complete packet, run `adopt-recommendations`; the best-in-class defaults then count as completed decisions. One explicit capability approval is still required.")
+            print(
+                "Generated placeholders remain proposed until researched. After authoring the complete packet, run `adopt-recommendations`; the best-in-class defaults then count as completed decisions. One explicit capability approval is still required."
+            )
             print_review_link(root, capability)
             return 0
 
@@ -486,7 +505,9 @@ def main() -> int:
             if archive:
                 print(f"Archived feedback: {archive.relative_to(root)}")
             print("The capability and slice plans remain unapproved until the explicit approve command is run.")
-            print("If feedback used Other, the brief description is now a canonical candidate; detailed rationale remains in the archived feedback record.")
+            print(
+                "If feedback used Other, the brief description is now a canonical candidate; detailed rationale remains in the archived feedback record."
+            )
             print_review_link(root, capability)
             return 0
 
@@ -505,7 +526,10 @@ def main() -> int:
         if args.command == "ready":
             result = validate(root, capability, True)
             if result:
-                print("Capability is not ready. Confirm or override the resolved recommendation defaults, approve the capability and all slice plans, and use the linked review pages.", file=sys.stderr)
+                print(
+                    "Capability is not ready. Confirm or override the resolved recommendation defaults, approve the capability and all slice plans, and use the linked review pages.",
+                    file=sys.stderr,
+                )
             print_review_link(root, capability)
             return result
     except (OSError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:

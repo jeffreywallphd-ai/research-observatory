@@ -35,6 +35,13 @@ class ContinuousIntegrationContractTests(unittest.TestCase):
 
         self.assertIn("production or repository secrets are forbidden", errors)
 
+    def test_rejects_bracket_style_secret_consumption(self) -> None:
+        mutated = self.workflow.replace('UV_NO_PROGRESS: "1"', "TOKEN: ${{ secrets['PRODUCTION_TOKEN'] }}", 1)
+
+        errors = validate_ci(REPO, mutated)
+
+        self.assertIn("production or repository secrets are forbidden", errors)
+
     def test_rejects_shortened_artifact_retention(self) -> None:
         mutated = self.workflow.replace("retention-days: 14", "retention-days: 1", 1)
 

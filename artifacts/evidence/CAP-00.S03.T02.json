@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S03.T02",
+  "commit": "9877766796b94bfa63faf35c767b095191f203ab",
+  "baseCommit": "2c518d39729fa9f41e92eaa5320f624b153e74d8",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    ".github/workflows/ci.yml",
+    "bootstrap.cmd",
+    "ci-policy.json",
+    "docs/automation/README.md",
+    "docs/automation/continuous-integration.md",
+    "docs/automation/developer-bootstrap.md",
+    "docs/automation/toolchain.md",
+    "docs/automation/verification-profiles.md",
+    "planning/backlog.yaml",
+    "pyproject.toml",
+    "quality-scope.json",
+    "tests/contracts/test_foundation_contracts.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/foundation/test_agent_protocol_check.py",
+    "tests/foundation/test_architecture_check.py",
+    "tests/foundation/test_bootstrap.py",
+    "tests/foundation/test_ci_check.py",
+    "tests/foundation/test_packaging_smoke_check.py",
+    "tests/foundation/test_quality_check.py",
+    "tests/foundation/test_runtime_check.py",
+    "tests/foundation/test_verify_runner.py",
+    "tools/README.md",
+    "tools/adr_check.py",
+    "tools/adr_new.py",
+    "tools/agent_protocol_check.py",
+    "tools/architecture_check.py",
+    "tools/bootstrap.py",
+    "tools/ci_check.py",
+    "tools/packaging_smoke_check.py",
+    "tools/quality_check.py",
+    "tools/runtime_check.py",
+    "tools/verify.py",
+    "uv.lock",
+    "verification-profiles.json"
+  ],
+  "checks": [
+    {
+      "command": ".\\bootstrap.cmd",
+      "exitCode": 0,
+      "result": "exact project-local Node 24.19.0, Python 3.14.6, Rust 1.96.1, pnpm 11.20.0, and uv 0.12.2 completed frozen installs and the foundation smoke gate"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-00.S03.T02-quality.json",
+      "exitCode": 0,
+      "result": "Ruff format, Ruff lint, and mypy passed for all 20 governed Python sources and tests"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile foundation --report artifacts/tmp/CAP-00.S03.T02-foundation.json",
+      "exitCode": 0,
+      "result": "repository, runtime, architecture, agent protocol, ADR, CI, quality, packaging smoke, 42 foundation tests, and backlog checks passed"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile service --report artifacts/tmp/CAP-00.S03.T02-contracts.json",
+      "exitCode": 0,
+      "result": "foundation and two portable contract tests passed through the service profile"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Four Windows 2025 pull-request jobs cover foundation/unit, formatting-lint-types, portable contracts, and packaging-input smoke checks",
+        "ci-policy.json and tools/ci_check.py enforce full reviewed action SHAs, contents-read-only permissions, disabled checkout credential persistence, exact runtime/dependency pins, and absence of production secrets",
+        "Every job uploads a unique machine report with always() and a fourteen-day retention policy; the local checker rejects mutable action refs, secrets, and retention drift"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "42 foundation tests and two portable contract tests passed at the implementation commit",
+        "CI tests cover the current workflow plus mutable action, production-secret, and retention failures",
+        "Quality tests retain a controlled lint failure while continuing diagnostics; packaging tests cover missing signing boundary and locked Cargo metadata failure"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "continuous-integration.md documents jobs, local equivalents, permissions, pins, failure artifacts, retention, and the packaging-smoke boundary",
+        "toolchain, bootstrap, verification, automation index, and tool index documentation reflect the installed contracts",
+        "Installer creation and signing remain explicitly deferred; no production secret, generated binary, application behavior, migration, or later-wave infrastructure was introduced"
+      ]
+    }
+  ],
+  "unverifiedItems": [
+    "No remote workflow run was created because the approved repository policy does not authorize a remote push; local validators cover the workflow contract."
+  ],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "A rigorous reviewer-role audit is required before the task may transition from REVIEW to DONE."
+  }
+}

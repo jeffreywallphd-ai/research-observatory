@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate the static capability/slice planning review site for Research Observatory."""
+
 from __future__ import annotations
 
 import argparse
@@ -9,15 +10,14 @@ import json
 import os
 import re
 import shutil
-import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import yaml
 
 try:
-    import mistune
+    import mistune  # type: ignore[import-not-found]
 except ImportError:  # pragma: no cover - generated site still works with plain Markdown fallback
     mistune = None
 
@@ -98,7 +98,7 @@ def shell(*, title: str, body: str, depth: int, page_type: str, capability_id: s
 <body data-page-type="{esc(page_type)}"{cap_attr}>
   <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="site-header">
-    <a class="brand" href="{'../' * depth}index.html" aria-label="Planning review home">
+    <a class="brand" href="{"../" * depth}index.html" aria-label="Planning review home">
       <span class="brand-mark" aria-hidden="true">RO</span>
       <span><strong>Research Observatory</strong><small>Planning Review</small></span>
     </a>
@@ -183,22 +183,21 @@ def decision_card(decision: dict[str, Any], plan_hash: str) -> str:
     return f"""
 <section class="decision-card" data-decision-id="{esc(did)}" data-recommendation="{esc(recommended)}" data-plan-hash="{esc(plan_hash)}">
   <div class="decision-heading">
-    <div><span class="eyebrow">{esc(did)}</span><h3>{esc(decision.get('title'))}</h3></div>
-    {status_badge(decision.get('status'))}
+    <div><span class="eyebrow">{esc(did)}</span><h3>{esc(decision.get("title"))}</h3></div>
+    {status_badge(decision.get("status"))}
   </div>
-  <p class="decision-basis">{esc(decision.get('recommendation_basis'))}</p>
-  <fieldset><legend>Resolved selection (change only to override)</legend>{''.join(options)}</fieldset>
+  <p class="decision-basis">{esc(decision.get("recommendation_basis"))}</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend>{"".join(options)}</fieldset>
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>{esc(decision.get('required_adr') or 'None currently identified')}</code></p>
+  <p class="decision-meta">Required ADR: <code>{esc(decision.get("required_adr") or "None currently identified")}</code></p>
 </section>
 """
 
 
 def build_site(repo: Path, output: Path, selected_capability: str | None = None) -> dict[str, Any]:
     backlog = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
-    backlog_caps = {cap["id"]: cap for cap in backlog.get("capabilities", [])}
     cap_plan_dir = repo / "planning/capability-plans"
     slice_plan_dir = repo / "planning/slice-plans"
     all_cap_paths = sorted(cap_plan_dir.glob("CAP-*.md"))
@@ -213,14 +212,14 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
 
     # Rebuild into a clean directory so stale pages or convenience launchers cannot
     # be mistaken for governed review pages or break page-count validation.
-    generated_at = datetime.now(timezone.utc).isoformat()
+    generated_at = datetime.now(UTC).isoformat()
     existing_manifest = output / "manifest.json"
     if existing_manifest.exists():
         try:
             existing_generated_at = json.loads(existing_manifest.read_text(encoding="utf-8")).get("generated_at")
             if isinstance(existing_generated_at, str) and existing_generated_at.strip():
                 generated_at = existing_generated_at
-        except (OSError, json.JSONDecodeError, AttributeError):
+        except OSError, json.JSONDecodeError, AttributeError:
             pass
 
     if output.exists():
@@ -251,9 +250,9 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         unresolved = len(meta.get("open_blocking_decisions", []))
         cards.append(f"""
 <a class="capability-card" href="{esc(cid)}/index.html">
-  <div class="capability-card-top"><span class="eyebrow">{esc(cid)}</span>{status_badge(meta.get('status'))}</div>
-  <h2>{esc(meta.get('title'))}</h2>
-  <dl><div><dt>Slices</dt><dd>{len(meta.get('slice_ids', []))}</dd></div><div><dt>Decisions</dt><dd>{decision_count}</dd></div><div><dt>Open</dt><dd>{unresolved}</dd></div></dl>
+  <div class="capability-card-top"><span class="eyebrow">{esc(cid)}</span>{status_badge(meta.get("status"))}</div>
+  <h2>{esc(meta.get("title"))}</h2>
+  <dl><div><dt>Slices</dt><dd>{len(meta.get("slice_ids", []))}</dd></div><div><dt>Decisions</dt><dd>{decision_count}</dd></div><div><dt>Open</dt><dd>{unresolved}</dd></div></dl>
   <span class="text-link">Review capability plan</span>
 </a>""")
     landing_main = f"""
@@ -263,7 +262,7 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
   <p>Review the preselected best-in-class defaults, override only where warranted, approve all slice plans together, then allow the coding agent to execute the capability as a long-running campaign.</p>
 </section>
 <section class="callout callout-info"><h2>How to use this site</h2><ol><li>Select a capability.</li><li>Confirm the preselected decisions near the top, or override an option with rationale.</li><li>Review every slice page and its task sequence.</li><li>Approve the capability directly when the defaults stand; export decision-response JSON only when preserving overrides or notes.</li></ol></section>
-<section class="capability-grid">{''.join(cards)}</section>
+<section class="capability-grid">{"".join(cards)}</section>
 """
     landing = shell(
         title="Planning review center",
@@ -283,7 +282,6 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         cap_dir = output / cid
         cap_dir.mkdir(parents=True, exist_ok=True)
         cap_hash = sha256(cap_path)
-        backlog_cap = backlog_caps.get(cid, {})
 
         slice_files = sorted((slice_plan_dir / cid).glob("*.md"))
         slices: list[dict[str, Any]] = []
@@ -307,22 +305,22 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         for idx, sl in enumerate(slices, start=1):
             smeta = sl["meta"]
             slice_cards.append(f"""
-<a class="slice-card" href="{esc(sl['page_name'])}">
+<a class="slice-card" href="{esc(sl["page_name"])}">
   <div class="slice-card-index">{idx}</div>
-  <div><span class="eyebrow">{esc(sl['slice_id'])}</span><h3>{esc(sl['title'])}</h3>
-  <p>{len(smeta.get('task_ids', []))} tasks · {esc(smeta.get('wave'))} · {esc(smeta.get('priority'))}</p></div>
-  {status_badge(smeta.get('status'))}
+  <div><span class="eyebrow">{esc(sl["slice_id"])}</span><h3>{esc(sl["title"])}</h3>
+  <p>{len(smeta.get("task_ids", []))} tasks · {esc(smeta.get("wave"))} · {esc(smeta.get("priority"))}</p></div>
+  {status_badge(smeta.get("status"))}
 </a>""")
 
         capability_main = f"""
 <section class="hero compact">
-  <div class="hero-top"><div><span class="eyebrow">{esc(cid)} · Capability decision and execution plan</span><h1>{esc(meta.get('title'))}</h1></div>{status_badge(meta.get('status'))}</div>
+  <div class="hero-top"><div><span class="eyebrow">{esc(cid)} · Capability decision and execution plan</span><h1>{esc(meta.get("title"))}</h1></div>{status_badge(meta.get("status"))}</div>
   <p>Review the completed recommendation register before implementation. Once approved, the campaign executes all slices continuously except for documented infeasibility or genuinely new consequential evidence.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>{len(slices)}</dd></div><div><dt>Decisions</dt><dd>{len(meta.get('decisions', []))}</dd></div><div><dt>Open blockers</dt><dd>{len(meta.get('open_blocking_decisions', []))}</dd></div><div><dt>Plan hash</dt><dd><code>{cap_hash[:12]}</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>{len(slices)}</dd></div><div><dt>Decisions</dt><dd>{len(meta.get("decisions", []))}</dd></div><div><dt>Open blockers</dt><dd>{len(meta.get("open_blocking_decisions", []))}</dd></div><div><dt>Plan hash</dt><dd><code>{cap_hash[:12]}</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Resolved recommendations and capability approval</h2><p>Best-in-class recommendations are preselected and decision-complete. Confirm them, override a documented option with rationale, or select Other and provide both a brief description and detailed rationale. Export a review record only when preserving overrides or notes; one explicit capability approval still authorizes implementation.</p></div>
-  <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / {len(meta.get('decisions', []))} selected</div>
+  <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / {len(meta.get("decisions", []))} selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
   <label class="approval-check"><input type="checkbox" data-approval-intent> Request approval of the capability packet and every slice plan after feedback is applied</label>
@@ -338,7 +336,7 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">{decisions_html}</div>
 <section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
-<div class="slice-list">{''.join(slice_cards)}</div>
+<div class="slice-list">{"".join(slice_cards)}</div>
 <details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article">{render_markdown(strip_first_h1(body_md))}</article></details>
 """
         cap_page = shell(
@@ -370,9 +368,9 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
             next_link = slices[index + 1]["page_name"] if index + 1 < len(slices) else "index.html"
             slice_main = f"""
 <section class="hero compact">
-  <div class="hero-top"><div><span class="eyebrow">{esc(sl['slice_id'])} · Slice {index + 1} of {len(slices)}</span><h1>{esc(sl['title'])}</h1></div>{status_badge(smeta.get('status'))}</div>
+  <div class="hero-top"><div><span class="eyebrow">{esc(sl["slice_id"])} · Slice {index + 1} of {len(slices)}</span><h1>{esc(sl["title"])}</h1></div>{status_badge(smeta.get("status"))}</div>
   <p>This plan expands the authoritative backlog tasks without creating a second hierarchy. It becomes executable only after the capability decisions and all slice plans are approved together.</p>
-  <dl class="summary-grid"><div><dt>Wave</dt><dd>{esc(smeta.get('wave'))}</dd></div><div><dt>Priority</dt><dd>{esc(smeta.get('priority'))}</dd></div><div><dt>Tasks</dt><dd>{len(smeta.get('task_ids', []))}</dd></div><div><dt>Plan hash</dt><dd><code>{sl['sha256'][:12]}</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>{esc(smeta.get("wave"))}</dd></div><div><dt>Priority</dt><dd>{esc(smeta.get("priority"))}</dd></div><div><dt>Tasks</dt><dd>{len(smeta.get("task_ids", []))}</dd></div><div><dt>Plan hash</dt><dd><code>{sl["sha256"][:12]}</code></dd></div></dl>
 </section>
 <section class="callout callout-warning">
   <div><span class="eyebrow">Capability decision gate</span><h2>{esc(gate_heading)}</h2><p>{esc(gate_text)}</p></div>
@@ -380,7 +378,7 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
 </section>
 <section class="decision-summary"><div class="section-heading"><span class="eyebrow">Slice decisions</span><h2>Recommended implementation selections</h2></div><article class="plan-article compact-article">{render_markdown(section4)}</article></section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Authoritative task plan</h2></div><article class="plan-article compact-article">{render_markdown(section9)}</article></section>
-<details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article">{render_markdown(strip_first_h1(sl['body']))}</article></details>
+<details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article">{render_markdown(strip_first_h1(sl["body"]))}</article></details>
 <nav class="page-turn" aria-label="Slice navigation"><a class="button button-quiet" href="{esc(prev_link)}">Previous</a><a class="button button-primary" href="{esc(next_link)}">Next</a></nav>
 """
             slice_page = shell(
@@ -423,7 +421,7 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
     total_slices = sum(len(item.get("slices", [])) for item in manifest["capabilities"])
     readme = f"""# Static planning review site
 
-Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest['capabilities'])} capability pages and {total_slices} individual slice pages. Every researched best-in-class recommendation is already selected and treated as a completed planning decision. The site lets a reviewer confirm the defaults, record a reasoned documented override, choose Other with a brief description plus detailed rationale, add notes, and export a JSON feedback record before the single explicit capability approval.
+Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["capabilities"])} capability pages and {total_slices} individual slice pages. Every researched best-in-class recommendation is already selected and treated as a completed planning decision. The site lets a reviewer confirm the defaults, record a reasoned documented override, choose Other with a brief description plus detailed rationale, add notes, and export a JSON feedback record before the single explicit capability approval.
 
 Canonical commands:
 
@@ -450,14 +448,14 @@ def main() -> int:
     args = parser.parse_args()
     repo = Path(args.repo).resolve()
     output = (repo / args.output).resolve() if not Path(args.output).is_absolute() else Path(args.output).resolve()
-    manifest = build_site(repo, output, args.capability)
+    build_site(repo, output, args.capability)
     entry = output / (args.capability or "") / "index.html" if args.capability else output / "index.html"
     print(f"Generated planning review site: {entry.as_uri()}")
     print(f"Manifest: {(output / 'manifest.json').as_posix()}")
     return 0
 
 
-REVIEW_CSS = r'''
+REVIEW_CSS = r"""
 :root {
   color-scheme: light;
   --canvas: #f5f7fb;
@@ -643,10 +641,10 @@ input:focus, textarea:focus, button:focus, a:focus { outline: 3px solid color-mi
   details > summary { display: none; }
   body { background: white; color: #10233d; }
 }
-'''
+"""
 
 
-REVIEW_JS = r'''
+REVIEW_JS = r"""
 (() => {
   const root = document.documentElement;
   const themeKey = "ro-planning-review-theme";
@@ -828,7 +826,7 @@ REVIEW_JS = r'''
 
   save();
 })();
-'''
+"""
 
 
 if __name__ == "__main__":

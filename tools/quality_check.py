@@ -25,13 +25,32 @@ def load_scope(repo: Path) -> list[str]:
         raise ValueError("quality-scope.json pythonFiles must be a non-empty string array")
     if len(files) != len(set(files)):
         raise ValueError("quality-scope.json pythonFiles must be unique")
+    roots = contract.get("governedRoots")
+    if not isinstance(roots, list) or not roots or not all(isinstance(item, str) for item in roots):
+        raise ValueError("quality-scope.json governedRoots must be a non-empty string array")
+    discovered: set[str] = set()
+    for relative_root in roots:
+        root_path = PurePosixPath(relative_root)
+        if root_path.is_absolute() or ".." in root_path.parts or "." in root_path.parts:
+            raise ValueError(f"unsafe governed root: {relative_root}")
+        absolute_root = repo.joinpath(*root_path.parts)
+        if not absolute_root.is_dir():
+            raise ValueError(f"governed root does not exist: {relative_root}")
+        discovered.update(path.relative_to(repo).as_posix() for path in absolute_root.rglob("*.py") if path.is_file())
     for relative in files:
         path = PurePosixPath(relative)
         if path.is_absolute() or ".." in path.parts or path.suffix != ".py":
             raise ValueError(f"unsafe or non-Python quality path: {relative}")
         if not (repo / relative).is_file():
             raise ValueError(f"quality path does not exist: {relative}")
-    return files
+    declared = set(files)
+    unlisted = sorted(discovered - declared)
+    stale = sorted(declared - discovered)
+    if unlisted:
+        raise ValueError(f"governed Python files are unlisted: {', '.join(unlisted)}")
+    if stale:
+        raise ValueError(f"declared Python files are outside governed roots: {', '.join(stale)}")
+    return sorted(files)
 
 
 def execute_quality(

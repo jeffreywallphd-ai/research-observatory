@@ -6,7 +6,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
@@ -27,9 +26,7 @@ class RepositoryStructureTests(unittest.TestCase):
                 f"# Module\n\nOwner: {module['owner']}  \nBoundary: {module['boundary']}\n",
                 encoding="utf-8",
             )
-        (self.repo / "repository-structure.json").write_text(
-            json.dumps(self.manifest), encoding="utf-8"
-        )
+        (self.repo / "repository-structure.json").write_text(json.dumps(self.manifest), encoding="utf-8")
 
     def test_accepts_complete_documented_skeleton(self) -> None:
         self.assertEqual([], validate_repository(self.repo))

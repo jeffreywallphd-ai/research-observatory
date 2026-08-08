@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 """Validate capability decision plans and the one-time planning gate."""
+
 from __future__ import annotations
-import argparse, json, re, sys
+
+import argparse
+import json
+import re
 from pathlib import Path
 from typing import Any
+
 import yaml
+
 try:
-    import jsonschema
+    import jsonschema  # type: ignore[import-untyped]
 except ImportError:  # pragma: no cover
     jsonschema = None
 
@@ -26,6 +32,7 @@ REQUIRED_HEADINGS = [
     "## 12. Approval record",
 ]
 
+
 def frontmatter(path: Path) -> tuple[dict[str, Any], str]:
     text = path.read_text(encoding="utf-8")
     if not text.startswith("---\n"):
@@ -33,7 +40,8 @@ def frontmatter(path: Path) -> tuple[dict[str, Any], str]:
     end = text.find("\n---\n", 4)
     if end < 0:
         raise ValueError("unterminated YAML front matter")
-    return yaml.safe_load(text[4:end]) or {}, text[end + 5:]
+    return yaml.safe_load(text[4:end]) or {}, text[end + 5 :]
+
 
 def body_decision_ids(body: str) -> list[str]:
     if "## 4. Decision register" not in body:
@@ -42,6 +50,7 @@ def body_decision_ids(body: str) -> list[str]:
     if "## 5." in section:
         section = section.split("## 5.", 1)[0]
     return re.findall(r"`(CAP-[0-9]{2}-D[0-9]{2,3})`", section)
+
 
 def main() -> int:
     ap = argparse.ArgumentParser()
@@ -117,11 +126,20 @@ def main() -> int:
                 errors.append(f"{cid}: authored packet must have decision_completion complete")
             if meta.get("open_blocking_decisions"):
                 errors.append(f"{cid}: authored packet must not retain open blocking decisions")
-            placeholder_markers = ("to be researched", "replace with", "placeholder", "tbd", "todo", "recommended candidate")
+            placeholder_markers = (
+                "to be researched",
+                "replace with",
+                "placeholder",
+                "tbd",
+                "todo",
+                "recommended candidate",
+            )
             for d in decisions:
                 if d.get("status") != "accepted" or not d.get("selected_option"):
                     errors.append(f"{cid}: authored decision {d.get('id')} must be selected and accepted")
-                searchable = " ".join([str(d.get("title", "")), str(d.get("recommendation", "")), *map(str, d.get("candidates") or [])]).lower()
+                searchable = " ".join(
+                    [str(d.get("title", "")), str(d.get("recommendation", "")), *map(str, d.get("candidates") or [])]
+                ).lower()
                 if any(marker in searchable for marker in placeholder_markers):
                     errors.append(f"{cid}: authored decision {d.get('id')} still contains a planning placeholder")
 
@@ -144,6 +162,9 @@ def main() -> int:
                 if not d.get("selected_option"):
                     errors.append(f"{cid}: decision {d.get('id')} requires selected_option")
             for sid in expected_slices:
+                if not isinstance(cid, str):
+                    errors.append(f"{path.name}: capability_id must be a string")
+                    break
                 matches = list((root / "planning/slice-plans" / cid).glob(f"{sid}-*.md"))
                 if len(matches) != 1:
                     errors.append(f"{cid}: expected exactly one slice plan for {sid}")
@@ -163,6 +184,7 @@ def main() -> int:
     scope = ",".join(sorted(selected)) if selected else "all authored"
     print(f"Valid capability decision plans: {len(paths)}; scope={scope}; approval_required={ns.require_approved}")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
