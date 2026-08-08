@@ -160,6 +160,11 @@ class BenchmarkRegistryTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "output must remain"):
                 safe_output_path(root, Path("../outside.json"))
 
+            shutil.rmtree(root / "artifacts" / "tmp")
+            destination = safe_output_path(root, Path("artifacts/tmp/new-report.json"))
+            self.assertEqual(root / "artifacts" / "tmp" / "new-report.json", destination)
+            self.assertTrue((root / "artifacts" / "tmp").is_dir())
+
 
 if __name__ == "__main__":
     unittest.main()
