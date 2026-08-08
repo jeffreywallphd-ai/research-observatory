@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S04.T02",
+  "commit": "412cce62a2994606d81c4a3dc538205bb3043138",
+  "baseCommit": "438edadfc822f75a246ecbed40577f29b4524558",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S04.T02.review-fix.json",
+    "reason": "The second independent review confirmed four prior finding groups but showed that follow-up manifests could omit changed files or forge their incremental base, while DONE status could excuse newly inserted unverified items. This manifest binds the complete correction and its legacy-only migration policy."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S03.T02.review-fix.json",
+    "artifacts/evidence/CAP-00.S03.T03.review-fix.json",
+    "artifacts/evidence/CAP-00.S04.T01.review-fix.json",
+    "artifacts/evidence/CAP-00.S04.T02.review-fix.json",
+    "docs/automation/codex-tracking-guide.md",
+    "planning/README.md",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S04.T02-second-review-fix-foundation.json",
+      "exitCode": 0,
+      "result": "The exact second review-fix commit passed repository, runtime, architecture, agent-protocol, ADR, CI, formatting, linting, typing, packaging, 67 foundation tests, and canonical backlog validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile security-local --report artifacts\\tmp\\CAP-00.S04.T02-second-review-fix-security-local.json",
+      "exitCode": 0,
+      "result": "The exact second review-fix commit passed the foundation checks again, all 19 security tests, and a live scan of 31 packages with 30 reported license findings and zero blocking findings."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate",
+      "exitCode": 0,
+      "result": "Complete schema, semantic, hierarchy, lease, dependency, review, release-gate, and stored-evidence validation passed for 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow -v",
+      "exitCode": 0,
+      "result": "All 23 focused schema and workflow tests passed, including omitted follow-up files, forged superseding bases, and post-DONE evidence mutation with a recomputed reference hash."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Every follow-up manifest must identify an earlier attachment with supersedes.path, set baseCommit to that attachment's commit, and declare a changedFiles set exactly equal to the incremental Git diff.",
+        "Stored validation no longer derives unverified-item permission from task status or approval. Non-empty unverifiedItems fail for all normal evidence before and after DONE.",
+        "The only residual exception is an explicit schema-governed legacy marker on four CAP-00.S03 references; task ID, path, commit, canonical digest, and exact hosted-CI text are fixed in the policy anchor, so recomputing a mutated reference hash or adding the marker elsewhere fails.",
+        "The two historical CAP-00.S03 review-fix manifests and the CAP-00.S04.T01 review-fix manifest now explicitly identify the attachment they supersede, use that commit as their incremental base, and declare the exact corresponding diff."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused tests attempt to omit one file from a follow-up diff, forge its base to an older ancestor, mutate unverifiedItems after approval while recomputing the stored hash, and apply the legacy marker to an unauthorized path; all attempts are rejected.",
+        "All 23 focused tests and 67 foundation tests pass at the exact correction commit, and the security-local profile independently passes 19 security tests plus the zero-blocker live scan."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The backlog schema, planning guide, and Codex tracking guide define exact follow-up scope and the immutable legacy marker boundary consistently with executable behavior.",
+        "The migration changes only three historical follow-up manifests and their governed references; original commits remain in Git history, no application feature or dependency changed, and all later-wave scope remains untouched."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce the remaining scope/base/unverified mutations and verify the legacy policy boundary before approval."
+  }
+}
