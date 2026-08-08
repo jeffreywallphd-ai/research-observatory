@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S04.T01",
+  "commit": "7d016c5251a6a9385abe8205857ca18b16feb3ca",
+  "baseCommit": "16cbd356f79458434af3993727701e59d9a8e02c",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    "docs/automation/codex-tracking-guide.md",
+    "docs/automation/toolchain.md",
+    "planning/README.md",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "pyproject.toml",
+    "quality-scope.json",
+    "tests/foundation/test_repository_structure.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tools/README.md",
+    "tools/capability_plan_check.py",
+    "tools/slice_plan_check.py",
+    "tools/taskctl.py",
+    "uv.lock"
+  ],
+  "checks": [
+    {
+      "command": ".\\bootstrap.cmd",
+      "exitCode": 0,
+      "result": "the exact commit completed all frozen installs including the locked schema validator and passed the foundation smoke gate through the approved user-cache ACL path"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile foundation --report artifacts/tmp/CAP-00.S04.T01-foundation.json",
+      "exitCode": 0,
+      "result": "all foundation commands and 50 foundation tests passed, including six direct backlog schema/graph tests"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "the Draft 2020-12 schema and semantic validator accepted 20 capabilities, 117 slices, 356 tasks, and 12 release gates"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile security-local --report artifacts/tmp/CAP-00.S04.T01-security-local.json",
+      "exitCode": 0,
+      "result": "the expanded locked Python environment and source passed the live security gate: 31 packages, 30 license observations, zero blockers, zero exceptions, and zero policy errors; all 19 security tests passed"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "planning/backlog.schema.json is an executable Draft 2020-12 contract for capabilities, slices, tasks, statuses, identities, owners, commit-bound evidence, reviews, leases, and RFC 3339 timestamps",
+        "Every taskctl command validates structure and formats before indexing or mutation; semantic validation then enforces cross-record dependency, campaign, gate, readiness, lease, evidence, review, and legal-state invariants",
+        "Duplicate task IDs identify the repeated ID, invalid status reports its exact JSON path/value, missing dependencies name task and target, and cycles print the complete repeated path"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Six focused tests cover the valid 356-task ledger plus duplicate task ID, invalid status, missing dependency, two-task dependency cycle, and malformed timestamp denial paths",
+        "The complete 50-test foundation suite passes with schema validation active for taskctl, and the existing atomic-write serialization test explicitly opts out only for its intentionally incomplete fixture",
+        "Format validation uses jsonschema's locked non-GPL extras, so declared date/date-time formats are enforced rather than annotation-only"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The 346 legacy human-readable task update dates were deterministically migrated to a single RFC 3339 UTC value so the authoritative ledger satisfies its timestamp contract",
+        "jsonschema 4.26.0, non-GPL format validators, matching stubs, and transitive packages are frozen in uv.lock; capability/slice plan validators now use the required typed dependency directly",
+        "Planning, coding-agent, tool, and toolchain documentation distinguishes structural schema checks from semantic workflow authorization without changing application, UI, migration, or later-wave scope"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "An independent reviewer must verify schema coverage, diagnostics, canonical migration, and evidence before approval."
+  }
+}
