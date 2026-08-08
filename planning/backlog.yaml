@@ -702,26 +702,31 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T16:25:07+00:00'
-      updated_at: '2026-08-08T16:25:07+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T16:27:30+00:00'
+      completed_at: '2026-08-08T16:27:30+00:00'
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Atomic capability/all-slice approval, durable full-campaign execution, READY-only scope/check
+        briefs, stop gates, evidence/review, and local-main behavior complete at b8bc006.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S02.T02.json
+        sha256: f7ded184a9cedcc1ef5d3bc979ee8bf3a1132fdf6ae58352f07c60e8bddfae1e
+        commit: b8bc0062900d71757f7ece740281f4d7eee1248c
+        recorded_at: '2026-08-08T16:27:20+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: approved
+        reviewed_at: '2026-08-08T16:27:30+00:00'
+        notes: Rigorous audit confirmed the protocol is self-contained for an unfamiliar agent; all-slice approval is atomic,
+          partial approval is denied, one run is durably resumable, only active-capability READY work is claimable, scope/check/evidence/review/local-main
+          rules are explicit, pause gates remain fail-closed, and tests prove expected and denial paths.
       base_sha: 8ab7c15bfc745c69833e9c61579e1e0781ff2315
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T16:25:07+00:00'
-        expires_at: '2026-08-09T00:25:07+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
@@ -750,11 +755,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-08T16:27:30+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
