@@ -1,7 +1,7 @@
 ---
 id: ADR-0002
 title: Govern the evaluation registry as a support-only repository area
-status: Proposed
+status: Accepted
 date: 2026-08-08
 deciders:
   - CAP-00 benchmark-registry implementation and independent review

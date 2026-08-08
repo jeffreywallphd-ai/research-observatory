@@ -22,7 +22,7 @@
       "id": "ADR-0002",
       "path": "docs/adr/ADR-0002-govern-the-evaluation-registry-as-a-support-only-repository-area.md",
       "title": "Govern the evaluation registry as a support-only repository area",
-      "status": "Proposed",
+      "status": "Accepted",
       "linkedTasks": [
         "CAP-00.S05.T02"
       ]

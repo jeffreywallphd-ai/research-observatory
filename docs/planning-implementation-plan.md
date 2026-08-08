@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 81a3ef584361bcc291789cdfbfecc0ba636ac6ec9f701d08ae1681ab7c100f75
+source_sha256: 33cc2befdca0facb7e983fe83bdd313eee4cd44fd9358a32b4b60cda96172a83
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -721,15 +721,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S05.T01.review-fix.json` at `5cafdf572fe68575f7a35618b56fda0faabb136e`
 - `artifacts/evidence/CAP-00.S05.T01.review-fix-2.json` at `535b1be09a9b3054cc802463dd4b4bac383ec0e2`
 
-#### - [ ] CAP-00.S05.T02 - Establish golden-output and benchmark registry conventions
+#### - [x] CAP-00.S05.T02 - Establish golden-output and benchmark registry conventions
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S05.T01`
 
-**Owner / review:** codex / codex-review (`changes-requested`)
+**Owner / review:** codex / codex-review (`approved`)
 
 **Objective:** Registry format for datasets, expected outputs, tolerances, model versions, prompts, schemas, and evaluation results.
 
@@ -754,10 +754,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S05.T02.review-fix.json` at `c959426487205bc3a883593169f9ca3c5484cc9f`
 - `artifacts/evidence/CAP-00.S05.T02.review-fix-2.json` at `dd71a9dcc0c1021140ae101f9c1e73b7bd5bc984`
 - `artifacts/evidence/CAP-00.S05.T02.review-fix-3.json` at `369abb4d638a958309240fdfb4aebe8cc0bf99c5`
+- `artifacts/evidence/CAP-00.S05.T02.review-fix-4.json` at `4a5fc16ee30575f6f34482ff65d4cd6281f79f82`
 
 #### - [ ] CAP-00.S05.T03 - Implement version, changelog, and build-manifest generation
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `S` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `S` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
