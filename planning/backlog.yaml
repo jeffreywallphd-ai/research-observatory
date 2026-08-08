@@ -806,7 +806,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S02.T03
-    status: IN_PROGRESS
+    status: NOT_STARTED
     tasks:
     - id: CAP-00.S03.T01
       capability_id: CAP-00
@@ -955,34 +955,39 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T17:03:36+00:00'
-      updated_at: '2026-08-08T17:21:06+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T17:29:49+00:00'
+      completed_at: '2026-08-08T17:29:49+00:00'
       blocker: null
-      implementation_notes: Commit-bound foundation, bootstrap, live security scan, and controlled boundary evidence attached;
+      implementation_notes: 'Commit-bound foundation, bootstrap, live security scan, and controlled boundary evidence attached;
         ready for independent security review.
+
+        Review fixes at ce24746 close config/ignore/environment suppression, binary trust, raw cleanup/error leakage, CI test
+        coverage, and malformed-date bypasses; all required gates pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S03.T03.json
         sha256: 3e137f48d93bc282573d40f33c0c0fd90ee17f2e45ce4e6d7de5d1e0f0f9d89b
         commit: 7352470d1f9fcd7cacea1bfa604df364a70c1a37
         recorded_at: '2026-08-08T17:17:30+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S03.T03.review-fix.json
+        sha256: 986fa1babd7131da69549615c2e1d97218c9eb91d5a18f5b840cab4b519052dd
+        commit: ce2474676425416a77822cea3e47fab804dc33d3
+        recorded_at: '2026-08-08T17:28:12+00:00'
       review:
         reviewer: codex-security-review
-        result: changes-requested
-        reviewed_at: '2026-08-08T17:21:06+00:00'
-        notes: 'P1 fixes required: eliminate Trivy config/ignore/environment suppression paths; verify reused scanner bytes,
-          not only version; fail closed and sanitize raw-report cleanup/errors; run security boundary tests in CI. P2: reject
-          suffixed malformed dates. Evidence must be regenerated.'
+        result: approved
+        reviewed_at: '2026-08-08T17:29:49+00:00'
+        notes: 'Approved at ce24746: all five required bypass fixes are effective; 19 security tests, CI contract, offline
+          binary verification, all platform hashes, foundation/security profiles, and corrected evidence pass. Hosted CI awaits
+          authorized remote execution.'
       base_sha: 9cad0f812fc97b684da76ea8e0cffd64de0128fd
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T17:03:36+00:00'
-        expires_at: '2026-08-09T01:03:36+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral
