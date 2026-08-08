@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S03.T01",
+  "commit": "69657fc7cb993d2f1757e6e6b208bf4f1cefe977",
+  "baseCommit": "ba8ee3c37bfd9c0d315c07cbfff1fd388309ef11",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    "docs/automation/README.md",
+    "docs/automation/verification-profiles.md",
+    "planning/backlog.yaml",
+    "tests/ai/README.md",
+    "tests/data/README.md",
+    "tests/documents/README.md",
+    "tests/evidence/README.md",
+    "tests/foundation/test_verify_runner.py",
+    "tests/graph/README.md",
+    "tests/novelty/README.md",
+    "tests/search/README.md",
+    "tests/security/README.md",
+    "tests/service/README.md",
+    "tools/README.md",
+    "tools/verify.py",
+    "verification-profiles.json"
+  ],
+  "checks": [
+    {
+      "command": "python tools/verify.py --profile foundation --profile desktop --profile service --profile data --profile documents --report artifacts/tmp/profile-group-1.json",
+      "exitCode": 0,
+      "result": "all five independently invoked profiles passed with per-command timings and structured results"
+    },
+    {
+      "command": "python tools/verify.py --profile search --profile ai --profile evidence --profile graph --profile novelty --report artifacts/tmp/profile-group-2.json",
+      "exitCode": 0,
+      "result": "all five independently invoked capability profiles passed"
+    },
+    {
+      "command": "python tools/verify.py --profile e2e-local --profile security-local --report artifacts/tmp/profile-group-3.json",
+      "exitCode": 0,
+      "result": "local end-to-end and security profiles passed their installed gates"
+    },
+    {
+      "command": "python tools/verify.py --profile server|cloud|unknown",
+      "exitCode": 0,
+      "result": "server and cloud returned expected blocked exit 3 with W10/W11 reasons; unknown returned expected safe error exit 2"
+    },
+    {
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "verification-profiles.json defines all fourteen required named profiles and a validated composable command graph",
+        "Every enabled profile was invoked independently at the immutable commit and passed its installed checks",
+        "tools/verify.py reports each command, exit, duration, captured diagnostics, aggregate status, failure cause, and optional JSON evidence; unknown and gated profiles fail safely"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "32 foundation tests include valid contract/expansion and activation behavior",
+        "controlled command failure proves exit code, duration, and diagnostic propagation",
+        "unknown, release-gated, and malformed optional-command tests cover material boundaries"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "docs/automation/verification-profiles.md documents commands, ownership, reports, exit behavior, honest suite activation, and gated profiles",
+        "Each future domain suite has an owned README and activates automatically when real test files appear",
+        "No product runtime or later-wave infrastructure behavior was introduced"
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The desktop profile declares UI-reference integrity, token, route/page-contract, workflow, accessibility, and visual-regression commands now",
+        "All six share the S06-owned verification/extensions/desktop-ui.json activation contract",
+        "Activation tests prove the existing runner invokes all six without a runner code change once S06 installs the extension"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "A rigorous reviewer-role audit is required before the task may transition from REVIEW to DONE."
+  }
+}

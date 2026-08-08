@@ -838,26 +838,31 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T16:34:54+00:00'
-      updated_at: '2026-08-08T16:34:54+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T16:41:33+00:00'
+      completed_at: '2026-08-08T16:41:33+00:00'
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Fourteen-profile declarative runner, structured timing/failure reports, honest suite activation,
+        S06 desktop extension hooks, gated profile denial, and all enabled profile invocations complete at 69657fc.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S03.T01.json
+        sha256: 1d9977d6f9b526d000d560291dbd5ce86faa0c55c741139dde6cdd4e66e152c1
+        commit: 69657fc7cb993d2f1757e6e6b208bf4f1cefe977
+        recorded_at: '2026-08-08T16:41:19+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: approved
+        reviewed_at: '2026-08-08T16:41:33+00:00'
+        notes: Rigorous audit confirmed all fourteen profile definitions, independent execution of twelve enabled profiles,
+          W10/W11 blockers, unknown-profile denial, command/duration/failure reporting, honest activation-controlled domain
+          suites, S06 desktop UI hooks, structured reports, and commit-bound evidence; no unresolved finding.
       base_sha: ba8ee3c37bfd9c0d315c07cbfff1fd388309ef11
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T16:34:54+00:00'
-        expires_at: '2026-08-09T00:34:54+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
@@ -887,11 +892,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-08T16:41:33+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
