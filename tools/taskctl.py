@@ -39,12 +39,15 @@ def parse_time(value: str) -> dt.datetime:
 
 
 def save_atomic(path: str, data: dict[str, Any]) -> None:
+    for capability in data.get("capabilities", []):
+        for slice_ in capability.get("slices", []):
+            slice_.pop("_position", None)
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
     fd, temp_name = tempfile.mkstemp(prefix=f"{destination.name}.", suffix=".tmp", dir=destination.parent)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            yaml.safe_dump(data, handle, sort_keys=False, allow_unicode=False, width=120)
+            yaml.safe_dump(data, handle, sort_keys=False, allow_unicode=True, width=120)
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temp_name, destination)
