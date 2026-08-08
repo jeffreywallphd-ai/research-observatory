@@ -1236,7 +1236,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-00.S04.T03
-    status: IN_PROGRESS
+    status: DONE
     tasks:
     - id: CAP-00.S05.T01
       capability_id: CAP-00
@@ -1491,11 +1491,14 @@ capabilities:
     platform_targets:
     - platform-neutral
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: codex-review
+      reviewed_at: '2026-08-08T23:11:33+00:00'
+      evidence:
+      - artifacts/evidence/CAP-00.S05.integration.json
+      notes: 'Independent slice review approved state commit 036eac8: all 14 task evidence manifests, three task approvals,
+        50 focused tests, 14-command/123-test foundation profile, clean full-history reproduction, and canonical integration
+        evidence path validated.'
   - id: CAP-00.S06
     title: Approved experience reference and UI conformance automation
     outcome: The Academic Minimal style, page contracts, fourteen use-case workflows, and linked HTML prototypes form an approved
@@ -1509,7 +1512,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T01
     - CAP-00.S02.T02
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-00.S06.T01
       capability_id: CAP-00
@@ -1542,11 +1545,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-08T23:11:33+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
