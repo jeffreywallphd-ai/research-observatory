@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e825995fc67b1e6886777f8fc717ee5b4c19fbc739fbaeede6799cb3e099aa4c
+source_sha256: 76d733b495af5cb7f4b2d175da3ba93933518c6cc18456de91f32d0be2fb6e92
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -575,7 +575,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The YAML plan is validated and can be queried or updated safely by Codex and reviewers.
 
-**Wave / priority / status / review:** `W0` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W0` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
@@ -682,7 +682,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Development begins with reusable fixtures and traceable versions rather than ad hoc documents or unverifiable demonstrations.
 
-**Wave / priority / status / review:** `W0` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W0` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
@@ -690,7 +690,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S05.T01 - Create a legally redistributable miniature scholarly fixture corpus
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
