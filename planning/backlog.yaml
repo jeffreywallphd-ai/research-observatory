@@ -461,12 +461,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T15:46:16+00:00'
-      updated_at: '2026-08-08T15:52:51+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T16:00:09+00:00'
+      completed_at: '2026-08-08T16:00:09+00:00'
       blocker: null
       implementation_notes: Implemented the governed monorepo skeleton and bootstrap foundation validation at commit 59024eea93130c1d867a46782cb353cff4b88ff4;
         submitted for independent agent review.
@@ -477,15 +477,13 @@ capabilities:
         commit: 59024eea93130c1d867a46782cb353cff4b88ff4
         recorded_at: '2026-08-08T15:52:50+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: approved
+        reviewed_at: '2026-08-08T16:00:09+00:00'
+        notes: Reviewed scoped module structure, ownership boundaries, deferred-path denial, generated-binary denial, regression
+          tests, and commit-bound evidence; foundation and repository setup validation pass with no unresolved blocker.
       base_sha: 47d460a8109acdd82237c2de37b18a79c2bb3853
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T15:46:16+00:00'
-        expires_at: '2026-08-08T23:46:16+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
@@ -515,11 +513,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-08T16:00:09+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
