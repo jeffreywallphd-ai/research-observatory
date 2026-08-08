@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.invalid/contracts/normalized-record-1.0.json",
+  "title": "Normalized scholarly record benchmark contract",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "title",
+    "authors",
+    "issued",
+    "containerTitle",
+    "doi",
+    "duplicateOf",
+    "missingFields",
+    "language"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^RO-[A-Z0-9-]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "authors": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "issued": {"type": ["string", "null"]},
+    "containerTitle": {"type": ["string", "null"]},
+    "doi": {"type": ["string", "null"]},
+    "duplicateOf": {"type": ["string", "null"]},
+    "missingFields": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"enum": ["abstract", "authors", "containerTitle", "issued"]}
+    },
+    "language": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}

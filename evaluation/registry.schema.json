@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.invalid/schemas/benchmark-registry-1.0.json",
+  "title": "Research Observatory benchmark registry",
+  "type": "object",
+  "required": ["schemaVersion", "documentType", "registryVersion", "offline", "deterministic", "benchmarks"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "benchmark-registry"},
+    "registryVersion": {"type": "integer", "minimum": 1},
+    "offline": {"const": true},
+    "deterministic": {"const": true},
+    "benchmarks": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "executor", "dataset", "expected", "tolerance", "model", "prompt", "schemas", "baseline"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*-v[0-9]+$"},
+          "kind": {"enum": ["golden-parsing", "contract-validation"]},
+          "executor": {"enum": ["metadata-json-normalizer-v1", "json-schema-validation-v1"]},
+          "dataset": {"$ref": "#/$defs/hashedPath"},
+          "expected": {"$ref": "#/$defs/hashedPath"},
+          "tolerance": {
+            "type": "object",
+            "required": ["mode"],
+            "properties": {"mode": {"const": "exact-json"}},
+            "additionalProperties": false
+          },
+          "model": {
+            "type": "object",
+            "required": ["id", "version", "revision"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "version": {"type": "string", "minLength": 1},
+              "revision": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          },
+          "prompt": {
+            "type": "object",
+            "required": ["id", "version", "sha256"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "version": {"type": "string", "minLength": 1},
+              "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+            },
+            "additionalProperties": false
+          },
+          "schemas": {"type": "array", "items": {"$ref": "#/$defs/hashedPath"}},
+          "baseline": {
+            "type": "object",
+            "required": ["version", "sha256", "history", "currentApproval"],
+            "properties": {
+              "version": {"type": "integer", "minimum": 1},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "history": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["version", "sha256", "approval"],
+                  "properties": {
+                    "version": {"type": "integer", "minimum": 1},
+                    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                    "approval": {"type": ["string", "null"]}
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "currentApproval": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "hashedPath": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -12,6 +12,7 @@
     {"path": "artifacts", "purpose": "Committed validation, approval, and task evidence; generated scratch remains ignored."},
     {"path": "design", "purpose": "Approved experience, visual, token, route, and workflow references."},
     {"path": "docs", "purpose": "Product, architecture, governance, automation, and decision authorities."},
+    {"path": "evaluation", "purpose": "Versioned benchmark registries, golden outputs, schemas, cases, and explicit baseline approvals."},
     {"path": "packages", "purpose": "Portable contracts, tokens, and reusable presentation libraries."},
     {"path": "packaging", "purpose": "Platform packaging inputs and qualification policy."},
     {"path": "planning", "purpose": "Machine-readable backlog and approved capability and slice decisions."},
@@ -67,7 +68,7 @@
       "path": "tests/foundation",
       "layer": "verification",
       "purpose": "Repository, architecture, governance, and automation boundary tests.",
-      "allowedDependencies": ["tools", "planning", "docs", "design"]
+      "allowedDependencies": ["tools", "planning", "docs", "design", "evaluation"]
     },
     {
       "path": "tests/desktop",
@@ -98,7 +99,8 @@
     "tools": "Repository automation may inspect governed files but must not become a product runtime dependency.",
     "planning": "Planning state may drive automation but product runtime code must not read or mutate the backlog.",
     "docs": "Documentation is authority and guidance, not a runtime configuration source unless a task defines a generated contract.",
-    "design": "Approved experience references drive generation and conformance; they are not shipped as mutable application state."
+    "design": "Approved experience references drive generation and conformance; they are not shipped as mutable application state.",
+    "evaluation": "Versioned benchmark and golden-output authority for tests and tools; product runtime modules must not depend on it."
   },
   "prohibitedDependencies": [
     {"from": "apps/desktop", "to": "services/core-api", "reason": "The desktop consumes typed IPC/HTTP contracts and may launch a sidecar; it never imports Python service internals."},

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "benchmark-registry",
+  "registryVersion": 1,
+  "offline": true,
+  "deterministic": true,
+  "benchmarks": [
+    {
+      "id": "golden-metadata-normalization-v1",
+      "kind": "golden-parsing",
+      "executor": "metadata-json-normalizer-v1",
+      "dataset": {
+        "path": "tests/fixtures/scholarly-corpus/metadata/records.json",
+        "sha256": "87341308e6061667a01edf1dc588a59764062824db7e2db620f529731a1ed8fa"
+      },
+      "expected": {
+        "path": "evaluation/baselines/golden-metadata-normalization-v1.json",
+        "sha256": "6884d362b84b2f45d18129afc2bc561a28dbe1e324fd6bbf2db47b317c0bf03a"
+      },
+      "tolerance": {"mode": "exact-json"},
+      "model": {"id": "deterministic-python", "version": "1", "revision": "metadata-json-normalizer-v1"},
+      "prompt": {"id": "none", "version": "not-applicable", "sha256": null},
+      "schemas": [],
+      "baseline": {
+        "version": 1,
+        "sha256": "6884d362b84b2f45d18129afc2bc561a28dbe1e324fd6bbf2db47b317c0bf03a",
+        "history": [],
+        "currentApproval": null
+      }
+    },
+    {
+      "id": "contract-normalized-record-v1",
+      "kind": "contract-validation",
+      "executor": "json-schema-validation-v1",
+      "dataset": {
+        "path": "evaluation/cases/contract-normalized-record.json",
+        "sha256": "093fb2f1206f888bd755debf608adf65ded2e429f07423371383eee054b7401d"
+      },
+      "expected": {
+        "path": "evaluation/baselines/contract-normalized-record-v1.json",
+        "sha256": "0d4406f92c225ce9c922b4ccbd4c21d3971fd9a511ef50e5f32fbdf1741d7ddb"
+      },
+      "tolerance": {"mode": "exact-json"},
+      "model": {"id": "jsonschema", "version": "4.26.0", "revision": "draft-2020-12"},
+      "prompt": {"id": "none", "version": "not-applicable", "sha256": null},
+      "schemas": [
+        {
+          "path": "evaluation/contracts/normalized-record.schema.json",
+          "sha256": "41ef5e019a04592be0ca1ffd0c99dd46bbea3f274f3bb9040704a129f2bf7da8"
+        }
+      ],
+      "baseline": {
+        "version": 1,
+        "sha256": "0d4406f92c225ce9c922b4ccbd4c21d3971fd9a511ef50e5f32fbdf1741d7ddb",
+        "history": [],
+        "currentApproval": null
+      }
+    }
+  ]
+}

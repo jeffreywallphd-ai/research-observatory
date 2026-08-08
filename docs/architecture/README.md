@@ -47,6 +47,7 @@ material, an accepted ADR change first.
 | `planning/` | Work and approval authority; never product runtime state. |
 | `docs/` | Product, architecture, governance, automation, and ADR authority. |
 | `design/` | Approved experience and workflow contracts. |
+| `evaluation/` | Versioned benchmark registries, golden outputs, schemas, cases, and baseline approvals; support-only, never product runtime state. |
 | `artifacts/` | Committed approval/validation evidence; scratch output is ignored. |
 
 ## Dependency rules
@@ -64,7 +65,7 @@ material, an accepted ADR change first.
 - Packaging consumes built artifacts. It does not create a reverse product-code
   dependency.
 - Tests may cross the boundaries they verify. Product modules cannot depend on
-  tests, tools, planning state, documentation, or evidence artifacts.
+  tests, tools, planning state, documentation, evaluation assets, or evidence artifacts.
 
 The exhaustive allowed and prohibited pairs, module purposes, and stable
 interface owners live in the JSON contract and are enforced by
