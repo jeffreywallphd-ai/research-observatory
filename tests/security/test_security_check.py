@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -12,7 +13,7 @@ from unittest.mock import patch
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from security_check import evaluate, load_policy, normalize_reports, run_trivy  # noqa: E402
+from security_check import evaluate, load_policy, normalize_reports, run_trivy, trivy_commands  # noqa: E402
 
 
 def load_fixture(name: str) -> dict[str, object]:
@@ -98,6 +99,16 @@ class SecurityPolicyTests(unittest.TestCase):
         self.assertTrue(any("expired" in error for error in expired_errors))
         self.assertTrue(any("30-day maximum" in error for error in overlong_errors))
 
+    def test_suffixed_malformed_exception_dates_fail_policy(self) -> None:
+        _, errors, _ = evaluate(
+            self.findings,
+            self.policy,
+            exception_for(self.findings[0]["key"], reviewed_at="2026-08-01-not-iso", expires_at="2026-08-20-not-iso"),
+            today=date(2026, 8, 8),
+        )
+
+        self.assertEqual(2, sum("must be an ISO date" in error for error in errors))
+
     def test_unused_exception_fails_closed(self) -> None:
         evaluated, errors, _ = evaluate(
             self.findings,
@@ -168,6 +179,74 @@ class SecurityPolicyTests(unittest.TestCase):
             for relative in ("security-policy.json", "security-toolchain.json", "trivy-secret.yaml"):
                 (checkout / relative).write_bytes((REPO / relative).read_bytes())
 
+            observed_environments: list[dict[str, str]] = []
+
+            def controlled_runner(command: list[str], **options: object) -> subprocess.CompletedProcess[str]:
+                environment = options["env"]
+                self.assertIsInstance(environment, dict)
+                observed_environments.append(environment)  # type: ignore[arg-type]
+                output = Path(command[command.index("--output") + 1])
+                output.write_text(json.dumps(load_fixture("trivy-clean.json")), encoding="utf-8")
+                return subprocess.CompletedProcess(command, 0, "", "")
+
+            with (
+                patch.dict(os.environ, {"TRIVY_IGNORE_UNFIXED": "true", "trivy_config": "ambient.yaml"}),
+                patch("security_check.install", return_value=checkout / "trivy.exe"),
+                patch("security_check.scanner_version", return_value="0.73.0"),
+            ):
+                reports, version = run_trivy(checkout, load_policy(checkout), runner=controlled_runner)
+
+            self.assertEqual("0.73.0", version)
+            self.assertEqual(2, len(reports))
+            self.assertTrue(observed_environments)
+            self.assertTrue(all(not key.upper().startswith("TRIVY_") for env in observed_environments for key in env))
+            self.assertEqual([], list((checkout / ".local" / "tmp").iterdir()))
+
+    def test_commands_override_committed_config_and_ignore_files(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = Path(temporary)
+            scratch = checkout / ".local" / "tmp" / "scan"
+            scratch.mkdir(parents=True)
+            (checkout / "trivy.yaml").write_text("exit-code: 0\n", encoding="utf-8")
+            (checkout / ".trivyignore").write_text("CVE-*\n", encoding="utf-8")
+
+            commands = trivy_commands(checkout, checkout / "trivy.exe", self.policy, scratch)
+
+            self.assertTrue(commands)
+            for command, _ in commands:
+                config = Path(command[command.index("--config") + 1])
+                ignore = Path(command[command.index("--ignorefile") + 1])
+                self.assertEqual(scratch / "trivy.yaml", config)
+                self.assertEqual(scratch / ".trivyignore", ignore)
+                self.assertNotEqual(checkout / "trivy.yaml", config)
+                self.assertNotEqual(checkout / ".trivyignore", ignore)
+
+    def test_scanner_failure_withholds_potential_secret_diagnostic(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = Path(temporary)
+            (checkout / ".local" / "tmp").mkdir(parents=True)
+            for relative in ("security-policy.json", "security-toolchain.json", "trivy-secret.yaml"):
+                (checkout / relative).write_bytes((REPO / relative).read_bytes())
+
+            def failing_runner(command: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+                return subprocess.CompletedProcess(command, 7, "potential-secret-value", "")
+
+            with (
+                patch("security_check.install", return_value=checkout / "trivy.exe"),
+                patch("security_check.scanner_version", return_value="0.73.0"),
+                self.assertRaisesRegex(RuntimeError, "output was withheld") as raised,
+            ):
+                run_trivy(checkout, load_policy(checkout), runner=failing_runner)
+
+            self.assertNotIn("potential-secret-value", str(raised.exception))
+
+    def test_raw_report_cleanup_failure_fails_the_scan(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = Path(temporary)
+            (checkout / ".local" / "tmp").mkdir(parents=True)
+            for relative in ("security-policy.json", "security-toolchain.json", "trivy-secret.yaml"):
+                (checkout / relative).write_bytes((REPO / relative).read_bytes())
+
             def controlled_runner(command: list[str], **_: object) -> subprocess.CompletedProcess[str]:
                 output = Path(command[command.index("--output") + 1])
                 output.write_text(json.dumps(load_fixture("trivy-clean.json")), encoding="utf-8")
@@ -176,12 +255,10 @@ class SecurityPolicyTests(unittest.TestCase):
             with (
                 patch("security_check.install", return_value=checkout / "trivy.exe"),
                 patch("security_check.scanner_version", return_value="0.73.0"),
+                patch("security_check.shutil.rmtree", side_effect=OSError("controlled cleanup failure")),
+                self.assertRaisesRegex(OSError, "controlled cleanup failure"),
             ):
-                reports, version = run_trivy(checkout, load_policy(checkout), runner=controlled_runner)
-
-            self.assertEqual("0.73.0", version)
-            self.assertEqual(2, len(reports))
-            self.assertEqual([], list((checkout / ".local" / "tmp").iterdir()))
+                run_trivy(checkout, load_policy(checkout), runner=controlled_runner)
 
 
 if __name__ == "__main__":

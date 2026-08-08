@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -130,7 +131,7 @@ def _date(value: Any, field: str) -> date:
     if not isinstance(value, str) or not value:
         raise ValueError(f"{field} must be a non-empty ISO date")
     try:
-        return date.fromisoformat(value[:10])
+        return date.fromisoformat(value)
     except ValueError as exc:
         raise ValueError(f"{field} must be an ISO date") from exc
 
@@ -166,9 +167,17 @@ def validate_exceptions(
                 errors.append(f"{prefix}.{field} is required")
         if record.get("status") != "approved":
             errors.append(f"{prefix}.status must be approved")
+        reviewed_at: date | None = None
+        expires_at: date | None = None
         try:
             reviewed_at = _date(record.get("reviewedAt"), f"{prefix}.reviewedAt")
+        except ValueError as exc:
+            errors.append(str(exc))
+        try:
             expires_at = _date(record.get("expiresAt"), f"{prefix}.expiresAt")
+        except ValueError as exc:
+            errors.append(str(exc))
+        if reviewed_at is not None and expires_at is not None:
             if reviewed_at > current_date:
                 errors.append(f"{prefix}.reviewedAt cannot be in the future")
             if expires_at < current_date:
@@ -177,8 +186,6 @@ def validate_exceptions(
                 errors.append(f"{prefix}.expiresAt precedes reviewedAt")
             if expires_at > reviewed_at + timedelta(days=maximum_days):
                 errors.append(f"{prefix} exceeds the {maximum_days}-day maximum")
-        except ValueError as exc:
-            errors.append(str(exc))
         valid[key] = record
     return valid, errors
 
@@ -249,12 +256,18 @@ def trivy_commands(
 ) -> list[tuple[list[str], Path]]:
     scan = policy["scan"]
     cache = repo / ".local" / "cache" / "trivy"
+    controlled_config = temporary / "trivy.yaml"
+    controlled_ignore = temporary / ".trivyignore"
+    controlled_config.write_text("{}\n", encoding="utf-8", newline="\n")
+    controlled_ignore.write_text("", encoding="utf-8", newline="\n")
     severities = "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
     common = [
         str(executable),
         "--cache-dir",
         str(cache),
         "--quiet",
+        "--config",
+        str(controlled_config),
     ]
     source_report = temporary / "source.json"
     source = [
@@ -272,6 +285,8 @@ def trivy_commands(
         str(repo / "trivy-secret.yaml"),
         "--timeout",
         "10m",
+        "--ignorefile",
+        str(controlled_ignore),
     ]
     for directory in scan["skipDirectories"]:
         source.extend(("--skip-dirs", directory))
@@ -291,6 +306,8 @@ def trivy_commands(
         severities,
         "--timeout",
         "10m",
+        "--ignorefile",
+        str(controlled_ignore),
     ]
     for directory in scan["skipDirectories"]:
         dependencies.extend(("--skip-dirs", directory))
@@ -314,6 +331,8 @@ def trivy_commands(
             severities,
             "--timeout",
             "10m",
+            "--ignorefile",
+            str(controlled_ignore),
             str(target),
         ]
         commands.append((command, report))
@@ -334,15 +353,25 @@ def run_trivy(
     temporary_root.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix="security-scan-", dir=temporary_root))
     reports: list[dict[str, Any]] = []
+    controlled_environment = {key: value for key, value in os.environ.items() if not key.upper().startswith("TRIVY_")}
     try:
         for command, report_path in trivy_commands(repo, executable, policy, temporary):
-            completed = runner(command, cwd=repo, capture_output=True, text=True, check=False)
+            completed = runner(
+                command,
+                cwd=repo,
+                capture_output=True,
+                text=True,
+                check=False,
+                env=controlled_environment,
+            )
             if completed.returncode != 0:
-                diagnostic = (completed.stderr or completed.stdout).strip()
-                raise RuntimeError(f"Trivy failed with exit {completed.returncode}: {diagnostic}")
+                raise RuntimeError(
+                    f"Trivy failed with exit {completed.returncode}; "
+                    "scanner output was withheld because it may contain secrets"
+                )
             reports.append(load_json_object(report_path))
     finally:
-        shutil.rmtree(temporary, ignore_errors=True)
+        shutil.rmtree(temporary)
     return reports, pinned_version
 
 

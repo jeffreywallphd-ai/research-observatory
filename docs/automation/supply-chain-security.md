@@ -4,9 +4,10 @@ The `security-local` profile and CI `security` job enforce one repository policy
 for committed secrets, source misconfiguration, vulnerable dependencies, and
 dependency licenses. The implementation uses Trivy 0.73.0 from the official Aqua
 Security release. `security-toolchain.json` pins each supported desktop archive
-by SHA-256; `tools/install_trivy.py` downloads into ignored checkout-local state,
-verifies the archive before extraction, rejects unsafe or ambiguous executable
-members, and verifies the installed version.
+and its extracted executable by SHA-256; `tools/install_trivy.py` downloads into
+ignored checkout-local state, verifies the archive before extraction, rejects
+unsafe or ambiguous executable members, verifies every reused executable before
+running it, and then verifies the installed version.
 
 ## Scan and report boundary
 
@@ -22,6 +23,13 @@ scan and is deleted in a `finally` block. Raw secret matches must never be
 committed or uploaded. The retained JSON is a normalized report that preserves
 finding identity, severity, package, target, and policy disposition but never
 copies a secret match. CI retains only this normalized report for fourteen days.
+If raw-report deletion fails, the scan fails; scanner stdout/stderr is withheld
+from retained errors because it may itself contain secret material.
+
+Every invocation supplies generated empty Trivy configuration and ignore files
+from the private scan directory and removes every inherited `TRIVY_*` environment
+variable. A committed `trivy.yaml`, `.trivyignore`, or ambient Trivy setting
+therefore cannot suppress a finding outside `security-exceptions.json`.
 
 ## Release policy
 
@@ -56,6 +64,9 @@ The first installation and the first vulnerability scan require network access
 to the pinned release and Trivy databases. Later runs use ignored local caches.
 `tools/install_trivy.py --offline` verifies and reuses an already installed or
 cached scanner without attempting a download.
+
+CI runs both the live scanner and the controlled security boundary suite. The
+workflow contract fails if either command is removed.
 
 Primary scanner sources:
 

@@ -111,11 +111,12 @@ def install(repo: Path, offline: bool = False, opener: UrlOpener = urllib.reques
     install_root = repo / ".local" / "toolchains" / "trivy" / version
     install_root.mkdir(parents=True, exist_ok=True)
     executable = install_root / asset["executable"]
-    installed = scanner_version(executable)
-    if installed == version:
+    expected_executable_sha256 = asset["executableSha256"]
+    if executable.exists() and sha256(executable) == expected_executable_sha256:
+        installed = scanner_version(executable)
+        if installed != version:
+            raise InstallError(f"trusted Trivy bytes did not report pinned version {version}: {executable}")
         return executable
-    if installed is not None:
-        raise InstallError(f"installed Trivy {installed} does not match pinned {version}: {executable}")
 
     downloads = repo / ".local" / "toolchains" / "downloads"
     downloads.mkdir(parents=True, exist_ok=True)
@@ -132,6 +133,13 @@ def install(repo: Path, offline: bool = False, opener: UrlOpener = urllib.reques
             archive.unlink(missing_ok=True)
             raise InstallError(f"downloaded Trivy archive checksum mismatch: expected {asset['sha256']}, got {actual}")
     extract_executable(archive, asset["archive"], asset["executable"], executable)
+    actual_executable_sha256 = sha256(executable)
+    if actual_executable_sha256 != expected_executable_sha256:
+        executable.unlink(missing_ok=True)
+        raise InstallError(
+            "extracted Trivy executable checksum mismatch: "
+            f"expected {expected_executable_sha256}, got {actual_executable_sha256}"
+        )
     installed = scanner_version(executable)
     if installed != version:
         raise InstallError(f"installed Trivy did not report pinned version {version}: {executable}")

@@ -806,7 +806,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S02.T03
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-00.S03.T01
       capability_id: CAP-00
@@ -959,16 +959,24 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T17:03:36+00:00'
-      updated_at: '2026-08-08T17:03:36+00:00'
+      updated_at: '2026-08-08T17:21:06+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Commit-bound foundation, bootstrap, live security scan, and controlled boundary evidence attached;
+        ready for independent security review.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S03.T03.json
+        sha256: 3e137f48d93bc282573d40f33c0c0fd90ee17f2e45ce4e6d7de5d1e0f0f9d89b
+        commit: 7352470d1f9fcd7cacea1bfa604df364a70c1a37
+        recorded_at: '2026-08-08T17:17:30+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-security-review
+        result: changes-requested
+        reviewed_at: '2026-08-08T17:21:06+00:00'
+        notes: 'P1 fixes required: eliminate Trivy config/ignore/environment suppression paths; verify reused scanner bytes,
+          not only version; fail closed and sanitize raw-report cleanup/errors; run security boundary tests in CI. P2: reject
+          suffixed malformed dates. Evidence must be regenerated.'
       base_sha: 9cad0f812fc97b684da76ea8e0cffd64de0128fd
       lease:
         claimed_by: codex

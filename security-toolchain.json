@@ -9,30 +9,35 @@
       "windows-x64": {
         "file": "trivy_0.73.0_windows-64bit.zip",
         "sha256": "d2d3ad5292aae470a03eb6506db86fce81b1894592b8451cadaf60eaa22f2025",
+        "executableSha256": "3f8d0a3f4306a628cccb0704ab5f9ab6589a8ff17f89d943722d551cdf8940ef",
         "archive": "zip",
         "executable": "trivy.exe"
       },
       "linux-x64": {
         "file": "trivy_0.73.0_Linux-64bit.tar.gz",
         "sha256": "2edd39da482bb4e9831962487b68f68e3928ec3137794757f54d00383d79547b",
+        "executableSha256": "5b3ebab0f98d95196c85efc3a9d31a01520c96fa342e4e611f56db64c516df1d",
         "archive": "tar.gz",
         "executable": "trivy"
       },
       "linux-arm64": {
         "file": "trivy_0.73.0_Linux-ARM64.tar.gz",
         "sha256": "13833d97e8a1a5367471c372a173180157f593bece570e20d5d925fef552f5dd",
+        "executableSha256": "a77454b28fe64a5ccfb39974e157db591060a4e3bcc367ef9992a70c5e48f249",
         "archive": "tar.gz",
         "executable": "trivy"
       },
       "macos-x64": {
         "file": "trivy_0.73.0_macOS-64bit.tar.gz",
         "sha256": "d39d1374dd3e35d48621b82df9b6625fe69f9920cc67d2739ed81bb679f16f51",
+        "executableSha256": "6e5793a6f6a08a74a11445c314d84dc5cb715f04f44aa68b3e2706949328583f",
         "archive": "tar.gz",
         "executable": "trivy"
       },
       "macos-arm64": {
         "file": "trivy_0.73.0_macOS-ARM64.tar.gz",
         "sha256": "80cc25faaf6378e37701202d0b4f9f43d9e413d198d594ba60fdf559fe44a683",
+        "executableSha256": "6b61392e1798f42a66fc78ddf4829b5d26500d259439bb00ae10ed93217ff38f",
         "archive": "tar.gz",
         "executable": "trivy"
       }
