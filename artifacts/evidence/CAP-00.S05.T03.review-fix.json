@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T03",
+  "commit": "91be762a85bbecbf57f2a4b8d9eb2260a1653eb9",
+  "baseCommit": "23717be17f09ffe614829d7d1e1d44feff2b3d0d",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T03.json",
+    "reason": "Independent review found clean-provenance races, redirected/swapped write destinations, arbitrary model-manifest inputs, malformed mirror/changelog crashes, and fail-open release headings. This manifest records the complete remediation and Git-filter portability correction."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T03.json",
+    "docs/automation/build-manifests.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/README.md",
+    "tests/foundation/test_build_manifest.py",
+    "tools/build_manifest.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S05.T03-review-fix-exact-foundation.json",
+      "exitCode": 0,
+      "result": "The clean exact remediation commit passed all 14 mandatory foundation commands and all 114 foundation tests; build provenance reported 0.1.0+g91be762 clean."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest -v",
+      "exitCode": 0,
+      "result": "All 13 focused tests passed, including deterministic clean/dirty output, committed-input race denial, real NTFS junction rejection, parent-swap denial, malformed mirror/changelog handling, exact dates, canonical component/lock inputs, CAP-07 model-manifest gating, and schema/output boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-00.S05.T03-review-fix-exact-manifest.json",
+      "exitCode": 0,
+      "result": "The exact clean commit generated a confined deterministic manifest using Git-filter-verified checkout inputs and canonical raw HEAD blobs for cross-platform lock/schema provenance."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The ledger and original evidence chain validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Generation captures every governed input once, rechecks current bytes, verifies Git state before/mid/final collection, and for clean builds compares each captured input through Git clean filters with the immutable HEAD blob.",
+        "Clean dependency and schema identifiers hash canonical raw HEAD blobs, avoiding Windows checkout-line-ending drift; dirty builds hash captured worktree bytes and retain explicit dirty paths.",
+        "Canonical directory identity guards reject redirected artifacts/tmp roots and component parents and revalidate parent/root identities immediately before and after atomic replacement.",
+        "The model-manifest set is explicitly governed empty until CAP-07 installs its owned contract and inventory; arbitrary files or prematurely installed JSON manifests fail closed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Thirteen focused tests directly reproduce the review's Cargo.lock race, NTFS junction escape, parent replacement, arbitrary model input, malformed JSON/TOML roots, invalid UTF-8, invalid/duplicate/misordered changelog headings, and all original expected/boundary cases.",
+        "The complete clean foundation profile passed 14 commands and 114 tests at exact commit 91be762a85bbecbf57f2a4b8d9eb2260a1653eb9."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "All fixed mirror and changelog inputs now use nonredirected before/after identity snapshots and return actionable errors rather than exceptions.",
+        "CHANGELOG.md requires exactly one Unreleased heading before releases, exactly one current-version heading, unique release versions, and real ISO calendar dates.",
+        "Automation and test documentation now state the Git snapshot, canonical hash, confinement, changelog, and CAP-07 model-manifest boundaries; generated ledger views were regenerated after review-state mutation."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce every prior race, junction/swap, arbitrary model input, malformed mirror/changelog, and dated-heading attack against exact commit 91be762a85bbecbf57f2a4b8d9eb2260a1653eb9, and verify the Git-filter/raw-blob portability boundary."
+  }
+}
