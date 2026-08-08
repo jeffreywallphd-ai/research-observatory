@@ -429,7 +429,7 @@ def eligible_capabilities(
         if capability.get("completion", {}).get("status") == "APPROVED":
             continue
         campaign_state = (capability.get("campaign") or {}).get("status")
-        if campaign_state in {"ACTIVE", "REVIEW", "COMPLETE", "CANCELLED"}:
+        if campaign_state in {"ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}:
             continue
         incomplete = [s for s in capability.get("slices", []) if s.get("completion", {}).get("status") != "APPROVED"]
         if not incomplete:
@@ -522,6 +522,41 @@ def require_execution_target(profile: str, platform: str) -> None:
         raise SystemExit("Execution commands require one concrete deployment profile and platform")
 
 
+def normalized_identity(value: str, label: str) -> str:
+    normalized = value.strip()
+    if not normalized:
+        raise SystemExit(f"{label} identity must be non-empty")
+    return normalized
+
+
+def git_execution_identity(
+    backlog_path: str,
+    *,
+    agent: str,
+    branch: str,
+    base_sha: str,
+    worktree: str | None,
+) -> tuple[str, str, str, str]:
+    agent = normalized_identity(agent, "Agent")
+    branch = normalized_identity(branch, "Branch")
+    if re.fullmatch(r"[0-9a-f]{40}", base_sha) is None:
+        raise SystemExit("Base SHA must be a full lowercase 40-character Git commit")
+    if not worktree:
+        raise SystemExit("A canonical Git worktree is required")
+    repo = discover_repository(backlog_path)
+    if Path(worktree).resolve() != repo:
+        raise SystemExit(f"Worktree must resolve to the canonical repository {repo}")
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
+    if head.returncode != 0 or head.stdout.strip() != base_sha:
+        raise SystemExit("Base SHA must equal the current Git HEAD")
+    current_branch = subprocess.run(
+        ["git", "branch", "--show-current"], cwd=repo, capture_output=True, text=True, check=False
+    )
+    if current_branch.returncode != 0 or current_branch.stdout.strip() != branch:
+        raise SystemExit("Branch must equal the current Git branch")
+    return agent, branch, base_sha, repo.as_posix()
+
+
 def require_task_campaign_lease(
     task: dict[str, Any], capabilities: dict[str, dict[str, Any]], actor: str
 ) -> dict[str, Any]:
@@ -541,17 +576,19 @@ def new_lease(agent: str, hours: int) -> dict[str, str]:
     }
 
 
+def parse_evidence_payload(payload: bytes, suffix: str) -> dict[str, Any]:
+    text = payload.decode("utf-8")
+    manifest = yaml.safe_load(text) if suffix.lower() in {".yaml", ".yml"} else json.loads(text)
+    if not isinstance(manifest, dict):
+        raise ValueError("evidence manifest root must be an object")
+    return manifest
+
+
 def load_evidence(path: str) -> dict[str, Any]:
     evidence_path = Path(path)
     if not evidence_path.exists():
         raise SystemExit(f"Evidence file does not exist: {path}")
-    if evidence_path.suffix.lower() in {".yaml", ".yml"}:
-        manifest = yaml.safe_load(evidence_path.read_text(encoding="utf-8"))
-    else:
-        manifest = json.loads(evidence_path.read_text(encoding="utf-8"))
-    if not isinstance(manifest, dict):
-        raise ValueError("evidence manifest root must be an object")
-    return manifest
+    return parse_evidence_payload(evidence_path.read_bytes(), evidence_path.suffix)
 
 
 def evidence_sha256(payload: bytes) -> str:
@@ -560,12 +597,21 @@ def evidence_sha256(payload: bytes) -> str:
 
 
 def validate_task_evidence(
-    task: dict[str, Any], manifest: dict[str, Any], *, expected_commit: str | None = None
+    task: dict[str, Any],
+    manifest: dict[str, Any],
+    *,
+    expected_commit: str | None = None,
+    allow_disclosed_unverified: bool = False,
+    allow_incremental_base: bool = False,
 ) -> list[str]:
     errors: list[str] = []
     if manifest.get("taskId") != task["id"]:
         errors.append("taskId does not match")
-    if manifest.get("baseCommit") != task.get("base_sha"):
+    if (
+        not manifest.get("supersedes")
+        and not allow_incremental_base
+        and manifest.get("baseCommit") != task.get("base_sha")
+    ):
         errors.append("baseCommit does not match the claimed task base_sha")
     if manifest.get("branch") != task.get("branch"):
         errors.append("branch does not match the claimed task branch")
@@ -579,6 +625,8 @@ def validate_task_evidence(
         errors.append("at least one check is required")
         checks = []
     for check in checks:
+        if not isinstance(check, dict) or not isinstance(check.get("command"), str) or not check["command"].strip():
+            errors.append("every check requires a non-empty command")
         if not isinstance(check, dict) or type(check.get("exitCode")) is not int or check.get("exitCode") != 0:
             command = check.get("command", "<unknown>") if isinstance(check, dict) else "<invalid>"
             errors.append(f"check failed: {command}")
@@ -606,7 +654,9 @@ def validate_task_evidence(
             errors.append(
                 f"criterion {item.get('criterion_index', '<unknown>')} requires non-empty evidence statements"
             )
-    if manifest.get("unverifiedItems") not in (None, []):
+    if "unverifiedItems" not in manifest or not isinstance(manifest.get("unverifiedItems"), list):
+        errors.append("unverifiedItems must be present as a list")
+    elif manifest.get("unverifiedItems") and not allow_disclosed_unverified:
         errors.append("unverifiedItems must be empty before evidence attachment")
     return errors
 
@@ -624,13 +674,68 @@ def discover_repository(backlog_path: str) -> Path:
     return Path(completed.stdout.strip()).resolve()
 
 
-def exact_commit_errors(task: dict[str, Any], manifest: dict[str, Any], repo: Path) -> list[str]:
+def changed_file_errors(task: dict[str, Any], manifest: dict[str, Any], repo: Path) -> list[str]:
     errors: list[str] = []
-    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
-    if head.returncode != 0:
-        return [f"cannot resolve current HEAD: {(head.stderr or head.stdout).strip()}"]
-    current_commit = head.stdout.strip()
-    errors.extend(validate_task_evidence(task, manifest, expected_commit=current_commit))
+    changed_files = manifest.get("changedFiles")
+    if (
+        not isinstance(changed_files, list)
+        or not changed_files
+        or not all(
+            isinstance(item, str)
+            and item
+            and not PurePosixPath(item).is_absolute()
+            and ".." not in PurePosixPath(item).parts
+            and "\\" not in item
+            for item in changed_files
+        )
+    ):
+        return ["changedFiles must be a non-empty unique list of safe repository-relative paths"]
+    if len(changed_files) != len(set(changed_files)):
+        return ["changedFiles must be a non-empty unique list of safe repository-relative paths"]
+    base = manifest.get("baseCommit")
+    commit = manifest.get("commit")
+    if not isinstance(base, str) or not isinstance(commit, str) or re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        return errors
+    actual = subprocess.run(
+        ["git", "diff", "--name-only", base, commit, "--"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if actual.returncode != 0:
+        return [f"cannot resolve changed-file scope: {(actual.stderr or actual.stdout).strip()}"]
+    actual_files = set(actual.stdout.splitlines())
+    declared_files = set(changed_files)
+    if manifest.get("supersedes"):
+        if not declared_files.issubset(actual_files):
+            errors.append("changedFiles contains paths outside the claimed base-to-commit diff")
+    elif declared_files != actual_files:
+        errors.append("changedFiles must exactly match the claimed base-to-commit diff")
+    return errors
+
+
+def committed_manifest_errors(
+    task: dict[str, Any],
+    manifest: dict[str, Any],
+    repo: Path,
+    *,
+    expected_commit: str | None = None,
+    evidence_path: Path | None = None,
+    allow_incremental_base: bool = False,
+) -> list[str]:
+    errors = validate_task_evidence(
+        task,
+        manifest,
+        expected_commit=expected_commit,
+        allow_disclosed_unverified=(
+            expected_commit is None
+            and task.get("status") == "DONE"
+            and task.get("review", {}).get("result") == "approved"
+        ),
+        allow_incremental_base=allow_incremental_base,
+    )
+    errors.extend(changed_file_errors(task, manifest, repo))
     commit = manifest.get("commit")
     if isinstance(commit, str) and re.fullmatch(r"[0-9a-f]{40}", commit):
         resolved = subprocess.run(
@@ -655,13 +760,68 @@ def exact_commit_errors(task: dict[str, Any], manifest: dict[str, Any], repo: Pa
                 errors.append(f"commit is not descended from task base_sha {base_sha}")
             elif ancestry.returncode != 0:
                 errors.append(f"cannot verify task base ancestry: {(ancestry.stderr or ancestry.stdout).strip()}")
+        manifest_base = manifest.get("baseCommit")
+        if isinstance(manifest_base, str) and re.fullmatch(r"[0-9a-f]{40}", manifest_base):
+            incremental_ancestry = subprocess.run(
+                ["git", "merge-base", "--is-ancestor", manifest_base, commit],
+                cwd=repo,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if incremental_ancestry.returncode == 1:
+                errors.append("commit is not descended from manifest baseCommit")
+            elif incremental_ancestry.returncode != 0:
+                errors.append(
+                    f"cannot verify manifest base ancestry: "
+                    f"{(incremental_ancestry.stderr or incremental_ancestry.stdout).strip()}"
+                )
+    if expected_commit is not None:
+        branch = subprocess.run(
+            ["git", "branch", "--show-current"], cwd=repo, capture_output=True, text=True, check=False
+        )
+        if branch.returncode != 0 or branch.stdout.strip() != task.get("branch"):
+            errors.append("task branch does not match the current Git branch")
+        worktree = task.get("worktree")
+        if not worktree or Path(worktree).resolve() != repo:
+            errors.append("task worktree does not match the canonical Git worktree")
+        dirty = subprocess.run(
+            ["git", "diff", "--quiet", "HEAD", "--"], cwd=repo, capture_output=True, text=True, check=False
+        )
+        if dirty.returncode != 0:
+            errors.append("tracked worktree changes exist outside the exact implementation commit")
+        untracked = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard"],
+            cwd=repo,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        allowed = {evidence_path.relative_to(repo).as_posix()} if evidence_path is not None else set()
+        unexpected = sorted(set(untracked.stdout.splitlines()) - allowed)
+        if untracked.returncode != 0:
+            errors.append(f"cannot inspect untracked files: {(untracked.stderr or untracked.stdout).strip()}")
+        elif unexpected:
+            errors.append(f"untracked source exists outside the evidence manifest: {unexpected[0]}")
     return errors
+
+
+def exact_commit_errors(
+    task: dict[str, Any], manifest: dict[str, Any], repo: Path, *, evidence_path: Path | None = None
+) -> list[str]:
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
+    if head.returncode != 0:
+        return [f"cannot resolve current HEAD: {(head.stderr or head.stdout).strip()}"]
+    current_commit = head.stdout.strip()
+    return committed_manifest_errors(task, manifest, repo, expected_commit=current_commit, evidence_path=evidence_path)
 
 
 def evidence_reference_errors(tasks: dict[str, dict[str, Any]], repo: Path) -> list[str]:
     errors: list[str] = []
     for task_id, task in tasks.items():
-        for reference in task.get("evidence", []):
+        seen_hashes: set[str] = set()
+        seen_commits: set[str] = set()
+        for reference_index, reference in enumerate(task.get("evidence", [])):
             raw_path = reference.get("path", "")
             path = PurePosixPath(raw_path)
             if (
@@ -683,14 +843,18 @@ def evidence_reference_errors(tasks: dict[str, dict[str, Any]], repo: Path) -> l
                 errors.append(f"{task_id}: evidence hash mismatch for {raw_path}")
                 continue
             try:
-                manifest = load_evidence(str(evidence_path))
-            except (OSError, ValueError, yaml.YAMLError) as exc:
+                manifest = parse_evidence_payload(payload, evidence_path.suffix)
+            except (UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
                 errors.append(f"{task_id}: invalid evidence manifest {raw_path}: {exc}")
                 continue
-            if manifest.get("taskId") != task_id:
-                errors.append(f"{task_id}: evidence manifest taskId mismatch for {raw_path}")
             if manifest.get("commit") != reference.get("commit"):
                 errors.append(f"{task_id}: evidence manifest commit mismatch for {raw_path}")
+            for error in committed_manifest_errors(task, manifest, repo, allow_incremental_base=reference_index > 0):
+                errors.append(f"{task_id}: {raw_path}: {error}")
+            if actual_sha256 in seen_hashes or reference.get("commit") in seen_commits:
+                errors.append(f"{task_id}: logically duplicate evidence attachment {raw_path}")
+            seen_hashes.add(actual_sha256)
+            seen_commits.add(reference.get("commit"))
     return errors
 
 
@@ -721,9 +885,19 @@ def validate(
                 not campaign.get("owner")
                 or not campaign.get("branch")
                 or not campaign.get("base_sha")
+                or not campaign.get("worktree")
                 or not campaign.get("lease")
             ):
-                errors.append(f"{cid}: ACTIVE campaign lacks owner, branch, base SHA, or lease")
+                errors.append(f"{cid}: ACTIVE campaign lacks owner, branch, base SHA, worktree, or lease")
+            if campaign.get("owner") and campaign["owner"] != campaign["owner"].strip():
+                errors.append(f"{cid}: campaign owner identity is not normalized")
+            if (
+                repo is not None
+                and campaign.get("status") == "ACTIVE"
+                and campaign.get("worktree")
+                and Path(campaign["worktree"]).resolve() != repo
+            ):
+                errors.append(f"{cid}: ACTIVE campaign worktree does not match the repository")
             lease = campaign.get("lease")
             if lease and lease.get("claimed_by") != campaign.get("owner"):
                 errors.append(f"{cid}: campaign lease owner does not match campaign owner")
@@ -734,6 +908,10 @@ def validate(
             not completion.get("reviewer") or not completion.get("reviewed_at") or not completion.get("evidence")
         ):
             errors.append(f"{cid}: approved completion lacks reviewer, time, or evidence")
+        if completion.get("reviewer") and completion["reviewer"] == (campaign or {}).get("owner"):
+            errors.append(f"{cid}: capability reviewer is not independent from the campaign owner")
+        if completion.get("reviewer") and completion["reviewer"] != completion["reviewer"].strip():
+            errors.append(f"{cid}: capability reviewer identity is not normalized")
         for position, slice_ in enumerate(capability.get("slices", [])):
             sid = slice_["id"]
             if not sid.startswith(f"{cid}.S"):
@@ -754,6 +932,10 @@ def validate(
                     or not completion.get("evidence")
                 ):
                     errors.append(f"{sid}: approved completion lacks reviewer, time, or evidence")
+            if completion.get("reviewer") and completion["reviewer"] == (campaign or {}).get("owner"):
+                errors.append(f"{sid}: slice reviewer is not independent from the campaign owner")
+            if completion.get("reviewer") and completion["reviewer"] != completion["reviewer"].strip():
+                errors.append(f"{sid}: slice reviewer identity is not normalized")
             for task in slice_["tasks"]:
                 tid = task["id"]
                 if not tid.startswith(f"{sid}.T"):
@@ -776,22 +958,40 @@ def validate(
                 if status == "READY" and not task_can_be_ready(data, capabilities, slices, tasks, gates, task):
                     errors.append(f"{tid}: READY while dependencies, prior slice, or activation gate are incomplete")
                 if status == "IN_PROGRESS" and (
-                    not task.get("owner") or not task.get("branch") or not task.get("base_sha") or not task.get("lease")
+                    not task.get("owner")
+                    or not task.get("branch")
+                    or not task.get("base_sha")
+                    or not task.get("worktree")
+                    or not task.get("lease")
                 ):
-                    errors.append(f"{tid}: IN_PROGRESS without owner, branch, base SHA, and lease")
+                    errors.append(f"{tid}: IN_PROGRESS without owner, branch, base SHA, worktree, and lease")
                 if status == "REVIEW" and (
                     not task.get("evidence")
                     or task.get("verification_state") != "passed"
                     or not task.get("owner")
                     or not task.get("branch")
                     or not task.get("base_sha")
+                    or not task.get("worktree")
                     or not task.get("lease")
                 ):
                     errors.append(f"{tid}: REVIEW without ownership, lease, passed verification, and evidence")
                 lease = task.get("lease")
+                if task.get("owner") and task["owner"] != task["owner"].strip():
+                    errors.append(f"{tid}: task owner identity is not normalized")
+                if (
+                    repo is not None
+                    and status in {"IN_PROGRESS", "REVIEW"}
+                    and task.get("worktree")
+                    and Path(task["worktree"]).resolve() != repo
+                ):
+                    errors.append(f"{tid}: active task worktree does not match the repository")
                 if lease and lease.get("claimed_by") != task.get("owner"):
                     errors.append(f"{tid}: lease owner does not match task owner")
                 review = task.get("review", {})
+                if review.get("reviewer") and review["reviewer"] == task.get("owner"):
+                    errors.append(f"{tid}: task reviewer is not independent from the task owner")
+                if review.get("reviewer") and review["reviewer"] != review["reviewer"].strip():
+                    errors.append(f"{tid}: task reviewer identity is not normalized")
                 if status == "DONE" and (
                     not task.get("evidence")
                     or review.get("result") != "approved"
@@ -805,11 +1005,22 @@ def validate(
                     errors.append(f"{tid}: BLOCKED without blocker details")
                 if status == "CANCELLED" and not task.get("cancellation"):
                     errors.append(f"{tid}: CANCELLED without rationale")
+                if status == "CANCELLED" and task.get("lease") is not None:
+                    errors.append(f"{tid}: CANCELLED task must release its lease")
     for gid, gate in gates.items():
         if gate.get("status") == "APPROVED":
             approval = gate.get("approval", {})
             if not approval.get("approved_by") or not approval.get("approved_at") or not approval.get("evidence"):
                 errors.append(f"{gid}: APPROVED without approver, timestamp, and evidence")
+            if approval.get("approved_by") and approval["approved_by"] != approval["approved_by"].strip():
+                errors.append(f"{gid}: release-gate approver identity is not normalized")
+            incomplete = sorted(
+                task["id"]
+                for task in tasks.values()
+                if task.get("wave") == gate.get("after_wave") and task["status"] != "DONE"
+            )
+            if incomplete:
+                errors.append(f"{gid}: APPROVED while preceding-wave task {incomplete[0]} is incomplete")
     return errors
 
 
@@ -867,7 +1078,7 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
     view["start_command"] = (
         f"python tools/taskctl.py capability start {capability['id']} --agent <agent> "
         f"--branch capability/{capability['id'].lower()}-<slug> --base-sha <sha> "
-        f"--profile {args.profile} --platform {args.platform}"
+        f"--worktree <absolute-repository-path> --profile {args.profile} --platform {args.platform}"
     )
     print_yaml(view)
 
@@ -972,9 +1183,19 @@ def command_capability_start(args, data, capabilities, slices, tasks, gates) -> 
     require_positive_lease_hours(args.lease_hours)
     require_execution_target(args.profile, args.platform)
     require_capability_planning_ready(args, args.capability)
+    agent, branch, base_sha, worktree = git_execution_identity(
+        args.file,
+        agent=args.agent,
+        branch=args.branch,
+        base_sha=args.base_sha,
+        worktree=args.worktree,
+    )
     if active_capabilities(capabilities):
         raise SystemExit("Another capability campaign is ACTIVE. Complete or pause it before starting another.")
     capability = get(capabilities, args.capability, "capability")
+    prior_campaign = capability.get("campaign") or {}
+    if prior_campaign.get("status") not in {None, "PLANNED"}:
+        raise SystemExit(f"Capability cannot start from campaign state {prior_campaign.get('status')}")
     candidates = eligible_capabilities(data, capabilities, slices, tasks, gates, args.profile, args.platform)
     if capability not in candidates:
         raise SystemExit(
@@ -983,16 +1204,16 @@ def command_capability_start(args, data, capabilities, slices, tasks, gates) -> 
     now = utc_now()
     capability["campaign"] = {
         "status": "ACTIVE",
-        "owner": args.agent,
-        "branch": args.branch,
-        "worktree": args.worktree,
-        "base_sha": args.base_sha,
+        "owner": agent,
+        "branch": branch,
+        "worktree": worktree,
+        "base_sha": base_sha,
         "profile": args.profile,
         "platform": args.platform,
         "started_at": now,
         "updated_at": now,
         "pause_reason": None,
-        "lease": new_lease(args.agent, args.lease_hours),
+        "lease": new_lease(agent, args.lease_hours),
     }
     capability["completion"]["status"] = "IN_PROGRESS"
     persist(args, data)
@@ -1040,18 +1261,38 @@ def command_capability_resume(args, data, capabilities, slices, tasks, gates) ->
     campaign = capability.get("campaign") or {}
     if campaign.get("status") != "PAUSED":
         raise SystemExit("Only a PAUSED capability may be resumed")
+    agent, branch, base_sha, worktree = git_execution_identity(
+        args.file,
+        agent=args.agent,
+        branch=args.branch,
+        base_sha=args.base_sha,
+        worktree=args.worktree,
+    )
+    if campaign.get("owner") != agent:
+        raise SystemExit(f"Paused capability is owned by {campaign.get('owner')}, not {agent}")
+    if campaign.get("branch") and campaign.get("branch") != branch:
+        raise SystemExit("Paused capability must resume on its recorded branch")
+    selected_slice = current_slice(capability)
+    if (
+        selected_slice is None
+        or not profile_matches(selected_slice, args.profile)
+        or not platform_matches(selected_slice, args.platform)
+        or not gate_is_open(data, gates, selected_slice["wave"])
+        or not slice_dependencies_done(selected_slice, tasks)
+    ):
+        raise SystemExit("Paused capability is not eligible for the requested profile/platform, gate, or dependencies")
     now = utc_now()
     campaign.update(
         status="ACTIVE",
-        owner=args.agent,
-        branch=args.branch,
-        worktree=args.worktree,
-        base_sha=args.base_sha,
+        owner=agent,
+        branch=branch,
+        worktree=worktree,
+        base_sha=base_sha,
         profile=args.profile,
         platform=args.platform,
         updated_at=now,
         pause_reason=None,
-        lease=new_lease(args.agent, args.lease_hours),
+        lease=new_lease(agent, args.lease_hours),
     )
     capability["completion"]["status"] = "IN_PROGRESS"
     persist(args, data)
@@ -1079,22 +1320,21 @@ def command_capability_review(args, data, capabilities, slices, tasks, gates) ->
         "status"
     ) != "REVIEW":
         raise SystemExit("Capability must be submitted for REVIEW")
-    if not args.reviewer.strip():
-        raise SystemExit("Reviewer identity must be non-empty")
+    reviewer = normalized_identity(args.reviewer, "Reviewer")
+    if reviewer == (capability.get("campaign") or {}).get("owner"):
+        raise SystemExit("Capability reviewer must be independent from the campaign owner")
     now = utc_now()
     if args.result == "approved":
         capability["campaign"]["status"] = "COMPLETE"
-        capability["completion"].update(status="APPROVED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
+        capability["completion"].update(status="APPROVED", reviewer=reviewer, reviewed_at=now, notes=args.note)
     elif args.result == "changes-requested":
         capability["campaign"]["status"] = "PAUSED"
         capability["campaign"]["pause_reason"] = "Capability review changes requested"
-        capability["completion"].update(
-            status="CHANGES_REQUESTED", reviewer=args.reviewer, reviewed_at=now, notes=args.note
-        )
+        capability["completion"].update(status="CHANGES_REQUESTED", reviewer=reviewer, reviewed_at=now, notes=args.note)
     else:
         capability["campaign"]["status"] = "PAUSED"
         capability["campaign"]["pause_reason"] = args.note or "Capability review blocked"
-        capability["completion"].update(status="BLOCKED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
+        capability["completion"].update(status="BLOCKED", reviewer=reviewer, reviewed_at=now, notes=args.note)
     persist(args, data)
 
 
@@ -1139,19 +1379,19 @@ def command_slice_review(args, data, capabilities, slices, tasks, gates) -> None
     slice_ = get(slices, args.slice, "slice")
     if slice_.get("completion", {}).get("status") != "REVIEW":
         raise SystemExit("Slice must be submitted for REVIEW")
-    if not args.reviewer.strip():
-        raise SystemExit("Reviewer identity must be non-empty")
+    reviewer = normalized_identity(args.reviewer, "Reviewer")
+    capability = capabilities[slice_["id"].split(".")[0]]
+    if reviewer == (capability.get("campaign") or {}).get("owner"):
+        raise SystemExit("Slice reviewer must be independent from the campaign owner")
     now = utc_now()
     if args.result == "approved":
-        slice_["completion"].update(status="APPROVED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
+        slice_["completion"].update(status="APPROVED", reviewer=reviewer, reviewed_at=now, notes=args.note)
         slice_["status"] = "DONE"
     elif args.result == "changes-requested":
-        slice_["completion"].update(
-            status="CHANGES_REQUESTED", reviewer=args.reviewer, reviewed_at=now, notes=args.note
-        )
+        slice_["completion"].update(status="CHANGES_REQUESTED", reviewer=reviewer, reviewed_at=now, notes=args.note)
         slice_["status"] = "IN_PROGRESS"
     else:
-        slice_["completion"].update(status="BLOCKED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
+        slice_["completion"].update(status="BLOCKED", reviewer=reviewer, reviewed_at=now, notes=args.note)
         slice_["status"] = "BLOCKED"
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     persist(args, data)
@@ -1160,6 +1400,13 @@ def command_slice_review(args, data, capabilities, slices, tasks, gates) -> None
 def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
     require_positive_lease_hours(args.lease_hours)
     require_execution_target(args.profile, args.platform)
+    agent, branch, base_sha, worktree = git_execution_identity(
+        args.file,
+        agent=args.agent,
+        branch=args.branch,
+        base_sha=args.base_sha,
+        worktree=args.worktree,
+    )
     task = get(tasks, args.task, "task")
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     if task["status"] != "READY":
@@ -1171,7 +1418,7 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
         raise SystemExit(f"No ACTIVE capability campaign. Start {task['capability_id']} before claiming tasks.")
     if active[0]["id"] != task["capability_id"]:
         raise SystemExit(f"Active campaign is {active[0]['id']}; task belongs to {task['capability_id']}")
-    require_active_lease(active[0], args.agent, f"Capability {active[0]['id']}")
+    require_active_lease(active[0], agent, f"Capability {active[0]['id']}")
     campaign = active[0]["campaign"]
     if args.profile != campaign.get("profile") or args.platform != campaign.get("platform"):
         raise SystemExit("Task claim profile/platform must match the active capability campaign")
@@ -1181,15 +1428,15 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
     now = utc_now()
     task.update(
         status="IN_PROGRESS",
-        owner=args.agent,
-        branch=args.branch,
-        base_sha=args.base_sha,
-        worktree=args.worktree,
+        owner=agent,
+        branch=branch,
+        base_sha=base_sha,
+        worktree=worktree,
         started_at=task.get("started_at") or now,
         updated_at=now,
         blocker=None,
         verification_state=None,
-        lease=new_lease(args.agent, args.lease_hours),
+        lease=new_lease(agent, args.lease_hours),
     )
     persist(args, data)
     print(f"Claimed {task['id']} within {task['capability_id']} / {task['slice_id']}")
@@ -1246,17 +1493,33 @@ def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
     if any(reference.get("path") == relative_evidence_path for reference in task.get("evidence", [])):
         raise SystemExit(f"Evidence manifest is already attached: {relative_evidence_path}")
     try:
-        manifest = load_evidence(args.from_file)
-    except (OSError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        payload = evidence_path.read_bytes()
+        manifest = parse_evidence_payload(payload, evidence_path.suffix)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
         raise SystemExit(f"Invalid evidence manifest: {exc}") from exc
-    errors = exact_commit_errors(task, manifest, repo)
+    payload_sha256 = evidence_sha256(payload)
+    existing_evidence = task.get("evidence", [])
+    if any(
+        reference.get("sha256") == payload_sha256 or reference.get("commit") == manifest.get("commit")
+        for reference in existing_evidence
+    ):
+        raise SystemExit("Logically duplicate evidence content or commit is already attached")
+    supersedes = manifest.get("supersedes")
+    if supersedes is not None and not isinstance(supersedes, dict):
+        raise SystemExit("supersedes must be an object naming an attached manifest")
+    superseded_path = (supersedes or {}).get("path")
+    if existing_evidence and not superseded_path:
+        raise SystemExit("Follow-up evidence must explicitly supersede an attached manifest")
+    if superseded_path and not any(reference.get("path") == superseded_path for reference in existing_evidence):
+        raise SystemExit("supersedes.path must name an attached evidence manifest")
+    errors = exact_commit_errors(task, manifest, repo, evidence_path=evidence_path)
     if errors:
         raise SystemExit("Invalid evidence:\n- " + "\n- ".join(errors))
     task.setdefault("evidence", []).append(
         {
             "type": "criterion-manifest",
             "path": relative_evidence_path,
-            "sha256": evidence_sha256(evidence_path.read_bytes()),
+            "sha256": payload_sha256,
             "commit": manifest["commit"],
             "recorded_at": utc_now(),
         }
@@ -1284,10 +1547,11 @@ def command_review(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] != "REVIEW":
         raise SystemExit("Only REVIEW tasks may be reviewed")
-    if not args.reviewer.strip():
-        raise SystemExit("Reviewer identity must be non-empty")
+    reviewer = normalized_identity(args.reviewer, "Reviewer")
+    if reviewer == task.get("owner"):
+        raise SystemExit("Task reviewer must be independent from the task owner")
     now = utc_now()
-    task["review"] = {"reviewer": args.reviewer, "result": args.result, "reviewed_at": now, "notes": args.note}
+    task["review"] = {"reviewer": reviewer, "result": args.result, "reviewed_at": now, "notes": args.note}
     if args.result == "approved":
         task["status"] = "DONE"
         task["completed_at"] = now
@@ -1313,43 +1577,49 @@ def command_review(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
     require_positive_lease_hours(args.lease_hours)
+    agent = normalized_identity(args.agent, "Agent")
     task = get(tasks, args.task, "task")
     if task["status"] not in {"BLOCKED", "REVIEW", "DONE"}:
         raise SystemExit(f"Task cannot be reopened from {task['status']}")
-    capability = require_task_campaign_lease(task, capabilities, args.agent)
+    capability = require_task_campaign_lease(task, capabilities, agent)
     if current_slice(capability) is not slices[task["slice_id"]]:
         raise SystemExit("Only a task in the active campaign's current slice may be reopened")
     if not task_can_be_ready(data, capabilities, slices, tasks, gates, task):
         raise SystemExit("Task cannot be reopened while dependencies or the activation gate are incomplete")
+    if any(gate.get("status") == "APPROVED" and gate.get("after_wave") == task.get("wave") for gate in gates.values()):
+        raise SystemExit("Task cannot be reopened after its wave release gate is APPROVED")
     lease = task.get("lease")
-    if lease_is_active(task) and lease and lease.get("claimed_by") != args.agent:
+    if lease_is_active(task) and lease and lease.get("claimed_by") != agent:
         raise SystemExit(f"Task {task['id']} has an active lease owned by {lease.get('claimed_by')}")
     task.update(
         status="IN_PROGRESS",
-        owner=args.agent,
+        owner=agent,
         updated_at=utc_now(),
         completed_at=None,
         verification_state=None,
         blocker=None,
         cancellation=None,
         review={"reviewer": None, "result": None, "reviewed_at": None, "notes": f"Reopened: {args.reason}"},
-        lease=new_lease(args.agent, args.lease_hours),
+        lease=new_lease(agent, args.lease_hours),
     )
     persist(args, data)
 
 
 def command_cancel(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
-    if task["status"] == "DONE":
-        raise SystemExit("DONE tasks are not cancelled; create a superseding task or ADR")
+    if task["status"] in {"DONE", "CANCELLED"}:
+        raise SystemExit(f"{task['status']} tasks cannot transition to CANCELLED")
+    actor = normalized_identity(args.actor, "Cancellation actor")
+    capability = require_task_campaign_lease(task, capabilities, actor)
+    if current_slice(capability) is not slices[task["slice_id"]]:
+        raise SystemExit("Only a task in the active campaign's current slice may be cancelled")
     if task["status"] in {"IN_PROGRESS", "REVIEW"}:
-        require_task_campaign_lease(task, capabilities, args.actor)
-        require_active_lease(task, args.actor, f"Task {task['id']}")
+        require_active_lease(task, actor, f"Task {task['id']}")
     task["status"] = "CANCELLED"
     task["cancellation"] = {
         "reason": args.reason,
         "replacement": args.replacement,
-        "cancelled_by": args.actor,
+        "cancelled_by": actor,
         "cancelled_at": utc_now(),
     }
     task["lease"] = None
@@ -1369,8 +1639,7 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
     gate = get(gates, args.gate, "gate")
     if gate.get("status") != "PENDING":
         raise SystemExit("Only a PENDING release gate may be approved")
-    if not args.approver.strip():
-        raise SystemExit("Release-gate approver identity must be non-empty")
+    approver = normalized_identity(args.approver, "Release-gate approver")
     if not args.evidence:
         raise SystemExit("At least one evidence reference is required")
     incomplete = sorted(
@@ -1383,7 +1652,7 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
         )
     gate["status"] = "APPROVED"
     gate["approval"] = {
-        "approved_by": args.approver,
+        "approved_by": approver,
         "approved_at": utc_now(),
         "evidence": args.evidence,
         "notes": args.note,
@@ -1425,7 +1694,7 @@ def build_parser() -> argparse.ArgumentParser:
     cstart.add_argument("--agent", required=True)
     cstart.add_argument("--branch", required=True)
     cstart.add_argument("--base-sha", required=True)
-    cstart.add_argument("--worktree")
+    cstart.add_argument("--worktree", required=True)
     cstart.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
     cstart.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
     cstart.add_argument("--lease-hours", type=int, default=24)
@@ -1447,7 +1716,7 @@ def build_parser() -> argparse.ArgumentParser:
     cresume.add_argument("--agent", required=True)
     cresume.add_argument("--branch", required=True)
     cresume.add_argument("--base-sha", required=True)
-    cresume.add_argument("--worktree")
+    cresume.add_argument("--worktree", required=True)
     cresume.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
     cresume.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
     cresume.add_argument("--lease-hours", type=int, default=24)
@@ -1480,7 +1749,7 @@ def build_parser() -> argparse.ArgumentParser:
     claim.add_argument("--agent", required=True)
     claim.add_argument("--branch", required=True)
     claim.add_argument("--base-sha", required=True)
-    claim.add_argument("--worktree")
+    claim.add_argument("--worktree", required=True)
     claim.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
     claim.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
     claim.add_argument("--lease-hours", type=int, default=8)
