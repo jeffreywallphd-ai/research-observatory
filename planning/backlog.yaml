@@ -1177,34 +1177,39 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T18:42:44+00:00'
-      updated_at: '2026-08-08T18:52:38+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T19:01:36+00:00'
+      completed_at: '2026-08-08T19:01:36+00:00'
       blocker: null
-      implementation_notes: Commit e1755e1 adds deterministic source-hashed plan and status views, mandatory foundation drift
+      implementation_notes: 'Commit e1755e1 adds deterministic source-hashed plan and status views, mandatory foundation drift
         checking, idempotent writes, and manual-edit detection/repair; 71 foundation and 4 focused tests pass.
+
+        Review-fix commit 5d9c162 binds content and digest to one snapshot, enforces canonical bytes and repository path confinement,
+        and adds race/corruption/junction/I-O regressions; 73 foundation and 6 focused tests pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S04.T03.json
         sha256: 5e48562bac6746fabf856fbc9f8559d115458a7c296a2ae85ba3e5c144c97c95
         commit: e1755e15441e685bdea7354f5fcde0d85a2f6ce5
         recorded_at: '2026-08-08T18:48:24+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S04.T03.review-fix.json
+        sha256: bbeb2572818b71abae716027a648c7eb726766a599ae5e52e7ce6aa8a19bbb35
+        commit: 5d9c1622c93a93b90afb9e2961b058fed983522c
+        recorded_at: '2026-08-08T18:58:08+00:00'
       review:
         reviewer: codex-review
-        result: changes-requested
-        reviewed_at: '2026-08-08T18:52:38+00:00'
-        notes: Renderer must parse and hash one immutable backlog snapshot, compare canonical output bytes so CRLF/invalid-byte
-          corruption is detected and repaired, and constrain resolved source/output paths inside the canonical repository
-          with actionable I/O failures.
+        result: approved
+        reviewed_at: '2026-08-08T19:01:36+00:00'
+        notes: 'Approved at 5d9c162: immutable single-read source/digest, canonical byte drift and corrupt-file repair, canonical
+          repository confinement, and actionable I/O recovery withstand independent mutation tests; 6 focused and 73 foundation
+          tests pass.'
       base_sha: 8ba8d1a90249c3e3987734a8487b8237040ff83f
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T18:52:38+00:00'
-        expires_at: '2026-08-09T02:52:38+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral

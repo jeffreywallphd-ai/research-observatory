@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S04.T03",
+  "commit": "5d9c1622c93a93b90afb9e2961b058fed983522c",
+  "baseCommit": "e1755e15441e685bdea7354f5fcde0d85a2f6ce5",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S04.T03.json",
+    "reason": "Independent review reproduced a source/digest split-read race, line-ending and invalid-byte drift bypasses, and output-parent path escape. This manifest records the immutable-snapshot, byte-comparison, path-confinement, and actionable-I/O corrections."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S04.T03.json",
+    "docs/planning-implementation-plan.md",
+    "planning/README.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_backlog_views.py",
+    "tools/backlog_views.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S04.T03-review-fix-foundation.json",
+      "exitCode": 0,
+      "result": "The exact review-fix commit passed all foundation commands, mandatory generated-view drift checking, 73 foundation tests, and canonical backlog validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate",
+      "exitCode": 0,
+      "result": "The authoritative ledger and all stored evidence validated for 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The committed comprehensive plan and status summary exactly matched their canonical UTF-8 render bytes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_backlog_views -v",
+      "exitCode": 0,
+      "result": "All six focused tests passed, including snapshot-race, CRLF, invalid-byte, junction escape, read denial, replace failure, repair, idempotency, and source-count cases."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The renderer reads planning/backlog.yaml once as bytes, parses and schema-validates that immutable payload, and derives the embedded canonical digest from the same payload; a regression attempts to swap source content after the first read and proves only one read occurs.",
+        "Check and repair modes compare raw output bytes to one canonical UTF-8 payload. CRLF conversion and invalid UTF-8 corruption are detected as drift, and regeneration restores exact canonical bytes without decoding the damaged file.",
+        "The canonical repository, backlog source, schema, output parents, and existing output files are resolved and constrained before access; a real Windows junction escape is rejected, while controlled read and atomic-replace failures return actionable diagnostics and preserve the prior destination.",
+        "Unchanged generation still performs no writes, source-derived hierarchy/status counts remain exact, and both outputs retain the explicit manual-edit prohibition."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused suite increased from four to six tests and now covers ordinary/manual drift, CRLF drift, invalid bytes, a source-snapshot race, repository-path redirection, read denial, replace failure cleanup, idempotency, and YAML-derived counts/statuses.",
+        "The complete foundation suite increased to 73 tests and passes at the exact review-fix commit with the mandatory backlog-view command active."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "planning/README.md documents immutable snapshot hashing, exact byte comparison, repository path confinement, corrupt-byte repair, atomic replacement, and actionable I/O failure behavior.",
+        "The correction changes only the renderer, its focused tests, synchronized generated views, task audit state, and preserved initial evidence; no application, architecture, dependency, UI, or later-wave implementation scope changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce all three requested findings against commit 5d9c1622c93a93b90afb9e2961b058fed983522c before approval."
+  }
+}
