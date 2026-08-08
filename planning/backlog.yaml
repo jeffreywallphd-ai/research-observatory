@@ -806,7 +806,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S02.T03
-    status: IN_PROGRESS
+    status: READY
     tasks:
     - id: CAP-00.S03.T01
       capability_id: CAP-00
@@ -892,33 +892,39 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T16:43:25+00:00'
-      updated_at: '2026-08-08T16:57:35+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T17:03:11+00:00'
+      completed_at: '2026-08-08T17:03:11+00:00'
       blocker: null
-      implementation_notes: Implementation commit 9877766 passed deterministic bootstrap, quality, foundation, portable-contract,
+      implementation_notes: 'Implementation commit 9877766 passed deterministic bootstrap, quality, foundation, portable-contract,
         packaging-smoke, and backlog gates.
+
+        Review fixes at 7fe9165 reject bracket-style secrets access and enforce a closed discovered Python quality scope;
+        all required gates passed.'
       evidence:
       - type: criterion-manifest
         path: artifacts\evidence\CAP-00.S03.T02.json
         sha256: 6073e80a4362a7688fbf9e3c478259fa789ea5e411b508cb55db7ebd2a9f22c6
         commit: 9877766796b94bfa63faf35c767b095191f203ab
         recorded_at: '2026-08-08T16:54:40+00:00'
+      - type: criterion-manifest
+        path: artifacts\evidence\CAP-00.S03.T02.review-fix.json
+        sha256: 1811e6580552958677d80d5ad4a51280a7184068d2f1a9ea2ed32b417375dd17
+        commit: 7fe9165caf44aeb59f6e2bb2549dcb23a059afbb
+        recorded_at: '2026-08-08T17:02:27+00:00'
       review:
         reviewer: codex-review
-        result: changes-requested
-        reviewed_at: '2026-08-08T16:57:35+00:00'
-        notes: Reject bracket-style GitHub secrets context access and close the Python quality scope so tracked or newly added
-          governed Python cannot bypass format, lint, or type gates.
+        result: approved
+        reviewed_at: '2026-08-08T17:03:11+00:00'
+        notes: 'Approved at 7fe9165: full-SHA/least-privilege CI remains sound; bracket-style secrets access is rejected;
+          governed Python roots are closed; focused and required checks pass. Hosted runner compatibility awaits an authorized
+          remote run.'
       base_sha: 2c518d39729fa9f41e92eaa5320f624b153e74d8
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T16:43:25+00:00'
-        expires_at: '2026-08-09T00:43:25+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
@@ -949,11 +955,11 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile security-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-08T17:03:11+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
