@@ -1,0 +1,1109 @@
+{
+  "schema_version": "1.0",
+  "document_type": "planning-review-site-manifest",
+  "baseline": "1.3",
+  "supplemental_release": "1.3.4",
+  "review_interface_release": "1.3.5",
+  "generated_at": "2026-08-08T15:37:30.522334+00:00",
+  "entry_point": "index.html",
+  "feedback_schema_version": "1.1",
+  "capabilities": [
+    {
+      "capability_id": "CAP-01",
+      "title": "Windows-first desktop shell and supervised local runtime",
+      "plan_path": "planning/capability-plans/CAP-01.md",
+      "plan_sha256": "930d2fce4a797740ef6548922d7133d93955586f623892460d22fb6b76c3d91a",
+      "page": "CAP-01/index.html",
+      "decision_count": 3,
+      "slice_count": 5,
+      "slices": [
+        {
+          "slice_id": "CAP-01.S01",
+          "title": "Tauri and React application shell",
+          "plan_path": "planning/slice-plans/CAP-01/CAP-01.S01-tauri-and-react-application-shell.md",
+          "plan_sha256": "7619fc289fd41e32ffde357de4e242c6ad2217412181895f6d66ef39036f52b9",
+          "page": "CAP-01/CAP-01.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-01.S02",
+          "title": "Desktop design system and accessibility foundation",
+          "plan_path": "planning/slice-plans/CAP-01/CAP-01.S02-desktop-design-system-and-accessibility-foundation.md",
+          "plan_sha256": "550986b65906ba2d00f2fc0cf166aa1cdf52c231670897224338679a1155f6dc",
+          "page": "CAP-01/CAP-01.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-01.S03",
+          "title": "Packaged Python/FastAPI sidecar",
+          "plan_path": "planning/slice-plans/CAP-01/CAP-01.S03-packaged-python-fastapi-sidecar.md",
+          "plan_sha256": "cc9a04f46feee2d96818803ef44f2b6018b28c27689aafc74affeda28af89a95",
+          "page": "CAP-01/CAP-01.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-01.S04",
+          "title": "Authenticated desktop-service contract",
+          "plan_path": "planning/slice-plans/CAP-01/CAP-01.S04-authenticated-desktop-service-contract.md",
+          "plan_sha256": "81921422e06c2ffdba27a0afd09a8db3309c433d1f6c812d371c5c2a0c677ee5",
+          "page": "CAP-01/CAP-01.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-01.S05",
+          "title": "Windows installation and update channels",
+          "plan_path": "planning/slice-plans/CAP-01/CAP-01.S05-windows-installation-and-update-channels.md",
+          "plan_sha256": "f5ad4bed9d7664d8a038d35e242d3809e608ab0fd18fbd84e3190d0fd862a7fa",
+          "page": "CAP-01/CAP-01.S05.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-02",
+      "title": "Local projects, durable storage, security, and recovery",
+      "plan_path": "planning/capability-plans/CAP-02.md",
+      "plan_sha256": "1cc2ff90ed8215366dd4c09364d8942e18463767c75e19b847d0996c66fc26d8",
+      "page": "CAP-02/index.html",
+      "decision_count": 3,
+      "slice_count": 5,
+      "slices": [
+        {
+          "slice_id": "CAP-02.S01",
+          "title": "Local project lifecycle and directory contract",
+          "plan_path": "planning/slice-plans/CAP-02/CAP-02.S01-local-project-lifecycle-and-directory-contract.md",
+          "plan_sha256": "b5efbbf9f740c55c80f6ae4be97f9ad22e7e5df7e85b915ccadced262897f61a",
+          "page": "CAP-02/CAP-02.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-02.S02",
+          "title": "SQLite schema, migrations, and repository layer",
+          "plan_path": "planning/slice-plans/CAP-02/CAP-02.S02-sqlite-schema-migrations-and-repository-layer.md",
+          "plan_sha256": "b8f032895272c1940027e73b23738ae56695e24d16787bc1d8737dedacb51019",
+          "page": "CAP-02/CAP-02.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-02.S03",
+          "title": "Encrypted local object and cache storage",
+          "plan_path": "planning/slice-plans/CAP-02/CAP-02.S03-encrypted-local-object-and-cache-storage.md",
+          "plan_sha256": "84bb81eec12664da0d3c748f3f97387a47e348819e5f9b9e0bda8e07ae975926",
+          "page": "CAP-02/CAP-02.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-02.S04",
+          "title": "Local secrets, profiles, and privacy controls",
+          "plan_path": "planning/slice-plans/CAP-02/CAP-02.S04-local-secrets-profiles-and-privacy-controls.md",
+          "plan_sha256": "30f0c9b26cf85dfc6056fed56a3d30764f775436f80d92608bfc35bb8f97f6b2",
+          "page": "CAP-02/CAP-02.S04.html",
+          "task_count": 4
+        },
+        {
+          "slice_id": "CAP-02.S05",
+          "title": "Backup, restore, relocation, and lab portability",
+          "plan_path": "planning/slice-plans/CAP-02/CAP-02.S05-backup-restore-relocation-and-lab-portability.md",
+          "plan_sha256": "e01c2dc1590e16eef5eaad906ede095eb31cde66d86c3f74a0d2ecbd6f03d090",
+          "page": "CAP-02/CAP-02.S05.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-03",
+      "title": "Canonical domain, research intent, provenance, and durable workflows",
+      "plan_path": "planning/capability-plans/CAP-03.md",
+      "plan_sha256": "6e9a1771b186d51e5c55285bfc1cf7806fee9fc0c1246db2f68c6e3897bfcf17",
+      "page": "CAP-03/index.html",
+      "decision_count": 4,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-03.S01",
+          "title": "Canonical identifiers and domain contracts",
+          "plan_path": "planning/slice-plans/CAP-03/CAP-03.S01-canonical-identifiers-and-domain-contracts.md",
+          "plan_sha256": "911a5ee234e10bf4ab505353bf910af5113dda47494093274fc139fb54c36677",
+          "page": "CAP-03/CAP-03.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-03.S02",
+          "title": "Research intent contract and mode governance",
+          "plan_path": "planning/slice-plans/CAP-03/CAP-03.S02-research-intent-contract-and-mode-governance.md",
+          "plan_sha256": "c1cdef9f41289d9b1586ab40440132da3a4b207a3a95281639fb72724f8044f2",
+          "page": "CAP-03/CAP-03.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-03.S03",
+          "title": "Append-only provenance and audit ledger",
+          "plan_path": "planning/slice-plans/CAP-03/CAP-03.S03-append-only-provenance-and-audit-ledger.md",
+          "plan_sha256": "a20bf7991d95bbfa9ac141d1d76c9ef95256e050f4e9a4b31db49636b54dd7a4",
+          "page": "CAP-03/CAP-03.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-03.S04",
+          "title": "Portable workflow model and local worker fabric",
+          "plan_path": "planning/slice-plans/CAP-03/CAP-03.S04-portable-workflow-model-and-local-worker-fabric.md",
+          "plan_sha256": "af29f86818e106abe40c3260aa6ef1d071a631f2fc2e02594c03f9c8f56c4b13",
+          "page": "CAP-03/CAP-03.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-03.S05",
+          "title": "Dependency graph, staleness, and controlled recalculation",
+          "plan_path": "planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md",
+          "plan_sha256": "019154163c2dc9240e892458794ed42ddf0c2d0b2a73a3aaf92238a7a83effa9",
+          "page": "CAP-03/CAP-03.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-03.S06",
+          "title": "Use-case profiles and adaptive guided navigation",
+          "plan_path": "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
+          "plan_sha256": "c0bafb3c96236b5705e25a355a7b3600237e9293c32a53812e5a507ed76e655b",
+          "page": "CAP-03/CAP-03.S06.html",
+          "task_count": 5
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-04",
+      "title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
+      "plan_path": "planning/capability-plans/CAP-04.md",
+      "plan_sha256": "a38473795ff18f921f4986a85731df1c59bc6b6e7b52a164c6d19712af3c2d10",
+      "page": "CAP-04/index.html",
+      "decision_count": 4,
+      "slice_count": 5,
+      "slices": [
+        {
+          "slice_id": "CAP-04.S01",
+          "title": "Reference-library and file imports",
+          "plan_path": "planning/slice-plans/CAP-04/CAP-04.S01-reference-library-and-file-imports.md",
+          "plan_sha256": "d5295c884bbee0f3b494abdda087d836f1825697d1efa39496fc0611ade268a1",
+          "page": "CAP-04/CAP-04.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-04.S02",
+          "title": "Open scholarly source adapters",
+          "plan_path": "planning/slice-plans/CAP-04/CAP-04.S02-open-scholarly-source-adapters.md",
+          "plan_sha256": "ca2a8af21e69d34ae10e36fd9ad9602fcec00b024e2d109e841103aaf8c2c062",
+          "page": "CAP-04/CAP-04.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-04.S03",
+          "title": "Canonical work, version, and identity reconciliation",
+          "plan_path": "planning/slice-plans/CAP-04/CAP-04.S03-canonical-work-version-and-identity-reconciliation.md",
+          "plan_sha256": "696445b6c7cfe6baf4d3b959c41f0e8f8a9b17bb3a031dfc9ed557eef18b29fa",
+          "page": "CAP-04/CAP-04.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-04.S04",
+          "title": "Corpus membership, discovery path, and rights governance",
+          "plan_path": "planning/slice-plans/CAP-04/CAP-04.S04-corpus-membership-discovery-path-and-rights-governance.md",
+          "plan_sha256": "dacb5d6a3b4bc9aed3208c97b75de50a028d51756af2f8f9c8c137478fdacf5e",
+          "page": "CAP-04/CAP-04.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-04.S05",
+          "title": "Connector SDK and controlled extensibility",
+          "plan_path": "planning/slice-plans/CAP-04/CAP-04.S05-connector-sdk-and-controlled-extensibility.md",
+          "plan_sha256": "bdb6752d0ad6d33b5cb94d961b114c539facaf67ac4efe82a22a971e8f13e3b1",
+          "page": "CAP-04/CAP-04.S05.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-05",
+      "title": "Document acquisition, parsing, source inspection, and page anchors",
+      "plan_path": "planning/capability-plans/CAP-05.md",
+      "plan_sha256": "e10e72d7d87efd05c9eb2f5cd99e68955699fb463ef9d8c152bcc3bd35e9d8bc",
+      "page": "CAP-05/index.html",
+      "decision_count": 3,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-05.S01",
+          "title": "Rights-aware document acquisition",
+          "plan_path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
+          "plan_sha256": "410ed342095d133b2527b2fd34e31c465e318bc045e4dc507f8e00270065d709",
+          "page": "CAP-05/CAP-05.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-05.S02",
+          "title": "Structured and PDF parsing pipeline",
+          "plan_path": "planning/slice-plans/CAP-05/CAP-05.S02-structured-and-pdf-parsing-pipeline.md",
+          "plan_sha256": "245b3af0621496796fc71bbf12a6af1d47c9881b3b10be2efd2fb938aaa6ce8f",
+          "page": "CAP-05/CAP-05.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-05.S03",
+          "title": "Immutable document revisions and source anchors",
+          "plan_path": "planning/slice-plans/CAP-05/CAP-05.S03-immutable-document-revisions-and-source-anchors.md",
+          "plan_sha256": "2f4baf9c99e6bf6a5a8b366a1c685a5a4b77aa881b117a9cf65864718844e6ce",
+          "page": "CAP-05/CAP-05.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-05.S04",
+          "title": "Source viewer and evidence inspection experience",
+          "plan_path": "planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md",
+          "plan_sha256": "e7fea55364c51e43947aa6e9c7fd37c48b1a42aff66da408bb59b3524d5f72d1",
+          "page": "CAP-05/CAP-05.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-05.S05",
+          "title": "References, citation contexts, tables, and figures",
+          "plan_path": "planning/slice-plans/CAP-05/CAP-05.S05-references-citation-contexts-tables-and-figures.md",
+          "plan_sha256": "250de57737636054756e2add5a35729b17063b7cfe8fa6b5abda3c19c331e1b6",
+          "page": "CAP-05/CAP-05.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-05.S06",
+          "title": "Parsing quality, correction, and reprocessing",
+          "plan_path": "planning/slice-plans/CAP-05/CAP-05.S06-parsing-quality-correction-and-reprocessing.md",
+          "plan_sha256": "aa9897115ef3200c7d601cebb1f343562cb94d0d49e867283f15913181adeaaf",
+          "page": "CAP-05/CAP-05.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-06",
+      "title": "Local search, discovery, corpus diagnostics, and screening",
+      "plan_path": "planning/capability-plans/CAP-06.md",
+      "plan_sha256": "f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f",
+      "page": "CAP-06/index.html",
+      "decision_count": 23,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-06.S01",
+          "title": "Fielded lexical search and local indexing",
+          "plan_path": "planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
+          "plan_sha256": "4af6a1225757f27aad5757d0b9f026c6da51fb310710e9c097d2241d362c07a9",
+          "page": "CAP-06/CAP-06.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-06.S02",
+          "title": "Semantic representations and vector retrieval",
+          "plan_path": "planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
+          "plan_sha256": "6c6923d4a220fd1070e34da9ba275aa40e883d10f7fc27aef3d41797dd6dd053",
+          "page": "CAP-06/CAP-06.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-06.S03",
+          "title": "Hybrid retrieval and reranking",
+          "plan_path": "planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
+          "plan_sha256": "70bab7aac1307ff03c39ea5ef1e85bd6dd7556c627ac7bc2141c9fc891251706",
+          "page": "CAP-06/CAP-06.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-06.S04",
+          "title": "Search Studio and transparent expansion",
+          "plan_path": "planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
+          "plan_sha256": "a0d5ad91ab4c9a3c192a62dc56110563e7cf00a245c056f56268688ff8ba7286",
+          "page": "CAP-06/CAP-06.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-06.S05",
+          "title": "Corpus canvas, coverage, and reflexivity diagnostics",
+          "plan_path": "planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
+          "plan_sha256": "a32ddc473cfbc5b3f3d72da10660ddf16e82d523696942a0a03269e5fd613327",
+          "page": "CAP-06/CAP-06.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-06.S06",
+          "title": "Transparent screening and active-learning governance",
+          "plan_path": "planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
+          "plan_sha256": "1cbc0d7597f95b609f6230bd0788a17e27a5736858efa4c80eaf12bf7949f9b6",
+          "page": "CAP-06/CAP-06.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-07",
+      "title": "Provider-neutral model gateway and governed AI execution",
+      "plan_path": "planning/capability-plans/CAP-07.md",
+      "plan_sha256": "e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86",
+      "page": "CAP-07/index.html",
+      "decision_count": 20,
+      "slice_count": 5,
+      "slices": [
+        {
+          "slice_id": "CAP-07.S01",
+          "title": "Model task, provider, and routing contracts",
+          "plan_path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+          "plan_sha256": "5a04d1b826c75fb9f0b7c60dcedfdd89664804ab4e5a309e5837c73e39437630",
+          "page": "CAP-07/CAP-07.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-07.S02",
+          "title": "Local model runtime and model management",
+          "plan_path": "planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
+          "plan_sha256": "553b03713d2d570d4acdc3d281c6253ac9199738a3f502469a9396ca2dfe53a5",
+          "page": "CAP-07/CAP-07.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-07.S03",
+          "title": "Approved remote model providers",
+          "plan_path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
+          "plan_sha256": "e2fc97be28ae1455d2ab8e65d3d50da67e1ba5a46a3fa6ff79026f66d5c58c93",
+          "page": "CAP-07/CAP-07.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-07.S04",
+          "title": "Prompt, schema, and structured-output registry",
+          "plan_path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
+          "plan_sha256": "66f4d65bba908975dc5654d35856a4b3f8b8fb996c2f79375899cf9a79ce838b",
+          "page": "CAP-07/CAP-07.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-07.S05",
+          "title": "AI observability, budgets, and evaluation operations",
+          "plan_path": "planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
+          "plan_sha256": "7010fc281485f009af739ce5d18dbeb5401c92240447f30e79e122776d5bf53c",
+          "page": "CAP-07/CAP-07.S05.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-08",
+      "title": "Evidence schemas, extraction, verification, and adjudication",
+      "plan_path": "planning/capability-plans/CAP-08.md",
+      "plan_sha256": "ddf910493846d24572db880ad5dc1c6109eda4f4e7d03bc8774a0d46c9f4d084",
+      "page": "CAP-08/index.html",
+      "decision_count": 23,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-08.S01",
+          "title": "Core ontology and schema-pack registry",
+          "plan_path": "planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
+          "plan_sha256": "2c786153da331d34392421284cd6770fc2b381a437b0ff6cba3eca2f69122bad",
+          "page": "CAP-08/CAP-08.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-08.S02",
+          "title": "Source-grounded extraction pipeline",
+          "plan_path": "planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
+          "plan_sha256": "bca4989a56008691e29b06f62f66a93dacabc904145ac38db015bda8fc0dceab",
+          "page": "CAP-08/CAP-08.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-08.S03",
+          "title": "Evidence record, status, confidence, and uncertainty model",
+          "plan_path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
+          "plan_sha256": "a9e96ba15db4e814b0a50ce8169091cc63608a97b427b4260cc079a9b4b374bb",
+          "page": "CAP-08/CAP-08.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-08.S04",
+          "title": "Independent evidence verification",
+          "plan_path": "planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
+          "plan_sha256": "4bb7ec95be99235559a7e8a2cef7cf52293ee64cd9a4509b40c98748c11b486c",
+          "page": "CAP-08/CAP-08.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-08.S05",
+          "title": "Evidence matrix and source-first analysis UI",
+          "plan_path": "planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
+          "plan_sha256": "9cfd207dcb8da3be73cfb1cd1654116f5920b420093dd6c4e09947abf34f5726",
+          "page": "CAP-08/CAP-08.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-08.S06",
+          "title": "Coder comparison, adjudication, and evidence export",
+          "plan_path": "planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
+          "plan_sha256": "09c0aaae8cc5e908775a57e252dd6f8e85ecd42e15b59654f91363efe12c7b5e",
+          "page": "CAP-08/CAP-08.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-09",
+      "title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
+      "plan_path": "planning/capability-plans/CAP-09.md",
+      "plan_sha256": "a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0",
+      "page": "CAP-09/index.html",
+      "decision_count": 23,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-09.S01",
+          "title": "Local graph domain and replaceable graph storage",
+          "plan_path": "planning/slice-plans/CAP-09/CAP-09.S01-local-graph-domain-and-replaceable-graph-storage.md",
+          "plan_sha256": "2d0a87e09726cf7cf46b21c7e565097f1d4f63d8105fa1440b9f1325bea31f36",
+          "page": "CAP-09/CAP-09.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-09.S02",
+          "title": "Claim, theory, construct, method, and context relations",
+          "plan_path": "planning/slice-plans/CAP-09/CAP-09.S02-claim-theory-construct-method-and-context-relations.md",
+          "plan_sha256": "82bb3f9764a1dc19d021ca1423d41869fb7b11bd230fed2efef7a55806e03cba",
+          "page": "CAP-09/CAP-09.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-09.S03",
+          "title": "Comparability sets and contradiction candidates",
+          "plan_path": "planning/slice-plans/CAP-09/CAP-09.S03-comparability-sets-and-contradiction-candidates.md",
+          "plan_sha256": "d3349417ec9719b2b4cf2efd99ca643e74fe686171f521f945a108c4475b8648",
+          "page": "CAP-09/CAP-09.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-09.S04",
+          "title": "Graph, theory, construct, and lineage workspaces",
+          "plan_path": "planning/slice-plans/CAP-09/CAP-09.S04-graph-theory-construct-and-lineage-workspaces.md",
+          "plan_sha256": "74d650afbfcc6a56b9bbabcd6dd44e61f8f848e1a032a946b7e19a22e906a73a",
+          "page": "CAP-09/CAP-09.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-09.S05",
+          "title": "Evidence-grounded synthesis and citation audit",
+          "plan_path": "planning/slice-plans/CAP-09/CAP-09.S05-evidence-grounded-synthesis-and-citation-audit.md",
+          "plan_sha256": "495168e204d3ea6db8d403d39e85b226a9735b1ece69e3b2643537f268fcbf32",
+          "page": "CAP-09/CAP-09.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-09.S06",
+          "title": "Reproducibility packages and scholarly exports",
+          "plan_path": "planning/slice-plans/CAP-09/CAP-09.S06-reproducibility-packages-and-scholarly-exports.md",
+          "plan_sha256": "42c1431709bbb20558379b26a65cb35947873b6a5139c615ba3a0af344585d80",
+          "page": "CAP-09/CAP-09.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-10",
+      "title": "Novelty auditing, research opportunities, and plural research modes",
+      "plan_path": "planning/capability-plans/CAP-10.md",
+      "plan_sha256": "77b41628903e08cc55695dbc9ff4580c875f590be3382eab3bf64322238898bd",
+      "page": "CAP-10/index.html",
+      "decision_count": 26,
+      "slice_count": 7,
+      "slices": [
+        {
+          "slice_id": "CAP-10.S01",
+          "title": "Nearest-prior novelty workspace MVP",
+          "plan_path": "planning/slice-plans/CAP-10/CAP-10.S01-nearest-prior-novelty-workspace-mvp.md",
+          "plan_sha256": "71ee2f5cfcbd51c6d56cdf1bf53f7ea1b94b48f0c8ae8ab06de255a9e52fe8ca",
+          "page": "CAP-10/CAP-10.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-10.S02",
+          "title": "Independent adversarial novelty challenge",
+          "plan_path": "planning/slice-plans/CAP-10/CAP-10.S02-independent-adversarial-novelty-challenge.md",
+          "plan_sha256": "fe68081272af7960feeade26cb54181850ae05b8244269c902f6d3f89dbfbc56",
+          "page": "CAP-10/CAP-10.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-10.S03",
+          "title": "Research opportunity dossier and decision ledger",
+          "plan_path": "planning/slice-plans/CAP-10/CAP-10.S03-research-opportunity-dossier-and-decision-ledger.md",
+          "plan_sha256": "16987476ae25b2f3c257e71429d8c1d4c955705809f32e78e44d8d4a82f2920e",
+          "page": "CAP-10/CAP-10.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-10.S04",
+          "title": "Plural opportunity detector ensemble",
+          "plan_path": "planning/slice-plans/CAP-10/CAP-10.S04-plural-opportunity-detector-ensemble.md",
+          "plan_sha256": "1921403107bbb9b00a12f424da2f3c5aa6c8535c348faadd648ee21efb0aeee2",
+          "page": "CAP-10/CAP-10.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-10.S05",
+          "title": "Critical and hermeneutic research support",
+          "plan_path": "planning/slice-plans/CAP-10/CAP-10.S05-critical-and-hermeneutic-research-support.md",
+          "plan_sha256": "d0f85e5536c97036a0aa590dae7d252dfa2f98d50b4c0b4caf7bbe66c8f15018",
+          "page": "CAP-10/CAP-10.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-10.S06",
+          "title": "Opportunity radar, ranking, and portfolio governance",
+          "plan_path": "planning/slice-plans/CAP-10/CAP-10.S06-opportunity-radar-ranking-and-portfolio-governance.md",
+          "plan_sha256": "d2db213b594fb21c03e8477cef52081fca5264b38a9f1362220864334a8333ab",
+          "page": "CAP-10/CAP-10.S06.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-10.S07",
+          "title": "Living monitor and impact-aware research memory",
+          "plan_path": "planning/slice-plans/CAP-10/CAP-10.S07-living-monitor-and-impact-aware-research-memory.md",
+          "plan_sha256": "ae5f2946a7d75f2f0d7b9119c96f0366ca547378388d30c39062dd84d1109762",
+          "page": "CAP-10/CAP-10.S07.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-11",
+      "title": "Windows PC/lab product hardening, validation, packaging, and release",
+      "plan_path": "planning/capability-plans/CAP-11.md",
+      "plan_sha256": "76ec74905dac9fe538a55bb55da9e7225fde6416e3be1bed67f7bcf346b72884",
+      "page": "CAP-11/index.html",
+      "decision_count": 18,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-11.S01",
+          "title": "Performance profiles, scale targets, and resource governance",
+          "plan_path": "planning/slice-plans/CAP-11/CAP-11.S01-performance-profiles-scale-targets-and-resource-governance.md",
+          "plan_sha256": "f10b744ff0339a0febcff5a4cd8efdc4888583fb313a9e9b9905badb5b05bfc7",
+          "page": "CAP-11/CAP-11.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-11.S02",
+          "title": "Reliability, crash recovery, upgrade, and rollback",
+          "plan_path": "planning/slice-plans/CAP-11/CAP-11.S02-reliability-crash-recovery-upgrade-and-rollback.md",
+          "plan_sha256": "0561b64edd8fa5bceb0f3d00874a67f3829d4ae2c0070b22ef05a18cb8262940",
+          "page": "CAP-11/CAP-11.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-11.S03",
+          "title": "Offline, privacy, and local security acceptance",
+          "plan_path": "planning/slice-plans/CAP-11/CAP-11.S03-offline-privacy-and-local-security-acceptance.md",
+          "plan_sha256": "e9a18c000ad8dc2e8d9c46cdc45744ed1cc618275af770ca363a3aeff0beca3a",
+          "page": "CAP-11/CAP-11.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-11.S04",
+          "title": "Accessibility, usability, onboarding, and help",
+          "plan_path": "planning/slice-plans/CAP-11/CAP-11.S04-accessibility-usability-onboarding-and-help.md",
+          "plan_sha256": "3c9ecb3fb30a6b93403ae77e8f236f6ba28dccc1ab98e3868a13928c9981ddb4",
+          "page": "CAP-11/CAP-11.S04.html",
+          "task_count": 4
+        },
+        {
+          "slice_id": "CAP-11.S05",
+          "title": "Lab deployment, policy, maintenance, and support",
+          "plan_path": "planning/slice-plans/CAP-11/CAP-11.S05-lab-deployment-policy-maintenance-and-support.md",
+          "plan_sha256": "1b35b2af614f8d03a10e61fa0b3b899c837ba7ce948ae81705ad2be5a60d2c3a",
+          "page": "CAP-11/CAP-11.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-11.S06",
+          "title": "Local release candidate and acceptance gate",
+          "plan_path": "planning/slice-plans/CAP-11/CAP-11.S06-local-release-candidate-and-acceptance-gate.md",
+          "plan_sha256": "716325f6cef98f9b1fb69618c53a2cab3ed561307a34f76e6756d9a4ff57724d",
+          "page": "CAP-11/CAP-11.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-12",
+      "title": "University-hosted deployment, institutional identity, collaboration, and operations",
+      "plan_path": "planning/capability-plans/CAP-12.md",
+      "plan_sha256": "b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a",
+      "page": "CAP-12/index.html",
+      "decision_count": 18,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-12.S01",
+          "title": "Desktop remote connection mode and API abstraction",
+          "plan_path": "planning/slice-plans/CAP-12/CAP-12.S01-desktop-remote-connection-mode-and-api-abstraction.md",
+          "plan_sha256": "7a48562fd73a00effeeda8bb731e70c1e9bd11b3cf4c57a4a6f039b259ee413f",
+          "page": "CAP-12/CAP-12.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-12.S02",
+          "title": "Institutional service and data-plane foundation",
+          "plan_path": "planning/slice-plans/CAP-12/CAP-12.S02-institutional-service-and-data-plane-foundation.md",
+          "plan_sha256": "52a356af8ef06b292449424edf7a806379dbf5945241728c053151ca0b6f48a3",
+          "page": "CAP-12/CAP-12.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-12.S03",
+          "title": "Institutional identity, authorization, and project isolation",
+          "plan_path": "planning/slice-plans/CAP-12/CAP-12.S03-institutional-identity-authorization-and-project-isolation.md",
+          "plan_sha256": "325fcd54452a1e2d5faf685bb9bdb0b5f5430198e00f8ba1dda85652d2561e12",
+          "page": "CAP-12/CAP-12.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-12.S04",
+          "title": "Team collaboration and scholarly adjudication",
+          "plan_path": "planning/slice-plans/CAP-12/CAP-12.S04-team-collaboration-and-scholarly-adjudication.md",
+          "plan_sha256": "b533315d51a563ba85d286018a5e9cf5b8eea02b6d194e457cadb0175a543d20",
+          "page": "CAP-12/CAP-12.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-12.S05",
+          "title": "Licensed sources, institutional rights, retention, and compute policy",
+          "plan_path": "planning/slice-plans/CAP-12/CAP-12.S05-licensed-sources-institutional-rights-retention-and-compute-policy.md",
+          "plan_sha256": "241dde279ad7add9a9dc3e3de86ca566f5dffd019d10d12c23580f7db735138d",
+          "page": "CAP-12/CAP-12.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-12.S06",
+          "title": "Institutional operations, disaster recovery, and pilot acceptance",
+          "plan_path": "planning/slice-plans/CAP-12/CAP-12.S06-institutional-operations-disaster-recovery-and-pilot-acceptance.md",
+          "plan_sha256": "c6892478bf6a30f54622dbd33d6becb4e26893072e5f145da4681e54903647bb",
+          "page": "CAP-12/CAP-12.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-13",
+      "title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
+      "plan_path": "planning/capability-plans/CAP-13.md",
+      "plan_sha256": "fa039ef4af91a2ba491c8d8f343f9833c7524741825dfb11bcb7feac5c8e9086",
+      "page": "CAP-13/index.html",
+      "decision_count": 18,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-13.S01",
+          "title": "SaaS organization and tenant control plane",
+          "plan_path": "planning/slice-plans/CAP-13/CAP-13.S01-saas-organization-and-tenant-control-plane.md",
+          "plan_sha256": "b9d5eada047de0aeff8e74dbaabf44bde2a5ee0f8f0c4b665ee3fe4aca89a19c",
+          "page": "CAP-13/CAP-13.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-13.S02",
+          "title": "Regional tenant data planes and isolation tiers",
+          "plan_path": "planning/slice-plans/CAP-13/CAP-13.S02-regional-tenant-data-planes-and-isolation-tiers.md",
+          "plan_sha256": "64d262419cd54a0cdee89cddb3a5489f5e9b93de3c0279b0a0969ffa14cff991",
+          "page": "CAP-13/CAP-13.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-13.S03",
+          "title": "Cloud identity, entitlement, metering, and billing",
+          "plan_path": "planning/slice-plans/CAP-13/CAP-13.S03-cloud-identity-entitlement-metering-and-billing.md",
+          "plan_sha256": "22babd4b8e9cd07a21774b90cd9270eedba257e51d1f95e6f7205b0937ebce4b",
+          "page": "CAP-13/CAP-13.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-13.S04",
+          "title": "Elastic workers, models, search, and cost governance",
+          "plan_path": "planning/slice-plans/CAP-13/CAP-13.S04-elastic-workers-models-search-and-cost-governance.md",
+          "plan_sha256": "539dde52a97fe31af51489282e3da1817f06df2fe5e5b6ddcd59f00ff25f121f",
+          "page": "CAP-13/CAP-13.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-13.S05",
+          "title": "Cloud security, privacy, residency, and compliance operations",
+          "plan_path": "planning/slice-plans/CAP-13/CAP-13.S05-cloud-security-privacy-residency-and-compliance-operations.md",
+          "plan_sha256": "453ea989e44bec4bee780f0c57d2aa0bc0b6d8413f8b459500cdbab2d87dedd8",
+          "page": "CAP-13/CAP-13.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-13.S06",
+          "title": "Desktop-cloud experience, service reliability, and launch gate",
+          "plan_path": "planning/slice-plans/CAP-13/CAP-13.S06-desktop-cloud-experience-service-reliability-and-launch-gate.md",
+          "plan_sha256": "4aae7b9e94b7ffcc8898e0651a3dde964a541d928cf257841c9cc27d75838a46",
+          "page": "CAP-13/CAP-13.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-14",
+      "title": "Cross-platform desktop qualification and release",
+      "plan_path": "planning/capability-plans/CAP-14.md",
+      "plan_sha256": "c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7",
+      "page": "CAP-14/index.html",
+      "decision_count": 18,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-14.S01",
+          "title": "Platform abstraction and build matrix",
+          "plan_path": "planning/slice-plans/CAP-14/CAP-14.S01-platform-abstraction-and-build-matrix.md",
+          "plan_sha256": "04ad91285525cd7c5eee0abcba88a5646d3a7a5cbb504a3b66500629022b82c1",
+          "page": "CAP-14/CAP-14.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-14.S02",
+          "title": "Apple Silicon macOS product qualification",
+          "plan_path": "planning/slice-plans/CAP-14/CAP-14.S02-apple-silicon-macos-product-qualification.md",
+          "plan_sha256": "c062cfea0c48b8d85ac34a82dad888b234b5fca9b95cd2c2583efdf2372e8c07",
+          "page": "CAP-14/CAP-14.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-14.S03",
+          "title": "Linux x86_64 and ARM64 product qualification",
+          "plan_path": "planning/slice-plans/CAP-14/CAP-14.S03-linux-x86-64-and-arm64-product-qualification.md",
+          "plan_sha256": "8d7e5f565dd7c4f077b293902e604803cd9687746dbf6de21655186b4c2773d6",
+          "page": "CAP-14/CAP-14.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-14.S04",
+          "title": "Cross-platform scientific and AI runtime",
+          "plan_path": "planning/slice-plans/CAP-14/CAP-14.S04-cross-platform-scientific-and-ai-runtime.md",
+          "plan_sha256": "92102b8a8cb66614a07a51367deaf02671bf584848af5c2ccdece798a37bd26a",
+          "page": "CAP-14/CAP-14.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-14.S05",
+          "title": "Cross-platform project compatibility and recovery",
+          "plan_path": "planning/slice-plans/CAP-14/CAP-14.S05-cross-platform-project-compatibility-and-recovery.md",
+          "plan_sha256": "ad35dc3cdc7d226a2ce7a7ccb757f25ae7d2e7c51cd8eabbe049d5fb90d2ea72",
+          "page": "CAP-14/CAP-14.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-14.S06",
+          "title": "Cross-platform desktop release gate",
+          "plan_path": "planning/slice-plans/CAP-14/CAP-14.S06-cross-platform-desktop-release-gate.md",
+          "plan_sha256": "a35bcbf2e3a7ef5582620f926e964c00c418596dc5295d4a412cab049ba66637",
+          "page": "CAP-14/CAP-14.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-15",
+      "title": "Empirical study design and protocol development",
+      "plan_path": "planning/capability-plans/CAP-15.md",
+      "plan_sha256": "8d349195487d01e11f9303e86df47f550e61fa708f9969bd31c49cdb97c3adda",
+      "page": "CAP-15/index.html",
+      "decision_count": 18,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-15.S01",
+          "title": "Study-design domain and evidence foundation",
+          "plan_path": "planning/slice-plans/CAP-15/CAP-15.S01-study-design-domain-and-evidence-foundation.md",
+          "plan_sha256": "833fafc51a47d46ee08b14cf1841543e60326454cf8f30e59d309ae615854c4e",
+          "page": "CAP-15/CAP-15.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-15.S02",
+          "title": "Research logic and design alternatives",
+          "plan_path": "planning/slice-plans/CAP-15/CAP-15.S02-research-logic-and-design-alternatives.md",
+          "plan_sha256": "71850e4eb8ac063a34d52d0a02642c86140cec3692f0ea46eb7e0e3a37c5f2c3",
+          "page": "CAP-15/CAP-15.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-15.S03",
+          "title": "Sampling, measurement, and data collection",
+          "plan_path": "planning/slice-plans/CAP-15/CAP-15.S03-sampling-measurement-and-data-collection.md",
+          "plan_sha256": "f12363110c33f0da51375c0c1897b5ed5ace2d617e1c70bb25c6bec915417f5f",
+          "page": "CAP-15/CAP-15.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-15.S04",
+          "title": "Analysis, validity, ethics, and reproducibility",
+          "plan_path": "planning/slice-plans/CAP-15/CAP-15.S04-analysis-validity-ethics-and-reproducibility.md",
+          "plan_sha256": "a5577035c8a3da6ba822f5fca8bf98e48bf84f2667761d43015962bc9ba606c3",
+          "page": "CAP-15/CAP-15.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-15.S05",
+          "title": "Study Design Studio and protocol exports",
+          "plan_path": "planning/slice-plans/CAP-15/CAP-15.S05-study-design-studio-and-protocol-exports.md",
+          "plan_sha256": "e168c7c0aa8d1f847d236e81686e6d507d75fff79b24bf8a29332b27d60576c6",
+          "page": "CAP-15/CAP-15.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-15.S06",
+          "title": "Study-design production acceptance",
+          "plan_path": "planning/slice-plans/CAP-15/CAP-15.S06-study-design-production-acceptance.md",
+          "plan_sha256": "8ffe15255d853d9a66fa7eabec2610f4896218999ea28e9b6806bb31ca13f42f",
+          "page": "CAP-15/CAP-15.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-16",
+      "title": "Manuscript blueprint, venue profiles, and article architecture",
+      "plan_path": "planning/capability-plans/CAP-16.md",
+      "plan_sha256": "4682fcd2244309de8aa621482ecde60e4a1b7c383d0d0bd1012535dcde0949f5",
+      "page": "CAP-16/index.html",
+      "decision_count": 18,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-16.S01",
+          "title": "Manuscript domain and template governance",
+          "plan_path": "planning/slice-plans/CAP-16/CAP-16.S01-manuscript-domain-and-template-governance.md",
+          "plan_sha256": "9651438b22b55bd3d8cdf813443bc698b17c5349979ee75a7fee18332c8fce22",
+          "page": "CAP-16/CAP-16.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-16.S02",
+          "title": "Empirical article blueprints",
+          "plan_path": "planning/slice-plans/CAP-16/CAP-16.S02-empirical-article-blueprints.md",
+          "plan_sha256": "8945ae1678bf3ea0d362bae17051b60df3bcea4d319b62f623ef4c417def2b9f",
+          "page": "CAP-16/CAP-16.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-16.S03",
+          "title": "Theory article blueprints",
+          "plan_path": "planning/slice-plans/CAP-16/CAP-16.S03-theory-article-blueprints.md",
+          "plan_sha256": "3a1bb27153adbff247c584f0a2ffc15fc65aee6c5158c99e6a72f9e2c4b5b87e",
+          "page": "CAP-16/CAP-16.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-16.S04",
+          "title": "Critical scholarship blueprints",
+          "plan_path": "planning/slice-plans/CAP-16/CAP-16.S04-critical-scholarship-blueprints.md",
+          "plan_sha256": "d0449faadb3d71d3f3c9ccbf8e5f25cafae755745ae71c89c244c41f65bee8b8",
+          "page": "CAP-16/CAP-16.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-16.S05",
+          "title": "Manuscript Blueprint and venue adaptation",
+          "plan_path": "planning/slice-plans/CAP-16/CAP-16.S05-manuscript-blueprint-and-venue-adaptation.md",
+          "plan_sha256": "3ec759a8695ecf2a17c12eab4b19e1940ba04ff4a693835f5cec16e959fe8f7e",
+          "page": "CAP-16/CAP-16.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-16.S06",
+          "title": "Manuscript blueprint production acceptance",
+          "plan_path": "planning/slice-plans/CAP-16/CAP-16.S06-manuscript-blueprint-production-acceptance.md",
+          "plan_sha256": "9d6fe82b3cde05ceca0b84965bb45507c4e01997be1f804209672a700b1880e8",
+          "page": "CAP-16/CAP-16.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-17",
+      "title": "Technical report and study-results integration",
+      "plan_path": "planning/capability-plans/CAP-17.md",
+      "plan_sha256": "20ea14d0a4fa5a1ed6dcba4f30f92b3419727927bbb0aa0507e2174c5c65fda0",
+      "page": "CAP-17/index.html",
+      "decision_count": 18,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-17.S01",
+          "title": "Private technical-report and study-artifact intake",
+          "plan_path": "planning/slice-plans/CAP-17/CAP-17.S01-private-technical-report-and-study-artifact-intake.md",
+          "plan_sha256": "6de2e5b1c5f831340f6ef14abc7dbb0061c1e38a5a8900ebe87ec6f2c6fa14e4",
+          "page": "CAP-17/CAP-17.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-17.S02",
+          "title": "Technical-report parsing and result extraction",
+          "plan_path": "planning/slice-plans/CAP-17/CAP-17.S02-technical-report-parsing-and-result-extraction.md",
+          "plan_sha256": "031f08f1039e26a86680945b18dde840b98427c5e5d681d97c5c39f174f3fd1e",
+          "page": "CAP-17/CAP-17.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-17.S03",
+          "title": "Study-plan and result reconciliation",
+          "plan_path": "planning/slice-plans/CAP-17/CAP-17.S03-study-plan-and-result-reconciliation.md",
+          "plan_sha256": "d6c3aebf1ec409961f02efe4fd35e314636aef5327b35a8ddb494c24f2ad0280",
+          "page": "CAP-17/CAP-17.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-17.S04",
+          "title": "Results evidence graph and dependency propagation",
+          "plan_path": "planning/slice-plans/CAP-17/CAP-17.S04-results-evidence-graph-and-dependency-propagation.md",
+          "plan_sha256": "7fc7f752792d9bdc6950aa0d24e409006bb2f1fde534f6afc2a83b4a801f69b8",
+          "page": "CAP-17/CAP-17.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-17.S05",
+          "title": "Technical Reports & Results workspace",
+          "plan_path": "planning/slice-plans/CAP-17/CAP-17.S05-technical-reports-and-results-workspace.md",
+          "plan_sha256": "3bc2c22120d6abd78e9aecd56e0287e5168acb1c16d72323b2da4809b14bbea6",
+          "page": "CAP-17/CAP-17.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-17.S06",
+          "title": "Results integration production acceptance",
+          "plan_path": "planning/slice-plans/CAP-17/CAP-17.S06-results-integration-production-acceptance.md",
+          "plan_sha256": "538f473a3a5862936a415ad44b9b3f08451045a5636edb75a9dbafb9b08e7d3a",
+          "page": "CAP-17/CAP-17.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-18",
+      "title": "Source-grounded manuscript drafting and publication artifacts",
+      "plan_path": "planning/capability-plans/CAP-18.md",
+      "plan_sha256": "04ca5faf83511b1c0ac49ac80c9c0c6b97d4c33b00e8d964a8d369399f2563d8",
+      "page": "CAP-18/index.html",
+      "decision_count": 18,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-18.S01",
+          "title": "Manuscript project and section workflow",
+          "plan_path": "planning/slice-plans/CAP-18/CAP-18.S01-manuscript-project-and-section-workflow.md",
+          "plan_sha256": "9683a6ad0f74561bc533f53b70a892c3628cc1d947ec3ef38fac948cc011eb5c",
+          "page": "CAP-18/CAP-18.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-18.S02",
+          "title": "Evidence-aware drafting engine",
+          "plan_path": "planning/slice-plans/CAP-18/CAP-18.S02-evidence-aware-drafting-engine.md",
+          "plan_sha256": "94178d15fda6a7a8687c0c5a3cfc11f38244d084d83a24170634018e496fc665",
+          "page": "CAP-18/CAP-18.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-18.S03",
+          "title": "Empirical manuscript drafting",
+          "plan_path": "planning/slice-plans/CAP-18/CAP-18.S03-empirical-manuscript-drafting.md",
+          "plan_sha256": "f3f78e8820be30f2a0ee4b4de9e85bc7f15cd0579d1e63fce5cb8718386c1ce5",
+          "page": "CAP-18/CAP-18.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-18.S04",
+          "title": "Theory and critical manuscript drafting",
+          "plan_path": "planning/slice-plans/CAP-18/CAP-18.S04-theory-and-critical-manuscript-drafting.md",
+          "plan_sha256": "31e14503340f559b054dcca453f9ad1d37be5006f09a34cf30a56aa39a081263",
+          "page": "CAP-18/CAP-18.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-18.S05",
+          "title": "Manuscript Studio and publication exports",
+          "plan_path": "planning/slice-plans/CAP-18/CAP-18.S05-manuscript-studio-and-publication-exports.md",
+          "plan_sha256": "8f8e2f12ca434ceadf971547f5380747da8dbb8c9ec82485c52620b0eb85369c",
+          "page": "CAP-18/CAP-18.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-18.S06",
+          "title": "Source-grounded manuscript production acceptance",
+          "plan_path": "planning/slice-plans/CAP-18/CAP-18.S06-source-grounded-manuscript-production-acceptance.md",
+          "plan_sha256": "230717d3a8e9e1adc652a9ee9f45683bd9efb9b67ffe7cac66e7573a6cebb77a",
+          "page": "CAP-18/CAP-18.S06.html",
+          "task_count": 3
+        }
+      ]
+    },
+    {
+      "capability_id": "CAP-19",
+      "title": "Reviewer simulation, editorial synthesis, and revision",
+      "plan_path": "planning/capability-plans/CAP-19.md",
+      "plan_sha256": "2a754c5cb0bcb0774263bfd9efcb307565ba207991aceb90385f0c9a1aa12245",
+      "page": "CAP-19/index.html",
+      "decision_count": 18,
+      "slice_count": 6,
+      "slices": [
+        {
+          "slice_id": "CAP-19.S01",
+          "title": "Reviewer protocol, roles, and independence",
+          "plan_path": "planning/slice-plans/CAP-19/CAP-19.S01-reviewer-protocol-roles-and-independence.md",
+          "plan_sha256": "e2f5bee64a01c9bcb530bfdac3104fcfb6f5dac74a85a50f0fbc3c5dbf48736b",
+          "page": "CAP-19/CAP-19.S01.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-19.S02",
+          "title": "Extended independent reviewer panel",
+          "plan_path": "planning/slice-plans/CAP-19/CAP-19.S02-extended-independent-reviewer-panel.md",
+          "plan_sha256": "20ae1f54835bff48c86c62fe692560f20508c0e2fa1d55bd3b857eb19865d98a",
+          "page": "CAP-19/CAP-19.S02.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-19.S03",
+          "title": "Generated and uploaded draft intake",
+          "plan_path": "planning/slice-plans/CAP-19/CAP-19.S03-generated-and-uploaded-draft-intake.md",
+          "plan_sha256": "4aa96bdac78bf8ec4703aeb058f5ac056df23ea901aa28d66c1d9dd3918fad3b",
+          "page": "CAP-19/CAP-19.S03.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-19.S04",
+          "title": "Reviewer reports and editorial synthesis",
+          "plan_path": "planning/slice-plans/CAP-19/CAP-19.S04-reviewer-reports-and-editorial-synthesis.md",
+          "plan_sha256": "4b27e075bb7c025253aa5e4dfbb42f533c2df8a2a0660e55703e4853097aab2e",
+          "page": "CAP-19/CAP-19.S04.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-19.S05",
+          "title": "Revision and response workflow",
+          "plan_path": "planning/slice-plans/CAP-19/CAP-19.S05-revision-and-response-workflow.md",
+          "plan_sha256": "2d396f24366d982192f8cf2d9ed9d4b241d8213220ad9df3eab9703b86171111",
+          "page": "CAP-19/CAP-19.S05.html",
+          "task_count": 3
+        },
+        {
+          "slice_id": "CAP-19.S06",
+          "title": "Reviewer simulation and research-production acceptance",
+          "plan_path": "planning/slice-plans/CAP-19/CAP-19.S06-reviewer-simulation-and-research-production-acceptance.md",
+          "plan_sha256": "41c0eea8a5c9bdf43acd88f723ad93a25058ce8818785514d934f349e468b406",
+          "page": "CAP-19/CAP-19.S06.html",
+          "task_count": 3
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>CAP-06 Local search, discovery, corpus diagnostics, and screening - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="capability" data-capability-id="CAP-06">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+  
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation"><h2>Capabilities</h2><nav class='cap-nav'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-01</span><small>Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-02</span><small>Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-03</span><small>Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-04</span><small>Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-05</span><small>Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item active" href="../CAP-06/index.html"><span>CAP-06</span><small>Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-07</span><small>Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-08</span><small>Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-09</span><small>Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-10</span><small>Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-11</span><small>Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-12</span><small>University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-13</span><small>Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-14</span><small>Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-15</span><small>Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-16</span><small>Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-17</span><small>Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-18</span><small>Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-19</span><small>Reviewer simulation, editorial synthesis, and revision</small></a></nav><h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-06.S01.html"><b>1</b><span><strong>CAP-06.S01</strong><small>Fielded lexical search and local indexing</small></span></a><a class="slice-nav-item" href="CAP-06.S02.html"><b>2</b><span><strong>CAP-06.S02</strong><small>Semantic representations and vector retrieval</small></span></a><a class="slice-nav-item" href="CAP-06.S03.html"><b>3</b><span><strong>CAP-06.S03</strong><small>Hybrid retrieval and reranking</small></span></a><a class="slice-nav-item" href="CAP-06.S04.html"><b>4</b><span><strong>CAP-06.S04</strong><small>Search Studio and transparent expansion</small></span></a><a class="slice-nav-item" href="CAP-06.S05.html"><b>5</b><span><strong>CAP-06.S05</strong><small>Corpus canvas, coverage, and reflexivity diagnostics</small></span></a><a class="slice-nav-item" href="CAP-06.S06.html"><b>6</b><span><strong>CAP-06.S06</strong><small>Transparent screening and active-learning governance</small></span></a></nav></aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><span aria-current="page">CAP-06</span></nav>
+      
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">CAP-06 · Capability decision and execution plan</span><h1>Local search, discovery, corpus diagnostics, and screening</h1></div><span class="status status-proposed">Proposed</span></div>
+  <p>Review the completed recommendation register before implementation. Once approved, the campaign executes all slices continuously except for documented infeasibility or genuinely new consequential evidence.</p>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>23</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>f8eeeaec7fbc</code></dd></div></dl>
+</section>
+<section class="review-toolbar" data-review-toolbar>
+  <div><h2>Resolved recommendations and capability approval</h2><p>Best-in-class recommendations are preselected and decision-complete. Confirm them, override a documented option with rationale, or select Other and provide both a brief description and detailed rationale. Export a review record only when preserving overrides or notes; one explicit capability approval still authorizes implementation.</p></div>
+  <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 23 selected</div>
+  <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
+  <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
+  <label class="approval-check"><input type="checkbox" data-approval-intent> Request approval of the capability packet and every slice plan after feedback is applied</label>
+  <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
+  <div class="feedback-message" data-feedback-message role="status"></div>
+  <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review CAP-06
+python tools/planctl.py --repo . approve CAP-06 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+# Only for overrides or notes:
+python tools/planctl.py --repo . apply-feedback CAP-06 &lt;downloaded-json&gt;
+python tools/planctl.py --repo . approve CAP-06 --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+python tools/planctl.py --repo . ready CAP-06 --require-approved</code></pre></details>
+</section>
+<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
+<div class="decision-list">
+<section class="decision-card" data-decision-id="CAP-06-D01" data-recommendation="Typed internal query AST compiled to SQLite FTS5 and external-source dialects" data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D01</span><h3>Canonical lexical query representation</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">An AST preserves exact execution, location-specific validation, translations and future server adapters without letting an index syntax become the domain contract.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D01-option-0">
+  <input id="CAP-06-D01-option-0" type="radio" name="CAP-06-D01" value="Typed internal query AST compiled to SQLite FTS5 and external-source dialects" data-decision-option checked>
+  <span><strong>Typed internal query AST compiled to SQLite FTS5 and external-source dialects</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D01-option-1">
+  <input id="CAP-06-D01-option-1" type="radio" name="CAP-06-D01" value="Store raw FTS5 strings as project truth; use an external search DSL library as the domain model" data-decision-option>
+  <span><strong>Store raw FTS5 strings as project truth; use an external search DSL library as the domain model</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D01-option-other">
+  <input id="CAP-06-D01-option-other" type="radio" name="CAP-06-D01" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D01-other-help">
+  <small id="CAP-06-D01-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D02" data-recommendation="Benchmark SPECTER2 retrieval/adhoc-query adapters against the project gold set; retain model port and exact fallback" data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D02</span><h3>Scientific semantic baseline</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Scientific representations are a stronger starting point, but the chosen model remains evidence- and license-dependent and must be replaceable.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D02-option-0">
+  <input id="CAP-06-D02-option-0" type="radio" name="CAP-06-D02" value="Benchmark SPECTER2 retrieval/adhoc-query adapters against the project gold set; retain model port and exact fallback" data-decision-option checked>
+  <span><strong>Benchmark SPECTER2 retrieval/adhoc-query adapters against the project gold set; retain model port and exact fallback</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D02-option-1">
+  <input id="CAP-06-D02-option-1" type="radio" name="CAP-06-D02" value="Use a generic sentence embedding model by default; hard-code SPECTER2 indefinitely" data-decision-option>
+  <span><strong>Use a generic sentence embedding model by default; hard-code SPECTER2 indefinitely</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D02-option-other">
+  <input id="CAP-06-D02-option-other" type="radio" name="CAP-06-D02" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D02-other-help">
+  <small id="CAP-06-D02-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D03" data-recommendation="Benchmark Qdrant service sidecar against a portable exact-cosine fallback and approve through ADR" data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D03</span><h3>Local vector engine</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Service mode has the operational surface needed for filters and recovery; exact fallback preserves correctness and usability when the service is unavailable.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D03-option-0">
+  <input id="CAP-06-D03-option-0" type="radio" name="CAP-06-D03" value="Benchmark Qdrant service sidecar against a portable exact-cosine fallback and approve through ADR" data-decision-option checked>
+  <span><strong>Benchmark Qdrant service sidecar against a portable exact-cosine fallback and approve through ADR</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D03-option-1">
+  <input id="CAP-06-D03-option-1" type="radio" name="CAP-06-D03" value="Treat Qdrant Python local mode as production equivalent; embed vector files directly in canonical storage" data-decision-option>
+  <span><strong>Treat Qdrant Python local mode as production equivalent; embed vector files directly in canonical storage</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D03-option-other">
+  <input id="CAP-06-D03-option-other" type="radio" name="CAP-06-D03" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D03-other-help">
+  <small id="CAP-06-D03-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D04" data-recommendation="Reciprocal Rank Fusion with deterministic tie rules, optional learned/calibrated alternatives later" data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D04</span><h3>Hybrid fusion</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">RRF combines ranks without fragile score calibration and remains easy to explain and replay.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D04-option-0">
+  <input id="CAP-06-D04-option-0" type="radio" name="CAP-06-D04" value="Reciprocal Rank Fusion with deterministic tie rules, optional learned/calibrated alternatives later" data-decision-option checked>
+  <span><strong>Reciprocal Rank Fusion with deterministic tie rules, optional learned/calibrated alternatives later</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D04-option-1">
+  <input id="CAP-06-D04-option-1" type="radio" name="CAP-06-D04" value="Normalize incomparable raw scores into a fixed weighted sum" data-decision-option>
+  <span><strong>Normalize incomparable raw scores into a fixed weighted sum</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D04-option-other">
+  <input id="CAP-06-D04-option-other" type="radio" name="CAP-06-D04" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D04-other-help">
+  <small id="CAP-06-D04-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D05" data-recommendation="Machine learning prioritizes only; named humans own inclusion/exclusion and stopping approval" data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D05</span><h3>Screening authority</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Transparent prioritization can reduce work without converting a relevance model into a scholarly decision maker.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D05-option-0">
+  <input id="CAP-06-D05-option-0" type="radio" name="CAP-06-D05" value="Machine learning prioritizes only; named humans own inclusion/exclusion and stopping approval" data-decision-option checked>
+  <span><strong>Machine learning prioritizes only; named humans own inclusion/exclusion and stopping approval</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D05-option-1">
+  <input id="CAP-06-D05-option-1" type="radio" name="CAP-06-D05" value="Autonomous inclusion or stopping based on classifier score" data-decision-option>
+  <span><strong>Autonomous inclusion or stopping based on classifier score</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D05-option-other">
+  <input id="CAP-06-D05-option-other" type="radio" name="CAP-06-D05" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D05-other-help">
+  <small id="CAP-06-D05-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D06" data-recommendation="Use `unicode61 remove_diacritics 2` as the general baseline; add an independently benchmarked trigram auxiliary index only for identifiers/titles that need substring tolerance." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D06</span><h3>Tokenizer/analyzer</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Language-neutral exactness and explainability are more important than aggressive English stemming; analyzer choice is part of the index manifest.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D06-option-0">
+  <input id="CAP-06-D06-option-0" type="radio" name="CAP-06-D06" value="Use `unicode61 remove_diacritics 2` as the general baseline; add an independently benchmarked trigram auxiliary index only for identifiers/titles that need substring tolerance." data-decision-option checked>
+  <span><strong>Use `unicode61 remove_diacritics 2` as the general baseline; add an independently benchmarked trigram auxiliary index only for identifiers/titles that need substring tolerance.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D06-option-1">
+  <input id="CAP-06-D06-option-1" type="radio" name="CAP-06-D06" value="Default porter stemming or one opaque language analyzer for all content." data-decision-option>
+  <span><strong>Default porter stemming or one opaque language analyzer for all content.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D06-option-other">
+  <input id="CAP-06-D06-option-other" type="radio" name="CAP-06-D06" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D06-other-help">
+  <small id="CAP-06-D06-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D07" data-recommendation="Use external-content/contentless FTS5 tables keyed to canonical stable IDs; treat them as disposable projections rebuilt from authoritative records." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D07</span><h3>FTS layout</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Canonical transactions and rights live in SQLite domain tables; FTS can be recreated, integrity-checked and replaced.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D07-option-0">
+  <input id="CAP-06-D07-option-0" type="radio" name="CAP-06-D07" value="Use external-content/contentless FTS5 tables keyed to canonical stable IDs; treat them as disposable projections rebuilt from authoritative records." data-decision-option checked>
+  <span><strong>Use external-content/contentless FTS5 tables keyed to canonical stable IDs; treat them as disposable projections rebuilt from authoritative records.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D07-option-1">
+  <input id="CAP-06-D07-option-1" type="radio" name="CAP-06-D07" value="Store canonical records only inside FTS virtual tables." data-decision-option>
+  <span><strong>Store canonical records only inside FTS virtual tables.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D07-option-other">
+  <input id="CAP-06-D07-option-other" type="radio" name="CAP-06-D07" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D07-other-help">
+  <small id="CAP-06-D07-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D08" data-recommendation="BM25 with explicit per-field weights and deterministic stable-ID tie break; expose matched fields and snippets, not a misleading probability." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D08</span><h3>Ranking</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">The score is an index ranking signal and must remain interpretable and replayable.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D08-option-0">
+  <input id="CAP-06-D08-option-0" type="radio" name="CAP-06-D08" value="BM25 with explicit per-field weights and deterministic stable-ID tie break; expose matched fields and snippets, not a misleading probability." data-decision-option checked>
+  <span><strong>BM25 with explicit per-field weights and deterministic stable-ID tie break; expose matched fields and snippets, not a misleading probability.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D08-option-1">
+  <input id="CAP-06-D08-option-1" type="radio" name="CAP-06-D08" value="Normalize BM25 to “relevance percent.”" data-decision-option>
+  <span><strong>Normalize BM25 to “relevance percent.”</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D08-option-other">
+  <input id="CAP-06-D08-option-other" type="radio" name="CAP-06-D08" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D08-other-help">
+  <small id="CAP-06-D08-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D09" data-recommendation="Create separate work-level title/abstract vectors and passage-level vectors; every vector stores source revision and chunk selector." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D09</span><h3>Representation unit</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Work vectors support discovery while passage vectors support evidence retrieval; provenance remains exact.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D09-option-0">
+  <input id="CAP-06-D09-option-0" type="radio" name="CAP-06-D09" value="Create separate work-level title/abstract vectors and passage-level vectors; every vector stores source revision and chunk selector." data-decision-option checked>
+  <span><strong>Create separate work-level title/abstract vectors and passage-level vectors; every vector stores source revision and chunk selector.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D09-option-1">
+  <input id="CAP-06-D09-option-1" type="radio" name="CAP-06-D09" value="One vector per PDF or unanchored fixed-token chunks." data-decision-option>
+  <span><strong>One vector per PDF or unanchored fixed-token chunks.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D09-option-other">
+  <input id="CAP-06-D09-option-other" type="radio" name="CAP-06-D09" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D09-other-help">
+  <small id="CAP-06-D09-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D10" data-recommendation="Benchmark SPECTER2 retrieval and adhoc-query adapters as the initial scientific baseline; pin revision/license and allow ONNX or Transformers execution." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D10</span><h3>Baseline model</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">SPECTER2 supplies scientific training and task adapters, but the gateway contract keeps it replaceable.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D10-option-0">
+  <input id="CAP-06-D10-option-0" type="radio" name="CAP-06-D10" value="Benchmark SPECTER2 retrieval and adhoc-query adapters as the initial scientific baseline; pin revision/license and allow ONNX or Transformers execution." data-decision-option checked>
+  <span><strong>Benchmark SPECTER2 retrieval and adhoc-query adapters as the initial scientific baseline; pin revision/license and allow ONNX or Transformers execution.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D10-option-1">
+  <input id="CAP-06-D10-option-1" type="radio" name="CAP-06-D10" value="Use a general-purpose embedding model without scientific evaluation." data-decision-option>
+  <span><strong>Use a general-purpose embedding model without scientific evaluation.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D10-option-other">
+  <input id="CAP-06-D10-option-other" type="radio" name="CAP-06-D10" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D10-other-help">
+  <small id="CAP-06-D10-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D11" data-recommendation="Approve Qdrant sidecar only if Windows install, filtering, recovery, portability and latency tests pass; retain exact NumPy/SQLite candidate fallback for small corpora." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D11</span><h3>Index adapter</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">A supervised service gives production health/filtering, while fallback protects correctness and offline continuity.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D11-option-0">
+  <input id="CAP-06-D11-option-0" type="radio" name="CAP-06-D11" value="Approve Qdrant sidecar only if Windows install, filtering, recovery, portability and latency tests pass; retain exact NumPy/SQLite candidate fallback for small corpora." data-decision-option checked>
+  <span><strong>Approve Qdrant sidecar only if Windows install, filtering, recovery, portability and latency tests pass; retain exact NumPy/SQLite candidate fallback for small corpora.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D11-option-1">
+  <input id="CAP-06-D11-option-1" type="radio" name="CAP-06-D11" value="Use Qdrant local mode as if it had service snapshot parity; store vectors in canonical relational rows for every query." data-decision-option>
+  <span><strong>Use Qdrant local mode as if it had service snapshot parity; store vectors in canonical relational rows for every query.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D11-option-other">
+  <input id="CAP-06-D11-option-other" type="radio" name="CAP-06-D11" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D11-other-help">
+  <small id="CAP-06-D11-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D12" data-recommendation="RRF over stable lexical and semantic rank lists, with explicit source weights only when approved by evaluation." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D12</span><h3>Fusion default</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Rank fusion avoids incompatible score calibration and provides clear component evidence.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D12-option-0">
+  <input id="CAP-06-D12-option-0" type="radio" name="CAP-06-D12" value="RRF over stable lexical and semantic rank lists, with explicit source weights only when approved by evaluation." data-decision-option checked>
+  <span><strong>RRF over stable lexical and semantic rank lists, with explicit source weights only when approved by evaluation.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D12-option-1">
+  <input id="CAP-06-D12-option-1" type="radio" name="CAP-06-D12" value="Weighted sum of BM25 and cosine similarity." data-decision-option>
+  <span><strong>Weighted sum of BM25 and cosine similarity.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D12-option-other">
+  <input id="CAP-06-D12-option-other" type="radio" name="CAP-06-D12" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D12-other-help">
+  <small id="CAP-06-D12-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D13" data-recommendation="Rerank a configurable top-N candidate set (default 50) after rights/filter enforcement; timeout returns fused order." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D13</span><h3>Rerank boundary</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Bounded reranking controls latency/cost and preserves a deterministic fallback.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D13-option-0">
+  <input id="CAP-06-D13-option-0" type="radio" name="CAP-06-D13" value="Rerank a configurable top-N candidate set (default 50) after rights/filter enforcement; timeout returns fused order." data-decision-option checked>
+  <span><strong>Rerank a configurable top-N candidate set (default 50) after rights/filter enforcement; timeout returns fused order.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D13-option-1">
+  <input id="CAP-06-D13-option-1" type="radio" name="CAP-06-D13" value="Rerank the full corpus or make reranking mandatory." data-decision-option>
+  <span><strong>Rerank the full corpus or make reranking mandatory.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D13-option-other">
+  <input id="CAP-06-D13-option-other" type="radio" name="CAP-06-D13" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D13-other-help">
+  <small id="CAP-06-D13-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D14" data-recommendation="Replay against pinned corpus/index/model snapshots; otherwise produce an explicit drift comparison, not a false exact replay claim." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D14</span><h3>Replay semantics</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Scholarly reproducibility requires distinguishing identical inputs from changed evidence state.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D14-option-0">
+  <input id="CAP-06-D14-option-0" type="radio" name="CAP-06-D14" value="Replay against pinned corpus/index/model snapshots; otherwise produce an explicit drift comparison, not a false exact replay claim." data-decision-option checked>
+  <span><strong>Replay against pinned corpus/index/model snapshots; otherwise produce an explicit drift comparison, not a false exact replay claim.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D14-option-1">
+  <input id="CAP-06-D14-option-1" type="radio" name="CAP-06-D14" value="Re-run against current state and label it reproduced." data-decision-option>
+  <span><strong>Re-run against current state and label it reproduced.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D14-option-other">
+  <input id="CAP-06-D14-option-other" type="radio" name="CAP-06-D14" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D14-other-help">
+  <small id="CAP-06-D14-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D15" data-recommendation="Draft query revisions are local UI state; only executed/saved runs become immutable SearchRun nodes." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D15</span><h3>Editing model</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Separating draft from executed state preserves an auditable search history.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D15-option-0">
+  <input id="CAP-06-D15-option-0" type="radio" name="CAP-06-D15" value="Draft query revisions are local UI state; only executed/saved runs become immutable SearchRun nodes." data-decision-option checked>
+  <span><strong>Draft query revisions are local UI state; only executed/saved runs become immutable SearchRun nodes.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D15-option-1">
+  <input id="CAP-06-D15-option-1" type="radio" name="CAP-06-D15" value="Overwrite the last run as the user edits." data-decision-option>
+  <span><strong>Overwrite the last run as the user edits.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D15-option-other">
+  <input id="CAP-06-D15-option-other" type="radio" name="CAP-06-D15" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D15-other-help">
+  <small id="CAP-06-D15-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D16" data-recommendation="Compile from canonical AST to per-source dialect and return unsupported/approximated clauses with warnings." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D16</span><h3>Translation</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Source syntaxes and fields differ; explicit loss reporting prevents false reproducibility.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D16-option-0">
+  <input id="CAP-06-D16-option-0" type="radio" name="CAP-06-D16" value="Compile from canonical AST to per-source dialect and return unsupported/approximated clauses with warnings." data-decision-option checked>
+  <span><strong>Compile from canonical AST to per-source dialect and return unsupported/approximated clauses with warnings.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D16-option-1">
+  <input id="CAP-06-D16-option-1" type="radio" name="CAP-06-D16" value="Copy one Boolean string to every database." data-decision-option>
+  <span><strong>Copy one Boolean string to every database.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D16-option-other">
+  <input id="CAP-06-D16-option-other" type="radio" name="CAP-06-D16" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D16-other-help">
+  <small id="CAP-06-D16-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D17" data-recommendation="Treat every expansion as an explicit bounded operation with seeds, relation type, depth/limit, preview and provenance." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D17</span><h3>Expansion</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Bounded operations make discovery paths inspectable, cancelable and reproducible.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D17-option-0">
+  <input id="CAP-06-D17-option-0" type="radio" name="CAP-06-D17" value="Treat every expansion as an explicit bounded operation with seeds, relation type, depth/limit, preview and provenance." data-decision-option checked>
+  <span><strong>Treat every expansion as an explicit bounded operation with seeds, relation type, depth/limit, preview and provenance.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D17-option-1">
+  <input id="CAP-06-D17-option-1" type="radio" name="CAP-06-D17" value="Background recursive graph crawl with hidden heuristics." data-decision-option>
+  <span><strong>Background recursive graph crawl with hidden heuristics.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D17-option-other">
+  <input id="CAP-06-D17-option-other" type="radio" name="CAP-06-D17" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D17-other-help">
+  <small id="CAP-06-D17-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D18" data-recommendation="Every percentage states denominator, known/unknown count, source snapshot and field derivation." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D18</span><h3>Diagnostic denominators</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Missingness is itself a corpus property and must remain visible.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D18-option-0">
+  <input id="CAP-06-D18-option-0" type="radio" name="CAP-06-D18" value="Every percentage states denominator, known/unknown count, source snapshot and field derivation." data-decision-option checked>
+  <span><strong>Every percentage states denominator, known/unknown count, source snapshot and field derivation.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D18-option-1">
+  <input id="CAP-06-D18-option-1" type="radio" name="CAP-06-D18" value="Compute percentages after silently dropping missing values." data-decision-option>
+  <span><strong>Compute percentages after silently dropping missing values.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D18-option-other">
+  <input id="CAP-06-D18-option-other" type="radio" name="CAP-06-D18" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D18-other-help">
+  <small id="CAP-06-D18-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D19" data-recommendation="Use cached, versioned 2D/cluster projections only for navigation; canonical records and inclusion state remain authoritative." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D19</span><h3>Canvas projection</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Projections are model-dependent views, not scholarly truth.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D19-option-0">
+  <input id="CAP-06-D19-option-0" type="radio" name="CAP-06-D19" value="Use cached, versioned 2D/cluster projections only for navigation; canonical records and inclusion state remain authoritative." data-decision-option checked>
+  <span><strong>Use cached, versioned 2D/cluster projections only for navigation; canonical records and inclusion state remain authoritative.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D19-option-1">
+  <input id="CAP-06-D19-option-1" type="radio" name="CAP-06-D19" value="Persist manual node coordinates as the field model." data-decision-option>
+  <span><strong>Persist manual node coordinates as the field model.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D19-option-other">
+  <input id="CAP-06-D19-option-other" type="radio" name="CAP-06-D19" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D19-other-help">
+  <small id="CAP-06-D19-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D20" data-recommendation="Create immutable boundary scenarios referencing base snapshot plus rule differences; compare coverage and downstream candidate changes." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D20</span><h3>Sensitivity</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Scenario snapshots make reflexive analysis reproducible and reversible.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D20-option-0">
+  <input id="CAP-06-D20-option-0" type="radio" name="CAP-06-D20" value="Create immutable boundary scenarios referencing base snapshot plus rule differences; compare coverage and downstream candidate changes." data-decision-option checked>
+  <span><strong>Create immutable boundary scenarios referencing base snapshot plus rule differences; compare coverage and downstream candidate changes.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D20-option-1">
+  <input id="CAP-06-D20-option-1" type="radio" name="CAP-06-D20" value="Mutate the main corpus to test a what-if question." data-decision-option>
+  <span><strong>Mutate the main corpus to test a what-if question.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D20-option-other">
+  <input id="CAP-06-D20-option-other" type="radio" name="CAP-06-D20" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D20-other-help">
+  <small id="CAP-06-D20-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D21" data-recommendation="Transparent TF-IDF plus regularized linear classifier and configurable query strategy as the initial reproducible baseline; model port permits alternatives." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D21</span><h3>Baseline learner</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">A simple baseline is fast, inspectable and effective for active prioritization; evaluation can justify replacement.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D21-option-0">
+  <input id="CAP-06-D21-option-0" type="radio" name="CAP-06-D21" value="Transparent TF-IDF plus regularized linear classifier and configurable query strategy as the initial reproducible baseline; model port permits alternatives." data-decision-option checked>
+  <span><strong>Transparent TF-IDF plus regularized linear classifier and configurable query strategy as the initial reproducible baseline; model port permits alternatives.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D21-option-1">
+  <input id="CAP-06-D21-option-1" type="radio" name="CAP-06-D21" value="Start with an opaque large neural model." data-decision-option>
+  <span><strong>Start with an opaque large neural model.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D21-option-other">
+  <input id="CAP-06-D21-option-other" type="radio" name="CAP-06-D21" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D21-other-help">
+  <small id="CAP-06-D21-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D22" data-recommendation="Immutable per-reviewer decisions with protocol version; adjudication produces a separate human record." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D22</span><h3>Decision model</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Reviewer independence and disagreement are evidence about the process.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D22-option-0">
+  <input id="CAP-06-D22-option-0" type="radio" name="CAP-06-D22" value="Immutable per-reviewer decisions with protocol version; adjudication produces a separate human record." data-decision-option checked>
+  <span><strong>Immutable per-reviewer decisions with protocol version; adjudication produces a separate human record.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D22-option-1">
+  <input id="CAP-06-D22-option-1" type="radio" name="CAP-06-D22" value="Overwrite conflicting labels with the last action." data-decision-option>
+  <span><strong>Overwrite conflicting labels with the last action.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D22-option-other">
+  <input id="CAP-06-D22-option-other" type="radio" name="CAP-06-D22" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D22-other-help">
+  <small id="CAP-06-D22-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-06-D23" data-recommendation="Multi-signal recommendation using yield curve, random-audit misses, citation-neighbor misses, uncertainty and protocol threshold; named human approval required." data-plan-hash="f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-06-D23</span><h3>Stopping</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">No single model-derived threshold demonstrates that relevant records are absent.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-06-D23-option-0">
+  <input id="CAP-06-D23-option-0" type="radio" name="CAP-06-D23" value="Multi-signal recommendation using yield curve, random-audit misses, citation-neighbor misses, uncertainty and protocol threshold; named human approval required." data-decision-option checked>
+  <span><strong>Multi-signal recommendation using yield curve, random-audit misses, citation-neighbor misses, uncertainty and protocol threshold; named human approval required.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-06-D23-option-1">
+  <input id="CAP-06-D23-option-1" type="radio" name="CAP-06-D23" value="Stop when model score falls below a fixed threshold." data-decision-option>
+  <span><strong>Stop when model score falls below a fixed threshold.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-06-D23-option-other">
+  <input id="CAP-06-D23-option-other" type="radio" name="CAP-06-D23" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-06-D23-other-help">
+  <small id="CAP-06-D23-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+</div>
+<section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
+<div class="slice-list">
+<a class="slice-card" href="CAP-06.S01.html">
+  <div class="slice-card-index">1</div>
+  <div><span class="eyebrow">CAP-06.S01</span><h3>Fielded lexical search and local indexing</h3>
+  <p>3 tasks · W3 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-06.S02.html">
+  <div class="slice-card-index">2</div>
+  <div><span class="eyebrow">CAP-06.S02</span><h3>Semantic representations and vector retrieval</h3>
+  <p>3 tasks · W3 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-06.S03.html">
+  <div class="slice-card-index">3</div>
+  <div><span class="eyebrow">CAP-06.S03</span><h3>Hybrid retrieval and reranking</h3>
+  <p>3 tasks · W3 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-06.S04.html">
+  <div class="slice-card-index">4</div>
+  <div><span class="eyebrow">CAP-06.S04</span><h3>Search Studio and transparent expansion</h3>
+  <p>3 tasks · W3 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-06.S05.html">
+  <div class="slice-card-index">5</div>
+  <div><span class="eyebrow">CAP-06.S05</span><h3>Corpus canvas, coverage, and reflexivity diagnostics</h3>
+  <p>3 tasks · W3 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-06.S06.html">
+  <div class="slice-card-index">6</div>
+  <div><span class="eyebrow">CAP-06.S06</span><h3>Transparent screening and active-learning governance</h3>
+  <p>3 tasks · W3 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a></div>
+<details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+
+&lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Review all slices&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Confirm or override resolved defaults&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve once&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Run long capability campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Production readiness review&lt;/span&gt;&lt;/div&gt;
+
+## 0. Control and authority
+
+| Field | Value |
+|---|---|
+| Capability | `CAP-06` — Local search, discovery, corpus diagnostics, and screening |
+| Objective | Deliver transparent lexical, semantic, citation, and active-learning workflows that can construct high-recall corpora without turning retrieval into an opaque chat session. |
+| Execution mode | Capability campaign; slices complete in dependency order |
+| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Slice plans | `CAP-06.S01`, `CAP-06.S02`, `CAP-06.S03`, `CAP-06.S04`, `CAP-06.S05`, `CAP-06.S06` |
+| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
+| Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
+
+## 1. Capability outcome and production-ready exit
+
+The campaign must deliver: **Deliver transparent lexical, semantic, citation, and active-learning workflows that can construct high-recall corpora without turning retrieval into an opaque chat session.**
+
+Production-ready exit criteria:
+
+- Lexical and semantic indexes are versioned, explainable, rebuildable, and usable offline for project content.
+- Search evolution is stored as a visible tree of exact queries, transformations, results, and discovery paths.
+- Screening supports human inclusion decisions, uncertainty/random audits, stopping evidence, and reproducible exports.
+
+Completion also requires all slices and tasks independently approved, capability-wide end-to-end evidence, failure/denial/cancel/restart/recovery/security/accessibility/platform coverage, accepted handoffs and no concealed production blockers.
+
+## 2. Slice map and end-to-end dependency logic
+
+| Slice | Responsibility | Production outcome | Upstream dependencies |
+|---|---|---|---|
+| `CAP-06.S01` | Fielded lexical search and local indexing | Exact terminology, Boolean logic, metadata filters, and reproducible ranking are available through SQLite FTS5. | `CAP-04.S04.T03`, `CAP-05.S03.T03` |
+| `CAP-06.S02` | Semantic representations and vector retrieval | Conceptually related literature is retrievable through a replaceable, versioned local embedding interface. | `CAP-06.S01.T02`, `CAP-07.S01.T03` |
+| `CAP-06.S03` | Hybrid retrieval and reranking | Search ensembles combine exact, semantic, graph, and project-specific relevance while preserving component evidence. | `CAP-06.S01.T03`, `CAP-06.S02.T03` |
+| `CAP-06.S04` | Search Studio and transparent expansion | Researchers can iteratively broaden, narrow, branch, and compare searches without losing their reasoning history. | `CAP-06.S03.T03`, `CAP-04.S02.T03` |
+| `CAP-06.S05` | Corpus canvas, coverage, and reflexivity diagnostics | Field structure and collection bias are visible before analytical claims are made. | `CAP-06.S04.T03`, `CAP-04.S04.T03` |
+| `CAP-06.S06` | Transparent screening and active-learning governance | Humans retain inclusion authority while machine prioritization reduces avoidable screening labor and exposes missed-paper risk. | `CAP-06.S05.T02`, `CAP-03.S02.T03` |
+
+The planning reviewer must test the complete vertical: inputs from previous capabilities, each slice handoff, researcher workflow, durable/provenance behavior, degraded/recovery path and downstream contract. Slice-level optimization may not break the capability-wide path.
+
+## 3. Decision-making protocol
+
+1. Read every slice plan, backlog task, architecture boundary, workflow/page contract and relevant benchmark/source.
+2. For each material choice, compare credible candidates using functionality, security, privacy/rights, portability, maintainability, licensing, local resource use, recovery, evaluation quality and downstream compatibility.
+3. Present the leading candidates and an explicit recommendation. Avoid asking an open-ended question when evidence supports a best direction.
+4. Record the accepted selection, rejected alternatives, evidence and replaceability/migration boundary in this packet and any required ADR.
+5. Validate that the selected set is internally compatible and can complete all slices end to end.
+6. Resolve all reasonably foreseeable decisions before campaign start. Implementation should not repeatedly interrupt the human for ordinary engineering choices.
+
+## 4. Decision register
+
+| ID | Decision | Recommended selection | Credible alternative | Why recommended / replacement boundary | Basis |
+|---|---|---|---|---|---|
+| `CAP-06-D01` | **Canonical lexical query representation** | Typed internal query AST compiled to SQLite FTS5 and external-source dialects | Store raw FTS5 strings as project truth; use an external search DSL library as the domain model | An AST preserves exact execution, location-specific validation, translations and future server adapters without letting an index syntax become the domain contract. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
+| `CAP-06-D02` | **Scientific semantic baseline** | Benchmark SPECTER2 retrieval/adhoc-query adapters against the project gold set; retain model port and exact fallback | Use a generic sentence embedding model by default; hard-code SPECTER2 indefinitely | Scientific representations are a stronger starting point, but the chosen model remains evidence- and license-dependent and must be replaceable. | [SciRepEval: A Multi-Format Benchmark for Scientific Document Representations](https://aclanthology.org/2023.emnlp-main.338/) |
+| `CAP-06-D03` | **Local vector engine** | Benchmark Qdrant service sidecar against a portable exact-cosine fallback and approve through ADR | Treat Qdrant Python local mode as production equivalent; embed vector files directly in canonical storage | Service mode has the operational surface needed for filters and recovery; exact fallback preserves correctness and usability when the service is unavailable. | [Qdrant Snapshots](https://qdrant.tech/documentation/concepts/snapshots/) |
+| `CAP-06-D04` | **Hybrid fusion** | Reciprocal Rank Fusion with deterministic tie rules, optional learned/calibrated alternatives later | Normalize incomparable raw scores into a fixed weighted sum | RRF combines ranks without fragile score calibration and remains easy to explain and replay. | [Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods](https://doi.org/10.1145/1571941.1572114) |
+| `CAP-06-D05` | **Screening authority** | Machine learning prioritizes only; named humans own inclusion/exclusion and stopping approval | Autonomous inclusion or stopping based on classifier score | Transparent prioritization can reduce work without converting a relevance model into a scholarly decision maker. | [An Open Source Machine Learning Framework for Efficient and Transparent Systematic Reviews](https://doi.org/10.1038/s42256-020-00287-7) |
+| `CAP-06-D06` | **Tokenizer/analyzer** | Use `unicode61 remove_diacritics 2` as the general baseline; add an independently benchmarked trigram auxiliary index only for identifiers/titles that need substring tolerance. | Default porter stemming or one opaque language analyzer for all content. | Language-neutral exactness and explainability are more important than aggressive English stemming; analyzer choice is part of the index manifest. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
+| `CAP-06-D07` | **FTS layout** | Use external-content/contentless FTS5 tables keyed to canonical stable IDs; treat them as disposable projections rebuilt from authoritative records. | Store canonical records only inside FTS virtual tables. | Canonical transactions and rights live in SQLite domain tables; FTS can be recreated, integrity-checked and replaced. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
+| `CAP-06-D08` | **Ranking** | BM25 with explicit per-field weights and deterministic stable-ID tie break; expose matched fields and snippets, not a misleading probability. | Normalize BM25 to “relevance percent.” | The score is an index ranking signal and must remain interpretable and replayable. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
+| `CAP-06-D09` | **Representation unit** | Create separate work-level title/abstract vectors and passage-level vectors; every vector stores source revision and chunk selector. | One vector per PDF or unanchored fixed-token chunks. | Work vectors support discovery while passage vectors support evidence retrieval; provenance remains exact. | [Web Annotation Data Model](https://www.w3.org/TR/annotation-model/) |
+| `CAP-06-D10` | **Baseline model** | Benchmark SPECTER2 retrieval and adhoc-query adapters as the initial scientific baseline; pin revision/license and allow ONNX or Transformers execution. | Use a general-purpose embedding model without scientific evaluation. | SPECTER2 supplies scientific training and task adapters, but the gateway contract keeps it replaceable. | [AllenAI SPECTER2 Model Card](https://huggingface.co/allenai/specter2) |
+| `CAP-06-D11` | **Index adapter** | Approve Qdrant sidecar only if Windows install, filtering, recovery, portability and latency tests pass; retain exact NumPy/SQLite candidate fallback for small corpora. | Use Qdrant local mode as if it had service snapshot parity; store vectors in canonical relational rows for every query. | A supervised service gives production health/filtering, while fallback protects correctness and offline continuity. | [Qdrant Snapshots](https://qdrant.tech/documentation/concepts/snapshots/) |
+| `CAP-06-D12` | **Fusion default** | RRF over stable lexical and semantic rank lists, with explicit source weights only when approved by evaluation. | Weighted sum of BM25 and cosine similarity. | Rank fusion avoids incompatible score calibration and provides clear component evidence. | [Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods](https://doi.org/10.1145/1571941.1572114) |
+| `CAP-06-D13` | **Rerank boundary** | Rerank a configurable top-N candidate set (default 50) after rights/filter enforcement; timeout returns fused order. | Rerank the full corpus or make reranking mandatory. | Bounded reranking controls latency/cost and preserves a deterministic fallback. | [Retrieve &amp; Re-Rank - Sentence Transformers](https://www.sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html) |
+| `CAP-06-D14` | **Replay semantics** | Replay against pinned corpus/index/model snapshots; otherwise produce an explicit drift comparison, not a false exact replay claim. | Re-run against current state and label it reproduced. | Scholarly reproducibility requires distinguishing identical inputs from changed evidence state. | [PRISMA-S: An Extension to the PRISMA Statement for Reporting Literature Searches](https://doi.org/10.1186/s13643-020-01542-z) |
+| `CAP-06-D15` | **Editing model** | Draft query revisions are local UI state; only executed/saved runs become immutable SearchRun nodes. | Overwrite the last run as the user edits. | Separating draft from executed state preserves an auditable search history. | [PRISMA-S: An Extension to the PRISMA Statement for Reporting Literature Searches](https://doi.org/10.1186/s13643-020-01542-z) |
+| `CAP-06-D16` | **Translation** | Compile from canonical AST to per-source dialect and return unsupported/approximated clauses with warnings. | Copy one Boolean string to every database. | Source syntaxes and fields differ; explicit loss reporting prevents false reproducibility. | [PRISMA-S: An Extension to the PRISMA Statement for Reporting Literature Searches](https://doi.org/10.1186/s13643-020-01542-z) |
+| `CAP-06-D17` | **Expansion** | Treat every expansion as an explicit bounded operation with seeds, relation type, depth/limit, preview and provenance. | Background recursive graph crawl with hidden heuristics. | Bounded operations make discovery paths inspectable, cancelable and reproducible. | [Semantic Scholar Academic Graph API](https://www.semanticscholar.org/product/api) |
+| `CAP-06-D18` | **Diagnostic denominators** | Every percentage states denominator, known/unknown count, source snapshot and field derivation. | Compute percentages after silently dropping missing values. | Missingness is itself a corpus property and must remain visible. | [PRISMA 2020 Statement](https://doi.org/10.1136/bmj.n71) |
+| `CAP-06-D19` | **Canvas projection** | Use cached, versioned 2D/cluster projections only for navigation; canonical records and inclusion state remain authoritative. | Persist manual node coordinates as the field model. | Projections are model-dependent views, not scholarly truth. | [SciRepEval: A Multi-Format Benchmark for Scientific Document Representations](https://aclanthology.org/2023.emnlp-main.338/) |
+| `CAP-06-D20` | **Sensitivity** | Create immutable boundary scenarios referencing base snapshot plus rule differences; compare coverage and downstream candidate changes. | Mutate the main corpus to test a what-if question. | Scenario snapshots make reflexive analysis reproducible and reversible. | [PRISMA-S: An Extension to the PRISMA Statement for Reporting Literature Searches](https://doi.org/10.1186/s13643-020-01542-z) |
+| `CAP-06-D21` | **Baseline learner** | Transparent TF-IDF plus regularized linear classifier and configurable query strategy as the initial reproducible baseline; model port permits alternatives. | Start with an opaque large neural model. | A simple baseline is fast, inspectable and effective for active prioritization; evaluation can justify replacement. | [ASReview Documentation](https://asreview.readthedocs.io/en/latest/) |
+| `CAP-06-D22` | **Decision model** | Immutable per-reviewer decisions with protocol version; adjudication produces a separate human record. | Overwrite conflicting labels with the last action. | Reviewer independence and disagreement are evidence about the process. | [An Open Source Machine Learning Framework for Efficient and Transparent Systematic Reviews](https://doi.org/10.1038/s42256-020-00287-7) |
+| `CAP-06-D23` | **Stopping** | Multi-signal recommendation using yield curve, random-audit misses, citation-neighbor misses, uncertainty and protocol threshold; named human approval required. | Stop when model score falls below a fixed threshold. | No single model-derived threshold demonstrates that relevant records are absent. | [PRISMA 2020 Statement](https://doi.org/10.1136/bmj.n71) |
+
+### Review and approval
+
+The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+
+
+## 5. Cross-slice architecture contract
+
+- Preserve the authority order: canonical relational/provenance records and human decisions first; indexes, caches, graph projections, model outputs, rankings and generated artifacts remain versioned derivatives unless the Systems Design explicitly states otherwise.
+- Stable ports isolate platform, storage, source, parser, model/provider, vector, graph, renderer and deployment adapters.
+- Every durable output records source snapshot, schema/policy/model/tool versions, rights/privacy decisions, human decisions and dependency links.
+- All long-running jobs are durable, idempotent where appropriate, cancellable, checkpointed, restartable and independently reviewable.
+- The campaign remains local/Windows-first for the current waves while producing portable contracts and fixtures needed by CAP-14 macOS/Linux qualification.
+- No later capability is implemented early except its documented interface/fixture seam.
+
+## 6. Experience and workflow contract
+
+Relevant approved pages: `search-studio.html`, `corpus-canvas.html`, `screening.html`
+
+- The project use case determines the primary ordered workflow. Each page shows current stage, prior/next stage, expected output and completion/checkpoint state.
+- All tools remain accessible as supporting tools with a clear route back to the primary workflow.
+- Intentional changes require the style guide/workflow/page prototype to be updated, validated and human-approved before implementation.
+- Accessibility, light/dark parity, offline/partial/error/recovery states and source/provenance inspection are capability exit requirements, not post-release polish.
+
+## 7. Security, privacy, rights and research-integrity decisions
+
+The reviewer must confirm the entire capability’s trust boundaries, data classes, authorization roles, secret/egress rules, rights/license handling, untrusted-content controls, logging/redaction, export behavior, model licenses and human scholarly authority. Where one slice’s output changes another slice’s rights or confidentiality exposure, the stricter policy travels with the object.
+
+## 8. Capability-wide verification strategy
+
+- **Contract:** all portable schemas, negative fixtures and adapter conformance.
+- **Integration:** real local components, deterministic provider/source/model fixtures, transaction/outbox/dependency behavior.
+- **End to end:** representative workflow across every slice with source inspection and human decision.
+- **Recovery:** cancellation, process/application restart, corrupted derivative, migration, rollback/repair and project relocation.
+- **Security/rights:** denial, malicious content, prompt injection, path/archive abuse, egress and export filters, redacted diagnostics.
+- **Quality/evaluation:** capability-specific gold sets, ablations, calibration/error analysis and independent human samples.
+- **Experience:** approved reference, adaptive navigation, keyboard/screen reader/zoom/reflow and light/dark visual checks.
+- **Performance:** reference hardware/corpus budgets plus 20% regression threshold.
+- **Independent review:** tests must demonstrate semantics, not merely execute code.
+
+## 9. Long-running execution contract
+
+Once approved and started, the agent should execute the whole capability slice by slice. It may make ordinary low-risk implementation choices within the accepted architecture, debug tests, refactor within module boundaries, select documented fallbacks and rerun evaluations without asking for confirmation. Progress is recorded through task/slice evidence and periodic concise updates rather than approval stops.
+
+### Allowed pause classifications
+
+- A search/vector/model ADR cannot be approved from available benchmark evidence.
+- The approved UI reference must change materially.
+- A source license or rights rule prevents the intended indexing behavior.
+- Required platform hardware is unavailable for a declared release qualification.
+- A governed UI/design change that requires a new approved reference.
+
+Every pause records category, evidence, exact blocked task/slice, attempted alternatives, recommended next action and conditions for resume. Test failures and routine uncertainty are not pause reasons.
+
+## 10. Plan and approval checklist
+
+- [ ] All slice plans exist and pass `slice_plan_check.py` structurally.
+- [ ] Every material decision has credible candidates, recommendation and accepted status.
+- [ ] Required ADRs and design-reference changes are approved.
+- [ ] Capability-wide architecture and end-to-end path are coherent.
+- [ ] Fixtures, benchmarks, credentials/licenses, hardware and human authorities are available or approved stubs exist.
+- [ ] Security/privacy/rights/research-integrity review is complete.
+- [ ] All slice plans are approved at immutable commits.
+- [ ] `python tools/planctl.py ready CAP-06 --require-approved` passes.
+- [ ] The first dependency-ready task can start and the campaign can continue without routine decision stops.
+
+## 11. Research and technical basis
+
+- [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) — Local fielded lexical indexing, BM25 ranking, snippets, rebuild and integrity checks.
+- [Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods](https://doi.org/10.1145/1571941.1572114) — Deterministic rank-level lexical/semantic fusion without score calibration assumptions.
+- [SciRepEval: A Multi-Format Benchmark for Scientific Document Representations](https://aclanthology.org/2023.emnlp-main.338/) — Scientific document embedding baseline and task-specific adapters.
+- [ASReview Documentation](https://asreview.readthedocs.io/en/latest/) — Transparent active-learning-assisted screening patterns.
+- [PRISMA-S: An Extension to the PRISMA Statement for Reporting Literature Searches](https://doi.org/10.1186/s13643-020-01542-z) — Search-strategy and information-source reporting.
+
+## 12. Approval record
+
+The packet remains **proposed**. Approval requires:
+
+- `decision_completion: complete`;
+- every front-matter decision `status: accepted`;
+- `approval.status: approved`, named approver, timestamp and approved commit;
+- approved slice plans and any required ADRs/reference versions;
+- passing approval-mode plan validation.
+</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>

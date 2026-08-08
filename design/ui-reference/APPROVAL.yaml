@@ -1,0 +1,42 @@
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.3
+version: '1.3'
+status: approved
+approved_by: Project-owner direction
+approved_at: '2026-08-07'
+approval_basis: The project owner selected Academic Minimal, required objective-specific
+  guided workflows, expanded the platform through empirical study design and article
+  production, required extended reviewer simulation, and directed macOS/Linux parity
+  after the Windows desktop waves.
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.2
+scope:
+  normative:
+  - design tokens
+  - semantic evidence, result, manuscript, review, and revision-state meanings
+  - fourteen use-case workflow profiles
+  - project-creation selection
+  - adaptive ordered navigation
+  - workflow context and previous/next behavior
+  - route and page inventory
+  - required page regions
+  - research-production safeguards
+  - cross-platform desktop parity
+  - light/dark parity
+  - keyboard, focus, responsive, density, and accessibility behavior
+  illustrative:
+  - mock names
+  - studies
+  - sources
+  - providers
+  - counts
+  - dates
+  - prose
+  - chart values
+  - nonfunctional actions
+implementation_rule: Any intentional user-facing change requires a proposed reference
+  update, validation, and explicit human approval before application implementation.
+  Restoring a defect to this baseline may cite the approved reference.
+deferred_surfaces:
+- university administrator console until W10
+- tenant administration until W11
+- billing until W11
+- managed-cloud operations console until W11

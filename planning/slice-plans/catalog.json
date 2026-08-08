@@ -1,0 +1,2548 @@
+{
+  "schema_version": "1.2",
+  "baseline": "1.3",
+  "supplemental_release": "1.3.4",
+  "status": "proposed",
+  "approval_required": true,
+  "planning_gate": "capability-decision-complete",
+  "capability_range": [
+    "CAP-01",
+    "CAP-15"
+  ],
+  "plan_count": 111,
+  "plans": [
+    {
+      "capability_id": "CAP-01",
+      "capability_title": "Windows-first desktop shell and supervised local runtime",
+      "slice_id": "CAP-01.S01",
+      "slice_title": "Tauri and React application shell",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-01/CAP-01.S01-tauri-and-react-application-shell.md",
+      "capability_plan": "planning/capability-plans/CAP-01.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-01.S01.T01",
+        "CAP-01.S01.T02",
+        "CAP-01.S01.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-00.S01.T03",
+        "CAP-00.S03.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-01",
+      "capability_title": "Windows-first desktop shell and supervised local runtime",
+      "slice_id": "CAP-01.S02",
+      "slice_title": "Desktop design system and accessibility foundation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-01/CAP-01.S02-desktop-design-system-and-accessibility-foundation.md",
+      "capability_plan": "planning/capability-plans/CAP-01.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-01.S02.T01",
+        "CAP-01.S02.T02",
+        "CAP-01.S02.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-01.S01.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-01",
+      "capability_title": "Windows-first desktop shell and supervised local runtime",
+      "slice_id": "CAP-01.S03",
+      "slice_title": "Packaged Python/FastAPI sidecar",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-01/CAP-01.S03-packaged-python-fastapi-sidecar.md",
+      "capability_plan": "planning/capability-plans/CAP-01.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-01.S03.T01",
+        "CAP-01.S03.T02",
+        "CAP-01.S03.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-00.S03.T02",
+        "CAP-01.S01.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-01",
+      "capability_title": "Windows-first desktop shell and supervised local runtime",
+      "slice_id": "CAP-01.S04",
+      "slice_title": "Authenticated desktop-service contract",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-01/CAP-01.S04-authenticated-desktop-service-contract.md",
+      "capability_plan": "planning/capability-plans/CAP-01.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-01.S04.T01",
+        "CAP-01.S04.T02",
+        "CAP-01.S04.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-01.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-01",
+      "capability_title": "Windows-first desktop shell and supervised local runtime",
+      "slice_id": "CAP-01.S05",
+      "slice_title": "Windows installation and update channels",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-01/CAP-01.S05-windows-installation-and-update-channels.md",
+      "capability_plan": "planning/capability-plans/CAP-01.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-01.S05.T01",
+        "CAP-01.S05.T02",
+        "CAP-01.S05.T03"
+      ],
+      "wave": "W5",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-01.S04.T03",
+        "CAP-00.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-02",
+      "capability_title": "Local projects, durable storage, security, and recovery",
+      "slice_id": "CAP-02.S01",
+      "slice_title": "Local project lifecycle and directory contract",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-02/CAP-02.S01-local-project-lifecycle-and-directory-contract.md",
+      "capability_plan": "planning/capability-plans/CAP-02.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-02.S01.T01",
+        "CAP-02.S01.T02",
+        "CAP-02.S01.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-00.S01.T03",
+        "CAP-01.S04.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-02",
+      "capability_title": "Local projects, durable storage, security, and recovery",
+      "slice_id": "CAP-02.S02",
+      "slice_title": "SQLite schema, migrations, and repository layer",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-02/CAP-02.S02-sqlite-schema-migrations-and-repository-layer.md",
+      "capability_plan": "planning/capability-plans/CAP-02.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-02.S02.T01",
+        "CAP-02.S02.T02",
+        "CAP-02.S02.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-02.S01.T01",
+        "CAP-03.S01.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-02",
+      "capability_title": "Local projects, durable storage, security, and recovery",
+      "slice_id": "CAP-02.S03",
+      "slice_title": "Encrypted local object and cache storage",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-02/CAP-02.S03-encrypted-local-object-and-cache-storage.md",
+      "capability_plan": "planning/capability-plans/CAP-02.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-02.S03.T01",
+        "CAP-02.S03.T02",
+        "CAP-02.S03.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-02.S02.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-02",
+      "capability_title": "Local projects, durable storage, security, and recovery",
+      "slice_id": "CAP-02.S04",
+      "slice_title": "Local secrets, profiles, and privacy controls",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-02/CAP-02.S04-local-secrets-profiles-and-privacy-controls.md",
+      "capability_plan": "planning/capability-plans/CAP-02.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-02.S04.T01",
+        "CAP-02.S04.T02",
+        "CAP-02.S04.T03",
+        "CAP-02.S04.T04"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-02.S03.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-02",
+      "capability_title": "Local projects, durable storage, security, and recovery",
+      "slice_id": "CAP-02.S05",
+      "slice_title": "Backup, restore, relocation, and lab portability",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-02/CAP-02.S05-backup-restore-relocation-and-lab-portability.md",
+      "capability_plan": "planning/capability-plans/CAP-02.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-02.S05.T01",
+        "CAP-02.S05.T02",
+        "CAP-02.S05.T03"
+      ],
+      "wave": "W5",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-02.S04.T03",
+        "CAP-03.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-03",
+      "capability_title": "Canonical domain, research intent, provenance, and durable workflows",
+      "slice_id": "CAP-03.S01",
+      "slice_title": "Canonical identifiers and domain contracts",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-03/CAP-03.S01-canonical-identifiers-and-domain-contracts.md",
+      "capability_plan": "planning/capability-plans/CAP-03.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-03.S01.T01",
+        "CAP-03.S01.T02",
+        "CAP-03.S01.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-00.S02.T01",
+        "CAP-00.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-03",
+      "capability_title": "Canonical domain, research intent, provenance, and durable workflows",
+      "slice_id": "CAP-03.S02",
+      "slice_title": "Research intent contract and mode governance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-03/CAP-03.S02-research-intent-contract-and-mode-governance.md",
+      "capability_plan": "planning/capability-plans/CAP-03.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-03.S02.T01",
+        "CAP-03.S02.T02",
+        "CAP-03.S02.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-03.S01.T03",
+        "CAP-01.S01.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-03",
+      "capability_title": "Canonical domain, research intent, provenance, and durable workflows",
+      "slice_id": "CAP-03.S03",
+      "slice_title": "Append-only provenance and audit ledger",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-03/CAP-03.S03-append-only-provenance-and-audit-ledger.md",
+      "capability_plan": "planning/capability-plans/CAP-03.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-03.S03.T01",
+        "CAP-03.S03.T02",
+        "CAP-03.S03.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-03.S01.T02",
+        "CAP-02.S02.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-03",
+      "capability_title": "Canonical domain, research intent, provenance, and durable workflows",
+      "slice_id": "CAP-03.S04",
+      "slice_title": "Portable workflow model and local worker fabric",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-03/CAP-03.S04-portable-workflow-model-and-local-worker-fabric.md",
+      "capability_plan": "planning/capability-plans/CAP-03.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-03.S04.T01",
+        "CAP-03.S04.T02",
+        "CAP-03.S04.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-03.S03.T02",
+        "CAP-02.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-03",
+      "capability_title": "Canonical domain, research intent, provenance, and durable workflows",
+      "slice_id": "CAP-03.S05",
+      "slice_title": "Dependency graph, staleness, and controlled recalculation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md",
+      "capability_plan": "planning/capability-plans/CAP-03.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-03.S05.T01",
+        "CAP-03.S05.T02",
+        "CAP-03.S05.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-03.S04.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-03",
+      "capability_title": "Canonical domain, research intent, provenance, and durable workflows",
+      "slice_id": "CAP-03.S06",
+      "slice_title": "Use-case profiles and adaptive guided navigation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
+      "capability_plan": "planning/capability-plans/CAP-03.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-03.S06.T01",
+        "CAP-03.S06.T02",
+        "CAP-03.S06.T03",
+        "CAP-03.S06.T04",
+        "CAP-03.S06.T05"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-03.S02.T01",
+        "CAP-00.S06.T04"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-04",
+      "capability_title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
+      "slice_id": "CAP-04.S01",
+      "slice_title": "Reference-library and file imports",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-04/CAP-04.S01-reference-library-and-file-imports.md",
+      "capability_plan": "planning/capability-plans/CAP-04.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-04.S01.T01",
+        "CAP-04.S01.T02",
+        "CAP-04.S01.T03"
+      ],
+      "wave": "W2",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-03.S03.T02",
+        "CAP-02.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-04",
+      "capability_title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
+      "slice_id": "CAP-04.S02",
+      "slice_title": "Open scholarly source adapters",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-04/CAP-04.S02-open-scholarly-source-adapters.md",
+      "capability_plan": "planning/capability-plans/CAP-04.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-04.S02.T01",
+        "CAP-04.S02.T02",
+        "CAP-04.S02.T03"
+      ],
+      "wave": "W2",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-04.S01.T01",
+        "CAP-07.S01.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-04",
+      "capability_title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
+      "slice_id": "CAP-04.S03",
+      "slice_title": "Canonical work, version, and identity reconciliation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-04/CAP-04.S03-canonical-work-version-and-identity-reconciliation.md",
+      "capability_plan": "planning/capability-plans/CAP-04.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-04.S03.T01",
+        "CAP-04.S03.T02",
+        "CAP-04.S03.T03"
+      ],
+      "wave": "W2",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-04.S01.T03",
+        "CAP-04.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-04",
+      "capability_title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
+      "slice_id": "CAP-04.S04",
+      "slice_title": "Corpus membership, discovery path, and rights governance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-04/CAP-04.S04-corpus-membership-discovery-path-and-rights-governance.md",
+      "capability_plan": "planning/capability-plans/CAP-04.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-04.S04.T01",
+        "CAP-04.S04.T02",
+        "CAP-04.S04.T03"
+      ],
+      "wave": "W2",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-04.S03.T03",
+        "CAP-03.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-04",
+      "capability_title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
+      "slice_id": "CAP-04.S05",
+      "slice_title": "Connector SDK and controlled extensibility",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-04/CAP-04.S05-connector-sdk-and-controlled-extensibility.md",
+      "capability_plan": "planning/capability-plans/CAP-04.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-04.S05.T01",
+        "CAP-04.S05.T02",
+        "CAP-04.S05.T03"
+      ],
+      "wave": "W2",
+      "priority": "P1",
+      "depends_on": [
+        "CAP-04.S04.T03",
+        "CAP-00.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-05",
+      "capability_title": "Document acquisition, parsing, source inspection, and page anchors",
+      "slice_id": "CAP-05.S01",
+      "slice_title": "Rights-aware document acquisition",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
+      "capability_plan": "planning/capability-plans/CAP-05.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-05.S01.T01",
+        "CAP-05.S01.T02",
+        "CAP-05.S01.T03"
+      ],
+      "wave": "W2",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-04.S04.T02",
+        "CAP-02.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-05",
+      "capability_title": "Document acquisition, parsing, source inspection, and page anchors",
+      "slice_id": "CAP-05.S02",
+      "slice_title": "Structured and PDF parsing pipeline",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-05/CAP-05.S02-structured-and-pdf-parsing-pipeline.md",
+      "capability_plan": "planning/capability-plans/CAP-05.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-05.S02.T01",
+        "CAP-05.S02.T02",
+        "CAP-05.S02.T03"
+      ],
+      "wave": "W2",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-05.S01.T03",
+        "CAP-03.S04.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-05",
+      "capability_title": "Document acquisition, parsing, source inspection, and page anchors",
+      "slice_id": "CAP-05.S03",
+      "slice_title": "Immutable document revisions and source anchors",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-05/CAP-05.S03-immutable-document-revisions-and-source-anchors.md",
+      "capability_plan": "planning/capability-plans/CAP-05.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-05.S03.T01",
+        "CAP-05.S03.T02",
+        "CAP-05.S03.T03"
+      ],
+      "wave": "W2",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-05.S02.T03",
+        "CAP-02.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-05",
+      "capability_title": "Document acquisition, parsing, source inspection, and page anchors",
+      "slice_id": "CAP-05.S04",
+      "slice_title": "Source viewer and evidence inspection experience",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md",
+      "capability_plan": "planning/capability-plans/CAP-05.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-05.S04.T01",
+        "CAP-05.S04.T02",
+        "CAP-05.S04.T03"
+      ],
+      "wave": "W2",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-05.S03.T03",
+        "CAP-01.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-05",
+      "capability_title": "Document acquisition, parsing, source inspection, and page anchors",
+      "slice_id": "CAP-05.S05",
+      "slice_title": "References, citation contexts, tables, and figures",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-05/CAP-05.S05-references-citation-contexts-tables-and-figures.md",
+      "capability_plan": "planning/capability-plans/CAP-05.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-05.S05.T01",
+        "CAP-05.S05.T02",
+        "CAP-05.S05.T03"
+      ],
+      "wave": "W2",
+      "priority": "P1",
+      "depends_on": [
+        "CAP-05.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-05",
+      "capability_title": "Document acquisition, parsing, source inspection, and page anchors",
+      "slice_id": "CAP-05.S06",
+      "slice_title": "Parsing quality, correction, and reprocessing",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-05/CAP-05.S06-parsing-quality-correction-and-reprocessing.md",
+      "capability_plan": "planning/capability-plans/CAP-05.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-05.S06.T01",
+        "CAP-05.S06.T02",
+        "CAP-05.S06.T03"
+      ],
+      "wave": "W2",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-05.S04.T02",
+        "CAP-03.S05.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-06",
+      "capability_title": "Local search, discovery, corpus diagnostics, and screening",
+      "slice_id": "CAP-06.S01",
+      "slice_title": "Fielded lexical search and local indexing",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
+      "capability_plan": "planning/capability-plans/CAP-06.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-06.S01.T01",
+        "CAP-06.S01.T02",
+        "CAP-06.S01.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-04.S04.T03",
+        "CAP-05.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-06",
+      "capability_title": "Local search, discovery, corpus diagnostics, and screening",
+      "slice_id": "CAP-06.S02",
+      "slice_title": "Semantic representations and vector retrieval",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
+      "capability_plan": "planning/capability-plans/CAP-06.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-06.S02.T01",
+        "CAP-06.S02.T02",
+        "CAP-06.S02.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-06.S01.T02",
+        "CAP-07.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-06",
+      "capability_title": "Local search, discovery, corpus diagnostics, and screening",
+      "slice_id": "CAP-06.S03",
+      "slice_title": "Hybrid retrieval and reranking",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
+      "capability_plan": "planning/capability-plans/CAP-06.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-06.S03.T01",
+        "CAP-06.S03.T02",
+        "CAP-06.S03.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-06.S01.T03",
+        "CAP-06.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-06",
+      "capability_title": "Local search, discovery, corpus diagnostics, and screening",
+      "slice_id": "CAP-06.S04",
+      "slice_title": "Search Studio and transparent expansion",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
+      "capability_plan": "planning/capability-plans/CAP-06.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-06.S04.T01",
+        "CAP-06.S04.T02",
+        "CAP-06.S04.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-06.S03.T03",
+        "CAP-04.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-06",
+      "capability_title": "Local search, discovery, corpus diagnostics, and screening",
+      "slice_id": "CAP-06.S05",
+      "slice_title": "Corpus canvas, coverage, and reflexivity diagnostics",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
+      "capability_plan": "planning/capability-plans/CAP-06.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-06.S05.T01",
+        "CAP-06.S05.T02",
+        "CAP-06.S05.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-06.S04.T03",
+        "CAP-04.S04.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-06",
+      "capability_title": "Local search, discovery, corpus diagnostics, and screening",
+      "slice_id": "CAP-06.S06",
+      "slice_title": "Transparent screening and active-learning governance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
+      "capability_plan": "planning/capability-plans/CAP-06.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-06.S06.T01",
+        "CAP-06.S06.T02",
+        "CAP-06.S06.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-06.S05.T02",
+        "CAP-03.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-07",
+      "capability_title": "Provider-neutral model gateway and governed AI execution",
+      "slice_id": "CAP-07.S01",
+      "slice_title": "Model task, provider, and routing contracts",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+      "capability_plan": "planning/capability-plans/CAP-07.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-07.S01.T01",
+        "CAP-07.S01.T02",
+        "CAP-07.S01.T03"
+      ],
+      "wave": "W1",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-03.S01.T03",
+        "CAP-00.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-07",
+      "capability_title": "Provider-neutral model gateway and governed AI execution",
+      "slice_id": "CAP-07.S02",
+      "slice_title": "Local model runtime and model management",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
+      "capability_plan": "planning/capability-plans/CAP-07.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-07.S02.T01",
+        "CAP-07.S02.T02",
+        "CAP-07.S02.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-07.S01.T03",
+        "CAP-01.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-07",
+      "capability_title": "Provider-neutral model gateway and governed AI execution",
+      "slice_id": "CAP-07.S03",
+      "slice_title": "Approved remote model providers",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
+      "capability_plan": "planning/capability-plans/CAP-07.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-07.S03.T01",
+        "CAP-07.S03.T02",
+        "CAP-07.S03.T03"
+      ],
+      "wave": "W3",
+      "priority": "P1",
+      "depends_on": [
+        "CAP-07.S01.T03",
+        "CAP-02.S04.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-07",
+      "capability_title": "Provider-neutral model gateway and governed AI execution",
+      "slice_id": "CAP-07.S04",
+      "slice_title": "Prompt, schema, and structured-output registry",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
+      "capability_plan": "planning/capability-plans/CAP-07.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-07.S04.T01",
+        "CAP-07.S04.T02",
+        "CAP-07.S04.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-07.S01.T01",
+        "CAP-00.S05.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-07",
+      "capability_title": "Provider-neutral model gateway and governed AI execution",
+      "slice_id": "CAP-07.S05",
+      "slice_title": "AI observability, budgets, and evaluation operations",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
+      "capability_plan": "planning/capability-plans/CAP-07.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-07.S05.T01",
+        "CAP-07.S05.T02",
+        "CAP-07.S05.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-07.S04.T03",
+        "CAP-03.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-08",
+      "capability_title": "Evidence schemas, extraction, verification, and adjudication",
+      "slice_id": "CAP-08.S01",
+      "slice_title": "Core ontology and schema-pack registry",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
+      "capability_plan": "planning/capability-plans/CAP-08.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-08.S01.T01",
+        "CAP-08.S01.T02",
+        "CAP-08.S01.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-03.S01.T03",
+        "CAP-07.S04.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-08",
+      "capability_title": "Evidence schemas, extraction, verification, and adjudication",
+      "slice_id": "CAP-08.S02",
+      "slice_title": "Source-grounded extraction pipeline",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
+      "capability_plan": "planning/capability-plans/CAP-08.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-08.S02.T01",
+        "CAP-08.S02.T02",
+        "CAP-08.S02.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-08.S01.T03",
+        "CAP-05.S03.T03",
+        "CAP-07.S04.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-08",
+      "capability_title": "Evidence schemas, extraction, verification, and adjudication",
+      "slice_id": "CAP-08.S03",
+      "slice_title": "Evidence record, status, confidence, and uncertainty model",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
+      "capability_plan": "planning/capability-plans/CAP-08.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-08.S03.T01",
+        "CAP-08.S03.T02",
+        "CAP-08.S03.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-08.S02.T03",
+        "CAP-03.S03.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-08",
+      "capability_title": "Evidence schemas, extraction, verification, and adjudication",
+      "slice_id": "CAP-08.S04",
+      "slice_title": "Independent evidence verification",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
+      "capability_plan": "planning/capability-plans/CAP-08.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-08.S04.T01",
+        "CAP-08.S04.T02",
+        "CAP-08.S04.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-08.S03.T03",
+        "CAP-07.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-08",
+      "capability_title": "Evidence schemas, extraction, verification, and adjudication",
+      "slice_id": "CAP-08.S05",
+      "slice_title": "Evidence matrix and source-first analysis UI",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
+      "capability_plan": "planning/capability-plans/CAP-08.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-08.S05.T01",
+        "CAP-08.S05.T02",
+        "CAP-08.S05.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-08.S04.T02",
+        "CAP-01.S02.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-08",
+      "capability_title": "Evidence schemas, extraction, verification, and adjudication",
+      "slice_id": "CAP-08.S06",
+      "slice_title": "Coder comparison, adjudication, and evidence export",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
+      "capability_plan": "planning/capability-plans/CAP-08.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-08.S06.T01",
+        "CAP-08.S06.T02",
+        "CAP-08.S06.T03"
+      ],
+      "wave": "W3",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-08.S05.T03",
+        "CAP-04.S04.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-09",
+      "capability_title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
+      "slice_id": "CAP-09.S01",
+      "slice_title": "Local graph domain and replaceable graph storage",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-09/CAP-09.S01-local-graph-domain-and-replaceable-graph-storage.md",
+      "capability_plan": "planning/capability-plans/CAP-09.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-09.S01.T01",
+        "CAP-09.S01.T02",
+        "CAP-09.S01.T03"
+      ],
+      "wave": "W4",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-08.S03.T02",
+        "CAP-03.S05.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-09",
+      "capability_title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
+      "slice_id": "CAP-09.S02",
+      "slice_title": "Claim, theory, construct, method, and context relations",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-09/CAP-09.S02-claim-theory-construct-method-and-context-relations.md",
+      "capability_plan": "planning/capability-plans/CAP-09.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-09.S02.T01",
+        "CAP-09.S02.T02",
+        "CAP-09.S02.T03"
+      ],
+      "wave": "W4",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-09.S01.T03",
+        "CAP-08.S06.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-09",
+      "capability_title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
+      "slice_id": "CAP-09.S03",
+      "slice_title": "Comparability sets and contradiction candidates",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-09/CAP-09.S03-comparability-sets-and-contradiction-candidates.md",
+      "capability_plan": "planning/capability-plans/CAP-09.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-09.S03.T01",
+        "CAP-09.S03.T02",
+        "CAP-09.S03.T03"
+      ],
+      "wave": "W4",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-09.S02.T03",
+        "CAP-08.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-09",
+      "capability_title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
+      "slice_id": "CAP-09.S04",
+      "slice_title": "Graph, theory, construct, and lineage workspaces",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-09/CAP-09.S04-graph-theory-construct-and-lineage-workspaces.md",
+      "capability_plan": "planning/capability-plans/CAP-09.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-09.S04.T01",
+        "CAP-09.S04.T02",
+        "CAP-09.S04.T03"
+      ],
+      "wave": "W4",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-09.S01.T03",
+        "CAP-06.S05.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-09",
+      "capability_title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
+      "slice_id": "CAP-09.S05",
+      "slice_title": "Evidence-grounded synthesis and citation audit",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-09/CAP-09.S05-evidence-grounded-synthesis-and-citation-audit.md",
+      "capability_plan": "planning/capability-plans/CAP-09.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-09.S05.T01",
+        "CAP-09.S05.T02",
+        "CAP-09.S05.T03"
+      ],
+      "wave": "W4",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-09.S03.T03",
+        "CAP-08.S06.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-09",
+      "capability_title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
+      "slice_id": "CAP-09.S06",
+      "slice_title": "Reproducibility packages and scholarly exports",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-09/CAP-09.S06-reproducibility-packages-and-scholarly-exports.md",
+      "capability_plan": "planning/capability-plans/CAP-09.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-09.S06.T01",
+        "CAP-09.S06.T02",
+        "CAP-09.S06.T03"
+      ],
+      "wave": "W4",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-09.S05.T03",
+        "CAP-04.S04.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-10",
+      "capability_title": "Novelty auditing, research opportunities, and plural research modes",
+      "slice_id": "CAP-10.S01",
+      "slice_title": "Nearest-prior novelty workspace MVP",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-10/CAP-10.S01-nearest-prior-novelty-workspace-mvp.md",
+      "capability_plan": "planning/capability-plans/CAP-10.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-10.S01.T01",
+        "CAP-10.S01.T02",
+        "CAP-10.S01.T03"
+      ],
+      "wave": "W4",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-09.S04.T02",
+        "CAP-06.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-10",
+      "capability_title": "Novelty auditing, research opportunities, and plural research modes",
+      "slice_id": "CAP-10.S02",
+      "slice_title": "Independent adversarial novelty challenge",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-10/CAP-10.S02-independent-adversarial-novelty-challenge.md",
+      "capability_plan": "planning/capability-plans/CAP-10.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-10.S02.T01",
+        "CAP-10.S02.T02",
+        "CAP-10.S02.T03"
+      ],
+      "wave": "W4",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-10.S01.T03",
+        "CAP-09.S06.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-10",
+      "capability_title": "Novelty auditing, research opportunities, and plural research modes",
+      "slice_id": "CAP-10.S03",
+      "slice_title": "Research opportunity dossier and decision ledger",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-10/CAP-10.S03-research-opportunity-dossier-and-decision-ledger.md",
+      "capability_plan": "planning/capability-plans/CAP-10.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-10.S03.T01",
+        "CAP-10.S03.T02",
+        "CAP-10.S03.T03"
+      ],
+      "wave": "W4",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-10.S02.T03",
+        "CAP-03.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-10",
+      "capability_title": "Novelty auditing, research opportunities, and plural research modes",
+      "slice_id": "CAP-10.S05",
+      "slice_title": "Critical and hermeneutic research support",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-10/CAP-10.S05-critical-and-hermeneutic-research-support.md",
+      "capability_plan": "planning/capability-plans/CAP-10.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-10.S05.T01",
+        "CAP-10.S05.T02",
+        "CAP-10.S05.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-10.S03.T02",
+        "CAP-08.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-10",
+      "capability_title": "Novelty auditing, research opportunities, and plural research modes",
+      "slice_id": "CAP-10.S04",
+      "slice_title": "Plural opportunity detector ensemble",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-10/CAP-10.S04-plural-opportunity-detector-ensemble.md",
+      "capability_plan": "planning/capability-plans/CAP-10.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-10.S04.T01",
+        "CAP-10.S04.T02",
+        "CAP-10.S04.T03"
+      ],
+      "wave": "W9",
+      "priority": "P1",
+      "depends_on": [
+        "CAP-10.S03.T03",
+        "CAP-09.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-10",
+      "capability_title": "Novelty auditing, research opportunities, and plural research modes",
+      "slice_id": "CAP-10.S06",
+      "slice_title": "Opportunity radar, ranking, and portfolio governance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-10/CAP-10.S06-opportunity-radar-ranking-and-portfolio-governance.md",
+      "capability_plan": "planning/capability-plans/CAP-10.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-10.S06.T01",
+        "CAP-10.S06.T02",
+        "CAP-10.S06.T03"
+      ],
+      "wave": "W9",
+      "priority": "P1",
+      "depends_on": [
+        "CAP-10.S04.T03",
+        "CAP-10.S05.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-10",
+      "capability_title": "Novelty auditing, research opportunities, and plural research modes",
+      "slice_id": "CAP-10.S07",
+      "slice_title": "Living monitor and impact-aware research memory",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-10/CAP-10.S07-living-monitor-and-impact-aware-research-memory.md",
+      "capability_plan": "planning/capability-plans/CAP-10.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-10.S07.T01",
+        "CAP-10.S07.T02",
+        "CAP-10.S07.T03"
+      ],
+      "wave": "W9",
+      "priority": "P1",
+      "depends_on": [
+        "CAP-10.S03.T03",
+        "CAP-09.S06.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-11",
+      "capability_title": "Windows PC/lab product hardening, validation, packaging, and release",
+      "slice_id": "CAP-11.S01",
+      "slice_title": "Performance profiles, scale targets, and resource governance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-11/CAP-11.S01-performance-profiles-scale-targets-and-resource-governance.md",
+      "capability_plan": "planning/capability-plans/CAP-11.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-11.S01.T01",
+        "CAP-11.S01.T02",
+        "CAP-11.S01.T03"
+      ],
+      "wave": "W5",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-10.S03.T02",
+        "CAP-07.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-11",
+      "capability_title": "Windows PC/lab product hardening, validation, packaging, and release",
+      "slice_id": "CAP-11.S02",
+      "slice_title": "Reliability, crash recovery, upgrade, and rollback",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-11/CAP-11.S02-reliability-crash-recovery-upgrade-and-rollback.md",
+      "capability_plan": "planning/capability-plans/CAP-11.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-11.S02.T01",
+        "CAP-11.S02.T02",
+        "CAP-11.S02.T03"
+      ],
+      "wave": "W5",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-11.S01.T03",
+        "CAP-02.S02.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-11",
+      "capability_title": "Windows PC/lab product hardening, validation, packaging, and release",
+      "slice_id": "CAP-11.S03",
+      "slice_title": "Offline, privacy, and local security acceptance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-11/CAP-11.S03-offline-privacy-and-local-security-acceptance.md",
+      "capability_plan": "planning/capability-plans/CAP-11.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-11.S03.T01",
+        "CAP-11.S03.T02",
+        "CAP-11.S03.T03"
+      ],
+      "wave": "W5",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-11.S02.T03",
+        "CAP-07.S03.T03",
+        "CAP-09.S06.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-11",
+      "capability_title": "Windows PC/lab product hardening, validation, packaging, and release",
+      "slice_id": "CAP-11.S04",
+      "slice_title": "Accessibility, usability, onboarding, and help",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-11/CAP-11.S04-accessibility-usability-onboarding-and-help.md",
+      "capability_plan": "planning/capability-plans/CAP-11.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-11.S04.T01",
+        "CAP-11.S04.T02",
+        "CAP-11.S04.T03",
+        "CAP-11.S04.T04"
+      ],
+      "wave": "W5",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-01.S02.T03",
+        "CAP-10.S03.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-11",
+      "capability_title": "Windows PC/lab product hardening, validation, packaging, and release",
+      "slice_id": "CAP-11.S05",
+      "slice_title": "Lab deployment, policy, maintenance, and support",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-11/CAP-11.S05-lab-deployment-policy-maintenance-and-support.md",
+      "capability_plan": "planning/capability-plans/CAP-11.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-11.S05.T01",
+        "CAP-11.S05.T02",
+        "CAP-11.S05.T03"
+      ],
+      "wave": "W5",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-01.S05.T03",
+        "CAP-02.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-11",
+      "capability_title": "Windows PC/lab product hardening, validation, packaging, and release",
+      "slice_id": "CAP-11.S06",
+      "slice_title": "Local release candidate and acceptance gate",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-11/CAP-11.S06-local-release-candidate-and-acceptance-gate.md",
+      "capability_plan": "planning/capability-plans/CAP-11.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-11.S06.T01",
+        "CAP-11.S06.T02",
+        "CAP-11.S06.T03"
+      ],
+      "wave": "W5",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-11.S03.T03",
+        "CAP-11.S04.T03",
+        "CAP-11.S05.T03",
+        "CAP-10.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-12",
+      "capability_title": "University-hosted deployment, institutional identity, collaboration, and operations",
+      "slice_id": "CAP-12.S01",
+      "slice_title": "Desktop remote connection mode and API abstraction",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-12/CAP-12.S01-desktop-remote-connection-mode-and-api-abstraction.md",
+      "capability_plan": "planning/capability-plans/CAP-12.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-12.S01.T01",
+        "CAP-12.S01.T02",
+        "CAP-12.S01.T03"
+      ],
+      "wave": "W10",
+      "priority": "P2",
+      "depends_on": [
+        "CAP-11.S06.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-12",
+      "capability_title": "University-hosted deployment, institutional identity, collaboration, and operations",
+      "slice_id": "CAP-12.S02",
+      "slice_title": "Institutional service and data-plane foundation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-12/CAP-12.S02-institutional-service-and-data-plane-foundation.md",
+      "capability_plan": "planning/capability-plans/CAP-12.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-12.S02.T01",
+        "CAP-12.S02.T02",
+        "CAP-12.S02.T03"
+      ],
+      "wave": "W10",
+      "priority": "P2",
+      "depends_on": [
+        "CAP-12.S01.T01",
+        "CAP-03.S04.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-12",
+      "capability_title": "University-hosted deployment, institutional identity, collaboration, and operations",
+      "slice_id": "CAP-12.S03",
+      "slice_title": "Institutional identity, authorization, and project isolation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-12/CAP-12.S03-institutional-identity-authorization-and-project-isolation.md",
+      "capability_plan": "planning/capability-plans/CAP-12.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-12.S03.T01",
+        "CAP-12.S03.T02",
+        "CAP-12.S03.T03"
+      ],
+      "wave": "W10",
+      "priority": "P2",
+      "depends_on": [
+        "CAP-12.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-12",
+      "capability_title": "University-hosted deployment, institutional identity, collaboration, and operations",
+      "slice_id": "CAP-12.S04",
+      "slice_title": "Team collaboration and scholarly adjudication",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-12/CAP-12.S04-team-collaboration-and-scholarly-adjudication.md",
+      "capability_plan": "planning/capability-plans/CAP-12.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-12.S04.T01",
+        "CAP-12.S04.T02",
+        "CAP-12.S04.T03"
+      ],
+      "wave": "W10",
+      "priority": "P2",
+      "depends_on": [
+        "CAP-12.S03.T03",
+        "CAP-08.S06.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-12",
+      "capability_title": "University-hosted deployment, institutional identity, collaboration, and operations",
+      "slice_id": "CAP-12.S05",
+      "slice_title": "Licensed sources, institutional rights, retention, and compute policy",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-12/CAP-12.S05-licensed-sources-institutional-rights-retention-and-compute-policy.md",
+      "capability_plan": "planning/capability-plans/CAP-12.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-12.S05.T01",
+        "CAP-12.S05.T02",
+        "CAP-12.S05.T03"
+      ],
+      "wave": "W10",
+      "priority": "P2",
+      "depends_on": [
+        "CAP-12.S03.T02",
+        "CAP-04.S05.T03",
+        "CAP-07.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-12",
+      "capability_title": "University-hosted deployment, institutional identity, collaboration, and operations",
+      "slice_id": "CAP-12.S06",
+      "slice_title": "Institutional operations, disaster recovery, and pilot acceptance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-12/CAP-12.S06-institutional-operations-disaster-recovery-and-pilot-acceptance.md",
+      "capability_plan": "planning/capability-plans/CAP-12.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-12.S06.T01",
+        "CAP-12.S06.T02",
+        "CAP-12.S06.T03"
+      ],
+      "wave": "W10",
+      "priority": "P2",
+      "depends_on": [
+        "CAP-12.S04.T03",
+        "CAP-12.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-13",
+      "capability_title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
+      "slice_id": "CAP-13.S01",
+      "slice_title": "SaaS organization and tenant control plane",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-13/CAP-13.S01-saas-organization-and-tenant-control-plane.md",
+      "capability_plan": "planning/capability-plans/CAP-13.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-13.S01.T01",
+        "CAP-13.S01.T02",
+        "CAP-13.S01.T03"
+      ],
+      "wave": "W11",
+      "priority": "P3",
+      "depends_on": [
+        "CAP-12.S06.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-13",
+      "capability_title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
+      "slice_id": "CAP-13.S02",
+      "slice_title": "Regional tenant data planes and isolation tiers",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-13/CAP-13.S02-regional-tenant-data-planes-and-isolation-tiers.md",
+      "capability_plan": "planning/capability-plans/CAP-13.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-13.S02.T01",
+        "CAP-13.S02.T02",
+        "CAP-13.S02.T03"
+      ],
+      "wave": "W11",
+      "priority": "P3",
+      "depends_on": [
+        "CAP-13.S01.T03",
+        "CAP-12.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-13",
+      "capability_title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
+      "slice_id": "CAP-13.S03",
+      "slice_title": "Cloud identity, entitlement, metering, and billing",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-13/CAP-13.S03-cloud-identity-entitlement-metering-and-billing.md",
+      "capability_plan": "planning/capability-plans/CAP-13.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-13.S03.T01",
+        "CAP-13.S03.T02",
+        "CAP-13.S03.T03"
+      ],
+      "wave": "W11",
+      "priority": "P3",
+      "depends_on": [
+        "CAP-13.S01.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-13",
+      "capability_title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
+      "slice_id": "CAP-13.S04",
+      "slice_title": "Elastic workers, models, search, and cost governance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-13/CAP-13.S04-elastic-workers-models-search-and-cost-governance.md",
+      "capability_plan": "planning/capability-plans/CAP-13.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-13.S04.T01",
+        "CAP-13.S04.T02",
+        "CAP-13.S04.T03"
+      ],
+      "wave": "W11",
+      "priority": "P3",
+      "depends_on": [
+        "CAP-13.S02.T02",
+        "CAP-07.S05.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-13",
+      "capability_title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
+      "slice_id": "CAP-13.S05",
+      "slice_title": "Cloud security, privacy, residency, and compliance operations",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-13/CAP-13.S05-cloud-security-privacy-residency-and-compliance-operations.md",
+      "capability_plan": "planning/capability-plans/CAP-13.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-13.S05.T01",
+        "CAP-13.S05.T02",
+        "CAP-13.S05.T03"
+      ],
+      "wave": "W11",
+      "priority": "P3",
+      "depends_on": [
+        "CAP-13.S02.T03",
+        "CAP-13.S03.T01"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-13",
+      "capability_title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
+      "slice_id": "CAP-13.S06",
+      "slice_title": "Desktop-cloud experience, service reliability, and launch gate",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-13/CAP-13.S06-desktop-cloud-experience-service-reliability-and-launch-gate.md",
+      "capability_plan": "planning/capability-plans/CAP-13.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-13.S06.T01",
+        "CAP-13.S06.T02",
+        "CAP-13.S06.T03"
+      ],
+      "wave": "W11",
+      "priority": "P3",
+      "depends_on": [
+        "CAP-13.S04.T03",
+        "CAP-13.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-14",
+      "capability_title": "Cross-platform desktop qualification and release",
+      "slice_id": "CAP-14.S01",
+      "slice_title": "Platform abstraction and build matrix",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-14/CAP-14.S01-platform-abstraction-and-build-matrix.md",
+      "capability_plan": "planning/capability-plans/CAP-14.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-14.S01.T01",
+        "CAP-14.S01.T02",
+        "CAP-14.S01.T03"
+      ],
+      "wave": "W6",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-11.S06.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-14",
+      "capability_title": "Cross-platform desktop qualification and release",
+      "slice_id": "CAP-14.S02",
+      "slice_title": "Apple Silicon macOS product qualification",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-14/CAP-14.S02-apple-silicon-macos-product-qualification.md",
+      "capability_plan": "planning/capability-plans/CAP-14.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-14.S02.T01",
+        "CAP-14.S02.T02",
+        "CAP-14.S02.T03"
+      ],
+      "wave": "W6",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-14.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-14",
+      "capability_title": "Cross-platform desktop qualification and release",
+      "slice_id": "CAP-14.S03",
+      "slice_title": "Linux x86_64 and ARM64 product qualification",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-14/CAP-14.S03-linux-x86-64-and-arm64-product-qualification.md",
+      "capability_plan": "planning/capability-plans/CAP-14.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-14.S03.T01",
+        "CAP-14.S03.T02",
+        "CAP-14.S03.T03"
+      ],
+      "wave": "W6",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-14.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-14",
+      "capability_title": "Cross-platform desktop qualification and release",
+      "slice_id": "CAP-14.S04",
+      "slice_title": "Cross-platform scientific and AI runtime",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-14/CAP-14.S04-cross-platform-scientific-and-ai-runtime.md",
+      "capability_plan": "planning/capability-plans/CAP-14.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-14.S04.T01",
+        "CAP-14.S04.T02",
+        "CAP-14.S04.T03"
+      ],
+      "wave": "W6",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-14.S01.T03",
+        "CAP-07.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-14",
+      "capability_title": "Cross-platform desktop qualification and release",
+      "slice_id": "CAP-14.S05",
+      "slice_title": "Cross-platform project compatibility and recovery",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-14/CAP-14.S05-cross-platform-project-compatibility-and-recovery.md",
+      "capability_plan": "planning/capability-plans/CAP-14.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-14.S05.T01",
+        "CAP-14.S05.T02",
+        "CAP-14.S05.T03"
+      ],
+      "wave": "W6",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-14.S02.T03",
+        "CAP-14.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-14",
+      "capability_title": "Cross-platform desktop qualification and release",
+      "slice_id": "CAP-14.S06",
+      "slice_title": "Cross-platform desktop release gate",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-14/CAP-14.S06-cross-platform-desktop-release-gate.md",
+      "capability_plan": "planning/capability-plans/CAP-14.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-14.S06.T01",
+        "CAP-14.S06.T02",
+        "CAP-14.S06.T03"
+      ],
+      "wave": "W6",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-14.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-15",
+      "capability_title": "Empirical study design and protocol development",
+      "slice_id": "CAP-15.S01",
+      "slice_title": "Study-design domain and evidence foundation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-15/CAP-15.S01-study-design-domain-and-evidence-foundation.md",
+      "capability_plan": "planning/capability-plans/CAP-15.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-15.S01.T01",
+        "CAP-15.S01.T02",
+        "CAP-15.S01.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-10.S03.T03",
+        "CAP-09.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-15",
+      "capability_title": "Empirical study design and protocol development",
+      "slice_id": "CAP-15.S02",
+      "slice_title": "Research logic and design alternatives",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-15/CAP-15.S02-research-logic-and-design-alternatives.md",
+      "capability_plan": "planning/capability-plans/CAP-15.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-15.S02.T01",
+        "CAP-15.S02.T02",
+        "CAP-15.S02.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-15.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-15",
+      "capability_title": "Empirical study design and protocol development",
+      "slice_id": "CAP-15.S03",
+      "slice_title": "Sampling, measurement, and data collection",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-15/CAP-15.S03-sampling-measurement-and-data-collection.md",
+      "capability_plan": "planning/capability-plans/CAP-15.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-15.S03.T01",
+        "CAP-15.S03.T02",
+        "CAP-15.S03.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-15.S02.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-15",
+      "capability_title": "Empirical study design and protocol development",
+      "slice_id": "CAP-15.S04",
+      "slice_title": "Analysis, validity, ethics, and reproducibility",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-15/CAP-15.S04-analysis-validity-ethics-and-reproducibility.md",
+      "capability_plan": "planning/capability-plans/CAP-15.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-15.S04.T01",
+        "CAP-15.S04.T02",
+        "CAP-15.S04.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-15.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-15",
+      "capability_title": "Empirical study design and protocol development",
+      "slice_id": "CAP-15.S05",
+      "slice_title": "Study Design Studio and protocol exports",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-15/CAP-15.S05-study-design-studio-and-protocol-exports.md",
+      "capability_plan": "planning/capability-plans/CAP-15.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-15.S05.T01",
+        "CAP-15.S05.T02",
+        "CAP-15.S05.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-15.S04.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-15",
+      "capability_title": "Empirical study design and protocol development",
+      "slice_id": "CAP-15.S06",
+      "slice_title": "Study-design production acceptance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-15/CAP-15.S06-study-design-production-acceptance.md",
+      "capability_plan": "planning/capability-plans/CAP-15.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-15.S06.T01",
+        "CAP-15.S06.T02",
+        "CAP-15.S06.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-15.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-16",
+      "capability_title": "Manuscript blueprint, venue profiles, and article architecture",
+      "slice_id": "CAP-16.S01",
+      "slice_title": "Manuscript domain and template governance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-16/CAP-16.S01-manuscript-domain-and-template-governance.md",
+      "capability_plan": "planning/capability-plans/CAP-16.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-16.S01.T01",
+        "CAP-16.S01.T02",
+        "CAP-16.S01.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-09.S06.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-16",
+      "capability_title": "Manuscript blueprint, venue profiles, and article architecture",
+      "slice_id": "CAP-16.S02",
+      "slice_title": "Empirical article blueprints",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-16/CAP-16.S02-empirical-article-blueprints.md",
+      "capability_plan": "planning/capability-plans/CAP-16.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-16.S02.T01",
+        "CAP-16.S02.T02",
+        "CAP-16.S02.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-16.S01.T03",
+        "CAP-15.S05.T02"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-16",
+      "capability_title": "Manuscript blueprint, venue profiles, and article architecture",
+      "slice_id": "CAP-16.S03",
+      "slice_title": "Theory article blueprints",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-16/CAP-16.S03-theory-article-blueprints.md",
+      "capability_plan": "planning/capability-plans/CAP-16.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-16.S03.T01",
+        "CAP-16.S03.T02",
+        "CAP-16.S03.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-16.S01.T03",
+        "CAP-09.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-16",
+      "capability_title": "Manuscript blueprint, venue profiles, and article architecture",
+      "slice_id": "CAP-16.S04",
+      "slice_title": "Critical scholarship blueprints",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-16/CAP-16.S04-critical-scholarship-blueprints.md",
+      "capability_plan": "planning/capability-plans/CAP-16.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-16.S04.T01",
+        "CAP-16.S04.T02",
+        "CAP-16.S04.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-16.S01.T03",
+        "CAP-10.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-16",
+      "capability_title": "Manuscript blueprint, venue profiles, and article architecture",
+      "slice_id": "CAP-16.S05",
+      "slice_title": "Manuscript Blueprint and venue adaptation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-16/CAP-16.S05-manuscript-blueprint-and-venue-adaptation.md",
+      "capability_plan": "planning/capability-plans/CAP-16.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-16.S05.T01",
+        "CAP-16.S05.T02",
+        "CAP-16.S05.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-16.S02.T03",
+        "CAP-16.S03.T03",
+        "CAP-16.S04.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-16",
+      "capability_title": "Manuscript blueprint, venue profiles, and article architecture",
+      "slice_id": "CAP-16.S06",
+      "slice_title": "Manuscript blueprint production acceptance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-16/CAP-16.S06-manuscript-blueprint-production-acceptance.md",
+      "capability_plan": "planning/capability-plans/CAP-16.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-16.S06.T01",
+        "CAP-16.S06.T02",
+        "CAP-16.S06.T03"
+      ],
+      "wave": "W7",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-16.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-17",
+      "capability_title": "Technical report and study-results integration",
+      "slice_id": "CAP-17.S01",
+      "slice_title": "Private technical-report and study-artifact intake",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-17/CAP-17.S01-private-technical-report-and-study-artifact-intake.md",
+      "capability_plan": "planning/capability-plans/CAP-17.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-17.S01.T01",
+        "CAP-17.S01.T02",
+        "CAP-17.S01.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-15.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-17",
+      "capability_title": "Technical report and study-results integration",
+      "slice_id": "CAP-17.S02",
+      "slice_title": "Technical-report parsing and result extraction",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-17/CAP-17.S02-technical-report-parsing-and-result-extraction.md",
+      "capability_plan": "planning/capability-plans/CAP-17.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-17.S02.T01",
+        "CAP-17.S02.T02",
+        "CAP-17.S02.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-17.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-17",
+      "capability_title": "Technical report and study-results integration",
+      "slice_id": "CAP-17.S03",
+      "slice_title": "Study-plan and result reconciliation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-17/CAP-17.S03-study-plan-and-result-reconciliation.md",
+      "capability_plan": "planning/capability-plans/CAP-17.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-17.S03.T01",
+        "CAP-17.S03.T02",
+        "CAP-17.S03.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-17.S02.T03",
+        "CAP-15.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-17",
+      "capability_title": "Technical report and study-results integration",
+      "slice_id": "CAP-17.S04",
+      "slice_title": "Results evidence graph and dependency propagation",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-17/CAP-17.S04-results-evidence-graph-and-dependency-propagation.md",
+      "capability_plan": "planning/capability-plans/CAP-17.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-17.S04.T01",
+        "CAP-17.S04.T02",
+        "CAP-17.S04.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-17.S03.T03",
+        "CAP-09.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-17",
+      "capability_title": "Technical report and study-results integration",
+      "slice_id": "CAP-17.S05",
+      "slice_title": "Technical Reports & Results workspace",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-17/CAP-17.S05-technical-reports-and-results-workspace.md",
+      "capability_plan": "planning/capability-plans/CAP-17.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-17.S05.T01",
+        "CAP-17.S05.T02",
+        "CAP-17.S05.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-17.S04.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-17",
+      "capability_title": "Technical report and study-results integration",
+      "slice_id": "CAP-17.S06",
+      "slice_title": "Results integration production acceptance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-17/CAP-17.S06-results-integration-production-acceptance.md",
+      "capability_plan": "planning/capability-plans/CAP-17.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-17.S06.T01",
+        "CAP-17.S06.T02",
+        "CAP-17.S06.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-17.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-18",
+      "capability_title": "Source-grounded manuscript drafting and publication artifacts",
+      "slice_id": "CAP-18.S01",
+      "slice_title": "Manuscript project and section workflow",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-18/CAP-18.S01-manuscript-project-and-section-workflow.md",
+      "capability_plan": "planning/capability-plans/CAP-18.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-18.S01.T01",
+        "CAP-18.S01.T02",
+        "CAP-18.S01.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-16.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-18",
+      "capability_title": "Source-grounded manuscript drafting and publication artifacts",
+      "slice_id": "CAP-18.S02",
+      "slice_title": "Evidence-aware drafting engine",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-18/CAP-18.S02-evidence-aware-drafting-engine.md",
+      "capability_plan": "planning/capability-plans/CAP-18.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-18.S02.T01",
+        "CAP-18.S02.T02",
+        "CAP-18.S02.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-18.S01.T03",
+        "CAP-17.S06.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-18",
+      "capability_title": "Source-grounded manuscript drafting and publication artifacts",
+      "slice_id": "CAP-18.S03",
+      "slice_title": "Empirical manuscript drafting",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-18/CAP-18.S03-empirical-manuscript-drafting.md",
+      "capability_plan": "planning/capability-plans/CAP-18.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-18.S03.T01",
+        "CAP-18.S03.T02",
+        "CAP-18.S03.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-18.S02.T03",
+        "CAP-17.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-18",
+      "capability_title": "Source-grounded manuscript drafting and publication artifacts",
+      "slice_id": "CAP-18.S04",
+      "slice_title": "Theory and critical manuscript drafting",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-18/CAP-18.S04-theory-and-critical-manuscript-drafting.md",
+      "capability_plan": "planning/capability-plans/CAP-18.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-18.S04.T01",
+        "CAP-18.S04.T02",
+        "CAP-18.S04.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-18.S02.T03",
+        "CAP-16.S03.T03",
+        "CAP-16.S04.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-18",
+      "capability_title": "Source-grounded manuscript drafting and publication artifacts",
+      "slice_id": "CAP-18.S05",
+      "slice_title": "Manuscript Studio and publication exports",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-18/CAP-18.S05-manuscript-studio-and-publication-exports.md",
+      "capability_plan": "planning/capability-plans/CAP-18.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-18.S05.T01",
+        "CAP-18.S05.T02",
+        "CAP-18.S05.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-18.S03.T03",
+        "CAP-18.S04.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-18",
+      "capability_title": "Source-grounded manuscript drafting and publication artifacts",
+      "slice_id": "CAP-18.S06",
+      "slice_title": "Source-grounded manuscript production acceptance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-18/CAP-18.S06-source-grounded-manuscript-production-acceptance.md",
+      "capability_plan": "planning/capability-plans/CAP-18.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-18.S06.T01",
+        "CAP-18.S06.T02",
+        "CAP-18.S06.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-18.S05.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-19",
+      "capability_title": "Reviewer simulation, editorial synthesis, and revision",
+      "slice_id": "CAP-19.S01",
+      "slice_title": "Reviewer protocol, roles, and independence",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-19/CAP-19.S01-reviewer-protocol-roles-and-independence.md",
+      "capability_plan": "planning/capability-plans/CAP-19.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-19.S01.T01",
+        "CAP-19.S01.T02",
+        "CAP-19.S01.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-18.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-19",
+      "capability_title": "Reviewer simulation, editorial synthesis, and revision",
+      "slice_id": "CAP-19.S02",
+      "slice_title": "Extended independent reviewer panel",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-19/CAP-19.S02-extended-independent-reviewer-panel.md",
+      "capability_plan": "planning/capability-plans/CAP-19.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-19.S02.T01",
+        "CAP-19.S02.T02",
+        "CAP-19.S02.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-19.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-19",
+      "capability_title": "Reviewer simulation, editorial synthesis, and revision",
+      "slice_id": "CAP-19.S03",
+      "slice_title": "Generated and uploaded draft intake",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-19/CAP-19.S03-generated-and-uploaded-draft-intake.md",
+      "capability_plan": "planning/capability-plans/CAP-19.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-19.S03.T01",
+        "CAP-19.S03.T02",
+        "CAP-19.S03.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-19.S01.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-19",
+      "capability_title": "Reviewer simulation, editorial synthesis, and revision",
+      "slice_id": "CAP-19.S04",
+      "slice_title": "Reviewer reports and editorial synthesis",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-19/CAP-19.S04-reviewer-reports-and-editorial-synthesis.md",
+      "capability_plan": "planning/capability-plans/CAP-19.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-19.S04.T01",
+        "CAP-19.S04.T02",
+        "CAP-19.S04.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-19.S02.T03",
+        "CAP-19.S03.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-19",
+      "capability_title": "Reviewer simulation, editorial synthesis, and revision",
+      "slice_id": "CAP-19.S05",
+      "slice_title": "Revision and response workflow",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-19/CAP-19.S05-revision-and-response-workflow.md",
+      "capability_plan": "planning/capability-plans/CAP-19.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-19.S05.T01",
+        "CAP-19.S05.T02",
+        "CAP-19.S05.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-19.S04.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    },
+    {
+      "capability_id": "CAP-19",
+      "capability_title": "Reviewer simulation, editorial synthesis, and revision",
+      "slice_id": "CAP-19.S06",
+      "slice_title": "Reviewer simulation and research-production acceptance",
+      "status": "proposed",
+      "approval_status": "pending",
+      "markdown_path": "planning/slice-plans/CAP-19/CAP-19.S06-reviewer-simulation-and-research-production-acceptance.md",
+      "capability_plan": "planning/capability-plans/CAP-19.md",
+      "planning_gate": "capability-decision-complete",
+      "task_ids": [
+        "CAP-19.S06.T01",
+        "CAP-19.S06.T02",
+        "CAP-19.S06.T03"
+      ],
+      "wave": "W8",
+      "priority": "P0",
+      "depends_on": [
+        "CAP-19.S05.T03",
+        "CAP-18.S06.T03"
+      ],
+      "ui_reference": "RO-UI-ACADEMIC-MINIMAL-1.3"
+    }
+  ]
+}

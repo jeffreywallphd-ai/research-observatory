@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>CAP-09 Scholarly graph, comparison sets, synthesis, and reproducibility - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="capability" data-capability-id="CAP-09">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+  
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation"><h2>Capabilities</h2><nav class='cap-nav'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-01</span><small>Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-02</span><small>Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-03</span><small>Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-04</span><small>Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-05</span><small>Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-06</span><small>Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-07</span><small>Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-08</span><small>Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item active" href="../CAP-09/index.html"><span>CAP-09</span><small>Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-10</span><small>Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-11</span><small>Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-12</span><small>University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-13</span><small>Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-14</span><small>Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-15</span><small>Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-16</span><small>Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-17</span><small>Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-18</span><small>Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-19</span><small>Reviewer simulation, editorial synthesis, and revision</small></a></nav><h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-09.S01.html"><b>1</b><span><strong>CAP-09.S01</strong><small>Local graph domain and replaceable graph storage</small></span></a><a class="slice-nav-item" href="CAP-09.S02.html"><b>2</b><span><strong>CAP-09.S02</strong><small>Claim, theory, construct, method, and context relations</small></span></a><a class="slice-nav-item" href="CAP-09.S03.html"><b>3</b><span><strong>CAP-09.S03</strong><small>Comparability sets and contradiction candidates</small></span></a><a class="slice-nav-item" href="CAP-09.S04.html"><b>4</b><span><strong>CAP-09.S04</strong><small>Graph, theory, construct, and lineage workspaces</small></span></a><a class="slice-nav-item" href="CAP-09.S05.html"><b>5</b><span><strong>CAP-09.S05</strong><small>Evidence-grounded synthesis and citation audit</small></span></a><a class="slice-nav-item" href="CAP-09.S06.html"><b>6</b><span><strong>CAP-09.S06</strong><small>Reproducibility packages and scholarly exports</small></span></a></nav></aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><span aria-current="page">CAP-09</span></nav>
+      
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">CAP-09 · Capability decision and execution plan</span><h1>Scholarly graph, comparison sets, synthesis, and reproducibility</h1></div><span class="status status-proposed">Proposed</span></div>
+  <p>Review the completed recommendation register before implementation. Once approved, the campaign executes all slices continuously except for documented infeasibility or genuinely new consequential evidence.</p>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>23</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>a09e141db088</code></dd></div></dl>
+</section>
+<section class="review-toolbar" data-review-toolbar>
+  <div><h2>Resolved recommendations and capability approval</h2><p>Best-in-class recommendations are preselected and decision-complete. Confirm them, override a documented option with rationale, or select Other and provide both a brief description and detailed rationale. Export a review record only when preserving overrides or notes; one explicit capability approval still authorizes implementation.</p></div>
+  <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 23 selected</div>
+  <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
+  <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
+  <label class="approval-check"><input type="checkbox" data-approval-intent> Request approval of the capability packet and every slice plan after feedback is applied</label>
+  <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
+  <div class="feedback-message" data-feedback-message role="status"></div>
+  <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review CAP-09
+python tools/planctl.py --repo . approve CAP-09 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+# Only for overrides or notes:
+python tools/planctl.py --repo . apply-feedback CAP-09 &lt;downloaded-json&gt;
+python tools/planctl.py --repo . approve CAP-09 --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+python tools/planctl.py --repo . ready CAP-09 --require-approved</code></pre></details>
+</section>
+<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
+<div class="decision-list">
+<section class="decision-card" data-decision-id="CAP-09-D01" data-recommendation="Relational assertions/evidence remain authoritative; graph stores and in-memory structures are versioned rebuildable projections" data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D01</span><h3>Graph authority</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">The domain requires transactions, disputes and provenance that must survive graph-engine replacement and local/server differences.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D01-option-0">
+  <input id="CAP-09-D01-option-0" type="radio" name="CAP-09-D01" value="Relational assertions/evidence remain authoritative; graph stores and in-memory structures are versioned rebuildable projections" data-decision-option checked>
+  <span><strong>Relational assertions/evidence remain authoritative; graph stores and in-memory structures are versioned rebuildable projections</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D01-option-1">
+  <input id="CAP-09-D01-option-1" type="radio" name="CAP-09-D01" value="Make Neo4j or a client graph the sole source of truth" data-decision-option>
+  <span><strong>Make Neo4j or a client graph the sole source of truth</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D01-option-other">
+  <input id="CAP-09-D01-option-other" type="radio" name="CAP-09-D01" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D01-other-help">
+  <small id="CAP-09-D01-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D02" data-recommendation="rustworkx for bounded in-memory analysis; Cytoscape.js for interactive visualization" data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D02</span><h3>Local analytical projection</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">This combination is cross-platform, performant and replaceable while avoiding a second mandatory local database.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D02-option-0">
+  <input id="CAP-09-D02-option-0" type="radio" name="CAP-09-D02" value="rustworkx for bounded in-memory analysis; Cytoscape.js for interactive visualization" data-decision-option checked>
+  <span><strong>rustworkx for bounded in-memory analysis; Cytoscape.js for interactive visualization</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D02-option-1">
+  <input id="CAP-09-D02-option-1" type="radio" name="CAP-09-D02" value="Use the UI graph as the analysis engine; ship a graph server in the first desktop release" data-decision-option>
+  <span><strong>Use the UI graph as the analysis engine; ship a graph server in the first desktop release</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D02-option-other">
+  <input id="CAP-09-D02-option-other" type="radio" name="CAP-09-D02" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D02-other-help">
+  <small id="CAP-09-D02-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D03" data-recommendation="Hard eligibility dimensions and explainable similarity precede stance/NLI signals" data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D03</span><h3>Comparability before contradiction</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Differences in construct, measure, population, method or period must not be mislabeled as substantive contradiction.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D03-option-0">
+  <input id="CAP-09-D03-option-0" type="radio" name="CAP-09-D03" value="Hard eligibility dimensions and explainable similarity precede stance/NLI signals" data-decision-option checked>
+  <span><strong>Hard eligibility dimensions and explainable similarity precede stance/NLI signals</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D03-option-1">
+  <input id="CAP-09-D03-option-1" type="radio" name="CAP-09-D03" value="Run contradiction classification across any semantically related claims" data-decision-option>
+  <span><strong>Run contradiction classification across any semantically related claims</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D03-option-other">
+  <input id="CAP-09-D03-option-other" type="radio" name="CAP-09-D03" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D03-other-help">
+  <small id="CAP-09-D03-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D04" data-recommendation="Evidence packet and claim plan precede prose; each material sentence resolves to accepted evidence and preserves dissent" data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D04</span><h3>Synthesis contract</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">The platform’s evidence-before-prose principle requires auditable claim-level support and citation completeness.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D04-option-0">
+  <input id="CAP-09-D04-option-0" type="radio" name="CAP-09-D04" value="Evidence packet and claim plan precede prose; each material sentence resolves to accepted evidence and preserves dissent" data-decision-option checked>
+  <span><strong>Evidence packet and claim plan precede prose; each material sentence resolves to accepted evidence and preserves dissent</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D04-option-1">
+  <input id="CAP-09-D04-option-1" type="radio" name="CAP-09-D04" value="Generate a long narrative directly from top retrieved papers" data-decision-option>
+  <span><strong>Generate a long narrative directly from top retrieved papers</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D04-option-other">
+  <input id="CAP-09-D04-option-other" type="radio" name="CAP-09-D04" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D04-other-help">
+  <small id="CAP-09-D04-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D05" data-recommendation="RO-Crate metadata plus BagIt-compatible checksum payload and CSL-formatted references" data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D05</span><h3>Reproducibility export</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Open package standards support human inspection, integrity validation and future tool interoperability.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D05-option-0">
+  <input id="CAP-09-D05-option-0" type="radio" name="CAP-09-D05" value="RO-Crate metadata plus BagIt-compatible checksum payload and CSL-formatted references" data-decision-option checked>
+  <span><strong>RO-Crate metadata plus BagIt-compatible checksum payload and CSL-formatted references</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D05-option-1">
+  <input id="CAP-09-D05-option-1" type="radio" name="CAP-09-D05" value="One opaque ZIP or application-only backup" data-decision-option>
+  <span><strong>One opaque ZIP or application-only backup</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D05-option-other">
+  <input id="CAP-09-D05-option-other" type="radio" name="CAP-09-D05" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D05-other-help">
+  <small id="CAP-09-D05-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D06" data-recommendation="Canonical domain records, evidence revisions and adjudications remain authoritative; graph nodes and edges are versioned derivative assertions with complete provenance." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D06</span><h3>Authority boundary</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">The graph can be dropped, repaired or replaced without losing scholarly decisions, rights or evidence history.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D06-option-0">
+  <input id="CAP-09-D06-option-0" type="radio" name="CAP-09-D06" value="Canonical domain records, evidence revisions and adjudications remain authoritative; graph nodes and edges are versioned derivative assertions with complete provenance." data-decision-option checked>
+  <span><strong>Canonical domain records, evidence revisions and adjudications remain authoritative; graph nodes and edges are versioned derivative assertions with complete provenance.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D06-option-1">
+  <input id="CAP-09-D06-option-1" type="radio" name="CAP-09-D06" value="Store graph edges as the only copy of scholarly relationships." data-decision-option>
+  <span><strong>Store graph edges as the only copy of scholarly relationships.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D06-option-other">
+  <input id="CAP-09-D06-option-other" type="radio" name="CAP-09-D06" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D06-other-help">
+  <small id="CAP-09-D06-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D07" data-recommendation="Persist projection tables and adjacency indexes in protected SQLite; load bounded analytical subgraphs into rustworkx through a stable GraphQuery port." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D07</span><h3>Local implementation</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">SQLite fits the local protected-store architecture while rustworkx supplies portable algorithms without creating another durable authority.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D07-option-0">
+  <input id="CAP-09-D07-option-0" type="radio" name="CAP-09-D07" value="Persist projection tables and adjacency indexes in protected SQLite; load bounded analytical subgraphs into rustworkx through a stable GraphQuery port." data-decision-option checked>
+  <span><strong>Persist projection tables and adjacency indexes in protected SQLite; load bounded analytical subgraphs into rustworkx through a stable GraphQuery port.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D07-option-1">
+  <input id="CAP-09-D07-option-1" type="radio" name="CAP-09-D07" value="Require an external graph server or keep all graph state only in memory." data-decision-option>
+  <span><strong>Require an external graph server or keep all graph state only in memory.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D07-option-other">
+  <input id="CAP-09-D07-option-other" type="radio" name="CAP-09-D07" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D07-other-help">
+  <small id="CAP-09-D07-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D08" data-recommendation="Represent relation assertion identity separately from edge projection; include direction, status, validity interval, confidence components, evidence anchors, inference method and dispute/supersession links." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D08</span><h3>Graph semantics</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Scholarly relations are contestable and temporally/version dependent; a rich assertion contract is required for audit and recalculation.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D08-option-0">
+  <input id="CAP-09-D08-option-0" type="radio" name="CAP-09-D08" value="Represent relation assertion identity separately from edge projection; include direction, status, validity interval, confidence components, evidence anchors, inference method and dispute/supersession links." data-decision-option checked>
+  <span><strong>Represent relation assertion identity separately from edge projection; include direction, status, validity interval, confidence components, evidence anchors, inference method and dispute/supersession links.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D08-option-1">
+  <input id="CAP-09-D08-option-1" type="radio" name="CAP-09-D08" value="Use untyped source-target-label triples." data-decision-option>
+  <span><strong>Use untyped source-target-label triples.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D08-option-other">
+  <input id="CAP-09-D08-option-other" type="radio" name="CAP-09-D08" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D08-other-help">
+  <small id="CAP-09-D08-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D09" data-recommendation="Use deterministic identifiers/aliases and candidate retrieval first, followed by model-assisted ranking; retain mention text, source context, candidate list and human decision." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D09</span><h3>Entity-linking policy</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Entity linking is consequential and requires reversible, inspectable resolution rather than fluent normalization.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D09-option-0">
+  <input id="CAP-09-D09-option-0" type="radio" name="CAP-09-D09" value="Use deterministic identifiers/aliases and candidate retrieval first, followed by model-assisted ranking; retain mention text, source context, candidate list and human decision." data-decision-option checked>
+  <span><strong>Use deterministic identifiers/aliases and candidate retrieval first, followed by model-assisted ranking; retain mention text, source context, candidate list and human decision.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D09-option-1">
+  <input id="CAP-09-D09-option-1" type="radio" name="CAP-09-D09" value="Let an LLM emit a canonical entity name without candidates or evidence." data-decision-option>
+  <span><strong>Let an LLM emit a canonical entity name without candidates or evidence.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D09-option-other">
+  <input id="CAP-09-D09-option-other" type="radio" name="CAP-09-D09" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D09-other-help">
+  <small id="CAP-09-D09-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D10" data-recommendation="Allow related, broader/narrower, variant and disputed-equivalence relations; merge only through an adjudicated command." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D10</span><h3>Construct identity</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Construct drift and operational variation are analytical material, not noise to erase.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D10-option-0">
+  <input id="CAP-09-D10-option-0" type="radio" name="CAP-09-D10" value="Allow related, broader/narrower, variant and disputed-equivalence relations; merge only through an adjudicated command." data-decision-option checked>
+  <span><strong>Allow related, broader/narrower, variant and disputed-equivalence relations; merge only through an adjudicated command.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D10-option-1">
+  <input id="CAP-09-D10-option-1" type="radio" name="CAP-09-D10" value="Case-folded string matching or embedding threshold automatically merges constructs." data-decision-option>
+  <span><strong>Case-folded string matching or embedding threshold automatically merges constructs.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D10-option-other">
+  <input id="CAP-09-D10-option-other" type="radio" name="CAP-09-D10" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D10-other-help">
+  <small id="CAP-09-D10-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D11" data-recommendation="Extract claim, evidence, warrant, qualification, rebuttal and relation candidates with exact anchors and candidate status; use schema packs by mode/domain." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D11</span><h3>Argument representation</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Argument roles and relation meanings vary; source-grounded typed candidates support later comparison and synthesis.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D11-option-0">
+  <input id="CAP-09-D11-option-0" type="radio" name="CAP-09-D11" value="Extract claim, evidence, warrant, qualification, rebuttal and relation candidates with exact anchors and candidate status; use schema packs by mode/domain." data-decision-option checked>
+  <span><strong>Extract claim, evidence, warrant, qualification, rebuttal and relation candidates with exact anchors and candidate status; use schema packs by mode/domain.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D11-option-1">
+  <input id="CAP-09-D11-option-1" type="radio" name="CAP-09-D11" value="One universal support/contradiction classifier over abstracts." data-decision-option>
+  <span><strong>One universal support/contradiction classifier over abstracts.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D11-option-other">
+  <input id="CAP-09-D11-option-other" type="radio" name="CAP-09-D11" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D11-other-help">
+  <small id="CAP-09-D11-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D12" data-recommendation="Apply explicit incompatibility gates first, then score remaining pairs on construct definition, unit/level, population, context, time, method, measure, outcome and intervention/exposure." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D12</span><h3>Two-stage comparability</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Hard semantic/methodological mismatches must be visible before softer similarity signals.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D12-option-0">
+  <input id="CAP-09-D12-option-0" type="radio" name="CAP-09-D12" value="Apply explicit incompatibility gates first, then score remaining pairs on construct definition, unit/level, population, context, time, method, measure, outcome and intervention/exposure." data-decision-option checked>
+  <span><strong>Apply explicit incompatibility gates first, then score remaining pairs on construct definition, unit/level, population, context, time, method, measure, outcome and intervention/exposure.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D12-option-1">
+  <input id="CAP-09-D12-option-1" type="radio" name="CAP-09-D12" value="Cluster only by embedding similarity or citation graph." data-decision-option>
+  <span><strong>Cluster only by embedding similarity or citation graph.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D12-option-other">
+  <input id="CAP-09-D12-option-other" type="radio" name="CAP-09-D12" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D12-other-help">
+  <small id="CAP-09-D12-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D13" data-recommendation="Systematic, theory, technical, critical and other modes version their dimensions, required fields, missingness treatment and thresholds." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D13</span><h3>Mode packs</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">What counts as comparable depends on the intended scholarly inference.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D13-option-0">
+  <input id="CAP-09-D13-option-0" type="radio" name="CAP-09-D13" value="Systematic, theory, technical, critical and other modes version their dimensions, required fields, missingness treatment and thresholds." data-decision-option checked>
+  <span><strong>Systematic, theory, technical, critical and other modes version their dimensions, required fields, missingness treatment and thresholds.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D13-option-1">
+  <input id="CAP-09-D13-option-1" type="radio" name="CAP-09-D13" value="Global weights hidden in the model." data-decision-option>
+  <span><strong>Global weights hidden in the model.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D13-option-other">
+  <input id="CAP-09-D13-option-other" type="radio" name="CAP-09-D13" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D13-other-help">
+  <small id="CAP-09-D13-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D14" data-recommendation="Generate typed candidates from normalized claims and evidence with explanatory contrasting dimensions; require human confirmation for promoted contradiction/boundary assertions." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D14</span><h3>Relation detection</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">NLI/stance is a signal; context and measurement differences can explain apparent conflict.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D14-option-0">
+  <input id="CAP-09-D14-option-0" type="radio" name="CAP-09-D14" value="Generate typed candidates from normalized claims and evidence with explanatory contrasting dimensions; require human confirmation for promoted contradiction/boundary assertions." data-decision-option checked>
+  <span><strong>Generate typed candidates from normalized claims and evidence with explanatory contrasting dimensions; require human confirmation for promoted contradiction/boundary assertions.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D14-option-1">
+  <input id="CAP-09-D14-option-1" type="radio" name="CAP-09-D14" value="Promote model labels directly to graph edges." data-decision-option>
+  <span><strong>Promote model labels directly to graph edges.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D14-option-other">
+  <input id="CAP-09-D14-option-other" type="radio" name="CAP-09-D14" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D14-other-help">
+  <small id="CAP-09-D14-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D15" data-recommendation="Use Cytoscape.js behind an application graph-view adapter, with server/core-prepared authorized subgraphs and versioned layout presets." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D15</span><h3>Visualization engine</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Cytoscape.js provides mature interaction/layout/serialization while replaceability and domain policy stay outside the library.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D15-option-0">
+  <input id="CAP-09-D15-option-0" type="radio" name="CAP-09-D15" value="Use Cytoscape.js behind an application graph-view adapter, with server/core-prepared authorized subgraphs and versioned layout presets." data-decision-option checked>
+  <span><strong>Use Cytoscape.js behind an application graph-view adapter, with server/core-prepared authorized subgraphs and versioned layout presets.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D15-option-1">
+  <input id="CAP-09-D15-option-1" type="radio" name="CAP-09-D15" value="Custom canvas engine or direct database-to-browser graph feed." data-decision-option>
+  <span><strong>Custom canvas engine or direct database-to-browser graph feed.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D15-option-other">
+  <input id="CAP-09-D15-option-other" type="radio" name="CAP-09-D15" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D15-other-help">
+  <small id="CAP-09-D15-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D16" data-recommendation="Start from a selected entity/claim and bounded neighborhood; expand explicitly by relation type/depth and summarize omitted nodes." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D16</span><h3>Progressive disclosure</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Research graphs become unusable and inaccessible when scale is uncontrolled.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D16-option-0">
+  <input id="CAP-09-D16-option-0" type="radio" name="CAP-09-D16" value="Start from a selected entity/claim and bounded neighborhood; expand explicitly by relation type/depth and summarize omitted nodes." data-decision-option checked>
+  <span><strong>Start from a selected entity/claim and bounded neighborhood; expand explicitly by relation type/depth and summarize omitted nodes.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D16-option-1">
+  <input id="CAP-09-D16-option-1" type="radio" name="CAP-09-D16" value="Auto-render all connected nodes." data-decision-option>
+  <span><strong>Auto-render all connected nodes.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D16-option-other">
+  <input id="CAP-09-D16-option-other" type="radio" name="CAP-09-D16" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D16-other-help">
+  <small id="CAP-09-D16-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D17" data-recommendation="Visual encodings indicate relation/status/provenance only; every inference opens evidence and a textual explanation, with no causal implication from layout." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D17</span><h3>Interpretation boundary</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Layout is a navigation aid, not scholarly evidence.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D17-option-0">
+  <input id="CAP-09-D17-option-0" type="radio" name="CAP-09-D17" value="Visual encodings indicate relation/status/provenance only; every inference opens evidence and a textual explanation, with no causal implication from layout." data-decision-option checked>
+  <span><strong>Visual encodings indicate relation/status/provenance only; every inference opens evidence and a textual explanation, with no causal implication from layout.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D17-option-1">
+  <input id="CAP-09-D17-option-1" type="radio" name="CAP-09-D17" value="Let force-directed distance imply conceptual importance." data-decision-option>
+  <span><strong>Let force-directed distance imply conceptual importance.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D17-option-other">
+  <input id="CAP-09-D17-option-other" type="radio" name="CAP-09-D17" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D17-other-help">
+  <small id="CAP-09-D17-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D18" data-recommendation="Require a versioned synthesis plan of intended claims, comparison sets, evidence requirements, dissent/uncertainty handling and output structure." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D18</span><h3>Plan before prose</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">An inspectable plan prevents prose fluency from silently selecting evidence or argument.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D18-option-0">
+  <input id="CAP-09-D18-option-0" type="radio" name="CAP-09-D18" value="Require a versioned synthesis plan of intended claims, comparison sets, evidence requirements, dissent/uncertainty handling and output structure." data-decision-option checked>
+  <span><strong>Require a versioned synthesis plan of intended claims, comparison sets, evidence requirements, dissent/uncertainty handling and output structure.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D18-option-1">
+  <input id="CAP-09-D18-option-1" type="radio" name="CAP-09-D18" value="Let the LLM decide claims while drafting." data-decision-option>
+  <span><strong>Let the LLM decide claims while drafting.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D18-option-other">
+  <input id="CAP-09-D18-option-other" type="radio" name="CAP-09-D18" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D18-other-help">
+  <small id="CAP-09-D18-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D19" data-recommendation="Retrieve accepted evidence records/passages for each planned claim with rights, source quality, status and counterevidence; freeze a packet snapshot before generation." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D19</span><h3>Evidence packet</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Bounded packets improve traceability, cost control and reproducibility.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D19-option-0">
+  <input id="CAP-09-D19-option-0" type="radio" name="CAP-09-D19" value="Retrieve accepted evidence records/passages for each planned claim with rights, source quality, status and counterevidence; freeze a packet snapshot before generation." data-decision-option checked>
+  <span><strong>Retrieve accepted evidence records/passages for each planned claim with rights, source quality, status and counterevidence; freeze a packet snapshot before generation.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D19-option-1">
+  <input id="CAP-09-D19-option-1" type="radio" name="CAP-09-D19" value="Send full documents or search snippets ad hoc." data-decision-option>
+  <span><strong>Send full documents or search snippets ad hoc.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D19-option-other">
+  <input id="CAP-09-D19-option-other" type="radio" name="CAP-09-D19" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D19-other-help">
+  <small id="CAP-09-D19-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D20" data-recommendation="Run a separate citation auditor over final sentences/claims and cited passages for support, completeness, scope and mismatch; block high-severity failures." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D20</span><h3>Independent audit</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Generator/auditor separation is required for epistemic accountability.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D20-option-0">
+  <input id="CAP-09-D20-option-0" type="radio" name="CAP-09-D20" value="Run a separate citation auditor over final sentences/claims and cited passages for support, completeness, scope and mismatch; block high-severity failures." data-decision-option checked>
+  <span><strong>Run a separate citation auditor over final sentences/claims and cited passages for support, completeness, scope and mismatch; block high-severity failures.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D20-option-1">
+  <input id="CAP-09-D20-option-1" type="radio" name="CAP-09-D20" value="Ask the drafting agent whether its citations are correct." data-decision-option>
+  <span><strong>Ask the drafting agent whether its citations are correct.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D20-option-other">
+  <input id="CAP-09-D20-option-other" type="radio" name="CAP-09-D20" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D20-other-help">
+  <small id="CAP-09-D20-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D21" data-recommendation="Use RO-Crate JSON-LD to describe entities/activities/files and BagIt-compatible payload manifests/checksums for transfer integrity." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D21</span><h3>Package model</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">The combination supplies portable research-object semantics and deterministic payload validation.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D21-option-0">
+  <input id="CAP-09-D21-option-0" type="radio" name="CAP-09-D21" value="Use RO-Crate JSON-LD to describe entities/activities/files and BagIt-compatible payload manifests/checksums for transfer integrity." data-decision-option checked>
+  <span><strong>Use RO-Crate JSON-LD to describe entities/activities/files and BagIt-compatible payload manifests/checksums for transfer integrity.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D21-option-1">
+  <input id="CAP-09-D21-option-1" type="radio" name="CAP-09-D21" value="Custom ZIP with a README only." data-decision-option>
+  <span><strong>Custom ZIP with a README only.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D21-option-other">
+  <input id="CAP-09-D21-option-other" type="radio" name="CAP-09-D21" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D21-other-help">
+  <small id="CAP-09-D21-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D22" data-recommendation="Freeze canonical revision/event high-water marks, corpus membership, rights decisions, schemas, indexes/models/prompt manifests and approved outputs; derived indexes are referenced or rebuilt, not silently copied as authority." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D22</span><h3>Snapshot boundary</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">A single transaction-like snapshot boundary is necessary for coherent reproduction.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D22-option-0">
+  <input id="CAP-09-D22-option-0" type="radio" name="CAP-09-D22" value="Freeze canonical revision/event high-water marks, corpus membership, rights decisions, schemas, indexes/models/prompt manifests and approved outputs; derived indexes are referenced or rebuilt, not silently copied as authority." data-decision-option checked>
+  <span><strong>Freeze canonical revision/event high-water marks, corpus membership, rights decisions, schemas, indexes/models/prompt manifests and approved outputs; derived indexes are referenced or rebuilt, not silently copied as authority.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D22-option-1">
+  <input id="CAP-09-D22-option-1" type="radio" name="CAP-09-D22" value="Export whatever is current as each file is written." data-decision-option>
+  <span><strong>Export whatever is current as each file is written.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D22-option-other">
+  <input id="CAP-09-D22-option-other" type="radio" name="CAP-09-D22" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D22-other-help">
+  <small id="CAP-09-D22-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-09-D23" data-recommendation="Compute an export policy per file/field/passage; replace restricted content with metadata/checksum/locator when redistribution is not permitted." data-plan-hash="a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-09-D23</span><h3>Rights filtering</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Access on the source machine does not grant redistribution rights.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-09-D23-option-0">
+  <input id="CAP-09-D23-option-0" type="radio" name="CAP-09-D23" value="Compute an export policy per file/field/passage; replace restricted content with metadata/checksum/locator when redistribution is not permitted." data-decision-option checked>
+  <span><strong>Compute an export policy per file/field/passage; replace restricted content with metadata/checksum/locator when redistribution is not permitted.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-09-D23-option-1">
+  <input id="CAP-09-D23-option-1" type="radio" name="CAP-09-D23" value="Include all local project content because the recipient may have access." data-decision-option>
+  <span><strong>Include all local project content because the recipient may have access.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-09-D23-option-other">
+  <input id="CAP-09-D23-option-other" type="radio" name="CAP-09-D23" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-09-D23-other-help">
+  <small id="CAP-09-D23-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+</div>
+<section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
+<div class="slice-list">
+<a class="slice-card" href="CAP-09.S01.html">
+  <div class="slice-card-index">1</div>
+  <div><span class="eyebrow">CAP-09.S01</span><h3>Local graph domain and replaceable graph storage</h3>
+  <p>3 tasks · W4 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-09.S02.html">
+  <div class="slice-card-index">2</div>
+  <div><span class="eyebrow">CAP-09.S02</span><h3>Claim, theory, construct, method, and context relations</h3>
+  <p>3 tasks · W4 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-09.S03.html">
+  <div class="slice-card-index">3</div>
+  <div><span class="eyebrow">CAP-09.S03</span><h3>Comparability sets and contradiction candidates</h3>
+  <p>3 tasks · W4 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-09.S04.html">
+  <div class="slice-card-index">4</div>
+  <div><span class="eyebrow">CAP-09.S04</span><h3>Graph, theory, construct, and lineage workspaces</h3>
+  <p>3 tasks · W4 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-09.S05.html">
+  <div class="slice-card-index">5</div>
+  <div><span class="eyebrow">CAP-09.S05</span><h3>Evidence-grounded synthesis and citation audit</h3>
+  <p>3 tasks · W4 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-09.S06.html">
+  <div class="slice-card-index">6</div>
+  <div><span class="eyebrow">CAP-09.S06</span><h3>Reproducibility packages and scholarly exports</h3>
+  <p>3 tasks · W4 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a></div>
+<details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+
+&lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Review all slices&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Confirm or override resolved defaults&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve once&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Run long capability campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Production readiness review&lt;/span&gt;&lt;/div&gt;
+
+## 0. Control and authority
+
+| Field | Value |
+|---|---|
+| Capability | `CAP-09` — Scholarly graph, comparison sets, synthesis, and reproducibility |
+| Objective | Connect bibliographic structure to claims, constructs, methods, contexts, assumptions, evidence, and decisions; then produce source-grounded synthesis and reproducibility artifacts. |
+| Execution mode | Capability campaign; slices complete in dependency order |
+| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Slice plans | `CAP-09.S01`, `CAP-09.S02`, `CAP-09.S03`, `CAP-09.S04`, `CAP-09.S05`, `CAP-09.S06` |
+| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
+| Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
+
+## 1. Capability outcome and production-ready exit
+
+The campaign must deliver: **Connect bibliographic structure to claims, constructs, methods, contexts, assumptions, evidence, and decisions; then produce source-grounded synthesis and reproducibility artifacts.**
+
+Production-ready exit criteria:
+
+- Typed graph projections are derived from canonical records and every material edge is traceable and contestable.
+- Contradiction analysis begins with explicit comparability rather than naive claim similarity.
+- Synthesis and exports preserve supporting evidence, disagreement, uncertainty, rights, and exact project state.
+- Synthesis and graph outputs can become evidence packets for study design, manuscript blueprints, drafting, and review without losing source lineage.
+
+Completion also requires all slices and tasks independently approved, capability-wide end-to-end evidence, failure/denial/cancel/restart/recovery/security/accessibility/platform coverage, accepted handoffs and no concealed production blockers.
+
+## 2. Slice map and end-to-end dependency logic
+
+| Slice | Responsibility | Production outcome | Upstream dependencies |
+|---|---|---|---|
+| `CAP-09.S01` | Local graph domain and replaceable graph storage | The system can query scholarly relations locally without binding the domain to a particular graph database. | `CAP-08.S03.T02`, `CAP-03.S05.T02` |
+| `CAP-09.S02` | Claim, theory, construct, method, and context relations | Internal paper semantics become a multi-granular argument representation with preserved wording and evidence. | `CAP-09.S01.T03`, `CAP-08.S06.T02` |
+| `CAP-09.S03` | Comparability sets and contradiction candidates | Studies are normalized into defensible comparison sets before support, contradiction, or boundary inference. | `CAP-09.S02.T03`, `CAP-08.S05.T03` |
+| `CAP-09.S04` | Graph, theory, construct, and lineage workspaces | Complex field structures are navigable through task-specific views rather than one undifferentiated network. | `CAP-09.S01.T03`, `CAP-06.S05.T01` |
+| `CAP-09.S05` | Evidence-grounded synthesis and citation audit | Narrative and tabular synthesis is downstream of accepted evidence and preserves disagreement and uncertainty. | `CAP-09.S03.T03`, `CAP-08.S06.T02` |
+| `CAP-09.S06` | Reproducibility packages and scholarly exports | A project can produce a rights-aware record of corpus, searches, schemas, models, decisions, analysis, and outputs. | `CAP-09.S05.T03`, `CAP-04.S04.T02` |
+
+The planning reviewer must test the complete vertical: inputs from previous capabilities, each slice handoff, researcher workflow, durable/provenance behavior, degraded/recovery path and downstream contract. Slice-level optimization may not break the capability-wide path.
+
+## 3. Decision-making protocol
+
+1. Read every slice plan, backlog task, architecture boundary, workflow/page contract and relevant benchmark/source.
+2. For each material choice, compare credible candidates using functionality, security, privacy/rights, portability, maintainability, licensing, local resource use, recovery, evaluation quality and downstream compatibility.
+3. Present the leading candidates and an explicit recommendation. Avoid asking an open-ended question when evidence supports a best direction.
+4. Record the accepted selection, rejected alternatives, evidence and replaceability/migration boundary in this packet and any required ADR.
+5. Validate that the selected set is internally compatible and can complete all slices end to end.
+6. Resolve all reasonably foreseeable decisions before campaign start. Implementation should not repeatedly interrupt the human for ordinary engineering choices.
+
+## 4. Decision register
+
+| ID | Decision | Recommended selection | Credible alternative | Why recommended / replacement boundary | Basis |
+|---|---|---|---|---|---|
+| `CAP-09-D01` | **Graph authority** | Relational assertions/evidence remain authoritative; graph stores and in-memory structures are versioned rebuildable projections | Make Neo4j or a client graph the sole source of truth | The domain requires transactions, disputes and provenance that must survive graph-engine replacement and local/server differences. | [rustworkx Documentation](https://www.rustworkx.org/dev/) |
+| `CAP-09-D02` | **Local analytical projection** | rustworkx for bounded in-memory analysis; Cytoscape.js for interactive visualization | Use the UI graph as the analysis engine; ship a graph server in the first desktop release | This combination is cross-platform, performant and replaceable while avoiding a second mandatory local database. | [Cytoscape.js Documentation](https://js.cytoscape.org/) |
+| `CAP-09-D03` | **Comparability before contradiction** | Hard eligibility dimensions and explainable similarity precede stance/NLI signals | Run contradiction classification across any semantically related claims | Differences in construct, measure, population, method or period must not be mislabeled as substantive contradiction. | [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/) |
+| `CAP-09-D04` | **Synthesis contract** | Evidence packet and claim plan precede prose; each material sentence resolves to accepted evidence and preserves dissent | Generate a long narrative directly from top retrieved papers | The platform’s evidence-before-prose principle requires auditable claim-level support and citation completeness. | [Synthesizing Scientific Literature with Retrieval-Augmented Language Models](https://doi.org/10.1038/s41586-025-10072-4) |
+| `CAP-09-D05` | **Reproducibility export** | RO-Crate metadata plus BagIt-compatible checksum payload and CSL-formatted references | One opaque ZIP or application-only backup | Open package standards support human inspection, integrity validation and future tool interoperability. | [RO-Crate 1.3 Specification](https://www.researchobject.org/ro-crate/specification.html) |
+| `CAP-09-D06` | **Authority boundary** | Canonical domain records, evidence revisions and adjudications remain authoritative; graph nodes and edges are versioned derivative assertions with complete provenance. | Store graph edges as the only copy of scholarly relationships. | The graph can be dropped, repaired or replaced without losing scholarly decisions, rights or evidence history. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
+| `CAP-09-D07` | **Local implementation** | Persist projection tables and adjacency indexes in protected SQLite; load bounded analytical subgraphs into rustworkx through a stable GraphQuery port. | Require an external graph server or keep all graph state only in memory. | SQLite fits the local protected-store architecture while rustworkx supplies portable algorithms without creating another durable authority. | [rustworkx Documentation](https://www.rustworkx.org/dev/) |
+| `CAP-09-D08` | **Graph semantics** | Represent relation assertion identity separately from edge projection; include direction, status, validity interval, confidence components, evidence anchors, inference method and dispute/supersession links. | Use untyped source-target-label triples. | Scholarly relations are contestable and temporally/version dependent; a rich assertion contract is required for audit and recalculation. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
+| `CAP-09-D09` | **Entity-linking policy** | Use deterministic identifiers/aliases and candidate retrieval first, followed by model-assisted ranking; retain mention text, source context, candidate list and human decision. | Let an LLM emit a canonical entity name without candidates or evidence. | Entity linking is consequential and requires reversible, inspectable resolution rather than fluent normalization. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
+| `CAP-09-D10` | **Construct identity** | Allow related, broader/narrower, variant and disputed-equivalence relations; merge only through an adjudicated command. | Case-folded string matching or embedding threshold automatically merges constructs. | Construct drift and operational variation are analytical material, not noise to erase. | [Web Annotation Data Model](https://www.w3.org/TR/annotation-model/) |
+| `CAP-09-D11` | **Argument representation** | Extract claim, evidence, warrant, qualification, rebuttal and relation candidates with exact anchors and candidate status; use schema packs by mode/domain. | One universal support/contradiction classifier over abstracts. | Argument roles and relation meanings vary; source-grounded typed candidates support later comparison and synthesis. | [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/) |
+| `CAP-09-D12` | **Two-stage comparability** | Apply explicit incompatibility gates first, then score remaining pairs on construct definition, unit/level, population, context, time, method, measure, outcome and intervention/exposure. | Cluster only by embedding similarity or citation graph. | Hard semantic/methodological mismatches must be visible before softer similarity signals. | [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/) |
+| `CAP-09-D13` | **Mode packs** | Systematic, theory, technical, critical and other modes version their dimensions, required fields, missingness treatment and thresholds. | Global weights hidden in the model. | What counts as comparable depends on the intended scholarly inference. | [PRISMA 2020 Statement](https://doi.org/10.1136/bmj.n71) |
+| `CAP-09-D14` | **Relation detection** | Generate typed candidates from normalized claims and evidence with explanatory contrasting dimensions; require human confirmation for promoted contradiction/boundary assertions. | Promote model labels directly to graph edges. | NLI/stance is a signal; context and measurement differences can explain apparent conflict. | [Fact or Fiction: Verifying Scientific Claims](https://aclanthology.org/2020.emnlp-main.609/) |
+| `CAP-09-D15` | **Visualization engine** | Use Cytoscape.js behind an application graph-view adapter, with server/core-prepared authorized subgraphs and versioned layout presets. | Custom canvas engine or direct database-to-browser graph feed. | Cytoscape.js provides mature interaction/layout/serialization while replaceability and domain policy stay outside the library. | [Cytoscape.js Documentation](https://js.cytoscape.org/) |
+| `CAP-09-D16` | **Progressive disclosure** | Start from a selected entity/claim and bounded neighborhood; expand explicitly by relation type/depth and summarize omitted nodes. | Auto-render all connected nodes. | Research graphs become unusable and inaccessible when scale is uncontrolled. | [Cytoscape.js Documentation](https://js.cytoscape.org/) |
+| `CAP-09-D17` | **Interpretation boundary** | Visual encodings indicate relation/status/provenance only; every inference opens evidence and a textual explanation, with no causal implication from layout. | Let force-directed distance imply conceptual importance. | Layout is a navigation aid, not scholarly evidence. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
+| `CAP-09-D18` | **Plan before prose** | Require a versioned synthesis plan of intended claims, comparison sets, evidence requirements, dissent/uncertainty handling and output structure. | Let the LLM decide claims while drafting. | An inspectable plan prevents prose fluency from silently selecting evidence or argument. | [Synthesizing Scientific Literature with Retrieval-Augmented Language Models](https://doi.org/10.1038/s41586-025-10072-4) |
+| `CAP-09-D19` | **Evidence packet** | Retrieve accepted evidence records/passages for each planned claim with rights, source quality, status and counterevidence; freeze a packet snapshot before generation. | Send full documents or search snippets ad hoc. | Bounded packets improve traceability, cost control and reproducibility. | [Language Agents Achieve Superhuman Synthesis of Scientific Knowledge](https://arxiv.org/abs/2409.13740) |
+| `CAP-09-D20` | **Independent audit** | Run a separate citation auditor over final sentences/claims and cited passages for support, completeness, scope and mismatch; block high-severity failures. | Ask the drafting agent whether its citations are correct. | Generator/auditor separation is required for epistemic accountability. | [Synthesizing Scientific Literature with Retrieval-Augmented Language Models](https://doi.org/10.1038/s41586-025-10072-4) |
+| `CAP-09-D21` | **Package model** | Use RO-Crate JSON-LD to describe entities/activities/files and BagIt-compatible payload manifests/checksums for transfer integrity. | Custom ZIP with a README only. | The combination supplies portable research-object semantics and deterministic payload validation. | [RO-Crate 1.3 Specification](https://www.researchobject.org/ro-crate/specification.html) |
+| `CAP-09-D22` | **Snapshot boundary** | Freeze canonical revision/event high-water marks, corpus membership, rights decisions, schemas, indexes/models/prompt manifests and approved outputs; derived indexes are referenced or rebuilt, not silently copied as authority. | Export whatever is current as each file is written. | A single transaction-like snapshot boundary is necessary for coherent reproduction. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
+| `CAP-09-D23` | **Rights filtering** | Compute an export policy per file/field/passage; replace restricted content with metadata/checksum/locator when redistribution is not permitted. | Include all local project content because the recipient may have access. | Access on the source machine does not grant redistribution rights. | [RFC 8493 - The BagIt File Packaging Format](https://www.rfc-editor.org/rfc/rfc8493.html) |
+
+### Review and approval
+
+The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+
+
+## 5. Cross-slice architecture contract
+
+- Preserve the authority order: canonical relational/provenance records and human decisions first; indexes, caches, graph projections, model outputs, rankings and generated artifacts remain versioned derivatives unless the Systems Design explicitly states otherwise.
+- Stable ports isolate platform, storage, source, parser, model/provider, vector, graph, renderer and deployment adapters.
+- Every durable output records source snapshot, schema/policy/model/tool versions, rights/privacy decisions, human decisions and dependency links.
+- All long-running jobs are durable, idempotent where appropriate, cancellable, checkpointed, restartable and independently reviewable.
+- The campaign remains local/Windows-first for the current waves while producing portable contracts and fixtures needed by CAP-14 macOS/Linux qualification.
+- No later capability is implemented early except its documented interface/fixture seam.
+
+## 6. Experience and workflow contract
+
+Relevant approved pages: `claim-graph.html`, `theory-map.html`, `synthesis-studio.html`, `audit-lineage.html`
+
+- The project use case determines the primary ordered workflow. Each page shows current stage, prior/next stage, expected output and completion/checkpoint state.
+- All tools remain accessible as supporting tools with a clear route back to the primary workflow.
+- Intentional changes require the style guide/workflow/page prototype to be updated, validated and human-approved before implementation.
+- Accessibility, light/dark parity, offline/partial/error/recovery states and source/provenance inspection are capability exit requirements, not post-release polish.
+
+## 7. Security, privacy, rights and research-integrity decisions
+
+The reviewer must confirm the entire capability’s trust boundaries, data classes, authorization roles, secret/egress rules, rights/license handling, untrusted-content controls, logging/redaction, export behavior, model licenses and human scholarly authority. Where one slice’s output changes another slice’s rights or confidentiality exposure, the stricter policy travels with the object.
+
+## 8. Capability-wide verification strategy
+
+- **Contract:** all portable schemas, negative fixtures and adapter conformance.
+- **Integration:** real local components, deterministic provider/source/model fixtures, transaction/outbox/dependency behavior.
+- **End to end:** representative workflow across every slice with source inspection and human decision.
+- **Recovery:** cancellation, process/application restart, corrupted derivative, migration, rollback/repair and project relocation.
+- **Security/rights:** denial, malicious content, prompt injection, path/archive abuse, egress and export filters, redacted diagnostics.
+- **Quality/evaluation:** capability-specific gold sets, ablations, calibration/error analysis and independent human samples.
+- **Experience:** approved reference, adaptive navigation, keyboard/screen reader/zoom/reflow and light/dark visual checks.
+- **Performance:** reference hardware/corpus budgets plus 20% regression threshold.
+- **Independent review:** tests must demonstrate semantics, not merely execute code.
+
+## 9. Long-running execution contract
+
+Once approved and started, the agent should execute the whole capability slice by slice. It may make ordinary low-risk implementation choices within the accepted architecture, debug tests, refactor within module boundaries, select documented fallbacks and rerun evaluations without asking for confirmation. Progress is recorded through task/slice evidence and periodic concise updates rather than approval stops.
+
+### Allowed pause classifications
+
+- A relation type or comparability rule changes the core ontology without approval.
+- A synthesis cannot meet citation-support thresholds.
+- An export would redistribute restricted full text or confidential content.
+- Projection consistency cannot be restored from authoritative state.
+- A governed UI/design change that requires a new approved reference.
+
+Every pause records category, evidence, exact blocked task/slice, attempted alternatives, recommended next action and conditions for resume. Test failures and routine uncertainty are not pause reasons.
+
+## 10. Plan and approval checklist
+
+- [ ] All slice plans exist and pass `slice_plan_check.py` structurally.
+- [ ] Every material decision has credible candidates, recommendation and accepted status.
+- [ ] Required ADRs and design-reference changes are approved.
+- [ ] Capability-wide architecture and end-to-end path are coherent.
+- [ ] Fixtures, benchmarks, credentials/licenses, hardware and human authorities are available or approved stubs exist.
+- [ ] Security/privacy/rights/research-integrity review is complete.
+- [ ] All slice plans are approved at immutable commits.
+- [ ] `python tools/planctl.py ready CAP-09 --require-approved` passes.
+- [ ] The first dependency-ready task can start and the campaign can continue without routine decision stops.
+
+## 11. Research and technical basis
+
+- [rustworkx Documentation](https://www.rustworkx.org/dev/) — Cross-platform high-performance in-memory graph projections and algorithms.
+- [Cytoscape.js Documentation](https://js.cytoscape.org/) — Interactive graph visualization, selectors, layouts, serialization and graph interaction.
+- [Synthesizing Scientific Literature with Retrieval-Augmented Language Models](https://doi.org/10.1038/s41586-025-10072-4) — Domain retrieval, reranking, iterative feedback, citation-aware synthesis and evaluation.
+- [RO-Crate 1.3 Specification](https://www.researchobject.org/ro-crate/specification.html) — JSON-LD research package metadata and research-object interchange.
+- [RFC 8493 - The BagIt File Packaging Format](https://www.rfc-editor.org/rfc/rfc8493.html) — Checksum-validated payload transfer and archival package layout.
+
+## 12. Approval record
+
+The packet remains **proposed**. Approval requires:
+
+- `decision_completion: complete`;
+- every front-matter decision `status: accepted`;
+- `approval.status: approved`, named approver, timestamp and approved commit;
+- approved slice plans and any required ADRs/reference versions;
+- passing approval-mode plan validation.
+</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>

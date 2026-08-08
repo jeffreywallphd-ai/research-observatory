@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.1",
+  "document_type": "repository-setup-verification",
+  "target": "C:/ai-projects/research-observatory",
+  "status": "pass",
+  "errors": [],
+  "warnings": [],
+  "commands": [
+    {
+      "command": [
+        "C:\\Python314\\python.exe",
+        "tools/taskctl.py",
+        "--file",
+        "planning/backlog.yaml",
+        "validate"
+      ],
+      "returncode": 0,
+      "stdout": "Valid backlog: 20 capabilities, 117 slices, 356 tasks, 12 release gates\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Python314\\python.exe",
+        "tools/capability_plan_check.py",
+        "--repo",
+        "."
+      ],
+      "returncode": 0,
+      "stdout": "Valid capability decision plans: 19; scope=all authored; approval_required=False\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Python314\\python.exe",
+        "tools/slice_plan_check.py",
+        "--repo",
+        "."
+      ],
+      "returncode": 0,
+      "stdout": "Valid slice implementation plans: 111; scope=all authored plans; approval_required=False\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Python314\\python.exe",
+        "tools/plan_review_site.py",
+        "--repo",
+        "."
+      ],
+      "returncode": 0,
+      "stdout": "Generated planning review site: file:///C:/ai-projects/research-observatory/planning/review-site/index.html\nManifest: C:/ai-projects/research-observatory/planning/review-site/manifest.json\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Python314\\python.exe",
+        "tools/plan_review_check.py",
+        "--repo",
+        ".",
+        "--report",
+        "artifacts/planning-review-site-validation.json"
+      ],
+      "returncode": 0,
+      "stdout": "Planning review site: pass - 19 capabilities, 111 slices, 131 HTML pages\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Python314\\python.exe",
+        "tools/ui_reference_check.py",
+        "--reference",
+        "design/ui-reference",
+        "--report",
+        "artifacts/ui-reference/report.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"ok\": true,\n  \"reference\": \"C:\\\\ai-projects\\\\research-observatory\\\\design\\\\ui-reference\",\n  \"reference_id\": \"RO-UI-ACADEMIC-MINIMAL-1.3\",\n  \"approved\": true,\n  \"product_pages\": 32,\n  \"workflow_profiles\": 14,\n  \"governed_files\": 54,\n  \"implementation_manifest\": null,\n  \"errors\": [],\n  \"warnings\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Python314\\python.exe",
+        "design/ui-reference/scripts/verify_site.py"
+      ],
+      "returncode": 0,
+      "stdout": "Verified 34 HTML files, 32 product pages, 14 workflows, and 20 capability records.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Python314\\python.exe",
+        "design/ui-reference/scripts/smoke_interactions.py"
+      ],
+      "returncode": 0,
+      "stdout": "Interaction smoke test passed: theme, sidebar, mock feedback, and adaptive workflow navigation.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "planning/review-site/assets/review.js"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

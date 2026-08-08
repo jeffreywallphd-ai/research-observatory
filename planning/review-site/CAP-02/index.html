@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>CAP-02 Local projects, durable storage, security, and recovery - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="capability" data-capability-id="CAP-02">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+  
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation"><h2>Capabilities</h2><nav class='cap-nav'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-01</span><small>Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item active" href="../CAP-02/index.html"><span>CAP-02</span><small>Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-03</span><small>Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-04</span><small>Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-05</span><small>Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-06</span><small>Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-07</span><small>Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-08</span><small>Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-09</span><small>Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-10</span><small>Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-11</span><small>Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-12</span><small>University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-13</span><small>Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-14</span><small>Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-15</span><small>Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-16</span><small>Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-17</span><small>Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-18</span><small>Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-19</span><small>Reviewer simulation, editorial synthesis, and revision</small></a></nav><h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-02.S01.html"><b>1</b><span><strong>CAP-02.S01</strong><small>Local project lifecycle and directory contract</small></span></a><a class="slice-nav-item" href="CAP-02.S02.html"><b>2</b><span><strong>CAP-02.S02</strong><small>SQLite schema, migrations, and repository layer</small></span></a><a class="slice-nav-item" href="CAP-02.S03.html"><b>3</b><span><strong>CAP-02.S03</strong><small>Encrypted local object and cache storage</small></span></a><a class="slice-nav-item" href="CAP-02.S04.html"><b>4</b><span><strong>CAP-02.S04</strong><small>Local secrets, profiles, and privacy controls</small></span></a><a class="slice-nav-item" href="CAP-02.S05.html"><b>5</b><span><strong>CAP-02.S05</strong><small>Backup, restore, relocation, and lab portability</small></span></a></nav></aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><span aria-current="page">CAP-02</span></nav>
+      
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">CAP-02 · Capability decision and execution plan</span><h1>Local projects, durable storage, security, and recovery</h1></div><span class="status status-proposed">Proposed</span></div>
+  <p>Review the completed recommendation register before implementation. Once approved, the campaign executes all slices continuously except for documented infeasibility or genuinely new consequential evidence.</p>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>3</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>1cc2ff90ed82</code></dd></div></dl>
+</section>
+<section class="review-toolbar" data-review-toolbar>
+  <div><h2>Resolved recommendations and capability approval</h2><p>Best-in-class recommendations are preselected and decision-complete. Confirm them, override a documented option with rationale, or select Other and provide both a brief description and detailed rationale. Export a review record only when preserving overrides or notes; one explicit capability approval still authorizes implementation.</p></div>
+  <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 3 selected</div>
+  <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
+  <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
+  <label class="approval-check"><input type="checkbox" data-approval-intent> Request approval of the capability packet and every slice plan after feedback is applied</label>
+  <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
+  <div class="feedback-message" data-feedback-message role="status"></div>
+  <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review CAP-02
+python tools/planctl.py --repo . approve CAP-02 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+# Only for overrides or notes:
+python tools/planctl.py --repo . apply-feedback CAP-02 &lt;downloaded-json&gt;
+python tools/planctl.py --repo . approve CAP-02 --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+python tools/planctl.py --repo . ready CAP-02 --require-approved</code></pre></details>
+</section>
+<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
+<div class="decision-list">
+<section class="decision-card" data-decision-id="CAP-02-D01" data-recommendation="SQLite STRICT tables behind repository ports with versioned migrations and SQLCipher or approved equivalent" data-plan-hash="1cc2ff90ed8215366dd4c09364d8942e18463767c75e19b847d0996c66fc26d8">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-02-D01</span><h3>Canonical local store</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">SQLite supports local portability and transactions; protected storage satisfies confidential research requirements.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-02-D01-option-0">
+  <input id="CAP-02-D01-option-0" type="radio" name="CAP-02-D01" value="SQLite STRICT tables behind repository ports with versioned migrations and SQLCipher or approved equivalent" data-decision-option checked>
+  <span><strong>SQLite STRICT tables behind repository ports with versioned migrations and SQLCipher or approved equivalent</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-02-D01-option-1">
+  <input id="CAP-02-D01-option-1" type="radio" name="CAP-02-D01" value="Plain JSON files; external PostgreSQL for desktop" data-decision-option>
+  <span><strong>Plain JSON files; external PostgreSQL for desktop</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-02-D01-option-other">
+  <input id="CAP-02-D01-option-other" type="radio" name="CAP-02-D01" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-02-D01-other-help">
+  <small id="CAP-02-D01-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-02-D02" data-recommendation="Encrypted content-addressed project object store with atomic writes and manifest verification" data-plan-hash="1cc2ff90ed8215366dd4c09364d8942e18463767c75e19b847d0996c66fc26d8">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-02-D02</span><h3>Object storage</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Separates large artifacts while supporting dedupe, integrity, backup and relocation.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-02-D02-option-0">
+  <input id="CAP-02-D02-option-0" type="radio" name="CAP-02-D02" value="Encrypted content-addressed project object store with atomic writes and manifest verification" data-decision-option checked>
+  <span><strong>Encrypted content-addressed project object store with atomic writes and manifest verification</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-02-D02-option-1">
+  <input id="CAP-02-D02-option-1" type="radio" name="CAP-02-D02" value="Store all binaries directly in relational BLOBs" data-decision-option>
+  <span><strong>Store all binaries directly in relational BLOBs</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-02-D02-option-other">
+  <input id="CAP-02-D02-option-other" type="radio" name="CAP-02-D02" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-02-D02-other-help">
+  <small id="CAP-02-D02-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-02-D03" data-recommendation="OS credential store, project privacy profiles and tested backup/restore/rekey/recovery" data-plan-hash="1cc2ff90ed8215366dd4c09364d8942e18463767c75e19b847d0996c66fc26d8">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-02-D03</span><h3>Secrets and recovery</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Credential and recovery behavior must be platform-specific at the adapter boundary and production qualified.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-02-D03-option-0">
+  <input id="CAP-02-D03-option-0" type="radio" name="CAP-02-D03" value="OS credential store, project privacy profiles and tested backup/restore/rekey/recovery" data-decision-option checked>
+  <span><strong>OS credential store, project privacy profiles and tested backup/restore/rekey/recovery</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-02-D03-option-1">
+  <input id="CAP-02-D03-option-1" type="radio" name="CAP-02-D03" value="Secrets in config files" data-decision-option>
+  <span><strong>Secrets in config files</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-02-D03-option-other">
+  <input id="CAP-02-D03-option-other" type="radio" name="CAP-02-D03" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-02-D03-other-help">
+  <small id="CAP-02-D03-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+</div>
+<section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
+<div class="slice-list">
+<a class="slice-card" href="CAP-02.S01.html">
+  <div class="slice-card-index">1</div>
+  <div><span class="eyebrow">CAP-02.S01</span><h3>Local project lifecycle and directory contract</h3>
+  <p>3 tasks · W1 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-02.S02.html">
+  <div class="slice-card-index">2</div>
+  <div><span class="eyebrow">CAP-02.S02</span><h3>SQLite schema, migrations, and repository layer</h3>
+  <p>3 tasks · W1 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-02.S03.html">
+  <div class="slice-card-index">3</div>
+  <div><span class="eyebrow">CAP-02.S03</span><h3>Encrypted local object and cache storage</h3>
+  <p>3 tasks · W1 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-02.S04.html">
+  <div class="slice-card-index">4</div>
+  <div><span class="eyebrow">CAP-02.S04</span><h3>Local secrets, profiles, and privacy controls</h3>
+  <p>4 tasks · W1 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-02.S05.html">
+  <div class="slice-card-index">5</div>
+  <div><span class="eyebrow">CAP-02.S05</span><h3>Backup, restore, relocation, and lab portability</h3>
+  <p>3 tasks · W5 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a></div>
+<details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+
+&lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Review all slices&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Confirm or override resolved defaults&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve once&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Run long capability campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Production readiness review&lt;/span&gt;&lt;/div&gt;
+
+## 0. Control and authority
+
+| Field | Value |
+|---|---|
+| Capability | `CAP-02` — Local projects, durable storage, security, and recovery |
+| Objective | Provide safe project lifecycle, local persistence, encrypted content storage, secrets management, and portable recovery for individual and laboratory computers. |
+| Execution mode | Capability campaign; slices complete in dependency order |
+| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Slice plans | `CAP-02.S01`, `CAP-02.S02`, `CAP-02.S03`, `CAP-02.S04`, `CAP-02.S05` |
+| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
+| Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
+
+## 1. Capability outcome and production-ready exit
+
+The campaign must deliver: **Provide safe project lifecycle, local persistence, encrypted content storage, secrets management, and portable recovery for individual and laboratory computers.**
+
+Production-ready exit criteria:
+
+- Projects survive crashes, application upgrades, relocations, and verified backup/restore cycles.
+- Sensitive documents and credentials are protected with explicit local threat assumptions.
+- A lab can configure approved storage and model-cache locations without converting the product into a server deployment.
+
+Completion also requires all slices and tasks independently approved, capability-wide end-to-end evidence, failure/denial/cancel/restart/recovery/security/accessibility/platform coverage, accepted handoffs and no concealed production blockers.
+
+## 2. Slice map and end-to-end dependency logic
+
+| Slice | Responsibility | Production outcome | Upstream dependencies |
+|---|---|---|---|
+| `CAP-02.S01` | Local project lifecycle and directory contract | Projects have explicit identity, version, location, lifecycle state, and safe-open semantics. | `CAP-00.S01.T03`, `CAP-01.S04.T02` |
+| `CAP-02.S02` | SQLite schema, migrations, and repository layer | Canonical local state is transactional, versioned, testable, and insulated from UI or model code. | `CAP-02.S01.T01`, `CAP-03.S01.T01` |
+| `CAP-02.S03` | Encrypted local object and cache storage | Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights metadata. | `CAP-02.S02.T01` |
+| `CAP-02.S04` | Local secrets, profiles, and privacy controls | Credentials and policy-sensitive configuration are isolated from ordinary project content. | `CAP-02.S03.T02` |
+| `CAP-02.S05` | Backup, restore, relocation, and lab portability | Researchers can protect and move projects without breaking identities, provenance, or evidence links. | `CAP-02.S04.T03`, `CAP-03.S05.T03` |
+
+The planning reviewer must test the complete vertical: inputs from previous capabilities, each slice handoff, researcher workflow, durable/provenance behavior, degraded/recovery path and downstream contract. Slice-level optimization may not break the capability-wide path.
+
+## 3. Decision-making protocol
+
+1. Read every slice plan, backlog task, architecture boundary, workflow/page contract and relevant benchmark/source.
+2. For each material choice, compare credible candidates using functionality, security, privacy/rights, portability, maintainability, licensing, local resource use, recovery, evaluation quality and downstream compatibility.
+3. Present the leading candidates and an explicit recommendation. Avoid asking an open-ended question when evidence supports a best direction.
+4. Record the accepted selection, rejected alternatives, evidence and replaceability/migration boundary in this packet and any required ADR.
+5. Validate that the selected set is internally compatible and can complete all slices end to end.
+6. Resolve all reasonably foreseeable decisions before campaign start. Implementation should not repeatedly interrupt the human for ordinary engineering choices.
+
+## 4. Decision register
+
+| ID | Decision | Recommended selection | Credible alternative | Why recommended / replacement boundary | Basis |
+|---|---|---|---|---|---|
+| `CAP-02-D01` | **Canonical local store** | SQLite STRICT tables behind repository ports with versioned migrations and SQLCipher or approved equivalent | Plain JSON files; external PostgreSQL for desktop | SQLite supports local portability and transactions; protected storage satisfies confidential research requirements. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
+| `CAP-02-D02` | **Object storage** | Encrypted content-addressed project object store with atomic writes and manifest verification | Store all binaries directly in relational BLOBs | Separates large artifacts while supporting dedupe, integrity, backup and relocation. | [RFC 8493 - The BagIt File Packaging Format](https://www.rfc-editor.org/rfc/rfc8493.html) |
+| `CAP-02-D03` | **Secrets and recovery** | OS credential store, project privacy profiles and tested backup/restore/rekey/recovery | Secrets in config files | Credential and recovery behavior must be platform-specific at the adapter boundary and production qualified. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
+
+### Review and approval
+
+The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+
+
+## 5. Cross-slice architecture contract
+
+- Preserve the authority order: canonical relational/provenance records and human decisions first; indexes, caches, graph projections, model outputs, rankings and generated artifacts remain versioned derivatives unless the Systems Design explicitly states otherwise.
+- Stable ports isolate platform, storage, source, parser, model/provider, vector, graph, renderer and deployment adapters.
+- Every durable output records source snapshot, schema/policy/model/tool versions, rights/privacy decisions, human decisions and dependency links.
+- All long-running jobs are durable, idempotent where appropriate, cancellable, checkpointed, restartable and independently reviewable.
+- The campaign remains local/Windows-first for the current waves while producing portable contracts and fixtures needed by CAP-14 macOS/Linux qualification.
+- No later capability is implemented early except its documented interface/fixture seam.
+
+## 6. Experience and workflow contract
+
+Relevant approved pages: See the slice plans and capability coverage catalog.
+
+- The project use case determines the primary ordered workflow. Each page shows current stage, prior/next stage, expected output and completion/checkpoint state.
+- All tools remain accessible as supporting tools with a clear route back to the primary workflow.
+- Intentional changes require the style guide/workflow/page prototype to be updated, validated and human-approved before implementation.
+- Accessibility, light/dark parity, offline/partial/error/recovery states and source/provenance inspection are capability exit requirements, not post-release polish.
+
+## 7. Security, privacy, rights and research-integrity decisions
+
+The reviewer must confirm the entire capability’s trust boundaries, data classes, authorization roles, secret/egress rules, rights/license handling, untrusted-content controls, logging/redaction, export behavior, model licenses and human scholarly authority. Where one slice’s output changes another slice’s rights or confidentiality exposure, the stricter policy travels with the object.
+
+## 8. Capability-wide verification strategy
+
+- **Contract:** all portable schemas, negative fixtures and adapter conformance.
+- **Integration:** real local components, deterministic provider/source/model fixtures, transaction/outbox/dependency behavior.
+- **End to end:** representative workflow across every slice with source inspection and human decision.
+- **Recovery:** cancellation, process/application restart, corrupted derivative, migration, rollback/repair and project relocation.
+- **Security/rights:** denial, malicious content, prompt injection, path/archive abuse, egress and export filters, redacted diagnostics.
+- **Quality/evaluation:** capability-specific gold sets, ablations, calibration/error analysis and independent human samples.
+- **Experience:** approved reference, adaptive navigation, keyboard/screen reader/zoom/reflow and light/dark visual checks.
+- **Performance:** reference hardware/corpus budgets plus 20% regression threshold.
+- **Independent review:** tests must demonstrate semantics, not merely execute code.
+
+## 9. Long-running execution contract
+
+Once approved and started, the agent should execute the whole capability slice by slice. It may make ordinary low-risk implementation choices within the accepted architecture, debug tests, refactor within module boundaries, select documented fallbacks and rerun evaluations without asking for confirmation. Progress is recorded through task/slice evidence and periodic concise updates rather than approval stops.
+
+### Allowed pause classifications
+
+- Implementation evidence demonstrates the approved architecture is infeasible.
+- A required external dependency, hardware target or human authority is unavailable.
+- A new consequential security, rights, ethics or experience decision was not knowable during planning.
+- A governed UI/design change that requires a new approved reference.
+
+Every pause records category, evidence, exact blocked task/slice, attempted alternatives, recommended next action and conditions for resume. Test failures and routine uncertainty are not pause reasons.
+
+## 10. Plan and approval checklist
+
+- [ ] All slice plans exist and pass `slice_plan_check.py` structurally.
+- [ ] Every material decision has credible candidates, recommendation and accepted status.
+- [ ] Required ADRs and design-reference changes are approved.
+- [ ] Capability-wide architecture and end-to-end path are coherent.
+- [ ] Fixtures, benchmarks, credentials/licenses, hardware and human authorities are available or approved stubs exist.
+- [ ] Security/privacy/rights/research-integrity review is complete.
+- [ ] All slice plans are approved at immutable commits.
+- [ ] `python tools/planctl.py ready CAP-02 --require-approved` passes.
+- [ ] The first dependency-ready task can start and the campaign can continue without routine decision stops.
+
+## 11. Research and technical basis
+
+- [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) — Local fielded lexical indexing, BM25 ranking, snippets, rebuild and integrity checks.
+- [RFC 8493 - The BagIt File Packaging Format](https://www.rfc-editor.org/rfc/rfc8493.html) — Checksum-validated payload transfer and archival package layout.
+- [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) — Interoperable provenance entities, activities, agents and derivations.
+
+## 12. Approval record
+
+The packet remains **proposed**. Approval requires:
+
+- `decision_completion: complete`;
+- every front-matter decision `status: accepted`;
+- `approval.status: approved`, named approver, timestamp and approved commit;
+- approved slice plans and any required ADRs/reference versions;
+- passing approval-mode plan validation.
+</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>

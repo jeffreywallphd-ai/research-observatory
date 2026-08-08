@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "document_type": "research-observatory-setup-pack-release-validation",
+  "package_version": "1.3.5",
+  "product_baseline": "1.3",
+  "planning_supplement": "1.3.4",
+  "status": "pass",
+  "scope": [
+    "external bootstrap-kit versus installed-repository authority separation",
+    "durable AGENTS.md, docs/README.md, planning/README.md, governance, and automation rules",
+    "Other capability-decision choice with brief description and detailed rationale",
+    "safe seed installation and clean-target verification"
+  ],
+  "counts": {
+    "repository_seed_files": 495,
+    "capability_plans": 19,
+    "slice_plans": 111,
+    "planning_review_html_pages": 131,
+    "ui_reference_html_pages": 34,
+    "package_files_excluding_SHA256SUMS": 504
+  },
+  "validation": {
+    "clean_install_created_files": 495,
+    "clean_install_conflicts": 0,
+    "clean_install_blocked": 0,
+    "installed_repository_validators_passed": 9,
+    "backlog": {
+      "capabilities": 20,
+      "slices": 117,
+      "tasks": 356,
+      "release_gates": 12
+    },
+    "planning": {
+      "capability_packets": 19,
+      "slice_plans": 111,
+      "material_decisions": 294
+    },
+    "planning_review": {
+      "capability_pages": 19,
+      "slice_pages": 111,
+      "html_pages": 131,
+      "other_controls_per_decision": 1
+    },
+    "ui_reference": {
+      "product_pages": 32,
+      "workflow_profiles": 14,
+      "html_documents": 34
+    },
+    "other_feedback_end_to_end": "pass",
+    "conflicting_destination_refusal": "pass",
+    "existing_file_preservation": "pass"
+  },
+  "non_changes": [
+    "vision",
+    "systems design",
+    "backlog task structure",
+    "capability plans",
+    "slice plans",
+    "approved product UI reference"
+  ]
+}

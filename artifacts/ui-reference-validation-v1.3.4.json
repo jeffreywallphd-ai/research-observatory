@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "reference": "design/ui-reference",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.3",
+  "approved": true,
+  "product_pages": 32,
+  "workflow_profiles": 14,
+  "governed_files": 54,
+  "implementation_manifest": null,
+  "errors": [],
+  "warnings": []
+}

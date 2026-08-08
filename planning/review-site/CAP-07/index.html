@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>CAP-07 Provider-neutral model gateway and governed AI execution - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="capability" data-capability-id="CAP-07">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+  
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation"><h2>Capabilities</h2><nav class='cap-nav'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-01</span><small>Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-02</span><small>Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-03</span><small>Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-04</span><small>Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-05</span><small>Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-06</span><small>Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item active" href="../CAP-07/index.html"><span>CAP-07</span><small>Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-08</span><small>Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-09</span><small>Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-10</span><small>Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-11</span><small>Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-12</span><small>University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-13</span><small>Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-14</span><small>Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-15</span><small>Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-16</span><small>Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-17</span><small>Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-18</span><small>Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-19</span><small>Reviewer simulation, editorial synthesis, and revision</small></a></nav><h2>Capability slices</h2><nav class='slice-nav'><a class="slice-nav-item" href="CAP-07.S01.html"><b>1</b><span><strong>CAP-07.S01</strong><small>Model task, provider, and routing contracts</small></span></a><a class="slice-nav-item" href="CAP-07.S02.html"><b>2</b><span><strong>CAP-07.S02</strong><small>Local model runtime and model management</small></span></a><a class="slice-nav-item" href="CAP-07.S03.html"><b>3</b><span><strong>CAP-07.S03</strong><small>Approved remote model providers</small></span></a><a class="slice-nav-item" href="CAP-07.S04.html"><b>4</b><span><strong>CAP-07.S04</strong><small>Prompt, schema, and structured-output registry</small></span></a><a class="slice-nav-item" href="CAP-07.S05.html"><b>5</b><span><strong>CAP-07.S05</strong><small>AI observability, budgets, and evaluation operations</small></span></a></nav></aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><span aria-current="page">CAP-07</span></nav>
+      
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">CAP-07 · Capability decision and execution plan</span><h1>Provider-neutral model gateway and governed AI execution</h1></div><span class="status status-proposed">Proposed</span></div>
+  <p>Review the completed recommendation register before implementation. Once approved, the campaign executes all slices continuously except for documented infeasibility or genuinely new consequential evidence.</p>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>20</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>e61f30d1e4b8</code></dd></div></dl>
+</section>
+<section class="review-toolbar" data-review-toolbar>
+  <div><h2>Resolved recommendations and capability approval</h2><p>Best-in-class recommendations are preselected and decision-complete. Confirm them, override a documented option with rationale, or select Other and provide both a brief description and detailed rationale. Export a review record only when preserving overrides or notes; one explicit capability approval still authorizes implementation.</p></div>
+  <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 20 selected</div>
+  <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
+  <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
+  <label class="approval-check"><input type="checkbox" data-approval-intent> Request approval of the capability packet and every slice plan after feedback is applied</label>
+  <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
+  <div class="feedback-message" data-feedback-message role="status"></div>
+  <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review CAP-07
+python tools/planctl.py --repo . approve CAP-07 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+# Only for overrides or notes:
+python tools/planctl.py --repo . apply-feedback CAP-07 &lt;downloaded-json&gt;
+python tools/planctl.py --repo . approve CAP-07 --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+python tools/planctl.py --repo . ready CAP-07 --require-approved</code></pre></details>
+</section>
+<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
+<div class="decision-list">
+<section class="decision-card" data-decision-id="CAP-07-D01" data-recommendation="Provider-neutral task/result envelopes and model manifests owned by the core; provider SDK types remain inside adapters" data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D01</span><h3>Gateway domain boundary</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Stable task contracts let local, university and cloud deployments change models without rewriting scholarly workflows.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D01-option-0">
+  <input id="CAP-07-D01-option-0" type="radio" name="CAP-07-D01" value="Provider-neutral task/result envelopes and model manifests owned by the core; provider SDK types remain inside adapters" data-decision-option checked>
+  <span><strong>Provider-neutral task/result envelopes and model manifests owned by the core; provider SDK types remain inside adapters</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D01-option-1">
+  <input id="CAP-07-D01-option-1" type="radio" name="CAP-07-D01" value="Expose one provider SDK directly to application modules" data-decision-option>
+  <span><strong>Expose one provider SDK directly to application modules</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D01-option-other">
+  <input id="CAP-07-D01-option-other" type="radio" name="CAP-07-D01" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D01-other-help">
+  <small id="CAP-07-D01-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D02" data-recommendation="Supervised llama.cpp sidecar with pinned GGUF model manifests; ONNX Runtime for suitable encoders/classifiers" data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D02</span><h3>Local generative runtime</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">The split uses cross-platform runtimes according to model workload while preserving offline desktop operation.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D02-option-0">
+  <input id="CAP-07-D02-option-0" type="radio" name="CAP-07-D02" value="Supervised llama.cpp sidecar with pinned GGUF model manifests; ONNX Runtime for suitable encoders/classifiers" data-decision-option checked>
+  <span><strong>Supervised llama.cpp sidecar with pinned GGUF model manifests; ONNX Runtime for suitable encoders/classifiers</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D02-option-1">
+  <input id="CAP-07-D02-option-1" type="radio" name="CAP-07-D02" value="Embed a single Python transformers runtime for every model class; require Docker locally" data-decision-option>
+  <span><strong>Embed a single Python transformers runtime for every model class; require Docker locally</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D02-option-other">
+  <input id="CAP-07-D02-option-other" type="radio" name="CAP-07-D02" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D02-other-help">
+  <small id="CAP-07-D02-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D03" data-recommendation="JSON Schema post-validation is authoritative; provider grammar/tool constraints are optimization only" data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D03</span><h3>Structured output authority</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Provider constraints can differ or fail open; deterministic local validation and repair/retry policy must fail closed.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D03-option-0">
+  <input id="CAP-07-D03-option-0" type="radio" name="CAP-07-D03" value="JSON Schema post-validation is authoritative; provider grammar/tool constraints are optimization only" data-decision-option checked>
+  <span><strong>JSON Schema post-validation is authoritative; provider grammar/tool constraints are optimization only</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D03-option-1">
+  <input id="CAP-07-D03-option-1" type="radio" name="CAP-07-D03" value="Trust provider “structured output” success without local validation" data-decision-option>
+  <span><strong>Trust provider “structured output” success without local validation</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D03-option-other">
+  <input id="CAP-07-D03-option-other" type="radio" name="CAP-07-D03" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D03-other-help">
+  <small id="CAP-07-D03-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D04" data-recommendation="Two adapters selected by capability/privacy/cost evidence, with OpenAI- and Anthropic-compatible contracts first and Gemini-ready port" data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D04</span><h3>Remote provider release baseline</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Two adapters prove portability; later providers enter through the same gateway and egress policy.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D04-option-0">
+  <input id="CAP-07-D04-option-0" type="radio" name="CAP-07-D04" value="Two adapters selected by capability/privacy/cost evidence, with OpenAI- and Anthropic-compatible contracts first and Gemini-ready port" data-decision-option checked>
+  <span><strong>Two adapters selected by capability/privacy/cost evidence, with OpenAI- and Anthropic-compatible contracts first and Gemini-ready port</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D04-option-1">
+  <input id="CAP-07-D04-option-1" type="radio" name="CAP-07-D04" value="Build separate workflow logic for each provider" data-decision-option>
+  <span><strong>Build separate workflow logic for each provider</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D04-option-other">
+  <input id="CAP-07-D04-option-other" type="radio" name="CAP-07-D04" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D04-other-help">
+  <small id="CAP-07-D04-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D05" data-recommendation="OpenTelemetry GenAI conventions with content redaction by default and separate durable scholarly provenance" data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D05</span><h3>AI telemetry</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Operational observability must not leak confidential research content and is distinct from auditable project evidence.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D05-option-0">
+  <input id="CAP-07-D05-option-0" type="radio" name="CAP-07-D05" value="OpenTelemetry GenAI conventions with content redaction by default and separate durable scholarly provenance" data-decision-option checked>
+  <span><strong>OpenTelemetry GenAI conventions with content redaction by default and separate durable scholarly provenance</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D05-option-1">
+  <input id="CAP-07-D05-option-1" type="radio" name="CAP-07-D05" value="Store complete prompts and outputs in ordinary logs" data-decision-option>
+  <span><strong>Store complete prompts and outputs in ordinary logs</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D05-option-other">
+  <input id="CAP-07-D05-option-other" type="radio" name="CAP-07-D05" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D05-other-help">
+  <small id="CAP-07-D05-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D06" data-recommendation="Use explicit task kinds—generation, structured extraction, embedding, reranking, classification/NLI, moderation and tool call—with task-specific input/result envelopes." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D06</span><h3>Task taxonomy</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Different tasks have different determinism, batching, evidence and failure semantics; a chat envelope would leak provider assumptions.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D06-option-0">
+  <input id="CAP-07-D06-option-0" type="radio" name="CAP-07-D06" value="Use explicit task kinds—generation, structured extraction, embedding, reranking, classification/NLI, moderation and tool call—with task-specific input/result envelopes." data-decision-option checked>
+  <span><strong>Use explicit task kinds—generation, structured extraction, embedding, reranking, classification/NLI, moderation and tool call—with task-specific input/result envelopes.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D06-option-1">
+  <input id="CAP-07-D06-option-1" type="radio" name="CAP-07-D06" value="One generic chat-completions DTO." data-decision-option>
+  <span><strong>One generic chat-completions DTO.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D06-option-other">
+  <input id="CAP-07-D06-option-other" type="radio" name="CAP-07-D06" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D06-other-help">
+  <small id="CAP-07-D06-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D07" data-recommendation="Route on declared task capabilities, data policy, context limits, structured-output support, deployment, evaluation status and resource/cost envelope." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D07</span><h3>Capability matching</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">A policy decision belongs in one auditable gateway and can be evaluated centrally.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D07-option-0">
+  <input id="CAP-07-D07-option-0" type="radio" name="CAP-07-D07" value="Route on declared task capabilities, data policy, context limits, structured-output support, deployment, evaluation status and resource/cost envelope." data-decision-option checked>
+  <span><strong>Route on declared task capabilities, data policy, context limits, structured-output support, deployment, evaluation status and resource/cost envelope.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D07-option-1">
+  <input id="CAP-07-D07-option-1" type="radio" name="CAP-07-D07" value="Route by model name string from each feature." data-decision-option>
+  <span><strong>Route by model name string from each feature.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D07-option-other">
+  <input id="CAP-07-D07-option-other" type="radio" name="CAP-07-D07" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D07-other-help">
+  <small id="CAP-07-D07-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D08" data-recommendation="Ordered policy with deadline budget, retry classification and explicit degraded result; no silent provider/model substitution for pinned reproducible runs." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D08</span><h3>Fallback</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Fallback improves availability only when the scholarly meaning and disclosure remain clear.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D08-option-0">
+  <input id="CAP-07-D08-option-0" type="radio" name="CAP-07-D08" value="Ordered policy with deadline budget, retry classification and explicit degraded result; no silent provider/model substitution for pinned reproducible runs." data-decision-option checked>
+  <span><strong>Ordered policy with deadline budget, retry classification and explicit degraded result; no silent provider/model substitution for pinned reproducible runs.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D08-option-1">
+  <input id="CAP-07-D08-option-1" type="radio" name="CAP-07-D08" value="Retry every error indefinitely or silently switch models." data-decision-option>
+  <span><strong>Retry every error indefinitely or silently switch models.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D08-option-other">
+  <input id="CAP-07-D08-option-other" type="radio" name="CAP-07-D08" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D08-other-help">
+  <small id="CAP-07-D08-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D09" data-recommendation="llama.cpp/GGUF for local generative LLMs; ONNX Runtime or evaluated native library for encoders/rerankers/classifiers; both supervised as replaceable sidecars/workers." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D09</span><h3>Runtime split</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">The split improves cross-platform packaging and resource efficiency while the gateway hides runtime details.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D09-option-0">
+  <input id="CAP-07-D09-option-0" type="radio" name="CAP-07-D09" value="llama.cpp/GGUF for local generative LLMs; ONNX Runtime or evaluated native library for encoders/rerankers/classifiers; both supervised as replaceable sidecars/workers." data-decision-option checked>
+  <span><strong>llama.cpp/GGUF for local generative LLMs; ONNX Runtime or evaluated native library for encoders/rerankers/classifiers; both supervised as replaceable sidecars/workers.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D09-option-1">
+  <input id="CAP-07-D09-option-1" type="radio" name="CAP-07-D09" value="One monolithic Python transformers service for every workload." data-decision-option>
+  <span><strong>One monolithic Python transformers service for every workload.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D09-option-other">
+  <input id="CAP-07-D09-option-other" type="radio" name="CAP-07-D09" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D09-other-help">
+  <small id="CAP-07-D09-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D10" data-recommendation="Pinned revision, cryptographic hash, license/use metadata, architecture, tokenizer and runtime compatibility required before activation." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D10</span><h3>Artifact acceptance</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Reproducibility, security and legal use require immutable artifacts and explicit consent.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D10-option-0">
+  <input id="CAP-07-D10-option-0" type="radio" name="CAP-07-D10" value="Pinned revision, cryptographic hash, license/use metadata, architecture, tokenizer and runtime compatibility required before activation." data-decision-option checked>
+  <span><strong>Pinned revision, cryptographic hash, license/use metadata, architecture, tokenizer and runtime compatibility required before activation.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D10-option-1">
+  <input id="CAP-07-D10-option-1" type="radio" name="CAP-07-D10" value="Download latest by mutable model name." data-decision-option>
+  <span><strong>Download latest by mutable model name.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D10-option-other">
+  <input id="CAP-07-D10-option-other" type="radio" name="CAP-07-D10" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D10-other-help">
+  <small id="CAP-07-D10-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D11" data-recommendation="Detect CPU/RAM/GPU/VRAM/driver and choose conservative approved profiles with user override; no automatic remote fallback." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D11</span><h3>Hardware profiles</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Research desktops and DGX-class lab machines vary widely; adaptive limits prevent instability.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D11-option-0">
+  <input id="CAP-07-D11-option-0" type="radio" name="CAP-07-D11" value="Detect CPU/RAM/GPU/VRAM/driver and choose conservative approved profiles with user override; no automatic remote fallback." data-decision-option checked>
+  <span><strong>Detect CPU/RAM/GPU/VRAM/driver and choose conservative approved profiles with user override; no automatic remote fallback.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D11-option-1">
+  <input id="CAP-07-D11-option-1" type="radio" name="CAP-07-D11" value="Optimistically allocate all GPU/RAM." data-decision-option>
+  <span><strong>Optimistically allocate all GPU/RAM.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D11-option-other">
+  <input id="CAP-07-D11-option-other" type="radio" name="CAP-07-D11" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D11-other-help">
+  <small id="CAP-07-D11-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D12" data-recommendation="Implement OpenAI-compatible and Anthropic Messages/tool-use adapters first; retain a Gemini adapter contract and add only after conformance/evaluation." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D12</span><h3>Initial adapters</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Two materially different APIs validate the gateway without diluting security and evaluation work.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D12-option-0">
+  <input id="CAP-07-D12-option-0" type="radio" name="CAP-07-D12" value="Implement OpenAI-compatible and Anthropic Messages/tool-use adapters first; retain a Gemini adapter contract and add only after conformance/evaluation." data-decision-option checked>
+  <span><strong>Implement OpenAI-compatible and Anthropic Messages/tool-use adapters first; retain a Gemini adapter contract and add only after conformance/evaluation.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D12-option-1">
+  <input id="CAP-07-D12-option-1" type="radio" name="CAP-07-D12" value="Implement every provider at once." data-decision-option>
+  <span><strong>Implement every provider at once.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D12-option-other">
+  <input id="CAP-07-D12-option-other" type="radio" name="CAP-07-D12" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D12-other-help">
+  <small id="CAP-07-D12-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D13" data-recommendation="Resolve and display the exact minimized payload after prompt assembly, including attachments, before first use or policy-sensitive changes." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D13</span><h3>Egress unit</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Researchers need concrete control over confidential literature, reports and manuscripts.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D13-option-0">
+  <input id="CAP-07-D13-option-0" type="radio" name="CAP-07-D13" value="Resolve and display the exact minimized payload after prompt assembly, including attachments, before first use or policy-sensitive changes." data-decision-option checked>
+  <span><strong>Resolve and display the exact minimized payload after prompt assembly, including attachments, before first use or policy-sensitive changes.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D13-option-1">
+  <input id="CAP-07-D13-option-1" type="radio" name="CAP-07-D13" value="Consent to “AI usage” generically." data-decision-option>
+  <span><strong>Consent to “AI usage” generically.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D13-option-other">
+  <input id="CAP-07-D13-option-other" type="radio" name="CAP-07-D13" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D13-other-help">
+  <small id="CAP-07-D13-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D14" data-recommendation="Central network policy plus adapter deny-by-default; no automatic remote fallback from a local task unless project policy explicitly permits it." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D14</span><h3>Offline enforcement</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Offline/privacy intent must be enforced before network activity.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D14-option-0">
+  <input id="CAP-07-D14-option-0" type="radio" name="CAP-07-D14" value="Central network policy plus adapter deny-by-default; no automatic remote fallback from a local task unless project policy explicitly permits it." data-decision-option checked>
+  <span><strong>Central network policy plus adapter deny-by-default; no automatic remote fallback from a local task unless project policy explicitly permits it.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D14-option-1">
+  <input id="CAP-07-D14-option-1" type="radio" name="CAP-07-D14" value="Let connection failure determine offline behavior." data-decision-option>
+  <span><strong>Let connection failure determine offline behavior.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D14-option-other">
+  <input id="CAP-07-D14-option-other" type="radio" name="CAP-07-D14" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D14-other-help">
+  <small id="CAP-07-D14-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D15" data-recommendation="JSON Schema Draft 2020-12 with versioned domain schemas; provider subsets compiled at adapter boundary." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D15</span><h3>Canonical schema</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">The common standard supports local validation and portable contracts.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D15-option-0">
+  <input id="CAP-07-D15-option-0" type="radio" name="CAP-07-D15" value="JSON Schema Draft 2020-12 with versioned domain schemas; provider subsets compiled at adapter boundary." data-decision-option checked>
+  <span><strong>JSON Schema Draft 2020-12 with versioned domain schemas; provider subsets compiled at adapter boundary.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D15-option-1">
+  <input id="CAP-07-D15-option-1" type="radio" name="CAP-07-D15" value="Provider-specific schema dialect as canonical." data-decision-option>
+  <span><strong>Provider-specific schema dialect as canonical.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D15-option-other">
+  <input id="CAP-07-D15-option-other" type="radio" name="CAP-07-D15" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D15-other-help">
+  <small id="CAP-07-D15-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D16" data-recommendation="Provider constraint -&gt; parse -&gt; canonical schema validation -&gt; semantic invariants -&gt; evidence/anchor validation -&gt; accepted or typed failure." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D16</span><h3>Validation pipeline</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Scholarly records require domain and provenance invariants beyond syntax.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D16-option-0">
+  <input id="CAP-07-D16-option-0" type="radio" name="CAP-07-D16" value="Provider constraint -&gt; parse -&gt; canonical schema validation -&gt; semantic invariants -&gt; evidence/anchor validation -&gt; accepted or typed failure." data-decision-option checked>
+  <span><strong>Provider constraint -&gt; parse -&gt; canonical schema validation -&gt; semantic invariants -&gt; evidence/anchor validation -&gt; accepted or typed failure.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D16-option-1">
+  <input id="CAP-07-D16-option-1" type="radio" name="CAP-07-D16" value="Accept syntactically valid JSON." data-decision-option>
+  <span><strong>Accept syntactically valid JSON.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D16-option-other">
+  <input id="CAP-07-D16-option-other" type="radio" name="CAP-07-D16" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D16-other-help">
+  <small id="CAP-07-D16-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D17" data-recommendation="At most bounded deterministic normalization plus one or configured model repair attempt; never invent missing required evidence." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D17</span><h3>Repair policy</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Bounded repair controls cost and avoids laundering unsupported output into valid shape.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D17-option-0">
+  <input id="CAP-07-D17-option-0" type="radio" name="CAP-07-D17" value="At most bounded deterministic normalization plus one or configured model repair attempt; never invent missing required evidence." data-decision-option checked>
+  <span><strong>At most bounded deterministic normalization plus one or configured model repair attempt; never invent missing required evidence.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D17-option-1">
+  <input id="CAP-07-D17-option-1" type="radio" name="CAP-07-D17" value="Repeatedly reprompt until something validates." data-decision-option>
+  <span><strong>Repeatedly reprompt until something validates.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D17-option-other">
+  <input id="CAP-07-D17-option-other" type="radio" name="CAP-07-D17" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D17-other-help">
+  <small id="CAP-07-D17-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D18" data-recommendation="Operational spans store hashes, sizes, task/model/version, timing, usage and validation status; raw content only in project-governed artifacts when explicitly required." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D18</span><h3>Telemetry/content boundary</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Diagnostics must remain useful without leaking private research.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D18-option-0">
+  <input id="CAP-07-D18-option-0" type="radio" name="CAP-07-D18" value="Operational spans store hashes, sizes, task/model/version, timing, usage and validation status; raw content only in project-governed artifacts when explicitly required." data-decision-option checked>
+  <span><strong>Operational spans store hashes, sizes, task/model/version, timing, usage and validation status; raw content only in project-governed artifacts when explicitly required.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D18-option-1">
+  <input id="CAP-07-D18-option-1" type="radio" name="CAP-07-D18" value="Full prompt/response logging in telemetry." data-decision-option>
+  <span><strong>Full prompt/response logging in telemetry.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D18-option-other">
+  <input id="CAP-07-D18-option-other" type="radio" name="CAP-07-D18" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D18-other-help">
+  <small id="CAP-07-D18-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D19" data-recommendation="Cache only deterministic/idempotent tasks by full manifest hash and data policy; never reuse across projects unless content-free/public and explicitly approved." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D19</span><h3>Cache</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Cross-project reuse risks confidentiality and false equivalence.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D19-option-0">
+  <input id="CAP-07-D19-option-0" type="radio" name="CAP-07-D19" value="Cache only deterministic/idempotent tasks by full manifest hash and data policy; never reuse across projects unless content-free/public and explicitly approved." data-decision-option checked>
+  <span><strong>Cache only deterministic/idempotent tasks by full manifest hash and data policy; never reuse across projects unless content-free/public and explicitly approved.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D19-option-1">
+  <input id="CAP-07-D19-option-1" type="radio" name="CAP-07-D19" value="Global semantic prompt cache." data-decision-option>
+  <span><strong>Global semantic prompt cache.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D19-option-other">
+  <input id="CAP-07-D19-option-other" type="radio" name="CAP-07-D19" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D19-other-help">
+  <small id="CAP-07-D19-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+
+<section class="decision-card" data-decision-id="CAP-07-D20" data-recommendation="Task-specific gold/held-out sets with objective checks, expert sampling, calibration and cost/latency; promotion requires non-regression thresholds and approval." data-plan-hash="e61f30d1e4b81d6cb3609a6bc6fea7cda24492a158e11066243f5f3196f4ac86">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-07-D20</span><h3>Evaluation gate</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">Scholarly tasks fail differently and need direct citation/evidence/schema evaluation.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-07-D20-option-0">
+  <input id="CAP-07-D20-option-0" type="radio" name="CAP-07-D20" value="Task-specific gold/held-out sets with objective checks, expert sampling, calibration and cost/latency; promotion requires non-regression thresholds and approval." data-decision-option checked>
+  <span><strong>Task-specific gold/held-out sets with objective checks, expert sampling, calibration and cost/latency; promotion requires non-regression thresholds and approval.</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-07-D20-option-1">
+  <input id="CAP-07-D20-option-1" type="radio" name="CAP-07-D20" value="One aggregate quality score or vendor benchmark." data-decision-option>
+  <span><strong>One aggregate quality score or vendor benchmark.</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-07-D20-option-other">
+  <input id="CAP-07-D20-option-other" type="radio" name="CAP-07-D20" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-07-D20-other-help">
+  <small id="CAP-07-D20-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+</section>
+</div>
+<section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
+<div class="slice-list">
+<a class="slice-card" href="CAP-07.S01.html">
+  <div class="slice-card-index">1</div>
+  <div><span class="eyebrow">CAP-07.S01</span><h3>Model task, provider, and routing contracts</h3>
+  <p>3 tasks · W1 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-07.S02.html">
+  <div class="slice-card-index">2</div>
+  <div><span class="eyebrow">CAP-07.S02</span><h3>Local model runtime and model management</h3>
+  <p>3 tasks · W3 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-07.S03.html">
+  <div class="slice-card-index">3</div>
+  <div><span class="eyebrow">CAP-07.S03</span><h3>Approved remote model providers</h3>
+  <p>3 tasks · W3 · P1</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-07.S04.html">
+  <div class="slice-card-index">4</div>
+  <div><span class="eyebrow">CAP-07.S04</span><h3>Prompt, schema, and structured-output registry</h3>
+  <p>3 tasks · W3 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a>
+<a class="slice-card" href="CAP-07.S05.html">
+  <div class="slice-card-index">5</div>
+  <div><span class="eyebrow">CAP-07.S05</span><h3>AI observability, budgets, and evaluation operations</h3>
+  <p>3 tasks · W3 · P0</p></div>
+  <span class="status status-proposed">Proposed</span>
+</a></div>
+<details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+
+&lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Review all slices&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Confirm or override resolved defaults&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve once&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Run long capability campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Production readiness review&lt;/span&gt;&lt;/div&gt;
+
+## 0. Control and authority
+
+| Field | Value |
+|---|---|
+| Capability | `CAP-07` — Provider-neutral model gateway and governed AI execution |
+| Objective | Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and usable locally or through approved providers. |
+| Execution mode | Capability campaign; slices complete in dependency order |
+| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Slice plans | `CAP-07.S01`, `CAP-07.S02`, `CAP-07.S03`, `CAP-07.S04`, `CAP-07.S05` |
+| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
+| Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
+
+## 1. Capability outcome and production-ready exit
+
+The campaign must deliver: **Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and usable locally or through approved providers.**
+
+Production-ready exit criteria:
+
+- All model calls pass through typed task contracts and produce versioned, observable result envelopes.
+- Local inference supports the complete basic PC/lab workflow; remote egress is optional and explicitly authorized.
+- Prompts, schemas, repair, evaluation, costs, and model upgrades are controlled as durable system assets.
+
+Completion also requires all slices and tasks independently approved, capability-wide end-to-end evidence, failure/denial/cancel/restart/recovery/security/accessibility/platform coverage, accepted handoffs and no concealed production blockers.
+
+## 2. Slice map and end-to-end dependency logic
+
+| Slice | Responsibility | Production outcome | Upstream dependencies |
+|---|---|---|---|
+| `CAP-07.S01` | Model task, provider, and routing contracts | AI capabilities are invoked by scholarly task type rather than hard-coded vendor API. | `CAP-03.S01.T03`, `CAP-00.S03.T03` |
+| `CAP-07.S02` | Local model runtime and model management | PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model server. | `CAP-07.S01.T03`, `CAP-01.S03.T03` |
+| `CAP-07.S03` | Approved remote model providers | Remote inference is available through explicit opt-in adapters with redaction, data-class, and reproducibility controls. | `CAP-07.S01.T03`, `CAP-02.S04.T01` |
+| `CAP-07.S04` | Prompt, schema, and structured-output registry | AI behavior is reproducible and testable as versioned configuration rather than hidden prompt strings. | `CAP-07.S01.T01`, `CAP-00.S05.T02` |
+| `CAP-07.S05` | AI observability, budgets, and evaluation operations | Model use is measurable by scholarly task, project, provider, quality, latency, and cost without exposing research content. | `CAP-07.S04.T03`, `CAP-03.S03.T03` |
+
+The planning reviewer must test the complete vertical: inputs from previous capabilities, each slice handoff, researcher workflow, durable/provenance behavior, degraded/recovery path and downstream contract. Slice-level optimization may not break the capability-wide path.
+
+## 3. Decision-making protocol
+
+1. Read every slice plan, backlog task, architecture boundary, workflow/page contract and relevant benchmark/source.
+2. For each material choice, compare credible candidates using functionality, security, privacy/rights, portability, maintainability, licensing, local resource use, recovery, evaluation quality and downstream compatibility.
+3. Present the leading candidates and an explicit recommendation. Avoid asking an open-ended question when evidence supports a best direction.
+4. Record the accepted selection, rejected alternatives, evidence and replaceability/migration boundary in this packet and any required ADR.
+5. Validate that the selected set is internally compatible and can complete all slices end to end.
+6. Resolve all reasonably foreseeable decisions before campaign start. Implementation should not repeatedly interrupt the human for ordinary engineering choices.
+
+## 4. Decision register
+
+| ID | Decision | Recommended selection | Credible alternative | Why recommended / replacement boundary | Basis |
+|---|---|---|---|---|---|
+| `CAP-07-D01` | **Gateway domain boundary** | Provider-neutral task/result envelopes and model manifests owned by the core; provider SDK types remain inside adapters | Expose one provider SDK directly to application modules | Stable task contracts let local, university and cloud deployments change models without rewriting scholarly workflows. | [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12) |
+| `CAP-07-D02` | **Local generative runtime** | Supervised llama.cpp sidecar with pinned GGUF model manifests; ONNX Runtime for suitable encoders/classifiers | Embed a single Python transformers runtime for every model class; require Docker locally | The split uses cross-platform runtimes according to model workload while preserving offline desktop operation. | [llama.cpp](https://github.com/ggml-org/llama.cpp) |
+| `CAP-07-D03` | **Structured output authority** | JSON Schema post-validation is authoritative; provider grammar/tool constraints are optimization only | Trust provider “structured output” success without local validation | Provider constraints can differ or fail open; deterministic local validation and repair/retry policy must fail closed. | [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12) |
+| `CAP-07-D04` | **Remote provider release baseline** | Two adapters selected by capability/privacy/cost evidence, with OpenAI- and Anthropic-compatible contracts first and Gemini-ready port | Build separate workflow logic for each provider | Two adapters prove portability; later providers enter through the same gateway and egress policy. | [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs) |
+| `CAP-07-D05` | **AI telemetry** | OpenTelemetry GenAI conventions with content redaction by default and separate durable scholarly provenance | Store complete prompts and outputs in ordinary logs | Operational observability must not leak confidential research content and is distinct from auditable project evidence. | [OpenTelemetry Generative AI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) |
+| `CAP-07-D06` | **Task taxonomy** | Use explicit task kinds—generation, structured extraction, embedding, reranking, classification/NLI, moderation and tool call—with task-specific input/result envelopes. | One generic chat-completions DTO. | Different tasks have different determinism, batching, evidence and failure semantics; a chat envelope would leak provider assumptions. | [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12) |
+| `CAP-07-D07` | **Capability matching** | Route on declared task capabilities, data policy, context limits, structured-output support, deployment, evaluation status and resource/cost envelope. | Route by model name string from each feature. | A policy decision belongs in one auditable gateway and can be evaluated centrally. | [OpenTelemetry Generative AI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) |
+| `CAP-07-D08` | **Fallback** | Ordered policy with deadline budget, retry classification and explicit degraded result; no silent provider/model substitution for pinned reproducible runs. | Retry every error indefinitely or silently switch models. | Fallback improves availability only when the scholarly meaning and disclosure remain clear. | [OpenTelemetry Generative AI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) |
+| `CAP-07-D09` | **Runtime split** | llama.cpp/GGUF for local generative LLMs; ONNX Runtime or evaluated native library for encoders/rerankers/classifiers; both supervised as replaceable sidecars/workers. | One monolithic Python transformers service for every workload. | The split improves cross-platform packaging and resource efficiency while the gateway hides runtime details. | [llama.cpp](https://github.com/ggml-org/llama.cpp) |
+| `CAP-07-D10` | **Artifact acceptance** | Pinned revision, cryptographic hash, license/use metadata, architecture, tokenizer and runtime compatibility required before activation. | Download latest by mutable model name. | Reproducibility, security and legal use require immutable artifacts and explicit consent. | [Safetensors Documentation](https://huggingface.co/docs/safetensors/index) |
+| `CAP-07-D11` | **Hardware profiles** | Detect CPU/RAM/GPU/VRAM/driver and choose conservative approved profiles with user override; no automatic remote fallback. | Optimistically allocate all GPU/RAM. | Research desktops and DGX-class lab machines vary widely; adaptive limits prevent instability. | [ONNX Runtime Execution Providers](https://onnxruntime.ai/docs/execution-providers/) |
+| `CAP-07-D12` | **Initial adapters** | Implement OpenAI-compatible and Anthropic Messages/tool-use adapters first; retain a Gemini adapter contract and add only after conformance/evaluation. | Implement every provider at once. | Two materially different APIs validate the gateway without diluting security and evaluation work. | [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs) |
+| `CAP-07-D13` | **Egress unit** | Resolve and display the exact minimized payload after prompt assembly, including attachments, before first use or policy-sensitive changes. | Consent to “AI usage” generically. | Researchers need concrete control over confidential literature, reports and manuscripts. | [Tool Use with Claude](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview) |
+| `CAP-07-D14` | **Offline enforcement** | Central network policy plus adapter deny-by-default; no automatic remote fallback from a local task unless project policy explicitly permits it. | Let connection failure determine offline behavior. | Offline/privacy intent must be enforced before network activity. | [OpenTelemetry Generative AI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) |
+| `CAP-07-D15` | **Canonical schema** | JSON Schema Draft 2020-12 with versioned domain schemas; provider subsets compiled at adapter boundary. | Provider-specific schema dialect as canonical. | The common standard supports local validation and portable contracts. | [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12) |
+| `CAP-07-D16` | **Validation pipeline** | Provider constraint -&gt; parse -&gt; canonical schema validation -&gt; semantic invariants -&gt; evidence/anchor validation -&gt; accepted or typed failure. | Accept syntactically valid JSON. | Scholarly records require domain and provenance invariants beyond syntax. | [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs) |
+| `CAP-07-D17` | **Repair policy** | At most bounded deterministic normalization plus one or configured model repair attempt; never invent missing required evidence. | Repeatedly reprompt until something validates. | Bounded repair controls cost and avoids laundering unsupported output into valid shape. | [Structured Outputs](https://ai.google.dev/gemini-api/docs/structured-output) |
+| `CAP-07-D18` | **Telemetry/content boundary** | Operational spans store hashes, sizes, task/model/version, timing, usage and validation status; raw content only in project-governed artifacts when explicitly required. | Full prompt/response logging in telemetry. | Diagnostics must remain useful without leaking private research. | [OpenTelemetry Generative AI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) |
+| `CAP-07-D19` | **Cache** | Cache only deterministic/idempotent tasks by full manifest hash and data policy; never reuse across projects unless content-free/public and explicitly approved. | Global semantic prompt cache. | Cross-project reuse risks confidentiality and false equivalence. | [OpenTelemetry Generative AI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) |
+| `CAP-07-D20` | **Evaluation gate** | Task-specific gold/held-out sets with objective checks, expert sampling, calibration and cost/latency; promotion requires non-regression thresholds and approval. | One aggregate quality score or vendor benchmark. | Scholarly tasks fail differently and need direct citation/evidence/schema evaluation. | [Synthesizing Scientific Literature with Retrieval-Augmented Language Models](https://doi.org/10.1038/s41586-025-10072-4) |
+
+### Review and approval
+
+The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+
+
+## 5. Cross-slice architecture contract
+
+- Preserve the authority order: canonical relational/provenance records and human decisions first; indexes, caches, graph projections, model outputs, rankings and generated artifacts remain versioned derivatives unless the Systems Design explicitly states otherwise.
+- Stable ports isolate platform, storage, source, parser, model/provider, vector, graph, renderer and deployment adapters.
+- Every durable output records source snapshot, schema/policy/model/tool versions, rights/privacy decisions, human decisions and dependency links.
+- All long-running jobs are durable, idempotent where appropriate, cancellable, checkpointed, restartable and independently reviewable.
+- The campaign remains local/Windows-first for the current waves while producing portable contracts and fixtures needed by CAP-14 macOS/Linux qualification.
+- No later capability is implemented early except its documented interface/fixture seam.
+
+## 6. Experience and workflow contract
+
+Relevant approved pages: `model-center.html`, `audit-lineage.html`, `project-settings.html`
+
+- The project use case determines the primary ordered workflow. Each page shows current stage, prior/next stage, expected output and completion/checkpoint state.
+- All tools remain accessible as supporting tools with a clear route back to the primary workflow.
+- Intentional changes require the style guide/workflow/page prototype to be updated, validated and human-approved before implementation.
+- Accessibility, light/dark parity, offline/partial/error/recovery states and source/provenance inspection are capability exit requirements, not post-release polish.
+
+## 7. Security, privacy, rights and research-integrity decisions
+
+The reviewer must confirm the entire capability’s trust boundaries, data classes, authorization roles, secret/egress rules, rights/license handling, untrusted-content controls, logging/redaction, export behavior, model licenses and human scholarly authority. Where one slice’s output changes another slice’s rights or confidentiality exposure, the stricter policy travels with the object.
+
+## 8. Capability-wide verification strategy
+
+- **Contract:** all portable schemas, negative fixtures and adapter conformance.
+- **Integration:** real local components, deterministic provider/source/model fixtures, transaction/outbox/dependency behavior.
+- **End to end:** representative workflow across every slice with source inspection and human decision.
+- **Recovery:** cancellation, process/application restart, corrupted derivative, migration, rollback/repair and project relocation.
+- **Security/rights:** denial, malicious content, prompt injection, path/archive abuse, egress and export filters, redacted diagnostics.
+- **Quality/evaluation:** capability-specific gold sets, ablations, calibration/error analysis and independent human samples.
+- **Experience:** approved reference, adaptive navigation, keyboard/screen reader/zoom/reflow and light/dark visual checks.
+- **Performance:** reference hardware/corpus budgets plus 20% regression threshold.
+- **Independent review:** tests must demonstrate semantics, not merely execute code.
+
+## 9. Long-running execution contract
+
+Once approved and started, the agent should execute the whole capability slice by slice. It may make ordinary low-risk implementation choices within the accepted architecture, debug tests, refactor within module boundaries, select documented fallbacks and rerun evaluations without asking for confirmation. Progress is recorded through task/slice evidence and periodic concise updates rather than approval stops.
+
+### Allowed pause classifications
+
+- A model license is incompatible with distribution or intended use.
+- An egress policy decision is unresolved for confidential data.
+- A provider contract cannot be normalized without leaking provider-specific semantics.
+- A model upgrade fails the approved evaluation gate.
+- A governed UI/design change that requires a new approved reference.
+
+Every pause records category, evidence, exact blocked task/slice, attempted alternatives, recommended next action and conditions for resume. Test failures and routine uncertainty are not pause reasons.
+
+## 10. Plan and approval checklist
+
+- [ ] All slice plans exist and pass `slice_plan_check.py` structurally.
+- [ ] Every material decision has credible candidates, recommendation and accepted status.
+- [ ] Required ADRs and design-reference changes are approved.
+- [ ] Capability-wide architecture and end-to-end path are coherent.
+- [ ] Fixtures, benchmarks, credentials/licenses, hardware and human authorities are available or approved stubs exist.
+- [ ] Security/privacy/rights/research-integrity review is complete.
+- [ ] All slice plans are approved at immutable commits.
+- [ ] `python tools/planctl.py ready CAP-07 --require-approved` passes.
+- [ ] The first dependency-ready task can start and the campaign can continue without routine decision stops.
+
+## 11. Research and technical basis
+
+- [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12) — Canonical structured-output and schema-pack validation.
+- [llama.cpp](https://github.com/ggml-org/llama.cpp) — Cross-platform local generative inference, embeddings, reranking, grammar constraints and OpenAI-compatible service.
+- [ONNX Runtime Execution Providers](https://onnxruntime.ai/docs/execution-providers/) — Portable CPU/CUDA/DirectML/CoreML inference for embedding, reranking and classification models.
+- [OpenTelemetry Generative AI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) — Portable redacted telemetry for model requests, responses, usage and agents.
+
+## 12. Approval record
+
+The packet remains **proposed**. Approval requires:
+
+- `decision_completion: complete`;
+- every front-matter decision `status: accepted`;
+- `approval.status: approved`, named approver, timestamp and approved commit;
+- approved slice plans and any required ADRs/reference versions;
+- passing approval-mode plan validation.
+</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>
