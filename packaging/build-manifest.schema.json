@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.invalid/schemas/build-manifest-1.0.json",
+  "type": "object",
+  "required": ["schemaVersion", "documentType", "manifestId", "productVersion", "buildIdentity", "source", "components", "dependencies", "schemas", "modelManifests"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-build-manifest"},
+    "manifestId": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "productVersion": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"},
+    "buildIdentity": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?\\+g[0-9a-f]{7}(?:\\.dirty)?$"},
+    "source": {
+      "type": "object",
+      "required": ["commit", "commitTimestamp", "sourceDateEpoch", "dirty", "dirtyPaths"],
+      "properties": {
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "commitTimestamp": {"type": "string", "format": "date-time"},
+        "sourceDateEpoch": {"type": "integer", "minimum": 0},
+        "dirty": {"type": "boolean"},
+        "dirtyPaths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      },
+      "additionalProperties": false
+    },
+    "components": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/component"}},
+    "dependencies": {"$ref": "#/$defs/identifiedSet"},
+    "schemas": {"$ref": "#/$defs/identifiedSet"},
+    "modelManifests": {"$ref": "#/$defs/identifiedSet"}
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "componentId", "componentKind", "version", "productVersionSource", "compatibilityLine"],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "component-version-manifest"},
+        "componentId": {"enum": ["core-api", "desktop", "worker-fabric"]},
+        "componentKind": {"enum": ["desktop", "sidecar"]},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"},
+        "productVersionSource": {"const": "packaging/product-version.json"},
+        "compatibilityLine": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"}
+      },
+      "additionalProperties": false
+    },
+    "identifiedSet": {
+      "type": "object",
+      "required": ["setId", "entries"],
+      "properties": {
+        "setId": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "entries": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/identifiedFile"}}
+      },
+      "additionalProperties": false
+    },
+    "identifiedFile": {
+      "type": "object",
+      "required": ["id", "path", "sha256"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

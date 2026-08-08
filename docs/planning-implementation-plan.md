@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 33cc2befdca0facb7e983fe83bdd313eee4cd44fd9358a32b4b60cda96172a83
+source_sha256: 5e531cc373965a5f7c3527bc4ddbbdc89b1d2e7aa05f2c5bf6c023a295e8416e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -758,13 +758,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S05.T03 - Implement version, changelog, and build-manifest generation
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `S` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `S` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S05.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Single product version source, generated component manifests, changelog convention, and reproducible build metadata.
 

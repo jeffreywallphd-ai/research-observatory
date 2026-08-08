@@ -18,6 +18,8 @@ monorepo with portable boundaries for later platforms and deployment profiles.
   for prerequisites and the cross-platform command.
 - See [`docs/automation/toolchain.md`](docs/automation/toolchain.md) for pinned
   runtimes, package managers, and frozen-install commands.
+- See [`docs/automation/build-manifests.md`](docs/automation/build-manifests.md)
+  for product version, changelog, component compatibility, and build provenance.
 
 ## Monorepo boundaries
 
@@ -31,6 +33,7 @@ monorepo with portable boundaries for later platforms and deployment profiles.
 | `packages/ui-components/` | Framework-facing reusable interface components |
 | `tests/` | Cross-boundary foundation, desktop, contract, end-to-end, and packaging tests |
 | `packaging/windows/` | Windows installer, upgrade, repair, and removal assets |
+| `packaging/` | Product version authority, build inputs, and provenance schemas |
 
 The machine-readable contract is [`repository-structure.json`](repository-structure.json).
 Every declared module contains a README naming its owner and boundary. Hosted

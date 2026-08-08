@@ -20,3 +20,7 @@ cases, malformed-input behavior, and valid PDF cross-reference integrity.
 `test_benchmark_registry.py` runs the golden parser and contract benchmark end to
 end and verifies deterministic reports, hash tampering, baseline immutability,
 version/history/approval requirements, distinct human approval, and path confinement.
+
+`test_build_manifest.py` verifies single-source version compatibility, deterministic
+clean and dirty build identities, dependency/schema/model-set provenance, manifest
+inventory drift, and output confinement.

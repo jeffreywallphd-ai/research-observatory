@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "component-version-manifest",
+  "componentId": "core-api",
+  "componentKind": "sidecar",
+  "version": "0.1.0",
+  "productVersionSource": "packaging/product-version.json",
+  "compatibilityLine": "0.1"
+}
