@@ -461,15 +461,21 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T15:46:16+00:00'
-      updated_at: '2026-08-08T15:46:16+00:00'
+      updated_at: '2026-08-08T15:52:51+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Implemented the governed monorepo skeleton and bootstrap foundation validation at commit 59024eea93130c1d867a46782cb353cff4b88ff4;
+        submitted for independent agent review.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S01.T01.json
+        sha256: 004503f948fc8a357c1decf0f803ad21a3e4383d40d95a6b2a2e7ddcce8876ba
+        commit: 59024eea93130c1d867a46782cb353cff4b88ff4
+        recorded_at: '2026-08-08T15:52:50+00:00'
       review:
         reviewer: null
         result: null
@@ -480,7 +486,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-08T15:46:16+00:00'
         expires_at: '2026-08-08T23:46:16+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
