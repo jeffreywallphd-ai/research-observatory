@@ -242,35 +242,63 @@ def historical_asset_errors(repo: Path, commit: str, registry: dict[str, Any]) -
     return errors
 
 
+def historical_registry_schema_errors(repo: Path, commit: str, registry: dict[str, Any]) -> list[str]:
+    schema_payload, read_error = git_blob(repo, commit, REGISTRY_SCHEMA_PATH)
+    if read_error:
+        return [read_error]
+    if schema_payload is None:
+        return [f"{commit}: historical benchmark registry schema is missing"]
+    schema, parse_error = parse_json(schema_payload, f"{commit}:{REGISTRY_SCHEMA_PATH}")
+    if parse_error or not isinstance(schema, dict):
+        return [f"{commit}: {parse_error or 'historical benchmark registry schema must be an object'}"]
+    return [f"{commit}: {error}" for error in document_schema_errors(registry, schema, "registry")]
+
+
+def approval_tree_blobs(repo: Path, commit: str) -> tuple[dict[str, str], str | None]:
+    tree = run_git(repo, ["ls-tree", "-r", commit, "--", "evaluation/approvals"])
+    if tree is None or tree.returncode != 0:
+        return {}, f"cannot inspect approval tree at governed commit {commit}"
+    identities: dict[str, str] = {}
+    for line in tree.stdout.splitlines():
+        metadata, separator, raw_path = line.partition(b"\t")
+        fields = metadata.split()
+        if not separator or len(fields) != 3:
+            continue
+        path = raw_path.decode("utf-8", errors="replace")
+        if path.endswith(".json") and fields[1] == b"blob":
+            identities[path] = fields[2].decode("ascii", errors="replace")
+    return identities, None
+
+
 def git_history_errors(repo: Path, current_registry: dict[str, Any]) -> list[str]:
     git_marker = repo / ".git"
     inside = run_git(repo, ["rev-parse", "--is-inside-work-tree"])
     if inside is None or inside.returncode != 0 or inside.stdout.strip() != b"true":
         return ["cannot inspect governed Git history in this checkout"] if git_marker.exists() else []
+    shallow = run_git(repo, ["rev-parse", "--is-shallow-repository"])
+    if shallow is None or shallow.returncode != 0:
+        return ["cannot determine whether governed Git history is complete"]
+    if shallow.stdout.strip() == b"true":
+        return ["governed benchmark history requires a complete, non-shallow Git checkout"]
     head_result = run_git(repo, ["rev-parse", "--verify", "HEAD"])
     if head_result is None or head_result.returncode != 0:
         return ["cannot resolve HEAD while validating governed Git history"]
     head = head_result.stdout.decode("ascii", errors="replace").strip()
 
-    errors: list[str] = []
-    registry_commits_result = run_git(repo, ["rev-list", "--reverse", "--topo-order", head, "--", REGISTRY_PATH])
-    if registry_commits_result is None or registry_commits_result.returncode != 0:
-        return ["cannot enumerate benchmark-registry Git history"]
-    historical_paths = {path for path, _ in registry_asset_specs(current_registry)}
-    for raw_commit in registry_commits_result.stdout.splitlines():
-        commit = raw_commit.decode("ascii", errors="replace")
-        historical_registry, registry_error = git_registry(repo, commit)
-        if registry_error:
-            errors.append(registry_error)
-        elif historical_registry is not None:
-            historical_paths.update(path for path, _ in registry_asset_specs(historical_registry))
-    if errors:
-        return errors
-
-    relevant_paths = ["evaluation", *sorted(historical_paths)]
-    commits_result = run_git(repo, ["rev-list", "--reverse", "--topo-order", head, "--", *relevant_paths])
+    commits_result = run_git(repo, ["rev-list", "--reverse", "--topo-order", head])
     if commits_result is None or commits_result.returncode != 0:
-        return ["cannot enumerate governed benchmark and approval history"]
+        return ["cannot enumerate complete reachable benchmark history"]
+
+    errors: list[str] = []
+    historical_paths = {path for path, _ in registry_asset_specs(current_registry)}
+    registry_cache: dict[str, tuple[dict[str, Any] | None, str | None]] = {}
+    approval_identities: dict[str, dict[str, str]] = {}
+
+    def cached_registry(revision: str) -> tuple[dict[str, Any] | None, str | None]:
+        if revision not in registry_cache:
+            registry_cache[revision] = git_registry(repo, revision)
+        return registry_cache[revision]
+
     for raw_commit in commits_result.stdout.splitlines():
         commit = raw_commit.decode("ascii", errors="replace")
         parents_result = run_git(repo, ["rev-list", "--parents", "-n", "1", commit])
@@ -278,51 +306,72 @@ def git_history_errors(repo: Path, current_registry: dict[str, Any]) -> list[str
             errors.append(f"cannot inspect parents of governed commit {commit}")
             continue
         parent_fields = parents_result.stdout.decode("ascii", errors="replace").split()
-        parent = parent_fields[1] if len(parent_fields) > 1 else None
-        current_at_commit, current_error = git_registry(repo, commit)
-        previous_at_parent: dict[str, Any] | None = None
-        previous_error: str | None = None
-        if parent:
-            previous_at_parent, previous_error = git_registry(repo, parent)
+        parents = parent_fields[1:]
+        current_at_commit, current_error = cached_registry(commit)
         if current_error:
             errors.append(current_error)
-        if previous_error:
-            errors.append(previous_error)
-        if previous_at_parent is not None and current_at_commit is None and current_error is None:
-            errors.append(f"{commit}: benchmark registry was removed from reachable history")
         if current_at_commit is not None:
-            transition_errors = baseline_lineage_errors(
-                current_at_commit,
-                previous_at_parent if previous_at_parent is not None else {"benchmarks": []},
-            )
-            errors.extend(f"{commit}: {error}" for error in transition_errors)
+            historical_paths.update(path for path, _ in registry_asset_specs(current_at_commit))
+            errors.extend(historical_registry_schema_errors(repo, commit, current_at_commit))
             errors.extend(historical_asset_errors(repo, commit, current_at_commit))
 
-        if parent:
-            approval_diff = run_git(
-                repo,
-                ["diff", "--name-status", "--no-renames", parent, commit, "--", "evaluation/approvals"],
-            )
-        else:
-            approval_diff = run_git(
-                repo,
-                [
-                    "diff-tree",
-                    "--root",
-                    "--no-commit-id",
-                    "--name-status",
-                    "-r",
-                    "--no-renames",
-                    commit,
-                    "--",
-                    "evaluation/approvals",
-                ],
-            )
-        if approval_diff is None or approval_diff.returncode != 0:
-            errors.append(f"cannot inspect approval changes in governed commit {commit}")
-        else:
-            errors.extend(approval_diff_errors(approval_diff.stdout, commit))
+        transition_parents: list[str | None] = [*parents]
+        if not transition_parents:
+            transition_parents.append(None)
+        for parent in transition_parents:
+            previous_at_parent: dict[str, Any] | None = None
+            previous_error: str | None = None
+            if parent:
+                previous_at_parent, previous_error = cached_registry(parent)
+            if previous_error:
+                errors.append(previous_error)
+            edge = f"{commit}<-{parent or '<root>'}"
+            if previous_at_parent is not None and current_at_commit is None and current_error is None:
+                errors.append(f"{edge}: benchmark registry was removed from reachable history")
+            if current_at_commit is not None and previous_error is None:
+                transition_errors = baseline_lineage_errors(
+                    current_at_commit,
+                    previous_at_parent if previous_at_parent is not None else {"benchmarks": []},
+                )
+                errors.extend(f"{edge}: {error}" for error in transition_errors)
 
+            if parent:
+                approval_diff = run_git(
+                    repo,
+                    ["diff", "--name-status", "--no-renames", parent, commit, "--", "evaluation/approvals"],
+                )
+            else:
+                approval_diff = run_git(
+                    repo,
+                    [
+                        "diff-tree",
+                        "--root",
+                        "--no-commit-id",
+                        "--name-status",
+                        "-r",
+                        "--no-renames",
+                        commit,
+                        "--",
+                        "evaluation/approvals",
+                    ],
+                )
+            if approval_diff is None or approval_diff.returncode != 0:
+                errors.append(f"cannot inspect approval changes on governed edge {edge}")
+            else:
+                errors.extend(approval_diff_errors(approval_diff.stdout, edge))
+
+        approval_blobs, approval_tree_error = approval_tree_blobs(repo, commit)
+        if approval_tree_error:
+            errors.append(approval_tree_error)
+        for path, blob in approval_blobs.items():
+            approval_identities.setdefault(path, {}).setdefault(blob, commit)
+
+    for path, identities in sorted(approval_identities.items()):
+        if len(identities) > 1:
+            origins = ", ".join(f"{blob}@{commit}" for blob, commit in sorted(identities.items()))
+            errors.append(f"immutable approval path has multiple reachable blob identities: {path}: {origins}")
+
+    relevant_paths = ["evaluation", *sorted(historical_paths)]
     status_result = run_git(repo, ["status", "--porcelain", "--", *relevant_paths])
     if status_result is None or status_result.returncode != 0:
         errors.append("cannot inspect governed benchmark worktree state")

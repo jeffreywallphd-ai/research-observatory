@@ -461,6 +461,104 @@ class BenchmarkRegistryTests(unittest.TestCase):
 
         self.assertEqual(["cannot inspect governed Git history in this checkout"], errors)
 
+    def test_rewrite_revert_branch_hidden_by_treesame_merge_remains_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            approval_root = root / "evaluation" / "approvals"
+            approval_root.mkdir(parents=True)
+            approval = approval_root / "immutable.json"
+            original = b'{"approvedBy":"human:owner"}\n'
+            approval.write_bytes(original)
+            self.initialize_git(root)
+            main_branch = subprocess.run(
+                ["git", "branch", "--show-current"], cwd=root, capture_output=True, text=True, check=True
+            ).stdout.strip()
+            subprocess.run(["git", "switch", "-c", "rewrite-side"], cwd=root, capture_output=True, check=True)
+            approval.write_bytes(b'{"approvedBy":"human:rewriter"}\n')
+            self.commit_all(root, "rewrite approval on side branch")
+            approval.write_bytes(original)
+            self.commit_all(root, "revert approval on side branch")
+            subprocess.run(["git", "switch", main_branch], cwd=root, capture_output=True, check=True)
+            self.add_unrelated_followup(root)
+            subprocess.run(
+                ["git", "merge", "--no-ff", "rewrite-side", "-m", "merge reverted side branch"],
+                cwd=root,
+                capture_output=True,
+                check=True,
+            )
+
+            errors = git_history_errors(root, {})
+
+        self.assertTrue(any("immutable baseline approval record" in error for error in errors))
+        self.assertTrue(any("multiple reachable blob identities" in error for error in errors))
+
+    def test_divergent_same_approval_path_blobs_reject_merge_resolution(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            approval_root = root / "evaluation" / "approvals"
+            approval_root.mkdir(parents=True)
+            (approval_root / "README.md").write_text("approvals\n", encoding="utf-8")
+            self.initialize_git(root)
+            base = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=True
+            ).stdout.strip()
+            approval = approval_root / "shared-v2.json"
+            subprocess.run(["git", "switch", "-c", "approval-a"], cwd=root, capture_output=True, check=True)
+            first = b'{"approvedBy":"human:owner-a"}\n'
+            approval.write_bytes(first)
+            self.commit_all(root, "add approval identity A")
+            subprocess.run(["git", "switch", "-c", "approval-b", base], cwd=root, capture_output=True, check=True)
+            approval.write_bytes(b'{"approvedBy":"human:owner-b"}\n')
+            self.commit_all(root, "add approval identity B")
+            subprocess.run(["git", "switch", "approval-a"], cwd=root, capture_output=True, check=True)
+            merge = subprocess.run(
+                ["git", "merge", "--no-ff", "approval-b", "-m", "merge divergent approvals"],
+                cwd=root,
+                capture_output=True,
+                check=False,
+            )
+            self.assertNotEqual(0, merge.returncode)
+            approval.write_bytes(first)
+            self.commit_all(root, "resolve approval to identity A")
+
+            errors = git_history_errors(root, {})
+
+        self.assertTrue(any("multiple reachable blob identities" in error for error in errors))
+        self.assertTrue(any("immutable baseline approval record" in error for error in errors))
+
+    def test_repaired_historical_schema_violation_remains_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            self.initialize_git(root)
+            canonical = self.load_manifest(root)
+            invalid = copy.deepcopy(canonical)
+            invalid["unexpectedHistoricalField"] = True
+            self.write_manifest(root, invalid)
+            self.commit_all(root, "commit schema-invalid registry")
+            self.write_manifest(root, canonical)
+            self.commit_all(root, "repair schema-invalid registry")
+
+            _, _, errors = load_registry(root)
+
+        self.assertTrue(any("unexpectedHistoricalField" in error for error in errors))
+
+    def test_shallow_checkout_denies_durable_history_validation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = self.temporary_repo(str(Path(temporary) / "source"))
+            self.initialize_git(source)
+            (source / "unrelated.txt").write_text("follow-up\n", encoding="utf-8")
+            self.commit_all(source, "follow-up")
+            clone = Path(temporary) / "shallow"
+            subprocess.run(
+                ["git", "clone", "--depth", "1", "--no-local", str(source), str(clone)],
+                capture_output=True,
+                check=True,
+            )
+
+            _, _, errors = load_registry(clone)
+
+        self.assertTrue(any("complete, non-shallow Git checkout" in error for error in errors))
+
     def test_paths_are_confined_and_reports_cannot_escape_scratch(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = self.temporary_repo(temporary)
