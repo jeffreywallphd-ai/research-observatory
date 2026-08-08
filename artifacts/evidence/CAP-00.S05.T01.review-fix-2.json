@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T01",
+  "commit": "535b1be09a9b3054cc802463dd4b4bac383ec0e2",
+  "baseCommit": "5cafdf572fe68575f7a35618b56fda0faabb136e",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T01.review-fix.json",
+    "reason": "Independent re-review showed that a required normal feature could be moved from an accepted fixture to a malformed rejected fixture and still satisfy global coverage. This manifest records the universal semantic-feature outcome binding and exact regression."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T01.review-fix.json",
+    "docs/automation/fixture-corpus.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_fixture_corpus_check.py",
+    "tools/fixture_corpus_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --repo . --report artifacts\\tmp\\CAP-00.S05.T01-review-fix-2-exact.json",
+      "exitCode": 0,
+      "result": "The exact second review-fix commit passed all 12 foundation commands and 81 foundation tests, including mandatory corpus, quality, generated-view, and backlog checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_fixture_corpus_check -v",
+      "exitCode": 0,
+      "result": "Eight focused tests passed, including the exact structured-full-text reassignment from an accepted body-less XML file to a rejected malformed XML fixture."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The authoritative ledger and stored evidence chain validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Every required normal feature, plus declared documentation, section, and plain-full-text features, is now bound to expectedOutcome accept; only malformed-json, malformed-xml, and malformed-pdf are valid on rejection fixtures.",
+        "The exact reproduced attack removes structured-full-text from the valid XML, removes its body, reassigns the feature to malformed rejected XML, updates the digest, and is denied because the feature requires an accepted outcome.",
+        "All previously corrected inventory, media, xref, per-item semantic, and control-file confinement boundaries remain active and pass the canonical corpus offline."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused suite now has eight tests and explicitly covers positive-feature laundering through a rejection fixture in addition to all prior tamper and redirect boundaries.",
+        "The complete exact-commit foundation suite now has 81 passing tests."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The automation guide states the accept-only normal-feature and reject-only malformed-feature contract.",
+        "The incremental correction changes only the validator, focused test, documentation, synchronized planning views, prior superseding evidence, and task audit state."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce the feature-laundering mutation and confirm prior fixes remain effective against commit 535b1be09a9b3054cc802463dd4b4bac383ec0e2."
+  }
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3915d336933734553ace1f79af5f252993d358c1c9dd82bf59849450825dc0b6
+source_sha256: 0a0cfeadc76271ed13354f3efe54428912575b1bddd45fec1b7481d88ebf81d1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -688,15 +688,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-00.S04.T03`
 
-#### - [ ] CAP-00.S05.T01 - Create a legally redistributable miniature scholarly fixture corpus
+#### - [x] CAP-00.S05.T01 - Create a legally redistributable miniature scholarly fixture corpus
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S04.T03`
 
-**Owner / review:** codex / codex-review (`changes-requested`)
+**Owner / review:** codex / codex-review (`approved`)
 
 **Objective:** Small fixture set containing metadata variants, duplicates, PDFs, structured full text, tables, citations, missing fields, and malformed inputs.
 
@@ -719,10 +719,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S05.T01.json` at `7a4301dbd9de0e05472fe537c92c44e02b7fdee6`
 - `artifacts/evidence/CAP-00.S05.T01.review-fix.json` at `5cafdf572fe68575f7a35618b56fda0faabb136e`
+- `artifacts/evidence/CAP-00.S05.T01.review-fix-2.json` at `535b1be09a9b3054cc802463dd4b4bac383ec0e2`
 
 #### - [ ] CAP-00.S05.T02 - Establish golden-output and benchmark registry conventions
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 

@@ -1264,17 +1264,19 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T19:09:55+00:00'
-      updated_at: '2026-08-08T19:37:03+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T19:42:36+00:00'
+      completed_at: '2026-08-08T19:42:36+00:00'
       blocker: null
       implementation_notes: 'Synthetic CC0 scholarly corpus and fail-closed offline validator complete; exact commit passed
         78 foundation tests.
 
-        All independent review findings fixed; exact review-fix commit passed 80 foundation tests and adversarial regressions.'
+        All independent review findings fixed; exact review-fix commit passed 80 foundation tests and adversarial regressions.
+
+        All review findings including reject-item feature laundering fixed; exact commit passed 81 foundation tests.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T01.json
@@ -1286,18 +1288,20 @@ capabilities:
         sha256: 031a84ec226ac088a5ce1c24932442d9e19c1b51c167011a626607e385370a5d
         commit: 5cafdf572fe68575f7a35618b56fda0faabb136e
         recorded_at: '2026-08-08T19:32:46+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T01.review-fix-2.json
+        sha256: ee638015161069d0240963aed2ee4a72034e447ad1dd40e166361c3c1f20121e
+        commit: 535b1be09a9b3054cc802463dd4b4bac383ec0e2
+        recorded_at: '2026-08-08T19:40:22+00:00'
       review:
         reviewer: codex-review
-        result: changes-requested
-        reviewed_at: '2026-08-08T19:37:03+00:00'
-        notes: P1 normal semantic features can be reassigned to rejected malformed fixtures; structured-full-text coverage
-          passed without an accepted article body.
+        result: approved
+        reviewed_at: '2026-08-08T19:42:36+00:00'
+        notes: Independent review reproduced all inventory, redirect, media, xref, semantic, and feature-outcome attacks;
+          all rejected. 81 foundation tests passed.
       base_sha: ff16722729ea25363f5be55b21dc244acf27f13a
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T19:37:03+00:00'
-        expires_at: '2026-08-09T03:37:03+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral
@@ -1327,11 +1331,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-08T19:42:36+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
