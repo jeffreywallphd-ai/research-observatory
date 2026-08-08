@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "verification-profile-contract",
+  "commands": {
+    "foundation:repository-structure": {"argv": ["{python}", "tools/repository_structure_check.py", "--repo", "{repo}"]},
+    "foundation:runtime": {"argv": ["{python}", "tools/runtime_check.py", "--repo", "{repo}"]},
+    "foundation:architecture": {"argv": ["{python}", "tools/architecture_check.py", "--repo", "{repo}"]},
+    "foundation:agent-protocol": {"argv": ["{python}", "tools/agent_protocol_check.py", "--repo", "{repo}"]},
+    "foundation:adr": {"argv": ["{python}", "tools/adr_check.py", "--repo", "{repo}"]},
+    "foundation:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/foundation", "-p", "test_*.py"]},
+    "foundation:backlog": {"argv": ["{python}", "tools/taskctl.py", "--file", "planning/backlog.yaml", "validate"]},
+    "desktop:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/desktop", "-p", "test_*.py"]},
+    "desktop:ui-reference-integrity": {"argv": ["{python}", "tools/ui_reference_check.py", "--reference", "design/ui-reference"]},
+    "desktop:ui-token": {"argv": ["{python}", "tools/ui_token_check.py", "--repo", "{repo}"]},
+    "desktop:ui-route-page": {"argv": ["{python}", "tools/ui_route_check.py", "--repo", "{repo}"]},
+    "desktop:ui-workflow": {"argv": ["{python}", "tools/ui_workflow_check.py", "--repo", "{repo}"]},
+    "desktop:ui-accessibility": {"argv": ["{python}", "tools/ui_accessibility_check.py", "--repo", "{repo}"]},
+    "desktop:ui-visual-regression": {"argv": ["{python}", "tools/ui_visual_regression_check.py", "--repo", "{repo}"]},
+    "service:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/service", "-p", "test_*.py"]},
+    "contracts:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/contracts", "-p", "test_*.py"]},
+    "data:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/data", "-p", "test_*.py"]},
+    "documents:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/documents", "-p", "test_*.py"]},
+    "search:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/search", "-p", "test_*.py"]},
+    "ai:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/ai", "-p", "test_*.py"]},
+    "evidence:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/evidence", "-p", "test_*.py"]},
+    "graph:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/graph", "-p", "test_*.py"]},
+    "novelty:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/novelty", "-p", "test_*.py"]},
+    "e2e-local:system": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/e2e", "-p", "test_*.py"]},
+    "security-local:policy": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/security", "-p", "test_*.py"]}
+  },
+  "profiles": {
+    "foundation": {
+      "description": "Repository, runtime, architecture, agent, ADR, foundation-unit, and backlog integrity.",
+      "commands": [
+        "foundation:repository-structure",
+        "foundation:runtime",
+        "foundation:architecture",
+        "foundation:agent-protocol",
+        "foundation:adr",
+        "foundation:unit",
+        "foundation:backlog"
+      ]
+    },
+    "desktop": {
+      "description": "Foundation plus desktop unit checks and activation-controlled UI conformance checks.",
+      "includes": ["foundation"],
+      "commands": [],
+      "optionalCommands": [
+        {"command": "desktop:unit", "activationGlob": "tests/desktop/test_*.py", "installedBy": "CAP-01"},
+        {"command": "desktop:ui-reference-integrity", "activationPath": "verification/extensions/desktop-ui.json", "installedBy": "CAP-00.S06"},
+        {"command": "desktop:ui-token", "activationPath": "verification/extensions/desktop-ui.json", "installedBy": "CAP-00.S06"},
+        {"command": "desktop:ui-route-page", "activationPath": "verification/extensions/desktop-ui.json", "installedBy": "CAP-00.S06"},
+        {"command": "desktop:ui-workflow", "activationPath": "verification/extensions/desktop-ui.json", "installedBy": "CAP-00.S06"},
+        {"command": "desktop:ui-accessibility", "activationPath": "verification/extensions/desktop-ui.json", "installedBy": "CAP-00.S06"},
+        {"command": "desktop:ui-visual-regression", "activationPath": "verification/extensions/desktop-ui.json", "installedBy": "CAP-00.S06"}
+      ]
+    },
+    "service": {"description": "Foundation plus Core API and portable-contract tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "service:unit", "activationGlob": "tests/service/test_*.py", "installedBy": "CAP-01.S03"}, {"command": "contracts:unit", "activationGlob": "tests/contracts/test_*.py", "installedBy": "CAP-01"}]},
+    "data": {"description": "Foundation plus data/storage and portable-contract tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "data:unit", "activationGlob": "tests/data/test_*.py", "installedBy": "CAP-02"}, {"command": "contracts:unit", "activationGlob": "tests/contracts/test_*.py", "installedBy": "CAP-01"}]},
+    "documents": {"description": "Foundation plus document ingestion, parsing, anchoring, and rights tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "documents:unit", "activationGlob": "tests/documents/test_*.py", "installedBy": "CAP-05"}]},
+    "search": {"description": "Foundation plus lexical, semantic, hybrid, reranking, and screening tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "search:unit", "activationGlob": "tests/search/test_*.py", "installedBy": "CAP-06"}]},
+    "ai": {"description": "Foundation plus model routing, policy, structured-output, and evaluation tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "ai:unit", "activationGlob": "tests/ai/test_*.py", "installedBy": "CAP-07"}]},
+    "evidence": {"description": "Foundation plus extraction, verification, uncertainty, and evidence-matrix tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "evidence:unit", "activationGlob": "tests/evidence/test_*.py", "installedBy": "CAP-08"}]},
+    "graph": {"description": "Foundation plus graph, relation, contradiction, lineage, and synthesis tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "graph:unit", "activationGlob": "tests/graph/test_*.py", "installedBy": "CAP-09"}]},
+    "novelty": {"description": "Foundation plus novelty generation, challenge, decision, and monitoring tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "novelty:unit", "activationGlob": "tests/novelty/test_*.py", "installedBy": "CAP-10"}]},
+    "e2e-local": {"description": "Foundation plus local happy, denial, cancellation, restart, and recovery workflows.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "e2e-local:system", "activationGlob": "tests/e2e/test_*.py", "installedBy": "CAP-01-CAP-11"}]},
+    "security-local": {"description": "Foundation plus local security, secret, dependency, license, and vulnerability policy checks.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "security-local:policy", "activationGlob": "tests/security/test_*.py", "installedBy": "CAP-00.S03.T03"}]},
+    "server": {"description": "University/server qualification profile.", "enabled": false, "blockedReason": "server verification is release-gated until W10 institutional implementation is approved", "commands": []},
+    "cloud": {"description": "Managed cloud qualification profile.", "enabled": false, "blockedReason": "cloud verification is release-gated until W11 managed-cloud implementation is approved", "commands": []}
+  }
+}

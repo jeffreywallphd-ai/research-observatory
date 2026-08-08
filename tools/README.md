@@ -12,6 +12,6 @@
 - `agent_protocol_check.py` - enforce atomic all-slice approval, durable capability execution, READY-only selection, scope/check/evidence rules, and task briefing.
 - `adr_new.py` - create a task-linked Proposed ADR and update the decision index in one guarded command.
 - `adr_check.py` - validate ADR states/index/task links and require matching changed ADRs for protected architecture paths.
-- `verify.py` - run the bootstrap `foundation` profile; CAP-00.S03 expands it into the complete profile runner.
+- `verify.py` - run composable task-facing verification profiles and emit command, duration, failure, and JSON report evidence.
 
 Run these from the repository root after the setup kit has installed `repo-seed/`. The external setup package is not the repository.
