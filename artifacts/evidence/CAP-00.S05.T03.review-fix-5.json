@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T03",
+  "commit": "8b5bc27f13965fbb949257900abc54a192abf720",
+  "baseCommit": "d2b2f10f40abf70c65e1c2ed2da85bc49914a4f8",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T03.review-fix-4.json",
+    "reason": "Independent review confirmed the five prior inventory, hierarchy, traversal, and temporary-content corrections, then reproduced destination-path substitution after final byte verification. This manifest binds handle-based Windows publication and exact-path replacement coverage."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T03.review-fix-4.json",
+    "docs/automation/build-manifests.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_build_manifest.py",
+    "tools/build_manifest.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S05.T03-review-fix-5-exact-foundation.json",
+      "exitCode": 0,
+      "result": "The clean exact fifth-remediation commit passed all 14 mandatory foundation commands and all 123 foundation tests; build provenance reported 0.1.0+g8b5bc27 clean."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest -v",
+      "exitCode": 0,
+      "result": "All 22 focused tests passed, including post-replacement path substitution, exact replacement of existing content without sibling names, temporary tampering, final inventories, CommonMark hierarchy, traversal, provenance races, confinement, strict SemVer, and deterministic output."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-00.S05.T03-review-fix-5-exact-manifest.json",
+      "exitCode": 0,
+      "result": "The exact clean commit replaced the existing confined report at the requested path and emitted build identity 0.1.0+g8b5bc27."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The foundation profile validated the ledger with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "On Windows, the serialized temporary is reopened with read and delete access while sharing only reads, then renamed through that retained file handle.",
+        "The retained handle denies competing writes and deletes through destination identity and byte verification; post-replacement path substitution is rejected while the canonical output remains intact.",
+        "Existing outputs are atomically replaced at the exact requested name, with UTF-16 rename metadata explicitly terminated and no unintended sibling paths."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused Windows tests attempt destination substitution after replacement and verify both denial and canonical safe content; another regression replaces materially different existing content and asserts an exact one-file inventory.",
+        "All 22 focused and all 123 complete foundation tests pass at exact commit 8b5bc27f13965fbb949257900abc54a192abf720."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Automation documentation now describes handle-based Windows rename plus retained write/delete protection through final identity and byte verification.",
+        "The independent changes-requested disposition and all predecessor evidence remain in the immutable audit chain; generated planning views match the exact ledger state."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must confirm destination substitution is closed by handle-bound publication, existing outputs are replaced at the exact name, and all previously accepted T03 boundaries remain satisfied."
+  }
+}

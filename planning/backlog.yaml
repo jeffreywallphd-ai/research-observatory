@@ -1420,12 +1420,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T21:08:08+00:00'
-      updated_at: '2026-08-08T22:39:32+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T22:57:49+00:00'
+      completed_at: '2026-08-08T22:57:49+00:00'
       blocker: null
       implementation_notes: 'Implementation commit 23717be passed the clean 14-command foundation profile, 109 tests, focused
         build-manifest boundaries, and exact clean provenance generation; submitted for independent review.
@@ -1441,7 +1441,10 @@ capabilities:
         changelog hierarchy, prior handle-lock race fixes retained; 14 commands, 117 tests, 16 focused pass.
 
         Fourth remediation closes exact inventory, temporary-content, CommonMark hierarchy, dangling junction, and traversal
-        failure boundaries at d2b2f10.'
+        failure boundaries at d2b2f10.
+
+        Fifth remediation binds Windows publication to the held file handle and covers post-replacement substitution and exact
+        existing-output replacement at 8b5bc27.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T03.json
@@ -1468,18 +1471,20 @@ capabilities:
         sha256: f10b55c2354ee00dd125e3db26ef1ecaf4fc571be4111966f32ad3c65f124185
         commit: d2b2f10f40abf70c65e1c2ed2da85bc49914a4f8
         recorded_at: '2026-08-08T22:30:06+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T03.review-fix-5.json
+        sha256: 83d4dd6d093a6b05e8deb1f4e6e2b7817d5d8cd574a36949a2b812bcb28d0260
+        commit: 8b5bc27f13965fbb949257900abc54a192abf720
+        recorded_at: '2026-08-08T22:48:31+00:00'
       review:
         reviewer: codex-review
-        result: changes-requested
-        reviewed_at: '2026-08-08T22:39:32+00:00'
-        notes: 'Exact d2b2f10 re-review: Windows destination path can be replaced after byte verification because the retained
-          handle shares delete; require handle-bound replacement/final verification and regression for post-replacement substitution.'
+        result: approved
+        reviewed_at: '2026-08-08T22:57:49+00:00'
+        notes: 'Independent exact-commit review approved 8b5bc27: 22 focused tests, 14-command/123-test foundation profile,
+          exact evidence scope, handle-bound replacement, and repeatable clean provenance all pass.'
       base_sha: 2f28abe2c25fdf911f338ae9e173223879964ac2
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T22:39:32+00:00'
-        expires_at: '2026-08-09T06:39:32+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral

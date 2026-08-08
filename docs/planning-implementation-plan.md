@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4569379fa0793bb8e5d1cf72c8fa2243038f13df9eb6dd0558f9854f653a5c44
+source_sha256: 60326af3fbf94705ae8e6f92dfa3a23db4aa80e661bc1430ddc20b2aee0c8888
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -756,15 +756,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S05.T02.review-fix-3.json` at `369abb4d638a958309240fdfb4aebe8cc0bf99c5`
 - `artifacts/evidence/CAP-00.S05.T02.review-fix-4.json` at `4a5fc16ee30575f6f34482ff65d4cd6281f79f82`
 
-#### - [ ] CAP-00.S05.T03 - Implement version, changelog, and build-manifest generation
+#### - [x] CAP-00.S05.T03 - Implement version, changelog, and build-manifest generation
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `S` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `S` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S05.T02`
 
-**Owner / review:** codex / codex-review (`changes-requested`)
+**Owner / review:** codex / codex-review (`approved`)
 
 **Objective:** Single product version source, generated component manifests, changelog convention, and reproducible build metadata.
 
@@ -790,6 +790,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-2.json` at `4a3196c892db6717d4a78933675a057c486a42a3`
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-3.json` at `8534749677355438708f2d3e9e73d167a86e5911`
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-4.json` at `d2b2f10f40abf70c65e1c2ed2da85bc49914a4f8`
+- `artifacts/evidence/CAP-00.S05.T03.review-fix-5.json` at `8b5bc27f13965fbb949257900abc54a192abf720`
 
 ### CAP-00.S06 - Approved experience reference and UI conformance automation
 
