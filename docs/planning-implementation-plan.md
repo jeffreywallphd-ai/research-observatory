@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 202ac265c7435c366321ec399426b15e3e1b4cd8a60e4bad580e6e599a053236
+source_sha256: 7f65a0230cb6eddabd26cf82837473f41bcb4a0dad88e2a35db15c20581710e3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -796,21 +796,21 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The Academic Minimal style, page contracts, fourteen use-case workflows, and linked HTML prototypes form an approved in-repository reference that must precede and validate user-facing implementation.
 
-**Wave / priority / status / review:** `W0` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W0` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S01.T01`, `CAP-00.S02.T02`
 
-#### - [ ] CAP-00.S06.T01 - Install the governed Academic Minimal UI reference
+#### - [x] CAP-00.S06.T01 - Install the governed Academic Minimal UI reference
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `low`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `low`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S01.T01`, `CAP-00.S02.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / codex-review (`approved`)
 
 **Objective:** Store the approved style guide, workflow catalog, capability/page contracts, linked HTML prototypes, shared assets, approval record, and deterministic generator under design/ui-reference.
 
@@ -829,9 +829,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-00.S06.T01.json` at `1acd8aa2ad13edc3c8d6938c2e0219010e8135e4`
+
 #### - [ ] CAP-00.S06.T02 - Implement UI-reference integrity and approval validation
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 202ac265c7435c366321ec399426b15e3e1b4cd8a60e4bad580e6e599a053236
+source_sha256: 7f65a0230cb6eddabd26cf82837473f41bcb4a0dad88e2a35db15c20581710e3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -46,16 +46,16 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 304 |
-| `IN_PROGRESS` | 1 |
-| `DONE` | 15 |
+| `NOT_STARTED` | 303 |
+| `READY` | 1 |
+| `DONE` | 16 |
 | `DEFERRED` | 36 |
 
 ## Capability progress
 
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
-| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 5/6 | 15/19 | `CAP-00.S06.T01` |
+| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 5/6 | 16/19 | - |
 | `CAP-01` Windows-first desktop shell and supervised local runtime | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
@@ -95,6 +95,4 @@ manual_edit: prohibited
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-00.S06.T01` Install the governed Academic Minimal UI reference | `IN_PROGRESS` | codex | `codex/cap-00-delivery-foundation` |
+No task is currently active.
