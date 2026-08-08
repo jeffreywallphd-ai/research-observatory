@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 0334080998f3bcc304bc8e90b82ac7889d4398d11ca2afc496c2e75ea8fa3b29
+source_sha256: e825995fc67b1e6886777f8fc717ee5b4c19fbc739fbaeede6799cb3e099aa4c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -47,15 +47,14 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 308 |
-| `IN_PROGRESS` | 1 |
-| `DONE` | 11 |
+| `DONE` | 12 |
 | `DEFERRED` | 36 |
 
 ## Capability progress
 
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
-| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 3/6 | 11/19 | `CAP-00.S04.T03` |
+| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 3/6 | 12/19 | - |
 | `CAP-01` Windows-first desktop shell and supervised local runtime | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
@@ -95,6 +94,4 @@ manual_edit: prohibited
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-00.S04.T03` Generate human-readable plan views from YAML | `IN_PROGRESS` | codex | `codex/cap-00-delivery-foundation` |
+No task is currently active.

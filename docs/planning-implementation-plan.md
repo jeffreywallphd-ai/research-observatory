@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0334080998f3bcc304bc8e90b82ac7889d4398d11ca2afc496c2e75ea8fa3b29
+source_sha256: e825995fc67b1e6886777f8fc717ee5b4c19fbc739fbaeede6799cb3e099aa4c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -646,15 +646,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S04.T02.review-fix.json` at `438edadfc822f75a246ecbed40577f29b4524558`
 - `artifacts/evidence/CAP-00.S04.T02.review-fix-2.json` at `412cce62a2994606d81c4a3dc538205bb3043138`
 
-#### - [ ] CAP-00.S04.T03 - Generate human-readable plan views from YAML
+#### - [x] CAP-00.S04.T03 - Generate human-readable plan views from YAML
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `S` / `low`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `S` / `low`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S04.T02`
 
-**Owner / review:** codex / codex-review (`changes-requested`)
+**Owner / review:** codex / codex-review (`approved`)
 
 **Objective:** Deterministic Markdown and summary reports generated from the authoritative backlog.
 
@@ -676,6 +676,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-00.S04.T03.json` at `e1755e15441e685bdea7354f5fcde0d85a2f6ce5`
+- `artifacts/evidence/CAP-00.S04.T03.review-fix.json` at `5d9c1622c93a93b90afb9e2961b058fed983522c`
 
 ### CAP-00.S05 - Test corpus, benchmark registry, and release metadata
 
