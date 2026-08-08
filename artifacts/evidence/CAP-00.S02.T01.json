@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S02.T01",
+  "commit": "b9f5796e136d4c3cd7480ed011527955ed17ed87",
+  "baseCommit": "ae170b82e73af5b753d64c3e0fc27b53061ccebb",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    "architecture-boundaries.json",
+    "docs/README.md",
+    "docs/architecture/README.md",
+    "planning/backlog.yaml",
+    "tests/foundation/test_architecture_check.py",
+    "tools/README.md",
+    "tools/architecture_check.py",
+    "tools/verify.py"
+  ],
+  "checks": [
+    {
+      "command": "python tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "11 repository areas, 12 governed modules, 5 stable interfaces, and 3 deployment profiles passed"
+    },
+    {
+      "command": "python tools/verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "repository, runtime, architecture, 15 foundation tests, and backlog checks passed"
+    },
+    {
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "docs/architecture/README.md states the purpose of every top-level repository area and diagrams production dependencies versus runtime interactions",
+        "architecture-boundaries.json provides a default-deny allowed dependency matrix, explicit prohibited directions, and five protected interface owners/change rules",
+        "local, university, and cloud profiles preserve one authoritative project home and keep university/cloud implementations behind W10/W11 release gates"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "test_repository_architecture_contract_is_complete covers the governed repository",
+        "test_missing_governed_module_is_rejected covers an incomplete architecture map",
+        "test_prohibited_reverse_dependency_is_rejected and test_deferred_cloud_profile_cannot_be_marked_active_early cover material coupling and deployment boundaries"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "docs/README.md routes implementation work through the concise map and full architecture baseline",
+        "tools/README.md documents the validator and the foundation profile runs it on every task gate",
+        "No application runtime, hosted infrastructure, migration, or unrelated product behavior was introduced"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "A rigorous reviewer-role audit is required before the task may transition from REVIEW to DONE."
+  }
+}

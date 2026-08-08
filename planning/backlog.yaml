@@ -647,26 +647,31 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T16:21:43+00:00'
-      updated_at: '2026-08-08T16:21:43+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T16:24:19+00:00'
+      completed_at: '2026-08-08T16:24:19+00:00'
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Architecture map, default-deny dependency contract, stable interface list, deployment boundaries,
+        validator, and negative tests complete at b9f5796.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S02.T01.json
+        sha256: db9de309a92346e79b2b197705062f1db2a5aeb496e647ff81c09b3e651c1852
+        commit: b9f5796e136d4c3cd7480ed011527955ed17ed87
+        recorded_at: '2026-08-08T16:24:04+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: approved
+        reviewed_at: '2026-08-08T16:24:19+00:00'
+        notes: Rigorous audit confirmed complete repository-area purposes, the default-deny module matrix, explicit prohibited
+          reverse dependencies, protected interface ownership, local/university/cloud authority separation, failure tests,
+          and commit-bound evidence; no unresolved finding.
       base_sha: ae170b82e73af5b753d64c3e0fc27b53061ccebb
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T16:21:43+00:00'
-        expires_at: '2026-08-09T00:21:43+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
@@ -697,11 +702,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-08T16:24:19+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
