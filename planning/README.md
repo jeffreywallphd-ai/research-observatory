@@ -119,6 +119,14 @@ evidence paths are repository-relative; complete manifest revalidation and
 line-ending-canonical hashes detect later content, task-ID, base, branch, check,
 criterion, commit, or verification drift.
 
+A follow-up manifest must identify a prior attachment with `supersedes.path`, use
+that attachment's commit as `baseCommit`, and list the exact incremental Git diff;
+partial file lists are invalid. DONE or approved status never relaxes the empty
+`unverifiedItems` rule. Four pre-policy CAP-00.S03 hosted-CI residuals carry the
+`pre-exact-evidence-hosted-ci-residual-v1` reference marker and are immutably
+pinned by task, path, commit, canonical digest, and exact residual text. The
+marker cannot be applied to new or modified evidence.
+
 Task, slice, and capability reviewers must be independent from the recorded
 implementation/campaign owner. Cancellation is an owner-authorized transition
 inside the current active slice and cannot rewrite an existing cancellation.

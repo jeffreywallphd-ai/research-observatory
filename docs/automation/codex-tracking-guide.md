@@ -56,6 +56,13 @@ and logical uniqueness are checked again on later validation. Implementation or
 campaign owners cannot review their own task, slice, or capability. Approved
 release gates remain semantically tied to a fully DONE preceding wave.
 
+Follow-up evidence must use `supersedes.path`, set `baseCommit` to that prior
+attachment's commit, and declare the complete incremental diff. Completion does
+not excuse non-empty `unverifiedItems`. The only exception is the explicitly
+marked `pre-exact-evidence-hosted-ci-residual-v1` migration for four pinned
+CAP-00.S03 records; their paths, commits, hashes, task IDs, and exact hosted-CI
+residual text are fixed and the marker is invalid everywhere else.
+
 ## Decision requests
 
 When a decision or approval is required:

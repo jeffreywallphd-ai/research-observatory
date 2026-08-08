@@ -3,14 +3,16 @@
   "documentType": "task-criterion-evidence",
   "taskId": "CAP-00.S04.T01",
   "commit": "1493a3cd6198286d6521b4c8cbc6230d68fc7f3c",
-  "baseCommit": "16cbd356f79458434af3993727701e59d9a8e02c",
+  "baseCommit": "7d016c5251a6a9385abe8205857ca18b16feb3ca",
   "branch": "codex/cap-00-delivery-foundation",
   "supersedes": {
     "path": "artifacts/evidence/CAP-00.S04.T01.json",
     "reason": "Independent review demonstrated three semantic-validation bypasses in the first-pass identity, dependency, and approved-review claims. This manifest records the corrected implementation and regression evidence without rewriting the historical submission."
   },
   "changedFiles": [
+    "artifacts/evidence/CAP-00.S04.T01.json",
     "planning/README.md",
+    "planning/backlog.yaml",
     "tests/foundation/test_taskctl_schema.py",
     "tools/taskctl.py"
   ],
