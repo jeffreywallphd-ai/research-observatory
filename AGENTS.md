@@ -98,3 +98,11 @@ Restoring code to an already approved reference does not require a new reference
 ## Verification
 
 Run the checks required by the active task contract and changed-path impact map. At minimum, validate backlog/plans, architecture, UI reference, generated review pages, type/lint/test profiles, and the primary platform when affected. See `docs/automation/project-automation-guide.md`.
+
+## Local main integration
+
+After a bounded work unit is committed and every required test passes, integrate
+the tested commit into the local `main` branch. Prefer a fast-forward-only merge.
+If `main` has diverged, stop and reconcile explicitly, rerun the affected checks,
+and never force or discard either history. Local integration does not approve a
+task, satisfy a review gate, complete a dependency, or authorize a remote push.

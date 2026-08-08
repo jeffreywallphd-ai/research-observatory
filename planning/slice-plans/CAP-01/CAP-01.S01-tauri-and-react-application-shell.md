@@ -8,7 +8,7 @@ capability_plan: planning/capability-plans/CAP-01.md
 planning_gate: capability-decision-complete
 slice_id: CAP-01.S01
 title: Tauri and React application shell
-status: proposed
+status: approved
 wave: W1
 priority: P0
 deployment_profiles:
@@ -23,10 +23,10 @@ task_ids:
 - CAP-01.S01.T03
 ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
 approval:
-  status: pending
-  approved_by: null
-  approved_at: null
-  approved_commit: null
+  status: approved
+  approved_by: repository-owner
+  approved_at: '2026-08-08T15:56:58.231475+00:00'
+  approved_commit: b0e318137b2aa3ccf34f6a21a587419991d24b03
 ---
 # CAP-01.S01 - Tauri and React application shell
 > **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-01.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-01 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.

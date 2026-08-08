@@ -12,7 +12,7 @@
       "capability_id": "CAP-01",
       "title": "Windows-first desktop shell and supervised local runtime",
       "plan_path": "planning/capability-plans/CAP-01.md",
-      "plan_sha256": "930d2fce4a797740ef6548922d7133d93955586f623892460d22fb6b76c3d91a",
+      "plan_sha256": "87f9e7b581e7228f17ca43067a360920429bf55aba290b9fdb273935ac528502",
       "page": "CAP-01/index.html",
       "decision_count": 3,
       "slice_count": 5,
@@ -21,7 +21,7 @@
           "slice_id": "CAP-01.S01",
           "title": "Tauri and React application shell",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S01-tauri-and-react-application-shell.md",
-          "plan_sha256": "7619fc289fd41e32ffde357de4e242c6ad2217412181895f6d66ef39036f52b9",
+          "plan_sha256": "b614069e45f4608d7ec4c740b145c2a836c8f37153baff4846cc2851cf4bd53f",
           "page": "CAP-01/CAP-01.S01.html",
           "task_count": 3
         },
@@ -29,7 +29,7 @@
           "slice_id": "CAP-01.S02",
           "title": "Desktop design system and accessibility foundation",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S02-desktop-design-system-and-accessibility-foundation.md",
-          "plan_sha256": "550986b65906ba2d00f2fc0cf166aa1cdf52c231670897224338679a1155f6dc",
+          "plan_sha256": "86fc99fab8bc461805208d26f6ffb82af7ef278999d82f758e072439dee13209",
           "page": "CAP-01/CAP-01.S02.html",
           "task_count": 3
         },
@@ -37,7 +37,7 @@
           "slice_id": "CAP-01.S03",
           "title": "Packaged Python/FastAPI sidecar",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S03-packaged-python-fastapi-sidecar.md",
-          "plan_sha256": "cc9a04f46feee2d96818803ef44f2b6018b28c27689aafc74affeda28af89a95",
+          "plan_sha256": "dedd4f63daa253f9cf143f3b05db57d11213f5830d254917de0b2b10fe495840",
           "page": "CAP-01/CAP-01.S03.html",
           "task_count": 3
         },
@@ -45,7 +45,7 @@
           "slice_id": "CAP-01.S04",
           "title": "Authenticated desktop-service contract",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S04-authenticated-desktop-service-contract.md",
-          "plan_sha256": "81921422e06c2ffdba27a0afd09a8db3309c433d1f6c812d371c5c2a0c677ee5",
+          "plan_sha256": "73642b4a4d3833bb04246e78f3c83add189f52ab871533a0854f9e4305be2065",
           "page": "CAP-01/CAP-01.S04.html",
           "task_count": 3
         },
@@ -53,7 +53,7 @@
           "slice_id": "CAP-01.S05",
           "title": "Windows installation and update channels",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S05-windows-installation-and-update-channels.md",
-          "plan_sha256": "f5ad4bed9d7664d8a038d35e242d3809e608ab0fd18fbd84e3190d0fd862a7fa",
+          "plan_sha256": "252ff3abf403663fe3ce6ad716e9b01b637f970cdb22c72d987ee6f299e8d0db",
           "page": "CAP-01/CAP-01.S05.html",
           "task_count": 3
         }

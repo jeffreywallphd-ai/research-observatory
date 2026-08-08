@@ -5,7 +5,7 @@ baseline: '1.3'
 supplemental_release: 1.3.4
 capability_id: CAP-01
 title: Windows-first desktop shell and supervised local runtime
-status: proposed
+status: approved
 execution_mode: long-running-capability-campaign
 decision_completion: complete
 open_blocking_decisions: []
@@ -47,10 +47,10 @@ decisions:
   status: accepted
   required_adr: null
 approval:
-  status: pending
-  approved_by: null
-  approved_at: null
-  approved_commit: null
+  status: approved
+  approved_by: repository-owner
+  approved_at: '2026-08-08T15:56:58.231475+00:00'
+  approved_commit: b0e318137b2aa3ccf34f6a21a587419991d24b03
 ---
 # CAP-01 — Capability decision and execution plan
 
