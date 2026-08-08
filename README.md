@@ -1,2 +1,2 @@
-# research-analysis-system
-A system to analyze research
+# research-observatory
+An AI system to support research
