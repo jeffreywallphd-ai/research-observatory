@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "document_type": "runtime-version-contract",
+  "runtimes": {
+    "node": {
+      "version": "24.19.0",
+      "command": ["node", "--version"],
+      "install_hint": "Install Node.js 24.19.0 LTS, then rerun the bootstrap command."
+    },
+    "python": {
+      "version": "3.14.6",
+      "command": ["python", "--version"],
+      "install_hint": "Install Python 3.14.6 with uv or the Python install manager, then rerun bootstrap."
+    },
+    "rust": {
+      "version": "1.96.1",
+      "command": ["rustc", "--version"],
+      "install_hint": "Install rustup and toolchain 1.96.1 with clippy and rustfmt, then rerun bootstrap."
+    }
+  },
+  "package_managers": {
+    "pnpm": {
+      "version": "11.20.0",
+      "command": ["corepack", "pnpm", "--version"],
+      "install_hint": "Run corepack prepare pnpm@11.20.0 --activate under the pinned Node.js runtime."
+    },
+    "uv": {
+      "version": "0.12.2",
+      "command": ["uv", "--version"],
+      "install_hint": "Install uv 0.12.2, then rerun bootstrap."
+    }
+  }
+}

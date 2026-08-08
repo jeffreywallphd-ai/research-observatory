@@ -14,6 +14,7 @@ def foundation_commands(repo: Path) -> list[list[str]]:
     python = sys.executable
     return [
         [python, "tools/repository_structure_check.py", "--repo", str(repo)],
+        [python, "tools/runtime_check.py", "--repo", str(repo)],
         [python, "-m", "unittest", "discover", "-s", "tests/foundation", "-p", "test_*.py"],
         [python, "tools/taskctl.py", "--file", "planning/backlog.yaml", "validate"],
     ]

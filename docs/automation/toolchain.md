@@ -1,0 +1,41 @@
+# Toolchain and lockfile contract
+
+The W0-W5 repository uses exact runtime and package-manager pins. The canonical
+machine-readable values live in `runtime-versions.json`; conventional version
+files repeat those values for ecosystem tooling and are checked for drift.
+
+| Tool | Pin | Declaration |
+|---|---:|---|
+| Node.js | 24.19.0 LTS | `.node-version`, `.nvmrc`, `package.json` |
+| Python | 3.14.6 | `.python-version`, `pyproject.toml` |
+| Rust | 1.96.1 | `rust-toolchain.toml` |
+| pnpm | 11.20.0 | `package.json` |
+| uv | 0.12.2 | `runtime-versions.json` |
+
+The pins select a supported Node LTS line, the current Python feature release,
+and stable Rust and package-manager releases as of the decision date. Upgrade
+them only through a reviewed change that regenerates every affected lockfile and
+passes the foundation, security, desktop, and service profiles as applicable.
+
+## Deterministic installs
+
+```powershell
+corepack pnpm install --frozen-lockfile
+uv sync --frozen --no-install-project
+cargo fetch --locked
+```
+
+These commands may consume the network or an already populated cache, but must
+not resolve or rewrite dependency versions. `tools/runtime_check.py` validates
+the declarations and reports actionable remediation for missing or mismatched
+tools. The Python lock includes PyYAML because the repository workflow and
+planning commands parse the governed YAML backlog. CAP-00.S01.T03 owns
+installation and developer-environment generation.
+
+Primary sources:
+
+- https://nodejs.org/en/about/previous-releases
+- https://www.python.org/downloads/source/
+- https://blog.rust-lang.org/2026/06/30/Rust-1.96.1/
+- https://pnpm.io/installation
+- https://docs.astral.sh/uv/concepts/projects/sync/
