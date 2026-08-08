@@ -29,6 +29,25 @@ Every subcommand first applies the committed Draft 2020-12 schema; `validate`
 then applies identity, dependency, campaign, gate, lease, evidence, and legal
 state invariants that JSON Schema cannot express by itself.
 
+The normal task transition is:
+
+```bash
+python tools/taskctl.py next --profile LOC --platform windows-x64
+python tools/taskctl.py claim CAP-XX.SXX.TXX --agent <agent> --branch <branch> --base-sha <full-sha> --profile LOC --platform windows-x64
+python tools/taskctl.py checks CAP-XX.SXX.TXX
+# Commit the implementation and run the declared checks on that exact HEAD.
+python tools/taskctl.py evidence CAP-XX.SXX.TXX --agent <agent> --from artifacts/evidence/CAP-XX.SXX.TXX.json
+python tools/taskctl.py submit CAP-XX.SXX.TXX --agent <agent> --note "<summary>"
+python tools/taskctl.py review CAP-XX.SXX.TXX --reviewer <reviewer> --result approved --note "<disposition>"
+```
+
+`block`, `renew`, `evidence`, `submit`, capability pause/renew/submit, and slice
+submit verify lease ownership. There is no campaign-override claim flag. Release
+gates cannot be approved twice or while their preceding wave contains an
+incomplete task. Every mutation validates the prospective ledger before an
+atomic compare-and-swap replacement; stale writers and failed replacements do
+not overwrite the prior file.
+
 ## Decision requests
 
 When a decision or approval is required:

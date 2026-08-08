@@ -906,12 +906,12 @@ capabilities:
         all required gates passed.'
       evidence:
       - type: criterion-manifest
-        path: artifacts\evidence\CAP-00.S03.T02.json
+        path: artifacts/evidence/CAP-00.S03.T02.json
         sha256: 6073e80a4362a7688fbf9e3c478259fa789ea5e411b508cb55db7ebd2a9f22c6
         commit: 9877766796b94bfa63faf35c767b095191f203ab
         recorded_at: '2026-08-08T16:54:40+00:00'
       - type: criterion-manifest
-        path: artifacts\evidence\CAP-00.S03.T02.review-fix.json
+        path: artifacts/evidence/CAP-00.S03.T02.review-fix.json
         sha256: 1811e6580552958677d80d5ad4a51280a7184068d2f1a9ea2ed32b417375dd17
         commit: 7fe9165caf44aeb59f6e2bb2549dcb23a059afbb
         recorded_at: '2026-08-08T17:02:27+00:00'
@@ -1104,11 +1104,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-08T17:51:42+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/cap-00-delivery-foundation
+      started_at: '2026-08-08T17:52:29+00:00'
+      updated_at: '2026-08-08T17:52:29+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1118,10 +1118,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: c775d85959edb169e57811ad83cc1e5401fd12c0
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-08T17:52:29+00:00'
+        expires_at: '2026-08-09T01:52:29+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
     - id: CAP-00.S04.T03
