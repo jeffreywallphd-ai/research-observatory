@@ -84,9 +84,10 @@ A missing plan must be scaffolded, fully researched, decision-complete, validate
 
 Backlog validation reports JSON paths for structural/type/status/timestamp errors,
 rejects duplicate capability, slice, task, wave, and gate IDs while indexing,
-and names missing dependency targets and exact dependency-cycle paths. Do not
-edit around these checks or treat schema-only validity as permission for an
-otherwise illegal workflow transition.
+enforces slice/task parent namespaces and complete approved-review metadata,
+and names missing task or slice dependency targets and exact task dependency-cycle
+paths. Do not edit around these checks or treat schema-only validity as permission
+for an otherwise illegal workflow transition.
 
 ## Replanning conditions
 

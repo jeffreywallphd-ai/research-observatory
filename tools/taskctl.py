@@ -208,6 +208,15 @@ def dependency_graph_errors(tasks: dict[str, dict[str, Any]]) -> list[str]:
     return errors
 
 
+def slice_dependency_errors(slices: dict[str, dict[str, Any]], tasks: dict[str, dict[str, Any]]) -> list[str]:
+    errors: list[str] = []
+    for slice_id, slice_ in slices.items():
+        for dependency in slice_.get("depends_on", []):
+            if dependency not in tasks:
+                errors.append(f"{slice_id}: missing dependency {dependency}")
+    return errors
+
+
 def previous_slices_approved(capability: dict[str, Any], slice_: dict[str, Any]) -> bool:
     position = slice_.get("_position", 0)
     return all(s.get("completion", {}).get("status") == "APPROVED" for s in capability.get("slices", [])[:position])
@@ -406,7 +415,7 @@ def validate(
     tasks: dict[str, dict[str, Any]],
     gates: dict[str, dict[str, Any]],
 ) -> list[str]:
-    errors = dependency_graph_errors(tasks)
+    errors = [*dependency_graph_errors(tasks), *slice_dependency_errors(slices, tasks)]
     waves = wave_map(data)
     active = active_capabilities(capabilities)
     if len(active) > 1:
@@ -434,6 +443,8 @@ def validate(
             errors.append(f"{cid}: approved completion lacks reviewer, time, or evidence")
         for position, slice_ in enumerate(capability.get("slices", [])):
             sid = slice_["id"]
+            if not sid.startswith(f"{cid}.S"):
+                errors.append(f"{sid}: outside capability namespace {cid}")
             if slice_.get("_position") != position:
                 errors.append(f"{sid}: inconsistent slice position")
             if slice_["wave"] not in waves:
@@ -452,6 +463,8 @@ def validate(
                     errors.append(f"{sid}: approved completion lacks reviewer, time, or evidence")
             for task in slice_["tasks"]:
                 tid = task["id"]
+                if not tid.startswith(f"{sid}.T"):
+                    errors.append(f"{tid}: outside slice namespace {sid}")
                 if task.get("capability_id") != cid or task.get("slice_id") != sid:
                     errors.append(f"{tid}: capability_id or slice_id mismatch")
                 status = task.get("status")
@@ -471,10 +484,14 @@ def validate(
                     errors.append(f"{tid}: IN_PROGRESS without owner, branch, base SHA, and lease")
                 if status == "REVIEW" and (not task.get("evidence") or task.get("verification_state") != "passed"):
                     errors.append(f"{tid}: REVIEW without passed verification and evidence")
+                review = task.get("review", {})
                 if status == "DONE" and (
-                    not task.get("evidence") or task.get("review", {}).get("result") != "approved"
+                    not task.get("evidence")
+                    or review.get("result") != "approved"
+                    or not review.get("reviewer")
+                    or not review.get("reviewed_at")
                 ):
-                    errors.append(f"{tid}: DONE without evidence and approved review")
+                    errors.append(f"{tid}: DONE without evidence and complete approved review")
                 if status == "BLOCKED" and not task.get("blocker"):
                     errors.append(f"{tid}: BLOCKED without blocker details")
                 if status == "CANCELLED" and not task.get("cancellation"):

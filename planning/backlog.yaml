@@ -1013,7 +1013,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-00.S03.T01
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-00.S04.T01
       capability_id: CAP-00
@@ -1045,16 +1045,23 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T17:33:22+00:00'
-      updated_at: '2026-08-08T17:33:22+00:00'
+      updated_at: '2026-08-08T17:46:59+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Executable Draft 2020-12 validation, precise duplicate/status/dependency/cycle diagnostics, RFC
+        3339 migration, focused tests, frozen dependencies, and changed-path security checks pass at 7d016c5.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S04.T01.json
+        sha256: 6135778c06aac38142d0c42183a3480b1831ea03cbc20757d310ebd0ff7f6fe2
+        commit: 7d016c5251a6a9385abe8205857ca18b16feb3ca
+        recorded_at: '2026-08-08T17:42:12+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: changes-requested
+        reviewed_at: '2026-08-08T17:46:59+00:00'
+        notes: Independent review found missing slice dependency target validation, incomplete approved-review metadata allowed
+          on DONE tasks, and absent slice/task namespace-parent consistency checks; implementation evidence requires correction.
       base_sha: 16cbd356f79458434af3993727701e59d9a8e02c
       lease:
         claimed_by: codex

@@ -74,6 +74,16 @@ class BacklogSchemaTests(unittest.TestCase):
 
         self.assertIn(f"{task['id']}: missing dependency CAP-99.S99.T99", errors)
 
+    def test_missing_slice_dependency_names_slice_and_target(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        slice_ = data["capabilities"][0]["slices"][0]
+        slice_["depends_on"] = ["CAP-99.S99.T99"]
+
+        loaded = self.load_copy(data)
+        errors = validate(*loaded)
+
+        self.assertIn(f"{slice_['id']}: missing dependency CAP-99.S99.T99", errors)
+
     def test_dependency_cycle_prints_the_cycle_path(self) -> None:
         data = copy.deepcopy(self.canonical)
         first, second = data["capabilities"][0]["slices"][0]["tasks"][:2]
@@ -94,6 +104,47 @@ class BacklogSchemaTests(unittest.TestCase):
 
         with self.assertRaisesRegex(SystemExit, r"campaign\.updated_at: 'not-a-timestamp' is not a 'date-time'"):
             self.load_copy(data)
+
+    def test_slice_id_must_remain_in_capability_namespace(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        capability = data["capabilities"][0]
+        slice_ = capability["slices"][0]
+        slice_["id"] = "CAP-99.S99"
+        for task in slice_["tasks"]:
+            task["slice_id"] = slice_["id"]
+
+        loaded = self.load_copy(data)
+        errors = validate(*loaded)
+
+        self.assertIn("CAP-99.S99: outside capability namespace CAP-00", errors)
+
+    def test_task_id_must_remain_in_slice_namespace(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        slice_ = data["capabilities"][0]["slices"][0]
+        task = slice_["tasks"][0]
+        task["id"] = "CAP-98.S98.T98"
+
+        loaded = self.load_copy(data)
+        errors = validate(*loaded)
+
+        self.assertIn(f"CAP-98.S98.T98: outside slice namespace {slice_['id']}", errors)
+
+    def test_done_task_requires_reviewer_and_review_timestamp(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        task = next(
+            task
+            for capability in data["capabilities"]
+            for slice_ in capability["slices"]
+            for task in slice_["tasks"]
+            if task["status"] == "DONE"
+        )
+        task["review"]["reviewer"] = None
+        task["review"]["reviewed_at"] = None
+
+        loaded = self.load_copy(data)
+        errors = validate(*loaded)
+
+        self.assertIn(f"{task['id']}: DONE without evidence and complete approved review", errors)
 
 
 if __name__ == "__main__":
