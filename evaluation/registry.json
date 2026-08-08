@@ -19,13 +19,15 @@
       },
       "tolerance": {"mode": "exact-json"},
       "model": {"id": "deterministic-python", "version": "1", "revision": "metadata-json-normalizer-v1"},
-      "prompt": {"id": "none", "version": "not-applicable", "sha256": null},
+      "prompt": {"id": "none", "version": "not-applicable", "path": null, "sha256": null},
       "schemas": [],
       "baseline": {
         "version": 1,
+        "expectedPath": "evaluation/baselines/golden-metadata-normalization-v1.json",
         "sha256": "6884d362b84b2f45d18129afc2bc561a28dbe1e324fd6bbf2db47b317c0bf03a",
         "history": [],
-        "currentApproval": null
+        "currentApproval": null,
+        "currentApprovalSha256": null
       }
     },
     {
@@ -42,7 +44,7 @@
       },
       "tolerance": {"mode": "exact-json"},
       "model": {"id": "jsonschema", "version": "4.26.0", "revision": "draft-2020-12"},
-      "prompt": {"id": "none", "version": "not-applicable", "sha256": null},
+      "prompt": {"id": "none", "version": "not-applicable", "path": null, "sha256": null},
       "schemas": [
         {
           "path": "evaluation/contracts/normalized-record.schema.json",
@@ -51,9 +53,11 @@
       ],
       "baseline": {
         "version": 1,
+        "expectedPath": "evaluation/baselines/contract-normalized-record-v1.json",
         "sha256": "0d4406f92c225ce9c922b4ccbd4c21d3971fd9a511ef50e5f32fbdf1741d7ddb",
         "history": [],
-        "currentApproval": null
+        "currentApproval": null,
+        "currentApprovalSha256": null
       }
     }
   ]

@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -16,6 +17,7 @@ sys.path.insert(0, str(REPO / "tools"))
 from benchmark_registry import (  # noqa: E402
     REGISTRY_PATH,
     approval_errors,
+    approval_immutability_errors,
     baseline_lineage_errors,
     load_registry,
     run_benchmarks,
@@ -95,9 +97,19 @@ class BenchmarkRegistryTests(unittest.TestCase):
 
         item["baseline"] = {
             "version": 2,
+            "expectedPath": item["expected"]["path"],
             "sha256": new_hash,
-            "history": [{"version": 1, "sha256": old_hash, "approval": None}],
+            "history": [
+                {
+                    "version": 1,
+                    "expectedPath": item["expected"]["path"],
+                    "sha256": old_hash,
+                    "approval": None,
+                    "approvalSha256": None,
+                }
+            ],
             "currentApproval": "evaluation/approvals/golden-v2.json",
+            "currentApprovalSha256": "2" * 64,
         }
         self.assertEqual([], baseline_lineage_errors(current, previous))
 
@@ -116,9 +128,19 @@ class BenchmarkRegistryTests(unittest.TestCase):
             item["expected"]["sha256"] = new_hash
             item["baseline"] = {
                 "version": 2,
+                "expectedPath": item["expected"]["path"],
                 "sha256": new_hash,
-                "history": [{"version": 1, "sha256": old_hash, "approval": None}],
+                "history": [
+                    {
+                        "version": 1,
+                        "expectedPath": item["expected"]["path"],
+                        "sha256": old_hash,
+                        "approval": None,
+                        "approvalSha256": None,
+                    }
+                ],
                 "currentApproval": approval_path,
+                "currentApprovalSha256": None,
             }
             approval = {
                 "schemaVersion": "1.0",
@@ -134,17 +156,153 @@ class BenchmarkRegistryTests(unittest.TestCase):
                 "approvedAt": "2026-08-08T16:00:00+00:00",
                 "rationale": "Reviewed semantic improvement.",
             }
-            (root / approval_path).write_text(json.dumps(approval), encoding="utf-8")
+            approval_payload = json.dumps(approval).encode()
+            (root / approval_path).write_bytes(approval_payload)
+            approval_hash = hashlib.sha256(approval_payload).hexdigest()
+            item["baseline"]["currentApprovalSha256"] = approval_hash
             self.write_manifest(root, manifest)
 
             _, _, errors = load_registry(root)
 
             self.assertEqual([], errors)
             approval["generatedBy"] = "human:benchmark-owner"
-            (root / approval_path).write_text(json.dumps(approval), encoding="utf-8")
-            errors = approval_errors(root, {}, item["id"], 2, old_hash, new_hash, approval_path)
+            changed_payload = json.dumps(approval).encode()
+            (root / approval_path).write_bytes(changed_payload)
+            errors = approval_errors(
+                root,
+                {},
+                item["id"],
+                2,
+                old_hash,
+                new_hash,
+                approval_path,
+                hashlib.sha256(changed_payload).hexdigest(),
+            )
 
         self.assertTrue(any("cannot approve" in error for error in errors))
+
+    def test_approval_contract_rejects_extras_boolean_versions_and_blank_human(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            benchmark = self.load_manifest(root)["benchmarks"][0]
+            approval_path = "evaluation/approvals/strictness.json"
+            approval = {
+                "schemaVersion": "1.0",
+                "documentType": "baseline-approval",
+                "status": "approved",
+                "benchmarkId": benchmark["id"],
+                "fromVersion": 1,
+                "toVersion": 2,
+                "oldSha256": benchmark["expected"]["sha256"],
+                "newSha256": "1" * 64,
+                "generatedBy": "codex",
+                "approvedBy": "human:benchmark-owner",
+                "approvedAt": "2026-08-08T16:00:00+00:00",
+                "rationale": "Reviewed semantic improvement.",
+            }
+            for key, value in (
+                ("unreviewedOverride", True),
+                ("fromVersion", True),
+                ("approvedBy", "human:"),
+            ):
+                mutated = copy.deepcopy(approval)
+                mutated[key] = value
+                payload = json.dumps(mutated).encode()
+                (root / approval_path).write_bytes(payload)
+
+                errors = approval_errors(
+                    root,
+                    {},
+                    benchmark["id"],
+                    2,
+                    benchmark["expected"]["sha256"],
+                    "1" * 64,
+                    approval_path,
+                    hashlib.sha256(payload).hexdigest(),
+                )
+
+                self.assertTrue(errors, key)
+
+    def test_expected_output_is_canonical_and_path_is_lineage_bound(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            manifest = self.load_manifest(root)
+            item = manifest["benchmarks"][0]
+            previous = copy.deepcopy(manifest)
+            redirected = "evaluation/cases/contract-normalized-record.json"
+            item["expected"]["path"] = redirected
+            item["expected"]["sha256"] = hashlib.sha256((root / redirected).read_bytes()).hexdigest()
+            item["baseline"]["sha256"] = item["expected"]["sha256"]
+            self.write_manifest(root, manifest)
+
+            _, _, errors = load_registry(root)
+            lineage_errors = baseline_lineage_errors(manifest, previous)
+
+        self.assertTrue(any("expected output must use canonical path" in error for error in errors))
+        self.assertTrue(any("increment exactly one version" in error for error in lineage_errors))
+
+    def test_real_prompt_requires_canonical_path_and_exact_hash(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            manifest = self.load_manifest(root)
+            prompt = manifest["benchmarks"][0]["prompt"]
+            prompt.update({"id": "real-prompt", "version": "v1", "path": None, "sha256": None})
+            self.write_manifest(root, manifest)
+
+            _, _, missing_errors = load_registry(root)
+
+            prompt_path = "evaluation/prompts/real-prompt-v1.txt"
+            payload = b"Normalize the supplied metadata deterministically.\n"
+            (root / prompt_path).write_bytes(payload)
+            prompt.update({"path": prompt_path, "sha256": hashlib.sha256(payload).hexdigest()})
+            self.write_manifest(root, manifest)
+
+            _, _, valid_errors = load_registry(root)
+
+        self.assertTrue(missing_errors)
+        self.assertEqual([], valid_errors)
+
+    def test_prompt_hash_change_requires_new_identity(self) -> None:
+        previous = self.load_manifest(REPO)
+        previous["benchmarks"][0]["prompt"] = {
+            "id": "real-prompt",
+            "version": "v1",
+            "path": "evaluation/prompts/real-prompt-v1.txt",
+            "sha256": "1" * 64,
+        }
+        current = copy.deepcopy(previous)
+        current["benchmarks"][0]["prompt"]["sha256"] = "2" * 64
+
+        errors = baseline_lineage_errors(current, previous)
+
+        self.assertTrue(any("without a new prompt identity" in error for error in errors))
+
+    def test_tracked_approval_records_reject_dirty_and_committed_rewrites(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            approval_root = root / "evaluation" / "approvals"
+            approval_root.mkdir(parents=True)
+            approval = approval_root / "immutable.json"
+            approval.write_text('{"approvedBy":"human:owner"}\n', encoding="utf-8")
+            commands = [
+                ["git", "init"],
+                ["git", "config", "user.email", "foundation@example.invalid"],
+                ["git", "config", "user.name", "Foundation Test"],
+                ["git", "add", "."],
+                ["git", "commit", "-m", "initial approval"],
+            ]
+            for command in commands:
+                subprocess.run(command, cwd=root, capture_output=True, check=True)
+            approval.write_text('{"approvedBy":"human:rewriter"}\n', encoding="utf-8")
+
+            dirty_errors = approval_immutability_errors(root)
+
+            subprocess.run(["git", "add", "."], cwd=root, capture_output=True, check=True)
+            subprocess.run(["git", "commit", "-m", "rewrite approval"], cwd=root, capture_output=True, check=True)
+            committed_errors = approval_immutability_errors(root)
+
+        self.assertTrue(any("rewritten or removed" in error for error in dirty_errors))
+        self.assertTrue(any("rewritten or removed" in error for error in committed_errors))
 
     def test_paths_are_confined_and_reports_cannot_escape_scratch(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

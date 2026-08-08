@@ -46,7 +46,8 @@ hash, version, history, explicit approval, task evidence, and independent review
 
 Evaluation assets become discoverable, offline, reviewable, and portable across
 local, university, and cloud qualification without changing product behavior.
-The new area adds a maintained schema and approval boundary; large or licensed
+The new area adds maintained registry and approval schemas, canonical baseline
+and prompt paths, and an immutable hash-pinned approval boundary; large or licensed
 datasets must remain external or use separately governed distribution mechanisms.
 No network service, secret, user content, model binary, or generated scratch
 result belongs in the area. Tests may depend on evaluation assets, but apps,

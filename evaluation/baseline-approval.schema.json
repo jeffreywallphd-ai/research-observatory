@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.invalid/schemas/baseline-approval-1.0.json",
+  "title": "Research Observatory baseline approval",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "status",
+    "benchmarkId",
+    "fromVersion",
+    "toVersion",
+    "oldSha256",
+    "newSha256",
+    "generatedBy",
+    "approvedBy",
+    "approvedAt",
+    "rationale"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "baseline-approval"},
+    "status": {"const": "approved"},
+    "benchmarkId": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*-v[0-9]+$"},
+    "fromVersion": {"type": "integer", "minimum": 1},
+    "toVersion": {"type": "integer", "minimum": 2},
+    "oldSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "newSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generatedBy": {"type": "string", "pattern": "\\S"},
+    "approvedBy": {"type": "string", "pattern": "^human:[A-Za-z0-9](?:[A-Za-z0-9._@-]*[A-Za-z0-9])?$"},
+    "approvedAt": {"type": "string", "format": "date-time"},
+    "rationale": {"type": "string", "pattern": "\\S"}
+  },
+  "additionalProperties": false
+}

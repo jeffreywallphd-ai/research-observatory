@@ -18,7 +18,10 @@ from jsonschema.exceptions import SchemaError
 
 REGISTRY_PATH = "evaluation/registry.json"
 REGISTRY_SCHEMA_PATH = "evaluation/registry.schema.json"
+APPROVAL_SCHEMA_PATH = "evaluation/baseline-approval.schema.json"
 APPROVAL_ROOT = "evaluation/approvals/"
+BASELINE_ROOT = "evaluation/baselines/"
+PROMPT_ROOT = "evaluation/prompts/"
 REPORT_ROOT = "artifacts/tmp"
 EXECUTOR_KIND = {
     "metadata-json-normalizer-v1": "golden-parsing",
@@ -72,20 +75,26 @@ def parse_json(payload: bytes, label: str) -> tuple[Any | None, str | None]:
         return None, f"cannot parse {label} as UTF-8 JSON: {exc}"
 
 
-def registry_schema_errors(registry: Any, schema: Any) -> list[str]:
+def document_schema_errors(value: Any, schema: Any, label: str) -> list[str]:
     try:
         Draft202012Validator.check_schema(schema)
     except SchemaError as exc:
-        return [f"invalid benchmark registry schema: {exc.message}"]
+        return [f"invalid {label} schema: {exc.message}"]
     validator = Draft202012Validator(schema, format_checker=FormatChecker())
-    errors = sorted(validator.iter_errors(registry), key=lambda error: [str(part) for part in error.path])
-    return [f"registry.{'.'.join(str(part) for part in error.path) or '<root>'}: {error.message}" for error in errors]
+    errors = sorted(validator.iter_errors(value), key=lambda error: [str(part) for part in error.path])
+    return [f"{label}.{'.'.join(str(part) for part in error.path) or '<root>'}: {error.message}" for error in errors]
 
 
-def previous_registry_from_git(repo: Path) -> dict[str, Any] | None:
+def git_reference(repo: Path) -> str | None:
+    governed_paths = [
+        REGISTRY_PATH,
+        "evaluation/baselines",
+        "evaluation/approvals",
+        "evaluation/prompts",
+    ]
     try:
         dirty = subprocess.run(
-            ["git", "status", "--porcelain", "--", "evaluation/registry.json", "evaluation/baselines"],
+            ["git", "status", "--porcelain", "--", *governed_paths],
             cwd=repo,
             capture_output=True,
             text=True,
@@ -94,6 +103,22 @@ def previous_registry_from_git(repo: Path) -> dict[str, Any] | None:
         if dirty.returncode != 0:
             return None
         reference = "HEAD" if dirty.stdout.strip() else "HEAD^"
+        exists = subprocess.run(
+            ["git", "rev-parse", "--verify", reference],
+            cwd=repo,
+            capture_output=True,
+            check=False,
+        )
+    except OSError:
+        return None
+    return reference if exists.returncode == 0 else None
+
+
+def previous_registry_from_git(repo: Path) -> dict[str, Any] | None:
+    reference = git_reference(repo)
+    if reference is None:
+        return None
+    try:
         previous = subprocess.run(
             ["git", "show", f"{reference}:{REGISTRY_PATH}"],
             cwd=repo,
@@ -109,6 +134,33 @@ def previous_registry_from_git(repo: Path) -> dict[str, Any] | None:
     except UnicodeError, json.JSONDecodeError:
         return None
     return value if isinstance(value, dict) else None
+
+
+def approval_immutability_errors(repo: Path) -> list[str]:
+    reference = git_reference(repo)
+    if reference is None:
+        return []
+    try:
+        changed = subprocess.run(
+            ["git", "diff", "--name-status", "--no-renames", reference, "--", "evaluation/approvals"],
+            cwd=repo,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return []
+    if changed.returncode != 0:
+        return ["cannot verify immutable baseline approval records against Git history"]
+    errors: list[str] = []
+    for line in changed.stdout.splitlines():
+        fields = line.split("\t", maxsplit=1)
+        if len(fields) != 2:
+            continue
+        status, path = fields
+        if path.endswith(".json") and status != "A":
+            errors.append(f"immutable baseline approval record was rewritten or removed: {path}")
+    return errors
 
 
 def baseline_lineage_errors(current: dict[str, Any], previous: dict[str, Any] | None) -> list[str]:
@@ -130,19 +182,46 @@ def baseline_lineage_errors(current: dict[str, Any], previous: dict[str, Any] | 
             if current_baseline.get("version") != 1:
                 errors.append(f"{benchmark_id}: a new benchmark baseline must start at version 1")
             continue
+        previous_prompt = previous_item.get("prompt", {})
+        current_prompt = current_item.get("prompt", {})
+        previous_prompt_identity = (previous_prompt.get("id"), previous_prompt.get("version"))
+        current_prompt_identity = (current_prompt.get("id"), current_prompt.get("version"))
+        if previous_prompt_identity == current_prompt_identity and previous_prompt != current_prompt:
+            migrated_no_prompt = {**previous_prompt, "path": None}
+            if not (
+                previous_prompt_identity == ("none", "not-applicable")
+                and previous_prompt.get("sha256") is None
+                and current_prompt == migrated_no_prompt
+            ):
+                errors.append(f"{benchmark_id}: prompt content or path changed without a new prompt identity")
         previous_baseline = previous_item.get("baseline", {})
+        old_path = previous_item.get("expected", {}).get("path")
+        new_path = current_item.get("expected", {}).get("path")
         old_hash = previous_item.get("expected", {}).get("sha256")
         new_hash = current_item.get("expected", {}).get("sha256")
-        if old_hash == new_hash:
+        if old_path == new_path and old_hash == new_hash:
             if current_baseline != previous_baseline:
-                errors.append(f"{benchmark_id}: baseline lineage changed without expected-output change")
+                migrated_initial = {
+                    **previous_baseline,
+                    "expectedPath": old_path,
+                    "currentApprovalSha256": None,
+                }
+                if not (
+                    previous_baseline.get("version") == 1
+                    and previous_baseline.get("history") == []
+                    and previous_baseline.get("currentApproval") is None
+                    and current_baseline == migrated_initial
+                ):
+                    errors.append(f"{benchmark_id}: baseline lineage changed without expected-output change")
             continue
         expected_history = [
             *previous_baseline.get("history", []),
             {
                 "version": previous_baseline.get("version"),
+                "expectedPath": old_path,
                 "sha256": old_hash,
                 "approval": previous_baseline.get("currentApproval"),
+                "approvalSha256": previous_baseline.get("currentApprovalSha256"),
             },
         ]
         if current_baseline.get("version") != previous_baseline.get("version", 0) + 1:
@@ -162,6 +241,7 @@ def approval_errors(
     old_hash: str,
     new_hash: str,
     raw_path: Any,
+    expected_approval_hash: Any,
 ) -> list[str]:
     if not isinstance(raw_path, str) or not raw_path.startswith(APPROVAL_ROOT) or not raw_path.endswith(".json"):
         return [f"{benchmark_id}: approval path must be a JSON file under {APPROVAL_ROOT}"]
@@ -169,9 +249,19 @@ def approval_errors(
     if path_error or payload is None:
         return [f"{benchmark_id}: invalid approval: {path_error}"]
     assets[raw_path] = payload
+    if not isinstance(expected_approval_hash, str) or sha256(payload) != expected_approval_hash:
+        return [f"{benchmark_id}: approval SHA-256 does not match pinned lineage for {raw_path}"]
     approval, parse_error = parse_json(payload, f"approval {raw_path}")
     if parse_error or not isinstance(approval, dict):
         return [f"{benchmark_id}: {parse_error or 'approval must be an object'}"]
+    _, schema_payload, schema_path_error = safe_snapshot(repo, APPROVAL_SCHEMA_PATH)
+    if schema_path_error or schema_payload is None:
+        return [f"{benchmark_id}: baseline approval schema: {schema_path_error}"]
+    assets[APPROVAL_SCHEMA_PATH] = schema_payload
+    approval_schema, schema_parse_error = parse_json(schema_payload, APPROVAL_SCHEMA_PATH)
+    if schema_parse_error or not isinstance(approval_schema, dict):
+        return [f"{benchmark_id}: {schema_parse_error or 'baseline approval schema must be an object'}"]
+    errors = document_schema_errors(approval, approval_schema, f"approval[{benchmark_id}]")
     expected = {
         "schemaVersion": "1.0",
         "documentType": "baseline-approval",
@@ -182,16 +272,16 @@ def approval_errors(
         "oldSha256": old_hash,
         "newSha256": new_hash,
     }
-    errors = [
+    errors.extend(
         f"{benchmark_id}: approval {key} must equal {value!r}"
         for key, value in expected.items()
-        if approval.get(key) != value
-    ]
+        if type(approval.get(key)) is not type(value) or approval.get(key) != value
+    )
     approved_by = approval.get("approvedBy")
     generated_by = approval.get("generatedBy")
-    if not isinstance(approved_by, str) or not approved_by.startswith("human:"):
-        errors.append(f"{benchmark_id}: approvedBy must use a human: identity")
-    if not isinstance(generated_by, str) or not generated_by:
+    if not isinstance(approved_by, str) or approved_by != approved_by.strip() or approved_by == "human:":
+        errors.append(f"{benchmark_id}: approvedBy must use a nonempty normalized human: identity")
+    if not isinstance(generated_by, str) or not generated_by.strip() or generated_by != generated_by.strip():
         errors.append(f"{benchmark_id}: generatedBy is required")
     if approved_by == generated_by:
         errors.append(f"{benchmark_id}: baseline generator cannot approve the same baseline")
@@ -228,7 +318,7 @@ def load_registry(repo: Path) -> tuple[dict[str, Any] | None, dict[str, bytes], 
         errors.append(schema_parse_error)
     if errors or not isinstance(registry, dict):
         return None, assets, errors or ["benchmark registry must be an object"]
-    errors.extend(registry_schema_errors(registry, schema))
+    errors.extend(document_schema_errors(registry, schema, "registry"))
     if errors:
         return registry, assets, errors
 
@@ -243,6 +333,9 @@ def load_registry(repo: Path) -> tuple[dict[str, Any] | None, dict[str, bytes], 
         benchmark_id = item["id"]
         if EXECUTOR_KIND[item["executor"]] != item["kind"]:
             errors.append(f"{benchmark_id}: executor is incompatible with benchmark kind")
+        canonical_baseline_path = f"{BASELINE_ROOT}{benchmark_id}.json"
+        if item["expected"]["path"] != canonical_baseline_path:
+            errors.append(f"{benchmark_id}: expected output must use canonical path {canonical_baseline_path}")
         path_specs = [item["dataset"], item["expected"], *item["schemas"]]
         for specification in path_specs:
             raw_path = specification["path"]
@@ -253,7 +346,21 @@ def load_registry(repo: Path) -> tuple[dict[str, Any] | None, dict[str, bytes], 
             assets[raw_path] = payload
             if sha256(payload) != specification["sha256"]:
                 errors.append(f"{benchmark_id}: SHA-256 mismatch for {raw_path}")
+        prompt = item["prompt"]
+        if prompt["id"] != "none":
+            canonical_prompt_path = f"{PROMPT_ROOT}{prompt['id']}-{prompt['version']}.txt"
+            if prompt["path"] != canonical_prompt_path:
+                errors.append(f"{benchmark_id}: prompt must use canonical path {canonical_prompt_path}")
+            _, prompt_payload, prompt_path_error = safe_snapshot(repo, prompt["path"])
+            if prompt_path_error or prompt_payload is None:
+                errors.append(f"{benchmark_id}: {prompt_path_error}")
+            else:
+                assets[prompt["path"]] = prompt_payload
+                if sha256(prompt_payload) != prompt["sha256"]:
+                    errors.append(f"{benchmark_id}: SHA-256 mismatch for {prompt['path']}")
         baseline = item["baseline"]
+        if baseline["expectedPath"] != item["expected"]["path"]:
+            errors.append(f"{benchmark_id}: baseline expectedPath must equal expected-output path")
         if baseline["sha256"] != item["expected"]["sha256"]:
             errors.append(f"{benchmark_id}: baseline hash must equal expected-output hash")
         version = baseline["version"]
@@ -263,13 +370,15 @@ def load_registry(repo: Path) -> tuple[dict[str, Any] | None, dict[str, bytes], 
         for index, entry in enumerate(history, start=1):
             if entry["version"] != index:
                 errors.append(f"{benchmark_id}: baseline history versions must be contiguous from 1")
-        if version == 1 and baseline["currentApproval"] is not None:
-            errors.append(f"{benchmark_id}: initial baseline must not claim a change approval")
-        if history and history[0]["approval"] is not None:
-            errors.append(f"{benchmark_id}: version-1 history must not claim a change approval")
+        if version == 1 and (baseline["currentApproval"] is not None or baseline["currentApprovalSha256"] is not None):
+            errors.append(f"{benchmark_id}: initial baseline must not claim a change approval or approval hash")
+        if history and (history[0]["approval"] is not None or history[0]["approvalSha256"] is not None):
+            errors.append(f"{benchmark_id}: version-1 history must not claim a change approval or approval hash")
         for history_index, entry in enumerate(history[1:], start=1):
-            if not entry["approval"]:
-                errors.append(f"{benchmark_id}: historical baseline version {entry['version']} requires approval")
+            if not entry["approval"] or not entry["approvalSha256"]:
+                errors.append(
+                    f"{benchmark_id}: historical baseline version {entry['version']} requires pinned approval"
+                )
                 continue
             errors.extend(
                 approval_errors(
@@ -280,13 +389,14 @@ def load_registry(repo: Path) -> tuple[dict[str, Any] | None, dict[str, bytes], 
                     history[history_index - 1]["sha256"],
                     entry["sha256"],
                     entry["approval"],
+                    entry["approvalSha256"],
                 )
             )
         if version > 1:
             if not history:
                 errors.append(f"{benchmark_id}: changed baseline requires prior history")
-            elif not baseline["currentApproval"]:
-                errors.append(f"{benchmark_id}: changed baseline requires currentApproval")
+            elif not baseline["currentApproval"] or not baseline["currentApprovalSha256"]:
+                errors.append(f"{benchmark_id}: changed baseline requires pinned currentApproval")
             else:
                 if history[-1]["sha256"] == baseline["sha256"]:
                     errors.append(f"{benchmark_id}: baseline version cannot increment without output change")
@@ -299,6 +409,7 @@ def load_registry(repo: Path) -> tuple[dict[str, Any] | None, dict[str, bytes], 
                         history[-1]["sha256"],
                         baseline["sha256"],
                         baseline["currentApproval"],
+                        baseline["currentApprovalSha256"],
                     )
                 )
         if item["kind"] == "contract-validation" and len(item["schemas"]) != 1:
@@ -306,6 +417,7 @@ def load_registry(repo: Path) -> tuple[dict[str, Any] | None, dict[str, bytes], 
         if item["kind"] == "golden-parsing" and item["schemas"]:
             errors.append(f"{benchmark_id}: golden parser does not consume a schema")
     errors.extend(baseline_lineage_errors(registry, previous_registry_from_git(repo)))
+    errors.extend(approval_immutability_errors(repo))
     return registry, assets, errors
 
 
