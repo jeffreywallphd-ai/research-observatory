@@ -213,6 +213,16 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
 
     # Rebuild into a clean directory so stale pages or convenience launchers cannot
     # be mistaken for governed review pages or break page-count validation.
+    generated_at = datetime.now(timezone.utc).isoformat()
+    existing_manifest = output / "manifest.json"
+    if existing_manifest.exists():
+        try:
+            existing_generated_at = json.loads(existing_manifest.read_text(encoding="utf-8")).get("generated_at")
+            if isinstance(existing_generated_at, str) and existing_generated_at.strip():
+                generated_at = existing_generated_at
+        except (OSError, json.JSONDecodeError, AttributeError):
+            pass
+
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True, exist_ok=True)
@@ -227,7 +237,7 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         "baseline": str(backlog.get("baseline", "1.3")),
         "supplemental_release": "1.3.4",
         "review_interface_release": REVIEW_INTERFACE_RELEASE,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": generated_at,
         "entry_point": "index.html",
         "feedback_schema_version": FEEDBACK_SCHEMA_VERSION,
         "capabilities": [],
