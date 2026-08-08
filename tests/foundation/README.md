@@ -23,4 +23,5 @@ version/history/approval requirements, distinct human approval, and path confine
 
 `test_build_manifest.py` verifies single-source version compatibility, deterministic
 clean and dirty build identities, dependency/schema/model-set provenance, manifest
-inventory drift, and output confinement.
+inventory drift, Git/input race detection, canonical guarded output and component
+writes, malformed mirror/changelog handling, and exact dated-release conventions.

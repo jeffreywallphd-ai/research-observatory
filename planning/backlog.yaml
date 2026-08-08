@@ -1424,21 +1424,29 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T21:08:08+00:00'
-      updated_at: '2026-08-08T21:08:08+00:00'
+      updated_at: '2026-08-08T21:29:52+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Implementation commit 23717be passed the clean 14-command foundation profile, 109 tests, focused
+        build-manifest boundaries, and exact clean provenance generation; submitted for independent review.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T03.json
+        sha256: d4a4fb48427bb47afc45ffcbfeb01a6b27d4814aa89b83cbcb306dc8097b7c18
+        commit: 23717be17f09ffe614829d7d1e1d44feff2b3d0d
+        recorded_at: '2026-08-08T21:22:49+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: changes-requested
+        reviewed_at: '2026-08-08T21:29:52+00:00'
+        notes: 'Required: bind clean provenance to stable Git/input snapshots; reject redirected or swapped output/component
+          parents; govern model-manifest inventory; fail actionably on malformed/redirected mirrors and changelog; enforce
+          exact unique dated release headings; regenerate ledger views.'
       base_sha: 2f28abe2c25fdf911f338ae9e173223879964ac2
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T21:08:08+00:00'
-        expires_at: '2026-08-09T05:08:08+00:00'
+        claimed_at: '2026-08-08T21:29:52+00:00'
+        expires_at: '2026-08-09T05:29:52+00:00'
       verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:

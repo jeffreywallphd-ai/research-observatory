@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -19,6 +20,7 @@ from build_manifest import (  # noqa: E402
     VERSION_SCHEMA_PATH,
     generate_build_manifest,
     git_source,
+    guarded_atomic_write_json,
     safe_output_path,
     source_contract,
     synchronize_component_manifests,
@@ -36,6 +38,8 @@ class BuildManifestTests(unittest.TestCase):
                 stdout = b"2026-08-08T17:05:34-04:00\n"
             elif arguments[:3] == ["show", "-s", "--format=%ct"]:
                 stdout = b"1786223134\n"
+            elif len(arguments) == 2 and arguments[0] == "show" and arguments[1].startswith("HEAD:"):
+                stdout = (REPO / arguments[1].removeprefix("HEAD:")).read_bytes()
             elif arguments[:2] == ["status", "--porcelain=v1"]:
                 stdout = status
             else:
@@ -166,6 +170,127 @@ class BuildManifestTests(unittest.TestCase):
 
         self.assertTrue(any("canonical desktop" in error for error in errors))
         self.assertTrue(any("Cargo, pnpm, and uv" in error for error in errors))
+
+    def test_model_manifest_inputs_remain_governed_empty_until_cap_07(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.contract_repo(temporary)
+            inputs_path = root / INPUTS_PATH
+            inputs = json.loads(inputs_path.read_text(encoding="utf-8"))
+            inputs["modelManifests"] = [{"id": "not-a-model", "path": "CHANGELOG.md"}]
+            inputs_path.write_text(json.dumps(inputs), encoding="utf-8")
+
+            _, _, _, errors = source_contract(root)
+
+        self.assertTrue(any("must remain empty until CAP-07" in error for error in errors))
+
+    def test_malformed_ecosystem_mirrors_and_changelog_fail_actionably(self) -> None:
+        mutations = {
+            "package-root": ("package.json", "[]\n", "package.json must contain an object"),
+            "python-project": ("pyproject.toml", 'project = "scalar"\n', "project must be a table"),
+            "cargo-workspace": ("Cargo.toml", 'workspace = "scalar"\n', "workspace and workspace.package"),
+            "changelog-date": (
+                "CHANGELOG.md",
+                "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] not-a-date\n",
+                "invalid release heading",
+            ),
+            "changelog-duplicate": (
+                "CHANGELOG.md",
+                "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n\n## [0.1.0] - 2026-08-07\n",
+                "duplicate release headings",
+            ),
+            "changelog-invalid-calendar-date": (
+                "CHANGELOG.md",
+                "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-02-30\n",
+                "has an invalid date",
+            ),
+        }
+        for label, (path, content, expected) in mutations.items():
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as temporary:
+                root = self.contract_repo(temporary)
+                (root / path).write_text(content, encoding="utf-8")
+
+                _, _, _, errors = source_contract(root)
+
+                self.assertTrue(any(expected in error for error in errors), errors)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.contract_repo(temporary)
+            (root / "CHANGELOG.md").write_bytes(b"\xff\xfe")
+
+            _, _, _, errors = source_contract(root)
+
+        self.assertTrue(any("cannot decode CHANGELOG.md" in error for error in errors))
+
+    def test_clean_manifest_rejects_input_status_race(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.contract_repo(temporary)
+            committed = {
+                path.relative_to(root).as_posix(): path.read_bytes() for path in root.rglob("*") if path.is_file()
+            }
+            mutated = False
+
+            def runner(command: list[str], **_: object) -> subprocess.CompletedProcess[bytes]:
+                nonlocal mutated
+                arguments = command[1:]
+                if arguments[:2] == ["rev-parse", "--verify"]:
+                    stdout = b"a" * 40 + b"\n"
+                elif arguments[:3] == ["show", "-s", "--format=%cI"]:
+                    stdout = b"2026-08-08T17:05:34-04:00\n"
+                elif arguments[:3] == ["show", "-s", "--format=%ct"]:
+                    stdout = b"1786223134\n"
+                elif arguments[:2] == ["status", "--porcelain=v1"]:
+                    if not mutated:
+                        (root / "Cargo.lock").write_bytes(b"raced lock bytes\n")
+                        mutated = True
+                    stdout = b""
+                elif len(arguments) == 2 and arguments[0] == "show" and arguments[1].startswith("HEAD:"):
+                    stdout = committed[arguments[1].removeprefix("HEAD:")]
+                else:
+                    return subprocess.CompletedProcess(command, 2, b"", b"unexpected Git command")
+                return subprocess.CompletedProcess(command, 0, stdout, b"")
+
+            manifest, errors = generate_build_manifest(root, runner=runner)
+
+        self.assertIsNone(manifest)
+        self.assertTrue(any("differs from committed HEAD bytes: Cargo.lock" in error for error in errors), errors)
+
+    def test_guarded_write_rejects_parent_swap(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            parent = root / "apps" / "desktop"
+            parent.mkdir(parents=True)
+            destination = parent / "component-manifest.json"
+            original = root / "apps" / "desktop-original"
+
+            def swap_parent() -> None:
+                parent.rename(original)
+                parent.mkdir()
+
+            with self.assertRaisesRegex(ValueError, "changed during guarded write"):
+                guarded_atomic_write_json(root, destination, {"safe": True}, root, before_replace=swap_parent)
+
+            self.assertFalse(destination.exists())
+
+    def test_output_rejects_redirected_scratch_root(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary, tempfile.TemporaryDirectory() as outside:
+            root = Path(temporary).resolve()
+            (root / "artifacts").mkdir()
+            link = root / "artifacts" / "tmp"
+            try:
+                link.symlink_to(Path(outside), target_is_directory=True)
+            except OSError as exc:
+                junction = subprocess.run(
+                    ["cmd", "/c", "mklink", "/J", str(link), str(Path(outside).resolve())],
+                    capture_output=True,
+                    check=False,
+                )
+                if junction.returncode != 0:
+                    self.skipTest(f"directory redirects unavailable: {exc}; {junction.stderr!r}")
+            try:
+                with self.assertRaisesRegex(ValueError, "canonical artifacts/tmp"):
+                    safe_output_path(root, Path("artifacts/tmp/escaped.json"))
+            finally:
+                os.rmdir(link)
 
     def test_output_cannot_escape_artifacts_scratch(self) -> None:
         with self.assertRaisesRegex(ValueError, "must remain"):

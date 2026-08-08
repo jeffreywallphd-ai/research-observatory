@@ -28,15 +28,20 @@ Generate deterministic build provenance with:
 ```
 
 The output binds the full Git commit and commit time, all dependency lockfile
-hashes, the exact repository schema inventory and identifiers, and the installed
-model-manifest set. Until model manifests are installed, the empty set still has
-a stable SHA-256 set identifier. Desktop and both sidecars are embedded with
-compatible versions.
+hashes, the exact repository schema inventory and identifiers, and the governed
+model-manifest set. CAP-07 owns the model-manifest contract and installation
+workflow; until that capability installs the contract, build inputs must declare
+an empty model-manifest set, which still receives a stable SHA-256 set identifier.
+Arbitrary files cannot be substituted as model manifests. Desktop and both
+sidecars are embedded with compatible versions.
 
 Clean builds use `<version>+g<commit7>`. Any tracked or untracked source change
 produces `<version>+g<commit7>.dirty` and records the affected repository-relative
 paths. No wall-clock time is used, so the same repository state produces identical
-JSON and manifest identifiers. Output is permitted only under `artifacts/tmp/`;
+JSON and manifest identifiers. Clean generation verifies captured governed bytes
+against `HEAD`, while every generation checks that Git and captured file state
+remain stable through collection. Output is permitted only under a canonical,
+nonredirected `artifacts/tmp/`;
 normal validation never edits tracked files. Only the explicit
 `--write-components` operation changes tracked component contracts; it never
 edits version sources, changelogs, or packaging inputs.

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import hashlib
 import json
 import os
@@ -12,6 +13,7 @@ import subprocess
 import tempfile
 import tomllib
 from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -23,6 +25,7 @@ INPUTS_PATH = "packaging/build-inputs.json"
 COMPONENT_SCHEMA_PATH = "packaging/component-manifest.schema.json"
 BUILD_SCHEMA_PATH = "packaging/build-manifest.schema.json"
 REPORT_ROOT = "artifacts/tmp"
+MODEL_MANIFEST_ROOT = "packaging/model-manifests"
 SEMVER = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$")
 EXPECTED_COMPONENTS = frozenset(
     {
@@ -33,6 +36,16 @@ EXPECTED_COMPONENTS = frozenset(
 )
 EXPECTED_LOCKS = frozenset({("cargo", "Cargo.lock"), ("pnpm", "pnpm-lock.yaml"), ("uv", "uv.lock")})
 GitRunner = Callable[..., subprocess.CompletedProcess[bytes]]
+BeforeReplace = Callable[[], None]
+
+
+@dataclass(frozen=True)
+class DirectoryGuard:
+    root: Path
+    root_identity: tuple[int, int]
+    parent: Path
+    parent_identity: tuple[int, int]
+    destination: Path
 
 
 def canonical_json_bytes(value: Any) -> bytes:
@@ -82,12 +95,39 @@ def parse_json(payload: bytes, label: str) -> tuple[Any | None, str | None]:
         return None, f"cannot parse {label} as UTF-8 JSON: {exc}"
 
 
-def load_json(repo: Path, path: str) -> tuple[Any | None, bytes | None, str | None]:
+def record_snapshot(snapshots: dict[str, bytes] | None, path: str, payload: bytes) -> str | None:
+    if snapshots is None:
+        return None
+    prior = snapshots.setdefault(path, payload)
+    if prior != payload:
+        return f"path changed between governed reads: {path}"
+    return None
+
+
+def load_json(
+    repo: Path, path: str, snapshots: dict[str, bytes] | None = None
+) -> tuple[Any | None, bytes | None, str | None]:
     payload, read_error = safe_snapshot(repo, path)
     if read_error or payload is None:
         return None, payload, read_error
+    snapshot_error = record_snapshot(snapshots, path, payload)
+    if snapshot_error:
+        return None, payload, snapshot_error
     value, parse_error = parse_json(payload, path)
     return value, payload, parse_error
+
+
+def load_text(repo: Path, path: str, snapshots: dict[str, bytes] | None = None) -> tuple[str | None, str | None]:
+    payload, read_error = safe_snapshot(repo, path)
+    if read_error or payload is None:
+        return None, read_error
+    snapshot_error = record_snapshot(snapshots, path, payload)
+    if snapshot_error:
+        return None, snapshot_error
+    try:
+        return payload.decode("utf-8"), None
+    except UnicodeError as exc:
+        return None, f"cannot decode {path} as UTF-8: {exc}"
 
 
 def schema_errors(value: Any, schema: Any, label: str) -> list[str]:
@@ -148,12 +188,54 @@ def repository_schema_paths(repo: Path) -> list[str]:
     return sorted(paths)
 
 
-def source_contract(repo: Path) -> tuple[dict[str, Any] | None, dict[str, Any] | None, list[dict[str, Any]], list[str]]:
+def changelog_errors(changelog: str, version: str) -> list[str]:
     errors: list[str] = []
-    version_document, _, version_error = load_json(repo, VERSION_PATH)
-    version_schema, _, version_schema_error = load_json(repo, VERSION_SCHEMA_PATH)
-    inputs, _, inputs_error = load_json(repo, INPUTS_PATH)
-    component_schema, _, component_schema_error = load_json(repo, COMPONENT_SCHEMA_PATH)
+    lines = changelog.splitlines()
+    if lines.count("# Changelog") != 1:
+        errors.append("CHANGELOG.md must contain exactly one '# Changelog' title")
+    release_pattern = re.compile(r"^## \[([^\]]+)\] - (\d{4}-\d{2}-\d{2})$")
+    heading_positions: list[tuple[str, int]] = []
+    unreleased_positions: list[int] = []
+    for index, line in enumerate(lines):
+        if line == "## [Unreleased]":
+            unreleased_positions.append(index)
+            continue
+        if line.startswith("## ["):
+            match = release_pattern.fullmatch(line)
+            if not match:
+                errors.append(f"CHANGELOG.md has an invalid release heading: {line!r}")
+                continue
+            release_version, release_date = match.groups()
+            try:
+                dt.date.fromisoformat(release_date)
+            except ValueError:
+                errors.append(f"CHANGELOG.md release {release_version} has an invalid date: {release_date}")
+            heading_positions.append((release_version, index))
+    if len(unreleased_positions) != 1:
+        errors.append("CHANGELOG.md must contain exactly one '## [Unreleased]' heading")
+    versions = [release_version for release_version, _ in heading_positions]
+    if versions.count(version) != 1:
+        errors.append(f"CHANGELOG.md must contain exactly one dated heading for product version {version}")
+    duplicates = sorted({release_version for release_version in versions if versions.count(release_version) > 1})
+    if duplicates:
+        errors.append(f"CHANGELOG.md contains duplicate release headings: {', '.join(duplicates)}")
+    if (
+        unreleased_positions
+        and heading_positions
+        and unreleased_positions[0] > min(index for _, index in heading_positions)
+    ):
+        errors.append("CHANGELOG.md Unreleased must appear before dated release headings")
+    return errors
+
+
+def source_contract(
+    repo: Path, snapshots: dict[str, bytes] | None = None
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None, list[dict[str, Any]], list[str]]:
+    errors: list[str] = []
+    version_document, _, version_error = load_json(repo, VERSION_PATH, snapshots)
+    version_schema, _, version_schema_error = load_json(repo, VERSION_SCHEMA_PATH, snapshots)
+    inputs, _, inputs_error = load_json(repo, INPUTS_PATH, snapshots)
+    component_schema, _, component_schema_error = load_json(repo, COMPONENT_SCHEMA_PATH, snapshots)
     for label, error in (
         ("product version", version_error),
         ("product version schema", version_schema_error),
@@ -189,18 +271,40 @@ def source_contract(repo: Path) -> tuple[dict[str, Any] | None, dict[str, Any] |
         errors.append("product version must be semantic version text")
         return version_document, inputs, [], errors
 
-    try:
-        package = json.loads((repo / "package.json").read_text(encoding="utf-8"))
-        python_project = tomllib.loads((repo / "pyproject.toml").read_text(encoding="utf-8"))
-        cargo = tomllib.loads((repo / "Cargo.toml").read_text(encoding="utf-8"))
-        mirrors = {
-            "package.json": package.get("version"),
-            "pyproject.toml": python_project.get("project", {}).get("version"),
-            "Cargo.toml": cargo.get("workspace", {}).get("package", {}).get("version"),
-        }
-    except (OSError, ValueError, json.JSONDecodeError, tomllib.TOMLDecodeError) as exc:
-        mirrors = {}
-        errors.append(f"cannot read ecosystem version mirrors: {exc}")
+    package_text, package_error = load_text(repo, "package.json", snapshots)
+    python_text, python_error = load_text(repo, "pyproject.toml", snapshots)
+    cargo_text, cargo_error = load_text(repo, "Cargo.toml", snapshots)
+    mirrors: dict[str, Any] = {}
+    for path, error in (
+        ("package.json", package_error),
+        ("pyproject.toml", python_error),
+        ("Cargo.toml", cargo_error),
+    ):
+        if error:
+            errors.append(f"cannot read ecosystem version mirror {path}: {error}")
+    if not any((package_error, python_error, cargo_error)):
+        try:
+            package = json.loads(package_text or "")
+            python_project = tomllib.loads(python_text or "")
+            cargo = tomllib.loads(cargo_text or "")
+        except (ValueError, json.JSONDecodeError, tomllib.TOMLDecodeError) as exc:
+            errors.append(f"cannot parse ecosystem version mirrors: {exc}")
+        else:
+            project = python_project.get("project") if isinstance(python_project, dict) else None
+            workspace = cargo.get("workspace") if isinstance(cargo, dict) else None
+            workspace_package = workspace.get("package") if isinstance(workspace, dict) else None
+            if not isinstance(package, dict):
+                errors.append("package.json must contain an object")
+            else:
+                mirrors["package.json"] = package.get("version")
+            if not isinstance(project, dict):
+                errors.append("pyproject.toml project must be a table")
+            else:
+                mirrors["pyproject.toml"] = project.get("version")
+            if not isinstance(workspace, dict) or not isinstance(workspace_package, dict):
+                errors.append("Cargo.toml workspace and workspace.package must be tables")
+            else:
+                mirrors["Cargo.toml"] = workspace_package.get("version")
     for path, mirror in mirrors.items():
         if mirror != version:
             errors.append(f"{path} version {mirror!r} must mirror authoritative product version {version!r}")
@@ -210,7 +314,7 @@ def source_contract(repo: Path) -> tuple[dict[str, Any] | None, dict[str, Any] |
     component_manifests: list[dict[str, Any]] = []
     if not component_input_errors:
         for component in components_config:
-            manifest, _, manifest_error = load_json(repo, component["manifestPath"])
+            manifest, _, manifest_error = load_json(repo, component["manifestPath"], snapshots)
             if manifest_error or not isinstance(manifest, dict):
                 errors.append(f"{component.get('id')}: {manifest_error or 'component manifest must be an object'}")
                 continue
@@ -247,15 +351,22 @@ def source_contract(repo: Path) -> tuple[dict[str, Any] | None, dict[str, Any] |
             lock_identities.append((str(identity[0]), str(identity[1])))
         if len(lock_identities) != len(EXPECTED_LOCKS) or frozenset(lock_identities) != EXPECTED_LOCKS:
             errors.append("dependencyLocks must contain exactly the Cargo, pnpm, and uv lockfiles")
-    if not isinstance(inputs.get("modelManifests"), list):
+    model_inputs = inputs.get("modelManifests")
+    if not isinstance(model_inputs, list):
         errors.append("modelManifests must be an array")
-    try:
-        changelog = (repo / "CHANGELOG.md").read_text(encoding="utf-8")
-        for fragment in ("# Changelog", "## [Unreleased]", f"## [{version}]"):
-            if fragment not in changelog:
-                errors.append(f"CHANGELOG.md is missing {fragment!r}")
-    except OSError as exc:
-        errors.append(f"cannot read CHANGELOG.md: {exc}")
+    elif model_inputs:
+        errors.append("modelManifests must remain empty until CAP-07 installs the governed model-manifest contract")
+    model_root = repo / MODEL_MANIFEST_ROOT
+    if model_root.exists() and any(path.is_file() for path in model_root.rglob("*.json")):
+        errors.append(
+            "model-manifest files require the governed CAP-07 contract before they can enter build provenance"
+        )
+
+    changelog, changelog_error = load_text(repo, "CHANGELOG.md", snapshots)
+    if changelog_error or changelog is None:
+        errors.append(f"cannot read CHANGELOG.md: {changelog_error}")
+    else:
+        errors.extend(changelog_errors(changelog, version))
     return version_document, inputs, component_manifests, errors
 
 
@@ -317,7 +428,9 @@ def git_source(repo: Path, runner: GitRunner = subprocess.run) -> tuple[dict[str
     }, errors
 
 
-def hashed_entries(repo: Path, items: Any, kind: str) -> tuple[list[dict[str, Any]], list[str]]:
+def hashed_entries(
+    repo: Path, items: Any, kind: str, snapshots: dict[str, bytes] | None = None
+) -> tuple[list[dict[str, Any]], list[str]]:
     if not isinstance(items, list):
         return [], [f"{kind} inputs must be an array"]
     entries: list[dict[str, Any]] = []
@@ -342,22 +455,56 @@ def hashed_entries(repo: Path, items: Any, kind: str) -> tuple[list[dict[str, An
         if read_error or payload is None:
             errors.append(f"{kind} {item_id}: {read_error}")
             continue
+        snapshot_error = record_snapshot(snapshots, path, payload)
+        if snapshot_error:
+            errors.append(f"{kind} {item_id}: {snapshot_error}")
+            continue
         entries.append({"id": item_id, "path": path, "sha256": sha256(payload)})
     return entries, errors
 
 
+def snapshot_integrity_errors(
+    repo: Path, snapshots: dict[str, bytes], source: dict[str, Any], runner: GitRunner
+) -> list[str]:
+    errors: list[str] = []
+    for path, captured in sorted(snapshots.items()):
+        current, read_error = safe_snapshot(repo, path)
+        if read_error or current is None:
+            errors.append(f"governed input changed after capture: {path}: {read_error}")
+            continue
+        if current != captured:
+            errors.append(f"governed input changed after capture: {path}")
+            continue
+        if not source["dirty"]:
+            committed, git_error = git_command(repo, ["show", f"HEAD:{path}"], runner)
+            if git_error or committed is None:
+                errors.append(f"clean build input is not available at HEAD: {path}: {git_error}")
+            elif committed != captured:
+                errors.append(f"clean build input differs from committed HEAD bytes: {path}")
+    return errors
+
+
+def stable_source_errors(before: dict[str, Any], after: dict[str, Any]) -> list[str]:
+    if before != after:
+        return ["Git commit or worktree state changed while build provenance was collected"]
+    return []
+
+
 def generate_build_manifest(repo: Path, runner: GitRunner = subprocess.run) -> tuple[dict[str, Any] | None, list[str]]:
     repo = repo.resolve(strict=True)
-    version_document, inputs, components, errors = source_contract(repo)
+    source, errors = git_source(repo, runner)
+    if errors or source is None:
+        return None, errors
+    snapshots: dict[str, bytes] = {}
+    version_document, inputs, components, contract_errors = source_contract(repo, snapshots)
+    errors.extend(contract_errors)
     if errors or version_document is None or inputs is None:
         return None, errors
-    source, git_errors = git_source(repo, runner)
-    errors.extend(git_errors)
-    dependencies, dependency_errors = hashed_entries(repo, inputs["dependencyLocks"], "dependency lock")
+    dependencies, dependency_errors = hashed_entries(repo, inputs["dependencyLocks"], "dependency lock", snapshots)
     errors.extend(dependency_errors)
     schema_entries: list[dict[str, Any]] = []
     for path in inputs["schemaPaths"]:
-        schema, payload, schema_error = load_json(repo, path)
+        schema, payload, schema_error = load_json(repo, path, snapshots)
         if schema_error or payload is None or not isinstance(schema, dict):
             errors.append(f"schema {path}: {schema_error or 'schema must be an object'}")
             continue
@@ -369,7 +516,7 @@ def generate_build_manifest(repo: Path, runner: GitRunner = subprocess.run) -> t
     schema_ids = [entry["id"] for entry in schema_entries]
     if len(schema_ids) != len(set(schema_ids)):
         errors.append("repository schemas must have unique stable $id values")
-    model_entries, model_errors = hashed_entries(repo, inputs["modelManifests"], "model manifest")
+    model_entries, model_errors = hashed_entries(repo, inputs["modelManifests"], "model manifest", snapshots)
     errors.extend(model_errors)
     if errors or source is None:
         return None, errors
@@ -387,27 +534,82 @@ def generate_build_manifest(repo: Path, runner: GitRunner = subprocess.run) -> t
         "modelManifests": identified_set(model_entries),
     }
     manifest["manifestId"] = f"sha256:{sha256(canonical_json_bytes(manifest))}"
-    build_schema, _, build_schema_error = load_json(repo, BUILD_SCHEMA_PATH)
+    build_schema, _, build_schema_error = load_json(repo, BUILD_SCHEMA_PATH, snapshots)
     if build_schema_error or not isinstance(build_schema, dict):
         return None, [f"build manifest schema: {build_schema_error or 'schema must be an object'}"]
     errors.extend(schema_errors(manifest, build_schema, "buildManifest"))
+    source_after, source_after_errors = git_source(repo, runner)
+    errors.extend(source_after_errors)
+    if source_after is not None:
+        errors.extend(stable_source_errors(source, source_after))
+    errors.extend(snapshot_integrity_errors(repo, snapshots, source, runner))
+    source_final, source_final_errors = git_source(repo, runner)
+    errors.extend(source_final_errors)
+    if source_final is not None:
+        errors.extend(stable_source_errors(source, source_final))
     return (manifest if not errors else None), errors
 
 
-def safe_output_path(repo: Path, raw_path: Path) -> Path:
-    destination = raw_path if raw_path.is_absolute() else repo / raw_path
+def path_identity(path: Path) -> tuple[int, int]:
+    stat = path.stat()
+    return (stat.st_dev, stat.st_ino)
+
+
+def destination_guard(repo: Path, destination: Path, allowed_root: Path) -> DirectoryGuard:
+    repo = repo.resolve(strict=True)
     destination = destination.absolute()
-    report_root = (repo / REPORT_ROOT).resolve(strict=True)
+    root = allowed_root.absolute()
     try:
-        destination.parent.resolve(strict=True).relative_to(report_root)
+        root.relative_to(repo)
+        if root.resolve(strict=True) != root or not root.is_dir():
+            raise ValueError("allowed root is redirected or is not a directory")
+        parent = destination.parent
+        parent.relative_to(root)
+        if parent.resolve(strict=True) != parent or not parent.is_dir():
+            raise ValueError("destination parent is redirected or is not a directory")
+        if destination.exists() and (destination.resolve(strict=True) != destination or not destination.is_file()):
+            raise ValueError("destination is redirected or is not a file")
+        return DirectoryGuard(root, path_identity(root), parent, path_identity(parent), destination)
     except (OSError, ValueError) as exc:
-        raise ValueError(f"build manifest output must remain under {REPORT_ROOT}: {raw_path}") from exc
+        raise ValueError(f"destination is not confined to canonical repository directories: {destination}") from exc
+
+
+def validate_directory_guard(guard: DirectoryGuard, *, require_destination: bool = False) -> None:
+    if (
+        guard.root.resolve(strict=True) != guard.root
+        or not guard.root.is_dir()
+        or path_identity(guard.root) != guard.root_identity
+        or guard.parent.resolve(strict=True) != guard.parent
+        or not guard.parent.is_dir()
+        or path_identity(guard.parent) != guard.parent_identity
+    ):
+        raise ValueError("destination root or parent changed during guarded write")
+    guard.parent.relative_to(guard.root)
+    if require_destination and (
+        not guard.destination.is_file() or guard.destination.resolve(strict=True) != guard.destination
+    ):
+        raise ValueError("guarded destination was not created as a canonical file")
+
+
+def safe_output_path(repo: Path, raw_path: Path) -> Path:
+    destination = (raw_path if raw_path.is_absolute() else repo / raw_path).absolute()
+    try:
+        destination_guard(repo, destination, repo / REPORT_ROOT)
+    except ValueError as exc:
+        raise ValueError(f"build manifest output must remain under canonical {REPORT_ROOT}: {raw_path}") from exc
     return destination
 
 
-def atomic_write_json(destination: Path, value: Any) -> None:
+def atomic_write_json(
+    destination: Path,
+    value: Any,
+    guard: DirectoryGuard | None = None,
+    before_replace: BeforeReplace | None = None,
+) -> None:
     temporary: Path | None = None
     try:
+        if guard:
+            validate_directory_guard(guard)
         with tempfile.NamedTemporaryFile(
             mode="w", encoding="utf-8", newline="\n", dir=destination.parent, prefix=destination.name, delete=False
         ) as handle:
@@ -417,11 +619,28 @@ def atomic_write_json(destination: Path, value: Any) -> None:
             handle.flush()
             os.fsync(handle.fileno())
         assert temporary is not None
+        if before_replace:
+            before_replace()
+        if guard:
+            validate_directory_guard(guard)
         os.replace(temporary, destination)
-    except OSError:
+        if guard:
+            validate_directory_guard(guard, require_destination=True)
+    except OSError, ValueError:
         if temporary is not None:
             temporary.unlink(missing_ok=True)
         raise
+
+
+def guarded_atomic_write_json(
+    repo: Path,
+    destination: Path,
+    value: Any,
+    allowed_root: Path,
+    before_replace: BeforeReplace | None = None,
+) -> None:
+    guard = destination_guard(repo, destination, allowed_root)
+    atomic_write_json(destination, value, guard, before_replace)
 
 
 def synchronize_component_manifests(repo: Path) -> list[str]:
@@ -447,25 +666,13 @@ def synchronize_component_manifests(repo: Path) -> list[str]:
         for component in components:
             relative = PurePosixPath(component["manifestPath"])
             destination = repo.joinpath(*relative.parts)
-            try:
-                resolved_parent = destination.parent.resolve(strict=True)
-                resolved_parent.relative_to(repo)
-                if resolved_parent != destination.parent:
-                    raise ValueError("parent directory is redirected")
-                if destination.exists() and (
-                    destination.resolve(strict=True) != destination or not destination.is_file()
-                ):
-                    raise ValueError("destination is redirected or is not a file")
-            except (OSError, ValueError) as exc:
-                errors.append(f"cannot safely generate {component['manifestPath']}: {exc}")
-                continue
             destinations.append((destination, expected_component(component, version)))
     if errors:
         return errors
     for destination, manifest in destinations:
         try:
-            atomic_write_json(destination, manifest)
-        except OSError as exc:
+            guarded_atomic_write_json(repo, destination, manifest, repo)
+        except (OSError, ValueError) as exc:
             errors.append(f"cannot write {destination.relative_to(repo).as_posix()}: {exc}")
             break
     return errors
@@ -497,7 +704,8 @@ def main() -> int:
         return 1
     if args.output:
         try:
-            atomic_write_json(safe_output_path(repo, args.output), manifest)
+            destination = safe_output_path(repo, args.output)
+            guarded_atomic_write_json(repo, destination, manifest, repo / REPORT_ROOT)
         except (OSError, ValueError) as exc:
             print(f"ERROR: cannot write build manifest: {exc}")
             return 2
