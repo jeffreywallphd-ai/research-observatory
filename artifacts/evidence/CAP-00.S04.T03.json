@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S04.T03",
+  "commit": "e1755e15441e685bdea7354f5fcde0d85a2f6ce5",
+  "baseCommit": "8ba8d1a90249c3e3987734a8487b8237040ff83f",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    "docs/automation/codex-tracking-guide.md",
+    "docs/planning-implementation-plan.md",
+    "planning/README.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "tests/foundation/README.md",
+    "tests/foundation/test_backlog_views.py",
+    "tools/README.md",
+    "tools/backlog_views.py",
+    "verification-profiles.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S04.T03-foundation.json",
+      "exitCode": 0,
+      "result": "The exact implementation commit passed repository, runtime, architecture, agent-protocol, generated-view drift, ADR, CI, formatting, linting, typing, packaging, all 71 foundation tests, and canonical backlog validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate",
+      "exitCode": 0,
+      "result": "The authoritative ledger validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "Both committed Markdown outputs matched a fresh deterministic render of the authoritative YAML without writes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_backlog_views -v",
+      "exitCode": 0,
+      "result": "Four focused tests passed for canonical output, exact source-derived counts/statuses, idempotent no-rewrite generation, and manual-edit drift detection plus repair."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "tools/backlog_views.py renders the comprehensive docs/planning-implementation-plan.md and compact planning/status-summary.md solely from planning/backlog.yaml, embeds a canonical source digest, uses deterministic ordering, and writes atomically only when bytes differ.",
+        "A repeated generation reports no changes; the idempotency test confirms unchanged bytes and modification times, while --check fails on any missing, stale, or manually edited output.",
+        "The summary derives all capability, campaign, slice, task, and gate totals/statuses from the loaded YAML. Its focused test compares every task-state count and the 20/117/356 hierarchy totals to the source objects.",
+        "Both generated files contain front-matter manual_edit: prohibited and a prominent GENERATED FILE - DO NOT EDIT warning naming backlog.yaml and the exact regeneration command."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Four focused tests cover the current canonical repository, unchanged regeneration, source-derived totals/statuses, and the material boundary where a manual edit must fail check mode and be repaired by regeneration.",
+        "The full foundation suite increased to 71 tests and passes at the exact implementation commit with the generated-view drift command active in the profile."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "verification-profiles.json makes generated-view drift a mandatory foundation command; quality-scope.json governs the renderer and tests; tool and foundation-test indexes describe the installed boundary.",
+        "planning/README.md and the Codex tracking guide require regeneration after authoritative ledger mutation and prohibit editing either view. No application, architecture, dependency, UI, or later-wave implementation scope changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "An independent reviewer must test deterministic generation, source fidelity, drift detection, repair behavior, and foundation integration before approval."
+  }
+}

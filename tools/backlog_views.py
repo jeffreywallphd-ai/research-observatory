@@ -11,7 +11,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from taskctl import load
+import yaml
+from taskctl import backlog_schema_errors, index_backlog
 
 PLAN_VIEW = Path("docs/planning-implementation-plan.md")
 STATUS_VIEW = Path("planning/status-summary.md")
@@ -43,9 +44,59 @@ def bullets(lines: list[str], values: list[Any] | None) -> None:
     lines.extend(f"- {inline(value)}" for value in values)
 
 
-def source_digest(path: Path) -> str:
-    payload = path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+def source_digest(payload: bytes) -> str:
+    payload = payload.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
     return hashlib.sha256(payload).hexdigest()
+
+
+def canonical_root(root: Path) -> Path:
+    try:
+        resolved = root.resolve(strict=True)
+    except OSError as exc:
+        raise SystemExit(f"Cannot resolve repository root {root}: {exc}") from exc
+    if not resolved.is_dir():
+        raise SystemExit(f"Repository root is not a directory: {resolved}")
+    return resolved
+
+
+def require_inside(root: Path, path: Path, label: str) -> Path:
+    try:
+        resolved = path.resolve(strict=True)
+        resolved.relative_to(root)
+    except (OSError, ValueError) as exc:
+        raise SystemExit(f"{label} must resolve inside repository {root}: {path}") from exc
+    return resolved
+
+
+def output_destination(root: Path, relative: Path) -> Path:
+    lexical = root / relative
+    try:
+        parent = lexical.parent.resolve(strict=False)
+        parent.relative_to(root)
+    except (OSError, ValueError) as exc:
+        raise SystemExit(f"Generated view parent escapes repository: {relative.parent}") from exc
+    destination = parent / lexical.name
+    if destination.exists() or destination.is_symlink():
+        try:
+            resolved_destination = destination.resolve(strict=True)
+            resolved_destination.relative_to(root)
+        except (OSError, ValueError) as exc:
+            raise SystemExit(f"Generated view path escapes repository: {relative}") from exc
+        if resolved_destination != destination:
+            raise SystemExit(f"Generated view path must not be a symbolic link or redirect: {relative}")
+    return destination
+
+
+def parse_backlog_snapshot(payload: bytes, schema_path: Path) -> dict[str, Any]:
+    try:
+        data = yaml.safe_load(payload.decode("utf-8"))
+    except (UnicodeError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Cannot parse backlog snapshot: {exc}") from exc
+    schema_errors = backlog_schema_errors(data, schema_path=schema_path)
+    if schema_errors:
+        raise SystemExit("Backlog schema validation failed:\n- " + "\n- ".join(schema_errors))
+    indexed, *_ = index_backlog(data)
+    return indexed
 
 
 def hierarchy(data: dict[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
@@ -321,40 +372,61 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
 
 
 def expected_outputs(root: Path) -> dict[Path, str]:
-    backlog = root / "planning/backlog.yaml"
-    data, *_ = load(str(backlog))
-    digest = source_digest(backlog)
+    root = canonical_root(root)
+    backlog = require_inside(root, root / "planning/backlog.yaml", "Backlog source")
+    schema = require_inside(root, root / "planning/backlog.schema.json", "Backlog schema")
+    try:
+        payload = backlog.read_bytes()
+    except OSError as exc:
+        raise SystemExit(f"Cannot read backlog source {backlog}: {exc}") from exc
+    data = parse_backlog_snapshot(payload, schema)
+    digest = source_digest(payload)
     return {
-        root / PLAN_VIEW: render_plan(data, digest),
-        root / STATUS_VIEW: render_summary(data, digest),
+        output_destination(root, PLAN_VIEW): render_plan(data, digest),
+        output_destination(root, STATUS_VIEW): render_summary(data, digest),
     }
 
 
 def synchronize(root: Path, *, check: bool) -> tuple[list[Path], list[Path]]:
+    root = canonical_root(root)
     stale: list[Path] = []
     updated: list[Path] = []
     for destination, expected in expected_outputs(root).items():
-        try:
-            current = destination.read_text(encoding="utf-8")
-        except FileNotFoundError:
-            current = ""
-        if current == expected:
-            continue
+        expected_payload = expected.encode("utf-8")
         relative = destination.relative_to(root)
+        try:
+            current = destination.read_bytes()
+        except FileNotFoundError:
+            current = b""
+        except OSError as exc:
+            raise SystemExit(f"Cannot read generated backlog view {relative}: {exc}") from exc
+        if current == expected_payload:
+            continue
         stale.append(relative)
         if check:
             continue
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        fd, temp_name = tempfile.mkstemp(prefix=f"{destination.name}.", suffix=".tmp", dir=destination.parent)
+        temp_name: str | None = None
         try:
-            with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
-                handle.write(expected)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            safe_destination = output_destination(root, relative)
+            fd, temp_name = tempfile.mkstemp(
+                prefix=f"{safe_destination.name}.", suffix=".tmp", dir=safe_destination.parent
+            )
+            with os.fdopen(fd, "wb") as handle:
+                handle.write(expected_payload)
                 handle.flush()
                 os.fsync(handle.fileno())
-            os.replace(temp_name, destination)
-        finally:
-            if os.path.exists(temp_name):
-                os.unlink(temp_name)
+            os.replace(temp_name, safe_destination)
+        except OSError as exc:
+            try:
+                if temp_name is not None and os.path.exists(temp_name):
+                    os.unlink(temp_name)
+            except OSError as cleanup_exc:
+                raise SystemExit(
+                    f"Cannot update generated backlog view {relative}: {exc}; "
+                    f"temporary-file cleanup also failed: {cleanup_exc}"
+                ) from exc
+            raise SystemExit(f"Cannot update generated backlog view {relative}: {exc}") from exc
         updated.append(relative)
     return stale, updated
 

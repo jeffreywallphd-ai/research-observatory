@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7e31869a33e35340e8b85b3a56d722808b87cf0634a6f0eea094f66723aba04c
+source_sha256: 0334080998f3bcc304bc8e90b82ac7889d4398d11ca2afc496c2e75ea8fa3b29
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -654,7 +654,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-00.S04.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / codex-review (`changes-requested`)
 
 **Objective:** Deterministic Markdown and summary reports generated from the authoritative backlog.
 
@@ -672,6 +672,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-00.S04.T03.json` at `e1755e15441e685bdea7354f5fcde0d85a2f6ce5`
 
 ### CAP-00.S05 - Test corpus, benchmark registry, and release metadata
 

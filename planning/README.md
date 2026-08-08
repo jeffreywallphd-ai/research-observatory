@@ -27,7 +27,11 @@ python tools/backlog_views.py --repo . --check
 
 Generation writes only when content changes, so repeating it against unchanged
 YAML preserves the files byte-for-byte and does not change modification times.
-Edit `backlog.yaml`, never a generated view.
+The renderer parses and hashes one immutable backlog byte snapshot, compares
+canonical UTF-8 output bytes (including line endings), and rejects source or
+output paths that resolve outside the canonical repository. Check mode detects
+corrupt bytes without decoding them; generation replaces them atomically or
+returns an actionable I/O failure. Edit `backlog.yaml`, never a generated view.
 
 ## Default planning and execution lifecycle
 
