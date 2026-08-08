@@ -421,7 +421,13 @@ def run_benchmarks(repo: Path) -> tuple[dict[str, Any], dict[str, Any]]:
 def safe_output_path(repo: Path, raw_path: Path, allow_directory: bool = False) -> Path:
     destination = raw_path if raw_path.is_absolute() else repo / raw_path
     destination = destination.absolute()
-    report_root = (repo / REPORT_ROOT).resolve(strict=True)
+    artifacts_root = (repo / "artifacts").resolve(strict=True)
+    report_root_path = repo / REPORT_ROOT
+    if not report_root_path.exists():
+        report_root_path.mkdir()
+    report_root = report_root_path.resolve(strict=True)
+    if report_root != artifacts_root / "tmp" or not report_root.is_dir():
+        raise ValueError(f"scratch root must not redirect outside repository artifacts: {report_root}")
     candidate = destination if allow_directory else destination.parent
     try:
         candidate.resolve(strict=False).relative_to(report_root)
