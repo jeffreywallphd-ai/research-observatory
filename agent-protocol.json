@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "coding-agent-operating-contract",
+  "authorities": [
+    "AGENTS.md",
+    "docs/README.md",
+    "planning/README.md",
+    "docs/automation/project-automation-guide.md",
+    "docs/automation/codex-tracking-guide.md"
+  ],
+  "campaign": {
+    "approvalUnit": "capability-and-all-slices-at-one-immutable-commit",
+    "partialApprovalStartsCampaign": false,
+    "executionUnit": "durable-full-capability-campaign",
+    "resumeAfterOrdinaryInterruption": true,
+    "routineSliceApprovalPrompts": false,
+    "terminalOutcome": "all-slices-approved-and-production-ready-capability-qualified",
+    "permittedPauseConditions": [
+      "approved-choice-infeasible",
+      "consequential-new-evidence",
+      "required-external-resource-unavailable",
+      "higher-authority-conflict",
+      "governed-experience-change-required",
+      "destructive-external-or-material-spend-authorization",
+      "explicit-user-direction"
+    ]
+  },
+  "selection": {
+    "scope": "active-capability-only",
+    "eligibleState": "READY",
+    "dependencyPolicy": "all-task-slice-wave-and-release-gate-dependencies-satisfied",
+    "inspectCommands": [
+      "python tools/taskctl.py --file planning/backlog.yaml next --profile LOC --platform windows-x64",
+      "python tools/taskctl.py --file planning/backlog.yaml show CAP-XX.SXX.TXX"
+    ],
+    "claimCommand": "python tools/taskctl.py --file planning/backlog.yaml claim CAP-XX.SXX.TXX --agent <agent> --branch <branch> --base-sha <sha> --worktree <path> --profile LOC --platform windows-x64"
+  },
+  "scopeControl": {
+    "permitted": [
+      "task-objective",
+      "task-deliverables",
+      "task-acceptance-criteria",
+      "dependency-compatible-supporting-changes",
+      "required-tests-contracts-docs-migrations-and-audit"
+    ],
+    "prohibited": [
+      "unclaimed-adjacent-task",
+      "unapproved-architecture-or-experience-change",
+      "gated-later-wave-implementation",
+      "test-weakening",
+      "remote-push-or-publication-without-authority"
+    ]
+  },
+  "verification": {
+    "requiredSources": [
+      "task-verification-commands",
+      "task-verification-profiles",
+      "changed-path-impact-map",
+      "architecture-and-experience-contracts-when-affected"
+    ],
+    "exactCommitRequired": true,
+    "failurePolicy": "remain-in-progress-and-fix-within-approved-scope"
+  },
+  "completion": {
+    "orderedSteps": [
+      "commit-bounded-implementation",
+      "criterion-linked-machine-evidence",
+      "task-submit",
+      "required-independent-review",
+      "clean-tested-fast-forward-to-local-main",
+      "slice-end-to-end-evidence-and-review-when-last-task",
+      "continue-next-ready-task-or-capability-qualification"
+    ],
+    "remotePushAuthorized": false,
+    "gateBypassAllowed": false
+  },
+  "capabilityQualification": [
+    "happy-path",
+    "failure-and-denial",
+    "cancellation",
+    "migration",
+    "restart-and-recovery",
+    "security-privacy-and-rights",
+    "accessibility",
+    "performance",
+    "required-platforms",
+    "independent-capability-review"
+  ]
+}

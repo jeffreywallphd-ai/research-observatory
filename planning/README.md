@@ -30,6 +30,12 @@ Capability
 
 The default is sustained execution. Do not insert routine approval stops after the capability is approved.
 
+Capability approval is atomic across the capability packet and all contained
+slice plans at one immutable commit. A subset of slices cannot be approved as a
+campaign start. The campaign is durable across ordinary process or session
+interruptions and resumes in the same active capability until every approved
+slice and the production-ready capability qualification finish.
+
 ## Decision review and Other
 
 Every decision page displays the documented candidates, preselected recommendation, and an `Other` option.

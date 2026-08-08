@@ -40,6 +40,19 @@ When a decision or approval is required:
 
 After approval, continue through tasks, slice integration, independent slice review, and the next approved slice. Ordinary test failure, debugging, implementation refinement inside the approved envelope, or use of a documented fallback is not a human stop point.
 
+The approval is valid only when it covers the capability packet and every slice
+plan at one immutable commit. A capability campaign is the durable execution
+unit: resume it after ordinary process/session interruption and continue through
+all slices and capability-wide production qualification. Never reinterpret a
+slice boundary as a request for another routine approval.
+
+Before claiming, use `taskctl next` and `taskctl show` to identify the active
+campaign's next `READY` task. Permitted scope is its objective, deliverables,
+criteria, dependencies, profile/platform, and governing sources. Required checks
+are its declared verification commands plus changed-path checks. Completion is
+commit-bound criterion evidence, submission, required review, clean tested local
+main integration, and continuation to the next eligible task or slice gate.
+
 ## Evidence
 
 A completion claim must link every criterion to a named test, report, artifact, source commit, and reviewer outcome. If evidence is incomplete, keep the task or slice in progress/review; do not mark it done with persuasive prose.

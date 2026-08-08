@@ -43,6 +43,32 @@ Use **Capability -> Slice -> Task**. The default unit is a capability campaign:
 
 Routine implementation choices, debugging, evidence collection, independent reviews, and slice transitions do not require new approval after campaign start.
 
+### One approval and one durable campaign
+
+Before asking to start `CAP-XX`, make every capability and slice decision
+decision-complete, generate the combined review packet, and identify the one
+immutable approval commit. The start prompt must state that approval covers the
+capability packet **and every contained slice plan**. A partial slice approval,
+an unresolved slice decision, or approval spread across mismatched commits does
+not authorize capability start.
+
+After approval, "one run" means one durable capability campaign, not a promise
+that one operating-system process will remain alive. Resume the same active
+campaign after an ordinary tool, app, or session interruption. Claim and finish
+the next dependency-eligible task, integrate and review its slice, and continue
+through every approved slice and capability-wide production qualification. Do
+not return for routine per-slice approval or stop merely because a slice ended.
+
+Safest concise start prompt:
+
+> Start CAP-XX using the repository workflow. Verify that the capability packet
+> and every slice decision are approved together at one immutable commit, then
+> execute the full durable campaign in dependency order through production-ready
+> capability qualification. Claim only the next READY task through taskctl;
+> validate, attach commit-bound evidence, obtain required review, fast-forward
+> tested work into local main, and stop only at a documented unmet gate without
+> bypassing it.
+
 Pause only for demonstrated infeasibility, genuinely new consequential evidence, unavailable required external service/credential/platform/hardware, higher-authority conflict, required governed experience-reference change, destructive or external action, substantial unapproved spend, or explicit user direction.
 
 ## Planning and review commands
