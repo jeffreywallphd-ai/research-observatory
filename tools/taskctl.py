@@ -7,6 +7,7 @@ inside it, completing slices in order until the capability has production-ready
 end-to-end evidence and independent approval. Tasks remain the atomic claim and
 evidence unit.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -19,19 +20,28 @@ import sys
 import tempfile
 from collections import Counter
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 import yaml
 
 VALID_STATUSES = {"NOT_STARTED", "READY", "IN_PROGRESS", "BLOCKED", "REVIEW", "DONE", "DEFERRED", "CANCELLED"}
 ACTIVE_PROFILES = {"LOC", "LAB", "UNI", "CLD", "ALL"}
-PLATFORMS = {"platform-neutral", "windows-x64", "macos-arm64", "linux-x64", "linux-arm64", "linux-server", "cloud", "ALL"}
+PLATFORMS = {
+    "platform-neutral",
+    "windows-x64",
+    "macos-arm64",
+    "linux-x64",
+    "linux-arm64",
+    "linux-server",
+    "cloud",
+    "ALL",
+}
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
 
 
 def utc_now() -> str:
-    return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
+    return dt.datetime.now(dt.UTC).replace(microsecond=0).isoformat()
 
 
 def parse_time(value: str) -> dt.datetime:
@@ -56,7 +66,15 @@ def save_atomic(path: str, data: dict[str, Any]) -> None:
             os.unlink(temp_name)
 
 
-def load(path: str) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, dict[str, Any]], dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
+def load(
+    path: str,
+) -> tuple[
+    dict[str, Any],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+]:
     data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
     tasks: dict[str, dict[str, Any]] = {}
     slices: dict[str, dict[str, Any]] = {}
@@ -106,7 +124,7 @@ def platform_matches(item: dict[str, Any], requested: str) -> bool:
 def dependency_graph_errors(tasks: dict[str, dict[str, Any]]) -> list[str]:
     errors: list[str] = []
     indegree = {tid: 0 for tid in tasks}
-    reverse = {tid: [] for tid in tasks}
+    reverse: dict[str, list[str]] = {tid: [] for tid in tasks}
     for tid, task in tasks.items():
         for dep in task.get("dependencies", []):
             if dep not in tasks:
@@ -137,13 +155,30 @@ def task_dependencies_done(task: dict[str, Any], tasks: dict[str, dict[str, Any]
     return all(tasks.get(dep, {}).get("status") == "DONE" for dep in task.get("dependencies", []))
 
 
-def task_can_be_ready(data: dict[str, Any], capabilities: dict[str, dict[str, Any]], slices: dict[str, dict[str, Any]], tasks: dict[str, dict[str, Any]], gates: dict[str, dict[str, Any]], task: dict[str, Any]) -> bool:
+def task_can_be_ready(
+    data: dict[str, Any],
+    capabilities: dict[str, dict[str, Any]],
+    slices: dict[str, dict[str, Any]],
+    tasks: dict[str, dict[str, Any]],
+    gates: dict[str, dict[str, Any]],
+    task: dict[str, Any],
+) -> bool:
     capability = capabilities[task["capability_id"]]
     slice_ = slices[task["slice_id"]]
-    return task_dependencies_done(task, tasks) and gate_is_open(data, gates, task["wave"]) and previous_slices_approved(capability, slice_)
+    return (
+        task_dependencies_done(task, tasks)
+        and gate_is_open(data, gates, task["wave"])
+        and previous_slices_approved(capability, slice_)
+    )
 
 
-def refresh_derived_states(data: dict[str, Any], capabilities: dict[str, dict[str, Any]], slices: dict[str, dict[str, Any]], tasks: dict[str, dict[str, Any]], gates: dict[str, dict[str, Any]]) -> int:
+def refresh_derived_states(
+    data: dict[str, Any],
+    capabilities: dict[str, dict[str, Any]],
+    slices: dict[str, dict[str, Any]],
+    tasks: dict[str, dict[str, Any]],
+    gates: dict[str, dict[str, Any]],
+) -> int:
     changed = 0
     for task in tasks.values():
         if task["status"] not in {"NOT_STARTED", "READY"}:
@@ -153,12 +188,16 @@ def refresh_derived_states(data: dict[str, Any], capabilities: dict[str, dict[st
             task["status"] = new_status
             task["updated_at"] = utc_now()
             changed += 1
-    for cid, capability in capabilities.items():
+    for _cid, capability in capabilities.items():
         for slice_ in capability.get("slices", []):
             if slice_["status"] in {"DEFERRED", "CANCELLED", "BLOCKED", "REVIEW", "DONE"}:
                 continue
             statuses = {task["status"] for task in slice_["tasks"]}
-            new = "IN_PROGRESS" if statuses & {"IN_PROGRESS", "REVIEW"} else ("READY" if statuses & {"READY"} else "NOT_STARTED")
+            new = (
+                "IN_PROGRESS"
+                if statuses & {"IN_PROGRESS", "REVIEW"}
+                else ("READY" if statuses & {"READY"} else "NOT_STARTED")
+            )
             if slice_["status"] != new:
                 slice_["status"] = new
                 changed += 1
@@ -180,7 +219,15 @@ def task_sort_key(task: dict[str, Any]) -> tuple[int, int, str]:
     return int(task["wave"][1:]), int(task["priority"][1:]), task["id"]
 
 
-def eligible_capabilities(data: dict[str, Any], capabilities: dict[str, dict[str, Any]], slices: dict[str, dict[str, Any]], tasks: dict[str, dict[str, Any]], gates: dict[str, dict[str, Any]], profile: str, platform: str) -> list[dict[str, Any]]:
+def eligible_capabilities(
+    data: dict[str, Any],
+    capabilities: dict[str, dict[str, Any]],
+    slices: dict[str, dict[str, Any]],
+    tasks: dict[str, dict[str, Any]],
+    gates: dict[str, dict[str, Any]],
+    profile: str,
+    platform: str,
+) -> list[dict[str, Any]]:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     eligible: list[dict[str, Any]] = []
     for capability in capabilities.values():
@@ -197,7 +244,10 @@ def eligible_capabilities(data: dict[str, Any], capabilities: dict[str, dict[str
             continue
         if not gate_is_open(data, gates, current["wave"]):
             continue
-        if any(task["status"] == "READY" and profile_matches(task, profile) and platform_matches(task, platform) for task in current["tasks"]):
+        if any(
+            task["status"] == "READY" and profile_matches(task, profile) and platform_matches(task, platform)
+            for task in current["tasks"]
+        ):
             eligible.append(capability)
     return sorted(eligible, key=capability_sort_key)
 
@@ -209,12 +259,28 @@ def current_slice(capability: dict[str, Any]) -> dict[str, Any] | None:
     return None
 
 
-def ready_tasks_in_campaign(data: dict[str, Any], capability: dict[str, Any], capabilities: dict[str, dict[str, Any]], slices: dict[str, dict[str, Any]], tasks: dict[str, dict[str, Any]], gates: dict[str, dict[str, Any]], profile: str, platform: str) -> list[dict[str, Any]]:
+def ready_tasks_in_campaign(
+    data: dict[str, Any],
+    capability: dict[str, Any],
+    capabilities: dict[str, dict[str, Any]],
+    slices: dict[str, dict[str, Any]],
+    tasks: dict[str, dict[str, Any]],
+    gates: dict[str, dict[str, Any]],
+    profile: str,
+    platform: str,
+) -> list[dict[str, Any]]:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     slice_ = current_slice(capability)
     if not slice_:
         return []
-    return sorted([t for t in slice_["tasks"] if t["status"] == "READY" and profile_matches(t, profile) and platform_matches(t, platform)], key=task_sort_key)
+    return sorted(
+        [
+            t
+            for t in slice_["tasks"]
+            if t["status"] == "READY" and profile_matches(t, profile) and platform_matches(t, platform)
+        ],
+        key=task_sort_key,
+    )
 
 
 def get(mapping: dict[str, dict[str, Any]], id_: str, label: str) -> dict[str, Any]:
@@ -229,14 +295,18 @@ def lease_is_active(holder: dict[str, Any]) -> bool:
     if not lease:
         return False
     try:
-        return parse_time(lease["expires_at"]) > dt.datetime.now(dt.timezone.utc)
-    except (KeyError, ValueError):
+        return parse_time(lease["expires_at"]) > dt.datetime.now(dt.UTC)
+    except KeyError, ValueError:
         return False
 
 
 def new_lease(agent: str, hours: int) -> dict[str, str]:
-    claimed = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
-    return {"claimed_by": agent, "claimed_at": claimed.isoformat(), "expires_at": (claimed + dt.timedelta(hours=hours)).isoformat()}
+    claimed = dt.datetime.now(dt.UTC).replace(microsecond=0)
+    return {
+        "claimed_by": agent,
+        "claimed_at": claimed.isoformat(),
+        "expires_at": (claimed + dt.timedelta(hours=hours)).isoformat(),
+    }
 
 
 def load_evidence(path: str) -> dict[str, Any]:
@@ -267,7 +337,13 @@ def validate_task_evidence(task: dict[str, Any], manifest: dict[str, Any]) -> li
     return errors
 
 
-def validate(data: dict[str, Any], capabilities: dict[str, dict[str, Any]], slices: dict[str, dict[str, Any]], tasks: dict[str, dict[str, Any]], gates: dict[str, dict[str, Any]]) -> list[str]:
+def validate(
+    data: dict[str, Any],
+    capabilities: dict[str, dict[str, Any]],
+    slices: dict[str, dict[str, Any]],
+    tasks: dict[str, dict[str, Any]],
+    gates: dict[str, dict[str, Any]],
+) -> list[str]:
     errors = dependency_graph_errors(tasks)
     waves = wave_map(data)
     active = active_capabilities(capabilities)
@@ -280,12 +356,19 @@ def validate(data: dict[str, Any], capabilities: dict[str, dict[str, Any]], slic
         if campaign:
             if campaign.get("status") not in CAMPAIGN_STATES:
                 errors.append(f"{cid}: invalid campaign status")
-            if campaign.get("status") == "ACTIVE" and (not campaign.get("owner") or not campaign.get("branch") or not campaign.get("base_sha") or not campaign.get("lease")):
+            if campaign.get("status") == "ACTIVE" and (
+                not campaign.get("owner")
+                or not campaign.get("branch")
+                or not campaign.get("base_sha")
+                or not campaign.get("lease")
+            ):
                 errors.append(f"{cid}: ACTIVE campaign lacks owner, branch, base SHA, or lease")
         completion = capability.get("completion", {})
         if completion.get("status") not in COMPLETION_STATES:
             errors.append(f"{cid}: invalid completion status")
-        if completion.get("status") == "APPROVED" and (not completion.get("reviewer") or not completion.get("reviewed_at") or not completion.get("evidence")):
+        if completion.get("status") == "APPROVED" and (
+            not completion.get("reviewer") or not completion.get("reviewed_at") or not completion.get("evidence")
+        ):
             errors.append(f"{cid}: approved completion lacks reviewer, time, or evidence")
         for position, slice_ in enumerate(capability.get("slices", [])):
             sid = slice_["id"]
@@ -299,7 +382,11 @@ def validate(data: dict[str, Any], capabilities: dict[str, dict[str, Any]], slic
             if completion.get("status") == "APPROVED":
                 if any(t["status"] != "DONE" for t in slice_["tasks"]):
                     errors.append(f"{sid}: approved before all tasks are DONE")
-                if not completion.get("reviewer") or not completion.get("reviewed_at") or not completion.get("evidence"):
+                if (
+                    not completion.get("reviewer")
+                    or not completion.get("reviewed_at")
+                    or not completion.get("evidence")
+                ):
                     errors.append(f"{sid}: approved completion lacks reviewer, time, or evidence")
             for task in slice_["tasks"]:
                 tid = task["id"]
@@ -316,11 +403,15 @@ def validate(data: dict[str, Any], capabilities: dict[str, dict[str, Any]], slic
                     errors.append(f"{tid}: invalid platform target")
                 if status == "READY" and not task_can_be_ready(data, capabilities, slices, tasks, gates, task):
                     errors.append(f"{tid}: READY while dependencies, prior slice, or activation gate are incomplete")
-                if status == "IN_PROGRESS" and (not task.get("owner") or not task.get("branch") or not task.get("base_sha") or not task.get("lease")):
+                if status == "IN_PROGRESS" and (
+                    not task.get("owner") or not task.get("branch") or not task.get("base_sha") or not task.get("lease")
+                ):
                     errors.append(f"{tid}: IN_PROGRESS without owner, branch, base SHA, and lease")
                 if status == "REVIEW" and (not task.get("evidence") or task.get("verification_state") != "passed"):
                     errors.append(f"{tid}: REVIEW without passed verification and evidence")
-                if status == "DONE" and (not task.get("evidence") or task.get("review", {}).get("result") != "approved"):
+                if status == "DONE" and (
+                    not task.get("evidence") or task.get("review", {}).get("result") != "approved"
+                ):
                     errors.append(f"{tid}: DONE without evidence and approved review")
                 if status == "BLOCKED" and not task.get("blocker"):
                     errors.append(f"{tid}: BLOCKED without blocker details")
@@ -344,14 +435,26 @@ def command_validate(args: argparse.Namespace, data, capabilities, slices, tasks
         for error in errors:
             print(f"ERROR: {error}")
         raise SystemExit(1)
-    print(f"Valid backlog: {len(capabilities)} capabilities, {len(slices)} slices, {len(tasks)} tasks, {len(gates)} release gates")
+    print(
+        f"Valid backlog: {len(capabilities)} capabilities, {len(slices)} slices, "
+        f"{len(tasks)} tasks, {len(gates)} release gates"
+    )
 
 
 def command_status(args, data, capabilities, slices, tasks, gates) -> None:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
-    print("Capability completion:", dict(sorted(Counter(c.get("completion", {}).get("status") for c in capabilities.values()).items())))
-    print("Campaign states:", dict(sorted(Counter((c.get("campaign") or {}).get("status", "NONE") for c in capabilities.values()).items())))
-    print("Slice completion:", dict(sorted(Counter(s.get("completion", {}).get("status") for s in slices.values()).items())))
+    print(
+        "Capability completion:",
+        dict(sorted(Counter(c.get("completion", {}).get("status") for c in capabilities.values()).items())),
+    )
+    print(
+        "Campaign states:",
+        dict(sorted(Counter((c.get("campaign") or {}).get("status", "NONE") for c in capabilities.values()).items())),
+    )
+    print(
+        "Slice completion:",
+        dict(sorted(Counter(s.get("completion", {}).get("status") for s in slices.values()).items())),
+    )
     print("Task states:", dict(sorted(Counter(t["status"] for t in tasks.values()).items())))
     print("Gate states:", dict(sorted(Counter(g["status"] for g in gates.values()).items())))
     active = active_capabilities(capabilities)
@@ -369,8 +472,15 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
         return
     capability = candidates[0]
     view = {k: capability[k] for k in ["id", "title", "objective", "exit_criteria"]}
-    view["current_slice"] = current_slice(capability)["id"]
-    view["start_command"] = f"python tools/taskctl.py capability start {capability['id']} --agent <agent> --branch capability/{capability['id'].lower()}-<slug> --base-sha <sha> --profile {args.profile} --platform {args.platform}"
+    selected_slice = current_slice(capability)
+    if selected_slice is None:
+        raise SystemExit(f"Capability {capability['id']} has no current slice")
+    view["current_slice"] = selected_slice["id"]
+    view["start_command"] = (
+        f"python tools/taskctl.py capability start {capability['id']} --agent <agent> "
+        f"--branch capability/{capability['id'].lower()}-<slug> --base-sha <sha> "
+        f"--profile {args.profile} --platform {args.platform}"
+    )
     print_yaml(view)
 
 
@@ -380,39 +490,70 @@ def command_next(args, data, capabilities, slices, tasks, gates) -> None:
         command_next_capability(args, data, capabilities, slices, tasks, gates)
         return
     campaign = active[0]
-    candidates = ready_tasks_in_campaign(data, campaign, capabilities, slices, tasks, gates, args.profile, args.platform)
+    candidates = ready_tasks_in_campaign(
+        data, campaign, capabilities, slices, tasks, gates, args.profile, args.platform
+    )
     if not candidates:
         slice_ = current_slice(campaign)
-        print(f"No READY task in active capability {campaign['id']} current slice {slice_['id'] if slice_ else 'none'}. Complete review, resolve blocker, or submit/approve the slice.")
+        print(
+            f"No READY task in active capability {campaign['id']} current slice "
+            f"{slice_['id'] if slice_ else 'none'}. Complete review, resolve blocker, "
+            "or submit/approve the slice."
+        )
         return
     print_yaml(candidates[0])
-
-
 
 
 def command_capability_prepare(args, data, capabilities, slices, tasks, gates) -> None:
     get(capabilities, args.capability, "capability")
     repo = Path(args.file).resolve().parent.parent
-    result = subprocess.run([sys.executable, str(repo / "tools" / "planctl.py"), "--repo", str(repo), "prepare", args.capability], check=False)
+    result = subprocess.run(
+        [sys.executable, str(repo / "tools" / "planctl.py"), "--repo", str(repo), "prepare", args.capability],
+        check=False,
+    )
     if result.returncode != 0:
         raise SystemExit(result.returncode)
+
 
 def command_capability_status(args, data, capabilities, slices, tasks, gates) -> None:
     if args.capability:
         capability = get(capabilities, args.capability, "capability")
-        summary = {k: capability.get(k) for k in ["id", "title", "objective", "exit_criteria", "execution_mode", "campaign", "completion"]}
-        summary["slices"] = [{"id": s["id"], "title": s["title"], "status": s["status"], "completion": s["completion"], "task_states": dict(Counter(t["status"] for t in s["tasks"]))} for s in capability["slices"]]
+        summary = {
+            k: capability.get(k)
+            for k in ["id", "title", "objective", "exit_criteria", "execution_mode", "campaign", "completion"]
+        }
+        summary["slices"] = [
+            {
+                "id": s["id"],
+                "title": s["title"],
+                "status": s["status"],
+                "completion": s["completion"],
+                "task_states": dict(Counter(t["status"] for t in s["tasks"])),
+            }
+            for s in capability["slices"]
+        ]
         print_yaml(summary)
     else:
-        for c in sorted(capabilities.values(), key=lambda x:x["id"]):
-            print(f"{c['id']}\tcampaign={(c.get('campaign') or {}).get('status','NONE')}\tcompletion={c.get('completion',{}).get('status')}\t{c['title']}")
+        for c in sorted(capabilities.values(), key=lambda x: x["id"]):
+            print(
+                f"{c['id']}\tcampaign={(c.get('campaign') or {}).get('status', 'NONE')}\t"
+                f"completion={c.get('completion', {}).get('status')}\t{c['title']}"
+            )
 
 
 def require_capability_planning_ready(args, capability_id: str) -> None:
-    if capability_id == 'CAP-00':
+    if capability_id == "CAP-00":
         return
     repo = Path(args.file).resolve().parents[1]
-    command = [sys.executable, str(repo / 'tools' / 'planctl.py'), '--repo', str(repo), 'ready', capability_id, '--require-approved']
+    command = [
+        sys.executable,
+        str(repo / "tools" / "planctl.py"),
+        "--repo",
+        str(repo),
+        "ready",
+        capability_id,
+        "--require-approved",
+    ]
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0:
         streams = []
@@ -420,7 +561,8 @@ def require_capability_planning_ready(args, capability_id: str) -> None:
             if not raw:
                 continue
             cleaned = "\n".join(
-                line for line in raw.splitlines()
+                line
+                for line in raw.splitlines()
                 if "TERM environment variable not set" not in line and line.strip() != "\x1b[3J"
             ).strip()
             if cleaned:
@@ -438,9 +580,6 @@ def require_capability_planning_ready(args, capability_id: str) -> None:
         raise SystemExit(message)
 
 
-
-
-
 def command_capability_start(args, data, capabilities, slices, tasks, gates) -> None:
     require_capability_planning_ready(args, args.capability)
     if active_capabilities(capabilities):
@@ -448,9 +587,23 @@ def command_capability_start(args, data, capabilities, slices, tasks, gates) -> 
     capability = get(capabilities, args.capability, "capability")
     candidates = eligible_capabilities(data, capabilities, slices, tasks, gates, args.profile, args.platform)
     if capability not in candidates:
-        raise SystemExit("Capability is not eligible for the requested profile/platform or its current slice is not ready")
+        raise SystemExit(
+            "Capability is not eligible for the requested profile/platform or its current slice is not ready"
+        )
     now = utc_now()
-    capability["campaign"] = {"status":"ACTIVE","owner":args.agent,"branch":args.branch,"worktree":args.worktree,"base_sha":args.base_sha,"profile":args.profile,"platform":args.platform,"started_at":now,"updated_at":now,"pause_reason":None,"lease":new_lease(args.agent,args.lease_hours)}
+    capability["campaign"] = {
+        "status": "ACTIVE",
+        "owner": args.agent,
+        "branch": args.branch,
+        "worktree": args.worktree,
+        "base_sha": args.base_sha,
+        "profile": args.profile,
+        "platform": args.platform,
+        "started_at": now,
+        "updated_at": now,
+        "pause_reason": None,
+        "lease": new_lease(args.agent, args.lease_hours),
+    }
     capability["completion"]["status"] = "IN_PROGRESS"
     save_atomic(args.file, data)
     print(f"Started capability campaign {capability['id']}")
@@ -463,7 +616,9 @@ def command_capability_pause(args, data, capabilities, slices, tasks, gates) -> 
         raise SystemExit("Only an ACTIVE capability may be paused")
     if any(t["status"] in {"IN_PROGRESS", "REVIEW"} for s in capability["slices"] for t in s["tasks"]):
         raise SystemExit("Resolve or explicitly block active/review tasks before pausing the capability")
-    campaign.update(status="PAUSED", pause_reason=args.reason, pause_category=args.category, updated_at=utc_now(), lease=None)
+    campaign.update(
+        status="PAUSED", pause_reason=args.reason, pause_category=args.category, updated_at=utc_now(), lease=None
+    )
     capability["completion"]["status"] = "PAUSED"
     save_atomic(args.file, data)
 
@@ -476,10 +631,21 @@ def command_capability_resume(args, data, capabilities, slices, tasks, gates) ->
     campaign = capability.get("campaign") or {}
     if campaign.get("status") != "PAUSED":
         raise SystemExit("Only a PAUSED capability may be resumed")
-    now=utc_now()
-    campaign.update(status="ACTIVE", owner=args.agent, branch=args.branch, worktree=args.worktree, base_sha=args.base_sha, profile=args.profile, platform=args.platform, updated_at=now, pause_reason=None, lease=new_lease(args.agent,args.lease_hours))
-    capability["completion"]["status"]="IN_PROGRESS"
-    save_atomic(args.file,data)
+    now = utc_now()
+    campaign.update(
+        status="ACTIVE",
+        owner=args.agent,
+        branch=args.branch,
+        worktree=args.worktree,
+        base_sha=args.base_sha,
+        profile=args.profile,
+        platform=args.platform,
+        updated_at=now,
+        pause_reason=None,
+        lease=new_lease(args.agent, args.lease_hours),
+    )
+    capability["completion"]["status"] = "IN_PROGRESS"
+    save_atomic(args.file, data)
 
 
 def command_capability_submit(args, data, capabilities, slices, tasks, gates) -> None:
@@ -490,42 +656,59 @@ def command_capability_submit(args, data, capabilities, slices, tasks, gates) ->
         raise SystemExit("All slices must be independently approved before capability submission")
     if not args.evidence:
         raise SystemExit("Capability end-to-end evidence is required")
-    capability["campaign"]["status"]="REVIEW"
-    capability["campaign"]["updated_at"]=utc_now()
-    capability["campaign"]["lease"]=None
+    capability["campaign"]["status"] = "REVIEW"
+    capability["campaign"]["updated_at"] = utc_now()
+    capability["campaign"]["lease"] = None
     capability["completion"].update(status="REVIEW", evidence=args.evidence, notes=args.note)
-    save_atomic(args.file,data)
+    save_atomic(args.file, data)
 
 
 def command_capability_review(args, data, capabilities, slices, tasks, gates) -> None:
-    capability=get(capabilities,args.capability,"capability")
-    if (capability.get("campaign") or {}).get("status") != "REVIEW" or capability.get("completion",{}).get("status") != "REVIEW":
+    capability = get(capabilities, args.capability, "capability")
+    if (capability.get("campaign") or {}).get("status") != "REVIEW" or capability.get("completion", {}).get(
+        "status"
+    ) != "REVIEW":
         raise SystemExit("Capability must be submitted for REVIEW")
-    now=utc_now()
-    if args.result=="approved":
-        capability["campaign"]["status"]="COMPLETE"
-        capability["completion"].update(status="APPROVED",reviewer=args.reviewer,reviewed_at=now,notes=args.note)
-    elif args.result=="changes-requested":
-        capability["campaign"]["status"]="PAUSED"
-        capability["campaign"]["pause_reason"]="Capability review changes requested"
-        capability["completion"].update(status="CHANGES_REQUESTED",reviewer=args.reviewer,reviewed_at=now,notes=args.note)
+    now = utc_now()
+    if args.result == "approved":
+        capability["campaign"]["status"] = "COMPLETE"
+        capability["completion"].update(status="APPROVED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
+    elif args.result == "changes-requested":
+        capability["campaign"]["status"] = "PAUSED"
+        capability["campaign"]["pause_reason"] = "Capability review changes requested"
+        capability["completion"].update(
+            status="CHANGES_REQUESTED", reviewer=args.reviewer, reviewed_at=now, notes=args.note
+        )
     else:
-        capability["campaign"]["status"]="PAUSED"
-        capability["campaign"]["pause_reason"]=args.note or "Capability review blocked"
-        capability["completion"].update(status="BLOCKED",reviewer=args.reviewer,reviewed_at=now,notes=args.note)
-    save_atomic(args.file,data)
+        capability["campaign"]["status"] = "PAUSED"
+        capability["campaign"]["pause_reason"] = args.note or "Capability review blocked"
+        capability["completion"].update(status="BLOCKED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
+    save_atomic(args.file, data)
 
 
 def command_slice_status(args, data, capabilities, slices, tasks, gates) -> None:
-    slice_=get(slices,args.slice,"slice")
-    view={k:slice_.get(k) for k in ["id","title","outcome","wave","priority","deployment_profiles","platform_targets","status","completion"]}
-    view["tasks"]=[{"id":t["id"],"title":t["title"],"status":t["status"]} for t in slice_["tasks"]]
+    slice_ = get(slices, args.slice, "slice")
+    view = {
+        k: slice_.get(k)
+        for k in [
+            "id",
+            "title",
+            "outcome",
+            "wave",
+            "priority",
+            "deployment_profiles",
+            "platform_targets",
+            "status",
+            "completion",
+        ]
+    }
+    view["tasks"] = [{"id": t["id"], "title": t["title"], "status": t["status"]} for t in slice_["tasks"]]
     print_yaml(view)
 
 
 def command_slice_submit(args, data, capabilities, slices, tasks, gates) -> None:
-    slice_=get(slices,args.slice,"slice")
-    capability=capabilities[slice_["id"].split('.')[0]]
+    slice_ = get(slices, args.slice, "slice")
+    capability = capabilities[slice_["id"].split(".")[0]]
     if (capability.get("campaign") or {}).get("status") != "ACTIVE":
         raise SystemExit("The parent capability campaign must be ACTIVE")
     if current_slice(capability) is not slice_:
@@ -534,174 +717,379 @@ def command_slice_submit(args, data, capabilities, slices, tasks, gates) -> None
         raise SystemExit("Every task in the slice must be DONE")
     if not args.evidence:
         raise SystemExit("Slice integration/end-to-end evidence is required")
-    slice_["status"]="REVIEW"
-    slice_["completion"].update(status="REVIEW",evidence=args.evidence,notes=args.note)
-    save_atomic(args.file,data)
+    slice_["status"] = "REVIEW"
+    slice_["completion"].update(status="REVIEW", evidence=args.evidence, notes=args.note)
+    save_atomic(args.file, data)
 
 
 def command_slice_review(args, data, capabilities, slices, tasks, gates) -> None:
-    slice_=get(slices,args.slice,"slice")
-    if slice_.get("completion",{}).get("status") != "REVIEW":
+    slice_ = get(slices, args.slice, "slice")
+    if slice_.get("completion", {}).get("status") != "REVIEW":
         raise SystemExit("Slice must be submitted for REVIEW")
-    now=utc_now()
-    if args.result=="approved":
-        slice_["completion"].update(status="APPROVED",reviewer=args.reviewer,reviewed_at=now,notes=args.note)
-        slice_["status"]="DONE"
-    elif args.result=="changes-requested":
-        slice_["completion"].update(status="CHANGES_REQUESTED",reviewer=args.reviewer,reviewed_at=now,notes=args.note)
-        slice_["status"]="IN_PROGRESS"
+    now = utc_now()
+    if args.result == "approved":
+        slice_["completion"].update(status="APPROVED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
+        slice_["status"] = "DONE"
+    elif args.result == "changes-requested":
+        slice_["completion"].update(
+            status="CHANGES_REQUESTED", reviewer=args.reviewer, reviewed_at=now, notes=args.note
+        )
+        slice_["status"] = "IN_PROGRESS"
     else:
-        slice_["completion"].update(status="BLOCKED",reviewer=args.reviewer,reviewed_at=now,notes=args.note)
-        slice_["status"]="BLOCKED"
-    refresh_derived_states(data,capabilities,slices,tasks,gates)
-    save_atomic(args.file,data)
+        slice_["completion"].update(status="BLOCKED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
+        slice_["status"] = "BLOCKED"
+    refresh_derived_states(data, capabilities, slices, tasks, gates)
+    save_atomic(args.file, data)
 
 
 def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
-    task=get(tasks,args.task,"task")
-    refresh_derived_states(data,capabilities,slices,tasks,gates)
+    task = get(tasks, args.task, "task")
+    refresh_derived_states(data, capabilities, slices, tasks, gates)
     if task["status"] != "READY":
         raise SystemExit(f"Task is {task['status']}, not READY")
-    if not profile_matches(task,args.profile) or not platform_matches(task,args.platform):
+    if not profile_matches(task, args.profile) or not platform_matches(task, args.platform):
         raise SystemExit("Task is not eligible for the requested profile/platform")
-    active=active_capabilities(capabilities)
+    active = active_capabilities(capabilities)
     if not args.override_campaign:
         if not active:
             raise SystemExit(f"No ACTIVE capability campaign. Start {task['capability_id']} before claiming tasks.")
         if active[0]["id"] != task["capability_id"]:
             raise SystemExit(f"Active campaign is {active[0]['id']}; task belongs to {task['capability_id']}")
-        if current_slice(active[0])["id"] != task["slice_id"]:
+        selected_slice = current_slice(active[0])
+        if selected_slice is None or selected_slice["id"] != task["slice_id"]:
             raise SystemExit("Task is outside the active campaign's current slice")
-    now=utc_now()
-    task.update(status="IN_PROGRESS",owner=args.agent,branch=args.branch,base_sha=args.base_sha,worktree=args.worktree,started_at=task.get("started_at") or now,updated_at=now,blocker=None,verification_state=None,lease=new_lease(args.agent,args.lease_hours))
-    save_atomic(args.file,data)
+    now = utc_now()
+    task.update(
+        status="IN_PROGRESS",
+        owner=args.agent,
+        branch=args.branch,
+        base_sha=args.base_sha,
+        worktree=args.worktree,
+        started_at=task.get("started_at") or now,
+        updated_at=now,
+        blocker=None,
+        verification_state=None,
+        lease=new_lease(args.agent, args.lease_hours),
+    )
+    save_atomic(args.file, data)
     print(f"Claimed {task['id']} within {task['capability_id']} / {task['slice_id']}")
 
 
 def command_block(args, data, capabilities, slices, tasks, gates) -> None:
-    task=get(tasks,args.task,"task")
-    if task["status"] not in {"READY","IN_PROGRESS","REVIEW"}:
+    task = get(tasks, args.task, "task")
+    if task["status"] not in {"READY", "IN_PROGRESS", "REVIEW"}:
         raise SystemExit(f"Task cannot be blocked from {task['status']}")
-    task["status"]="BLOCKED"; task["blocker"]={"reason":args.reason,"next_action":args.next_action,"recorded_at":utc_now(),"owner":task.get("owner")}; task["updated_at"]=utc_now()
-    save_atomic(args.file,data)
+    task["status"] = "BLOCKED"
+    task["blocker"] = {
+        "reason": args.reason,
+        "next_action": args.next_action,
+        "recorded_at": utc_now(),
+        "owner": task.get("owner"),
+    }
+    task["updated_at"] = utc_now()
+    save_atomic(args.file, data)
 
 
 def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
-    task=get(tasks,args.task,"task")
-    if task["status"] != "IN_PROGRESS": raise SystemExit("Evidence may be attached only while IN_PROGRESS")
-    manifest=load_evidence(args.from_file); errors=validate_task_evidence(task,manifest)
-    if errors: raise SystemExit("Invalid evidence:\n- " + "\n- ".join(errors))
-    task.setdefault("evidence",[]).append({"type":"criterion-manifest","path":args.from_file,"sha256":hashlib.sha256(Path(args.from_file).read_bytes()).hexdigest(),"commit":manifest["commit"],"recorded_at":utc_now()})
-    task["verification_state"]="passed"; task["updated_at"]=utc_now(); save_atomic(args.file,data)
+    task = get(tasks, args.task, "task")
+    if task["status"] != "IN_PROGRESS":
+        raise SystemExit("Evidence may be attached only while IN_PROGRESS")
+    manifest = load_evidence(args.from_file)
+    errors = validate_task_evidence(task, manifest)
+    if errors:
+        raise SystemExit("Invalid evidence:\n- " + "\n- ".join(errors))
+    task.setdefault("evidence", []).append(
+        {
+            "type": "criterion-manifest",
+            "path": args.from_file,
+            "sha256": hashlib.sha256(Path(args.from_file).read_bytes()).hexdigest(),
+            "commit": manifest["commit"],
+            "recorded_at": utc_now(),
+        }
+    )
+    task["verification_state"] = "passed"
+    task["updated_at"] = utc_now()
+    save_atomic(args.file, data)
 
 
 def command_submit(args, data, capabilities, slices, tasks, gates) -> None:
-    task=get(tasks,args.task,"task")
-    if task["status"] != "IN_PROGRESS": raise SystemExit("Only IN_PROGRESS tasks may be submitted")
-    if task.get("verification_state") != "passed" or not task.get("evidence"): raise SystemExit("Verification must pass and evidence must be attached before REVIEW")
-    task["status"]="REVIEW"; task["updated_at"]=utc_now(); task["implementation_notes"]=((task.get("implementation_notes") or "")+"\n"+args.note).strip(); save_atomic(args.file,data)
+    task = get(tasks, args.task, "task")
+    if task["status"] != "IN_PROGRESS":
+        raise SystemExit("Only IN_PROGRESS tasks may be submitted")
+    if task.get("verification_state") != "passed" or not task.get("evidence"):
+        raise SystemExit("Verification must pass and evidence must be attached before REVIEW")
+    task["status"] = "REVIEW"
+    task["updated_at"] = utc_now()
+    task["implementation_notes"] = ((task.get("implementation_notes") or "") + "\n" + args.note).strip()
+    save_atomic(args.file, data)
 
 
 def command_review(args, data, capabilities, slices, tasks, gates) -> None:
-    task=get(tasks,args.task,"task")
-    if task["status"] != "REVIEW": raise SystemExit("Only REVIEW tasks may be reviewed")
-    now=utc_now(); task["review"]={"reviewer":args.reviewer,"result":args.result,"reviewed_at":now,"notes":args.note}
-    if args.result=="approved": task["status"]="DONE"; task["completed_at"]=now; task["lease"]=None
-    elif args.result=="changes-requested": task["status"]="IN_PROGRESS"; task["verification_state"]=None
-    else: task["status"]="BLOCKED"; task["blocker"]={"reason":args.note or "Reviewer blocked the task","next_action":"Resolve review blocker","recorded_at":now,"owner":task.get("owner")}
-    task["updated_at"]=now; refresh_derived_states(data,capabilities,slices,tasks,gates); save_atomic(args.file,data)
+    task = get(tasks, args.task, "task")
+    if task["status"] != "REVIEW":
+        raise SystemExit("Only REVIEW tasks may be reviewed")
+    now = utc_now()
+    task["review"] = {"reviewer": args.reviewer, "result": args.result, "reviewed_at": now, "notes": args.note}
+    if args.result == "approved":
+        task["status"] = "DONE"
+        task["completed_at"] = now
+        task["lease"] = None
+    elif args.result == "changes-requested":
+        task["status"] = "IN_PROGRESS"
+        task["verification_state"] = None
+    else:
+        task["status"] = "BLOCKED"
+        task["blocker"] = {
+            "reason": args.note or "Reviewer blocked the task",
+            "next_action": "Resolve review blocker",
+            "recorded_at": now,
+            "owner": task.get("owner"),
+        }
+    task["updated_at"] = now
+    refresh_derived_states(data, capabilities, slices, tasks, gates)
+    save_atomic(args.file, data)
 
 
 def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
-    task=get(tasks,args.task,"task")
-    if task["status"] not in {"BLOCKED","REVIEW","DONE","CANCELLED"}: raise SystemExit(f"Task cannot be reopened from {task['status']}")
-    task.update(status="IN_PROGRESS",updated_at=utc_now(),completed_at=None,verification_state=None,blocker=None,cancellation=None,review={"reviewer":None,"result":None,"reviewed_at":None,"notes":f"Reopened: {args.reason}"})
-    if not lease_is_active(task): task["lease"]=new_lease(args.agent,args.lease_hours)
-    save_atomic(args.file,data)
+    task = get(tasks, args.task, "task")
+    if task["status"] not in {"BLOCKED", "REVIEW", "DONE", "CANCELLED"}:
+        raise SystemExit(f"Task cannot be reopened from {task['status']}")
+    task.update(
+        status="IN_PROGRESS",
+        updated_at=utc_now(),
+        completed_at=None,
+        verification_state=None,
+        blocker=None,
+        cancellation=None,
+        review={"reviewer": None, "result": None, "reviewed_at": None, "notes": f"Reopened: {args.reason}"},
+    )
+    if not lease_is_active(task):
+        task["lease"] = new_lease(args.agent, args.lease_hours)
+    save_atomic(args.file, data)
 
 
 def command_cancel(args, data, capabilities, slices, tasks, gates) -> None:
-    task=get(tasks,args.task,"task")
-    if task["status"]=="DONE": raise SystemExit("DONE tasks are not cancelled; create a superseding task or ADR")
-    task["status"]="CANCELLED"; task["cancellation"]={"reason":args.reason,"replacement":args.replacement,"cancelled_by":args.actor,"cancelled_at":utc_now()}; task["lease"]=None; task["updated_at"]=utc_now(); save_atomic(args.file,data)
+    task = get(tasks, args.task, "task")
+    if task["status"] == "DONE":
+        raise SystemExit("DONE tasks are not cancelled; create a superseding task or ADR")
+    task["status"] = "CANCELLED"
+    task["cancellation"] = {
+        "reason": args.reason,
+        "replacement": args.replacement,
+        "cancelled_by": args.actor,
+        "cancelled_at": utc_now(),
+    }
+    task["lease"] = None
+    task["updated_at"] = utc_now()
+    save_atomic(args.file, data)
 
 
 def command_gate_status(args, data, capabilities, slices, tasks, gates) -> None:
-    if args.gate: print_yaml(get(gates,args.gate,"gate"))
+    if args.gate:
+        print_yaml(get(gates, args.gate, "gate"))
     else:
-        for gate in data["release_gates"]: print(f"{gate['id']}\t{gate['status']}\tunlocks={','.join(gate.get('unlocks_waves',[]))}\t{gate['name']}")
+        for gate in data["release_gates"]:
+            print(f"{gate['id']}\t{gate['status']}\tunlocks={','.join(gate.get('unlocks_waves', []))}\t{gate['name']}")
 
 
 def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None:
-    gate=get(gates,args.gate,"gate")
-    if not args.evidence: raise SystemExit("At least one evidence reference is required")
-    gate["status"]="APPROVED"; gate["approval"]={"approved_by":args.approver,"approved_at":utc_now(),"evidence":args.evidence,"notes":args.note}
-    for wid in gate.get("unlocks_waves",[]):
+    gate = get(gates, args.gate, "gate")
+    if not args.evidence:
+        raise SystemExit("At least one evidence reference is required")
+    gate["status"] = "APPROVED"
+    gate["approval"] = {
+        "approved_by": args.approver,
+        "approved_at": utc_now(),
+        "evidence": args.evidence,
+        "notes": args.note,
+    }
+    for wid in gate.get("unlocks_waves", []):
         for task in tasks.values():
-            if task["wave"]==wid and task["status"]=="DEFERRED": task["status"]="NOT_STARTED"; task["updated_at"]=utc_now()
+            if task["wave"] == wid and task["status"] == "DEFERRED":
+                task["status"] = "NOT_STARTED"
+                task["updated_at"] = utc_now()
         for slice_ in slices.values():
-            if slice_["wave"]==wid and slice_["status"]=="DEFERRED": slice_["status"]="NOT_STARTED"
-    refresh_derived_states(data,capabilities,slices,tasks,gates); save_atomic(args.file,data)
+            if slice_["wave"] == wid and slice_["status"] == "DEFERRED":
+                slice_["status"] = "NOT_STARTED"
+    refresh_derived_states(data, capabilities, slices, tasks, gates)
+    save_atomic(args.file, data)
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p=argparse.ArgumentParser(description=__doc__); p.add_argument("--file",default="planning/backlog.yaml"); sub=p.add_subparsers(dest="command",required=True)
-    sub.add_parser("validate"); sub.add_parser("status")
-    n=sub.add_parser("next"); n.add_argument("--profile",choices=sorted(ACTIVE_PROFILES),default="LOC"); n.add_argument("--platform",choices=sorted(PLATFORMS),default="windows-x64")
-    nc=sub.add_parser("next-capability"); nc.add_argument("--profile",choices=sorted(ACTIVE_PROFILES),default="LOC"); nc.add_argument("--platform",choices=sorted(PLATFORMS),default="windows-x64")
-    sh=sub.add_parser("show"); sh.add_argument("task")
-    cap=sub.add_parser("capability"); cs=cap.add_subparsers(dest="cap_command",required=True)
-    cstat=cs.add_parser("status"); cstat.add_argument("capability",nargs="?")
-    cprep=cs.add_parser("prepare"); cprep.add_argument("capability")
-    cstart=cs.add_parser("start"); cstart.add_argument("capability"); cstart.add_argument("--agent",required=True); cstart.add_argument("--branch",required=True); cstart.add_argument("--base-sha",required=True); cstart.add_argument("--worktree"); cstart.add_argument("--profile",choices=sorted(ACTIVE_PROFILES),default="LOC"); cstart.add_argument("--platform",choices=sorted(PLATFORMS),default="windows-x64"); cstart.add_argument("--lease-hours",type=int,default=24)
-    cpause=cs.add_parser("pause"); cpause.add_argument("capability"); cpause.add_argument("--category",choices=["infeasible","external-dependency","hardware-unavailable","human-decision","approved-design-gate"],required=True); cpause.add_argument("--reason",required=True)
-    cresume=cs.add_parser("resume"); cresume.add_argument("capability"); cresume.add_argument("--agent",required=True); cresume.add_argument("--branch",required=True); cresume.add_argument("--base-sha",required=True); cresume.add_argument("--worktree"); cresume.add_argument("--profile",choices=sorted(ACTIVE_PROFILES),default="LOC"); cresume.add_argument("--platform",choices=sorted(PLATFORMS),default="windows-x64"); cresume.add_argument("--lease-hours",type=int,default=24)
-    csubmit=cs.add_parser("submit"); csubmit.add_argument("capability"); csubmit.add_argument("--evidence",action="append",required=True); csubmit.add_argument("--note",default="")
-    creview=cs.add_parser("review"); creview.add_argument("capability"); creview.add_argument("--reviewer",required=True); creview.add_argument("--result",choices=["approved","changes-requested","blocked"],required=True); creview.add_argument("--note",default="")
-    sl=sub.add_parser("slice"); ss=sl.add_subparsers(dest="slice_command",required=True)
-    sstat=ss.add_parser("status"); sstat.add_argument("slice")
-    ssubmit=ss.add_parser("submit"); ssubmit.add_argument("slice"); ssubmit.add_argument("--evidence",action="append",required=True); ssubmit.add_argument("--note",default="")
-    sreview=ss.add_parser("review"); sreview.add_argument("slice"); sreview.add_argument("--reviewer",required=True); sreview.add_argument("--result",choices=["approved","changes-requested","blocked"],required=True); sreview.add_argument("--note",default="")
-    claim=sub.add_parser("claim"); claim.add_argument("task"); claim.add_argument("--agent",required=True); claim.add_argument("--branch",required=True); claim.add_argument("--base-sha",required=True); claim.add_argument("--worktree"); claim.add_argument("--profile",choices=sorted(ACTIVE_PROFILES),default="LOC"); claim.add_argument("--platform",choices=sorted(PLATFORMS),default="windows-x64"); claim.add_argument("--lease-hours",type=int,default=8); claim.add_argument("--override-campaign",action="store_true")
-    block=sub.add_parser("block"); block.add_argument("task"); block.add_argument("--reason",required=True); block.add_argument("--next-action",required=True)
-    checks=sub.add_parser("checks"); checks.add_argument("task")
-    ev=sub.add_parser("evidence"); ev.add_argument("task"); ev.add_argument("--from",dest="from_file",required=True)
-    submit=sub.add_parser("submit"); submit.add_argument("task"); submit.add_argument("--note",default="")
-    rev=sub.add_parser("review"); rev.add_argument("task"); rev.add_argument("--reviewer",required=True); rev.add_argument("--result",choices=["approved","changes-requested","blocked"],required=True); rev.add_argument("--note",default="")
-    reopen=sub.add_parser("reopen"); reopen.add_argument("task"); reopen.add_argument("--reason",required=True); reopen.add_argument("--agent",required=True); reopen.add_argument("--lease-hours",type=int,default=8)
-    cancel=sub.add_parser("cancel"); cancel.add_argument("task"); cancel.add_argument("--reason",required=True); cancel.add_argument("--replacement"); cancel.add_argument("--actor",required=True)
-    gate=sub.add_parser("gate"); gs=gate.add_subparsers(dest="gate_command",required=True); gst=gs.add_parser("status"); gst.add_argument("gate",nargs="?"); ga=gs.add_parser("approve"); ga.add_argument("gate"); ga.add_argument("--approver",required=True); ga.add_argument("--evidence",action="append",required=True); ga.add_argument("--note",default="")
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--file", default="planning/backlog.yaml")
+    sub = p.add_subparsers(dest="command", required=True)
+    sub.add_parser("validate")
+    sub.add_parser("status")
+    n = sub.add_parser("next")
+    n.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    n.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    nc = sub.add_parser("next-capability")
+    nc.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    nc.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    sh = sub.add_parser("show")
+    sh.add_argument("task")
+    cap = sub.add_parser("capability")
+    cs = cap.add_subparsers(dest="cap_command", required=True)
+    cstat = cs.add_parser("status")
+    cstat.add_argument("capability", nargs="?")
+    cprep = cs.add_parser("prepare")
+    cprep.add_argument("capability")
+    cstart = cs.add_parser("start")
+    cstart.add_argument("capability")
+    cstart.add_argument("--agent", required=True)
+    cstart.add_argument("--branch", required=True)
+    cstart.add_argument("--base-sha", required=True)
+    cstart.add_argument("--worktree")
+    cstart.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    cstart.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    cstart.add_argument("--lease-hours", type=int, default=24)
+    cpause = cs.add_parser("pause")
+    cpause.add_argument("capability")
+    cpause.add_argument(
+        "--category",
+        choices=["infeasible", "external-dependency", "hardware-unavailable", "human-decision", "approved-design-gate"],
+        required=True,
+    )
+    cpause.add_argument("--reason", required=True)
+    cresume = cs.add_parser("resume")
+    cresume.add_argument("capability")
+    cresume.add_argument("--agent", required=True)
+    cresume.add_argument("--branch", required=True)
+    cresume.add_argument("--base-sha", required=True)
+    cresume.add_argument("--worktree")
+    cresume.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    cresume.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    cresume.add_argument("--lease-hours", type=int, default=24)
+    csubmit = cs.add_parser("submit")
+    csubmit.add_argument("capability")
+    csubmit.add_argument("--evidence", action="append", required=True)
+    csubmit.add_argument("--note", default="")
+    creview = cs.add_parser("review")
+    creview.add_argument("capability")
+    creview.add_argument("--reviewer", required=True)
+    creview.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
+    creview.add_argument("--note", default="")
+    sl = sub.add_parser("slice")
+    ss = sl.add_subparsers(dest="slice_command", required=True)
+    sstat = ss.add_parser("status")
+    sstat.add_argument("slice")
+    ssubmit = ss.add_parser("submit")
+    ssubmit.add_argument("slice")
+    ssubmit.add_argument("--evidence", action="append", required=True)
+    ssubmit.add_argument("--note", default="")
+    sreview = ss.add_parser("review")
+    sreview.add_argument("slice")
+    sreview.add_argument("--reviewer", required=True)
+    sreview.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
+    sreview.add_argument("--note", default="")
+    claim = sub.add_parser("claim")
+    claim.add_argument("task")
+    claim.add_argument("--agent", required=True)
+    claim.add_argument("--branch", required=True)
+    claim.add_argument("--base-sha", required=True)
+    claim.add_argument("--worktree")
+    claim.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    claim.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    claim.add_argument("--lease-hours", type=int, default=8)
+    claim.add_argument("--override-campaign", action="store_true")
+    block = sub.add_parser("block")
+    block.add_argument("task")
+    block.add_argument("--reason", required=True)
+    block.add_argument("--next-action", required=True)
+    checks = sub.add_parser("checks")
+    checks.add_argument("task")
+    ev = sub.add_parser("evidence")
+    ev.add_argument("task")
+    ev.add_argument("--from", dest="from_file", required=True)
+    submit = sub.add_parser("submit")
+    submit.add_argument("task")
+    submit.add_argument("--note", default="")
+    rev = sub.add_parser("review")
+    rev.add_argument("task")
+    rev.add_argument("--reviewer", required=True)
+    rev.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
+    rev.add_argument("--note", default="")
+    reopen = sub.add_parser("reopen")
+    reopen.add_argument("task")
+    reopen.add_argument("--reason", required=True)
+    reopen.add_argument("--agent", required=True)
+    reopen.add_argument("--lease-hours", type=int, default=8)
+    cancel = sub.add_parser("cancel")
+    cancel.add_argument("task")
+    cancel.add_argument("--reason", required=True)
+    cancel.add_argument("--replacement")
+    cancel.add_argument("--actor", required=True)
+    gate = sub.add_parser("gate")
+    gs = gate.add_subparsers(dest="gate_command", required=True)
+    gst = gs.add_parser("status")
+    gst.add_argument("gate", nargs="?")
+    ga = gs.add_parser("approve")
+    ga.add_argument("gate")
+    ga.add_argument("--approver", required=True)
+    ga.add_argument("--evidence", action="append", required=True)
+    ga.add_argument("--note", default="")
     return p
 
 
 def main() -> None:
-    parser=build_parser(); args=parser.parse_args(); data,capabilities,slices,tasks,gates=load(args.file)
-    if args.command=="validate": command_validate(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="status": command_status(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="next": command_next(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="next-capability": command_next_capability(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="show": print_yaml(get(tasks,args.task,"task"))
-    elif args.command=="capability" and args.cap_command=="prepare": command_capability_prepare(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="capability" and args.cap_command=="status": command_capability_status(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="capability" and args.cap_command=="start": command_capability_start(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="capability" and args.cap_command=="pause": command_capability_pause(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="capability" and args.cap_command=="resume": command_capability_resume(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="capability" and args.cap_command=="submit": command_capability_submit(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="capability" and args.cap_command=="review": command_capability_review(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="slice" and args.slice_command=="status": command_slice_status(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="slice" and args.slice_command=="submit": command_slice_submit(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="slice" and args.slice_command=="review": command_slice_review(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="claim": command_claim(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="block": command_block(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="checks":
-        for command in get(tasks,args.task,"task").get("verification_commands",[]): print(command)
-    elif args.command=="evidence": command_evidence(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="submit": command_submit(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="review": command_review(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="reopen": command_reopen(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="cancel": command_cancel(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="gate" and args.gate_command=="status": command_gate_status(args,data,capabilities,slices,tasks,gates)
-    elif args.command=="gate" and args.gate_command=="approve": command_gate_approve(args,data,capabilities,slices,tasks,gates)
-    else: parser.error("Unsupported command")
+    parser = build_parser()
+    args = parser.parse_args()
+    data, capabilities, slices, tasks, gates = load(args.file)
+    if args.command == "validate":
+        command_validate(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "status":
+        command_status(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "next":
+        command_next(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "next-capability":
+        command_next_capability(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "show":
+        print_yaml(get(tasks, args.task, "task"))
+    elif args.command == "capability" and args.cap_command == "prepare":
+        command_capability_prepare(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "capability" and args.cap_command == "status":
+        command_capability_status(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "capability" and args.cap_command == "start":
+        command_capability_start(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "capability" and args.cap_command == "pause":
+        command_capability_pause(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "capability" and args.cap_command == "resume":
+        command_capability_resume(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "capability" and args.cap_command == "submit":
+        command_capability_submit(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "capability" and args.cap_command == "review":
+        command_capability_review(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "slice" and args.slice_command == "status":
+        command_slice_status(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "slice" and args.slice_command == "submit":
+        command_slice_submit(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "slice" and args.slice_command == "review":
+        command_slice_review(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "claim":
+        command_claim(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "block":
+        command_block(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "checks":
+        for command in get(tasks, args.task, "task").get("verification_commands", []):
+            print(command)
+    elif args.command == "evidence":
+        command_evidence(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "submit":
+        command_submit(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "review":
+        command_review(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "reopen":
+        command_reopen(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "cancel":
+        command_cancel(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "gate" and args.gate_command == "status":
+        command_gate_status(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "gate" and args.gate_command == "approve":
+        command_gate_approve(args, data, capabilities, slices, tasks, gates)
+    else:
+        parser.error("Unsupported command")
 
-if __name__=="__main__": main()
+
+if __name__ == "__main__":
+    main()

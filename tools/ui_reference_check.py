@@ -7,12 +7,12 @@ requirements. It can also compare an implementation manifest emitted by the
 real desktop application against the approved routes, workflow profiles, and
 reference ID.
 """
+
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -104,10 +104,16 @@ def validate(reference: Path, implementation_manifest: Path | None = None) -> di
     if not isinstance(pages, list):
         errors.append("SITE_MANIFEST pages must be a list")
         pages = []
-    page_files = {p.get("file") for p in pages if isinstance(p, dict) and p.get("file")}
+    page_files: set[str] = {
+        file_name
+        for page in pages
+        if isinstance(page, dict) and isinstance(file_name := page.get("file"), str) and file_name
+    }
     expected_count = int(site.get("product_page_count") or 0)
     if expected_count != 32 or len(page_files) != 32:
-        errors.append(f"approved reference must contain 32 product pages; manifest={expected_count}, unique={len(page_files)}")
+        errors.append(
+            f"approved reference must contain 32 product pages; manifest={expected_count}, unique={len(page_files)}"
+        )
 
     for file_name in sorted(page_files):
         path = reference / file_name
@@ -123,7 +129,8 @@ def validate(reference: Path, implementation_manifest: Path | None = None) -> di
 
     wf_map = workflows.get("workflows") or {}
     if not isinstance(wf_map, dict) or len(wf_map) != 14:
-        errors.append(f"workflow catalog must define exactly fourteen profiles; found {len(wf_map) if isinstance(wf_map, dict) else 'invalid'}")
+        found = len(wf_map) if isinstance(wf_map, dict) else "invalid"
+        errors.append(f"workflow catalog must define exactly fourteen profiles; found {found}")
         wf_map = {}
     for key, profile in wf_map.items():
         steps = profile.get("steps") if isinstance(profile, dict) else None
@@ -228,7 +235,11 @@ def main() -> int:
     parser.add_argument("--reference", type=Path, default=Path("design/ui-reference"))
     parser.add_argument("--implementation-manifest", type=Path)
     parser.add_argument("--report", type=Path)
-    parser.add_argument("--write-hashes", action="store_true", help="Regenerate governed-file hashes for a proposed/approved reference revision.")
+    parser.add_argument(
+        "--write-hashes",
+        action="store_true",
+        help="Regenerate governed-file hashes for a proposed/approved reference revision.",
+    )
     args = parser.parse_args()
 
     reference = args.reference.resolve()

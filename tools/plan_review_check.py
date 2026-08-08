@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """Validate the generated static capability/slice planning review site."""
+
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import os
-import re
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
@@ -117,7 +116,9 @@ def main() -> int:
 
     manifest_caps = {entry["capability_id"]: entry for entry in manifest.get("capabilities", [])}
     if set(manifest_caps) != set(cap_plans):
-        errors.append(f"Manifest capability set differs from plans: manifest={sorted(manifest_caps)} plans={sorted(cap_plans)}")
+        errors.append(
+            f"Manifest capability set differs from plans: manifest={sorted(manifest_caps)} plans={sorted(cap_plans)}"
+        )
 
     manifest_slices: dict[str, dict[str, Any]] = {}
     for cap_entry in manifest.get("capabilities", []):
@@ -188,9 +189,13 @@ def main() -> int:
             if parsed.other_choice_count != decision_count:
                 errors.append(f"{rel}: expected {decision_count} Other choices, found {parsed.other_choice_count}")
             if parsed.other_input_count != decision_count:
-                errors.append(f"{rel}: expected {decision_count} Other-description inputs, found {parsed.other_input_count}")
+                errors.append(
+                    f"{rel}: expected {decision_count} Other-description inputs, found {parsed.other_input_count}"
+                )
             if parsed.rationale_count != decision_count:
-                errors.append(f"{rel}: expected {decision_count} detailed-rationale fields, found {parsed.rationale_count}")
+                errors.append(
+                    f"{rel}: expected {decision_count} detailed-rationale fields, found {parsed.rationale_count}"
+                )
         elif page.parent != site:
             sid = page.stem
             if sid not in slice_plans:
@@ -205,11 +210,10 @@ def main() -> int:
         if not required.exists():
             errors.append(f"Missing required review-site artifact: {required}")
 
-
     review_js = site / "assets/review.js"
     if review_js.exists():
         js_text = review_js.read_text(encoding="utf-8")
-        for marker in ('const otherSentinel = "__OTHER__"', 'schema_version: "1.1"', 'other_option'):
+        for marker in ('const otherSentinel = "__OTHER__"', 'schema_version: "1.1"', "other_option"):
             if marker not in js_text:
                 errors.append(f"assets/review.js: missing Other-feedback marker {marker}")
 
@@ -235,7 +239,10 @@ def main() -> int:
             print(f"ERROR: {error}", file=sys.stderr)
     for warning in warnings:
         print(f"WARNING: {warning}", file=sys.stderr)
-    print(f"Planning review site: {result['status']} - {len(cap_plans)} capabilities, {len(slice_plans)} slices, {len(html_pages)} HTML pages")
+    print(
+        f"Planning review site: {result['status']} - {len(cap_plans)} capabilities, "
+        f"{len(slice_plans)} slices, {len(html_pages)} HTML pages"
+    )
     return 1 if errors else 0
 
 

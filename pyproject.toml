@@ -23,6 +23,12 @@ target-version = "py314"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/foundation/test_repository_structure.py" = ["RUF001"]
+"tools/plan_review_site.py" = ["E501"]
+"tools/planctl.py" = ["E501"]
+"tools/slice_plan_check.py" = ["RUF001"]
+
 [tool.ruff.format]
 line-ending = "lf"
 

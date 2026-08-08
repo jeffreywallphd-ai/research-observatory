@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -17,6 +18,22 @@ class PythonQualityCheckTests(unittest.TestCase):
 
         self.assertIn("tools/quality_check.py", files)
         self.assertEqual(len(files), len(set(files)))
+
+    def test_unlisted_file_in_governed_root_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            tools = repo / "tools"
+            tools.mkdir()
+            (tools / "listed.py").write_text("pass\n", encoding="utf-8")
+            (tools / "unlisted.py").write_text("pass\n", encoding="utf-8")
+            (repo / "quality-scope.json").write_text(
+                '{"schemaVersion":"1.0","documentType":"python-quality-scope",'
+                '"governedRoots":["tools"],"pythonFiles":["tools/listed.py"]}\n',
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "governed Python files are unlisted: tools/unlisted.py"):
+                load_scope(repo)
 
     def test_expected_checks_report_success(self) -> None:
         seen: list[list[str]] = []
