@@ -45,7 +45,8 @@
         "uv==0.12.2",
         "uv sync --frozen --no-install-project",
         "tools/install_trivy.py",
-        "tools/security_check.py"
+        "tools/security_check.py",
+        "unittest discover -s tests/security"
       ]
     },
     "contracts": {

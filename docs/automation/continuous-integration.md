@@ -11,7 +11,7 @@ required commands, unique artifact names, and fourteen-day report retention.
 |---|---|---|
 | `foundation` | Repository, workflow, architecture, ADR, quality, packaging-input, unit, and backlog gates. | `ci-foundation.json` |
 | `quality` | Ruff formatting, Ruff linting, and mypy over the explicit governed Python scope. | `ci-quality.json` |
-| `security` | Pinned Trivy secret, misconfiguration, vulnerability, license, and exception-policy gate. | `ci-security.json` |
+| `security` | Pinned Trivy live scan plus secret, threshold, exception, sanitization, and installer boundary tests. | `ci-security.json` |
 | `contracts` | Foundation plus portable cross-process contract tests through the service profile. | `ci-contracts.json` |
 | `packaging-smoke` | Frozen Python, Node.js, and Rust dependencies plus locked packaging-source validation. | `ci-packaging-smoke.json` |
 

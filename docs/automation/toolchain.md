@@ -11,7 +11,7 @@ files repeat those values for ecosystem tooling and are checked for drift.
 | Rust | 1.96.1 | `rust-toolchain.toml` |
 | pnpm | 11.20.0 | `package.json` |
 | uv | 0.12.2 | `runtime-versions.json` |
-| Trivy | 0.73.0 | `security-toolchain.json` with per-platform archive SHA-256 |
+| Trivy | 0.73.0 | `security-toolchain.json` with per-platform archive and executable SHA-256 |
 
 The Python development group also pins Ruff 0.15.22, mypy 2.3.0, and
 types-PyYAML 6.0.12.20260518. `quality-scope.json` closes the Python quality
