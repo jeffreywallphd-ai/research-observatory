@@ -85,82 +85,62 @@ def document_schema_errors(value: Any, schema: Any, label: str) -> list[str]:
     return [f"{label}.{'.'.join(str(part) for part in error.path) or '<root>'}: {error.message}" for error in errors]
 
 
-def git_reference(repo: Path) -> str | None:
-    governed_paths = [
-        REGISTRY_PATH,
-        "evaluation/baselines",
-        "evaluation/approvals",
-        "evaluation/prompts",
-    ]
+def run_git(repo: Path, arguments: list[str]) -> subprocess.CompletedProcess[bytes] | None:
     try:
-        dirty = subprocess.run(
-            ["git", "status", "--porcelain", "--", *governed_paths],
-            cwd=repo,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if dirty.returncode != 0:
-            return None
-        reference = "HEAD" if dirty.stdout.strip() else "HEAD^"
-        exists = subprocess.run(
-            ["git", "rev-parse", "--verify", reference],
+        return subprocess.run(
+            ["git", *arguments],
             cwd=repo,
             capture_output=True,
             check=False,
         )
     except OSError:
         return None
-    return reference if exists.returncode == 0 else None
 
 
-def previous_registry_from_git(repo: Path) -> dict[str, Any] | None:
-    reference = git_reference(repo)
-    if reference is None:
-        return None
-    try:
-        previous = subprocess.run(
-            ["git", "show", f"{reference}:{REGISTRY_PATH}"],
-            cwd=repo,
-            capture_output=True,
-            check=False,
-        )
-    except OSError:
-        return None
-    if previous.returncode != 0:
-        return None
-    try:
-        value = json.loads(previous.stdout.decode("utf-8"))
-    except UnicodeError, json.JSONDecodeError:
-        return None
-    return value if isinstance(value, dict) else None
+def git_blob(repo: Path, revision: str, path: str) -> tuple[bytes | None, str | None]:
+    present = run_git(repo, ["ls-tree", "--name-only", revision, "--", path])
+    if present is None or present.returncode != 0:
+        return None, f"cannot inspect Git tree {revision} for {path}"
+    if not present.stdout.strip():
+        return None, None
+    blob = run_git(repo, ["show", f"{revision}:{path}"])
+    if blob is None or blob.returncode != 0:
+        return None, f"cannot read Git blob {revision}:{path}"
+    return blob.stdout, None
 
 
-def approval_immutability_errors(repo: Path) -> list[str]:
-    reference = git_reference(repo)
-    if reference is None:
-        return []
-    try:
-        changed = subprocess.run(
-            ["git", "diff", "--name-status", "--no-renames", reference, "--", "evaluation/approvals"],
-            cwd=repo,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-    except OSError:
-        return []
-    if changed.returncode != 0:
-        return ["cannot verify immutable baseline approval records against Git history"]
-    errors: list[str] = []
-    for line in changed.stdout.splitlines():
-        fields = line.split("\t", maxsplit=1)
-        if len(fields) != 2:
+def git_registry(repo: Path, revision: str) -> tuple[dict[str, Any] | None, str | None]:
+    payload, read_error = git_blob(repo, revision, REGISTRY_PATH)
+    if read_error or payload is None:
+        return None, read_error
+    value, parse_error = parse_json(payload, f"{revision}:{REGISTRY_PATH}")
+    if parse_error or not isinstance(value, dict):
+        return None, parse_error or f"{revision}:{REGISTRY_PATH} must be an object"
+    return value, None
+
+
+def registry_asset_specs(registry: dict[str, Any]) -> list[tuple[str, Any]]:
+    specifications: list[tuple[str, Any]] = []
+    for item in registry.get("benchmarks", []):
+        if not isinstance(item, dict):
             continue
-        status, path = fields
-        if path.endswith(".json") and status != "A":
-            errors.append(f"immutable baseline approval record was rewritten or removed: {path}")
-    return errors
+        for specification in [item.get("dataset"), item.get("expected"), *item.get("schemas", [])]:
+            if isinstance(specification, dict) and isinstance(specification.get("path"), str):
+                specifications.append((specification["path"], specification.get("sha256")))
+        prompt = item.get("prompt", {})
+        if isinstance(prompt, dict) and isinstance(prompt.get("path"), str):
+            specifications.append((prompt["path"], prompt.get("sha256")))
+        baseline = item.get("baseline", {})
+        if not isinstance(baseline, dict):
+            continue
+        for lineage in [*baseline.get("history", []), baseline]:
+            if not isinstance(lineage, dict):
+                continue
+            approval_path = lineage.get("approval", lineage.get("currentApproval"))
+            approval_hash = lineage.get("approvalSha256", lineage.get("currentApprovalSha256"))
+            if isinstance(approval_path, str):
+                specifications.append((approval_path, approval_hash))
+    return specifications
 
 
 def baseline_lineage_errors(current: dict[str, Any], previous: dict[str, Any] | None) -> list[str]:
@@ -230,6 +210,140 @@ def baseline_lineage_errors(current: dict[str, Any], previous: dict[str, Any] | 
             errors.append(f"{benchmark_id}: changed baseline must append the exact previous baseline to history")
         if not current_baseline.get("currentApproval"):
             errors.append(f"{benchmark_id}: changed baseline requires currentApproval")
+    return errors
+
+
+def approval_diff_errors(payload: bytes, context: str) -> list[str]:
+    errors: list[str] = []
+    try:
+        lines = payload.decode("utf-8").splitlines()
+    except UnicodeError:
+        return [f"cannot decode Git approval changes for {context}"]
+    for line in lines:
+        fields = line.split("\t", maxsplit=1)
+        if len(fields) != 2:
+            continue
+        status, path = fields
+        if path.endswith(".json") and status != "A":
+            errors.append(f"{context}: immutable baseline approval record was rewritten or removed: {path}")
+    return errors
+
+
+def historical_asset_errors(repo: Path, commit: str, registry: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for path, expected_hash in registry_asset_specs(registry):
+        payload, read_error = git_blob(repo, commit, path)
+        if read_error:
+            errors.append(read_error)
+        elif payload is None:
+            errors.append(f"{commit}: governed registry asset is missing: {path}")
+        elif not isinstance(expected_hash, str) or sha256(payload) != expected_hash:
+            errors.append(f"{commit}: governed registry asset SHA-256 mismatch: {path}")
+    return errors
+
+
+def git_history_errors(repo: Path, current_registry: dict[str, Any]) -> list[str]:
+    git_marker = repo / ".git"
+    inside = run_git(repo, ["rev-parse", "--is-inside-work-tree"])
+    if inside is None or inside.returncode != 0 or inside.stdout.strip() != b"true":
+        return ["cannot inspect governed Git history in this checkout"] if git_marker.exists() else []
+    head_result = run_git(repo, ["rev-parse", "--verify", "HEAD"])
+    if head_result is None or head_result.returncode != 0:
+        return ["cannot resolve HEAD while validating governed Git history"]
+    head = head_result.stdout.decode("ascii", errors="replace").strip()
+
+    errors: list[str] = []
+    registry_commits_result = run_git(repo, ["rev-list", "--reverse", "--topo-order", head, "--", REGISTRY_PATH])
+    if registry_commits_result is None or registry_commits_result.returncode != 0:
+        return ["cannot enumerate benchmark-registry Git history"]
+    historical_paths = {path for path, _ in registry_asset_specs(current_registry)}
+    for raw_commit in registry_commits_result.stdout.splitlines():
+        commit = raw_commit.decode("ascii", errors="replace")
+        historical_registry, registry_error = git_registry(repo, commit)
+        if registry_error:
+            errors.append(registry_error)
+        elif historical_registry is not None:
+            historical_paths.update(path for path, _ in registry_asset_specs(historical_registry))
+    if errors:
+        return errors
+
+    relevant_paths = ["evaluation", *sorted(historical_paths)]
+    commits_result = run_git(repo, ["rev-list", "--reverse", "--topo-order", head, "--", *relevant_paths])
+    if commits_result is None or commits_result.returncode != 0:
+        return ["cannot enumerate governed benchmark and approval history"]
+    for raw_commit in commits_result.stdout.splitlines():
+        commit = raw_commit.decode("ascii", errors="replace")
+        parents_result = run_git(repo, ["rev-list", "--parents", "-n", "1", commit])
+        if parents_result is None or parents_result.returncode != 0:
+            errors.append(f"cannot inspect parents of governed commit {commit}")
+            continue
+        parent_fields = parents_result.stdout.decode("ascii", errors="replace").split()
+        parent = parent_fields[1] if len(parent_fields) > 1 else None
+        current_at_commit, current_error = git_registry(repo, commit)
+        previous_at_parent: dict[str, Any] | None = None
+        previous_error: str | None = None
+        if parent:
+            previous_at_parent, previous_error = git_registry(repo, parent)
+        if current_error:
+            errors.append(current_error)
+        if previous_error:
+            errors.append(previous_error)
+        if previous_at_parent is not None and current_at_commit is None and current_error is None:
+            errors.append(f"{commit}: benchmark registry was removed from reachable history")
+        if current_at_commit is not None:
+            transition_errors = baseline_lineage_errors(
+                current_at_commit,
+                previous_at_parent if previous_at_parent is not None else {"benchmarks": []},
+            )
+            errors.extend(f"{commit}: {error}" for error in transition_errors)
+            errors.extend(historical_asset_errors(repo, commit, current_at_commit))
+
+        if parent:
+            approval_diff = run_git(
+                repo,
+                ["diff", "--name-status", "--no-renames", parent, commit, "--", "evaluation/approvals"],
+            )
+        else:
+            approval_diff = run_git(
+                repo,
+                [
+                    "diff-tree",
+                    "--root",
+                    "--no-commit-id",
+                    "--name-status",
+                    "-r",
+                    "--no-renames",
+                    commit,
+                    "--",
+                    "evaluation/approvals",
+                ],
+            )
+        if approval_diff is None or approval_diff.returncode != 0:
+            errors.append(f"cannot inspect approval changes in governed commit {commit}")
+        else:
+            errors.extend(approval_diff_errors(approval_diff.stdout, commit))
+
+    status_result = run_git(repo, ["status", "--porcelain", "--", *relevant_paths])
+    if status_result is None or status_result.returncode != 0:
+        errors.append("cannot inspect governed benchmark worktree state")
+    elif status_result.stdout.strip():
+        head_registry, head_registry_error = git_registry(repo, head)
+        if head_registry_error:
+            errors.append(head_registry_error)
+        else:
+            transition_errors = baseline_lineage_errors(
+                current_registry,
+                head_registry if head_registry is not None else {"benchmarks": []},
+            )
+            errors.extend(f"worktree: {error}" for error in transition_errors)
+        approval_diff = run_git(
+            repo,
+            ["diff", "--name-status", "--no-renames", head, "--", "evaluation/approvals"],
+        )
+        if approval_diff is None or approval_diff.returncode != 0:
+            errors.append("cannot inspect worktree approval changes")
+        else:
+            errors.extend(approval_diff_errors(approval_diff.stdout, "worktree"))
     return errors
 
 
@@ -370,6 +484,8 @@ def load_registry(repo: Path) -> tuple[dict[str, Any] | None, dict[str, bytes], 
         for index, entry in enumerate(history, start=1):
             if entry["version"] != index:
                 errors.append(f"{benchmark_id}: baseline history versions must be contiguous from 1")
+            if entry["expectedPath"] != canonical_baseline_path:
+                errors.append(f"{benchmark_id}: historical baseline paths must remain canonical")
         if version == 1 and (baseline["currentApproval"] is not None or baseline["currentApprovalSha256"] is not None):
             errors.append(f"{benchmark_id}: initial baseline must not claim a change approval or approval hash")
         if history and (history[0]["approval"] is not None or history[0]["approvalSha256"] is not None):
@@ -416,8 +532,7 @@ def load_registry(repo: Path) -> tuple[dict[str, Any] | None, dict[str, bytes], 
             errors.append(f"{benchmark_id}: contract benchmark requires exactly one schema")
         if item["kind"] == "golden-parsing" and item["schemas"]:
             errors.append(f"{benchmark_id}: golden parser does not consume a schema")
-    errors.extend(baseline_lineage_errors(registry, previous_registry_from_git(repo)))
-    errors.extend(approval_immutability_errors(repo))
+    errors.extend(git_history_errors(repo, registry))
     return registry, assets, errors
 
 

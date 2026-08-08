@@ -10,6 +10,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
@@ -17,8 +18,8 @@ sys.path.insert(0, str(REPO / "tools"))
 from benchmark_registry import (  # noqa: E402
     REGISTRY_PATH,
     approval_errors,
-    approval_immutability_errors,
     baseline_lineage_errors,
+    git_history_errors,
     load_registry,
     run_benchmarks,
     safe_output_path,
@@ -43,6 +44,74 @@ class BenchmarkRegistryTests(unittest.TestCase):
 
     def write_manifest(self, root: Path, manifest: dict[str, Any]) -> None:
         (root / REGISTRY_PATH).write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+    def initialize_git(self, root: Path) -> None:
+        for command in (
+            ["git", "init"],
+            ["git", "config", "user.email", "foundation@example.invalid"],
+            ["git", "config", "user.name", "Foundation Test"],
+            ["git", "config", "core.autocrlf", "false"],
+        ):
+            subprocess.run(command, cwd=root, capture_output=True, check=True)
+        self.commit_all(root, "initial benchmark registry")
+
+    def commit_all(self, root: Path, message: str) -> None:
+        subprocess.run(["git", "add", "-A"], cwd=root, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", message], cwd=root, capture_output=True, check=True)
+
+    def add_unrelated_followup(self, root: Path) -> None:
+        marker = root / "unrelated.txt"
+        marker.write_text(marker.read_text(encoding="utf-8") + "x\n" if marker.exists() else "x\n", encoding="utf-8")
+        self.commit_all(root, "unrelated follow-up")
+
+    def establish_version_two(self, root: Path) -> tuple[dict[str, Any], str]:
+        manifest = self.load_manifest(root)
+        item = manifest["benchmarks"][0]
+        baseline_path = root / item["expected"]["path"]
+        value = json.loads(baseline_path.read_text(encoding="utf-8"))
+        value["baselineNote"] = "approved intentional change"
+        baseline_path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+        old_hash = item["expected"]["sha256"]
+        new_hash = hashlib.sha256(baseline_path.read_bytes()).hexdigest()
+        approval_path = "evaluation/approvals/golden-v2.json"
+        approval = {
+            "schemaVersion": "1.0",
+            "documentType": "baseline-approval",
+            "status": "approved",
+            "benchmarkId": item["id"],
+            "fromVersion": 1,
+            "toVersion": 2,
+            "oldSha256": old_hash,
+            "newSha256": new_hash,
+            "generatedBy": "codex",
+            "approvedBy": "human:benchmark-owner",
+            "approvedAt": "2026-08-08T16:00:00+00:00",
+            "rationale": "Reviewed semantic improvement.",
+        }
+        approval_payload = json.dumps(approval).encode()
+        (root / approval_path).write_bytes(approval_payload)
+        item["expected"]["sha256"] = new_hash
+        item["baseline"] = {
+            "version": 2,
+            "expectedPath": item["expected"]["path"],
+            "sha256": new_hash,
+            "history": [
+                {
+                    "version": 1,
+                    "expectedPath": item["expected"]["path"],
+                    "sha256": old_hash,
+                    "approval": None,
+                    "approvalSha256": None,
+                }
+            ],
+            "currentApproval": approval_path,
+            "currentApprovalSha256": hashlib.sha256(approval_payload).hexdigest(),
+        }
+        self.write_manifest(root, manifest)
+        self.commit_all(root, "approved version two baseline")
+        _, _, errors = load_registry(root)
+        self.assertEqual([], errors)
+        return manifest, approval_path
 
     def test_two_canonical_benchmarks_run_end_to_end_deterministically(self) -> None:
         first, first_actuals = run_benchmarks(REPO)
@@ -284,25 +353,113 @@ class BenchmarkRegistryTests(unittest.TestCase):
             approval_root.mkdir(parents=True)
             approval = approval_root / "immutable.json"
             approval.write_text('{"approvedBy":"human:owner"}\n', encoding="utf-8")
-            commands = [
-                ["git", "init"],
-                ["git", "config", "user.email", "foundation@example.invalid"],
-                ["git", "config", "user.name", "Foundation Test"],
-                ["git", "add", "."],
-                ["git", "commit", "-m", "initial approval"],
-            ]
-            for command in commands:
-                subprocess.run(command, cwd=root, capture_output=True, check=True)
+            self.initialize_git(root)
             approval.write_text('{"approvedBy":"human:rewriter"}\n', encoding="utf-8")
 
-            dirty_errors = approval_immutability_errors(root)
+            dirty_errors = git_history_errors(root, {})
 
-            subprocess.run(["git", "add", "."], cwd=root, capture_output=True, check=True)
-            subprocess.run(["git", "commit", "-m", "rewrite approval"], cwd=root, capture_output=True, check=True)
-            committed_errors = approval_immutability_errors(root)
+            self.commit_all(root, "rewrite approval")
+            self.add_unrelated_followup(root)
+            committed_errors = git_history_errors(root, {})
 
         self.assertTrue(any("rewritten or removed" in error for error in dirty_errors))
         self.assertTrue(any("rewritten or removed" in error for error in committed_errors))
+
+    def test_approval_rewrite_and_repin_cannot_be_laundered_by_followup_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            self.initialize_git(root)
+            manifest, approval_path = self.establish_version_two(root)
+            approval = json.loads((root / approval_path).read_text(encoding="utf-8"))
+            approval["rationale"] = "Rewritten after approval."
+            payload = json.dumps(approval).encode()
+            (root / approval_path).write_bytes(payload)
+            manifest["benchmarks"][0]["baseline"]["currentApprovalSha256"] = hashlib.sha256(payload).hexdigest()
+            self.write_manifest(root, manifest)
+            self.commit_all(root, "rewrite and repin approval")
+            self.add_unrelated_followup(root)
+
+            _, _, errors = load_registry(root)
+
+        self.assertTrue(any("immutable baseline approval record" in error for error in errors))
+        self.assertTrue(any("baseline lineage changed without expected-output change" in error for error in errors))
+
+    def test_approval_removal_cannot_be_laundered_by_followup_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            self.initialize_git(root)
+            _, approval_path = self.establish_version_two(root)
+            (root / approval_path).unlink()
+            self.commit_all(root, "remove approval")
+            self.add_unrelated_followup(root)
+
+            _, _, errors = load_registry(root)
+
+        self.assertTrue(any("immutable baseline approval record" in error for error in errors))
+
+    def test_baseline_history_rewrite_cannot_be_laundered_by_followup_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            self.initialize_git(root)
+            manifest, approval_path = self.establish_version_two(root)
+            item = manifest["benchmarks"][0]
+            forged_old_hash = "3" * 64
+            item["baseline"]["history"][0]["sha256"] = forged_old_hash
+            approval = json.loads((root / approval_path).read_text(encoding="utf-8"))
+            approval["oldSha256"] = forged_old_hash
+            forged_approval_path = "evaluation/approvals/forged-history-v2.json"
+            payload = json.dumps(approval).encode()
+            (root / forged_approval_path).write_bytes(payload)
+            item["baseline"]["currentApproval"] = forged_approval_path
+            item["baseline"]["currentApprovalSha256"] = hashlib.sha256(payload).hexdigest()
+            self.write_manifest(root, manifest)
+            self.commit_all(root, "rewrite baseline history")
+            self.add_unrelated_followup(root)
+
+            _, _, errors = load_registry(root)
+
+        self.assertTrue(any("baseline lineage changed without expected-output change" in error for error in errors))
+
+    def test_same_identity_prompt_mutation_cannot_be_laundered_by_followup_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            self.initialize_git(root)
+            manifest = self.load_manifest(root)
+            prompt_path = "evaluation/prompts/real-prompt-v1.txt"
+            first_payload = b"First governed prompt.\n"
+            (root / prompt_path).write_bytes(first_payload)
+            manifest["benchmarks"][0]["prompt"] = {
+                "id": "real-prompt",
+                "version": "v1",
+                "path": prompt_path,
+                "sha256": hashlib.sha256(first_payload).hexdigest(),
+            }
+            self.write_manifest(root, manifest)
+            self.commit_all(root, "add versioned prompt")
+            _, _, initial_errors = load_registry(root)
+            self.assertEqual([], initial_errors)
+
+            second_payload = b"Mutated without a new identity.\n"
+            (root / prompt_path).write_bytes(second_payload)
+            manifest["benchmarks"][0]["prompt"]["sha256"] = hashlib.sha256(second_payload).hexdigest()
+            self.write_manifest(root, manifest)
+            self.commit_all(root, "mutate prompt without version")
+            self.add_unrelated_followup(root)
+
+            _, _, errors = load_registry(root)
+
+        self.assertTrue(
+            any("prompt content or path changed without a new prompt identity" in error for error in errors)
+        )
+
+    def test_git_inspection_failure_is_closed_in_checkout(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / ".git").write_text("gitdir: unavailable\n", encoding="utf-8")
+            with patch("benchmark_registry.run_git", return_value=None):
+                errors = git_history_errors(root, {})
+
+        self.assertEqual(["cannot inspect governed Git history in this checkout"], errors)
 
     def test_paths_are_confined_and_reports_cannot_escape_scratch(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
