@@ -30,7 +30,7 @@ Version 1 is the independently reviewed initial baseline. Every subsequent versi
 5. identify a `human:` approver distinct from the generator; and
 6. record adjacent versions, exact old/new hashes, a timezone-aware approval time, and rationale.
 
-Expected outputs are nonredirected files at the canonical `evaluation/baselines/<benchmark-id>.json` path, which is also recorded in current and historical lineage. A prompt path or hash cannot change while retaining the same prompt ID and version. Git-aware validation compares a dirty tree with `HEAD`, or a clean commit with its parent, so changing an expected path or output without matching version/history/approval fails. It also denies any modification or removal of a tracked approval JSON. Static lineage and approval checks remain available in source exports without Git history.
+Expected outputs are nonredirected files at the canonical `evaluation/baselines/<benchmark-id>.json` path, which is also recorded in current and historical lineage. A prompt path or hash cannot change while retaining the same prompt ID and version. Git-aware validation replays every relevant registry and asset transition reachable from `HEAD`, verifies each historical asset against the hash recorded at that commit, and checks the dirty worktree against `HEAD`. Thus an invalid baseline, prompt, or approval transition cannot become trusted through a later unrelated commit. Git inspection fails closed inside a checkout; static lineage and approval checks remain available in source exports without Git metadata.
 
 Run locally:
 

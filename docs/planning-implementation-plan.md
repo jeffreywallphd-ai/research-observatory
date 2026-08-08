@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 566f5662286203ed8528edc2d8229969ee7a7a98f26f76f9c51816c457e40c98
+source_sha256: a7a95515d360a6c94746b9255f0d6faf362c0eb44d279359d84901c1bf6e6f0b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -751,6 +751,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-00.S05.T02.json` at `e207d56cb90ed4d02858737086ef1b3c6f06b299`
+- `artifacts/evidence/CAP-00.S05.T02.review-fix.json` at `c959426487205bc3a883593169f9ca3c5484cc9f`
 
 #### - [ ] CAP-00.S05.T03 - Implement version, changelog, and build-manifest generation
 

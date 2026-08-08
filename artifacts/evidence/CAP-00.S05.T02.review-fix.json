@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T02",
+  "commit": "c959426487205bc3a883593169f9ca3c5484cc9f",
+  "baseCommit": "e207d56cb90ed4d02858737086ef1b3c6f06b299",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T02.json",
+    "reason": "Independent review found permissive and mutable approval records, redirectable expected-output paths, and unhashed nontrivial prompts. This manifest records strict approval, baseline-path, prompt-identity, and Git-immutability corrections."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T02.json",
+    "docs/adr/ADR-0002-govern-the-evaluation-registry-as-a-support-only-repository-area.md",
+    "docs/automation/benchmark-registry.md",
+    "docs/planning-implementation-plan.md",
+    "evaluation/README.md",
+    "evaluation/approvals/README.md",
+    "evaluation/baseline-approval.schema.json",
+    "evaluation/prompts/README.md",
+    "evaluation/registry.json",
+    "evaluation/registry.schema.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_benchmark_registry.py",
+    "tools/benchmark_registry.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "The exact clean review-fix commit passed all 13 foundation commands and all 91 foundation tests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_benchmark_registry -v",
+      "exitCode": 0,
+      "result": "All 10 focused tests passed, including strict approval-schema mutations, dirty and committed approval rewrites, canonical baseline confinement, prompt hashing and identity, deterministic end-to-end execution, tampering, and scratch confinement."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\benchmark_registry.py --repo .",
+      "exitCode": 0,
+      "result": "Both canonical golden-parsing and contract-validation benchmarks passed at the exact clean commit."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\adr_check.py --repo . --base 0a598e57ed890fa408797d7aef3918c3022fd7da --head c959426",
+      "exitCode": 0,
+      "result": "ADR validation passed with two indexed records and 28 task-scope paths inspected."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The golden metadata normalizer and strict contract validator execute offline and pass exact JSON comparison without a baseline-update command.",
+        "Expected outputs are nonredirected files at canonical evaluation/baselines/<benchmark-id>.json paths recorded in current and historical lineage.",
+        "Version 2+ changes require an exact-schema human approval whose bytes are SHA-256-pinned; tracked approval rewrites and removals fail in both dirty and committed Git states."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Ten focused tests reproduce the review attacks: extra approval keys, Boolean versions, blank human identities, approval rewrites, expected-output redirects, and real prompts without governed paths or hashes.",
+        "The complete exact-commit foundation suite has 91 passing tests."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Registry and approval schemas, prompt and approval conventions, the automation guide, and proposed ADR-0002 describe the same canonical paths, hash pins, immutability, and version rules.",
+        "The correction remains confined to evaluation governance, its runner and focused tests, documentation, prior evidence, and synchronized task audit views."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce all three prior bypasses and confirm approval payload pinning and Git immutability against commit c959426487205bc3a883593169f9ca3c5484cc9f."
+  }
+}
