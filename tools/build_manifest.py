@@ -429,7 +429,13 @@ def git_source(repo: Path, runner: GitRunner = subprocess.run) -> tuple[dict[str
 
 
 def hashed_entries(
-    repo: Path, items: Any, kind: str, snapshots: dict[str, bytes] | None = None
+    repo: Path,
+    items: Any,
+    kind: str,
+    snapshots: dict[str, bytes] | None = None,
+    *,
+    clean: bool = False,
+    runner: GitRunner = subprocess.run,
 ) -> tuple[list[dict[str, Any]], list[str]]:
     if not isinstance(items, list):
         return [], [f"{kind} inputs must be an array"]
@@ -459,7 +465,14 @@ def hashed_entries(
         if snapshot_error:
             errors.append(f"{kind} {item_id}: {snapshot_error}")
             continue
-        entries.append({"id": item_id, "path": path, "sha256": sha256(payload)})
+        provenance_payload = payload
+        if clean:
+            committed, git_error = git_command(repo, ["cat-file", "blob", f"HEAD:{path}"], runner)
+            if git_error or committed is None:
+                errors.append(f"{kind} {item_id}: cannot read canonical HEAD blob: {git_error}")
+                continue
+            provenance_payload = committed
+        entries.append({"id": item_id, "path": path, "sha256": sha256(provenance_payload)})
     return entries, errors
 
 
@@ -476,11 +489,13 @@ def snapshot_integrity_errors(
             errors.append(f"governed input changed after capture: {path}")
             continue
         if not source["dirty"]:
-            committed, git_error = git_command(repo, ["show", f"HEAD:{path}"], runner)
-            if git_error or committed is None:
+            checkout_bytes, git_error = git_command(
+                repo, ["cat-file", "--filters", f"--path={path}", f"HEAD:{path}"], runner
+            )
+            if git_error or checkout_bytes is None:
                 errors.append(f"clean build input is not available at HEAD: {path}: {git_error}")
-            elif committed != captured:
-                errors.append(f"clean build input differs from committed HEAD bytes: {path}")
+            elif checkout_bytes != captured:
+                errors.append(f"clean build input differs from the committed HEAD checkout: {path}")
     return errors
 
 
@@ -500,7 +515,14 @@ def generate_build_manifest(repo: Path, runner: GitRunner = subprocess.run) -> t
     errors.extend(contract_errors)
     if errors or version_document is None or inputs is None:
         return None, errors
-    dependencies, dependency_errors = hashed_entries(repo, inputs["dependencyLocks"], "dependency lock", snapshots)
+    dependencies, dependency_errors = hashed_entries(
+        repo,
+        inputs["dependencyLocks"],
+        "dependency lock",
+        snapshots,
+        clean=not source["dirty"],
+        runner=runner,
+    )
     errors.extend(dependency_errors)
     schema_entries: list[dict[str, Any]] = []
     for path in inputs["schemaPaths"]:
@@ -512,11 +534,25 @@ def generate_build_manifest(repo: Path, runner: GitRunner = subprocess.run) -> t
         if not isinstance(schema_id, str) or not schema_id:
             errors.append(f"schema {path} requires a stable $id")
             continue
-        schema_entries.append({"id": schema_id, "path": path, "sha256": sha256(payload)})
+        provenance_payload = payload
+        if not source["dirty"]:
+            committed, git_error = git_command(repo, ["cat-file", "blob", f"HEAD:{path}"], runner)
+            if git_error or committed is None:
+                errors.append(f"schema {path}: cannot read canonical HEAD blob: {git_error}")
+                continue
+            provenance_payload = committed
+        schema_entries.append({"id": schema_id, "path": path, "sha256": sha256(provenance_payload)})
     schema_ids = [entry["id"] for entry in schema_entries]
     if len(schema_ids) != len(set(schema_ids)):
         errors.append("repository schemas must have unique stable $id values")
-    model_entries, model_errors = hashed_entries(repo, inputs["modelManifests"], "model manifest", snapshots)
+    model_entries, model_errors = hashed_entries(
+        repo,
+        inputs["modelManifests"],
+        "model manifest",
+        snapshots,
+        clean=not source["dirty"],
+        runner=runner,
+    )
     errors.extend(model_errors)
     if errors or source is None:
         return None, errors
