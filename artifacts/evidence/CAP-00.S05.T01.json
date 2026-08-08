@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T01",
+  "commit": "7a4301dbd9de0e05472fe537c92c44e02b7fdee6",
+  "baseCommit": "ff16722729ea25363f5be55b21dc244acf27f13a",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    ".gitattributes",
+    "docs/automation/README.md",
+    "docs/automation/fixture-corpus.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "tests/fixtures/README.md",
+    "tests/fixtures/scholarly-corpus/LICENSE.txt",
+    "tests/fixtures/scholarly-corpus/README.md",
+    "tests/fixtures/scholarly-corpus/fulltext/article.txt",
+    "tests/fixtures/scholarly-corpus/fulltext/article.xml",
+    "tests/fixtures/scholarly-corpus/malformed/article.xml",
+    "tests/fixtures/scholarly-corpus/malformed/records.json",
+    "tests/fixtures/scholarly-corpus/malformed/truncated.pdf",
+    "tests/fixtures/scholarly-corpus/manifest.json",
+    "tests/fixtures/scholarly-corpus/manifest.schema.json",
+    "tests/fixtures/scholarly-corpus/metadata/records.bib",
+    "tests/fixtures/scholarly-corpus/metadata/records.json",
+    "tests/fixtures/scholarly-corpus/metadata/records.ris",
+    "tests/fixtures/scholarly-corpus/pdf/article.pdf",
+    "tests/foundation/README.md",
+    "tests/foundation/test_fixture_corpus_check.py",
+    "tools/README.md",
+    "tools/fixture_corpus_check.py",
+    "verification-profiles.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --repo . --report artifacts\\tmp\\CAP-00.S05.T01-exact.json",
+      "exitCode": 0,
+      "result": "The exact implementation commit passed all 12 foundation commands, including repository, runtime, architecture, agent protocol, generated views, fixture corpus, ADR, CI, quality, packaging, 78 foundation tests, and backlog validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\fixture_corpus_check.py --repo .",
+      "exitCode": 0,
+      "result": "The immutable corpus passed exact inventory, schema, license, provenance, SHA-256, byte-length, structural, semantic feature, PDF xref, and intentional rejection validation for 11 files and 20 features."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_fixture_corpus_check -v",
+      "exitCode": 0,
+      "result": "Five focused tests passed for the canonical corpus and material tamper, unlicensed/undocumented file, malformed-case, and invalid PDF xref boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The authoritative ledger validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The repository-authored corpus contains no third-party scholarly content; LICENSE.txt, README.md, the schema, the global manifest provenance, and every item record the CC0-1.0 dedication and synthetic origin.",
+        "Eleven exact-inventory fixtures cover complete, partial, variant, duplicate-DOI, and Unicode metadata; JSON, RIS, BibTeX, XML, plain text, and PDF; tables, citations, and bibliography; plus deliberately malformed JSON, XML, and PDF.",
+        "The manifest declares offline and deterministic operation and pins every file by SHA-256 and byte length. The validator performs no network access and fails closed on missing, extra, redirected, altered, structurally invalid, or semantically incomplete content."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Five focused mutation tests validate the expected corpus and detect content tampering, missing license metadata, undocumented files, a malformed fixture that no longer fails, and an accepted PDF with inconsistent cross-reference offsets.",
+        "The full foundation suite increased to 78 tests and passes with the corpus validator as a mandatory profile command."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "verification-profiles.json makes fixture validation mandatory in foundation; quality-scope.json governs the validator and tests; .gitattributes treats PDF fixtures as binary.",
+        "The automation, tool, fixture, and foundation-test documentation explains licensing, provenance, coverage, offline validation, and the safe synthetic-only update procedure. No application or later-capability implementation scope changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "An independent reviewer must probe redistribution provenance, inventory/hash enforcement, semantic edge-case coverage, malformed-input behavior, path confinement, PDF integrity, and foundation integration before approval."
+  }
+}

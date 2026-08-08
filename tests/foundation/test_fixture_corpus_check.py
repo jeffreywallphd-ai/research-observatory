@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -78,6 +80,18 @@ class FixtureCorpusCheckTests(unittest.TestCase):
 
         self.assertIn("undocumented fixture file: undocumented.txt", errors)
 
+        with tempfile.TemporaryDirectory() as temporary:
+            corpus = self.copy_corpus(temporary)
+            nested = corpus / "nested"
+            nested.mkdir()
+            (nested / "manifest.json").write_text("{}", encoding="utf-8")
+            (nested / "manifest.schema.json").write_text("{}", encoding="utf-8")
+
+            errors = corpus_errors(corpus)
+
+        self.assertIn("undocumented fixture file: nested/manifest.json", errors)
+        self.assertIn("undocumented fixture file: nested/manifest.schema.json", errors)
+
     def test_rejection_fixture_must_reproduce_its_declared_failure(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             corpus = self.copy_corpus(temporary)
@@ -89,17 +103,83 @@ class FixtureCorpusCheckTests(unittest.TestCase):
 
         self.assertTrue(any("rejection fixture unexpectedly passes structural validation" in error for error in errors))
 
-    def test_accepted_pdf_must_have_consistent_xref_offsets(self) -> None:
+    def test_media_types_and_pdf_xref_metadata_are_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             corpus = self.copy_corpus(temporary)
-            path = corpus / "pdf" / "article.pdf"
-            payload = path.read_bytes()
-            path.write_bytes(payload.replace(b"0000000043 00000 n", b"0000000044 00000 n", 1))
-            self.update_item_digest(corpus, "pdf/article.pdf")
+            manifest_path = corpus / "manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            pdf_item = next(item for item in manifest["items"] if item["path"] == "pdf/article.pdf")
+            pdf_item["mediaType"] = "text/plain"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
 
             errors = corpus_errors(corpus)
 
-        self.assertTrue(any("invalid-pdf-xref" in error for error in errors))
+        self.assertTrue(any("mediaType" in error and "does not match path type" in error for error in errors))
+        self.assertTrue(any("feature 'pdf' is incompatible" in error for error in errors))
+
+        mutations = (
+            (b"xref\n0 6\n", b"xref\n0 5\n"),
+            (b"0000000043 00000 n", b"0000000043 00000 f"),
+            (b"0000000043 00000 n", b"0000000043 00001 n"),
+        )
+        for original, replacement in mutations:
+            with self.subTest(replacement=replacement), tempfile.TemporaryDirectory() as temporary:
+                corpus = self.copy_corpus(temporary)
+                path = corpus / "pdf" / "article.pdf"
+                payload = path.read_bytes()
+                self.assertIn(original, payload)
+                path.write_bytes(payload.replace(original, replacement, 1))
+                self.update_item_digest(corpus, "pdf/article.pdf")
+
+                errors = corpus_errors(corpus)
+
+            self.assertTrue(any("invalid-pdf-xref" in error for error in errors))
+
+    def test_declared_text_features_are_substantiated_by_content(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            corpus = self.copy_corpus(temporary)
+            path = corpus / "fulltext" / "article.txt"
+            path.write_text("x\n", encoding="utf-8")
+            self.update_item_digest(corpus, "fulltext/article.txt")
+
+            errors = corpus_errors(corpus)
+
+        self.assertTrue(any("plain-full-text lacks" in error for error in errors))
+        self.assertTrue(any("table is declared" in error for error in errors))
+        self.assertTrue(any("citations are declared" in error for error in errors))
+        self.assertTrue(any("bibliography is declared" in error for error in errors))
+
+    def test_manifest_and_schema_redirects_are_rejected(self) -> None:
+        for control_name in ("manifest.json", "manifest.schema.json"):
+            with self.subTest(control_name=control_name), tempfile.TemporaryDirectory() as temporary:
+                corpus = self.copy_corpus(temporary)
+                control = corpus / control_name
+                control.unlink()
+                outside = Path(temporary) / "outside"
+                outside.mkdir()
+                redirected = False
+                try:
+                    if os.name == "nt":
+                        created = subprocess.run(
+                            ["cmd", "/c", "mklink", "/J", str(control), str(outside)],
+                            capture_output=True,
+                            check=False,
+                        )
+                        if created.returncode != 0:
+                            self.skipTest("directory junctions are unavailable")
+                    else:
+                        target = outside / control_name
+                        target.write_text("{}", encoding="utf-8")
+                        control.symlink_to(target)
+                    redirected = True
+
+                    errors = corpus_errors(corpus)
+                finally:
+                    if redirected and control.exists():
+                        control.unlink() if control.is_symlink() else control.rmdir()
+
+            self.assertTrue(any("fixture control file" in error for error in errors))
+            self.assertTrue(any("does not resolve inside the corpus" in error for error in errors))
 
 
 if __name__ == "__main__":
