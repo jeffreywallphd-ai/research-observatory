@@ -89,6 +89,30 @@ and names missing task or slice dependency targets and exact task dependency-cyc
 paths. Do not edit around these checks or treat schema-only validity as permission
 for an otherwise illegal workflow transition.
 
+`taskctl` mutations are compare-and-swap writes under an exclusive backlog
+lock. A command refuses to replace the ledger if another writer changed it,
+if IDs moved, or if the resulting schema/semantic state is invalid; a failed
+temporary write or replace leaves the previous ledger intact. The lock marker
+is ignored by Git.
+
+Execution commands require one concrete profile/platform and the matching
+active campaign lease. Task `block`, `renew`, `evidence`, and `submit` require
+`--agent` to match the task lease owner; capability/slice mutations similarly
+require the campaign owner. An expired lease may be renewed only by its recorded
+owner:
+
+```bash
+python tools/taskctl.py capability renew CAP-XX --agent <agent>
+python tools/taskctl.py renew CAP-XX.SXX.TXX --agent <agent>
+```
+
+Commit the implementation and required verification before attaching evidence.
+The manifest must live under the repository, name the current full Git `HEAD`,
+descend from the claimed `base_sha`, map every acceptance criterion exactly,
+and contain only passing checks. Stored evidence paths are repository-relative;
+hash validation canonicalizes text line endings and detects later content,
+task-ID, or commit drift.
+
 ## Replanning conditions
 
 Reopen planning only for:

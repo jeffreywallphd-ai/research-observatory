@@ -11,15 +11,19 @@ evidence unit.
 from __future__ import annotations
 
 import argparse
+import copy
 import datetime as dt
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
 from collections import Counter
-from pathlib import Path
+from collections.abc import Iterator
+from contextlib import contextmanager
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
@@ -50,22 +54,91 @@ def parse_time(value: str) -> dt.datetime:
     return dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
-def save_atomic(path: str, data: dict[str, Any]) -> None:
-    for capability in data.get("capabilities", []):
+def serializable_backlog(data: dict[str, Any]) -> dict[str, Any]:
+    document = copy.deepcopy(data)
+    for capability in document.get("capabilities", []):
         for slice_ in capability.get("slices", []):
             slice_.pop("_position", None)
+    return document
+
+
+def identity_snapshot(data: dict[str, Any]) -> tuple[tuple[str, tuple[tuple[str, tuple[str, ...]], ...]], ...]:
+    return tuple(
+        (
+            capability["id"],
+            tuple(
+                (slice_["id"], tuple(task["id"] for task in slice_.get("tasks", [])))
+                for slice_ in capability.get("slices", [])
+            ),
+        )
+        for capability in data.get("capabilities", [])
+    )
+
+
+@contextmanager
+def exclusive_backlog_lock(destination: Path) -> Iterator[None]:
+    lock_path = destination.with_name(f"{destination.name}.taskctl.lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a+b") as handle:
+        if lock_path.stat().st_size == 0:
+            handle.write(b"\0")
+            handle.flush()
+        handle.seek(0)
+        try:
+            set_backlog_lock(handle, unlock=False)
+        except OSError as exc:
+            raise SystemExit(f"Backlog is locked by another taskctl writer: {destination}") from exc
+        try:
+            yield
+        finally:
+            handle.seek(0)
+            set_backlog_lock(handle, unlock=True)
+
+
+def set_backlog_lock(handle: Any, *, unlock: bool) -> None:
+    if os.name == "nt":
+        import msvcrt
+
+        operation = msvcrt.LK_UNLCK if unlock else msvcrt.LK_NBLCK
+        msvcrt.locking(handle.fileno(), operation, 1)
+    else:
+        import fcntl
+
+        fcntl_api = vars(fcntl)
+        flock = fcntl_api["flock"]
+        operation = fcntl_api["LOCK_UN"] if unlock else fcntl_api["LOCK_EX"] | fcntl_api["LOCK_NB"]
+        flock(handle.fileno(), operation)
+
+
+def save_atomic(
+    path: str,
+    data: dict[str, Any],
+    *,
+    expected_sha256: str | None = None,
+) -> None:
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
-    fd, temp_name = tempfile.mkstemp(prefix=f"{destination.name}.", suffix=".tmp", dir=destination.parent)
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            yaml.safe_dump(data, handle, sort_keys=False, allow_unicode=True, width=120)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(temp_name, destination)
-    finally:
-        if os.path.exists(temp_name):
-            os.unlink(temp_name)
+    document = serializable_backlog(data)
+    with exclusive_backlog_lock(destination):
+        if expected_sha256 is not None:
+            try:
+                actual_sha256 = hashlib.sha256(destination.read_bytes()).hexdigest()
+            except OSError as exc:
+                raise SystemExit(f"Cannot verify backlog before save: {destination}: {exc}") from exc
+            if actual_sha256 != expected_sha256:
+                raise SystemExit(
+                    "Backlog changed after taskctl loaded it; no update was written. Reload and retry the command."
+                )
+        fd, temp_name = tempfile.mkstemp(prefix=f"{destination.name}.", suffix=".tmp", dir=destination.parent)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                yaml.safe_dump(document, handle, sort_keys=False, allow_unicode=True, width=120)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temp_name, destination)
+        finally:
+            if os.path.exists(temp_name):
+                os.unlink(temp_name)
 
 
 def _json_path(parts: Any) -> str:
@@ -112,12 +185,24 @@ def load(
 ]:
     try:
         data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
-    except (OSError, yaml.YAMLError) as exc:
+    except (OSError, UnicodeError, yaml.YAMLError) as exc:
         raise SystemExit(f"Cannot load backlog {path}: {exc}") from exc
     if validate_schema:
         schema_errors = backlog_schema_errors(data, schema_path=schema_path)
         if schema_errors:
             raise SystemExit("Backlog schema validation failed:\n- " + "\n- ".join(schema_errors))
+    return index_backlog(data)
+
+
+def index_backlog(
+    data: dict[str, Any],
+) -> tuple[
+    dict[str, Any],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+]:
     tasks: dict[str, dict[str, Any]] = {}
     slices: dict[str, dict[str, Any]] = {}
     capabilities: dict[str, dict[str, Any]] = {}
@@ -148,6 +233,40 @@ def load(
             raise SystemExit(f"Duplicate release gate ID: {gate['id']}")
         gates[gate["id"]] = gate
     return data, capabilities, slices, tasks, gates
+
+
+def save_validated(
+    path: str,
+    data: dict[str, Any],
+    *,
+    expected_sha256: str | None = None,
+    expected_identity: tuple[tuple[str, tuple[tuple[str, tuple[str, ...]], ...]], ...] | None = None,
+    schema_path: Path | None = None,
+    repo: Path | None = None,
+) -> None:
+    document = serializable_backlog(data)
+    if expected_identity is not None and identity_snapshot(document) != expected_identity:
+        raise SystemExit(
+            "Stable backlog IDs or their hierarchy changed during a taskctl transition; no update was written"
+        )
+    schema_errors = backlog_schema_errors(document, schema_path=schema_path)
+    if schema_errors:
+        raise SystemExit("Refusing to save invalid backlog schema:\n- " + "\n- ".join(schema_errors))
+    indexed = index_backlog(document)
+    semantic_errors = validate(*indexed, repo=repo)
+    if semantic_errors:
+        raise SystemExit("Refusing to save invalid backlog state:\n- " + "\n- ".join(semantic_errors))
+    save_atomic(path, document, expected_sha256=expected_sha256)
+
+
+def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
+    save_validated(
+        args.file,
+        data,
+        expected_sha256=getattr(args, "source_sha256", None),
+        expected_identity=getattr(args, "source_identity", None),
+        repo=getattr(args, "repo_root", None),
+    )
 
 
 def wave_map(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -226,6 +345,10 @@ def task_dependencies_done(task: dict[str, Any], tasks: dict[str, dict[str, Any]
     return all(tasks.get(dep, {}).get("status") == "DONE" for dep in task.get("dependencies", []))
 
 
+def slice_dependencies_done(slice_: dict[str, Any], tasks: dict[str, dict[str, Any]]) -> bool:
+    return all(tasks.get(dep, {}).get("status") == "DONE" for dep in slice_.get("depends_on", []))
+
+
 def task_can_be_ready(
     data: dict[str, Any],
     capabilities: dict[str, dict[str, Any]],
@@ -238,6 +361,7 @@ def task_can_be_ready(
     slice_ = slices[task["slice_id"]]
     return (
         task_dependencies_done(task, tasks)
+        and slice_dependencies_done(slice_, tasks)
         and gate_is_open(data, gates, task["wave"])
         and previous_slices_approved(capability, slice_)
     )
@@ -266,7 +390,7 @@ def refresh_derived_states(
             statuses = {task["status"] for task in slice_["tasks"]}
             new = (
                 "IN_PROGRESS"
-                if statuses & {"IN_PROGRESS", "REVIEW"}
+                if statuses & {"IN_PROGRESS", "REVIEW", "DONE"}
                 else ("READY" if statuses & {"READY"} else "NOT_STARTED")
             )
             if slice_["status"] != new:
@@ -371,6 +495,43 @@ def lease_is_active(holder: dict[str, Any]) -> bool:
         return False
 
 
+def require_active_lease(holder: dict[str, Any], actor: str, label: str) -> None:
+    actor = actor.strip()
+    if not actor:
+        raise SystemExit(f"{label} actor must be non-empty")
+    campaign = holder.get("campaign") or {}
+    owner = holder.get("owner") or campaign.get("owner")
+    lease = holder.get("lease") or campaign.get("lease")
+    if owner != actor:
+        raise SystemExit(f"{label} is owned by {owner or '<unclaimed>'}, not {actor}")
+    if not lease:
+        raise SystemExit(f"{label} has no active lease")
+    if lease.get("claimed_by") != actor:
+        raise SystemExit(f"{label} lease belongs to {lease.get('claimed_by') or '<unknown>'}, not {actor}")
+    if not lease_is_active(holder):
+        raise SystemExit(f"{label} lease has expired; renew or reopen it before mutation")
+
+
+def require_positive_lease_hours(hours: int) -> None:
+    if hours <= 0:
+        raise SystemExit("Lease duration must be greater than zero hours")
+
+
+def require_execution_target(profile: str, platform: str) -> None:
+    if profile == "ALL" or platform == "ALL":
+        raise SystemExit("Execution commands require one concrete deployment profile and platform")
+
+
+def require_task_campaign_lease(
+    task: dict[str, Any], capabilities: dict[str, dict[str, Any]], actor: str
+) -> dict[str, Any]:
+    capability = capabilities[task["capability_id"]]
+    if (capability.get("campaign") or {}).get("status") != "ACTIVE":
+        raise SystemExit(f"Capability {capability['id']} campaign is not ACTIVE")
+    require_active_lease(capability, actor, f"Capability {capability['id']}")
+    return capability
+
+
 def new_lease(agent: str, hours: int) -> dict[str, str]:
     claimed = dt.datetime.now(dt.UTC).replace(microsecond=0)
     return {
@@ -385,26 +546,151 @@ def load_evidence(path: str) -> dict[str, Any]:
     if not evidence_path.exists():
         raise SystemExit(f"Evidence file does not exist: {path}")
     if evidence_path.suffix.lower() in {".yaml", ".yml"}:
-        return yaml.safe_load(evidence_path.read_text(encoding="utf-8"))
-    return json.loads(evidence_path.read_text(encoding="utf-8"))
+        manifest = yaml.safe_load(evidence_path.read_text(encoding="utf-8"))
+    else:
+        manifest = json.loads(evidence_path.read_text(encoding="utf-8"))
+    if not isinstance(manifest, dict):
+        raise ValueError("evidence manifest root must be an object")
+    return manifest
 
 
-def validate_task_evidence(task: dict[str, Any], manifest: dict[str, Any]) -> list[str]:
+def evidence_sha256(payload: bytes) -> str:
+    """Hash repository text canonically so Git EOL conversion cannot invalidate evidence."""
+    return hashlib.sha256(payload.replace(b"\r\n", b"\n").replace(b"\r", b"\n")).hexdigest()
+
+
+def validate_task_evidence(
+    task: dict[str, Any], manifest: dict[str, Any], *, expected_commit: str | None = None
+) -> list[str]:
     errors: list[str] = []
     if manifest.get("taskId") != task["id"]:
         errors.append("taskId does not match")
-    if not manifest.get("commit"):
-        errors.append("commit is required")
+    if manifest.get("baseCommit") != task.get("base_sha"):
+        errors.append("baseCommit does not match the claimed task base_sha")
+    if manifest.get("branch") != task.get("branch"):
+        errors.append("branch does not match the claimed task branch")
+    commit = manifest.get("commit")
+    if not isinstance(commit, str) or re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        errors.append("commit must be a full lowercase 40-character Git SHA")
+    elif expected_commit is not None and commit != expected_commit:
+        errors.append(f"commit must equal current HEAD {expected_commit}")
     checks = manifest.get("checks", [])
-    if not checks:
+    if not isinstance(checks, list) or not checks:
         errors.append("at least one check is required")
+        checks = []
     for check in checks:
-        if check.get("exitCode") != 0:
-            errors.append(f"check failed: {check.get('command', '<unknown>')}")
-    mapped = {item.get("criterion_index") for item in manifest.get("acceptanceCriteria", [])}
+        if not isinstance(check, dict) or type(check.get("exitCode")) is not int or check.get("exitCode") != 0:
+            command = check.get("command", "<unknown>") if isinstance(check, dict) else "<invalid>"
+            errors.append(f"check failed: {command}")
+    criteria = manifest.get("acceptanceCriteria", [])
+    if not isinstance(criteria, list):
+        criteria = []
+    mapped_indexes = [
+        item.get("criterion_index")
+        for item in criteria
+        if isinstance(item, dict) and type(item.get("criterion_index")) is int
+    ]
+    mapped = set(mapped_indexes)
     expected = set(range(1, len(task.get("acceptance_criteria", [])) + 1))
-    if mapped != expected:
+    if mapped != expected or len(mapped_indexes) != len(mapped):
         errors.append(f"criterion evidence must map exactly to indexes {sorted(expected)}")
+    for item in criteria:
+        if not isinstance(item, dict):
+            continue
+        evidence = item.get("evidence")
+        if (
+            not isinstance(evidence, list)
+            or not evidence
+            or not all(isinstance(statement, str) and statement.strip() for statement in evidence)
+        ):
+            errors.append(
+                f"criterion {item.get('criterion_index', '<unknown>')} requires non-empty evidence statements"
+            )
+    if manifest.get("unverifiedItems") not in (None, []):
+        errors.append("unverifiedItems must be empty before evidence attachment")
+    return errors
+
+
+def discover_repository(backlog_path: str) -> Path:
+    completed = subprocess.run(
+        ["git", "-C", str(Path(backlog_path).resolve().parent), "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        detail = (completed.stderr or completed.stdout).strip()
+        raise SystemExit(f"Cannot resolve Git repository for exact-commit evidence: {detail or 'git failed'}")
+    return Path(completed.stdout.strip()).resolve()
+
+
+def exact_commit_errors(task: dict[str, Any], manifest: dict[str, Any], repo: Path) -> list[str]:
+    errors: list[str] = []
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
+    if head.returncode != 0:
+        return [f"cannot resolve current HEAD: {(head.stderr or head.stdout).strip()}"]
+    current_commit = head.stdout.strip()
+    errors.extend(validate_task_evidence(task, manifest, expected_commit=current_commit))
+    commit = manifest.get("commit")
+    if isinstance(commit, str) and re.fullmatch(r"[0-9a-f]{40}", commit):
+        resolved = subprocess.run(
+            ["git", "rev-parse", "--verify", f"{commit}^{{commit}}"],
+            cwd=repo,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if resolved.returncode != 0 or resolved.stdout.strip() != commit:
+            errors.append("commit does not resolve to the named immutable Git commit")
+        base_sha = task.get("base_sha")
+        if base_sha:
+            ancestry = subprocess.run(
+                ["git", "merge-base", "--is-ancestor", base_sha, commit],
+                cwd=repo,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if ancestry.returncode == 1:
+                errors.append(f"commit is not descended from task base_sha {base_sha}")
+            elif ancestry.returncode != 0:
+                errors.append(f"cannot verify task base ancestry: {(ancestry.stderr or ancestry.stdout).strip()}")
+    return errors
+
+
+def evidence_reference_errors(tasks: dict[str, dict[str, Any]], repo: Path) -> list[str]:
+    errors: list[str] = []
+    for task_id, task in tasks.items():
+        for reference in task.get("evidence", []):
+            raw_path = reference.get("path", "")
+            path = PurePosixPath(raw_path)
+            if (
+                not raw_path.startswith("artifacts/evidence/")
+                or path.is_absolute()
+                or ".." in path.parts
+                or "\\" in raw_path
+            ):
+                errors.append(f"{task_id}: unsafe evidence path {raw_path!r}")
+                continue
+            evidence_path = repo.joinpath(*path.parts)
+            try:
+                payload = evidence_path.read_bytes()
+            except OSError as exc:
+                errors.append(f"{task_id}: cannot read evidence {raw_path}: {exc}")
+                continue
+            actual_sha256 = evidence_sha256(payload)
+            if actual_sha256 != reference.get("sha256"):
+                errors.append(f"{task_id}: evidence hash mismatch for {raw_path}")
+                continue
+            try:
+                manifest = load_evidence(str(evidence_path))
+            except (OSError, ValueError, yaml.YAMLError) as exc:
+                errors.append(f"{task_id}: invalid evidence manifest {raw_path}: {exc}")
+                continue
+            if manifest.get("taskId") != task_id:
+                errors.append(f"{task_id}: evidence manifest taskId mismatch for {raw_path}")
+            if manifest.get("commit") != reference.get("commit"):
+                errors.append(f"{task_id}: evidence manifest commit mismatch for {raw_path}")
     return errors
 
 
@@ -414,8 +700,12 @@ def validate(
     slices: dict[str, dict[str, Any]],
     tasks: dict[str, dict[str, Any]],
     gates: dict[str, dict[str, Any]],
+    *,
+    repo: Path | None = None,
 ) -> list[str]:
     errors = [*dependency_graph_errors(tasks), *slice_dependency_errors(slices, tasks)]
+    if repo is not None:
+        errors.extend(evidence_reference_errors(tasks, repo))
     waves = wave_map(data)
     active = active_capabilities(capabilities)
     if len(active) > 1:
@@ -434,6 +724,9 @@ def validate(
                 or not campaign.get("lease")
             ):
                 errors.append(f"{cid}: ACTIVE campaign lacks owner, branch, base SHA, or lease")
+            lease = campaign.get("lease")
+            if lease and lease.get("claimed_by") != campaign.get("owner"):
+                errors.append(f"{cid}: campaign lease owner does not match campaign owner")
         completion = capability.get("completion", {})
         if completion.get("status") not in COMPLETION_STATES:
             errors.append(f"{cid}: invalid completion status")
@@ -476,14 +769,28 @@ def validate(
                     errors.append(f"{tid}: invalid deployment profile")
                 if not set(task.get("platform_targets", [])).issubset(PLATFORMS - {"ALL"}):
                     errors.append(f"{tid}: invalid platform target")
+                if status in {"IN_PROGRESS", "REVIEW", "DONE"} and (
+                    not task_dependencies_done(task, tasks) or not slice_dependencies_done(slice_, tasks)
+                ):
+                    errors.append(f"{tid}: active or completed while task/slice dependencies are incomplete")
                 if status == "READY" and not task_can_be_ready(data, capabilities, slices, tasks, gates, task):
                     errors.append(f"{tid}: READY while dependencies, prior slice, or activation gate are incomplete")
                 if status == "IN_PROGRESS" and (
                     not task.get("owner") or not task.get("branch") or not task.get("base_sha") or not task.get("lease")
                 ):
                     errors.append(f"{tid}: IN_PROGRESS without owner, branch, base SHA, and lease")
-                if status == "REVIEW" and (not task.get("evidence") or task.get("verification_state") != "passed"):
-                    errors.append(f"{tid}: REVIEW without passed verification and evidence")
+                if status == "REVIEW" and (
+                    not task.get("evidence")
+                    or task.get("verification_state") != "passed"
+                    or not task.get("owner")
+                    or not task.get("branch")
+                    or not task.get("base_sha")
+                    or not task.get("lease")
+                ):
+                    errors.append(f"{tid}: REVIEW without ownership, lease, passed verification, and evidence")
+                lease = task.get("lease")
+                if lease and lease.get("claimed_by") != task.get("owner"):
+                    errors.append(f"{tid}: lease owner does not match task owner")
                 review = task.get("review", {})
                 if status == "DONE" and (
                     not task.get("evidence")
@@ -492,6 +799,8 @@ def validate(
                     or not review.get("reviewed_at")
                 ):
                     errors.append(f"{tid}: DONE without evidence and complete approved review")
+                if status == "DONE" and task.get("lease") is not None:
+                    errors.append(f"{tid}: DONE task must release its lease")
                 if status == "BLOCKED" and not task.get("blocker"):
                     errors.append(f"{tid}: BLOCKED without blocker details")
                 if status == "CANCELLED" and not task.get("cancellation"):
@@ -509,7 +818,7 @@ def print_yaml(value: Any) -> None:
 
 
 def command_validate(args: argparse.Namespace, data, capabilities, slices, tasks, gates) -> None:
-    errors = validate(data, capabilities, slices, tasks, gates)
+    errors = validate(data, capabilities, slices, tasks, gates, repo=getattr(args, "repo_root", None))
     if errors:
         for error in errors:
             print(f"ERROR: {error}")
@@ -660,6 +969,8 @@ def require_capability_planning_ready(args, capability_id: str) -> None:
 
 
 def command_capability_start(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    require_execution_target(args.profile, args.platform)
     require_capability_planning_ready(args, args.capability)
     if active_capabilities(capabilities):
         raise SystemExit("Another capability campaign is ACTIVE. Complete or pause it before starting another.")
@@ -684,7 +995,7 @@ def command_capability_start(args, data, capabilities, slices, tasks, gates) -> 
         "lease": new_lease(args.agent, args.lease_hours),
     }
     capability["completion"]["status"] = "IN_PROGRESS"
-    save_atomic(args.file, data)
+    persist(args, data)
     print(f"Started capability campaign {capability['id']}")
 
 
@@ -693,16 +1004,35 @@ def command_capability_pause(args, data, capabilities, slices, tasks, gates) -> 
     campaign = capability.get("campaign") or {}
     if campaign.get("status") != "ACTIVE":
         raise SystemExit("Only an ACTIVE capability may be paused")
+    require_active_lease(capability, args.agent, f"Capability {args.capability}")
     if any(t["status"] in {"IN_PROGRESS", "REVIEW"} for s in capability["slices"] for t in s["tasks"]):
         raise SystemExit("Resolve or explicitly block active/review tasks before pausing the capability")
     campaign.update(
         status="PAUSED", pause_reason=args.reason, pause_category=args.category, updated_at=utc_now(), lease=None
     )
     capability["completion"]["status"] = "PAUSED"
-    save_atomic(args.file, data)
+    persist(args, data)
+
+
+def command_capability_renew(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    capability = get(capabilities, args.capability, "capability")
+    campaign = capability.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE":
+        raise SystemExit("Only an ACTIVE capability lease may be renewed")
+    if campaign.get("owner") != args.agent:
+        raise SystemExit(f"Capability {args.capability} is owned by {campaign.get('owner')}, not {args.agent}")
+    if lease_is_active(capability):
+        require_active_lease(capability, args.agent, f"Capability {args.capability}")
+    campaign["lease"] = new_lease(args.agent, args.lease_hours)
+    campaign["updated_at"] = utc_now()
+    persist(args, data)
+    print(f"Renewed capability lease for {args.capability}")
 
 
 def command_capability_resume(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    require_execution_target(args.profile, args.platform)
     require_capability_planning_ready(args, args.capability)
     if active_capabilities(capabilities):
         raise SystemExit("Another capability campaign is ACTIVE")
@@ -724,13 +1054,14 @@ def command_capability_resume(args, data, capabilities, slices, tasks, gates) ->
         lease=new_lease(args.agent, args.lease_hours),
     )
     capability["completion"]["status"] = "IN_PROGRESS"
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_capability_submit(args, data, capabilities, slices, tasks, gates) -> None:
     capability = get(capabilities, args.capability, "capability")
     if (capability.get("campaign") or {}).get("status") != "ACTIVE":
         raise SystemExit("Capability campaign must be ACTIVE")
+    require_active_lease(capability, args.agent, f"Capability {args.capability}")
     if any(s.get("completion", {}).get("status") != "APPROVED" for s in capability["slices"]):
         raise SystemExit("All slices must be independently approved before capability submission")
     if not args.evidence:
@@ -739,7 +1070,7 @@ def command_capability_submit(args, data, capabilities, slices, tasks, gates) ->
     capability["campaign"]["updated_at"] = utc_now()
     capability["campaign"]["lease"] = None
     capability["completion"].update(status="REVIEW", evidence=args.evidence, notes=args.note)
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_capability_review(args, data, capabilities, slices, tasks, gates) -> None:
@@ -748,6 +1079,8 @@ def command_capability_review(args, data, capabilities, slices, tasks, gates) ->
         "status"
     ) != "REVIEW":
         raise SystemExit("Capability must be submitted for REVIEW")
+    if not args.reviewer.strip():
+        raise SystemExit("Reviewer identity must be non-empty")
     now = utc_now()
     if args.result == "approved":
         capability["campaign"]["status"] = "COMPLETE"
@@ -762,7 +1095,7 @@ def command_capability_review(args, data, capabilities, slices, tasks, gates) ->
         capability["campaign"]["status"] = "PAUSED"
         capability["campaign"]["pause_reason"] = args.note or "Capability review blocked"
         capability["completion"].update(status="BLOCKED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_slice_status(args, data, capabilities, slices, tasks, gates) -> None:
@@ -790,6 +1123,7 @@ def command_slice_submit(args, data, capabilities, slices, tasks, gates) -> None
     capability = capabilities[slice_["id"].split(".")[0]]
     if (capability.get("campaign") or {}).get("status") != "ACTIVE":
         raise SystemExit("The parent capability campaign must be ACTIVE")
+    require_active_lease(capability, args.agent, f"Capability {capability['id']}")
     if current_slice(capability) is not slice_:
         raise SystemExit("Only the current capability slice may be submitted")
     if any(t["status"] != "DONE" for t in slice_["tasks"]):
@@ -798,13 +1132,15 @@ def command_slice_submit(args, data, capabilities, slices, tasks, gates) -> None
         raise SystemExit("Slice integration/end-to-end evidence is required")
     slice_["status"] = "REVIEW"
     slice_["completion"].update(status="REVIEW", evidence=args.evidence, notes=args.note)
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_slice_review(args, data, capabilities, slices, tasks, gates) -> None:
     slice_ = get(slices, args.slice, "slice")
     if slice_.get("completion", {}).get("status") != "REVIEW":
         raise SystemExit("Slice must be submitted for REVIEW")
+    if not args.reviewer.strip():
+        raise SystemExit("Reviewer identity must be non-empty")
     now = utc_now()
     if args.result == "approved":
         slice_["completion"].update(status="APPROVED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
@@ -818,10 +1154,12 @@ def command_slice_review(args, data, capabilities, slices, tasks, gates) -> None
         slice_["completion"].update(status="BLOCKED", reviewer=args.reviewer, reviewed_at=now, notes=args.note)
         slice_["status"] = "BLOCKED"
     refresh_derived_states(data, capabilities, slices, tasks, gates)
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    require_execution_target(args.profile, args.platform)
     task = get(tasks, args.task, "task")
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     if task["status"] != "READY":
@@ -829,14 +1167,17 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
     if not profile_matches(task, args.profile) or not platform_matches(task, args.platform):
         raise SystemExit("Task is not eligible for the requested profile/platform")
     active = active_capabilities(capabilities)
-    if not args.override_campaign:
-        if not active:
-            raise SystemExit(f"No ACTIVE capability campaign. Start {task['capability_id']} before claiming tasks.")
-        if active[0]["id"] != task["capability_id"]:
-            raise SystemExit(f"Active campaign is {active[0]['id']}; task belongs to {task['capability_id']}")
-        selected_slice = current_slice(active[0])
-        if selected_slice is None or selected_slice["id"] != task["slice_id"]:
-            raise SystemExit("Task is outside the active campaign's current slice")
+    if not active:
+        raise SystemExit(f"No ACTIVE capability campaign. Start {task['capability_id']} before claiming tasks.")
+    if active[0]["id"] != task["capability_id"]:
+        raise SystemExit(f"Active campaign is {active[0]['id']}; task belongs to {task['capability_id']}")
+    require_active_lease(active[0], args.agent, f"Capability {active[0]['id']}")
+    campaign = active[0]["campaign"]
+    if args.profile != campaign.get("profile") or args.platform != campaign.get("platform"):
+        raise SystemExit("Task claim profile/platform must match the active capability campaign")
+    selected_slice = current_slice(active[0])
+    if selected_slice is None or selected_slice["id"] != task["slice_id"]:
+        raise SystemExit("Task is outside the active campaign's current slice")
     now = utc_now()
     task.update(
         status="IN_PROGRESS",
@@ -850,14 +1191,16 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
         verification_state=None,
         lease=new_lease(args.agent, args.lease_hours),
     )
-    save_atomic(args.file, data)
+    persist(args, data)
     print(f"Claimed {task['id']} within {task['capability_id']} / {task['slice_id']}")
 
 
 def command_block(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
-    if task["status"] not in {"READY", "IN_PROGRESS", "REVIEW"}:
+    if task["status"] not in {"IN_PROGRESS", "REVIEW"}:
         raise SystemExit(f"Task cannot be blocked from {task['status']}")
+    require_task_campaign_lease(task, capabilities, args.agent)
+    require_active_lease(task, args.agent, f"Task {task['id']}")
     task["status"] = "BLOCKED"
     task["blocker"] = {
         "reason": args.reason,
@@ -866,47 +1209,83 @@ def command_block(args, data, capabilities, slices, tasks, gates) -> None:
         "owner": task.get("owner"),
     }
     task["updated_at"] = utc_now()
-    save_atomic(args.file, data)
+    task["lease"] = None
+    persist(args, data)
+
+
+def command_renew(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    task = get(tasks, args.task, "task")
+    if task["status"] not in {"IN_PROGRESS", "REVIEW"}:
+        raise SystemExit("Only an IN_PROGRESS or REVIEW task lease may be renewed")
+    if task.get("owner") != args.agent:
+        raise SystemExit(f"Task {task['id']} is owned by {task.get('owner')}, not {args.agent}")
+    require_task_campaign_lease(task, capabilities, args.agent)
+    if lease_is_active(task):
+        require_active_lease(task, args.agent, f"Task {task['id']}")
+    task["lease"] = new_lease(args.agent, args.lease_hours)
+    task["updated_at"] = utc_now()
+    persist(args, data)
+    print(f"Renewed task lease for {task['id']}")
 
 
 def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] != "IN_PROGRESS":
         raise SystemExit("Evidence may be attached only while IN_PROGRESS")
-    manifest = load_evidence(args.from_file)
-    errors = validate_task_evidence(task, manifest)
+    require_task_campaign_lease(task, capabilities, args.agent)
+    require_active_lease(task, args.agent, f"Task {task['id']}")
+    repo = discover_repository(args.file)
+    evidence_path = Path(args.from_file).resolve()
+    try:
+        relative_evidence_path = evidence_path.relative_to(repo).as_posix()
+    except ValueError as exc:
+        raise SystemExit("Evidence manifest must be stored inside the repository") from exc
+    if not relative_evidence_path.startswith("artifacts/evidence/"):
+        raise SystemExit("Evidence manifest must be stored under artifacts/evidence")
+    if any(reference.get("path") == relative_evidence_path for reference in task.get("evidence", [])):
+        raise SystemExit(f"Evidence manifest is already attached: {relative_evidence_path}")
+    try:
+        manifest = load_evidence(args.from_file)
+    except (OSError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Invalid evidence manifest: {exc}") from exc
+    errors = exact_commit_errors(task, manifest, repo)
     if errors:
         raise SystemExit("Invalid evidence:\n- " + "\n- ".join(errors))
     task.setdefault("evidence", []).append(
         {
             "type": "criterion-manifest",
-            "path": args.from_file,
-            "sha256": hashlib.sha256(Path(args.from_file).read_bytes()).hexdigest(),
+            "path": relative_evidence_path,
+            "sha256": evidence_sha256(evidence_path.read_bytes()),
             "commit": manifest["commit"],
             "recorded_at": utc_now(),
         }
     )
     task["verification_state"] = "passed"
     task["updated_at"] = utc_now()
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_submit(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] != "IN_PROGRESS":
         raise SystemExit("Only IN_PROGRESS tasks may be submitted")
+    require_task_campaign_lease(task, capabilities, args.agent)
+    require_active_lease(task, args.agent, f"Task {task['id']}")
     if task.get("verification_state") != "passed" or not task.get("evidence"):
         raise SystemExit("Verification must pass and evidence must be attached before REVIEW")
     task["status"] = "REVIEW"
     task["updated_at"] = utc_now()
     task["implementation_notes"] = ((task.get("implementation_notes") or "") + "\n" + args.note).strip()
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_review(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] != "REVIEW":
         raise SystemExit("Only REVIEW tasks may be reviewed")
+    if not args.reviewer.strip():
+        raise SystemExit("Reviewer identity must be non-empty")
     now = utc_now()
     task["review"] = {"reviewer": args.reviewer, "result": args.result, "reviewed_at": now, "notes": args.note}
     if args.result == "approved":
@@ -916,8 +1295,11 @@ def command_review(args, data, capabilities, slices, tasks, gates) -> None:
     elif args.result == "changes-requested":
         task["status"] = "IN_PROGRESS"
         task["verification_state"] = None
+        require_positive_lease_hours(args.lease_hours)
+        task["lease"] = new_lease(task["owner"], args.lease_hours)
     else:
         task["status"] = "BLOCKED"
+        task["lease"] = None
         task["blocker"] = {
             "reason": args.note or "Reviewer blocked the task",
             "next_action": "Resolve review blocker",
@@ -926,31 +1308,43 @@ def command_review(args, data, capabilities, slices, tasks, gates) -> None:
         }
     task["updated_at"] = now
     refresh_derived_states(data, capabilities, slices, tasks, gates)
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
     task = get(tasks, args.task, "task")
-    if task["status"] not in {"BLOCKED", "REVIEW", "DONE", "CANCELLED"}:
+    if task["status"] not in {"BLOCKED", "REVIEW", "DONE"}:
         raise SystemExit(f"Task cannot be reopened from {task['status']}")
+    capability = require_task_campaign_lease(task, capabilities, args.agent)
+    if current_slice(capability) is not slices[task["slice_id"]]:
+        raise SystemExit("Only a task in the active campaign's current slice may be reopened")
+    if not task_can_be_ready(data, capabilities, slices, tasks, gates, task):
+        raise SystemExit("Task cannot be reopened while dependencies or the activation gate are incomplete")
+    lease = task.get("lease")
+    if lease_is_active(task) and lease and lease.get("claimed_by") != args.agent:
+        raise SystemExit(f"Task {task['id']} has an active lease owned by {lease.get('claimed_by')}")
     task.update(
         status="IN_PROGRESS",
+        owner=args.agent,
         updated_at=utc_now(),
         completed_at=None,
         verification_state=None,
         blocker=None,
         cancellation=None,
         review={"reviewer": None, "result": None, "reviewed_at": None, "notes": f"Reopened: {args.reason}"},
+        lease=new_lease(args.agent, args.lease_hours),
     )
-    if not lease_is_active(task):
-        task["lease"] = new_lease(args.agent, args.lease_hours)
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_cancel(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] == "DONE":
         raise SystemExit("DONE tasks are not cancelled; create a superseding task or ADR")
+    if task["status"] in {"IN_PROGRESS", "REVIEW"}:
+        require_task_campaign_lease(task, capabilities, args.actor)
+        require_active_lease(task, args.actor, f"Task {task['id']}")
     task["status"] = "CANCELLED"
     task["cancellation"] = {
         "reason": args.reason,
@@ -960,7 +1354,7 @@ def command_cancel(args, data, capabilities, slices, tasks, gates) -> None:
     }
     task["lease"] = None
     task["updated_at"] = utc_now()
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def command_gate_status(args, data, capabilities, slices, tasks, gates) -> None:
@@ -973,8 +1367,20 @@ def command_gate_status(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None:
     gate = get(gates, args.gate, "gate")
+    if gate.get("status") != "PENDING":
+        raise SystemExit("Only a PENDING release gate may be approved")
+    if not args.approver.strip():
+        raise SystemExit("Release-gate approver identity must be non-empty")
     if not args.evidence:
         raise SystemExit("At least one evidence reference is required")
+    incomplete = sorted(
+        task["id"] for task in tasks.values() if task.get("wave") == gate.get("after_wave") and task["status"] != "DONE"
+    )
+    if incomplete:
+        raise SystemExit(
+            f"Release gate {gate['id']} cannot approve before every {gate.get('after_wave')} task is DONE; "
+            f"first incomplete task: {incomplete[0]}"
+        )
     gate["status"] = "APPROVED"
     gate["approval"] = {
         "approved_by": args.approver,
@@ -991,7 +1397,7 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
             if slice_["wave"] == wid and slice_["status"] == "DEFERRED":
                 slice_["status"] = "NOT_STARTED"
     refresh_derived_states(data, capabilities, slices, tasks, gates)
-    save_atomic(args.file, data)
+    persist(args, data)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -1030,7 +1436,12 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["infeasible", "external-dependency", "hardware-unavailable", "human-decision", "approved-design-gate"],
         required=True,
     )
+    cpause.add_argument("--agent", required=True)
     cpause.add_argument("--reason", required=True)
+    crenew = cs.add_parser("renew")
+    crenew.add_argument("capability")
+    crenew.add_argument("--agent", required=True)
+    crenew.add_argument("--lease-hours", type=int, default=24)
     cresume = cs.add_parser("resume")
     cresume.add_argument("capability")
     cresume.add_argument("--agent", required=True)
@@ -1042,6 +1453,7 @@ def build_parser() -> argparse.ArgumentParser:
     cresume.add_argument("--lease-hours", type=int, default=24)
     csubmit = cs.add_parser("submit")
     csubmit.add_argument("capability")
+    csubmit.add_argument("--agent", required=True)
     csubmit.add_argument("--evidence", action="append", required=True)
     csubmit.add_argument("--note", default="")
     creview = cs.add_parser("review")
@@ -1055,6 +1467,7 @@ def build_parser() -> argparse.ArgumentParser:
     sstat.add_argument("slice")
     ssubmit = ss.add_parser("submit")
     ssubmit.add_argument("slice")
+    ssubmit.add_argument("--agent", required=True)
     ssubmit.add_argument("--evidence", action="append", required=True)
     ssubmit.add_argument("--note", default="")
     sreview = ss.add_parser("review")
@@ -1071,23 +1484,30 @@ def build_parser() -> argparse.ArgumentParser:
     claim.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
     claim.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
     claim.add_argument("--lease-hours", type=int, default=8)
-    claim.add_argument("--override-campaign", action="store_true")
     block = sub.add_parser("block")
     block.add_argument("task")
+    block.add_argument("--agent", required=True)
     block.add_argument("--reason", required=True)
     block.add_argument("--next-action", required=True)
+    renew = sub.add_parser("renew")
+    renew.add_argument("task")
+    renew.add_argument("--agent", required=True)
+    renew.add_argument("--lease-hours", type=int, default=8)
     checks = sub.add_parser("checks")
     checks.add_argument("task")
     ev = sub.add_parser("evidence")
     ev.add_argument("task")
+    ev.add_argument("--agent", required=True)
     ev.add_argument("--from", dest="from_file", required=True)
     submit = sub.add_parser("submit")
     submit.add_argument("task")
+    submit.add_argument("--agent", required=True)
     submit.add_argument("--note", default="")
     rev = sub.add_parser("review")
     rev.add_argument("task")
     rev.add_argument("--reviewer", required=True)
     rev.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
+    rev.add_argument("--lease-hours", type=int, default=8)
     rev.add_argument("--note", default="")
     reopen = sub.add_parser("reopen")
     reopen.add_argument("task")
@@ -1114,7 +1534,13 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
+    try:
+        args.source_sha256 = hashlib.sha256(Path(args.file).read_bytes()).hexdigest()
+    except OSError as exc:
+        raise SystemExit(f"Cannot load backlog {args.file}: {exc}") from exc
     data, capabilities, slices, tasks, gates = load(args.file)
+    args.source_identity = identity_snapshot(data)
+    args.repo_root = discover_repository(args.file)
     if args.command == "validate":
         command_validate(args, data, capabilities, slices, tasks, gates)
     elif args.command == "status":
@@ -1133,6 +1559,8 @@ def main() -> None:
         command_capability_start(args, data, capabilities, slices, tasks, gates)
     elif args.command == "capability" and args.cap_command == "pause":
         command_capability_pause(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "capability" and args.cap_command == "renew":
+        command_capability_renew(args, data, capabilities, slices, tasks, gates)
     elif args.command == "capability" and args.cap_command == "resume":
         command_capability_resume(args, data, capabilities, slices, tasks, gates)
     elif args.command == "capability" and args.cap_command == "submit":
@@ -1149,6 +1577,8 @@ def main() -> None:
         command_claim(args, data, capabilities, slices, tasks, gates)
     elif args.command == "block":
         command_block(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "renew":
+        command_renew(args, data, capabilities, slices, tasks, gates)
     elif args.command == "checks":
         for command in get(tasks, args.task, "task").get("verification_commands", []):
             print(command)

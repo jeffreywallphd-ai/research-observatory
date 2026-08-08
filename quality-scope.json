@@ -40,6 +40,7 @@
     "tests/foundation/test_repository_structure.py",
     "tests/foundation/test_runtime_check.py",
     "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
     "tests/foundation/test_verify_runner.py",
     "tests/contracts/test_foundation_contracts.py",
     "tests/security/test_install_trivy.py",
