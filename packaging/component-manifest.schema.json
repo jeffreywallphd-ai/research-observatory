@@ -8,9 +8,9 @@
     "documentType": {"const": "component-version-manifest"},
     "componentId": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
     "componentKind": {"enum": ["desktop", "sidecar"]},
-    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"},
+    "version": {"type": "string", "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*)?$"},
     "productVersionSource": {"const": "packaging/product-version.json"},
-    "compatibilityLine": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"}
+    "compatibilityLine": {"type": "string", "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$"}
   },
   "additionalProperties": false
 }

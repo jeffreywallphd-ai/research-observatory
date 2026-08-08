@@ -223,6 +223,26 @@ class BuildManifestTests(unittest.TestCase):
                 "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n\n## [release-one] - 2026-08-07\n",
                 "not a semantic version",
             ),
+            "changelog-leading-zero-core": (
+                "CHANGELOG.md",
+                "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n\n## [00.0.1] - 2026-08-07\n",
+                "not a semantic version",
+            ),
+            "changelog-leading-zero-prerelease": (
+                "CHANGELOG.md",
+                "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n\n## [0.0.1-01] - 2026-08-07\n",
+                "not a semantic version",
+            ),
+            "changelog-empty-prerelease-identifier": (
+                "CHANGELOG.md",
+                "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n\n## [0.0.1-alpha..1] - 2026-08-07\n",
+                "not a semantic version",
+            ),
+            "changelog-extra-level-two": (
+                "CHANGELOG.md",
+                "# Changelog\n\n## Notes\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n",
+                "invalid release heading",
+            ),
         }
         for label, (path, content, expected) in mutations.items():
             with self.subTest(label=label), tempfile.TemporaryDirectory() as temporary:
@@ -240,6 +260,22 @@ class BuildManifestTests(unittest.TestCase):
             _, _, _, errors = source_contract(root)
 
         self.assertTrue(any("cannot decode CHANGELOG.md" in error for error in errors))
+
+    def test_product_authority_and_schemas_reject_invalid_semver_forms(self) -> None:
+        for invalid in ("00.0.1", "0.0.1-01", "0.0.1-alpha..1"):
+            with self.subTest(version=invalid), tempfile.TemporaryDirectory() as temporary:
+                root = self.contract_repo(temporary)
+                version_path = root / VERSION_PATH
+                version_document = json.loads(version_path.read_text(encoding="utf-8"))
+                version_document["version"] = invalid
+                version_path.write_text(json.dumps(version_document), encoding="utf-8")
+
+                _, _, _, errors = source_contract(root)
+
+                self.assertTrue(any("productVersion.version" in error for error in errors), errors)
+                self.assertTrue(
+                    any("product version must be semantic version text" in error for error in errors), errors
+                )
 
     def test_reserved_model_manifest_tree_rejects_every_entry_before_cap_07(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

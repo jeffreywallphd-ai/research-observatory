@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T03",
+  "commit": "4a3196c892db6717d4a78933675a057c486a42a3",
+  "baseCommit": "91be762a85bbecbf57f2a4b8d9eb2260a1653eb9",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T03.review-fix.json",
+    "reason": "Independent re-review found final-window governed-input and path-replacement races, incomplete changelog ordering/identity validation, and extension-selective pre-CAP-07 model-tree denial. This manifest records Windows handle locks and complete order/inventory remediation."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T03.review-fix.json",
+    "docs/automation/build-manifests.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_build_manifest.py",
+    "tools/build_manifest.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S05.T03-review-fix-2-exact-foundation.json",
+      "exitCode": 0,
+      "result": "The exact clean second-remediation commit passed all 14 mandatory foundation commands and all 116 foundation tests; guarded build provenance reported 0.1.0+g4a3196c clean."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest -v",
+      "exitCode": 0,
+      "result": "All 15 focused tests passed, adding final-status dirty-lock mutation denial and extensionless reserved-model-tree denial to every prior deterministic, Git-filter, junction, parent-swap, changelog, malformed-input, and confinement case."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-00.S05.T03-review-fix-2-exact-manifest.json",
+      "exitCode": 0,
+      "result": "The clean exact commit generated the confined manifest while holding write/delete-denying handles for governed inputs and rename/delete-denying handles for every output ancestor."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The ledger and complete prior evidence chain validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "On Windows, generation holds read handles that deny writes/deletes to every governed input across two final Git-status and byte/hash verification cycles; a persisted change during the former final status is denied or detected before return.",
+        "Atomic JSON output holds no-delete handles for the repository and every ancestor through replacement. Interposed attempts to move a component or scratch parent and junction the path fail before any destination write.",
+        "Changelog validation now requires the title as the first nonblank line, one following Unreleased section, current product version as the first dated release, valid unique semantic versions in strictly newest-to-oldest order, and real ISO dates.",
+        "Before CAP-07 owns the model contract, configured model inputs must be empty and the reserved model-manifests root must be absent/empty, canonical, and nonredirected; files of every extension fail closed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused suite directly injects a Cargo.lock mutation during the third status call, a rename attempt inside the final replace window, a real NTFS junction, invalid changelog title/version ordering and non-SemVer release, and an extensionless premature model file.",
+        "All 15 focused tests and all 116 complete foundation tests pass at exact commit 4a3196c892db6717d4a78933675a057c486a42a3."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Automation documentation states canonical changelog ordering, complete reserved model-tree denial, Git-filter/raw-blob provenance, governed-input locking, and ancestor-directory locking.",
+        "The second independent changes-requested disposition and superseded evidence are retained in the ledger/audit chain; generated planning views exactly match that state."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce both final-window races using actual Windows writes/renames, all changelog ordering/identity attacks, every reserved model-tree extension/redirect, prior Git-filter/junction/malformed-input cases, and exact evidence binding at 4a3196c892db6717d4a78933675a057c486a42a3."
+  }
+}
