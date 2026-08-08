@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T02",
+  "commit": "369abb4d638a958309240fdfb4aebe8cc0bf99c5",
+  "baseCommit": "dd71a9dcc0c1021140ae101f9c1e73b7bd5bc984",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T02.review-fix-2.json",
+    "reason": "Independent re-review found that path-limited history omitted tree-same rewrite/revert branches, merge commits compared only their first parent, and repaired schema-invalid registries were not replay-validated. This manifest records complete-graph, all-parent, global-identity, and historical-schema corrections."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T02.review-fix-2.json",
+    "docs/automation/benchmark-registry.md",
+    "docs/planning-implementation-plan.md",
+    "evaluation/README.md",
+    "evaluation/approvals/README.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_benchmark_registry.py",
+    "tools/benchmark_registry.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "The exact clean third review-fix commit passed all 13 foundation commands and all 100 foundation tests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_benchmark_registry -v",
+      "exitCode": 0,
+      "result": "All 19 focused tests passed, including tree-same rewrite/revert merge history, divergent same-path approval blobs, repaired historical schema violations, shallow checkouts, and every prior linear attack."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\benchmark_registry.py --repo .",
+      "exitCode": 0,
+      "result": "Both canonical benchmarks passed after complete unsimplified reachable-graph validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The authoritative backlog and complete evidence chain validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Validation enumerates the complete commit graph reachable from HEAD without path-history simplification and replays the registry transition across every parent edge of every merge.",
+        "Every historical registry is validated against the registry schema stored at that commit, and every referenced asset is verified against its contemporaneous recorded SHA-256.",
+        "A graph-wide approval path-to-blob identity map rejects divergent same-path additions even when a merge selects one valid branch; per-edge checks continue to reject rewrites and removals."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused suite reproduces the reviewer attacks: a rewrite/revert side branch hidden behind a tree-same merge, divergent approval blobs at one path resolved during merge, and a schema-invalid registry committed then repaired.",
+        "Shallow repositories fail closed because incomplete ancestry cannot prove the durable-history invariant.",
+        "All 19 focused and 100 complete foundation tests pass at the exact clean commit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Evaluation and automation documentation now states complete-graph, all-parent, historical-schema, global-approval-identity, worktree, and shallow-checkout behavior.",
+        "The superseding evidence explicitly corrects the prior path-limited reachable-history claim and preserves the third review disposition in the task audit."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce the tree-same and divergent-approval merge attacks plus repaired historical schema violation against commit 369abb4d638a958309240fdfb4aebe8cc0bf99c5."
+  }
+}

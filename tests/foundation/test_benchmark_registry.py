@@ -542,6 +542,33 @@ class BenchmarkRegistryTests(unittest.TestCase):
 
         self.assertTrue(any("unexpectedHistoricalField" in error for error in errors))
 
+    def test_repaired_malformed_historical_shapes_report_without_crashing(self) -> None:
+        shapes = ("benchmarks", "schemas", "history", "prompt", "expected")
+        for shape in shapes:
+            with self.subTest(shape=shape), tempfile.TemporaryDirectory() as temporary:
+                root = self.temporary_repo(temporary)
+                self.initialize_git(root)
+                canonical = self.load_manifest(root)
+                invalid = copy.deepcopy(canonical)
+                item = invalid["benchmarks"][0]
+                if shape == "benchmarks":
+                    invalid["benchmarks"] = None
+                elif shape == "schemas":
+                    item["schemas"] = None
+                elif shape == "history":
+                    item["baseline"]["history"] = None
+                else:
+                    item[shape] = None
+                self.write_manifest(root, invalid)
+                self.commit_all(root, f"commit malformed {shape} registry")
+                self.write_manifest(root, canonical)
+                self.commit_all(root, f"repair malformed {shape} registry")
+
+                _, _, errors = load_registry(root)
+
+                self.assertTrue(errors)
+                self.assertTrue(any("registry." in error for error in errors))
+
     def test_shallow_checkout_denies_durable_history_validation(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             source = self.temporary_repo(str(Path(temporary) / "source"))

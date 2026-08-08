@@ -121,10 +121,17 @@ def git_registry(repo: Path, revision: str) -> tuple[dict[str, Any] | None, str 
 
 def registry_asset_specs(registry: dict[str, Any]) -> list[tuple[str, Any]]:
     specifications: list[tuple[str, Any]] = []
-    for item in registry.get("benchmarks", []):
+    benchmarks = registry.get("benchmarks")
+    if not isinstance(benchmarks, list):
+        return specifications
+    for item in benchmarks:
         if not isinstance(item, dict):
             continue
-        for specification in [item.get("dataset"), item.get("expected"), *item.get("schemas", [])]:
+        path_specifications = [item.get("dataset"), item.get("expected")]
+        schemas = item.get("schemas")
+        if isinstance(schemas, list):
+            path_specifications.extend(schemas)
+        for specification in path_specifications:
             if isinstance(specification, dict) and isinstance(specification.get("path"), str):
                 specifications.append((specification["path"], specification.get("sha256")))
         prompt = item.get("prompt", {})
@@ -133,7 +140,9 @@ def registry_asset_specs(registry: dict[str, Any]) -> list[tuple[str, Any]]:
         baseline = item.get("baseline", {})
         if not isinstance(baseline, dict):
             continue
-        for lineage in [*baseline.get("history", []), baseline]:
+        history = baseline.get("history")
+        lineages = [*history, baseline] if isinstance(history, list) else [baseline]
+        for lineage in lineages:
             if not isinstance(lineage, dict):
                 continue
             approval_path = lineage.get("approval", lineage.get("currentApproval"))
@@ -145,25 +154,37 @@ def registry_asset_specs(registry: dict[str, Any]) -> list[tuple[str, Any]]:
 
 def baseline_lineage_errors(current: dict[str, Any], previous: dict[str, Any] | None) -> list[str]:
     errors: list[str] = []
+    current_benchmarks = current.get("benchmarks")
+    if not isinstance(current_benchmarks, list):
+        current_benchmarks = []
     current_items = {
-        item["id"]: item for item in current.get("benchmarks", []) if isinstance(item, dict) and "id" in item
+        item["id"]: item for item in current_benchmarks if isinstance(item, dict) and isinstance(item.get("id"), str)
     }
     if previous is None:
         return errors
+    previous_benchmarks = previous.get("benchmarks")
+    if not isinstance(previous_benchmarks, list):
+        previous_benchmarks = []
     previous_items = {
-        item["id"]: item for item in previous.get("benchmarks", []) if isinstance(item, dict) and "id" in item
+        item["id"]: item for item in previous_benchmarks if isinstance(item, dict) and isinstance(item.get("id"), str)
     }
     for removed in sorted(set(previous_items) - set(current_items)):
         errors.append(f"benchmark removal requires a governed deprecation workflow: {removed}")
     for benchmark_id, current_item in current_items.items():
-        current_baseline = current_item.get("baseline", {})
+        current_baseline = current_item.get("baseline")
+        if not isinstance(current_baseline, dict):
+            current_baseline = {}
         previous_item = previous_items.get(benchmark_id)
         if previous_item is None:
             if current_baseline.get("version") != 1:
                 errors.append(f"{benchmark_id}: a new benchmark baseline must start at version 1")
             continue
-        previous_prompt = previous_item.get("prompt", {})
-        current_prompt = current_item.get("prompt", {})
+        previous_prompt = previous_item.get("prompt")
+        if not isinstance(previous_prompt, dict):
+            previous_prompt = {}
+        current_prompt = current_item.get("prompt")
+        if not isinstance(current_prompt, dict):
+            current_prompt = {}
         previous_prompt_identity = (previous_prompt.get("id"), previous_prompt.get("version"))
         current_prompt_identity = (current_prompt.get("id"), current_prompt.get("version"))
         if previous_prompt_identity == current_prompt_identity and previous_prompt != current_prompt:
@@ -174,11 +195,19 @@ def baseline_lineage_errors(current: dict[str, Any], previous: dict[str, Any] | 
                 and current_prompt == migrated_no_prompt
             ):
                 errors.append(f"{benchmark_id}: prompt content or path changed without a new prompt identity")
-        previous_baseline = previous_item.get("baseline", {})
-        old_path = previous_item.get("expected", {}).get("path")
-        new_path = current_item.get("expected", {}).get("path")
-        old_hash = previous_item.get("expected", {}).get("sha256")
-        new_hash = current_item.get("expected", {}).get("sha256")
+        previous_baseline = previous_item.get("baseline")
+        if not isinstance(previous_baseline, dict):
+            previous_baseline = {}
+        previous_expected = previous_item.get("expected")
+        if not isinstance(previous_expected, dict):
+            previous_expected = {}
+        current_expected = current_item.get("expected")
+        if not isinstance(current_expected, dict):
+            current_expected = {}
+        old_path = previous_expected.get("path")
+        new_path = current_expected.get("path")
+        old_hash = previous_expected.get("sha256")
+        new_hash = current_expected.get("sha256")
         if old_path == new_path and old_hash == new_hash:
             if current_baseline != previous_baseline:
                 migrated_initial = {
@@ -194,8 +223,11 @@ def baseline_lineage_errors(current: dict[str, Any], previous: dict[str, Any] | 
                 ):
                     errors.append(f"{benchmark_id}: baseline lineage changed without expected-output change")
             continue
+        previous_history = previous_baseline.get("history")
+        if not isinstance(previous_history, list):
+            previous_history = []
         expected_history = [
-            *previous_baseline.get("history", []),
+            *previous_history,
             {
                 "version": previous_baseline.get("version"),
                 "expectedPath": old_path,
@@ -204,7 +236,10 @@ def baseline_lineage_errors(current: dict[str, Any], previous: dict[str, Any] | 
                 "approvalSha256": previous_baseline.get("currentApprovalSha256"),
             },
         ]
-        if current_baseline.get("version") != previous_baseline.get("version", 0) + 1:
+        previous_version = previous_baseline.get("version")
+        if type(previous_version) is not int:
+            previous_version = 0
+        if current_baseline.get("version") != previous_version + 1:
             errors.append(f"{benchmark_id}: changed baseline must increment exactly one version")
         if current_baseline.get("history") != expected_history:
             errors.append(f"{benchmark_id}: changed baseline must append the exact previous baseline to history")
@@ -291,12 +326,16 @@ def git_history_errors(repo: Path, current_registry: dict[str, Any]) -> list[str
 
     errors: list[str] = []
     historical_paths = {path for path, _ in registry_asset_specs(current_registry)}
-    registry_cache: dict[str, tuple[dict[str, Any] | None, str | None]] = {}
+    registry_cache: dict[str, tuple[dict[str, Any] | None, list[str], bool]] = {}
     approval_identities: dict[str, dict[str, str]] = {}
 
-    def cached_registry(revision: str) -> tuple[dict[str, Any] | None, str | None]:
+    def cached_registry(revision: str) -> tuple[dict[str, Any] | None, list[str], bool]:
         if revision not in registry_cache:
-            registry_cache[revision] = git_registry(repo, revision)
+            registry, parse_error = git_registry(repo, revision)
+            snapshot_errors = [parse_error] if parse_error else []
+            if registry is not None and not snapshot_errors:
+                snapshot_errors.extend(historical_registry_schema_errors(repo, revision, registry))
+            registry_cache[revision] = (registry, snapshot_errors, not snapshot_errors)
         return registry_cache[revision]
 
     for raw_commit in commits_result.stdout.splitlines():
@@ -307,12 +346,10 @@ def git_history_errors(repo: Path, current_registry: dict[str, Any]) -> list[str
             continue
         parent_fields = parents_result.stdout.decode("ascii", errors="replace").split()
         parents = parent_fields[1:]
-        current_at_commit, current_error = cached_registry(commit)
-        if current_error:
-            errors.append(current_error)
-        if current_at_commit is not None:
+        current_at_commit, current_errors, current_valid = cached_registry(commit)
+        errors.extend(current_errors)
+        if current_at_commit is not None and current_valid:
             historical_paths.update(path for path, _ in registry_asset_specs(current_at_commit))
-            errors.extend(historical_registry_schema_errors(repo, commit, current_at_commit))
             errors.extend(historical_asset_errors(repo, commit, current_at_commit))
 
         transition_parents: list[str | None] = [*parents]
@@ -320,15 +357,13 @@ def git_history_errors(repo: Path, current_registry: dict[str, Any]) -> list[str
             transition_parents.append(None)
         for parent in transition_parents:
             previous_at_parent: dict[str, Any] | None = None
-            previous_error: str | None = None
+            previous_valid = True
             if parent:
-                previous_at_parent, previous_error = cached_registry(parent)
-            if previous_error:
-                errors.append(previous_error)
+                previous_at_parent, _, previous_valid = cached_registry(parent)
             edge = f"{commit}<-{parent or '<root>'}"
-            if previous_at_parent is not None and current_at_commit is None and current_error is None:
+            if previous_valid and previous_at_parent is not None and current_at_commit is None and current_valid:
                 errors.append(f"{edge}: benchmark registry was removed from reachable history")
-            if current_at_commit is not None and previous_error is None:
+            if current_at_commit is not None and current_valid and previous_valid:
                 transition_errors = baseline_lineage_errors(
                     current_at_commit,
                     previous_at_parent if previous_at_parent is not None else {"benchmarks": []},

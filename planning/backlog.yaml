@@ -1335,7 +1335,7 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T19:44:43+00:00'
-      updated_at: '2026-08-08T20:38:30+00:00'
+      updated_at: '2026-08-08T20:53:01+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Golden parser and contract benchmark run end to end; explicit human-approved baseline lineage
@@ -1346,7 +1346,11 @@ capabilities:
 
         Durable-history review fix: replay all relevant reachable registry and asset transitions, preserve evaluation bytes,
         reject multi-commit laundering, and fail closed on Git inspection errors. Exact commit passed 13 foundation commands,
-        96 tests, and 15 focused regressions.'
+        96 tests, and 15 focused regressions.
+
+        Complete-graph review fix: unsimplified reachable history, every merge parent, contemporaneous historical schema validation,
+        graph-wide approval blob identity, and shallow-checkout denial. Exact commit passed 13 foundation commands, 100 tests,
+        and 19 focused regressions.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T02.json
@@ -1363,18 +1367,22 @@ capabilities:
         sha256: 072751c26fed296eac3bc7ae25a16bf38d203387a4196307f21b5d9a6713b346
         commit: dd71a9dcc0c1021140ae101f9c1e73b7bd5bc984
         recorded_at: '2026-08-08T20:31:25+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T02.review-fix-3.json
+        sha256: 61110fabfa6105c106a9207c7d584b530d157e965eafab93048a19bb729ea499
+        commit: 369abb4d638a958309240fdfb4aebe8cc0bf99c5
+        recorded_at: '2026-08-08T20:46:44+00:00'
       review:
         reviewer: codex-review
         result: changes-requested
-        reviewed_at: '2026-08-08T20:38:30+00:00'
-        notes: 'Reachable merge history must be audited without path simplification: inspect every parent edge, enforce one
-          approval blob per path globally, validate each historical registry against its contemporaneous schema, and reject
-          shallow history.'
+        reviewed_at: '2026-08-08T20:53:01+00:00'
+        notes: 'Historical replay must be schema-first and total: malformed repaired registry snapshots must report actionable
+          schema errors, never reach structural consumers, and never crash verification.'
       base_sha: 0a598e57ed890fa408797d7aef3918c3022fd7da
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T20:38:30+00:00'
-        expires_at: '2026-08-09T04:38:30+00:00'
+        claimed_at: '2026-08-08T20:53:01+00:00'
+        expires_at: '2026-08-09T04:53:01+00:00'
       verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
