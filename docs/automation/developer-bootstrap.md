@@ -2,8 +2,9 @@
 
 The bootstrap is one sustained, fail-closed setup command. It checks every
 runtime and package manager against `runtime-versions.json`, installs only from
-committed lockfiles, creates the local development configuration, and ends by
-running the foundation smoke profile.
+committed lockfiles, installs the checksum-pinned security scanner, creates the
+local development configuration, and ends by running the foundation smoke
+profile.
 
 ## Prerequisites
 
@@ -34,8 +35,9 @@ Successful execution is idempotent. It runs these governed operations:
 
 1. `corepack pnpm install --frozen-lockfile`
 2. `uv sync --frozen --no-install-project`
-3. `cargo fetch --locked`
-4. `.venv` Python foundation verification
+3. `.venv` Python `tools/install_trivy.py --repo <checkout>`
+4. `cargo fetch --locked`
+5. `.venv` Python foundation verification
 
 ## Local state contract
 
@@ -44,6 +46,7 @@ The checkout-local outputs are limited to ignored paths:
 - `.venv/` for the Python environment;
 - `node_modules/` for pnpm installation metadata and packages;
 - `.local/development.json` for non-secret development settings;
+- `.local/toolchains/trivy/` and `.local/cache/trivy/` for the pinned scanner and its database cache;
 - `target/` if later Rust build commands are run.
 
 Package managers also use their normal user-level download caches outside the

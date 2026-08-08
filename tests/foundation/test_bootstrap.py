@@ -23,6 +23,7 @@ DECLARATION_FILES = [
     "pyproject.toml",
     "runtime-versions.json",
     "rust-toolchain.toml",
+    "security-toolchain.json",
     "uv.lock",
 ]
 
@@ -76,6 +77,7 @@ class DeveloperBootstrapTests(unittest.TestCase):
             self.assertIn(["corepack.cmd", "pnpm", "install", "--frozen-lockfile"], runner.commands)
             self.assertIn(["uv", "sync", "--frozen", "--no-install-project"], runner.commands)
             self.assertIn(["cargo", "fetch", "--locked"], runner.commands)
+            self.assertTrue(any("tools/install_trivy.py" in command for command in runner.commands))
             self.assertTrue(any(command[0].endswith(".venv\\Scripts\\python.exe") for command in runner.commands))
 
     def test_failed_install_does_not_publish_development_config(self) -> None:
