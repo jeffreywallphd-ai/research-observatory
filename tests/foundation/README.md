@@ -16,3 +16,7 @@ no-rewrite generation, generated-file drift detection, and repair of manual edit
 `test_fixture_corpus_check.py` verifies the synthetic scholarly corpus contract,
 including licensing and provenance, exact inventory, content hashes, semantic edge
 cases, malformed-input behavior, and valid PDF cross-reference integrity.
+
+`test_benchmark_registry.py` runs the golden parser and contract benchmark end to
+end and verifies deterministic reports, hash tampering, baseline immutability,
+version/history/approval requirements, distinct human approval, and path confinement.

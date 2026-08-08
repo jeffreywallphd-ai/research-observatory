@@ -20,5 +20,6 @@
 - `install_trivy.py` - install and verify the per-platform checksum-pinned security scanner in ignored local state.
 - `security_check.py` - scan source and dependencies, enforce release/exception policy, and emit sanitized evidence.
 - `fixture_corpus_check.py` - validate the synthetic scholarly fixture corpus license, provenance, exact inventory, hashes, semantic coverage, and intentional malformed inputs offline.
+- `benchmark_registry.py` - validate and run pinned golden/contract benchmarks, emit deterministic results, and enforce versioned human-approved baseline changes without overwriting baselines.
 
 Run these from the repository root after the setup kit has installed `repo-seed/`. The external setup package is not the repository.

@@ -19,8 +19,9 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
         errors, records = validate_registry(REPO)
 
         self.assertEqual([], errors)
-        self.assertEqual({"ADR-0001"}, set(records))
+        self.assertEqual({"ADR-0001", "ADR-0002"}, set(records))
         self.assertIn("CAP-00.S02.T03", records["ADR-0001"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-00.S05.T02", records["ADR-0002"]["metadata"]["linked_tasks"])
 
     def test_unindexed_adr_file_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -66,7 +67,7 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
 
             output = create_adr(
                 checkout,
-                "ADR-0002",
+                "ADR-0099",
                 "Example decision",
                 ["CAP-00.S02.T03"],
                 ["packages/contracts/**"],
@@ -75,7 +76,7 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
             self.assertTrue(output.is_file())
             self.assertIn("status: Proposed", output.read_text(encoding="utf-8"))
             index = json.loads((checkout / "docs" / "adr" / "index.json").read_text(encoding="utf-8"))
-            self.assertEqual("ADR-0002", index["records"][-1]["id"])
+            self.assertEqual("ADR-0099", index["records"][-1]["id"])
 
 
 if __name__ == "__main__":

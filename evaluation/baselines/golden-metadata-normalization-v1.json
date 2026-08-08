@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0",
+  "records": [
+    {
+      "id": "RO-FIX-001",
+      "title": "Transparent Offline Pipelines for Synthetic Evidence",
+      "authors": ["Example, Amina", "Fiction, Bartosz"],
+      "issued": "2024-02-29",
+      "containerTitle": "Journal of Reproducible Fixtures",
+      "doi": "10.99999/ro.fixture.001",
+      "duplicateOf": null,
+      "missingFields": [],
+      "language": "en"
+    },
+    {
+      "id": "RO-FIX-001-DUP",
+      "title": "Transparent offline pipelines for synthetic evidence.",
+      "authors": ["A. Example", "B. Fiction"],
+      "issued": "2024-02-29",
+      "containerTitle": "J. Reproducible Fixtures",
+      "doi": "10.99999/ro.fixture.001",
+      "duplicateOf": "RO-FIX-001",
+      "missingFields": ["abstract"],
+      "language": null
+    },
+    {
+      "id": "RO-FIX-002-MISSING",
+      "title": "A Record with Deliberately Missing Optional Fields",
+      "authors": [],
+      "issued": null,
+      "containerTitle": null,
+      "doi": null,
+      "duplicateOf": null,
+      "missingFields": ["abstract", "authors", "containerTitle", "issued"],
+      "language": null
+    },
+    {
+      "id": "RO-FIX-003-UNICODE",
+      "title": "M\u00e9todos sint\u00e9ticos \u2014 reproducibility across na\u00efve encodings",
+      "authors": ["Mu\u00f1oz, Zo\u00eb", "\u0141\u0105ka, Jan"],
+      "issued": "2023",
+      "containerTitle": "Proceedings of the Fictional Fixture Workshop",
+      "doi": null,
+      "duplicateOf": null,
+      "missingFields": ["abstract"],
+      "language": "mul"
+    }
+  ]
+}

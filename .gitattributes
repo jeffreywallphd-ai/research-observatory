@@ -11,4 +11,6 @@
 *.png binary
 *.jpg binary
 *.jpeg binary
+# Fixture hashes cover exact repository bytes; disable checkout conversion.
+tests/fixtures/scholarly-corpus/** -text
 *.pdf binary

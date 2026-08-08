@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "1.0",
+  "id": "RO-CONTRACT-001",
+  "title": "Transparent Offline Pipelines for Synthetic Evidence",
+  "authors": ["Example, Amina", "Fiction, Bartosz"],
+  "issued": "2024-02-29",
+  "containerTitle": "Journal of Reproducible Fixtures",
+  "doi": "10.99999/ro.fixture.001",
+  "duplicateOf": null,
+  "missingFields": [],
+  "language": "en"
+}

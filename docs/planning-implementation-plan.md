@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0a0cfeadc76271ed13354f3efe54428912575b1bddd45fec1b7481d88ebf81d1
+source_sha256: 570ff3fd9650e0e2525c5f30d68cf4287727db1d5b24557f7bcb8d4014e14c48
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -723,13 +723,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S05.T02 - Establish golden-output and benchmark registry conventions
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S05.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Registry format for datasets, expected outputs, tolerances, model versions, prompts, schemas, and evaluation results.
 
