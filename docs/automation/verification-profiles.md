@@ -27,7 +27,7 @@ release-gated profile exits with code 3 and its gate reason.
 | `service`, `data` | Core API/contracts and storage/migration behavior. |
 | `documents`, `search`, `ai`, `evidence`, `graph`, `novelty` | Capability-specific unit/integration suites. |
 | `e2e-local` | Local happy, denial, cancellation, restart, and recovery workflows. |
-| `security-local` | Local security, dependency, secret, license, and vulnerability policy. |
+| `security-local` | Foundation plus the pinned live scanner and security policy unit/boundary tests. |
 | `server`, `cloud` | Explicitly blocked until their later release gates. |
 
 Each domain owns its corresponding `tests/<profile>/` directory. Empty early

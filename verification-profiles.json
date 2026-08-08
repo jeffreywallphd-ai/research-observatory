@@ -29,7 +29,8 @@
     "graph:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/graph", "-p", "test_*.py"]},
     "novelty:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/novelty", "-p", "test_*.py"]},
     "e2e-local:system": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/e2e", "-p", "test_*.py"]},
-    "security-local:policy": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/security", "-p", "test_*.py"]}
+    "security-local:supply-chain": {"argv": ["{python}", "tools/security_check.py", "--repo", "{repo}", "--report", "artifacts/tmp/security-local.json"]},
+    "security-local:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/security", "-p", "test_*.py"]}
   },
   "profiles": {
     "foundation": {
@@ -70,7 +71,7 @@
     "graph": {"description": "Foundation plus graph, relation, contradiction, lineage, and synthesis tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "graph:unit", "activationGlob": "tests/graph/test_*.py", "installedBy": "CAP-09"}]},
     "novelty": {"description": "Foundation plus novelty generation, challenge, decision, and monitoring tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "novelty:unit", "activationGlob": "tests/novelty/test_*.py", "installedBy": "CAP-10"}]},
     "e2e-local": {"description": "Foundation plus local happy, denial, cancellation, restart, and recovery workflows.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "e2e-local:system", "activationGlob": "tests/e2e/test_*.py", "installedBy": "CAP-01-CAP-11"}]},
-    "security-local": {"description": "Foundation plus local security, secret, dependency, license, and vulnerability policy checks.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "security-local:policy", "activationGlob": "tests/security/test_*.py", "installedBy": "CAP-00.S03.T03"}]},
+    "security-local": {"description": "Foundation plus local security, secret, dependency, license, and vulnerability policy checks.", "includes": ["foundation"], "commands": ["security-local:supply-chain", "security-local:unit"]},
     "server": {"description": "University/server qualification profile.", "enabled": false, "blockedReason": "server verification is release-gated until W10 institutional implementation is approved", "commands": []},
     "cloud": {"description": "Managed cloud qualification profile.", "enabled": false, "blockedReason": "cloud verification is release-gated until W11 managed-cloud implementation is approved", "commands": []}
   }

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "software-supply-chain-policy",
+  "scannerContract": "security-toolchain.json",
+  "exceptionsPath": "security-exceptions.json",
+  "maximumExceptionDays": 30,
+  "blockingSeverities": ["HIGH", "CRITICAL"],
+  "warningSeverities": ["MEDIUM"],
+  "alwaysBlockingKinds": ["secret"],
+  "licensePolicy": {
+    "allowedIds": [
+      "0BSD",
+      "Apache-2.0",
+      "BSD-2-Clause",
+      "BSD-3-Clause",
+      "ISC",
+      "MIT",
+      "MPL-2.0",
+      "PSF-2.0",
+      "Unicode-3.0",
+      "Unlicense"
+    ],
+    "deniedIds": [
+      "AGPL-3.0-only",
+      "AGPL-3.0-or-later",
+      "SSPL-1.0"
+    ],
+    "allowedCategories": ["notice", "permissive", "unencumbered"],
+    "deniedCategories": ["forbidden", "restricted", "reciprocal", "unknown"]
+  },
+  "scan": {
+    "sourceScanners": ["secret", "misconfig"],
+    "dependencyScanners": ["vuln", "license"],
+    "skipDirectories": [
+      ".git",
+      ".local",
+      ".venv",
+      "artifacts/tmp",
+      "design/ui-reference/previews",
+      "node_modules",
+      "planning/review-site",
+      "target"
+    ],
+    "environmentTargets": [".venv", "node_modules"]
+  }
+}

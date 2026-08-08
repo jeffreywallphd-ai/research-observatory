@@ -16,5 +16,7 @@
 - `ci_check.py` - enforce pinned actions, least-privilege triggers, required CI jobs, and retained failure evidence.
 - `quality_check.py` - run governed Ruff formatting/lint and mypy checks with a structured report.
 - `packaging_smoke_check.py` - validate frozen packaging source inputs without producing or signing binaries.
+- `install_trivy.py` - install and verify the per-platform checksum-pinned security scanner in ignored local state.
+- `security_check.py` - scan source and dependencies, enforce release/exception policy, and emit sanitized evidence.
 
 Run these from the repository root after the setup kit has installed `repo-seed/`. The external setup package is not the repository.

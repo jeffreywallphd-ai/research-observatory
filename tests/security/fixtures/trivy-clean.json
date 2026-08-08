@@ -1,0 +1,19 @@
+{
+  "SchemaVersion": 2,
+  "Results": [
+    {
+      "Target": "Python",
+      "Class": "license",
+      "Type": "python-pkg",
+      "Licenses": [
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "safe-package",
+          "Name": "MIT",
+          "FilePath": "safe-package.dist-info/METADATA"
+        }
+      ]
+    }
+  ]
+}

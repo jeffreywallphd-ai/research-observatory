@@ -17,6 +17,7 @@
     "tools/bootstrap.py",
     "tools/capability_plan_check.py",
     "tools/ci_check.py",
+    "tools/install_trivy.py",
     "tools/packaging_smoke_check.py",
     "tools/plan_review_check.py",
     "tools/plan_review_site.py",
@@ -24,6 +25,7 @@
     "tools/quality_check.py",
     "tools/repository_structure_check.py",
     "tools/runtime_check.py",
+    "tools/security_check.py",
     "tools/slice_plan_check.py",
     "tools/taskctl.py",
     "tools/ui_reference_check.py",
@@ -38,6 +40,8 @@
     "tests/foundation/test_repository_structure.py",
     "tests/foundation/test_runtime_check.py",
     "tests/foundation/test_verify_runner.py",
-    "tests/contracts/test_foundation_contracts.py"
+    "tests/contracts/test_foundation_contracts.py",
+    "tests/security/test_install_trivy.py",
+    "tests/security/test_security_check.py"
   ]
 }

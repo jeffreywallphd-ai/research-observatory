@@ -33,6 +33,7 @@ def bootstrap_commands(repo: Path, platform_name: str) -> list[tuple[str, list[s
     return [
         ("Node dependencies", [corepack, "pnpm", "install", "--frozen-lockfile"]),
         ("Python environment", ["uv", "sync", "--frozen", "--no-install-project"]),
+        ("Security scanner", [python, "tools/install_trivy.py", "--repo", str(repo)]),
         ("Rust dependencies", ["cargo", "fetch", "--locked"]),
         ("Foundation smoke gate", [python, "tools/verify.py", "--profile", "foundation"]),
     ]

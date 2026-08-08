@@ -11,6 +11,7 @@ required commands, unique artifact names, and fourteen-day report retention.
 |---|---|---|
 | `foundation` | Repository, workflow, architecture, ADR, quality, packaging-input, unit, and backlog gates. | `ci-foundation.json` |
 | `quality` | Ruff formatting, Ruff linting, and mypy over the explicit governed Python scope. | `ci-quality.json` |
+| `security` | Pinned Trivy secret, misconfiguration, vulnerability, license, and exception-policy gate. | `ci-security.json` |
 | `contracts` | Foundation plus portable cross-process contract tests through the service profile. | `ci-contracts.json` |
 | `packaging-smoke` | Frozen Python, Node.js, and Rust dependencies plus locked packaging-source validation. | `ci-packaging-smoke.json` |
 
@@ -34,6 +35,7 @@ Run the hosted-CI equivalents locally before completing a task:
 ```powershell
 .venv\Scripts\python.exe tools/ci_check.py --repo .
 .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/local-quality.json
+.venv\Scripts\python.exe tools/security_check.py --repo . --report artifacts/tmp/local-security.json
 .venv\Scripts\python.exe tools/verify.py --profile foundation --report artifacts/tmp/local-foundation.json
 .venv\Scripts\python.exe tools/verify.py --profile service --report artifacts/tmp/local-contracts.json
 ```
@@ -41,6 +43,10 @@ Run the hosted-CI equivalents locally before completing a task:
 The packaging smoke gate qualifies locked source inputs only. Installer creation,
 signing, upgrade, repair, rollback, and removal remain owned by their later CAP-00
 slices and must not be inferred from this smoke result.
+
+The uploaded security report is normalized and never contains raw secret
+matches. See [`supply-chain-security.md`](supply-chain-security.md) for scanner,
+threshold, exception, and local-cache rules.
 
 Primary action and runner sources:
 
