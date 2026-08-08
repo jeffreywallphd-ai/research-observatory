@@ -38,8 +38,10 @@ class BuildManifestTests(unittest.TestCase):
                 stdout = b"2026-08-08T17:05:34-04:00\n"
             elif arguments[:3] == ["show", "-s", "--format=%ct"]:
                 stdout = b"1786223134\n"
-            elif len(arguments) == 2 and arguments[0] == "show" and arguments[1].startswith("HEAD:"):
-                stdout = (REPO / arguments[1].removeprefix("HEAD:")).read_bytes()
+            elif len(arguments) >= 3 and arguments[:2] == ["cat-file", "blob"]:
+                stdout = (REPO / arguments[2].removeprefix("HEAD:")).read_bytes()
+            elif len(arguments) >= 4 and arguments[:2] == ["cat-file", "--filters"]:
+                stdout = (REPO / arguments[3].removeprefix("HEAD:")).read_bytes()
             elif arguments[:2] == ["status", "--porcelain=v1"]:
                 stdout = status
             else:
@@ -243,8 +245,10 @@ class BuildManifestTests(unittest.TestCase):
                         (root / "Cargo.lock").write_bytes(b"raced lock bytes\n")
                         mutated = True
                     stdout = b""
-                elif len(arguments) == 2 and arguments[0] == "show" and arguments[1].startswith("HEAD:"):
-                    stdout = committed[arguments[1].removeprefix("HEAD:")]
+                elif len(arguments) >= 3 and arguments[:2] == ["cat-file", "blob"]:
+                    stdout = committed[arguments[2].removeprefix("HEAD:")]
+                elif len(arguments) >= 4 and arguments[:2] == ["cat-file", "--filters"]:
+                    stdout = committed[arguments[3].removeprefix("HEAD:")]
                 else:
                     return subprocess.CompletedProcess(command, 2, b"", b"unexpected Git command")
                 return subprocess.CompletedProcess(command, 0, stdout, b"")
@@ -252,7 +256,9 @@ class BuildManifestTests(unittest.TestCase):
             manifest, errors = generate_build_manifest(root, runner=runner)
 
         self.assertIsNone(manifest)
-        self.assertTrue(any("differs from committed HEAD bytes: Cargo.lock" in error for error in errors), errors)
+        self.assertTrue(
+            any("differs from the committed HEAD checkout: Cargo.lock" in error for error in errors), errors
+        )
 
     def test_guarded_write_rejects_parent_swap(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
