@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S03.T02",
+  "commit": "7fe9165caf44aeb59f6e2bb2549dcb23a059afbb",
+  "baseCommit": "9877766796b94bfa63faf35c767b095191f203ab",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S03.T02.json",
+    "docs/automation/toolchain.md",
+    "planning/backlog.yaml",
+    "pyproject.toml",
+    "quality-scope.json",
+    "tests/foundation/test_ci_check.py",
+    "tests/foundation/test_quality_check.py",
+    "tests/foundation/test_repository_structure.py",
+    "tools/capability_plan_check.py",
+    "tools/ci_check.py",
+    "tools/plan_review_check.py",
+    "tools/plan_review_site.py",
+    "tools/planctl.py",
+    "tools/quality_check.py",
+    "tools/repository_structure_check.py",
+    "tools/slice_plan_check.py",
+    "tools/taskctl.py",
+    "tools/ui_reference_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-00.S03.T02-review-fix-quality.json",
+      "exitCode": 0,
+      "result": "Ruff format, Ruff lint, and mypy passed for all 29 Python files discovered beneath the governed application, package, service, test, tool, and worker roots"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile foundation --report artifacts/tmp/CAP-00.S03.T02-review-fix-foundation.json",
+      "exitCode": 0,
+      "result": "all foundation commands and 44 foundation tests passed"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile service --report artifacts/tmp/CAP-00.S03.T02-review-fix-contracts.json",
+      "exitCode": 0,
+      "result": "foundation plus two portable contract tests passed"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The CI secret guard now rejects both dotted and bracket-style GitHub secrets context access",
+        "The Python quality contract discovers every .py file under all production and automation roots and fails if any discovered file is unlisted or any declaration is stale",
+        "The original pinned action, least-privilege, frozen dependency, and retained artifact controls remain passing"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "A bracket-style secret regression test proves the previously bypassable syntax is rejected",
+        "An unlisted governed-root file regression test proves new Python files cannot silently bypass formatting, lint, or type checks",
+        "All 44 foundation tests and two portable contract tests pass at the review-fix commit"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Toolchain documentation now defines the closed discovered-roots boundary and its separate approved UI-reference boundary",
+        "Existing repository workflow tools were formatted and type-corrected so taskctl, planctl, plan validators, review generators, repository checks, and UI-reference checks are all within the passing quality set",
+        "No application feature, schema migration, production secret, hosted action run, or later-wave infrastructure was introduced"
+      ]
+    }
+  ],
+  "unverifiedItems": [
+    "No remote workflow run was created because remote push is outside the approved local integration policy."
+  ],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "The independent reviewer must confirm both requested changes before approval."
+  }
+}
