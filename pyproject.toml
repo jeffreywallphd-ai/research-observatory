@@ -1,6 +1,6 @@
 [project]
 name = "research-observatory"
-version = "0.0.0"
+version = "0.1.0"
 description = "Evidence-first, local-first scholarly reasoning and research production"
 readme = "README.md"
 requires-python = ">=3.14,<3.15"

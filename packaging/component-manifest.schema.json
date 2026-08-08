@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.invalid/schemas/component-version-manifest-1.0.json",
+  "type": "object",
+  "required": ["schemaVersion", "documentType", "componentId", "componentKind", "version", "productVersionSource", "compatibilityLine"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "component-version-manifest"},
+    "componentId": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+    "componentKind": {"enum": ["desktop", "sidecar"]},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"},
+    "productVersionSource": {"const": "packaging/product-version.json"},
+    "compatibilityLine": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"}
+  },
+  "additionalProperties": false
+}

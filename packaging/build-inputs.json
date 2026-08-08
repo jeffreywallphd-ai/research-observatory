@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "build-manifest-inputs",
+  "components": [
+    {"id": "desktop", "kind": "desktop", "manifestPath": "apps/desktop/component-manifest.json"},
+    {"id": "core-api", "kind": "sidecar", "manifestPath": "services/core-api/component-manifest.json"},
+    {"id": "worker-fabric", "kind": "sidecar", "manifestPath": "workers/component-manifest.json"}
+  ],
+  "dependencyLocks": [
+    {"id": "cargo", "path": "Cargo.lock"},
+    {"id": "pnpm", "path": "pnpm-lock.yaml"},
+    {"id": "uv", "path": "uv.lock"}
+  ],
+  "schemaPaths": [
+    "evaluation/baseline-approval.schema.json",
+    "evaluation/contracts/normalized-record.schema.json",
+    "evaluation/registry.schema.json",
+    "packaging/build-manifest.schema.json",
+    "packaging/component-manifest.schema.json",
+    "packaging/product-version.schema.json",
+    "planning/backlog.schema.json",
+    "planning/capability-plans/capability-plan.schema.json",
+    "planning/decision-feedback.schema.json",
+    "planning/slice-plans/slice-plan.schema.json",
+    "tests/fixtures/scholarly-corpus/manifest.schema.json"
+  ],
+  "modelManifests": []
+}
