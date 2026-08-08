@@ -620,7 +620,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-00.S01.T01
-    status: NOT_STARTED
+    status: DONE
     tasks:
     - id: CAP-00.S02.T01
       capability_id: CAP-00
@@ -786,11 +786,14 @@ capabilities:
     platform_targets:
     - platform-neutral
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: codex-review
+      reviewed_at: '2026-08-08T16:33:36+00:00'
+      evidence:
+      - artifacts/evidence/CAP-00.S02.integration.json
+      notes: Slice-level audit verified the architecture map and default-deny dependency contract, atomic all-slice/durable
+        campaign protocol, indexed ADR lifecycle and self-protecting change-set gate, immutable task evidence, expected paths,
+        and denial boundaries; no unresolved finding.
   - id: CAP-00.S03
     title: Verification, CI, and supply-chain controls
     outcome: Every task can invoke consistent, composable verification profiles locally and in CI.
@@ -803,7 +806,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S02.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-00.S03.T01
       capability_id: CAP-00
@@ -835,11 +838,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-08T16:33:36+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
