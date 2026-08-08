@@ -28,7 +28,12 @@ COMPONENT_SCHEMA_PATH = "packaging/component-manifest.schema.json"
 BUILD_SCHEMA_PATH = "packaging/build-manifest.schema.json"
 REPORT_ROOT = "artifacts/tmp"
 MODEL_MANIFEST_ROOT = "packaging/model-manifests"
-SEMVER = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$")
+SEMVER_TEXT = (
+    r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
+    r"(?:-(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)"
+    r"(?:\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*)?"
+)
+SEMVER = re.compile(rf"^{SEMVER_TEXT}$")
 EXPECTED_COMPONENTS = frozenset(
     {
         ("desktop", "desktop", "apps/desktop/component-manifest.json"),
@@ -256,7 +261,7 @@ def changelog_errors(changelog: str, version: str) -> list[str]:
         if line == "## [Unreleased]":
             unreleased_positions.append(index)
             continue
-        if line.startswith("## ["):
+        if line.startswith("## "):
             match = release_pattern.fullmatch(line)
             if not match:
                 errors.append(f"CHANGELOG.md has an invalid release heading: {line!r}")

@@ -1424,14 +1424,18 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T21:08:08+00:00'
-      updated_at: '2026-08-08T21:56:48+00:00'
+      updated_at: '2026-08-08T22:03:19+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Implementation commit 23717be passed the clean 14-command foundation profile, 109 tests, focused
         build-manifest boundaries, and exact clean provenance generation; submitted for independent review.
 
         Review fixes complete at 91be762: clean Git-filter/raw-blob provenance, junction and parent-swap guards, CAP-07 model-manifest
-        denial, actionable mirror/changelog parsing, exact dates; 14 commands, 114 tests, and 13 focused tests pass.'
+        denial, actionable mirror/changelog parsing, exact dates; 14 commands, 114 tests, and 13 focused tests pass.
+
+        Second re-review fixes complete at 4a3196c: Windows input/output ancestor locks close final race windows; changelog
+        order/SemVer is canonical; every pre-CAP-07 model-tree entry/redirect is denied; 14 commands, 116 tests, 15 focused
+        pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T03.json
@@ -1443,18 +1447,22 @@ capabilities:
         sha256: 12eee1cf2ecd28420661519fa42a20757c77caf68242a9c38a8c0e2eab1bee69
         commit: 91be762a85bbecbf57f2a4b8d9eb2260a1653eb9
         recorded_at: '2026-08-08T21:43:06+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T03.review-fix-2.json
+        sha256: aa67ac3a1106b72f6a339d9dd19a17ff2334d773938bd5106fb7ee477c3e1931
+        commit: 4a3196c892db6717d4a78933675a057c486a42a3
+        recorded_at: '2026-08-08T22:00:10+00:00'
       review:
         reviewer: codex-review
         result: changes-requested
-        reviewed_at: '2026-08-08T21:56:48+00:00'
-        notes: 'Re-review of 91be762 required: close final status/input and path-replace TOCTOU windows; enforce canonical
-          changelog title/current/newest-first SemVer order; deny every file or redirect in the pre-CAP-07 reserved model
-          tree.'
+        reviewed_at: '2026-08-08T22:03:19+00:00'
+        notes: Re-review of 4a3196c confirmed both race fixes, but required strict SemVer across tool/schemas and rejection
+          of noncanonical level-2 changelog headings between title, Unreleased, and dated releases.
       base_sha: 2f28abe2c25fdf911f338ae9e173223879964ac2
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T21:56:48+00:00'
-        expires_at: '2026-08-09T05:56:48+00:00'
+        claimed_at: '2026-08-08T22:03:19+00:00'
+        expires_at: '2026-08-09T06:03:19+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:

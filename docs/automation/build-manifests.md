@@ -9,9 +9,11 @@ version and major/minor compatibility line.
 `CHANGELOG.md` starts with its title, keeps one `Unreleased` section, and lists
 unique semantic versions newest-to-oldest using exact
 `## [version] - YYYY-MM-DD` headings with real calendar dates. The first dated
-release is the current product version. A version change updates the authority,
-all mirrors, the three component manifests, and the changelog in one reviewed
-task.
+release is the current product version. Versions use the SemVer 2.0 core and
+prerelease grammar without leading-zero numeric identifiers, empty identifiers,
+or build metadata. A version change updates the authority, all mirrors, the three
+component manifests, and the changelog in one reviewed task. Other change
+categories use level-three headings beneath these canonical level-two headings.
 
 After updating the authority and ecosystem mirrors, regenerate the component
 contracts with:
