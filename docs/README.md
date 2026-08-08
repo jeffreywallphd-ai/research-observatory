@@ -7,7 +7,7 @@ This file is the repository's high-level document router. It delegates detailed 
 | Need | Read |
 |---|---|
 | Product purpose, users, workflows, principles, non-goals | `product/vision.md` |
-| Architecture, services, data, deployment, security, platform model | Accepted `adr/` records, then `architecture/source/systems-design.md` |
+| Architecture, services, data, deployment, security, platform model | Accepted `adr/` records, then `architecture/README.md` and `architecture/source/systems-design.md` |
 | Source precedence, mismatch handling, document change control | `governance/repository-governance.md` |
 | Capability campaign, verification, evidence, CI, and stop rules | `automation/project-automation-guide.md` |
 | Coding-agent claims, task flow, and evidence | `automation/codex-tracking-guide.md` |
