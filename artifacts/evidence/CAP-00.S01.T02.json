@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S01.T02",
+  "commit": "0f60cf5d3c1d893e178b7a286724f9817a444781",
+  "baseCommit": "3cf2f4e9c5b68b73adac9f5f43880e15848ce3df",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    ".gitattributes",
+    ".node-version",
+    ".nvmrc",
+    ".python-version",
+    "Cargo.lock",
+    "Cargo.toml",
+    "README.md",
+    "docs/automation/toolchain.md",
+    "package.json",
+    "planning/backlog.yaml",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "pyproject.toml",
+    "runtime-versions.json",
+    "rust-toolchain.toml",
+    "tests/foundation/test_runtime_check.py",
+    "tools/README.md",
+    "tools/runtime_check.py",
+    "tools/verify.py",
+    "uv.lock"
+  ],
+  "checks": [
+    {
+      "command": "python tools/runtime_check.py --repo . --check-installed",
+      "exitCode": 0,
+      "result": "Node 24.19.0, Python 3.14.6, Rust 1.96.1, pnpm 11.20.0, and uv 0.12.2 match the runtime contract"
+    },
+    {
+      "command": "python tools/verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "repository structure, runtime declarations, 9 foundation tests, and backlog validation passed"
+    },
+    {
+      "command": "corepack pnpm install --frozen-lockfile",
+      "exitCode": 0,
+      "result": "lockfile was current and pnpm completed without dependency resolution"
+    },
+    {
+      "command": "uv sync --frozen --no-install-project",
+      "exitCode": 0,
+      "result": "the locked Python environment was already synchronized with PyYAML 6.0.3"
+    },
+    {
+      "command": "cargo fetch --locked",
+      "exitCode": 0,
+      "result": "the locked Rust workspace fetched without rewriting Cargo.lock"
+    },
+    {
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "runtime-versions.json and ecosystem-native files exact-pin every required runtime and dependency manager",
+        "tools/runtime_check.py rejects unavailable or mismatched installed tools with a version-specific installation hint",
+        "pnpm, uv, and Cargo frozen or locked installation commands completed without modifying their lockfiles"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "test_declarations_and_lockfiles_match_contract covers the supported declaration path",
+        "test_rejects_unsupported_runtime_with_actionable_message covers a material version mismatch",
+        "test_rejects_missing_tool_with_install_hint covers the absent-prerequisite boundary"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "docs/automation/toolchain.md records the pins, upgrade policy, and deterministic install commands",
+        "README.md and tools/README.md link the toolchain contract and checker",
+        "The foundation verifier now enforces declaration and lockfile consistency without introducing application or hosted infrastructure scope"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "A rigorous reviewer-role audit is required before the task may transition from REVIEW to DONE."
+  }
+}

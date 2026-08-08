@@ -513,26 +513,30 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T16:01:08+00:00'
-      updated_at: '2026-08-08T16:01:08+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T16:12:33+00:00'
+      completed_at: '2026-08-08T16:12:33+00:00'
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Pinned runtime declarations, deterministic lockfiles, frozen-install checks, and failure-path
+        tests are complete at 0f60cf5.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S01.T02.json
+        sha256: a1e702b17553045aa361de6669ddf068ac10e92030cacaf45cee8aefb89edba5
+        commit: 0f60cf5d3c1d893e178b7a286724f9817a444781
+        recorded_at: '2026-08-08T16:12:21+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: approved
+        reviewed_at: '2026-08-08T16:12:33+00:00'
+        notes: Rigorous audit confirmed exact cross-ecosystem pins, actionable unsupported and missing-tool failures, immutable
+          frozen installs, lockfile consistency, documentation, and commit-bound evidence; no unresolved finding.
       base_sha: 3cf2f4e9c5b68b73adac9f5f43880e15848ce3df
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T16:01:08+00:00'
-        expires_at: '2026-08-09T00:01:08+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
@@ -563,11 +567,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-08T16:12:33+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
