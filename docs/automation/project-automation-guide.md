@@ -115,3 +115,14 @@ Automate local, reversible, bounded actions. Human authorization is required for
 ## 10. Setup verification
 
 After seed installation, verify root `AGENTS.md`, `docs/README.md`, and `planning/README.md` delegate correctly to this guide. The external setup pack is not required for operation.
+
+## 11. Local main integration
+
+The default handoff for tested repository work is the local `main` branch:
+
+1. Run the task contract and changed-path checks against the exact commit to integrate.
+2. Require a clean worktree and successful checks; never integrate known failing work.
+3. Fast-forward local `main` to the tested branch when histories permit.
+4. If histories diverge, stop for explicit reconciliation, then rerun affected checks before merging.
+5. Preserve task, review, approval, dependency, and release-gate state exactly as recorded; a Git merge is not workflow approval.
+6. Do not push local `main`, publish artifacts, or update a remote without separate explicit authorization.

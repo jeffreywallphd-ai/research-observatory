@@ -44,6 +44,11 @@ After approval, continue through tasks, slice integration, independent slice rev
 
 A completion claim must link every criterion to a named test, report, artifact, source commit, and reviewer outcome. If evidence is incomplete, keep the task or slice in progress/review; do not mark it done with persuasive prose.
 
+After required checks pass and the bounded work is committed, fast-forward the
+tested branch into local `main`. Keep any pending review or approval state
+pending in the backlog: local Git integration is not a substitute for a workflow
+transition. Stop on branch divergence and never push without explicit authority.
+
 ## Independent review
 
 Use a fresh agent context when possible. The reviewer challenges scope, architecture, tests, denial/failure/recovery paths, privacy/security, rights, UI contracts, platform behavior, hidden TODOs, and whether evidence actually proves the acceptance criteria.
