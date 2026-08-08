@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2db31fe0e0957fca946a7819b214a52caf574ce7dd3ac42e2304789b4a967802
+source_sha256: 4569379fa0793bb8e5d1cf72c8fa2243038f13df9eb6dd0558f9854f653a5c44
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -789,6 +789,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S05.T03.review-fix.json` at `91be762a85bbecbf57f2a4b8d9eb2260a1653eb9`
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-2.json` at `4a3196c892db6717d4a78933675a057c486a42a3`
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-3.json` at `8534749677355438708f2d3e9e73d167a86e5911`
+- `artifacts/evidence/CAP-00.S05.T03.review-fix-4.json` at `d2b2f10f40abf70c65e1c2ed2da85bc49914a4f8`
 
 ### CAP-00.S06 - Approved experience reference and UI conformance automation
 

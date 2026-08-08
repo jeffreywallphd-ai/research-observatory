@@ -487,6 +487,48 @@ class BuildManifestTests(unittest.TestCase):
 
             self.assertFalse(destination.exists())
 
+    @unittest.skipUnless(os.name == "nt", "Windows handle replacement contract")
+    def test_guarded_write_blocks_post_replacement_path_substitution(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            parent = root / "artifacts" / "tmp"
+            parent.mkdir(parents=True)
+            destination = parent / "manifest.json"
+            attacker = parent / "attacker.json"
+            attacker.write_text('{"attacker":true}\n', encoding="utf-8")
+            substitution_blocked = False
+
+            def substitute_destination() -> None:
+                nonlocal substitution_blocked
+                try:
+                    os.replace(attacker, destination)
+                except OSError:
+                    substitution_blocked = True
+
+            guarded_atomic_write_json(
+                root,
+                destination,
+                {"safe": True},
+                parent,
+                after_replace=substitute_destination,
+            )
+
+            self.assertTrue(substitution_blocked)
+            self.assertEqual({"safe": True}, json.loads(destination.read_text(encoding="utf-8")))
+
+    def test_guarded_write_atomically_replaces_existing_content(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            parent = root / "artifacts" / "tmp"
+            parent.mkdir(parents=True)
+            destination = parent / "manifest.json"
+            destination.write_text('{"old":true}\n', encoding="utf-8")
+
+            guarded_atomic_write_json(root, destination, {"safe": True}, parent)
+
+            self.assertEqual({"safe": True}, json.loads(destination.read_text(encoding="utf-8")))
+            self.assertEqual([destination], list(parent.iterdir()))
+
     def test_output_rejects_redirected_scratch_root(self) -> None:
         with tempfile.TemporaryDirectory() as temporary, tempfile.TemporaryDirectory() as outside:
             root = Path(temporary).resolve()

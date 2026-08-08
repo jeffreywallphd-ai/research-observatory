@@ -44,6 +44,8 @@ EXPECTED_COMPONENTS = frozenset(
 EXPECTED_LOCKS = frozenset({("cargo", "Cargo.lock"), ("pnpm", "pnpm-lock.yaml"), ("uv", "uv.lock")})
 GitRunner = Callable[..., subprocess.CompletedProcess[bytes]]
 BeforeReplace = Callable[[], None]
+HeldReplace = Callable[[Path], None]
+HeldRead = Callable[[], bytes]
 
 
 @dataclass(frozen=True)
@@ -100,6 +102,108 @@ def windows_path_locks(paths: list[Path], *, directories: bool, allow_delete: bo
     finally:
         for handle in reversed(handles):
             close_handle(handle)
+
+
+@contextmanager
+def held_file_renamer(source: Path) -> Iterator[tuple[HeldReplace, HeldRead]]:
+    """Keep a file write/delete locked while renaming it through its Windows handle."""
+    if os.name != "nt":
+        current = source
+
+        def replace_portable(destination: Path) -> None:
+            nonlocal current
+            os.replace(current, destination)
+            current = destination
+
+        yield replace_portable, lambda: current.read_bytes()
+        return
+    import ctypes
+    from ctypes import wintypes
+
+    class FileRenameInfo(ctypes.Structure):
+        _fields_ = (
+            ("ReplaceIfExists", wintypes.BOOLEAN),
+            ("RootDirectory", wintypes.HANDLE),
+            ("FileNameLength", wintypes.DWORD),
+            ("FileName", wintypes.WCHAR * 1),
+        )
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    create_file = kernel32.CreateFileW
+    create_file.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create_file.restype = wintypes.HANDLE
+    set_file_information = kernel32.SetFileInformationByHandle
+    set_file_information.argtypes = (wintypes.HANDLE, ctypes.c_int, wintypes.LPVOID, wintypes.DWORD)
+    set_file_information.restype = wintypes.BOOL
+    get_file_size = kernel32.GetFileSizeEx
+    get_file_size.argtypes = (wintypes.HANDLE, ctypes.POINTER(ctypes.c_longlong))
+    get_file_size.restype = wintypes.BOOL
+    set_file_pointer = kernel32.SetFilePointerEx
+    set_file_pointer.argtypes = (wintypes.HANDLE, ctypes.c_longlong, wintypes.LPVOID, wintypes.DWORD)
+    set_file_pointer.restype = wintypes.BOOL
+    read_file = kernel32.ReadFile
+    read_file.argtypes = (
+        wintypes.HANDLE,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        ctypes.POINTER(wintypes.DWORD),
+        wintypes.LPVOID,
+    )
+    read_file.restype = wintypes.BOOL
+    close_handle = kernel32.CloseHandle
+    close_handle.argtypes = (wintypes.HANDLE,)
+    close_handle.restype = wintypes.BOOL
+    generic_read = 0x80000000
+    delete_access = 0x00010000
+    file_share_read = 0x00000001
+    open_existing = 3
+    file_rename_info = 3
+    file_begin = 0
+    invalid_handle = wintypes.HANDLE(-1).value
+    handle = create_file(str(source), generic_read | delete_access, file_share_read, None, open_existing, 0, None)
+    if handle == invalid_handle:
+        raise ctypes.WinError(ctypes.get_last_error())
+
+    def replace(destination: Path) -> None:
+        encoded_name = str(destination).encode("utf-16-le")
+        size = FileRenameInfo.FileName.offset + len(encoded_name) + ctypes.sizeof(wintypes.WCHAR)
+        buffer = ctypes.create_string_buffer(size)
+        info = ctypes.cast(buffer, ctypes.POINTER(FileRenameInfo)).contents
+        info.ReplaceIfExists = True
+        info.RootDirectory = None
+        info.FileNameLength = len(encoded_name)
+        ctypes.memmove(ctypes.addressof(buffer) + FileRenameInfo.FileName.offset, encoded_name, len(encoded_name))
+        if not set_file_information(handle, file_rename_info, buffer, size):
+            raise ctypes.WinError(ctypes.get_last_error())
+
+    def read_held() -> bytes:
+        length = ctypes.c_longlong()
+        if not get_file_size(handle, ctypes.byref(length)):
+            raise ctypes.WinError(ctypes.get_last_error())
+        if length.value < 0 or length.value > 0xFFFFFFFF:
+            raise ValueError("guarded JSON temporary has an unsupported size")
+        if not set_file_pointer(handle, 0, None, file_begin):
+            raise ctypes.WinError(ctypes.get_last_error())
+        buffer = ctypes.create_string_buffer(length.value)
+        count = wintypes.DWORD()
+        if length.value and not read_file(handle, buffer, length.value, ctypes.byref(count), None):
+            raise ctypes.WinError(ctypes.get_last_error())
+        if count.value != length.value:
+            raise OSError("guarded JSON temporary could not be read completely")
+        return buffer.raw[: count.value]
+
+    try:
+        yield replace, read_held
+    finally:
+        close_handle(handle)
 
 
 def canonical_json_bytes(value: Any) -> bytes:
@@ -790,6 +894,7 @@ def atomic_write_json(
     value: Any,
     guard: DirectoryGuard | None = None,
     before_replace: BeforeReplace | None = None,
+    after_replace: BeforeReplace | None = None,
 ) -> None:
     temporary: Path | None = None
     encoded = (json.dumps(value, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
@@ -805,17 +910,19 @@ def atomic_write_json(
             os.fsync(handle.fileno())
         assert temporary is not None
         temporary_identity = path_identity(temporary)
-        with windows_path_locks([temporary], directories=False, allow_delete=True):
+        with held_file_renamer(temporary) as (replace_held, read_held):
             if before_replace:
                 before_replace()
             if guard:
                 validate_directory_guard(guard)
-            if path_identity(temporary) != temporary_identity or temporary.read_bytes() != encoded:
+            if path_identity(temporary) != temporary_identity or read_held() != encoded:
                 raise ValueError("temporary JSON changed before guarded replacement")
-            os.replace(temporary, destination)
+            replace_held(destination)
+            if after_replace:
+                after_replace()
             if guard:
                 validate_directory_guard(guard, require_destination=True)
-            if destination.read_bytes() != encoded:
+            if path_identity(destination) != temporary_identity or read_held() != encoded:
                 raise ValueError("guarded destination content differs from the verified temporary JSON")
     except OSError, ValueError:
         if temporary is not None:
@@ -829,6 +936,7 @@ def guarded_atomic_write_json(
     value: Any,
     allowed_root: Path,
     before_replace: BeforeReplace | None = None,
+    after_replace: BeforeReplace | None = None,
 ) -> None:
     repo = repo.resolve(strict=True)
     parent = destination.absolute().parent
@@ -840,7 +948,7 @@ def guarded_atomic_write_json(
         directory_chain.append(cursor)
     with windows_path_locks(directory_chain, directories=True):
         guard = destination_guard(repo, destination, allowed_root)
-        atomic_write_json(destination, value, guard, before_replace)
+        atomic_write_json(destination, value, guard, before_replace, after_replace)
 
 
 def synchronize_component_manifests(repo: Path) -> list[str]:

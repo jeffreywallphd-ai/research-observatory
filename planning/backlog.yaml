@@ -1424,7 +1424,7 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T21:08:08+00:00'
-      updated_at: '2026-08-08T22:19:54+00:00'
+      updated_at: '2026-08-08T22:39:32+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Implementation commit 23717be passed the clean 14-command foundation profile, 109 tests, focused
@@ -1438,7 +1438,10 @@ capabilities:
         pass.
 
         Third re-review fixes complete at 8534749: one strict SemVer grammar across tool and schemas, canonical level-two
-        changelog hierarchy, prior handle-lock race fixes retained; 14 commands, 117 tests, 16 focused pass.'
+        changelog hierarchy, prior handle-lock race fixes retained; 14 commands, 117 tests, 16 focused pass.
+
+        Fourth remediation closes exact inventory, temporary-content, CommonMark hierarchy, dangling junction, and traversal
+        failure boundaries at d2b2f10.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T03.json
@@ -1460,18 +1463,22 @@ capabilities:
         sha256: 0318e0bc090329e9d40fa2d07634f793fa120abd3a0f3598f9419d0ffb87c297
         commit: 8534749677355438708f2d3e9e73d167a86e5911
         recorded_at: '2026-08-08T22:09:44+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T03.review-fix-4.json
+        sha256: f10b55c2354ee00dd125e3db26ef1ecaf4fc571be4111966f32ad3c65f124185
+        commit: d2b2f10f40abf70c65e1c2ed2da85bc49914a4f8
+        recorded_at: '2026-08-08T22:30:06+00:00'
       review:
         reviewer: codex-review
         result: changes-requested
-        reviewed_at: '2026-08-08T22:19:54+00:00'
-        notes: 'Re-review of 8534749 required: re-enumerate schema/model inventories during final stability; protect temporary
-          JSON content through replacement; recognize CommonMark ATX/setext H2 forms; reject dangling reserved-root redirects;
-          fail closed on schema traversal errors.'
+        reviewed_at: '2026-08-08T22:39:32+00:00'
+        notes: 'Exact d2b2f10 re-review: Windows destination path can be replaced after byte verification because the retained
+          handle shares delete; require handle-bound replacement/final verification and regression for post-replacement substitution.'
       base_sha: 2f28abe2c25fdf911f338ae9e173223879964ac2
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T22:19:54+00:00'
-        expires_at: '2026-08-09T06:19:54+00:00'
+        claimed_at: '2026-08-08T22:39:32+00:00'
+        expires_at: '2026-08-09T06:39:32+00:00'
       verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T03",
+  "commit": "d2b2f10f40abf70c65e1c2ed2da85bc49914a4f8",
+  "baseCommit": "8534749677355438708f2d3e9e73d167a86e5911",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T03.review-fix-3.json",
+    "reason": "Independent re-review confirmed the strict SemVer remediation and prior race closures, then identified late inventory creation, temporary-file tampering, noncanonical CommonMark level-two headings, a dangling reserved-root junction, and fail-open schema traversal. This manifest binds the fail-closed remediations and their regressions."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T03.review-fix-3.json",
+    "docs/automation/build-manifests.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_build_manifest.py",
+    "tools/build_manifest.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S05.T03-review-fix-4-exact-foundation.json",
+      "exitCode": 0,
+      "result": "The clean exact fourth-remediation commit passed all 14 mandatory foundation commands and all 121 foundation tests; build provenance reported 0.1.0+gd2b2f10 clean."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest -v",
+      "exitCode": 0,
+      "result": "All 20 focused tests passed, including final-status late schema/model creation, closed-temporary tampering, CommonMark ATX/setext hierarchy, dangling reserved-root junction, scan failures, prior provenance races, confinement, strict SemVer, and deterministic output."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-00.S05.T03-review-fix-4-exact-manifest.json",
+      "exitCode": 0,
+      "result": "The exact clean commit generated a confined deterministic manifest whose identity is 0.1.0+gd2b2f10."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The foundation profile validated the ledger with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Schema discovery now uses explicit fail-closed traversal and exact final re-enumeration; late schema creation or unreadable inventory subtrees invalidate provenance collection.",
+        "The pre-CAP-07 reserved model root is inspected with lstat semantics, so existing, populated, redirected, and dangling-junction forms all reject, including files created during final collection.",
+        "Changelog validation recognizes CommonMark ATX level-two variants and setext level-two headings, preserving the exact canonical release hierarchy."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Guarded atomic output serializes exact bytes, holds a no-write handle on the temporary through replacement, verifies its identity and bytes before replacement, and verifies destination bytes afterward.",
+        "All 20 focused and all 121 complete foundation tests pass at exact commit d2b2f10f40abf70c65e1c2ed2da85bc49914a4f8."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Automation documentation describes final schema/model inventory re-enumeration, fail-closed schema traversal, canonical CommonMark heading rules, and temporary JSON protection.",
+        "The independent changes-requested disposition and every predecessor evidence manifest remain in the immutable audit chain; generated planning views match the exact ledger state."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must confirm all five exact-8534749 findings are closed without regressing the previously verified provenance, confinement, SemVer, inventory, and evidence boundaries."
+  }
+}
