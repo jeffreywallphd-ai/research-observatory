@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "architecture-decision-index",
+  "allowedStates": ["Proposed", "Accepted", "Rejected", "Superseded"],
+  "records": [
+    {
+      "id": "ADR-0001",
+      "path": "docs/adr/ADR-0001-machine-checked-architecture-boundaries.md",
+      "title": "Adopt machine-checked architecture boundaries and protected-interface review",
+      "status": "Accepted",
+      "linkedTasks": ["CAP-00.S02.T01", "CAP-00.S02.T03"]
+    }
+  ]
+}

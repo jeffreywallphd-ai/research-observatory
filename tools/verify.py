@@ -17,6 +17,7 @@ def foundation_commands(repo: Path) -> list[list[str]]:
         [python, "tools/runtime_check.py", "--repo", str(repo)],
         [python, "tools/architecture_check.py", "--repo", str(repo)],
         [python, "tools/agent_protocol_check.py", "--repo", str(repo)],
+        [python, "tools/adr_check.py", "--repo", str(repo)],
         [python, "-m", "unittest", "discover", "-s", "tests/foundation", "-p", "test_*.py"],
         [python, "tools/taskctl.py", "--file", "planning/backlog.yaml", "validate"],
     ]

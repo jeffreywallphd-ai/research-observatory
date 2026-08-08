@@ -2,6 +2,11 @@
   "schemaVersion": "1.0",
   "documentType": "architecture-boundary-contract",
   "authority": "docs/architecture/source/systems-design.md plus accepted docs/adr records",
+  "adrWorkflow": {
+    "index": "docs/adr/index.json",
+    "protectedPaths": "architecture-protected-paths.json",
+    "changeRule": "A protected path change must include an indexed Proposed or Accepted ADR whose affected paths cover the change and whose linked task exists in the backlog."
+  },
   "repositoryAreas": [
     {"path": "apps", "purpose": "User-facing application composition roots."},
     {"path": "artifacts", "purpose": "Committed validation, approval, and task evidence; generated scratch remains ignored."},
