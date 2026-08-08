@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S04.T02",
+  "commit": "438edadfc822f75a246ecbed40577f29b4524558",
+  "baseCommit": "62c8252a79306c9ba4e3fc0798747b87f68be932",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S04.T02.json",
+    "reason": "Independent review reproduced five classes of audit-invariant bypass: forgeable and TOCTOU-prone evidence, invalid Git execution identity, illegal campaign and cancellation transitions, non-durable approved release gates, and self-review. This manifest records the corrections and preserves the original submission and changes-requested review record."
+  },
+  "changedFiles": [
+    "AGENTS.md",
+    "artifacts/evidence/CAP-00.S04.T02.json",
+    "docs/automation/codex-tracking-guide.md",
+    "planning/README.md",
+    "planning/backlog.yaml",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S04.T02-review-fix-foundation.json",
+      "exitCode": 0,
+      "result": "The exact review-fix commit passed repository, runtime, architecture, agent-protocol, ADR, CI, formatting, linting, typing, packaging, 67 foundation tests, and canonical backlog validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile security-local --report artifacts\\tmp\\CAP-00.S04.T02-review-fix-security-local.json",
+      "exitCode": 0,
+      "result": "The exact review-fix commit passed the foundation checks again, all 19 security tests, and a live scan of 31 packages with 30 reported license findings and zero blocking findings."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate",
+      "exitCode": 0,
+      "result": "Complete stored evidence, semantic state, hierarchy, lease, dependency, review-independence, release-gate, and schema validation passed for 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Evidence is parsed from one immutable byte snapshot, hashed from that same snapshot, and revalidated completely whenever a stored reference is checked; logical duplicate submissions and undeclared follow-up evidence are rejected.",
+        "Exact evidence now binds the current full commit, actual branch and canonical worktree, claimed base ancestry, truthful changed files, named passing commands, exact criterion mappings, explicit empty unverified items, and a clean tracked tree without unrelated untracked files.",
+        "Claim, start, and resume require normalized identities plus a real current Git branch, full current HEAD, and matching canonical worktree; illegal PAUSED starts, incompatible resumes, unauthorized or repeated cancellation, and active-campaign lease bypasses are rejected.",
+        "Approved release gates are enforced as durable semantic invariants, reopening a task behind an approved gate is denied, and task, slice, and capability self-review by the owning implementer is rejected.",
+        "Every mutation retains schema and semantic revalidation, stable hierarchy enforcement, and exclusive-lock compare-and-swap replacement with recovery tests."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Reviewer-derived mutation tests cover evidence swapping, forged stored manifests, duplicate aliases, stale commits, false or empty changed-file claims, missing commands, forged branches, dirty and unrelated files, invalid Git execution metadata, campaign transition bypasses, cancellation, gate durability, and self-review.",
+        "The full foundation suite passes 67 tests at the exact review-fix commit; the security-local suite independently passes 19 security tests and the live supply-chain scan with zero blocking findings."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "AGENTS.md, planning/README.md, and the Codex tracking guide document normalized Git execution identity, mandatory worktree metadata, immutable evidence snapshots, superseding evidence, independent reviews, durable release gates, and legal campaign recovery transitions.",
+        "The correction is confined to workflow contracts, documentation, backlog audit state, focused tests, taskctl, and the preserved first-pass evidence; it does not expand application, UI, architecture, dependency, or later-wave implementation scope."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce the five original finding groups against commit 438edadfc822f75a246ecbed40577f29b4524558 before approval."
+  }
+}

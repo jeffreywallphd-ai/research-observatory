@@ -344,6 +344,64 @@ class TaskctlWorkflowTests(unittest.TestCase):
             evidence.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
             reference["sha256"] = evidence_sha256(evidence.read_bytes())
 
+            review_fix_source = repo / "review-fix.txt"
+            review_fix_source.write_text("review correction\n", encoding="utf-8")
+            subprocess.run(["git", "add", "artifacts/evidence/manifest.json", "review-fix.txt"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-m", "review fix"], cwd=repo, capture_output=True, check=True)
+            review_fix_head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+            followup_manifest = {
+                **manifest,
+                "commit": review_fix_head,
+                "baseCommit": head,
+                "changedFiles": ["artifacts/evidence/manifest.json", "review-fix.txt"],
+                "supersedes": {
+                    "path": "artifacts/evidence/manifest.json",
+                    "reason": "review correction",
+                },
+            }
+            followup = repo / "artifacts" / "evidence" / "followup.json"
+            args.from_file = str(followup)
+
+            omitted_scope = copy.deepcopy(followup_manifest)
+            omitted_scope["changedFiles"] = ["review-fix.txt"]
+            followup.write_text(json.dumps(omitted_scope), encoding="utf-8", newline="\n")
+            with self.assertRaisesRegex(SystemExit, "exactly match"), patch("taskctl.persist"):
+                command_evidence(args, *context)
+
+            forged_base = copy.deepcopy(followup_manifest)
+            forged_base["baseCommit"] = base
+            followup.write_text(json.dumps(forged_base), encoding="utf-8", newline="\n")
+            with self.assertRaisesRegex(SystemExit, "baseCommit must equal"), patch("taskctl.persist"):
+                command_evidence(args, *context)
+
+            followup.write_text(json.dumps(followup_manifest), encoding="utf-8", newline="\n")
+            with patch("taskctl.persist"):
+                command_evidence(args, *context)
+            followup_reference = task["evidence"][1]
+
+            mutated_followup = copy.deepcopy(followup_manifest)
+            mutated_followup["unverifiedItems"] = ["newly unverified after approval"]
+            mutated_payload = json.dumps(mutated_followup).encode()
+            followup.write_bytes(mutated_payload)
+            followup_reference["sha256"] = evidence_sha256(mutated_payload)
+            followup_reference["legacy_policy"] = "pre-exact-evidence-hosted-ci-residual-v1"
+            task["status"] = "DONE"
+            task["review"] = {
+                "reviewer": "reviewer",
+                "result": "approved",
+                "reviewed_at": "2026-08-08T00:00:00+00:00",
+                "notes": "approved",
+            }
+            post_done_errors = evidence_reference_errors({task["id"]: task}, repo)
+            self.assertTrue(any("unverifiedItems" in error for error in post_done_errors), post_done_errors)
+            self.assertTrue(any("not authorized" in error for error in post_done_errors), post_done_errors)
+            task["status"] = "IN_PROGRESS"
+            followup_reference.pop("legacy_policy")
+            followup.write_text(json.dumps(followup_manifest), encoding="utf-8", newline="\n")
+            followup_reference["sha256"] = evidence_sha256(followup.read_bytes())
+
             stale = copy.deepcopy(manifest)
             stale["commit"] = "0" * 40
             errors = exact_commit_errors(task, stale, repo, evidence_path=evidence)

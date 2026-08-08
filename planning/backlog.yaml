@@ -910,11 +910,13 @@ capabilities:
         sha256: 6073e80a4362a7688fbf9e3c478259fa789ea5e411b508cb55db7ebd2a9f22c6
         commit: 9877766796b94bfa63faf35c767b095191f203ab
         recorded_at: '2026-08-08T16:54:40+00:00'
+        legacy_policy: pre-exact-evidence-hosted-ci-residual-v1
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S03.T02.review-fix.json
-        sha256: 1811e6580552958677d80d5ad4a51280a7184068d2f1a9ea2ed32b417375dd17
+        sha256: 1c3f2e26e7f5d8a678d02a4001ca4883e2a8af8d69a9c09b61fee6636f5e8cf7
         commit: 7fe9165caf44aeb59f6e2bb2549dcb23a059afbb
         recorded_at: '2026-08-08T17:02:27+00:00'
+        legacy_policy: pre-exact-evidence-hosted-ci-residual-v1
       review:
         reviewer: codex-review
         result: approved
@@ -973,11 +975,13 @@ capabilities:
         sha256: 3e137f48d93bc282573d40f33c0c0fd90ee17f2e45ce4e6d7de5d1e0f0f9d89b
         commit: 7352470d1f9fcd7cacea1bfa604df364a70c1a37
         recorded_at: '2026-08-08T17:17:30+00:00'
+        legacy_policy: pre-exact-evidence-hosted-ci-residual-v1
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S03.T03.review-fix.json
-        sha256: 986fa1babd7131da69549615c2e1d97218c9eb91d5a18f5b840cab4b519052dd
+        sha256: 44327b2c7ace55114775ad16fd5c61978d9f1ed5fa879e3ad73a5ed51f9bd991
         commit: ce2474676425416a77822cea3e47fab804dc33d3
         recorded_at: '2026-08-08T17:28:12+00:00'
+        legacy_policy: pre-exact-evidence-hosted-ci-residual-v1
       review:
         reviewer: codex-security-review
         result: approved
@@ -1061,7 +1065,7 @@ capabilities:
         recorded_at: '2026-08-08T17:42:12+00:00'
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S04.T01.review-fix.json
-        sha256: 9a2a16559b072d65ac51acd9b5caf93e103b68e8ab8c449d82b0da69ce0df13d
+        sha256: 13dc52e5a73079863b64690b91ec92452079e767d657afa75a8a65e39e7b16b8
         commit: 1493a3cd6198286d6521b4c8cbc6230d68fc7f3c
         recorded_at: '2026-08-08T17:49:51+00:00'
       review:
@@ -1108,29 +1112,37 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T17:52:29+00:00'
-      updated_at: '2026-08-08T18:15:22+00:00'
+      updated_at: '2026-08-08T18:32:30+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Owned lease, exact-commit evidence, legal transition/gate enforcement, stable IDs, and atomic
+      implementation_notes: 'Owned lease, exact-commit evidence, legal transition/gate enforcement, stable IDs, and atomic
         compare-and-swap recovery pass at 62c8252.
+
+        Review-fix commit 438edad addresses all five independently reproduced audit-invariant findings; exact foundation,
+        security-local, and canonical validation pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S04.T02.json
         sha256: f4ed0a28573d68494951ff53df42aadb4ac10460e86e0bab78767b245fe99a97
         commit: 62c8252a79306c9ba4e3fc0798747b87f68be932
         recorded_at: '2026-08-08T18:07:43+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S04.T02.review-fix.json
+        sha256: 6a05d60163cc577ed351d6698c360262e861b34e158697162408111e780ea086
+        commit: 438edadfc822f75a246ecbed40577f29b4524558
+        recorded_at: '2026-08-08T18:28:25+00:00'
       review:
         reviewer: codex-review
         result: changes-requested
-        reviewed_at: '2026-08-08T18:15:22+00:00'
-        notes: Independent review reproduced forgeable/TOCTOU evidence, invalid Git ownership metadata, campaign/cancellation
-          transition bypasses, non-durable release-gate approval, and task/slice/capability self-review; submitted evidence
-          requires correction.
+        reviewed_at: '2026-08-08T18:32:30+00:00'
+        notes: Follow-up evidence must bind its base to the superseded attachment, declare the exact incremental diff, and
+          cannot inherit unverified-item permission merely from DONE status; use an explicit narrow legacy policy for historical
+          hosted-CI residuals.
       base_sha: c775d85959edb169e57811ad83cc1e5401fd12c0
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T18:15:22+00:00'
-        expires_at: '2026-08-09T02:15:22+00:00'
+        claimed_at: '2026-08-08T18:32:30+00:00'
+        expires_at: '2026-08-09T02:32:30+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:

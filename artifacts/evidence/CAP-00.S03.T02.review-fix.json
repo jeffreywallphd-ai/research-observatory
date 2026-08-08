@@ -5,6 +5,10 @@
   "commit": "7fe9165caf44aeb59f6e2bb2549dcb23a059afbb",
   "baseCommit": "9877766796b94bfa63faf35c767b095191f203ab",
   "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S03.T02.json",
+    "reason": "Independent review required bracket-style secret detection and a closed governed Python quality scope; this explicit link preserves the original submission while binding the incremental correction."
+  },
   "changedFiles": [
     "artifacts/evidence/CAP-00.S03.T02.json",
     "docs/automation/toolchain.md",

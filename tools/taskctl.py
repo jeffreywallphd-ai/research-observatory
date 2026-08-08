@@ -44,6 +44,44 @@ PLATFORMS = {
 }
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
+LEGACY_UNVERIFIED_POLICY = "pre-exact-evidence-hosted-ci-residual-v1"
+LEGACY_UNVERIFIED_REFERENCES: dict[str, dict[str, Any]] = {
+    "artifacts/evidence/CAP-00.S03.T02.json": {
+        "taskId": "CAP-00.S03.T02",
+        "commit": "9877766796b94bfa63faf35c767b095191f203ab",
+        "sha256": "6073e80a4362a7688fbf9e3c478259fa789ea5e411b508cb55db7ebd2a9f22c6",
+        "unverifiedItems": [
+            "No remote workflow run was created because the approved repository policy does not authorize a "
+            "remote push; local validators cover the workflow contract."
+        ],
+    },
+    "artifacts/evidence/CAP-00.S03.T02.review-fix.json": {
+        "taskId": "CAP-00.S03.T02",
+        "commit": "7fe9165caf44aeb59f6e2bb2549dcb23a059afbb",
+        "sha256": "1c3f2e26e7f5d8a678d02a4001ca4883e2a8af8d69a9c09b61fee6636f5e8cf7",
+        "unverifiedItems": [
+            "No remote workflow run was created because remote push is outside the approved local integration policy."
+        ],
+    },
+    "artifacts/evidence/CAP-00.S03.T03.json": {
+        "taskId": "CAP-00.S03.T03",
+        "commit": "7352470d1f9fcd7cacea1bfa604df364a70c1a37",
+        "sha256": "3e137f48d93bc282573d40f33c0c0fd90ee17f2e45ce4e6d7de5d1e0f0f9d89b",
+        "unverifiedItems": [
+            "No remote GitHub Actions run was created because remote push is outside the approved local integration "
+            "policy; the workflow contract and hosted commands were validated locally."
+        ],
+    },
+    "artifacts/evidence/CAP-00.S03.T03.review-fix.json": {
+        "taskId": "CAP-00.S03.T03",
+        "commit": "ce2474676425416a77822cea3e47fab804dc33d3",
+        "sha256": "44327b2c7ace55114775ad16fd5c61978d9f1ed5fa879e3ad73a5ed51f9bd991",
+        "unverifiedItems": [
+            "No remote GitHub Actions run was created because remote push is outside the approved local integration "
+            "policy; the CI workflow contract and both security commands passed locally."
+        ],
+    },
+}
 
 
 def utc_now() -> str:
@@ -596,23 +634,45 @@ def evidence_sha256(payload: bytes) -> str:
     return hashlib.sha256(payload.replace(b"\r\n", b"\n").replace(b"\r", b"\n")).hexdigest()
 
 
+def legacy_unverified_policy_errors(
+    reference: dict[str, Any], manifest: dict[str, Any], actual_sha256: str
+) -> tuple[bool, list[str]]:
+    policy = reference.get("legacy_policy")
+    if policy is None:
+        return False, []
+    if policy != LEGACY_UNVERIFIED_POLICY:
+        return False, [f"unsupported legacy evidence policy {policy!r}"]
+    path = reference.get("path", "")
+    expected = LEGACY_UNVERIFIED_REFERENCES.get(path)
+    if expected is None:
+        return False, [f"legacy evidence policy is not authorized for {path!r}"]
+    errors: list[str] = []
+    for field in ("commit", "sha256"):
+        actual = reference.get(field) if field == "commit" else actual_sha256
+        if actual != expected[field]:
+            errors.append(f"legacy evidence {field} does not match its immutable policy anchor")
+    if manifest.get("taskId") != expected["taskId"]:
+        errors.append("legacy evidence taskId does not match its immutable policy anchor")
+    if manifest.get("commit") != expected["commit"]:
+        errors.append("legacy evidence manifest commit does not match its immutable policy anchor")
+    if manifest.get("unverifiedItems") != expected["unverifiedItems"]:
+        errors.append("legacy evidence unverifiedItems do not match the immutable hosted-CI residual")
+    return not errors, errors
+
+
 def validate_task_evidence(
     task: dict[str, Any],
     manifest: dict[str, Any],
     *,
     expected_commit: str | None = None,
+    expected_base_commit: str | None = None,
     allow_disclosed_unverified: bool = False,
-    allow_incremental_base: bool = False,
 ) -> list[str]:
     errors: list[str] = []
     if manifest.get("taskId") != task["id"]:
         errors.append("taskId does not match")
-    if (
-        not manifest.get("supersedes")
-        and not allow_incremental_base
-        and manifest.get("baseCommit") != task.get("base_sha")
-    ):
-        errors.append("baseCommit does not match the claimed task base_sha")
+    if expected_base_commit is not None and manifest.get("baseCommit") != expected_base_commit:
+        errors.append(f"baseCommit must equal the expected evidence base {expected_base_commit}")
     if manifest.get("branch") != task.get("branch"):
         errors.append("branch does not match the claimed task branch")
     commit = manifest.get("commit")
@@ -707,10 +767,7 @@ def changed_file_errors(task: dict[str, Any], manifest: dict[str, Any], repo: Pa
         return [f"cannot resolve changed-file scope: {(actual.stderr or actual.stdout).strip()}"]
     actual_files = set(actual.stdout.splitlines())
     declared_files = set(changed_files)
-    if manifest.get("supersedes"):
-        if not declared_files.issubset(actual_files):
-            errors.append("changedFiles contains paths outside the claimed base-to-commit diff")
-    elif declared_files != actual_files:
+    if declared_files != actual_files:
         errors.append("changedFiles must exactly match the claimed base-to-commit diff")
     return errors
 
@@ -721,19 +778,16 @@ def committed_manifest_errors(
     repo: Path,
     *,
     expected_commit: str | None = None,
+    expected_base_commit: str | None = None,
     evidence_path: Path | None = None,
-    allow_incremental_base: bool = False,
+    allow_disclosed_unverified: bool = False,
 ) -> list[str]:
     errors = validate_task_evidence(
         task,
         manifest,
         expected_commit=expected_commit,
-        allow_disclosed_unverified=(
-            expected_commit is None
-            and task.get("status") == "DONE"
-            and task.get("review", {}).get("result") == "approved"
-        ),
-        allow_incremental_base=allow_incremental_base,
+        expected_base_commit=expected_base_commit,
+        allow_disclosed_unverified=allow_disclosed_unverified,
     )
     errors.extend(changed_file_errors(task, manifest, repo))
     commit = manifest.get("commit")
@@ -807,13 +861,25 @@ def committed_manifest_errors(
 
 
 def exact_commit_errors(
-    task: dict[str, Any], manifest: dict[str, Any], repo: Path, *, evidence_path: Path | None = None
+    task: dict[str, Any],
+    manifest: dict[str, Any],
+    repo: Path,
+    *,
+    evidence_path: Path | None = None,
+    expected_base_commit: str | None = None,
 ) -> list[str]:
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
     if head.returncode != 0:
         return [f"cannot resolve current HEAD: {(head.stderr or head.stdout).strip()}"]
     current_commit = head.stdout.strip()
-    return committed_manifest_errors(task, manifest, repo, expected_commit=current_commit, evidence_path=evidence_path)
+    return committed_manifest_errors(
+        task,
+        manifest,
+        repo,
+        expected_commit=current_commit,
+        expected_base_commit=expected_base_commit or task.get("base_sha"),
+        evidence_path=evidence_path,
+    )
 
 
 def evidence_reference_errors(tasks: dict[str, dict[str, Any]], repo: Path) -> list[str]:
@@ -821,6 +887,7 @@ def evidence_reference_errors(tasks: dict[str, dict[str, Any]], repo: Path) -> l
     for task_id, task in tasks.items():
         seen_hashes: set[str] = set()
         seen_commits: set[str] = set()
+        seen_references: dict[str, dict[str, Any]] = {}
         for reference_index, reference in enumerate(task.get("evidence", [])):
             raw_path = reference.get("path", "")
             path = PurePosixPath(raw_path)
@@ -849,12 +916,38 @@ def evidence_reference_errors(tasks: dict[str, dict[str, Any]], repo: Path) -> l
                 continue
             if manifest.get("commit") != reference.get("commit"):
                 errors.append(f"{task_id}: evidence manifest commit mismatch for {raw_path}")
-            for error in committed_manifest_errors(task, manifest, repo, allow_incremental_base=reference_index > 0):
+            allow_legacy_unverified, policy_errors = legacy_unverified_policy_errors(reference, manifest, actual_sha256)
+            for error in policy_errors:
+                errors.append(f"{task_id}: {raw_path}: {error}")
+            expected_base_commit = task.get("base_sha")
+            supersedes = manifest.get("supersedes")
+            if reference_index == 0:
+                if supersedes is not None:
+                    errors.append(f"{task_id}: {raw_path}: initial evidence cannot supersede another attachment")
+            elif isinstance(supersedes, dict):
+                superseded_path = supersedes.get("path")
+                prior_reference = seen_references.get(superseded_path) if isinstance(superseded_path, str) else None
+                if prior_reference is None:
+                    errors.append(f"{task_id}: {raw_path}: supersedes.path must identify a prior evidence attachment")
+                else:
+                    expected_base_commit = prior_reference.get("commit")
+            else:
+                errors.append(
+                    f"{task_id}: {raw_path}: follow-up evidence must identify a prior attachment with supersedes.path"
+                )
+            for error in committed_manifest_errors(
+                task,
+                manifest,
+                repo,
+                expected_base_commit=expected_base_commit,
+                allow_disclosed_unverified=allow_legacy_unverified,
+            ):
                 errors.append(f"{task_id}: {raw_path}: {error}")
             if actual_sha256 in seen_hashes or reference.get("commit") in seen_commits:
                 errors.append(f"{task_id}: logically duplicate evidence attachment {raw_path}")
             seen_hashes.add(actual_sha256)
             seen_commits.add(reference.get("commit"))
+            seen_references[raw_path] = reference
     return errors
 
 
@@ -1510,9 +1603,21 @@ def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
     superseded_path = (supersedes or {}).get("path")
     if existing_evidence and not superseded_path:
         raise SystemExit("Follow-up evidence must explicitly supersede an attached manifest")
-    if superseded_path and not any(reference.get("path") == superseded_path for reference in existing_evidence):
+    superseded_reference = next(
+        (reference for reference in existing_evidence if reference.get("path") == superseded_path), None
+    )
+    if superseded_path and superseded_reference is None:
         raise SystemExit("supersedes.path must name an attached evidence manifest")
-    errors = exact_commit_errors(task, manifest, repo, evidence_path=evidence_path)
+    expected_base_commit = (
+        superseded_reference.get("commit") if superseded_reference is not None else task.get("base_sha")
+    )
+    errors = exact_commit_errors(
+        task,
+        manifest,
+        repo,
+        evidence_path=evidence_path,
+        expected_base_commit=expected_base_commit,
+    )
     if errors:
         raise SystemExit("Invalid evidence:\n- " + "\n- ".join(errors))
     task.setdefault("evidence", []).append(

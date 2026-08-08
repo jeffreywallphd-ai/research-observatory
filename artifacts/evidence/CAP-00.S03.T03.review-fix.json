@@ -5,6 +5,10 @@
   "commit": "ce2474676425416a77822cea3e47fab804dc33d3",
   "baseCommit": "7352470d1f9fcd7cacea1bfa604df364a70c1a37",
   "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S03.T03.json",
+    "reason": "Independent security review required five boundary corrections; this explicit link preserves the original submission while binding the incremental correction."
+  },
   "changedFiles": [
     ".github/workflows/ci.yml",
     "artifacts/evidence/CAP-00.S03.T03.json",
