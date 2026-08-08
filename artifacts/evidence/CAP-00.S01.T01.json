@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S01.T01",
+  "commit": "59024eea93130c1d867a46782cb353cff4b88ff4",
+  "baseCommit": "47d460a8109acdd82237c2de37b18a79c2bb3853",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    ".gitignore",
+    "README.md",
+    "apps/desktop/README.md",
+    "packages/contracts/README.md",
+    "packages/ui-components/README.md",
+    "packages/ui-tokens/README.md",
+    "packaging/windows/README.md",
+    "planning/backlog.yaml",
+    "repository-structure.json",
+    "services/core-api/README.md",
+    "tests/contracts/README.md",
+    "tests/desktop/README.md",
+    "tests/e2e/README.md",
+    "tests/foundation/README.md",
+    "tests/foundation/test_repository_structure.py",
+    "tests/packaging/README.md",
+    "tools/README.md",
+    "tools/repository_structure_check.py",
+    "tools/taskctl.py",
+    "tools/verify.py",
+    "workers/README.md"
+  ],
+  "checks": [
+    {
+      "command": "python tools/verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "12 required modules passed; 5 foundation tests passed; backlog validation passed"
+    },
+    {
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    },
+    {
+      "command": "python <setup-pack>/setup/verify_repo_setup.py --target . --run-validators --report artifacts/bootstrap/setup-verification.json",
+      "exitCode": 0,
+      "result": "pass with no errors or warnings",
+      "report": "artifacts/bootstrap/setup-verification.json",
+      "reportSha256": "451425dca528c03f7eaa4ceb8498fc336b841719c2f86dd861a39c9553f19dd6"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "repository-structure.json declares the W0-W5 module contract",
+        "tools/repository_structure_check.py verifies all 12 required module directories and ownership/boundary READMEs",
+        ".gitignore and the structure validator prevent generated binaries and build directories from entering the governed skeleton"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The structure contract declares seven deferred implementation paths",
+        "The validator confirms admin-console, Helm, Terraform, tenancy, SSO, PostgreSQL, and Temporal implementations are absent",
+        "test_rejects_deferred_cloud_implementation_path proves the material failure boundary"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "planning/backlog.yaml and planning/backlog.schema.json retain all original IDs",
+        "taskctl validation reports exactly 20 capabilities, 117 slices, 356 tasks, and 12 release gates",
+        "The bootstrap task controller remains intentionally limited; CAP-00.S04 retains full transition hardening"
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Five standard-library foundation tests cover the valid skeleton, missing README, forbidden deferred path, tracked binary, and taskctl serialization boundary",
+        "The foundation profile runs the tests and reports failures through process exit status"
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "README.md and every declared module README document responsibility and boundary",
+        "tools/README.md documents the two bootstrap checks",
+        "No migrations, product behavior, hosted infrastructure, or unrelated application code were introduced"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review is required before the task may transition from REVIEW to DONE."
+  }
+}
