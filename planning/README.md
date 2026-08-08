@@ -98,8 +98,10 @@ is ignored by Git.
 Execution commands require one concrete profile/platform and the matching
 active campaign lease. Task `block`, `renew`, `evidence`, and `submit` require
 `--agent` to match the task lease owner; capability/slice mutations similarly
-require the campaign owner. An expired lease may be renewed only by its recorded
-owner:
+require the campaign owner. Start, resume, and claim also require the actual
+current branch, full current `HEAD`, and canonical absolute Git worktree; stored
+identities are trimmed. A PAUSED campaign resumes through `resume` and cannot be
+overwritten by `start`. An expired lease may be renewed only by its recorded owner:
 
 ```bash
 python tools/taskctl.py capability renew CAP-XX --agent <agent>
@@ -109,9 +111,20 @@ python tools/taskctl.py renew CAP-XX.SXX.TXX --agent <agent>
 Commit the implementation and required verification before attaching evidence.
 The manifest must live under the repository, name the current full Git `HEAD`,
 descend from the claimed `base_sha`, map every acceptance criterion exactly,
-and contain only passing checks. Stored evidence paths are repository-relative;
-hash validation canonicalizes text line endings and detects later content,
-task-ID, or commit drift.
+list the truthful base-to-commit changed-file scope, contain named passing checks,
+and declare no unverified items. The manifest is read once; that same immutable
+snapshot is validated and hashed. Dirty tracked source, unrelated untracked files,
+branch/worktree drift, and logically duplicate attachments are rejected. Stored
+evidence paths are repository-relative; complete manifest revalidation and
+line-ending-canonical hashes detect later content, task-ID, base, branch, check,
+criterion, commit, or verification drift.
+
+Task, slice, and capability reviewers must be independent from the recorded
+implementation/campaign owner. Cancellation is an owner-authorized transition
+inside the current active slice and cannot rewrite an existing cancellation.
+An approved release gate remains valid only while every task in its preceding
+wave is DONE; reopening such a task is denied because no implicit gate-reset
+transition exists.
 
 ## Replanning conditions
 

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S04.T02",
+  "commit": "62c8252a79306c9ba4e3fc0798747b87f68be932",
+  "baseCommit": "c775d85959edb169e57811ad83cc1e5401fd12c0",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    ".gitignore",
+    "docs/automation/codex-tracking-guide.md",
+    "planning/README.md",
+    "planning/backlog.yaml",
+    "quality-scope.json",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/README.md",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts/tmp/CAP-00.S04.T02-foundation.json",
+      "exitCode": 0,
+      "result": "The exact implementation commit passed repository, runtime, architecture, agent-protocol, ADR, CI, format, lint, types, packaging, 63 foundation tests, and canonical backlog checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "Schema, semantic state, stable hierarchy, lease ownership, dependency, gate, and all 13 committed evidence-reference integrity checks passed for 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile security-local --report artifacts/tmp/CAP-00.S04.T02-security-local.json",
+      "exitCode": 0,
+      "result": "Foundation repeated successfully; 19 security tests passed and the live supply-chain scan reported 31 packages, 30 license findings, and zero blocking findings."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "READY calculation and claim now require completed task and slice dependencies, an open wave gate, the current campaign slice, a concrete matching profile/platform, and the active campaign owner lease; the campaign override flag was removed.",
+        "Task and campaign mutation commands verify owner identity and unexpired leases, while explicit owner-only renew commands recover expired task or campaign leases without enabling takeover.",
+        "Evidence attachment requires a repository-contained artifacts/evidence manifest naming current full HEAD, the claimed base SHA and branch, base ancestry, one non-empty record per criterion, only passing integer exit codes, and no unverified items; stored hashes are line-ending canonical and revalidated against task/commit identity.",
+        "Every mutation revalidates schema and semantic state, preserves the stable Capability/Slice/Task identity hierarchy, and performs an exclusive-lock compare-and-swap temporary-file replacement. Release gates reject reapproval and any incomplete preceding-wave task."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Nine focused workflow tests cover legal claim/review, task and slice dependency denials, activation gate denial, profile denial, campaign/task lease conflicts and renewal, exact-HEAD evidence, release-gate denial, stable-ID denial, invalid-state denial, stale-writer denial, and replace-failure recovery.",
+        "The focused schema plus workflow suites pass 19 tests, and the full foundation profile passes 63 tests at the exact implementation commit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "planning/README.md and the Codex tracking guide document the owned-lease transition sequence, exact-commit evidence contract, compare-and-swap behavior, and recovery commands; tools/README.md reflects the supported surface.",
+        "quality-scope.json governs the new workflow tests, lock markers are ignored, two legacy Windows-style evidence paths were canonically migrated, and no application, UI, architecture, dependency, or later-wave implementation scope changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "An independent reviewer must mutation-test authorization, transitions, exact-commit evidence, stable identity, concurrency/recovery behavior, and the criterion claims before approval."
+  }
+}

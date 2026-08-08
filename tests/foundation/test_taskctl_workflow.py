@@ -11,6 +11,7 @@ import unittest
 from argparse import Namespace
 from contextlib import redirect_stderr
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
@@ -19,19 +20,28 @@ sys.path.insert(0, str(REPO / "tools"))
 from taskctl import (  # noqa: E402
     build_parser,
     command_block,
+    command_cancel,
+    command_capability_resume,
+    command_capability_review,
+    command_capability_start,
     command_claim,
     command_evidence,
     command_gate_approve,
     command_renew,
+    command_reopen,
     command_review,
+    command_slice_review,
     command_submit,
+    evidence_reference_errors,
     evidence_sha256,
     exact_commit_errors,
+    git_execution_identity,
     identity_snapshot,
     load,
     new_lease,
     save_atomic,
     save_validated,
+    validate,
 )
 
 
@@ -68,6 +78,8 @@ class TaskctlWorkflowTests(unittest.TestCase):
             "_position": 0,
             "completion": {"status": "PENDING", "reviewer": None, "reviewed_at": None, "evidence": []},
             "depends_on": [],
+            "deployment_profiles": ["LOC"],
+            "platform_targets": ["platform-neutral"],
             "tasks": [task],
         }
         capability = {
@@ -78,6 +90,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 "owner": "alice",
                 "profile": "LOC",
                 "platform": "windows-x64",
+                "branch": "codex/test",
+                "base_sha": "a" * 40,
+                "worktree": str(REPO),
                 "lease": new_lease("alice", 8),
             },
             "completion": {"status": "IN_PROGRESS"},
@@ -107,7 +122,13 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
     def test_claim_enforces_ready_gate_dependency_profile_and_campaign_lease(self) -> None:
         context = self.workflow()
-        with patch("taskctl.persist"):
+        with (
+            patch("taskctl.persist"),
+            patch(
+                "taskctl.git_execution_identity",
+                return_value=("alice", "codex/test", "a" * 40, REPO.as_posix()),
+            ),
+        ):
             command_claim(self.claim_args(), *context)
         self.assertEqual("IN_PROGRESS", context[3]["CAP-00.S01.T01"]["status"])
         self.assertEqual("alice", context[3]["CAP-00.S01.T01"]["lease"]["claimed_by"])
@@ -142,7 +163,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     task["deployment_profiles"] = ["CLD"]
                 else:
                     args.agent = "bob"
-                with self.assertRaisesRegex(SystemExit, expected), patch("taskctl.persist"):
+                identity = (args.agent.strip(), "codex/test", "a" * 40, REPO.as_posix())
+                with (
+                    self.assertRaisesRegex(SystemExit, expected),
+                    patch("taskctl.persist"),
+                    patch("taskctl.git_execution_identity", return_value=identity),
+                ):
                     command_claim(args, data, capabilities, slices, tasks, gates)
 
     def test_active_task_mutations_require_the_lease_owner(self) -> None:
@@ -153,6 +179,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             owner="alice",
             branch="codex/test",
             base_sha="a" * 40,
+            worktree=str(REPO),
             lease=new_lease("alice", 8),
             evidence=[{"type": "criterion-manifest"}],
             verification_state="passed",
@@ -189,6 +216,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             owner="alice",
             branch="codex/test",
             base_sha="a" * 40,
+            worktree=str(REPO),
             lease=new_lease("alice", 8),
             evidence=[{"type": "criterion-manifest"}],
             verification_state="passed",
@@ -208,6 +236,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             owner="alice",
             branch="codex/test",
             base_sha="a" * 40,
+            worktree=str(REPO),
             lease={
                 "claimed_by": "alice",
                 "claimed_at": "2020-01-01T00:00:00+00:00",
@@ -223,42 +252,126 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def test_evidence_requires_current_head_and_records_canonical_repository_path(self) -> None:
         context = self.workflow()
         task = context[3]["CAP-00.S01.T01"]
-        head = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
-        ).stdout.strip()
-        task.update(
-            status="IN_PROGRESS",
-            owner="alice",
-            branch="codex/test",
-            base_sha=head,
-            lease=new_lease("alice", 8),
-        )
-        manifest = {
-            "taskId": task["id"],
-            "commit": head,
-            "baseCommit": head,
-            "branch": "codex/test",
-            "checks": [{"command": "test", "exitCode": 0}],
-            "acceptanceCriteria": [{"criterion_index": 1, "evidence": ["verified"]}],
-            "unverifiedItems": [],
-        }
-        with tempfile.TemporaryDirectory(dir=REPO / "artifacts" / "evidence") as temporary:
-            evidence = Path(temporary) / "manifest.json"
-            evidence.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
-            args = Namespace(
-                task=task["id"], agent="alice", from_file=str(evidence), file=str(REPO / "planning" / "backlog.yaml")
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            (repo / "planning").mkdir()
+            (repo / "artifacts" / "evidence").mkdir(parents=True)
+            (repo / "planning" / "backlog.yaml").write_text("plan: fixture\n", encoding="utf-8")
+            (repo / "implementation.txt").write_text("baseline\n", encoding="utf-8")
+            subprocess.run(["git", "init", "-b", "test-branch"], cwd=repo, capture_output=True, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "Taskctl Test"], cwd=repo, check=True)
+            subprocess.run(["git", "add", "."], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-m", "baseline"], cwd=repo, capture_output=True, check=True)
+            base = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+            (repo / "implementation.txt").write_text("implemented\n", encoding="utf-8")
+            subprocess.run(["git", "add", "implementation.txt"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-m", "implementation"], cwd=repo, capture_output=True, check=True)
+            head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+            task.update(
+                status="IN_PROGRESS",
+                owner="alice",
+                branch="test-branch",
+                base_sha=base,
+                worktree=repo.as_posix(),
+                lease=new_lease("alice", 8),
             )
-            with patch("taskctl.persist"):
+            context[1]["CAP-00"]["campaign"].update(branch="test-branch", base_sha=base, worktree=repo.as_posix())
+            manifest = {
+                "taskId": task["id"],
+                "commit": head,
+                "baseCommit": base,
+                "branch": "test-branch",
+                "changedFiles": ["implementation.txt"],
+                "checks": [{"command": "test", "exitCode": 0}],
+                "acceptanceCriteria": [{"criterion_index": 1, "evidence": ["verified"]}],
+                "unverifiedItems": [],
+            }
+            evidence = repo / "artifacts" / "evidence" / "manifest.json"
+            evidence.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
+            unrelated = repo / "untracked.py"
+            unrelated.write_text("raise RuntimeError\n", encoding="utf-8")
+            args = Namespace(
+                task=task["id"],
+                agent="alice",
+                from_file=str(evidence),
+                file=str(repo / "planning" / "backlog.yaml"),
+            )
+            with self.assertRaisesRegex(SystemExit, "untracked source"), patch("taskctl.persist"):
                 command_evidence(args, *context)
+            unrelated.unlink()
+            original_read_bytes = Path.read_bytes
+            evidence_reads = 0
+
+            def read_snapshot(path: Path) -> bytes:
+                nonlocal evidence_reads
+                if path == evidence:
+                    evidence_reads += 1
+                return original_read_bytes(path)
+
+            with patch("taskctl.persist"), patch.object(Path, "read_bytes", read_snapshot):
+                command_evidence(args, *context)
+            self.assertEqual(1, evidence_reads)
             reference = task["evidence"][0]
-            self.assertTrue(reference["path"].startswith("artifacts/evidence/"))
-            self.assertNotIn("\\", reference["path"])
+            self.assertEqual("artifacts/evidence/manifest.json", reference["path"])
             self.assertEqual(evidence_sha256(evidence.read_bytes()), reference["sha256"])
+
+            alias = evidence.with_name("alias.json")
+            alias.write_bytes(evidence.read_bytes())
+            args.from_file = str(alias)
+            with self.assertRaisesRegex(SystemExit, "Logically duplicate"), patch("taskctl.persist"):
+                command_evidence(args, *context)
+            alias.unlink()
+
+            forged_reference_manifest = copy.deepcopy(manifest)
+            forged_reference_manifest.update(
+                baseCommit="0" * 40,
+                checks=[{"command": "test", "exitCode": 1}],
+                acceptanceCriteria=[],
+                unverifiedItems=["missing verification"],
+            )
+            forged_payload = json.dumps(forged_reference_manifest).encode()
+            evidence.write_bytes(forged_payload)
+            reference["sha256"] = evidence_sha256(forged_payload)
+            reference_errors = evidence_reference_errors({task["id"]: task}, repo)
+            self.assertTrue(any("check failed" in error for error in reference_errors))
+            self.assertTrue(any("criterion evidence" in error for error in reference_errors))
+            self.assertTrue(any("unverifiedItems" in error for error in reference_errors))
+            evidence.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
+            reference["sha256"] = evidence_sha256(evidence.read_bytes())
 
             stale = copy.deepcopy(manifest)
             stale["commit"] = "0" * 40
-            errors = exact_commit_errors(task, stale, REPO)
+            errors = exact_commit_errors(task, stale, repo, evidence_path=evidence)
             self.assertTrue(any("current HEAD" in error for error in errors))
+
+            mutations: list[tuple[dict[str, Any], str]] = [
+                ({"changedFiles": []}, "changedFiles must be a non-empty"),
+                ({"changedFiles": ["planning/backlog.yaml"]}, "exactly match"),
+                ({"checks": [{"exitCode": 0}]}, "non-empty command"),
+                ({"unverifiedItems": None}, "unverifiedItems must be present"),
+            ]
+            for mutation, expected in mutations:
+                with self.subTest(expected=expected):
+                    forged = copy.deepcopy(manifest)
+                    forged.update(mutation)
+                    errors = exact_commit_errors(task, forged, repo, evidence_path=evidence)
+                    self.assertTrue(any(expected in error for error in errors), errors)
+
+            task["branch"] = "forged-branch"
+            forged_branch = copy.deepcopy(manifest)
+            forged_branch["branch"] = "forged-branch"
+            errors = exact_commit_errors(task, forged_branch, repo, evidence_path=evidence)
+            self.assertIn("task branch does not match the current Git branch", errors)
+            task["branch"] = "test-branch"
+
+            (repo / "implementation.txt").write_text("dirty after verification\n", encoding="utf-8")
+            errors = exact_commit_errors(task, manifest, repo, evidence_path=evidence)
+            self.assertIn("tracked worktree changes exist outside the exact implementation commit", errors)
 
     def test_release_gate_rejects_incomplete_wave_and_reapproval(self) -> None:
         data, capabilities, slices, tasks, _ = self.workflow()
@@ -274,6 +387,175 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("APPROVED", gate["status"])
         with self.assertRaisesRegex(SystemExit, "Only a PENDING"), patch("taskctl.persist"):
             command_gate_approve(args, data, capabilities, slices, tasks, gates)
+
+    def test_git_execution_identity_requires_real_head_branch_and_worktree(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            (repo / "planning").mkdir()
+            backlog = repo / "planning" / "backlog.yaml"
+            backlog.write_text("plan: fixture\n", encoding="utf-8")
+            subprocess.run(["git", "init", "-b", "identity-branch"], cwd=repo, capture_output=True, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "Taskctl Test"], cwd=repo, check=True)
+            subprocess.run(["git", "add", "."], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-m", "baseline"], cwd=repo, capture_output=True, check=True)
+            head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+
+            identity = git_execution_identity(
+                str(backlog),
+                agent=" alice ",
+                branch="identity-branch",
+                base_sha=head,
+                worktree=str(repo),
+            )
+            self.assertEqual(("alice", "identity-branch", head, repo.as_posix()), identity)
+            with self.assertRaisesRegex(SystemExit, "current Git HEAD"):
+                git_execution_identity(
+                    str(backlog),
+                    agent="alice",
+                    branch="identity-branch",
+                    base_sha="0" * 40,
+                    worktree=str(repo),
+                )
+            with self.assertRaisesRegex(SystemExit, "canonical Git worktree"):
+                git_execution_identity(
+                    str(backlog), agent="alice", branch="identity-branch", base_sha=head, worktree=None
+                )
+            with self.assertRaisesRegex(SystemExit, "current Git branch"):
+                git_execution_identity(str(backlog), agent="alice", branch="other", base_sha=head, worktree=str(repo))
+
+    def test_campaign_start_resume_and_cancellation_follow_explicit_boundaries(self) -> None:
+        context = self.workflow()
+        capability = context[1]["CAP-00"]
+        capability["campaign"]["status"] = "PAUSED"
+        start_args = Namespace(
+            capability="CAP-00",
+            agent="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        identity = ("alice", "codex/test", "a" * 40, REPO.as_posix())
+        with (
+            self.assertRaisesRegex(SystemExit, "cannot start from campaign state PAUSED"),
+            patch("taskctl.git_execution_identity", return_value=identity),
+            patch("taskctl.persist"),
+        ):
+            command_capability_start(start_args, *context)
+
+        resume_args = copy.copy(start_args)
+        resume_args.profile = "CLD"
+        with (
+            self.assertRaisesRegex(SystemExit, "not eligible"),
+            patch("taskctl.git_execution_identity", return_value=identity),
+            patch("taskctl.persist"),
+        ):
+            command_capability_resume(resume_args, *context)
+        resume_args.profile = "LOC"
+        resume_args.agent = " alice "
+        with patch("taskctl.git_execution_identity", return_value=identity), patch("taskctl.persist"):
+            command_capability_resume(resume_args, *context)
+        self.assertEqual("alice", capability["campaign"]["owner"])
+
+        task = context[3]["CAP-00.S01.T01"]
+        with self.assertRaisesRegex(SystemExit, "owned by alice, not bob"), patch("taskctl.persist"):
+            command_cancel(
+                Namespace(task=task["id"], actor="bob", reason="cancel", replacement=None, file="unused"),
+                *context,
+            )
+        with patch("taskctl.persist"):
+            command_cancel(
+                Namespace(task=task["id"], actor=" alice ", reason="cancel", replacement=None, file="unused"),
+                *context,
+            )
+        self.assertEqual("alice", task["cancellation"]["cancelled_by"])
+        with self.assertRaisesRegex(SystemExit, "CANCELLED tasks cannot"), patch("taskctl.persist"):
+            command_cancel(
+                Namespace(task=task["id"], actor="mallory", reason="rewrite", replacement=None, file="unused"),
+                *context,
+            )
+
+    def test_task_slice_and_capability_owners_cannot_self_review(self) -> None:
+        context = self.workflow()
+        task = context[3]["CAP-00.S01.T01"]
+        task.update(
+            status="REVIEW",
+            owner="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            lease=new_lease("alice", 8),
+            evidence=[{"type": "criterion-manifest"}],
+            verification_state="passed",
+        )
+        review_args = Namespace(
+            task=task["id"], reviewer=" alice ", result="approved", note="", lease_hours=8, file="unused"
+        )
+        with self.assertRaisesRegex(SystemExit, "independent from the task owner"), patch("taskctl.persist"):
+            command_review(review_args, *context)
+
+        slice_ = context[2]["CAP-00.S01"]
+        slice_["completion"]["status"] = "REVIEW"
+        with self.assertRaisesRegex(SystemExit, "independent from the campaign owner"), patch("taskctl.persist"):
+            command_slice_review(
+                Namespace(slice=slice_["id"], reviewer="alice", result="approved", note="", file="unused"),
+                *context,
+            )
+
+        capability = context[1]["CAP-00"]
+        capability["campaign"]["status"] = "REVIEW"
+        capability["completion"]["status"] = "REVIEW"
+        with self.assertRaisesRegex(SystemExit, "independent from the campaign owner"), patch("taskctl.persist"):
+            command_capability_review(
+                Namespace(capability=capability["id"], reviewer="alice", result="approved", note="", file="unused"),
+                *context,
+            )
+
+    def test_approved_release_gate_remains_a_semantic_invariant_and_blocks_reopen(self) -> None:
+        data, capabilities, slices, tasks, _ = self.workflow()
+        gate = {
+            "id": "G0",
+            "status": "APPROVED",
+            "after_wave": "W0",
+            "unlocks_waves": [],
+            "approval": {
+                "approved_by": "reviewer",
+                "approved_at": "2026-01-01T00:00:00+00:00",
+                "evidence": ["report.json"],
+            },
+        }
+        gates = {"G0": gate}
+        data["release_gates"] = [gate]
+        errors = validate(data, capabilities, slices, tasks, gates)
+        self.assertIn("G0: APPROVED while preceding-wave task CAP-00.S01.T01 is incomplete", errors)
+
+        task = tasks["CAP-00.S01.T01"]
+        task.update(
+            status="DONE",
+            owner="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            lease=None,
+            evidence=[{"type": "criterion-manifest"}],
+            verification_state="passed",
+            review={"reviewer": "reviewer", "result": "approved", "reviewed_at": "2026-01-01T00:00:00+00:00"},
+        )
+        with self.assertRaisesRegex(SystemExit, "release gate is APPROVED"), patch("taskctl.persist"):
+            command_reopen(
+                Namespace(task=task["id"], agent="alice", reason="reopen", lease_hours=8, file="unused"),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
 
     def test_atomic_save_preserves_destination_on_replace_failure_and_stale_writer(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

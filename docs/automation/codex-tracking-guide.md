@@ -20,7 +20,7 @@ Work within one approved capability campaign. Do not select unrelated globally r
 ```bash
 python tools/planctl.py --repo . ready CAP-XX --require-approved
 python tools/taskctl.py --file planning/backlog.yaml validate
-python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --agent <agent> --branch <branch> --base-sha <sha> --profile LOC --platform windows-x64
+python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 python tools/taskctl.py --file planning/backlog.yaml status
 ```
 
@@ -33,7 +33,7 @@ The normal task transition is:
 
 ```bash
 python tools/taskctl.py next --profile LOC --platform windows-x64
-python tools/taskctl.py claim CAP-XX.SXX.TXX --agent <agent> --branch <branch> --base-sha <full-sha> --profile LOC --platform windows-x64
+python tools/taskctl.py claim CAP-XX.SXX.TXX --agent <agent> --branch <branch> --base-sha <full-sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 python tools/taskctl.py checks CAP-XX.SXX.TXX
 # Commit the implementation and run the declared checks on that exact HEAD.
 python tools/taskctl.py evidence CAP-XX.SXX.TXX --agent <agent> --from artifacts/evidence/CAP-XX.SXX.TXX.json
@@ -47,6 +47,14 @@ gates cannot be approved twice or while their preceding wave contains an
 incomplete task. Every mutation validates the prospective ledger before an
 atomic compare-and-swap replacement; stale writers and failed replacements do
 not overwrite the prior file.
+
+Start/resume/claim metadata is bound to the actual current Git branch, full
+`HEAD`, and canonical worktree. Evidence is a single-read snapshot whose base,
+branch, commit ancestry, exact changed-file scope, named passing checks, complete
+criterion map, empty unverified list, clean tracked/untracked worktree, digest,
+and logical uniqueness are checked again on later validation. Implementation or
+campaign owners cannot review their own task, slice, or capability. Approved
+release gates remain semantically tied to a fully DONE preceding wave.
 
 ## Decision requests
 

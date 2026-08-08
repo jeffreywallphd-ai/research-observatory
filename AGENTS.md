@@ -78,7 +78,7 @@ python tools/planctl.py --repo . prepare CAP-XX
 python tools/planctl.py --repo . review CAP-XX
 python tools/planctl.py --repo . validate CAP-XX
 python tools/planctl.py --repo . ready CAP-XX --require-approved
-python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --agent <agent> --branch <branch> --base-sha <sha> --profile LOC --platform windows-x64
+python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 ```
 
 Whenever requesting a decision, override, approval, or readiness remediation, print the `file://` URI and repository-relative path produced by `planctl review`.
