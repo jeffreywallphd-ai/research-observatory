@@ -51,8 +51,9 @@ remain stable through collection. On Windows, governed input handles deny writes
 and deletes during final confirmation, and canonical ancestor-directory handles
 deny rename/delete swaps through atomic output replacement. The final stability
 cycles also re-enumerate schemas and the reserved model tree, and any unreadable
-schema directory fails closed. Temporary JSON is write-locked and byte-verified
-through replacement. Output is permitted
+schema directory fails closed. Temporary JSON is write-locked, renamed through
+its held Windows handle, and kept write/delete locked through final identity and
+byte verification. Output is permitted
 only under a canonical, nonredirected `artifacts/tmp/`;
 normal validation never edits tracked files. Only the explicit
 `--write-components` operation changes tracked component contracts; it never
