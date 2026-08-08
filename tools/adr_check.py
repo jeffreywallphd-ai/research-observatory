@@ -192,7 +192,7 @@ def main() -> int:
         for error in errors:
             print(f"ERROR: {error}")
         return 1
-    suffix = f"; {len(set(changed_paths))} changed paths covered" if changed_paths else ""
+    suffix = f"; {len(set(changed_paths))} changed paths inspected" if changed_paths else ""
     print(f"ADR registry: pass - {len(records)} indexed records{suffix}")
     return 0
 
