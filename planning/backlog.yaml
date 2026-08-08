@@ -1108,18 +1108,21 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T17:52:29+00:00'
-      updated_at: '2026-08-08T18:32:30+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T18:41:58+00:00'
+      completed_at: '2026-08-08T18:41:58+00:00'
       blocker: null
       implementation_notes: 'Owned lease, exact-commit evidence, legal transition/gate enforcement, stable IDs, and atomic
         compare-and-swap recovery pass at 62c8252.
 
         Review-fix commit 438edad addresses all five independently reproduced audit-invariant findings; exact foundation,
-        security-local, and canonical validation pass.'
+        security-local, and canonical validation pass.
+
+        Second review-fix commit 412cce6 enforces exact follow-up base/scope and an immutable legacy-only hosted-CI residual
+        policy; exact foundation, security-local, focused, and canonical checks pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S04.T02.json
@@ -1131,19 +1134,21 @@ capabilities:
         sha256: 6a05d60163cc577ed351d6698c360262e861b34e158697162408111e780ea086
         commit: 438edadfc822f75a246ecbed40577f29b4524558
         recorded_at: '2026-08-08T18:28:25+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S04.T02.review-fix-2.json
+        sha256: f4fbc2615d8827fcf61eec75deda022f6e1e1fc7f697a4749a4db526e4c06622
+        commit: 412cce62a2994606d81c4a3dc538205bb3043138
+        recorded_at: '2026-08-08T18:39:38+00:00'
       review:
         reviewer: codex-review
-        result: changes-requested
-        reviewed_at: '2026-08-08T18:32:30+00:00'
-        notes: Follow-up evidence must bind its base to the superseded attachment, declare the exact incremental diff, and
-          cannot inherit unverified-item permission merely from DONE status; use an explicit narrow legacy policy for historical
-          hosted-CI residuals.
+        result: approved
+        reviewed_at: '2026-08-08T18:41:58+00:00'
+        notes: 'Approved at 412cce6 after three adversarial passes: exact follow-up base/scope, immutable legacy residual
+          policy, full stored evidence validation, Git identity, transition/gate invariants, independent review, and CAS recovery
+          all withstand mutation tests; 23 focused and 67 foundation tests pass.'
       base_sha: c775d85959edb169e57811ad83cc1e5401fd12c0
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T18:32:30+00:00'
-        expires_at: '2026-08-09T02:32:30+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
@@ -1172,11 +1177,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-08T18:41:58+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
