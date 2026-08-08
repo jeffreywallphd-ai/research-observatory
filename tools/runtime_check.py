@@ -8,9 +8,9 @@ import json
 import os
 import re
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
-
+from typing import Any
 
 VERSION_PATTERN = re.compile(r"(?<!\d)(\d+\.\d+\.\d+)(?!\d)")
 
@@ -86,10 +86,7 @@ def installed_errors(
         if result.returncode != 0 or actual is None:
             errors.append(f"{name} is unavailable. {specification['install_hint']}")
         elif actual != expected:
-            errors.append(
-                f"{name} {actual} is unsupported; expected {expected}. "
-                f"{specification['install_hint']}"
-            )
+            errors.append(f"{name} {actual} is unsupported; expected {expected}. {specification['install_hint']}")
     return errors
 
 

@@ -9,11 +9,10 @@ import json
 import os
 import subprocess
 import sys
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from runtime_check import declaration_errors, installed_errors, load_contract
-
 
 CommandRunner = Callable[..., subprocess.CompletedProcess[str]]
 

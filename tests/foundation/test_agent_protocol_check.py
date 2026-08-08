@@ -5,7 +5,6 @@ import sys
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
@@ -28,8 +27,10 @@ class AgentProtocolTests(unittest.TestCase):
         self.assertIn("campaign.partialApprovalStartsCampaign must be False", errors)
 
     def test_missing_continuous_campaign_instruction_is_rejected(self) -> None:
-        agents = (REPO / "AGENTS.md").read_text(encoding="utf-8").replace(
-            "### One approval and one durable campaign", "### Campaign"
+        agents = (
+            (REPO / "AGENTS.md")
+            .read_text(encoding="utf-8")
+            .replace("### One approval and one durable campaign", "### Campaign")
         )
 
         errors = validate_protocol(REPO, self.protocol, {"AGENTS.md": agents})

@@ -13,9 +13,15 @@ from typing import Any
 
 import yaml
 
-
 ADR_ID = re.compile(r"^ADR-\d{4}$")
-REQUIRED_SECTIONS = ["## Context", "## Candidates", "## Decision", "## Consequences", "## Verification", "## Task links"]
+REQUIRED_SECTIONS = [
+    "## Context",
+    "## Candidates",
+    "## Decision",
+    "## Consequences",
+    "## Verification",
+    "## Task links",
+]
 ACTIVE_CHANGE_STATES = {"Proposed", "Accepted"}
 
 
@@ -56,10 +62,7 @@ def validate_registry(repo: Path) -> tuple[list[str], dict[str, dict[str, Any]]]
         errors.append("ADR index contains duplicate identifiers")
 
     adr_dir = repo / "docs" / "adr"
-    actual_paths = {
-        path.relative_to(repo).as_posix()
-        for path in adr_dir.glob("ADR-[0-9][0-9][0-9][0-9]-*.md")
-    }
+    actual_paths = {path.relative_to(repo).as_posix() for path in adr_dir.glob("ADR-[0-9][0-9][0-9][0-9]-*.md")}
     indexed_paths = {entry.get("path") for entry in entries}
     for path in sorted(actual_paths - indexed_paths):
         errors.append(f"unindexed ADR file: {path}")
@@ -88,7 +91,11 @@ def validate_registry(repo: Path) -> tuple[list[str], dict[str, dict[str, Any]]]
                 errors.append(f"{adr_id} lacks required field {field}")
         if metadata.get("status") not in expected_states:
             errors.append(f"{adr_id} has unsupported status {metadata.get('status')!r}")
-        if entry.get("id") != adr_id or entry.get("title") != metadata.get("title") or entry.get("status") != metadata.get("status"):
+        if (
+            entry.get("id") != adr_id
+            or entry.get("title") != metadata.get("title")
+            or entry.get("status") != metadata.get("status")
+        ):
             errors.append(f"{adr_id} metadata does not match its index entry")
         links = metadata.get("linked_tasks") or []
         if entry.get("linkedTasks") != links:
@@ -125,11 +132,7 @@ def validate_registry(repo: Path) -> tuple[list[str], dict[str, dict[str, Any]]]
 
 def protected_matches(repo: Path, changed_path: str) -> list[str]:
     policy = load_json(repo / "architecture-protected-paths.json")
-    return [
-        entry["pattern"]
-        for entry in policy["paths"]
-        if fnmatch.fnmatchcase(changed_path, entry["pattern"])
-    ]
+    return [entry["pattern"] for entry in policy["paths"] if fnmatch.fnmatchcase(changed_path, entry["pattern"])]
 
 
 def validate_change_set(
@@ -153,7 +156,8 @@ def validate_change_set(
                 covering.append(metadata["id"])
         if not covering:
             errors.append(
-                f"protected architecture change {changed_path!r} ({protected_by}) lacks a changed, indexed Proposed or Accepted ADR with matching affected_paths"
+                f"protected architecture change {changed_path!r} ({protected_by}) lacks a changed, indexed "
+                "Proposed or Accepted ADR with matching affected_paths"
             )
     return errors
 

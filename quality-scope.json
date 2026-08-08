@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "python-quality-scope",
+  "pythonFiles": [
+    "tools/adr_check.py",
+    "tools/adr_new.py",
+    "tools/agent_protocol_check.py",
+    "tools/architecture_check.py",
+    "tools/bootstrap.py",
+    "tools/ci_check.py",
+    "tools/packaging_smoke_check.py",
+    "tools/quality_check.py",
+    "tools/runtime_check.py",
+    "tools/verify.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/foundation/test_agent_protocol_check.py",
+    "tests/foundation/test_architecture_check.py",
+    "tests/foundation/test_bootstrap.py",
+    "tests/foundation/test_ci_check.py",
+    "tests/foundation/test_packaging_smoke_check.py",
+    "tests/foundation/test_quality_check.py",
+    "tests/foundation/test_runtime_check.py",
+    "tests/foundation/test_verify_runner.py",
+    "tests/contracts/test_foundation_contracts.py"
+  ]
+}

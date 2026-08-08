@@ -12,6 +12,11 @@ files repeat those values for ecosystem tooling and are checked for drift.
 | pnpm | 11.20.0 | `package.json` |
 | uv | 0.12.2 | `runtime-versions.json` |
 
+The Python development group also pins Ruff 0.15.22, mypy 2.3.0, and
+types-PyYAML 6.0.12.20260518. `quality-scope.json` is the explicit set of Python
+sources and tests governed by formatting, lint, and type checks; adding a Python
+automation file requires adding it to that scope in the same change.
+
 The pins select a supported Node LTS line, the current Python feature release,
 and stable Rust and package-manager releases as of the decision date. Upgrade
 them only through a reviewed change that regenerates every affected lockfile and

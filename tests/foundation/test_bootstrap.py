@@ -8,12 +8,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 from bootstrap import BootstrapError, bootstrap  # noqa: E402
-
 
 DECLARATION_FILES = [
     ".node-version",
@@ -78,9 +76,7 @@ class DeveloperBootstrapTests(unittest.TestCase):
             self.assertIn(["corepack.cmd", "pnpm", "install", "--frozen-lockfile"], runner.commands)
             self.assertIn(["uv", "sync", "--frozen", "--no-install-project"], runner.commands)
             self.assertIn(["cargo", "fetch", "--locked"], runner.commands)
-            self.assertTrue(
-                any(command[0].endswith(".venv\\Scripts\\python.exe") for command in runner.commands)
-            )
+            self.assertTrue(any(command[0].endswith(".venv\\Scripts\\python.exe") for command in runner.commands))
 
     def test_failed_install_does_not_publish_development_config(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -88,9 +84,7 @@ class DeveloperBootstrapTests(unittest.TestCase):
             seed_checkout(checkout)
             runner = ControlledRunner(failing_step="fetch")
 
-            with self.assertRaisesRegex(
-                BootstrapError, "(?s)Rust dependencies failed.*controlled install failure"
-            ):
+            with self.assertRaisesRegex(BootstrapError, "(?s)Rust dependencies failed.*controlled install failure"):
                 bootstrap(checkout, runner=runner, platform_name="nt")
 
             self.assertFalse((checkout / ".local" / "development.json").exists())

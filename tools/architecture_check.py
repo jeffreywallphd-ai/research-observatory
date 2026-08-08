@@ -8,7 +8,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 REQUIRED_PROFILE_STATES = {
     "local": ("W0-W5", "release-authoritative-first"),
     "university": ("W10", "deferred-behind-release-gate"),

@@ -10,7 +10,6 @@ from datetime import date
 from pathlib import Path
 
 import yaml
-
 from adr_check import ADR_ID, task_ids
 
 
@@ -114,9 +113,7 @@ def main() -> int:
     parser.add_argument("--affected", action="append", required=True)
     args = parser.parse_args()
     try:
-        output = create_adr(
-            Path(args.repo).resolve(), args.id, args.title, args.task, args.affected
-        )
+        output = create_adr(Path(args.repo).resolve(), args.id, args.title, args.task, args.affected)
     except (OSError, ValueError, FileExistsError, KeyError, json.JSONDecodeError, yaml.YAMLError) as exc:
         print(f"ERROR: {exc}")
         return 1

@@ -6,5 +6,6 @@
 - `developer-bootstrap.md` - exact prerequisites, one-command setup, generated local state, and recovery.
 - `toolchain.md` - runtime pins, lockfile policy, and deterministic install commands.
 - `verification-profiles.md` - named profile composition, reports, failure behavior, release-gated profiles, and extension ownership.
+- `continuous-integration.md` - required CI jobs, immutable action pins, least privilege, local equivalents, and evidence retention.
 
 These files contain detailed procedure delegated by root `AGENTS.md`, `docs/README.md`, and `planning/README.md`. They are repository operating documents after installation from the setup pack.

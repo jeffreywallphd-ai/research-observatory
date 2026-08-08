@@ -8,9 +8,9 @@ import json
 import subprocess
 import sys
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
-
+from typing import Any
 
 CommandRunner = Callable[..., subprocess.CompletedProcess[str]]
 Clock = Callable[[], float]
@@ -41,9 +41,7 @@ def validate_contract(contract: dict[str, Any]) -> list[str]:
         "cloud",
     }
     if set(profiles) != expected_profiles:
-        errors.append(
-            f"verification profiles must be exactly {sorted(expected_profiles)}; found {sorted(profiles)}"
-        )
+        errors.append(f"verification profiles must be exactly {sorted(expected_profiles)}; found {sorted(profiles)}")
     for command_id, specification in commands.items():
         argv = specification.get("argv") if isinstance(specification, dict) else None
         if not isinstance(argv, list) or not argv or not all(isinstance(item, str) for item in argv):
@@ -84,7 +82,8 @@ def validate_contract(contract: dict[str, Any]) -> list[str]:
             activation_keys = [key for key in ("activationPath", "activationGlob") if optional.get(key)]
             if len(activation_keys) != 1 or not optional.get("installedBy"):
                 errors.append(
-                    f"profile {profile_name!r} optional command requires exactly one activationPath/activationGlob and installedBy"
+                    f"profile {profile_name!r} optional command requires exactly one "
+                    "activationPath/activationGlob and installedBy"
                 )
     return errors
 
