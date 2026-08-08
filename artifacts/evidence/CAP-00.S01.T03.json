@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S01.T03",
+  "commit": "ed7d2058e0bfe94426975711763036bc0aed1aa4",
+  "baseCommit": "b2365ed88f9ad84a3f7c3a6414c11b3b3494f9de",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    ".gitattributes",
+    ".gitignore",
+    "README.md",
+    "bootstrap.cmd",
+    "docs/automation/README.md",
+    "docs/automation/developer-bootstrap.md",
+    "planning/backlog.yaml",
+    "tests/foundation/README.md",
+    "tests/foundation/test_bootstrap.py",
+    "tools/README.md",
+    "tools/bootstrap.py",
+    "tools/runtime_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".\\bootstrap.cmd (from a git archive of ed7d205 with no .venv, node_modules, or .local directory)",
+      "exitCode": 0,
+      "result": "frozen pnpm, uv, and Cargo steps passed; a new .venv, node_modules, and .local/development.json were created; the final foundation smoke gate passed"
+    },
+    {
+      "command": "python tools/verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "repository structure, runtime declarations, 11 foundation tests, and backlog validation passed under the pinned virtual environment"
+    },
+    {
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    },
+    {
+      "command": "git check-ignore .local/development.json",
+      "exitCode": 0,
+      "result": "generated non-secret development configuration is governed as checkout-local ignored state"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "bootstrap.cmd completed from a freshly archived Windows checkout containing none of the documented generated directories",
+        "tools/bootstrap.py validated exact prerequisites, ran only frozen or locked dependency commands, and used the new .venv interpreter for the final smoke gate",
+        "The clean run created only .venv, node_modules, and the atomic .local/development.json checkout-local outputs documented by the bootstrap contract"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "test_clean_windows_checkout_runs_frozen_steps_and_writes_only_documented_config covers command selection and the expected clean-checkout path",
+        "test_failed_install_does_not_publish_development_config proves a dependency failure aborts before local configuration is published",
+        "The installed-runtime tests continue to prove missing and mismatched prerequisites fail with actionable version guidance"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "docs/automation/developer-bootstrap.md defines prerequisites, platform commands, local-state boundaries, recovery, and the no-secrets rule",
+        "README.md, docs/automation/README.md, tools/README.md, and tests/foundation/README.md expose the governed entry points and ownership",
+        "The change is limited to bootstrap automation, tests, documentation, ignore rules, and the claimed task state"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "A rigorous reviewer-role audit is required before the task may transition from REVIEW to DONE."
+  }
+}

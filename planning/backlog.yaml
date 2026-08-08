@@ -429,7 +429,7 @@ capabilities:
     - LAB
     - ALL
     depends_on: []
-    status: READY
+    status: NOT_STARTED
     tasks:
     - id: CAP-00.S01.T01
       capability_id: CAP-00
@@ -567,29 +567,37 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T16:13:09+00:00'
-      updated_at: '2026-08-08T16:13:09+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T16:19:03+00:00'
+      completed_at: '2026-08-08T16:19:03+00:00'
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: 'One-command Windows bootstrap, cross-platform orchestrator, atomic local config, clean-checkout
+        proof, and failure tests complete at ed7d205.
+
+        Corrected evidence manifest base SHA and reattached the clean-checkout proof before review.'
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S01.T03.json
+        sha256: ccfc0f6abf7d6defc37e2fa0129141843bd33526a4afe036211e8a8e09d77cb2
+        commit: ed7d2058e0bfe94426975711763036bc0aed1aa4
+        recorded_at: '2026-08-08T16:18:49+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: codex-review
+        result: approved
+        reviewed_at: '2026-08-08T16:19:03+00:00'
+        notes: Rigorous audit confirmed the execution-policy-safe Windows entry point, cross-platform orchestrator, exact
+          prerequisite rejection, frozen dependency commands, atomic no-secret config, literal fresh-checkout success, failure-path
+          tests, and corrected evidence hash; no unresolved finding.
       base_sha: b2365ed88f9ad84a3f7c3a6414c11b3b3494f9de
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T16:13:09+00:00'
-        expires_at: '2026-08-09T00:13:09+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
+      cancellation: null
     platform_targets:
     - platform-neutral
     completion:
