@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-00.S01",
+  "stateCommit": "6029b7545b7091216cac91df4899f9cda7754a8c",
+  "outcome": "A deterministic monorepo skeleton supports desktop, Python service, shared contracts, tests, packaging, and documentation.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-00.S01.T01",
+      "path": "artifacts/evidence/CAP-00.S01.T01.json",
+      "sha256": "004503f948fc8a357c1decf0f803ad21a3e4383d40d95a6b2a2e7ddcce8876ba",
+      "status": "DONE"
+    },
+    {
+      "taskId": "CAP-00.S01.T02",
+      "path": "artifacts/evidence/CAP-00.S01.T02.json",
+      "sha256": "a1e702b17553045aa361de6669ddf068ac10e92030cacaf45cee8aefb89edba5",
+      "status": "DONE"
+    },
+    {
+      "taskId": "CAP-00.S01.T03",
+      "path": "artifacts/evidence/CAP-00.S01.T03.json",
+      "sha256": "ccfc0f6abf7d6defc37e2fa0129141843bd33526a4afe036211e8a8e09d77cb2",
+      "status": "DONE"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".\\bootstrap.cmd",
+      "exitCode": 0,
+      "result": "exact prerequisite checks, all frozen dependency installs, local configuration generation, and the foundation smoke gate passed at the reviewed slice state"
+    },
+    {
+      "command": ".\\bootstrap.cmd (fresh git archive of T03 implementation commit ed7d205)",
+      "exitCode": 0,
+      "result": "a checkout with no generated environment created only .venv, node_modules, and .local/development.json before passing smoke verification"
+    },
+    {
+      "command": "python tools/verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "12 module boundaries, exact toolchain declarations, 11 foundation tests, and backlog integrity passed"
+    },
+    {
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "20 capabilities, 117 slices, 356 tasks, and 12 release gates valid"
+    }
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": []
+  }
+}

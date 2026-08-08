@@ -429,7 +429,7 @@ capabilities:
     - LAB
     - ALL
     depends_on: []
-    status: NOT_STARTED
+    status: DONE
     tasks:
     - id: CAP-00.S01.T01
       capability_id: CAP-00
@@ -601,11 +601,14 @@ capabilities:
     platform_targets:
     - platform-neutral
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: codex-review
+      reviewed_at: '2026-08-08T16:20:46+00:00'
+      evidence:
+      - artifacts/evidence/CAP-00.S01.integration.json
+      notes: Slice-level audit verified all task reviews, immutable manifest hashes, governed module boundaries, exact toolchains,
+        frozen installs, fresh-checkout Windows bootstrap, atomic local state, and integrated foundation checks; no unresolved
+        finding.
   - id: CAP-00.S02
     title: Architecture and agent operating contract
     outcome: Human and AI contributors receive explicit boundaries, conventions, and change-control rules.
@@ -617,7 +620,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-00.S01.T01
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-00.S02.T01
       capability_id: CAP-00
@@ -644,11 +647,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: August 7, 2026
+      updated_at: '2026-08-08T16:20:46+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
