@@ -1,0 +1,78 @@
+{
+  "release": "1.3.4",
+  "baseline": "1.3",
+  "status": "validated-proposed",
+  "planning": {
+    "capability_plan_count": 19,
+    "slice_plan_count": 111,
+    "total_decisions": 294,
+    "all_recommendations_preselected": true,
+    "all_decisions_accepted": true,
+    "open_blocking_decisions": 0,
+    "new_capabilities": [
+      "CAP-16",
+      "CAP-17",
+      "CAP-18",
+      "CAP-19"
+    ],
+    "new_slice_plan_count": 24,
+    "new_task_coverage": 72,
+    "new_decisions": 72
+  },
+  "backlog": {
+    "capabilities": 20,
+    "slices": 117,
+    "tasks": 356,
+    "post_bootstrap_tasks_covered_by_slice_plans": 337,
+    "release_gates": 12
+  },
+  "review_site": {
+    "capabilities": 19,
+    "slices": 111,
+    "generated_html_pages": 131,
+    "supplemental_release": "1.3.4",
+    "recommendations_visible_as_preselected": true
+  },
+  "human_package": {
+    "pdf_count": 153,
+    "pdf_pages": 2300,
+    "new_slice_pdf_count": 24,
+    "new_slice_pdf_pages": 341,
+    "new_capability_pdf_count": 4,
+    "new_capability_pdf_pages": 41
+  },
+  "current_standards": {
+    "article_xml": "JATS 1.4",
+    "manuscript_exchange": "MECA 2.0.1",
+    "contributor_roles": "ANSI/NISO CRediT",
+    "research_metadata": "DataCite Metadata Schema 4.7",
+    "research_package": "RO-Crate 1.3",
+    "annotation": "W3C Web Annotation",
+    "provenance": "W3C PROV-O",
+    "peer_review_terms": "ANSI/NISO Z39.106-2023",
+    "ai_publication_governance": "ICMJE AI guidance"
+  },
+  "checks": {
+    "backlog": "pass",
+    "capability_plans": "pass",
+    "slice_plans": "pass",
+    "decision_preselection_294_of_294": "pass",
+    "unapproved_readiness_negative_control": "pass",
+    "one_approval_flow_smoke": "pass",
+    "review_site": "pass",
+    "ui_reference": "pass",
+    "ui_interactions": "pass",
+    "pdf_integrity": "pass",
+    "representative_pdf_render_review": "pass",
+    "structured_files": "pass",
+    "javascript_syntax": "pass",
+    "python_compilation": "pass"
+  },
+  "approval": {
+    "plans": "proposed",
+    "decisions": "complete",
+    "campaign_start_allowed": false,
+    "required_human_action": "one explicit capability approval after confirmation or reasoned override of the preselected defaults",
+    "review_entry": "planning/review-site/index.html"
+  }
+}

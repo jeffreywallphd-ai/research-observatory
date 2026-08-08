@@ -1,0 +1,489 @@
+---
+plan_schema_version: '1.1'
+document_type: slice-implementation-plan
+baseline: '1.3'
+supplemental_release: 1.3.4
+capability_id: CAP-06
+capability_plan: planning/capability-plans/CAP-06.md
+planning_gate: capability-decision-complete
+slice_id: CAP-06.S01
+title: Fielded lexical search and local indexing
+status: proposed
+wave: W3
+priority: P0
+deployment_profiles:
+- LOC
+- LAB
+- ALL
+platform_targets:
+- windows-x64
+task_ids:
+- CAP-06.S01.T01
+- CAP-06.S01.T02
+- CAP-06.S01.T03
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
+approval:
+  status: pending
+  approved_by: null
+  approved_at: null
+  approved_commit: null
+---
+# CAP-06.S01 — Fielded lexical search and local indexing
+
+> **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-06.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and both plan validators pass in approval mode. Once the capability campaign starts, the agent should execute continuously through its slices and pause only for an allowed infeasibility, external dependency, unavailable required hardware, explicit human decision, or approved design gate.
+
+<div class="visual-flow"><span>Capability decisions approved</span><b>→</b><span>Slice plan approved</span><b>→</b><span>Tasks executed</span><b>→</b><span>Slice integration</span><b>→</b><span>Independent review</span></div>
+
+## 0. Plan control
+
+| Field | Value |
+|---|---|
+| Capability | `CAP-06` — Local search, discovery, corpus diagnostics, and screening |
+| Capability objective | Deliver transparent lexical, semantic, citation, and active-learning workflows that can construct high-recall corpora without turning retrieval into an opaque chat session. |
+| Slice | `CAP-06.S01` — Fielded lexical search and local indexing |
+| Slice outcome | Exact terminology, Boolean logic, metadata filters, and reproducible ranking are available through SQLite FTS5. |
+| Wave / priority | `W3` / `P0` |
+| Deployment profiles | `LOC`, `LAB`, `ALL` |
+| Platform targets | `windows-x64` |
+| Backlog tasks | `CAP-06.S01.T01`, `CAP-06.S01.T02`, `CAP-06.S01.T03` |
+| Slice dependencies | `CAP-04.S04.T03`, `CAP-05.S03.T03` |
+| Capability decision packet | `planning/capability-plans/CAP-06.md` — must be approved and decision-complete |
+| Approved experience | `RO-UI-ACADEMIC-MINIMAL-1.3`; relevant pages: search-studio.html, corpus-canvas.html, screening.html |
+| Approval state | `PROPOSED` / human approval pending |
+
+## 1. Purpose and contribution to the larger vision
+
+Exact terminology, Boolean logic, metadata filters, and reproducible ranking are available through SQLite FTS5.
+
+This slice advances the capability objective: **Deliver transparent lexical, semantic, citation, and active-learning workflows that can construct high-recall corpora without turning retrieval into an opaque chat session.** It is designed as one production vertical inside a long-running capability campaign, not as an isolated technical experiment. The implementation must preserve the platform’s evidence-before-prose rule, source and decision provenance, bounded uncertainty, researcher authority, local-first privacy, cross-platform ports, and the distinction between canonical scholarly state and rebuildable analytical derivatives.
+
+**Implementation thesis.** Represent every search as a typed, round-trippable query tree; compile it to a versioned FTS5 projection and return field-level explanations without making FTS syntax part of the scholarly record.
+
+The containing capability is complete only when all of its slices satisfy these exit conditions:
+
+- Lexical and semantic indexes are versioned, explainable, rebuildable, and usable offline for project content.
+- Search evolution is stored as a visible tree of exact queries, transformations, results, and discovery paths.
+- Screening supports human inclusion decisions, uncertainty/random audits, stopping evidence, and reproducible exports.
+
+## 2. Scope
+
+### 2.1 In scope
+
+- Typed query AST, parser, validation diagnostics and canonical serialization.
+- FTS5 external-content projections for canonical work metadata and permitted document passages.
+- Incremental indexing, checkpointed rebuild, integrity verification and rights-driven removal.
+- Fielded results, snippets, deterministic pagination and ranking explanation.
+
+### 2.2 Explicit non-goals
+
+- Semantic embeddings and vector search (S02).
+- Cross-source query execution and branching UI beyond the local lexical contract (S04).
+- Autonomous relevance or inclusion decisions.
+- Do not implement downstream capability behavior beyond narrow ports, fixtures and handoffs explicitly named here.
+- Do not introduce university-hosted or managed-cloud infrastructure during the local Windows waves; preserve deployment-neutral contracts only.
+- Do not bypass the Core API, canonical repositories, provenance ledger, durable workflow fabric, rights policy, model gateway or approved experience reference.
+- Do not declare completion from happy-path task tests alone; slice-wide failure, cancellation, restart, migration, security, accessibility and handoff evidence is required.
+
+### 2.3 Slice boundary
+
+- **Consumes:** `CAP-04.S04.T03`, `CAP-05.S03.T03` and the handoffs in Section 13.
+- **Produces:** Exact terminology, Boolean logic, metadata filters, and reproducible ranking are available through SQLite FTS5.
+- **Owns:** The portable domain contracts, adapter boundaries, workflows, fixtures, decisions and evidence explicitly listed in this plan.
+- **Does not own:** Product purpose, unrelated capabilities, user-authoritative scholarly judgments, source rights, or provider/database/UI framework internals.
+
+## 3. Authority, dependencies, and campaign stop conditions
+
+### 3.1 Governing authority
+
+1. Vision and non-goals in `docs/product/vision.md`.
+2. Accepted ADRs, then `docs/architecture/source/systems-design.md`.
+3. `planning/backlog.yaml` for IDs, dependencies, waves, status and evidence.
+4. Approved capability decision packet `planning/capability-plans/CAP-06.md`.
+5. This approved slice plan.
+6. Approved UI reference, workflow/page contracts and style guide for user-facing work.
+7. Automation and task-control rules.
+
+### 3.2 Required upstream state
+
+- All slice dependencies are approved or an explicitly approved integration stub exists: `CAP-04.S04.T03`, `CAP-05.S03.T03`.
+- The capability decision packet contains all material cross-slice choices, candidate options, recommendation, accepted selection, migration boundary and approval.
+- Every slice plan in the capability exists and is structurally valid before capability approval; all plans are approved before campaign start.
+- Required fixtures, benchmark corpora, credentials, model/source licenses, platform resources and human authority are available or represented by approved deterministic stubs.
+
+### 3.3 Decision-complete capability rule
+
+Planning by capability is the default. Before `capability start`, the planning agent inspects all slices and adjacent contracts, researches credible options, and records the strongest best-in-class recommendation as the selected and accepted option for every material decision in the capability packet. Those selections count as completed decisions. The static review site is a confirmation-and-override surface plus the one-time capability approval gate; implementation agents must not repeatedly ask for choices already settled by the packet. After approval, execution proceeds continuously slice by slice through a production-ready end-to-end capability.
+
+### 3.4 Allowed pauses after execution begins
+
+The long-running campaign should continue task-by-task and slice-by-slice. It may pause only when classified as one of the following and recorded by `taskctl`:
+
+- **Infeasible:** validated evidence disproves the selected design and no compatible fallback exists within the approved boundary.
+- **External dependency:** a required source/provider/license/credential/approval controlled outside the repository is unavailable.
+- **Hardware unavailable:** a required qualification target cannot be simulated and is not accessible.
+- **Human decision:** a newly discovered consequential product, architecture, security, rights, ethics or scholarly-authority choice was not reasonably knowable during planning.
+- **Approved design gate:** the implementation requires an intentional change to the governed style guide/workflow/page reference.
+
+Ordinary implementation uncertainty, test failure, debugging, refactoring, model fallback, recoverable performance work, or a choice already covered by the packet is not a pause condition.
+
+## 4. Selected implementation decisions
+
+The capability packet's researched best-in-class recommendations are already selected, accepted, and decision-complete. This section projects the applicable decisions into the slice implementation contract. Capability approval authorizes those defaults; a reviewer may override a selection before approval only with explicit rationale. During execution, no implementation agent may silently choose a different candidate.
+
+
+These selections are recommendations until the capability packet and ADRs are approved. Approval turns them into the execution contract for the campaign.
+
+| Decision | Recommended selection | Alternative not selected | Rationale and replaceability | Basis |
+|---|---|---|---|---|
+| **Tokenizer/analyzer** | Use `unicode61 remove_diacritics 2` as the general baseline; add an independently benchmarked trigram auxiliary index only for identifiers/titles that need substring tolerance. | Default porter stemming or one opaque language analyzer for all content. | Language-neutral exactness and explainability are more important than aggressive English stemming; analyzer choice is part of the index manifest. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
+| **FTS layout** | Use external-content/contentless FTS5 tables keyed to canonical stable IDs; treat them as disposable projections rebuilt from authoritative records. | Store canonical records only inside FTS virtual tables. | Canonical transactions and rights live in SQLite domain tables; FTS can be recreated, integrity-checked and replaced. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
+| **Ranking** | BM25 with explicit per-field weights and deterministic stable-ID tie break; expose matched fields and snippets, not a misleading probability. | Normalize BM25 to “relevance percent.” | The score is an index ranking signal and must remain interpretable and replayable. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
+
+## 5. Architecture and implementation design
+
+### 5.1 Components and recommended repository locations
+
+| Component / location | Responsibility |
+|---|---|
+| `services/core/research_observatory/modules/corpus_search/query` | Query AST, parser, validator, serializer and dialect compiler. |
+| `services/core/research_observatory/adapters/search/sqlite_fts` | FTS schema, writers, readers, rebuild and integrity routines. |
+| `services/workers/indexing` | Checkpointed batch and incremental index activities. |
+| `packages/contracts/search` | SearchQuery, SearchHit, RankingExplanation and index-manifest schemas. |
+| `packages/ui/search` | Result rows, filters, syntax diagnostics and explanation drawer. |
+| `tests/fixtures/search` | Known-item, analyzer, rights and interruption fixtures. |
+
+The paths are recommendations within the approved modular-monolith/package structure. Exact filenames may change without a new decision if module ownership, portable contracts and dependency directions remain intact.
+
+### 5.2 Data model and durable state
+
+| Entity / value object | Required semantics |
+|---|---|
+| `LexicalIndexManifest` | index version, analyzer, field weights, schema, source snapshot, build status and checksum |
+| `SearchQueryAst` | typed terms, phrases, Boolean groups, fields, ranges, filters and source syntax |
+| `IndexedDocument` | canonical work/version/passage IDs, permitted fields, revision and rights state |
+| `LexicalSearchHit` | stable target, component score, matched fields, snippets and pagination cursor |
+
+**Cross-cutting invariants**
+
+- Canonical records, accepted evidence, rights decisions, human adjudications and provenance are authoritative; indexes, graph projections, rankings, generated drafts and detector signals are versioned derivatives.
+- Unknown, not reported, not applicable, denied, unavailable, ambiguous, inferred, disputed, stale and failed remain distinct where relevant.
+- Every long-running operation has stable identity, status, inputs/manifests, progress, cancellation, checkpoint, restart and evidence records.
+- State transitions are authorized in core services and committed atomically with outbox/dependency facts or through an idempotent staged protocol.
+
+### 5.3 Interfaces and contracts
+
+- `LexicalIndex.ensure_version(project_id, manifest)` validates or schedules rebuild.
+- `LexicalIndex.apply(change_batch, checkpoint)` is idempotent by canonical change ID.
+- `LexicalSearch.execute(query_ast, snapshot_id, page_cursor)` returns stable hits and explanations.
+- Index events include `lexical.index.build.started|checkpointed|completed|failed|stale`.
+
+All contracts use stable canonical IDs, explicit revisions/status, typed errors and version metadata. Provider SDK objects, SQLite rows, model tensors, graph library objects and UI component state may not cross the owning adapter boundary.
+
+### 5.4 Cross-capability and platform compatibility
+
+- Windows x64 is the current implementation target, but paths, process control, credential storage, accelerators and packaging stay behind adapters required by CAP-14 macOS/Linux qualification.
+- Local and hosted deployments use the same domain/API/workflow semantics; storage, process, authentication and scaling adapters differ later.
+- Downstream CAP-11–19 consume immutable IDs, evidence/provenance, manifests and ports rather than internal tables or framework classes.
+- Model, embedding, reranker, parser, graph and vector choices are pinned and replaceable; changing one marks exact dependents stale and requires evaluation rather than silent regeneration.
+
+## 6. User experience and approved reference
+
+- Search Studio displays original text, normalized query tree and location-specific errors before execution.
+- Result rows show matched fields, highlighted snippets and filters; a details drawer explains BM25 field contributions without implying probability.
+- Index unavailable/stale states offer exact metadata fallback, health details and a controlled rebuild action.
+
+- Workflow navigation must show the project’s selected use case, current numbered stage, completed/upcoming states, expected output and next/previous actions.
+- Supporting tools remain accessible, but opening one explains its relationship to the primary path and offers return to the current stage.
+- All semantic states use text/icon in addition to color, meet WCAG 2.2 AA targets, support keyboard operation, and have light/dark parity.
+- Loading, empty, offline, partial, denied, stale, cancellation, failure, retry and recovery states are designed—not left as generic alerts.
+
+**Reference-first rule.** If the planned experience materially differs from `RO-UI-ACADEMIC-MINIMAL-1.3`, update the style guide, workflow catalog, page contract and HTML prototype; run reference validators; obtain explicit approval and a new reference ID; only then implement application code. Restoring a defect to the approved reference does not require a new reference.
+
+## 7. Security, privacy, rights and research integrity
+
+- Compile the AST to parameterized MATCH expressions; never concatenate user input into SQL.
+- Index only fields permitted by rights policy and current project access; rights downgrades emit deletion/quarantine changes.
+- Snippet generation escapes HTML and limits content to authorized source spans.
+
+Additional mandatory controls:
+
+- Treat source content, metadata, model files, provider responses, reports, URLs, archives and rich text as untrusted.
+- Apply least privilege, schema/input validation, destination/path controls, bounded resources, output encoding and redacted diagnostics at trusted boundaries.
+- Private projects and unpublished ideas remain local by default; egress requires project policy, rights decision and visible payload/provider preview.
+- Never fabricate evidence, citations, availability, permissions, method details, model certainty, benchmark success or completion evidence.
+- AI output is candidate state until the domain-specific verifier/human gate promotes it.
+
+## 8. Failure, cancellation, restart and recovery
+
+| Material scenario | Required durable and user-visible behavior |
+|---|---|
+| Malformed query | Reject before execution with token/character location, expected forms and unchanged original input. |
+| Interrupted rebuild | Retain old healthy index; resume checkpoint or restart shadow build, then atomically activate. |
+| Projection corruption | Fail integrity check, mark stale, use exact metadata fallback and rebuild from canonical state. |
+| Rights change | Remove affected rows transactionally and invalidate cached result manifests. |
+
+Every scenario receives a deterministic fixture where feasible, expected canonical state, expected derivative state, user message/action, retry/cancel rule, cleanup/repair rule, provenance event and automated test. A restart test must execute from persisted state rather than from an in-memory mock alone.
+
+## 9. Task-by-task implementation plan
+
+### CAP-06.S01.T01 — Define searchable fields, analyzers, and query grammar
+
+**Objective.** Search contract covering title, abstract, full text, authors, venue, identifiers, year, tags, decisions, and exact/phrase/Boolean syntax.
+
+| Control | Value |
+|---|---|
+| Dependencies | `CAP-04.S04.T03`, `CAP-05.S03.T03` |
+| Estimate / risk | `M` / `medium` |
+| Review gate | `agent-review` |
+| Verification profiles | `search` |
+
+**Expected deliverables**
+
+- Search contract covering title, abstract, full text, authors, venue, identifiers, year, tags, decisions, and exact/phrase/Boolean syntax.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-06.S01.T01`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
+2. Define the versioned portable schema and invariants first. Validate examples and negative fixtures; keep provider, database, model, graph, and UI framework types behind adapters.
+3. Use the declared representative corpus and gold queries to measure recall, ranking quality, bias/coverage and latency. Record ablations and make degraded/fallback behavior user-visible.
+4. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
+5. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
+6. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Grammar is documented and round-trippable; invalid queries produce location-specific errors; original and normalized query are both retained.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Criterion-linked evidence required**
+
+- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
+- Named automated tests and report paths mapped to every acceptance criterion.
+- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
+- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
+- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
+- Independent reviewer result. The implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile search
+```
+
+
+### CAP-06.S01.T02 — Implement incremental FTS5 indexing and rebuild
+
+**Objective.** Index writers for canonical metadata and permitted document text with version markers, checkpoints, and full rebuild command.
+
+| Control | Value |
+|---|---|
+| Dependencies | `CAP-06.S01.T01` |
+| Estimate / risk | `L` / `high` |
+| Review gate | `agent-review` |
+| Verification profiles | `search`, `data` |
+
+**Expected deliverables**
+
+- Index writers for canonical metadata and permitted document text with version markers, checkpoints, and full rebuild command.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-06.S01.T02`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
+2. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
+3. Implement the approved Academic Minimal route and workflow state using shared components. Cover keyboard/focus, screen reader names, light/dark, loading, empty, offline, denied, stale, error and recovery states; update and approve the reference before any intentional UX divergence.
+4. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
+5. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
+6. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Committed corpus changes appear incrementally; interrupted indexing resumes or rebuilds safely; restricted text is excluded according to policy.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Criterion-linked evidence required**
+
+- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
+- Named automated tests and report paths mapped to every acceptance criterion.
+- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
+- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
+- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
+- Independent reviewer result. The implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile search
+python tools/verify.py --profile data
+```
+
+
+### CAP-06.S01.T03 — Implement fielded search, filters, snippets, and ranking explanation
+
+**Objective.** Search API and desktop result view with filters, highlighted snippets, score components, and stable pagination.
+
+| Control | Value |
+|---|---|
+| Dependencies | `CAP-06.S01.T02` |
+| Estimate / risk | `L` / `medium` |
+| Review gate | `agent-review` |
+| Verification profiles | `search`, `desktop` |
+
+**Expected deliverables**
+
+- Search API and desktop result view with filters, highlighted snippets, score components, and stable pagination.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-06.S01.T03`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
+2. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
+3. Use the declared representative corpus and gold queries to measure recall, ranking quality, bias/coverage and latency. Record ablations and make degraded/fallback behavior user-visible.
+4. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
+5. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
+6. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Known-item tests meet declared recall; identical corpus/index/query yields stable ordering; users can distinguish exact, field, and filter contributions.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Criterion-linked evidence required**
+
+- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
+- Named automated tests and report paths mapped to every acceptance criterion.
+- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
+- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
+- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
+- Independent reviewer result. The implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile search
+python tools/verify.py --profile desktop
+```
+
+
+## 10. Slice-wide verification matrix
+
+| Verification family | Required slice evidence |
+|---|---|
+| Domain and schema | Contract examples/negative cases; invariants and state transitions; stable IDs/revisions; property tests where valuable. |
+| Adapter and integration | Real local adapters with deterministic fixtures; idempotency; concurrency; transaction/outbox/dependency behavior; replaceability test double. |
+| End-to-end | Approved workflow from entry point through durable result, source inspection, user decision and restart. |
+| Failure and recovery | At least the Section 8 cases, cancellation acknowledgement, process restart, corrupted/partial derivative repair and no canonical loss. |
+| Security, privacy and rights | Authorization denial, prompt/source injection, malformed files/payloads, secret/content redaction, egress and export policy. |
+| Accessibility and UI reference | Route/page contract, shared tokens, light/dark, keyboard, focus, screen reader, zoom/reflow and visual-baseline checks. |
+| Performance and capacity | Declared fixtures, warm/cold measurements, p50/p95, memory/disk/model footprint, cancellation and regression threshold. |
+| Cross-capability | Upstream fixture compatibility, downstream contract fixture, staleness propagation and no forbidden module dependency. |
+| Independent review | Reviewer maps every criterion to evidence, challenges tests and confirms no concealed production blocker. |
+
+Task verification commands are authoritative minimums. The slice review must also run a clean-state combined profile and any benchmark/security/reference checks described here.
+
+## 11. Performance and resource budgets
+
+| Measure | Initial production budget / qualification target |
+|---|---|
+| Parser/validation | p95 < 25 ms for a 4,000-character query on reference Windows hardware. |
+| Local metadata search | p95 < 250 ms over 100,000 works after warm-up; first page of 50 results. |
+| Incremental indexing | 1,000 metadata changes < 5 s excluding document-text extraction. |
+| Rebuild | 100,000 works plus 1 million short passages < 30 min on the declared reference laptop; old index remains usable. |
+
+Budgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.
+
+## 12. Observability and provenance
+
+Required metrics and diagnostics:
+
+- query parse failures by rule
+- index lag and checkpoint age
+- search p50/p95 latency
+- known-item recall and rank
+- rights-driven removals
+- fallback activations
+- integrity/rebuild outcomes
+
+- One trace/correlation ID links desktop action, core command, workflow job, adapter/model call, provenance activity and evidence artifact.
+- Operational telemetry is content-redacted by default. Durable scholarly provenance records source IDs/passages/hashes, schema/policy/model versions, decisions and derivation—not secret-bearing logs.
+- Support bundles require user preview and classification-aware exclusion of source text, research ideas, prompts and unpublished results.
+- Every promoted output records dependencies so CAP-03 can mark it stale precisely.
+
+## 13. Adjacent-slice handoffs
+
+- Consumes canonical work/version/passages and rights changes from CAP-04/CAP-05.
+- Provides LexicalIndex and SearchRun lexical components to CAP-06.S03 and Search Studio.
+- Provides deterministic candidate retrieval to CAP-08 extraction, CAP-09 synthesis and CAP-10 novelty.
+
+Handoffs must include portable schemas, accepted/rejected examples, failure fixtures, manifest/version rules, performance baselines and evidence IDs. An informal README-only handoff is insufficient.
+
+## 14. Migration and backward compatibility
+
+- Version every durable schema, policy, model/index/graph manifest and export profile. Use forward migrations with preflight, backup, rollback/repair evidence and test fixtures from the prior supported release.
+- Rebuilding a derivative does not mutate canonical evidence/decisions. Old and new derivative versions remain distinguishable until promotion and dependent staleness are resolved.
+- Project moves and later Windows/macOS/Linux qualification cannot rely on absolute paths or machine-specific IDs in portable records.
+- Deprecations include reader compatibility, warnings, migration telemetry and a declared removal release. Unsupported old projects open read-only with repair/export options rather than silent partial upgrade.
+
+## 15. Required slice evidence bundle
+
+- Approved capability decision packet and this approved slice plan at immutable commits.
+- Reviewed commits/diffs for all tasks and criterion-to-evidence records.
+- Unit, contract, integration, end-to-end, failure, cancellation, restart, recovery, migration and performance reports.
+- Security/privacy/rights/research-integrity review and accessibility/UI conformance evidence where applicable.
+- Schemas, migrations, API/client fixtures, model/index/graph manifests, benchmark datasets and hashes.
+- Architecture dependency report, staleness/provenance traces and adjacent-slice handoff fixture.
+- Independent slice review with approved/changes-requested/blocked outcome.
+
+## 16. Definition of Ready
+
+- Capability packet is decision-complete and approved; each decision lists options, recommendation, accepted selection and migration boundary.
+- This plan and all other capability slice plans exist, pass structural checks and are approved.
+- Required ADRs/experience changes are approved before the campaign starts.
+- Dependencies, fixtures, credentials/licenses, platform resources and human authorities are available or explicitly stubbed.
+- The first task is `READY`, no conflicting lease exists, and the campaign can plausibly run to production-ready capability completion without routine stop points.
+
+## 17. Definition of Done
+
+- Every task is `DONE` and independently approved.
+- Slice-wide verification passes from a clean state on the required platform/profile.
+- Failure, denial, cancellation, restart, migration, recovery, security, accessibility and performance paths satisfy this plan.
+- No concealed TODO, placeholder, skipped mandatory test, unreviewed architecture divergence or production blocker remains.
+- Handoff contracts/fixtures and dependency/staleness behavior are accepted by the next slice.
+- The capability campaign automatically advances to its next dependency-ready slice.
+
+## 18. Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| Analyzer bias | Expose analyzer/version, preserve exact-field searches and benchmark discipline/language subsets. |
+| FTS canonicalization drift | Projection consistency checks compare source revision counts/checksums. |
+| Ranking overinterpretation | Label signals as rank components and prohibit probability language. |
+
+## 19. Required ADRs and human decisions
+
+- ADR-CAP06-LEXICAL-QUERY: query AST, analyzer, FTS table strategy and field weights.
+
+All material choices in Sections 4–5 must appear in the capability packet. Before approval, reviewers may accept the recommendation, select a documented alternative, or require more evidence. After capability start, these choices are not reopened for preference; they are reopened only when implementation evidence demonstrates infeasibility or a newly discovered consequential issue outside the approved decision envelope.
+
+## 20. Research and standards basis
+
+- **SQLite FTS5 Extension** — Local fielded lexical indexing, BM25 ranking, snippets, rebuild and integrity checks.  
+  https://www.sqlite.org/fts5.html
+- **PRISMA-S: An Extension to the PRISMA Statement for Reporting Literature Searches** — Search-strategy and information-source reporting.  
+  https://doi.org/10.1186/s13643-020-01542-z
+- **Web Content Accessibility Guidelines 2.2** — AA accessibility target.  
+  https://www.w3.org/TR/WCAG22/
+
+These sources support implementation choices, not universal truth claims. Production selection remains conditional on project-specific benchmarks, licenses, privacy/rights constraints and the accepted capability decision packet.
+
+## 21. AI implementation runbook
+
+1. Run `python tools/planctl.py ready CAP-06 --require-approved` and `python tools/taskctl.py validate`.
+2. Confirm the active campaign is `CAP-06`, this is the current slice, and the approved packet/plan commits match the campaign record.
+3. Load only the governing context, capability packet, this slice plan, task record, affected code and tests.
+4. Execute all tasks in dependency order. Debug, refactor and use approved fallbacks without routine human pauses.
+5. After each task, run focused verification, attach criterion-linked evidence and obtain independent task review.
+6. After the last task, run the complete Section 10 matrix from a clean/restarted state and assemble the slice evidence bundle.
+7. Request independent slice review. On approval, let `taskctl` advance the campaign automatically to the next slice.
+8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.

@@ -1,0 +1,369 @@
+{
+  "schema_version": "1.1",
+  "baseline": "1.3",
+  "supplemental_release": "1.3.4",
+  "status": "proposed",
+  "execution_mode": "long-running-capability-campaign",
+  "plan_count": 19,
+  "plans": [
+    {
+      "capability_id": "CAP-01",
+      "title": "Windows-first desktop shell and supervised local runtime",
+      "path": "planning/capability-plans/CAP-01.md",
+      "decision_count": 3,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-01.S01",
+        "CAP-01.S02",
+        "CAP-01.S03",
+        "CAP-01.S04",
+        "CAP-01.S05"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-02",
+      "title": "Local projects, durable storage, security, and recovery",
+      "path": "planning/capability-plans/CAP-02.md",
+      "decision_count": 3,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-02.S01",
+        "CAP-02.S02",
+        "CAP-02.S03",
+        "CAP-02.S04",
+        "CAP-02.S05"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-03",
+      "title": "Canonical domain, research intent, provenance, and durable workflows",
+      "path": "planning/capability-plans/CAP-03.md",
+      "decision_count": 4,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-03.S01",
+        "CAP-03.S02",
+        "CAP-03.S03",
+        "CAP-03.S04",
+        "CAP-03.S05",
+        "CAP-03.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-04",
+      "title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
+      "path": "planning/capability-plans/CAP-04.md",
+      "decision_count": 4,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-04.S01",
+        "CAP-04.S02",
+        "CAP-04.S03",
+        "CAP-04.S04",
+        "CAP-04.S05"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-05",
+      "title": "Document acquisition, parsing, source inspection, and page anchors",
+      "path": "planning/capability-plans/CAP-05.md",
+      "decision_count": 3,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-05.S01",
+        "CAP-05.S02",
+        "CAP-05.S03",
+        "CAP-05.S04",
+        "CAP-05.S05",
+        "CAP-05.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-06",
+      "title": "Local search, discovery, corpus diagnostics, and screening",
+      "path": "planning/capability-plans/CAP-06.md",
+      "decision_count": 23,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-06.S01",
+        "CAP-06.S02",
+        "CAP-06.S03",
+        "CAP-06.S04",
+        "CAP-06.S05",
+        "CAP-06.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-07",
+      "title": "Provider-neutral model gateway and governed AI execution",
+      "path": "planning/capability-plans/CAP-07.md",
+      "decision_count": 20,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-07.S01",
+        "CAP-07.S02",
+        "CAP-07.S03",
+        "CAP-07.S04",
+        "CAP-07.S05"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-08",
+      "title": "Evidence schemas, extraction, verification, and adjudication",
+      "path": "planning/capability-plans/CAP-08.md",
+      "decision_count": 23,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-08.S01",
+        "CAP-08.S02",
+        "CAP-08.S03",
+        "CAP-08.S04",
+        "CAP-08.S05",
+        "CAP-08.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-09",
+      "title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
+      "path": "planning/capability-plans/CAP-09.md",
+      "decision_count": 23,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-09.S01",
+        "CAP-09.S02",
+        "CAP-09.S03",
+        "CAP-09.S04",
+        "CAP-09.S05",
+        "CAP-09.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-10",
+      "title": "Novelty auditing, research opportunities, and plural research modes",
+      "path": "planning/capability-plans/CAP-10.md",
+      "decision_count": 26,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-10.S01",
+        "CAP-10.S02",
+        "CAP-10.S03",
+        "CAP-10.S05",
+        "CAP-10.S04",
+        "CAP-10.S06",
+        "CAP-10.S07"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-11",
+      "title": "Windows PC/lab product hardening, validation, packaging, and release",
+      "path": "planning/capability-plans/CAP-11.md",
+      "decision_count": 18,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-11.S01",
+        "CAP-11.S02",
+        "CAP-11.S03",
+        "CAP-11.S04",
+        "CAP-11.S05",
+        "CAP-11.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-12",
+      "title": "University-hosted deployment, institutional identity, collaboration, and operations",
+      "path": "planning/capability-plans/CAP-12.md",
+      "decision_count": 18,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-12.S01",
+        "CAP-12.S02",
+        "CAP-12.S03",
+        "CAP-12.S04",
+        "CAP-12.S05",
+        "CAP-12.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-13",
+      "title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
+      "path": "planning/capability-plans/CAP-13.md",
+      "decision_count": 18,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-13.S01",
+        "CAP-13.S02",
+        "CAP-13.S03",
+        "CAP-13.S04",
+        "CAP-13.S05",
+        "CAP-13.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-14",
+      "title": "Cross-platform desktop qualification and release",
+      "path": "planning/capability-plans/CAP-14.md",
+      "decision_count": 18,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-14.S01",
+        "CAP-14.S02",
+        "CAP-14.S03",
+        "CAP-14.S04",
+        "CAP-14.S05",
+        "CAP-14.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-15",
+      "title": "Empirical study design and protocol development",
+      "path": "planning/capability-plans/CAP-15.md",
+      "decision_count": 18,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-15.S01",
+        "CAP-15.S02",
+        "CAP-15.S03",
+        "CAP-15.S04",
+        "CAP-15.S05",
+        "CAP-15.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-16",
+      "title": "Manuscript blueprint, venue profiles, and article architecture",
+      "path": "planning/capability-plans/CAP-16.md",
+      "decision_count": 18,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-16.S01",
+        "CAP-16.S02",
+        "CAP-16.S03",
+        "CAP-16.S04",
+        "CAP-16.S05",
+        "CAP-16.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-17",
+      "title": "Technical report and study-results integration",
+      "path": "planning/capability-plans/CAP-17.md",
+      "decision_count": 18,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-17.S01",
+        "CAP-17.S02",
+        "CAP-17.S03",
+        "CAP-17.S04",
+        "CAP-17.S05",
+        "CAP-17.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-18",
+      "title": "Source-grounded manuscript drafting and publication artifacts",
+      "path": "planning/capability-plans/CAP-18.md",
+      "decision_count": 18,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-18.S01",
+        "CAP-18.S02",
+        "CAP-18.S03",
+        "CAP-18.S04",
+        "CAP-18.S05",
+        "CAP-18.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    },
+    {
+      "capability_id": "CAP-19",
+      "title": "Reviewer simulation, editorial synthesis, and revision",
+      "path": "planning/capability-plans/CAP-19.md",
+      "decision_count": 18,
+      "open_blocking_decision_count": 0,
+      "slice_ids": [
+        "CAP-19.S01",
+        "CAP-19.S02",
+        "CAP-19.S03",
+        "CAP-19.S04",
+        "CAP-19.S05",
+        "CAP-19.S06"
+      ],
+      "status": "proposed",
+      "decision_completion": "complete",
+      "approval_status": "pending",
+      "execution_mode": "long-running-capability-campaign"
+    }
+  ],
+  "decision_policy": "best-in-class-recommendations-preselected-and-complete"
+}

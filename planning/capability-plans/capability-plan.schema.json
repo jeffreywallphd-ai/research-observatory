@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/capability-decision-plan-frontmatter-1.1.json",
+  "title": "Research Observatory Capability Decision Plan Front Matter",
+  "type": "object",
+  "required": [
+    "plan_schema_version",
+    "document_type",
+    "baseline",
+    "supplemental_release",
+    "capability_id",
+    "title",
+    "status",
+    "execution_mode",
+    "decision_completion",
+    "open_blocking_decisions",
+    "slice_ids",
+    "decisions",
+    "approval"
+  ],
+  "properties": {
+    "plan_schema_version": {
+      "const": "1.1"
+    },
+    "document_type": {
+      "const": "capability-decision-plan"
+    },
+    "baseline": {
+      "type": "string"
+    },
+    "supplemental_release": {
+      "type": "string"
+    },
+    "capability_id": {
+      "type": "string",
+      "pattern": "^CAP-[0-9]{2}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "approved",
+        "superseded",
+        "withdrawn"
+      ]
+    },
+    "execution_mode": {
+      "const": "long-running-capability-campaign"
+    },
+    "decision_completion": {
+      "enum": [
+        "pending",
+        "complete",
+        "reopened"
+      ]
+    },
+    "open_blocking_decisions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^CAP-[0-9]{2}-D[0-9]{2,3}$"
+      },
+      "uniqueItems": true
+    },
+    "slice_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}$"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "decisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "candidates",
+          "recommendation",
+          "recommendation_basis",
+          "selected_option",
+          "status",
+          "required_adr"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^CAP-[0-9]{2}-D[0-9]{2,3}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "candidates": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "recommendation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recommendation_basis": {
+            "type": "string",
+            "minLength": 1
+          },
+          "selected_option": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "recommended",
+              "accepted",
+              "reopened",
+              "rejected"
+            ]
+          },
+          "required_adr": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "approval": {
+      "type": "object",
+      "required": [
+        "status",
+        "approved_by",
+        "approved_at",
+        "approved_commit"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "pending",
+            "approved",
+            "rejected",
+            "superseded"
+          ]
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approved_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approved_commit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,492 @@
+---
+plan_schema_version: '1.1'
+document_type: slice-implementation-plan
+baseline: '1.3'
+supplemental_release: 1.3.4
+capability_id: CAP-07
+capability_plan: planning/capability-plans/CAP-07.md
+planning_gate: capability-decision-complete
+slice_id: CAP-07.S01
+title: Model task, provider, and routing contracts
+status: proposed
+wave: W1
+priority: P0
+deployment_profiles:
+- LOC
+- LAB
+- ALL
+platform_targets:
+- windows-x64
+task_ids:
+- CAP-07.S01.T01
+- CAP-07.S01.T02
+- CAP-07.S01.T03
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
+approval:
+  status: pending
+  approved_by: null
+  approved_at: null
+  approved_commit: null
+---
+# CAP-07.S01 — Model task, provider, and routing contracts
+
+> **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-07.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and both plan validators pass in approval mode. Once the capability campaign starts, the agent should execute continuously through its slices and pause only for an allowed infeasibility, external dependency, unavailable required hardware, explicit human decision, or approved design gate.
+
+<div class="visual-flow"><span>Capability decisions approved</span><b>→</b><span>Slice plan approved</span><b>→</b><span>Tasks executed</span><b>→</b><span>Slice integration</span><b>→</b><span>Independent review</span></div>
+
+## 0. Plan control
+
+| Field | Value |
+|---|---|
+| Capability | `CAP-07` — Provider-neutral model gateway and governed AI execution |
+| Capability objective | Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and usable locally or through approved providers. |
+| Slice | `CAP-07.S01` — Model task, provider, and routing contracts |
+| Slice outcome | AI capabilities are invoked by scholarly task type rather than hard-coded vendor API. |
+| Wave / priority | `W1` / `P0` |
+| Deployment profiles | `LOC`, `LAB`, `ALL` |
+| Platform targets | `windows-x64` |
+| Backlog tasks | `CAP-07.S01.T01`, `CAP-07.S01.T02`, `CAP-07.S01.T03` |
+| Slice dependencies | `CAP-03.S01.T03`, `CAP-00.S03.T03` |
+| Capability decision packet | `planning/capability-plans/CAP-07.md` — must be approved and decision-complete |
+| Approved experience | `RO-UI-ACADEMIC-MINIMAL-1.3`; relevant pages: model-center.html, audit-lineage.html, project-settings.html |
+| Approval state | `PROPOSED` / human approval pending |
+
+## 1. Purpose and contribution to the larger vision
+
+AI capabilities are invoked by scholarly task type rather than hard-coded vendor API.
+
+This slice advances the capability objective: **Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and usable locally or through approved providers.** It is designed as one production vertical inside a long-running capability campaign, not as an isolated technical experiment. The implementation must preserve the platform’s evidence-before-prose rule, source and decision provenance, bounded uncertainty, researcher authority, local-first privacy, cross-platform ports, and the distinction between canonical scholarly state and rebuildable analytical derivatives.
+
+**Implementation thesis.** Define a stable scholarly AI task language and result envelope before integrating runtimes so every extraction, verification, reranking, synthesis and challenge workflow can change providers without changing its domain semantics.
+
+The containing capability is complete only when all of its slices satisfy these exit conditions:
+
+- All model calls pass through typed task contracts and produce versioned, observable result envelopes.
+- Local inference supports the complete basic PC/lab workflow; remote egress is optional and explicitly authorized.
+- Prompts, schemas, repair, evaluation, costs, and model upgrades are controlled as durable system assets.
+
+## 2. Scope
+
+### 2.1 In scope
+
+- Model task/result/error/cancellation contracts.
+- Model/provider registry and capability discovery.
+- Policy-driven routing, fallback, timeout and circuit breaking.
+
+### 2.2 Explicit non-goals
+
+- Installing or distributing model weights (S02).
+- Provider-specific consent and egress implementation (S03).
+- Prompt authoring and structured-output versioning (S04).
+- Do not implement downstream capability behavior beyond narrow ports, fixtures and handoffs explicitly named here.
+- Do not introduce university-hosted or managed-cloud infrastructure during the local Windows waves; preserve deployment-neutral contracts only.
+- Do not bypass the Core API, canonical repositories, provenance ledger, durable workflow fabric, rights policy, model gateway or approved experience reference.
+- Do not declare completion from happy-path task tests alone; slice-wide failure, cancellation, restart, migration, security, accessibility and handoff evidence is required.
+
+### 2.3 Slice boundary
+
+- **Consumes:** `CAP-03.S01.T03`, `CAP-00.S03.T03` and the handoffs in Section 13.
+- **Produces:** AI capabilities are invoked by scholarly task type rather than hard-coded vendor API.
+- **Owns:** The portable domain contracts, adapter boundaries, workflows, fixtures, decisions and evidence explicitly listed in this plan.
+- **Does not own:** Product purpose, unrelated capabilities, user-authoritative scholarly judgments, source rights, or provider/database/UI framework internals.
+
+## 3. Authority, dependencies, and campaign stop conditions
+
+### 3.1 Governing authority
+
+1. Vision and non-goals in `docs/product/vision.md`.
+2. Accepted ADRs, then `docs/architecture/source/systems-design.md`.
+3. `planning/backlog.yaml` for IDs, dependencies, waves, status and evidence.
+4. Approved capability decision packet `planning/capability-plans/CAP-07.md`.
+5. This approved slice plan.
+6. Approved UI reference, workflow/page contracts and style guide for user-facing work.
+7. Automation and task-control rules.
+
+### 3.2 Required upstream state
+
+- All slice dependencies are approved or an explicitly approved integration stub exists: `CAP-03.S01.T03`, `CAP-00.S03.T03`.
+- The capability decision packet contains all material cross-slice choices, candidate options, recommendation, accepted selection, migration boundary and approval.
+- Every slice plan in the capability exists and is structurally valid before capability approval; all plans are approved before campaign start.
+- Required fixtures, benchmark corpora, credentials, model/source licenses, platform resources and human authority are available or represented by approved deterministic stubs.
+
+### 3.3 Decision-complete capability rule
+
+Planning by capability is the default. Before `capability start`, the planning agent inspects all slices and adjacent contracts, researches credible options, and records the strongest best-in-class recommendation as the selected and accepted option for every material decision in the capability packet. Those selections count as completed decisions. The static review site is a confirmation-and-override surface plus the one-time capability approval gate; implementation agents must not repeatedly ask for choices already settled by the packet. After approval, execution proceeds continuously slice by slice through a production-ready end-to-end capability.
+
+### 3.4 Allowed pauses after execution begins
+
+The long-running campaign should continue task-by-task and slice-by-slice. It may pause only when classified as one of the following and recorded by `taskctl`:
+
+- **Infeasible:** validated evidence disproves the selected design and no compatible fallback exists within the approved boundary.
+- **External dependency:** a required source/provider/license/credential/approval controlled outside the repository is unavailable.
+- **Hardware unavailable:** a required qualification target cannot be simulated and is not accessible.
+- **Human decision:** a newly discovered consequential product, architecture, security, rights, ethics or scholarly-authority choice was not reasonably knowable during planning.
+- **Approved design gate:** the implementation requires an intentional change to the governed style guide/workflow/page reference.
+
+Ordinary implementation uncertainty, test failure, debugging, refactoring, model fallback, recoverable performance work, or a choice already covered by the packet is not a pause condition.
+
+## 4. Selected implementation decisions
+
+The capability packet's researched best-in-class recommendations are already selected, accepted, and decision-complete. This section projects the applicable decisions into the slice implementation contract. Capability approval authorizes those defaults; a reviewer may override a selection before approval only with explicit rationale. During execution, no implementation agent may silently choose a different candidate.
+
+
+These selections are recommendations until the capability packet and ADRs are approved. Approval turns them into the execution contract for the campaign.
+
+| Decision | Recommended selection | Alternative not selected | Rationale and replaceability | Basis |
+|---|---|---|---|---|
+| **Task taxonomy** | Use explicit task kinds—generation, structured extraction, embedding, reranking, classification/NLI, moderation and tool call—with task-specific input/result envelopes. | One generic chat-completions DTO. | Different tasks have different determinism, batching, evidence and failure semantics; a chat envelope would leak provider assumptions. | [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12) |
+| **Capability matching** | Route on declared task capabilities, data policy, context limits, structured-output support, deployment, evaluation status and resource/cost envelope. | Route by model name string from each feature. | A policy decision belongs in one auditable gateway and can be evaluated centrally. | [OpenTelemetry Generative AI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) |
+| **Fallback** | Ordered policy with deadline budget, retry classification and explicit degraded result; no silent provider/model substitution for pinned reproducible runs. | Retry every error indefinitely or silently switch models. | Fallback improves availability only when the scholarly meaning and disclosure remain clear. | [OpenTelemetry Generative AI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) |
+
+## 5. Architecture and implementation design
+
+### 5.1 Components and recommended repository locations
+
+| Component / location | Responsibility |
+|---|---|
+| `packages/contracts/model-gateway` | Task, request, result, usage, error, policy and manifest schemas. |
+| `services/core/research_observatory/ports/model_gateway.py` | Provider-neutral async interface. |
+| `services/core/research_observatory/modules/model_gateway/registry.py` | Models, capabilities, evaluations, licenses and availability. |
+| `services/core/research_observatory/modules/model_gateway/router.py` | Policy evaluation, deadline, retry, fallback and circuit breakers. |
+| `services/core/research_observatory/adapters/models` | Local/remote provider adapters only. |
+| `tests/contracts/model_gateway` | Conformance tests shared by every adapter. |
+
+The paths are recommendations within the approved modular-monolith/package structure. Exact filenames may change without a new decision if module ownership, portable contracts and dependency directions remain intact.
+
+### 5.2 Data model and durable state
+
+| Entity / value object | Required semantics |
+|---|---|
+| `ModelTaskSpec` | task kind, schema/prompt references, data class, determinism, context, resource and deadline |
+| `ModelManifest` | model/provider/revision/runtime/license/capabilities/context/evaluation/availability |
+| `RoutingPolicy` | eligible set, preference rules, fallback, budget, data/egress and reproducibility constraints |
+| `ModelResultEnvelope` | typed result, status, model route, usage, validation, citations/evidence links and trace |
+| `ModelError` | portable category, retryability, provider details redacted and partial-output disposition |
+
+**Cross-cutting invariants**
+
+- Canonical records, accepted evidence, rights decisions, human adjudications and provenance are authoritative; indexes, graph projections, rankings, generated drafts and detector signals are versioned derivatives.
+- Unknown, not reported, not applicable, denied, unavailable, ambiguous, inferred, disputed, stale and failed remain distinct where relevant.
+- Every long-running operation has stable identity, status, inputs/manifests, progress, cancellation, checkpoint, restart and evidence records.
+- State transitions are authorized in core services and committed atomically with outbox/dependency facts or through an idempotent staged protocol.
+
+### 5.3 Interfaces and contracts
+
+- `ModelGateway.execute(task_spec, input_refs, policy, cancel_token)` is the only application entry point.
+- `ModelAdapter.describe/health/execute/cancel` must pass a conformance suite.
+- `ModelRegistry.resolve(policy, project_context)` returns ranked eligible routes and rejections.
+- Routing events record attempts, fallbacks, deadline consumption and final disposition.
+
+All contracts use stable canonical IDs, explicit revisions/status, typed errors and version metadata. Provider SDK objects, SQLite rows, model tensors, graph library objects and UI component state may not cross the owning adapter boundary.
+
+### 5.4 Cross-capability and platform compatibility
+
+- Windows x64 is the current implementation target, but paths, process control, credential storage, accelerators and packaging stay behind adapters required by CAP-14 macOS/Linux qualification.
+- Local and hosted deployments use the same domain/API/workflow semantics; storage, process, authentication and scaling adapters differ later.
+- Downstream CAP-11–19 consume immutable IDs, evidence/provenance, manifests and ports rather than internal tables or framework classes.
+- Model, embedding, reranker, parser, graph and vector choices are pinned and replaceable; changing one marks exact dependents stale and requires evaluation rather than silent regeneration.
+
+## 6. User experience and approved reference
+
+- Model Center displays task capability, evaluation status, local/remote availability and policy rejection reasons.
+- Feature workspaces state which model route was used and whether fallback or degraded execution occurred.
+- Pinned/reproducible workflows warn before changing model or provider.
+
+- Workflow navigation must show the project’s selected use case, current numbered stage, completed/upcoming states, expected output and next/previous actions.
+- Supporting tools remain accessible, but opening one explains its relationship to the primary path and offers return to the current stage.
+- All semantic states use text/icon in addition to color, meet WCAG 2.2 AA targets, support keyboard operation, and have light/dark parity.
+- Loading, empty, offline, partial, denied, stale, cancellation, failure, retry and recovery states are designed—not left as generic alerts.
+
+**Reference-first rule.** If the planned experience materially differs from `RO-UI-ACADEMIC-MINIMAL-1.3`, update the style guide, workflow catalog, page contract and HTML prototype; run reference validators; obtain explicit approval and a new reference ID; only then implement application code. Restoring a defect to the approved reference does not require a new reference.
+
+## 7. Security, privacy, rights and research integrity
+
+- Task inputs are references until an adapter assembles the minimum authorized payload.
+- Provider credentials never enter contracts, logs or project exports.
+- Policy denies routes that violate local-only, confidential, rights or network state.
+
+Additional mandatory controls:
+
+- Treat source content, metadata, model files, provider responses, reports, URLs, archives and rich text as untrusted.
+- Apply least privilege, schema/input validation, destination/path controls, bounded resources, output encoding and redacted diagnostics at trusted boundaries.
+- Private projects and unpublished ideas remain local by default; egress requires project policy, rights decision and visible payload/provider preview.
+- Never fabricate evidence, citations, availability, permissions, method details, model certainty, benchmark success or completion evidence.
+- AI output is candidate state until the domain-specific verifier/human gate promotes it.
+
+## 8. Failure, cancellation, restart and recovery
+
+| Material scenario | Required durable and user-visible behavior |
+|---|---|
+| No eligible route | Return structured setup/policy reasons and a local/manual fallback where the feature supports it. |
+| Transient provider failure | Retry within budget and only fail over according to policy; retain all attempt metadata. |
+| Deadline exhaustion | Cancel remaining attempts and return timeout without treating partial text as valid result. |
+| Circuit open | Skip unhealthy route, expose reset/health evidence and preserve pinned-run reproducibility warning. |
+
+Every scenario receives a deterministic fixture where feasible, expected canonical state, expected derivative state, user message/action, retry/cancel rule, cleanup/repair rule, provenance event and automated test. A restart test must execute from persisted state rather than from an in-memory mock alone.
+
+## 9. Task-by-task implementation plan
+
+### CAP-07.S01.T01 — Define model task interfaces and result envelopes
+
+**Objective.** Contracts for embedding, reranking, classification, NLI, structured extraction, generation, tool use, token accounting, confidence, and citations.
+
+| Control | Value |
+|---|---|
+| Dependencies | `CAP-03.S01.T03`, `CAP-00.S03.T03` |
+| Estimate / risk | `L` / `high` |
+| Review gate | `agent-review` |
+| Verification profiles | `ai` |
+
+**Expected deliverables**
+
+- Contracts for embedding, reranking, classification, NLI, structured extraction, generation, tool use, token accounting, confidence, and citations.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-07.S01.T01`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
+2. Define the versioned portable schema and invariants first. Validate examples and negative fixtures; keep provider, database, model, graph, and UI framework types behind adapters.
+3. Pin model, prompt/schema, runtime/provider and evaluation manifests. Enforce local schema validation, source/evidence closure, egress policy and deterministic fallback; treat model output as untrusted candidate state.
+4. Use the declared representative corpus and gold queries to measure recall, ranking quality, bias/coverage and latency. Record ablations and make degraded/fallback behavior user-visible.
+5. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
+6. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
+7. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Each result records provider/model/version/configuration, request hash, policy decision, latency, usage, and validation outcome; unsupported features fail explicitly.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Criterion-linked evidence required**
+
+- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
+- Named automated tests and report paths mapped to every acceptance criterion.
+- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
+- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
+- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
+- Independent reviewer result. The implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile ai
+```
+
+
+### CAP-07.S01.T02 — Implement model registry and capability discovery
+
+**Objective.** Registry of installed/available models, licenses, context limits, modalities, hardware requirements, quality tiers, and allowed data classes.
+
+| Control | Value |
+|---|---|
+| Dependencies | `CAP-07.S01.T01` |
+| Estimate / risk | `M` / `high` |
+| Review gate | `agent-review` |
+| Verification profiles | `ai`, `service` |
+
+**Expected deliverables**
+
+- Registry of installed/available models, licenses, context limits, modalities, hardware requirements, quality tiers, and allowed data classes.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-07.S01.T02`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
+2. Define the versioned portable schema and invariants first. Validate examples and negative fixtures; keep provider, database, model, graph, and UI framework types behind adapters.
+3. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
+4. Pin model, prompt/schema, runtime/provider and evaluation manifests. Enforce local schema validation, source/evidence closure, egress policy and deterministic fallback; treat model output as untrusted candidate state.
+5. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
+6. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
+7. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Routing never selects a model lacking required capability or permission; registry changes are versioned and visible to users/admins.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Criterion-linked evidence required**
+
+- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
+- Named automated tests and report paths mapped to every acceptance criterion.
+- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
+- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
+- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
+- Independent reviewer result. The implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile ai
+python tools/verify.py --profile service
+```
+
+
+### CAP-07.S01.T03 — Implement routing, fallback, timeout, and circuit-breaker policy
+
+**Objective.** Policy engine using task, privacy, rights, reproducibility, hardware, cost, and project preferences to select provider and fallback.
+
+| Control | Value |
+|---|---|
+| Dependencies | `CAP-07.S01.T02` |
+| Estimate / risk | `L` / `high` |
+| Review gate | `security-review` |
+| Verification profiles | `ai`, `security-local` |
+
+**Expected deliverables**
+
+- Policy engine using task, privacy, rights, reproducibility, hardware, cost, and project preferences to select provider and fallback.
+
+**Ordered implementation sequence**
+
+1. Confirm the approved capability decision packet, this approved slice plan, dependencies, portable contracts, and criterion-to-evidence IDs for `CAP-07.S01.T03`. Add a failing success-path test and at least one material denial/failure/restart case before production code.
+2. Implement the domain/core path behind the selected port, with explicit transaction or idempotency boundaries, bounded resources, durable checkpoints, cancellation, and restart semantics.
+3. Exercise security, privacy, rights and research-integrity boundaries with malformed/untrusted inputs, authorization denial, confidential-content redaction and unsupported-state fixtures. Failure must leave canonical state unchanged or exactly recoverable.
+4. Run the task verification profiles plus targeted unit, contract, integration and end-to-end tests. Capture named reports, manifests, performance evidence and changed-contract hashes against the reviewed commit.
+5. Request independent review focused on acceptance coverage, architecture compatibility, test validity, portability and concealed production blockers. Do not self-approve or advance the slice until review is approved.
+
+**Acceptance criteria from the authoritative backlog**
+
+- Fallback cannot cross a prohibited egress boundary; failures preserve the original request state; route decisions and alternatives are auditable.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Criterion-linked evidence required**
+
+- Reviewed commit SHA, changed-file inventory, and explanation for any change outside the expected task boundary.
+- Named automated tests and report paths mapped to every acceptance criterion.
+- Durable failure, denial, cancellation, restart and recovery evidence appropriate to the task.
+- Architecture, security, rights, accessibility, model-evaluation and approved-reference evidence when applicable.
+- Updated schemas, client/adapter contracts, migrations, fixtures, model/index manifests and documentation hashes.
+- Independent reviewer result. The implementation agent may not self-approve.
+
+**Backlog verification commands**
+
+```text
+python tools/verify.py --profile ai
+python tools/verify.py --profile security-local
+```
+
+
+## 10. Slice-wide verification matrix
+
+| Verification family | Required slice evidence |
+|---|---|
+| Domain and schema | Contract examples/negative cases; invariants and state transitions; stable IDs/revisions; property tests where valuable. |
+| Adapter and integration | Real local adapters with deterministic fixtures; idempotency; concurrency; transaction/outbox/dependency behavior; replaceability test double. |
+| End-to-end | Approved workflow from entry point through durable result, source inspection, user decision and restart. |
+| Failure and recovery | At least the Section 8 cases, cancellation acknowledgement, process restart, corrupted/partial derivative repair and no canonical loss. |
+| Security, privacy and rights | Authorization denial, prompt/source injection, malformed files/payloads, secret/content redaction, egress and export policy. |
+| Accessibility and UI reference | Route/page contract, shared tokens, light/dark, keyboard, focus, screen reader, zoom/reflow and visual-baseline checks. |
+| Performance and capacity | Declared fixtures, warm/cold measurements, p50/p95, memory/disk/model footprint, cancellation and regression threshold. |
+| Cross-capability | Upstream fixture compatibility, downstream contract fixture, staleness propagation and no forbidden module dependency. |
+| Independent review | Reviewer maps every criterion to evidence, challenges tests and confirms no concealed production blocker. |
+
+Task verification commands are authoritative minimums. The slice review must also run a clean-state combined profile and any benchmark/security/reference checks described here.
+
+## 11. Performance and resource budgets
+
+| Measure | Initial production budget / qualification target |
+|---|---|
+| Gateway overhead | p95 < 25 ms excluding model/provider execution. |
+| Routing determinism | Identical registry/policy/project state yields identical eligible order. |
+| Cancellation | Gateway acknowledges < 100 ms and propagates to adapter immediately. |
+| Registry discovery | 1,000 model manifests filtered/ranked < 100 ms. |
+
+Budgets are evaluated on documented reference hardware and corpus fixtures. A regression exceeding 20% or violating a hard interaction/resource limit blocks approval unless a reviewed explanation and revised target are accepted before implementation proceeds.
+
+## 12. Observability and provenance
+
+Required metrics and diagnostics:
+
+- task volume/latency/status
+- route/fallback/circuit decisions
+- policy rejection reasons
+- provider/model availability
+- deadline usage
+- cancellation
+- evaluation eligibility
+
+- One trace/correlation ID links desktop action, core command, workflow job, adapter/model call, provenance activity and evidence artifact.
+- Operational telemetry is content-redacted by default. Durable scholarly provenance records source IDs/passages/hashes, schema/policy/model versions, decisions and derivation—not secret-bearing logs.
+- Support bundles require user preview and classification-aware exclusion of source text, research ideas, prompts and unpublished results.
+- Every promoted output records dependencies so CAP-03 can mark it stale precisely.
+
+## 13. Adjacent-slice handoffs
+
+- Provides the model contract required by CAP-06 semantic/reranking and all CAP-08–10 AI workflows.
+- Consumes CAP-03 workflow/cancellation/provenance and CAP-02 policy/secrets.
+- CAP-14 later qualifies the same adapters/runtimes on macOS/Linux.
+
+Handoffs must include portable schemas, accepted/rejected examples, failure fixtures, manifest/version rules, performance baselines and evidence IDs. An informal README-only handoff is insufficient.
+
+## 14. Migration and backward compatibility
+
+- Version every durable schema, policy, model/index/graph manifest and export profile. Use forward migrations with preflight, backup, rollback/repair evidence and test fixtures from the prior supported release.
+- Rebuilding a derivative does not mutate canonical evidence/decisions. Old and new derivative versions remain distinguishable until promotion and dependent staleness are resolved.
+- Project moves and later Windows/macOS/Linux qualification cannot rely on absolute paths or machine-specific IDs in portable records.
+- Deprecations include reader compatibility, warnings, migration telemetry and a declared removal release. Unsupported old projects open read-only with repair/export options rather than silent partial upgrade.
+
+## 15. Required slice evidence bundle
+
+- Approved capability decision packet and this approved slice plan at immutable commits.
+- Reviewed commits/diffs for all tasks and criterion-to-evidence records.
+- Unit, contract, integration, end-to-end, failure, cancellation, restart, recovery, migration and performance reports.
+- Security/privacy/rights/research-integrity review and accessibility/UI conformance evidence where applicable.
+- Schemas, migrations, API/client fixtures, model/index/graph manifests, benchmark datasets and hashes.
+- Architecture dependency report, staleness/provenance traces and adjacent-slice handoff fixture.
+- Independent slice review with approved/changes-requested/blocked outcome.
+
+## 16. Definition of Ready
+
+- Capability packet is decision-complete and approved; each decision lists options, recommendation, accepted selection and migration boundary.
+- This plan and all other capability slice plans exist, pass structural checks and are approved.
+- Required ADRs/experience changes are approved before the campaign starts.
+- Dependencies, fixtures, credentials/licenses, platform resources and human authorities are available or explicitly stubbed.
+- The first task is `READY`, no conflicting lease exists, and the campaign can plausibly run to production-ready capability completion without routine stop points.
+
+## 17. Definition of Done
+
+- Every task is `DONE` and independently approved.
+- Slice-wide verification passes from a clean state on the required platform/profile.
+- Failure, denial, cancellation, restart, migration, recovery, security, accessibility and performance paths satisfy this plan.
+- No concealed TODO, placeholder, skipped mandatory test, unreviewed architecture divergence or production blocker remains.
+- Handoff contracts/fixtures and dependency/staleness behavior are accepted by the next slice.
+- The capability campaign automatically advances to its next dependency-ready slice.
+
+## 18. Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| Lowest-common-denominator contract | Use task-specific extensions and capability discovery, not provider-specific leakage. |
+| Silent semantic drift | Pin task/prompt/schema/model manifests and disclose fallback. |
+| Policy complexity | Pure deterministic policy evaluator with fixture matrix and reasons. |
+
+## 19. Required ADRs and human decisions
+
+- ADR-CAP07-GATEWAY: model task taxonomy, result envelope and routing semantics.
+
+All material choices in Sections 4–5 must appear in the capability packet. Before approval, reviewers may accept the recommendation, select a documented alternative, or require more evidence. After capability start, these choices are not reopened for preference; they are reopened only when implementation evidence demonstrates infeasibility or a newly discovered consequential issue outside the approved decision envelope.
+
+## 20. Research and standards basis
+
+- **JSON Schema Draft 2020-12** — Canonical structured-output and schema-pack validation.  
+  https://json-schema.org/draft/2020-12
+- **OpenTelemetry Generative AI Semantic Conventions** — Portable redacted telemetry for model requests, responses, usage and agents.  
+  https://opentelemetry.io/docs/specs/semconv/gen-ai/
+- **llama.cpp** — Cross-platform local generative inference, embeddings, reranking, grammar constraints and OpenAI-compatible service.  
+  https://github.com/ggml-org/llama.cpp
+- **ONNX Runtime Execution Providers** — Portable CPU/CUDA/DirectML/CoreML inference for embedding, reranking and classification models.  
+  https://onnxruntime.ai/docs/execution-providers/
+
+These sources support implementation choices, not universal truth claims. Production selection remains conditional on project-specific benchmarks, licenses, privacy/rights constraints and the accepted capability decision packet.
+
+## 21. AI implementation runbook
+
+1. Run `python tools/planctl.py ready CAP-07 --require-approved` and `python tools/taskctl.py validate`.
+2. Confirm the active campaign is `CAP-07`, this is the current slice, and the approved packet/plan commits match the campaign record.
+3. Load only the governing context, capability packet, this slice plan, task record, affected code and tests.
+4. Execute all tasks in dependency order. Debug, refactor and use approved fallbacks without routine human pauses.
+5. After each task, run focused verification, attach criterion-linked evidence and obtain independent task review.
+6. After the last task, run the complete Section 10 matrix from a clean/restarted state and assemble the slice evidence bundle.
+7. Request independent slice review. On approval, let `taskctl` advance the campaign automatically to the next slice.
+8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/capability-decision-feedback-1.1.json",
+  "title": "Research Observatory Capability Decision Feedback",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "document_type",
+    "capability_id",
+    "capability_plan_sha256",
+    "reviewed_at",
+    "requested_action",
+    "decisions"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.1" },
+    "document_type": { "const": "capability-decision-feedback" },
+    "capability_id": { "type": "string", "pattern": "^CAP-[0-9]{2}$" },
+    "capability_plan_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "reviewer": { "type": ["string", "null"] },
+    "reviewed_at": { "type": "string" },
+    "requested_action": { "enum": ["record-feedback", "approve-capability-and-slices"] },
+    "capability_notes": { "type": "string" },
+    "decisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "selected_option", "other_option", "accepted_recommendation", "rationale"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^CAP-[0-9]{2}-D[0-9]{2,3}$" },
+          "selected_option": { "type": "string", "minLength": 1 },
+          "other_option": { "type": ["string", "null"], "maxLength": 180 },
+          "accepted_recommendation": { "type": "boolean" },
+          "rationale": { "type": ["string", "null"] }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "selected_option": { "const": "__OTHER__" } } },
+            "then": {
+              "properties": {
+                "other_option": { "type": "string", "minLength": 1 },
+                "rationale": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
