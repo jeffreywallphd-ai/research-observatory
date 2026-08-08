@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-00.S05",
+  "stateCommit": "036eac81a1b01744dda906a52c035f018cf9ad17",
+  "outcome": "Development begins with reusable fixtures and traceable versions rather than ad hoc documents or unverifiable demonstrations.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-00.S05.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-00.S05.T01.json", "sha256": "3e7a5c333df67bf3d3b96b41c275237f898b7bcb2a317f99ac7be4a57b490c21"},
+        {"path": "artifacts/evidence/CAP-00.S05.T01.review-fix.json", "sha256": "031a84ec226ac088a5ce1c24932442d9e19c1b51c167011a626607e385370a5d"},
+        {"path": "artifacts/evidence/CAP-00.S05.T01.review-fix-2.json", "sha256": "ee638015161069d0240963aed2ee4a72034e447ad1dd40e166361c3c1f20121e"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-00.S05.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-00.S05.T02.json", "sha256": "df6cfafc647268ae6ded5883d270ebb206426815f899cb6f32eac51e1ba66038"},
+        {"path": "artifacts/evidence/CAP-00.S05.T02.review-fix.json", "sha256": "716736f4dd30dd87dfdbeb3f302039a9a0041284fcf07f2a80988fb510c39cb3"},
+        {"path": "artifacts/evidence/CAP-00.S05.T02.review-fix-2.json", "sha256": "072751c26fed296eac3bc7ae25a16bf38d203387a4196307f21b5d9a6713b346"},
+        {"path": "artifacts/evidence/CAP-00.S05.T02.review-fix-3.json", "sha256": "61110fabfa6105c106a9207c7d584b530d157e965eafab93048a19bb729ea499"},
+        {"path": "artifacts/evidence/CAP-00.S05.T02.review-fix-4.json", "sha256": "16579c71452a620eeb2781a41c12eb13300a23762105b32d26d2d37e9a59652a"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-00.S05.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-00.S05.T03.json", "sha256": "d4a4fb48427bb47afc45ffcbfeb01a6b27d4814aa89b83cbcb306dc8097b7c18"},
+        {"path": "artifacts/evidence/CAP-00.S05.T03.review-fix.json", "sha256": "12eee1cf2ecd28420661519fa42a20757c77caf68242a9c38a8c0e2eab1bee69"},
+        {"path": "artifacts/evidence/CAP-00.S05.T03.review-fix-2.json", "sha256": "aa67ac3a1106b72f6a339d9dd19a17ff2334d773938bd5106fb7ee477c3e1931"},
+        {"path": "artifacts/evidence/CAP-00.S05.T03.review-fix-3.json", "sha256": "0318e0bc090329e9d40fa2d07634f793fa120abd3a0f3598f9419d0ffb87c297"},
+        {"path": "artifacts/evidence/CAP-00.S05.T03.review-fix-4.json", "sha256": "f10b55c2354ee00dd125e3db26ef1ecaf4fc571be4111966f32ad3c65f124185"},
+        {"path": "artifacts/evidence/CAP-00.S05.T03.review-fix-5.json", "sha256": "83d4dd6d093a6b05e8deb1f4e6e2b7817d5d8cd574a36949a2b812bcb28d0260"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S05.T03-approved-foundation.json",
+      "exitCode": 0,
+      "result": "At the approved aggregate commit, all 14 foundation commands and all 123 foundation tests passed, including fixture, benchmark, build provenance, evidence, quality, packaging, and ledger validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_fixture_corpus_check tests.foundation.test_benchmark_registry tests.foundation.test_build_manifest -v",
+      "exitCode": 0,
+      "result": "All 50 focused slice tests passed across licensed offline fixtures, exact inventories and content contracts, durable benchmark history and approval lineage, deterministic build provenance, and confined handle-bound publication."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\fixture_corpus_check.py --repo . && .venv\\Scripts\\python.exe tools\\benchmark_registry.py --repo . --report artifacts\\tmp\\CAP-00.S05-integration-benchmarks.json && .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-00.S05-integration-build-manifest.json",
+      "exitCode": 0,
+      "result": "The canonical 11-file CC0 corpus validated, two canonical benchmarks executed and matched exactly, and a clean 0.1.0+g036eac8 build manifest bound commit, dependency, schema, component, and empty governed model identities."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The authoritative ledger, complete task evidence chains, and generated plan/status views validated with all three S05 tasks DONE and independently approved."
+    }
+  ],
+  "integratedBehavior": [
+    "The offline CC0 fixture corpus provides exact licensed bytes, accepted and intentional-rejection documents, metadata variants, duplicates, structured text, tables, citations, missing fields, and fail-closed PDF/content semantics.",
+    "The benchmark registry executes golden parsing and contract cases deterministically while binding prompts, schemas, datasets, expected outputs, human approvals, immutable version lineage, and every relevant reachable Git-history transition.",
+    "One strict product version authority drives ecosystem mirrors, desktop and sidecar component manifests, canonical changelog releases, and reproducible build identities with exact commit, dependency, schema, and governed model-manifest sets.",
+    "Clean and dirty provenance, inventory changes, malformed controls, redirected paths, concurrent input changes, and output publication are distinguished or rejected with deterministic evidence suitable for local automation."
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The governed model-manifest set intentionally remains empty until CAP-07 defines and installs its canonical contract."
+    ]
+  }
+}

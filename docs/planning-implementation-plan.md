@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 60326af3fbf94705ae8e6f92dfa3a23db4aa80e661bc1430ddc20b2aee0c8888
+source_sha256: 56ff71a9dac0aa672051a08824862c451422b706a20e9015af2e5985043de79a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -682,7 +682,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Development begins with reusable fixtures and traceable versions rather than ad hoc documents or unverifiable demonstrations.
 
-**Wave / priority / status / review:** `W0` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W0` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
@@ -796,7 +796,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The Academic Minimal style, page contracts, fourteen use-case workflows, and linked HTML prototypes form an approved in-repository reference that must precede and validate user-facing implementation.
 
-**Wave / priority / status / review:** `W0` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W0` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
@@ -804,7 +804,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S06.T01 - Install the governed Academic Minimal UI reference
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `low`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `low`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
