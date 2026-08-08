@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3915d336933734553ace1f79af5f252993d358c1c9dd82bf59849450825dc0b6
+source_sha256: 0a0cfeadc76271ed13354f3efe54428912575b1bddd45fec1b7481d88ebf81d1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -46,16 +46,16 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 307 |
-| `IN_PROGRESS` | 1 |
-| `DONE` | 12 |
+| `NOT_STARTED` | 306 |
+| `READY` | 1 |
+| `DONE` | 13 |
 | `DEFERRED` | 36 |
 
 ## Capability progress
 
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
-| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 4/6 | 12/19 | `CAP-00.S05.T01` |
+| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 4/6 | 13/19 | - |
 | `CAP-01` Windows-first desktop shell and supervised local runtime | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
@@ -95,6 +95,4 @@ manual_edit: prohibited
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-00.S05.T01` Create a legally redistributable miniature scholarly fixture corpus | `IN_PROGRESS` | codex | `codex/cap-00-delivery-foundation` |
+No task is currently active.
