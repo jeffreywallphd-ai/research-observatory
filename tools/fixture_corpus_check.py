@@ -42,12 +42,6 @@ FEATURE_MEDIA_TYPES = {
     "citations": {"application/xml", "application/pdf", "text/plain"},
     "bibliography": {"application/xml", "application/pdf", "text/plain"},
 }
-FEATURE_OUTCOMES = {
-    "pdf": "accept",
-    "malformed-json": "reject",
-    "malformed-xml": "reject",
-    "malformed-pdf": "reject",
-}
 REQUIRED_FEATURES = {
     "metadata-json",
     "metadata-ris",
@@ -66,6 +60,12 @@ REQUIRED_FEATURES = {
     "malformed-xml",
     "malformed-pdf",
     "license-provenance",
+}
+REJECTION_FEATURES = {"malformed-json", "malformed-xml", "malformed-pdf"}
+ACCEPTANCE_FEATURES = (REQUIRED_FEATURES | {"documentation", "plain-full-text", "sections"}) - REJECTION_FEATURES
+FEATURE_OUTCOMES = {
+    **{feature: "accept" for feature in ACCEPTANCE_FEATURES},
+    **{feature: "reject" for feature in REJECTION_FEATURES},
 }
 
 

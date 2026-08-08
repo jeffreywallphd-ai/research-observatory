@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: cba971bda82406240de9ae91f9de968d74f334e6216f63cc4f0fdba8f5652db3
+source_sha256: 3915d336933734553ace1f79af5f252993d358c1c9dd82bf59849450825dc0b6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -718,6 +718,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-00.S05.T01.json` at `7a4301dbd9de0e05472fe537c92c44e02b7fdee6`
+- `artifacts/evidence/CAP-00.S05.T01.review-fix.json` at `5cafdf572fe68575f7a35618b56fda0faabb136e`
 
 #### - [ ] CAP-00.S05.T02 - Establish golden-output and benchmark registry conventions
 

@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T01",
+  "commit": "5cafdf572fe68575f7a35618b56fda0faabb136e",
+  "baseCommit": "7a4301dbd9de0e05472fe537c92c44e02b7fdee6",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T01.json",
+    "reason": "Independent review reproduced a nested manifest-name inventory bypass, media-type PDF downgrade, incomplete PDF xref validation, unsubstantiated per-item semantic features, and unconstrained control-file redirects. This manifest records the fail-closed corrections."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T01.json",
+    "docs/automation/fixture-corpus.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/fixtures/scholarly-corpus/manifest.schema.json",
+    "tests/foundation/test_fixture_corpus_check.py",
+    "tools/fixture_corpus_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --repo . --report artifacts\\tmp\\CAP-00.S05.T01-review-fix-exact.json",
+      "exitCode": 0,
+      "result": "The exact review-fix commit passed all 12 foundation commands and 80 foundation tests, including mandatory corpus validation, quality, generated-view integrity, and backlog validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_fixture_corpus_check -v",
+      "exitCode": 0,
+      "result": "Seven exact-commit focused tests passed, including regressions for nested control filenames, media downgrade, xref count/state/generation mutation, semantic-content replacement, and manifest/schema redirects."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\fixture_corpus_check.py --repo .",
+      "exitCode": 0,
+      "result": "The canonical corpus passed with 11 exact-inventory files, 20 substantiated features, three intentional rejection cases, and CC0-1.0 provenance."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The authoritative ledger and stored initial evidence validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Only root manifest.json and manifest.schema.json are excluded from exact inventory; nested files with either basename are now reported as undocumented.",
+        "The manifest schema restricts supported media types, while the validator binds each suffix to its media type and each structural feature to compatible media and accept/reject outcomes, preventing a PDF from being disguised as text.",
+        "PDF validation now checks the declared xref count, exact entry count, free/in-use state, generation, object set and offsets, trailer size, and startxref target.",
+        "Per-item validation substantiates structured and plain scholarly sections, tables, citation markers, bibliographies, and RIS/BibTeX missing-field variants rather than trusting the feature labels.",
+        "Both root control files and all item paths must resolve to ordinary non-redirected files inside the corpus. The validator remains deterministic and offline."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused suite increased from five to seven tests and covers canonical content, hash/length tampering, licensing/inventory, nested excluded-name attacks, malformed fixtures, media downgrade, xref offset/count/state/generation attacks, semantic-content replacement, and control-file redirects.",
+        "The complete foundation suite increased to 80 tests and passes on the immutable review-fix commit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The automation guide now documents exact root exclusions, control/item confinement, media and feature binding, full xref integrity, and per-item semantics.",
+        "The correction changes only the validator contract, focused tests, corpus schema, documentation, synchronized planning views, preserved initial evidence, and task audit state; no application or later-capability scope changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must attempt every previously reproduced bypass against commit 5cafdf572fe68575f7a35618b56fda0faabb136e before approval."
+  }
+}

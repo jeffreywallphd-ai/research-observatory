@@ -1268,28 +1268,35 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T19:09:55+00:00'
-      updated_at: '2026-08-08T19:26:43+00:00'
+      updated_at: '2026-08-08T19:37:03+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Synthetic CC0 scholarly corpus and fail-closed offline validator complete; exact commit passed
+      implementation_notes: 'Synthetic CC0 scholarly corpus and fail-closed offline validator complete; exact commit passed
         78 foundation tests.
+
+        All independent review findings fixed; exact review-fix commit passed 80 foundation tests and adversarial regressions.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T01.json
         sha256: 3e7a5c333df67bf3d3b96b41c275237f898b7bcb2a317f99ac7be4a57b490c21
         commit: 7a4301dbd9de0e05472fe537c92c44e02b7fdee6
         recorded_at: '2026-08-08T19:20:38+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T01.review-fix.json
+        sha256: 031a84ec226ac088a5ce1c24932442d9e19c1b51c167011a626607e385370a5d
+        commit: 5cafdf572fe68575f7a35618b56fda0faabb136e
+        recorded_at: '2026-08-08T19:32:46+00:00'
       review:
         reviewer: codex-review
         result: changes-requested
-        reviewed_at: '2026-08-08T19:26:43+00:00'
-        notes: P1 inventory basename bypass; P1 media-type/xref trust; P1 unsubstantiated text semantic features; P2 unconstrained
-          control-file redirects.
+        reviewed_at: '2026-08-08T19:37:03+00:00'
+        notes: P1 normal semantic features can be reassigned to rejected malformed fixtures; structured-full-text coverage
+          passed without an accepted article body.
       base_sha: ff16722729ea25363f5be55b21dc244acf27f13a
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T19:26:43+00:00'
-        expires_at: '2026-08-09T03:26:43+00:00'
+        claimed_at: '2026-08-08T19:37:03+00:00'
+        expires_at: '2026-08-09T03:37:03+00:00'
       verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
