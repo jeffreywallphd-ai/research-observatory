@@ -13,7 +13,8 @@ release is the current product version. Versions use the SemVer 2.0 core and
 prerelease grammar without leading-zero numeric identifiers, empty identifiers,
 or build metadata. A version change updates the authority, all mirrors, the three
 component manifests, and the changelog in one reviewed task. Other change
-categories use level-three headings beneath these canonical level-two headings.
+categories use level-three headings beneath these canonical level-two headings;
+ATX variants and setext level-two headings are rejected.
 
 After updating the authority and ecosystem mirrors, regenerate the component
 contracts with:
@@ -48,7 +49,10 @@ JSON and manifest identifiers. Clean generation verifies captured governed bytes
 against `HEAD`, while every generation checks that Git and captured file state
 remain stable through collection. On Windows, governed input handles deny writes
 and deletes during final confirmation, and canonical ancestor-directory handles
-deny rename/delete swaps through atomic output replacement. Output is permitted
+deny rename/delete swaps through atomic output replacement. The final stability
+cycles also re-enumerate schemas and the reserved model tree, and any unreadable
+schema directory fails closed. Temporary JSON is write-locked and byte-verified
+through replacement. Output is permitted
 only under a canonical, nonredirected `artifacts/tmp/`;
 normal validation never edits tracked files. Only the explicit
 `--write-components` operation changes tracked component contracts; it never

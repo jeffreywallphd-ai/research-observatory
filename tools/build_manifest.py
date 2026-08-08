@@ -56,7 +56,7 @@ class DirectoryGuard:
 
 
 @contextmanager
-def windows_path_locks(paths: list[Path], *, directories: bool) -> Iterator[None]:
+def windows_path_locks(paths: list[Path], *, directories: bool, allow_delete: bool = False) -> Iterator[None]:
     """Hold Windows handles that deny rename/delete and, for files, writes."""
     if os.name != "nt":
         yield
@@ -82,11 +82,12 @@ def windows_path_locks(paths: list[Path], *, directories: bool) -> Iterator[None
     generic_read = 0x80000000
     file_share_read = 0x00000001
     file_share_write = 0x00000002
+    file_share_delete = 0x00000004
     open_existing = 3
     file_flag_open_reparse_point = 0x00200000
     file_flag_backup_semantics = 0x02000000
     flags = file_flag_open_reparse_point | (file_flag_backup_semantics if directories else 0)
-    share = file_share_read | (file_share_write if directories else 0)
+    share = file_share_read | (file_share_write if directories else 0) | (file_share_delete if allow_delete else 0)
     invalid_handle = wintypes.HANDLE(-1).value
     handles: list[int] = []
     try:
@@ -236,14 +237,58 @@ def configured_components(inputs: dict[str, Any]) -> tuple[list[dict[str, str]],
     return components, errors
 
 
-def repository_schema_paths(repo: Path) -> list[str]:
+def repository_schema_paths(repo: Path) -> tuple[list[str], list[str]]:
     paths: list[str] = []
-    for path in repo.rglob("*.schema.json"):
-        relative = path.relative_to(repo)
-        if relative.parts[0].startswith(".") or relative.parts[0] == "artifacts":
-            continue
-        paths.append(relative.as_posix())
-    return sorted(paths)
+    errors: list[str] = []
+
+    def visit(directory: Path, *, top_level: bool = False) -> None:
+        try:
+            entries = list(os.scandir(directory))
+        except OSError as exc:
+            errors.append(
+                f"cannot enumerate schema inventory directory {directory.relative_to(repo).as_posix()}: {exc}"
+            )
+            return
+        for entry in entries:
+            path = Path(entry.path)
+            if top_level and (entry.name.startswith(".") or entry.name in {"artifacts", "node_modules"}):
+                continue
+            try:
+                redirected = entry.is_symlink() or path.is_junction()
+                is_directory = entry.is_dir(follow_symlinks=False)
+                is_file = entry.is_file(follow_symlinks=False)
+            except OSError as exc:
+                errors.append(f"cannot inspect schema inventory path {path.relative_to(repo).as_posix()}: {exc}")
+                continue
+            if redirected:
+                errors.append(f"schema inventory path is redirected: {path.relative_to(repo).as_posix()}")
+            elif is_directory:
+                visit(path)
+            elif is_file and entry.name.endswith(".schema.json"):
+                paths.append(path.relative_to(repo).as_posix())
+
+    visit(repo, top_level=True)
+    return sorted(paths), errors
+
+
+def model_inventory_errors(repo: Path) -> list[str]:
+    model_root = repo / MODEL_MANIFEST_ROOT
+    try:
+        model_root.lstat()
+    except FileNotFoundError:
+        return []
+    except OSError as exc:
+        return [f"cannot inspect the model-manifest reserved root before CAP-07: {exc}"]
+    try:
+        if model_root.is_symlink() or model_root.is_junction():
+            return ["model-manifest reserved root must not be a redirect before CAP-07"]
+        if model_root.resolve(strict=True) != model_root or not model_root.is_dir():
+            return ["model-manifest reserved root is not a canonical directory before CAP-07"]
+        if any(model_root.iterdir()):
+            return ["the model-manifest reserved root must remain empty until CAP-07 installs its contract"]
+    except OSError as exc:
+        return [f"cannot enumerate the model-manifest reserved root before CAP-07: {exc}"]
+    return []
 
 
 def changelog_errors(changelog: str, version: str) -> list[str]:
@@ -255,13 +300,15 @@ def changelog_errors(changelog: str, version: str) -> list[str]:
     if first_content is None or lines[first_content] != "# Changelog":
         errors.append("CHANGELOG.md '# Changelog' must be the first nonblank line")
     release_pattern = re.compile(r"^## \[([^\]]+)\] - (\d{4}-\d{2}-\d{2})$")
+    atx_h2_pattern = re.compile(r"^ {0,3}##(?:[ \t]+|$)")
+    setext_h2_pattern = re.compile(r"^ {0,3}-+[ \t]*$")
     heading_positions: list[tuple[str, int]] = []
     unreleased_positions: list[int] = []
     for index, line in enumerate(lines):
         if line == "## [Unreleased]":
             unreleased_positions.append(index)
             continue
-        if line.startswith("## "):
+        if atx_h2_pattern.match(line):
             match = release_pattern.fullmatch(line)
             if not match:
                 errors.append(f"CHANGELOG.md has an invalid release heading: {line!r}")
@@ -274,6 +321,8 @@ def changelog_errors(changelog: str, version: str) -> list[str]:
             except ValueError:
                 errors.append(f"CHANGELOG.md release {release_version} has an invalid date: {release_date}")
             heading_positions.append((release_version, index))
+        elif index > 0 and lines[index - 1].strip() and setext_h2_pattern.fullmatch(line):
+            errors.append(f"CHANGELOG.md has a noncanonical setext level-two heading: {lines[index - 1]!r}")
     if len(unreleased_positions) != 1:
         errors.append("CHANGELOG.md must contain exactly one '## [Unreleased]' heading")
     elif first_content is not None and unreleased_positions[0] < first_content:
@@ -412,11 +461,13 @@ def source_contract(
         errors.append("desktop and sidecar component versions are incompatible")
 
     configured_schemas = inputs.get("schemaPaths")
+    discovered_schemas, schema_inventory_errors = repository_schema_paths(repo)
+    errors.extend(schema_inventory_errors)
     if not isinstance(configured_schemas, list) or any(not isinstance(path, str) for path in configured_schemas):
         errors.append("schemaPaths must be a string array")
     elif len(configured_schemas) != len(set(configured_schemas)):
         errors.append("schemaPaths must not contain duplicate paths")
-    elif sorted(configured_schemas) != repository_schema_paths(repo):
+    elif sorted(configured_schemas) != discovered_schemas:
         errors.append("build inputs schemaPaths must exactly inventory every repository schema")
     dependency_locks = inputs.get("dependencyLocks")
     if not isinstance(dependency_locks, list):
@@ -439,17 +490,7 @@ def source_contract(
         errors.append("modelManifests must be an array")
     elif model_inputs:
         errors.append("modelManifests must remain empty until CAP-07 installs the governed model-manifest contract")
-    model_root = repo / MODEL_MANIFEST_ROOT
-    if model_root.exists():
-        try:
-            if model_root.resolve(strict=True) != model_root or not model_root.is_dir():
-                raise ValueError("reserved root is redirected or is not a directory")
-            reserved_entries = list(model_root.iterdir())
-        except (OSError, ValueError) as exc:
-            errors.append(f"model-manifest reserved root is unsafe before CAP-07: {exc}")
-        else:
-            if reserved_entries:
-                errors.append("the model-manifest reserved root must remain empty until CAP-07 installs its contract")
+    errors.extend(model_inventory_errors(repo))
 
     changelog, changelog_error = load_text(repo, "CHANGELOG.md", snapshots)
     if changelog_error or changelog is None:
@@ -599,6 +640,18 @@ def stable_source_errors(before: dict[str, Any], after: dict[str, Any]) -> list[
     return []
 
 
+def inventory_stability_errors(repo: Path, inputs: dict[str, Any]) -> list[str]:
+    discovered, errors = repository_schema_paths(repo)
+    configured = inputs.get("schemaPaths")
+    if isinstance(configured, list) and all(isinstance(path, str) for path in configured):
+        if sorted(configured) != discovered:
+            errors.append("schema inventory changed while build provenance was collected")
+    else:
+        errors.append("schema inventory configuration became invalid during collection")
+    errors.extend(model_inventory_errors(repo))
+    return errors
+
+
 def generate_build_manifest(repo: Path, runner: GitRunner = subprocess.run) -> tuple[dict[str, Any] | None, list[str]]:
     repo = repo.resolve(strict=True)
     source, errors = git_source(repo, runner)
@@ -676,6 +729,7 @@ def generate_build_manifest(repo: Path, runner: GitRunner = subprocess.run) -> t
                 if source_check is not None:
                     errors.extend(stable_source_errors(source, source_check))
                 errors.extend(snapshot_integrity_errors(repo, snapshots, source, runner))
+                errors.extend(inventory_stability_errors(repo, inputs))
     except OSError as exc:
         errors.append(f"cannot lock governed build inputs for a stable snapshot: {exc}")
     return (manifest if not errors else None), errors
@@ -738,25 +792,31 @@ def atomic_write_json(
     before_replace: BeforeReplace | None = None,
 ) -> None:
     temporary: Path | None = None
+    encoded = (json.dumps(value, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     try:
         if guard:
             validate_directory_guard(guard)
         with tempfile.NamedTemporaryFile(
-            mode="w", encoding="utf-8", newline="\n", dir=destination.parent, prefix=destination.name, delete=False
+            mode="wb", dir=destination.parent, prefix=destination.name, delete=False
         ) as handle:
             temporary = Path(handle.name)
-            json.dump(value, handle, indent=2, ensure_ascii=False)
-            handle.write("\n")
+            handle.write(encoded)
             handle.flush()
             os.fsync(handle.fileno())
         assert temporary is not None
-        if before_replace:
-            before_replace()
-        if guard:
-            validate_directory_guard(guard)
-        os.replace(temporary, destination)
-        if guard:
-            validate_directory_guard(guard, require_destination=True)
+        temporary_identity = path_identity(temporary)
+        with windows_path_locks([temporary], directories=False, allow_delete=True):
+            if before_replace:
+                before_replace()
+            if guard:
+                validate_directory_guard(guard)
+            if path_identity(temporary) != temporary_identity or temporary.read_bytes() != encoded:
+                raise ValueError("temporary JSON changed before guarded replacement")
+            os.replace(temporary, destination)
+            if guard:
+                validate_directory_guard(guard, require_destination=True)
+            if destination.read_bytes() != encoded:
+                raise ValueError("guarded destination content differs from the verified temporary JSON")
     except OSError, ValueError:
         if temporary is not None:
             temporary.unlink(missing_ok=True)

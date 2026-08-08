@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T03",
+  "commit": "8534749677355438708f2d3e9e73d167a86e5911",
+  "baseCommit": "4a3196c892db6717d4a78933675a057c486a42a3",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T03.review-fix-2.json",
+    "reason": "Independent re-review confirmed both final-window race closures, then found permissive leading-zero/empty-identifier SemVer patterns and noncanonical level-two changelog sections. This manifest records one strict grammar across the tool and all product/component/build schemas."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S05.T03.review-fix-2.json",
+    "docs/automation/build-manifests.md",
+    "docs/planning-implementation-plan.md",
+    "packaging/build-manifest.schema.json",
+    "packaging/component-manifest.schema.json",
+    "packaging/product-version.schema.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_build_manifest.py",
+    "tools/build_manifest.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S05.T03-review-fix-3-exact-foundation.json",
+      "exitCode": 0,
+      "result": "The clean exact third-remediation commit passed all 14 mandatory foundation commands and all 117 foundation tests; strict-schema build provenance reported 0.1.0+g8534749 clean."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_build_manifest -v",
+      "exitCode": 0,
+      "result": "All 16 focused tests passed, including leading-zero core/numeric-prerelease, empty prerelease identifier, non-SemVer release, arbitrary level-two heading, ordering, date, race, junction, reserved-tree, malformed-input, and deterministic provenance cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-00.S05.T03-review-fix-3-exact-manifest.json",
+      "exitCode": 0,
+      "result": "The exact clean commit generated a confined deterministic manifest accepted by the strengthened product, component, and build-manifest schemas."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The ledger and complete prior evidence chain validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "One strict SemVer core/prerelease grammar governs the product authority, generated component versions, embedded build components, productVersion, buildIdentity, and changelog releases.",
+        "Numeric core and prerelease identifiers reject leading zeroes, prerelease identifiers are nonempty, and compatibility lines use canonical no-leading-zero major/minor values.",
+        "CHANGELOG.md permits only Unreleased and exact dated semantic releases at level two; categories remain level three. Current product version must be first and later releases strictly descend."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused mutations reject 00.0.1, 0.0.1-01, 0.0.1-alpha..1, banana, and arbitrary ## Notes headings in addition to all prior boundary cases.",
+        "All 16 focused and all 117 complete foundation tests pass at exact commit 8534749677355438708f2d3e9e73d167a86e5911."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "All repeated JSON Schema patterns match executable validation, and automation documentation states the same allowed version subset and heading hierarchy.",
+        "The independent changes-requested disposition and prior evidence remain immutable in the audit chain; generated planning views match the exact ledger state."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must confirm strict SemVer equivalence across executable and schema boundaries, canonical level-two changelog structure, all previously confirmed race closures and inventory/confinement controls, and exact evidence at 8534749677355438708f2d3e9e73d167a86e5911."
+  }
+}
