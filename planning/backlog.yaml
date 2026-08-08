@@ -1013,7 +1013,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-00.S03.T01
-    status: IN_PROGRESS
+    status: READY
     tasks:
     - id: CAP-00.S04.T01
       capability_id: CAP-00
@@ -1041,33 +1041,39 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T17:33:22+00:00'
-      updated_at: '2026-08-08T17:46:59+00:00'
-      completed_at: null
+      updated_at: '2026-08-08T17:51:42+00:00'
+      completed_at: '2026-08-08T17:51:42+00:00'
       blocker: null
-      implementation_notes: Executable Draft 2020-12 validation, precise duplicate/status/dependency/cycle diagnostics, RFC
+      implementation_notes: 'Executable Draft 2020-12 validation, precise duplicate/status/dependency/cycle diagnostics, RFC
         3339 migration, focused tests, frozen dependencies, and changed-path security checks pass at 7d016c5.
+
+        Review fixes at 1493a3c close every required identity, slice-dependency, and complete-review finding; 54 foundation
+        tests and canonical validation pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S04.T01.json
         sha256: 6135778c06aac38142d0c42183a3480b1831ea03cbc20757d310ebd0ff7f6fe2
         commit: 7d016c5251a6a9385abe8205857ca18b16feb3ca
         recorded_at: '2026-08-08T17:42:12+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S04.T01.review-fix.json
+        sha256: 9a2a16559b072d65ac51acd9b5caf93e103b68e8ab8c449d82b0da69ce0df13d
+        commit: 1493a3cd6198286d6521b4c8cbc6230d68fc7f3c
+        recorded_at: '2026-08-08T17:49:51+00:00'
       review:
         reviewer: codex-review
-        result: changes-requested
-        reviewed_at: '2026-08-08T17:46:59+00:00'
-        notes: Independent review found missing slice dependency target validation, incomplete approved-review metadata allowed
-          on DONE tasks, and absent slice/task namespace-parent consistency checks; implementation evidence requires correction.
+        result: approved
+        reviewed_at: '2026-08-08T17:51:42+00:00'
+        notes: Approved at 1493a3c after four direct mutation probes, 10/10 focused schema tests, 54 foundation tests, canonical
+          validation, and evidence hash verification; no required findings remain. Optional whitespace normalization is deferred
+          hardening.
       base_sha: 16cbd356f79458434af3993727701e59d9a8e02c
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-08T17:33:22+00:00'
-        expires_at: '2026-08-09T01:33:22+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral
@@ -1098,11 +1104,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-08T17:51:42+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
