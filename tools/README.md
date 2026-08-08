@@ -2,6 +2,7 @@
 
 - `planctl.py` - prepare, review, apply feedback, approve, validate, and gate capability plans.
 - `taskctl.py` - schema-validate, select, claim/renew owned leases, enforce transitions and release gates, attach exact-commit evidence, and atomically compare-and-swap capability/slice/task state.
+- `backlog_views.py` - deterministically render the comprehensive Markdown plan and compact status summary from `planning/backlog.yaml`, or fail on generated-view drift with `--check`.
 - `capability_plan_check.py` and `slice_plan_check.py` - validate canonical plans.
 - `plan_review_site.py` and `plan_review_check.py` - generate and validate the static review site.
 - `ui_reference_check.py` - validate the approved experience reference.
