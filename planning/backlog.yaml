@@ -1335,14 +1335,18 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T19:44:43+00:00'
-      updated_at: '2026-08-08T20:22:13+00:00'
+      updated_at: '2026-08-08T20:38:30+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Golden parser and contract benchmark run end to end; explicit human-approved baseline lineage
         enforced; 86 foundation tests and fresh checkout pass.
 
         Review findings corrected: strict SHA-pinned immutable approvals, canonical lineage-bound baselines, and canonical
-        hash-bound versioned prompts. Exact commit passed 13 foundation commands, 91 tests, and 10 focused regressions.'
+        hash-bound versioned prompts. Exact commit passed 13 foundation commands, 91 tests, and 10 focused regressions.
+
+        Durable-history review fix: replay all relevant reachable registry and asset transitions, preserve evaluation bytes,
+        reject multi-commit laundering, and fail closed on Git inspection errors. Exact commit passed 13 foundation commands,
+        96 tests, and 15 focused regressions.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T02.json
@@ -1354,17 +1358,23 @@ capabilities:
         sha256: 716736f4dd30dd87dfdbeb3f302039a9a0041284fcf07f2a80988fb510c39cb3
         commit: c959426487205bc3a883593169f9ca3c5484cc9f
         recorded_at: '2026-08-08T20:15:04+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T02.review-fix-2.json
+        sha256: 072751c26fed296eac3bc7ae25a16bf38d203387a4196307f21b5d9a6713b346
+        commit: dd71a9dcc0c1021140ae101f9c1e73b7bd5bc984
+        recorded_at: '2026-08-08T20:31:25+00:00'
       review:
         reviewer: codex-review
         result: changes-requested
-        reviewed_at: '2026-08-08T20:22:13+00:00'
-        notes: 'Durable Git history is required: one-parent approval, baseline, and prompt checks can be laundered by an unrelated
-          follow-up commit. Replay every governed transition and fail closed on Git inspection errors.'
+        reviewed_at: '2026-08-08T20:38:30+00:00'
+        notes: 'Reachable merge history must be audited without path simplification: inspect every parent edge, enforce one
+          approval blob per path globally, validate each historical registry against its contemporaneous schema, and reject
+          shallow history.'
       base_sha: 0a598e57ed890fa408797d7aef3918c3022fd7da
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T20:22:13+00:00'
-        expires_at: '2026-08-09T04:22:13+00:00'
+        claimed_at: '2026-08-08T20:38:30+00:00'
+        expires_at: '2026-08-09T04:38:30+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:

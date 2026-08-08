@@ -10,7 +10,7 @@ Run the complete registry:
 .venv\Scripts\python.exe tools\benchmark_registry.py --repo . --report artifacts\tmp\benchmark-results.json
 ```
 
-The runner never overwrites a baseline. On a mismatch, use `--proposal-dir artifacts/tmp/benchmark-proposals` to write isolated candidate outputs for review. A baseline change is then a normal reviewed repository change: add a schema-valid approval record, pin its SHA-256, append the exact prior lineage, increment the baseline version, update the canonical expected output/hash, and run the foundation profile. Approval JSON is immutable once tracked, and every relevant reachable transition is replayed so an invalid change cannot be laundered by a later commit. Never edit a golden output merely to make a regression green.
+The runner never overwrites a baseline. On a mismatch, use `--proposal-dir artifacts/tmp/benchmark-proposals` to write isolated candidate outputs for review. A baseline change is then a normal reviewed repository change: add a schema-valid approval record, pin its SHA-256, append the exact prior lineage, increment the baseline version, update the canonical expected output/hash, and run the foundation profile. Approval JSON is immutable once tracked. The complete reachable Git graph, every merge-parent edge, historical schemas, asset hashes, and global approval identities are checked so invalid changes cannot be hidden by rewrite/revert branches or later commits. Never edit a golden output merely to make a regression green.
 
 The initial cases are:
 

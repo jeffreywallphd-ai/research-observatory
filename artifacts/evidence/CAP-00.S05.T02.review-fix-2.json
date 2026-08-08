@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S05.T02",
+  "commit": "dd71a9dcc0c1021140ae101f9c1e73b7bd5bc984",
+  "baseCommit": "c959426487205bc3a883593169f9ca3c5484cc9f",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S05.T02.review-fix.json",
+    "reason": "Independent re-review proved that one-parent Git comparison allowed an invalid approval, baseline, or prompt transition to be trusted after an unrelated follow-up commit. This manifest replaces the immediate-transition claim with durable reachable-history replay evidence."
+  },
+  "changedFiles": [
+    ".gitattributes",
+    "artifacts/evidence/CAP-00.S05.T02.review-fix.json",
+    "docs/automation/benchmark-registry.md",
+    "docs/planning-implementation-plan.md",
+    "evaluation/README.md",
+    "evaluation/approvals/README.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_benchmark_registry.py",
+    "tools/benchmark_registry.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "The exact clean second review-fix commit passed all 13 foundation commands and all 96 foundation tests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_benchmark_registry -v",
+      "exitCode": 0,
+      "result": "All 15 focused tests passed, including four two-commit laundering scenarios and fail-closed Git inspection."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\benchmark_registry.py --repo .",
+      "exitCode": 0,
+      "result": "Both canonical benchmarks passed after replaying every relevant reachable registry and asset transition."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The authoritative backlog and evidence chain validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The runner enumerates every relevant commit reachable from HEAD, replays registry baseline and prompt transitions, verifies each commit's governed asset bytes against recorded SHA-256 values, and checks dirty worktree transitions against HEAD.",
+        "Approval JSON changes are additive-only across reachable history; rewrite, repin, removal, forged baseline history, and same-ID prompt mutation remain rejected after a later unrelated commit.",
+        "All evaluation files are byte-preserving under .gitattributes so exact registry hashes are independent of checkout line-ending policy."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fifteen focused tests include the reviewer's multi-commit attack sequence for approval rewrite plus repin, approval removal, baseline/history rewrite with a newly added approval, and same-identity prompt mutation.",
+        "A dedicated test proves Git inspection failures deny validation inside a checkout, while source exports without Git metadata retain static validation.",
+        "The complete exact-commit foundation suite has 96 passing tests."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Evaluation and automation documentation now describes durable reachable-history replay rather than adjacent-parent comparison.",
+        "The superseding evidence explicitly corrects the prior immediate-only immutability claim and keeps the second review disposition in the task audit."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce each two-commit laundering attack against dd71a9dcc0c1021140ae101f9c1e73b7bd5bc984 and inspect all-reachable-history, merge, worktree, and Git-failure behavior."
+  }
+}
