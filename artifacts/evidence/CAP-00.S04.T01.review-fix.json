@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S04.T01",
+  "commit": "1493a3cd6198286d6521b4c8cbc6230d68fc7f3c",
+  "baseCommit": "16cbd356f79458434af3993727701e59d9a8e02c",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S04.T01.json",
+    "reason": "Independent review demonstrated three semantic-validation bypasses in the first-pass identity, dependency, and approved-review claims. This manifest records the corrected implementation and regression evidence without rewriting the historical submission."
+  },
+  "changedFiles": [
+    "planning/README.md",
+    "tests/foundation/test_taskctl_schema.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts/tmp/CAP-00.S04.T01-review-fix-foundation.json",
+      "exitCode": 0,
+      "result": "The exact fix commit passed repository, runtime, architecture, agent-protocol, ADR, CI, formatting, lint, typing, packaging, 54 foundation tests, and canonical backlog checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The corrected validator accepted 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_schema -v",
+      "exitCode": 0,
+      "result": "All ten focused tests pass, including direct denials for missing slice dependency targets, out-of-parent slice and task IDs, and DONE reviews without reviewer/timestamp metadata."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Slice-level depends_on values now resolve strictly to existing task IDs and produce a diagnostic naming both the owning slice and missing target.",
+        "Semantic validation now rejects slice IDs outside their containing capability namespace and task IDs outside their containing slice namespace.",
+        "DONE tasks now require evidence plus an approved review with a non-empty reviewer and reviewed_at timestamp; the original structural and task dependency/cycle diagnostics remain intact."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Four reviewer-derived mutation tests reproduce and deny every requested bypass, increasing the focused backlog suite from six to ten tests.",
+        "The complete foundation suite increased from 50 to 54 tests and passes at the exact fix commit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "planning/README.md now documents parent-namespace, slice-dependency, and complete-review invariants precisely.",
+        "The fix is confined to backlog semantic validation, its focused tests, and its documentation; the immutable first-pass evidence and changes-requested review record preserve the audit trail."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must verify every required finding against commit 1493a3cd6198286d6521b4c8cbc6230d68fc7f3c before approval."
+  }
+}
