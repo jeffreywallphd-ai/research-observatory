@@ -10,7 +10,6 @@ from typing import Any
 
 import yaml
 
-
 REQUIRED_DOCUMENT_ANCHORS = {
     "AGENTS.md": [
         "## Default execution model",

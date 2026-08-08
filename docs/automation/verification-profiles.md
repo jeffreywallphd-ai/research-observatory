@@ -22,7 +22,7 @@ release-gated profile exits with code 3 and its gate reason.
 
 | Profile | Intended checks |
 |---|---|
-| `foundation` | Repository, runtime, architecture, agent protocol, ADR, unit, and backlog integrity. |
+| `foundation` | Repository, runtime, architecture, agent protocol, ADR, CI, Python quality, packaging-input smoke, unit, and backlog integrity. |
 | `desktop` | Desktop unit tests plus governed UI conformance. |
 | `service`, `data` | Core API/contracts and storage/migration behavior. |
 | `documents`, `search`, `ai`, `evidence`, `graph`, `novelty` | Capability-specific unit/integration suites. |

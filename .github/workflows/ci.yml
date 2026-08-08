@@ -1,0 +1,147 @@
+name: Continuous integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: pwsh
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  UV_NO_PROGRESS: "1"
+
+jobs:
+  foundation:
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Install pinned Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+      - name: Install locked Python dependencies
+        run: |
+          python -m pip install uv==0.12.2
+          uv sync --frozen --no-install-project
+      - name: Run foundation gate
+        run: .venv\Scripts\python.exe tools/verify.py --profile foundation --report artifacts/tmp/ci-foundation.json
+      - name: Retain foundation evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: foundation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/tmp/ci-foundation.json
+          if-no-files-found: warn
+          include-hidden-files: false
+          retention-days: 14
+
+  quality:
+    runs-on: windows-2025
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Install pinned Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+      - name: Install locked Python dependencies
+        run: |
+          python -m pip install uv==0.12.2
+          uv sync --frozen --no-install-project
+      - name: Run formatting, lint, and type gates
+        run: .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/ci-quality.json
+      - name: Retain quality evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: quality-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/tmp/ci-quality.json
+          if-no-files-found: warn
+          include-hidden-files: false
+          retention-days: 14
+
+  contracts:
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Install pinned Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+      - name: Install locked Python dependencies
+        run: |
+          python -m pip install uv==0.12.2
+          uv sync --frozen --no-install-project
+      - name: Run portable contract gate
+        run: .venv\Scripts\python.exe tools/verify.py --profile service --report artifacts/tmp/ci-contracts.json
+      - name: Retain contract evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: contracts-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/tmp/ci-contracts.json
+          if-no-files-found: warn
+          include-hidden-files: false
+          retention-days: 14
+
+  packaging-smoke:
+    runs-on: windows-2025
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Install pinned Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version-file: .python-version
+      - name: Install pinned Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+      - name: Install locked Python and Node.js dependencies
+        run: |
+          python -m pip install uv==0.12.2
+          uv sync --frozen --no-install-project
+          corepack enable
+          corepack prepare pnpm@11.20.0 --activate
+          corepack pnpm install --frozen-lockfile
+      - name: Install pinned Rust and fetch locked dependencies
+        run: |
+          rustup toolchain install 1.96.1 --profile minimal
+          cargo fetch --locked
+      - name: Run packaging input smoke gate
+        run: .venv\Scripts\python.exe tools/packaging_smoke_check.py --repo . --report artifacts/tmp/ci-packaging-smoke.json
+      - name: Retain packaging smoke evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: packaging-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/tmp/ci-packaging-smoke.json
+          if-no-files-found: warn
+          include-hidden-files: false
+          retention-days: 14

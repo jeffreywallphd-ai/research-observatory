@@ -9,7 +9,6 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
@@ -24,8 +23,20 @@ class VerificationRunnerTests(unittest.TestCase):
         self.assertEqual([], validate_contract(self.contract))
         self.assertEqual(
             {
-                "foundation", "desktop", "service", "data", "documents", "search", "ai",
-                "evidence", "graph", "novelty", "e2e-local", "security-local", "server", "cloud",
+                "foundation",
+                "desktop",
+                "service",
+                "data",
+                "documents",
+                "search",
+                "ai",
+                "evidence",
+                "graph",
+                "novelty",
+                "e2e-local",
+                "security-local",
+                "server",
+                "cloud",
             },
             set(self.contract["profiles"]),
         )
@@ -71,9 +82,7 @@ class VerificationRunnerTests(unittest.TestCase):
 
         ticks = iter([10.0, 10.1, 10.6, 10.7])
         with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
-            exit_code, report = execute_profile(
-                REPO, contract, "foundation", runner=runner, clock=lambda: next(ticks)
-            )
+            exit_code, report = execute_profile(REPO, contract, "foundation", runner=runner, clock=lambda: next(ticks))
 
         self.assertEqual(17, exit_code)
         self.assertEqual("FAIL", report["status"])

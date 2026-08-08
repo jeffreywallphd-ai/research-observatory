@@ -18,6 +18,12 @@ On Windows, from the repository root:
 .\bootstrap.cmd
 ```
 
+`bootstrap.cmd` prefers exact checkout-local runtimes under
+`.local/toolchains/` when they exist, then falls back to `PATH`. This supports a
+non-administrative setup without changing the machine-wide Node.js or Rust
+installation. The directory is ignored and must contain only downloaded
+toolchains and caches, never repository source or secrets.
+
 On macOS or Linux, from the repository root:
 
 ```sh

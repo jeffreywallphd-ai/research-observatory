@@ -13,5 +13,8 @@
 - `adr_new.py` - create a task-linked Proposed ADR and update the decision index in one guarded command.
 - `adr_check.py` - validate ADR states/index/task links and require matching changed ADRs for protected architecture paths.
 - `verify.py` - run composable task-facing verification profiles and emit command, duration, failure, and JSON report evidence.
+- `ci_check.py` - enforce pinned actions, least-privilege triggers, required CI jobs, and retained failure evidence.
+- `quality_check.py` - run governed Ruff formatting/lint and mypy checks with a structured report.
+- `packaging_smoke_check.py` - validate frozen packaging source inputs without producing or signing binaries.
 
 Run these from the repository root after the setup kit has installed `repo-seed/`. The external setup package is not the repository.

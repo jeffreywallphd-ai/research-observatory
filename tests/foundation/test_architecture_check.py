@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import copy
-import json
 import sys
 import unittest
 from pathlib import Path
-
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
@@ -22,9 +20,7 @@ class ArchitectureContractTests(unittest.TestCase):
 
     def test_missing_governed_module_is_rejected(self) -> None:
         contract = copy.deepcopy(self.contract)
-        contract["modules"] = [
-            module for module in contract["modules"] if module["path"] != "workers"
-        ]
+        contract["modules"] = [module for module in contract["modules"] if module["path"] != "workers"]
 
         errors = validate_contract(REPO, contract)
 
@@ -32,17 +28,14 @@ class ArchitectureContractTests(unittest.TestCase):
 
     def test_prohibited_reverse_dependency_is_rejected(self) -> None:
         contract = copy.deepcopy(self.contract)
-        service = next(
-            module for module in contract["modules"] if module["path"] == "services/core-api"
-        )
+        service = next(module for module in contract["modules"] if module["path"] == "services/core-api")
         service["allowedDependencies"].append("apps/desktop")
 
         errors = validate_contract(REPO, contract)
 
         self.assertTrue(
             any(
-                "('services/core-api', 'apps/desktop')" in error
-                and "both allowed and prohibited" in error
+                "('services/core-api', 'apps/desktop')" in error and "both allowed and prohibited" in error
                 for error in errors
             )
         )
