@@ -1424,29 +1424,37 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T21:08:08+00:00'
-      updated_at: '2026-08-08T21:29:52+00:00'
+      updated_at: '2026-08-08T21:56:48+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Implementation commit 23717be passed the clean 14-command foundation profile, 109 tests, focused
+      implementation_notes: 'Implementation commit 23717be passed the clean 14-command foundation profile, 109 tests, focused
         build-manifest boundaries, and exact clean provenance generation; submitted for independent review.
+
+        Review fixes complete at 91be762: clean Git-filter/raw-blob provenance, junction and parent-swap guards, CAP-07 model-manifest
+        denial, actionable mirror/changelog parsing, exact dates; 14 commands, 114 tests, and 13 focused tests pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S05.T03.json
         sha256: d4a4fb48427bb47afc45ffcbfeb01a6b27d4814aa89b83cbcb306dc8097b7c18
         commit: 23717be17f09ffe614829d7d1e1d44feff2b3d0d
         recorded_at: '2026-08-08T21:22:49+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S05.T03.review-fix.json
+        sha256: 12eee1cf2ecd28420661519fa42a20757c77caf68242a9c38a8c0e2eab1bee69
+        commit: 91be762a85bbecbf57f2a4b8d9eb2260a1653eb9
+        recorded_at: '2026-08-08T21:43:06+00:00'
       review:
         reviewer: codex-review
         result: changes-requested
-        reviewed_at: '2026-08-08T21:29:52+00:00'
-        notes: 'Required: bind clean provenance to stable Git/input snapshots; reject redirected or swapped output/component
-          parents; govern model-manifest inventory; fail actionably on malformed/redirected mirrors and changelog; enforce
-          exact unique dated release headings; regenerate ledger views.'
+        reviewed_at: '2026-08-08T21:56:48+00:00'
+        notes: 'Re-review of 91be762 required: close final status/input and path-replace TOCTOU windows; enforce canonical
+          changelog title/current/newest-first SemVer order; deny every file or redirect in the pre-CAP-07 reserved model
+          tree.'
       base_sha: 2f28abe2c25fdf911f338ae9e173223879964ac2
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T21:29:52+00:00'
-        expires_at: '2026-08-09T05:29:52+00:00'
+        claimed_at: '2026-08-08T21:56:48+00:00'
+        expires_at: '2026-08-09T05:56:48+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:

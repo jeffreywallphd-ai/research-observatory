@@ -208,6 +208,21 @@ class BuildManifestTests(unittest.TestCase):
                 "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-02-30\n",
                 "has an invalid date",
             ),
+            "changelog-title-order": (
+                "CHANGELOG.md",
+                "## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n\n# Changelog\n",
+                "first nonblank line",
+            ),
+            "changelog-version-order": (
+                "CHANGELOG.md",
+                "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n\n## [0.2.0] - 2026-08-07\n",
+                "newest to oldest",
+            ),
+            "changelog-non-semver": (
+                "CHANGELOG.md",
+                "# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n\n## [release-one] - 2026-08-07\n",
+                "not a semantic version",
+            ),
         }
         for label, (path, content, expected) in mutations.items():
             with self.subTest(label=label), tempfile.TemporaryDirectory() as temporary:
@@ -225,6 +240,17 @@ class BuildManifestTests(unittest.TestCase):
             _, _, _, errors = source_contract(root)
 
         self.assertTrue(any("cannot decode CHANGELOG.md" in error for error in errors))
+
+    def test_reserved_model_manifest_tree_rejects_every_entry_before_cap_07(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.contract_repo(temporary)
+            reserved = root / "packaging" / "model-manifests"
+            reserved.mkdir()
+            (reserved / "extensionless-manifest").write_text("premature\n", encoding="utf-8")
+
+            _, _, _, errors = source_contract(root)
+
+        self.assertTrue(any("must remain empty until CAP-07" in error for error in errors), errors)
 
     def test_clean_manifest_rejects_input_status_race(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -277,10 +303,42 @@ class BuildManifestTests(unittest.TestCase):
                 parent.rename(original)
                 parent.mkdir()
 
-            with self.assertRaisesRegex(ValueError, "changed during guarded write"):
+            with self.assertRaises((OSError, ValueError)):
                 guarded_atomic_write_json(root, destination, {"safe": True}, root, before_replace=swap_parent)
 
             self.assertFalse(destination.exists())
+
+    def test_dirty_manifest_rejects_mutation_during_final_status(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.contract_repo(temporary)
+            lock_path = root / "Cargo.lock"
+            lock_path.write_bytes(b"first dirty state\n")
+            status_calls = 0
+
+            def runner(command: list[str], **_: object) -> subprocess.CompletedProcess[bytes]:
+                nonlocal status_calls
+                arguments = command[1:]
+                if arguments[:2] == ["rev-parse", "--verify"]:
+                    stdout = b"a" * 40 + b"\n"
+                elif arguments[:3] == ["show", "-s", "--format=%cI"]:
+                    stdout = b"2026-08-08T17:05:34-04:00\n"
+                elif arguments[:3] == ["show", "-s", "--format=%ct"]:
+                    stdout = b"1786223134\n"
+                elif arguments[:2] == ["status", "--porcelain=v1"]:
+                    status_calls += 1
+                    if status_calls == 3:
+                        lock_path.write_bytes(b"second dirty state\n")
+                    stdout = b" M Cargo.lock\0"
+                else:
+                    return subprocess.CompletedProcess(command, 2, b"", b"unexpected Git command")
+                return subprocess.CompletedProcess(command, 0, stdout, b"")
+
+            manifest, errors = generate_build_manifest(root, runner=runner)
+
+        self.assertIsNone(manifest)
+        self.assertTrue(
+            any("governed input changed" in error or "Git command is unavailable" in error for error in errors), errors
+        )
 
     def test_output_rejects_redirected_scratch_root(self) -> None:
         with tempfile.TemporaryDirectory() as temporary, tempfile.TemporaryDirectory() as outside:

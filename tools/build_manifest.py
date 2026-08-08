@@ -12,8 +12,10 @@ import re
 import subprocess
 import tempfile
 import tomllib
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -46,6 +48,52 @@ class DirectoryGuard:
     parent: Path
     parent_identity: tuple[int, int]
     destination: Path
+
+
+@contextmanager
+def windows_path_locks(paths: list[Path], *, directories: bool) -> Iterator[None]:
+    """Hold Windows handles that deny rename/delete and, for files, writes."""
+    if os.name != "nt":
+        yield
+        return
+    import ctypes
+    from ctypes import wintypes
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    create_file = kernel32.CreateFileW
+    create_file.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create_file.restype = wintypes.HANDLE
+    close_handle = kernel32.CloseHandle
+    close_handle.argtypes = (wintypes.HANDLE,)
+    close_handle.restype = wintypes.BOOL
+    generic_read = 0x80000000
+    file_share_read = 0x00000001
+    file_share_write = 0x00000002
+    open_existing = 3
+    file_flag_open_reparse_point = 0x00200000
+    file_flag_backup_semantics = 0x02000000
+    flags = file_flag_open_reparse_point | (file_flag_backup_semantics if directories else 0)
+    share = file_share_read | (file_share_write if directories else 0)
+    invalid_handle = wintypes.HANDLE(-1).value
+    handles: list[int] = []
+    try:
+        for path in sorted(set(paths), key=lambda item: str(item).casefold()):
+            handle = create_file(str(path), generic_read, share, None, open_existing, flags, None)
+            if handle == invalid_handle:
+                raise ctypes.WinError(ctypes.get_last_error())
+            handles.append(handle)
+        yield
+    finally:
+        for handle in reversed(handles):
+            close_handle(handle)
 
 
 def canonical_json_bytes(value: Any) -> bytes:
@@ -198,6 +246,9 @@ def changelog_errors(changelog: str, version: str) -> list[str]:
     lines = changelog.splitlines()
     if lines.count("# Changelog") != 1:
         errors.append("CHANGELOG.md must contain exactly one '# Changelog' title")
+    first_content = next((index for index, line in enumerate(lines) if line.strip()), None)
+    if first_content is None or lines[first_content] != "# Changelog":
+        errors.append("CHANGELOG.md '# Changelog' must be the first nonblank line")
     release_pattern = re.compile(r"^## \[([^\]]+)\] - (\d{4}-\d{2}-\d{2})$")
     heading_positions: list[tuple[str, int]] = []
     unreleased_positions: list[int] = []
@@ -211,6 +262,8 @@ def changelog_errors(changelog: str, version: str) -> list[str]:
                 errors.append(f"CHANGELOG.md has an invalid release heading: {line!r}")
                 continue
             release_version, release_date = match.groups()
+            if not SEMVER.fullmatch(release_version):
+                errors.append(f"CHANGELOG.md release heading is not a semantic version: {release_version}")
             try:
                 dt.date.fromisoformat(release_date)
             except ValueError:
@@ -218,6 +271,8 @@ def changelog_errors(changelog: str, version: str) -> list[str]:
             heading_positions.append((release_version, index))
     if len(unreleased_positions) != 1:
         errors.append("CHANGELOG.md must contain exactly one '## [Unreleased]' heading")
+    elif first_content is not None and unreleased_positions[0] < first_content:
+        errors.append("CHANGELOG.md Unreleased must appear after the title")
     versions = [release_version for release_version, _ in heading_positions]
     if versions.count(version) != 1:
         errors.append(f"CHANGELOG.md must contain exactly one dated heading for product version {version}")
@@ -230,7 +285,25 @@ def changelog_errors(changelog: str, version: str) -> list[str]:
         and unreleased_positions[0] > min(index for _, index in heading_positions)
     ):
         errors.append("CHANGELOG.md Unreleased must appear before dated release headings")
+    valid_versions = [release_version for release_version in versions if SEMVER.fullmatch(release_version)]
+    if valid_versions and valid_versions[0] != version:
+        errors.append(f"CHANGELOG.md first dated release must be current product version {version}")
+    for newer, older in pairwise(valid_versions):
+        if semver_key(newer) <= semver_key(older):
+            errors.append("CHANGELOG.md dated releases must be unique and ordered newest to oldest")
+            break
     return errors
+
+
+def semver_key(version: str) -> tuple[int, int, int, int, tuple[tuple[int, int | str], ...]]:
+    core, separator, prerelease = version.partition("-")
+    major, minor, patch = (int(part) for part in core.split("."))
+    if not separator:
+        return (major, minor, patch, 1, ())
+    identifiers: list[tuple[int, int | str]] = []
+    for identifier in prerelease.split("."):
+        identifiers.append((0, int(identifier)) if identifier.isdigit() else (1, identifier))
+    return (major, minor, patch, 0, tuple(identifiers))
 
 
 def source_contract(
@@ -362,10 +435,16 @@ def source_contract(
     elif model_inputs:
         errors.append("modelManifests must remain empty until CAP-07 installs the governed model-manifest contract")
     model_root = repo / MODEL_MANIFEST_ROOT
-    if model_root.exists() and any(path.is_file() for path in model_root.rglob("*.json")):
-        errors.append(
-            "model-manifest files require the governed CAP-07 contract before they can enter build provenance"
-        )
+    if model_root.exists():
+        try:
+            if model_root.resolve(strict=True) != model_root or not model_root.is_dir():
+                raise ValueError("reserved root is redirected or is not a directory")
+            reserved_entries = list(model_root.iterdir())
+        except (OSError, ValueError) as exc:
+            errors.append(f"model-manifest reserved root is unsafe before CAP-07: {exc}")
+        else:
+            if reserved_entries:
+                errors.append("the model-manifest reserved root must remain empty until CAP-07 installs its contract")
 
     changelog, changelog_error = load_text(repo, "CHANGELOG.md", snapshots)
     if changelog_error or changelog is None:
@@ -584,15 +663,16 @@ def generate_build_manifest(repo: Path, runner: GitRunner = subprocess.run) -> t
     if build_schema_error or not isinstance(build_schema, dict):
         return None, [f"build manifest schema: {build_schema_error or 'schema must be an object'}"]
     errors.extend(schema_errors(manifest, build_schema, "buildManifest"))
-    source_after, source_after_errors = git_source(repo, runner)
-    errors.extend(source_after_errors)
-    if source_after is not None:
-        errors.extend(stable_source_errors(source, source_after))
-    errors.extend(snapshot_integrity_errors(repo, snapshots, source, runner))
-    source_final, source_final_errors = git_source(repo, runner)
-    errors.extend(source_final_errors)
-    if source_final is not None:
-        errors.extend(stable_source_errors(source, source_final))
+    try:
+        with windows_path_locks([repo.joinpath(*PurePosixPath(path).parts) for path in snapshots], directories=False):
+            for _ in range(2):
+                source_check, source_check_errors = git_source(repo, runner)
+                errors.extend(source_check_errors)
+                if source_check is not None:
+                    errors.extend(stable_source_errors(source, source_check))
+                errors.extend(snapshot_integrity_errors(repo, snapshots, source, runner))
+    except OSError as exc:
+        errors.append(f"cannot lock governed build inputs for a stable snapshot: {exc}")
     return (manifest if not errors else None), errors
 
 
@@ -685,8 +765,17 @@ def guarded_atomic_write_json(
     allowed_root: Path,
     before_replace: BeforeReplace | None = None,
 ) -> None:
-    guard = destination_guard(repo, destination, allowed_root)
-    atomic_write_json(destination, value, guard, before_replace)
+    repo = repo.resolve(strict=True)
+    parent = destination.absolute().parent
+    relative_parent = parent.relative_to(repo)
+    directory_chain = [repo]
+    cursor = repo
+    for part in relative_parent.parts:
+        cursor /= part
+        directory_chain.append(cursor)
+    with windows_path_locks(directory_chain, directories=True):
+        guard = destination_guard(repo, destination, allowed_root)
+        atomic_write_json(destination, value, guard, before_replace)
 
 
 def synchronize_component_manifests(repo: Path) -> list[str]:
