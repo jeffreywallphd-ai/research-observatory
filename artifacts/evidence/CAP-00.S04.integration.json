@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-00.S04",
+  "stateCommit": "f4aec062b2d139fc0554fd1826d49d0402d1fdf7",
+  "outcome": "The YAML plan is validated and can be queried or updated safely by Codex and reviewers.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-00.S04.T01",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-00.S04.T01.json",
+          "sha256": "6135778c06aac38142d0c42183a3480b1831ea03cbc20757d310ebd0ff7f6fe2"
+        },
+        {
+          "path": "artifacts/evidence/CAP-00.S04.T01.review-fix.json",
+          "sha256": "13dc52e5a73079863b64690b91ec92452079e767d657afa75a8a65e39e7b16b8"
+        }
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-00.S04.T02",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-00.S04.T02.json",
+          "sha256": "f4ed0a28573d68494951ff53df42aadb4ac10460e86e0bab78767b245fe99a97"
+        },
+        {
+          "path": "artifacts/evidence/CAP-00.S04.T02.review-fix.json",
+          "sha256": "6a05d60163cc577ed351d6698c360262e861b34e158697162408111e780ea086"
+        },
+        {
+          "path": "artifacts/evidence/CAP-00.S04.T02.review-fix-2.json",
+          "sha256": "f4fbc2615d8827fcf61eec75deda022f6e1e1fc7f697a4749a4db526e4c06622"
+        }
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-00.S04.T03",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-00.S04.T03.json",
+          "sha256": "5e48562bac6746fabf856fbc9f8559d115458a7c296a2ae85ba3e5c144c97c95"
+        },
+        {
+          "path": "artifacts/evidence/CAP-00.S04.T03.review-fix.json",
+          "sha256": "bbeb2572818b71abae716027a648c7eb726766a599ae5e52e7ce6aa8a19bbb35"
+        }
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts\\tmp\\CAP-00.S04-integration-foundation.json",
+      "exitCode": 0,
+      "result": "At the approved aggregate commit, all foundation commands passed, including executable backlog schema/semantics, mandatory generated-view drift checking, Python quality, packaging smoke, 73 foundation tests, and stored evidence validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_backlog_views -v",
+      "exitCode": 0,
+      "result": "All 29 focused tests passed across structural/semantic schema rules, owned workflow transitions and evidence integrity, concurrency recovery, deterministic plan views, corrupt-byte repair, and path confinement."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate",
+      "exitCode": 0,
+      "result": "The canonical ledger and all attached evidence validated for 20 capabilities, 117 slices, 356 tasks, and 12 release gates, with all three S04 tasks DONE and independently approved."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The comprehensive implementation plan and compact status summary exactly matched one immutable authoritative YAML snapshot."
+    }
+  ],
+  "integratedBehavior": [
+    "The Draft 2020-12 schema and semantic validator preserve permanent Capability/Slice/Task identity, parent namespaces, timestamps, dependencies, cycles, reviews, leases, release gates, and stored evidence integrity with precise diagnostics.",
+    "taskctl selects only eligible work, binds execution to real Git branch/HEAD/worktree identity, enforces campaign and task ownership, dependencies, profile/platform, legal transitions, durable release gates, independent reviews, and compare-and-swap atomic ledger writes.",
+    "Exact evidence uses one immutable byte snapshot, truthful full changed-file scope, named passing checks, exact criterion mappings, clean worktree state, cryptographic references, explicit supersession, and a narrowly pinned legacy residual boundary.",
+    "The generated comprehensive plan and status summary derive counts and states from one source snapshot, use canonical UTF-8 bytes, reject manual/corrupt/path-redirected output, repair ordinary partial updates, and are mandatory in the foundation profile."
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The two generated Markdown outputs are individually atomic rather than transactionally replaced as a pair; a rerun detects and repairs a partial pair before foundation verification can pass."
+    ]
+  }
+}

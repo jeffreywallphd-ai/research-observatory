@@ -1017,7 +1017,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-00.S03.T01
-    status: IN_PROGRESS
+    status: DONE
     tasks:
     - id: CAP-00.S04.T01
       capability_id: CAP-00
@@ -1216,11 +1216,14 @@ capabilities:
     platform_targets:
     - platform-neutral
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: codex-integration-review
+      reviewed_at: '2026-08-08T19:09:06+00:00'
+      evidence:
+      - artifacts/evidence/CAP-00.S04.integration.json
+      notes: 'Approved at f4aec06: all seven task-evidence attachments and review/supersession chains validate; 29 focused
+        and 73 foundation tests pass; schema, taskctl authorization/evidence/CAS, and deterministic views compose without
+        false-green paths.'
   - id: CAP-00.S05
     title: Test corpus, benchmark registry, and release metadata
     outcome: Development begins with reusable fixtures and traceable versions rather than ad hoc documents or unverifiable
@@ -1233,7 +1236,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-00.S04.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-00.S05.T01
       capability_id: CAP-00
@@ -1261,11 +1264,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-08T19:09:06+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
