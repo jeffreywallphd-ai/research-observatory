@@ -17,6 +17,7 @@ target/
 *.pdb
 
 # Local tooling and secrets
+/.local/
 .env
 .env.*
 !.env.example
