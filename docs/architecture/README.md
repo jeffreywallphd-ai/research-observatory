@@ -70,6 +70,10 @@ The exhaustive allowed and prohibited pairs, module purposes, and stable
 interface owners live in the JSON contract and are enforced by
 `python tools/architecture_check.py --repo .`.
 
+Changes to protected module or interface paths also require an indexed ADR in
+the same change set; see [`../adr/README.md`](../adr/README.md) and
+`python tools/adr_check.py --repo . --base <merge-base> --head HEAD`.
+
 ## One client, three project-home profiles
 
 | Profile | Authority and boundary | Delivery state |

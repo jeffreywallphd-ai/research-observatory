@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "architecture-protected-path-contract",
+  "paths": [
+    {
+      "pattern": "architecture-boundaries.json",
+      "reason": "The repository dependency matrix and stable-interface inventory are architecture authority."
+    },
+    {
+      "pattern": "architecture-protected-paths.json",
+      "reason": "Changing the ADR enforcement boundary is itself an architecture decision."
+    },
+    {
+      "pattern": "repository-structure.json",
+      "reason": "Adding, removing, or moving governed modules changes the architecture map."
+    },
+    {
+      "pattern": "docs/architecture/source/systems-design.md",
+      "reason": "The systems design is the architecture baseline when no accepted ADR supersedes it."
+    },
+    {
+      "pattern": "packages/contracts/**",
+      "reason": "Portable API, command, event, schema, and bundle contracts are protected interfaces."
+    },
+    {
+      "pattern": "apps/desktop/**/api/**",
+      "reason": "Desktop-side transport and generated API seams are protected interfaces."
+    },
+    {
+      "pattern": "services/core-api/**/ports/**",
+      "reason": "Application ports preserve replaceable infrastructure and deployment profiles."
+    },
+    {
+      "pattern": "workers/**/contracts/**",
+      "reason": "Worker activity inputs, outputs, cancellation, progress, and failure classes are protected interfaces."
+    }
+  ]
+}
