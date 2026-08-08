@@ -56,6 +56,11 @@ def sha256(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def git_blob_sha1(payload: bytes) -> str:
+    header = f"blob {len(payload)}\0".encode("ascii")
+    return hashlib.sha1(header + payload, usedforsecurity=False).hexdigest()
+
+
 def identified_set(entries: list[dict[str, Any]]) -> dict[str, Any]:
     ordered = sorted(entries, key=lambda item: (str(item.get("id")), str(item.get("path"))))
     return {"setId": f"sha256:{sha256(canonical_json_bytes(ordered))}", "entries": ordered}
@@ -370,9 +375,11 @@ def source_contract(
     return version_document, inputs, component_manifests, errors
 
 
-def git_command(repo: Path, arguments: list[str], runner: GitRunner) -> tuple[bytes | None, str | None]:
+def git_command(
+    repo: Path, arguments: list[str], runner: GitRunner, input_bytes: bytes | None = None
+) -> tuple[bytes | None, str | None]:
     try:
-        result = runner(["git", *arguments], cwd=repo, capture_output=True, check=False)
+        result = runner(["git", *arguments], cwd=repo, capture_output=True, check=False, input=input_bytes)
     except OSError as exc:
         return None, f"Git command is unavailable: {exc}"
     if result.returncode != 0:
@@ -489,12 +496,15 @@ def snapshot_integrity_errors(
             errors.append(f"governed input changed after capture: {path}")
             continue
         if not source["dirty"]:
-            checkout_bytes, git_error = git_command(
-                repo, ["cat-file", "--filters", f"--path={path}", f"HEAD:{path}"], runner
+            committed, committed_error = git_command(repo, ["cat-file", "blob", f"HEAD:{path}"], runner)
+            filtered_hash, filter_error = git_command(
+                repo, ["hash-object", f"--path={path}", "--stdin"], runner, captured
             )
-            if git_error or checkout_bytes is None:
-                errors.append(f"clean build input is not available at HEAD: {path}: {git_error}")
-            elif checkout_bytes != captured:
+            if committed_error or committed is None:
+                errors.append(f"clean build input is not available at HEAD: {path}: {committed_error}")
+            elif filter_error or filtered_hash is None:
+                errors.append(f"cannot apply Git checkout filters to clean build input {path}: {filter_error}")
+            elif filtered_hash.decode("ascii", errors="replace").strip() != git_blob_sha1(committed):
                 errors.append(f"clean build input differs from the committed HEAD checkout: {path}")
     return errors
 
