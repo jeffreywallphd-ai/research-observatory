@@ -22,6 +22,21 @@ Before start:
 
 After start, execute tasks and slices continuously. Do not request approval for ordinary debugging, code organization within approved boundaries, documented fallbacks, independent review, or transitions to the next approved slice.
 
+### 2.1 Approval prompt and full-campaign meaning
+
+The capability-start approval prompt must enumerate or link the capability and
+all contained slice decisions, name their single immutable approval commit, and
+ask for one approval of the complete packet. `planctl ready CAP-XX
+--require-approved` must fail if any slice is missing, unresolved, unapproved,
+or approved at a different plan state. Partial slice approval never starts a
+campaign.
+
+One campaign run is durable and resumable. A process or session may restart, but
+the active campaign remains the execution unit until every slice and the
+capability qualification are complete or a permitted pause condition occurs.
+Slice completion is an internal integration/review boundary, not a new human
+approval prompt.
+
 ## 3. Permitted pause conditions
 
 Pause only for:
@@ -62,6 +77,13 @@ The generated site adds `Other` to every decision without modifying canonical pl
 ## 5. Task and slice execution
 
 A task claim records agent, branch, worktree, base SHA, lease, and expected scope. A task contract includes goal, non-goals, dependencies, inspect/change scopes, canonical sources, criteria, required checks, security class, human gates, and evidence outputs.
+
+At each iteration select only the dependency-eligible `READY` task in the active
+capability. State its permitted scope from the task deliverables and acceptance
+criteria, run its declared verification commands plus changed-path checks, bind
+evidence to the implementation commit, complete required review, and then move
+to the next eligible task. Do not use a globally READY task to leave an active
+campaign.
 
 A slice completes only after:
 

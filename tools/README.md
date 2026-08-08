@@ -9,6 +9,7 @@
 - `runtime_check.py` - validate exact runtime/package-manager pins and report actionable mismatches.
 - `bootstrap.py` - verify prerequisites, perform frozen installs, generate local development configuration, and run the foundation smoke gate.
 - `architecture_check.py` - validate repository-area purposes, module dependency rules, stable interfaces, and deployment-profile boundaries.
+- `agent_protocol_check.py` - enforce atomic all-slice approval, durable capability execution, READY-only selection, scope/check/evidence rules, and task briefing.
 - `verify.py` - run the bootstrap `foundation` profile; CAP-00.S03 expands it into the complete profile runner.
 
 Run these from the repository root after the setup kit has installed `repo-seed/`. The external setup package is not the repository.
