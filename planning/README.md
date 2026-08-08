@@ -15,6 +15,19 @@ Capability
 - `capability-plans/CAP-XX.md` resolves cross-slice and material implementation decisions.
 - `slice-plans/CAP-XX/*.md` expands the existing tasks into a coherent implementation and verification contract.
 - `review-site/` is generated from the Markdown plans and is not a parallel authority.
+- `../docs/planning-implementation-plan.md` and `status-summary.md` are generated from `backlog.yaml`; every section is read-only and `foundation` rejects drift.
+
+Regenerate and verify the human-readable backlog views after every authoritative
+ledger mutation:
+
+```bash
+python tools/backlog_views.py --repo .
+python tools/backlog_views.py --repo . --check
+```
+
+Generation writes only when content changes, so repeating it against unchanged
+YAML preserves the files byte-for-byte and does not change modification times.
+Edit `backlog.yaml`, never a generated view.
 
 ## Default planning and execution lifecycle
 

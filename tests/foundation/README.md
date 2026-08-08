@@ -9,3 +9,6 @@ governance failures before application toolchains are bootstrapped.
 `test_bootstrap.py` models a clean checkout with controlled command results. It
 verifies Windows command selection, the documented generated-file boundary, and
 fail-closed behavior without resolving dependencies during the unit test.
+
+`test_backlog_views.py` verifies source-derived totals and statuses, idempotent
+no-rewrite generation, generated-file drift detection, and repair of manual edits.
