@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7f65a0230cb6eddabd26cf82837473f41bcb4a0dad88e2a35db15c20581710e3
+source_sha256: b1053db6219e79f77b4efc50d74fa0c0892faa400c1b46900a19f0c52b1336cf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -835,13 +835,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S06.T02 - Implement UI-reference integrity and approval validation
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S06.T01`, `CAP-00.S03.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Validate approval status, governed-file hashes, generator reproducibility, page inventory, capability coverage, workflow page references, local links, shared assets, and prohibited hosted-scope additions.
 

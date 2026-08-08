@@ -259,7 +259,7 @@ def metric(label: str, value: str, unit: str, delta: str, icon_name: str = "data
 
 
 def write(name: str, html: str) -> None:
-    (ROOT / name).write_text(html, encoding="utf-8")
+    (ROOT / name).write_text(html, encoding="utf-8", newline="\n")
 
 def page_home() -> str:
     actions = button("Edit workflow & intent", "intent-contract.html", icon_name="document") + button("Continue workflow", "study-design.html", kind="primary", icon_name="arrow-right")
@@ -1152,9 +1152,9 @@ def main() -> None:
     }
     for name, html in pages.items():
         write(name, html)
-    (ROOT / "STYLE_GUIDE.md").write_text(style_guide_markdown(), encoding="utf-8")
-    (ROOT / "README.md").write_text(readme_markdown(), encoding="utf-8")
-    (ROOT / "PAGE_INVENTORY.md").write_text(inventory_markdown(), encoding="utf-8")
+    (ROOT / "STYLE_GUIDE.md").write_text(style_guide_markdown(), encoding="utf-8", newline="\n")
+    (ROOT / "README.md").write_text(readme_markdown(), encoding="utf-8", newline="\n")
+    (ROOT / "PAGE_INVENTORY.md").write_text(inventory_markdown(), encoding="utf-8", newline="\n")
     print(f"Generated {len(pages)} HTML files in {ROOT}")
 
 

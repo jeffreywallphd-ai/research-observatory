@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 7f65a0230cb6eddabd26cf82837473f41bcb4a0dad88e2a35db15c20581710e3
+source_sha256: b1053db6219e79f77b4efc50d74fa0c0892faa400c1b46900a19f0c52b1336cf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -47,7 +47,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 303 |
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 16 |
 | `DEFERRED` | 36 |
 
@@ -55,7 +55,7 @@ manual_edit: prohibited
 
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
-| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 5/6 | 16/19 | - |
+| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 5/6 | 16/19 | `CAP-00.S06.T02` |
 | `CAP-01` Windows-first desktop shell and supervised local runtime | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
@@ -95,4 +95,6 @@ manual_edit: prohibited
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `CAP-00.S06.T02` Implement UI-reference integrity and approval validation | `IN_PROGRESS` | codex | `codex/cap-00-delivery-foundation` |
