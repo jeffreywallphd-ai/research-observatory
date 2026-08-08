@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+
+# Node and frontend builds
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Rust and native builds
+target/
+*.pdb
+
+# Local tooling and secrets
+.env
+.env.*
+!.env.example
+*.log
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Repository-generated scratch output
+artifacts/tmp/

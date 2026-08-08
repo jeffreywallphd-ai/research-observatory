@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0",
+  "document_type": "repository-structure-contract",
+  "scope": "W0-W5 local Windows-first monorepo skeleton",
+  "modules": [
+    {
+      "path": "apps/desktop",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Tauri and React desktop composition, routes, shell, and local user experience."
+    },
+    {
+      "path": "services/core-api",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Packaged Python Core API modular monolith and local application composition root."
+    },
+    {
+      "path": "workers",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Isolated, idempotent CPU, GPU, and I/O activities invoked through stable contracts."
+    },
+    {
+      "path": "packages/contracts",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Portable schemas, OpenAPI sources, events, and generated client contracts."
+    },
+    {
+      "path": "packages/ui-tokens",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Generated and validated Academic Minimal semantic design tokens."
+    },
+    {
+      "path": "packages/ui-components",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Reusable accessible UI components that consume governed tokens and contracts."
+    },
+    {
+      "path": "tests/foundation",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Repository structure, generated-state, and automation boundary tests."
+    },
+    {
+      "path": "tests/desktop",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Desktop shell, accessibility, interaction, and platform tests."
+    },
+    {
+      "path": "tests/contracts",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Portable schema and cross-process compatibility tests."
+    },
+    {
+      "path": "tests/e2e",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Local end-to-end workflow, denial, cancellation, restart, and recovery tests."
+    },
+    {
+      "path": "tests/packaging",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Install, upgrade, repair, rollback, and removal qualification tests."
+    },
+    {
+      "path": "packaging/windows",
+      "owner": "Research Observatory maintainers",
+      "boundary": "Windows packaging inputs and policy; generated or signed binaries are never committed."
+    }
+  ],
+  "deferred_implementation_paths": [
+    "apps/admin-console",
+    "deploy/helm",
+    "infrastructure/terraform",
+    "services/tenancy",
+    "services/sso",
+    "services/postgresql",
+    "services/temporal"
+  ],
+  "forbidden_tracked_binary_suffixes": [
+    ".dll",
+    ".dylib",
+    ".exe",
+    ".node",
+    ".pdb",
+    ".pyc",
+    ".pyo",
+    ".so"
+  ],
+  "forbidden_tracked_generated_directories": [
+    "__pycache__",
+    ".venv",
+    "build",
+    "dist",
+    "node_modules",
+    "target"
+  ]
+}

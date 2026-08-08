@@ -429,7 +429,7 @@ capabilities:
     - LAB
     - ALL
     depends_on: []
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-00.S01.T01
       capability_id: CAP-00
@@ -461,11 +461,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: August 7, 2026
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/cap-00-delivery-foundation
+      started_at: '2026-08-08T15:46:16+00:00'
+      updated_at: '2026-08-08T15:46:16+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -475,10 +475,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 47d460a8109acdd82237c2de37b18a79c2bb3853
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-08T15:46:16+00:00'
+        expires_at: '2026-08-08T23:46:16+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
     - id: CAP-00.S01.T02
@@ -1452,9 +1455,23 @@ capabilities:
       evidence: []
       notes: null
   execution_mode: capability_campaign
-  campaign: null
+  campaign:
+    status: ACTIVE
+    owner: codex
+    branch: codex/cap-00-delivery-foundation
+    worktree: C:/workspace/research-observatory
+    base_sha: 47d460a8109acdd82237c2de37b18a79c2bb3853
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-08-08T15:46:15+00:00'
+    updated_at: '2026-08-08T15:46:15+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-08T15:46:15+00:00'
+      expires_at: '2026-08-09T15:46:15+00:00'
   completion:
-    status: PENDING
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
