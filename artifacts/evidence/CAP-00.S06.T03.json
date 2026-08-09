@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S06.T03",
+  "commit": "5ef232e641d6ad4999a6b7c7c31315ad758820cb",
+  "baseCommit": "55a0fe56bb0f1eddacf5ebbcc27093913c62277b",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    ".github/pull_request_template.md",
+    ".github/workflows/ci.yml",
+    "architecture-protected-paths.json",
+    "design/README.md",
+    "design/ui-change.schema.json",
+    "docs/adr/ADR-0003-protect-design-first-ui-change-controls-and-immutable-lineage.md",
+    "docs/adr/index.json",
+    "docs/automation/README.md",
+    "docs/automation/design-first-ui-changes.md",
+    "docs/automation/ui-reference-validation.md",
+    "docs/planning-implementation-plan.md",
+    "packaging/build-inputs.json",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "tests/foundation/README.md",
+    "tests/foundation/test_adr_check.py",
+    "tests/foundation/test_ci_check.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/README.md",
+    "tools/ci_check.py",
+    "tools/ui_change_gate.py",
+    "ui-change-policy.json",
+    "verification-profiles.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "The exact clean commit passed all 16 mandatory foundation commands and all 138 foundation tests. Build provenance reported 0.1.0+g5ef232e clean; UI reference identity, generator reproducibility, ADR governance, CI policy, quality, packaging, backlog, and the mandatory UI-change gate all passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_ui_change_gate tests.foundation.test_ci_check tests.foundation.test_taskctl_schema tests.foundation.test_adr_check -v",
+      "exitCode": 0,
+      "result": "All 29 focused design-first, CI history/base, task-lineage schema, and protected-ADR tests passed at the exact evidence commit."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 55a0fe56bb0f1eddacf5ebbcc27093913c62277b --head 5ef232e641d6ad4999a6b7c7c31315ad758820cb",
+      "exitCode": 0,
+      "result": "The exact claimed base-to-head task range passed with no product UI implementation change and no undeclared UI contract."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\adr_check.py --repo . --base 55a0fe56bb0f1eddacf5ebbcc27093913c62277b --head 5ef232e641d6ad4999a6b7c7c31315ad758820cb",
+      "exitCode": 0,
+      "result": "ADR-0003 and the indexed decision registry cover all protected enforcement-control changes across the exact 26-file task range."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The authoritative ledger and generated planning views validate without drift before evidence attachment."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Every governed user-interface implementation range is derived from immutable base/head Git trees and must have exactly one task-bound contract with exact changed-file coverage.",
+        "Intentional design changes require a different approved reference from the base, exact governed package hashes, a human approval commit, and strict approval-before-every-implementation-commit ordering across full history.",
+        "Missing contracts, reuse of the base reference, approval and implementation in the same commit, incomplete file scope, policy weakening, and protected-control changes in the same range fail focused regressions."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The approved-reference-implementation path and defect-restoration path both pass using the unchanged current approved reference package.",
+        "Defect restoration must cite the exact reference lineage and provide both a defect statement, expected approved behavior, and focused evidence; the schema and Git-tree validator reject incomplete or mismatched metadata."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Intentional changes require approval_kind human, a canonical human identity, a human-and-agent-review task gate, and a normalized approver identity distinct from the implementation agent.",
+        "A focused adversarial test proves agent:owner cannot use human:owner to self-approve, and another proves approval must strictly precede implementation.",
+        "The repository human review gate remains the identity-authentication boundary; the machine gate binds that declared identity to the exact approved package and immutable commit ordering."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "human-and-agent-review",
+    "note": "The repository owner approved the CAP-00 campaign and its slice decisions. Independent technical review must now validate identity separation, history and merge handling, exact reference/package/task binding, control anti-tamper coverage, CI base selection, ADR scope, and the evidence manifest before task approval."
+  }
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a8cbbc69407c591a8cb1bd5ea22c605a9f9a3687c567b79023da2c9d0a28afce
+source_sha256: 1e951a552929f6f3eb429966a592340134382d29d5ede7c52fac7d158256c7bd
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -892,6 +892,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-00.S06.T03.json` at `5ef232e641d6ad4999a6b7c7c31315ad758820cb`
 
 #### - [ ] CAP-00.S06.T04 - Implement UI implementation-conformance verification
 
