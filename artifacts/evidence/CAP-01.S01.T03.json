@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S01.T03",
+  "commit": "dae49529e536663d01bdb5cf7e3de40fdfaf24a3",
+  "baseCommit": "891a42475a7e69c1af8a7392a349e46926aed125",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    "apps/desktop/README.md",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/projectSelection.test.ts",
+    "apps/desktop/src/app/projectSelection.ts",
+    "artifacts/evidence/ui-change/CAP-01.S01.T03.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S01.T03-desktop.json",
+      "exitCode": 0,
+      "result": "The exact implementation commit passed all 24 desktop-profile commands in 464.86 seconds, including 146 foundation tests, 22 desktop tests, 13 renderer tests within the application command, all native/application commands, 32 routes, 139 browser workflow cases, 390 keyboard cases, 64 responsive cases, and 64 visual captures. Report SHA-256: fc5e08e294efe566b636dd8131b02247bb2375968391ac07c4147ac6a3d63961."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\CAP-01.S01.T03-application.json",
+      "exitCode": 0,
+      "result": "The production bundle presents four deterministic recents and one explicit missing-location state; verifies locate/open/remove/create intent boundaries; persists canonical removal across reload; reaches an explicit empty state; recovers malformed versioned preferences without rewriting them; preserves visible state on write failure; and makes zero unexpected requests. Report SHA-256: 689cdebe6f69f861095b7b9ecf6c9f593a6de999beb4e755e006631509269f2f."
+    },
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop test",
+      "exitCode": 0,
+      "result": "Thirteen strict renderer tests pass, including deterministic ordering, duplicate/invalid catalog denial, strict preference schema recovery, canonical idempotent removal, explicit repair, and denial of opening a missing project."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base 891a42475a7e69c1af8a7392a349e46926aed125 --head HEAD",
+      "exitCode": 0,
+      "result": "The two-file renderer implementation is exactly bound to approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5... with no approved-reference or protected-control drift."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --check",
+      "exitCode": 0,
+      "result": "The authoritative backlog, campaign state, task claim, UI lineage, and generated planning views are synchronized and valid."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Recent entries use canonical UTC ordering with a stable ID tie-break, reject duplicate or malformed IDs, and apply a strict version-1 removed-ID preference record in canonical order.",
+        "Removal is persisted before the visible card disappears; reload preserves the removal, and a storage write failure leaves the card visible with an accessible error status.",
+        "The unavailable fixture exposes only Locate project and Remove. Open and Create emit opaque explicit intents and fail closed until CAP-02 project authority handles them; no path can treat the missing entry as openable or create a replacement.",
+        "Removing all entries renders the approved-style No recent projects state with an explicit link to the New Project form."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Pure tests cover success, canonical order, duplicate/malformed catalog denial, schema-version recovery, idempotent persistence, unavailable-location repair, and invalid state/action pairs.",
+        "The real production bundle exercises reload persistence, malformed-state recovery without rewrite, controlled storage failure, empty state, and exact open/locate/remove/create events across the approved Projects and New Project pages."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The README documents the versioned storage contract, opaque event API, fail-closed CAP-02 handoff, accessible status behavior, and exclusion of paths/content/credentials from preferences and diagnostics.",
+        "Renderer code owns only local UI preferences and project-selection intent composition. It imports no filesystem, service, storage implementation, credential, or project lifecycle authority.",
+        "The task-bound UI evidence preserves the approved reference identity; no reference bytes, dependencies, native privileges, or later CAP-01/CAP-02 behavior changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review must exercise the actual production bundle through available, missing, removal, reload, empty, malformed-preference, and failed-write states; confirm no implicit replacement or renderer project authority; and validate exact evidence/UI scope before approval."
+  }
+}

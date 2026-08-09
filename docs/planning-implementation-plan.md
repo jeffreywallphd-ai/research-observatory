@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c2838b0a1aee9b98885fa66806c463e4945cfc1bbaa417c02326c16a2cbf064b
+source_sha256: 86c6fa814a50ee88f67f5254efd2347b46e6f5fcee565e8110ee71a2cb85cbcf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1045,6 +1045,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile desktop
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-01.S01.T03.json` at `dae49529e536663d01bdb5cf7e3de40fdfaf24a3`
 
 ### CAP-01.S02 - Desktop design system and accessibility foundation
 
