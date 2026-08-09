@@ -27,6 +27,26 @@
       "reason": "The design-first gate enforces human approval separation and immutable reference-before-code ordering."
     },
     {
+      "pattern": "verification/extensions/desktop-ui.json",
+      "reason": "The activation binds desktop conformance to one exact approved reference, target mode, normative source set, and controlled renderer."
+    },
+    {
+      "pattern": "verification/desktop-ui.schema.json",
+      "reason": "The strict activation schema prevents conformance inputs and controlled visual settings from becoming optional or ambiguous."
+    },
+    {
+      "pattern": "verification/baselines/desktop-ui.json",
+      "reason": "The visual baseline is approved-reference, browser, platform, viewport, theme, and font authority."
+    },
+    {
+      "pattern": "tools/ui_conformance.py",
+      "reason": "The shared desktop verifier enforces token, route, workflow, accessibility, responsive, and visual-reference conformance."
+    },
+    {
+      "pattern": "tools/ui_*_check.py",
+      "reason": "Desktop profile entry points must continue to invoke the governed conformance implementation."
+    },
+    {
       "pattern": "planning/backlog.schema.json",
       "reason": "The task schema governs exact experience-change lineage used by design-first enforcement."
     },

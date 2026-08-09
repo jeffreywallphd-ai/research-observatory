@@ -1,0 +1,497 @@
+{
+  "browserVersion": "145.0.7632.6",
+  "documentType": "desktop-ui-visual-baseline",
+  "entries": {
+    "audit-lineage.html::dark": {
+      "height": 900,
+      "page": "audit-lineage.html",
+      "sha256": "81270c837addb856fdd9c4200420a95b6b3cda15f29703629c4d310f34006a9b",
+      "theme": "dark",
+      "width": 1440
+    },
+    "audit-lineage.html::light": {
+      "height": 900,
+      "page": "audit-lineage.html",
+      "sha256": "5d10f231ff479d3b808402656a22da60635d0a196b087920a75161b9a205a24d",
+      "theme": "light",
+      "width": 1440
+    },
+    "claim-graph.html::dark": {
+      "height": 900,
+      "page": "claim-graph.html",
+      "sha256": "f7964e370d91e62df86a3491f617a350aec9f90ce131132eef5323295403cad9",
+      "theme": "dark",
+      "width": 1440
+    },
+    "claim-graph.html::light": {
+      "height": 900,
+      "page": "claim-graph.html",
+      "sha256": "9124b10457633ab80db4d83b30bc69b3a3777ff1f218ba3de2bd8bec18ea16ec",
+      "theme": "light",
+      "width": 1440
+    },
+    "corpus-canvas.html::dark": {
+      "height": 900,
+      "page": "corpus-canvas.html",
+      "sha256": "bc5ae1bb1e57e62eb62f148c7c9d4f1530b86a8addd4d8bf4b13838db06e619e",
+      "theme": "dark",
+      "width": 1440
+    },
+    "corpus-canvas.html::light": {
+      "height": 900,
+      "page": "corpus-canvas.html",
+      "sha256": "dc366379c086444919f05911efcbd18ac6d0c66941c5b81c98575a1818df2b33",
+      "theme": "light",
+      "width": 1440
+    },
+    "critical-lens.html::dark": {
+      "height": 900,
+      "page": "critical-lens.html",
+      "sha256": "0ec294309e571daabd4881b00a85c0e94f0624209a96e6ab42dd0b22b0771c2a",
+      "theme": "dark",
+      "width": 1440
+    },
+    "critical-lens.html::light": {
+      "height": 900,
+      "page": "critical-lens.html",
+      "sha256": "f405e5f71f53b2946b0d7a915b1fe64b9f79b1bb5a2ff95bbf61a755b4d337ec",
+      "theme": "light",
+      "width": 1440
+    },
+    "document-reader.html::dark": {
+      "height": 900,
+      "page": "document-reader.html",
+      "sha256": "eaa606874cbf59832fa97b202f76ca7a98df04d520a7f7685722477e2b414698",
+      "theme": "dark",
+      "width": 1440
+    },
+    "document-reader.html::light": {
+      "height": 900,
+      "page": "document-reader.html",
+      "sha256": "7c999741ffe68397cbb883864a6454a19f029479d139b19e5eb7eba382ff9e99",
+      "theme": "light",
+      "width": 1440
+    },
+    "evidence-matrix.html::dark": {
+      "height": 900,
+      "page": "evidence-matrix.html",
+      "sha256": "f96c48a2fe64a3d883e841a1fe30a8e9aae95e06cedf7d5a7282ce18b570949d",
+      "theme": "dark",
+      "width": 1440
+    },
+    "evidence-matrix.html::light": {
+      "height": 900,
+      "page": "evidence-matrix.html",
+      "sha256": "9045a3d2e5642c4df7618db77135f8ced3f0f84c5dc729b3a7d808410e947133",
+      "theme": "light",
+      "width": 1440
+    },
+    "help-onboarding.html::dark": {
+      "height": 900,
+      "page": "help-onboarding.html",
+      "sha256": "427b23ff5f8786ea40f74973c5315933f7be19c743cc924ca400143e83f0c10a",
+      "theme": "dark",
+      "width": 1440
+    },
+    "help-onboarding.html::light": {
+      "height": 900,
+      "page": "help-onboarding.html",
+      "sha256": "8d67cc6c5abc937d89007a57bf83f4faf5c46c92bd099e9e1fc6c749db406008",
+      "theme": "light",
+      "width": 1440
+    },
+    "index.html::dark": {
+      "height": 900,
+      "page": "index.html",
+      "sha256": "10378c97e723704f3be95fdc2672efe2d1a1b525c599043e65a0186bb76932d7",
+      "theme": "dark",
+      "width": 1440
+    },
+    "index.html::light": {
+      "height": 900,
+      "page": "index.html",
+      "sha256": "0a665c8f325254ad6a326226521d5d6437678f3886e2f82c86bc122b1f4573d9",
+      "theme": "light",
+      "width": 1440
+    },
+    "ingestion-reconciliation.html::dark": {
+      "height": 900,
+      "page": "ingestion-reconciliation.html",
+      "sha256": "3fc9385c2377dbcd94d7830510ebf8821fc9ed4a8a60506693dfe2563ef4d0e5",
+      "theme": "dark",
+      "width": 1440
+    },
+    "ingestion-reconciliation.html::light": {
+      "height": 900,
+      "page": "ingestion-reconciliation.html",
+      "sha256": "2824fee9ed2a693fbd4a73dfab8711a441862047ecec283fe437dc70d4a0b64c",
+      "theme": "light",
+      "width": 1440
+    },
+    "intent-contract.html::dark": {
+      "height": 900,
+      "page": "intent-contract.html",
+      "sha256": "a55e8671d71a22a6404301224cb8cf39c025194d8c2d275f714d8e643f466794",
+      "theme": "dark",
+      "width": 1440
+    },
+    "intent-contract.html::light": {
+      "height": 900,
+      "page": "intent-contract.html",
+      "sha256": "6d9227a1a7bf91a5e86dd2f055f99200f8ce875f41852883c40463bb98558ae0",
+      "theme": "light",
+      "width": 1440
+    },
+    "living-monitor.html::dark": {
+      "height": 900,
+      "page": "living-monitor.html",
+      "sha256": "1fc8bc0e1b07bb73f95cd68279af6de94c188d1f5b0f719bfdc96bff44482505",
+      "theme": "dark",
+      "width": 1440
+    },
+    "living-monitor.html::light": {
+      "height": 900,
+      "page": "living-monitor.html",
+      "sha256": "7660135423230aff5efb449bcb40bc4c5b5e3e92bd815bebd94efccde4001e6a",
+      "theme": "light",
+      "width": 1440
+    },
+    "manuscript-blueprint.html::dark": {
+      "height": 900,
+      "page": "manuscript-blueprint.html",
+      "sha256": "4823dfea34dd326612761743196524427df2aa2b1f577d09a00cab3d524cb311",
+      "theme": "dark",
+      "width": 1440
+    },
+    "manuscript-blueprint.html::light": {
+      "height": 900,
+      "page": "manuscript-blueprint.html",
+      "sha256": "1b465522a15af384f37f4ca220e9469cfdcac7c73ba755910ec127d09d73002c",
+      "theme": "light",
+      "width": 1440
+    },
+    "manuscript-studio.html::dark": {
+      "height": 900,
+      "page": "manuscript-studio.html",
+      "sha256": "f0dfc3c36dd9b1da42685d03805ecf363e106c2b3baea75847ead630b86af096",
+      "theme": "dark",
+      "width": 1440
+    },
+    "manuscript-studio.html::light": {
+      "height": 900,
+      "page": "manuscript-studio.html",
+      "sha256": "d7d7cb9b20e2834780602dd003de472ee85fdca6438037109c9f229171013fef",
+      "theme": "light",
+      "width": 1440
+    },
+    "model-center.html::dark": {
+      "height": 900,
+      "page": "model-center.html",
+      "sha256": "f5019501fdef5af4f983172c81cf4d17540d897958cd78dc09013daa995420e3",
+      "theme": "dark",
+      "width": 1440
+    },
+    "model-center.html::light": {
+      "height": 900,
+      "page": "model-center.html",
+      "sha256": "6a60500107e72eb18c82dee9ddd68ec26fe242ba1f9daa4d0868db2b9159bbf8",
+      "theme": "light",
+      "width": 1440
+    },
+    "new-project.html::dark": {
+      "height": 900,
+      "page": "new-project.html",
+      "sha256": "fa865fd5c976577eed11f711e160ab8ef30921bc37b5dedc3720affab89cf0f8",
+      "theme": "dark",
+      "width": 1440
+    },
+    "new-project.html::light": {
+      "height": 900,
+      "page": "new-project.html",
+      "sha256": "707fd1b7e928f02e07af32c501efff03b332755a3b1c7e40ab98ced9aa79cf7a",
+      "theme": "light",
+      "width": 1440
+    },
+    "novelty-audit.html::dark": {
+      "height": 900,
+      "page": "novelty-audit.html",
+      "sha256": "165a11ceadf25d77ee53d3a1bcd03fdfa1c5052e490b4db505b24c83c3d78def",
+      "theme": "dark",
+      "width": 1440
+    },
+    "novelty-audit.html::light": {
+      "height": 900,
+      "page": "novelty-audit.html",
+      "sha256": "7425dc5aacecfbc8b9ddcaf8122a923596fa6668202cd6ca811f71c75d13456c",
+      "theme": "light",
+      "width": 1440
+    },
+    "opportunity-radar.html::dark": {
+      "height": 900,
+      "page": "opportunity-radar.html",
+      "sha256": "be366fb0cec986c3d37c7f2de63d15ed78887f1d226a6e7c5dd81711e076379b",
+      "theme": "dark",
+      "width": 1440
+    },
+    "opportunity-radar.html::light": {
+      "height": 900,
+      "page": "opportunity-radar.html",
+      "sha256": "7581a45c19e6dc1e44c57246720a4c52fa153f18d46a579a4a6dd15b7b2d826b",
+      "theme": "light",
+      "width": 1440
+    },
+    "parsing-quality.html::dark": {
+      "height": 900,
+      "page": "parsing-quality.html",
+      "sha256": "ea3f20a07adddaadda93351b63645bd5d1fbdaba22b7042f577f7c4b872e54e7",
+      "theme": "dark",
+      "width": 1440
+    },
+    "parsing-quality.html::light": {
+      "height": 900,
+      "page": "parsing-quality.html",
+      "sha256": "32bed7859c2eab4183da28226489c997ce6a848717589982c254ba32fd83b223",
+      "theme": "light",
+      "width": 1440
+    },
+    "project-settings.html::dark": {
+      "height": 900,
+      "page": "project-settings.html",
+      "sha256": "df7c1cb639446b27407f6a4f03e018520456138c1a72d675cd80dec91a698c01",
+      "theme": "dark",
+      "width": 1440
+    },
+    "project-settings.html::light": {
+      "height": 900,
+      "page": "project-settings.html",
+      "sha256": "b6cd7399557ab302e6cea8bf7693f4e6043a5501f9ae43afa5ceddd93b20ac22",
+      "theme": "light",
+      "width": 1440
+    },
+    "projects.html::dark": {
+      "height": 900,
+      "page": "projects.html",
+      "sha256": "bbc929a7617804630891006b98a927987a5341b6b2441fabbe89d4719155803f",
+      "theme": "dark",
+      "width": 1440
+    },
+    "projects.html::light": {
+      "height": 900,
+      "page": "projects.html",
+      "sha256": "0aa5ca51857f192872f8c7c441b97f688e2c6aeeae83ad874509448fb7f59273",
+      "theme": "light",
+      "width": 1440
+    },
+    "research-notebook.html::dark": {
+      "height": 900,
+      "page": "research-notebook.html",
+      "sha256": "5fa629e64ae15eaa407f2b03cfff507c22ad5c126c3bd03af7e8a1221ab70056",
+      "theme": "dark",
+      "width": 1440
+    },
+    "research-notebook.html::light": {
+      "height": 900,
+      "page": "research-notebook.html",
+      "sha256": "6dd168b21851f9fbda3ff930b36b984792d1ff84b3e78ca8915c0e65c1aad4ac",
+      "theme": "light",
+      "width": 1440
+    },
+    "reviewer-simulation.html::dark": {
+      "height": 900,
+      "page": "reviewer-simulation.html",
+      "sha256": "623b2a944afb0c0b83c30665bcf62d5a8d8527ebd1a0cce04c1082efcb76369e",
+      "theme": "dark",
+      "width": 1440
+    },
+    "reviewer-simulation.html::light": {
+      "height": 900,
+      "page": "reviewer-simulation.html",
+      "sha256": "149040b407f2fcee559ada36b0800d977052a3c191e11711eb08f02418c21cfc",
+      "theme": "light",
+      "width": 1440
+    },
+    "revision-response.html::dark": {
+      "height": 900,
+      "page": "revision-response.html",
+      "sha256": "f1350d9039219932dfad2f2c3fb53f735d93e13236ca6da2921af3a1cbf824e7",
+      "theme": "dark",
+      "width": 1440
+    },
+    "revision-response.html::light": {
+      "height": 900,
+      "page": "revision-response.html",
+      "sha256": "49d74d0eed97b666e06154e17c0ea14b26eb168292d68c921b8f15bc35ab8e40",
+      "theme": "light",
+      "width": 1440
+    },
+    "schema-manager.html::dark": {
+      "height": 900,
+      "page": "schema-manager.html",
+      "sha256": "81f22d4bf2d67946c350d5ba3d142d31c54a4db54652f2cf68991822b6a44124",
+      "theme": "dark",
+      "width": 1440
+    },
+    "schema-manager.html::light": {
+      "height": 900,
+      "page": "schema-manager.html",
+      "sha256": "8935b146c70f1d1e3b90ebd7f7928011b13fc21924d2e763136bc63165d2a150",
+      "theme": "light",
+      "width": 1440
+    },
+    "screening.html::dark": {
+      "height": 900,
+      "page": "screening.html",
+      "sha256": "450c3bb9feb0ab4bbd61f4b1c8c9adb604a64bc67d03cb8e3d2d99f4f246828f",
+      "theme": "dark",
+      "width": 1440
+    },
+    "screening.html::light": {
+      "height": 900,
+      "page": "screening.html",
+      "sha256": "b515da2f79c828dc696bfcf2a25143e5d6e8fe3549105f5780148b0a7a21c8b3",
+      "theme": "light",
+      "width": 1440
+    },
+    "search-studio.html::dark": {
+      "height": 900,
+      "page": "search-studio.html",
+      "sha256": "34deeec632eddcd2926a95719d613cf8013c19aa26556b9cf2a53a0a3aea1ed8",
+      "theme": "dark",
+      "width": 1440
+    },
+    "search-studio.html::light": {
+      "height": 900,
+      "page": "search-studio.html",
+      "sha256": "54d3b89a18de6ddfaca70c132932a35eab0488f11fc22b0f0083c90e91cb8734",
+      "theme": "light",
+      "width": 1440
+    },
+    "source-manager.html::dark": {
+      "height": 900,
+      "page": "source-manager.html",
+      "sha256": "ce9d9bf1b72325274aa1d9a7b879a3759f5fef49bfe31bd47a0651597d7a22bd",
+      "theme": "dark",
+      "width": 1440
+    },
+    "source-manager.html::light": {
+      "height": 900,
+      "page": "source-manager.html",
+      "sha256": "99beba5e32c0a0d6078982341bd6ff850e80b5ad3bed5c3af7b39c49c4510529",
+      "theme": "light",
+      "width": 1440
+    },
+    "study-design.html::dark": {
+      "height": 900,
+      "page": "study-design.html",
+      "sha256": "8baf3514206e85aa7e1542e9acdad18e2399b42f6b4271d13d365a7d7d5cbea5",
+      "theme": "dark",
+      "width": 1440
+    },
+    "study-design.html::light": {
+      "height": 900,
+      "page": "study-design.html",
+      "sha256": "87884ac9b5129412b286510cc6080b6e4d3345eac7d83b7ceb7a649927e13a54",
+      "theme": "light",
+      "width": 1440
+    },
+    "synthesis-studio.html::dark": {
+      "height": 900,
+      "page": "synthesis-studio.html",
+      "sha256": "b4ee27120b5b739d3c6fae50aefd45408b8ec2e384240ecef091701a37717c26",
+      "theme": "dark",
+      "width": 1440
+    },
+    "synthesis-studio.html::light": {
+      "height": 900,
+      "page": "synthesis-studio.html",
+      "sha256": "ab5b6fa952572e41878fb68e311b213aa0c567f5e6c8923b486a9b97259e7796",
+      "theme": "light",
+      "width": 1440
+    },
+    "task-center.html::dark": {
+      "height": 900,
+      "page": "task-center.html",
+      "sha256": "6412ed9a4ac8b1874023c047cad297cc2de9e7b591c1a6522911bcf23c1c2a42",
+      "theme": "dark",
+      "width": 1440
+    },
+    "task-center.html::light": {
+      "height": 900,
+      "page": "task-center.html",
+      "sha256": "14faaa7dcbd99f79ff408c39e746027d7f0760a91b2eca2ef870c817b0d2da43",
+      "theme": "light",
+      "width": 1440
+    },
+    "technical-reports.html::dark": {
+      "height": 900,
+      "page": "technical-reports.html",
+      "sha256": "200d6eab17be723150a1c39a08b226173f17dc55034e1340a0ea9d94b5d46eac",
+      "theme": "dark",
+      "width": 1440
+    },
+    "technical-reports.html::light": {
+      "height": 900,
+      "page": "technical-reports.html",
+      "sha256": "88e7703927469aad4398f315924045aada6a65ce43d0ca1c757cc3f66e2b4e5a",
+      "theme": "light",
+      "width": 1440
+    },
+    "theory-map.html::dark": {
+      "height": 900,
+      "page": "theory-map.html",
+      "sha256": "aca1b46408ad49321f55c3f12cdc2b1253649c7f1f962cf6d1633cfb5a499cf5",
+      "theme": "dark",
+      "width": 1440
+    },
+    "theory-map.html::light": {
+      "height": 900,
+      "page": "theory-map.html",
+      "sha256": "46e3b7aec7c96f8c54743182021dee7f7d93b6b406b752a0c4f5712416b7e48d",
+      "theme": "light",
+      "width": 1440
+    }
+  },
+  "platform": "windows-x64",
+  "playwrightVersion": "1.58.0",
+  "referenceApprovalCommit": "762a7f307f212f7b2de9b96475c3e75e361fce8e",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
+  "referencePackageSha256": "cc4c2ba45978f2ebf3e97f930841eef51297e7fb81e741a1e980bf5e5493a25f",
+  "schemaVersion": "1.0",
+  "settings": {
+    "animations": "disabled",
+    "baselinePath": "verification/baselines/desktop-ui.json",
+    "browserVersion": "145.0.7632.6",
+    "colorSchemes": [
+      "light",
+      "dark"
+    ],
+    "deviceScaleFactor": 1,
+    "engine": "chromium",
+    "locale": "en-US",
+    "platform": "windows-x64",
+    "playwrightVersion": "1.58.0",
+    "reducedMotion": "reduce",
+    "requiredFonts": [
+      "Segoe UI",
+      "Georgia",
+      "Consolas"
+    ],
+    "responsiveViewports": [
+      {
+        "height": 720,
+        "label": "minimum-desktop",
+        "width": 1280
+      },
+      {
+        "height": 450,
+        "label": "windows-200-percent-effective",
+        "width": 720
+      }
+    ],
+    "timezoneId": "UTC",
+    "viewport": {
+      "height": 900,
+      "width": 1440
+    }
+  }
+}

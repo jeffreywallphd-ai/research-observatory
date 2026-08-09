@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/desktop-ui-verification-1.0.json",
+  "title": "Research Observatory desktop UI verification activation",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "mode",
+    "referenceRoot",
+    "targetRoot",
+    "referenceId",
+    "referencePackageSha256",
+    "implementationRoots",
+    "normativeSources",
+    "illustrativeExclusions",
+    "visual"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "desktop-ui-verification-activation"},
+    "mode": {"const": "approved-reference-fixture"},
+    "referenceRoot": {"const": "design/ui-reference"},
+    "targetRoot": {"const": "design/ui-reference"},
+    "referenceId": {"type": "string", "minLength": 1},
+    "referencePackageSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "implementationRoots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "normativeSources": {
+      "type": "object",
+      "required": ["tokens", "style", "routes", "workflows", "pages", "approval"],
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "illustrativeExclusions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "visual": {
+      "type": "object",
+      "required": [
+        "baselinePath",
+        "platform",
+        "engine",
+        "playwrightVersion",
+        "browserVersion",
+        "viewport",
+        "responsiveViewports",
+        "deviceScaleFactor",
+        "locale",
+        "timezoneId",
+        "reducedMotion",
+        "colorSchemes",
+        "requiredFonts",
+        "animations"
+      ],
+      "properties": {
+        "baselinePath": {"const": "verification/baselines/desktop-ui.json"},
+        "platform": {"const": "windows-x64"},
+        "engine": {"const": "chromium"},
+        "playwrightVersion": {"const": "1.58.0"},
+        "browserVersion": {"const": "145.0.7632.6"},
+        "viewport": {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": {"width": {"const": 1440}, "height": {"const": 900}},
+          "additionalProperties": false
+        },
+        "responsiveViewports": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["width", "height", "label"],
+            "properties": {
+              "width": {"type": "integer", "minimum": 640},
+              "height": {"type": "integer", "minimum": 360},
+              "label": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "deviceScaleFactor": {"const": 1},
+        "locale": {"const": "en-US"},
+        "timezoneId": {"const": "UTC"},
+        "reducedMotion": {"const": "reduce"},
+        "colorSchemes": {"const": ["light", "dark"]},
+        "requiredFonts": {"const": ["Segoe UI", "Georgia", "Consolas"]},
+        "animations": {"const": "disabled"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

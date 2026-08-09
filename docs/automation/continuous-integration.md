@@ -11,6 +11,7 @@ required commands, unique artifact names, and fourteen-day report retention.
 |---|---|---|
 | `foundation` | Repository, workflow, architecture, ADR, quality, packaging-input, unit, and backlog gates. | `ci-foundation.json` |
 | `quality` | Ruff formatting, Ruff linting, and mypy over the explicit governed Python scope. | `ci-quality.json` |
+| `desktop-ui` | Foundation, desktop regressions, approved-reference conformance, and controlled Playwright screenshots. | `ci-desktop-ui.json` |
 | `security` | Pinned Trivy live scan plus secret, threshold, exception, sanitization, and installer boundary tests. | `ci-security.json` |
 | `contracts` | Foundation plus portable cross-process contract tests through the service profile. | `ci-contracts.json` |
 | `packaging-smoke` | Frozen Python, Node.js, and Rust dependencies plus locked packaging-source validation. | `ci-packaging-smoke.json` |
@@ -37,6 +38,8 @@ Run the hosted-CI equivalents locally before completing a task:
 .venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/local-quality.json
 .venv\Scripts\python.exe tools/security_check.py --repo . --report artifacts/tmp/local-security.json
 .venv\Scripts\python.exe tools/verify.py --profile foundation --report artifacts/tmp/local-foundation.json
+.venv\Scripts\playwright.exe install chromium
+.venv\Scripts\python.exe tools/verify.py --profile desktop --report artifacts/tmp/local-desktop-ui.json
 .venv\Scripts\python.exe tools/verify.py --profile service --report artifacts/tmp/local-contracts.json
 ```
 
