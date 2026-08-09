@@ -344,6 +344,7 @@ def configured_components(inputs: dict[str, Any]) -> tuple[list[dict[str, str]],
 def repository_schema_paths(repo: Path) -> tuple[list[str], list[str]]:
     paths: list[str] = []
     errors: list[str] = []
+    generated_directories = frozenset({"__pycache__", "artifacts", "coverage", "dist", "node_modules", "target"})
 
     def visit(directory: Path, *, top_level: bool = False) -> None:
         try:
@@ -355,7 +356,7 @@ def repository_schema_paths(repo: Path) -> tuple[list[str], list[str]]:
             return
         for entry in entries:
             path = Path(entry.path)
-            if top_level and (entry.name.startswith(".") or entry.name in {"artifacts", "node_modules"}):
+            if entry.name in generated_directories or (top_level and entry.name.startswith(".")):
                 continue
             try:
                 redirected = entry.is_symlink() or path.is_junction()

@@ -23,6 +23,7 @@ from build_manifest import (  # noqa: E402
     git_blob_sha1,
     git_source,
     guarded_atomic_write_json,
+    repository_schema_paths,
     safe_output_path,
     source_contract,
     synchronize_component_manifests,
@@ -345,6 +346,18 @@ class BuildManifestTests(unittest.TestCase):
                 _, _, _, errors = source_contract(root)
 
         self.assertTrue(any("cannot enumerate schema inventory directory" in error for error in errors), errors)
+
+    def test_schema_inventory_excludes_nested_generated_dependency_trees(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.contract_repo(temporary)
+            generated = root / "apps" / "desktop" / "node_modules" / "dependency"
+            generated.mkdir(parents=True)
+            (generated / "dependency.schema.json").write_text("{}\n", encoding="utf-8")
+
+            schemas, errors = repository_schema_paths(root)
+
+        self.assertEqual([], errors)
+        self.assertFalse(any(item.startswith("apps/desktop/node_modules/") for item in schemas))
 
     def test_clean_manifest_rejects_input_status_race(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
