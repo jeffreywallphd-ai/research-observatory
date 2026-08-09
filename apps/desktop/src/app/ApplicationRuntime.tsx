@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 
 import { installApplicationFrame } from "./frame";
+import { installProjectSelection } from "./projectSelection";
 import type { DesktopRoute } from "./routes";
 
 export interface ApplicationRuntimeProps {
@@ -9,6 +10,13 @@ export interface ApplicationRuntimeProps {
 }
 
 export function ApplicationRuntime({ route, text }: ApplicationRuntimeProps): ReactNode {
-  useEffect(() => installApplicationFrame(document, route), [route]);
+  useEffect(() => {
+    const disposeFrame = installApplicationFrame(document, route);
+    const disposeProjectSelection = installProjectSelection(document, route);
+    return () => {
+      disposeProjectSelection();
+      disposeFrame();
+    };
+  }, [route]);
   return text;
 }
