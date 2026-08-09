@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ceb78191caee89d3d7490ef2189a1e8c9a01aafb77db9c8c8163b1088b161f12
+source_sha256: 86734e635128355ab8961115153730d726a68c3b52b5b625e1da2ccf6da66864
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1054,7 +1054,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Reusable components express status, provenance, evidence, uncertainty, and human decision states consistently.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1062,13 +1062,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T01 - Implement design tokens and core components
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S01.T01`, `CAP-00.S06.T04`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:maxwell (`changes-requested`)
 
 **Objective:** Versioned typography, spacing, color, icon, form, table, dialog, notification, badge, and panel components.
 
