@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6e6b72e3b89bf726260bedfc5d6246df7b3473b72bf53191fdab0083044f0eb6
+source_sha256: 765f14a3d5865fbafb23d1cbcf6baef9e17a3eef6bbef16830a5fca26a1ec5e1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1062,13 +1062,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T01 - Implement design tokens and core components
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S01.T01`, `CAP-00.S06.T04`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Versioned typography, spacing, color, icon, form, table, dialog, notification, badge, and panel components.
 
