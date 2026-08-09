@@ -50,16 +50,27 @@ class ContinuousIntegrationContractTests(unittest.TestCase):
         self.assertTrue(any("artifact retention" in error for error in errors))
 
     def test_requires_pull_request_base_and_full_history_for_ui_change_ordering(self) -> None:
+        base_expression = (
+            "  UI_CHANGE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || "
+            "inputs.ui_change_base_sha }}\n"
+        )
         missing_base = self.workflow.replace(
-            "  UI_CHANGE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}\n",
+            base_expression,
             "",
             1,
         )
         shallow = self.workflow.replace("          fetch-depth: 0\n", "          fetch-depth: 1\n", 1)
+        optional_manual_base = self.workflow.replace(
+            "        required: true\n        type: string\n", "        required: false\n        type: string\n", 1
+        )
 
         self.assertIn(
-            "CI must bind UI_CHANGE_BASE_SHA to the pull-request or push base commit",
+            "CI must bind UI_CHANGE_BASE_SHA to the pull-request, push, or explicit manual base commit",
             validate_ci(REPO, missing_base),
+        )
+        self.assertIn(
+            "manual CI must require an explicit immutable UI change base SHA",
+            validate_ci(REPO, optional_manual_base),
         )
         self.assertIn(
             "foundation checkout must fetch full history for design-first ordering",

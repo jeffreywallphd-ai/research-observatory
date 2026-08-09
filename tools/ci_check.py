@@ -43,6 +43,14 @@ def validate_ci(repo: Path, workflow_text: str | None = None) -> list[str]:
         errors.append("CI triggers must be exactly pull_request, push, and workflow_dispatch")
     elif triggers.get("push", {}).get("branches") != ["main"]:
         errors.append("CI push trigger must be limited to main")
+    else:
+        manual_input = triggers.get("workflow_dispatch", {}).get("inputs", {}).get("ui_change_base_sha")
+        if manual_input != {
+            "description": "Immutable base commit for the complete manually dispatched change range",
+            "required": "true",
+            "type": "string",
+        }:
+            errors.append("manual CI must require an explicit immutable UI change base SHA")
     if workflow.get("permissions") != {"contents": "read"}:
         errors.append("CI root permissions must be exactly contents: read")
     concurrency = workflow.get("concurrency")
@@ -51,9 +59,9 @@ def validate_ci(repo: Path, workflow_text: str | None = None) -> list[str]:
     if workflow.get("defaults", {}).get("run", {}).get("shell") != "pwsh":
         errors.append("CI default shell must be pwsh")
     if workflow.get("env", {}).get("UI_CHANGE_BASE_SHA") != (
-        "${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}"
+        "${{ github.event.pull_request.base.sha || github.event.before || inputs.ui_change_base_sha }}"
     ):
-        errors.append("CI must bind UI_CHANGE_BASE_SHA to the pull-request or push base commit")
+        errors.append("CI must bind UI_CHANGE_BASE_SHA to the pull-request, push, or explicit manual base commit")
 
     lowered = workflow_text.lower()
     forbidden = {

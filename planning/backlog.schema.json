@@ -111,7 +111,7 @@
         "previous_reference_id": {"type": ["string", "null"]},
         "implementation_agent": {
           "type": "string",
-          "pattern": "^(agent|human):[A-Za-z0-9][A-Za-z0-9._-]*$"
+          "pattern": "^(agent|human):[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$"
         }
       },
       "additionalProperties": false
