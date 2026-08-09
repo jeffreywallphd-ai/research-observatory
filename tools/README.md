@@ -7,6 +7,7 @@
 - `plan_review_site.py` and `plan_review_check.py` - generate and validate the static review site.
 - `ui_reference_check.py` - validate the approved experience reference.
 - `ui_change_gate.py` - enforce exact task/PR reference lineage, human design approval, reference-before-code ordering, and governed restoration evidence.
+- `ui_conformance.py` plus `ui_*_check.py` entry points - compare the activated desktop target with approved tokens, routes, workflows, accessibility/responsive behavior, and controlled visual baselines.
 - `repository_structure_check.py` - validate declared module boundaries and reject deferred implementation or committed binaries.
 - `runtime_check.py` - validate exact runtime/package-manager pins and report actionable mismatches.
 - `bootstrap.py` - verify prerequisites, perform frozen installs, generate local development configuration, and run the foundation smoke gate.

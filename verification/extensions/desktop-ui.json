@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "desktop-ui-verification-activation",
+  "mode": "approved-reference-fixture",
+  "referenceRoot": "design/ui-reference",
+  "targetRoot": "design/ui-reference",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
+  "referencePackageSha256": "cc4c2ba45978f2ebf3e97f930841eef51297e7fb81e741a1e980bf5e5493a25f",
+  "implementationRoots": [
+    "apps/desktop/src",
+    "modules/ui",
+    "packages/ui-components",
+    "packages/ui-tokens"
+  ],
+  "normativeSources": {
+    "tokens": "design/ui-reference/assets/tokens.css",
+    "style": "design/ui-reference/STYLE_GUIDE.md",
+    "routes": "design/ui-reference/SITE_MANIFEST.json",
+    "workflows": "design/ui-reference/WORKFLOW_CATALOG.json",
+    "pages": "design/ui-reference/CAPABILITY_COVERAGE.json",
+    "approval": "design/ui-reference/APPROVAL.yaml"
+  },
+  "illustrativeExclusions": [
+    "mock names",
+    "studies",
+    "sources",
+    "providers",
+    "counts",
+    "dates",
+    "prose",
+    "chart values",
+    "nonfunctional actions"
+  ],
+  "visual": {
+    "baselinePath": "verification/baselines/desktop-ui.json",
+    "platform": "windows-x64",
+    "engine": "chromium",
+    "playwrightVersion": "1.58.0",
+    "browserVersion": "145.0.7632.6",
+    "viewport": {"width": 1440, "height": 900},
+    "responsiveViewports": [
+      {"width": 1280, "height": 720, "label": "minimum-desktop"},
+      {"width": 720, "height": 450, "label": "windows-200-percent-effective"}
+    ],
+    "deviceScaleFactor": 1,
+    "locale": "en-US",
+    "timezoneId": "UTC",
+    "reducedMotion": "reduce",
+    "colorSchemes": ["light", "dark"],
+    "requiredFonts": ["Segoe UI", "Georgia", "Consolas"],
+    "animations": "disabled"
+  }
+}

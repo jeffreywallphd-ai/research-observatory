@@ -77,7 +77,16 @@ GATE_CONTROL_PATHS = frozenset(
         "quality-scope.json",
         "tools/ci_check.py",
         "tools/ui_change_gate.py",
+        "tools/ui_accessibility_check.py",
+        "tools/ui_conformance.py",
+        "tools/ui_route_check.py",
+        "tools/ui_token_check.py",
+        "tools/ui_visual_regression_check.py",
+        "tools/ui_workflow_check.py",
         "ui-change-policy.json",
+        "verification/baselines/desktop-ui.json",
+        "verification/desktop-ui.schema.json",
+        "verification/extensions/desktop-ui.json",
         "verification-profiles.json",
     }
 )

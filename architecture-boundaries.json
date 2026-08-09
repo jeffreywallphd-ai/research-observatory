@@ -19,6 +19,7 @@
     {"path": "services", "purpose": "Application service composition roots and replaceable infrastructure adapters."},
     {"path": "tests", "purpose": "Foundation, contract, product, end-to-end, and packaging verification."},
     {"path": "tools", "purpose": "Repository automation, validation, planning, and evidence control."},
+    {"path": "verification", "purpose": "Strict profile activations, governed baselines, and conformance configuration."},
     {"path": "workers", "purpose": "Isolated idempotent CPU, GPU, and I/O activities behind stable contracts."}
   ],
   "modules": [
@@ -100,7 +101,8 @@
     "planning": "Planning state may drive automation but product runtime code must not read or mutate the backlog.",
     "docs": "Documentation is authority and guidance, not a runtime configuration source unless a task defines a generated contract.",
     "design": "Approved experience references drive generation and conformance; they are not shipped as mutable application state.",
-    "evaluation": "Versioned benchmark and golden-output authority for tests and tools; product runtime modules must not depend on it."
+    "evaluation": "Versioned benchmark and golden-output authority for tests and tools; product runtime modules must not depend on it.",
+    "verification": "Verification activation and baseline authority for tools and CI; product runtime modules must not read it."
   },
   "prohibitedDependencies": [
     {"from": "apps/desktop", "to": "services/core-api", "reason": "The desktop consumes typed IPC/HTTP contracts and may launch a sidecar; it never imports Python service internals."},

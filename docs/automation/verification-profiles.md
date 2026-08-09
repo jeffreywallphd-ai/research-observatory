@@ -43,5 +43,12 @@ visual regression. CAP-00.S06 installs their tools and creates
 desktop profile automatically invokes all six. Before activation, the JSON report
 lists each skipped command and the owning installation slice.
 
+The activation also enables the desktop regression suite installed by
+CAP-00.S06. On Windows x64, install the exact locked browser once with
+`.venv\Scripts\playwright.exe install chromium`. The profile then emits separate
+reference, token, route, workflow, accessibility, and visual reports under
+`artifacts/tmp/`. See [`ui-conformance-verification.md`](ui-conformance-verification.md)
+for the pre-application fixture boundary and approved baseline-change procedure.
+
 Reports under `artifacts/tmp/` are local scratch. CI and task evidence may retain
 selected reports under governed artifact paths with an explicit retention rule.

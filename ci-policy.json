@@ -39,6 +39,15 @@
         "tools/quality_check.py"
       ]
     },
+    "desktop-ui": {
+      "artifactPath": "artifacts/tmp/ci-desktop-ui.json",
+      "requiredRunFragments": [
+        "uv==0.12.2",
+        "uv sync --frozen --no-install-project",
+        "playwright.exe install chromium",
+        "tools/verify.py --profile desktop"
+      ]
+    },
     "security": {
       "artifactPath": "artifacts/tmp/ci-security.json",
       "requiredRunFragments": [

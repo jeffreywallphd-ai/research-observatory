@@ -39,6 +39,17 @@ Successful execution is idempotent. It runs these governed operations:
 4. `cargo fetch --locked`
 5. `.venv` Python foundation verification
 
+The foundation bootstrap does not download a browser. Before the Windows x64
+desktop profile is first run, install its lock-pinned Chromium build:
+
+```powershell
+.venv\Scripts\playwright.exe install chromium
+```
+
+This download is a desktop qualification prerequisite, not an application
+runtime dependency. The desktop checker fails actionably if the required build
+is absent or its version differs.
+
 ## Local state contract
 
 The checkout-local outputs are limited to ignored paths:

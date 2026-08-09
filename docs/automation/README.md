@@ -13,5 +13,6 @@
 - `build-manifests.md` - single-source product versions, compatible component manifests, changelog policy, and reproducible clean/dirty build provenance.
 - `ui-reference-validation.md` - approved-reference hashes, offline link and scope checks, generator reproducibility, and deterministic reports.
 - `design-first-ui-changes.md` - task/PR contracts, human reference approval, reference-before-code ordering, and defect restoration.
+- `ui-conformance-verification.md` - activated desktop checks, fixture boundary, controlled Playwright rendering, and baseline approval rules.
 
 These files contain detailed procedure delegated by root `AGENTS.md`, `docs/README.md`, and `planning/README.md`. They are repository operating documents after installation from the setup pack.
