@@ -75,11 +75,19 @@ Visual baselines contain 32 pages in light and dark at the pinned Windows x64
 renderer identity. Verification rejects dirty baseline state and strict-schema
 validates every reachable historical baseline, then binds it to the exact
 approved reference package and complete approval record. Git history must show
-a different reference ID and approval commit for a changed baseline; the
-guarded writer refuses a same-reference overwrite. CI installs the locked
-browser and runs the full desktop profile. Activation, schemas, baseline, core
+a different reference ID and approval commit for a changed visual contract. A
+provenance-only ratification may retain the reference ID only when the package
+SHA and approval commit are the sole changes and every renderer setting and
+screenshot entry remains byte-equivalent. The guarded writer refuses a
+same-reference visual overwrite. CI installs the locked browser and runs the
+full desktop profile. Activation, schemas, baseline, core
 checker, entry points, profile wiring, CI wiring, and weakening-sensitive gate
 controls are architecture protected.
+
+An exact later ratification can close a preserved pre-control package-lineage
+gap only for a byte-equivalent visual contract. It does not suppress historical
+schema, raw-byte, transition, or approval-record failures and cannot authorize
+changed screenshots, renderer settings, or reference identity.
 
 ## Consequences
 

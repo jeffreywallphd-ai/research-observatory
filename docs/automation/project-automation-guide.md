@@ -148,3 +148,4 @@ The default handoff for tested repository work is the local `main` branch:
 4. If histories diverge, stop for explicit reconciliation, then rerun affected checks before merging.
 5. Preserve task, review, approval, dependency, and release-gate state exactly as recorded; a Git merge is not workflow approval.
 6. Do not push local `main`, publish artifacts, or update a remote without separate explicit authorization.
+7. After the requested work is fully complete and integrated, leave the repository checked out on local `main`; retain the campaign branch for audit, but do not leave it checked out for routine operation.

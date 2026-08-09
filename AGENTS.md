@@ -132,3 +132,6 @@ the tested commit into the local `main` branch. Prefer a fast-forward-only merge
 If `main` has diverged, stop and reconcile explicitly, rerun the affected checks,
 and never force or discard either history. Local integration does not approve a
 task, satisfy a review gate, complete a dependency, or authorize a remote push.
+After the requested work is fully completed and its tested result is integrated,
+leave the repository checked out on local `main` for routine operation. Do not
+switch to `main` while uncommitted work or an unmet review/release gate remains.
