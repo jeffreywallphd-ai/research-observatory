@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b1053db6219e79f77b4efc50d74fa0c0892faa400c1b46900a19f0c52b1336cf
+source_sha256: c43b68010bbed243f1af66b6e0b24d761d20a9257c905f946e4d9677d2c6fc30
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -841,7 +841,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-00.S06.T01`, `CAP-00.S03.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:descartes (`changes-requested`)
 
 **Objective:** Validate approval status, governed-file hashes, generator reproducibility, page inventory, capability coverage, workflow page references, local links, shared assets, and prohibited hosted-scope additions.
 
@@ -859,6 +859,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-00.S06.T02.json` at `91668d26dc15327929430c6a0da098a2bdc1c4bb`
 
 #### - [ ] CAP-00.S06.T03 - Implement design-first change gating
 
