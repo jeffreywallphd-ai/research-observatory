@@ -2050,12 +2050,12 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T10:15:59+00:00'
-      updated_at: '2026-08-09T10:33:57+00:00'
-      completed_at: null
+      updated_at: '2026-08-09T10:40:03+00:00'
+      completed_at: '2026-08-09T10:40:03+00:00'
       blocker: null
       implementation_notes: Deterministic recent-project preferences, explicit unavailable-location repair, persistent removal/empty-state
         flows, and fail-closed CAP-02 intent handoff pass the full desktop profile at dae49529e536663d01bdb5cf7e3de40fdfaf24a3.
@@ -2066,15 +2066,14 @@ capabilities:
         commit: dae49529e536663d01bdb5cf7e3de40fdfaf24a3
         recorded_at: '2026-08-09T10:33:27+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:maxwell
+        result: approved
+        reviewed_at: '2026-08-09T10:40:03+00:00'
+        notes: 'Approved at dae4952: deterministic/persistent recents, strict recovery, explicit missing-location actions,
+          fail-closed opaque intents, empty state, and read/write failure behavior pass independent production-bundle review
+          with exact evidence.'
       base_sha: 891a42475a7e69c1af8a7392a349e46926aed125
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-09T10:15:59+00:00'
-        expires_at: '2026-08-09T18:15:59+00:00'
+      lease: null
       experience_change:
         kind: approved-reference-implementation
         contract_path: artifacts/evidence/ui-change/CAP-01.S01.T03.json
