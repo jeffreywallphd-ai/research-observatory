@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T01",
+  "commit": "2ad4146b32ec48080cf5189f65d7e30947310a07",
+  "baseCommit": "5c8dbac196c44bd97d1d21ca92ec848393e438c8",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S02.T01.json",
+    "reason": "Independent review confirmed the reference lineage and visual baseline but found a dangling dialog name, incomplete evidence/uncertainty APIs, an undeclared standalone package boundary, and structural/style validator false greens. This manifest preserves the original submission while binding the reviewed remediation and exact regression evidence."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/designSystem.test.tsx",
+    "apps/desktop/tsconfig.json",
+    "artifacts/evidence/CAP-01.S02.T01.json",
+    "artifacts/evidence/ui-change/CAP-01.S02.T01.json",
+    "docs/planning-implementation-plan.md",
+    "packages/ui-components/README.md",
+    "packages/ui-components/catalog.html",
+    "packages/ui-components/package.json",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/src/styles.css",
+    "packages/ui-components/tests/package.test.tsx",
+    "packages/ui-components/tsconfig.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pnpm-lock.yaml",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/desktop_app_check.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S02.T01-review-fix-desktop.json",
+      "exitCode": 0,
+      "result": "The exact clean remediation commit passed all 25 desktop-profile commands in 580.54 seconds, including 147 foundation tests, 32 desktop tests, all nine package/application/native commands, six catalog theme/zoom cases, 32 production routes, 139 browser workflows, 390 keyboard cases, 64 responsive cases, 64 visual captures, and the immutable performance gate. Report SHA-256: 82421edd6fa0419be2e1fd055cc5b8c8614aa0b7310702f13a6b0325d8739897."
+    },
+    {
+      "command": "pnpm --dir packages/ui-components verify",
+      "exitCode": 0,
+      "result": "Package-local strict type checking and two public-runtime/tree-shaking tests pass. The test imports the package by its public name, resolves React and ui-tokens through declared workspace/peer contracts, proves the dialog title referent exists and is nonempty, and proves unused dialog/table code is removed from a StatusBadge-only consumer bundle."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_ui_change_gate tests.desktop.test_desktop_app_check tests.desktop.test_ui_conformance.UiConformanceTests.test_implementation_inventory_excludes_dependency_and_build_directories",
+      "exitCode": 0,
+      "result": "All 21 focused gate, catalog, accessibility, dependency-inventory, and literal-style regressions pass, including comment-only component inventory, dangling aria-labelledby, named CSS colors, inline TSX styles, generated dependency-directory exclusion, and exact independently reviewed gate-hardening provenance."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base 949296e1308a6a7528634a72ed0f9ac39c55d756 --head 2ad4146b32ec48080cf5189f65d7e30947310a07",
+      "exitCode": 0,
+      "result": "The full task range passes with exactly nine governed implementation files, unchanged approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5..., and one exact six-file gate-hardening envelope immediately preceded by the independent CHANGES_REQUESTED planning transition."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "DialogSurface now renders a nonempty h2 whose id exactly matches aria-labelledby in both public-package SSR and the real Chromium catalog.",
+        "EvidenceStateBadge exposes all seven governed evidence identities and UncertaintyState exposes all four governed uncertainty identities as typed, runtime-validated, visible text that does not depend on color.",
+        "The complete catalog passes light/dark contrast, structural inventory, semantic reference, minimum-control, and horizontal-fit checks at 100%, 150%, and 200% zoom."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Regression tests reject the four independent-review attacks: comment-only Panel inventory, missing dialog title targets, named CSS literal colors, and inline TSX style literals.",
+        "CSS declarations are parsed by property and permit visual values only through governed variables or the narrowly enumerated non-color structural grammar; exported component identities and catalog classes are structurally inspected rather than substring-counted.",
+        "Public component identities reject unsupported semantic, evidence, and uncertainty values at runtime."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ui-components now declares ui-tokens as a workspace dependency, React as an exact peer, and a locked standalone verification toolchain; application TypeScript resolution no longer bypasses package exports through path aliases.",
+        "Package-local type/runtime/tree-shaking checks run as the first application command, and frozen pnpm importers bind the public token package plus exact toolchain versions.",
+        "Generated node_modules, dist, and target directories are excluded from authored UI inventory under an independently reviewed exact hardening envelope, while real source remains fail-closed."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The approved Academic Minimal 1.3 reference and all 54 governed reference hashes remain unchanged.",
+        "The task-bound UI contract now exactly lists the nine governed package files, including the standalone TypeScript contract; no alternate visual system, baseline rewrite, native privilege, or later-task behavior was introduced.",
+        "All 64 approved production visual captures and the commit-bound performance thresholds pass at the exact clean remediation commit."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must repeat the original four false-green probes, verify complete evidence/uncertainty identities and dialog naming in SSR plus Chromium, validate public package resolution/tree shaking, audit the exact reviewed hardening provenance, and confirm the full evidence identity before approval."
+  }
+}
