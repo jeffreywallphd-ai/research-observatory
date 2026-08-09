@@ -85,6 +85,7 @@ GATE_CONTROL_PATHS = frozenset(
         "tools/ui_workflow_check.py",
         "ui-change-policy.json",
         "verification/baselines/desktop-ui.json",
+        "verification/desktop-ui-baseline.schema.json",
         "verification/desktop-ui.schema.json",
         "verification/extensions/desktop-ui.json",
         "verification-profiles.json",

@@ -16,6 +16,7 @@ import subprocess
 import sys
 import tempfile
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -23,6 +24,7 @@ import yaml
 from bs4 import BeautifulSoup, Tag
 from jsonschema import Draft202012Validator
 from playwright.sync_api import Browser, Page, ViewportSize, sync_playwright
+from ui_reference_check import canonical_payload
 from ui_reference_check import validate as validate_reference
 
 CHECKS = frozenset({"tokens", "routes", "workflows", "accessibility", "visual"})
@@ -46,27 +48,16 @@ UI_SUFFIXES = frozenset(
         ".woff2",
     }
 )
-TEST_SUFFIXES = (
-    ".d.ts",
-    ".spec.js",
-    ".spec.jsx",
-    ".spec.ts",
-    ".spec.tsx",
-    ".test.js",
-    ".test.jsx",
-    ".test.ts",
-    ".test.tsx",
-)
-COMMON_SELECTORS = {
-    "top bar": "header.topbar",
-    "primary navigation": "aside.sidebar",
-    "main region": "main#main-content",
-    "workflow navigation": "[data-workflow-nav]",
-    "supporting tools": "[data-all-tools]",
-    "workflow context": "[data-workflow-context]",
-    "theme control": "[data-theme-toggle]",
-    "sidebar control": "[data-sidebar-toggle]",
-    "workflow selector": "[data-workflow-select]",
+COMMON_REGION_SELECTORS = {
+    "application top bar": ("header.topbar",),
+    "project home access": ('a.brand[href="index.html"]',),
+    "primary-use-case selector": ("[data-workflow-select]",),
+    "ordered guided-workflow navigation": ("[data-workflow-nav]",),
+    "secondary all-tools inventory": ("[data-all-tools]",),
+    "page title and purpose": ("main#main-content .page-header h1", "main#main-content .page-header .page-subtitle"),
+    "workflow context with previous/next or return action": ("[data-workflow-context]",),
+    "theme toggle": ("[data-theme-toggle]",),
+    "trust/provenance footer": ("footer.trust-footer",),
 }
 TOKEN_PATTERN = re.compile(r"(--[a-z0-9-]+)\s*:\s*([^;{}]+);", flags=re.IGNORECASE)
 WORKFLOW_CONTEXT_EXCLUSIONS = frozenset(
@@ -98,6 +89,7 @@ class Context:
     target: Path
     site: dict[str, Any]
     workflows: dict[str, Any]
+    page_contracts: dict[str, dict[str, Any]]
     pages: list[str]
 
 
@@ -138,7 +130,7 @@ def implementation_files(repo: Path, roots: list[str]) -> list[str]:
             for name in file_names:
                 path = directory_path / name
                 relative = path.relative_to(repo).as_posix()
-                if path.suffix.lower() in UI_SUFFIXES and not relative.endswith(TEST_SUFFIXES):
+                if path.suffix.lower() in UI_SUFFIXES:
                     found.append(relative)
     return sorted(found)
 
@@ -173,6 +165,7 @@ def load_context(repo: Path) -> Context:
             )
     site = json_object(confined_path(reference, "SITE_MANIFEST.json"))
     workflow_document = json_object(confined_path(reference, "WORKFLOW_CATALOG.json"))
+    coverage_document = json_object(confined_path(reference, "CAPABILITY_COVERAGE.json"))
     workflows = workflow_document.get("workflows")
     if not isinstance(workflows, dict):
         raise ValueError("WORKFLOW_CATALOG.json workflows must be an object")
@@ -182,7 +175,26 @@ def load_context(repo: Path) -> Context:
     pages = [str(item.get("file")) for item in page_items if isinstance(item, dict)]
     if len(pages) != 32 or len(set(pages)) != 32 or any(not page.endswith(".html") for page in pages):
         raise ValueError("approved desktop route inventory must contain exactly 32 unique HTML product pages")
-    return Context(repo, config, reference, target, site, workflows, pages)
+    raw_contracts = coverage_document.get("page_contracts")
+    if not isinstance(raw_contracts, dict) or set(raw_contracts) != set(pages):
+        raise ValueError("CAPABILITY_COVERAGE.json page contracts must exactly match the product route inventory")
+    page_contracts: dict[str, dict[str, Any]] = {}
+    for page_name, raw_contract in raw_contracts.items():
+        if not isinstance(raw_contract, dict):
+            raise ValueError(f"CAPABILITY_COVERAGE.json#{page_name} must be an object")
+        raw_regions = raw_contract.get("required_regions")
+        if (
+            not isinstance(raw_regions, list)
+            or not raw_regions
+            or any(not isinstance(region, str) or not region.strip() for region in raw_regions)
+            or len(raw_regions) != len(set(raw_regions))
+        ):
+            raise ValueError(f"CAPABILITY_COVERAGE.json#{page_name} required_regions must be unique nonempty strings")
+        missing_common = sorted(set(COMMON_REGION_SELECTORS) - set(raw_regions))
+        if missing_common:
+            raise ValueError(f"CAPABILITY_COVERAGE.json#{page_name} omits common regions {missing_common}")
+        page_contracts[page_name] = raw_contract
+    return Context(repo, config, reference, target, site, workflows, page_contracts, pages)
 
 
 def source(context: Context, key: str) -> str:
@@ -241,13 +253,40 @@ def soup(path: Path) -> BeautifulSoup:
     return BeautifulSoup(path.read_text(encoding="utf-8"), "html.parser")
 
 
+def semantic_region_contract(document: BeautifulSoup) -> list[dict[str, Any]]:
+    """Return UI structure while deliberately excluding illustrative prose/data."""
+    contract: list[dict[str, Any]] = []
+    semantic_text_tags = {"button", "dt", "h2", "h3", "h4", "h5", "h6", "label", "legend", "summary", "th"}
+    for element in document.select("body *"):
+        if (
+            not isinstance(element, Tag)
+            or element.find_parent("svg") is not None
+            or element.name in {"script", "style"}
+        ):
+            continue
+        attributes: dict[str, Any] = {}
+        for name, raw_value in sorted(element.attrs.items()):
+            if name == "style" or not (name in {"class", "href", "id", "role", "type"} or name.startswith("data-")):
+                continue
+            value = sorted(str(item) for item in raw_value) if isinstance(raw_value, list) else str(raw_value)
+            attributes[name] = value
+        item: dict[str, Any] = {"tag": element.name, "attributes": attributes}
+        if element.name in semantic_text_tags:
+            item["semanticText"] = " ".join(element.get_text(" ", strip=True).split())
+        contract.append(item)
+    return contract
+
+
 def check_routes(context: Context) -> dict[str, Any]:
     errors: list[str] = []
     page_ids: set[str] = set()
     linked_routes: set[str] = set()
+    region_count = 0
     for page_name in context.pages:
         reference_page = soup(confined_path(context.reference, page_name))
         target_page = soup(confined_path(context.target, page_name))
+        required_regions = cast(list[str], context.page_contracts[page_name]["required_regions"])
+        region_count += len(required_regions)
         expected_id = str(reference_page.body.get("data-page", "")) if reference_page.body else ""
         observed_id = str(target_page.body.get("data-page", "")) if target_page.body else ""
         if not observed_id or observed_id != expected_id or observed_id in page_ids:
@@ -255,9 +294,18 @@ def check_routes(context: Context) -> dict[str, Any]:
                 f"{source(context, 'routes')}#{page_name}: route identity must be unique and match {expected_id!r}"
             )
         page_ids.add(observed_id)
-        for label, selector in COMMON_SELECTORS.items():
-            if target_page.select_one(selector) is None:
-                errors.append(f"{source(context, 'pages')}#{page_name}: missing required {label} region {selector}")
+        for region, selectors in COMMON_REGION_SELECTORS.items():
+            for selector in selectors:
+                if target_page.select_one(selector) is None:
+                    errors.append(
+                        f"{source(context, 'pages')}#{page_name}: required region {region!r} "
+                        f"does not satisfy {selector}"
+                    )
+        if semantic_region_contract(target_page) != semantic_region_contract(reference_page):
+            errors.append(
+                f"{source(context, 'pages')}#{page_name}: executable region structure differs for exact "
+                f"required_regions={required_regions}"
+            )
         reference_tools = reference_page.select_one("[data-all-tools]")
         target_tools = target_page.select_one("[data-all-tools]")
         expected_hrefs = (
@@ -294,7 +342,12 @@ def check_routes(context: Context) -> dict[str, Any]:
         context,
         "routes",
         errors,
-        {"routes": len(context.pages), "uniqueRouteIds": len(page_ids), "requiredRegions": sorted(COMMON_SELECTORS)},
+        {
+            "routes": len(context.pages),
+            "uniqueRouteIds": len(page_ids),
+            "requiredRegionContracts": region_count,
+            "commonRequiredRegions": sorted(COMMON_REGION_SELECTORS),
+        },
     )
 
 
@@ -383,12 +436,63 @@ def set_page(page: Page, context: Context, page_name: str, theme: Theme = "light
     page.evaluate("document.fonts.ready")
 
 
+def keyboard_link_errors(
+    page: Page,
+    selector: str,
+    expected: list[str],
+    label: str,
+) -> tuple[list[str], int]:
+    errors: list[str] = []
+    page.evaluate(
+        """({selector}) => {
+          document.querySelector('[data-conformance-sentinel]')?.remove();
+          const container = document.querySelector(selector);
+          if (!container) return;
+          const sentinel = document.createElement('button');
+          sentinel.type = 'button';
+          sentinel.dataset.conformanceSentinel = 'true';
+          sentinel.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:1px;opacity:.01';
+          container.before(sentinel);
+          window.__conformanceActivation = null;
+          container.querySelectorAll('a[href]').forEach(link => link.addEventListener('click', event => {
+            event.preventDefault();
+            window.__conformanceActivation = link.getAttribute('href');
+          }));
+        }""",
+        {"selector": selector},
+    )
+    sentinel = page.locator("[data-conformance-sentinel]")
+    if sentinel.count() != 1:
+        return [f"{label}: keyboard navigation container is absent"], 0
+    sentinel.focus()
+    for index, expected_href in enumerate(expected):
+        page.keyboard.press("Tab")
+        observed = page.evaluate(
+            """() => document.activeElement?.tagName === 'A'
+              ? document.activeElement.getAttribute('href') : null"""
+        )
+        if observed != expected_href:
+            errors.append(
+                f"{label}: keyboard focus order differs at {index}; expected {expected_href!r}, found {observed!r}"
+            )
+            continue
+        page.keyboard.press("Enter")
+        activated = page.evaluate("window.__conformanceActivation")
+        if activated != expected_href:
+            errors.append(
+                f"{label}: keyboard activation failed at {index}; expected {expected_href!r}, found {activated!r}"
+            )
+    sentinel.evaluate("node => node.remove()")
+    return errors, len(expected)
+
+
 def check_workflows(context: Context) -> dict[str, Any]:
     errors: list[str] = []
     if len(context.workflows) != 14:
         errors.append(f"{source(context, 'workflows')}: expected exactly 14 workflow profiles")
     playwright, browser = open_browser(context)
     cases = 0
+    keyboard_cases = 0
     repeated_routes: dict[str, list[str]] = {}
     try:
         for workflow_id, specification in sorted(context.workflows.items()):
@@ -405,6 +509,14 @@ def check_workflows(context: Context) -> dict[str, Any]:
                 )
                 if observed != steps:
                     errors.append(f"{source(context, 'workflows')}#{workflow_id}: ordered primary navigation differs")
+                keyboard_errors, checked = keyboard_link_errors(
+                    page,
+                    "[data-workflow-nav]",
+                    [str(step) for step in steps],
+                    f"{source(context, 'workflows')}#{workflow_id}",
+                )
+                errors.extend(keyboard_errors)
+                keyboard_cases += checked
                 seen_step_pages: set[str] = set()
                 for index in range(len(steps)):
                     step_page = str(steps[index])
@@ -429,6 +541,14 @@ def check_workflows(context: Context) -> dict[str, Any]:
                             f"{source(context, 'workflows')}#{workflow_id}:{steps[index]}: previous/next links "
                             f"must be {expected}; found {hrefs}"
                         )
+                    keyboard_errors, checked = keyboard_link_errors(
+                        page,
+                        "[data-workflow-context]",
+                        expected,
+                        f"{source(context, 'workflows')}#{workflow_id}:{steps[index]}",
+                    )
+                    errors.extend(keyboard_errors)
+                    keyboard_cases += checked
                     cases += 1
                 supporting = None
                 for name in context.pages:
@@ -457,7 +577,12 @@ def check_workflows(context: Context) -> dict[str, Any]:
         context,
         "workflows",
         errors,
-        {"profiles": len(context.workflows), "browserCases": cases, "approvedRepeatedRoutes": repeated_routes},
+        {
+            "profiles": len(context.workflows),
+            "browserCases": cases,
+            "keyboardCases": keyboard_cases,
+            "approvedRepeatedRoutes": repeated_routes,
+        },
     )
 
 
@@ -514,6 +639,7 @@ def check_accessibility(context: Context) -> dict[str, Any]:
         errors.append(f"{source(context, 'style')}: reduced-motion contract is missing")
     playwright, browser = open_browser(context)
     responsive_cases = 0
+    responsive_visual_cases = 0
     try:
         page = new_page(browser, context)
         try:
@@ -544,18 +670,37 @@ def check_accessibility(context: Context) -> dict[str, Any]:
                     set_page(page, context, page_name)
                     reference_html = inline_page(context, page_name, root=context.reference)
                     reference_page.set_content(reference_html, wait_until="load")
-                    overflow = page.evaluate(
-                        "document.documentElement.scrollWidth > document.documentElement.clientWidth + 1"
+                    reference_page.evaluate("document.fonts.ready")
+                    measurements = page.evaluate(
+                        """() => { const root=document.documentElement; return {
+                          scrollWidth:root.scrollWidth, clientWidth:root.clientWidth,
+                          scrollHeight:root.scrollHeight, clientHeight:root.clientHeight}; }"""
                     )
-                    expected_overflow = reference_page.evaluate(
-                        "document.documentElement.scrollWidth > document.documentElement.clientWidth + 1"
+                    expected_measurements = reference_page.evaluate(
+                        """() => { const root=document.documentElement; return {
+                          scrollWidth:root.scrollWidth, clientWidth:root.clientWidth,
+                          scrollHeight:root.scrollHeight, clientHeight:root.clientHeight}; }"""
                     )
-                    if overflow != expected_overflow:
+                    if measurements != expected_measurements:
                         errors.append(
-                            f"{source(context, 'style')}#{page_name}: responsive overflow differs from reference "
+                            f"{source(context, 'style')}#{page_name}: responsive geometry differs from reference "
                             f"at {viewport['label']}"
                         )
+                    screenshot_options: dict[str, Any] = {
+                        "full_page": False,
+                        "animations": "disabled",
+                        "caret": "hide",
+                        "scale": "device",
+                    }
+                    observed_image = page.screenshot(**screenshot_options)
+                    expected_image = reference_page.screenshot(**screenshot_options)
+                    if hashlib.sha256(observed_image).digest() != hashlib.sha256(expected_image).digest():
+                        errors.append(
+                            f"{source(context, 'style')}#{page_name}: responsive visual contract differs from "
+                            f"reference at {viewport['label']}"
+                        )
                     responsive_cases += 1
+                    responsive_visual_cases += 1
             finally:
                 reference_page.context.close()
                 page.context.close()
@@ -569,6 +714,7 @@ def check_accessibility(context: Context) -> dict[str, Any]:
         {
             "pages": len(context.pages),
             "responsiveCases": responsive_cases,
+            "responsiveVisualCases": responsive_visual_cases,
             "standard": "approved-reference accessibility and responsive contract",
         },
     )
@@ -581,44 +727,54 @@ def git(repo: Path, *args: str) -> str:
     return completed.stdout.strip()
 
 
-def baseline_document_errors(value: dict[str, Any], label: str) -> list[str]:
+def schema_errors(value: object, schema: dict[str, Any], label: str) -> list[str]:
+    issues = sorted(Draft202012Validator(schema).iter_errors(value), key=lambda issue: list(issue.absolute_path))
+    return [
+        f"{label}: {'.'.join(str(part) for part in issue.absolute_path) or '<root>'}: {issue.message}"
+        for issue in issues
+    ]
+
+
+def baseline_document_errors(
+    value: dict[str, Any],
+    label: str,
+    schema: dict[str, Any],
+    expected_pages: list[str] | None = None,
+) -> list[str]:
     errors: list[str] = []
-    keys = set(value)
-    if keys != BASELINE_KEYS:
-        errors.append(
-            f"{label}: baseline fields must be exact; missing={sorted(BASELINE_KEYS - keys)}, "
-            f"extra={sorted(keys - BASELINE_KEYS)}"
-        )
-    if value.get("schemaVersion") != "1.0" or value.get("documentType") != "desktop-ui-visual-baseline":
-        errors.append(f"{label}: baseline document identity is invalid")
-    if not re.fullmatch(r"[0-9a-f]{64}", str(value.get("referencePackageSha256", ""))):
-        errors.append(f"{label}: referencePackageSha256 must be lowercase SHA-256")
-    if not re.fullmatch(r"[0-9a-f]{40}", str(value.get("referenceApprovalCommit", ""))):
-        errors.append(f"{label}: referenceApprovalCommit must be a full commit SHA")
-    entries = value.get("entries")
-    if not isinstance(entries, dict) or not entries:
-        errors.append(f"{label}: entries must be a non-empty object")
+    errors.extend(schema_errors(value, schema, label))
+    if errors:
         return errors
-    for key, raw_entry in entries.items():
+    settings = cast(dict[str, Any], value["settings"])
+    for field in ("platform", "playwrightVersion", "browserVersion"):
+        if value[field] != settings[field]:
+            errors.append(f"{label}: top-level {field} must equal settings.{field}")
+    entries = value.get("entries")
+    assert isinstance(entries, dict)
+    viewport = cast(dict[str, int], settings["viewport"])
+    observed_pages: dict[str, set[str]] = {}
+    for key, raw_entry in cast(dict[str, dict[str, Any]], entries).items():
         entry_label = f"{label}#{key}"
-        if not isinstance(key, str) or not isinstance(raw_entry, dict):
-            errors.append(f"{entry_label}: visual entry must be an object")
-            continue
-        if set(raw_entry) != BASELINE_ENTRY_KEYS:
-            errors.append(f"{entry_label}: visual entry fields must be exact")
-            continue
-        page_name = raw_entry.get("page")
-        theme = raw_entry.get("theme")
-        if key != f"{page_name}::{theme}" or theme not in {"light", "dark"}:
+        page_name = cast(str, raw_entry["page"])
+        theme = cast(str, raw_entry["theme"])
+        if key != f"{page_name}::{theme}":
             errors.append(f"{entry_label}: visual entry key, page, and theme are inconsistent")
-        if not isinstance(raw_entry.get("width"), int) or not isinstance(raw_entry.get("height"), int):
-            errors.append(f"{entry_label}: visual dimensions must be integers")
-        if not re.fullmatch(r"[0-9a-f]{64}", str(raw_entry.get("sha256", ""))):
-            errors.append(f"{entry_label}: screenshot SHA-256 is invalid")
+        if raw_entry["width"] != viewport["width"] or raw_entry["height"] != viewport["height"]:
+            errors.append(f"{entry_label}: visual dimensions must equal the governed viewport")
+        observed_pages.setdefault(page_name, set()).add(theme)
+    incomplete = sorted(page_name for page_name, themes in observed_pages.items() if themes != {"light", "dark"})
+    if incomplete:
+        errors.append(f"{label}: every page requires exact light/dark entries; incomplete={incomplete}")
+    if expected_pages is not None and set(observed_pages) != set(expected_pages):
+        errors.append(
+            f"{label}: entry pages must exactly match product routes; "
+            f"missing={sorted(set(expected_pages) - set(observed_pages))}, "
+            f"extra={sorted(set(observed_pages) - set(expected_pages))}"
+        )
     return errors
 
 
-def git_json_at(repo: Path, revision: str, relative: str) -> tuple[dict[str, Any] | None, str | None, str | None]:
+def git_blob_at(repo: Path, revision: str, relative: str) -> tuple[bytes | None, str | None]:
     listing = subprocess.run(
         ["git", "ls-tree", revision, "--", relative],
         cwd=repo,
@@ -628,9 +784,9 @@ def git_json_at(repo: Path, revision: str, relative: str) -> tuple[dict[str, Any
         timeout=30,
     )
     if listing.returncode != 0:
-        return None, None, f"cannot inspect {revision}:{relative}"
+        return None, f"cannot inspect {revision}:{relative}"
     if not listing.stdout.strip():
-        return None, None, None
+        return None, None
     metadata, separator, path = listing.stdout.strip().partition("\t")
     fields = metadata.split()
     if (
@@ -640,10 +796,27 @@ def git_json_at(repo: Path, revision: str, relative: str) -> tuple[dict[str, Any
         or fields[0] not in {"100644", "100755"}
         or fields[1] != "blob"
     ):
-        return None, None, f"{revision}:{relative} must be a regular Git blob"
-    payload = git(repo, "show", f"{revision}:{relative}")
+        return None, f"{revision}:{relative} must be a regular Git blob"
+    completed = subprocess.run(
+        ["git", "show", f"{revision}:{relative}"],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    if completed.returncode != 0:
+        return None, f"cannot read {revision}:{relative}"
+    return completed.stdout, None
+
+
+def git_json_at(repo: Path, revision: str, relative: str) -> tuple[dict[str, Any] | None, bytes | None, str | None]:
+    payload, read_error = git_blob_at(repo, revision, relative)
+    if read_error or payload is None:
+        return None, payload, read_error
     try:
-        loaded = json.loads(payload)
+        loaded = json.loads(payload.decode("utf-8"))
+    except UnicodeDecodeError:
+        return None, payload, f"{revision}:{relative}: invalid UTF-8"
     except json.JSONDecodeError as exc:
         return None, payload, f"{revision}:{relative}: invalid JSON: {exc.msg}"
     if not isinstance(loaded, dict):
@@ -651,7 +824,153 @@ def git_json_at(repo: Path, revision: str, relative: str) -> tuple[dict[str, Any
     return loaded, payload, None
 
 
-def approval_lineage_errors(repo: Path, baseline: dict[str, Any], baseline_commit: str) -> list[str]:
+APPROVAL_KEYS = frozenset(
+    {
+        "reference_id",
+        "version",
+        "status",
+        "approved_by",
+        "approved_at",
+        "approval_basis",
+        "supersedes",
+        "scope",
+        "implementation_rule",
+        "deferred_surfaces",
+    }
+)
+REFERENCE_MANIFEST_KEYS = frozenset(
+    {
+        "reference_id",
+        "version",
+        "status",
+        "approval_file",
+        "canonical_token_file",
+        "style_guides",
+        "workflow_catalog",
+        "page_contracts",
+        "page_inventory",
+        "site_manifest",
+        "generator",
+        "validator",
+        "governed_files",
+        "file_hashes",
+    }
+)
+
+
+def approval_record_errors(value: object, label: str, reference_id: str) -> list[str]:
+    if not isinstance(value, dict):
+        return [f"{label}: approval record must be an object"]
+    errors: list[str] = []
+    if set(value) != APPROVAL_KEYS:
+        errors.append(
+            f"{label}: approval fields must be exact; missing={sorted(APPROVAL_KEYS - set(value))}, "
+            f"extra={sorted(set(value) - APPROVAL_KEYS)}"
+        )
+        return errors
+    if value["reference_id"] != reference_id or value["status"] != "approved":
+        errors.append(f"{label}: approval identity/status does not match the baseline")
+    for field in ("version", "approved_by", "approval_basis", "implementation_rule"):
+        if not isinstance(value[field], str) or not value[field].strip():
+            errors.append(f"{label}: {field} must be a nonempty string")
+    try:
+        if not isinstance(value["approved_at"], str):
+            raise ValueError
+        date.fromisoformat(value["approved_at"])
+    except ValueError:
+        errors.append(f"{label}: approved_at must be a valid ISO date")
+    if value["supersedes"] is not None and (not isinstance(value["supersedes"], str) or not value["supersedes"]):
+        errors.append(f"{label}: supersedes must be null or a nonempty reference ID")
+    scope = value["scope"]
+    if not isinstance(scope, dict) or set(scope) != {"normative", "illustrative"}:
+        errors.append(f"{label}: scope must contain exact normative and illustrative arrays")
+    else:
+        for field in ("normative", "illustrative"):
+            items = scope[field]
+            if (
+                not isinstance(items, list)
+                or not items
+                or any(not isinstance(item, str) or not item.strip() for item in items)
+                or len(items) != len(set(items))
+            ):
+                errors.append(f"{label}: scope.{field} must be unique nonempty strings")
+    deferred = value["deferred_surfaces"]
+    if not isinstance(deferred, list) or any(not isinstance(item, str) or not item.strip() for item in deferred):
+        errors.append(f"{label}: deferred_surfaces must be an array of nonempty strings")
+    return errors
+
+
+def reference_package_errors(
+    repo: Path,
+    baseline: dict[str, Any],
+    baseline_commit: str,
+    approval_commit: str,
+) -> list[str]:
+    errors: list[str] = []
+    approval_path = "design/ui-reference/APPROVAL.yaml"
+    manifest_path = "design/ui-reference/REFERENCE_MANIFEST.yaml"
+    approval_bytes, approval_error = git_blob_at(repo, approval_commit, approval_path)
+    current_approval_bytes, current_approval_error = git_blob_at(repo, baseline_commit, approval_path)
+    manifest_bytes, manifest_error = git_blob_at(repo, baseline_commit, manifest_path)
+    errors.extend(error for error in (approval_error, current_approval_error, manifest_error) if error)
+    if errors or approval_bytes is None or current_approval_bytes is None or manifest_bytes is None:
+        return errors
+    if approval_bytes != current_approval_bytes:
+        errors.append(f"{baseline_commit}: approved reference record differs from the cited approval commit")
+    try:
+        approval = yaml.safe_load(approval_bytes.decode("utf-8"))
+        manifest = yaml.safe_load(manifest_bytes.decode("utf-8"))
+    except UnicodeDecodeError, yaml.YAMLError:
+        return [*errors, f"{baseline_commit}: approved reference governance records are unreadable"]
+    reference_id = str(baseline.get("referenceId", ""))
+    errors.extend(approval_record_errors(approval, f"{approval_commit}:{approval_path}", reference_id))
+    if not isinstance(manifest, dict) or set(manifest) != REFERENCE_MANIFEST_KEYS:
+        errors.append(f"{baseline_commit}:{manifest_path}: manifest fields must be exact")
+        return errors
+    if (
+        manifest["reference_id"] != reference_id
+        or manifest["status"] != "approved"
+        or manifest["approval_file"] != "APPROVAL.yaml"
+        or not isinstance(approval, dict)
+        or manifest["version"] != approval.get("version")
+    ):
+        errors.append(f"{baseline_commit}:{manifest_path}: manifest identity/status/version is inconsistent")
+    governed = manifest["governed_files"]
+    declared_hashes = manifest["file_hashes"]
+    if (
+        not isinstance(governed, list)
+        or not governed
+        or any(not isinstance(item, str) or not item for item in governed)
+        or len(governed) != len(set(governed))
+        or not isinstance(declared_hashes, dict)
+        or set(declared_hashes) != set(governed)
+    ):
+        errors.append(f"{baseline_commit}:{manifest_path}: governed file/hash inventory is invalid")
+        return errors
+    observed: dict[str, str] = {}
+    for relative in governed:
+        payload, read_error = git_blob_at(repo, baseline_commit, f"design/ui-reference/{relative}")
+        if read_error or payload is None:
+            errors.append(read_error or f"{baseline_commit}: missing governed reference file {relative}")
+            continue
+        digest = hashlib.sha256(canonical_payload(relative, payload)).hexdigest()
+        observed[relative] = digest
+        if declared_hashes.get(relative) != digest:
+            errors.append(f"{baseline_commit}:{manifest_path}: governed hash differs for {relative}")
+    package_sha256 = hashlib.sha256(
+        json.dumps(observed, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    if package_sha256 != baseline.get("referencePackageSha256"):
+        errors.append(f"{baseline_commit}: visual baseline does not bind the exact approved reference package")
+    return errors
+
+
+def approval_lineage_errors(
+    repo: Path,
+    baseline: dict[str, Any],
+    baseline_commit: str,
+    package_cache: dict[tuple[str, str, str], list[str]] | None = None,
+) -> list[str]:
     errors: list[str] = []
     approval_commit = str(baseline.get("referenceApprovalCommit", ""))
     if not re.fullmatch(r"[0-9a-f]{40}", approval_commit):
@@ -685,14 +1004,42 @@ def approval_lineage_errors(repo: Path, baseline: dict[str, Any], baseline_commi
         errors.append(f"{baseline_commit}: cited reference approval commit did not change APPROVAL.yaml")
         return errors
     try:
-        approval = yaml.safe_load(git(repo, "show", f"{approval_commit}:design/ui-reference/APPROVAL.yaml"))
-    except ValueError, yaml.YAMLError:
-        return [*errors, f"{baseline_commit}: cited reference approval record is unreadable"]
-    if not isinstance(approval, dict) or approval.get("status") != "approved":
-        errors.append(f"{baseline_commit}: cited reference approval record is not approved")
-    elif approval.get("reference_id") != baseline.get("referenceId"):
-        errors.append(f"{baseline_commit}: baseline referenceId differs from its cited approval record")
+        tree = git(repo, "rev-parse", f"{baseline_commit}:design/ui-reference")
+    except ValueError:
+        return [*errors, f"{baseline_commit}: approved reference tree is absent"]
+    cache_key = (approval_commit, str(baseline.get("referencePackageSha256", "")), tree)
+    if package_cache is not None and cache_key in package_cache:
+        errors.extend(package_cache[cache_key])
+    else:
+        package_errors = reference_package_errors(repo, baseline, baseline_commit, approval_commit)
+        errors.extend(package_errors)
+        if package_cache is not None:
+            package_cache[cache_key] = package_errors
     return errors
+
+
+def font_face_available(page: Page, font: str) -> bool:
+    return bool(
+        page.evaluate(
+            """font => {
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              if (!context) return false;
+              const sample = 'mmmmmmmmmmlliWW00@# Research Observatory';
+              const metrics = family => {
+                context.font = `72px ${family}`;
+                const value = context.measureText(sample);
+                return [value.width, value.actualBoundingBoxAscent, value.actualBoundingBoxDescent];
+              };
+              const same = (left, right) => left.every((value, index) => Math.abs(value - right[index]) < 0.01);
+              const escaped = String(font).replace(/["\\\\]/g, '\\$&');
+              return ['monospace', 'serif', 'sans-serif'].some(fallback =>
+                !same(metrics(`"${escaped}", ${fallback}`), metrics(fallback))
+              );
+            }""",
+            font,
+        )
+    )
 
 
 def render_visuals(context: Context) -> tuple[dict[str, Any], list[str]]:
@@ -717,11 +1064,7 @@ def render_visuals(context: Context) -> tuple[dict[str, Any], list[str]]:
             try:
                 for page_name in context.pages:
                     set_page(page, context, page_name, theme)
-                    missing_fonts = [
-                        font
-                        for font in visual["requiredFonts"]
-                        if not page.evaluate('font => document.fonts.check(`12px \\"${font}\\"`)', font)
-                    ]
+                    missing_fonts = [font for font in visual["requiredFonts"] if not font_face_available(page, font)]
                     if missing_fonts:
                         errors.append(
                             f"{source(context, 'style')}#{page_name}: missing controlled fonts {missing_fonts}"
@@ -752,6 +1095,8 @@ def render_visuals(context: Context) -> tuple[dict[str, Any], list[str]]:
 def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     relative = str(context.config["visual"]["baselinePath"])
+    schema_path = confined_path(context.repo, "verification/desktop-ui-baseline.schema.json")
+    schema = json_object(schema_path)
     if git(context.repo, "rev-parse", "--is-inside-work-tree") != "true":
         return [f"{relative}: cannot inspect governed Git history"]
     if git(context.repo, "rev-parse", "--is-shallow-repository") == "true":
@@ -760,19 +1105,21 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
     if status:
         errors.append(f"{relative}: visual baseline must be committed before authoritative verification")
     head = git(context.repo, "rev-parse", "--verify", "HEAD")
-    head_baseline, _, head_error = git_json_at(context.repo, head, relative)
+    head_baseline, head_payload, head_error = git_json_at(context.repo, head, relative)
     if head_error:
         errors.append(head_error)
     elif head_baseline is None:
         errors.append(f"{relative}: visual baseline is absent from HEAD")
-    elif head_baseline != baseline:
+    elif head_payload != confined_path(context.repo, relative).read_bytes():
         errors.append(f"{relative}: working baseline bytes differ from the committed HEAD baseline")
 
     commits = git(context.repo, "rev-list", "--reverse", "--topo-order", head).splitlines()
-    snapshots: dict[str, tuple[dict[str, Any] | None, str | None]] = {}
+    snapshots: dict[str, tuple[dict[str, Any] | None, bytes | None]] = {}
+    valid_snapshots: dict[str, bool] = {}
     identities: dict[tuple[str, str], dict[str, str]] = {}
+    package_cache: dict[tuple[str, str, str], list[str]] = {}
 
-    def snapshot(revision: str) -> tuple[dict[str, Any] | None, str | None]:
+    def snapshot(revision: str) -> tuple[dict[str, Any] | None, bytes | None]:
         if revision not in snapshots:
             value, payload, read_error = git_json_at(context.repo, revision, relative)
             snapshots[revision] = (value, payload)
@@ -784,19 +1131,40 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
         current, current_payload = snapshot(commit)
         parents = git(context.repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
         if current is not None:
-            errors.extend(baseline_document_errors(current, f"{commit}:{relative}"))
-            errors.extend(approval_lineage_errors(context.repo, current, commit))
+            document_errors = baseline_document_errors(current, f"{commit}:{relative}", schema, context.pages or None)
+            errors.extend(document_errors)
+            valid_snapshots[commit] = not document_errors
+            if not document_errors:
+                errors.extend(approval_lineage_errors(context.repo, current, commit, package_cache))
             identity = (str(current.get("referenceId", "")), str(current.get("referenceApprovalCommit", "")))
             if current_payload is not None:
-                blob = hashlib.sha256(current_payload.encode("utf-8")).hexdigest()
+                blob = hashlib.sha256(current_payload).hexdigest()
                 identities.setdefault(identity, {}).setdefault(blob, commit)
+        else:
+            valid_snapshots[commit] = False
         for parent in parents or [""]:
             previous, previous_payload = snapshot(parent) if parent else (None, None)
             edge = f"{commit}<-{parent or '<root>'}"
             if previous is not None and current is None:
                 errors.append(f"{edge}: visual baseline was removed from reachable history")
                 continue
-            if previous is None or current is None or previous_payload == current_payload:
+            if (
+                previous is None
+                or current is None
+                or previous_payload == current_payload
+                or not valid_snapshots.get(commit, False)
+            ):
+                continue
+            if parent and parent not in valid_snapshots:
+                parent_errors = baseline_document_errors(
+                    previous,
+                    f"{parent}:{relative}",
+                    schema,
+                    context.pages or None,
+                )
+                errors.extend(parent_errors)
+                valid_snapshots[parent] = not parent_errors
+            if parent and not valid_snapshots.get(parent, False):
                 continue
             if current.get("referenceId") == previous.get("referenceId"):
                 errors.append(f"{edge}: changing a visual baseline requires a new approved reference ID")
@@ -825,7 +1193,15 @@ def check_visual(context: Context) -> dict[str, Any]:
     errors: list[str] = []
     baseline_path = confined_path(context.repo, str(context.config["visual"]["baselinePath"]))
     baseline = json_object(baseline_path)
-    errors.extend(baseline_document_errors(baseline, baseline_path.relative_to(context.repo).as_posix()))
+    baseline_schema = json_object(confined_path(context.repo, "verification/desktop-ui-baseline.schema.json"))
+    errors.extend(
+        baseline_document_errors(
+            baseline,
+            baseline_path.relative_to(context.repo).as_posix(),
+            baseline_schema,
+            context.pages,
+        )
+    )
     errors.extend(baseline_history_errors(context, baseline))
     expected_identity = {
         "referenceId": context.config["referenceId"],

@@ -35,6 +35,10 @@
       "reason": "The strict activation schema prevents conformance inputs and controlled visual settings from becoming optional or ambiguous."
     },
     {
+      "pattern": "verification/desktop-ui-baseline.schema.json",
+      "reason": "The strict visual-baseline schema governs every current and historical renderer, dimension, entry, and approved-reference identity."
+    },
+    {
       "pattern": "verification/baselines/desktop-ui.json",
       "reason": "The visual baseline is approved-reference, browser, platform, viewport, theme, and font authority."
     },
