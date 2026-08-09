@@ -44,6 +44,15 @@
       "linkedTasks": [
         "CAP-00.S06.T04"
       ]
+    },
+    {
+      "id": "ADR-0005",
+      "path": "docs/adr/ADR-0005-activate-the-offline-tauri-desktop-application.md",
+      "title": "Activate the offline Tauri desktop application",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-01.S01.T01"
+      ]
     }
   ]
 }

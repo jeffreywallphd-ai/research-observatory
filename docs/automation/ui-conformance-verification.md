@@ -1,12 +1,12 @@
 # Desktop UI conformance verification
 
 The `desktop` verification profile binds researcher-facing implementation to the
-approved UI reference. CAP-00 activates an `approved-reference-fixture` target
-before application code exists. This mode qualifies the verifier and baseline,
-not a shipped desktop application: it fails as soon as a UI implementation file
-appears under a configured application root. CAP-01 must then replace the
-fixture activation with an implementation target and retain every conformance
-boundary.
+approved UI reference. CAP-00 initially qualified the verifier and baseline with
+an `approved-reference-fixture` target. CAP-01 now uses
+`approved-reference-application`: the profile first rebuilds `apps/desktop/dist`,
+validates its exact source/output manifest, and then retains every conformance
+boundary against the shipped Tauri webview target. Missing, redirected, stale, or
+incomplete application output fails closed.
 
 ## Checks
 
