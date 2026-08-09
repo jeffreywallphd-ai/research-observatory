@@ -1973,12 +1973,12 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T09:04:08+00:00'
-      updated_at: '2026-08-09T10:11:28+00:00'
-      completed_at: null
+      updated_at: '2026-08-09T10:15:23+00:00'
+      completed_at: '2026-08-09T10:15:23+00:00'
       blocker: null
       implementation_notes: 'Approved-reference primary frame, 32-route guards, dynamic keyboard navigation, and real built-runtime
         browser validation pass the full desktop profile at 8c27449.
@@ -2006,15 +2006,13 @@ capabilities:
         recorded_at: '2026-08-09T10:11:02+00:00'
       review:
         reviewer: agent:maxwell
-        result: changes-requested
-        reviewed_at: '2026-08-09T09:57:55+00:00'
-        notes: Reject decoded scheme-prefixed forms such as https:evil.invalid/... and mailto:user@example.invalid/...; add
-          unit and bundled-renderer regressions before re-review.
+        result: approved
+        reviewed_at: '2026-08-09T10:15:23+00:00'
+        notes: 'Approved at e19ecc7: independent pure and production-bundle replay confirms scheme-prefixed links recover
+          safely, lose stale current-state semantics, and are excluded from keyboard routing; exact evidence and full checks
+          validate.'
       base_sha: 67be83ac7ad482c81d5fc709b0f2e448dc1a6697
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-09T09:57:55+00:00'
-        expires_at: '2026-08-09T17:57:55+00:00'
+      lease: null
       experience_change:
         kind: approved-reference-implementation
         contract_path: artifacts/evidence/ui-change/CAP-01.S01.T02.json
@@ -2052,11 +2050,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-09T10:15:23+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
