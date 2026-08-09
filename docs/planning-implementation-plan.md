@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3d7be6c3d6c29784d83bf65cab533abe96c122240df01bc721c44dfaaf615b4e
+source_sha256: 4c9ea30cea2d163d46617e34b2b0ce7b76a112906ce5c1d18e3a3899023610b8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -900,13 +900,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S06.T04 - Implement UI implementation-conformance verification
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S06.T03`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:descartes (`changes-requested`)
 
 **Objective:** Compare the application against approved tokens, routes/page contracts, use-case workflows, navigation behavior, accessibility rules, responsive states, and visual baselines.
 
