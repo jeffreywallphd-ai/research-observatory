@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 208a5f1fee42ff2b03e6d93921228bfa033b9daa62a471aa177136738c934ce4
+source_sha256: 9e82e851946110ed2802073d3fffe835a7953336cd6e1ef2b811bab501949581
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -866,15 +866,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S06.T02.review-fix.json` at `1e5954e60d0405631e56a7a45007a770b01ddb28`
 - `artifacts/evidence/CAP-00.S06.T02.review-fix-2.json` at `1ee236ab5ea27a6d84cbf16047f3c858f163bd83`
 
-#### - [ ] CAP-00.S06.T03 - Implement design-first change gating
+#### - [x] CAP-00.S06.T03 - Implement design-first change gating
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S06.T02`, `CAP-00.S04.T02`
 
-**Owner / review:** codex / agent:descartes (`changes-requested`)
+**Owner / review:** codex / agent:descartes (`approved`)
 
 **Objective:** Require intentional UI/UX changes to update and approve the reference before application implementation; distinguish approved design change from defect restoration and record reference lineage in task and pull-request evidence.
 
@@ -900,7 +900,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S06.T04 - Implement UI implementation-conformance verification
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 

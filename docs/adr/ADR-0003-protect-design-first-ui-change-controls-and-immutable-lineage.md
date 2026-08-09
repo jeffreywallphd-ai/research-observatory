@@ -1,7 +1,7 @@
 ---
 id: ADR-0003
 title: Protect design-first UI change controls and immutable lineage
-status: Proposed
+status: Accepted
 date: 2026-08-08
 deciders:
   - CAP-00 approved experience policy and CAP-00.S06.T03 independent review
