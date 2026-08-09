@@ -2656,9 +2656,23 @@ capabilities:
       evidence: []
       notes: null
   execution_mode: capability_campaign
-  campaign: null
+  campaign:
+    status: ACTIVE
+    owner: codex
+    branch: codex/cap-01-desktop-shell
+    worktree: C:/workspace/research-observatory
+    base_sha: fe63930a0d26dc28885e0e26ff578cc92c7a12b5
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-08-09T06:52:46+00:00'
+    updated_at: '2026-08-09T06:52:46+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-09T06:52:46+00:00'
+      expires_at: '2026-08-10T06:52:46+00:00'
   completion:
-    status: PENDING
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
