@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S06.T02",
+  "commit": "1ee236ab5ea27a6d84cbf16047f3c858f163bd83",
+  "baseCommit": "1e5954e60d0405631e56a7a45007a770b01ddb28",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S06.T02.review-fix.json",
+    "reason": "Remediation re-review confirmed the original three findings were closed and then found omitted SVG and Worker-class browser fetch surfaces. This manifest binds the expanded URL-attribute matrix and executable/remote-resource denial."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S06.T02.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_ui_reference_check.py",
+    "tools/ui_reference_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_ui_reference_check -v",
+      "exitCode": 0,
+      "result": "All six focused tests passed; the boundary matrix includes coherent regenerated/rehashed remote SVG image references and rehashed Worker construction in addition to no-op generation, remote CSS/fetch, hosted-route, governance, workflow, and concurrency cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "The clean exact second-remediation commit passed all 15 mandatory foundation commands and all 129 foundation tests; build provenance reported 0.1.0+g1ee236a clean."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --check",
+      "exitCode": 0,
+      "result": "The ledger and generated planning views validate with both independent changes-requested rounds preserved in the audit trail."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The HTML URL matrix now covers standard navigation/media/script/form fetches, SVG image/use/feImage href and xlink:href, legacy fetching attributes, source sets, meta refresh, portals, and local target confinement.",
+        "Governed HTML, CSS, and JavaScript reject remote resource literals; executable surfaces additionally reject fetch/XHR/WebSocket/EventSource, Worker/SharedWorker/importScripts, sendBeacon, service-worker registration, and worklet module loading.",
+        "A coherent generator revision that emits a remote SVG image, regenerates its page, and rehashes every governed artifact fails the network gate while still satisfying generator reproducibility; a separately rehashed Worker mutation also fails."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The canonical RO-UI-ACADEMIC-MINIMAL-1.3 reference remains accepted with the exact approved identity, all 54 hashes, aggregate package hash, and required page/workflow/capability counts.",
+        "The report remains deterministic and the UI-reference checker remains a mandatory foundation command."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The complete browser dependency surface is validated statically without browser launch or network access, and generator reproduction stays confined to immutable snapshots in an isolated temporary directory.",
+        "The exact clean commit passes the full foundation profile and preserves both independent review dispositions plus their superseded evidence."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must confirm coherent remote SVG and rehashed Worker-class mutations are denied, all prior findings remain closed, and the full T02 acceptance/evidence chain remains valid."
+  }
+}

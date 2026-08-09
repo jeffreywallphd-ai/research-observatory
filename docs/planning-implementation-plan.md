@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 00a83c25055587b73ec6d56bf33b651178f2dc2fd0e762656c40e2f34ac21b9c
+source_sha256: 953b8b2ee018b3d5a20920c57dda9e3e9f3412e23d03da83a07e5a4a690ab3ba
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -833,15 +833,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S06.T01.json` at `1acd8aa2ad13edc3c8d6938c2e0219010e8135e4`
 
-#### - [ ] CAP-00.S06.T02 - Implement UI-reference integrity and approval validation
+#### - [x] CAP-00.S06.T02 - Implement UI-reference integrity and approval validation
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S06.T01`, `CAP-00.S03.T01`
 
-**Owner / review:** codex / agent:descartes (`changes-requested`)
+**Owner / review:** codex / agent:descartes (`approved`)
 
 **Objective:** Validate approval status, governed-file hashes, generator reproducibility, page inventory, capability coverage, workflow page references, local links, shared assets, and prohibited hosted-scope additions.
 
@@ -864,10 +864,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S06.T02.json` at `91668d26dc15327929430c6a0da098a2bdc1c4bb`
 - `artifacts/evidence/CAP-00.S06.T02.review-fix.json` at `1e5954e60d0405631e56a7a45007a770b01ddb28`
+- `artifacts/evidence/CAP-00.S06.T02.review-fix-2.json` at `1ee236ab5ea27a6d84cbf16047f3c858f163bd83`
 
 #### - [ ] CAP-00.S06.T03 - Implement design-first change gating
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 

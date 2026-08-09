@@ -1603,19 +1603,22 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T23:32:31+00:00'
-      updated_at: '2026-08-09T00:19:06+00:00'
-      completed_at: null
+      updated_at: '2026-08-09T00:32:33+00:00'
+      completed_at: '2026-08-09T00:32:33+00:00'
       blocker: null
       implementation_notes: 'Implementation complete at 91668d2; exact clean foundation passed 15 commands and 128 tests;
         focused reference integrity suite passed 5 tests; deterministic report and evidence attached.
 
         Review remediation complete at 1e5954e: generator outputs must be freshly reproduced, browser network surfaces and
         administrator route variants fail closed; exact clean foundation passed 15 commands/129 tests and focused suite passed
-        6 tests.'
+        6 tests.
+
+        Second review remediation complete at 1ee236a: coherent SVG fetches, Worker-class and remaining browser fetch surfaces
+        are denied; exact clean foundation passed 15 commands/129 tests and all prior findings remain closed.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S06.T02.json
@@ -1627,19 +1630,21 @@ capabilities:
         sha256: e504402c750a8f35abebfc42acee5757ff75add338bf8eebad9b64192329e824
         commit: 1e5954e60d0405631e56a7a45007a770b01ddb28
         recorded_at: '2026-08-09T00:11:52+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S06.T02.review-fix-2.json
+        sha256: dcbb5736ba4cdd053c659e5e8a33c4a3b84a48807e358ea788e48ad8200d55bd
+        commit: 1ee236ab5ea27a6d84cbf16047f3c858f163bd83
+        recorded_at: '2026-08-09T00:27:32+00:00'
       review:
         reviewer: agent:descartes
-        result: changes-requested
-        reviewed_at: '2026-08-09T00:19:06+00:00'
-        notes: 'Required follow-up: cover SVG browser-fetching URL attributes and Worker/SharedWorker-class executable fetch
-          surfaces with coherent rehashed regressions. Original generator reseeding, CSS, and administrator-route findings
-          are closed; remaining acceptance and gates pass.'
+        result: approved
+        reviewed_at: '2026-08-09T00:32:33+00:00'
+        notes: Approved exact commit 1ee236a after independent closure of coherent SVG image/use, Worker/SharedWorker, incomplete
+          generator, remote CSS/fetch, and administrator-route bypasses; deterministic report, evidence chain, taskctl/views,
+          and 15-command/129-test foundation all pass.
       base_sha: 11aabd195064b213a25af38c0356242368e433be
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-09T00:19:06+00:00'
-        expires_at: '2026-08-09T08:19:06+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
@@ -1674,11 +1679,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-09T00:32:33+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
