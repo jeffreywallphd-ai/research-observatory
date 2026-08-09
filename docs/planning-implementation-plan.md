@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 426ac1a0965da31758df840af19171650e4be5cad821beaeb1cf8ee79f6e5880
+source_sha256: 5efcf4ab25d584a71f138f7d860684fbc79ebc65783a8717e5843fb4511a5a09
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -935,7 +935,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-01 - Windows-first desktop shell and supervised local runtime
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Campaign / completion:** `ACTIVE` / `IN_PROGRESS`
 
 **Objective:** Deliver the canonical Windows-first desktop experience and a reliably packaged local analytical service that requires no external server administration.
 
