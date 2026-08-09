@@ -1679,11 +1679,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T00:36:20+00:00'
-      updated_at: '2026-08-09T01:06:23+00:00'
+      updated_at: '2026-08-09T01:17:37+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Exact implementation commit 5ef232e passed 16 foundation commands, 138 tests, 29 focused adversarial
@@ -1695,16 +1695,18 @@ capabilities:
         commit: 5ef232e641d6ad4999a6b7c7c31315ad758820cb
         recorded_at: '2026-08-09T01:05:48+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:descartes
+        result: changes-requested
+        reviewed_at: '2026-08-09T01:17:37+00:00'
+        notes: 'Required: reject non-blob governed UI objects; fail closed on ambiguous/manual bases; bind active task base/status/range;
+          canonicalize human principals; and replace self-asserted restoration evidence with commit-bound governed verification
+          or retain human classification.'
       base_sha: 55a0fe56bb0f1eddacf5ebbcc27093913c62277b
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-09T00:36:20+00:00'
-        expires_at: '2026-08-09T08:36:20+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-09T01:17:37+00:00'
+        expires_at: '2026-08-09T09:17:37+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral

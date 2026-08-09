@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1b9e0796c67aac5f1774167f9ead5f33c9f60755bd7e14a709f056c12684a627
+source_sha256: e330a9c2d0269dcd3a85a87d759e3d48a7bf27a2b689949c6ac276ff56262a2c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -868,13 +868,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S06.T03 - Implement design-first change gating
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S06.T02`, `CAP-00.S04.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:descartes (`changes-requested`)
 
 **Objective:** Require intentional UI/UX changes to update and approve the reference before application implementation; distinguish approved design change from defect restoration and record reference lineage in task and pull-request evidence.
 
