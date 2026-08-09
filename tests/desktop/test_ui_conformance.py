@@ -27,6 +27,7 @@ from ui_conformance import (  # noqa: E402
     check_tokens,
     check_visual,
     check_workflows,
+    file_inventory,
     font_face_available,
     load_context,
     new_page,
@@ -124,6 +125,37 @@ class UiConformanceTests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "application manifest"):
                 load_context(root)
+
+    def test_application_inventory_detects_content_type_and_membership_races(self) -> None:
+        for inventory_kind in ("source", "artifact"):
+            for mutation in ("content", "type", "membership"):
+                with (
+                    self.subTest(inventory_kind=inventory_kind, mutation=mutation),
+                    tempfile.TemporaryDirectory() as temporary,
+                ):
+                    root = Path(temporary) / "repo"
+                    inventory_root = root / "apps" / "desktop" / ("src" if inventory_kind == "source" else "dist")
+                    inventory_root.mkdir(parents=True)
+                    source = inventory_root / "View.tsx"
+                    source.write_text("export const value = 1;\n", encoding="utf-8", newline="\n")
+
+                    def mutate(
+                        mutation_kind: str = mutation,
+                        source_path: Path = source,
+                        root_path: Path = inventory_root,
+                    ) -> None:
+                        if mutation_kind == "content":
+                            source_path.write_text("export const value = 2;\n", encoding="utf-8", newline="\n")
+                        elif mutation_kind == "type":
+                            source_path.unlink()
+                            source_path.mkdir()
+                        else:
+                            (root_path / "Late.tsx").write_text(
+                                "export const late = true;\n", encoding="utf-8", newline="\n"
+                            )
+
+                    with self.assertRaisesRegex((OSError, ValueError), "inventory|regular file"):
+                        file_inventory(root, inventory_root, after_first_pass=mutate)
 
     def test_token_and_supporting_navigation_drift_fail(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

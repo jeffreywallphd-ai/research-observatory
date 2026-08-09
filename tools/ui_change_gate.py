@@ -101,6 +101,45 @@ APPLICATION_ACTIVATION_PATHS = frozenset(
         "verification-profiles.json",
     }
 )
+REVIEW_HARDENING_PATHS = frozenset({"tools/ui_change_gate.py", "tools/ui_conformance.py"})
+REVIEW_HARDENING_TESTS = frozenset({"tests/desktop/test_ui_conformance.py", "tests/foundation/test_ui_change_gate.py"})
+AGENT_REVIEWER = re.compile(r"^agent:[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$")
+
+
+def independent_review_hardening_errors(backlog: dict[str, Any], task_id: str, paths: set[str]) -> list[str]:
+    if paths & GATE_CONTROL_PATHS != REVIEW_HARDENING_PATHS or not paths >= REVIEW_HARDENING_TESTS:
+        return [
+            "post-implementation gate hardening must change only the canonical protected hardening pair "
+            "and include both regression suites"
+        ]
+    matches = [
+        task
+        for capability in backlog.get("capabilities", [])
+        if isinstance(capability, dict)
+        for slice_item in capability.get("slices", [])
+        if isinstance(slice_item, dict)
+        for task in slice_item.get("tasks", [])
+        if isinstance(task, dict) and task.get("id") == task_id
+    ]
+    if len(matches) != 1:
+        return ["post-implementation gate hardening requires one exact task in the parent backlog"]
+    task = matches[0]
+    review = task.get("review")
+    reviewer = review.get("reviewer") if isinstance(review, dict) else None
+    owner = task.get("owner")
+    if (
+        task.get("status") != "IN_PROGRESS"
+        or not isinstance(review, dict)
+        or review.get("result") != "changes-requested"
+        or not isinstance(reviewer, str)
+        or AGENT_REVIEWER.fullmatch(reviewer) is None
+        or reviewer == f"agent:{owner}"
+    ):
+        return [
+            "post-implementation gate hardening requires a canonical independent agent CHANGES_REQUESTED "
+            "record in the commit's parent backlog"
+        ]
+    return []
 
 
 def application_activation_errors(
@@ -149,16 +188,40 @@ def application_activation_errors(
     commits = git(repo, "rev-list", "--reverse", "--topo-order", f"{base}..{head}").decode("ascii").splitlines()
     protected_positions: list[int] = []
     implementation_positions: list[int] = []
+    paths_by_position: dict[int, set[str]] = {}
     for position, commit in enumerate(commits):
         paths = commit_paths(repo, commit)
+        paths_by_position[position] = paths
         if paths & GATE_CONTROL_PATHS:
             protected_positions.append(position)
         if any(is_implementation_path(path, policy) for path in paths):
             implementation_positions.append(position)
+    first_implementation = min(implementation_positions) if implementation_positions else None
+    late_protected = (
+        [position for position in protected_positions if position >= first_implementation]
+        if first_implementation is not None
+        else []
+    )
+    activation_positions = [position for position in protected_positions if position not in late_protected]
+    if late_protected:
+        if len(late_protected) != 1:
+            errors.append("first-application range permits at most one post-review gate-hardening commit")
+        else:
+            position = late_protected[0]
+            try:
+                parent = resolve_commit(repo, f"{commits[position]}^")
+                backlog = yaml_object(blob(repo, parent, "planning/backlog.yaml"), "parent backlog")
+                errors.extend(
+                    independent_review_hardening_errors(
+                        backlog, str(contract.get("taskId")), paths_by_position[position]
+                    )
+                )
+            except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
+                errors.append(f"invalid post-implementation gate-hardening provenance: {exc}")
     invalid_order = (
-        not protected_positions
+        not activation_positions
         or not implementation_positions
-        or max(protected_positions) >= min(implementation_positions)
+        or max(activation_positions) >= min(implementation_positions)
     )
     if invalid_order:
         errors.append("first-application gate activation must be committed before every UI implementation commit")

@@ -41,8 +41,32 @@ class DesktopAppCheckTests(unittest.TestCase):
             errors = security_errors(root)
 
         self.assertTrue(any("development URL" in error for error in errors))
-        self.assertTrue(any("external network" in error for error in errors))
+        self.assertTrue(any("Tauri CSP" in error for error in errors))
         self.assertTrue(any("zero privileged" in error for error in errors))
+
+    def test_every_unreviewed_connection_source_fails_closed(self) -> None:
+        for source in (
+            "wss://example.invalid",
+            "data:",
+            "example.invalid",
+            "ipc.evil:",
+            "http://ipc.localhost.evil",
+        ):
+            with self.subTest(source=source), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary) / "repo"
+                tauri = REPO / "apps" / "desktop" / "src-tauri"
+                shutil.copytree(tauri, root / "apps" / "desktop" / "src-tauri")
+                config_path = root / "apps" / "desktop" / "src-tauri" / "tauri.conf.json"
+                config = json.loads(config_path.read_text(encoding="utf-8"))
+                config["app"]["security"]["csp"] = config["app"]["security"]["csp"].replace(
+                    "connect-src ipc: http://ipc.localhost",
+                    f"connect-src ipc: http://ipc.localhost {source}",
+                )
+                config_path.write_text(json.dumps(config), encoding="utf-8", newline="\n")
+
+                errors = security_errors(root)
+
+            self.assertTrue(any("offline source allowlist" in error for error in errors), errors)
 
 
 if __name__ == "__main__":
