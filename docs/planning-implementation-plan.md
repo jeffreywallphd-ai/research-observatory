@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b90558d6d1ee4b0867f387e7b66bbd4bec8471d5252c2315710a549bb4f9fdf9
+source_sha256: 1718f122fb4731b3178e913c11e1fcdd958dae1df22ec940fb71f0a2a0d55fba
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -990,13 +990,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S01.T02 - Implement the primary application frame and workspace routing
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `low`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `low`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S01.T01`
 
-**Owner / review:** codex / agent:descartes (`changes-requested`)
+**Owner / review:** codex / agent:maxwell (`changes-requested`)
 
 **Objective:** Title bar, navigation rail, command area, project context, route guards, and placeholder workspaces matching the product information architecture.
 
