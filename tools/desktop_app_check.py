@@ -28,6 +28,12 @@ EXPECTED_CSP = {
     "frame-ancestors": ("'none'",),
     "form-action": ("'self'",),
 }
+ROUTE_RECOVERY_CASES = (
+    "%252e%252e/study-design.html",
+    "%5c/study-design.html",
+    "%2f%2fevil.invalid/study-design.html",
+    "%68ttps%3A%2F%2Fevil.invalid/study-design.html",
+)
 
 
 def csp_directives(raw: str) -> tuple[dict[str, tuple[str, ...]], list[str]]:
@@ -127,7 +133,13 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
     runtime = (context.target / "runtime" / "main.js").read_text(encoding="utf-8")
     if "process.env.NODE_ENV" in runtime:
         errors.append("desktop production runtime retains an unresolved Node environment expression")
-    details: dict[str, Any] = {"pages": 0, "keyboardRail": False, "commandFocus": False, "requests": []}
+    details: dict[str, Any] = {
+        "pages": 0,
+        "routeRecoveryCases": 0,
+        "keyboardRail": False,
+        "commandFocus": False,
+        "requests": [],
+    }
     documents: dict[str, str] = {}
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
@@ -171,6 +183,20 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     details["commandFocus"] = page.evaluate(
                         "document.activeElement?.matches(\"label.global-search input[type='search']\") === true"
                     )
+                page.close()
+            recovery_html = inline_page(context, "index.html").replace(
+                "</body>", f'<script type="module">{runtime}</script></body>'
+            )
+            for route_case in ROUTE_RECOVERY_CASES:
+                page = browser_context.new_page()
+                page_url = f"http://tauri.localhost/{route_case}"
+                documents[page_url] = recovery_html
+                page.goto(page_url, wait_until="load")
+                page.wait_for_function("document.body.dataset.applicationFrame === 'ready'", timeout=5_000)
+                current_workspace = page.locator("body").get_attribute("data-current-workspace")
+                if current_workspace != "index.html":
+                    errors.append(f"{route_case}: unsafe route recovered to {current_workspace!r}")
+                details["routeRecoveryCases"] += 1
                 page.close()
         except (OSError, PlaywrightError, ValueError) as exc:
             errors.append(f"desktop built-runtime browser check failed: {exc}")

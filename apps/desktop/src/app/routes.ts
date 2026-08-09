@@ -35,20 +35,32 @@ export const DESKTOP_ROUTES = [
 
 export type DesktopRoute = (typeof DESKTOP_ROUTES)[number];
 const ROUTES = new Set<string>(DESKTOP_ROUTES);
+const SCHEME_SEGMENT = /^[a-z][a-z0-9+.-]*:$/iu;
 
-export function resolveDesktopRoute(pathname: string): DesktopRoute {
+export function canonicalDesktopPath(pathname: string): string | null {
   const undecorated = pathname.split(/[?#]/u, 1)[0] ?? "";
-  if (undecorated.includes("\\") || undecorated.startsWith("//") || /^[a-z][a-z0-9+.-]*:/iu.test(undecorated)) {
-    return "index.html";
-  }
   let decoded: string;
   try {
     decoded = decodeURIComponent(undecorated);
   } catch {
-    return "index.html";
+    return null;
   }
   const segments = decoded.split("/");
-  if (segments.includes("..") || segments.includes(".")) return "index.html";
+  if (
+    decoded.includes("\\") ||
+    decoded.startsWith("//") ||
+    /%[0-9a-f]{2}/iu.test(decoded) ||
+    segments.some((segment) => segment === "." || segment === ".." || SCHEME_SEGMENT.test(segment))
+  ) {
+    return null;
+  }
+  return decoded;
+}
+
+export function resolveDesktopRoute(pathname: string): DesktopRoute {
+  const canonical = canonicalDesktopPath(pathname);
+  if (canonical === null) return "index.html";
+  const segments = canonical.split("/");
   const candidate = segments.pop() || "index.html";
   return ROUTES.has(candidate) ? (candidate as DesktopRoute) : "index.html";
 }

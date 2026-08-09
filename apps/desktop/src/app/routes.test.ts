@@ -17,6 +17,10 @@ describe("desktop routes", () => {
     expect(resolveDesktopRoute("/unknown-workspace.html")).toBe("index.html");
     expect(resolveDesktopRoute("/../study-design.html")).toBe("index.html");
     expect(resolveDesktopRoute("/%2e%2e/study-design.html")).toBe("index.html");
+    expect(resolveDesktopRoute("/%252e%252e/study-design.html")).toBe("index.html");
+    expect(resolveDesktopRoute("/%5c/study-design.html")).toBe("index.html");
+    expect(resolveDesktopRoute("/%2f%2fevil.invalid/study-design.html")).toBe("index.html");
+    expect(resolveDesktopRoute("/%68ttps%3A%2F%2Fevil.invalid/study-design.html")).toBe("index.html");
     expect(resolveDesktopRoute(["https", "example.invalid/study-design.html"].join("://"))).toBe("index.html");
     expect(resolveDesktopRoute("\\study-design.html")).toBe("index.html");
     expect(resolveDesktopRoute("/%E0%A4%A")).toBe("index.html");
