@@ -10,9 +10,11 @@ linked_tasks:
 decision_scope: Design-first UI classification, exact task and reference lineage, human approval separation, reference-before-implementation ordering, pull-request enforcement, and protection of the enforcement controls.
 affected_paths:
   - architecture-protected-paths.json
+  - ci-policy.json
   - ui-change-policy.json
   - design/ui-change.schema.json
   - tools/ui_change_gate.py
+  - tools/ci_check.py
   - planning/backlog.schema.json
   - verification-profiles.json
   - quality-scope.json

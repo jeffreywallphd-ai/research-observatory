@@ -39,6 +39,14 @@
       "reason": "Quality scope determines whether the design-first checker and its regressions receive static validation."
     },
     {
+      "pattern": "ci-policy.json",
+      "reason": "CI policy governs the required foundation invocation that includes design-first enforcement."
+    },
+    {
+      "pattern": "tools/ci_check.py",
+      "reason": "The CI policy checker enforces full-history checkout and immutable base selection for design-first verification."
+    },
+    {
       "pattern": ".github/workflows/ci.yml",
       "reason": "CI history and base selection are required to prove reference approval precedes implementation."
     },
