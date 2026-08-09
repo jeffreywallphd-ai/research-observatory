@@ -70,8 +70,12 @@ GATE_CONTROL_PATHS = frozenset(
     {
         ".github/pull_request_template.md",
         ".github/workflows/ci.yml",
+        "architecture-protected-paths.json",
+        "ci-policy.json",
         "design/ui-change.schema.json",
         "planning/backlog.schema.json",
+        "quality-scope.json",
+        "tools/ci_check.py",
         "tools/ui_change_gate.py",
         "ui-change-policy.json",
         "verification-profiles.json",

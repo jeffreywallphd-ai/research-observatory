@@ -192,23 +192,31 @@ class UiChangeGateTests(unittest.TestCase):
         self.assertTrue(any("exactly one changed UI evidence contract" in error for error in result["errors"]))
 
     def test_ui_implementation_cannot_weaken_gate_controls_in_same_range(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root, base, package = self.prepare(temporary)
-            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
-                "export const View = () => 'changed';\n", encoding="utf-8", newline="\n"
-            )
-            contract = self.contract("approved-reference-implementation", package, base)
-            self.install_contract(root, contract)
-            policy_path = root / "ui-change-policy.json"
-            policy = json.loads(policy_path.read_text(encoding="utf-8"))
-            policy["implementationRoots"] = list(reversed(policy["implementationRoots"]))
-            self.write_json(policy_path, policy)
-            head = self.commit(root, "weaken gate with UI")
+        for control_path in ("ui-change-policy.json", "architecture-protected-paths.json", "tools/ci_check.py"):
+            with self.subTest(control_path=control_path), tempfile.TemporaryDirectory() as temporary:
+                root, base, package = self.prepare(temporary)
+                target = root / control_path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if control_path != "ui-change-policy.json":
+                    target.write_text("governed control\n", encoding="utf-8", newline="\n")
+                    base = self.commit(root, f"install {control_path}")
+                (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                    "export const View = () => 'changed';\n", encoding="utf-8", newline="\n"
+                )
+                contract = self.contract("approved-reference-implementation", package, base)
+                self.install_contract(root, contract)
+                if control_path == "ui-change-policy.json":
+                    policy = json.loads(target.read_text(encoding="utf-8"))
+                    policy["implementationRoots"] = list(reversed(policy["implementationRoots"]))
+                    self.write_json(target, policy)
+                else:
+                    target.write_text("weakened control\n", encoding="utf-8", newline="\n")
+                head = self.commit(root, "weaken gate with UI")
 
-            result = validate(root, base, head)
+                result = validate(root, base, head)
 
-        self.assertFalse(result["ok"])
-        self.assertTrue(any("cannot change its own" in error for error in result["errors"]))
+            self.assertFalse(result["ok"])
+            self.assertTrue(any("cannot change its own" in error for error in result["errors"]))
 
     def test_intentional_change_requires_new_human_approval_before_implementation(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
