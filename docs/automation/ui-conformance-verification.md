@@ -53,6 +53,12 @@ The later exact ratification may close a preserved pre-control package-lineage
 gap only for the identical visual contract. Historical schema, raw-byte,
 transition, and approval-record checks still run; a screenshot, renderer,
 reference ID, or any other baseline-field change cannot use this exception.
+Because the approval record is itself governed, one handoff commit necessarily
+contains the new exact approval package before its immediate child updates the
+baseline provenance. That handoff is accepted only when its baseline bytes are
+unchanged from its single parent, the child changes provenance only, and the
+child independently validates the exact package at both approval and baseline
+commits. No additional intermediate commit is permitted.
 
 ```powershell
 .venv\Scripts\python.exe tools\ui_conformance.py --repo . --write-baseline `

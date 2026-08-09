@@ -421,6 +421,48 @@ class UiConformanceTests(unittest.TestCase):
         changed_visual["entries"]["index.html::light"]["sha256"] = "3" * 64
         self.assertFalse(provenance_only_reference_ratification(previous, changed_visual))
 
+    def test_ratification_exception_still_validates_legacy_approval_and_claimed_package(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            root.mkdir()
+            self.git(root, "init", "-b", "main")
+            self.git(root, "config", "user.name", "UI Baseline Test")
+            self.git(root, "config", "user.email", "ui-baseline@example.invalid")
+            reference = root / "design" / "ui-reference"
+            shutil.copytree(REFERENCE, reference)
+            approval = reference / "APPROVAL.yaml"
+            approval.write_text(
+                "reference_id: RO-UI-ACADEMIC-MINIMAL-1.3\nstatus: approved\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            manifest_path = reference / "REFERENCE_MANIFEST.yaml"
+            manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+            manifest["file_hashes"]["APPROVAL.yaml"] = hashlib.sha256(approval.read_bytes()).hexdigest()
+            manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8", newline="\n")
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "malformed legacy approval")
+            approval_commit = self.git(root, "rev-parse", "HEAD")
+            (root / "baseline-marker.txt").write_text("baseline\n", encoding="utf-8", newline="\n")
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "legacy baseline")
+            baseline_commit = self.git(root, "rev-parse", "HEAD")
+            baseline = {
+                "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
+                "referencePackageSha256": "1" * 64,
+                "referenceApprovalCommit": approval_commit,
+            }
+
+            errors = approval_lineage_errors(
+                root,
+                baseline,
+                baseline_commit,
+                verify_package_at_original_approval=False,
+            )
+
+        self.assertTrue(any("approval fields must be exact" in error for error in errors), errors)
+        self.assertTrue(any("does not bind the exact approved reference package" in error for error in errors), errors)
+
     def test_visual_mismatch_maps_to_normative_page_contract(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             context = self.context_copy(temporary)

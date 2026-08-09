@@ -88,6 +88,11 @@ An exact later ratification can close a preserved pre-control package-lineage
 gap only for a byte-equivalent visual contract. It does not suppress historical
 schema, raw-byte, transition, or approval-record failures and cannot authorize
 changed screenshots, renderer settings, or reference identity.
+Since the approval record is governed, the new approval package precedes its
+baseline-provenance update by one commit. The checker accepts only that single,
+unchanged-baseline handoff with one parent and an immediate provenance-only
+child that independently validates both package snapshots; intervening commits
+or baseline changes remain invalid.
 
 ## Consequences
 
