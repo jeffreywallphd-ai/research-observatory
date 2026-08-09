@@ -26,6 +26,15 @@
       "linkedTasks": [
         "CAP-00.S05.T02"
       ]
+    },
+    {
+      "id": "ADR-0003",
+      "path": "docs/adr/ADR-0003-protect-design-first-ui-change-controls-and-immutable-lineage.md",
+      "title": "Protect design-first UI change controls and immutable lineage",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-00.S06.T03"
+      ]
     }
   ]
 }

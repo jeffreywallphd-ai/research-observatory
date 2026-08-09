@@ -105,6 +105,23 @@ class BacklogSchemaTests(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, r"campaign\.updated_at: 'not-a-timestamp' is not a 'date-time'"):
             self.load_copy(data)
 
+    def test_experience_change_requires_exact_machine_lineage_fields(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        task = data["capabilities"][0]["slices"][0]["tasks"][0]
+        task["experience_change"] = {
+            "kind": "defect-restoration",
+            "contract_path": f"artifacts/evidence/ui-change/{task['id']}.json",
+            "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.3",
+            "reference_version": "1.3",
+            "reference_package_sha256": "0" * 64,
+            "reference_approval_commit": "0" * 40,
+            "previous_reference_id": "RO-UI-ACADEMIC-MINIMAL-1.2",
+            "implementation_agent": "codex",
+        }
+
+        with self.assertRaisesRegex(SystemExit, r"experience_change\.implementation_agent"):
+            self.load_copy(data)
+
     def test_slice_id_must_remain_in_capability_namespace(self) -> None:
         data = copy.deepcopy(self.canonical)
         capability = data["capabilities"][0]

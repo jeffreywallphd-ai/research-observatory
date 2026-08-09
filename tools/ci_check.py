@@ -50,6 +50,10 @@ def validate_ci(repo: Path, workflow_text: str | None = None) -> list[str]:
         errors.append("CI concurrency must cancel superseded runs")
     if workflow.get("defaults", {}).get("run", {}).get("shell") != "pwsh":
         errors.append("CI default shell must be pwsh")
+    if workflow.get("env", {}).get("UI_CHANGE_BASE_SHA") != (
+        "${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}"
+    ):
+        errors.append("CI must bind UI_CHANGE_BASE_SHA to the pull-request or push base commit")
 
     lowered = workflow_text.lower()
     forbidden = {
@@ -111,6 +115,12 @@ def validate_ci(repo: Path, workflow_text: str | None = None) -> list[str]:
                     errors.append(f"job {job_id} action {action} is not pinned to the approved commit SHA")
                 if action == "actions/checkout" and step.get("with", {}).get("persist-credentials") != "false":
                     errors.append(f"job {job_id} checkout must disable credential persistence")
+                if (
+                    action == "actions/checkout"
+                    and job_id == "foundation"
+                    and step.get("with", {}).get("fetch-depth") != "0"
+                ):
+                    errors.append("foundation checkout must fetch full history for design-first ordering")
                 if action == "actions/upload-artifact":
                     uploads.append(step)
         if len(uploads) != 1:

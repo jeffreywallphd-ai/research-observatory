@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-policy",
+  "referenceRoot": "design/ui-reference",
+  "approvalPath": "design/ui-reference/APPROVAL.yaml",
+  "manifestPath": "design/ui-reference/REFERENCE_MANIFEST.yaml",
+  "contractSchemaPath": "design/ui-change.schema.json",
+  "contractRoot": "artifacts/evidence/ui-change",
+  "implementationRoots": [
+    "apps/desktop/src",
+    "modules/ui",
+    "packages/ui-components",
+    "packages/ui-tokens"
+  ],
+  "implementationExtensions": [
+    ".css",
+    ".html",
+    ".js",
+    ".jsx",
+    ".json",
+    ".jpg",
+    ".jpeg",
+    ".mjs",
+    ".png",
+    ".scss",
+    ".svg",
+    ".ts",
+    ".tsx",
+    ".webp",
+    ".woff",
+    ".woff2"
+  ],
+  "ignoredImplementationSuffixes": [
+    ".d.ts",
+    ".spec.js",
+    ".spec.jsx",
+    ".spec.ts",
+    ".spec.tsx",
+    ".test.js",
+    ".test.jsx",
+    ".test.ts",
+    ".test.tsx"
+  ]
+}

@@ -83,6 +83,38 @@
           "additionalProperties": false
         }
       ]
+    },
+    "experienceChange": {
+      "type": "object",
+      "required": [
+        "kind",
+        "contract_path",
+        "reference_id",
+        "reference_version",
+        "reference_package_sha256",
+        "reference_approval_commit",
+        "previous_reference_id",
+        "implementation_agent"
+      ],
+      "properties": {
+        "kind": {
+          "enum": ["intentional-design-change", "approved-reference-implementation", "defect-restoration"]
+        },
+        "contract_path": {
+          "type": "string",
+          "pattern": "^artifacts/evidence/ui-change/CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}\\.json$"
+        },
+        "reference_id": {"type": "string", "minLength": 1},
+        "reference_version": {"type": "string", "minLength": 1},
+        "reference_package_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "reference_approval_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "previous_reference_id": {"type": ["string", "null"]},
+        "implementation_agent": {
+          "type": "string",
+          "pattern": "^(agent|human):[A-Za-z0-9][A-Za-z0-9._-]*$"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [
@@ -984,6 +1016,9 @@
                       },
                       "evidence": {
                         "$ref": "#/$defs/taskEvidence"
+                      },
+                      "experience_change": {
+                        "$ref": "#/$defs/experienceChange"
                       },
                       "verification_state": {
                         "type": [

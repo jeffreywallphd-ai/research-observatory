@@ -24,3 +24,6 @@ must follow the design-first workflow, receive a new approval, and only then be
 used as an implementation baseline. Reports are confined to canonical
 `artifacts/tmp` and contain no absolute checkout path, so repeated runs are
 byte-deterministic.
+
+Application change ordering and exact task/PR lineage are enforced separately
+by `tools/ui_change_gate.py`; see `design-first-ui-changes.md`.
