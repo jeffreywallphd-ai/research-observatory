@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 208a5f1fee42ff2b03e6d93921228bfa033b9daa62a471aa177136738c934ce4
+source_sha256: 9e82e851946110ed2802073d3fffe835a7953336cd6e1ef2b811bab501949581
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -46,16 +46,16 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 302 |
-| `REVIEW` | 1 |
-| `DONE` | 17 |
+| `NOT_STARTED` | 301 |
+| `READY` | 1 |
+| `DONE` | 18 |
 | `DEFERRED` | 36 |
 
 ## Capability progress
 
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
-| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 5/6 | 17/19 | `CAP-00.S06.T03` |
+| `CAP-00` Delivery foundation and Codex execution system | `ACTIVE` | `IN_PROGRESS` | 5/6 | 18/19 | - |
 | `CAP-01` Windows-first desktop shell and supervised local runtime | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
@@ -95,6 +95,4 @@ manual_edit: prohibited
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-00.S06.T03` Implement design-first change gating | `REVIEW` | codex | `codex/cap-00-delivery-foundation` |
+No task is currently active.

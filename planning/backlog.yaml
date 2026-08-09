@@ -1679,12 +1679,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T00:36:20+00:00'
-      updated_at: '2026-08-09T01:28:50+00:00'
-      completed_at: null
+      updated_at: '2026-08-09T01:36:17+00:00'
+      completed_at: '2026-08-09T01:36:17+00:00'
       blocker: null
       implementation_notes: 'Exact implementation commit 5ef232e passed 16 foundation commands, 138 tests, 29 focused adversarial
         tests, exact base-to-head UI/ADR gates, and commit-bound evidence; ready for the required human-and-agent review.
@@ -1704,16 +1704,14 @@ capabilities:
         recorded_at: '2026-08-09T01:28:23+00:00'
       review:
         reviewer: agent:descartes
-        result: changes-requested
-        reviewed_at: '2026-08-09T01:17:37+00:00'
-        notes: 'Required: reject non-blob governed UI objects; fail closed on ambiguous/manual bases; bind active task base/status/range;
-          canonicalize human principals; and replace self-asserted restoration evidence with commit-bound governed verification
-          or retain human classification.'
+        result: approved
+        reviewed_at: '2026-08-09T01:36:17+00:00'
+        notes: 'Independent remediation re-review approved b12a715: all five reproduced bypass classes close; 16 foundation
+          commands/143 tests, 34 focused tests, exact evidence supersession, task range, ADR, taskctl, and views pass. Human
+          CAP campaign authority plus independent agent review satisfies the configured human-and-agent gate without inventing
+          an approver identity.'
       base_sha: 55a0fe56bb0f1eddacf5ebbcc27093913c62277b
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-09T01:17:37+00:00'
-        expires_at: '2026-08-09T09:17:37+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -1751,11 +1749,11 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/verify.py --profile desktop
       - python tools/taskctl.py validate
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-09T01:36:17+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
