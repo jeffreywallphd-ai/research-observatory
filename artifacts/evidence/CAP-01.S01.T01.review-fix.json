@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S01.T01",
+  "commit": "493ce3b6f60474796b66e214603d0a83b29965b1",
+  "baseCommit": "79f8603492d5e593c76293dea66885ae6e010223",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S01.T01.json",
+    "reason": "Independent review confirmed the application bootstrap but reproduced a permissive CSP-source parser and mutable source/output inventory reads. This manifest preserves the first submission while binding the fail-closed remediation and regression evidence."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S01.T01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/desktop_app_check.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S01.T01-review-fix-desktop.json",
+      "exitCode": 0,
+      "result": "The exact remediation commit passed all 24 desktop-profile commands in 422.86 seconds, including 146 foundation tests, 20 desktop tests, locked Rust and TypeScript builds, 32 routes, 139 browser workflow cases, 390 keyboard cases, 64 responsive cases, and 64 visual captures. Report SHA-256: 153259d0cb61bdd04ca7270d2b6a0f51005dd0fb22876497006f68b1415802a7."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check tests.desktop.test_ui_conformance tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "All 33 focused CSP, immutable inventory, application conformance, and design-first gate tests passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base 1a8347f2b6e9c6706d6c5c63af401c36e5d5060d --head HEAD",
+      "exitCode": 0,
+      "result": "The live task range passed with the unchanged approved UI reference/package, exact four-file renderer scope, activation-before-implementation ordering, and independently requested post-review hardening provenance."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --check",
+      "exitCode": 0,
+      "result": "The authoritative ledger validates and all generated planning views are current."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The native Windows application, locked Rust/TypeScript builds, strict route/session state, zero-privilege Tauri capability, and bounded no-socket launch behavior remain green.",
+        "CSP validation now parses the complete directive set and requires an exact offline allowlist; WebSocket, alternate-scheme, host-source, IPC-prefix, and localhost-prefix mutations fail.",
+        "Application source and output inventories now use canonical regular-file snapshots, double-pass hashing, exact membership checks, and final manifest/input/output revalidation."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Regression tests deterministically mutate source and artifact inventories by content, file type, and membership between passes; all mutations are rejected.",
+        "The complete focused suite grew to 33 tests and the full desktop profile passes 146 foundation plus 20 desktop tests at the exact remediation commit.",
+        "The design-first gate permits one narrowly defined protected hardening commit only when its parent ledger records an independent canonical agent CHANGES_REQUESTED result and both regression suites are present."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The immutable first submission, independent review record, and superseding remediation remain separately auditable in Git and task evidence.",
+        "The fix is confined to desktop validation, application inventory stability, the bounded review-hardening gate, and their tests; approved UI bytes, application dependencies, and later CAP-01 scope are unchanged."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce every original CSP and source/output mutation finding against commit 493ce3b6f60474796b66e214603d0a83b29965b1 and audit the bounded post-review hardening provenance before approval."
+  }
+}
