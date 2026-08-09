@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S01.T02",
+  "commit": "8c274496dd272f4079f16eaaef86a2d539876996",
+  "baseCommit": "67be83ac7ad482c81d5fc709b0f2e448dc1a6697",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    "apps/desktop/README.md",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/frame.test.ts",
+    "apps/desktop/src/app/frame.ts",
+    "apps/desktop/src/app/routes.test.ts",
+    "apps/desktop/src/app/routes.ts",
+    "apps/desktop/vite.config.ts",
+    "artifacts/evidence/ui-change/CAP-01.S01.T02.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S01.T02-desktop.json",
+      "exitCode": 0,
+      "result": "The exact implementation commit passed all 24 desktop-profile commands in 441.58 seconds, including 146 foundation tests, 22 desktop tests, all native/application commands, 32 routes, 139 browser workflow cases, 390 keyboard cases, 64 responsive cases, and 64 visual captures. Report SHA-256: 5773c38f736518d3e843e315cad7923698eb750f8fedf504e6f6172f919b6061."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\CAP-01.S01.T02-application.json",
+      "exitCode": 0,
+      "result": "All eight locked renderer/native commands passed. The production bundle activated all 32 pages under a simulated Tauri origin with exact workspace identity, keyboard rail movement, Ctrl+K command focus, no runtime errors, and zero unexpected requests. Report SHA-256: a771c39927cda93e28ad2ead9f87839e3ab5aaf55136bd0ebdbd8e5fd8d4d3cb."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_route_check.py --repo . --report artifacts\\tmp\\CAP-01.S01.T02-routes.json",
+      "exitCode": 0,
+      "result": "All 32 approved routes, 32 unique route IDs, and 521 exact required-region contracts passed. Report SHA-256: 2f17cd9098f288621ede2df6fd3099dbb04fd6113acc23e10f74150caad90a83."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_workflow_check.py --repo . --report artifacts\\tmp\\CAP-01.S01.T02-workflows.json",
+      "exitCode": 0,
+      "result": "All 14 approved workflow profiles, 139 browser cases, and 390 keyboard cases passed. Report SHA-256: 41523d50bec954463e9e272ebfd47e86e8ba5ae68df2f62d2f840832155900ae."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base 67be83ac7ad482c81d5fc709b0f2e448dc1a6697 --head HEAD",
+      "exitCode": 0,
+      "result": "The exact three-file renderer change is bound to approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5... with no protected-control or reference drift."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The React runtime progressively activates the unchanged approved title bar, project context, command area, navigation rail, and main workspace landmarks on all 32 product routes.",
+        "Every approved route resolves from a deep link; unknown, malformed-encoding, dot-segment, encoded-traversal, backslash, absolute-scheme, and remote navigation inputs recover to project home or are rejected as nonlocal.",
+        "Arrow keys, Home, and End move through distinct visible workspaces even after the reference script dynamically populates navigation; Ctrl+K focuses project search; native link activation remains intact.",
+        "Renderer code owns only frame activation and route normalization. It imports no filesystem, service, storage, project-authority, or scholarly business implementation."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Eight Vitest cases cover the full 32-route inventory, known deep links, frame-region completeness, keyboard wrap/bounds, local-link acceptance, and material malformed/remote/traversal failures.",
+        "The desktop Python regression opens the actual bundled runtime on every page, captures page errors, denies unexpected requests, and asserts workspace/keyboard/command behavior rather than inspecting source text alone.",
+        "The production Vite build defines NODE_ENV explicitly; the previously unresolved browser expression is absent and the runtime bundle decreased from approximately 771 KB to 263 KB."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The desktop README documents frame ownership, shortcuts, route compatibility, recovery state, and the prohibition on renderer-owned project replacement.",
+        "The task-bound UI evidence contract preserves the exact approved reference identity and implementation scope; authoritative backlog and generated views remain synchronized.",
+        "No reference bytes, dependency versions, native privileges, service behavior, project-recents behavior, design-system scope, or later CAP-01 slice work changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review must run the real built-runtime browser boundary, verify all 32 deep links and failure normalization, audit keyboard behavior after dynamic navigation population, confirm no business logic entered views, and validate exact evidence/reference scope before approval."
+  }
+}
