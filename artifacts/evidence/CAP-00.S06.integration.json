@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-00.S06",
+  "stateCommit": "adf64d861d6b21f8b4b1bf99eeb376061bec750a",
+  "outcome": "The Academic Minimal style, page contracts, fourteen use-case workflows, and linked HTML prototypes form an approved in-repository reference that must precede and validate user-facing implementation.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-00.S06.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-00.S06.T01.json", "sha256": "a43e7b0c5e24829aabdfd10e6c201a9d3a749e46a3eabf7ce10a99b71b08475f"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-00.S06.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-00.S06.T02.json", "sha256": "24f9a717aaf7586466947c87e51ed0123132497a0818d4269c99491f79fb2e1b"},
+        {"path": "artifacts/evidence/CAP-00.S06.T02.review-fix.json", "sha256": "e504402c750a8f35abebfc42acee5757ff75add338bf8eebad9b64192329e824"},
+        {"path": "artifacts/evidence/CAP-00.S06.T02.review-fix-2.json", "sha256": "dcbb5736ba4cdd053c659e5e8a33c4a3b84a48807e358ea788e48ad8200d55bd"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-00.S06.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-00.S06.T03.json", "sha256": "d2ce73bf05eb64519c484a10b354bd12df2d445103b62a57f2c366aefff99dca"},
+        {"path": "artifacts/evidence/CAP-00.S06.T03.review-fix.json", "sha256": "1f4a0971620e5d0788c35a670b768f9252d381a32d789fe0718328e7acd37c33"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-00.S06.T04",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-00.S06.T04.json", "sha256": "17270a8675c38556297193125a80f895da0f59159e624c507a4bd15d6035f468"},
+        {"path": "artifacts/evidence/CAP-00.S06.T04.review-fix.json", "sha256": "d06679c930c390bac631fc567dcac0b6f217bc02f578f5c9bc82d568888e4215"},
+        {"path": "artifacts/evidence/CAP-00.S06.T04.review-fix-2.json", "sha256": "0098b7a08c7dc44644e90bae3ef96f57b2471bb30a26337a11a58395868d9dc9"},
+        {"path": "artifacts/evidence/CAP-00.S06.T04.review-fix-3.json", "sha256": "0d487cda388162a706de637160d75ba252cfcc9a17dd49b214b4917cfd33d0e5"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --report artifacts/tmp/CAP-00.S06-integration-desktop.json",
+      "exitCode": 0,
+      "result": "At the exact post-task-approval aggregate commit, all 23 desktop-profile commands passed in 325.34 seconds, including 143 foundation tests, 15 desktop tests, accepted ADR validation, 521 page-region contracts, 139 browser workflow cases, 390 keyboard cases, 64 responsive visuals, and 64 pinned captures."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_ui_reference_check tests.foundation.test_ui_change_gate tests.desktop.test_ui_conformance -v",
+      "exitCode": 0,
+      "result": "All 33 cross-task regressions passed across exact reference inventory and offline boundaries, design-first identity/range/self-review controls, application-fixture denial, deterministic browser behavior, accessibility, and complete historical package lineage."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe design\\ui-reference\\scripts\\verify_site.py",
+      "exitCode": 0,
+      "result": "The independent site verifier accepted 34 offline HTML documents, 32 product pages, 14 workflows, and 20 capability records with no broken or escaping link."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The authoritative ledger, all four task evidence chains and approvals, accepted ADR index, and generated planning views validate exactly."
+    }
+  ],
+  "integratedBehavior": [
+    "The approved Academic Minimal 1.3 reference is a clone-portable, offline, exact 54-file package containing 32 product pages, 14 use-case workflows, page/region contracts, normative tokens, accessibility behavior, and explicit illustrative exclusions.",
+    "Reference validation reproduces generated outputs from governed inputs, enforces exact inventory and hashes, denies browser network surfaces and hosted administrator routes, and produces deterministic machine-readable identity reports.",
+    "Design-first automation binds intentional user-facing changes to an active task range and newer human-approved reference before implementation, while independently reviewed defect restoration remains narrowly classified and same-change control weakening is denied.",
+    "The desktop profile checks reference integrity, 109 tokens, routes/regions, guided navigation, keyboard behavior, responsive accessibility, controlled Windows renderer identity, complete Git lineage, and 64 light/dark visual baselines.",
+    "ADR-0003 and ADR-0004 are Accepted, architecture-protected, task-linked decisions governing change authorization and conformance/baseline enforcement."
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The conformance target intentionally remains approved-reference-fixture until CAP-01 installs the first researcher-facing desktop implementation; fixture mode fails closed if application UI source appears.",
+      "University administrator and managed-cloud surfaces remain explicitly deferred to their later release-gated waves."
+    ]
+  }
+}
