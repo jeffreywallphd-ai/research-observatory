@@ -10,10 +10,19 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from desktop_app_check import command_plan, security_errors  # noqa: E402
+from desktop_app_check import command_plan, runtime_frame_errors, security_errors  # noqa: E402
 
 
 class DesktopAppCheckTests(unittest.TestCase):
+    def test_built_runtime_activates_every_frame_and_keyboard_boundary(self) -> None:
+        errors, details = runtime_frame_errors(REPO)
+
+        self.assertEqual([], errors)
+        self.assertEqual(32, details["pages"])
+        self.assertTrue(details["keyboardRail"])
+        self.assertTrue(details["commandFocus"])
+        self.assertEqual([], details["requests"])
+
     def test_security_boundary_and_complete_command_plan(self) -> None:
         self.assertEqual([], security_errors(REPO))
         commands = command_plan(REPO)

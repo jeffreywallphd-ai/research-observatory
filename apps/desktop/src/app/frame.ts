@@ -54,33 +54,59 @@ export function routeFromNavigationHref(href: string | null): DesktopRoute | nul
 export function installApplicationFrame(documentRoot: Document, currentRoute: DesktopRoute): () => void {
   const errors = frameContractErrors(documentRoot);
   documentRoot.body.dataset.applicationFrame = errors.length === 0 ? "ready" : "recovery-required";
+  documentRoot.body.dataset.currentWorkspace = currentRoute;
   if (errors.length > 0) {
     documentRoot.body.dataset.applicationFrameError = errors.join("; ");
     return () => undefined;
   }
 
-  const navigation = [...documentRoot.querySelectorAll<HTMLAnchorElement>("aside.sidebar a.nav-item[href]")].filter(
+  const navigationItems = (): HTMLAnchorElement[] => {
+    const observedRoutes = new Set<DesktopRoute>();
+    return [...documentRoot.querySelectorAll<HTMLAnchorElement>("aside.sidebar a.nav-item[href]")].filter((anchor) => {
+      if (anchor.closest("details:not([open])")) return false;
+      const route = routeFromNavigationHref(anchor.getAttribute("href"));
+      if (route === null || observedRoutes.has(route)) return false;
+      observedRoutes.add(route);
+      return true;
+    });
+  };
+  documentRoot.body.dataset.navigationWorkspaces = String(navigationItems().length);
+  const localAnchors = [...documentRoot.querySelectorAll<HTMLAnchorElement>("a[href]")].filter(
     (anchor) => routeFromNavigationHref(anchor.getAttribute("href")) !== null,
   );
-  for (const anchor of navigation) {
-    if (routeFromNavigationHref(anchor.getAttribute("href")) === currentRoute) anchor.setAttribute("aria-current", "page");
-    else anchor.removeAttribute("aria-current");
+  for (const anchor of localAnchors) {
+    if (routeFromNavigationHref(anchor.getAttribute("href")) === currentRoute) {
+      anchor.setAttribute("aria-current", "page");
+    } else if (anchor.getAttribute("aria-current") === "page") {
+      anchor.removeAttribute("aria-current");
+    }
   }
 
-  const onKeyDown = (event: KeyboardEvent): void => {
+  const onCommandKeyDown = (event: KeyboardEvent): void => {
     if (event.ctrlKey && !event.altKey && !event.metaKey && event.key.toLowerCase() === "k") {
       event.preventDefault();
       documentRoot.querySelector<HTMLInputElement>("label.global-search input[type='search']")?.focus();
-      return;
     }
+  };
+  const onNavigationKeyDown = (event: KeyboardEvent): void => {
     if (!(["ArrowDown", "ArrowUp", "End", "Home"] as const).includes(event.key as never)) return;
     const view = documentRoot.defaultView;
     if (!view || !(event.target instanceof view.HTMLAnchorElement)) return;
-    const current = navigation.indexOf(event.target);
+    const currentRoute = routeFromNavigationHref(event.target.getAttribute("href"));
+    const navigation = navigationItems();
+    const current = navigation.findIndex(
+      (anchor) => routeFromNavigationHref(anchor.getAttribute("href")) === currentRoute,
+    );
     if (current < 0) return;
     event.preventDefault();
-    navigation[nextNavigationIndex(current, navigation.length, event.key as "ArrowDown" | "ArrowUp" | "End" | "Home")]?.focus();
+    navigation[
+      nextNavigationIndex(current, navigation.length, event.key as "ArrowDown" | "ArrowUp" | "End" | "Home")
+    ]?.focus();
   };
-  documentRoot.addEventListener("keydown", onKeyDown);
-  return () => documentRoot.removeEventListener("keydown", onKeyDown);
+  documentRoot.addEventListener("keydown", onCommandKeyDown);
+  documentRoot.addEventListener("keydown", onNavigationKeyDown);
+  return () => {
+    documentRoot.removeEventListener("keydown", onCommandKeyDown);
+    documentRoot.removeEventListener("keydown", onNavigationKeyDown);
+  };
 }
