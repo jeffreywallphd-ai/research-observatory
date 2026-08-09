@@ -49,3 +49,25 @@ documents. Malformed, encoded-traversal, and unknown paths recover to `index.htm
 Frame activation fails closed with `data-application-frame="recovery-required"`
 when an approved landmark is absent; the renderer does not fabricate a replacement
 project or workspace.
+
+## Project selection
+
+The approved Projects and New Project pages expose a renderer-side project-selection
+contract without assuming CAP-02 project authority. Recent entries use the versioned
+`research-observatory.project-recents.v1` preference record. The record stores only
+canonical removed project IDs; it never stores project paths, research content, or
+credentials. Invalid or unsupported preference bytes are left untouched while the UI
+shows an explicit recovery notice.
+
+The runtime emits the bubbling `research-observatory:project-intent` event with one of
+four opaque intents: `open-existing`, `locate-existing`, `remove-recent`, or
+`create-new`. Open and create actions fail closed after emitting their intent; a later
+CAP-02 adapter must validate the existing location or create the project and then own
+navigation. A missing recent entry offers only **Locate project** and **Remove**—it
+cannot silently create a replacement. Removal is committed to preferences before the
+card disappears, and a failed write leaves the visible entry intact.
+
+With no recent entries, the project grid presents an explicit empty state linking to
+the approved New Project form. User-facing status uses a polite live region, every
+remove action has a project-specific accessible name, and diagnostics/events contain
+only opaque fixture IDs rather than local paths.

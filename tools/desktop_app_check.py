@@ -144,6 +144,15 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "routeRecoveryCases": 0,
         "hrefRecoveryCases": 0,
         "workspaceNavigationItems": None,
+        "projectSelection": {
+            "recentProjects": 0,
+            "missingProjects": 0,
+            "persistentRemoval": False,
+            "emptyState": False,
+            "preferenceRecovery": False,
+            "writeFailurePreserved": False,
+            "intents": [],
+        },
         "keyboardRail": False,
         "commandFocus": False,
         "requests": [],
@@ -235,6 +244,112 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     errors.append(f"{href_case}: runtime error: {'; '.join(page_errors)}")
                 details["hrefRecoveryCases"] += 1
                 page.close()
+            project_page = browser_context.new_page()
+            project_page.add_init_script(
+                """
+                window.__projectIntents = [];
+                document.addEventListener("research-observatory:project-intent", (event) => {
+                  window.__projectIntents.push(event.detail);
+                  event.preventDefault();
+                });
+                """
+            )
+            projects_url = "http://tauri.localhost/projects.html"
+            project_page.goto(projects_url, wait_until="load")
+            project_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
+            project_details = details["projectSelection"]
+            recent = project_page.locator("[data-recent-project-id]")
+            project_details["recentProjects"] = recent.count()
+            project_details["missingProjects"] = project_page.locator('[data-project-availability="missing"]').count()
+            expected_ids = [
+                "generative-ai-creative-cognition",
+                "community-governed-ai",
+                "recurrent-staged-loras",
+                "digital-control-worker-autonomy",
+            ]
+            observed_ids = recent.evaluate_all("nodes => nodes.map(node => node.dataset.recentProjectId)")
+            if observed_ids != expected_ids:
+                errors.append(f"project recents were not deterministic: {observed_ids}")
+
+            missing = project_page.locator('[data-project-availability="missing"]')
+            missing.locator('[data-project-action="locate-existing"]').click()
+            if project_page.url != projects_url:
+                errors.append("missing-project locate action navigated away from the existing project")
+            intents = project_page.evaluate("window.__projectIntents")
+            if intents != [{"type": "locate-existing", "projectId": "recurrent-staged-loras"}]:
+                errors.append(f"missing-project repair emitted unexpected intents: {intents}")
+
+            available = project_page.locator('[data-project-availability="available"]').first
+            available.locator('[data-project-action="open-existing"]').click()
+            if project_page.url != projects_url:
+                errors.append(
+                    "handled existing-project open intent navigated before the project authority completed it"
+                )
+
+            missing.locator('[data-project-action="remove-recent"]').click()
+            stored = project_page.evaluate("localStorage.getItem('research-observatory.project-recents.v1')")
+            if stored != '{"schemaVersion":1,"removedProjectIds":["recurrent-staged-loras"]}':
+                errors.append(f"recent-project removal was not canonical: {stored!r}")
+            project_details["intents"] = project_page.evaluate("window.__projectIntents")
+            project_page.reload(wait_until="load")
+            project_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
+            if project_page.locator('[data-recent-project-id="recurrent-staged-loras"]').count() == 0:
+                project_details["persistentRemoval"] = True
+
+            while project_page.locator("[data-recent-project-id]").count():
+                project_page.locator("[data-recent-project-id]").first.locator(
+                    '[data-project-action="remove-recent"]'
+                ).click()
+            project_details["emptyState"] = (
+                project_page.locator('[data-project-empty-state="ready"] a[href="new-project.html"]').count() == 1
+                and project_page.locator("body").get_attribute("data-recent-project-count") == "0"
+            )
+            project_page.locator('[data-project-empty-state="ready"] a[href="new-project.html"]').click()
+            project_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
+            if project_page.url != "http://tauri.localhost/new-project.html":
+                errors.append("empty project state did not open the explicit new-project flow")
+            project_page.locator('[data-project-action="create-new"]').click()
+            if project_page.url != "http://tauri.localhost/new-project.html":
+                errors.append(
+                    "handled explicit project-creation intent navigated before project authority completed it"
+                )
+            project_details["intents"].extend(project_page.evaluate("window.__projectIntents"))
+
+            project_page.evaluate(
+                "localStorage.setItem('research-observatory.project-recents.v1', "
+                '\'{"schemaVersion":2,"removedProjectIds":[]}\')'
+            )
+            project_page.goto(projects_url, wait_until="load")
+            project_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
+            recovery_status = project_page.locator('[data-project-selection-status="recovery"]')
+            raw_after_recovery = project_page.evaluate(
+                "localStorage.getItem('research-observatory.project-recents.v1')"
+            )
+            project_details["preferenceRecovery"] = (
+                recovery_status.count() == 1
+                and not recovery_status.is_hidden()
+                and raw_after_recovery == '{"schemaVersion":2,"removedProjectIds":[]}'
+                and project_page.locator("[data-recent-project-id]").count() == 4
+            )
+            project_page.close()
+
+            write_failure_page = browser_context.new_page()
+            write_failure_page.add_init_script(
+                """
+                Storage.prototype.setItem = () => { throw new Error("controlled preference write failure"); };
+                """
+            )
+            write_failure_page.goto(projects_url, wait_until="load")
+            write_failure_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
+            before_failure = write_failure_page.locator("[data-recent-project-id]").count()
+            write_failure_page.locator('[data-project-action="remove-recent"]').first.click()
+            error_status = write_failure_page.locator('[data-project-selection-status="error"]')
+            project_details["writeFailurePreserved"] = (
+                write_failure_page.locator("[data-recent-project-id]").count() == before_failure
+                and error_status.count() == 1
+                and not error_status.is_hidden()
+            )
+            write_failure_page.close()
         except (OSError, PlaywrightError, ValueError) as exc:
             errors.append(f"desktop built-runtime browser check failed: {exc}")
         finally:
@@ -246,6 +361,12 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         errors.append("desktop navigation rail did not move keyboard focus to a distinct workspace")
     if not details["commandFocus"]:
         errors.append("desktop Ctrl+K command shortcut did not focus project search")
+    project_details = details["projectSelection"]
+    if project_details.get("recentProjects") != 4 or project_details.get("missingProjects") != 1:
+        errors.append("desktop project selection did not expose the deterministic recent/missing fixture")
+    for field in ("persistentRemoval", "emptyState", "preferenceRecovery", "writeFailurePreserved"):
+        if project_details.get(field) is not True:
+            errors.append(f"desktop project selection did not verify {field}")
     return errors, details
 
 

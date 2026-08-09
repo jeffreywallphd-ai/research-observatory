@@ -25,6 +25,17 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(details["keyboardRail"])
         self.assertTrue(details["commandFocus"])
         self.assertEqual([], details["requests"])
+        project = details["projectSelection"]
+        self.assertEqual(4, project["recentProjects"])
+        self.assertEqual(1, project["missingProjects"])
+        self.assertTrue(project["persistentRemoval"])
+        self.assertTrue(project["emptyState"])
+        self.assertTrue(project["preferenceRecovery"])
+        self.assertTrue(project["writeFailurePreserved"])
+        self.assertEqual(
+            ["locate-existing", "open-existing", "remove-recent", "create-new"],
+            [intent["type"] for intent in project["intents"]],
+        )
 
     def test_security_boundary_and_complete_command_plan(self) -> None:
         self.assertEqual([], security_errors(REPO))
