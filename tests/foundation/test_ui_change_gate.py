@@ -28,7 +28,11 @@ class UiChangeGateTests(unittest.TestCase):
             "tests/foundation/test_ui_change_gate.py",
             "tools/desktop_app_check.py",
         }
-        review = {"reviewer": "agent:descartes", "result": "changes-requested"}
+        review = {
+            "reviewer": "agent:descartes",
+            "result": "changes-requested",
+            "reviewed_at": "2026-08-09T08:02:53+00:00",
+        }
         backlog: dict[str, Any] = {
             "capabilities": [
                 {
@@ -39,6 +43,7 @@ class UiChangeGateTests(unittest.TestCase):
                                     "id": "CAP-01.S01.T01",
                                     "status": "IN_PROGRESS",
                                     "owner": "codex",
+                                    "updated_at": "2026-08-09T08:02:53+00:00",
                                     "review": review,
                                 }
                             ]
@@ -47,20 +52,34 @@ class UiChangeGateTests(unittest.TestCase):
                 }
             ]
         }
+        previous_backlog = json.loads(json.dumps(backlog))
+        previous_task = previous_backlog["capabilities"][0]["slices"][0]["tasks"][0]
+        previous_task["status"] = "REVIEW"
+        previous_task["review"]["reviewed_at"] = None
 
-        self.assertEqual([], independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths))
+        self.assertEqual([], independent_review_hardening_errors(backlog, previous_backlog, "CAP-01.S01.T01", paths))
         review["reviewer"] = "agent:codex"
-        self.assertTrue(independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths))
+        self.assertTrue(independent_review_hardening_errors(backlog, previous_backlog, "CAP-01.S01.T01", paths))
         review["reviewer"] = "agent:co-dex"
-        self.assertTrue(independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths))
+        self.assertTrue(independent_review_hardening_errors(backlog, previous_backlog, "CAP-01.S01.T01", paths))
         review["reviewer"] = "agent:descartes"
         self.assertTrue(
-            independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths | {"verification-profiles.json"})
+            independent_review_hardening_errors(
+                backlog, previous_backlog, "CAP-01.S01.T01", paths | {"verification-profiles.json"}
+            )
         )
-        self.assertTrue(independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths | {"tools/taskctl.py"}))
         self.assertTrue(
-            independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths | {"apps/desktop/src/App.tsx"})
+            independent_review_hardening_errors(
+                backlog, previous_backlog, "CAP-01.S01.T01", paths | {"tools/taskctl.py"}
+            )
         )
+        self.assertTrue(
+            independent_review_hardening_errors(
+                backlog, previous_backlog, "CAP-01.S01.T01", paths | {"apps/desktop/src/App.tsx"}
+            )
+        )
+        previous_task["review"]["reviewed_at"] = review["reviewed_at"]
+        self.assertTrue(independent_review_hardening_errors(backlog, previous_backlog, "CAP-01.S01.T01", paths))
 
     def git(self, root: Path, *args: str) -> str:
         return subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True).stdout.strip()

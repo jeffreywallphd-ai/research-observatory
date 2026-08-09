@@ -101,7 +101,6 @@ APPLICATION_ACTIVATION_PATHS = frozenset(
         "verification-profiles.json",
     }
 )
-REVIEW_HARDENING_PATHS = frozenset({"tools/ui_change_gate.py", "tools/ui_conformance.py"})
 REVIEW_HARDENING_ENVELOPES = frozenset(
     {
         frozenset(
@@ -122,16 +121,16 @@ REVIEW_HARDENING_ENVELOPES = frozenset(
                 "tools/ui_conformance.py",
             }
         ),
+        frozenset({"tests/foundation/test_ui_change_gate.py", "tools/ui_change_gate.py"}),
     }
+)
+REVIEW_RECORD_ENVELOPE = frozenset(
+    {"docs/planning-implementation-plan.md", "planning/backlog.yaml", "planning/status-summary.md"}
 )
 AGENT_REVIEWER = re.compile(r"^agent:[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$")
 
 
-def independent_review_hardening_errors(backlog: dict[str, Any], task_id: str, paths: set[str]) -> list[str]:
-    if paths & GATE_CONTROL_PATHS != REVIEW_HARDENING_PATHS or frozenset(paths) not in REVIEW_HARDENING_ENVELOPES:
-        return [
-            "post-implementation gate hardening must match one exact canonical implementation-and-regression envelope"
-        ]
+def backlog_task(backlog: dict[str, Any], task_id: str) -> dict[str, Any] | None:
     matches = [
         task
         for capability in backlog.get("capabilities", [])
@@ -141,10 +140,22 @@ def independent_review_hardening_errors(backlog: dict[str, Any], task_id: str, p
         for task in slice_item.get("tasks", [])
         if isinstance(task, dict) and task.get("id") == task_id
     ]
-    if len(matches) != 1:
-        return ["post-implementation gate hardening requires one exact task in the parent backlog"]
-    task = matches[0]
+    return matches[0] if len(matches) == 1 else None
+
+
+def independent_review_hardening_errors(
+    backlog: dict[str, Any], previous_backlog: dict[str, Any], task_id: str, paths: set[str]
+) -> list[str]:
+    if frozenset(paths) not in REVIEW_HARDENING_ENVELOPES:
+        return [
+            "post-implementation gate hardening must match one exact canonical implementation-and-regression envelope"
+        ]
+    task = backlog_task(backlog, task_id)
+    previous_task = backlog_task(previous_backlog, task_id)
+    if task is None or previous_task is None:
+        return ["post-implementation gate hardening requires one exact task in both review-transition backlogs"]
     review = task.get("review")
+    previous_review = previous_task.get("review")
     reviewer = review.get("reviewer") if isinstance(review, dict) else None
     owner = task.get("owner")
     if (
@@ -158,6 +169,17 @@ def independent_review_hardening_errors(backlog: dict[str, Any], task_id: str, p
         return [
             "post-implementation gate hardening requires a canonical independent agent CHANGES_REQUESTED "
             "record in the commit's parent backlog"
+        ]
+    if (
+        previous_task.get("status") != "REVIEW"
+        or not isinstance(previous_review, dict)
+        or not review.get("reviewed_at")
+        or review.get("reviewed_at") == previous_review.get("reviewed_at")
+        or task.get("updated_at") != review.get("reviewed_at")
+    ):
+        return [
+            "post-implementation gate hardening requires its immediate parent to introduce a distinct "
+            "REVIEW-to-IN_PROGRESS independent review transition"
         ]
     return []
 
@@ -227,10 +249,16 @@ def application_activation_errors(
         for position in late_protected:
             try:
                 parent = resolve_commit(repo, f"{commits[position]}^")
+                if commit_paths(repo, parent) != REVIEW_RECORD_ENVELOPE:
+                    raise ValueError("immediate parent is not the exact planning-only review-record commit")
+                grandparent = resolve_commit(repo, f"{parent}^")
                 backlog = yaml_object(blob(repo, parent, "planning/backlog.yaml"), "parent backlog")
+                previous_backlog = yaml_object(
+                    blob(repo, grandparent, "planning/backlog.yaml"), "pre-review parent backlog"
+                )
                 errors.extend(
                     independent_review_hardening_errors(
-                        backlog, str(contract.get("taskId")), paths_by_position[position]
+                        backlog, previous_backlog, str(contract.get("taskId")), paths_by_position[position]
                     )
                 )
             except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
