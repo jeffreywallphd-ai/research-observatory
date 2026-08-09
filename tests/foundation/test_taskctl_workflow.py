@@ -539,6 +539,41 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 *context,
             )
 
+    def test_capability_review_remediation_can_resume_after_every_slice_is_approved(self) -> None:
+        context = self.workflow()
+        capability = context[1]["CAP-00"]
+        for slice_ in capability["slices"]:
+            slice_["completion"]["status"] = "APPROVED"
+        capability["campaign"].update(status="PAUSED", owner="alice")
+        capability["completion"]["status"] = "CHANGES_REQUESTED"
+        args = Namespace(
+            capability="CAP-00",
+            agent="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        identity = ("alice", "codex/test", "a" * 40, REPO.as_posix())
+
+        with patch("taskctl.git_execution_identity", return_value=identity), patch("taskctl.persist"):
+            command_capability_resume(args, *context)
+
+        self.assertEqual("ACTIVE", capability["campaign"]["status"])
+        self.assertEqual("IN_PROGRESS", capability["completion"]["status"])
+
+        capability["campaign"]["status"] = "PAUSED"
+        capability["completion"]["status"] = "APPROVED"
+        with (
+            self.assertRaisesRegex(SystemExit, "no eligible slice or capability-review remediation"),
+            patch("taskctl.git_execution_identity", return_value=identity),
+            patch("taskctl.persist"),
+        ):
+            command_capability_resume(args, *context)
+
     def test_task_slice_and_capability_owners_cannot_self_review(self) -> None:
         context = self.workflow()
         task = context[3]["CAP-00.S01.T01"]
