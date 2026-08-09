@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Research Observatory">
+  <rect width="512" height="512" rx="112" fill="#1d4ed8"/>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="24">
+    <path d="M96 400h320M128 400v-64h256v64M160 336v-64a96 96 0 0 1 192 0v64M192 272h128M256 128v48M184 152l32 40M328 152l-32 40"/>
+  </g>
+</svg>
