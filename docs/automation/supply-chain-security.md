@@ -39,7 +39,11 @@ findings are reported for review. Licenses must match an allowed SPDX identifier
 or allowed Trivy category; explicitly denied identifiers and denied, restricted,
 forbidden, reciprocal, or unknown categories block. The small explicit allowances for
 MPL-2.0 and PSF-2.0 cover the current locked development environment and do not
-authorize unreviewed additions to that list.
+authorize unreviewed additions to that list. A conjunction such as
+`MIT AND PSF-2.0` is allowed only when every component is individually present
+in the allowlist. Disjunctions, license exceptions, malformed expressions, and
+any conjunction containing an unlisted or denied component continue to fail
+closed unless the complete identifier is reviewed and explicitly allowed.
 
 An exception in `security-exceptions.json` must:
 

@@ -134,6 +134,52 @@ class SecurityPolicyTests(unittest.TestCase):
         self.assertEqual([], warnings)
         self.assertEqual(["ALLOW"], [item["disposition"] for item in evaluated])
 
+    def test_allowed_spdx_conjunction_requires_every_component_to_be_allowed(self) -> None:
+        base = {
+            "kind": "license",
+            "severity": "UNKNOWN",
+            "category": "unknown",
+            "target": "Python",
+            "package": "controlled-package",
+            "title": "Controlled composite license fixture",
+        }
+        allowed = {
+            **base,
+            "key": "license|MIT AND PSF-2.0|Python|controlled-package",
+            "id": "MIT AND PSF-2.0",
+        }
+        denied = {
+            **base,
+            "key": "license|MIT AND AGPL-3.0-only|Python|controlled-package",
+            "id": "MIT AND AGPL-3.0-only",
+        }
+        ambiguous = {
+            **base,
+            "key": "license|MIT OR PSF-2.0|Python|controlled-package",
+            "id": "MIT OR PSF-2.0",
+        }
+        unlisted = {
+            **base,
+            "key": "license|MIT AND BlueOak-1.0.0|Python|controlled-package",
+            "id": "MIT AND BlueOak-1.0.0",
+            "category": "permissive",
+        }
+        exceptions = {
+            "schemaVersion": "1.0",
+            "documentType": "software-supply-chain-exceptions",
+            "exceptions": [],
+        }
+
+        evaluated, errors, _ = evaluate(
+            [allowed, denied, ambiguous, unlisted], self.policy, exceptions, today=date(2026, 8, 8)
+        )
+
+        self.assertEqual([], errors)
+        self.assertEqual(["ALLOW", "BLOCK", "BLOCK", "BLOCK"], [item["disposition"] for item in evaluated])
+        self.assertIn("explicitly denied", evaluated[1]["policyReason"])
+        self.assertIn("category unknown is denied", evaluated[2]["policyReason"])
+        self.assertIn("component that is not explicitly allowed", evaluated[3]["policyReason"])
+
     def test_unlisted_reciprocal_license_blocks_while_explicit_mpl_allowance_remains_visible(self) -> None:
         reciprocal = {
             "key": "license|GPL-3.0-only|Python|controlled-package",
