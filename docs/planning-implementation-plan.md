@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 454b94cccd57d90b623de4b5073940b52e705a99f4787f292cc63f50c4d5d459
+source_sha256: 426ac1a0965da31758df840af19171650e4be5cad821beaeb1cf8ee79f6e5880
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### G0 - Executable engineering baseline
 
-**After / unlocks / status:** `W0` / `W1` / `PENDING`
+**After / unlocks / status:** `W0` / `W1` / `APPROVED`
 
 **Criteria:**
 
@@ -245,7 +245,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-00 - Delivery foundation and Codex execution system
 
-**Campaign / completion:** `REVIEW` / `REVIEW`
+**Campaign / completion:** `COMPLETE` / `APPROVED`
 
 **Objective:** Create a reproducible repository, architecture and approved-experience guardrails, validation system, and machine-readable backlog that make small AI-authored changes safe and reviewable.
 
@@ -949,7 +949,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A production-shaped desktop shell provides navigation, project selection, commands, and application state.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -957,7 +957,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S01.T01 - Bootstrap the Tauri 2 and React/TypeScript desktop application
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1908,7 +1908,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A small stable core model defines records, documents, evidence, decisions, workflows, ontologies, graphs, opportunities, and monitoring events.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1916,7 +1916,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T01 - Define core aggregate and value-object contracts
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
