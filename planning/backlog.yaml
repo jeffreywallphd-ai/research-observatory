@@ -1891,7 +1891,7 @@ capabilities:
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T06:53:20+00:00'
-      updated_at: '2026-08-09T08:30:11+00:00'
+      updated_at: '2026-08-09T08:43:08+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Offline Tauri/React shell, approved-reference application activation, exact manifests, Windows
@@ -1910,6 +1910,11 @@ capabilities:
         sha256: 6d21ea97c9251cd9b88e389b40111a099d26570aef5b731866a377c632870154
         commit: 493ce3b6f60474796b66e214603d0a83b29965b1
         recorded_at: '2026-08-09T08:18:56+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S01.T01.review-fix-2.json
+        sha256: 627d589f236dcec854bc6067f8223a3a82e71d3687be475f98564848d36cf608
+        commit: e989c1393e1f3dfd30206105d7cedcfe7f811bd5
+        recorded_at: '2026-08-09T08:43:08+00:00'
       review:
         reviewer: agent:descartes
         result: changes-requested
@@ -1930,7 +1935,7 @@ capabilities:
         reference_approval_commit: 7e625150c57f518327d8dcce430371902ecaed10
         previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.2
         implementation_agent: agent:codex
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 48c79d82dafc9a30d615762830e1cda164ee0939cdaca81d8da9a2325a0e92b3
+source_sha256: 2d14d9653cb162d52b7ad7c3097fbda29d875e93feb0b9950809bb07abd3b3bf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -985,6 +985,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-01.S01.T01.json` at `79f8603492d5e593c76293dea66885ae6e010223`
 - `artifacts/evidence/CAP-01.S01.T01.review-fix.json` at `493ce3b6f60474796b66e214603d0a83b29965b1`
+- `artifacts/evidence/CAP-01.S01.T01.review-fix-2.json` at `e989c1393e1f3dfd30206105d7cedcfe7f811bd5`
 
 #### - [ ] CAP-01.S01.T02 - Implement the primary application frame and workspace routing
 
