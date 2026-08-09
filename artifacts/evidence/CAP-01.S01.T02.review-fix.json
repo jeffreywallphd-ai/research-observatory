@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S01.T02",
+  "commit": "5422bd749ba68274faf1f2744ebf8dc439aef6ff",
+  "baseCommit": "8c274496dd272f4079f16eaaef86a2d539876996",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S01.T02.json",
+    "reason": "Independent review demonstrated that scheme, separator, and traversal checks ran before decoding and could be bypassed with ambiguous encoded paths. This manifest binds the centralized canonicalization remediation and its real-bundle regressions."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/frame.test.ts",
+    "apps/desktop/src/app/frame.ts",
+    "apps/desktop/src/app/routes.test.ts",
+    "apps/desktop/src/app/routes.ts",
+    "artifacts/evidence/CAP-01.S01.T02.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S01.T02-review-fix-desktop.json",
+      "exitCode": 0,
+      "result": "The exact remediation commit passed all 24 desktop-profile commands in 452.03 seconds, including 146 foundation tests, 22 desktop tests, all native/application commands, 32 approved routes, 139 browser workflow cases, 390 keyboard cases, 64 responsive cases, and 64 visual captures. Report SHA-256: 18bf8c98b16b2d3331a2ff54b54523aa16ad18db6258807967f25467f1af1e9b."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\CAP-01.S01.T02-review-fix-application.json",
+      "exitCode": 0,
+      "result": "All eight locked renderer/native commands passed. The production bundle activated all 32 approved pages and safely recovered four adversarial encoded paths, with exact workspace identity, keyboard rail movement, Ctrl+K command focus, no runtime errors, and zero unexpected requests. Report SHA-256: f8a07a4f781e9f6b093a7ce67c711642994d2fd200755e60019872d54d522ec3."
+    },
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop test",
+      "exitCode": 0,
+      "result": "Eight renderer-domain tests pass, including double-encoded traversal, encoded backslash, encoded protocol-relative input, encoded absolute schemes, malformed escapes, ordinary queries/fragments, and every approved route."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base 67be83ac7ad482c81d5fc709b0f2e448dc1a6697 --head HEAD",
+      "exitCode": 0,
+      "result": "The exact three-file renderer change remains bound to approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5... with no protected-control or reference drift."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --check",
+      "exitCode": 0,
+      "result": "The authoritative backlog, task evidence chain, campaign state, and all generated planning views are synchronized and valid."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "A single canonicalDesktopPath boundary decodes exactly once and then rejects residual percent escapes, backslashes, protocol-relative paths, dot segments, and scheme-looking path segments before route selection.",
+        "Known deep links retain their exact workspace identity; every rejected or unknown input deterministically recovers to project home without remote navigation or a replacement project."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Pure route tests and the actual production bundle both cover the four independent-review attacks: double-encoded traversal, encoded backslash, encoded protocol-relative input, and encoded HTTPS scheme.",
+        "The full built-runtime matrix still verifies all 32 approved pages, dynamic keyboard navigation, command focus, and zero unexpected requests."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Frame activation and route normalization remain renderer-only infrastructure with no filesystem, project lifecycle, service, or scholarly business implementation.",
+        "No approved reference bytes, dependencies, native privileges, or later CAP-01 task behavior changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce all four encoded-route attacks against the exact production bundle and audit adjacent mixed/double encoding, separator, scheme, query, fragment, and normal-route behavior before approval."
+  }
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fe37dbfe738f8ff7f50df133fa87cff881b62cd99aac3a313dc172fa8e76f76a
+source_sha256: 51d01e9fa1a33bd7d8e68927bad960d3957da356a76f60be332202f6737b0fbe
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1017,6 +1017,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-01.S01.T02.json` at `8c274496dd272f4079f16eaaef86a2d539876996`
+- `artifacts/evidence/CAP-01.S01.T02.review-fix.json` at `5422bd749ba68274faf1f2744ebf8dc439aef6ff`
 
 #### - [ ] CAP-01.S01.T03 - Add project switcher, recent projects, and empty-state flows
 
