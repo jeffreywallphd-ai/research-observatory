@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "capability-qualification-evidence",
+  "capabilityId": "CAP-00",
+  "baseCommit": "47d460a8109acdd82237c2de37b18a79c2bb3853",
+  "stateCommit": "2ffbdeeb622757b09c0d02e7c8114617d1c3733a",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.capability.json",
+    "sha256": "cd7dfd8e38cece96f720f0b5d9e380342b5db6122cf93018bc23c763b10ac3a6",
+    "reason": "Independent capability review required current S03 task-evidence bindings and fail-closed compound license parsing. The original evidence remains immutable; this record binds the remediation and clean requalification."
+  },
+  "objective": "Create a reproducible repository, architecture and approved-experience guardrails, validation system, and machine-readable backlog that make small AI-authored changes safe and reviewable.",
+  "sliceEvidence": [
+    {
+      "sliceId": "CAP-00.S01",
+      "path": "artifacts/evidence/CAP-00.S01.integration.json",
+      "sha256": "c0f450d1677faa4fee1c5175c47e42ca891b45de160c4ee6cab262982886b248",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S02",
+      "path": "artifacts/evidence/CAP-00.S02.integration.json",
+      "sha256": "6257ba18f4e1d0feb063cc0d0fb8058bcc82b727855db8e513bd845c497022b4",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S03",
+      "path": "artifacts/evidence/CAP-00.S03.integration.review-fix.json",
+      "sha256": "85e36cc44cace81899dd374035814b5893f72feba6d95e3b37df08b6cecd8dfe",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S04",
+      "path": "artifacts/evidence/CAP-00.S04.integration.json",
+      "sha256": "2ed46df66c05e4dbafb96655b09b561fcfc419df24b7c865863d4169c4dee0d8",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S05",
+      "path": "artifacts/evidence/CAP-00.S05.integration.json",
+      "sha256": "3937ca6f917b60d873d2350c725a8983f8e7b2b9a7c46dbb73259fe983682061",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S06",
+      "path": "artifacts/evidence/CAP-00.S06.integration.json",
+      "sha256": "3960d4aa5fd1ff09b5e6a290d6d598a26def54bf06365013b330c678bde452b3",
+      "status": "APPROVED"
+    }
+  ],
+  "qualificationRemediation": {
+    "reviewFindings": [
+      "The original S03 integration evidence retained pre-remediation hashes for the T02 and T03 review-fix manifests.",
+      "The license policy allowed unsupported OR, WITH, symbolic, mixed, or malformed expressions to reach permissive category fallback.",
+      "Taskctl could not resume capability-level remediation after every slice had already been independently approved."
+    ],
+    "resolution": [
+      "A superseding S03 integration record binds the current canonical T02 and T03 review-fix bytes and leaves the original record untouched.",
+      "Unsupported compound license syntax is rejected before category fallback; strict AND is allowed only when every component is individually allowlisted.",
+      "Capability resume now recognizes only CHANGES_REQUESTED or BLOCKED capability-review remediation when no incomplete slice remains, with a regression test denying unrelated no-slice resumptions.",
+      "The frozen lxml dependency remains 6.1.1, above the advisory fixed boundary, with no vulnerability or license exception and no weakened threshold."
+    ],
+    "controlledLicenseCases": [
+      "MIT OR PSF-2.0",
+      "MIT WITH LLVM-exception",
+      "MIT && AGPL-3.0-only",
+      "MIT AND PSF-2.0 OR AGPL-3.0-only"
+    ],
+    "sources": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-41066",
+      "https://pypi.org/project/lxml/"
+    ]
+  },
+  "qualificationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile security-local",
+      "exitCode": 0,
+      "result": "At exact clean commit 2ffbdee, the complete security-local profile passed in 282.6 seconds: 144 foundation tests, 20 security tests, 38 packages, 37 findings, zero blockers, and clean build identity 0.1.0+g2ffbdee."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile desktop",
+      "exitCode": 0,
+      "result": "At the same exact clean commit, all 23 desktop commands passed in 404.32 seconds: 144 foundation tests, 15 desktop tests, 32 routes, 14 workflows, 521 region contracts, 139 browser cases, 390 keyboard cases, 64 responsive visuals, and 64 pinned captures."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "All 14 campaign/lifecycle regressions passed, including capability-review remediation after all slices are approved and rejection outside the authorized review states."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py validate; .venv\\Scripts\\python.exe tools/backlog_views.py --check",
+      "exitCode": 0,
+      "result": "The authoritative ledger contains 20 capabilities, 117 slices, 356 tasks, and 12 gates; all 19 CAP-00 tasks are DONE, all six slices are independently APPROVED, and generated views are current."
+    }
+  ],
+  "exitCriteria": [
+    {
+      "criterion_index": 1,
+      "status": "verified",
+      "evidence": [
+        "Fresh-checkout Windows bootstrap, exact pinned runtimes, frozen package operations, deterministic benchmarks, packaging smoke, and clean build identity are independently evidenced and pass in the current profiles."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "status": "verified",
+      "evidence": [
+        "Taskctl governs READY selection, ownership leases, exact Git identity, criterion evidence, independent task/slice/capability reviews, all-slice campaigns, review remediation, cancellation, stale-writer rejection, and release gates; all 19 tasks and six slices are complete."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "status": "verified",
+      "evidence": [
+        "The default-deny architecture map, stable-interface inventory, protected-path change gate, indexed ADR lifecycle, pinned least-privilege CI, and fail-closed supply-chain controls pass automatically."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "status": "verified",
+      "evidence": [
+        "The exact 54-file Academic Minimal 1.3 reference is approved, offline, reproducible, and bound to 32 pages, 14 workflows, accessibility behavior, package history, design-first authorization, and deterministic Windows conformance."
+      ]
+    }
+  ],
+  "crossCuttingQualification": {
+    "happyPath": "Fresh-checkout bootstrap, deterministic verification/builds, governed task lifecycle, approved UI reference, and foundation/security/desktop profiles pass.",
+    "failureAndDenial": "Missing tools, dependency/profile/gate mismatch, unauthorized ownership/review, stale evidence, malformed history, redirects/races, browser network surfaces, scanner violations, and conformance drift reject actionably.",
+    "cancellationAndRecovery": "Campaign cancellation and review remediation are explicit and ownership-bound; bootstrap is idempotent; ledger and governed output writes are atomic and stale-writer protected.",
+    "securityPrivacyRights": "Pinned scanning uses controlled inputs and exact exceptions with zero blockers; raw secrets are not retained; fixtures are synthetic CC0-1.0; private or production data is absent.",
+    "accessibilityAndPlatform": "Windows x64 is the W0 authority and passes pinned Chromium, Playwright, fonts, routes, keyboard/focus, light/dark, and two-viewport responsive contracts.",
+    "migrationBackupRestore": "No product database exists before CAP-01. Repository authority is Git-versioned, views are reproducible, and later application migration/backup duties remain release-gated."
+  },
+  "releaseGateG0": [
+    {
+      "criterion_index": 1,
+      "status": "verified",
+      "evidence": "Fresh-clone bootstrap and current foundation/build/package checks pass."
+    },
+    {
+      "criterion_index": 2,
+      "status": "verified",
+      "evidence": "The complete ledger, 19 tasks, six slice approvals, capability campaign, remediation, cancellation/resume, and release-gate invariants validate automatically."
+    },
+    {
+      "criterion_index": 3,
+      "status": "verified",
+      "evidence": "Architecture rules and four Accepted ADRs are documented, indexed, protected, and machine checked."
+    },
+    {
+      "criterion_index": 4,
+      "status": "verified",
+      "evidence": "The approved reference, workflow catalog, page contracts, design-first gate, and full Windows conformance profile are installed and passing."
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewReadiness": {
+    "allSlicesApproved": true,
+    "allExitCriteriaVerified": true,
+    "securityBlockingFindings": 0,
+    "unresolvedFindings": [],
+    "requiredReview": "independent capability remediation review",
+    "residualLimitations": [
+      "Hosted GitHub Actions execution is unavailable locally; its pinned workflow, permissions, commands, and evidence-retention contract are validated locally.",
+      "Desktop conformance intentionally targets the approved fixture until CAP-01 installs application UI source; fixture mode then fails closed and requires ADR-reviewed activation.",
+      "Server, cloud, non-Windows, university-administration, migration, and application backup/restore work remains assigned to later release-gated capabilities."
+    ]
+  }
+}
