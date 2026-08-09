@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: d3542f293fb27a041d65fc06c10fe043d406ad8f43814fcc123ba39c540fc82e
+source_sha256: 48c79d82dafc9a30d615762830e1cda164ee0939cdaca81d8da9a2325a0e92b3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 299 |
 | `READY` | 1 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 19 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S01.T01` Bootstrap the Tauri 2 and React/TypeScript desktop application | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S01.T01` Bootstrap the Tauri 2 and React/TypeScript desktop application | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
