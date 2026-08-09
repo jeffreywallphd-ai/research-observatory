@@ -24,6 +24,7 @@
     "planning/decision-feedback.schema.json",
     "planning/slice-plans/slice-plan.schema.json",
     "tests/fixtures/scholarly-corpus/manifest.schema.json",
+    "verification/desktop-ui-baseline.schema.json",
     "verification/desktop-ui.schema.json"
   ],
   "modelManifests": []

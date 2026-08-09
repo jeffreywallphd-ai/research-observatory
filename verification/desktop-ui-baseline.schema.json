@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/desktop-ui-visual-baseline-1.0.json",
+  "title": "Research Observatory desktop UI visual baseline",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "referenceId",
+    "referencePackageSha256",
+    "referenceApprovalCommit",
+    "platform",
+    "playwrightVersion",
+    "browserVersion",
+    "settings",
+    "entries"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "desktop-ui-visual-baseline"},
+    "referenceId": {"type": "string", "minLength": 1},
+    "referencePackageSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "referenceApprovalCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "platform": {"const": "windows-x64"},
+    "playwrightVersion": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+    "browserVersion": {"type": "string", "pattern": "^[1-9][0-9]*(\\.[0-9]+){3}$"},
+    "settings": {"$ref": "#/$defs/settings"},
+    "entries": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"pattern": "^[^/\\\\]+\\.html::(light|dark)$"},
+      "additionalProperties": {"$ref": "#/$defs/entry"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "viewport": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "responsiveViewport": {
+      "type": "object",
+      "required": ["width", "height", "label"],
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "label": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "settings": {
+      "type": "object",
+      "required": [
+        "baselinePath",
+        "platform",
+        "engine",
+        "playwrightVersion",
+        "browserVersion",
+        "viewport",
+        "responsiveViewports",
+        "deviceScaleFactor",
+        "locale",
+        "timezoneId",
+        "reducedMotion",
+        "colorSchemes",
+        "requiredFonts",
+        "animations"
+      ],
+      "properties": {
+        "baselinePath": {"const": "verification/baselines/desktop-ui.json"},
+        "platform": {"const": "windows-x64"},
+        "engine": {"const": "chromium"},
+        "playwrightVersion": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+        "browserVersion": {"type": "string", "pattern": "^[1-9][0-9]*(\\.[0-9]+){3}$"},
+        "viewport": {"$ref": "#/$defs/viewport"},
+        "responsiveViewports": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/responsiveViewport"}
+        },
+        "deviceScaleFactor": {"type": "number", "exclusiveMinimum": 0},
+        "locale": {"const": "en-US"},
+        "timezoneId": {"const": "UTC"},
+        "reducedMotion": {"const": "reduce"},
+        "colorSchemes": {"const": ["light", "dark"]},
+        "requiredFonts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "animations": {"const": "disabled"}
+      },
+      "additionalProperties": false
+    },
+    "entry": {
+      "type": "object",
+      "required": ["page", "theme", "width", "height", "sha256"],
+      "properties": {
+        "page": {"type": "string", "pattern": "^[^/\\\\]+\\.html$"},
+        "theme": {"enum": ["light", "dark"]},
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

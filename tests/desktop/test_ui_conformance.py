@@ -15,13 +15,19 @@ sys.path.insert(0, str(REPO / "tools"))
 
 from ui_conformance import (  # noqa: E402
     Context,
+    approval_record_errors,
+    baseline_document_errors,
     baseline_history_errors,
     check_accessibility,
     check_routes,
     check_tokens,
     check_visual,
     check_workflows,
+    font_face_available,
     load_context,
+    new_page,
+    open_browser,
+    set_page,
 )
 
 
@@ -36,11 +42,24 @@ class UiConformanceTests(unittest.TestCase):
         target = root / "target"
         shutil.copytree(REFERENCE, reference, ignore=shutil.ignore_patterns("previews", "__pycache__"))
         shutil.copytree(REFERENCE, target, ignore=shutil.ignore_patterns("previews", "__pycache__"))
+        schema_path = root / "verification" / "desktop-ui-baseline.schema.json"
+        schema_path.parent.mkdir(parents=True)
+        shutil.copy2(REPO / "verification" / "desktop-ui-baseline.schema.json", schema_path)
         config = json.loads((REPO / "verification" / "extensions" / "desktop-ui.json").read_text(encoding="utf-8"))
         site = json.loads((reference / "SITE_MANIFEST.json").read_text(encoding="utf-8"))
         workflow_document = json.loads((reference / "WORKFLOW_CATALOG.json").read_text(encoding="utf-8"))
+        coverage = json.loads((reference / "CAPABILITY_COVERAGE.json").read_text(encoding="utf-8"))
         pages = [str(item["file"]) for item in site["pages"]]
-        return Context(root, config, reference, target, site, workflow_document["workflows"], pages)
+        return Context(
+            root,
+            config,
+            reference,
+            target,
+            site,
+            workflow_document["workflows"],
+            coverage["page_contracts"],
+            pages,
+        )
 
     def git(self, root: Path, *args: str) -> str:
         return subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
@@ -71,7 +90,7 @@ class UiConformanceTests(unittest.TestCase):
                 REPO / "verification" / "desktop-ui.schema.json",
                 root / "verification" / "desktop-ui.schema.json",
             )
-            implementation = root / "apps" / "desktop" / "src" / "View.tsx"
+            implementation = root / "apps" / "desktop" / "src" / "Application.test.tsx"
             implementation.parent.mkdir(parents=True)
             implementation.write_text("export const View = () => null;\n", encoding="utf-8", newline="\n")
 
@@ -102,6 +121,25 @@ class UiConformanceTests(unittest.TestCase):
         self.assertFalse(route_result["ok"])
         self.assertTrue(any("supporting-tool navigation differs" in error for error in route_result["errors"]))
 
+    def test_every_exact_page_region_contract_is_executable(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context = self.context_copy(temporary)
+            index = context.target / "index.html"
+            index.write_text(
+                index.read_text(encoding="utf-8").replace('<footer class="trust-footer">', "<footer>"),
+                encoding="utf-8",
+                newline="\n",
+            )
+
+            result = check_routes(context)
+
+        self.assertFalse(result["ok"])
+        self.assertEqual(
+            sum(len(contract["required_regions"]) for contract in context.page_contracts.values()),
+            result["details"]["requiredRegionContracts"],
+        )
+        self.assertTrue(any("trust/provenance footer" in error for error in result["errors"]))
+
     def test_workflow_order_drift_fails_against_catalog(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             context = self.context_copy(temporary)
@@ -113,6 +151,7 @@ class UiConformanceTests(unittest.TestCase):
                 context.target,
                 context.site,
                 {"rapid-orientation": {"steps": list(reversed(rapid["steps"]))}},
+                context.page_contracts,
                 context.pages,
             )
 
@@ -120,6 +159,32 @@ class UiConformanceTests(unittest.TestCase):
 
         self.assertFalse(result["ok"])
         self.assertTrue(any("ordered primary navigation differs" in error for error in result["errors"]))
+
+    def test_workflow_links_must_be_tab_reachable_and_keyboard_activatable(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context = self.context_copy(temporary)
+            app = context.target / "assets" / "app.js"
+            app.write_text(
+                app.read_text(encoding="utf-8").replace("<a class=", '<a tabindex="-1" class='),
+                encoding="utf-8",
+                newline="\n",
+            )
+            rapid = context.workflows["rapid-orientation"]
+            reduced = Context(
+                context.repo,
+                context.config,
+                context.reference,
+                context.target,
+                context.site,
+                {"rapid-orientation": rapid},
+                context.page_contracts,
+                context.pages,
+            )
+
+            result = check_workflows(reduced)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("keyboard focus order differs" in error for error in result["errors"]))
 
     def test_accessibility_and_responsive_contract_drift_fails(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -137,6 +202,7 @@ class UiConformanceTests(unittest.TestCase):
                 context.target,
                 context.site,
                 context.workflows,
+                context.page_contracts,
                 ["index.html"],
             )
 
@@ -144,6 +210,40 @@ class UiConformanceTests(unittest.TestCase):
 
         self.assertFalse(result["ok"])
         self.assertTrue(any("document language must be en" in error for error in result["errors"]))
+
+    def test_controlled_font_check_rejects_a_missing_face(self) -> None:
+        context = load_context(REPO)
+        playwright, browser = open_browser(context)
+        try:
+            page = new_page(browser, context)
+            try:
+                set_page(page, context, "index.html")
+                self.assertTrue(font_face_available(page, "Segoe UI"))
+                self.assertFalse(font_face_available(page, "DefinitelyMissingFont-9B6F"))
+            finally:
+                page.context.close()
+        finally:
+            browser.close()
+            playwright.stop()
+
+    def test_strict_baseline_and_approval_records_reject_malformed_history_shapes(self) -> None:
+        schema = json.loads((REPO / "verification" / "desktop-ui-baseline.schema.json").read_text(encoding="utf-8"))
+        malformed = json.loads((REPO / "verification" / "baselines" / "desktop-ui.json").read_text())
+        malformed["settings"] = "not-an-object"
+        malformed["platform"] = "junk-platform"
+        malformed["entries"]["index.html::light"]["width"] = -1440
+        malformed["entries"]["index.html::light"]["height"] = 0
+
+        baseline_errors = baseline_document_errors(malformed, "historical", schema)
+        approval_errors = approval_record_errors(
+            {"reference_id": malformed["referenceId"], "status": "approved"},
+            "historical-approval",
+            malformed["referenceId"],
+        )
+
+        self.assertTrue(baseline_errors)
+        self.assertTrue(any("settings" in error for error in baseline_errors))
+        self.assertTrue(any("approval fields must be exact" in error for error in approval_errors))
 
     def test_same_reference_baseline_rewrite_requires_new_approval(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -155,16 +255,41 @@ class UiConformanceTests(unittest.TestCase):
             approval = root / "design" / "ui-reference" / "APPROVAL.yaml"
             approval.parent.mkdir(parents=True)
             approval.write_text("status: approved\n", encoding="utf-8", newline="\n")
+            schema_path = root / "verification" / "desktop-ui-baseline.schema.json"
+            schema_path.parent.mkdir(parents=True)
+            shutil.copy2(REPO / "verification" / "desktop-ui-baseline.schema.json", schema_path)
             baseline_path = root / "verification" / "baselines" / "desktop-ui.json"
-            self.write_json(baseline_path, {"referenceId": "REF-1", "entries": {"page::light": "one"}})
+            settings = json.loads(
+                (REPO / "verification" / "extensions" / "desktop-ui.json").read_text(encoding="utf-8")
+            )["visual"]
+            initial = {
+                "schemaVersion": "1.0",
+                "documentType": "desktop-ui-visual-baseline",
+                "referenceId": "REF-1",
+                "referencePackageSha256": "1" * 64,
+                "referenceApprovalCommit": "0" * 40,
+                "platform": settings["platform"],
+                "playwrightVersion": settings["playwrightVersion"],
+                "browserVersion": settings["browserVersion"],
+                "settings": settings,
+                "entries": {
+                    f"page.html::{theme}": {
+                        "page": "page.html",
+                        "theme": theme,
+                        "width": settings["viewport"]["width"],
+                        "height": settings["viewport"]["height"],
+                        "sha256": "1" * 64,
+                    }
+                    for theme in ("light", "dark")
+                },
+            }
+            self.write_json(baseline_path, initial)
             self.git(root, "add", "--all")
             self.git(root, "commit", "-m", "approve initial baseline")
             approval_commit = self.git(root, "rev-parse", "HEAD")
-            current = {
-                "referenceId": "REF-1",
-                "referenceApprovalCommit": approval_commit,
-                "entries": {"page::light": "two"},
-            }
+            current = json.loads(json.dumps(initial))
+            current["referenceApprovalCommit"] = approval_commit
+            current["entries"]["page.html::light"]["sha256"] = "2" * 64
             self.write_json(baseline_path, current)
             self.git(root, "add", "--all")
             self.git(root, "commit", "-m", "rewrite same reference baseline")
@@ -175,11 +300,63 @@ class UiConformanceTests(unittest.TestCase):
                 "visual": {"baselinePath": "verification/baselines/desktop-ui.json"},
                 "normativeSources": {"style": "design/ui-reference/STYLE_GUIDE.md"},
             }
-            context = Context(root, config, root, root, {}, {}, [])
+            context = Context(root, config, root, root, {}, {}, {}, [])
 
-            errors = baseline_history_errors(context, current)
+            with mock.patch("ui_conformance.approval_lineage_errors", return_value=[]):
+                errors = baseline_history_errors(context, current)
 
         self.assertTrue(any("requires a new approved reference ID" in error for error in errors), errors)
+
+    def test_repaired_current_baseline_does_not_hide_a_malformed_historical_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            root.mkdir()
+            self.git(root, "init", "-b", "main")
+            self.git(root, "config", "user.name", "UI Baseline Test")
+            self.git(root, "config", "user.email", "ui-baseline@example.invalid")
+            schema_path = root / "verification" / "desktop-ui-baseline.schema.json"
+            schema_path.parent.mkdir(parents=True)
+            shutil.copy2(REPO / "verification" / "desktop-ui-baseline.schema.json", schema_path)
+            approval = root / "design" / "ui-reference" / "APPROVAL.yaml"
+            approval.parent.mkdir(parents=True)
+            approval.write_text("status: approved\n", encoding="utf-8", newline="\n")
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "establish approval")
+            approval_commit = self.git(root, "rev-parse", "HEAD")
+            baseline_path = root / "verification" / "baselines" / "desktop-ui.json"
+            canonical = json.loads(
+                (REPO / "verification" / "baselines" / "desktop-ui.json").read_text(encoding="utf-8")
+            )
+            canonical["referenceApprovalCommit"] = approval_commit
+            malformed = json.loads(json.dumps(canonical))
+            malformed["settings"] = "not-an-object"
+            malformed["platform"] = "junk"
+            malformed["entries"]["index.html::light"]["width"] = -1
+            malformed["entries"]["index.html::light"]["height"] = 0
+            self.write_json(baseline_path, malformed)
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "malformed historical baseline")
+            self.write_json(baseline_path, canonical)
+            self.git(root, "add", "--all")
+            self.git(root, "commit", "-m", "repair current baseline")
+            context = Context(
+                root,
+                {
+                    "visual": {"baselinePath": "verification/baselines/desktop-ui.json"},
+                    "normativeSources": {"style": "design/ui-reference/STYLE_GUIDE.md"},
+                },
+                root,
+                root,
+                {},
+                {},
+                {},
+                [],
+            )
+
+            with mock.patch("ui_conformance.approval_lineage_errors", return_value=[]):
+                errors = baseline_history_errors(context, canonical)
+
+        self.assertTrue(any("settings" in error and "not of type 'object'" in error for error in errors), errors)
 
     def test_visual_mismatch_maps_to_normative_page_contract(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

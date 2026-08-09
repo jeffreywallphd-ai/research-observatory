@@ -11,6 +11,7 @@ decision_scope: Desktop target activation, approved-reference conformance checks
 affected_paths:
   - verification/extensions/desktop-ui.json
   - verification/desktop-ui.schema.json
+  - verification/desktop-ui-baseline.schema.json
   - verification/baselines/desktop-ui.json
   - tools/ui_conformance.py
   - tools/ui_*_check.py
@@ -71,10 +72,12 @@ exists. Application implementation must replace the mode/target through a
 protected, ADR-reviewed change.
 
 Visual baselines contain 32 pages in light and dark at the pinned Windows x64
-renderer identity. Verification rejects dirty baseline state. Git history must
-show a different reference ID and approval commit for a changed baseline; the
+renderer identity. Verification rejects dirty baseline state and strict-schema
+validates every reachable historical baseline, then binds it to the exact
+approved reference package and complete approval record. Git history must show
+a different reference ID and approval commit for a changed baseline; the
 guarded writer refuses a same-reference overwrite. CI installs the locked
-browser and runs the full desktop profile. Activation, schema, baseline, core
+browser and runs the full desktop profile. Activation, schemas, baseline, core
 checker, entry points, profile wiring, CI wiring, and weakening-sensitive gate
 controls are architecture protected.
 

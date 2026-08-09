@@ -11,10 +11,11 @@ boundary.
 ## Checks
 
 The profile validates exact light/dark semantic-token declarations, all 32
-product route identities and required regions, approved primary and
-supporting-tool navigation, all 14 ordered workflows, distinct-route
-previous/next behavior, keyboard theme/sidebar/focus behavior, accessible-name
-and responsive-state parity, and 64 controlled screenshots (32 pages in two
+product route identities and all 521 exact required-region contracts, approved
+primary and supporting-tool navigation, all 14 ordered workflows,
+distinct-route previous/next behavior, tab-order and Enter activation for every
+workflow link, keyboard theme/sidebar/focus behavior, accessible-name and exact
+responsive visual parity, and 64 controlled screenshots (32 pages in two
 themes). Every report cites the normative token, style, route, workflow, page,
 and approval sources and carries the explicit illustrative exclusions. Mock
 names, studies, counts, dates, prose, and chart values are never product
@@ -36,10 +37,14 @@ assets are inlined, so qualification is offline.
 ## Visual baseline changes
 
 `verification/baselines/desktop-ui.json` records the screenshot SHA-256 values
-and full renderer identity. Authoritative verification rejects an uncommitted
-baseline. A changed committed baseline must cite a different approved reference
-ID and a different approval commit occurring between baseline versions. Create
-a baseline only after the new reference has completed the human approval gate:
+and full renderer identity. `verification/desktop-ui-baseline.schema.json`
+strictly validates the current record and every reachable historical snapshot.
+Authoritative verification rejects an uncommitted baseline, incomplete or
+malformed approval record, or reference package whose Git blobs do not produce
+the cited package hash. A changed committed baseline must cite a different
+approved reference ID and a different approval commit occurring between
+baseline versions. Create a baseline only after the new reference has completed
+the human approval gate:
 
 ```powershell
 .venv\Scripts\python.exe tools\ui_conformance.py --repo . --write-baseline `
