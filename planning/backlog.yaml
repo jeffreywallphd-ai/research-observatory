@@ -1977,11 +1977,16 @@ capabilities:
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T09:04:08+00:00'
-      updated_at: '2026-08-09T09:04:08+00:00'
+      updated_at: '2026-08-09T09:29:17+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S01.T02.json
+        sha256: d347d59d73737dbcc1b19beb7d1e7d8cbeb821b0e63d91d9fc0c6a7c8116eae9
+        commit: 8c274496dd272f4079f16eaaef86a2d539876996
+        recorded_at: '2026-08-09T09:29:17+00:00'
       review:
         reviewer: null
         result: null
@@ -2001,7 +2006,7 @@ capabilities:
         reference_approval_commit: 7e625150c57f518327d8dcce430371902ecaed10
         previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.2
         implementation_agent: agent:codex
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
