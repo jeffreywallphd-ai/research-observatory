@@ -25,3 +25,8 @@ version/history/approval requirements, distinct human approval, and path confine
 clean and dirty build identities, dependency/schema/model-set provenance, manifest
 inventory drift, Git/input race detection, canonical guarded output and component
 writes, malformed mirror/changelog handling, and exact dated-release conventions.
+
+`test_ui_change_gate.py` verifies approved-reference implementation and defect
+restoration, exact task/contract/file lineage, newer human-approved reference
+ordering, self-approval and same-commit denial, automatic task-base selection,
+and protection against UI changes weakening their own gate controls.

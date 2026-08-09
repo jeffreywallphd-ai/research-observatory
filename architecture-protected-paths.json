@@ -15,6 +15,38 @@
       "reason": "Adding, removing, or moving governed modules changes the architecture map."
     },
     {
+      "pattern": "ui-change-policy.json",
+      "reason": "The governed UI implementation roots and contract locations define the design-first enforcement boundary."
+    },
+    {
+      "pattern": "design/ui-change.schema.json",
+      "reason": "UI change evidence fields bind tasks, reference lineage, approval ordering, and focused conformance evidence."
+    },
+    {
+      "pattern": "tools/ui_change_gate.py",
+      "reason": "The design-first gate enforces human approval separation and immutable reference-before-code ordering."
+    },
+    {
+      "pattern": "planning/backlog.schema.json",
+      "reason": "The task schema governs exact experience-change lineage used by design-first enforcement."
+    },
+    {
+      "pattern": "verification-profiles.json",
+      "reason": "Verification composition determines whether design-first enforcement is mandatory."
+    },
+    {
+      "pattern": "quality-scope.json",
+      "reason": "Quality scope determines whether the design-first checker and its regressions receive static validation."
+    },
+    {
+      "pattern": ".github/workflows/ci.yml",
+      "reason": "CI history and base selection are required to prove reference approval precedes implementation."
+    },
+    {
+      "pattern": ".github/pull_request_template.md",
+      "reason": "The review template exposes machine UI lineage and residuals to human and independent reviewers."
+    },
+    {
       "pattern": "docs/architecture/source/systems-design.md",
       "reason": "The systems design is the architecture baseline when no accepted ADR supersedes it."
     },
