@@ -1887,11 +1887,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T06:53:20+00:00'
-      updated_at: '2026-08-09T08:43:39+00:00'
+      updated_at: '2026-08-09T08:49:27+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Offline Tauri/React shell, approved-reference application activation, exact manifests, Windows
@@ -1921,14 +1921,14 @@ capabilities:
       review:
         reviewer: agent:descartes
         result: changes-requested
-        reviewed_at: '2026-08-09T08:30:11+00:00'
-        notes: Final-read source/output inventory changes remain detectable only between passes, not through completion; hardening
-          exception accepts separator-lookalike self-reviewers and unrelated all-path scope.
+        reviewed_at: '2026-08-09T08:49:27+00:00'
+        notes: All prior findings are closed; remaining gate provenance must prove each protected correction is immediately
+          preceded by a distinct REVIEW-to-IN_PROGRESS independent review transition.
       base_sha: 1a8347f2b6e9c6706d6c5c63af401c36e5d5060d
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-09T08:30:11+00:00'
-        expires_at: '2026-08-09T16:30:11+00:00'
+        claimed_at: '2026-08-09T08:49:27+00:00'
+        expires_at: '2026-08-09T16:49:27+00:00'
       experience_change:
         kind: approved-reference-implementation
         contract_path: artifacts/evidence/ui-change/CAP-01.S01.T01.json
@@ -1938,7 +1938,7 @@ capabilities:
         reference_approval_commit: 7e625150c57f518327d8dcce430371902ecaed10
         previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.2
         implementation_agent: agent:codex
-      verification_state: passed
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
