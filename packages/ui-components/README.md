@@ -1,5 +1,8 @@
 # UI components
 
+Owner: Research Observatory maintainers
+Boundary: Accessible reusable interface components consuming governed tokens and portable contracts.
+
 `@research-observatory/ui-components` provides accessible, framework-local
 React primitives for the approved Academic Minimal experience. Components
 consume semantic custom properties from `@research-observatory/ui-tokens` and

@@ -1,5 +1,8 @@
 # UI tokens
 
+Owner: Research Observatory maintainers
+Boundary: Generated and validated Academic Minimal semantic design tokens.
+
 `@research-observatory/ui-tokens` is the versioned transport for the approved
 Academic Minimal semantic token contract. `index.css` imports the governed
 source directly, so downstream applications cannot drift through a copied
