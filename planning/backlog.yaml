@@ -2050,14 +2050,15 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T10:15:59+00:00'
-      updated_at: '2026-08-09T10:33:27+00:00'
+      updated_at: '2026-08-09T10:33:57+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
+      implementation_notes: Deterministic recent-project preferences, explicit unavailable-location repair, persistent removal/empty-state
+        flows, and fail-closed CAP-02 intent handoff pass the full desktop profile at dae49529e536663d01bdb5cf7e3de40fdfaf24a3.
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S01.T03.json
