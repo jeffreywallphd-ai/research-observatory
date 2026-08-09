@@ -20,6 +20,7 @@
     "tools/bootstrap.py",
     "tools/capability_plan_check.py",
     "tools/ci_check.py",
+    "tools/desktop_app_check.py",
     "tools/fixture_corpus_check.py",
     "tools/install_trivy.py",
     "tools/packaging_smoke_check.py",
@@ -60,6 +61,7 @@
     "tests/foundation/test_ui_change_gate.py",
     "tests/foundation/test_verify_runner.py",
     "tests/desktop/test_ui_conformance.py",
+    "tests/desktop/test_desktop_app_check.py",
     "tests/contracts/test_foundation_contracts.py",
     "tests/security/test_install_trivy.py",
     "tests/security/test_security_check.py"

@@ -9,6 +9,8 @@
     "mode",
     "referenceRoot",
     "targetRoot",
+    "applicationRoot",
+    "applicationManifestPath",
     "referenceId",
     "referencePackageSha256",
     "implementationRoots",
@@ -19,9 +21,11 @@
   "properties": {
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "desktop-ui-verification-activation"},
-    "mode": {"const": "approved-reference-fixture"},
+    "mode": {"enum": ["approved-reference-fixture", "approved-reference-application"]},
     "referenceRoot": {"const": "design/ui-reference"},
-    "targetRoot": {"const": "design/ui-reference"},
+    "targetRoot": {"enum": ["design/ui-reference", "apps/desktop/dist"]},
+    "applicationRoot": {"const": "apps/desktop"},
+    "applicationManifestPath": {"const": "apps/desktop/dist/application-manifest.json"},
     "referenceId": {"type": "string", "minLength": 1},
     "referencePackageSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "implementationRoots": {
@@ -96,5 +100,15 @@
       "additionalProperties": false
     }
   },
+  "allOf": [
+    {
+      "if": {"properties": {"mode": {"const": "approved-reference-fixture"}}},
+      "then": {"properties": {"targetRoot": {"const": "design/ui-reference"}}}
+    },
+    {
+      "if": {"properties": {"mode": {"const": "approved-reference-application"}}},
+      "then": {"properties": {"targetRoot": {"const": "apps/desktop/dist"}}}
+    }
+  ],
   "additionalProperties": false
 }

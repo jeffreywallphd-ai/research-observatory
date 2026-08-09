@@ -87,10 +87,12 @@ class UiConformanceTests(unittest.TestCase):
             root = Path(temporary) / "repo"
             shutil.copytree(REFERENCE, root / "design" / "ui-reference")
             (root / "verification" / "extensions").mkdir(parents=True)
-            shutil.copy2(
-                REPO / "verification" / "extensions" / "desktop-ui.json",
-                root / "verification" / "extensions" / "desktop-ui.json",
+            fixture_config = json.loads(
+                (REPO / "verification" / "extensions" / "desktop-ui.json").read_text(encoding="utf-8")
             )
+            fixture_config["mode"] = "approved-reference-fixture"
+            fixture_config["targetRoot"] = "design/ui-reference"
+            self.write_json(root / "verification" / "extensions" / "desktop-ui.json", fixture_config)
             shutil.copy2(
                 REPO / "verification" / "desktop-ui.schema.json",
                 root / "verification" / "desktop-ui.schema.json",
@@ -100,6 +102,27 @@ class UiConformanceTests(unittest.TestCase):
             implementation.write_text("export const View = () => null;\n", encoding="utf-8", newline="\n")
 
             with self.assertRaisesRegex(ValueError, "cannot remain active"):
+                load_context(root)
+
+    def test_application_mode_requires_a_bound_build_manifest(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            shutil.copytree(REFERENCE, root / "design" / "ui-reference")
+            shutil.copytree(REFERENCE, root / "apps" / "desktop" / "dist")
+            source = root / "apps" / "desktop" / "src" / "View.tsx"
+            source.parent.mkdir(parents=True)
+            source.write_text("export const View = () => null;\n", encoding="utf-8", newline="\n")
+            (root / "verification" / "extensions").mkdir(parents=True)
+            shutil.copy2(
+                REPO / "verification" / "extensions" / "desktop-ui.json",
+                root / "verification" / "extensions" / "desktop-ui.json",
+            )
+            shutil.copy2(
+                REPO / "verification" / "desktop-ui.schema.json",
+                root / "verification" / "desktop-ui.schema.json",
+            )
+
+            with self.assertRaisesRegex(ValueError, "application manifest"):
                 load_context(root)
 
     def test_token_and_supporting_navigation_drift_fail(self) -> None:

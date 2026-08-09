@@ -79,6 +79,17 @@ BASELINE_KEYS = frozenset(
     }
 )
 BASELINE_ENTRY_KEYS = frozenset({"page", "theme", "width", "height", "sha256"})
+APPLICATION_MANIFEST_KEYS = frozenset(
+    {"schemaVersion", "documentType", "referenceId", "referencePackageSha256", "sourceFiles", "artifacts"}
+)
+APPLICATION_EXTERNAL_INPUTS = (
+    "Cargo.toml",
+    "Cargo.lock",
+    "package.json",
+    "pnpm-lock.yaml",
+    "verification/extensions/desktop-ui.json",
+)
+APPLICATION_EXCLUDED_DIRECTORIES = frozenset({"dist", "node_modules", "target"})
 
 
 @dataclass(frozen=True)
@@ -135,6 +146,63 @@ def implementation_files(repo: Path, roots: list[str]) -> list[str]:
     return sorted(found)
 
 
+def file_inventory(repo: Path, root: Path, *, excluded_directories: frozenset[str] = frozenset()) -> dict[str, str]:
+    observed: dict[str, str] = {}
+
+    def fail_closed(error: OSError) -> None:
+        raise error
+
+    for directory, child_directories, file_names in os.walk(root, followlinks=False, onerror=fail_closed):
+        child_directories[:] = sorted(name for name in child_directories if name not in excluded_directories)
+        directory_path = Path(directory)
+        for name in [*child_directories, *sorted(file_names)]:
+            candidate = directory_path / name
+            relative = candidate.relative_to(repo).as_posix()
+            confined_path(repo, relative)
+        for name in sorted(file_names):
+            candidate = directory_path / name
+            relative = candidate.relative_to(repo).as_posix()
+            observed[relative] = hashlib.sha256(candidate.read_bytes()).hexdigest()
+    return observed
+
+
+def application_build_errors(repo: Path, config: dict[str, Any], target: Path) -> list[str]:
+    errors: list[str] = []
+    application_root = confined_path(repo, str(config["applicationRoot"]))
+    manifest_path = confined_path(repo, str(config["applicationManifestPath"]))
+    try:
+        manifest = json_object(manifest_path)
+    except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        return [f"invalid desktop application manifest: {exc}"]
+    if set(manifest) != APPLICATION_MANIFEST_KEYS:
+        errors.append("desktop application manifest has a noncanonical field set")
+        return errors
+    if manifest.get("schemaVersion") != "1.0" or manifest.get("documentType") != "desktop-application-build-manifest":
+        errors.append("desktop application manifest identity is invalid")
+    if manifest.get("referenceId") != config["referenceId"]:
+        errors.append("desktop application manifest reference ID is stale")
+    if manifest.get("referencePackageSha256") != config["referencePackageSha256"]:
+        errors.append("desktop application manifest reference package is stale")
+
+    expected_sources = file_inventory(repo, application_root, excluded_directories=APPLICATION_EXCLUDED_DIRECTORIES)
+    for relative in APPLICATION_EXTERNAL_INPUTS:
+        source = confined_path(repo, relative)
+        expected_sources[relative] = hashlib.sha256(source.read_bytes()).hexdigest()
+    if manifest.get("sourceFiles") != dict(sorted(expected_sources.items())):
+        errors.append("desktop application manifest does not bind the exact current build-input inventory")
+
+    expected_artifacts = file_inventory(repo, target)
+    manifest_relative = manifest_path.relative_to(repo).as_posix()
+    expected_artifacts.pop(manifest_relative, None)
+    expected_artifacts = {
+        Path(relative).relative_to(target.relative_to(repo)).as_posix(): digest
+        for relative, digest in expected_artifacts.items()
+    }
+    if manifest.get("artifacts") != dict(sorted(expected_artifacts.items())):
+        errors.append("desktop application manifest does not bind the exact current output inventory")
+    return errors
+
+
 def load_context(repo: Path) -> Context:
     repo = repo.resolve(strict=True)
     config_path = confined_path(repo, "verification/extensions/desktop-ui.json")
@@ -156,13 +224,19 @@ def load_context(repo: Path) -> Context:
         raise ValueError("desktop UI activation reference ID does not match the approved reference")
     if reference_result["reference_package_sha256"] != config["referencePackageSha256"]:
         raise ValueError("desktop UI activation package SHA-256 does not match the approved reference")
+    found = implementation_files(repo, list(config["implementationRoots"]))
     if config["mode"] == "approved-reference-fixture":
-        found = implementation_files(repo, list(config["implementationRoots"]))
         if found:
             raise ValueError(
                 "approved-reference-fixture mode cannot remain active after desktop UI implementation appears: "
                 + ", ".join(found)
             )
+    elif config["mode"] == "approved-reference-application":
+        if not found:
+            raise ValueError("approved-reference-application mode requires desktop UI implementation source")
+        build_errors = application_build_errors(repo, config, target)
+        if build_errors:
+            raise ValueError("invalid desktop application build: " + "; ".join(build_errors))
     site = json_object(confined_path(reference, "SITE_MANIFEST.json"))
     workflow_document = json_object(confined_path(reference, "WORKFLOW_CATALOG.json"))
     coverage_document = json_object(confined_path(reference, "CAPABILITY_COVERAGE.json"))

@@ -91,6 +91,78 @@ GATE_CONTROL_PATHS = frozenset(
         "verification-profiles.json",
     }
 )
+APPLICATION_ACTIVATION_PATHS = frozenset(
+    {
+        "quality-scope.json",
+        "tools/ui_change_gate.py",
+        "tools/ui_conformance.py",
+        "verification/desktop-ui.schema.json",
+        "verification/extensions/desktop-ui.json",
+        "verification-profiles.json",
+    }
+)
+
+
+def application_activation_errors(
+    repo: Path,
+    base: str,
+    head: str,
+    protected_changes: list[str],
+    contract: dict[str, Any],
+    policy: dict[str, Any],
+) -> list[str]:
+    errors: list[str] = []
+    if contract.get("changeKind") != "approved-reference-implementation":
+        return ["UI implementation cannot change its own design-first gate controls in the same range"]
+    if set(protected_changes) != APPLICATION_ACTIVATION_PATHS:
+        return [
+            "UI implementation cannot change its own design-first gate controls except for the exact first-application "
+            f"activation set; found {protected_changes}"
+        ]
+    try:
+        base_activation = json_object(
+            blob(repo, base, "verification/extensions/desktop-ui.json"), "base desktop UI activation"
+        )
+        head_activation = json_object(
+            blob(repo, head, "verification/extensions/desktop-ui.json"), "desktop UI activation"
+        )
+    except (UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        return [f"invalid first-application activation: {exc}"]
+    expected_head = dict(base_activation)
+    expected_head.update(
+        {
+            "mode": "approved-reference-application",
+            "targetRoot": "apps/desktop/dist",
+            "applicationRoot": "apps/desktop",
+            "applicationManifestPath": "apps/desktop/dist/application-manifest.json",
+        }
+    )
+    if base_activation.get("mode") != "approved-reference-fixture" or base_activation.get("targetRoot") != str(
+        policy["referenceRoot"]
+    ):
+        errors.append("first-application activation requires the governed fixture mode at the task base")
+    if head_activation != expected_head:
+        errors.append(
+            "first-application activation may only retarget the unchanged approved reference to the desktop build"
+        )
+
+    commits = git(repo, "rev-list", "--reverse", "--topo-order", f"{base}..{head}").decode("ascii").splitlines()
+    protected_positions: list[int] = []
+    implementation_positions: list[int] = []
+    for position, commit in enumerate(commits):
+        paths = commit_paths(repo, commit)
+        if paths & GATE_CONTROL_PATHS:
+            protected_positions.append(position)
+        if any(is_implementation_path(path, policy) for path in paths):
+            implementation_positions.append(position)
+    invalid_order = (
+        not protected_positions
+        or not implementation_positions
+        or max(protected_positions) >= min(implementation_positions)
+    )
+    if invalid_order:
+        errors.append("first-application gate activation must be committed before every UI implementation commit")
+    return errors
 
 
 def git(repo: Path, *args: str, allowed: tuple[int, ...] = (0,)) -> bytes:
@@ -423,11 +495,6 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
     except ValueError as exc:
         errors.append(str(exc))
     protected_changes = sorted(changed & GATE_CONTROL_PATHS)
-    if protected_changes:
-        errors.append(
-            "UI implementation cannot change its own design-first gate controls in the same range: "
-            + ", ".join(protected_changes)
-        )
 
     contract_path = contract_paths[0]
     try:
@@ -441,6 +508,11 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         errors.append(f"{contract_path}:{location}: {issue.message}")
     if errors:
         return report
+
+    if protected_changes:
+        errors.extend(application_activation_errors(repo, base, head, protected_changes, contract, policy))
+        if errors:
+            return report
 
     task_id = str(contract["taskId"])
     expected_contract_path = f"{contract_root}/{task_id}.json"
