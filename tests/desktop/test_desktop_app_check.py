@@ -19,6 +19,7 @@ class DesktopAppCheckTests(unittest.TestCase):
 
         self.assertEqual([], errors)
         self.assertEqual(32, details["pages"])
+        self.assertEqual(4, details["routeRecoveryCases"])
         self.assertTrue(details["keyboardRail"])
         self.assertTrue(details["commandFocus"])
         self.assertEqual([], details["requests"])

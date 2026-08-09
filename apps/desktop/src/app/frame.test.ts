@@ -34,6 +34,10 @@ describe("application frame", () => {
     expect(routeFromNavigationHref("../study-design.html")).toBeNull();
     expect(routeFromNavigationHref("../index.html")).toBeNull();
     expect(routeFromNavigationHref("%68ttps%3A%2F%2Fexample.invalid/study-design.html")).toBeNull();
+    expect(routeFromNavigationHref("/%252e%252e/study-design.html")).toBeNull();
+    expect(routeFromNavigationHref("/%5c/study-design.html")).toBeNull();
+    expect(routeFromNavigationHref("/%2f%2fevil.invalid/study-design.html")).toBeNull();
+    expect(routeFromNavigationHref("/%68ttps%3A%2F%2Fevil.invalid/study-design.html")).toBeNull();
     expect(routeFromNavigationHref("unknown.html")).toBeNull();
   });
 });

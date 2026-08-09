@@ -1,5 +1,5 @@
 import type { DesktopRoute } from "./routes";
-import { resolveDesktopRoute } from "./routes";
+import { canonicalDesktopPath, resolveDesktopRoute } from "./routes";
 
 export const REQUIRED_FRAME_REGIONS = [
   ["title bar", "header.topbar"],
@@ -33,22 +33,10 @@ export function nextNavigationIndex(
 
 export function routeFromNavigationHref(href: string | null): DesktopRoute | null {
   if (!href) return null;
-  let decoded: string;
-  try {
-    decoded = decodeURIComponent(href.split(/[?#]/u, 1)[0] ?? "");
-  } catch {
-    return null;
-  }
-  if (
-    decoded.includes("\\") ||
-    decoded.startsWith("//") ||
-    /^[a-z][a-z0-9+.-]*:/iu.test(decoded) ||
-    decoded.split("/").some((segment) => segment === "." || segment === "..")
-  ) {
-    return null;
-  }
-  const resolved = resolveDesktopRoute(decoded);
-  return resolved === "index.html" && !/(?:^|\/)index\.html$/u.test(decoded) ? null : resolved;
+  const canonical = canonicalDesktopPath(href);
+  if (canonical === null) return null;
+  const resolved = resolveDesktopRoute(canonical);
+  return resolved === "index.html" && !/(?:^|\/)index\.html$/u.test(canonical) ? null : resolved;
 }
 
 export function installApplicationFrame(documentRoot: Document, currentRoute: DesktopRoute): () => void {
