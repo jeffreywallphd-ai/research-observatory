@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -200,10 +201,22 @@ def blocking_reason(finding: dict[str, Any], policy: dict[str, Any]) -> str | No
         allowed_ids = {str(value).casefold() for value in license_policy.get("allowedIds", [])}
         denied_ids = {str(value).casefold() for value in license_policy.get("deniedIds", [])}
         category = finding.get("category", "unknown").casefold()
-        if identifier in denied_ids:
+        conjunction = re.fullmatch(
+            r"([A-Za-z0-9.+-]+)(?:\s+AND\s+([A-Za-z0-9.+-]+))+",
+            str(finding["id"]),
+            flags=re.IGNORECASE,
+        )
+        components = (
+            {item.casefold() for item in re.split(r"\s+AND\s+", str(finding["id"]), flags=re.IGNORECASE)}
+            if conjunction
+            else {identifier}
+        )
+        if components & denied_ids:
             return f"license {finding['id']} is explicitly denied"
-        if identifier in allowed_ids:
+        if components <= allowed_ids:
             return None
+        if conjunction:
+            return f"license conjunction {finding['id']} contains a component that is not explicitly allowed"
         if category in {str(value).casefold() for value in license_policy.get("deniedCategories", [])}:
             return f"license category {category} is denied"
         if category not in {str(value).casefold() for value in license_policy.get("allowedCategories", [])}:
