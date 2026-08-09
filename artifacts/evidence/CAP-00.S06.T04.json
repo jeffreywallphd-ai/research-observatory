@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S06.T04",
+  "commit": "86c386e7c06a9e0b15cdfd5172eea665e120602e",
+  "baseCommit": "8c5ef326c43b92de1104718798aa5acee362f905",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    ".github/workflows/ci.yml",
+    "architecture-boundaries.json",
+    "architecture-protected-paths.json",
+    "ci-policy.json",
+    "docs/README.md",
+    "docs/adr/ADR-0004-govern-desktop-ui-conformance-and-visual-baselines.md",
+    "docs/adr/index.json",
+    "docs/automation/README.md",
+    "docs/automation/continuous-integration.md",
+    "docs/automation/developer-bootstrap.md",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/automation/verification-profiles.md",
+    "docs/planning-implementation-plan.md",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pyproject.toml",
+    "quality-scope.json",
+    "tests/desktop/README.md",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_adr_check.py",
+    "tools/README.md",
+    "tools/ui_accessibility_check.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py",
+    "tools/ui_route_check.py",
+    "tools/ui_token_check.py",
+    "tools/ui_visual_regression_check.py",
+    "tools/ui_workflow_check.py",
+    "uv.lock",
+    "verification-profiles.json",
+    "verification/baselines/desktop-ui.json",
+    "verification/desktop-ui.schema.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts/tmp/t04-foundation.json",
+      "exitCode": 0,
+      "result": "The exact clean implementation commit passed all 16 foundation commands and all 143 foundation tests. Build provenance reported 0.1.0+g86c386e clean; repository, architecture, approved reference, design-first gate, ADR, CI, quality, packaging, backlog, and generated views all passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts/tmp/t04-desktop.json",
+      "exitCode": 0,
+      "result": "The desktop profile passed all inherited foundation commands, 7 desktop regressions, approved-reference integrity, exact token and route checks, 14 workflows across 139 distinct-route browser cases, 32-page accessibility and 64 responsive cases, and 64 deterministic light/dark screenshots."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_adr_check tests.desktop.test_ui_conformance",
+      "exitCode": 0,
+      "result": "All 12 focused ADR and desktop conformance tests passed, including fixture/application separation, light/dark token drift, supporting navigation, workflow ordering, accessibility, normative failure mapping, and same-reference baseline history laundering denial."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The authoritative ledger validates with 20 capabilities, 117 slices, 356 tasks, and 12 release gates; generated planning views have no drift."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The activated desktop profile validates 109 light/dark semantic tokens, all 32 product routes and required regions, exact approved supporting-tool navigation, all 14 ordered workflow profiles, and previous/next behavior for 139 distinct-route browser cases.",
+        "Keyboard focus visibility, keyboard-operated theme and sidebar controls, approved accessible-name behavior, two responsive viewports, and 64 light/dark visual captures pass on the pinned Windows x64 renderer.",
+        "The pre-application approved-reference-fixture mode fails when researcher-facing application source appears, so CAP-00 qualifies the verifier without falsely claiming that CAP-01 application code exists."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The activation pins Windows x64, Playwright 1.58.0, Chromium 145.0.7632.6, a 1440x900 viewport, two responsive viewports, device scale, locale, UTC, reduced motion, light/dark schemes, Segoe UI/Georgia/Consolas, animation suppression, deterministic time/random values, and offline asset loading.",
+        "The committed baseline binds 64 screenshot SHA-256 values to the exact approved reference ID, package SHA-256, approval commit, and renderer settings.",
+        "Full reachable Git-history replay rejects malformed or removed baselines, same-reference or same-approval rewrites, merge/history laundering, dirty or non-HEAD bytes, and changes whose new approval does not follow the prior baseline version."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Every conformance report carries the exact approved reference ID/package and names the governing token, style, route, workflow, page, and approval artifacts.",
+        "Reports preserve the approved illustrative exclusions for mock names, studies, sources, providers, counts, dates, prose, chart values, and nonfunctional actions rather than treating them as product requirements.",
+        "ADR-0004, architecture protection, quality scope, strict activation schema, CI policy, and the design-first anti-tamper inventory prevent the same change from silently disabling these checks."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "human-and-agent-review",
+    "note": "The repository owner approved the CAP-00 plan and slice decisions. Independent technical review must validate exact task/evidence scope, fixture separation, report mappings, workflow and browser coverage, controlled renderer identity, baseline full-history enforcement, ADR/CI anti-tamper controls, and the clean foundation and desktop results before task approval."
+  }
+}
