@@ -11,7 +11,9 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from ui_conformance import load_context
+from playwright.sync_api import Error as PlaywrightError
+from playwright.sync_api import sync_playwright
+from ui_conformance import inline_page, load_context
 
 Runner = Callable[..., subprocess.CompletedProcess[str]]
 EXPECTED_CSP = {
@@ -112,9 +114,82 @@ def command_plan(repo: Path) -> list[list[str]]:
     ]
 
 
+def page_error_collector(target: list[str]) -> Callable[[PlaywrightError], None]:
+    def collect(error: PlaywrightError) -> None:
+        target.append(str(error))
+
+    return collect
+
+
+def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
+    errors: list[str] = []
+    context = load_context(repo)
+    runtime = (context.target / "runtime" / "main.js").read_text(encoding="utf-8")
+    if "process.env.NODE_ENV" in runtime:
+        errors.append("desktop production runtime retains an unresolved Node environment expression")
+    details: dict[str, Any] = {"pages": 0, "keyboardRail": False, "commandFocus": False, "requests": []}
+    documents: dict[str, str] = {}
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True)
+        browser_context = browser.new_context()
+
+        def serve_application(route: Any) -> None:
+            document = documents.get(route.request.url)
+            if document is None:
+                details["requests"].append(route.request.url)
+                route.abort()
+            else:
+                route.fulfill(status=200, content_type="text/html; charset=utf-8", body=document)
+
+        browser_context.route("**/*", serve_application)
+        try:
+            for page_name in context.pages:
+                page = browser_context.new_page()
+                page_errors: list[str] = []
+                page.on("pageerror", page_error_collector(page_errors))
+                html = inline_page(context, page_name).replace(
+                    "</body>", f'<script type="module">{runtime}</script></body>'
+                )
+                page_url = f"http://tauri.localhost/{page_name}"
+                documents[page_url] = html
+                page.goto(page_url, wait_until="load")
+                page.wait_for_function("document.body.dataset.applicationFrame === 'ready'", timeout=5_000)
+                current_workspace = page.locator("body").get_attribute("data-current-workspace")
+                if current_workspace != page_name:
+                    errors.append(f"{page_name}: application frame marked current workspace {current_workspace!r}")
+                if page_errors:
+                    errors.append(f"{page_name}: runtime error: {'; '.join(page_errors)}")
+                details["pages"] += 1
+                if page_name == "index.html":
+                    first = page.locator("aside.sidebar a.nav-item[href]").first
+                    first.focus()
+                    before = page.evaluate("document.activeElement?.getAttribute('href')")
+                    page.keyboard.press("ArrowDown")
+                    after = page.evaluate("document.activeElement?.getAttribute('href')")
+                    details["keyboardRail"] = isinstance(after, str) and after != before
+                    page.keyboard.press("Control+K")
+                    details["commandFocus"] = page.evaluate(
+                        "document.activeElement?.matches(\"label.global-search input[type='search']\") === true"
+                    )
+                page.close()
+        except (OSError, PlaywrightError, ValueError) as exc:
+            errors.append(f"desktop built-runtime browser check failed: {exc}")
+        finally:
+            browser_context.close()
+            browser.close()
+    if details["requests"]:
+        errors.append("desktop built runtime attempted external resource requests")
+    if not details["keyboardRail"]:
+        errors.append("desktop navigation rail did not move keyboard focus to a distinct workspace")
+    if not details["commandFocus"]:
+        errors.append("desktop Ctrl+K command shortcut did not focus project search")
+    return errors, details
+
+
 def validate(repo: Path, runner: Runner = subprocess.run) -> dict[str, Any]:
     errors = security_errors(repo)
     commands: list[dict[str, Any]] = []
+    frame: dict[str, Any] = {}
     if errors:
         return {"ok": False, "commands": commands, "errors": errors}
     environment, _, _ = tool_environment(repo)
@@ -130,9 +205,11 @@ def validate(repo: Path, runner: Runner = subprocess.run) -> dict[str, Any]:
             context = load_context(repo)
             if context.config["mode"] != "approved-reference-application":
                 errors.append("desktop verification did not target the built application")
+            frame_errors, frame = runtime_frame_errors(repo)
+            errors.extend(frame_errors)
         except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
             errors.append(str(exc))
-    return {"ok": not errors, "commands": commands, "errors": errors}
+    return {"ok": not errors, "commands": commands, "errors": errors, "frame": frame}
 
 
 def main() -> int:
