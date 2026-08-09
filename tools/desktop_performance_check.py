@@ -15,8 +15,9 @@ import subprocess
 import time
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
-from build_manifest import guarded_atomic_write_json, safe_output_path
+from build_manifest import guarded_atomic_write_json, load_json, safe_output_path
 from playwright.sync_api import Route, sync_playwright
 from ui_conformance import inline_page, load_context
 
@@ -26,6 +27,12 @@ ROUTE_USABLE_BUDGET_MS = 1_000.0
 DEFAULT_REPETITIONS = 12
 CPU_THROTTLE_RATE = 1
 RELATIVE_REGRESSION_PERCENT = 20
+PERFORMANCE_BASELINE_PATH = "verification/baselines/desktop-performance.json"
+MEASUREMENT_BUDGETS = {
+    "coldShellFirstContentfulPaint": COLD_SHELL_PAINT_BUDGET_MS,
+    "warmRouteVisibleSkeleton": ROUTE_SKELETON_BUDGET_MS,
+    "warmRouteUsable": ROUTE_USABLE_BUDGET_MS,
+}
 
 
 class MemoryStatusEx(ctypes.Structure):
@@ -86,20 +93,118 @@ def distribution(samples: list[float]) -> dict[str, Any]:
     }
 
 
-def evaluated_measurement(samples: list[float], budget_ms: float) -> dict[str, Any]:
+def evaluated_measurement(samples: list[float], budget_ms: float, baseline_p95_ms: float) -> dict[str, Any]:
     measured = distribution(samples)
     p95 = float(measured["p95Ms"])
+    relative_limit = round(min(budget_ms, baseline_p95_ms * (1 + RELATIVE_REGRESSION_PERCENT / 100)), 3)
     return {
         **measured,
         "absoluteBudgetMs": budget_ms,
         "passesAbsoluteBudget": p95 <= budget_ms,
+        "passesRegressionThreshold": p95 <= relative_limit,
         "futureRegressionThreshold": {
-            "baselineP95Ms": p95,
+            "baselineP95Ms": baseline_p95_ms,
             "maximumIncreasePercent": RELATIVE_REGRESSION_PERCENT,
-            "maximumFutureP95Ms": round(min(budget_ms, p95 * 1.2), 3),
+            "maximumFutureP95Ms": relative_limit,
             "rule": "Future p95 must remain within both the absolute budget and 120% of this commit-bound baseline.",
         },
     }
+
+
+def validate_regression_baseline(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError("desktop performance baseline must be a JSON object")
+    expected_keys = {
+        "schemaVersion",
+        "documentType",
+        "baselineSourceCommit",
+        "profile",
+        "referenceId",
+        "fixture",
+        "methodology",
+        "measurements",
+    }
+    if set(value) != expected_keys:
+        raise ValueError("desktop performance baseline has unexpected or missing fields")
+    if value.get("schemaVersion") != "1.0" or value.get("documentType") != "desktop-performance-baseline":
+        raise ValueError("desktop performance baseline identity is invalid")
+    source_commit = value.get("baselineSourceCommit")
+    if (
+        not isinstance(source_commit, str)
+        or len(source_commit) != 40
+        or any(character not in "0123456789abcdef" for character in source_commit)
+    ):
+        raise ValueError("desktop performance baseline source commit must be a full lowercase Git SHA")
+    if value.get("profile") != "windows-x64" or value.get("referenceId") != "RO-UI-ACADEMIC-MINIMAL-1.3":
+        raise ValueError("desktop performance baseline profile or reference identity is invalid")
+    fixture = value.get("fixture")
+    expected_fixture_keys = {
+        "applicationManifestSha256",
+        "runtimeSha256",
+        "referencePackageSha256",
+    }
+    if not isinstance(fixture, dict) or set(fixture) != expected_fixture_keys:
+        raise ValueError("desktop performance baseline fixture identity is invalid")
+    if any(
+        not isinstance(fixture.get(key), str)
+        or len(fixture[key]) != 64
+        or any(character not in "0123456789abcdef" for character in fixture[key])
+        for key in expected_fixture_keys
+    ):
+        raise ValueError("desktop performance baseline fixture hashes must be lowercase SHA-256 values")
+    methodology = value.get("methodology")
+    expected_methodology = {
+        "browserEngine": "chromium",
+        "browserVersion": "145.0.7632.6",
+        "playwrightVersion": "1.58.0",
+        "cpuThrottleRate": CPU_THROTTLE_RATE,
+        "hardwareQualification": "representative measured Windows x64 workstation",
+        "repetitions": DEFAULT_REPETITIONS,
+        "regressionThresholdPercent": RELATIVE_REGRESSION_PERCENT,
+    }
+    if methodology != expected_methodology:
+        raise ValueError("desktop performance baseline methodology does not match the governed benchmark")
+    measurements = value.get("measurements")
+    if not isinstance(measurements, dict) or set(measurements) != set(MEASUREMENT_BUDGETS):
+        raise ValueError("desktop performance baseline measurement inventory is invalid")
+    for name, budget in MEASUREMENT_BUDGETS.items():
+        measurement = measurements.get(name)
+        if not isinstance(measurement, dict) or set(measurement) != {"absoluteBudgetMs", "baselineP95Ms"}:
+            raise ValueError(f"desktop performance baseline {name} is invalid")
+        baseline_p95 = measurement.get("baselineP95Ms")
+        if isinstance(baseline_p95, bool) or not isinstance(baseline_p95, (int, float)) or baseline_p95 <= 0:
+            raise ValueError(f"desktop performance baseline {name} p95 must be positive")
+        if measurement.get("absoluteBudgetMs") != budget or baseline_p95 > budget:
+            raise ValueError(f"desktop performance baseline {name} does not preserve its approved budget")
+    return value
+
+
+def load_regression_baseline(repo: Path) -> tuple[dict[str, Any], str]:
+    value, payload, error = load_json(repo, PERFORMANCE_BASELINE_PATH)
+    if error or payload is None:
+        raise ValueError(error or "desktop performance baseline could not be read")
+    baseline = validate_regression_baseline(value)
+    ancestry = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", baseline["baselineSourceCommit"], "HEAD"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=30,
+    )
+    if ancestry.returncode != 0:
+        raise ValueError("desktop performance baseline source commit is not an ancestor of HEAD")
+    return baseline, hashlib.sha256(payload).hexdigest()
+
+
+def approved_document_name(raw_url: str, available: set[str]) -> str | None:
+    parsed = urlsplit(raw_url)
+    if parsed.scheme != "http" or parsed.netloc != "tauri.localhost" or parsed.query or parsed.fragment:
+        return None
+    if not parsed.path.startswith("/") or parsed.path.count("/") != 1:
+        return None
+    name = parsed.path[1:]
+    return name if name in available else None
 
 
 def sha256(path: Path) -> str:
@@ -134,6 +239,7 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
         return {"ok": False, "errors": ["repetitions must be between 5 and 100"]}
     source, source_errors = source_record(repo, allow_dirty)
     errors.extend(source_errors)
+    baseline, baseline_sha256 = load_regression_baseline(repo)
     context = load_context(repo)
     manifest_path = context.target / "application-manifest.json"
     runtime_path = context.target / "runtime" / "main.js"
@@ -158,8 +264,8 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
                 browser_context = browser.new_context()
 
                 def serve(route: Route) -> None:
-                    name = route.request.url.rsplit("/", 1)[-1]
-                    document = documents.get(name)
+                    name = approved_document_name(route.request.url, set(documents))
+                    document = documents.get(name) if name is not None else None
                     if document is None:
                         unexpected_requests.append(route.request.url)
                         route.abort()
@@ -202,22 +308,39 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
         errors.append("desktop performance fixture attempted an unexpected request")
     measurements: dict[str, Any] = {}
     if len(cold_samples) == repetitions:
-        measurements["coldShellFirstContentfulPaint"] = evaluated_measurement(cold_samples, COLD_SHELL_PAINT_BUDGET_MS)
+        measurements["coldShellFirstContentfulPaint"] = evaluated_measurement(
+            cold_samples,
+            COLD_SHELL_PAINT_BUDGET_MS,
+            float(baseline["measurements"]["coldShellFirstContentfulPaint"]["baselineP95Ms"]),
+        )
     if len(route_skeleton_samples) == repetitions:
         measurements["warmRouteVisibleSkeleton"] = evaluated_measurement(
-            route_skeleton_samples, ROUTE_SKELETON_BUDGET_MS
+            route_skeleton_samples,
+            ROUTE_SKELETON_BUDGET_MS,
+            float(baseline["measurements"]["warmRouteVisibleSkeleton"]["baselineP95Ms"]),
         )
     if len(route_usable_samples) == repetitions:
-        measurements["warmRouteUsable"] = evaluated_measurement(route_usable_samples, ROUTE_USABLE_BUDGET_MS)
+        measurements["warmRouteUsable"] = evaluated_measurement(
+            route_usable_samples,
+            ROUTE_USABLE_BUDGET_MS,
+            float(baseline["measurements"]["warmRouteUsable"]["baselineP95Ms"]),
+        )
     for name, measurement in measurements.items():
         if measurement["passesAbsoluteBudget"] is not True:
             errors.append(f"{name} p95 exceeds its approved absolute budget")
+        if measurement["passesRegressionThreshold"] is not True:
+            errors.append(f"{name} p95 exceeds its committed 20% regression threshold")
 
     return {
         "schemaVersion": "1.0",
         "documentType": "desktop-performance-report",
         "ok": not errors,
         "source": source,
+        "regressionBaseline": {
+            "path": PERFORMANCE_BASELINE_PATH,
+            "sha256": baseline_sha256,
+            "sourceCommit": baseline["baselineSourceCommit"],
+        },
         "platform": hardware_record(),
         "fixture": {
             "profile": "windows-x64",
