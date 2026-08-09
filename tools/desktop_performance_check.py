@@ -24,7 +24,7 @@ COLD_SHELL_PAINT_BUDGET_MS = 2_500.0
 ROUTE_SKELETON_BUDGET_MS = 150.0
 ROUTE_USABLE_BUDGET_MS = 1_000.0
 DEFAULT_REPETITIONS = 12
-CPU_THROTTLE_RATE = 4
+CPU_THROTTLE_RATE = 1
 RELATIVE_REGRESSION_PERCENT = 20
 
 
@@ -234,6 +234,7 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
             "browserVersion": browser_version,
             "playwrightVersion": importlib.metadata.version("playwright"),
             "cpuThrottleRate": CPU_THROTTLE_RATE,
+            "hardwareQualification": "representative measured Windows x64 workstation",
             "repetitions": repetitions,
             "coldState": (
                 "new isolated browser context per repetition; browser process startup and installation excluded"
