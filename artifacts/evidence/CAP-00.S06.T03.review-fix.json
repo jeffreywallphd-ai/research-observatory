@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S06.T03",
+  "commit": "b12a715287bceec8c6f36405409a1db1b119f080",
+  "baseCommit": "5ef232e641d6ad4999a6b7c7c31315ad758820cb",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S06.T03.json",
+    "reason": "Independent review reproduced non-blob UI objects, ambiguous and one-commit CI base selection, unbound task ranges, a punctuation lookalike self-approval, and self-asserted restoration classification. This manifest binds the fail-closed remediation and preserves that review audit."
+  },
+  "changedFiles": [
+    ".github/pull_request_template.md",
+    ".github/workflows/ci.yml",
+    "artifacts/evidence/CAP-00.S06.T03.json",
+    "design/ui-change.schema.json",
+    "docs/adr/ADR-0003-protect-design-first-ui-change-controls-and-immutable-lineage.md",
+    "docs/automation/design-first-ui-changes.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/README.md",
+    "tests/foundation/test_ci_check.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ci_check.py",
+    "tools/ui_change_gate.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "The exact clean remediation commit passed all 16 mandatory foundation commands and all 143 foundation tests. Build provenance reported 0.1.0+gb12a715 clean; UI reference identity, design-first gating, ADR and CI policy, quality, packaging, backlog, and generated views all passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_ui_change_gate tests.foundation.test_ci_check tests.foundation.test_taskctl_schema tests.foundation.test_adr_check -v",
+      "exitCode": 0,
+      "result": "All 34 focused tests passed at the exact remediation commit, including regular-blob enforcement, ambiguous-base failure, exact active-task/base binding, trailing-separator principal denial, human restoration classification, explicit manual CI base, prior approval ordering, reference lineage, and gate-control anti-tamper cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 55a0fe56bb0f1eddacf5ebbcc27093913c62277b --head b12a715287bceec8c6f36405409a1db1b119f080",
+      "exitCode": 0,
+      "result": "The complete claimed task range passes with no product UI implementation change or undeclared UI contract while retaining every design-first enforcement revision."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\adr_check.py --repo . --base 55a0fe56bb0f1eddacf5ebbcc27093913c62277b --head b12a715287bceec8c6f36405409a1db1b119f080",
+      "exitCode": 0,
+      "result": "ADR-0003 covers all protected control changes across the complete 27-file claimed task range."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The ledger validates with the independent changes-requested disposition preserved, and generated planning views have no drift."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The gate derives exact UI changes from immutable Git trees, rejects non-regular UI objects in either base or head, and binds one active contract task to the exact validated base.",
+        "Intentional implementation requires the newer exact human-approved package and strict approval-before-every-implementation-commit ordering across full history.",
+        "Pull requests and pushes use event bases, manual CI requires an explicit immutable base, and ambiguous active tasks fail rather than falling back to one commit."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Approved-reference implementation and defect restoration pass against the unchanged exact reference package with cited reference lineage and focused evidence.",
+        "Until CAP-00.S06.T04 installs governed implementation-conformance evidence, defect restoration additionally requires the repository's human-and-agent review gate, preventing self-asserted classification from bypassing design approval."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Human approvers use an ASCII canonical identity that cannot end in punctuation; implementation principals use the same canonical suffix grammar.",
+        "agent:owner is rejected both for human:owner and the reproduced human:owner. lookalike, while the repository human review gate remains the authentication boundary.",
+        "Exact approval records, reference package bytes, task ownership, active state, task base, ancestry, and strict approval ordering are all machine-bound."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "human-and-agent-review",
+    "note": "Independent re-review must reproduce closure of all five findings, validate the original and superseding evidence chain, and confirm the full clean foundation result before approval."
+  }
+}

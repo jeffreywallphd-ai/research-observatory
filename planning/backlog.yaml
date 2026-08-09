@@ -1683,7 +1683,7 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T00:36:20+00:00'
-      updated_at: '2026-08-09T01:17:37+00:00'
+      updated_at: '2026-08-09T01:28:23+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Exact implementation commit 5ef232e passed 16 foundation commands, 138 tests, 29 focused adversarial
@@ -1694,6 +1694,11 @@ capabilities:
         sha256: d2ce73bf05eb64519c484a10b354bd12df2d445103b62a57f2c366aefff99dca
         commit: 5ef232e641d6ad4999a6b7c7c31315ad758820cb
         recorded_at: '2026-08-09T01:05:48+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S06.T03.review-fix.json
+        sha256: 1f4a0971620e5d0788c35a670b768f9252d381a32d789fe0718328e7acd37c33
+        commit: b12a715287bceec8c6f36405409a1db1b119f080
+        recorded_at: '2026-08-09T01:28:23+00:00'
       review:
         reviewer: agent:descartes
         result: changes-requested
@@ -1706,7 +1711,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-09T01:17:37+00:00'
         expires_at: '2026-08-09T09:17:37+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral
