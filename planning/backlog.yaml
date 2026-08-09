@@ -1679,15 +1679,18 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T00:36:20+00:00'
-      updated_at: '2026-08-09T01:28:23+00:00'
+      updated_at: '2026-08-09T01:28:50+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Exact implementation commit 5ef232e passed 16 foundation commands, 138 tests, 29 focused adversarial
+      implementation_notes: 'Exact implementation commit 5ef232e passed 16 foundation commands, 138 tests, 29 focused adversarial
         tests, exact base-to-head UI/ADR gates, and commit-bound evidence; ready for the required human-and-agent review.
+
+        Review remediation at b12a715 closes all five independent findings; 16 foundation commands, 143 tests, 34 focused
+        tests, exact task-range UI/ADR gates, and superseding evidence pass cleanly.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S06.T03.json
