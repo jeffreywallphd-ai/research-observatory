@@ -21,6 +21,7 @@ from ui_change_gate import automatic_base, independent_review_hardening_errors, 
 class UiChangeGateTests(unittest.TestCase):
     def test_post_implementation_hardening_requires_independent_changes_requested_record(self) -> None:
         paths = {
+            "tests/desktop/test_desktop_app_check.py",
             "tools/ui_change_gate.py",
             "tools/ui_conformance.py",
             "tests/desktop/test_ui_conformance.py",
@@ -50,9 +51,15 @@ class UiChangeGateTests(unittest.TestCase):
         self.assertEqual([], independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths))
         review["reviewer"] = "agent:codex"
         self.assertTrue(independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths))
+        review["reviewer"] = "agent:co-dex"
+        self.assertTrue(independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths))
         review["reviewer"] = "agent:descartes"
         self.assertTrue(
             independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths | {"verification-profiles.json"})
+        )
+        self.assertTrue(independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths | {"tools/taskctl.py"}))
+        self.assertTrue(
+            independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths | {"apps/desktop/src/App.tsx"})
         )
 
     def git(self, root: Path, *args: str) -> str:

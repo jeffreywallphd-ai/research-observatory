@@ -17,6 +17,7 @@ import subprocess
 import sys
 import tempfile
 from collections.abc import Callable
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -24,6 +25,7 @@ from typing import Any, Literal, cast
 
 import yaml
 from bs4 import BeautifulSoup, Tag
+from build_manifest import windows_path_locks
 from jsonschema import Draft202012Validator
 from playwright.sync_api import Browser, Page, ViewportSize, sync_playwright
 from ui_reference_check import canonical_payload
@@ -202,7 +204,79 @@ def file_inventory(
     return first
 
 
-def application_build_errors(repo: Path, config: dict[str, Any], target: Path) -> list[str]:
+def application_inventory_shape(
+    repo: Path, roots: tuple[tuple[Path, frozenset[str]], ...]
+) -> tuple[frozenset[Path], frozenset[Path]]:
+    files: set[Path] = set()
+    directories: set[Path] = set()
+
+    def fail_closed(error: OSError) -> None:
+        raise error
+
+    for root, exclusions in roots:
+        for directory, child_directories, file_names in os.walk(root, followlinks=False, onerror=fail_closed):
+            child_directories[:] = sorted(name for name in child_directories if name not in exclusions)
+            directory_path = confined_path(repo, Path(directory).relative_to(repo).as_posix())
+            directories.add(directory_path)
+            for name in [*child_directories, *sorted(file_names)]:
+                candidate = confined_path(repo, (directory_path / name).relative_to(repo).as_posix())
+                if name in child_directories:
+                    directories.add(candidate)
+                else:
+                    files.add(candidate)
+    return frozenset(files), frozenset(directories)
+
+
+def application_inventory_fingerprints(repo: Path, files: frozenset[Path]) -> dict[str, str]:
+    return {
+        path.relative_to(repo).as_posix(): hashlib.sha256(stable_file_bytes(repo, path)).hexdigest()
+        for path in sorted(files, key=lambda item: item.relative_to(repo).as_posix())
+    }
+
+
+def application_directory_tokens(repo: Path, directories: frozenset[Path]) -> dict[str, tuple[int, int, int, int]]:
+    tokens: dict[str, tuple[int, int, int, int]] = {}
+    for path in sorted(directories, key=lambda item: item.relative_to(repo).as_posix()):
+        metadata = path.lstat()
+        if not stat.S_ISDIR(metadata.st_mode):
+            raise ValueError(f"application inventory directory changed type: {path.relative_to(repo).as_posix()}")
+        tokens[path.relative_to(repo).as_posix()] = (
+            metadata.st_dev,
+            metadata.st_ino,
+            metadata.st_mode,
+            metadata.st_mtime_ns,
+        )
+    return tokens
+
+
+@contextmanager
+def application_inventory_guard(repo: Path, application_root: Path, target: Path) -> Any:
+    roots: tuple[tuple[Path, frozenset[str]], ...] = (
+        (application_root, APPLICATION_EXCLUDED_DIRECTORIES),
+        (target, frozenset()),
+    )
+    files, directories = application_inventory_shape(repo, roots)
+    extra_files = frozenset(confined_path(repo, path) for path in APPLICATION_EXTERNAL_INPUTS)
+    with (
+        windows_path_locks(list(directories), directories=True),
+        windows_path_locks(list(files | extra_files), directories=False),
+    ):
+        locked_files, locked_directories = application_inventory_shape(repo, roots)
+        if (locked_files, locked_directories) != (files, directories):
+            raise ValueError("application inventory changed while snapshot locks were acquired")
+        fingerprints = application_inventory_fingerprints(repo, files | extra_files)
+        directory_tokens = application_directory_tokens(repo, directories)
+        yield
+        final_files, final_directories = application_inventory_shape(repo, roots)
+        if (final_files, final_directories) != (files, directories):
+            raise ValueError("application inventory membership changed during verification")
+        if application_inventory_fingerprints(repo, files | extra_files) != fingerprints:
+            raise ValueError("application inventory content changed during verification")
+        if application_directory_tokens(repo, directories) != directory_tokens:
+            raise ValueError("application inventory directories changed during verification")
+
+
+def locked_application_build_errors(repo: Path, config: dict[str, Any], target: Path) -> list[str]:
     errors: list[str] = []
     try:
         application_root = confined_path(repo, str(config["applicationRoot"]))
@@ -256,6 +330,20 @@ def application_build_errors(repo: Path, config: dict[str, Any], target: Path) -
     if stable_file_bytes(repo, manifest_path) != manifest_payload:
         errors.append("desktop application manifest changed during verification")
     return errors
+
+
+def application_build_errors(repo: Path, config: dict[str, Any], target: Path) -> list[str]:
+    try:
+        application_root = confined_path(repo, str(config["applicationRoot"]))
+        manifest_path = confined_path(repo, str(config["applicationManifestPath"]))
+        stable_file_bytes(repo, manifest_path)
+    except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        return [f"invalid desktop application manifest: {exc}"]
+    try:
+        with application_inventory_guard(repo, application_root, target):
+            return locked_application_build_errors(repo, config, target)
+    except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        return [f"invalid desktop application inventory: {exc}"]
 
 
 def load_context(repo: Path) -> Context:
