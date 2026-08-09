@@ -12,6 +12,7 @@
     {"id": "uv", "path": "uv.lock"}
   ],
   "schemaPaths": [
+    "design/ui-change.schema.json",
     "evaluation/baseline-approval.schema.json",
     "evaluation/contracts/normalized-record.schema.json",
     "evaluation/registry.schema.json",
