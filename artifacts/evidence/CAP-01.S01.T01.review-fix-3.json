@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S01.T01",
+  "commit": "4d3380d79ca436557e80e686a43993c9d71ba5e4",
+  "baseCommit": "e989c1393e1f3dfd30206105d7cedcfe7f811bd5",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S01.T01.review-fix-2.json",
+    "reason": "The third independent review confirmed every application and path/identity correction but demonstrated reuse of stale CHANGES_REQUESTED state. This manifest binds the immediate distinct review-transition requirement without altering prior evidence."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S01.T01.review-fix-2.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S01.T01-review-fix-3-desktop.json",
+      "exitCode": 0,
+      "result": "The exact final-fix commit passed all 24 desktop-profile commands in 421.08 seconds, including 146 foundation tests, 21 desktop tests, all application/native commands, and the complete browser conformance matrix. Report SHA-256: ac256024f8c3dc42c90bf5765e5c5723fce4ec8f5b3124e9e7e5f23fdae36c2f."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "All 13 UI-gate tests pass, including stale/reused review timestamps, separator-equivalent self-review, unrelated all-path scope, and exact valid correction envelopes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base 1a8347f2b6e9c6706d6c5c63af401c36e5d5060d --head HEAD",
+      "exitCode": 0,
+      "result": "The live full task range passes with three exact hardening envelopes and three distinct planning-only REVIEW-to-IN_PROGRESS transitions immediately preceding them."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The independently accepted Windows application, CSP, and held source/output snapshot behavior remains unchanged and passes the full desktop profile.",
+        "Every protected review correction now requires its immediate parent commit to contain exactly the three synchronized planning files."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The parent backlog must transition this exact task from REVIEW to IN_PROGRESS, introduce a non-empty new reviewed_at value, and set updated_at to that review time.",
+        "A third exact correction commit that merely inherits the prior CHANGES_REQUESTED state is rejected by the focused regression."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "All three actual remediation commits have distinct immediate review-record parents and exact enumerated correction scopes.",
+        "The immutable task evidence chain now records each independent finding and correction without rewriting history."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce stale CHANGES_REQUESTED reuse against 4d3380d79ca436557e80e686a43993c9d71ba5e4 and confirm all real correction transitions before approval."
+  }
+}
