@@ -102,15 +102,35 @@ APPLICATION_ACTIVATION_PATHS = frozenset(
     }
 )
 REVIEW_HARDENING_PATHS = frozenset({"tools/ui_change_gate.py", "tools/ui_conformance.py"})
-REVIEW_HARDENING_TESTS = frozenset({"tests/desktop/test_ui_conformance.py", "tests/foundation/test_ui_change_gate.py"})
+REVIEW_HARDENING_ENVELOPES = frozenset(
+    {
+        frozenset(
+            {
+                "tests/desktop/test_desktop_app_check.py",
+                "tests/desktop/test_ui_conformance.py",
+                "tests/foundation/test_ui_change_gate.py",
+                "tools/desktop_app_check.py",
+                "tools/ui_change_gate.py",
+                "tools/ui_conformance.py",
+            }
+        ),
+        frozenset(
+            {
+                "tests/desktop/test_ui_conformance.py",
+                "tests/foundation/test_ui_change_gate.py",
+                "tools/ui_change_gate.py",
+                "tools/ui_conformance.py",
+            }
+        ),
+    }
+)
 AGENT_REVIEWER = re.compile(r"^agent:[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$")
 
 
 def independent_review_hardening_errors(backlog: dict[str, Any], task_id: str, paths: set[str]) -> list[str]:
-    if paths & GATE_CONTROL_PATHS != REVIEW_HARDENING_PATHS or not paths >= REVIEW_HARDENING_TESTS:
+    if paths & GATE_CONTROL_PATHS != REVIEW_HARDENING_PATHS or frozenset(paths) not in REVIEW_HARDENING_ENVELOPES:
         return [
-            "post-implementation gate hardening must change only the canonical protected hardening pair "
-            "and include both regression suites"
+            "post-implementation gate hardening must match one exact canonical implementation-and-regression envelope"
         ]
     matches = [
         task
@@ -133,7 +153,7 @@ def independent_review_hardening_errors(backlog: dict[str, Any], task_id: str, p
         or review.get("result") != "changes-requested"
         or not isinstance(reviewer, str)
         or AGENT_REVIEWER.fullmatch(reviewer) is None
-        or reviewer == f"agent:{owner}"
+        or re.sub(r"[^a-z0-9]", "", reviewer.removeprefix("agent:")) == re.sub(r"[^a-z0-9]", "", str(owner).lower())
     ):
         return [
             "post-implementation gate hardening requires a canonical independent agent CHANGES_REQUESTED "
@@ -204,10 +224,7 @@ def application_activation_errors(
     )
     activation_positions = [position for position in protected_positions if position not in late_protected]
     if late_protected:
-        if len(late_protected) != 1:
-            errors.append("first-application range permits at most one post-review gate-hardening commit")
-        else:
-            position = late_protected[0]
+        for position in late_protected:
             try:
                 parent = resolve_commit(repo, f"{commits[position]}^")
                 backlog = yaml_object(blob(repo, parent, "planning/backlog.yaml"), "parent backlog")

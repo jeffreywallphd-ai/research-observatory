@@ -18,6 +18,7 @@ sys.path.insert(0, str(REPO / "tools"))
 
 from ui_conformance import (  # noqa: E402
     Context,
+    application_inventory_guard,
     approval_lineage_errors,
     approval_record_errors,
     baseline_document_errors,
@@ -156,6 +157,43 @@ class UiConformanceTests(unittest.TestCase):
 
                     with self.assertRaisesRegex((OSError, ValueError), "inventory|regular file"):
                         file_inventory(root, inventory_root, after_first_pass=mutate)
+
+    def test_application_inventory_guard_holds_source_and_output_snapshot_through_completion(self) -> None:
+        for inventory_kind in ("source", "artifact"):
+            for mutation in ("content", "type", "membership"):
+                with (
+                    self.subTest(inventory_kind=inventory_kind, mutation=mutation),
+                    tempfile.TemporaryDirectory() as temporary,
+                ):
+                    root = Path(temporary) / "repo"
+                    source_root = root / "apps" / "desktop"
+                    artifact_root = source_root / "dist"
+                    source_root.mkdir(parents=True)
+                    artifact_root.mkdir()
+                    source = (source_root if inventory_kind == "source" else artifact_root) / "entry.txt"
+                    source.write_text("before\n", encoding="utf-8", newline="\n")
+                    for relative in (
+                        "Cargo.toml",
+                        "Cargo.lock",
+                        "package.json",
+                        "pnpm-lock.yaml",
+                        "verification/extensions/desktop-ui.json",
+                    ):
+                        external = root / relative
+                        external.parent.mkdir(parents=True, exist_ok=True)
+                        external.write_text("governed\n", encoding="utf-8", newline="\n")
+
+                    with (
+                        self.assertRaises((OSError, ValueError)),
+                        application_inventory_guard(root, source_root, artifact_root),
+                    ):
+                        if mutation == "content":
+                            source.write_text("after\n", encoding="utf-8", newline="\n")
+                        elif mutation == "type":
+                            source.unlink()
+                            source.mkdir()
+                        else:
+                            (source.parent / "late.txt").write_text("late\n", encoding="utf-8", newline="\n")
 
     def test_token_and_supporting_navigation_drift_fail(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
