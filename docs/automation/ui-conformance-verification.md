@@ -41,10 +41,18 @@ and full renderer identity. `verification/desktop-ui-baseline.schema.json`
 strictly validates the current record and every reachable historical snapshot.
 Authoritative verification rejects an uncommitted baseline, incomplete or
 malformed approval record, or reference package whose Git blobs do not produce
-the cited package hash. A changed committed baseline must cite a different
-approved reference ID and a different approval commit occurring between
-baseline versions. Create a baseline only after the new reference has completed
-the human approval gate:
+the cited package hash. A changed committed visual contract must cite a
+different approved reference ID and a different approval commit occurring
+between baseline versions. A provenance-only ratification may retain the
+reference ID only when every renderer setting and screenshot entry is
+byte-equivalent and the package SHA plus approval commit are the sole changed
+fields. Create a baseline only after the reference has completed the human
+approval gate:
+
+The later exact ratification may close a preserved pre-control package-lineage
+gap only for the identical visual contract. Historical schema, raw-byte,
+transition, and approval-record checks still run; a screenshot, renderer,
+reference ID, or any other baseline-field change cannot use this exception.
 
 ```powershell
 .venv\Scripts\python.exe tools\ui_conformance.py --repo . --write-baseline `

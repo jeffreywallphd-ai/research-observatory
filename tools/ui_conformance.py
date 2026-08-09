@@ -900,33 +900,28 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
     return errors
 
 
-def reference_package_errors(
+def reference_package_at(
     repo: Path,
-    baseline: dict[str, Any],
-    baseline_commit: str,
-    approval_commit: str,
-) -> list[str]:
+    revision: str,
+    reference_id: str,
+) -> tuple[bytes | None, str | None, list[str]]:
     errors: list[str] = []
     approval_path = "design/ui-reference/APPROVAL.yaml"
     manifest_path = "design/ui-reference/REFERENCE_MANIFEST.yaml"
-    approval_bytes, approval_error = git_blob_at(repo, approval_commit, approval_path)
-    current_approval_bytes, current_approval_error = git_blob_at(repo, baseline_commit, approval_path)
-    manifest_bytes, manifest_error = git_blob_at(repo, baseline_commit, manifest_path)
-    errors.extend(error for error in (approval_error, current_approval_error, manifest_error) if error)
-    if errors or approval_bytes is None or current_approval_bytes is None or manifest_bytes is None:
-        return errors
-    if approval_bytes != current_approval_bytes:
-        errors.append(f"{baseline_commit}: approved reference record differs from the cited approval commit")
+    approval_bytes, approval_error = git_blob_at(repo, revision, approval_path)
+    manifest_bytes, manifest_error = git_blob_at(repo, revision, manifest_path)
+    errors.extend(error for error in (approval_error, manifest_error) if error)
+    if errors or approval_bytes is None or manifest_bytes is None:
+        return approval_bytes, None, errors
     try:
         approval = yaml.safe_load(approval_bytes.decode("utf-8"))
         manifest = yaml.safe_load(manifest_bytes.decode("utf-8"))
     except UnicodeDecodeError, yaml.YAMLError:
-        return [*errors, f"{baseline_commit}: approved reference governance records are unreadable"]
-    reference_id = str(baseline.get("referenceId", ""))
-    errors.extend(approval_record_errors(approval, f"{approval_commit}:{approval_path}", reference_id))
+        return approval_bytes, None, [*errors, f"{revision}: approved reference governance records are unreadable"]
+    errors.extend(approval_record_errors(approval, f"{revision}:{approval_path}", reference_id))
     if not isinstance(manifest, dict) or set(manifest) != REFERENCE_MANIFEST_KEYS:
-        errors.append(f"{baseline_commit}:{manifest_path}: manifest fields must be exact")
-        return errors
+        errors.append(f"{revision}:{manifest_path}: manifest fields must be exact")
+        return approval_bytes, None, errors
     if (
         manifest["reference_id"] != reference_id
         or manifest["status"] != "approved"
@@ -934,7 +929,7 @@ def reference_package_errors(
         or not isinstance(approval, dict)
         or manifest["version"] != approval.get("version")
     ):
-        errors.append(f"{baseline_commit}:{manifest_path}: manifest identity/status/version is inconsistent")
+        errors.append(f"{revision}:{manifest_path}: manifest identity/status/version is inconsistent")
     governed = manifest["governed_files"]
     declared_hashes = manifest["file_hashes"]
     if (
@@ -945,23 +940,45 @@ def reference_package_errors(
         or not isinstance(declared_hashes, dict)
         or set(declared_hashes) != set(governed)
     ):
-        errors.append(f"{baseline_commit}:{manifest_path}: governed file/hash inventory is invalid")
-        return errors
+        errors.append(f"{revision}:{manifest_path}: governed file/hash inventory is invalid")
+        return approval_bytes, None, errors
     observed: dict[str, str] = {}
     for relative in governed:
-        payload, read_error = git_blob_at(repo, baseline_commit, f"design/ui-reference/{relative}")
+        payload, read_error = git_blob_at(repo, revision, f"design/ui-reference/{relative}")
         if read_error or payload is None:
-            errors.append(read_error or f"{baseline_commit}: missing governed reference file {relative}")
+            errors.append(read_error or f"{revision}: missing governed reference file {relative}")
             continue
         digest = hashlib.sha256(canonical_payload(relative, payload)).hexdigest()
         observed[relative] = digest
         if declared_hashes.get(relative) != digest:
-            errors.append(f"{baseline_commit}:{manifest_path}: governed hash differs for {relative}")
+            errors.append(f"{revision}:{manifest_path}: governed hash differs for {relative}")
     package_sha256 = hashlib.sha256(
         json.dumps(observed, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
-    if package_sha256 != baseline.get("referencePackageSha256"):
+    return approval_bytes, package_sha256, errors
+
+
+def reference_package_errors(
+    repo: Path,
+    baseline: dict[str, Any],
+    baseline_commit: str,
+    approval_commit: str,
+) -> list[str]:
+    reference_id = str(baseline.get("referenceId", ""))
+    expected_package = str(baseline.get("referencePackageSha256", ""))
+    approval_bytes, approved_package, approval_errors = reference_package_at(repo, approval_commit, reference_id)
+    current_approval_bytes, baseline_package, baseline_errors = reference_package_at(
+        repo, baseline_commit, reference_id
+    )
+    errors = [*approval_errors, *baseline_errors]
+    if approval_bytes is not None and current_approval_bytes is not None and approval_bytes != current_approval_bytes:
+        errors.append(f"{baseline_commit}: approved reference record differs from the cited approval commit")
+    if approved_package is not None and approved_package != expected_package:
+        errors.append(f"{baseline_commit}: baseline-bound reference package did not exist at the cited approval commit")
+    if baseline_package is not None and baseline_package != expected_package:
         errors.append(f"{baseline_commit}: visual baseline does not bind the exact approved reference package")
+    if approved_package is not None and baseline_package is not None and approved_package != baseline_package:
+        errors.append(f"{baseline_commit}: approved reference package changed after its cited approval commit")
     return errors
 
 
@@ -970,6 +987,8 @@ def approval_lineage_errors(
     baseline: dict[str, Any],
     baseline_commit: str,
     package_cache: dict[tuple[str, str, str], list[str]] | None = None,
+    *,
+    verify_package_at_original_approval: bool = True,
 ) -> list[str]:
     errors: list[str] = []
     approval_commit = str(baseline.get("referenceApprovalCommit", ""))
@@ -1007,6 +1026,8 @@ def approval_lineage_errors(
         tree = git(repo, "rev-parse", f"{baseline_commit}:design/ui-reference")
     except ValueError:
         return [*errors, f"{baseline_commit}: approved reference tree is absent"]
+    if not verify_package_at_original_approval:
+        return errors
     cache_key = (approval_commit, str(baseline.get("referencePackageSha256", "")), tree)
     if package_cache is not None and cache_key in package_cache:
         errors.extend(package_cache[cache_key])
@@ -1092,6 +1113,31 @@ def render_visuals(context: Context) -> tuple[dict[str, Any], list[str]]:
     return dict(sorted(entries.items())), errors
 
 
+def provenance_only_reference_ratification(previous: dict[str, Any], current: dict[str, Any]) -> bool:
+    provenance_fields = {"referencePackageSha256", "referenceApprovalCommit"}
+    previous_contract = {key: value for key, value in previous.items() if key not in provenance_fields}
+    current_contract = {key: value for key, value in current.items() if key not in provenance_fields}
+    return (
+        previous.get("referenceId") == current.get("referenceId")
+        and previous.get("referencePackageSha256") != current.get("referencePackageSha256")
+        and previous.get("referenceApprovalCommit") != current.get("referenceApprovalCommit")
+        and previous_contract == current_contract
+    )
+
+
+def baseline_contract_key(value: dict[str, Any]) -> tuple[str, str, str]:
+    provenance_fields = {"referencePackageSha256", "referenceApprovalCommit"}
+    contract = {key: item for key, item in value.items() if key not in provenance_fields}
+    digest = hashlib.sha256(
+        json.dumps(contract, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    return (
+        digest,
+        str(value.get("referencePackageSha256", "")),
+        str(value.get("referenceApprovalCommit", "")),
+    )
+
+
 def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     relative = str(context.config["visual"]["baselinePath"])
@@ -1127,6 +1173,23 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
                 errors.append(read_error)
         return snapshots[revision]
 
+    ratified_legacy_contracts: set[tuple[str, str, str]] = set()
+    for commit in commits:
+        candidate, _ = snapshot(commit)
+        if candidate != baseline:
+            continue
+        if baseline_document_errors(candidate, f"{commit}:{relative}", schema, context.pages or None):
+            continue
+        parents = git(context.repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
+        for parent in parents:
+            previous, _ = snapshot(parent)
+            if previous is None or not provenance_only_reference_ratification(previous, candidate):
+                continue
+            if baseline_document_errors(previous, f"{parent}:{relative}", schema, context.pages or None):
+                continue
+            if not approval_lineage_errors(context.repo, candidate, commit, package_cache):
+                ratified_legacy_contracts.add(baseline_contract_key(previous))
+
     for commit in commits:
         current, current_payload = snapshot(commit)
         parents = git(context.repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
@@ -1135,7 +1198,17 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
             errors.extend(document_errors)
             valid_snapshots[commit] = not document_errors
             if not document_errors:
-                errors.extend(approval_lineage_errors(context.repo, current, commit, package_cache))
+                errors.extend(
+                    approval_lineage_errors(
+                        context.repo,
+                        current,
+                        commit,
+                        package_cache,
+                        verify_package_at_original_approval=(
+                            baseline_contract_key(current) not in ratified_legacy_contracts
+                        ),
+                    )
+                )
             identity = (str(current.get("referenceId", "")), str(current.get("referenceApprovalCommit", "")))
             if current_payload is not None:
                 blob = hashlib.sha256(current_payload).hexdigest()
@@ -1166,7 +1239,8 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
                 valid_snapshots[parent] = not parent_errors
             if parent and not valid_snapshots.get(parent, False):
                 continue
-            if current.get("referenceId") == previous.get("referenceId"):
+            provenance_only = provenance_only_reference_ratification(previous, current)
+            if current.get("referenceId") == previous.get("referenceId") and not provenance_only:
                 errors.append(f"{edge}: changing a visual baseline requires a new approved reference ID")
             if current.get("referenceApprovalCommit") == previous.get("referenceApprovalCommit"):
                 errors.append(f"{edge}: changing a visual baseline requires a new reference approval commit")
