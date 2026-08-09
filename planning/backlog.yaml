@@ -123,14 +123,16 @@ release_gates:
   - Backlog dependencies, capability campaigns, slice reviews, and task transitions validate automatically.
   - Architecture constraints and ADR process are documented.
   - Approved UI reference, workflow catalog, page contracts, and design-first automation are installed and validated.
-  status: PENDING
+  status: APPROVED
   unlocks_waves:
   - W1
   approval:
-    approved_by: null
-    approved_at: null
-    evidence: []
-    notes: null
+    approved_by: repository-owner
+    approved_at: '2026-08-09T06:41:32+00:00'
+    evidence:
+    - artifacts/evidence/CAP-00.capability.review-fix.json
+    notes: Repository owner approved CAP-00. Independent capability review passed all W0 exit criteria with zero unresolved
+      findings; authorize G0 and W1 readiness without starting CAP-01.
 - id: G1
   after_wave: W1
   name: Durable Windows local application core
@@ -1816,7 +1818,7 @@ capabilities:
         taskctl/views, exact 54-file package, and all design-first/conformance boundaries pass.'
   execution_mode: capability_campaign
   campaign:
-    status: REVIEW
+    status: COMPLETE
     owner: codex
     branch: codex/cap-00-delivery-foundation
     worktree: C:/ai-projects/research-observatory
@@ -1828,13 +1830,14 @@ capabilities:
     pause_reason: null
     lease: null
   completion:
-    status: REVIEW
+    status: APPROVED
     reviewer: agent:descartes
-    reviewed_at: '2026-08-09T06:18:21+00:00'
+    reviewed_at: '2026-08-09T06:41:09+00:00'
     evidence:
     - artifacts/evidence/CAP-00.capability.review-fix.json
-    notes: 'Remediation resubmission: superseding S03 evidence binds the current T02/T03 review-fix hashes; unsupported OR/WITH/symbolic/mixed
-      license expressions fail closed; exact clean security-local and desktop profiles pass at 2ffbdee.'
+    notes: 'Independent remediation review approved exact submission 82d6ef8/state 2ffbdee: superseding S03 and capability
+      hashes/ancestry validate; unsupported compound license forms deny; review-remediation state matrix closes; 28 focused,
+      144+20 security-local, 15 desktop tests, taskctl/views pass with zero blockers.'
 - id: CAP-01
   title: Windows-first desktop shell and supervised local runtime
   objective: Deliver the canonical Windows-first desktop experience and a reliably packaged local analytical service that
@@ -1857,7 +1860,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S03.T02
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-01.S01.T01
       capability_id: CAP-01
@@ -1884,11 +1887,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-09T06:41:32+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3570,7 +3573,7 @@ capabilities:
     depends_on:
     - CAP-00.S02.T01
     - CAP-00.S05.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-03.S01.T01
       capability_id: CAP-03
@@ -3602,11 +3605,11 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-09T06:41:32+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
