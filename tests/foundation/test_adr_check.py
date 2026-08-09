@@ -19,7 +19,7 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
         errors, records = validate_registry(REPO)
 
         self.assertEqual([], errors)
-        self.assertEqual({"ADR-0001", "ADR-0002", "ADR-0003", "ADR-0004", "ADR-0005"}, set(records))
+        self.assertEqual({"ADR-0001", "ADR-0002", "ADR-0003", "ADR-0004", "ADR-0005", "ADR-0006"}, set(records))
         self.assertIn("CAP-00.S02.T03", records["ADR-0001"]["metadata"]["linked_tasks"])
         self.assertIn("CAP-00.S05.T02", records["ADR-0002"]["metadata"]["linked_tasks"])
         self.assertIn("CAP-00.S06.T03", records["ADR-0003"]["metadata"]["linked_tasks"])
