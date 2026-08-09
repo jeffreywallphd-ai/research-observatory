@@ -35,7 +35,7 @@ export const DESKTOP_ROUTES = [
 
 export type DesktopRoute = (typeof DESKTOP_ROUTES)[number];
 const ROUTES = new Set<string>(DESKTOP_ROUTES);
-const SCHEME_SEGMENT = /^[a-z][a-z0-9+.-]*:$/iu;
+const SCHEME_PREFIX = /^[a-z][a-z0-9+.-]*:/iu;
 
 export function canonicalDesktopPath(pathname: string): string | null {
   const undecorated = pathname.split(/[?#]/u, 1)[0] ?? "";
@@ -50,7 +50,7 @@ export function canonicalDesktopPath(pathname: string): string | null {
     decoded.includes("\\") ||
     decoded.startsWith("//") ||
     /%[0-9a-f]{2}/iu.test(decoded) ||
-    segments.some((segment) => segment === "." || segment === ".." || SCHEME_SEGMENT.test(segment))
+    segments.some((segment) => segment === "." || segment === ".." || SCHEME_PREFIX.test(segment))
   ) {
     return null;
   }
