@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 4690b6a9ddee9862ff9a630c7cd4493f397faf3219964a45e1ac620d9396ef8b
+source_sha256: fe37dbfe738f8ff7f50df133fa87cff881b62cd99aac3a313dc172fa8e76f76a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 298 |
 | `READY` | 1 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 20 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S01.T02` Implement the primary application frame and workspace routing | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S01.T02` Implement the primary application frame and workspace routing | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |

@@ -1973,11 +1973,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T09:04:08+00:00'
-      updated_at: '2026-08-09T09:29:43+00:00'
+      updated_at: '2026-08-09T09:34:37+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Approved-reference primary frame, 32-route guards, dynamic keyboard navigation, and real built-runtime
@@ -1989,15 +1989,16 @@ capabilities:
         commit: 8c274496dd272f4079f16eaaef86a2d539876996
         recorded_at: '2026-08-09T09:29:17+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:descartes
+        result: changes-requested
+        reviewed_at: '2026-08-09T09:34:37+00:00'
+        notes: Encoded/double-encoded traversal, backslash, protocol-relative, and scheme paths are checked before canonical
+          decoding and can mark a non-home workspace current. All normal runtime/frame/evidence checks passed.
       base_sha: 67be83ac7ad482c81d5fc709b0f2e448dc1a6697
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-09T09:04:08+00:00'
-        expires_at: '2026-08-09T17:04:08+00:00'
+        claimed_at: '2026-08-09T09:34:37+00:00'
+        expires_at: '2026-08-09T17:34:37+00:00'
       experience_change:
         kind: approved-reference-implementation
         contract_path: artifacts/evidence/ui-change/CAP-01.S01.T02.json
@@ -2007,7 +2008,7 @@ capabilities:
         reference_approval_commit: 7e625150c57f518327d8dcce430371902ecaed10
         previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.2
         implementation_agent: agent:codex
-      verification_state: passed
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
