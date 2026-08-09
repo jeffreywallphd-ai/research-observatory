@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 86c6fa814a50ee88f67f5254efd2347b46e6f5fcee565e8110ee71a2cb85cbcf
+source_sha256: 2c9eadbf97919f7be00e66d2225c308651997ddc6253b19562b00c32f61f1b2a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 297 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 21 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S01.T03` Add project switcher, recent projects, and empty-state flows | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S01.T03` Add project switcher, recent projects, and empty-state flows | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
