@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S06.T02",
+  "commit": "91668d26dc15327929430c6a0da098a2bdc1c4bb",
+  "baseCommit": "11aabd195064b213a25af38c0356242368e433be",
+  "branch": "codex/cap-00-delivery-foundation",
+  "changedFiles": [
+    "design/ui-reference/REFERENCE_MANIFEST.yaml",
+    "design/ui-reference/scripts/build_mockups.py",
+    "docs/automation/README.md",
+    "docs/automation/ui-reference-validation.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "tests/foundation/test_ui_reference_check.py",
+    "tools/ui_reference_check.py",
+    "verification-profiles.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_ui_reference_check -v",
+      "exitCode": 0,
+      "result": "Five focused tests cover deterministic approved-reference reporting, missing/modified/unapproved artifacts, broken workflows and page contracts, escaping or network links, hosted routes, generator drift, approved hash-rewrite refusal, and concurrent reference mutation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_reference_check.py --repo . --reference design\\ui-reference --report artifacts\\tmp\\CAP-00.S06.T02-report-a.json (repeated as report-b and byte-compared)",
+      "exitCode": 0,
+      "result": "Both runs emitted identical bytes (SHA-256 c42f813c2c8390b5a146c82f3fe65abca6a9263c85a175cc6745f8265804fcb8), reported RO-UI-ACADEMIC-MINIMAL-1.3, all 54 governed hashes, 32 product pages, 34 HTML documents, 14 workflows, 20 capability records, and a reproducible generator."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation",
+      "exitCode": 0,
+      "result": "The clean exact implementation commit passed all 15 mandatory foundation commands and all 128 foundation tests; build provenance reported 0.1.0+g91668d2 clean and the UI-reference gate passed without warnings."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --check",
+      "exitCode": 0,
+      "result": "The authoritative ledger validates at 20 capabilities, 117 slices, 356 tasks, and 12 release gates, and both generated planning views are current."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Validation fails closed for missing or modified governed files, unapproved governance records, broken or incomplete workflows, absent page contracts, package-escaping and network-dependent links, unexpected hosted administration routes, redirected inventory entries, and reference changes during validation.",
+        "The approved reference refuses in-place hash regeneration; its generator is reproduced from immutable snapshots and every generated governed artifact must retain the approved canonical hash."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The supplied approved reference passes and the deterministic report identifies RO-UI-ACADEMIC-MINIMAL-1.3 version 1.3 with the exact sorted map of all 54 governed SHA-256 values and aggregate package SHA-256 cc4c2ba45978f2ebf3e97f930841eef51297e7fb81e741a1e980bf5e5493a25f.",
+        "The report also binds the exact page, HTML-document, workflow-profile, and capability-record counts and records generator reproducibility."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The validator performs no browser launch or network request: it parses HTML with the Python standard library, resolves local targets inside the canonical package, and runs the local generator in an isolated temporary directory.",
+        "Two exact-commit runs produced byte-identical reports, and the validation gate is now mandatory in the foundation profile."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review must confirm fail-closed approved-reference governance, exact inventory and hashes, workflow/page/link boundaries, isolated generator reproducibility, concurrency stability, report determinism, and mandatory foundation integration."
+  }
+}

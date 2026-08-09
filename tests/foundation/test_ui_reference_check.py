@@ -37,6 +37,14 @@ class UiReferenceCheckTests(unittest.TestCase):
         payload = canonical_payload(path.name, path.read_bytes())
         return hashlib.sha256(payload).hexdigest()
 
+    def update_governed_hash(self, root: Path, relative: str) -> None:
+        manifest_path = root / "REFERENCE_MANIFEST.yaml"
+        manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+        manifest["file_hashes"][relative] = self.canonical_hash(root / relative)
+        manifest_path.write_text(
+            yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True), encoding="utf-8", newline="\n"
+        )
+
     def test_approved_reference_report_is_complete_and_deterministic(self) -> None:
         first = validate(REFERENCE)
         second = validate(REFERENCE)
@@ -85,6 +93,8 @@ class UiReferenceCheckTests(unittest.TestCase):
             "missing-contract": (self.remove_page_contract, "page contracts must exactly match product pages"),
             "escaping-link": (self.add_escaping_link, "package-escaping local reference"),
             "network-link": (self.add_network_link, "network-dependent"),
+            "network-css": (self.add_network_css, "network-dependent CSS reference"),
+            "network-api": (self.add_network_api, "browser network API is prohibited"),
             "hosted-route": (self.add_hosted_route, "unexpected hosted administration route"),
         }
         for label, (mutate, expected) in mutations.items():
@@ -118,12 +128,46 @@ class UiReferenceCheckTests(unittest.TestCase):
             'href="assets/tokens.css"', 'href="https://example.invalid/tokens.css"', 1
         )
         path.write_text(text, encoding="utf-8", newline="\n")
+        self.update_governed_hash(root, "index.html")
+
+    def add_network_css(self, root: Path) -> None:
+        path = root / "assets" / "app.css"
+        path.write_text(
+            path.read_text(encoding="utf-8") + '\n@import url("https://example.invalid/remote.css");\n',
+            encoding="utf-8",
+            newline="\n",
+        )
+        self.update_governed_hash(root, "assets/app.css")
+
+    def add_network_api(self, root: Path) -> None:
+        path = root / "assets" / "app.js"
+        path.write_text(
+            path.read_text(encoding="utf-8") + '\nfetch("https://example.invalid/data.json");\n',
+            encoding="utf-8",
+            newline="\n",
+        )
+        self.update_governed_hash(root, "assets/app.js")
 
     def add_hosted_route(self, root: Path) -> None:
-        path = root / "SITE_MANIFEST.json"
-        value = json.loads(path.read_text(encoding="utf-8"))
-        value["pages"][0]["file"] = "university-admin.html"
-        self.write_json(path, value)
+        old_route = "project-settings.html"
+        new_route = "university-administrator-console.html"
+        manifest_path = root / "REFERENCE_MANIFEST.yaml"
+        manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+        for relative in manifest["governed_files"]:
+            path = root / relative
+            if path.suffix.lower() not in {".css", ".html", ".js", ".json", ".md", ".py", ".yaml"}:
+                continue
+            text = path.read_text(encoding="utf-8")
+            if old_route in text:
+                path.write_text(text.replace(old_route, new_route), encoding="utf-8", newline="\n")
+        (root / old_route).replace(root / new_route)
+        manifest["governed_files"] = [new_route if item == old_route else item for item in manifest["governed_files"]]
+        manifest["file_hashes"] = {
+            relative: self.canonical_hash(root / relative) for relative in manifest["governed_files"]
+        }
+        manifest_path.write_text(
+            yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True), encoding="utf-8", newline="\n"
+        )
 
     def test_generator_drift_and_approved_hash_rewrite_fail(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -147,6 +191,18 @@ class UiReferenceCheckTests(unittest.TestCase):
 
         self.assertFalse(result["ok"])
         self.assertTrue(any("generator is not reproducible" in error for error in result["errors"]), result["errors"])
+
+    def test_no_op_generator_cannot_reuse_preexisting_outputs(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.reference_copy(temporary)
+            generator = root / "scripts" / "build_mockups.py"
+            generator.write_text('print("no output generated")\n', encoding="utf-8", newline="\n")
+            self.update_governed_hash(root, "scripts/build_mockups.py")
+            result = validate(root)
+
+        self.assertFalse(result["ok"])
+        self.assertFalse(result["generator_reproducible"])
+        self.assertTrue(any("generator inventory differs" in error for error in result["errors"]), result["errors"])
 
     def test_reference_change_during_validation_fails(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

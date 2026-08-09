@@ -36,11 +36,34 @@ INVENTORY_EXCLUSIONS = frozenset(
 TEXT_SUFFIXES = frozenset({".css", ".html", ".js", ".json", ".md", ".py", ".txt", ".yaml", ".yml"})
 REQUIRED_SHARED_ASSETS = frozenset({"assets/tokens.css", "assets/app.css", "assets/print.css", "assets/app.js"})
 HOSTED_ROUTE = re.compile(
-    r"(?:^|[-_/])(?:admin|admin-console|billing|cloud-admin|cloud-ops|managed-cloud|tenant|university-admin)"
+    r"(?:^|[-_/])(?:admin|administrator|administration|billing|cloud-admin|cloud-ops|managed-cloud|tenant)"
     r"(?:[-_./]|$)",
     re.IGNORECASE,
 )
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
+CSS_URL = re.compile(r"url\(\s*(['\"]?)(.*?)\1\s*\)", re.IGNORECASE | re.DOTALL)
+CSS_IMPORT = re.compile(r"@import\s+(?!url\()(['\"])(.*?)\1", re.IGNORECASE | re.DOTALL)
+BROWSER_NETWORK_API = re.compile(
+    r"\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|importScripts)\s*\(|\bnavigator\s*\.\s*sendBeacon\s*\(",
+    re.IGNORECASE,
+)
+FETCH_ATTRIBUTES = {
+    "a": ("href",),
+    "audio": ("src",),
+    "base": ("href",),
+    "button": ("formaction",),
+    "embed": ("src",),
+    "form": ("action",),
+    "iframe": ("src",),
+    "img": ("src", "srcset"),
+    "input": ("src", "formaction"),
+    "link": ("href",),
+    "object": ("data",),
+    "script": ("src",),
+    "source": ("src", "srcset"),
+    "track": ("src",),
+    "video": ("src", "poster"),
+}
 
 
 class ReferenceParser(HTMLParser):
@@ -49,12 +72,17 @@ class ReferenceParser(HTMLParser):
         self.targets: list[tuple[str, str, str]] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        attribute = {"a": "href", "link": "href", "script": "src", "img": "src"}.get(tag)
-        if not attribute:
-            return
-        value = dict(attrs).get(attribute)
-        if value:
-            self.targets.append((tag, attribute, value))
+        values = dict(attrs)
+        for attribute in FETCH_ATTRIBUTES.get(tag, ()):
+            value = values.get(attribute)
+            if not value:
+                continue
+            targets = [item.strip().split()[0] for item in value.split(",")] if attribute == "srcset" else [value]
+            self.targets.extend((tag, attribute, target) for target in targets if target)
+        if tag == "meta" and (values.get("http-equiv") or "").lower() == "refresh":
+            match = re.search(r"(?:^|;)\s*url\s*=\s*([^;]+)", values.get("content") or "", re.IGNORECASE)
+            if match:
+                self.targets.append((tag, "content", match.group(1).strip(" \t'\"")))
 
 
 def canonical_payload(path: str, payload: bytes) -> bytes:
@@ -147,9 +175,53 @@ def discovered_inventory(reference: Path, errors: list[str]) -> list[str]:
     return sorted(discovered)
 
 
+def local_target_error(reference: Path, source: str, raw_target: str, context: str) -> tuple[str | None, str | None]:
+    parsed = urlparse(raw_target)
+    if raw_target.startswith("#"):
+        return None, None
+    if parsed.scheme or parsed.netloc:
+        return None, f"{source}: network-dependent {context}: {raw_target}"
+    target_text = unquote(parsed.path)
+    if not target_text:
+        return None, None
+    if "\\" in target_text or target_text.startswith("/"):
+        return None, f"{source}: package-escaping local reference: {raw_target}"
+    root = reference.resolve(strict=True)
+    target = (reference / PurePosixPath(source).parent / PurePosixPath(target_text)).resolve(strict=False)
+    try:
+        target.relative_to(root)
+    except ValueError:
+        return None, f"{source}: package-escaping local reference: {raw_target}"
+    if not target.is_file():
+        return None, f"{source}: broken local reference: {raw_target}"
+    return target.relative_to(root).as_posix(), None
+
+
+def executable_reference_errors(reference: Path, payloads: dict[str, bytes]) -> list[str]:
+    errors: list[str] = []
+    for relative, payload in sorted(payloads.items()):
+        suffix = Path(relative).suffix.lower()
+        if suffix not in {".css", ".html", ".js"}:
+            continue
+        try:
+            text = payload.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            errors.append(f"{relative}: executable browser content is not UTF-8: {exc}")
+            continue
+        if suffix in {".css", ".html"}:
+            css_targets = [match.group(2).strip() for match in CSS_URL.finditer(text)]
+            css_targets.extend(match.group(2).strip() for match in CSS_IMPORT.finditer(text))
+            for target in css_targets:
+                _, error = local_target_error(reference, relative, target, "CSS reference")
+                if error:
+                    errors.append(error)
+        if suffix in {".html", ".js"} and BROWSER_NETWORK_API.search(text):
+            errors.append(f"{relative}: browser network API is prohibited in the offline reference")
+    return errors
+
+
 def html_reference_errors(reference: Path, payloads: dict[str, bytes], html_files: set[str]) -> list[str]:
     errors: list[str] = []
-    root = reference.resolve(strict=True)
     for relative in sorted(html_files):
         payload = payloads.get(relative)
         if payload is None:
@@ -163,31 +235,13 @@ def html_reference_errors(reference: Path, payloads: dict[str, bytes], html_file
         parser.feed(text)
         linked_assets: set[str] = set()
         for tag, attribute, raw_target in parser.targets:
-            parsed = urlparse(raw_target)
-            if raw_target.startswith("#"):
-                continue
-            if parsed.scheme or parsed.netloc:
-                errors.append(f"{relative}: network-dependent {tag} {attribute}: {raw_target}")
-                continue
-            target_text = unquote(parsed.path)
-            if not target_text:
-                continue
-            if "\\" in target_text or target_text.startswith("/"):
-                errors.append(f"{relative}: package-escaping local reference: {raw_target}")
-                continue
-            target = (reference / PurePosixPath(relative).parent / PurePosixPath(target_text)).resolve(strict=False)
-            try:
-                target.relative_to(root)
-            except ValueError:
-                errors.append(f"{relative}: package-escaping local reference: {raw_target}")
-                continue
-            if not target.is_file():
-                errors.append(f"{relative}: broken local reference: {raw_target}")
-                continue
-            destination = target.relative_to(root).as_posix()
-            linked_assets.add(destination)
-            if HOSTED_ROUTE.search(destination):
-                errors.append(f"{relative}: unexpected hosted administration route: {destination}")
+            destination, error = local_target_error(reference, relative, raw_target, f"{tag} {attribute}")
+            if error:
+                errors.append(error)
+            elif destination:
+                linked_assets.add(destination)
+                if HOSTED_ROUTE.search(destination):
+                    errors.append(f"{relative}: unexpected hosted administration route: {destination}")
         if relative in html_files and not REQUIRED_SHARED_ASSETS.issubset(linked_assets):
             missing = sorted(REQUIRED_SHARED_ASSETS - linked_assets)
             errors.append(f"{relative}: missing shared local assets: {', '.join(missing)}")
@@ -205,6 +259,13 @@ def generator_reproducibility_errors(
                 path = target.joinpath(*PurePosixPath(relative).parts)
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(payload)
+            generated_outputs = {
+                relative
+                for relative in expected_hashes
+                if relative.endswith(".html") or relative in {"PAGE_INVENTORY.md", "README.md", "STYLE_GUIDE.md"}
+            }
+            for relative in generated_outputs:
+                target.joinpath(*PurePosixPath(relative).parts).unlink()
             generated = subprocess.run(
                 [sys.executable, str(target / "scripts" / "build_mockups.py")],
                 cwd=target,
@@ -217,6 +278,13 @@ def generator_reproducibility_errors(
         if generated.returncode != 0:
             message = generated.stderr.decode("utf-8", errors="replace").strip()
             return [f"UI-reference generator failed with exit {generated.returncode}: {message}"]
+        inventory_errors: list[str] = []
+        actual_inventory = discovered_inventory(target, inventory_errors)
+        errors.extend(inventory_errors)
+        if actual_inventory != sorted(expected_hashes):
+            missing = sorted(set(expected_hashes) - set(actual_inventory))
+            unexpected = sorted(set(actual_inventory) - set(expected_hashes))
+            errors.append(f"UI-reference generator inventory differs; missing={missing}, unexpected={unexpected}")
         for relative, expected in sorted(expected_hashes.items()):
             path = target.joinpath(*PurePosixPath(relative).parts)
             if not path.is_file():
@@ -388,6 +456,7 @@ def validate(reference: Path, implementation_manifest: Path | None = None) -> di
         errors.append(f"PAGE_INVENTORY.md omits product pages: {', '.join(missing_inventory_pages)}")
 
     errors.extend(html_reference_errors(reference, payloads, html_files))
+    errors.extend(executable_reference_errors(reference, payloads))
     if hashes:
         errors.extend(generator_reproducibility_errors(payloads, controls["REFERENCE_MANIFEST.yaml"], hashes))
 

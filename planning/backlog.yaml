@@ -1607,21 +1607,29 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-08T23:32:31+00:00'
-      updated_at: '2026-08-08T23:32:31+00:00'
+      updated_at: '2026-08-09T00:02:29+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Implementation complete at 91668d2; exact clean foundation passed 15 commands and 128 tests; focused
+        reference integrity suite passed 5 tests; deterministic report and evidence attached.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S06.T02.json
+        sha256: 24f9a717aaf7586466947c87e51ed0123132497a0818d4269c99491f79fb2e1b
+        commit: 91668d26dc15327929430c6a0da098a2bdc1c4bb
+        recorded_at: '2026-08-08T23:53:01+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:descartes
+        result: changes-requested
+        reviewed_at: '2026-08-09T00:02:29+00:00'
+        notes: 'Required: generator reproduction must start with generated outputs absent/poisoned; offline checks must cover
+          CSS and browser-fetching URL surfaces; deferred university-administrator route variants must be denied. Supplied
+          reference, evidence, focused tests, and foundation otherwise pass.'
       base_sha: 11aabd195064b213a25af38c0356242368e433be
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-08T23:32:31+00:00'
-        expires_at: '2026-08-09T07:32:31+00:00'
+        claimed_at: '2026-08-09T00:02:29+00:00'
+        expires_at: '2026-08-09T08:02:29+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
