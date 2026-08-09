@@ -2146,18 +2146,21 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T11:54:57+00:00'
-      updated_at: '2026-08-09T13:44:04+00:00'
+      updated_at: '2026-08-09T13:51:48+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Academic Minimal token/component contracts, catalog, ADR, boundary tests, UI lineage, application
         checks, and full desktop profile pass at 5c8dbac.
 
         Remediation binds dialog names, complete evidence/uncertainty APIs, standalone package dependencies and tree shaking,
-        structural/literal-style denial, and a clean 25-command desktop profile at 2ad4146.'
+        structural/literal-style denial, and a clean 25-command desktop profile at 2ad4146.
+
+        Final inventory correction excludes only canonical generated roots while binding nested authored src/node_modules,
+        src/dist, and src/target across activation, manifest, and held inventories at dc45d30.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S02.T01.json
@@ -2169,6 +2172,11 @@ capabilities:
         sha256: 3097c4c28149eb61c6dba1a2d707edb91f868c422a5931d28ddf6a699bb745bd
         commit: 2ad4146b32ec48080cf5189f65d7e30947310a07
         recorded_at: '2026-08-09T13:35:12+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S02.T01.review-fix-2.json
+        sha256: ec7e1d360f3fb23891ed7ca2564afa5ed66b04bb2b3c0ed77084b55984c2a4a7
+        commit: dc45d304489160acc9f2ab5646698e4d656c9b14
+        recorded_at: '2026-08-09T13:51:40+00:00'
       review:
         reviewer: agent:maxwell
         result: changes-requested
@@ -2181,7 +2189,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-09T13:44:04+00:00'
         expires_at: '2026-08-09T21:44:04+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64

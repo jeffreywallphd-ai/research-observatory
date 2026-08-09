@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T01",
+  "commit": "dc45d304489160acc9f2ab5646698e4d656c9b14",
+  "baseCommit": "2ad4146b32ec48080cf5189f65d7e30947310a07",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S02.T01.review-fix.json",
+    "reason": "The first re-review closed all four original findings but demonstrated that generated-directory exclusions applied at every traversal depth and could omit authored nested source. This manifest preserves the accepted component remediation while binding root-only exclusions and nested authored-source regressions."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S02.T01.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_ui_conformance.UiConformanceTests.test_implementation_inventory_excludes_dependency_and_build_directories tests.desktop.test_ui_conformance.UiConformanceTests.test_application_inventory_excludes_only_canonical_root_generated_directories tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "All 17 focused tests pass. Canonical package/application root node_modules, dist, and target directories are excluded, while identically named directories nested under authored src remain present in activation, hash inventory, and held manifest-snapshot inventories."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\CAP-01.S02.T01-review-fix-2-application.json",
+      "exitCode": 0,
+      "result": "All nine package/application/native commands, six catalog theme/zoom cases, 32 production routes, deterministic project recovery, and zero-request boundaries pass. Report SHA-256: c086f65dd913862c04ff40b9b6c6a4c2ec209b6f3327feeffcaf475d1681dae3."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests\\desktop -p test_*.py",
+      "exitCode": 0,
+      "result": "All 33 desktop tests pass after the root-only exclusion correction, including the original four component false-green probes and both nested authored-source inventories."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base 949296e1308a6a7528634a72ed0f9ac39c55d756 --head dc45d304489160acc9f2ab5646698e4d656c9b14",
+      "exitCode": 0,
+      "result": "The full task range passes with the unchanged nine-file approved-reference implementation set and two exact hardening commits, each immediately preceded by its own distinct independent CHANGES_REQUESTED planning transition; the final correction uses the exact four-file application-inventory envelope."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S02.T01-review-fix-desktop.json",
+      "exitCode": 0,
+      "result": "The accepted production UI/package implementation at 2ad4146 passed all 25 commands in 580.54 seconds with report SHA-256 82421edd6fa0419be2e1fd055cc5b8c8614aa0b7310702f13a6b0325d8739897. The only later source delta is the four-file verifier/test hardening envelope, fully replayed by the 17 focused tests, 33-test desktop suite, nine-command application aggregate, quality gate, taskctl, views, and live UI gate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The independently accepted dialog naming, complete seven/four evidence and uncertainty variants, package reuse, scaling, contrast, and non-color identities remain unchanged from 2ad4146.",
+        "All production application, browser, native, and catalog checks pass after the inventory correction."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "New regressions place Attack.tsx under src/node_modules, src/dist, and src/target and prove every file remains in both implementation and application inventories.",
+        "The same names at canonical package/application roots remain excluded as generated dependency/build output, preventing both dependency-link false positives and authored-source false negatives.",
+        "The held source snapshot uses the same root-only rule, so nested authored files cannot evade final manifest membership or mutation detection."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The correction changes only UI inventory traversal, its focused tests, and the exact reviewed-hardening envelope identity; component APIs, dependencies, UI bytes, native privileges, and later task behavior are unchanged.",
+        "The second protected correction has a distinct planning-only reviewer parent and the exact four-file canonical application-inventory envelope."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Approved Academic Minimal reference bytes, the task UI evidence contract, nine governed implementation files, and 64 visual baselines remain unchanged.",
+        "The live gate validates the entire base-to-dc45d30 history without weakening intentional design-change or unreviewed protected-control denial."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent final re-review must reproduce nested src/node_modules, src/dist, and src/target inclusion across implementation, source-manifest, and held inventories; confirm root generated directories remain excluded; then validate the exact second review transition/evidence chain before approval."
+  }
+}
