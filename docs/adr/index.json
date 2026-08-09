@@ -53,6 +53,15 @@
       "linkedTasks": [
         "CAP-01.S01.T01"
       ]
+    },
+    {
+      "id": "ADR-0006",
+      "path": "docs/adr/ADR-0006-distribute-academic-minimal-tokens-and-components.md",
+      "title": "Distribute Academic Minimal tokens and components through governed local packages",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-01.S02.T01"
+      ]
     }
   ]
 }

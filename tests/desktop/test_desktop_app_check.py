@@ -10,7 +10,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from desktop_app_check import command_plan, runtime_frame_errors, security_errors  # noqa: E402
+from desktop_app_check import command_plan, design_system_errors, runtime_frame_errors, security_errors  # noqa: E402
 
 
 class DesktopAppCheckTests(unittest.TestCase):
@@ -25,6 +25,7 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(details["keyboardRail"])
         self.assertTrue(details["commandFocus"])
         self.assertEqual([], details["requests"])
+        self.assertEqual(6, details["designSystem"]["cases"])
         project = details["projectSelection"]
         self.assertEqual(4, project["recentProjects"])
         self.assertEqual(1, project["missingProjects"])
@@ -90,6 +91,26 @@ class DesktopAppCheckTests(unittest.TestCase):
                 errors = security_errors(root)
 
             self.assertTrue(any("offline source allowlist" in error for error in errors), errors)
+
+    def test_design_system_is_reference_bound_and_rejects_literal_color_drift(self) -> None:
+        self.assertEqual([], design_system_errors(REPO))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            shutil.copytree(REPO / "packages" / "ui-tokens", root / "packages" / "ui-tokens")
+            shutil.copytree(REPO / "packages" / "ui-components", root / "packages" / "ui-components")
+            token_source = root / "design" / "ui-reference" / "assets" / "tokens.css"
+            token_source.parent.mkdir(parents=True)
+            shutil.copy2(REPO / "design" / "ui-reference" / "assets" / "tokens.css", token_source)
+            styles = root / "packages" / "ui-components" / "src" / "styles.css"
+            styles.write_text(styles.read_text(encoding="utf-8") + "\n.attack { color: #ffffff; }\n", encoding="utf-8")
+            transport = root / "packages" / "ui-tokens" / "index.css"
+            transport.write_text('@import "https://example.invalid/tokens.css";\n', encoding="utf-8")
+
+            errors = design_system_errors(root)
+
+        self.assertTrue(any("literal colors" in error for error in errors), errors)
+        self.assertTrue(any("governed reference source" in error for error in errors), errors)
 
 
 if __name__ == "__main__":

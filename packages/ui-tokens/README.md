@@ -1,7 +1,12 @@
 # UI tokens
 
-Owner: Research Observatory maintainers
-Boundary: Generated and validated Academic Minimal semantic design tokens.
+`@research-observatory/ui-tokens` is the versioned transport for the approved
+Academic Minimal semantic token contract. `index.css` imports the governed
+source directly, so downstream applications cannot drift through a copied
+palette. `src/index.ts` exposes only stable token and state identities; visual
+values remain authoritative in `design/ui-reference/assets/tokens.css`.
 
-Token changes originate in the approved UI reference. Product implementation
-must not alter these values merely to make an existing interface appear conformant.
+The contract is version `1.0.0` and is bound to reference
+`RO-UI-ACADEMIC-MINIMAL-1.3`. Changes to semantic meaning, contrast, or values
+require a newer approved reference. Additive TypeScript helpers that preserve
+the visual contract use normal semantic versioning.

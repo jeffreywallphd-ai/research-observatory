@@ -2133,6 +2133,15 @@ capabilities:
       estimate: M
       risk: medium
       review_gate: agent-review
+      experience_change:
+        kind: approved-reference-implementation
+        contract_path: artifacts/evidence/ui-change/CAP-01.S02.T01.json
+        reference_id: RO-UI-ACADEMIC-MINIMAL-1.3
+        reference_version: '1.3'
+        reference_package_sha256: db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2
+        reference_approval_commit: 7e625150c57f518327d8dcce430371902ecaed10
+        previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.2
+        implementation_agent: agent:codex
       verification_profiles:
       - desktop
       verification_commands:

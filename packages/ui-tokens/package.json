@@ -1,0 +1,12 @@
+{
+  "name": "@research-observatory/ui-tokens",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./index.css": "./index.css",
+    "./contract": "./token-contract.json"
+  }
+}
+
