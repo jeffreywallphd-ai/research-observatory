@@ -1860,7 +1860,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S03.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-01.S01.T01
       capability_id: CAP-01
@@ -2090,11 +2090,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts\evidence\CAP-01.S01.integration.json
+      notes: All three tasks are independently approved; exact post-approval desktop integration and production application
+        checks pass at 77d5bf3.
   - id: CAP-01.S02
     title: Desktop design system and accessibility foundation
     outcome: Reusable components express status, provenance, evidence, uncertainty, and human decision states consistently.
