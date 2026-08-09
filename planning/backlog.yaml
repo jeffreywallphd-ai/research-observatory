@@ -1977,7 +1977,7 @@ capabilities:
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T09:04:08+00:00'
-      updated_at: '2026-08-09T09:57:55+00:00'
+      updated_at: '2026-08-09T10:11:02+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Approved-reference primary frame, 32-route guards, dynamic keyboard navigation, and real built-runtime
@@ -1996,6 +1996,11 @@ capabilities:
         sha256: 65b3cccbaf824445c377ec9f263cb970249496274dc5b0186424d16c598268a9
         commit: 5422bd749ba68274faf1f2744ebf8dc439aef6ff
         recorded_at: '2026-08-09T09:47:17+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S01.T02.review-fix-2.json
+        sha256: 70d829eb0fef627bfb95a12183169141be40b55e0e112eda212493586b1b9fa2
+        commit: e19ecc726ebba7206fb06ce0fa51a228bd830fed
+        recorded_at: '2026-08-09T10:11:02+00:00'
       review:
         reviewer: agent:maxwell
         result: changes-requested
@@ -2016,7 +2021,7 @@ capabilities:
         reference_approval_commit: 7e625150c57f518327d8dcce430371902ecaed10
         previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.2
         implementation_agent: agent:codex
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
