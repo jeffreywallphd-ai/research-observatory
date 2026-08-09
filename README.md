@@ -16,6 +16,9 @@ monorepo with portable boundaries for later platforms and deployment profiles.
 - Prepare a Windows development checkout with `.\bootstrap.cmd`; see
   [`docs/automation/developer-bootstrap.md`](docs/automation/developer-bootstrap.md)
   for prerequisites and the cross-platform command.
+- Launch the desktop development app with `.\dev.cmd` in PowerShell or
+  `./dev.cmd` in Git Bash. The launcher selects the checkout-local Node and Rust
+  toolchains before invoking the root `pnpm dev` script.
 - See [`docs/automation/toolchain.md`](docs/automation/toolchain.md) for pinned
   runtimes, package managers, and frozen-install commands.
 - See [`docs/automation/build-manifests.md`](docs/automation/build-manifests.md)
