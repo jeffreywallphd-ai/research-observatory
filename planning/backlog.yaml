@@ -2146,11 +2146,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T11:54:57+00:00'
-      updated_at: '2026-08-09T13:35:21+00:00'
+      updated_at: '2026-08-09T13:44:04+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Academic Minimal token/component contracts, catalog, ADR, boundary tests, UI lineage, application
@@ -2172,15 +2172,16 @@ capabilities:
       review:
         reviewer: agent:maxwell
         result: changes-requested
-        reviewed_at: '2026-08-09T12:52:25+00:00'
-        notes: Dialog title reference is dangling; uncertainty-state API/catalog coverage is incomplete; package dependency/runtime
-          boundary is undeclared; and catalog/token drift checks admit structural and literal-style false greens.
+        reviewed_at: '2026-08-09T13:44:04+00:00'
+        notes: 'Generated-directory exclusions are depth-insensitive: nested authored src/target files evade implementation
+          and application-manifest inventories; restrict exclusions to canonical root-level generated locations and regress
+          activation/inventory binding.'
       base_sha: 949296e1308a6a7528634a72ed0f9ac39c55d756
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-09T12:52:25+00:00'
-        expires_at: '2026-08-09T20:52:25+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-09T13:44:04+00:00'
+        expires_at: '2026-08-09T21:44:04+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
