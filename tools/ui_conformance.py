@@ -963,6 +963,8 @@ def reference_package_errors(
     baseline: dict[str, Any],
     baseline_commit: str,
     approval_commit: str,
+    *,
+    require_package_at_approval: bool = True,
 ) -> list[str]:
     reference_id = str(baseline.get("referenceId", ""))
     expected_package = str(baseline.get("referencePackageSha256", ""))
@@ -973,11 +975,16 @@ def reference_package_errors(
     errors = [*approval_errors, *baseline_errors]
     if approval_bytes is not None and current_approval_bytes is not None and approval_bytes != current_approval_bytes:
         errors.append(f"{baseline_commit}: approved reference record differs from the cited approval commit")
-    if approved_package is not None and approved_package != expected_package:
+    if require_package_at_approval and approved_package is not None and approved_package != expected_package:
         errors.append(f"{baseline_commit}: baseline-bound reference package did not exist at the cited approval commit")
     if baseline_package is not None and baseline_package != expected_package:
         errors.append(f"{baseline_commit}: visual baseline does not bind the exact approved reference package")
-    if approved_package is not None and baseline_package is not None and approved_package != baseline_package:
+    if (
+        require_package_at_approval
+        and approved_package is not None
+        and baseline_package is not None
+        and approved_package != baseline_package
+    ):
         errors.append(f"{baseline_commit}: approved reference package changed after its cited approval commit")
     return errors
 
@@ -986,7 +993,7 @@ def approval_lineage_errors(
     repo: Path,
     baseline: dict[str, Any],
     baseline_commit: str,
-    package_cache: dict[tuple[str, str, str], list[str]] | None = None,
+    package_cache: dict[tuple[str, str, str, bool], list[str]] | None = None,
     *,
     verify_package_at_original_approval: bool = True,
 ) -> list[str]:
@@ -1026,13 +1033,22 @@ def approval_lineage_errors(
         tree = git(repo, "rev-parse", f"{baseline_commit}:design/ui-reference")
     except ValueError:
         return [*errors, f"{baseline_commit}: approved reference tree is absent"]
-    if not verify_package_at_original_approval:
-        return errors
-    cache_key = (approval_commit, str(baseline.get("referencePackageSha256", "")), tree)
+    cache_key = (
+        approval_commit,
+        str(baseline.get("referencePackageSha256", "")),
+        tree,
+        verify_package_at_original_approval,
+    )
     if package_cache is not None and cache_key in package_cache:
         errors.extend(package_cache[cache_key])
     else:
-        package_errors = reference_package_errors(repo, baseline, baseline_commit, approval_commit)
+        package_errors = reference_package_errors(
+            repo,
+            baseline,
+            baseline_commit,
+            approval_commit,
+            require_package_at_approval=verify_package_at_original_approval,
+        )
         errors.extend(package_errors)
         if package_cache is not None:
             package_cache[cache_key] = package_errors
@@ -1163,7 +1179,7 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
     snapshots: dict[str, tuple[dict[str, Any] | None, bytes | None]] = {}
     valid_snapshots: dict[str, bool] = {}
     identities: dict[tuple[str, str], dict[str, str]] = {}
-    package_cache: dict[tuple[str, str, str], list[str]] = {}
+    package_cache: dict[tuple[str, str, str, bool], list[str]] = {}
 
     def snapshot(revision: str) -> tuple[dict[str, Any] | None, bytes | None]:
         if revision not in snapshots:
@@ -1174,6 +1190,7 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
         return snapshots[revision]
 
     ratified_legacy_contracts: set[tuple[str, str, str]] = set()
+    ratification_handoff_commits: set[str] = set()
     for commit in commits:
         candidate, _ = snapshot(commit)
         if candidate != baseline:
@@ -1189,6 +1206,13 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
                 continue
             if not approval_lineage_errors(context.repo, candidate, commit, package_cache):
                 ratified_legacy_contracts.add(baseline_contract_key(previous))
+                approval_commit = str(candidate.get("referenceApprovalCommit", ""))
+                handoff_parents = git(context.repo, "rev-list", "--parents", "-n", "1", parent).split()[1:]
+                if parent == approval_commit and len(handoff_parents) == 1:
+                    before_handoff, before_handoff_payload = snapshot(handoff_parents[0])
+                    _, handoff_payload = snapshot(parent)
+                    if before_handoff == previous and before_handoff_payload == handoff_payload:
+                        ratification_handoff_commits.add(parent)
 
     for commit in commits:
         current, current_payload = snapshot(commit)
@@ -1197,7 +1221,7 @@ def baseline_history_errors(context: Context, baseline: dict[str, Any]) -> list[
             document_errors = baseline_document_errors(current, f"{commit}:{relative}", schema, context.pages or None)
             errors.extend(document_errors)
             valid_snapshots[commit] = not document_errors
-            if not document_errors:
+            if not document_errors and commit not in ratification_handoff_commits:
                 errors.extend(
                     approval_lineage_errors(
                         context.repo,
