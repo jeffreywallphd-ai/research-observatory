@@ -28,10 +28,16 @@ DEFAULT_REPETITIONS = 12
 CPU_THROTTLE_RATE = 1
 RELATIVE_REGRESSION_PERCENT = 20
 PERFORMANCE_BASELINE_PATH = "verification/baselines/desktop-performance.json"
+EXPECTED_PERFORMANCE_BASELINE_SHA256 = "e85f168b4385a640f73bb6d871424e32d29583282fc741e54cb765bda92bac1a"
 MEASUREMENT_BUDGETS = {
     "coldShellFirstContentfulPaint": COLD_SHELL_PAINT_BUDGET_MS,
     "warmRouteVisibleSkeleton": ROUTE_SKELETON_BUDGET_MS,
     "warmRouteUsable": ROUTE_USABLE_BUDGET_MS,
+}
+EXPECTED_BASELINE_P95_MS = {
+    "coldShellFirstContentfulPaint": 96.0,
+    "warmRouteVisibleSkeleton": 73.033,
+    "warmRouteUsable": 77.622,
 }
 
 
@@ -172,10 +178,17 @@ def validate_regression_baseline(value: Any) -> dict[str, Any]:
         if not isinstance(measurement, dict) or set(measurement) != {"absoluteBudgetMs", "baselineP95Ms"}:
             raise ValueError(f"desktop performance baseline {name} is invalid")
         baseline_p95 = measurement.get("baselineP95Ms")
-        if isinstance(baseline_p95, bool) or not isinstance(baseline_p95, (int, float)) or baseline_p95 <= 0:
-            raise ValueError(f"desktop performance baseline {name} p95 must be positive")
+        if (
+            isinstance(baseline_p95, bool)
+            or not isinstance(baseline_p95, (int, float))
+            or not math.isfinite(baseline_p95)
+            or baseline_p95 <= 0
+        ):
+            raise ValueError(f"desktop performance baseline {name} p95 must be positive and finite")
         if measurement.get("absoluteBudgetMs") != budget or baseline_p95 > budget:
             raise ValueError(f"desktop performance baseline {name} does not preserve its approved budget")
+        if baseline_p95 != EXPECTED_BASELINE_P95_MS[name]:
+            raise ValueError(f"desktop performance baseline {name} does not match its immutable reviewed p95")
     return value
 
 
@@ -183,6 +196,9 @@ def load_regression_baseline(repo: Path) -> tuple[dict[str, Any], str]:
     value, payload, error = load_json(repo, PERFORMANCE_BASELINE_PATH)
     if error or payload is None:
         raise ValueError(error or "desktop performance baseline could not be read")
+    payload_sha256 = hashlib.sha256(payload).hexdigest()
+    if payload_sha256 != EXPECTED_PERFORMANCE_BASELINE_SHA256:
+        raise ValueError("desktop performance baseline bytes do not match the immutable reviewed SHA-256")
     baseline = validate_regression_baseline(value)
     ancestry = subprocess.run(
         ["git", "merge-base", "--is-ancestor", baseline["baselineSourceCommit"], "HEAD"],
@@ -194,7 +210,7 @@ def load_regression_baseline(repo: Path) -> tuple[dict[str, Any], str]:
     )
     if ancestry.returncode != 0:
         raise ValueError("desktop performance baseline source commit is not an ancestor of HEAD")
-    return baseline, hashlib.sha256(payload).hexdigest()
+    return baseline, payload_sha256
 
 
 def approved_document_name(raw_url: str, available: set[str]) -> str | None:

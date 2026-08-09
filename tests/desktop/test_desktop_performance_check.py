@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import sys
 import unittest
 from pathlib import Path
@@ -10,6 +11,8 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 from desktop_performance_check import (  # noqa: E402
+    EXPECTED_PERFORMANCE_BASELINE_SHA256,
+    PERFORMANCE_BASELINE_PATH,
     RELATIVE_REGRESSION_PERCENT,
     approved_document_name,
     distribution,
@@ -97,6 +100,10 @@ class DesktopPerformanceCheckTests(unittest.TestCase):
 
     def test_regression_baseline_is_strict_and_preserves_budgets(self) -> None:
         self.assertEqual(VALID_BASELINE, validate_regression_baseline(copy.deepcopy(VALID_BASELINE)))
+        self.assertEqual(
+            EXPECTED_PERFORMANCE_BASELINE_SHA256,
+            hashlib.sha256((REPO / PERFORMANCE_BASELINE_PATH).read_bytes()).hexdigest(),
+        )
 
         for field, replacement in (
             ("schemaVersion", "2.0"),
@@ -112,6 +119,12 @@ class DesktopPerformanceCheckTests(unittest.TestCase):
         invalid_budget["measurements"]["coldShellFirstContentfulPaint"]["absoluteBudgetMs"] = 2501.0
         with self.assertRaisesRegex(ValueError, "approved budget"):
             validate_regression_baseline(invalid_budget)
+
+        for numeric_value in (2000.0, float("nan"), float("inf")):
+            invalid_p95 = copy.deepcopy(VALID_BASELINE)
+            invalid_p95["measurements"]["coldShellFirstContentfulPaint"]["baselineP95Ms"] = numeric_value
+            with self.subTest(replacement=numeric_value), self.assertRaises(ValueError):
+                validate_regression_baseline(invalid_p95)
 
         unexpected = copy.deepcopy(VALID_BASELINE)
         unexpected["unreviewedOverride"] = True
