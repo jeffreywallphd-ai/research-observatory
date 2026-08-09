@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T01",
+  "commit": "5c8dbac196c44bd97d1d21ca92ec848393e438c8",
+  "baseCommit": "949296e1308a6a7528634a72ed0f9ac39c55d756",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    ".gitignore",
+    "apps/desktop/package.json",
+    "apps/desktop/src/app/designSystem.test.tsx",
+    "apps/desktop/tsconfig.json",
+    "artifacts/evidence/ui-change/CAP-01.S02.T01.json",
+    "docs/adr/ADR-0006-distribute-academic-minimal-tokens-and-components.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "packages/ui-components/README.md",
+    "packages/ui-components/catalog.html",
+    "packages/ui-components/package.json",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/src/styles.css",
+    "packages/ui-tokens/README.md",
+    "packages/ui-tokens/index.css",
+    "packages/ui-tokens/package.json",
+    "packages/ui-tokens/src/index.ts",
+    "packages/ui-tokens/token-contract.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pnpm-lock.yaml",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/foundation/test_adr_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S02.T01-desktop.json",
+      "exitCode": 0,
+      "result": "At exact clean commit 5c8dbac, all 25 desktop-profile commands passed in 506.36 seconds, including 146 foundation tests, 30 desktop tests, 15 React tests within the application command, all eight renderer/native commands, six light/dark 100-200% component catalog cases, the immutable performance gate, 32 routes, 139 browser workflows, 390 keyboard cases, 64 responsive cases, and 64 visual captures. Report SHA-256: a0f2eaaa7453eca73903d27b02d5fd109b2357c3751ec4ab18f6512427d6f731."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\CAP-01.S02.T01-application.json",
+      "exitCode": 0,
+      "result": "All eight pinned commands, six catalog theme/zoom cases, 32 production routes, six route recoveries, two href denials, deterministic project selection and recovery, and zero requests passed. Report SHA-256: dd21700c9376c688ccdb0323505ee8df8b967438c2ed77af8b46e6cf2f22d4b9."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 949296e1308a6a7528634a72ed0f9ac39c55d756 --head 5c8dbac196c44bd97d1d21ca92ec848393e438c8",
+      "exitCode": 0,
+      "result": "Exactly eight governed package implementation files are bound to UI evidence contract artifacts/evidence/ui-change/CAP-01.S02.T01.json and unchanged approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5...."
+    },
+    {
+      "command": "pnpm --dir apps/desktop lint; pnpm --dir apps/desktop typecheck; pnpm --dir apps/desktop test; python -m unittest tests.desktop.test_desktop_app_check",
+      "exitCode": 0,
+      "result": "Lint and strict TypeScript pass; 15 React tests and five desktop checker tests pass. Boundary coverage includes invalid semantic tone, blank field identity, duplicate table columns, literal-color drift, external token transport, exact token hash/contract, and six catalog scaling cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\adr_check.py --repo .; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\python.exe tools\\taskctl.py validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "ADR-0006 is accepted and indexed, architecture boundaries pass, the single task claim and UI lineage validate, and generated planning views are synchronized. ADR SHA-256: 930fdc468e0bfca766ccadb68ae075e7173c0b24b6f79efc4ad735d0df59f1e0; token contract SHA-256: 34749f3fecc3c14df6300496030271fb395240ba3859e2f05e2b2fb115cef91b."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The local catalog renders token-only typography, icon, form/button, table, dialog, notification, badge, and panel primitives in both themes at 100%, 150%, and 200% zoom with no horizontal overflow and 40px-or-larger controls.",
+        "Static WCAG calculations enforce at least 4.5:1 for strong/default/muted text and info/success/warning/danger/violet semantic foreground/background pairs in both light and dark token scopes.",
+        "Neutral, info, success, warning, danger, violet, seven evidence states, and four distinct uncertainty identities are versioned and documented; every catalog state contains visible text and semantic structure rather than color alone."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "React server rendering verifies bound label/description/error IDs, alert semantics, evidence-state identity, table captions/headers, and dialog naming across the expected component path.",
+        "Material failures reject unsupported tones, blank field identity, duplicate table columns, external token imports, literal component colors, token hash/reference drift, incomplete catalog inventory, insufficient contrast, undersized controls, semantic-role loss, and scaling overflow."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0006 records the approved local CSS transport, React package boundary, repository-native catalog decision, candidates, consequences, verification, rollback, and T02/T03 ownership seams.",
+        "Workspace manifests and frozen pnpm lock expose both private packages without adding a third-party dependency; noninteractive checks remain supply-chain verified and the generated pnpm store is ignored.",
+        "Package READMEs document ownership, boundary, component/version inventory, status semantics, downstream focus/recovery handoffs, and reference-first evolution."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The token CSS transport imports only design/ui-reference/assets/tokens.css, and token-contract.json pins reference ID/version/package plus canonical token SHA e6aa1ebf....",
+        "Component CSS contains no literal color and consumes only approved semantic custom properties. The task-bound UI gate identifies exactly the eight intended package files and proves no reference or protected-control drift.",
+        "The full production desktop visual baseline remains unchanged: the final composed run passed all 64 approved captures after a transient single-capture mismatch was independently rerun and passed without source or baseline modification."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review must verify that the packages are genuinely reference-bound and reusable, attack token/contrast/catalog/component invariants, confirm 100-200% light/dark behavior and non-color semantics, inspect ADR/UI lineage and exact scope, and ensure no T02 focus or T03 recovery ownership is falsely claimed."
+  }
+}

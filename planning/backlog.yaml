@@ -2146,15 +2146,21 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T11:54:57+00:00'
-      updated_at: '2026-08-09T11:54:57+00:00'
+      updated_at: '2026-08-09T12:44:33+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Academic Minimal token/component contracts, catalog, ADR, boundary tests, UI lineage, application
+        checks, and full desktop profile pass at 5c8dbac.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S02.T01.json
+        sha256: 02724877e4d3d7a80ca5d01a5bfad13d0ee49db8cfe132112744ec756c00f5ba
+        commit: 5c8dbac196c44bd97d1d21ca92ec848393e438c8
+        recorded_at: '2026-08-09T12:44:25+00:00'
       review:
         reviewer: null
         result: null
@@ -2165,7 +2171,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-09T11:54:57+00:00'
         expires_at: '2026-08-09T19:54:57+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64

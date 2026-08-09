@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9115fb63aa550af8181786967c63f5093b8f9a07f737cc9e6cf9c24c3526d48c
+source_sha256: ceb78191caee89d3d7490ef2189a1e8c9a01aafb77db9c8c8163b1088b161f12
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1062,7 +1062,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T01 - Implement design tokens and core components
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1086,6 +1086,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile desktop
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-01.S02.T01.json` at `5c8dbac196c44bd97d1d21ca92ec848393e438c8`
 
 #### - [ ] CAP-01.S02.T02 - Establish keyboard, focus, and screen-reader behavior
 
