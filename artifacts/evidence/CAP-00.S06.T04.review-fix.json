@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S06.T04",
+  "commit": "8fd281d2d1ca970394b2cbe23d1a5519f1a77d0f",
+  "baseCommit": "86c386e7c06a9e0b15cdfd5172eea665e120602e",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S06.T04.json",
+    "reason": "Independent review reproduced five false-green boundaries in fixture separation, exact page-region enforcement, workflow keyboard reachability, controlled font identity, and historical baseline/approval validation. This manifest binds their remediation while preserving the original review audit."
+  },
+  "changedFiles": [
+    "architecture-protected-paths.json",
+    "artifacts/evidence/CAP-00.S06.T04.json",
+    "docs/adr/ADR-0004-govern-desktop-ui-conformance-and-visual-baselines.md",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/planning-implementation-plan.md",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_ui_conformance.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py",
+    "verification/desktop-ui-baseline.schema.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts/tmp/t04-review-fix-foundation.json",
+      "exitCode": 0,
+      "result": "The exact clean remediation commit passed all 16 mandatory foundation commands and all 143 foundation tests in 204.25 seconds. Build provenance reported 0.1.0+g8fd281d clean; architecture, approved reference, design-first, ADR, CI, quality, packaging, backlog, and generated-view checks all passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts/tmp/t04-review-fix-desktop.json",
+      "exitCode": 0,
+      "result": "The exact clean remediation commit passed all 23 desktop-profile commands in 277.87 seconds, including the inherited 143 foundation tests, 12 desktop regressions, 521 page-region contracts, 14 workflows/139 browser cases/390 keyboard cases, 64 responsive geometry and visual cases, and 64 controlled light/dark captures."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_ui_conformance tests.foundation.test_ui_change_gate -v",
+      "exitCode": 0,
+      "result": "All 24 focused tests passed at the exact remediation commit, including every reproduced review attack, reachable malformed-history repair, same-reference rewrite denial, and design-first anti-tamper cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate",
+      "exitCode": 0,
+      "result": "The authoritative ledger validates with 20 capabilities, 117 slices, 356 tasks, and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --check",
+      "exitCode": 0,
+      "result": "Both generated planning views exactly match the authoritative ledger."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Fixture mode now inventories every UI-suffixed file under implementation roots, including test/spec names, so application code cannot hide behind a filename convention.",
+        "All 32 routes load the exact CAPABILITY_COVERAGE page-contract inventory and enforce 521 required-region declarations through nine named common selectors plus reference-bound semantic structure and labels that exclude illustrative prose/data.",
+        "All fourteen workflows validate exact primary/supporting navigation, previous/next order, and actual Tab focus plus Enter activation for 390 generated workflow links; tabindex=-1 mutations fail.",
+        "Accessibility validates visible keyboard focus and controls plus exact reference geometry and screenshots at both governed responsive viewports."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Controlled fonts are proven through canvas face metrics against three generic fallbacks; Segoe UI, Georgia, and Consolas pass while DefinitelyMissingFont-9B6F fails on the pinned browser.",
+        "The new architecture-protected baseline schema requires exact fields, valid Windows/renderer identities, positive dimensions, complete settings, strict entries, and light/dark pairs; every reachable historical snapshot is validated before structural consumers run.",
+        "Each valid historical baseline resolves a strictly prior exact approval commit, validates the complete approval record, verifies unchanged approval bytes, hashes every governed reference Git blob against REFERENCE_MANIFEST, and recomputes the cited package SHA-256.",
+        "Raw Git blob bytes bind working/HEAD identity, all-parent full-history replay remains enforced, and a repaired current record cannot hide an earlier malformed snapshot."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Failures cite the exact token, style, route, workflow, or CAPABILITY_COVERAGE page contract and include the affected workflow/page identity and exact required-region labels.",
+        "Semantic region comparison deliberately excludes illustrative prose and mock values while retaining UI structure, semantic attributes, control labels, and region headings.",
+        "ADR-0004, build-input inventory, architecture protection, and design-first anti-tamper scope now include the strict baseline schema and remediated checker."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "human-and-agent-review",
+    "note": "The repository owner's CAP-00 plan and slice approval remains the human authority. Independent technical re-review must reproduce all five closures, validate the original and superseding evidence chain, and confirm the exact clean foundation and desktop results without inventing a human approver identity."
+  }
+}

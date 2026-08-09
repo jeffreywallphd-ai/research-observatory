@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4c9ea30cea2d163d46617e34b2b0ce7b76a112906ce5c1d18e3a3899023610b8
+source_sha256: 33f3bc8a2cbdec347c20ab0ede948ecc128e76067cea814bd0c2de25f236e356
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -929,6 +929,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-00.S06.T04.json` at `86c386e7c06a9e0b15cdfd5172eea665e120602e`
+- `artifacts/evidence/CAP-00.S06.T04.review-fix.json` at `8fd281d2d1ca970394b2cbe23d1a5519f1a77d0f`
 
 ## CAP-01 - Windows-first desktop shell and supervised local runtime
 
