@@ -153,11 +153,12 @@ class SecurityPolicyTests(unittest.TestCase):
             "key": "license|MIT AND AGPL-3.0-only|Python|controlled-package",
             "id": "MIT AND AGPL-3.0-only",
         }
-        ambiguous = {
-            **base,
-            "key": "license|MIT OR PSF-2.0|Python|controlled-package",
-            "id": "MIT OR PSF-2.0",
-        }
+        invalid_expressions = [
+            "MIT OR PSF-2.0",
+            "MIT WITH LLVM-exception",
+            "MIT && AGPL-3.0-only",
+            "MIT AND PSF-2.0 OR AGPL-3.0-only",
+        ]
         unlisted = {
             **base,
             "key": "license|MIT AND BlueOak-1.0.0|Python|controlled-package",
@@ -170,15 +171,25 @@ class SecurityPolicyTests(unittest.TestCase):
             "exceptions": [],
         }
 
-        evaluated, errors, _ = evaluate(
-            [allowed, denied, ambiguous, unlisted], self.policy, exceptions, today=date(2026, 8, 8)
+        findings = [allowed, denied, unlisted]
+        findings.extend(
+            {
+                **base,
+                "key": f"license|{identifier}|Python|controlled-package",
+                "id": identifier,
+                "category": "permissive",
+            }
+            for identifier in invalid_expressions
         )
+        evaluated, errors, _ = evaluate(findings, self.policy, exceptions, today=date(2026, 8, 8))
 
         self.assertEqual([], errors)
-        self.assertEqual(["ALLOW", "BLOCK", "BLOCK", "BLOCK"], [item["disposition"] for item in evaluated])
+        self.assertEqual(
+            ["ALLOW", "BLOCK", "BLOCK", "BLOCK", "BLOCK", "BLOCK", "BLOCK"], [item["disposition"] for item in evaluated]
+        )
         self.assertIn("explicitly denied", evaluated[1]["policyReason"])
-        self.assertIn("category unknown is denied", evaluated[2]["policyReason"])
-        self.assertIn("component that is not explicitly allowed", evaluated[3]["policyReason"])
+        self.assertIn("component that is not explicitly allowed", evaluated[2]["policyReason"])
+        self.assertTrue(all("not an allowed SPDX conjunction" in item["policyReason"] for item in evaluated[3:]))
 
     def test_unlisted_reciprocal_license_blocks_while_explicit_mpl_allowance_remains_visible(self) -> None:
         reciprocal = {

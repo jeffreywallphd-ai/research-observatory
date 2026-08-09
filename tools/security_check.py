@@ -217,6 +217,8 @@ def blocking_reason(finding: dict[str, Any], policy: dict[str, Any]) -> str | No
             return None
         if conjunction:
             return f"license conjunction {finding['id']} contains a component that is not explicitly allowed"
+        if re.search(r"(?:^|\s)(?:AND|OR|WITH)(?:\s|$)|[()&|]", str(finding["id"]), flags=re.IGNORECASE):
+            return f"license expression {finding['id']} is not an allowed SPDX conjunction"
         if category in {str(value).casefold() for value in license_policy.get("deniedCategories", [])}:
             return f"license category {category} is denied"
         if category not in {str(value).casefold() for value in license_policy.get("allowedCategories", [])}:
