@@ -1749,11 +1749,11 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/verify.py --profile desktop
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T01:40:40+00:00'
-      updated_at: '2026-08-09T05:11:21+00:00'
+      updated_at: '2026-08-09T05:12:09+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Exact clean foundation and desktop profiles pass; criterion evidence 17270a8675c38556297193125a80f895da0f59159e624c507a4bd15d6035f468
@@ -1765,7 +1765,10 @@ capabilities:
 
         Final remediation cf4f521 binds the complete package at approval and baseline commits; project-owner ratification
         is separate at 7e62515; exact clean foundation 16/143, desktop 23/14, focused 26, visual history, taskctl, and views
-        pass; evidence 0098b7a0... attached for final independent review.'
+        pass; evidence 0098b7a0... attached for final independent review.
+
+        Final lineage remediation c9e0cec and evidence 0d487cda... close the required review finding; exact foundation 16/143,
+        desktop 23/15, focused 27, visual history, taskctl, and generated views pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S06.T04.json
