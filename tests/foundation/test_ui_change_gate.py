@@ -81,6 +81,60 @@ class UiChangeGateTests(unittest.TestCase):
         previous_task["review"]["reviewed_at"] = review["reviewed_at"]
         self.assertTrue(independent_review_hardening_errors(backlog, previous_backlog, "CAP-01.S01.T01", paths))
 
+    def test_later_ui_task_accepts_only_exact_independently_reviewed_hardening_envelope(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            view = root / "apps" / "desktop" / "src" / "View.tsx"
+            view.write_text("export const View = () => 'implemented';\n", encoding="utf-8", newline="\n")
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            backlog_path = root / "planning" / "backlog.yaml"
+            backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            task = backlog["capabilities"][0]["slices"][0]["tasks"][0]
+            task.update(
+                {
+                    "status": "REVIEW",
+                    "updated_at": "2026-08-09T08:00:00+00:00",
+                    "review": {"reviewer": None, "result": None, "reviewed_at": None},
+                }
+            )
+            self.write_yaml(backlog_path, backlog)
+            self.commit(root, "implement UI")
+
+            task.update(
+                {
+                    "status": "IN_PROGRESS",
+                    "updated_at": "2026-08-09T08:02:53+00:00",
+                    "review": {
+                        "reviewer": "agent:descartes",
+                        "result": "changes-requested",
+                        "reviewed_at": "2026-08-09T08:02:53+00:00",
+                    },
+                }
+            )
+            self.write_yaml(backlog_path, backlog)
+            (root / "docs" / "planning-implementation-plan.md").parent.mkdir(parents=True)
+            (root / "docs" / "planning-implementation-plan.md").write_text("reviewed\n", encoding="utf-8")
+            (root / "planning" / "status-summary.md").write_text("reviewed\n", encoding="utf-8")
+            self.commit(root, "record independent review")
+
+            for relative in (
+                "tests/desktop/test_desktop_app_check.py",
+                "tests/desktop/test_ui_conformance.py",
+                "tests/foundation/test_ui_change_gate.py",
+                "tools/desktop_app_check.py",
+                "tools/ui_change_gate.py",
+                "tools/ui_conformance.py",
+            ):
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("hardened\n", encoding="utf-8", newline="\n")
+            head = self.commit(root, "harden reviewed UI boundary")
+
+            result = validate(root, base, head)
+
+        self.assertTrue(result["ok"], result["errors"])
+
     def git(self, root: Path, *args: str) -> str:
         return subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
 

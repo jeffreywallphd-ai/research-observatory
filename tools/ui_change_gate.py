@@ -195,38 +195,6 @@ def application_activation_errors(
     errors: list[str] = []
     if contract.get("changeKind") != "approved-reference-implementation":
         return ["UI implementation cannot change its own design-first gate controls in the same range"]
-    if set(protected_changes) != APPLICATION_ACTIVATION_PATHS:
-        return [
-            "UI implementation cannot change its own design-first gate controls except for the exact first-application "
-            f"activation set; found {protected_changes}"
-        ]
-    try:
-        base_activation = json_object(
-            blob(repo, base, "verification/extensions/desktop-ui.json"), "base desktop UI activation"
-        )
-        head_activation = json_object(
-            blob(repo, head, "verification/extensions/desktop-ui.json"), "desktop UI activation"
-        )
-    except (UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
-        return [f"invalid first-application activation: {exc}"]
-    expected_head = dict(base_activation)
-    expected_head.update(
-        {
-            "mode": "approved-reference-application",
-            "targetRoot": "apps/desktop/dist",
-            "applicationRoot": "apps/desktop",
-            "applicationManifestPath": "apps/desktop/dist/application-manifest.json",
-        }
-    )
-    if base_activation.get("mode") != "approved-reference-fixture" or base_activation.get("targetRoot") != str(
-        policy["referenceRoot"]
-    ):
-        errors.append("first-application activation requires the governed fixture mode at the task base")
-    if head_activation != expected_head:
-        errors.append(
-            "first-application activation may only retarget the unchanged approved reference to the desktop build"
-        )
-
     commits = git(repo, "rev-list", "--reverse", "--topo-order", f"{base}..{head}").decode("ascii").splitlines()
     protected_positions: list[int] = []
     implementation_positions: list[int] = []
@@ -263,13 +231,46 @@ def application_activation_errors(
                 )
             except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
                 errors.append(f"invalid post-implementation gate-hardening provenance: {exc}")
-    invalid_order = (
-        not activation_positions
-        or not implementation_positions
-        or max(activation_positions) >= min(implementation_positions)
-    )
-    if invalid_order:
-        errors.append("first-application gate activation must be committed before every UI implementation commit")
+    if set(protected_changes) == APPLICATION_ACTIVATION_PATHS:
+        try:
+            base_activation = json_object(
+                blob(repo, base, "verification/extensions/desktop-ui.json"), "base desktop UI activation"
+            )
+            head_activation = json_object(
+                blob(repo, head, "verification/extensions/desktop-ui.json"), "desktop UI activation"
+            )
+        except (UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"invalid first-application activation: {exc}")
+            return errors
+        expected_head = dict(base_activation)
+        expected_head.update(
+            {
+                "mode": "approved-reference-application",
+                "targetRoot": "apps/desktop/dist",
+                "applicationRoot": "apps/desktop",
+                "applicationManifestPath": "apps/desktop/dist/application-manifest.json",
+            }
+        )
+        if base_activation.get("mode") != "approved-reference-fixture" or base_activation.get("targetRoot") != str(
+            policy["referenceRoot"]
+        ):
+            errors.append("first-application activation requires the governed fixture mode at the task base")
+        if head_activation != expected_head:
+            errors.append(
+                "first-application activation may only retarget the unchanged approved reference to the desktop build"
+            )
+        invalid_order = (
+            not activation_positions
+            or not implementation_positions
+            or max(activation_positions) >= min(implementation_positions)
+        )
+        if invalid_order:
+            errors.append("first-application gate activation must be committed before every UI implementation commit")
+    elif not late_protected or len(late_protected) != len(protected_positions) or errors:
+        errors.append(
+            "UI implementation cannot change its own design-first gate controls without an exact independently "
+            "reviewed post-implementation hardening commit"
+        )
     return errors
 
 

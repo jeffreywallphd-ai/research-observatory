@@ -10,9 +10,11 @@ import os
 import re
 import subprocess
 from collections.abc import Callable
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
+import yaml
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import sync_playwright
 from ui_conformance import inline_page, load_context
@@ -77,7 +79,32 @@ REQUIRED_COMPONENT_MARKERS = (
     "ro-notification",
     "ro-status-badge",
     "ro-panel",
+    "ro-evidence-state",
+    "ro-uncertainty-state",
 )
+REQUIRED_COMPONENT_EXPORTS = (
+    "Typography",
+    "Icon",
+    "Button",
+    "Field",
+    "DataTable",
+    "DialogSurface",
+    "Notification",
+    "StatusBadge",
+    "Panel",
+    "EvidenceStateBadge",
+    "UncertaintyState",
+)
+EXPECTED_EVIDENCE_STATES = {
+    "observed",
+    "extracted",
+    "inferred",
+    "verified",
+    "disputed",
+    "adjudicated",
+    "stale",
+}
+EXPECTED_UNCERTAINTY_STATES = {"unknown", "not-reported", "not-applicable", "ambiguous"}
 CONTRAST_PAIRS = (
     ("text-strong", "surface-1"),
     ("text-default", "surface-1"),
@@ -143,6 +170,97 @@ def contrast_ratio(foreground: str, background: str) -> float:
     return (lighter + 0.05) / (darker + 0.05)
 
 
+class CatalogContractParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.class_counts: dict[str, int] = {}
+        self.evidence_states: set[str] = set()
+        self.uncertainty_states: set[str] = set()
+        self.ids: dict[str, list[str]] = {}
+        self.label_references: list[str] = []
+        self._id_stack: list[str | None] = []
+
+    def handle_starttag(self, tag: str, attributes: list[tuple[str, str | None]]) -> None:
+        values = {name: value for name, value in attributes}
+        for class_name in (values.get("class") or "").split():
+            self.class_counts[class_name] = self.class_counts.get(class_name, 0) + 1
+        evidence_state = values.get("data-evidence-state")
+        if evidence_state:
+            self.evidence_states.add(evidence_state)
+        uncertainty_state = values.get("data-uncertainty-state")
+        if uncertainty_state:
+            self.uncertainty_states.add(uncertainty_state)
+        element_id = values.get("id")
+        if element_id:
+            self.ids.setdefault(element_id, [])
+        self._id_stack.append(element_id)
+        labelledby = values.get("aria-labelledby")
+        if labelledby:
+            self.label_references.extend(labelledby.split())
+
+    def handle_startendtag(self, tag: str, attributes: list[tuple[str, str | None]]) -> None:
+        self.handle_starttag(tag, attributes)
+        self.handle_endtag(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        if self._id_stack:
+            self._id_stack.pop()
+
+    def handle_data(self, data: str) -> None:
+        for element_id in self._id_stack:
+            if element_id:
+                self.ids[element_id].append(data)
+
+
+def catalog_contract_errors(catalog: str) -> list[str]:
+    parser = CatalogContractParser()
+    try:
+        parser.feed(catalog)
+        parser.close()
+    except (TypeError, ValueError) as exc:
+        return [f"desktop component catalog HTML cannot be parsed: {exc}"]
+    errors: list[str] = []
+    for marker in REQUIRED_COMPONENT_MARKERS:
+        if parser.class_counts.get(marker, 0) == 0:
+            errors.append(f"desktop component catalog has no structural {marker} instance")
+    if parser.evidence_states != EXPECTED_EVIDENCE_STATES:
+        errors.append("desktop component catalog must render every governed evidence state exactly by identity")
+    if parser.uncertainty_states != EXPECTED_UNCERTAINTY_STATES:
+        errors.append("desktop component catalog must render every governed uncertainty state exactly by identity")
+    for reference in parser.label_references:
+        targets = parser.ids.get(reference)
+        if targets is None or not "".join(targets).strip():
+            errors.append(f"desktop component catalog has a dangling or empty aria-labelledby target: {reference}")
+    return errors
+
+
+def component_style_errors(styles: str, components: str) -> list[str]:
+    errors: list[str] = []
+    uncommented_styles = re.sub(r"/\*.*?\*/", "", styles, flags=re.DOTALL)
+    uncommented_components = re.sub(r"/\*.*?\*/|//[^\n]*", "", components, flags=re.DOTALL)
+    for name in REQUIRED_COMPONENT_EXPORTS:
+        if re.search(rf"(?m)^\s*export function {re.escape(name)}\s*\(", uncommented_components) is None:
+            errors.append(f"desktop component package is missing exported {name}")
+    for marker in REQUIRED_COMPONENT_MARKERS:
+        if re.search(rf"\.{re.escape(marker)}(?![a-zA-Z0-9_-])", uncommented_styles) is None:
+            errors.append(f"desktop component styles are missing structural selector .{marker}")
+    if re.search(r"\bstyle\s*(?:=|:)", uncommented_components):
+        errors.append("desktop component source must not bypass governed classes with inline styles")
+    for match in re.finditer(r"(?P<property>[a-zA-Z-]+)\s*:\s*(?P<value>[^;{}]+)", uncommented_styles):
+        property_name = match.group("property").lower()
+        if not (
+            property_name in {"color", "background", "background-color", "fill", "stroke", "border", "outline", "box-shadow", "text-shadow"}
+            or property_name.endswith("-color")
+        ):
+            continue
+        value = match.group("value").strip()
+        remainder = re.sub(r"var\(--[a-z0-9-]+\)", "", value)
+        remainder = re.sub(r"(?:inherit|currentColor|solid|dashed|dotted|none|\d+(?:\.\d+)?(?:px|rem|em|%)?)", "", remainder)
+        if remainder.strip():
+            errors.append(f"desktop component visual declaration must use governed tokens: {property_name}: {value}")
+    return errors
+
+
 def design_system_errors(repo: Path) -> list[str]:
     errors: list[str] = []
     tokens_path = repo / "design" / "ui-reference" / "assets" / "tokens.css"
@@ -151,14 +269,18 @@ def design_system_errors(repo: Path) -> list[str]:
     component_path = repo / "packages" / "ui-components" / "src" / "index.tsx"
     styles_path = repo / "packages" / "ui-components" / "src" / "styles.css"
     catalog_path = repo / "packages" / "ui-components" / "catalog.html"
+    component_manifest_path = repo / "packages" / "ui-components" / "package.json"
+    lock_path = repo / "pnpm-lock.yaml"
     try:
         contract = json_object(contract_path)
+        component_manifest = json_object(component_manifest_path)
         tokens = tokens_path.read_text(encoding="utf-8")
         transport = transport_path.read_text(encoding="utf-8")
         components = component_path.read_text(encoding="utf-8")
         styles = styles_path.read_text(encoding="utf-8")
         catalog = catalog_path.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        lock = yaml.safe_load(lock_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, TypeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
         return [f"desktop design system cannot be loaded: {exc}"]
     if set(contract) != TOKEN_CONTRACT_KEYS or contract != EXPECTED_TOKEN_CONTRACT:
         errors.append("desktop token contract must exactly bind Academic Minimal 1.3")
@@ -166,11 +288,40 @@ def design_system_errors(repo: Path) -> list[str]:
         errors.append("desktop token source differs from its approved canonical SHA-256")
     if transport != EXPECTED_TOKEN_TRANSPORT:
         errors.append("desktop token transport must import only the governed reference source")
-    if re.search(r"#[0-9a-fA-F]{3,8}|\b(?:rgb|hsl)a?\(", styles):
-        errors.append("desktop components must consume semantic tokens instead of literal colors")
-    for marker in REQUIRED_COMPONENT_MARKERS:
-        if marker not in components or marker not in styles or marker not in catalog:
-            errors.append(f"desktop component catalog is missing {marker}")
+    errors.extend(component_style_errors(styles, components))
+    errors.extend(catalog_contract_errors(catalog))
+    if component_manifest.get("dependencies") != {"@research-observatory/ui-tokens": "workspace:*"}:
+        errors.append("desktop component package must depend on the public ui-tokens workspace package")
+    if component_manifest.get("peerDependencies") != {"react": "19.2.8"}:
+        errors.append("desktop component package must declare its exact React peer contract")
+    if component_manifest.get("sideEffects") != ["./src/styles.css"]:
+        errors.append("desktop component package must preserve tree-shakeable style side-effect metadata")
+    if 'from "@research-observatory/ui-tokens"' not in components or "../../ui-tokens" in components:
+        errors.append("desktop components must consume ui-tokens through its public package API")
+    importers = lock.get("importers") if isinstance(lock, dict) else None
+    component_importer = importers.get("packages/ui-components") if isinstance(importers, dict) else None
+    if not isinstance(component_importer, dict):
+        errors.append("pnpm lockfile must contain the ui-components package importer")
+    else:
+        locked_dependencies = component_importer.get("dependencies")
+        token_lock = (
+            locked_dependencies.get("@research-observatory/ui-tokens")
+            if isinstance(locked_dependencies, dict)
+            else None
+        )
+        if token_lock != {"specifier": "workspace:*", "version": "link:../ui-tokens"}:
+            errors.append("pnpm lockfile must bind ui-components to the public ui-tokens package")
+        locked_development = component_importer.get("devDependencies")
+        if not isinstance(locked_development, dict) or {
+            "@types/react",
+            "@types/react-dom",
+            "react",
+            "react-dom",
+            "typescript",
+            "vite",
+            "vitest",
+        } - set(locked_development):
+            errors.append("pnpm lockfile must bind the ui-components standalone verification toolchain")
     root = re.search(r":root\s*\{(?P<body>.*?)\n\}", tokens, flags=re.DOTALL)
     dark = re.search(r'html\[data-theme="dark"\]\s*\{(?P<body>.*?)\n\}', tokens, flags=re.DOTALL)
     if root is None or dark is None:
@@ -234,8 +385,23 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                       alertCount: document.querySelectorAll('[role=alert]').length,
                       statusCount: document.querySelectorAll('[role=status]').length,
                       dialogName: document.querySelector('dialog')?.getAttribute('aria-labelledby'),
+                      dialogTargetCount: (() => {
+                        const reference = document.querySelector('dialog')?.getAttribute('aria-labelledby');
+                        return reference ? document.querySelectorAll(`#${CSS.escape(reference)}`).length : 0;
+                      })(),
+                      dialogTargetText: (() => {
+                        const reference = document.querySelector('dialog')?.getAttribute('aria-labelledby');
+                        return reference ? document.getElementById(reference)?.textContent?.trim() : '';
+                      })(),
+                      componentCounts: Object.fromEntries(
+                        %s.map((className) => [className, document.getElementsByClassName(className).length])
+                      ),
+                      evidenceStates: Array.from(document.querySelectorAll('[data-evidence-state]'))
+                        .map((node) => node.getAttribute('data-evidence-state')),
+                      uncertaintyStates: Array.from(document.querySelectorAll('[data-uncertainty-state]'))
+                        .map((node) => node.getAttribute('data-uncertainty-state')),
                     })
-                    """
+                    """ % json.dumps(list(REQUIRED_COMPONENT_MARKERS))
                 )
                 if observed.get("catalog") != "1.0.0" or observed.get("overflow") is not False:
                     errors.append(f"{theme} {zoom_percent}% component catalog identity or horizontal fit failed")
@@ -245,8 +411,19 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                     observed.get("alertCount") != 1
                     or observed.get("statusCount") != 2
                     or not observed.get("dialogName")
+                    or observed.get("dialogTargetCount") != 1
+                    or not observed.get("dialogTargetText")
                 ):
                     errors.append(f"{theme} {zoom_percent}% component semantics are incomplete")
+                component_counts = observed.get("componentCounts")
+                if not isinstance(component_counts, dict) or any(
+                    component_counts.get(marker, 0) < 1 for marker in REQUIRED_COMPONENT_MARKERS
+                ):
+                    errors.append(f"{theme} {zoom_percent}% component structural inventory is incomplete")
+                if set(observed.get("evidenceStates") or []) != EXPECTED_EVIDENCE_STATES:
+                    errors.append(f"{theme} {zoom_percent}% component evidence-state inventory is incomplete")
+                if set(observed.get("uncertaintyStates") or []) != EXPECTED_UNCERTAINTY_STATES:
+                    errors.append(f"{theme} {zoom_percent}% component uncertainty-state inventory is incomplete")
                 details["cases"] += 1
             except PlaywrightError as exc:
                 errors.append(f"{theme} {zoom_percent}% component catalog browser check failed: {exc}")
@@ -305,7 +482,9 @@ def tool_environment(repo: Path) -> tuple[dict[str, str], Path, Path]:
 def command_plan(repo: Path) -> list[list[str]]:
     _, corepack, cargo = tool_environment(repo)
     app = str(repo / "apps" / "desktop")
+    component_package = str(repo / "packages" / "ui-components")
     return [
+        [str(corepack), "pnpm", "--dir", component_package, "verify"],
         [str(corepack), "pnpm", "--dir", app, "lint"],
         [str(corepack), "pnpm", "--dir", app, "typecheck"],
         [str(corepack), "pnpm", "--dir", app, "test"],
