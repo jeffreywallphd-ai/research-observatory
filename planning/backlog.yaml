@@ -1512,7 +1512,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T01
     - CAP-00.S02.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-00.S06.T01
       capability_id: CAP-00
@@ -1806,11 +1806,14 @@ capabilities:
     platform_targets:
     - platform-neutral
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-00.S06.integration.json
+      notes: All four tasks are DONE and independently approved. Exact aggregate adf64d8 passed desktop 23/23 with 143 foundation
+        and 15 desktop tests, 33 focused cross-task regressions, 34-page offline site verification, taskctl, ADR, and generated-view
+        checks; no unresolved finding.
   execution_mode: capability_campaign
   campaign:
     status: ACTIVE
