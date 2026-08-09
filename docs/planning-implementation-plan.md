@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5efcf4ab25d584a71f138f7d860684fbc79ebc65783a8717e5843fb4511a5a09
+source_sha256: 248980b2de4e0a06ec3cfa7a4c2f9d32013163071614a259c2bc1666b65a6143
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -957,13 +957,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S01.T01 - Bootstrap the Tauri 2 and React/TypeScript desktop application
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-00.S01.T03`, `CAP-00.S03.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Runnable desktop package with strict TypeScript, routing, application state, and development/build commands.
 
