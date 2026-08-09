@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-01.S01",
+  "stateCommit": "890a8ca6933bc2372e418a1299d13d5fe06b3ded",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S01.integration.review-fix.json",
+    "sha256": "12e9d0a078ec59dfebcce865c12e56405891eabec94eec6facdd5cc0bb945b7e",
+    "reason": "The first performance remediation record exposed two independent review false-greens: nonlocal URLs with approved basenames were served as local, and every run replaced rather than enforced the recorded 20% threshold. This record binds the exact-origin denial, immutable committed baseline, and clean requalification results."
+  },
+  "outcome": "The production Windows desktop shell remains fully qualified and its standard performance gate now denies all nonlocal fixture requests while enforcing both immutable relative p95 thresholds and unchanged absolute latency budgets.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-01.S01.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S01.T01.json", "sha256": "97b4a77df8568a933035bd3b18d439e7dd2d82c352d29f71ab1201b75b4317a7"},
+        {"path": "artifacts/evidence/CAP-01.S01.T01.review-fix.json", "sha256": "6d21ea97c9251cd9b88e389b40111a099d26570aef5b731866a377c632870154"},
+        {"path": "artifacts/evidence/CAP-01.S01.T01.review-fix-2.json", "sha256": "627d589f236dcec854bc6067f8223a3a82e71d3687be475f98564848d36cf608"},
+        {"path": "artifacts/evidence/CAP-01.S01.T01.review-fix-3.json", "sha256": "03cc445bdbbde0688edcd98f7ce83896f0266a2e6a1ef227effe9088b550325a"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S01.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S01.T02.json", "sha256": "d347d59d73737dbcc1b19beb7d1e7d8cbeb821b0e63d91d9fc0c6a7c8116eae9"},
+        {"path": "artifacts/evidence/CAP-01.S01.T02.review-fix.json", "sha256": "65b3cccbaf824445c377ec9f263cb970249496274dc5b0186424d16c598268a9"},
+        {"path": "artifacts/evidence/CAP-01.S01.T02.review-fix-2.json", "sha256": "70d829eb0fef627bfb95a12183169141be40b55e0e112eda212493586b1b9fa2"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S01.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S01.T03.json", "sha256": "6a90f90d966791c0d062a686e3a13e1c58e079a5e66427dd1be54de91eb800a2"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_performance_check",
+      "exitCode": 0,
+      "result": "Seven focused tests pass. They retain every nearest-rank sample, enforce absolute and fixed-relative limits independently, reject exact-basename URLs from external/scheme/authority/port/nested/encoded/query variants, reject malformed or override-bearing baselines, preserve governed budgets, and record actionable hardware without host identity."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\CAP-01.S01-performance-fix.json",
+      "exitCode": 0,
+      "result": "At exact clean commit 890a8ca, 12 undiscarded repetitions passed the immutable baseline and absolute budgets: cold paint p95 104.000 ms <= 115.200/2500 ms, visible skeleton p95 75.564 ms <= 87.640/150 ms, and usable route p95 80.727 ms <= 93.146/1000 ms. The report binds baseline SHA-256 e85f168b4385a640f73bb6d871424e32d29583282fc741e54cb765bda92bac1a to source commit 6d69c49 and records zero unexpected requests. Report SHA-256: 894eedb87e34785c2ca60bdc9f31119b7b3aa9d2bc54167a2429ec69505d95c9."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S01-integration-review-fix-2-desktop.json",
+      "exitCode": 0,
+      "result": "At exact clean commit 890a8ca, all 25 commands passed in 483.57 seconds, including 146 foundation tests, 29 desktop tests, 13 renderer tests within the application command, every native command, the immutable performance gate, 32 routes, 139 browser workflow cases, 390 keyboard cases, 64 responsive cases, and 64 visual captures. Report SHA-256: eee36dce44730cdd3cbb5ed8371b56b2edc15b2a0eec03f2aca91e6938c0bee4."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The campaign, three DONE task states and independent approvals, evidence lineage, current S01 remediation state, and generated views validate before resubmission."
+    }
+  ],
+  "integratedBehavior": [
+    "The production Tauri and React shell remains deterministic, offline, zero-privilege, exact-route, keyboard-operable, visually conformant, and recoverable across all previously approved S01 behavior.",
+    "The benchmark serves only exact http://tauri.localhost/index.html and http://tauri.localhost/study-design.html requests; any other scheme, authority, port, path, encoding, query, fragment, or resource request is aborted, retained, and makes the report fail.",
+    "The version-controlled baseline is strict-schema validated, pins its originating source commit and fixture/methodology identity, must descend from the current revision, and cannot alter the three approved absolute budgets.",
+    "Every current p95 must satisfy both the fixed 120% baseline limit and the absolute plan budget; reports expose both booleans, the baseline file hash, origin commit, full samples, and exact clean current commit."
+  ],
+  "reviewFixes": [
+    "Closed the external approved-basename false-green with exact scheme, authority, and single-segment approved-path matching plus attack regressions.",
+    "Closed self-rebaselining by moving the 96.000/73.033/77.622 ms p95 values into an immutable governed baseline whose fixed 115.200/87.640/93.146 ms limits are enforced on every run.",
+    "Preserved the original 2500/150/1000 ms budgets, representative Windows hardware methodology, production fixture binding, complete distributions, safe report writer, and standard desktop-profile activation."
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "Real project validation, creation, and durable lifecycle authority intentionally remain CAP-02 responsibilities; this slice fails closed after emitting opaque user intents.",
+      "Supervised Core sidecar lifecycle and authenticated renderer-to-service connectivity are supplied by CAP-01.S03 and CAP-01.S04 before capability completion.",
+      "Shared production design-system components and formal accessibility primitives are supplied by CAP-01.S02."
+    ]
+  }
+}

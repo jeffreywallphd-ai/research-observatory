@@ -1860,7 +1860,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S03.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-01.S01.T01
       capability_id: CAP-01
@@ -2090,13 +2090,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:maxwell
       reviewed_at: '2026-08-09T11:33:55+00:00'
       evidence:
-      - artifacts\evidence\CAP-01.S01.integration.review-fix.json
-      notes: Performance verifier must reject nonlocal requests by exact origin/path and enforce the committed 20% p95 regression
-        baseline instead of rebaselining each run.
+      - artifacts\evidence\CAP-01.S01.integration.review-fix-2.json
+      notes: Closed both performance-review false-greens with exact local-origin request denial and an immutable enforced
+        p95 baseline; 25-command desktop profile is green at 890a8ca.
   - id: CAP-01.S02
     title: Desktop design system and accessibility foundation
     outcome: Reusable components express status, provenance, evidence, uncertainty, and human decision states consistently.
