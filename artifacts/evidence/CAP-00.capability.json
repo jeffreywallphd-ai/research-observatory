@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "capability-qualification-evidence",
+  "capabilityId": "CAP-00",
+  "baseCommit": "47d460a8109acdd82237c2de37b18a79c2bb3853",
+  "stateCommit": "9b2e87924e41b12e3c7f6449c9a2774f062719c3",
+  "branch": "codex/cap-00-delivery-foundation",
+  "objective": "Create a reproducible repository, architecture and approved-experience guardrails, validation system, and machine-readable backlog that make small AI-authored changes safe and reviewable.",
+  "sliceEvidence": [
+    {
+      "sliceId": "CAP-00.S01",
+      "path": "artifacts/evidence/CAP-00.S01.integration.json",
+      "sha256": "c0f450d1677faa4fee1c5175c47e42ca891b45de160c4ee6cab262982886b248",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S02",
+      "path": "artifacts/evidence/CAP-00.S02.integration.json",
+      "sha256": "6257ba18f4e1d0feb063cc0d0fb8058bcc82b727855db8e513bd845c497022b4",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S03",
+      "path": "artifacts/evidence/CAP-00.S03.integration.json",
+      "sha256": "155d44629dc984988483b8efe4cf2504798f801c44e339e34274fef9a01eafa4",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S04",
+      "path": "artifacts/evidence/CAP-00.S04.integration.json",
+      "sha256": "2ed46df66c05e4dbafb96655b09b561fcfc419df24b7c865863d4169c4dee0d8",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S05",
+      "path": "artifacts/evidence/CAP-00.S05.integration.json",
+      "sha256": "3937ca6f917b60d873d2350c725a8983f8e7b2b9a7c46dbb73259fe983682061",
+      "status": "APPROVED"
+    },
+    {
+      "sliceId": "CAP-00.S06",
+      "path": "artifacts/evidence/CAP-00.S06.integration.json",
+      "sha256": "3960d4aa5fd1ff09b5e6a290d6d598a26def54bf06365013b330c678bde452b3",
+      "status": "APPROVED"
+    }
+  ],
+  "qualificationRemediation": {
+    "trigger": "The first capability-wide security-local run correctly blocked lxml 6.0.2 for CVE-2026-41066 and the scanner's unknown classification of greenlet's MIT AND PSF-2.0 declaration.",
+    "resolution": [
+      "The frozen direct dependency was upgraded to stable lxml 6.1.1, above the advisory's fixed boundary of 6.1.0.",
+      "SPDX AND expressions are accepted only when every component is already individually allowlisted; a denied, unlisted, OR, WITH, or malformed expression remains blocked or follows the existing fail-closed category policy.",
+      "No vulnerability or license exception was added and no release threshold was weakened."
+    ],
+    "changedFiles": [
+      "docs/automation/supply-chain-security.md",
+      "pyproject.toml",
+      "tests/security/test_security_check.py",
+      "tools/security_check.py",
+      "uv.lock"
+    ],
+    "sources": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-41066",
+      "https://pypi.org/project/lxml/"
+    ]
+  },
+  "qualificationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile security-local --report artifacts/tmp/CAP-00-capability-security-local-final.json",
+      "exitCode": 0,
+      "result": "At exact clean commit 9b2e879, all 18 commands passed in 257.83 seconds: 143 foundation tests, 20 security tests, 38 installed packages, 37 normalized findings, and zero blocking vulnerabilities, licenses, secrets, or misconfigurations."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --report artifacts/tmp/CAP-00-capability-desktop-final.json",
+      "exitCode": 0,
+      "result": "At the same exact clean commit, all 23 commands passed in 392.77 seconds: 143 foundation tests, 15 desktop tests, 32 routes, 14 workflows, 521 region contracts, 139 browser cases, 390 keyboard cases, 64 responsive visuals, and 64 pinned Windows captures."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_workflow tests.foundation.test_bootstrap tests.foundation.test_build_manifest -v",
+      "exitCode": 0,
+      "result": "All 37 focused capability regressions passed across READY/dependency/lease authorization, independent review, campaign start/resume/cancellation, release gates, atomic stale-writer rejection, clean Windows bootstrap orchestration, frozen installs, deterministic build identity, inventory races, redirects, and confined atomic publication."
+    },
+    {
+      "command": "uv lock --check; .venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools\\adr_check.py --repo .",
+      "exitCode": 0,
+      "result": "The frozen dependency graph, authoritative 20-capability/117-slice/356-task/12-gate ledger, generated views, and four-record Accepted ADR registry are internally consistent."
+    }
+  ],
+  "exitCriteria": [
+    {
+      "criterion_index": 1,
+      "status": "verified",
+      "evidence": [
+        "S01 independently proved a fresh archived Windows checkout can execute exact prerequisites, frozen pnpm/uv/Cargo operations, pinned scanner installation, and the foundation smoke profile while publishing only documented ignored local state.",
+        "Current exact-commit profiles prove repository structure, runtime pins, lint, formatting, mypy, 143 foundation tests, deterministic benchmarks, packaging smoke, and clean build identity 0.1.0+g9b2e879."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "status": "verified",
+      "evidence": [
+        "Taskctl validates capability campaigns, dependency and release-gate eligibility, canonical branch/base/worktree identity, owner leases, criterion evidence, submit/review/reopen/cancel transitions, independent reviews, slice/capability completion, and atomic stale-writer protection.",
+        "Every CAP-00 task is DONE, every slice integration record is independently APPROVED, and generated Markdown/status views match the YAML authority."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "status": "verified",
+      "evidence": [
+        "The default-deny architecture map, stable interface inventory, dependency validator, protected-path change gate, ADR template/index/lifecycle, and four indexed Accepted ADRs pass the architecture and ADR profiles.",
+        "CI is pinned and least-privilege with retained normalized evidence; protected controls cannot be weakened in the same UI change range."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "status": "verified",
+      "evidence": [
+        "The exact 54-file Academic Minimal 1.3 package is approved, reproducibly generated, offline, and bound to 32 product pages, 14 workflows, page/region contracts, 109 tokens, normative sources, illustrative exclusions, and design-first human authorization.",
+        "The desktop profile enforces fixture/application separation, routes, regions, guided navigation, keyboard behavior, responsive accessibility, controlled renderer identity, complete approval/package history, and 64 light/dark visual baselines."
+      ]
+    }
+  ],
+  "crossCuttingQualification": {
+    "happyPath": "Fresh-checkout bootstrap evidence, deterministic benchmarks/build identity, complete task lifecycle, approved offline UI reference, and foundation/security/desktop profiles pass.",
+    "failureAndDenial": "Missing tools, frozen-install failure, dependency/profile/gate mismatch, unauthorized owner/reviewer, stale evidence, malformed history, path redirects, network UI surfaces, self-approval, scanner violations, and conformance drift reject actionably.",
+    "cancellation": "Campaign cancellation is explicit, ownership-bound, and regression-tested together with start, pause/resume, and release-gate escape denial.",
+    "migrationAndCompatibility": "No product database exists before CAP-01. Repository schema compatibility is governed through strict backlog, evidence, ADR, baseline, benchmark, version, and manifest history validation; repaired invalid history cannot be laundered.",
+    "restartAndRecovery": "Bootstrap is idempotent, task/campaign leases renew or resume under exact ownership, failed installs publish no configuration, and atomic ledger/build writes preserve the prior destination on replace failure, tamper, race, or stale writer.",
+    "securityPrivacyRights": "Pinned Trivy installation and controlled configuration scan source and installed dependencies with zero blockers; raw secret material is never retained; fixtures are synthetic CC0-1.0; browser checks abort network access; private or production data is absent.",
+    "accessibility": "All 32 product pages pass exact required-region, keyboard/focus, light/dark, and two-viewport responsive accessibility contracts with deterministic browser evidence.",
+    "platform": "Windows x64 is the release-authoritative W0 platform and passes exact runtime/bootstrap and pinned Chromium/Playwright/font/viewport qualification. Server, cloud, and non-Windows release profiles remain correctly gated.",
+    "backupRestore": "There is no application data before CAP-01. Repository authority is Git-versioned, generated views are reproducible, and every mutable control-plane/output publication path exercised here is atomic and recovery-tested."
+  },
+  "releaseGateG0": [
+    {
+      "criterion_index": 1,
+      "status": "verified",
+      "evidence": "Fresh-checkout bootstrap evidence plus current foundation/build/package checks pass."
+    },
+    {
+      "criterion_index": 2,
+      "status": "verified",
+      "evidence": "The complete ledger, capability campaign, six independent slice reviews, task transitions, cancellation/resume, and release-gate invariants validate automatically."
+    },
+    {
+      "criterion_index": 3,
+      "status": "verified",
+      "evidence": "Architecture rules and the Accepted ADR lifecycle are documented, indexed, protected, and machine checked."
+    },
+    {
+      "criterion_index": 4,
+      "status": "verified",
+      "evidence": "The approved reference, workflow catalog, page contracts, design-first gate, and full Windows conformance profile are installed and passing."
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewReadiness": {
+    "allSlicesApproved": true,
+    "allExitCriteriaVerified": true,
+    "securityBlockingFindings": 0,
+    "unresolvedFindings": [],
+    "requiredReview": "independent capability review",
+    "residualLimitations": [
+      "Hosted CI execution itself is not available locally; its pinned workflow, least-privilege permissions, commands, and evidence retention contract are validated locally.",
+      "The desktop conformance target remains approved-reference-fixture until CAP-01 installs application UI source, at which point fixture mode fails closed and must be replaced through an ADR-reviewed activation change.",
+      "Server, cloud, non-Windows desktop, university administration, product data migration, and application backup/restore remain correctly assigned to later release-gated capabilities."
+    ]
+  }
+}
