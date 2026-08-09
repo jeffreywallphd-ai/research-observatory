@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2c9eadbf97919f7be00e66d2225c308651997ddc6253b19562b00c32f61f1b2a
+source_sha256: 35354e69ddc8f885128db55c0a281f96ad9040b9ba5c6579a7c8397b72249633
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1020,15 +1020,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S01.T02.review-fix.json` at `5422bd749ba68274faf1f2744ebf8dc439aef6ff`
 - `artifacts/evidence/CAP-01.S01.T02.review-fix-2.json` at `e19ecc726ebba7206fb06ce0fa51a228bd830fed`
 
-#### - [ ] CAP-01.S01.T03 - Add project switcher, recent projects, and empty-state flows
+#### - [x] CAP-01.S01.T03 - Add project switcher, recent projects, and empty-state flows
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S01.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:maxwell (`approved`)
 
 **Objective:** Project-selection experience that can open, create, and recover from unavailable local project locations.
 
