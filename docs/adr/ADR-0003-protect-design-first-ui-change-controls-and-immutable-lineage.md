@@ -50,8 +50,8 @@ already approved page/workflow without incorrectly requiring a new design.
    restoration.
 3. Add a schema-governed per-task change contract and validate immutable Git
    base/head blobs, reference package hashes, task metadata, identities, and
-   commit ancestry. Protect the checker, policy, schema, CI wiring, and task
-   schema as architecture-governed controls.
+commit ancestry. Protect the checker, policy, schema, CI wiring, and task
+schema as architecture-governed controls.
 
 ## Decision
 
@@ -67,7 +67,12 @@ restoration use the unchanged approved package; restoration also states the
 defect and expected approved behavior.
 
 CI supplies the pull-request/push base and checks full Git history. Local runs
-may provide the task base explicitly. Gate-control paths become protected
+may provide the task base explicitly; manual CI requires one, and ambiguous
+active-task base selection fails closed. The contract task must be active and
+bound to that exact base. Governed UI paths must remain regular Git blobs rather
+than symlinks or other redirected object types. Defect restoration retains the
+human-and-agent classification gate until the governed conformance verifier is
+installed. Gate-control paths become protected
 architecture paths, and canonical path inventories are also embedded in the
 checker so a policy-only edit cannot silently remove coverage.
 
@@ -96,8 +101,9 @@ weaken an established architecture safeguard.
 - `python tools/ci_check.py --repo .`
 - `python tools/taskctl.py validate`
 - Foundation tests for approved implementation, restoration, missing/stale
-  contracts, newer human approval, self approval, same-commit ordering, exact
-  task lineage, and gate-control weakening.
+contracts, newer human approval, self approval, same-commit ordering, exact
+task/range lineage, regular-blob enforcement, ambiguous base selection, human
+restoration classification, and gate-control weakening.
 
 ## Task links
 

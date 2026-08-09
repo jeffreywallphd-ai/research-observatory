@@ -11,6 +11,7 @@
 - Approved reference ID and package SHA-256:
 - Human reference approver (intentional design changes only):
 - Focused conformance/restoration evidence:
+- Human restoration classification (required until the governed conformance verifier is installed):
 
 Intentional changes to routes, navigation, tokens, workflows, required regions, or interactions must use a newer human-approved reference committed before implementation. Implementing or restoring the current reference must cite it exactly. The foundation gate verifies this section against the task and committed UI change contract.
 

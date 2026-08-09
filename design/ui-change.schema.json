@@ -25,7 +25,10 @@
       "type": "string",
       "pattern": "^artifacts/evidence/ui-change/CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}\\.json$"
     },
-    "implementationAgent": {"type": "string", "pattern": "^(agent|human):[A-Za-z0-9][A-Za-z0-9._-]*$"},
+    "implementationAgent": {
+      "type": "string",
+      "pattern": "^(agent|human):[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$"
+    },
     "changedFiles": {
       "type": "array",
       "minItems": 1,

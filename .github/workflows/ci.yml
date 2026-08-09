@@ -6,6 +6,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      ui_change_base_sha:
+        description: Immutable base commit for the complete manually dispatched change range
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -21,7 +26,7 @@ defaults:
 env:
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   UV_NO_PROGRESS: "1"
-  UI_CHANGE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
+  UI_CHANGE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || inputs.ui_change_base_sha }}
 
 jobs:
   foundation:

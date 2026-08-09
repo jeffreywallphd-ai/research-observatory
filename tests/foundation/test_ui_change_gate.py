@@ -127,6 +127,8 @@ class UiChangeGateTests(unittest.TestCase):
         review_gate: str = "agent-review",
         base_sha: str | None = None,
     ) -> None:
+        if base_sha is None:
+            base_sha = self.git(root, "rev-parse", "HEAD")
         path = root / "artifacts" / "evidence" / "ui-change" / "CAP-01.S01.T01.json"
         self.write_json(path, contract)
         reference = contract["reference"]
@@ -171,7 +173,8 @@ class UiChangeGateTests(unittest.TestCase):
                     f"export const View = () => '{kind}';\n", encoding="utf-8", newline="\n"
                 )
                 contract = self.contract(kind, package, base)
-                self.install_contract(root, contract)
+                review_gate = "human-and-agent-review" if kind == "defect-restoration" else "agent-review"
+                self.install_contract(root, contract, review_gate=review_gate, base_sha=base)
                 head = self.commit(root, kind)
 
                 result = validate(root, base, head)
@@ -308,7 +311,7 @@ class UiChangeGateTests(unittest.TestCase):
                 version="2",
                 implementation_agent="agent:owner",
             )
-            self.install_contract(root, contract, review_gate="human-and-agent-review")
+            self.install_contract(root, contract, review_gate="human-and-agent-review", base_sha=base)
             head = self.commit(root, "implement self-approved design")
 
             result = validate(root, base, head)
@@ -349,13 +352,127 @@ class UiChangeGateTests(unittest.TestCase):
                 reference_id="REF-2",
                 version="2",
             )
-            self.install_contract(root, contract, review_gate="human-and-agent-review")
+            self.install_contract(root, contract, review_gate="human-and-agent-review", base_sha=base)
             head = self.commit(root, "record UI lineage")
 
             result = validate(root, base, head)
 
         self.assertFalse(result["ok"])
         self.assertTrue(any("strictly precede" in error for error in result["errors"]))
+
+    def test_governed_ui_path_must_be_a_regular_git_blob(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            view = root / "apps" / "desktop" / "src" / "View.tsx"
+            view.write_text("design/ui-reference/index.html\n", encoding="utf-8", newline="\n")
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            self.git(root, "add", "--all")
+            object_id = self.git(root, "hash-object", "-w", "apps/desktop/src/View.tsx")
+            self.git(root, "update-index", "--add", "--cacheinfo", "120000", object_id, "apps/desktop/src/View.tsx")
+            self.git(root, "commit", "-m", "redirect UI implementation")
+            head = self.git(root, "rev-parse", "HEAD")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("regular Git blob" in error for error in result["errors"]))
+
+    def test_automatic_base_rejects_ambiguous_active_experience_tasks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            contract = self.contract("approved-reference-implementation", package, base)
+            self.install_contract(root, contract, base_sha=base)
+            backlog_path = root / "planning" / "backlog.yaml"
+            backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            first = backlog["capabilities"][0]["slices"][0]["tasks"][0]
+            second = dict(first)
+            second["id"] = "CAP-01.S01.T02"
+            backlog["capabilities"][0]["slices"][0]["tasks"].append(second)
+            self.write_yaml(backlog_path, backlog)
+            head = self.commit(root, "ambiguous UI tasks")
+
+            with self.assertRaisesRegex(ValueError, "ambiguous active UI experience tasks"):
+                automatic_base(root, head)
+
+    def test_contract_task_must_be_active_and_bound_to_validated_base(self) -> None:
+        for field, value, expected in (
+            ("base_sha", None, "base_sha must exactly equal"),
+            ("status", "DONE", "must be active"),
+        ):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
+                root, base, package = self.prepare(temporary)
+                view = root / "apps" / "desktop" / "src" / "View.tsx"
+                view.write_text("export const View = () => 'changed';\n", encoding="utf-8", newline="\n")
+                contract = self.contract("approved-reference-implementation", package, base)
+                self.install_contract(root, contract, base_sha=base)
+                backlog_path = root / "planning" / "backlog.yaml"
+                backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+                backlog["capabilities"][0]["slices"][0]["tasks"][0][field] = value
+                self.write_yaml(backlog_path, backlog)
+                head = self.commit(root, f"unbound task {field}")
+
+                result = validate(root, base, head)
+
+            self.assertFalse(result["ok"])
+            self.assertTrue(any(expected in error for error in result["errors"]))
+
+    def test_self_approval_rejects_trailing_separator_lookalike(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, _ = self.prepare(temporary)
+            approval_path = root / "design" / "ui-reference" / "APPROVAL.yaml"
+            approval = yaml.safe_load(approval_path.read_text(encoding="utf-8"))
+            approval.update(
+                {
+                    "reference_id": "REF-2",
+                    "version": "2",
+                    "approval_kind": "human",
+                    "approved_by": "human:owner.",
+                    "supersedes": "REF-1",
+                }
+            )
+            self.write_yaml(approval_path, approval)
+            manifest_path = root / "design" / "ui-reference" / "REFERENCE_MANIFEST.yaml"
+            manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+            manifest.update({"reference_id": "REF-2", "version": "2"})
+            self.write_yaml(manifest_path, manifest)
+            package = self.reference_package(root)
+            approval_commit = self.commit(root, "lookalike approval")
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'lookalike';\n", encoding="utf-8", newline="\n"
+            )
+            contract = self.contract(
+                "intentional-design-change",
+                package,
+                approval_commit,
+                approved_by="human:owner.",
+                previous="REF-1",
+                reference_id="REF-2",
+                version="2",
+                implementation_agent="agent:owner",
+            )
+            self.install_contract(root, contract, review_gate="human-and-agent-review", base_sha=base)
+            head = self.commit(root, "implement lookalike-approved design")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("does not match" in error or "explicit human" in error for error in result["errors"]))
+
+    def test_defect_restoration_requires_human_classification_until_conformance_gate_exists(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, package = self.prepare(temporary)
+            (root / "apps" / "desktop" / "src" / "View.tsx").write_text(
+                "export const View = () => 'arbitrary new behavior';\n", encoding="utf-8", newline="\n"
+            )
+            contract = self.contract("defect-restoration", package, base)
+            self.install_contract(root, contract, review_gate="agent-review", base_sha=base)
+            head = self.commit(root, "self-asserted restoration")
+
+            result = validate(root, base, head)
+
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("requires human-and-agent-review" in error for error in result["errors"]))
 
 
 if __name__ == "__main__":

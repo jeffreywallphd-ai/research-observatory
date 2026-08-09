@@ -21,7 +21,7 @@ TEXT_SUFFIXES = frozenset(
 REFERENCE_EXCLUSIONS = frozenset(
     {"REFERENCE_MANIFEST.yaml", "SHA256SUMS.txt", "VALIDATION_REPORT.md", "ui-reference-validation.json"}
 )
-HUMAN_ID = re.compile(r"^human:[A-Za-z0-9][A-Za-z0-9._-]*$")
+HUMAN_ID = re.compile(r"^human:[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$")
 EXPECTED_POLICY_SCALARS = {
     "schemaVersion": "1.0",
     "documentType": "ui-change-policy",
@@ -156,6 +156,43 @@ def changed_paths(repo: Path, base: str, head: str) -> set[str]:
     return paths
 
 
+def tree_entry(repo: Path, commit: str, path: str) -> tuple[str, str] | None:
+    canonical = canonical_path(path)
+    records = [
+        record for record in git(repo, "ls-tree", "-z", "--full-tree", commit, "--", canonical).split(b"\0") if record
+    ]
+    if not records:
+        return None
+    if len(records) != 1:
+        raise ValueError(f"Git returned multiple tree entries for {canonical}")
+    metadata, separator, raw_path = records[0].partition(b"\t")
+    parts = metadata.decode("ascii", errors="replace").split()
+    observed_path = raw_path.decode("utf-8") if separator else ""
+    if len(parts) != 3 or observed_path != canonical:
+        raise ValueError(f"Git returned a malformed tree entry for {canonical}")
+    mode, kind, _ = parts
+    return mode, kind
+
+
+def implementation_object_errors(repo: Path, base: str, head: str, paths: list[str]) -> list[str]:
+    errors: list[str] = []
+    for path in paths:
+        observed = 0
+        for label, commit in (("base", base), ("head", head)):
+            entry = tree_entry(repo, commit, path)
+            if entry is None:
+                continue
+            observed += 1
+            mode, kind = entry
+            if kind != "blob" or mode not in {"100644", "100755"}:
+                errors.append(
+                    f"governed UI implementation path must be a regular Git blob at {label}: {path} ({mode} {kind})"
+                )
+        if observed == 0:
+            errors.append(f"governed UI implementation path is absent from both base and head: {path}")
+    return errors
+
+
 def is_ancestor(repo: Path, ancestor: str, descendant: str) -> bool:
     completed = subprocess.run(
         ["git", "merge-base", "--is-ancestor", ancestor, descendant],
@@ -279,22 +316,29 @@ def find_task(backlog: dict[str, Any], task_id: str) -> dict[str, Any] | None:
 
 def automatic_base(repo: Path, head_ref: str) -> str:
     """Use the sole active experience task base, otherwise the immediate parent."""
+    head = resolve_commit(repo, head_ref)
     try:
-        head = resolve_commit(repo, head_ref)
         backlog = yaml_object(blob(repo, head, "planning/backlog.yaml"), "planning/backlog.yaml")
-        active = [
-            task
-            for capability in backlog.get("capabilities", [])
-            for slice_ in capability.get("slices", [])
-            for task in slice_.get("tasks", [])
-            if task.get("status") in {"IN_PROGRESS", "REVIEW"} and isinstance(task.get("experience_change"), dict)
-        ]
-        if len(active) == 1 and isinstance(active[0].get("base_sha"), str):
-            candidate = resolve_commit(repo, active[0]["base_sha"])
-            if candidate != head and is_ancestor(repo, candidate, head):
-                return candidate
-    except UnicodeDecodeError, ValueError, yaml.YAMLError:
-        pass
+    except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
+        raise ValueError(f"cannot select UI change base from the authoritative backlog: {exc}") from exc
+    active = [
+        task
+        for capability in backlog.get("capabilities", [])
+        for slice_ in capability.get("slices", [])
+        for task in slice_.get("tasks", [])
+        if task.get("status") in {"IN_PROGRESS", "REVIEW"} and isinstance(task.get("experience_change"), dict)
+    ]
+    if len(active) > 1:
+        identities = sorted(str(task.get("id")) for task in active)
+        raise ValueError(f"ambiguous active UI experience tasks; supply an explicit immutable base: {identities}")
+    if len(active) == 1:
+        raw_base = active[0].get("base_sha")
+        if not isinstance(raw_base, str) or not re.fullmatch(r"[0-9a-f]{40}", raw_base):
+            raise ValueError(f"active UI experience task {active[0].get('id')} lacks a canonical base_sha")
+        candidate = resolve_commit(repo, raw_base)
+        if candidate == head or not is_ancestor(repo, candidate, head):
+            raise ValueError(f"active UI experience task {active[0].get('id')} has an invalid base_sha range")
+        return candidate
     return f"{head_ref}^"
 
 
@@ -364,6 +408,10 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
     if len(contract_paths) != 1:
         errors.append(f"exactly one changed UI evidence contract is required; found {contract_paths}")
         return report
+    try:
+        errors.extend(implementation_object_errors(repo, base, head, ui_files))
+    except ValueError as exc:
+        errors.append(str(exc))
     protected_changes = sorted(changed & GATE_CONTROL_PATHS)
     if protected_changes:
         errors.append(
@@ -447,6 +495,10 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         }
         if experience != expected_experience:
             errors.append("task experience_change must exactly match the UI evidence lineage")
+        if task.get("status") not in {"IN_PROGRESS", "REVIEW"}:
+            errors.append("UI evidence task must be active in IN_PROGRESS or REVIEW state")
+        if task.get("base_sha") != base:
+            errors.append("UI evidence task base_sha must exactly equal the validated change base")
         implementation_identity = str(contract["implementationAgent"]).split(":", 1)[1]
         if task.get("owner") != implementation_identity:
             errors.append("UI evidence implementationAgent must identify the claimed task owner")
@@ -496,6 +548,11 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
             errors.append(f"{kind} must use the unchanged approved reference from the base commit")
         if reference_changed:
             errors.append(f"{kind} cannot modify the governed UI reference")
+        if kind == "defect-restoration" and task is not None and task.get("review_gate") != "human-and-agent-review":
+            errors.append(
+                "defect restoration requires human-and-agent-review to classify the change until governed "
+                "implementation-conformance evidence is installed"
+            )
 
     report["ok"] = not errors
     return report
@@ -508,8 +565,11 @@ def main() -> int:
     parser.add_argument("--head", default="HEAD")
     args = parser.parse_args()
     repo = args.repo.resolve()
-    base = args.base or automatic_base(repo, args.head)
-    result = validate(repo, base, args.head)
+    try:
+        base = args.base or automatic_base(repo, args.head)
+        result = validate(repo, base, args.head)
+    except ValueError as exc:
+        result = {"ok": False, "base": args.base, "head": args.head, "errors": [str(exc)]}
     print(json.dumps(result, indent=2, ensure_ascii=False, sort_keys=True))
     return 0 if result["ok"] else 1
 

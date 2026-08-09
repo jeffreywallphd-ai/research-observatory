@@ -122,6 +122,10 @@ class BacklogSchemaTests(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, r"experience_change\.implementation_agent"):
             self.load_copy(data)
 
+        task["experience_change"]["implementation_agent"] = "agent:codex."
+        with self.assertRaisesRegex(SystemExit, r"experience_change\.implementation_agent"):
+            self.load_copy(data)
+
     def test_slice_id_must_remain_in_capability_namespace(self) -> None:
         data = copy.deepcopy(self.canonical)
         capability = data["capabilities"][0]
