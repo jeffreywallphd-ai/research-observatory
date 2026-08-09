@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: a20787df46af8ddd69ec34814a9c49c2bb70b38d2fdc2050889cc567f19fa12a
+source_sha256: ef607ea5107e7f1b0fc87ee9cea9f43236b0ca8253107436987cbf0de709819a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -47,7 +47,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 301 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 18 |
 | `DEFERRED` | 36 |
 
@@ -97,4 +97,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-00.S06.T04` Implement UI implementation-conformance verification | `IN_PROGRESS` | codex | `codex/cap-00-delivery-foundation` |
+| `CAP-00.S06.T04` Implement UI implementation-conformance verification | `REVIEW` | codex | `codex/cap-00-delivery-foundation` |
