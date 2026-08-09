@@ -9,6 +9,7 @@
     "pnpm": "11.20.0"
   },
   "scripts": {
+    "dev": "pnpm --dir apps/desktop dev",
     "verify:foundation": "python tools/verify.py --profile foundation"
   }
 }
