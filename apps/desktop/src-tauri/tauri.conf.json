@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Research Observatory",
+  "version": "0.1.0",
+  "identifier": "org.researchobservatory.desktop",
+  "build": {
+    "beforeBuildCommand": "pnpm build",
+    "beforeDevCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Research Observatory",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 720,
+        "minHeight": 450,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "capabilities": ["main-window"],
+      "csp": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src ipc: http://ipc.localhost; font-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+      "freezePrototype": true
+    },
+    "withGlobalTauri": false
+  },
+  "bundle": {
+    "active": false,
+    "targets": "all"
+  }
+}
