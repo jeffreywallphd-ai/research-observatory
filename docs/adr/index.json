@@ -40,7 +40,7 @@
       "id": "ADR-0004",
       "path": "docs/adr/ADR-0004-govern-desktop-ui-conformance-and-visual-baselines.md",
       "title": "Govern desktop UI conformance and visual baselines",
-      "status": "Proposed",
+      "status": "Accepted",
       "linkedTasks": [
         "CAP-00.S06.T04"
       ]

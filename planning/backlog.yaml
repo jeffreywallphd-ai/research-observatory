@@ -1749,12 +1749,12 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/verify.py --profile desktop
       - python tools/taskctl.py validate
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T01:40:40+00:00'
-      updated_at: '2026-08-09T05:12:09+00:00'
-      completed_at: null
+      updated_at: '2026-08-09T05:24:09+00:00'
+      completed_at: '2026-08-09T05:24:09+00:00'
       blocker: null
       implementation_notes: 'Exact clean foundation and desktop profiles pass; criterion evidence 17270a8675c38556297193125a80f895da0f59159e624c507a4bd15d6035f468
         attached for independent human-and-agent review.
@@ -1792,17 +1792,13 @@ capabilities:
         recorded_at: '2026-08-09T05:11:21+00:00'
       review:
         reviewer: agent:descartes
-        result: changes-requested
-        reviewed_at: '2026-08-09T04:52:11+00:00'
-        notes: Final re-review verifies the five original findings, exact current package lineage, merge mutation denial,
-          evidence, and profiles, but the provenance-only legacy exception returns before historical approval-record and baseline-package
-          validation. Narrow it to waive only the ratified original-approval/package equality mismatch and add a malformed-approval/arbitrary-package
-          regression.
+        result: approved
+        reviewed_at: '2026-08-09T05:24:09+00:00'
+        notes: 'Final independent re-review approved c9e0cec/4b72a61: malformed approval and arbitrary package denial, seven-case
+          handoff topology matrix, merge mutation rejection, exact evidence/scope/ancestry, 27 focused tests, and 23-command
+          desktop aggregate with 143 foundation and 15 desktop tests all pass; no required findings remain.'
       base_sha: 8c5ef326c43b92de1104718798aa5acee362f905
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-09T04:52:11+00:00'
-        expires_at: '2026-08-09T12:52:11+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
