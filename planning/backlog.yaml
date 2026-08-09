@@ -1860,7 +1860,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S03.T02
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-01.S01.T01
       capability_id: CAP-01
@@ -1887,11 +1887,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T06:53:20+00:00'
-      updated_at: '2026-08-09T07:56:02+00:00'
+      updated_at: '2026-08-09T08:02:53+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Offline Tauri/React shell, approved-reference application activation, exact manifests, Windows
@@ -1903,15 +1903,16 @@ capabilities:
         commit: 79f8603492d5e593c76293dea66885ae6e010223
         recorded_at: '2026-08-09T07:55:27+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:descartes
+        result: changes-requested
+        reviewed_at: '2026-08-09T08:02:53+00:00'
+        notes: CSP allowlist misses WebSocket/alternate schemes and prefix confusion; application source/output manifest hashing
+          is vulnerable to mutation after read. Exact scope/evidence/native/UI checks otherwise verified.
       base_sha: 1a8347f2b6e9c6706d6c5c63af401c36e5d5060d
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-09T06:53:20+00:00'
-        expires_at: '2026-08-09T14:53:20+00:00'
+        claimed_at: '2026-08-09T08:02:53+00:00'
+        expires_at: '2026-08-09T16:02:53+00:00'
       experience_change:
         kind: approved-reference-implementation
         contract_path: artifacts/evidence/ui-change/CAP-01.S01.T01.json
@@ -1921,7 +1922,7 @@ capabilities:
         reference_approval_commit: 7e625150c57f518327d8dcce430371902ecaed10
         previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.2
         implementation_agent: agent:codex
-      verification_state: passed
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
