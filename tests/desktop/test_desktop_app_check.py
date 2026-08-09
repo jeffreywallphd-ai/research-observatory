@@ -10,7 +10,13 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from desktop_app_check import command_plan, design_system_errors, runtime_frame_errors, security_errors  # noqa: E402
+from desktop_app_check import (  # noqa: E402
+    command_plan,
+    design_system_errors,
+    runtime_frame_errors,
+    security_errors,
+    tool_environment,
+)
 
 
 class DesktopAppCheckTests(unittest.TestCase):
@@ -46,6 +52,7 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(any("pnpm" in command and "build" in command for command in rendered))
         self.assertTrue(any("clippy" in command and "--locked" in command for command in rendered))
         self.assertTrue(any("cargo.exe test" in command and "--locked" in command for command in rendered))
+        self.assertEqual("true", tool_environment(REPO)[0]["CI"])
 
     def test_external_development_url_and_privilege_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

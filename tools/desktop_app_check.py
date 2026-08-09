@@ -294,6 +294,7 @@ def tool_environment(repo: Path) -> tuple[dict[str, str], Path, Path]:
         if not path.is_file():
             raise ValueError(f"pinned desktop tool is unavailable: {path.relative_to(repo).as_posix()}")
     environment = os.environ.copy()
+    environment["CI"] = "true"
     environment["PATH"] = os.pathsep.join((str(node_root), str(cargo.parent), environment.get("PATH", "")))
     environment["COREPACK_HOME"] = str(repo / ".local" / "toolchains" / "corepack")
     environment["CARGO_HOME"] = str(cargo_root)
