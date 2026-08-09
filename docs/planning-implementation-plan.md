@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7229f5f04e33f3f22c33d366d32a543d3cca2e983b28ed9768101b995782cf7b
+source_sha256: d446ca1f82ec52a5b26e87492b00342d900b0d275a89e9b8eb63de119f14f6c2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -955,15 +955,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-00.S01.T03`, `CAP-00.S03.T02`
 
-#### - [ ] CAP-01.S01.T01 - Bootstrap the Tauri 2 and React/TypeScript desktop application
+#### - [x] CAP-01.S01.T01 - Bootstrap the Tauri 2 and React/TypeScript desktop application
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-00.S01.T03`, `CAP-00.S03.T02`
 
-**Owner / review:** codex / agent:descartes (`changes-requested`)
+**Owner / review:** codex / agent:descartes (`approved`)
 
 **Objective:** Runnable desktop package with strict TypeScript, routing, application state, and development/build commands.
 
@@ -990,7 +990,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S01.T02 - Implement the primary application frame and workspace routing
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `low`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `low`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
