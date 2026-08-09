@@ -1860,7 +1860,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S03.T02
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-01.S01.T01
       capability_id: CAP-01
@@ -2090,13 +2090,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
+      status: APPROVED
       reviewer: agent:maxwell
-      reviewed_at: '2026-08-09T11:50:03+00:00'
+      reviewed_at: '2026-08-09T11:53:55+00:00'
       evidence:
       - artifacts\evidence\CAP-01.S01.integration.review-fix-3.json
-      notes: Pinned the exact reviewed baseline SHA and p95 values, rejected non-finite/tampered baselines, and revalidated
-        the clean benchmark at 024ae82.
+      notes: Approved after exact local-request denial, immutable SHA/p95 performance anchors, finite-number validation, fresh
+        clean benchmark, and the complete archived 25-command desktop profile.
   - id: CAP-01.S02
     title: Desktop design system and accessibility foundation
     outcome: Reusable components express status, provenance, evidence, uncertainty, and human decision states consistently.
@@ -2108,7 +2108,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-01.S01.T01
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-01.S02.T01
       capability_id: CAP-01
@@ -2137,11 +2137,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-09T11:53:55+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

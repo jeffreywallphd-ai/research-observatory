@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5524a7454dd8378887a6dde7de6e3ab8eb611b26288aff0082c4ee98234d0eec
+source_sha256: 6e6b72e3b89bf726260bedfc5d6246df7b3473b72bf53191fdab0083044f0eb6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -41,16 +41,15 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `APPROVED` | 6 |
+| `APPROVED` | 7 |
 | `PENDING` | 110 |
-| `REVIEW` | 1 |
 
 ### Task state
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 297 |
-| `READY` | 1 |
+| `NOT_STARTED` | 296 |
+| `READY` | 2 |
 | `DONE` | 22 |
 | `DEFERRED` | 36 |
 
@@ -59,7 +58,7 @@ manual_edit: prohibited
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
 | `CAP-00` Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
-| `CAP-01` Windows-first desktop shell and supervised local runtime | `ACTIVE` | `IN_PROGRESS` | 0/5 | 3/15 | - |
+| `CAP-01` Windows-first desktop shell and supervised local runtime | `ACTIVE` | `IN_PROGRESS` | 1/5 | 3/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
 | `CAP-04` Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
