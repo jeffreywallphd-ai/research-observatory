@@ -137,10 +137,12 @@ def implementation_files(repo: Path, roots: list[str]) -> list[str]:
         if not root_path.exists():
             continue
         for directory, child_directories, file_names in os.walk(root_path, followlinks=False, onerror=fail_closed):
-            child_directories[:] = sorted(
-                name for name in child_directories if name not in APPLICATION_EXCLUDED_DIRECTORIES
-            )
             directory_path = Path(directory)
+            child_directories[:] = sorted(
+                name
+                for name in child_directories
+                if directory_path != root_path or name not in APPLICATION_EXCLUDED_DIRECTORIES
+            )
             for name in [*child_directories, *file_names]:
                 candidate = directory_path / name
                 relative = candidate.relative_to(repo).as_posix()
@@ -176,8 +178,10 @@ def inventory_once(repo: Path, root: Path, *, excluded_directories: frozenset[st
         raise error
 
     for directory, child_directories, file_names in os.walk(root, followlinks=False, onerror=fail_closed):
-        child_directories[:] = sorted(name for name in child_directories if name not in excluded_directories)
         directory_path = Path(directory)
+        child_directories[:] = sorted(
+            name for name in child_directories if directory_path != root or name not in excluded_directories
+        )
         for name in [*child_directories, *sorted(file_names)]:
             candidate = directory_path / name
             relative = candidate.relative_to(repo).as_posix()
@@ -218,8 +222,10 @@ def application_inventory_shape(
 
     for root, exclusions in roots:
         for directory, child_directories, file_names in os.walk(root, followlinks=False, onerror=fail_closed):
-            child_directories[:] = sorted(name for name in child_directories if name not in exclusions)
             directory_path = confined_path(repo, Path(directory).relative_to(repo).as_posix())
+            child_directories[:] = sorted(
+                name for name in child_directories if directory_path != root or name not in exclusions
+            )
             directories.add(directory_path)
             for name in [*child_directories, *sorted(file_names)]:
                 candidate = confined_path(repo, (directory_path / name).relative_to(repo).as_posix())
