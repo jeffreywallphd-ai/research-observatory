@@ -33,6 +33,12 @@ ROUTE_RECOVERY_CASES = (
     "%5c/study-design.html",
     "%2f%2fevil.invalid/study-design.html",
     "%68ttps%3A%2F%2Fevil.invalid/study-design.html",
+    "https:evil.invalid/study-design.html",
+    "mailto:user@example.invalid/study-design.html",
+)
+HREF_RECOVERY_CASES = (
+    "https:evil.invalid/study-design.html",
+    "mailto:user@example.invalid/study-design.html",
 )
 
 
@@ -136,6 +142,8 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
     details: dict[str, Any] = {
         "pages": 0,
         "routeRecoveryCases": 0,
+        "hrefRecoveryCases": 0,
+        "workspaceNavigationItems": None,
         "keyboardRail": False,
         "commandFocus": False,
         "requests": [],
@@ -169,6 +177,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 current_workspace = page.locator("body").get_attribute("data-current-workspace")
                 if current_workspace != page_name:
                     errors.append(f"{page_name}: application frame marked current workspace {current_workspace!r}")
+                if page_name == "study-design.html":
+                    navigation_count = page.locator("body").get_attribute("data-navigation-workspaces")
+                    details["workspaceNavigationItems"] = int(navigation_count or "0")
                 if page_errors:
                     errors.append(f"{page_name}: runtime error: {'; '.join(page_errors)}")
                 details["pages"] += 1
@@ -197,6 +208,32 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 if current_workspace != "index.html":
                     errors.append(f"{route_case}: unsafe route recovered to {current_workspace!r}")
                 details["routeRecoveryCases"] += 1
+                page.close()
+            for href_case in HREF_RECOVERY_CASES:
+                page = browser_context.new_page()
+                page_errors = []
+                page.on("pageerror", page_error_collector(page_errors))
+                href_html = (
+                    inline_page(context, "study-design.html")
+                    .replace('href="study-design.html"', f'href="{href_case}"', 1)
+                    .replace("</body>", f'<script type="module">{runtime}</script></body>')
+                )
+                page_url = "http://tauri.localhost/study-design.html"
+                documents[page_url] = href_html
+                page.goto(page_url, wait_until="load")
+                page.wait_for_function("document.body.dataset.applicationFrame === 'ready'", timeout=5_000)
+                unsafe_anchor = page.locator(f'aside.sidebar a.nav-item[href="{href_case}"]').first
+                if unsafe_anchor.get_attribute("aria-current") == "page":
+                    errors.append(f"{href_case}: external-looking href was marked as the current local workspace")
+                unsafe_anchor.focus()
+                before_focus = page.evaluate("document.activeElement?.getAttribute('href')")
+                page.keyboard.press("ArrowDown")
+                after_focus = page.evaluate("document.activeElement?.getAttribute('href')")
+                if after_focus != before_focus:
+                    errors.append(f"{href_case}: external-looking href remained in keyboard navigation")
+                if page_errors:
+                    errors.append(f"{href_case}: runtime error: {'; '.join(page_errors)}")
+                details["hrefRecoveryCases"] += 1
                 page.close()
         except (OSError, PlaywrightError, ValueError) as exc:
             errors.append(f"desktop built-runtime browser check failed: {exc}")

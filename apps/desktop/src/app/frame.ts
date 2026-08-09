@@ -59,13 +59,12 @@ export function installApplicationFrame(documentRoot: Document, currentRoute: De
     });
   };
   documentRoot.body.dataset.navigationWorkspaces = String(navigationItems().length);
-  const localAnchors = [...documentRoot.querySelectorAll<HTMLAnchorElement>("a[href]")].filter(
-    (anchor) => routeFromNavigationHref(anchor.getAttribute("href")) !== null,
-  );
-  for (const anchor of localAnchors) {
-    if (routeFromNavigationHref(anchor.getAttribute("href")) === currentRoute) {
+  const anchors = [...documentRoot.querySelectorAll<HTMLAnchorElement>("a[href]")];
+  for (const anchor of anchors) {
+    const route = routeFromNavigationHref(anchor.getAttribute("href"));
+    if (route === currentRoute) {
       anchor.setAttribute("aria-current", "page");
-    } else if (anchor.getAttribute("aria-current") === "page") {
+    } else if (route === null || anchor.getAttribute("aria-current") === "page") {
       anchor.removeAttribute("aria-current");
     }
   }

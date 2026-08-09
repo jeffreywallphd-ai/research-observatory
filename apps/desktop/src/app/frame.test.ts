@@ -38,6 +38,8 @@ describe("application frame", () => {
     expect(routeFromNavigationHref("/%5c/study-design.html")).toBeNull();
     expect(routeFromNavigationHref("/%2f%2fevil.invalid/study-design.html")).toBeNull();
     expect(routeFromNavigationHref("/%68ttps%3A%2F%2Fevil.invalid/study-design.html")).toBeNull();
+    expect(routeFromNavigationHref("https:evil.invalid/study-design.html")).toBeNull();
+    expect(routeFromNavigationHref("mailto:user@example.invalid/study-design.html")).toBeNull();
     expect(routeFromNavigationHref("unknown.html")).toBeNull();
   });
 });
