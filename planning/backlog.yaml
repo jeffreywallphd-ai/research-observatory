@@ -1887,11 +1887,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-09T06:41:32+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/cap-01-desktop-shell
+      started_at: '2026-08-09T06:53:20+00:00'
+      updated_at: '2026-08-09T06:53:20+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -1901,10 +1901,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 1a8347f2b6e9c6706d6c5c63af401c36e5d5060d
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-09T06:53:20+00:00'
+        expires_at: '2026-08-09T14:53:20+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
     - id: CAP-01.S01.T02
