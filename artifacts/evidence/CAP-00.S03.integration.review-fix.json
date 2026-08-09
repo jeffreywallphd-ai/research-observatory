@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-00.S03",
+  "stateCommit": "2ffbdeeb622757b09c0d02e7c8114617d1c3733a",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S03.integration.json",
+    "sha256": "155d44629dc984988483b8efe4cf2504798f801c44e339e34274fef9a01eafa4",
+    "reason": "The original integration record predated later immutable review-fix attachments for T02 and T03. This record binds their current canonical bytes and requalifies the integrated slice after the capability security review."
+  },
+  "outcome": "Every task can invoke consistent, composable verification profiles locally and in CI, with fail-closed supply-chain policy and immutable current evidence bindings.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-00.S03.T01",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-00.S03.T01.json",
+          "sha256": "1d9977d6f9b526d000d560291dbd5ce86faa0c55c741139dde6cdd4e66e152c1"
+        }
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-00.S03.T02",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-00.S03.T02.json",
+          "sha256": "6073e80a4362a7688fbf9e3c478259fa789ea5e411b508cb55db7ebd2a9f22c6"
+        },
+        {
+          "path": "artifacts/evidence/CAP-00.S03.T02.review-fix.json",
+          "sha256": "1c3f2e26e7f5d8a678d02a4001ca4883e2a8af8d69a9c09b61fee6636f5e8cf7"
+        }
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-00.S03.T03",
+      "evidence": [
+        {
+          "path": "artifacts/evidence/CAP-00.S03.T03.json",
+          "sha256": "3e137f48d93bc282573d40f33c0c0fd90ee17f2e45ce4e6d7de5d1e0f0f9d89b"
+        },
+        {
+          "path": "artifacts/evidence/CAP-00.S03.T03.review-fix.json",
+          "sha256": "44327b2c7ace55114775ad16fd5c61978d9f1ed5fa879e3ad73a5ed51f9bd991"
+        }
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile security-local",
+      "exitCode": 0,
+      "result": "At exact clean commit 2ffbdee, the composed security-local profile passed in 282.6 seconds with 144 foundation tests, 20 security tests, 38 packages, 37 normalized findings, and zero blockers."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile desktop",
+      "exitCode": 0,
+      "result": "At the same exact clean commit, the 23-command desktop profile passed in 404.32 seconds with 144 foundation tests and 15 desktop tests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "All 14 lifecycle tests passed, including the regression allowing a paused capability-review remediation to resume after every slice is already approved while rejecting other no-slice resumptions."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py validate; .venv\\Scripts\\python.exe tools/backlog_views.py --check",
+      "exitCode": 0,
+      "result": "The authoritative 20-capability, 117-slice, 356-task, 12-gate ledger and both generated planning views validate exactly."
+    }
+  ],
+  "reviewFixes": [
+    "The current T02 and T03 review-fix evidence SHA-256 values replace the stale pre-remediation values without modifying the original integration record.",
+    "License handling now rejects OR, WITH, symbolic operators, parentheses, and mixed or malformed compound expressions before permissive category fallback; strict AND is accepted only when every component is individually allowlisted.",
+    "The capability campaign can be resumed through taskctl for an independently requested capability-level remediation after all slices are approved; the gate remains state- and reviewer-bound."
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "Hosted GitHub Actions execution remains unverified until a remote push is separately authorized; the pinned workflow contract and every local hosted-command equivalent pass."
+    ]
+  }
+}

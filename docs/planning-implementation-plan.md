@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 98222c728ab71b12c11d33d2a74359807bcda0ce2aeb83beec20f82cf9fe6045
+source_sha256: 454b94cccd57d90b623de4b5073940b52e705a99f4787f292cc63f50c4d5d459
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -245,7 +245,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-00 - Delivery foundation and Codex execution system
 
-**Campaign / completion:** `ACTIVE` / `IN_PROGRESS`
+**Campaign / completion:** `REVIEW` / `REVIEW`
 
 **Objective:** Create a reproducible repository, architecture and approved-experience guardrails, validation system, and machine-readable backlog that make small AI-authored changes safe and reviewable.
 

@@ -1816,7 +1816,7 @@ capabilities:
         taskctl/views, exact 54-file package, and all design-first/conformance boundaries pass.'
   execution_mode: capability_campaign
   campaign:
-    status: ACTIVE
+    status: REVIEW
     owner: codex
     branch: codex/cap-00-delivery-foundation
     worktree: C:/workspace/research-observatory
@@ -1824,21 +1824,17 @@ capabilities:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-08T15:46:15+00:00'
-    updated_at: '2026-08-09T06:23:21+00:00'
+    updated_at: '2026-08-09T06:33:10+00:00'
     pause_reason: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-09T06:23:21+00:00'
-      expires_at: '2026-08-10T06:23:21+00:00'
+    lease: null
   completion:
-    status: IN_PROGRESS
+    status: REVIEW
     reviewer: agent:descartes
     reviewed_at: '2026-08-09T06:18:21+00:00'
     evidence:
-    - artifacts/evidence/CAP-00.capability.json
-    notes: 'Required: supersede stale CAP-00.S03 integration hashes for T02/T03 review-fix manifests and update capability
-      binding; reject permissive-category OR/WITH/symbolic/mixed/malformed SPDX expressions before category fallback. All
-      other 19-task/42-manifest, profile, exit-criterion, G0, and residual checks pass.'
+    - artifacts/evidence/CAP-00.capability.review-fix.json
+    notes: 'Remediation resubmission: superseding S03 evidence binds the current T02/T03 review-fix hashes; unsupported OR/WITH/symbolic/mixed
+      license expressions fail closed; exact clean security-local and desktop profiles pass at 2ffbdee.'
 - id: CAP-01
   title: Windows-first desktop shell and supervised local runtime
   objective: Deliver the canonical Windows-first desktop experience and a reliably packaged local analytical service that
