@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 54eff387f29f22d8777c19642f4e6c7321e2b3d16cd8d86c18a1234d0b019afe
+source_sha256: 8f8542a41bb87562dc68a76175bca7f6e36d28668b2ef45078190e31e474d08d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -949,7 +949,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A production-shaped desktop shell provides navigation, project selection, commands, and application state.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -957,13 +957,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S01.T01 - Bootstrap the Tauri 2 and React/TypeScript desktop application
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-00.S01.T03`, `CAP-00.S03.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:descartes (`changes-requested`)
 
 **Objective:** Runnable desktop package with strict TypeScript, routing, application state, and development/build commands.
 
