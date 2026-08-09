@@ -28,6 +28,8 @@
 .ro-notification, .ro-panel { padding: var(--space-4); color: var(--text-default); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-md); }
 .ro-notification { display: grid; gap: var(--space-2); border-left-width: var(--space-1); }
 .ro-status-badge { display: inline-flex; align-items: center; min-height: var(--space-6); padding: 0 var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-pill); color: var(--text-default); background: var(--neutral-soft); font: 650 var(--text-xs) / var(--leading-normal) var(--font-sans); }
+.ro-evidence-state, .ro-uncertainty-state { display: inline-flex; align-items: center; min-height: var(--space-6); padding: 0 var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); color: var(--text-default); background: var(--neutral-soft); font: 650 var(--text-xs) / var(--leading-normal) var(--font-sans); }
+.ro-uncertainty-state { border-style: dashed; }
 [data-tone="info"] { --ro-tone: var(--info); --ro-tone-soft: var(--info-soft); --ro-tone-border: var(--info-border); }
 [data-tone="success"] { --ro-tone: var(--success); --ro-tone-soft: var(--success-soft); --ro-tone-border: var(--success-border); }
 [data-tone="warning"] { --ro-tone: var(--warning); --ro-tone-soft: var(--warning-soft); --ro-tone-border: var(--warning-border); }
@@ -42,5 +44,11 @@
 .ro-panel[data-evidence-state="disputed"] { border-inline-start-color: var(--state-disputed); }
 .ro-panel[data-evidence-state="adjudicated"] { border-inline-start-color: var(--state-adjudicated); }
 .ro-panel[data-evidence-state="stale"] { border-inline-start-color: var(--state-stale); }
+.ro-evidence-state[data-evidence-state="observed"] { border-inline-start-color: var(--state-observed); }
+.ro-evidence-state[data-evidence-state="extracted"] { border-inline-start-color: var(--state-extracted); }
+.ro-evidence-state[data-evidence-state="inferred"] { border-inline-start-color: var(--state-inferred); }
+.ro-evidence-state[data-evidence-state="verified"] { border-inline-start-color: var(--state-verified); }
+.ro-evidence-state[data-evidence-state="disputed"] { border-inline-start-color: var(--state-disputed); }
+.ro-evidence-state[data-evidence-state="adjudicated"] { border-inline-start-color: var(--state-adjudicated); }
+.ro-evidence-state[data-evidence-state="stale"] { border-inline-start-color: var(--state-stale); }
 @media (prefers-reduced-motion: no-preference) { .ro-button { transition: background var(--transition-fast), border-color var(--transition-fast); } }
-
