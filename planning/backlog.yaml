@@ -2146,12 +2146,12 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T11:54:57+00:00'
-      updated_at: '2026-08-09T13:51:48+00:00'
-      completed_at: null
+      updated_at: '2026-08-09T13:54:40+00:00'
+      completed_at: '2026-08-09T13:54:40+00:00'
       blocker: null
       implementation_notes: 'Academic Minimal token/component contracts, catalog, ADR, boundary tests, UI lineage, application
         checks, and full desktop profile pass at 5c8dbac.
@@ -2179,16 +2179,12 @@ capabilities:
         recorded_at: '2026-08-09T13:51:40+00:00'
       review:
         reviewer: agent:maxwell
-        result: changes-requested
-        reviewed_at: '2026-08-09T13:44:04+00:00'
-        notes: 'Generated-directory exclusions are depth-insensitive: nested authored src/target files evade implementation
-          and application-manifest inventories; restrict exclusions to canonical root-level generated locations and regress
-          activation/inventory binding.'
+        result: approved
+        reviewed_at: '2026-08-09T13:54:40+00:00'
+        notes: Independent final review closed all original and nested-inventory findings; exact evidence/provenance, 17 focused
+          tests, 33 desktop tests, nine-command application report, and live UI gate pass.
       base_sha: 949296e1308a6a7528634a72ed0f9ac39c55d756
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-09T13:44:04+00:00'
-        expires_at: '2026-08-09T21:44:04+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
@@ -2219,11 +2215,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-09T13:54:40+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

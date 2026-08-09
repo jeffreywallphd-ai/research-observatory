@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0ada10750eadadc808cc100c90b150da77b2080499cbd4dcfd163283f40576cb
+source_sha256: e7a8a5abdbd17f945dce3c39488c7574bcaa1f86787465657ea9e400f4fa1881
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1060,15 +1060,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-01.S01.T01`
 
-#### - [ ] CAP-01.S02.T01 - Implement design tokens and core components
+#### - [x] CAP-01.S02.T01 - Implement design tokens and core components
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S01.T01`, `CAP-00.S06.T04`
 
-**Owner / review:** codex / agent:maxwell (`changes-requested`)
+**Owner / review:** codex / agent:maxwell (`approved`)
 
 **Objective:** Versioned typography, spacing, color, icon, form, table, dialog, notification, badge, and panel components.
 
@@ -1095,7 +1095,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T02 - Establish keyboard, focus, and screen-reader behavior
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
