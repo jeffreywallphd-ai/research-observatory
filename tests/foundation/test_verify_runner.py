@@ -110,7 +110,7 @@ class VerificationRunnerTests(unittest.TestCase):
             self.assertEqual(0, exit_code)
             self.assertEqual(6, len(seen))
             self.assertEqual(
-                ["desktop:unit"],
+                ["desktop:application", "desktop:unit"],
                 [item["command"] for item in report["skippedOptionalCommands"]],
             )
 
