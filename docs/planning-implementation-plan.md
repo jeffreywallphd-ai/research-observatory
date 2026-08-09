@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1e951a552929f6f3eb429966a592340134382d29d5ede7c52fac7d158256c7bd
+source_sha256: 1b9e0796c67aac5f1774167f9ead5f33c9f60755bd7e14a709f056c12684a627
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -868,7 +868,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S06.T03 - Implement design-first change gating
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
