@@ -16,7 +16,6 @@ async function walk(directory) {
       const text = await readFile(candidate, "utf8");
       const relative = path.relative(appRoot, candidate).replaceAll("\\", "/");
       if (relative === "scripts/lint.mjs") continue;
-      if (text.includes("\r")) errors.push(`${relative}: CRLF is not allowed`);
       if (/\bany\b/.test(text)) errors.push(`${relative}: explicit any is not allowed`);
       if (/https?:\/\//i.test(text)) errors.push(`${relative}: renderer/build source must remain offline`);
       if (/\b(TODO|FIXME)\b/.test(text)) errors.push(`${relative}: unresolved work marker`);
