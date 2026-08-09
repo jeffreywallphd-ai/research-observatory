@@ -101,6 +101,14 @@ APPLICATION_ACTIVATION_PATHS = frozenset(
         "verification-profiles.json",
     }
 )
+APPLICATION_INVENTORY_HARDENING_ENVELOPE = frozenset(
+    {
+        "tests/desktop/test_ui_conformance.py",
+        "tests/foundation/test_ui_change_gate.py",
+        "tools/ui_change_gate.py",
+        "tools/ui_conformance.py",
+    }
+)
 REVIEW_HARDENING_ENVELOPES = frozenset(
     {
         frozenset(
@@ -113,14 +121,7 @@ REVIEW_HARDENING_ENVELOPES = frozenset(
                 "tools/ui_conformance.py",
             }
         ),
-        frozenset(
-            {
-                "tests/desktop/test_ui_conformance.py",
-                "tests/foundation/test_ui_change_gate.py",
-                "tools/ui_change_gate.py",
-                "tools/ui_conformance.py",
-            }
-        ),
+        APPLICATION_INVENTORY_HARDENING_ENVELOPE,
         frozenset({"tests/foundation/test_ui_change_gate.py", "tools/ui_change_gate.py"}),
     }
 )

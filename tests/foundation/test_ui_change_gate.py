@@ -15,10 +15,26 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from ui_change_gate import automatic_base, independent_review_hardening_errors, validate  # noqa: E402
+from ui_change_gate import (  # noqa: E402
+    APPLICATION_INVENTORY_HARDENING_ENVELOPE,
+    automatic_base,
+    independent_review_hardening_errors,
+    validate,
+)
 
 
 class UiChangeGateTests(unittest.TestCase):
+    def test_application_inventory_hardening_uses_the_exact_reviewed_envelope(self) -> None:
+        self.assertEqual(
+            {
+                "tests/desktop/test_ui_conformance.py",
+                "tests/foundation/test_ui_change_gate.py",
+                "tools/ui_change_gate.py",
+                "tools/ui_conformance.py",
+            },
+            APPLICATION_INVENTORY_HARDENING_ENVELOPE,
+        )
+
     def test_post_implementation_hardening_requires_independent_changes_requested_record(self) -> None:
         paths = {
             "tests/desktop/test_desktop_app_check.py",

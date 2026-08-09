@@ -17,8 +17,10 @@ REFERENCE = REPO / "design" / "ui-reference"
 sys.path.insert(0, str(REPO / "tools"))
 
 from ui_conformance import (  # noqa: E402
+    APPLICATION_EXCLUDED_DIRECTORIES,
     Context,
     application_inventory_guard,
+    application_inventory_shape,
     approval_lineage_errors,
     approval_record_errors,
     baseline_document_errors,
@@ -118,10 +120,44 @@ class UiConformanceTests(unittest.TestCase):
                 generated = package / directory / "dependency.tsx"
                 generated.parent.mkdir(parents=True)
                 generated.write_text("export const Dependency = () => null;\n", encoding="utf-8", newline="\n")
+                authored = package / "src" / directory / "Attack.tsx"
+                authored.parent.mkdir(parents=True)
+                authored.write_text("export const Attack = () => null;\n", encoding="utf-8", newline="\n")
 
             observed = implementation_files(root, ["packages/ui-components"])
 
-        self.assertEqual(["packages/ui-components/src/index.tsx"], observed)
+        self.assertEqual(
+            [
+                "packages/ui-components/src/dist/Attack.tsx",
+                "packages/ui-components/src/index.tsx",
+                "packages/ui-components/src/node_modules/Attack.tsx",
+                "packages/ui-components/src/target/Attack.tsx",
+            ],
+            observed,
+        )
+
+    def test_application_inventory_excludes_only_canonical_root_generated_directories(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            application = root / "apps" / "desktop"
+            expected: list[str] = []
+            for directory in ("node_modules", "dist", "target"):
+                generated = application / directory / "dependency.tsx"
+                generated.parent.mkdir(parents=True, exist_ok=True)
+                generated.write_text("export const Dependency = () => null;\n", encoding="utf-8", newline="\n")
+                authored = application / "src" / directory / "Attack.tsx"
+                authored.parent.mkdir(parents=True, exist_ok=True)
+                authored.write_text("export const Attack = () => null;\n", encoding="utf-8", newline="\n")
+                expected.append(authored.relative_to(root).as_posix())
+
+            observed = file_inventory(root, application, excluded_directories=APPLICATION_EXCLUDED_DIRECTORIES)
+            held_files, _ = application_inventory_shape(
+                root,
+                ((application, APPLICATION_EXCLUDED_DIRECTORIES),),
+            )
+
+        self.assertEqual(sorted(expected), sorted(observed))
+        self.assertEqual(sorted(expected), sorted(path.relative_to(root).as_posix() for path in held_files))
 
     def test_application_mode_requires_a_bound_build_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
