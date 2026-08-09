@@ -1753,7 +1753,7 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T01:40:40+00:00'
-      updated_at: '2026-08-09T04:52:11+00:00'
+      updated_at: '2026-08-09T05:11:21+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Exact clean foundation and desktop profiles pass; criterion evidence 17270a8675c38556297193125a80f895da0f59159e624c507a4bd15d6035f468
@@ -1782,6 +1782,11 @@ capabilities:
         sha256: 0098b7a08c7dc44644e90bae3ef96f57b2471bb30a26337a11a58395868d9dc9
         commit: cf4f521e8e362061afb94245986c7bb6203852b2
         recorded_at: '2026-08-09T04:41:56+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S06.T04.review-fix-3.json
+        sha256: 0d487cda388162a706de637160d75ba252cfcc9a17dd49b214b4917cfd33d0e5
+        commit: c9e0cec2bc295188353db3b7cf34d609c199805b
+        recorded_at: '2026-08-09T05:11:21+00:00'
       review:
         reviewer: agent:descartes
         result: changes-requested
@@ -1795,7 +1800,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-09T04:52:11+00:00'
         expires_at: '2026-08-09T12:52:11+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral
