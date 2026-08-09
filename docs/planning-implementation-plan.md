@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c9a4e9f24a52e1a5502345e847bb8799352c80bc6bd086dc283e01f05644062d
+source_sha256: 2d9c1620566369da736e7bb3a2b9c8914a85b26b086f684ccc77f1c1986d3b1f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -898,15 +898,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S06.T03.json` at `5ef232e641d6ad4999a6b7c7c31315ad758820cb`
 - `artifacts/evidence/CAP-00.S06.T03.review-fix.json` at `b12a715287bceec8c6f36405409a1db1b119f080`
 
-#### - [ ] CAP-00.S06.T04 - Implement UI implementation-conformance verification
+#### - [x] CAP-00.S06.T04 - Implement UI implementation-conformance verification
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
 **Dependencies:** `CAP-00.S06.T03`
 
-**Owner / review:** codex / agent:descartes (`changes-requested`)
+**Owner / review:** codex / agent:descartes (`approved`)
 
 **Objective:** Compare the application against approved tokens, routes/page contracts, use-case workflows, navigation behavior, accessibility rules, responsive states, and visual baselines.
 

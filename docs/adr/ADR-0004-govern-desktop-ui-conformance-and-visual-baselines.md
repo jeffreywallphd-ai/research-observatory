@@ -1,7 +1,7 @@
 ---
 id: ADR-0004
 title: Govern desktop UI conformance and visual baselines
-status: Proposed
+status: Accepted
 date: 2026-08-08
 deciders:
   - CAP-00 approved plan and CAP-00.S06.T04 independent review
