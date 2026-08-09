@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-01.S01",
+  "stateCommit": "6d69c499c61e698a32281b667f2612884c6bc890",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S01.integration.json",
+    "sha256": "df6ea1ba86d6af47f2579bf93bb2529cbb71274b5b2fb7fbf550c885c5c699ab",
+    "reason": "The original integration record did not include the performance measurements required by the approved CAP-01.S01 plan. This record adds a commit-bound production-bundle benchmark and requalifies the complete slice without changing the three independently approved task outcomes."
+  },
+  "outcome": "A production-shaped Windows-first Tauri and React desktop shell launches offline, provides exact approved navigation and command behavior, exposes deterministic recoverable project-selection flows, and satisfies explicit cold-paint and warm-route performance budgets without taking project lifecycle authority from CAP-02.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-01.S01.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S01.T01.json", "sha256": "97b4a77df8568a933035bd3b18d439e7dd2d82c352d29f71ab1201b75b4317a7"},
+        {"path": "artifacts/evidence/CAP-01.S01.T01.review-fix.json", "sha256": "6d21ea97c9251cd9b88e389b40111a099d26570aef5b731866a377c632870154"},
+        {"path": "artifacts/evidence/CAP-01.S01.T01.review-fix-2.json", "sha256": "627d589f236dcec854bc6067f8223a3a82e71d3687be475f98564848d36cf608"},
+        {"path": "artifacts/evidence/CAP-01.S01.T01.review-fix-3.json", "sha256": "03cc445bdbbde0688edcd98f7ce83896f0266a2e6a1ef227effe9088b550325a"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S01.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S01.T02.json", "sha256": "d347d59d73737dbcc1b19beb7d1e7d8cbeb821b0e63d91d9fc0c6a7c8116eae9"},
+        {"path": "artifacts/evidence/CAP-01.S01.T02.review-fix.json", "sha256": "65b3cccbaf824445c377ec9f263cb970249496274dc5b0186424d16c598268a9"},
+        {"path": "artifacts/evidence/CAP-01.S01.T02.review-fix-2.json", "sha256": "70d829eb0fef627bfb95a12183169141be40b55e0e112eda212493586b1b9fa2"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S01.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S01.T03.json", "sha256": "6a90f90d966791c0d062a686e3a13e1c58e079a5e66427dd1be54de91eb800a2"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\CAP-01.S01-performance.json",
+      "exitCode": 0,
+      "result": "At exact clean commit 6d69c49, the production application bundle passed 12 undiscarded repetitions on Windows 11 x64 with Chromium 145. Cold shell first-contentful-paint p95 was 96.000 ms against 2500 ms, warm-route visible-skeleton p95 was 73.033 ms against 150 ms, and warm-route usable p95 was 77.622 ms against 1000 ms. The report records OS build 26200, Intel64 Family 6 Model 183, 20 logical CPUs, 16,984,227,840 physical bytes, Playwright 1.58.0, fixture and runtime hashes, every sample, nearest-rank p50/p95, a 20% future-regression threshold, and zero requests. Report SHA-256: c33c6dab39b3053840526ca3b07cff3eb6e9ff5784eec7964191437398a11130."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S01-integration-review-fix-desktop.json",
+      "exitCode": 0,
+      "result": "At exact clean commit 6d69c49, all 25 desktop-profile commands passed in 479.851 seconds, including 146 foundation tests, 26 desktop tests, 13 renderer tests within the application command, all native commands, the performance gate, 32 routes, 139 browser workflow cases, 390 keyboard cases, 64 responsive cases, and 64 visual captures. Report SHA-256: 9c6de4676f2b34eb2e486978a0f48aceac290e75261d5a25e29c6d5954490312."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . (composed as desktop:application)",
+      "exitCode": 0,
+      "result": "All eight renderer/native commands passed. The production bundle activated 32 pages, six unsafe route recoveries, two unsafe-href exclusions, dynamic keyboard and Ctrl+K behavior, deterministic recent projects, missing-location repair, reload persistence, empty and malformed-preference recovery, failed-write preservation, exact opaque intents, and zero unexpected requests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The authoritative campaign, all eight immutable task evidence records, three DONE task states, three independent task approvals, and generated planning views validate exactly before slice resubmission."
+    }
+  ],
+  "integratedBehavior": [
+    "The repository-pinned Tauri 2, React 19, TypeScript 7, Node, pnpm, and Rust inputs produce a deterministic offline application bundle and locked native build with zero privileged main-window commands and a restrictive local CSP.",
+    "The React runtime progressively activates the approved title bar, project context, command search, navigation rail, and main workspace across all 32 routes; route selection rejects ambiguous encoding, traversal, separators, protocol-relative forms, and scheme-prefixed links.",
+    "Keyboard navigation recomputes visible unique routes, excludes nonlocal anchors, clears stale current-page semantics, and preserves native link activation for canonical local routes; Ctrl+K focuses project search.",
+    "Project selection uses a strict version-1 opaque removed-ID preference record, deterministic ordering, persist-before-hide removal, explicit unavailable-location locate/remove actions, an accessible empty state, and fail-closed open/create intents pending CAP-02 authority.",
+    "Malformed or unsupported preferences are preserved without rewrite while defaults and a recovery notice are shown; unavailable storage preserves visible state and reports an accessible error; default events and diagnostics exclude paths, research content, credentials, and external requests.",
+    "The production bundle now has a standard desktop-profile performance gate with absolute cold-paint and route-interaction budgets plus an exact commit-bound baseline and 20% future-regression threshold."
+  ],
+  "reviewFixes": [
+    "The missing approved-plan performance criterion is now an activation-controlled repository verification command, not an ad hoc timing note.",
+    "Measurements bind the exact clean source commit, production application manifest, runtime, approved reference package, Windows hardware and OS, pinned browser, complete sample distributions, and zero network requests.",
+    "The 2500 ms cold-paint, 150 ms visible-skeleton, and 1000 ms usable-route budgets are enforced without CPU-throttle simulation on the recorded representative Windows x64 workstation; future changes must also remain within 120% of this p95 baseline."
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "Real project validation, creation, and durable lifecycle authority intentionally remain CAP-02 responsibilities; this slice fails closed after emitting opaque user intents.",
+      "Supervised Core sidecar lifecycle and authenticated renderer-to-service connectivity are supplied by CAP-01.S03 and CAP-01.S04 before capability completion.",
+      "Shared production design-system components and formal accessibility primitives are supplied by CAP-01.S02; this slice consumes the already approved Academic Minimal reference directly."
+    ]
+  }
+}
