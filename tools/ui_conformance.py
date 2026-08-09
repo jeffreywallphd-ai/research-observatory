@@ -168,9 +168,9 @@ def file_inventory(repo: Path, root: Path, *, excluded_directories: frozenset[st
 
 def application_build_errors(repo: Path, config: dict[str, Any], target: Path) -> list[str]:
     errors: list[str] = []
-    application_root = confined_path(repo, str(config["applicationRoot"]))
-    manifest_path = confined_path(repo, str(config["applicationManifestPath"]))
     try:
+        application_root = confined_path(repo, str(config["applicationRoot"]))
+        manifest_path = confined_path(repo, str(config["applicationManifestPath"]))
         manifest = json_object(manifest_path)
     except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
         return [f"invalid desktop application manifest: {exc}"]
