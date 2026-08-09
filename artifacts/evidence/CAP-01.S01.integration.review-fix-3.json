@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-01.S01",
+  "stateCommit": "024ae82d7af463772570a036d6e84c40ccd45dd9",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S01.integration.review-fix-2.json",
+    "sha256": "f19b21537158bb77f67ab52d777dc719f59ded66760bd90fec62a80b5360eef5",
+    "reason": "The second remediation closed the original request and self-rebaseline defects but still permitted a committed baseline edit to raise p95 values or use non-finite JSON numbers. This record binds exact baseline SHA/p95 anchors and finite-number denial."
+  },
+  "outcome": "The production Windows desktop shell remains fully qualified, and its performance gate now rejects nonlocal requests, enforces immutable relative and absolute budgets, and cannot launder the reviewed baseline through byte, value, or non-finite-number edits.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-01.S01.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S01.T01.json", "sha256": "97b4a77df8568a933035bd3b18d439e7dd2d82c352d29f71ab1201b75b4317a7"},
+        {"path": "artifacts/evidence/CAP-01.S01.T01.review-fix.json", "sha256": "6d21ea97c9251cd9b88e389b40111a099d26570aef5b731866a377c632870154"},
+        {"path": "artifacts/evidence/CAP-01.S01.T01.review-fix-2.json", "sha256": "627d589f236dcec854bc6067f8223a3a82e71d3687be475f98564848d36cf608"},
+        {"path": "artifacts/evidence/CAP-01.S01.T01.review-fix-3.json", "sha256": "03cc445bdbbde0688edcd98f7ce83896f0266a2e6a1ef227effe9088b550325a"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S01.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S01.T02.json", "sha256": "d347d59d73737dbcc1b19beb7d1e7d8cbeb821b0e63d91d9fc0c6a7c8116eae9"},
+        {"path": "artifacts/evidence/CAP-01.S01.T02.review-fix.json", "sha256": "65b3cccbaf824445c377ec9f263cb970249496274dc5b0186424d16c598268a9"},
+        {"path": "artifacts/evidence/CAP-01.S01.T02.review-fix-2.json", "sha256": "70d829eb0fef627bfb95a12183169141be40b55e0e112eda212493586b1b9fa2"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S01.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S01.T03.json", "sha256": "6a90f90d966791c0d062a686e3a13e1c58e079a5e66427dd1be54de91eb800a2"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_performance_check; .venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "All seven focused performance tests and all governed Python formatting, lint, and strict typing checks pass. Baseline regressions deny p95 2000.0, NaN, positive infinity, altered budgets, altered methodology, extra overrides, and any byte drift from SHA-256 e85f168b4385a640f73bb6d871424e32d29583282fc741e54cb765bda92bac1a."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\CAP-01.S01-performance-fix-2.json",
+      "exitCode": 0,
+      "result": "At exact clean commit 024ae82, 12 undiscarded repetitions pass the exact reviewed baseline and absolute budgets: cold paint p95 96.000 ms <= 115.200/2500 ms, visible skeleton p95 73.472 ms <= 87.640/150 ms, and usable route p95 78.216 ms <= 93.146/1000 ms. Baseline bytes, origin commit, fixture, platform, methodology, samples, current source, and zero unexpected requests are recorded. Report SHA-256: e65a0bcc07e2b64935a76c2559fbb94e10a40640841e354d8eaaccacc1ee2307."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S01-integration-review-fix-2-desktop.json",
+      "exitCode": 0,
+      "result": "The immediately preceding implementation state 890a8ca passed all 25 commands in 483.57 seconds with 146 foundation tests, 29 desktop tests, 32 routes, 139 workflow cases, 390 keyboard cases, 64 responsive cases, and 64 visual captures. Report SHA-256: eee36dce44730cdd3cbb5ed8371b56b2edc15b2a0eec03f2aca91e6938c0bee4. The only production delta afterward is exact baseline anchoring and its focused tests; the independent reviewer explicitly waived another full replay after verifying the archived report and fresh benchmark."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The campaign, approved task evidence, review lineage, remediation state, and generated views validate before resubmission."
+    }
+  ],
+  "integratedBehavior": [
+    "Exact local-origin request denial and immutable 120% p95 thresholds remain enforced independently of the unchanged 2500/150/1000 ms absolute budgets.",
+    "The verifier pins both the complete baseline file SHA-256 and each reviewed 96.000/73.033/77.622 ms p95 value; a future intentional rebaseline requires an explicit code-and-baseline review rather than a data-only edit.",
+    "Baseline numeric inputs must be real finite positive values, strict fields and methodology remain exact, and the origin commit must be an ancestor of the measured source.",
+    "All prior deterministic offline shell, routing, keyboard, project-selection, native-boundary, approved-reference, accessibility, responsive, and visual behavior remains qualified."
+  ],
+  "reviewFixes": [
+    "Pinned the immutable baseline file to exact SHA-256 e85f168b4385a640f73bb6d871424e32d29583282fc741e54cb765bda92bac1a.",
+    "Pinned cold, skeleton, and usable baseline p95 values to 96.000, 73.033, and 77.622 ms respectively.",
+    "Rejected NaN, infinity, nonpositive, nonnumeric, altered, and above-budget baseline values with focused regression coverage."
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "Real project lifecycle authority remains CAP-02; supervised Core and authenticated service connectivity remain CAP-01.S03/S04; shared components remain CAP-01.S02."
+    ]
+  }
+}

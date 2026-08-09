@@ -1860,7 +1860,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S03.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-01.S01.T01
       capability_id: CAP-01
@@ -2090,13 +2090,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:maxwell
       reviewed_at: '2026-08-09T11:50:03+00:00'
       evidence:
-      - artifacts\evidence\CAP-01.S01.integration.review-fix-2.json
-      notes: Pin the exact approved performance baseline hash/p95 values and reject non-finite numeric values so committed
-        baseline edits cannot launder the relative threshold.
+      - artifacts\evidence\CAP-01.S01.integration.review-fix-3.json
+      notes: Pinned the exact reviewed baseline SHA and p95 values, rejected non-finite/tampered baselines, and revalidated
+        the clean benchmark at 024ae82.
   - id: CAP-01.S02
     title: Desktop design system and accessibility foundation
     outcome: Reusable components express status, provenance, evidence, uncertainty, and human decision states consistently.
