@@ -8,9 +8,22 @@
   <body>
     <main data-component-catalog="1.0.0">
       <h1 class="ro-typography ro-typography--page-title">Academic Minimal components</h1>
-      <section class="catalog-grid" aria-label="Semantic states">
+      <section class="catalog-grid" aria-label="Evidence states">
         <article class="ro-panel" data-tone="neutral" data-evidence-state="observed"><h2 class="ro-typography ro-typography--section-title">Observed evidence</h2><p>Directly present in the source.</p></article>
-        <article class="ro-panel" data-tone="violet" data-evidence-state="inferred"><h2 class="ro-typography ro-typography--section-title">Inferred relation</h2><p>Analytical and not explicit in the source.</p></article>
+        <article class="ro-panel" data-tone="info" data-evidence-state="extracted"><h2 class="ro-typography ro-typography--section-title">Extracted evidence</h2><p>Structured from a governed source.</p></article>
+        <article class="ro-panel" data-tone="violet" data-evidence-state="inferred"><h2 class="ro-typography ro-typography--section-title">Inferred evidence</h2><p>Analytical and not explicit in the source.</p></article>
+        <article class="ro-panel" data-tone="success" data-evidence-state="verified"><h2 class="ro-typography ro-typography--section-title">Verified evidence</h2><p>Independently checked.</p></article>
+        <article class="ro-panel" data-tone="warning" data-evidence-state="disputed"><h2 class="ro-typography ro-typography--section-title">Disputed evidence</h2><p>Has an unresolved challenge.</p></article>
+        <article class="ro-panel" data-tone="success" data-evidence-state="adjudicated"><h2 class="ro-typography ro-typography--section-title">Adjudicated evidence</h2><p>Resolved by the accountable reviewer.</p></article>
+        <article class="ro-panel" data-tone="warning" data-evidence-state="stale"><h2 class="ro-typography ro-typography--section-title">Stale evidence</h2><p>Requires a current verification.</p></article>
+      </section>
+      <section class="catalog-grid" aria-label="Uncertainty states">
+        <span class="ro-uncertainty-state" data-uncertainty-state="unknown">Uncertainty: Unknown</span>
+        <span class="ro-uncertainty-state" data-uncertainty-state="not-reported">Uncertainty: Not reported</span>
+        <span class="ro-uncertainty-state" data-uncertainty-state="not-applicable">Uncertainty: Not applicable</span>
+        <span class="ro-uncertainty-state" data-uncertainty-state="ambiguous">Uncertainty: Ambiguous</span>
+      </section>
+      <section class="catalog-grid" aria-label="Notifications">
         <section class="ro-notification" data-tone="success" role="status" aria-atomic="true"><h3>Verified</h3><p>Independent check complete.</p></section>
         <section class="ro-notification" data-tone="warning" role="status" aria-atomic="true"><h3>Uncertainty</h3><p>Result remains ambiguous.</p></section>
         <section class="ro-notification" data-tone="danger" role="alert" aria-atomic="true"><h3>Blocked</h3><p>Evidence is insufficient.</p></section>
@@ -18,7 +31,7 @@
       <section class="catalog-grid" aria-label="Controls and data">
         <svg class="ro-icon" viewBox="0 0 24 24" focusable="false" role="img" aria-label="Evidence"><path d="M5 3h14v18H5V3Zm2 2v14h10V5H7Z"></path></svg>
         <div class="ro-field"><label for="catalog-query">Search evidence</label><span id="catalog-query-description" class="ro-field__description">Local project only</span><input id="catalog-query" aria-describedby="catalog-query-description"></div>
-        <div><span class="ro-status-badge" data-tone="info">Extracted</span> <span class="ro-status-badge" data-tone="violet">Unknown</span></div>
+        <div><span class="ro-status-badge" data-tone="info">Extracted</span> <span class="ro-evidence-state" data-evidence-state="observed">Evidence: Observed</span></div>
         <div><button class="ro-button ro-button--primary" type="button">Continue</button> <button class="ro-button" type="button">Cancel</button></div>
         <div class="ro-table-scroll" tabindex="0" aria-label="Evidence states scroll region"><table class="ro-table"><caption>Evidence states</caption><thead><tr><th scope="col">State</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td>Verified</td><td>Independently checked</td></tr></tbody></table></div>
       </section>

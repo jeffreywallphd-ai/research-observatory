@@ -3,9 +3,13 @@ import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react
 import {
   DESIGN_REFERENCE_ID,
   DESIGN_TOKEN_CONTRACT_VERSION,
+  evidenceStates,
   isSemanticTone,
+  uncertaintyStates,
+  type EvidenceState,
   type SemanticTone,
-} from "../../ui-tokens/src/index";
+  type UncertaintyState as UncertaintyIdentity,
+} from "@research-observatory/ui-tokens";
 
 export { DESIGN_REFERENCE_ID, DESIGN_TOKEN_CONTRACT_VERSION };
 export const UI_COMPONENT_CONTRACT_VERSION = "1.0.0" as const;
@@ -22,14 +26,15 @@ function requireSemanticTone(tone: SemanticTone): void {
 }
 
 export interface TypographyProps {
+  readonly id?: string;
   readonly as?: TypographyTag;
   readonly variant?: TypographyVariant;
   readonly className?: string;
   readonly children: ReactNode;
 }
 
-export function Typography({ as: Element = "p", variant = "body", className, children }: TypographyProps) {
-  return <Element className={classNames("ro-typography", `ro-typography--${variant}`, className)}>{children}</Element>;
+export function Typography({ id, as: Element = "p", variant = "body", className, children }: TypographyProps) {
+  return <Element id={id} className={classNames("ro-typography", `ro-typography--${variant}`, className)}>{children}</Element>;
 }
 
 const ICON_PATHS = {
@@ -134,7 +139,7 @@ export function DialogSurface({ id, title, open = false, children, actions }: Di
   if (!id.trim() || !title.trim()) throw new TypeError("dialog id and title must be nonempty");
   return (
     <dialog className="ro-dialog" open={open} aria-labelledby={`${id}-title`}>
-      <Typography as="h2" variant="section-title" className="ro-dialog__title">{title}</Typography>
+      <Typography id={`${id}-title`} as="h2" variant="section-title" className="ro-dialog__title">{title}</Typography>
       <div className="ro-dialog__body">{children}</div>
       {actions ? <div className="ro-dialog__actions">{actions}</div> : null}
     </dialog>
@@ -165,13 +170,61 @@ export function StatusBadge({ tone = "neutral", children }: ToneProps) {
   return <span className="ro-status-badge" data-tone={tone}>{children}</span>;
 }
 
+const EVIDENCE_STATE_LABELS: Readonly<Record<EvidenceState, string>> = {
+  observed: "Observed",
+  extracted: "Extracted",
+  inferred: "Inferred",
+  verified: "Verified",
+  disputed: "Disputed",
+  adjudicated: "Adjudicated",
+  stale: "Stale",
+};
+
+const UNCERTAINTY_STATE_LABELS: Readonly<Record<UncertaintyIdentity, string>> = {
+  unknown: "Unknown",
+  "not-reported": "Not reported",
+  "not-applicable": "Not applicable",
+  ambiguous: "Ambiguous",
+};
+
+function requireEvidenceState(state: EvidenceState): void {
+  if (!evidenceStates.some((candidate) => candidate === state)) {
+    throw new RangeError(`unsupported evidence state: ${String(state)}`);
+  }
+}
+
+function requireUncertaintyState(state: UncertaintyIdentity): void {
+  if (!uncertaintyStates.some((candidate) => candidate === state)) {
+    throw new RangeError(`unsupported uncertainty state: ${String(state)}`);
+  }
+}
+
+export interface EvidenceStateBadgeProps {
+  readonly state: EvidenceState;
+}
+
+export function EvidenceStateBadge({ state }: EvidenceStateBadgeProps) {
+  requireEvidenceState(state);
+  return <span className="ro-evidence-state" data-evidence-state={state}>Evidence: {EVIDENCE_STATE_LABELS[state]}</span>;
+}
+
+export interface UncertaintyStateProps {
+  readonly state: UncertaintyIdentity;
+}
+
+export function UncertaintyState({ state }: UncertaintyStateProps) {
+  requireUncertaintyState(state);
+  return <span className="ro-uncertainty-state" data-uncertainty-state={state}>Uncertainty: {UNCERTAINTY_STATE_LABELS[state]}</span>;
+}
+
 export interface PanelProps extends ToneProps {
   readonly title: string;
-  readonly evidenceState?: "observed" | "extracted" | "inferred" | "verified" | "disputed" | "adjudicated" | "stale";
+  readonly evidenceState?: EvidenceState;
 }
 
 export function Panel({ tone = "neutral", title, evidenceState, children }: PanelProps) {
   requireSemanticTone(tone);
+  if (evidenceState) requireEvidenceState(evidenceState);
   return (
     <section className="ro-panel" data-tone={tone} data-evidence-state={evidenceState}>
       <Typography as="h2" variant="section-title">{title}</Typography>
