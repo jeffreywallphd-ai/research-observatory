@@ -1887,11 +1887,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T06:53:20+00:00'
-      updated_at: '2026-08-09T08:59:38+00:00'
+      updated_at: '2026-08-09T09:00:10+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Offline Tauri/React shell, approved-reference application activation, exact manifests, Windows
@@ -1901,7 +1901,10 @@ capabilities:
         full 24-command desktop profile and 33 focused tests pass.
 
         Second independent-review remediation at e989c13 holds application inventories through completion and enforces exact
-        normalized review-hardening provenance; full 24-command desktop profile and 34 focused tests pass.'
+        normalized review-hardening provenance; full 24-command desktop profile and 34 focused tests pass.
+
+        Final review remediation at 4d3380d requires an exact immediate planning-only fresh independent review transition
+        for every protected correction; full desktop profile and 13 gate tests pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S01.T01.json

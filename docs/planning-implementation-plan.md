@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b85f6a0baa699dba9b8918eec3c9d30046541ac178a0fa4a65e0d85929ceaa43
+source_sha256: 7229f5f04e33f3f22c33d366d32a543d3cca2e983b28ed9768101b995782cf7b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -957,7 +957,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S01.T01 - Bootstrap the Tauri 2 and React/TypeScript desktop application
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
