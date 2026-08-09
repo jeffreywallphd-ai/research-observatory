@@ -1887,18 +1887,21 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T06:53:20+00:00'
-      updated_at: '2026-08-09T08:43:08+00:00'
+      updated_at: '2026-08-09T08:43:39+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Offline Tauri/React shell, approved-reference application activation, exact manifests, Windows
         no-socket launch smoke, and full desktop profile are ready for independent review.
 
         Independent-review remediation at 493ce3b closes exact CSP allowlist and immutable application inventory findings;
-        full 24-command desktop profile and 33 focused tests pass.'
+        full 24-command desktop profile and 33 focused tests pass.
+
+        Second independent-review remediation at e989c13 holds application inventories through completion and enforces exact
+        normalized review-hardening provenance; full 24-command desktop profile and 34 focused tests pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S01.T01.json
