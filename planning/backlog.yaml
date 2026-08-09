@@ -1860,7 +1860,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-00.S03.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-01.S01.T01
       capability_id: CAP-01
@@ -2090,13 +2090,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:maxwell
       reviewed_at: '2026-08-09T11:04:00+00:00'
       evidence:
-      - artifacts\evidence\CAP-01.S01.integration.json
-      notes: Add commit-bound production-bundle performance evidence for cold shell paint and route transitions, including
-        hardware/OS, fixture, repetitions/distribution, and regression thresholds required by approved plan sections 10-11.
+      - artifacts\evidence\CAP-01.S01.integration.review-fix.json
+      notes: Performance review finding remediated with a clean commit-bound production-bundle benchmark, enforced budgets,
+        recorded hardware and distributions, and a green 25-command desktop profile.
   - id: CAP-01.S02
     title: Desktop design system and accessibility foundation
     outcome: Reusable components express status, provenance, evidence, uncertainty, and human decision states consistently.
