@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
+import { installApplicationFrame } from "./frame";
 import type { DesktopRoute } from "./routes";
 
 export interface ApplicationRuntimeProps {
@@ -8,6 +9,6 @@ export interface ApplicationRuntimeProps {
 }
 
 export function ApplicationRuntime({ route, text }: ApplicationRuntimeProps): ReactNode {
-  void route;
+  useEffect(() => installApplicationFrame(document, route), [route]);
   return text;
 }

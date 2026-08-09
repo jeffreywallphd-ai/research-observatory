@@ -37,6 +37,18 @@ export type DesktopRoute = (typeof DESKTOP_ROUTES)[number];
 const ROUTES = new Set<string>(DESKTOP_ROUTES);
 
 export function resolveDesktopRoute(pathname: string): DesktopRoute {
-  const candidate = pathname.split(/[?#]/u, 1)[0]?.split("/").pop() || "index.html";
+  const undecorated = pathname.split(/[?#]/u, 1)[0] ?? "";
+  if (undecorated.includes("\\") || undecorated.startsWith("//") || /^[a-z][a-z0-9+.-]*:/iu.test(undecorated)) {
+    return "index.html";
+  }
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(undecorated);
+  } catch {
+    return "index.html";
+  }
+  const segments = decoded.split("/");
+  if (segments.includes("..") || segments.includes(".")) return "index.html";
+  const candidate = segments.pop() || "index.html";
   return ROUTES.has(candidate) ? (candidate as DesktopRoute) : "index.html";
 }
