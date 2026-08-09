@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3eb26bc05b4a0f261e40aeb30cd5f86619f863dd942307582453f71e82d0e135
+source_sha256: 1603df8d21351e63ced0e667dfd771001fd737ab2b0359f3283eecf20f1f5508
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -796,7 +796,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The Academic Minimal style, page contracts, fourteen use-case workflows, and linked HTML prototypes form an approved in-repository reference that must precede and validate user-facing implementation.
 
-**Wave / priority / status / review:** `W0` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W0` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
