@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ddc6b2d4cd00a0694c5686e904042fd41de5437cd7f2c0b06c251bee3eaa40bf
+source_sha256: 89112a0b71fc2f93a746876afa5d663fbe5da5104ca40eabfa681d022f7dd9f7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1022,13 +1022,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S01.T03 - Add project switcher, recent projects, and empty-state flows
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S01.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Project-selection experience that can open, create, and recover from unavailable local project locations.
 
