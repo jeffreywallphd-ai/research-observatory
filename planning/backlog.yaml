@@ -1973,15 +1973,18 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-09T09:04:08+00:00'
-      updated_at: '2026-08-09T09:47:17+00:00'
+      updated_at: '2026-08-09T09:48:06+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Approved-reference primary frame, 32-route guards, dynamic keyboard navigation, and real built-runtime
+      implementation_notes: 'Approved-reference primary frame, 32-route guards, dynamic keyboard navigation, and real built-runtime
         browser validation pass the full desktop profile at 8c27449.
+
+        Encoded-route canonicalization remediation is bound at 5422bd749ba68274faf1f2744ebf8dc439aef6ff; full desktop profile
+        and real production-bundle recovery matrix pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S01.T02.json
