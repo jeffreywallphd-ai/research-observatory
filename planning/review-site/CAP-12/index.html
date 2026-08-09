@@ -27,7 +27,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-12 · Capability decision and execution plan</span><h1>University-hosted deployment, institutional identity, collaboration, and operations</h1></div><span class="status status-proposed">Proposed</span></div>
   <p>Review the completed recommendation register before implementation. Once approved, the campaign executes all slices continuously except for documented infeasibility or genuinely new consequential evidence.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>18</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>b99c97f37e74</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>18</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>d7f08ee19cd6</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Resolved recommendations and capability approval</h2><p>Best-in-class recommendations are preselected and decision-complete. Confirm them, override a documented option with rationale, or select Other and provide both a brief description and detailed rationale. Export a review record only when preserving overrides or notes; one explicit capability approval still authorizes implementation.</p></div>
@@ -46,7 +46,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-12-D01" data-recommendation="Keep one desktop UI and place local/remote implementations behind a versioned client gateway" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D01" data-recommendation="Keep one desktop UI and place local/remote implementations behind a versioned client gateway" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D01</span><h3>Client architecture</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -73,7 +73,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>ADR-REMOTE-CLIENT</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D02" data-recommendation="Use hardened OCI containers on one institution-controlled server with Compose or Podman; add Kubernetes only by ADR" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D02" data-recommendation="Use hardened OCI containers on one institution-controlled server with Compose or Podman; add Kubernetes only by ADR" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D02</span><h3>Institutional pilot topology</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -100,7 +100,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>ADR-INSTITUTIONAL-TOPOLOGY</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D03" data-recommendation="Use PostgreSQL, S3-compatible objects, Qdrant and Temporal behind existing ports" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D03" data-recommendation="Use PostgreSQL, S3-compatible objects, Qdrant and Temporal behind existing ports" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D03</span><h3>Hosted persistence</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -127,7 +127,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D04" data-recommendation="Use system-browser OIDC authorization code with PKCE and short-lived sessions" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D04" data-recommendation="Use system-browser OIDC authorization code with PKCE and short-lived sessions" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D04</span><h3>Authentication</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -154,7 +154,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>ADR-INSTITUTIONAL-IDENTITY</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D05" data-recommendation="Combine role permissions, project/data attributes and default-deny PostgreSQL RLS" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D05" data-recommendation="Combine role permissions, project/data attributes and default-deny PostgreSQL RLS" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D05</span><h3>Authorization</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -181,7 +181,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D06" data-recommendation="Carry project and organization scope through every repository, object, vector, workflow and audit operation" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D06" data-recommendation="Carry project and organization scope through every repository, object, vector, workflow and audit operation" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D06</span><h3>Project isolation</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -208,7 +208,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D07" data-recommendation="Model stable subject IDs and groups now; add SCIM only when institutional lifecycle automation is required" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D07" data-recommendation="Model stable subject IDs and groups now; add SCIM only when institutional lifecycle automation is required" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D07</span><h3>Provisioning readiness</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -235,7 +235,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D08" data-recommendation="Use immutable revisions, optimistic concurrency and explicit conflict/adjudication objects" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D08" data-recommendation="Use immutable revisions, optimistic concurrency and explicit conflict/adjudication objects" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D08</span><h3>Collaboration semantics</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -262,7 +262,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D09" data-recommendation="Allow encrypted, rights-bounded read cache with explicit expiration and no offline writes by default" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D09" data-recommendation="Allow encrypted, rights-bounded read cache with explicit expiration and no offline writes by default" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D09</span><h3>Offline cache</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -289,7 +289,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D10" data-recommendation="Evaluate entitlements at acquisition, view, derivation, export and cache boundaries" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D10" data-recommendation="Evaluate entitlements at acquisition, view, derivation, export and cache boundaries" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D10</span><h3>Rights enforcement</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -316,7 +316,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D11" data-recommendation="Use institution policy to route local, private hosted or approved external models with fail-closed payload checks" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D11" data-recommendation="Use institution policy to route local, private hosted or approved external models with fail-closed payload checks" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D11</span><h3>Model egress</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -343,7 +343,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D12" data-recommendation="Use versioned policy, deletion workflow, legal-hold override and auditable exceptions" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D12" data-recommendation="Use versioned policy, deletion workflow, legal-hold override and auditable exceptions" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D12</span><h3>Retention and legal hold</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -370,7 +370,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D13" data-recommendation="Use OpenTelemetry with project/tenant context and strict content redaction" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D13" data-recommendation="Use OpenTelemetry with project/tenant context and strict content redaction" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D13</span><h3>Observability</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -397,7 +397,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D14" data-recommendation="Declare service-specific RPO/RTO, encrypted backups and regularly exercised restore drills" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D14" data-recommendation="Declare service-specific RPO/RTO, encrypted backups and regularly exercised restore drills" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D14</span><h3>Disaster recovery</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -424,7 +424,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D15" data-recommendation="Design a bounded institution operations console only after governed UI-reference approval" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D15" data-recommendation="Design a bounded institution operations console only after governed UI-reference approval" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D15</span><h3>Administration experience</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -451,7 +451,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>ADR-INSTITUTIONAL-ADMIN-UX</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D16" data-recommendation="Run a complete research-group workflow under institutional security, rights and recovery controls" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D16" data-recommendation="Run a complete research-group workflow under institutional security, rights and recovery controls" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D16</span><h3>Pilot acceptance</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -478,7 +478,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D17" data-recommendation="Append security, rights, collaboration and admin events to tamper-evident provenance/audit records" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D17" data-recommendation="Append security, rights, collaboration and admin events to tamper-evident provenance/audit records" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D17</span><h3>Audit trail</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -505,7 +505,7 @@ python tools/planctl.py --repo . ready CAP-12 --require-approved</code></pre></d
   <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-12-D18" data-recommendation="Use explicit API capability negotiation and supported-version windows" data-plan-hash="b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a">
+<section class="decision-card" data-decision-id="CAP-12-D18" data-recommendation="Use explicit API capability negotiation and supported-version windows" data-plan-hash="d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-12-D18</span><h3>Service compatibility</h3></div>
     <span class="status status-accepted">Accepted</span>
