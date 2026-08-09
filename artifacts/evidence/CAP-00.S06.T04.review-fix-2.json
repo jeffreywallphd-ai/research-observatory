@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S06.T04",
+  "commit": "cf4f521e8e362061afb94245986c7bb6203852b2",
+  "baseCommit": "8fd281d2d1ca970394b2cbe23d1a5519f1a77d0f",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S06.T04.review-fix.json",
+    "reason": "The first remediation closed all five original findings, but re-review proved that a later governed package could cite an earlier approval commit. This manifest binds complete package reconstruction at both commits, the project owner's exact package ratification, and the narrowly constrained provenance-only historical repair."
+  },
+  "changedFiles": [
+    "AGENTS.md",
+    "artifacts/evidence/CAP-00.S06.T04.review-fix.json",
+    "design/ui-reference/APPROVAL.yaml",
+    "design/ui-reference/REFERENCE_MANIFEST.yaml",
+    "docs/adr/ADR-0004-govern-desktop-ui-conformance-and-visual-baselines.md",
+    "docs/automation/project-automation-guide.md",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_ui_conformance.py",
+    "tools/ui_conformance.py",
+    "verification/baselines/desktop-ui.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile foundation --report artifacts/tmp/t04-final-foundation.json",
+      "exitCode": 0,
+      "result": "The exact clean final remediation commit passed all 16 foundation commands and all 143 foundation tests in 214.97 seconds; build provenance reported 0.1.0+gcf4f521 clean."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts/tmp/t04-final-desktop.json",
+      "exitCode": 0,
+      "result": "The exact clean final remediation commit passed all 23 desktop-profile commands in 298.16 seconds, including 143 foundation tests, 14 desktop tests, all 521 page-region contracts, 390 keyboard cases, 64 responsive visual cases, and 64 pinned captures."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_ui_conformance tests.foundation.test_ui_change_gate -v",
+      "exitCode": 0,
+      "result": "All 26 focused tests passed at the exact commit, including post-approval package mutation through a merge, strict provenance-only ratification limits, the five original review attacks, and design-first anti-tamper boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_visual_regression_check.py",
+      "exitCode": 0,
+      "result": "Full reachable history, the separate 7e625150 approval commit, package SHA db13c8d5..., unchanged renderer settings, and all 64 screenshot hashes validate at the exact commit."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate",
+      "exitCode": 0,
+      "result": "The ledger validates with all prior review dispositions and evidence attachments preserved."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --check",
+      "exitCode": 0,
+      "result": "Generated planning views exactly match the authoritative ledger."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "All prior fixture, exact-region, workflow keyboard, controlled-font, responsive, and accessibility closures remain green across 14 desktop regressions and the full browser matrix.",
+        "No token, route, workflow, page-contract, renderer, responsive, or screenshot entry changed during the ratification."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The project owner's 2026-08-09 approval is recorded separately at commit 7e625150c57f518327d8dcce430371902ecaed10; that commit contains the complete 54-file governed package and manifest producing SHA-256 db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2.",
+        "For every authoritative baseline, the verifier reconstructs approval and manifest records plus every governed Git blob independently at the cited approval commit and baseline commit and requires both aggregate packages to equal the baseline-bound SHA.",
+        "A regression mutates app.css after approval, updates its manifest/package hash, merges the mutation through a second parent, and confirms that the earlier approval cannot authorize the later package.",
+        "The preserved pre-control provenance gap is closed only by the exact later human ratification and byte-equivalent visual contract; any changed screenshot, renderer setting, reference identity, or other baseline field rejects the exception. Historical schema, bytes, transitions, and approval records remain checked."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Reports retain exact normative source mappings and illustrative exclusions while using the ratified package identity.",
+        "ADR-0004 and automation guidance document the constrained ratification semantics, and AGENTS.md plus the project automation guide now require completed tested work to finish checked out on local main without authorizing any remote push."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "human-and-agent-review",
+    "note": "The project owner's explicit CAP-00 approval supplies the human ratification at the separate approval commit. Independent technical review must reproduce the post-approval merge mutation denial, verify the narrow legacy-ratification boundary, and validate the entire evidence chain and exact clean profiles without inventing another human identity."
+  }
+}
