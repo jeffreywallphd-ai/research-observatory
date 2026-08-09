@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 7229f5f04e33f3f22c33d366d32a543d3cca2e983b28ed9768101b995782cf7b
+source_sha256: d446ca1f82ec52a5b26e87492b00342d900b0d275a89e9b8eb63de119f14f6c2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -48,10 +48,9 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 299 |
-| `READY` | 1 |
-| `REVIEW` | 1 |
-| `DONE` | 19 |
+| `NOT_STARTED` | 298 |
+| `READY` | 2 |
+| `DONE` | 20 |
 | `DEFERRED` | 36 |
 
 ## Capability progress
@@ -59,7 +58,7 @@ manual_edit: prohibited
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
 | `CAP-00` Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
-| `CAP-01` Windows-first desktop shell and supervised local runtime | `ACTIVE` | `IN_PROGRESS` | 0/5 | 0/15 | `CAP-01.S01.T01` |
+| `CAP-01` Windows-first desktop shell and supervised local runtime | `ACTIVE` | `IN_PROGRESS` | 0/5 | 1/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
 | `CAP-04` Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
@@ -98,6 +97,4 @@ manual_edit: prohibited
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-01.S01.T01` Bootstrap the Tauri 2 and React/TypeScript desktop application | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
+No task is currently active.
