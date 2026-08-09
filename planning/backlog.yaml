@@ -1749,14 +1749,15 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/verify.py --profile desktop
       - python tools/taskctl.py validate
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T01:40:40+00:00'
-      updated_at: '2026-08-09T02:19:17+00:00'
+      updated_at: '2026-08-09T02:19:49+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
+      implementation_notes: Exact clean foundation and desktop profiles pass; criterion evidence 17270a8675c38556297193125a80f895da0f59159e624c507a4bd15d6035f468
+        attached for independent human-and-agent review.
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-00.S06.T04.json
