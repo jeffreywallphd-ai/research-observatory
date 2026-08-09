@@ -1749,11 +1749,11 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/verify.py --profile desktop
       - python tools/taskctl.py validate
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T01:40:40+00:00'
-      updated_at: '2026-08-09T03:08:08+00:00'
+      updated_at: '2026-08-09T03:17:13+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Exact clean foundation and desktop profiles pass; criterion evidence 17270a8675c38556297193125a80f895da0f59159e624c507a4bd15d6035f468
@@ -1776,17 +1776,17 @@ capabilities:
       review:
         reviewer: agent:descartes
         result: changes-requested
-        reviewed_at: '2026-08-09T02:39:31+00:00'
-        notes: 'Independent review reproduced five required false greens: test/spec UI files can hide fixture escape; page_contract
-          required regions are not enforced; workflow links with tabindex=-1 pass keyboard checks; document.fonts.check accepts
-          nonexistent fonts; and malformed historical baseline/settings/minimal approval lineage passes. Exact evidence, scope,
-          profiles, taskctl, and views otherwise validated.'
+        reviewed_at: '2026-08-09T03:17:13+00:00'
+        notes: 'Re-review confirms the five original findings closed, but exact reference-package lineage remains fail-open:
+          baseline validation recomputes governed package bytes only at the later baseline commit and reads only APPROVAL.yaml
+          at referenceApprovalCommit, so post-approval governed-file/manifest mutation can be baseline-bound to an earlier
+          approval. Recompute and compare the complete package at approval, including merge-history regression.'
       base_sha: 8c5ef326c43b92de1104718798aa5acee362f905
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-09T02:39:31+00:00'
-        expires_at: '2026-08-09T10:39:31+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-09T03:17:13+00:00'
+        expires_at: '2026-08-09T11:17:13+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - platform-neutral
