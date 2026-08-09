@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a4537f10ed7d73bbb6154015f8f700f9d0d92676f4015f590f567376e4bd9318
+source_sha256: ddc6b2d4cd00a0694c5686e904042fd41de5437cd7f2c0b06c251bee3eaa40bf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -988,15 +988,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S01.T01.review-fix-2.json` at `e989c1393e1f3dfd30206105d7cedcfe7f811bd5`
 - `artifacts/evidence/CAP-01.S01.T01.review-fix-3.json` at `4d3380d79ca436557e80e686a43993c9d71ba5e4`
 
-#### - [ ] CAP-01.S01.T02 - Implement the primary application frame and workspace routing
+#### - [x] CAP-01.S01.T02 - Implement the primary application frame and workspace routing
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `low`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `low`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S01.T01`
 
-**Owner / review:** codex / agent:maxwell (`changes-requested`)
+**Owner / review:** codex / agent:maxwell (`approved`)
 
 **Objective:** Title bar, navigation rail, command area, project context, route guards, and placeholder workspaces matching the product information architecture.
 
@@ -1022,7 +1022,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S01.T03 - Add project switcher, recent projects, and empty-state flows
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
