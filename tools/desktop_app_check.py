@@ -248,14 +248,23 @@ def component_style_errors(styles: str, components: str) -> list[str]:
         errors.append("desktop component source must not bypass governed classes with inline styles")
     for match in re.finditer(r"(?P<property>[a-zA-Z-]+)\s*:\s*(?P<value>[^;{}]+)", uncommented_styles):
         property_name = match.group("property").lower()
-        if not (
-            property_name in {"color", "background", "background-color", "fill", "stroke", "border", "outline", "box-shadow", "text-shadow"}
-            or property_name.endswith("-color")
-        ):
+        visual_properties = {
+            "color",
+            "background",
+            "background-color",
+            "fill",
+            "stroke",
+            "border",
+            "outline",
+            "box-shadow",
+            "text-shadow",
+        }
+        if not (property_name in visual_properties or property_name.endswith("-color")):
             continue
         value = match.group("value").strip()
         remainder = re.sub(r"var\(--[a-z0-9-]+\)", "", value)
-        remainder = re.sub(r"(?:inherit|currentColor|solid|dashed|dotted|none|\d+(?:\.\d+)?(?:px|rem|em|%)?)", "", remainder)
+        allowed_value = r"(?:inherit|currentColor|solid|dashed|dotted|none|\d+(?:\.\d+)?(?:px|rem|em|%)?)"
+        remainder = re.sub(allowed_value, "", remainder)
         if remainder.strip():
             errors.append(f"desktop component visual declaration must use governed tokens: {property_name}: {value}")
     return errors
@@ -372,8 +381,7 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                     """,
                     [theme, zoom_percent / 100],
                 )
-                observed = page.evaluate(
-                    """
+                catalog_script = """
                     () => ({
                       catalog: document.querySelector('[data-component-catalog]')
                         ?.getAttribute('data-component-catalog'),
@@ -393,16 +401,16 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                         const reference = document.querySelector('dialog')?.getAttribute('aria-labelledby');
                         return reference ? document.getElementById(reference)?.textContent?.trim() : '';
                       })(),
-                      componentCounts: Object.fromEntries(
-                        %s.map((className) => [className, document.getElementsByClassName(className).length])
-                      ),
+                      componentCounts: Object.fromEntries(__REQUIRED_COMPONENT_MARKERS__.map(
+                        (className) => [className, document.getElementsByClassName(className).length]
+                      )),
                       evidenceStates: Array.from(document.querySelectorAll('[data-evidence-state]'))
                         .map((node) => node.getAttribute('data-evidence-state')),
                       uncertaintyStates: Array.from(document.querySelectorAll('[data-uncertainty-state]'))
                         .map((node) => node.getAttribute('data-uncertainty-state')),
                     })
-                    """ % json.dumps(list(REQUIRED_COMPONENT_MARKERS))
-                )
+                    """.replace("__REQUIRED_COMPONENT_MARKERS__", json.dumps(list(REQUIRED_COMPONENT_MARKERS)))
+                observed = page.evaluate(catalog_script)
                 if observed.get("catalog") != "1.0.0" or observed.get("overflow") is not False:
                     errors.append(f"{theme} {zoom_percent}% component catalog identity or horizontal fit failed")
                 if float(observed.get("minimumControl") or 0) < 40 * zoom_percent / 100:
