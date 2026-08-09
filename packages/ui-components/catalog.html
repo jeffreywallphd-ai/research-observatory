@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Research Observatory component catalog</title>
+  </head>
+  <body>
+    <main data-component-catalog="1.0.0">
+      <h1 class="ro-typography ro-typography--page-title">Academic Minimal components</h1>
+      <section class="catalog-grid" aria-label="Semantic states">
+        <article class="ro-panel" data-tone="neutral" data-evidence-state="observed"><h2 class="ro-typography ro-typography--section-title">Observed evidence</h2><p>Directly present in the source.</p></article>
+        <article class="ro-panel" data-tone="violet" data-evidence-state="inferred"><h2 class="ro-typography ro-typography--section-title">Inferred relation</h2><p>Analytical and not explicit in the source.</p></article>
+        <section class="ro-notification" data-tone="success" role="status" aria-atomic="true"><h3>Verified</h3><p>Independent check complete.</p></section>
+        <section class="ro-notification" data-tone="warning" role="status" aria-atomic="true"><h3>Uncertainty</h3><p>Result remains ambiguous.</p></section>
+        <section class="ro-notification" data-tone="danger" role="alert" aria-atomic="true"><h3>Blocked</h3><p>Evidence is insufficient.</p></section>
+      </section>
+      <section class="catalog-grid" aria-label="Controls and data">
+        <svg class="ro-icon" viewBox="0 0 24 24" focusable="false" role="img" aria-label="Evidence"><path d="M5 3h14v18H5V3Zm2 2v14h10V5H7Z"></path></svg>
+        <div class="ro-field"><label for="catalog-query">Search evidence</label><span id="catalog-query-description" class="ro-field__description">Local project only</span><input id="catalog-query" aria-describedby="catalog-query-description"></div>
+        <div><span class="ro-status-badge" data-tone="info">Extracted</span> <span class="ro-status-badge" data-tone="violet">Unknown</span></div>
+        <div><button class="ro-button ro-button--primary" type="button">Continue</button> <button class="ro-button" type="button">Cancel</button></div>
+        <div class="ro-table-scroll" tabindex="0" aria-label="Evidence states scroll region"><table class="ro-table"><caption>Evidence states</caption><thead><tr><th scope="col">State</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td>Verified</td><td>Independently checked</td></tr></tbody></table></div>
+      </section>
+      <dialog class="ro-dialog" open aria-labelledby="catalog-dialog-title"><h2 id="catalog-dialog-title" class="ro-typography ro-typography--section-title">Confirm evidence link</h2><div class="ro-dialog__body">The researcher retains final authority.</div><div class="ro-dialog__actions"><button class="ro-button ro-button--primary" type="button">Confirm</button></div></dialog>
+    </main>
+  </body>
+</html>

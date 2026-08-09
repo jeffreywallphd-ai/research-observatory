@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import re
 import subprocess
 from collections.abc import Callable
 from pathlib import Path
@@ -40,6 +42,52 @@ HREF_RECOVERY_CASES = (
     "https:evil.invalid/study-design.html",
     "mailto:user@example.invalid/study-design.html",
 )
+TOKEN_CONTRACT_KEYS = {
+    "schemaVersion",
+    "documentType",
+    "contractVersion",
+    "referenceId",
+    "referenceVersion",
+    "referencePackageSha256",
+    "sourcePath",
+    "sourceCanonicalSha256",
+    "transport",
+    "themes",
+}
+EXPECTED_TOKEN_CONTRACT = {
+    "schemaVersion": "1.0",
+    "documentType": "design-token-contract",
+    "contractVersion": "1.0.0",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
+    "referenceVersion": "1.3",
+    "referencePackageSha256": "db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2",
+    "sourcePath": "design/ui-reference/assets/tokens.css",
+    "sourceCanonicalSha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5",
+    "transport": "css-custom-properties",
+    "themes": ["light", "dark"],
+}
+EXPECTED_TOKEN_TRANSPORT = '@import "../../design/ui-reference/assets/tokens.css";\n'
+REQUIRED_COMPONENT_MARKERS = (
+    "ro-typography",
+    "ro-icon",
+    "ro-button",
+    "ro-field",
+    "ro-table",
+    "ro-dialog",
+    "ro-notification",
+    "ro-status-badge",
+    "ro-panel",
+)
+CONTRAST_PAIRS = (
+    ("text-strong", "surface-1"),
+    ("text-default", "surface-1"),
+    ("text-muted", "surface-1"),
+    ("success", "success-soft"),
+    ("warning", "warning-soft"),
+    ("danger", "danger-soft"),
+    ("info", "info-soft"),
+    ("violet", "violet-soft"),
+)
 
 
 def csp_directives(raw: str) -> tuple[dict[str, tuple[str, ...]], list[str]]:
@@ -63,6 +111,148 @@ def json_object(path: Path) -> dict[str, Any]:
     if not isinstance(loaded, dict):
         raise ValueError(f"{path} must contain a JSON object")
     return loaded
+
+
+def canonical_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
+def css_variables(block: str) -> dict[str, str]:
+    return {
+        match.group("name"): match.group("value").strip()
+        for match in re.finditer(r"--(?P<name>[a-z0-9-]+)\s*:\s*(?P<value>[^;]+);", block)
+    }
+
+
+def color_channels(value: str) -> tuple[float, float, float]:
+    if re.fullmatch(r"#[0-9a-fA-F]{6}", value) is None:
+        raise ValueError(f"unsupported governed contrast color: {value}")
+    return tuple(int(value[index : index + 2], 16) / 255 for index in (1, 3, 5))  # type: ignore[return-value]
+
+
+def relative_luminance(value: str) -> float:
+    channels = [
+        channel / 12.92 if channel <= 0.04045 else ((channel + 0.055) / 1.055) ** 2.4
+        for channel in color_channels(value)
+    ]
+    return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722
+
+
+def contrast_ratio(foreground: str, background: str) -> float:
+    lighter, darker = sorted((relative_luminance(foreground), relative_luminance(background)), reverse=True)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def design_system_errors(repo: Path) -> list[str]:
+    errors: list[str] = []
+    tokens_path = repo / "design" / "ui-reference" / "assets" / "tokens.css"
+    transport_path = repo / "packages" / "ui-tokens" / "index.css"
+    contract_path = repo / "packages" / "ui-tokens" / "token-contract.json"
+    component_path = repo / "packages" / "ui-components" / "src" / "index.tsx"
+    styles_path = repo / "packages" / "ui-components" / "src" / "styles.css"
+    catalog_path = repo / "packages" / "ui-components" / "catalog.html"
+    try:
+        contract = json_object(contract_path)
+        tokens = tokens_path.read_text(encoding="utf-8")
+        transport = transport_path.read_text(encoding="utf-8")
+        components = component_path.read_text(encoding="utf-8")
+        styles = styles_path.read_text(encoding="utf-8")
+        catalog = catalog_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        return [f"desktop design system cannot be loaded: {exc}"]
+    if set(contract) != TOKEN_CONTRACT_KEYS or contract != EXPECTED_TOKEN_CONTRACT:
+        errors.append("desktop token contract must exactly bind Academic Minimal 1.3")
+    if canonical_sha256(tokens_path) != EXPECTED_TOKEN_CONTRACT["sourceCanonicalSha256"]:
+        errors.append("desktop token source differs from its approved canonical SHA-256")
+    if transport != EXPECTED_TOKEN_TRANSPORT:
+        errors.append("desktop token transport must import only the governed reference source")
+    if re.search(r"#[0-9a-fA-F]{3,8}|\b(?:rgb|hsl)a?\(", styles):
+        errors.append("desktop components must consume semantic tokens instead of literal colors")
+    for marker in REQUIRED_COMPONENT_MARKERS:
+        if marker not in components or marker not in styles or marker not in catalog:
+            errors.append(f"desktop component catalog is missing {marker}")
+    root = re.search(r":root\s*\{(?P<body>.*?)\n\}", tokens, flags=re.DOTALL)
+    dark = re.search(r'html\[data-theme="dark"\]\s*\{(?P<body>.*?)\n\}', tokens, flags=re.DOTALL)
+    if root is None or dark is None:
+        errors.append("desktop token source must define light and dark semantic scopes")
+        return errors
+    light_values = css_variables(root.group("body"))
+    dark_values = {**light_values, **css_variables(dark.group("body"))}
+    for theme, values in (("light", light_values), ("dark", dark_values)):
+        for foreground, background in CONTRAST_PAIRS:
+            try:
+                ratio = contrast_ratio(values[foreground], values[background])
+            except (KeyError, ValueError) as exc:
+                errors.append(f"{theme} component contrast cannot be evaluated: {exc}")
+                continue
+            if ratio < 4.5:
+                errors.append(f"{theme} {foreground}/{background} contrast is {ratio:.2f}, below WCAG AA")
+    return errors
+
+
+def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[list[str], dict[str, Any]]:
+    errors: list[str] = []
+    details: dict[str, Any] = {"cases": 0, "themes": ["light", "dark"], "zoomPercent": [100, 150, 200]}
+    try:
+        html = (repo / "packages" / "ui-components" / "catalog.html").read_text(encoding="utf-8")
+        tokens = (repo / "design" / "ui-reference" / "assets" / "tokens.css").read_text(encoding="utf-8")
+        styles = (repo / "packages" / "ui-components" / "src" / "styles.css").read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as exc:
+        return [f"desktop component catalog cannot be rendered: {exc}"], details
+    catalog_layout = (
+        "body{margin:0;padding:var(--space-4);color:var(--text-default);background:var(--canvas);"
+        "font-family:var(--font-sans)}main{max-width:72rem;margin:auto}.catalog-grid{display:grid;"
+        "grid-template-columns:repeat(auto-fit,minmax(min(18rem,100%),1fr));gap:var(--space-4);"
+        "margin-block:var(--space-4)}"
+    )
+    document = html.replace("</head>", f"<style>{tokens}\n{styles}\n{catalog_layout}</style></head>")
+    for theme in ("light", "dark"):
+        for zoom_percent in (100, 150, 200):
+            page = browser_context.new_page()
+            page.set_viewport_size({"width": 1280, "height": 720})
+            try:
+                page.set_content(document, wait_until="load")
+                page.evaluate(
+                    """
+                    ([theme, zoom]) => {
+                      document.documentElement.dataset.theme = theme;
+                      document.documentElement.style.zoom = String(zoom);
+                    }
+                    """,
+                    [theme, zoom_percent / 100],
+                )
+                observed = page.evaluate(
+                    """
+                    () => ({
+                      catalog: document.querySelector('[data-component-catalog]')
+                        ?.getAttribute('data-component-catalog'),
+                      overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+                      minimumControl: Math.min(
+                        ...Array.from(document.querySelectorAll('button,input'))
+                          .map((node) => node.getBoundingClientRect().height)
+                      ),
+                      alertCount: document.querySelectorAll('[role=alert]').length,
+                      statusCount: document.querySelectorAll('[role=status]').length,
+                      dialogName: document.querySelector('dialog')?.getAttribute('aria-labelledby'),
+                    })
+                    """
+                )
+                if observed.get("catalog") != "1.0.0" or observed.get("overflow") is not False:
+                    errors.append(f"{theme} {zoom_percent}% component catalog identity or horizontal fit failed")
+                if float(observed.get("minimumControl") or 0) < 40 * zoom_percent / 100:
+                    errors.append(f"{theme} {zoom_percent}% component controls are below their approved minimum")
+                if (
+                    observed.get("alertCount") != 1
+                    or observed.get("statusCount") != 2
+                    or not observed.get("dialogName")
+                ):
+                    errors.append(f"{theme} {zoom_percent}% component semantics are incomplete")
+                details["cases"] += 1
+            except PlaywrightError as exc:
+                errors.append(f"{theme} {zoom_percent}% component catalog browser check failed: {exc}")
+            finally:
+                page.close()
+    return errors, details
 
 
 def security_errors(repo: Path) -> list[str]:
@@ -156,6 +346,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "keyboardRail": False,
         "commandFocus": False,
         "requests": [],
+        "designSystem": {},
     }
     documents: dict[str, str] = {}
     with sync_playwright() as playwright:
@@ -172,6 +363,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
 
         browser_context.route("**/*", serve_application)
         try:
+            catalog_errors, catalog_details = component_catalog_browser_errors(repo, browser_context)
+            errors.extend(catalog_errors)
+            details["designSystem"] = catalog_details
             for page_name in context.pages:
                 page = browser_context.new_page()
                 page_errors: list[str] = []
@@ -371,7 +565,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
 
 
 def validate(repo: Path, runner: Runner = subprocess.run) -> dict[str, Any]:
-    errors = security_errors(repo)
+    errors = [*security_errors(repo), *design_system_errors(repo)]
     commands: list[dict[str, Any]] = []
     frame: dict[str, Any] = {}
     if errors:

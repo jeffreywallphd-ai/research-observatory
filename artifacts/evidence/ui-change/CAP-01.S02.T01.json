@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-01.S02.T01",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-01.S02.T01.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "packages/ui-components/catalog.html",
+    "packages/ui-components/package.json",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/src/styles.css",
+    "packages/ui-tokens/index.css",
+    "packages/ui-tokens/package.json",
+    "packages/ui-tokens/src/index.ts",
+    "packages/ui-tokens/token-contract.json"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
+    "version": "1.3",
+    "packageSha256": "db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2",
+    "approvalCommit": "7e625150c57f518327d8dcce430371902ecaed10",
+    "approvedBy": "Project-owner direction",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.2"
+  },
+  "focusedEvidence": [
+    {
+      "command": "pnpm --dir apps/desktop test",
+      "result": "passed",
+      "scope": "React server-rendered semantic roles, descriptions, alerts, evidence states, tables, dialogs, and invalid tone/field/column denial"
+    },
+    {
+      "command": "python -m unittest tests.desktop.test_desktop_app_check",
+      "result": "passed",
+      "scope": "exact token lineage, literal-color and external-transport denial, WCAG contrast, light/dark catalog semantics, and horizontal/control fit at 100/150/200 percent"
+    }
+  ],
+  "implementationScope": "Implement the approved Academic Minimal 1.3 semantic token transport and reusable typography, icon, form, table, dialog, notification, badge, and panel components with a governed local catalog; preserve focus-management and recovery-state composition for the next two tasks."
+}
