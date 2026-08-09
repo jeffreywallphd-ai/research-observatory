@@ -12,9 +12,11 @@ import mimetypes
 import os
 import platform
 import re
+import stat
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -146,8 +148,24 @@ def implementation_files(repo: Path, roots: list[str]) -> list[str]:
     return sorted(found)
 
 
-def file_inventory(repo: Path, root: Path, *, excluded_directories: frozenset[str] = frozenset()) -> dict[str, str]:
+def stable_file_bytes(repo: Path, path: Path) -> bytes:
+    relative = path.relative_to(repo).as_posix()
+    canonical = confined_path(repo, relative)
+    before = canonical.lstat()
+    if not stat.S_ISREG(before.st_mode):
+        raise ValueError(f"application inventory entry is not a regular file: {relative}")
+    payload = canonical.read_bytes()
+    after = canonical.lstat()
+    identity_before = (before.st_dev, before.st_ino, before.st_mode, before.st_size, before.st_mtime_ns)
+    identity_after = (after.st_dev, after.st_ino, after.st_mode, after.st_size, after.st_mtime_ns)
+    if identity_before != identity_after or confined_path(repo, relative) != canonical:
+        raise ValueError(f"application inventory entry changed while being read: {relative}")
+    return payload
+
+
+def inventory_once(repo: Path, root: Path, *, excluded_directories: frozenset[str] = frozenset()) -> dict[str, str]:
     observed: dict[str, str] = {}
+    files: list[Path] = []
 
     def fail_closed(error: OSError) -> None:
         raise error
@@ -161,9 +179,27 @@ def file_inventory(repo: Path, root: Path, *, excluded_directories: frozenset[st
             confined_path(repo, relative)
         for name in sorted(file_names):
             candidate = directory_path / name
-            relative = candidate.relative_to(repo).as_posix()
-            observed[relative] = hashlib.sha256(candidate.read_bytes()).hexdigest()
+            files.append(candidate)
+    for candidate in sorted(files, key=lambda item: item.relative_to(repo).as_posix()):
+        relative = candidate.relative_to(repo).as_posix()
+        observed[relative] = hashlib.sha256(stable_file_bytes(repo, candidate)).hexdigest()
     return observed
+
+
+def file_inventory(
+    repo: Path,
+    root: Path,
+    *,
+    excluded_directories: frozenset[str] = frozenset(),
+    after_first_pass: Callable[[], None] | None = None,
+) -> dict[str, str]:
+    first = inventory_once(repo, root, excluded_directories=excluded_directories)
+    if after_first_pass is not None:
+        after_first_pass()
+    second = inventory_once(repo, root, excluded_directories=excluded_directories)
+    if first != second:
+        raise ValueError(f"application inventory changed while being verified: {root.relative_to(repo).as_posix()}")
+    return first
 
 
 def application_build_errors(repo: Path, config: dict[str, Any], target: Path) -> list[str]:
@@ -171,7 +207,10 @@ def application_build_errors(repo: Path, config: dict[str, Any], target: Path) -
     try:
         application_root = confined_path(repo, str(config["applicationRoot"]))
         manifest_path = confined_path(repo, str(config["applicationManifestPath"]))
-        manifest = json_object(manifest_path)
+        manifest_payload = stable_file_bytes(repo, manifest_path)
+        manifest = json.loads(manifest_payload.decode("utf-8"))
+        if not isinstance(manifest, dict):
+            raise ValueError("application-manifest.json must contain a JSON object")
     except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
         return [f"invalid desktop application manifest: {exc}"]
     if set(manifest) != APPLICATION_MANIFEST_KEYS:
@@ -187,7 +226,7 @@ def application_build_errors(repo: Path, config: dict[str, Any], target: Path) -
     expected_sources = file_inventory(repo, application_root, excluded_directories=APPLICATION_EXCLUDED_DIRECTORIES)
     for relative in APPLICATION_EXTERNAL_INPUTS:
         source = confined_path(repo, relative)
-        expected_sources[relative] = hashlib.sha256(source.read_bytes()).hexdigest()
+        expected_sources[relative] = hashlib.sha256(stable_file_bytes(repo, source)).hexdigest()
     if manifest.get("sourceFiles") != dict(sorted(expected_sources.items())):
         errors.append("desktop application manifest does not bind the exact current build-input inventory")
 
@@ -200,6 +239,22 @@ def application_build_errors(repo: Path, config: dict[str, Any], target: Path) -
     }
     if manifest.get("artifacts") != dict(sorted(expected_artifacts.items())):
         errors.append("desktop application manifest does not bind the exact current output inventory")
+    final_sources = file_inventory(repo, application_root, excluded_directories=APPLICATION_EXCLUDED_DIRECTORIES)
+    for relative in APPLICATION_EXTERNAL_INPUTS:
+        source = confined_path(repo, relative)
+        final_sources[relative] = hashlib.sha256(stable_file_bytes(repo, source)).hexdigest()
+    final_artifacts = file_inventory(repo, target)
+    final_artifacts.pop(manifest_relative, None)
+    final_artifacts = {
+        Path(relative).relative_to(target.relative_to(repo)).as_posix(): digest
+        for relative, digest in final_artifacts.items()
+    }
+    if final_sources != expected_sources:
+        errors.append("desktop application build inputs changed during manifest verification")
+    if final_artifacts != expected_artifacts:
+        errors.append("desktop application outputs changed during manifest verification")
+    if stable_file_bytes(repo, manifest_path) != manifest_payload:
+        errors.append("desktop application manifest changed during verification")
     return errors
 
 

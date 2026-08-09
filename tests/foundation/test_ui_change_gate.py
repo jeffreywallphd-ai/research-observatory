@@ -8,16 +8,53 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any
 
 import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from ui_change_gate import automatic_base, validate  # noqa: E402
+from ui_change_gate import automatic_base, independent_review_hardening_errors, validate  # noqa: E402
 
 
 class UiChangeGateTests(unittest.TestCase):
+    def test_post_implementation_hardening_requires_independent_changes_requested_record(self) -> None:
+        paths = {
+            "tools/ui_change_gate.py",
+            "tools/ui_conformance.py",
+            "tests/desktop/test_ui_conformance.py",
+            "tests/foundation/test_ui_change_gate.py",
+            "tools/desktop_app_check.py",
+        }
+        review = {"reviewer": "agent:descartes", "result": "changes-requested"}
+        backlog: dict[str, Any] = {
+            "capabilities": [
+                {
+                    "slices": [
+                        {
+                            "tasks": [
+                                {
+                                    "id": "CAP-01.S01.T01",
+                                    "status": "IN_PROGRESS",
+                                    "owner": "codex",
+                                    "review": review,
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+
+        self.assertEqual([], independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths))
+        review["reviewer"] = "agent:codex"
+        self.assertTrue(independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths))
+        review["reviewer"] = "agent:descartes"
+        self.assertTrue(
+            independent_review_hardening_errors(backlog, "CAP-01.S01.T01", paths | {"verification-profiles.json"})
+        )
+
     def git(self, root: Path, *args: str) -> str:
         return subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
 

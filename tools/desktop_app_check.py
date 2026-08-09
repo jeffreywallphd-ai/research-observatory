@@ -14,16 +14,34 @@ from typing import Any
 from ui_conformance import load_context
 
 Runner = Callable[..., subprocess.CompletedProcess[str]]
-EXPECTED_CSP_PARTS = frozenset(
-    {
-        "default-src 'self'",
-        "connect-src ipc: http://ipc.localhost",
-        "object-src 'none'",
-        "base-uri 'none'",
-        "frame-ancestors 'none'",
-        "form-action 'self'",
-    }
-)
+EXPECTED_CSP = {
+    "default-src": ("'self'",),
+    "img-src": ("'self'", "data:"),
+    "style-src": ("'self'", "'unsafe-inline'"),
+    "script-src": ("'self'",),
+    "connect-src": ("ipc:", "http://ipc.localhost"),
+    "font-src": ("'self'",),
+    "object-src": ("'none'",),
+    "base-uri": ("'none'",),
+    "frame-ancestors": ("'none'",),
+    "form-action": ("'self'",),
+}
+
+
+def csp_directives(raw: str) -> tuple[dict[str, tuple[str, ...]], list[str]]:
+    directives: dict[str, tuple[str, ...]] = {}
+    errors: list[str] = []
+    for raw_part in raw.split(";"):
+        part = raw_part.strip()
+        if not part:
+            continue
+        tokens = part.split()
+        name = tokens[0]
+        if name in directives:
+            errors.append(f"Tauri CSP repeats directive {name}")
+            continue
+        directives[name] = tuple(tokens[1:])
+    return directives, errors
 
 
 def json_object(path: Path) -> dict[str, Any]:
@@ -48,14 +66,13 @@ def security_errors(repo: Path) -> list[str]:
         errors.append("Tauri security configuration is missing")
         return errors
     csp = security.get("csp")
-    if not isinstance(csp, str) or not EXPECTED_CSP_PARTS.issubset(
-        {part.strip() for part in csp.split(";") if part.strip()}
-    ):
-        errors.append("Tauri CSP does not contain the required offline restrictions")
     if isinstance(csp, str):
-        stripped = csp.replace("http://ipc.localhost", "").replace("ipc:", "")
-        if "http:" in stripped or "https:" in stripped or "*" in stripped:
-            errors.append("Tauri CSP permits an external network origin or wildcard")
+        observed_csp, csp_errors = csp_directives(csp)
+        errors.extend(csp_errors)
+        if observed_csp != EXPECTED_CSP:
+            errors.append("Tauri CSP must exactly match the reviewed offline source allowlist")
+    else:
+        errors.append("Tauri CSP must be an explicit string source allowlist")
     if security.get("capabilities") != ["main-window"] or app.get("withGlobalTauri") is not False:
         errors.append("Tauri must expose only the named main-window capability without a global bridge")
     capability = json_object(repo / "apps" / "desktop" / "src-tauri" / "capabilities" / "main-window.json")
