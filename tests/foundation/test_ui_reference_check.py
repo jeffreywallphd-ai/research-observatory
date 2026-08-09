@@ -95,6 +95,8 @@ class UiReferenceCheckTests(unittest.TestCase):
             "network-link": (self.add_network_link, "network-dependent"),
             "network-css": (self.add_network_css, "network-dependent CSS reference"),
             "network-api": (self.add_network_api, "browser network API is prohibited"),
+            "network-worker": (self.add_network_worker, "browser network API is prohibited"),
+            "network-svg": (self.add_network_svg, "network-dependent image href"),
             "hosted-route": (self.add_hosted_route, "unexpected hosted administration route"),
         }
         for label, (mutate, expected) in mutations.items():
@@ -147,6 +149,44 @@ class UiReferenceCheckTests(unittest.TestCase):
             newline="\n",
         )
         self.update_governed_hash(root, "assets/app.js")
+
+    def add_network_worker(self, root: Path) -> None:
+        path = root / "assets" / "app.js"
+        path.write_text(
+            path.read_text(encoding="utf-8") + '\nnew Worker("https://example.invalid/worker.js");\n',
+            encoding="utf-8",
+            newline="\n",
+        )
+        self.update_governed_hash(root, "assets/app.js")
+
+    def add_network_svg(self, root: Path) -> None:
+        generator = root / "scripts" / "build_mockups.py"
+        text = generator.read_text(encoding="utf-8")
+        marker = '    print(f"Generated {len(pages)} HTML files in {ROOT}")'
+        injected = "\n".join(
+            [
+                '    index_path = ROOT / "index.html"',
+                "    index_path.write_text(",
+                '        index_path.read_text(encoding="utf-8").replace(',
+                '            "</body>",',
+                "            '<svg><image href=\"https://example.invalid/image.svg\"></image></svg></body>',",
+                "        ),",
+                '        encoding="utf-8",',
+                '        newline="\\n",',
+                "    )",
+                marker,
+            ]
+        )
+        generator.write_text(text.replace(marker, injected), encoding="utf-8", newline="\n")
+        subprocess.run([sys.executable, str(generator)], cwd=root, check=True, capture_output=True)
+        manifest_path = root / "REFERENCE_MANIFEST.yaml"
+        manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+        manifest["file_hashes"] = {
+            relative: self.canonical_hash(root / relative) for relative in manifest["governed_files"]
+        }
+        manifest_path.write_text(
+            yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True), encoding="utf-8", newline="\n"
+        )
 
     def add_hosted_route(self, root: Path) -> None:
         old_route = "project-settings.html"

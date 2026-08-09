@@ -44,24 +44,40 @@ SHA256 = re.compile(r"^[0-9a-f]{64}$")
 CSS_URL = re.compile(r"url\(\s*(['\"]?)(.*?)\1\s*\)", re.IGNORECASE | re.DOTALL)
 CSS_IMPORT = re.compile(r"@import\s+(?!url\()(['\"])(.*?)\1", re.IGNORECASE | re.DOTALL)
 BROWSER_NETWORK_API = re.compile(
-    r"\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|importScripts)\s*\(|\bnavigator\s*\.\s*sendBeacon\s*\(",
+    r"\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|Worker|SharedWorker|importScripts)\s*\("
+    r"|\bnavigator\s*\.\s*(?:sendBeacon|serviceWorker\s*\.\s*register)\s*\("
+    r"|\b(?:audioWorklet|paintWorklet)\s*\.\s*addModule\s*\(",
     re.IGNORECASE,
 )
+REMOTE_RESOURCE = re.compile(r"(?:https?:)?//[^\s'\"<>]+", re.IGNORECASE)
 FETCH_ATTRIBUTES = {
     "a": ("href",),
+    "applet": ("archive", "code", "codebase", "object"),
     "audio": ("src",),
     "base": ("href",),
+    "body": ("background",),
     "button": ("formaction",),
     "embed": ("src",),
+    "feimage": ("href", "xlink:href"),
     "form": ("action",),
+    "frame": ("src",),
+    "html": ("manifest",),
     "iframe": ("src",),
+    "image": ("href", "xlink:href"),
     "img": ("src", "srcset"),
     "input": ("src", "formaction"),
     "link": ("href",),
+    "menuitem": ("icon",),
     "object": ("data",),
-    "script": ("src",),
+    "portal": ("src",),
+    "script": ("src", "href", "xlink:href"),
     "source": ("src", "srcset"),
+    "table": ("background",),
+    "td": ("background",),
+    "th": ("background",),
     "track": ("src",),
+    "tr": ("background",),
+    "use": ("href", "xlink:href"),
     "video": ("src", "poster"),
 }
 
@@ -217,6 +233,8 @@ def executable_reference_errors(reference: Path, payloads: dict[str, bytes]) -> 
                     errors.append(error)
         if suffix in {".html", ".js"} and BROWSER_NETWORK_API.search(text):
             errors.append(f"{relative}: browser network API is prohibited in the offline reference")
+        for match in REMOTE_RESOURCE.finditer(text):
+            errors.append(f"{relative}: remote browser resource is prohibited: {match.group(0)}")
     return errors
 
 
