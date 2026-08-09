@@ -30,6 +30,7 @@ from ui_conformance import (  # noqa: E402
     check_workflows,
     file_inventory,
     font_face_available,
+    implementation_files,
     load_context,
     new_page,
     open_browser,
@@ -105,6 +106,22 @@ class UiConformanceTests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "cannot remain active"):
                 load_context(root)
+
+    def test_implementation_inventory_excludes_dependency_and_build_directories(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            package = root / "packages" / "ui-components"
+            source = package / "src" / "index.tsx"
+            source.parent.mkdir(parents=True)
+            source.write_text("export const Component = () => null;\n", encoding="utf-8", newline="\n")
+            for directory in ("node_modules", "dist", "target"):
+                generated = package / directory / "dependency.tsx"
+                generated.parent.mkdir(parents=True)
+                generated.write_text("export const Dependency = () => null;\n", encoding="utf-8", newline="\n")
+
+            observed = implementation_files(root, ["packages/ui-components"])
+
+        self.assertEqual(["packages/ui-components/src/index.tsx"], observed)
 
     def test_application_mode_requires_a_bound_build_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

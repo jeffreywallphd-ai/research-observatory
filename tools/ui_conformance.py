@@ -137,6 +137,9 @@ def implementation_files(repo: Path, roots: list[str]) -> list[str]:
         if not root_path.exists():
             continue
         for directory, child_directories, file_names in os.walk(root_path, followlinks=False, onerror=fail_closed):
+            child_directories[:] = sorted(
+                name for name in child_directories if name not in APPLICATION_EXCLUDED_DIRECTORIES
+            )
             directory_path = Path(directory)
             for name in [*child_directories, *file_names]:
                 candidate = directory_path / name
