@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S01.T02",
+  "commit": "e19ecc726ebba7206fb06ce0fa51a228bd830fed",
+  "baseCommit": "5422bd749ba68274faf1f2744ebf8dc439aef6ff",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S01.T02.review-fix.json",
+    "reason": "The second independent review confirmed the documented encoded-route fixes but found decoded scheme-prefixed links could still inherit local workspace semantics. This manifest binds exact scheme-prefix rejection, stale aria-current cleanup, and keyboard exclusion in the real production bundle."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/frame.test.ts",
+    "apps/desktop/src/app/frame.ts",
+    "apps/desktop/src/app/routes.test.ts",
+    "apps/desktop/src/app/routes.ts",
+    "artifacts/evidence/CAP-01.S01.T02.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S01.T02-review-fix-2-desktop.json",
+      "exitCode": 0,
+      "result": "The exact second-remediation commit passed all 24 desktop-profile commands in 463.82 seconds, including 146 foundation tests, 22 desktop tests, all native/application commands, the complete approved UI matrix, and the expanded real-bundle recovery boundary. Report SHA-256: 3889fe4197518fd97d32f0943e6647e607c1fc732210d4de1b85eb73c6e97d29."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\CAP-01.S01.T02-review-fix-2-application.json",
+      "exitCode": 0,
+      "result": "All eight locked renderer/native commands passed. The production bundle activated all 32 pages, recovered six unsafe route inputs, rejected two scheme-prefixed navigation hrefs, removed stale current-page semantics, excluded those links from keyboard routing, and made zero unexpected requests. Report SHA-256: 55e547d1344cc6e31d839984a702bf8be86e41238c9d2c01ca0984268a808a04."
+    },
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop test",
+      "exitCode": 0,
+      "result": "Eight renderer-domain tests pass, including exact scheme-prefix forms https:evil.invalid/... and mailto:user@example.invalid/... in both route and navigation-href boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 55 governed Python files pass formatting, lint, and type checks after the expanded bundled-browser regression."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base 67be83ac7ad482c81d5fc709b0f2e448dc1a6697 --head HEAD",
+      "exitCode": 0,
+      "result": "The full T02 renderer range remains exactly bound to approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5... with no protected-control or reference drift."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Every decoded path segment beginning with an RFC-style scheme prefix is rejected, including non-hierarchical and browser-resolved relative scheme forms.",
+        "The frame now evaluates every anchor and removes stale aria-current state from any link that is not a canonical approved local route; invalid links are also absent from delegated keyboard navigation."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Pure route and frame tests cover HTTPS and mailto scheme-prefix forms alongside all prior encoding, traversal, separator, malformed-input, query, fragment, and approved-route cases.",
+        "The built-runtime regression mutates the real approved study-design navigation link, verifies it is not current, and verifies ArrowDown does not route focus through it."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The correction remains inside renderer route/frame normalization and its verification harness; no project lifecycle, filesystem, service, dependency, native privilege, or approved reference bytes changed.",
+        "The immutable evidence chain preserves both independent review findings and their exact correction ranges."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must reproduce scheme-prefixed route and navigation-href forms in the exact production bundle, confirm stale aria-current removal and keyboard exclusion, and validate the full evidence chain before approval."
+  }
+}
