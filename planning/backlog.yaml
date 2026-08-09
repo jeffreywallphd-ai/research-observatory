@@ -1753,11 +1753,16 @@ capabilities:
       owner: codex
       branch: codex/cap-00-delivery-foundation
       started_at: '2026-08-09T01:40:40+00:00'
-      updated_at: '2026-08-09T01:40:40+00:00'
+      updated_at: '2026-08-09T02:19:17+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-00.S06.T04.json
+        sha256: 17270a8675c38556297193125a80f895da0f59159e624c507a4bd15d6035f468
+        commit: 86c386e7c06a9e0b15cdfd5172eea665e120602e
+        recorded_at: '2026-08-09T02:19:17+00:00'
       review:
         reviewer: null
         result: null
@@ -1768,7 +1773,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-09T01:40:40+00:00'
         expires_at: '2026-08-09T09:40:40+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - platform-neutral
