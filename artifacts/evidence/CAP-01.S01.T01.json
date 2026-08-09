@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S01.T01",
+  "commit": "79f8603492d5e593c76293dea66885ae6e010223",
+  "baseCommit": "1a8347f2b6e9c6706d6c5c63af401c36e5d5060d",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    "Cargo.lock",
+    "Cargo.toml",
+    "apps/desktop/README.md",
+    "apps/desktop/package.json",
+    "apps/desktop/scripts/assemble-reference.mjs",
+    "apps/desktop/scripts/clean-dist.mjs",
+    "apps/desktop/scripts/lint.mjs",
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/build.rs",
+    "apps/desktop/src-tauri/capabilities/main-window.json",
+    "apps/desktop/src-tauri/gen/schemas/acl-manifests.json",
+    "apps/desktop/src-tauri/gen/schemas/capabilities.json",
+    "apps/desktop/src-tauri/gen/schemas/desktop-schema.json",
+    "apps/desktop/src-tauri/gen/schemas/windows-schema.json",
+    "apps/desktop/src-tauri/icons/128x128.png",
+    "apps/desktop/src-tauri/icons/128x128@2x.png",
+    "apps/desktop/src-tauri/icons/32x32.png",
+    "apps/desktop/src-tauri/icons/64x64.png",
+    "apps/desktop/src-tauri/icons/Square107x107Logo.png",
+    "apps/desktop/src-tauri/icons/Square142x142Logo.png",
+    "apps/desktop/src-tauri/icons/Square150x150Logo.png",
+    "apps/desktop/src-tauri/icons/Square284x284Logo.png",
+    "apps/desktop/src-tauri/icons/Square30x30Logo.png",
+    "apps/desktop/src-tauri/icons/Square310x310Logo.png",
+    "apps/desktop/src-tauri/icons/Square44x44Logo.png",
+    "apps/desktop/src-tauri/icons/Square71x71Logo.png",
+    "apps/desktop/src-tauri/icons/Square89x89Logo.png",
+    "apps/desktop/src-tauri/icons/StoreLogo.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-anydpi-v26/ic_launcher.xml",
+    "apps/desktop/src-tauri/icons/android/mipmap-hdpi/ic_launcher.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-hdpi/ic_launcher_foreground.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-hdpi/ic_launcher_round.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-mdpi/ic_launcher.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-mdpi/ic_launcher_foreground.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-mdpi/ic_launcher_round.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-xhdpi/ic_launcher.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-xhdpi/ic_launcher_foreground.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-xhdpi/ic_launcher_round.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-xxhdpi/ic_launcher.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-xxhdpi/ic_launcher_foreground.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-xxhdpi/ic_launcher_round.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-xxxhdpi/ic_launcher.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-xxxhdpi/ic_launcher_foreground.png",
+    "apps/desktop/src-tauri/icons/android/mipmap-xxxhdpi/ic_launcher_round.png",
+    "apps/desktop/src-tauri/icons/android/values/ic_launcher_background.xml",
+    "apps/desktop/src-tauri/icons/app-icon.svg",
+    "apps/desktop/src-tauri/icons/icon.icns",
+    "apps/desktop/src-tauri/icons/icon.ico",
+    "apps/desktop/src-tauri/icons/icon.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@1x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@2x-1.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@2x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@3x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@1x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@2x-1.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@2x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@3x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@1x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@2x-1.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@2x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@3x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-512@2x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-60x60@2x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-60x60@3x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-76x76@1x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-76x76@2x.png",
+    "apps/desktop/src-tauri/icons/ios/AppIcon-83.5x83.5@2x.png",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/main.rs",
+    "apps/desktop/src-tauri/tauri.conf.json",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/routes.test.ts",
+    "apps/desktop/src/app/routes.ts",
+    "apps/desktop/src/app/session.test.ts",
+    "apps/desktop/src/app/session.ts",
+    "apps/desktop/src/main.tsx",
+    "apps/desktop/tsconfig.json",
+    "apps/desktop/vite.config.ts",
+    "artifacts/evidence/ui-change/CAP-01.S01.T01.json",
+    "docs/adr/ADR-0005-activate-the-offline-tauri-desktop-application.md",
+    "docs/adr/index.json",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pnpm-lock.yaml",
+    "quality-scope.json",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/foundation/test_build_manifest.py",
+    "tests/foundation/test_verify_runner.py",
+    "tools/build_manifest.py",
+    "tools/desktop_app_check.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py",
+    "verification-profiles.json",
+    "verification/desktop-ui.schema.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts/tmp/CAP-01.S01.T01-desktop.json",
+      "exitCode": 0,
+      "result": "The exact clean implementation commit passed all 24 desktop-profile commands in 458.15 seconds: 16 foundation commands with 145 tests, 8 pinned application commands, 18 desktop tests, 32 routes, 521 region contracts, 390 keyboard cases, 64 responsive visual cases, and 64 controlled light/dark captures. Report SHA-256: 344f13efaca5b85cba188de1bbe7ca2dd659f0a9b097ed1df6a168e975c5757c."
+    },
+    {
+      "command": "Start target\\debug\\research-observatory-desktop.exe hidden; verify process liveness and Get-NetTCPConnection -OwningProcess; stop exact process",
+      "exitCode": 0,
+      "result": "The Windows Tauri executable stayed alive for five seconds, owned zero TCP sockets, and terminated cleanly when the bounded smoke process was stopped."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 1a8347f2b6e9c6706d6c5c63af401c36e5d5060d",
+      "exitCode": 0,
+      "result": "The design-first gate bound exactly four governed renderer files to approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5..., and proved the exact protected activation commits precede every UI implementation commit."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --check",
+      "exitCode": 0,
+      "result": "The authoritative ledger and generated planning views validate with only CAP-01.S01.T01 claimed inside the active approved CAP-01 campaign."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The pinned Tauri 2.11.5 Windows host compiles, links, and launches with a packaged frontend, no devUrl, no production server, a restrictive offline CSP, no global Tauri bridge, and an explicit main-window capability granting zero privileged commands.",
+        "The bounded Windows launch smoke proved process liveness and zero owned TCP sockets; locked Cargo format, Clippy with warnings denied, native unit tests, and debug build all pass.",
+        "The React 19.2.8/TypeScript 7.0.2 renderer passes deterministic lint, strict typecheck, five unit tests, and a Vite production build whose manifest binds the complete current input and 41-artifact output inventories."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Route tests prove all 32 approved routes and safe recovery of an unknown deep link to project home; project-session tests prove the expected open path and fail closed on an invalid transition.",
+        "Desktop regressions cover missing application manifests, fixture-mode escape, CSP/network/privilege mutations, generated dependency-tree schema boundaries, and first-application protected-control ordering.",
+        "The real application build passes 521 semantic region contracts, 14 workflows with 390 keyboard cases, 64 responsive cases, and 64 controlled visual hashes."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0005 records renderer/native ownership, zero-privilege/offline constraints, deterministic build provenance, activation ordering, rollback, and future typed Tauri/Core API boundaries.",
+        "The desktop README, exact Cargo/pnpm locks, Tauri-generated capability schemas, application activation schema, verification profile, quality scope, UI lineage contract, and conformance guide are synchronized without modifying the approved reference package.",
+        "CAP-00 build-manifest schema inventory remains fail closed for source trees while explicitly excluding nested generated node_modules/dist/target trees required by the new workspace."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review must audit the exact task range and protected activation ordering, reproduce offline/zero-privilege and manifest failure boundaries, validate locked dependency identities, confirm real-build UI conformance, and inspect the Windows launch/no-socket evidence before approval."
+  }
+}
