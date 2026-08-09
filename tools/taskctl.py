@@ -1366,9 +1366,11 @@ def command_capability_resume(args, data, capabilities, slices, tasks, gates) ->
     if campaign.get("branch") and campaign.get("branch") != branch:
         raise SystemExit("Paused capability must resume on its recorded branch")
     selected_slice = current_slice(capability)
-    if (
-        selected_slice is None
-        or not profile_matches(selected_slice, args.profile)
+    if selected_slice is None:
+        if capability.get("completion", {}).get("status") not in {"CHANGES_REQUESTED", "BLOCKED"}:
+            raise SystemExit("Paused capability has no eligible slice or capability-review remediation")
+    elif (
+        not profile_matches(selected_slice, args.profile)
         or not platform_matches(selected_slice, args.platform)
         or not gate_is_open(data, gates, selected_slice["wave"])
         or not slice_dependencies_done(selected_slice, tasks)
