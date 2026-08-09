@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5ff405160a5629ea160851ebea3016ade4c410dbe43090df4ed6ef493aec6feb
+source_sha256: 5524a7454dd8378887a6dde7de6e3ab8eb611b26288aff0082c4ee98234d0eec
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -949,7 +949,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A production-shaped desktop shell provides navigation, project selection, commands, and application state.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `CHANGES_REQUESTED`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
