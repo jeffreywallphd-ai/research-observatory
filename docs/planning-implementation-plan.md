@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b3c9a0a5079a37910b06729d378abc0d5e4c8db27386a13096d589f31c378e0e
+source_sha256: f3a92a2f0d26c15a685729b918a5d6eabbfbf43d8d610b2bd5fa05a592a6f977
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -900,7 +900,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-00.S06.T04 - Implement UI implementation-conformance verification
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `platform-neutral`
 
