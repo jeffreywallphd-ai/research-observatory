@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-00.S06.T04",
+  "commit": "c9e0cec2bc295188353db3b7cf34d609c199805b",
+  "baseCommit": "cf4f521e8e362061afb94245986c7bb6203852b2",
+  "branch": "codex/cap-00-delivery-foundation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-00.S06.T04.review-fix-2.json",
+    "reason": "Final re-review proved that the provenance-only ratification exception skipped approval-record and baseline-package reconstruction. This manifest binds the narrowed exception, its adversarial regression, the one-commit governed-approval handoff, and full exact-commit qualification."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-00.S06.T04.review-fix-2.json",
+    "docs/adr/ADR-0004-govern-desktop-ui-conformance-and-visual-baselines.md",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_ui_conformance.py",
+    "tools/ui_conformance.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile foundation --report artifacts/tmp/t04-exception-final-foundation.json",
+      "exitCode": 0,
+      "result": "The exact clean remediation commit passed all 16 foundation commands and all 143 foundation tests in 218.11 seconds; build provenance reported 0.1.0+gc9e0cec clean."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --report artifacts/tmp/t04-exception-final-desktop.json",
+      "exitCode": 0,
+      "result": "The same exact clean commit passed all 23 desktop-profile commands in 319.00 seconds, including 143 foundation tests, 15 desktop tests, 521 page-region contracts, 139 browser workflow cases, 390 keyboard cases, 64 responsive visual cases, and 64 pinned captures."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_ui_conformance tests.foundation.test_ui_change_gate -v",
+      "exitCode": 0,
+      "result": "All 27 focused tests passed, including malformed legacy approval and arbitrary claimed-package rejection, post-approval package mutation through a merge, strict provenance-only ratification, and all prior UI change-boundary regressions."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_visual_regression_check.py",
+      "exitCode": 0,
+      "result": "Reachable visual history, the separate governed approval handoff, exact package SHA db13c8d5..., controlled renderer settings, and all 64 screenshot hashes validate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The ledger validates with every prior evidence attachment and independent review disposition preserved."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "Generated planning views exactly match the authoritative ledger."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The desktop profile executes the complete approved-reference fixture contract across 32 routes, 14 workflow profiles, 521 required regions, 139 browser cases, 390 keyboard cases, light/dark parity, and responsive/accessibility checks.",
+        "All fixture-presence, token, route, workflow, keyboard, font, region, and accessibility adversarial regressions pass at the exact commit."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact 54-file project-owner-ratified reference package remains SHA-256 db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2, with 64 controlled Chromium captures matching the authoritative baseline.",
+        "Approval records, manifests, governed blobs, and claimed package identity are always reconstructed at historical approval and baseline commits. The legacy ratification exception waives only original-approval package equality and cannot suppress malformed approval or arbitrary package failures.",
+        "The only governed-approval handoff accepted is the exact single-parent approval commit immediately followed by a provenance-only child that strictly validates the current package; baseline bytes must remain identical to the already validated parent and no intermediate commit is allowed."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Every report retains its exact normative reference mapping and explicit illustrative exclusions.",
+        "ADR-0004 and the automation guide document full historical reconstruction and the narrowly bounded approval handoff without attributing an invented human identity."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "human-and-agent-review",
+    "note": "The project owner's explicit CAP-00 approval remains the human boundary. Independent technical re-review must reproduce the malformed legacy approval/arbitrary claimed-package denial, confirm the one-commit handoff cannot suppress historical validation, verify the complete supersession chain and exact diff, and audit the exact clean profile results."
+  }
+}
