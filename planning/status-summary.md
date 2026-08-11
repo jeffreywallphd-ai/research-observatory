@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: dcfe20d1663a9b3ad5fe869dd2e5a4b2866b593f16c3bbf903ef37ead2caf9cd
+source_sha256: d2326cc14d7e06a6ac6dc006bc8e02b82cde57a760e2d0d85d49862099696829
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 293 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 25 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S03.T01` Create the modular FastAPI service skeleton | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S03.T01` Create the modular FastAPI service skeleton | `REVIEW` | codex | `codex/cap-01-desktop-shell` |

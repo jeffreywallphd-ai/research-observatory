@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dcfe20d1663a9b3ad5fe869dd2e5a4b2866b593f16c3bbf903ef37ead2caf9cd
+source_sha256: d2326cc14d7e06a6ac6dc006bc8e02b82cde57a760e2d0d85d49862099696829
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1171,7 +1171,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S03.T01 - Create the modular FastAPI service skeleton
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -1198,6 +1198,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-01.S03.T01.json` at `c7f7395699097e4f963938184449b110ee7d8a25`
+- `artifacts/evidence/CAP-01.S03.T01.review-fix.json` at `71f16111874bf006aaae18c5763678a03586c0b4`
 
 #### - [ ] CAP-01.S03.T02 - Package the Python service as a Windows sidecar artifact
 
