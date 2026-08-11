@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "documentType": "ui-component-performance-baseline",
-  "baselineSourceCommit": "85bd0583207eac4349b9c4957b1e10c198f09b3c",
+  "baselineSourceCommit": "b09fb7f254763912b999e2e491cd89a083c97ba0",
   "profile": "windows-x64",
   "componentContractVersion": "1.2.0",
   "fixture": {
@@ -11,8 +11,8 @@
     "pageSize": 50,
     "pageCount": 200,
     "maximumRenderedRows": 50,
-    "benchmarkEntrySha256": "3bec54a441c32e87d7433eaa111073d7dd399575e5e580608e549bebef50ff43",
-    "benchmarkRunnerSha256": "596ec4531e32cac012887524be010a6143413a6a9d3cc34831b32a13fcba0594"
+    "benchmarkEntrySha256": "94703cee80e3a31f0d36e5cc6b792402cc548fb6d9c6d9e1c3f058a8e5e18053",
+    "benchmarkRunnerSha256": "f4c3db4b027c048a9ebbb49fb3927e2243f625bebf790e02e72cd737cacd5b0c"
   },
   "methodology": {
     "runtime": "Node 24.19.0, React 19.2.8 production SSR, Vite 8.2.1",
@@ -28,7 +28,7 @@
   "measurements": {
     "warmPaginatedRenderBatch": {
       "absoluteBudgetMs": 100.0,
-      "baselineP95Ms": 43.169
+      "baselineP95Ms": 39.097
     }
   }
 }
