@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 05e01c61a77333d9ad87df75a641a9b210fa86bf020b6d429c923b100f150134
+source_sha256: 3bd2d534979d765af2a5647f6d0b3c91df19ea8fa81709ab994d82c77fb9587a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1126,7 +1126,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T03 - Create consistent loading, error, offline, and recovery states
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
