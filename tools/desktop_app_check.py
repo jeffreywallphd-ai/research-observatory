@@ -785,6 +785,15 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             details["focusContainment"] = details["focusContainment"] and page.evaluate(
                 "document.activeElement?.textContent?.trim() === 'Close shortcuts'"
             )
+            for shortcut in ("Control+K", "Control+/", "Alt+H", "Control+/"):
+                page.keyboard.press(shortcut)
+                details["focusContainment"] = details["focusContainment"] and page.evaluate(
+                    """() => {
+                      const dialog = document.querySelector('[role="dialog"][aria-modal="true"]');
+                      return Boolean(dialog && dialog.contains(document.activeElement)
+                        && document.activeElement?.textContent?.trim() === 'Close shortcuts');
+                    }"""
+                )
             page.keyboard.press("Escape")
             page.wait_for_function("document.activeElement?.id === 'shell-command'", timeout=5_000)
             details["focusRestoration"] = page.locator('[role="dialog"]').count() == 0 and page.evaluate(
@@ -793,10 +802,20 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             page.keyboard.press("Alt+H")
             details["homeShortcut"] = page.evaluate("document.activeElement?.id === 'main-content'")
 
+            theme_toggle = page.locator("[data-theme-toggle]")
             previous_theme = page.locator("html").get_attribute("data-theme")
-            page.locator('[data-command-id="toggle-theme"]').focus()
+            initial_toggle_name = theme_toggle.inner_text().strip()
+            initial_pressed = theme_toggle.get_attribute("aria-pressed")
+            theme_toggle.focus()
             page.keyboard.press("Enter")
-            details["themeToggle"] = page.locator("html").get_attribute("data-theme") != previous_theme
+            current_theme = page.locator("html").get_attribute("data-theme")
+            details["themeToggle"] = (
+                current_theme != previous_theme
+                and initial_toggle_name == "Dark theme"
+                and theme_toggle.inner_text().strip() == initial_toggle_name
+                and initial_pressed == ("true" if previous_theme == "dark" else "false")
+                and theme_toggle.get_attribute("aria-pressed") == ("true" if current_theme == "dark" else "false")
+            )
             details["keyboardCommand"] = details["themeToggle"]
             page.wait_for_function(
                 "document.querySelector('[data-live-region]')?.textContent?.includes('theme active')",
