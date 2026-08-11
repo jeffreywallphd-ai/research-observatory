@@ -29,7 +29,20 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
     def test_unindexed_adr_file_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             checkout = Path(temporary) / "repo"
-            shutil.copytree(REPO, checkout, ignore=shutil.ignore_patterns(".git", ".venv", "node_modules", ".local"))
+            shutil.copytree(
+                REPO,
+                checkout,
+                ignore=shutil.ignore_patterns(
+                    ".git",
+                    ".venv",
+                    ".local",
+                    "__pycache__",
+                    "dist",
+                    "node_modules",
+                    "product-dist",
+                    "target",
+                ),
+            )
             sample = checkout / "docs" / "adr" / "ADR-9999-unindexed.md"
             sample.write_text("---\nid: ADR-9999\n---\n", encoding="utf-8")
 
