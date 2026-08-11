@@ -8,7 +8,7 @@ export const DATA_TABLE_FIXTURE_VERSION = "data-table-10000-v1" as const;
 export const DATA_TABLE_TOTAL_ROWS = 10_000;
 export const DATA_TABLE_PAGE_SIZE = 50;
 export const DATA_TABLE_REPETITIONS = 20;
-export const DATA_TABLE_RENDERS_PER_SAMPLE = 200;
+export const DATA_TABLE_RENDERS_PER_SAMPLE = 1_000;
 export const DATA_TABLE_WARMUP_BATCHES = 5;
 
 const columns = [
