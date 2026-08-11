@@ -18,7 +18,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from build_manifest import guarded_atomic_write_json, load_json, safe_output_path
-from desktop_product import PRODUCT_MANIFEST, PRODUCT_ROOT, inline_product_index
+from desktop_app_check import PRODUCT_MANIFEST, PRODUCT_ROOT, inline_product_index
 from playwright.sync_api import Route, sync_playwright
 from ui_conformance import load_context
 
@@ -328,13 +328,15 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
                     """
                 )
                 fcp = paint_ready.get("fcp") if isinstance(paint_ready, dict) else None
-                cdp_metrics: dict[str, Any] = {}
+                cdp_metrics: dict[str, float] = {}
                 if not isinstance(fcp, (int, float)):
-                    cdp_metrics = {
-                        item.get("name"): item.get("value")
-                        for item in cdp.send("Performance.getMetrics").get("metrics", [])
-                        if isinstance(item, dict)
-                    }
+                    for item in cdp.send("Performance.getMetrics").get("metrics", []):
+                        if not isinstance(item, dict):
+                            continue
+                        name = item.get("name")
+                        value = item.get("value")
+                        if isinstance(name, str) and isinstance(value, (int, float)):
+                            cdp_metrics[name] = float(value)
                     cdp_fcp = cdp_metrics.get("FirstContentfulPaint")
                     navigation_start = cdp_metrics.get("NavigationStart")
                     if isinstance(cdp_fcp, (int, float)) and isinstance(navigation_start, (int, float)):

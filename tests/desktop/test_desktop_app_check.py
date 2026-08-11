@@ -17,11 +17,11 @@ from desktop_app_check import (  # noqa: E402
     command_plan,
     component_catalog_browser_errors,
     design_system_errors,
+    product_build_errors,
     runtime_frame_errors,
     security_errors,
     tool_environment,
 )
-from desktop_product import product_build_errors  # noqa: E402
 
 
 class DesktopAppCheckTests(unittest.TestCase):
