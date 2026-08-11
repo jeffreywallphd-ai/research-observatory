@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-01.S02",
+  "stateCommit": "4676ad50d767e413a2c210c0f35b28af4644d29c",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S02.integration.json",
+    "sha256": "58626d067126ea9950e0f8924304e1162a431ed5bc5e8df8c93ef608809e9464",
+    "reason": "The original integration review found that the approved S02 plan's 10,000-row responsiveness requirement lacked a bounded component contract and governed benchmark. This record binds the independently approved pagination, real-browser interaction, performance, and Windows checkout-portability remediations while preserving the original recovery and accessibility behavior."
+  },
+  "outcome": "The reusable Academic Minimal desktop foundation now provides accessible semantic states, keyboard/focus/screen-reader behavior, safe recovery surfaces, and a bounded 10,000-row table contract with live interaction and commit-bound performance qualification, without shipping the UI-reference site or a nonfunctional table demo in the application.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-01.S02.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S02.T01.json", "sha256": "02724877e4d3d7a80ca5d01a5bfad13d0ee49db8cfe132112744ec756c00f5ba"},
+        {"path": "artifacts/evidence/CAP-01.S02.T01.review-fix.json", "sha256": "3097c4c28149eb61c6dba1a2d707edb91f868c422a5931d28ddf6a699bb745bd"},
+        {"path": "artifacts/evidence/CAP-01.S02.T01.review-fix-2.json", "sha256": "ec7e1d360f3fb23891ed7ca2564afa5ed66b04bb2b3c0ed77084b55984c2a4a7"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S02.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S02.T02.json", "sha256": "939b1cce6edabae0164d3ce8649689112de4ce16e36835e7b6eeaeec57a0cba2"},
+        {"path": "artifacts/evidence/CAP-01.S02.T02.review-fix.json", "sha256": "b5d00fce5e27643a4a18cd62cf4e81fcafe88f7275eab8d0b742b45e56568a4a"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S02.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S02.T03.json", "sha256": "60ae8c334b59c5712ae296039f30c3a660d24d0a233113f7b68e6f7be8fd9ddb"},
+        {"path": "artifacts/evidence/CAP-01.S02.T03.review-fix.json", "sha256": "bcae361be399abff74431a99d504ee268512827c36255c013bad6cd6f6ebf53e"},
+        {"path": "artifacts/evidence/CAP-01.S02.T03.review-fix-2.json", "sha256": "bcb7b00ef8374112bf5555aadf82e7274ace848ab2aaa80f508153606644c97a"},
+        {"path": "artifacts/evidence/CAP-01.S02.T03.review-fix-3.json", "sha256": "88009b9a593bc6c734c5eedbd98ad824fbdbd652f43d315bf8867b764da6e316"},
+        {"path": "artifacts/evidence/CAP-01.S02.T03.review-fix-4.json", "sha256": "085f04b102ec6cbc6b2b58e627cd383b8db78b53c6244970b39fb5f5aac95e9b"},
+        {"path": "artifacts/evidence/CAP-01.S02.T03.review-fix-5.json", "sha256": "6285735939015be62bd1c00ff819f0711612df527c3cf9de075d38955932cebe"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\CAP-01.S02-integration-review-fix-app.json",
+      "exitCode": 0,
+      "result": "At exact clean state 4676ad5, all nine component, renderer, and native commands pass. The product supplies the approved keyboard, focus, theme, recovery, retained-input, safe-diagnostic, offline, responsive, and reference-isolation behavior. A test-only browser consumer traverses the real 10,000-row DataTable through all 200 pages with a 50-row DOM bound, live ranges, Enter activation, retained focus, compact density, and disabled first/last controls. Report SHA-256: 814c4ab974776485e0c1173874a72fa5966f9f455b14cbe2e65ab9ea33081ed7."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\CAP-01.S02-integration-review-fix-performance-sequential.json",
+      "exitCode": 0,
+      "result": "At exact clean post-main-checkout state 4676ad5 and without competing build workload, all immutable performance thresholds pass: cold p95 36 ms, visible p95 19.081 ms, usable p95 20.651 ms, and 10,000-row render-batch p95 39.578 ms below the 46.916 ms relative and 100 ms absolute limits. Canonical fixture hashes remain the reviewed LF values under the Windows CRLF checkout. Report SHA-256: f993b554ef70106a86ce43e30c33a68380bd5346262925f9e31a1105f4e75337."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop",
+      "exitCode": 0,
+      "result": "The exact clean production implementation at b32e834 passed all 25 commands in 554.56 seconds with 148 foundation tests, 38 desktop tests, all package/application/native commands, 139 workflow cases, 390 keyboard cases, 64 accessibility/responsive cases, and 64 visual captures. Later approved changes are confined to test-only browser verification, evidence/planning records, and line-ending-stable performance-fixture hashing; their complete focused and aggregate checks are recorded above and were independently reviewed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 758a1e559fefeba699e4550389d7efed0ad75db4 --head 9f94e9433cb455a2c912ab4e14f3f22e92d7d929",
+      "exitCode": 0,
+      "result": "At the final active task implementation commit, the complete T03 range passes with exactly the seven approved UI files and unchanged RO-UI-ACADEMIC-MINIMAL-1.3 lineage. All three tasks' UI ranges and contracts were independently approved; no approved reference byte changed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The active campaign, three DONE tasks, every current immutable evidence attachment, three independent approvals, and generated planning views validate exactly."
+    }
+  ],
+  "integratedBehavior": [
+    "The standalone ui-tokens and ui-components packages expose versioned Academic Minimal contracts with declared package dependencies, standalone type/runtime resolution, tree-shaking, strict governed styles, and complete documented evidence, uncertainty, and boundary identities.",
+    "The functional desktop provides landmarks, visible focus, skip navigation, bounded shortcuts, modal focus containment/restoration, stable theme semantics, live announcements, and actionable loading/offline/denied/stale/partial/failure/recovery states.",
+    "Large table consumers receive accessible 1-200-row pagination, first/last boundary states, polite range/page announcements, stable row identity, keyboard operation, and a measured 10,000-row fixture that never renders more than 50 rows in the approved scenario.",
+    "The performance verifier pins exact baseline bytes and p95 values, retains all samples, records hardware/OS/runtime/methodology, rejects non-finite or altered thresholds, and binds governed UTF-8 fixture content consistently across clean LF and CRLF materializations without accepting bare carriage returns.",
+    "The local-service recovery seam admits only its exact allowlisted result; malformed, credential-shaped, URL/path-bearing, extra-field, and hostile values fail closed to a nonblank generic state and fixed opaque diagnostic.",
+    "The production and development application contain exactly one functional CAP-01 page. The 32-page UI reference, the component browser harness, illustrative records, future-capability routes, and nonfunctional demos remain isolated in design or test tooling and never enter the product bundle."
+  ],
+  "reviewFixes": [
+    "Added bounded accessible pagination and a representative 10,000-row performance baseline with immutable absolute and 20-percent regression limits.",
+    "Added a real-browser test-only consumer that traverses every page and verifies row bounds, contents, live ranges, keyboard focus, compact mode, and disabled boundaries.",
+    "Integrated the benchmark into the existing desktop performance verifier without modifying verification-profile or protected UI-gate controls.",
+    "Canonicalized only governed UTF-8 text fixture line endings so the release-authoritative Windows main/branch checkout remains reproducible while content drift and bare carriage returns fail closed."
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The actual packaged FastAPI sidecar and native process supervision are intentionally owned by CAP-01.S03; this slice exposes only the truthful not-packaged recovery seam.",
+      "Authenticated renderer-to-service transport, capability tokens, compatibility negotiation, and request cancellation are intentionally owned by CAP-01.S04.",
+      "The current functional product has no data-table workflow; downstream capabilities may consume the qualified shared DataTable only when they implement their own functional UI."
+    ]
+  }
+}

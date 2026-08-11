@@ -2108,7 +2108,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-01.S01.T01
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-01.S02.T01
       capability_id: CAP-01
@@ -2369,14 +2369,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:maxwell
       reviewed_at: '2026-08-11T19:58:05+00:00'
       evidence:
-      - artifacts\evidence\CAP-01.S02.integration.json
-      notes: Approved slice plan requires large tables/navigation to remain responsive with 10,000 rows through pagination
-        or virtualization. DataTable eagerly renders every row and has no bounded contract or 10,000-row benchmark with hardware,
-        repetitions, budget, and regression evidence; reopen the owning T01 task before slice resubmission.
+      - artifacts/evidence/CAP-01.S02.integration.review-fix.json
+      notes: 'Requalified all S02 behavior after independent task remediations: bounded and interactively tested 10,000-row
+        DataTable, immutable sequential performance, Windows LF/CRLF checkout reproducibility, unchanged recovery/accessibility
+        behavior, and strict product/reference/test separation.'
   - id: CAP-01.S03
     title: Packaged Python/FastAPI sidecar
     outcome: The desktop bundles and supervises a compatible local service with no user-managed Python installation.
