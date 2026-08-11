@@ -2479,11 +2479,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T22:04:42+00:00'
-      updated_at: '2026-08-11T23:26:16+00:00'
+      updated_at: '2026-08-11T23:36:52+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Exact bb7a1b9 passed 19-command service and 25-command desktop profiles; 644-file/31.6 MB Pythonless-path
@@ -2496,16 +2496,17 @@ capabilities:
         commit: bb7a1b9875fcc0b42e40460b350d7bf4dda11e0e
         recorded_at: '2026-08-11T23:25:44+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:maxwell
+        result: changes-requested
+        reviewed_at: '2026-08-11T23:36:52+00:00'
+        notes: Artifact manifest validation was identity-free, exact report hardlinks could escape scratch confinement, and
+          embedded pydantic mypy modules contradicted the build-tool exclusion evidence.
       base_sha: e1c77668875f7b4477dfb7bbca83e9a64814af23
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-11T22:04:42+00:00'
-        expires_at: '2026-08-12T06:04:42+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-11T23:36:52+00:00'
+        expires_at: '2026-08-12T07:36:52+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
