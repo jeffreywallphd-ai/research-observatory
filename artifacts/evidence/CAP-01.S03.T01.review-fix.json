@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S03.T01",
+  "commit": "71f16111874bf006aaae18c5763678a03586c0b4",
+  "baseCommit": "c7f7395699097e4f963938184449b110ee7d8a25",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S03.T01.json",
+    "reason": "Independent review showed that the strict framework-neutral runtime schema validated a fabricated base projection but rejected the real health and readiness payloads, and that the original evidence called the 18-command service profile a 16-command profile. This remediation binds both strict schema variants to actual served JSON and corrects the command count without rewriting prior evidence."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S03.T01.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/core-runtime.schema.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/service/test_core_api.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile service --report artifacts\\tmp\\CAP-01.S03.T01-review-fix-service.json",
+      "exitCode": 0,
+      "result": "At exact clean remediation commit 71f1611, all 18 commands passed in 403.85 seconds: 16 foundation commands with 148 tests, one service command with 8 tests, and one portable-contract command with 2 tests. Clean build identity was 0.1.0+g71f1611. Report SHA-256: eb0bff0393ec1a8353d9a3d3b606cdf57726a06f5495ae0ffce2bb8173782d6f."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 8 focused tests pass. The runtime-contract test now obtains actual /healthz and /readyz JSON from the current FastAPI app and requires both strict variants to validate; unknown state and an added invented field are independently rejected."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . --report artifacts\\tmp\\CAP-01.S03.T01-review-fix-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, lint, and strict type checks passed all 66 governed Python files after the test correction."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts\\tmp\\CAP-01.S03.T01-review-fix-build.json",
+      "exitCode": 0,
+      "result": "The build manifest accepts the exact schema inventory and clean remediation identity; the revised runtime schema SHA-256 is 936c69167af82a2122cb46064a6d1bd723b155809b86978653bd03b51beb68de."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The real Uvicorn startup/readiness/shutdown, isolated process check, deterministic OpenAPI, strict startup configuration, and version bindings remain unchanged and pass in the full clean profile.",
+        "The portable runtime schema now defines exactly two strict response variants: health requires alive=true and readiness requires a boolean ready field; both share canonical service/version/state/capability constraints.",
+        "Actual served /healthz and /readyz payloads, rather than a fabricated projection, are now the schema conformance inputs."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "All 8 service tests pass, including the new actual-response binding plus prior loopback, invalid configuration, duplicate-module, logging-redaction, OpenAPI/version, and isolated-process boundaries.",
+        "The corrected contract test rejects both an unknown runtime state and an otherwise-valid readiness payload with an extra field, preserving fail-closed evolution.",
+        "The exact full profile independently runs the service and portable-contract commands after all 16 foundation gates."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The seven-file incremental range contains only immutable original evidence, the recorded review transition, the runtime schema/readme, and its service regression test.",
+        "No application implementation, dependency, OpenAPI document, UI, reference, deployment profile, or later capability behavior changed.",
+        "This superseding record corrects the original evidence narrative to the report's actual 18 commands while retaining the immutable original manifest for audit."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must validate both actual served payloads against the strict schema, rerun the unknown-state/extra-field attacks, confirm the exact seven-file incremental scope and corrected 18-command evidence, and ensure all prior approved boundaries remain intact."
+  }
+}

@@ -2417,21 +2417,29 @@ capabilities:
       - service
       verification_commands:
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T21:15:26+00:00'
-      updated_at: '2026-08-11T21:53:29+00:00'
+      updated_at: '2026-08-11T22:02:24+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Modular local Core API, strict configuration/logging/module boundaries, deterministic OpenAPI/runtime
+      implementation_notes: 'Modular local Core API, strict configuration/logging/module boundaries, deterministic OpenAPI/runtime
         schema, real loopback startup, clean service profile, and scoped dependency policy are ready for independent review.
+
+        Review remediation binds strict runtime schema variants to actual served health/readiness payloads and corrects the
+        immutable evidence command count; exact clean service profile passes.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S03.T01.json
         sha256: 79a8e1e47a9f416ef64cdff08dbf0d452c41f613a4a72909a5e41bb579e77f69
         commit: c7f7395699097e4f963938184449b110ee7d8a25
         recorded_at: '2026-08-11T21:49:26+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S03.T01.review-fix.json
+        sha256: ef60df99d4c27b5bfa6646b34b14bc847fa50b12ef187be163320f45d33903c2
+        commit: 71f16111874bf006aaae18c5763678a03586c0b4
+        recorded_at: '2026-08-11T22:02:15+00:00'
       review:
         reviewer: agent:maxwell
         result: changes-requested
@@ -2443,7 +2451,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-11T21:53:29+00:00'
         expires_at: '2026-08-12T05:53:29+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
