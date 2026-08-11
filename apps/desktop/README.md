@@ -53,6 +53,13 @@ home, skip navigation is first in the tab order, dialog focus is restored, and
 status changes use one polite live region. The shell contains no fabricated
 project, source, study, model, or workflow data.
 
+It also exposes a truthful local-service recovery boundary. Until CAP-01.S03
+packages the sidecar, retry performs a bounded local readiness check and
+reports the opaque `RO-CAP01-SERVICE-NOT-PACKAGED` reference. Copy and
+continue-locally actions are functional, and command input remains mounted
+across retry or failure. Raw exceptions, paths, URLs, credentials, and stack
+traces are never rendered or copied.
+
 The legacy reference-activation modules are isolated behind
 `src/reference-main.tsx` for conformance tests and are not imported by the
 product entry. Project storage, scholarly workflows, sources, models, and

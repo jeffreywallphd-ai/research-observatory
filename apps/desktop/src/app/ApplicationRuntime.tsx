@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 
 import { Button, Field, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 
+import { LocalServiceBoundary } from "./LocalServiceBoundary";
+
 export type ApplicationTheme = "light" | "dark";
 
 export interface ShortcutDefinition {
@@ -216,10 +218,7 @@ export function ApplicationRuntime(): ReactNode {
               <StatusBadge tone="success">Ready</StatusBadge>
               <p>The signed-development Tauri window and React renderer are running locally.</p>
             </Panel>
-            <Panel title="Local service" tone="neutral">
-              <StatusBadge>Not started</StatusBadge>
-              <p>The supervised analytical service will appear here when CAP-01.S03 is implemented.</p>
-            </Panel>
+            <LocalServiceBoundary announce={announce} />
           </div>
         </main>
       </div>

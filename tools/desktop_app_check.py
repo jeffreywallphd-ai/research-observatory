@@ -346,7 +346,7 @@ class CatalogContractParser(HTMLParser):
         self.class_counts: dict[str, int] = {}
         self.evidence_states: set[str] = set()
         self.uncertainty_states: set[str] = set()
-        self.boundary_states: set[str] = set()
+        self.boundary_states: list[str] = []
         self.ids: dict[str, list[str]] = {}
         self.label_references: list[str] = []
         self._id_stack: list[str | None] = []
@@ -363,7 +363,7 @@ class CatalogContractParser(HTMLParser):
             self.uncertainty_states.add(uncertainty_state)
         boundary_state = values.get("data-boundary-state")
         if boundary_state:
-            self.boundary_states.add(boundary_state)
+            self.boundary_states.append(boundary_state)
         element_id = values.get("id")
         if element_id:
             self.ids.setdefault(element_id, [])
@@ -401,7 +401,9 @@ def catalog_contract_errors(catalog: str) -> list[str]:
         errors.append("desktop component catalog must render every governed evidence state exactly by identity")
     if parser.uncertainty_states != EXPECTED_UNCERTAINTY_STATES:
         errors.append("desktop component catalog must render every governed uncertainty state exactly by identity")
-    if parser.boundary_states != EXPECTED_BOUNDARY_STATES:
+    if set(parser.boundary_states) != EXPECTED_BOUNDARY_STATES or len(parser.boundary_states) != len(
+        EXPECTED_BOUNDARY_STATES
+    ):
         errors.append("desktop component catalog must render every governed boundary state exactly by identity")
     for reference in parser.label_references:
         targets = parser.ids.get(reference)
@@ -589,7 +591,7 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                     })
                     """.replace("__REQUIRED_COMPONENT_MARKERS__", json.dumps(list(REQUIRED_COMPONENT_MARKERS)))
                 observed = page.evaluate(catalog_script)
-                if observed.get("catalog") != "1.0.0" or observed.get("overflow") is not False:
+                if observed.get("catalog") != "1.1.0" or observed.get("overflow") is not False:
                     errors.append(f"{theme} {zoom_percent}% component catalog identity or horizontal fit failed")
                 if float(observed.get("minimumControl") or 0) < 40 * zoom_percent / 100:
                     errors.append(f"{theme} {zoom_percent}% component controls are below their approved minimum")
@@ -610,7 +612,9 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                     errors.append(f"{theme} {zoom_percent}% component evidence-state inventory is incomplete")
                 if set(observed.get("uncertaintyStates") or []) != EXPECTED_UNCERTAINTY_STATES:
                     errors.append(f"{theme} {zoom_percent}% component uncertainty-state inventory is incomplete")
-                if set(observed.get("boundaryStates") or []) != EXPECTED_BOUNDARY_STATES:
+                if set(observed.get("boundaryStates") or []) != EXPECTED_BOUNDARY_STATES or len(
+                    observed.get("boundaryStates") or []
+                ) != len(EXPECTED_BOUNDARY_STATES):
                     errors.append(f"{theme} {zoom_percent}% component boundary-state inventory is incomplete")
                 details["cases"] += 1
             except PlaywrightError as exc:
@@ -857,11 +861,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             diagnostic = boundary.locator("[data-diagnostic-reference]").inner_text().strip()
             details["boundaryState"] = (
                 boundary.get_attribute("data-boundary-state") == "recovery-required"
-                and re.fullmatch(r"RO-[A-Z0-9]+(?:-[A-Z0-9]+){2,15}", diagnostic) is not None
+                and diagnostic == "RO-CAP01-SERVICE-NOT-PACKAGED"
             )
-            browser_context.grant_permissions(
-                ["clipboard-read", "clipboard-write"], origin="http://tauri.localhost"
-            )
+            browser_context.grant_permissions(["clipboard-read", "clipboard-write"], origin="http://tauri.localhost")
             boundary.locator("[data-copy-diagnostic]").click()
             page.wait_for_function(
                 "document.querySelector('[data-live-region]')?.textContent?.includes('Diagnostic reference copied')",

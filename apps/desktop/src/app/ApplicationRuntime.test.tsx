@@ -17,6 +17,10 @@ describe("functional desktop application", () => {
     expect(html).not.toContain("Use light theme");
     expect(html).toContain('data-live-region="true"');
     expect(html).toContain('data-trust-footer="true"');
+    expect(html).toContain('data-local-service-boundary="true"');
+    expect(html).toContain('data-boundary-state="recovery-required"');
+    expect(html).toContain("RO-CAP01-SERVICE-NOT-PACKAGED");
+    expect(html).toContain("Copy diagnostic reference");
     expect(html).toContain("Only implemented capabilities appear here.");
     expect(html).not.toContain("prototype-index.html");
     expect(html).not.toContain("data-workflow-select");

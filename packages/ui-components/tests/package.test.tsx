@@ -8,6 +8,7 @@ import { describe, expect, it } from "vitest";
 import { build } from "vite";
 
 import {
+  BoundaryStatePanel,
   DialogSurface,
   EvidenceStateBadge,
   StatusBadge,
@@ -21,12 +22,24 @@ describe("ui-components package boundary", () => {
         <StatusBadge>Ready</StatusBadge>
         <EvidenceStateBadge state="verified" />
         <UncertaintyState state="not-reported" />
+        <BoundaryStatePanel
+          state="failed"
+          title="Local operation failed"
+          message="Input remains available."
+          diagnosticReference="RO-LOCAL-OPERATION-FAILED"
+          onRetry={() => undefined}
+        >
+          <p>Retained input</p>
+        </BoundaryStatePanel>
       </DialogSurface>,
     );
 
     expect(markup).toContain('aria-labelledby="package-dialog-title"');
     expect(markup).toContain('id="package-dialog-title"');
     expect(markup).toContain("Package dialog");
+    expect(markup).toContain('data-boundary-state="failed"');
+    expect(markup).toContain("RO-LOCAL-OPERATION-FAILED");
+    expect(markup).toContain("Retained input");
   });
 
   it("tree-shakes components that a package consumer does not import", async () => {

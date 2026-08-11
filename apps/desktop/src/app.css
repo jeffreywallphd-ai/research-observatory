@@ -27,6 +27,7 @@ main { min-width: 0; width: min(100%, 80rem); padding: var(--space-7); }
 .command-results span { color: var(--text-muted); }
 .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); gap: var(--space-4); }
 .status-grid .ro-panel { display: grid; align-content: start; gap: var(--space-3); }
+.status-grid [data-local-service-boundary] { min-width: 0; }
 .trust-footer { padding: var(--space-3) var(--space-5); color: var(--text-muted); background: var(--surface-1); border-block-start: 1px solid var(--border-subtle); font-size: var(--text-xs); }
 .dialog-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: var(--space-5); background: var(--overlay); }
 .shortcut-dialog { width: min(32rem, 100%); max-height: calc(100vh - var(--space-10)); overflow: auto; display: grid; gap: var(--space-4); padding: var(--space-5); color: var(--text-default); background: var(--surface-1); border: 1px solid var(--border-default); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); }
