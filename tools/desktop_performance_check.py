@@ -330,9 +330,9 @@ def load_ui_component_baseline(repo: Path) -> tuple[dict[str, Any], str]:
     if ancestry.returncode != 0:
         raise ValueError("UI component baseline source commit is not an ancestor of HEAD")
     fixture = baseline["fixture"]
-    if sha256(repo / UI_COMPONENT_BENCHMARK_ENTRY) != fixture["benchmarkEntrySha256"]:
+    if canonical_text_sha256(repo / UI_COMPONENT_BENCHMARK_ENTRY) != fixture["benchmarkEntrySha256"]:
         raise ValueError("UI component benchmark entry changed without a reviewed rebaseline")
-    if sha256(repo / UI_COMPONENT_BENCHMARK_RUNNER) != fixture["benchmarkRunnerSha256"]:
+    if canonical_text_sha256(repo / UI_COMPONENT_BENCHMARK_RUNNER) != fixture["benchmarkRunnerSha256"]:
         raise ValueError("UI component benchmark runner changed without a reviewed rebaseline")
     return baseline, payload_sha256
 
@@ -417,9 +417,9 @@ def ui_component_benchmark(repo: Path) -> dict[str, Any]:
         "fixture": {
             **samples_payload["fixture"],
             "benchmarkEntry": UI_COMPONENT_BENCHMARK_ENTRY,
-            "benchmarkEntrySha256": sha256(repo / UI_COMPONENT_BENCHMARK_ENTRY),
+            "benchmarkEntrySha256": canonical_text_sha256(repo / UI_COMPONENT_BENCHMARK_ENTRY),
             "benchmarkRunner": UI_COMPONENT_BENCHMARK_RUNNER,
-            "benchmarkRunnerSha256": sha256(repo / UI_COMPONENT_BENCHMARK_RUNNER),
+            "benchmarkRunnerSha256": canonical_text_sha256(repo / UI_COMPONENT_BENCHMARK_RUNNER),
             "componentContractVersion": package.get("version"),
         },
         "methodology": EXPECTED_UI_COMPONENT_BASELINE_METHODOLOGY,
@@ -440,6 +440,15 @@ def approved_document_name(raw_url: str, available: set[str]) -> str | None:
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def canonical_text_sha256(path: Path) -> str:
+    payload = path.read_bytes()
+    payload.decode("utf-8")
+    normalized = payload.replace(b"\r\n", b"\n")
+    if b"\r" in normalized:
+        raise ValueError(f"governed text fixture contains a bare carriage return: {path}")
+    return hashlib.sha256(normalized).hexdigest()
 
 
 def source_record(repo: Path, allow_dirty: bool) -> tuple[dict[str, Any], list[str]]:
