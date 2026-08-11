@@ -40,3 +40,10 @@ checks its light/dark contrast, semantic roles, minimum controls, token lineage,
 complete evidence/uncertainty inventory, accessible-name references, and
 horizontal fit at 100%, 150%, and 200% zoom. Package-local type, runtime, and
 tree-shaking tests bind the catalog semantics to the exported public APIs.
+
+The desktop verification profile also runs the governed 10,000-row
+`DataTable` benchmark. It alternates the first and last accessible pagination
+windows, verifies that no more than 50 rows enter the markup, retains every
+sample, and enforces both the 100 ms batch budget and the immutable 20 percent
+regression threshold in
+`verification/baselines/ui-components-data-table-performance.json`.
