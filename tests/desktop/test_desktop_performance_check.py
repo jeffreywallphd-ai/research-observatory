@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,7 @@ from desktop_performance_check import (  # noqa: E402
     UI_COMPONENT_BASELINE_PATH,
     UI_COMPONENT_BATCH_BUDGET_MS,
     approved_document_name,
+    canonical_text_sha256,
     distribution,
     evaluated_measurement,
     hardware_record,
@@ -92,6 +94,20 @@ VALID_UI_COMPONENT_SAMPLES: dict[str, Any] = {
 
 
 class DesktopPerformanceCheckTests(unittest.TestCase):
+    def test_governed_text_hash_is_stable_across_clean_windows_line_endings(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture = Path(temporary) / "fixture.tsx"
+            fixture.write_bytes(b"export const rows = 10000;\n")
+            lf_hash = canonical_text_sha256(fixture)
+            fixture.write_bytes(b"export const rows = 10000;\r\n")
+            self.assertEqual(lf_hash, canonical_text_sha256(fixture))
+
+            fixture.write_bytes(b"export const rows = 9999;\r\n")
+            self.assertNotEqual(lf_hash, canonical_text_sha256(fixture))
+            fixture.write_bytes(b"export const rows = 10000;\r")
+            with self.assertRaisesRegex(ValueError, "bare carriage return"):
+                canonical_text_sha256(fixture)
+
     def test_nearest_rank_distribution_retains_every_sample(self) -> None:
         samples = [10.0, 50.0, 20.0, 40.0, 30.0]
 
