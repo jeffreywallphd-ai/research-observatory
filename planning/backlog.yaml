@@ -2294,22 +2294,30 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T17:04:36+00:00'
-      updated_at: '2026-08-11T17:33:17+00:00'
+      updated_at: '2026-08-11T19:33:11+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Implemented reusable eight-state operation boundaries and a truthful functional local-service
+      implementation_notes: 'Implemented reusable eight-state operation boundaries and a truthful functional local-service
         recovery path with retry, cancellation seam, continued local use, retained input, safe diagnostic copy, and complete
         desktop qualification.
+
+        Validated hostile runtime probe results into the exact allowlisted fixed diagnostic; malformed, secret-bearing, extra-field,
+        and throwing outputs now fail closed to a nonblank safe state. Exact desktop profile passed 25 commands.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S02.T03.json
         sha256: 60ae8c334b59c5712ae296039f30c3a660d24d0a233113f7b68e6f7be8fd9ddb
         commit: f5386c316ee1e4e559a134d2420dd4bb6a7cec22
         recorded_at: '2026-08-11T17:27:04+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S02.T03.review-fix.json
+        sha256: bcae361be399abff74431a99d504ee268512827c36255c013bad6cd6f6ebf53e
+        commit: 10d2bfb3151f3dbe12b3ea311dc33bf1a95bc11b
+        recorded_at: '2026-08-11T19:32:56+00:00'
       review:
         reviewer: agent:maxwell
         result: changes-requested
@@ -2323,7 +2331,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-11T17:33:17+00:00'
         expires_at: '2026-08-12T01:33:17+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
