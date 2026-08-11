@@ -7,7 +7,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
-    "verify": "pnpm typecheck && pnpm test"
+    "verify": "pnpm run typecheck && pnpm run test"
   },
   "dependencies": {
     "@research-observatory/ui-tokens": "workspace:*"

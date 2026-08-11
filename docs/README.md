@@ -13,7 +13,7 @@ This file is the repository's high-level document router. It delegates detailed 
 | Coding-agent claims, task flow, and evidence | `automation/codex-tracking-guide.md` |
 | Static decision-review behavior and feedback format | `automation/planning-review-site.md` |
 | Current work identity and plan lifecycle | `../planning/README.md` |
-| Approved visual/workflow reference | `../design/ui-reference/STYLE_GUIDE.md`, `WORKFLOW_CATALOG.md`, and `prototype-index.html` |
+| Approved visual/workflow reference (design input only; never the application runtime) | `../design/ui-reference/STYLE_GUIDE.md`, `WORKFLOW_CATALOG.md`, and `prototype-index.html` |
 | Desktop implementation conformance and visual baselines | `automation/ui-conformance-verification.md` |
 
 ## Required reading by work type

@@ -6,7 +6,7 @@
   "build": {
     "beforeBuildCommand": "pnpm build",
     "beforeDevCommand": "pnpm build",
-    "frontendDist": "../dist"
+    "frontendDist": "../product-dist"
   },
   "app": {
     "windows": [

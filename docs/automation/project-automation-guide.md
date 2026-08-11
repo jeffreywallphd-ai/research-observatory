@@ -111,6 +111,12 @@ Update style/workflow/page/HTML reference
 
 The implementation must expose a conformance manifest and pass route, required-region, workflow, token, accessibility, interaction, responsive, theme, and controlled visual-regression tests.
 
+The approved reference is never a deployable application artifact. Do not copy
+its HTML, illustrative records, future-capability routes, or nonfunctional actions
+into production or development bundles. Implement only the functional regions and
+workflows owned by the active capability; keep the full reference in isolated
+design/conformance tooling.
+
 ## 7. Evidence
 
 Each task evidence manifest must identify exact commit, changed files, commands, exit status, reports, artifacts, criterion mapping, unverified items, and reviewer disposition. Evidence must be machine-verifiable and stored by reference/hash rather than narrative alone.

@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, Ref } from "react";
 
 import {
   DESIGN_REFERENCE_ID,
@@ -62,11 +62,12 @@ export function Icon({ name, label, className }: IconProps) {
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   readonly tone?: "primary" | "secondary" | "danger";
+  readonly ref?: Ref<HTMLButtonElement>;
 }
 
-export function Button({ tone = "secondary", type = "button", className, children, ...props }: ButtonProps) {
+export function Button({ ref, tone = "secondary", type = "button", className, children, ...props }: ButtonProps) {
   return (
-    <button type={type} className={classNames("ro-button", `ro-button--${tone}`, className)} {...props}>
+    <button ref={ref} type={type} className={classNames("ro-button", `ro-button--${tone}`, className)} {...props}>
       {children}
     </button>
   );
@@ -77,10 +78,11 @@ export interface FieldProps {
   readonly label: string;
   readonly description?: string;
   readonly error?: string;
+  readonly inputRef?: Ref<HTMLInputElement>;
   readonly input?: Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "aria-describedby" | "aria-invalid">;
 }
 
-export function Field({ id, label, description, error, input }: FieldProps) {
+export function Field({ id, label, description, error, inputRef, input }: FieldProps) {
   if (!id.trim() || !label.trim()) throw new TypeError("field id and label must be nonempty");
   const descriptionIds = [description ? `${id}-description` : null, error ? `${id}-error` : null]
     .filter(Boolean)
@@ -89,7 +91,7 @@ export function Field({ id, label, description, error, input }: FieldProps) {
     <div className="ro-field" data-invalid={error ? "true" : undefined}>
       <label htmlFor={id}>{label}</label>
       {description ? <span id={`${id}-description`} className="ro-field__description">{description}</span> : null}
-      <input id={id} aria-describedby={descriptionIds || undefined} aria-invalid={error ? true : undefined} {...input} />
+      <input ref={inputRef} id={id} aria-describedby={descriptionIds || undefined} aria-invalid={error ? true : undefined} {...input} />
       {error ? <span id={`${id}-error`} className="ro-field__error">{error}</span> : null}
     </div>
   );

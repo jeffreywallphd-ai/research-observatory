@@ -22,7 +22,7 @@ async function filesBelow(root, excludedDirectories = new Set()) {
       const candidate = path.join(directory, entry.name);
       if (entry.isSymbolicLink()) throw new Error(`redirected build input/output: ${candidate}`);
       if (entry.isDirectory()) {
-        if (!excludedDirectories.has(entry.name)) await walk(candidate);
+        if (directory !== root || !excludedDirectories.has(entry.name)) await walk(candidate);
       } else if (entry.isFile()) {
         result.push(candidate);
       } else {
@@ -78,4 +78,4 @@ await writeFile(
   `${JSON.stringify(manifest, null, 2)}\n`,
   { encoding: "utf8", flag: "wx" },
 );
-console.log(`assembled desktop application: ${Object.keys(artifacts).length} artifacts`);
+console.log(`assembled desktop reference conformance fixture: ${Object.keys(artifacts).length} artifacts`);

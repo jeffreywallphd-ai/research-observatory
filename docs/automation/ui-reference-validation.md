@@ -5,7 +5,13 @@ Academic Minimal experience reference. It reads governed files once, validates
 the shared reference ID and approval/version state, and reports the exact
 canonical SHA-256 map plus a package digest.
 
-The gate requires exactly 32 product pages, 34 HTML documents, 14 workflow
+The reference is a design and verification authority, not deployable application
+content. Its HTML pages, illustrative values, mock records, future-capability
+navigation, and nonfunctional actions must never be configured as a production or
+development frontend. Applications may consume approved semantic tokens and
+implement only the page regions and workflows owned by completed capabilities.
+
+The gate requires exactly 32 reference pages, 34 HTML documents, 14 workflow
 profiles, 20 capability records, and page-contract parity. Every HTML link and
 asset must remain local, present, and inside `design/ui-reference`; network
 dependencies and W10/W11 hosted-administration routes are rejected. A temporary

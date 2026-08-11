@@ -7,16 +7,15 @@ This module may call privileged operating-system behavior only through narrow
 Tauri commands or versioned Core API contracts. It must not embed service,
 storage, parser, model-provider, or project-authority implementations.
 
-`component-manifest.json` is the generated desktop version contract. It must mirror
-the single product version in `packaging/product-version.json` and remain compatible
-with the packaged sidecars.
+`component-manifest.json` is the generated desktop version contract. It must
+mirror the single product version in `packaging/product-version.json` and remain
+compatible with packaged sidecars.
 
 ## Development
 
 Use the repository-pinned Node, pnpm, Rust, and Python runtimes. The renderer is
-strict TypeScript and React 19; Tauri 2 is the only native host. Production builds
-do not start a development server and the initial capability grants no privileged
-commands.
+strict TypeScript and React 19; Tauri 2 is the only native host. Production and
+development make no network request and initially grant no privileged commands.
 
 ```powershell
 pnpm --dir apps/desktop lint
@@ -26,48 +25,36 @@ pnpm --dir apps/desktop build
 cargo test --workspace --locked
 ```
 
-`pnpm build` recreates `dist/` from the exact approved UI reference, bundles the
-React application runtime, and writes `dist/application-manifest.json`. The desktop
-verification profile rejects missing, stale, redirected, or incomplete builds.
+`pnpm build` produces two deliberately separate outputs:
 
-Routing and project-session transitions are pure renderer-domain modules. Filesystem,
-process, credential, service, and storage access must be added only through reviewed,
-typed Tauri commands or Core API contracts; renderer code must never import native
-or service implementations directly.
+- `product-dist/` is the only Tauri `frontendDist` used by production and
+  development. It contains authored React behavior for implemented capabilities,
+  currently one CAP-01 project-home route, plus an exact product manifest.
+- `dist/` is an offline reference-conformance fixture used only by verification.
+  It is never configured as a Tauri frontend and is not a product or development
+  application.
 
-## Application frame
+The product assembler rejects reference-only pages, workflow fixtures,
+unexpected artifacts, stale source hashes, and any Tauri configuration that
+points away from `product-dist/`.
 
-The React runtime progressively activates the approved Academic Minimal title bar,
-project context, command area, navigation rail, and workspace landmarks without
-copying research or workflow logic into renderer views. `Ctrl+K` focuses project
-search. In the navigation rail, `ArrowUp`, `ArrowDown`, `Home`, and `End` move
-between approved local workspaces; native link activation preserves keyboard and
-deep-link behavior.
+## Functional application boundary
 
-The route catalog is the compatibility boundary for all 32 approved workspace
-documents. Malformed, encoded-traversal, and unknown paths recover to `index.html`.
-Frame activation fails closed with `data-application-frame="recovery-required"`
-when an approved landmark is absent; the renderer does not fabricate a replacement
-project or workspace.
+The React product implements only behavior owned by completed capabilities. The
+approved UI reference supplies semantic tokens, layout intent, accessibility
+requirements, and page/workflow contracts; its HTML, illustrative prose, mock
+research records, future-capability routes, and nonfunctional actions are not
+product source.
 
-## Project selection
+The current product exposes only `index.html`, the page that the reference
+coverage catalog assigns to CAP-01. `Ctrl+K` focuses the real command search,
+`Ctrl+/` opens the keyboard-shortcut dialog, `Alt+H` returns focus to project
+home, skip navigation is first in the tab order, dialog focus is restored, and
+status changes use one polite live region. The shell contains no fabricated
+project, source, study, model, or workflow data.
 
-The approved Projects and New Project pages expose a renderer-side project-selection
-contract without assuming CAP-02 project authority. Recent entries use the versioned
-`research-observatory.project-recents.v1` preference record. The record stores only
-canonical removed project IDs; it never stores project paths, research content, or
-credentials. Invalid or unsupported preference bytes are left untouched while the UI
-shows an explicit recovery notice.
-
-The runtime emits the bubbling `research-observatory:project-intent` event with one of
-four opaque intents: `open-existing`, `locate-existing`, `remove-recent`, or
-`create-new`. Open and create actions fail closed after emitting their intent; a later
-CAP-02 adapter must validate the existing location or create the project and then own
-navigation. A missing recent entry offers only **Locate project** and **Remove**—it
-cannot silently create a replacement. Removal is committed to preferences before the
-card disappears, and a failed write leaves the visible entry intact.
-
-With no recent entries, the project grid presents an explicit empty state linking to
-the approved New Project form. User-facing status uses a polite live region, every
-remove action has a project-specific accessible name, and diagnostics/events contain
-only opaque fixture IDs rather than local paths.
+The legacy reference-activation modules are isolated behind
+`src/reference-main.tsx` for conformance tests and are not imported by the
+product entry. Project storage, scholarly workflows, sources, models, and
+manuscript surfaces must remain absent from the product bundle until their
+owning capability supplies real contracts and behavior.
