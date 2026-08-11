@@ -2108,7 +2108,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-01.S01.T01
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-01.S02.T01
       capability_id: CAP-01
@@ -2343,11 +2343,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts\evidence\CAP-01.S02.integration.json
+      notes: All three approved tasks integrate into the functional CAP-01 product with shared components, keyboard/focus/screen-reader
+        behavior, eight actionable boundary states, hostile-diagnostic fail-closed handling, exact product/reference separation,
+        immutable performance, and the full desktop profile.
   - id: CAP-01.S03
     title: Packaged Python/FastAPI sidecar
     outcome: The desktop bundles and supervises a compatible local service with no user-managed Python installation.
