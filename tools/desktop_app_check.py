@@ -9,6 +9,7 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 from collections.abc import Callable
 from html.parser import HTMLParser
 from pathlib import Path
@@ -48,6 +49,8 @@ PRODUCT_PACKAGE_ROOTS = (
     "packages/ui-tokens",
 )
 PRODUCT_EXCLUDED_DIRECTORIES = frozenset({"dist", "product-dist", "node_modules", "target"})
+DATA_TABLE_INTERACTIVE_RUNNER = "tests/desktop/fixtures/data-table-interactive.mjs"
+NODE_RUNTIME = ".local/toolchains/node-v24.19.0-win-x64/node.exe"
 EXPECTED_PRODUCT_ARTIFACTS = {
     "assets/app.css",
     "assets/app.js",
@@ -695,6 +698,129 @@ def page_error_collector(target: list[str]) -> Callable[[PlaywrightError], None]
     return collect
 
 
+def data_table_interaction_errors(repo: Path, browser_context: Any) -> tuple[list[str], dict[str, Any]]:
+    errors: list[str] = []
+    details: dict[str, Any] = {
+        "totalRows": 10_000,
+        "maximumRenderedRows": 0,
+        "pageSize": 50,
+        "pages": 200,
+        "keyboardTransitions": False,
+        "focusPreserved": False,
+        "disabledBoundaries": False,
+        "compact": False,
+    }
+    node = repo / NODE_RUNTIME
+    runner = repo / DATA_TABLE_INTERACTIVE_RUNNER
+    if not node.is_file() or not runner.is_file():
+        return ["interactive DataTable verifier requires the pinned Node runtime and test fixture"], details
+
+    with tempfile.TemporaryDirectory(prefix="ro-data-table-interactive-") as temporary:
+        output_root = Path(temporary)
+        completed = subprocess.run(
+            [str(node), str(runner), str(output_root)],
+            cwd=repo,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=120,
+        )
+        if completed.returncode:
+            diagnostic = (completed.stderr or completed.stdout).strip()
+            return [f"interactive DataTable fixture build failed: {diagnostic}"], details
+        bundle = output_root / "data-table-interactive.js"
+        if not bundle.is_file():
+            return ["interactive DataTable fixture build omitted its exact browser bundle"], details
+
+        page = browser_context.new_page()
+        page_errors: list[str] = []
+        page.on("pageerror", page_error_collector(page_errors))
+        try:
+            page.set_content('<!doctype html><html><body><main><div id="root"></div></main></body></html>')
+            page.add_script_tag(content=bundle.read_text(encoding="utf-8"))
+            page.wait_for_function("document.body.dataset.tableHarnessReady === 'true'", timeout=5_000)
+            table = page.locator(".ro-data-table")
+            rows = table.locator("tbody tr")
+            status = table.locator('[aria-live="polite"]')
+            previous = table.get_by_role("button", name="Previous page of 10,000-row interactive inventory")
+            following = table.get_by_role("button", name="Next page of 10,000-row interactive inventory")
+
+            details["maximumRenderedRows"] = rows.count()
+            details["compact"] = table.locator('table[data-density="compact"]').count() == 1
+            first_valid = (
+                table.get_attribute("data-total-rows") == "10000"
+                and table.get_attribute("data-rendered-rows") == "50"
+                and rows.count() == 50
+                and status.inner_text().strip() == "Rows 1-50 of 10000. Page 1 of 200."
+                and "Research record 0" in table.inner_text()
+                and "Research record 49" in table.inner_text()
+                and "Research record 50" not in table.inner_text()
+                and previous.is_disabled()
+                and following.is_enabled()
+            )
+
+            following.focus()
+            following.press("Enter")
+            page.wait_for_function(
+                "document.querySelector('[aria-live=polite]')?.textContent?.includes('Rows 51-100 of 10000')"
+            )
+            next_focus = page.evaluate(
+                "document.activeElement?.getAttribute('aria-label') === 'Next page of 10,000-row interactive inventory'"
+            )
+            for _index in range(198):
+                following.click()
+            page.wait_for_function(
+                "document.querySelector('[aria-live=polite]')?.textContent?.includes('Page 200 of 200')"
+            )
+            last_text = table.inner_text()
+            last_valid = (
+                rows.count() == 50
+                and status.inner_text().strip() == "Rows 9951-10000 of 10000. Page 200 of 200."
+                and "Research record 9950" in last_text
+                and "Research record 9999" in last_text
+                and "Research record 9949" not in last_text
+                and following.is_disabled()
+                and previous.is_enabled()
+            )
+
+            previous.focus()
+            previous.press("Enter")
+            page.wait_for_function(
+                "document.querySelector('[aria-live=polite]')?.textContent?.includes('Rows 9901-9950 of 10000')"
+            )
+            previous_focus = page.evaluate(
+                "document.activeElement?.getAttribute('aria-label') === "
+                "'Previous page of 10,000-row interactive inventory'"
+            )
+            for _index in range(198):
+                previous.click()
+            page.wait_for_function(
+                "document.querySelector('[aria-live=polite]')?.textContent?.includes('Page 1 of 200')"
+            )
+            returned_valid = (
+                rows.count() == 50
+                and status.inner_text().strip() == "Rows 1-50 of 10000. Page 1 of 200."
+                and previous.is_disabled()
+                and following.is_enabled()
+            )
+            details["keyboardTransitions"] = first_valid and last_valid and returned_valid
+            details["focusPreserved"] = next_focus and previous_focus
+            details["disabledBoundaries"] = first_valid and last_valid and returned_valid
+            if page_errors:
+                errors.append(f"interactive DataTable runtime error: {'; '.join(page_errors)}")
+        except (OSError, PlaywrightError, ValueError) as exc:
+            errors.append(f"interactive DataTable browser check failed: {exc}")
+        finally:
+            page.close()
+
+    for field in ("keyboardTransitions", "focusPreserved", "disabledBoundaries", "compact"):
+        if details[field] is not True:
+            errors.append(f"interactive 10,000-row DataTable did not verify {field}")
+    if details["maximumRenderedRows"] != 50:
+        errors.append("interactive 10,000-row DataTable exceeded its 50-row render bound")
+    return errors, details
+
+
 def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
     errors = product_build_errors(repo)
     runtime_path = repo / PRODUCT_ROOT / "assets" / "app.js"
@@ -723,6 +849,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "criticalViolations": [],
         "requests": [],
         "designSystem": {},
+        "largeTable": {},
     }
     if errors:
         return errors, details
@@ -743,6 +870,9 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             catalog_errors, catalog_details = component_catalog_browser_errors(repo, browser_context)
             errors.extend(catalog_errors)
             details["designSystem"] = catalog_details
+            table_errors, table_details = data_table_interaction_errors(repo, browser_context)
+            errors.extend(table_errors)
+            details["largeTable"] = table_details
             page = browser_context.new_page()
             page_errors: list[str] = []
             page.on("pageerror", page_error_collector(page_errors))

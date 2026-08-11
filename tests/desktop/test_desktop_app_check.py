@@ -50,6 +50,12 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertEqual([], details["criticalViolations"])
         self.assertEqual([], details["requests"])
         self.assertEqual(6, details["designSystem"]["cases"])
+        self.assertEqual(10_000, details["largeTable"]["totalRows"])
+        self.assertEqual(50, details["largeTable"]["maximumRenderedRows"])
+        self.assertTrue(details["largeTable"]["keyboardTransitions"])
+        self.assertTrue(details["largeTable"]["focusPreserved"])
+        self.assertTrue(details["largeTable"]["disabledBoundaries"])
+        self.assertTrue(details["largeTable"]["compact"])
 
     def test_security_boundary_and_complete_command_plan(self) -> None:
         self.assertEqual([], security_errors(REPO))
