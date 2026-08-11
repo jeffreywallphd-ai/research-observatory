@@ -2,7 +2,7 @@ import { performance } from "node:perf_hooks";
 
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { DataTable } from "../src/index";
+import { DataTable } from "../../../packages/ui-components/src/index";
 
 export const DATA_TABLE_FIXTURE_VERSION = "data-table-10000-v1" as const;
 export const DATA_TABLE_TOTAL_ROWS = 10_000;
