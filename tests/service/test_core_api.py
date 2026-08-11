@@ -126,21 +126,21 @@ class CoreApiTests(unittest.TestCase):
         )
         self.assertEqual(hostile_value["reasonCode"], "[REDACTED]")
 
-    def test_runtime_contract_accepts_service_projection_and_denies_unknown_state(self) -> None:
+    def test_runtime_contract_accepts_served_health_and_readiness_and_denies_drift(self) -> None:
         schema = json.loads(
             (REPO / "packages" / "contracts" / "core-api" / "core-runtime.schema.json").read_text(encoding="utf-8")
         )
         validator = Draft202012Validator(schema)
-        projection = {
-            "schemaVersion": "1.0",
-            "service": "research-observatory-core",
-            "version": "0.1.0",
-            "state": "ready",
-            "capabilities": ["runtime.status"],
-        }
-        self.assertEqual(list(validator.iter_errors(projection)), [])
-        projection["state"] = "probably-ready"
-        self.assertNotEqual(list(validator.iter_errors(projection)), [])
+        with TestClient(create_app(settings=CoreSettings())) as client:
+            health = client.get("/healthz").json()
+            readiness = client.get("/readyz").json()
+        self.assertEqual(list(validator.iter_errors(health)), [])
+        self.assertEqual(list(validator.iter_errors(readiness)), [])
+
+        invalid_state = {**health, "state": "probably-ready"}
+        extra_field = {**readiness, "invented": True}
+        self.assertNotEqual(list(validator.iter_errors(invalid_state)), [])
+        self.assertNotEqual(list(validator.iter_errors(extra_field)), [])
 
     def test_generated_openapi_and_component_version_are_current(self) -> None:
         committed = REPO / "packages" / "contracts" / "core-api" / "openapi.json"

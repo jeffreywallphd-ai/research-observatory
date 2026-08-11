@@ -2,18 +2,44 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://research-observatory.local/contracts/core-api/core-runtime.schema.json",
   "title": "Research Observatory Core runtime contract",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["schemaVersion", "service", "version", "state", "capabilities"],
-  "properties": {
-    "schemaVersion": {"const": "1.0"},
-    "service": {"const": "research-observatory-core"},
-    "version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
-    "state": {"enum": ["starting", "ready", "stopping", "unavailable"]},
-    "capabilities": {
-      "type": "array",
-      "items": {"type": "string", "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"},
-      "uniqueItems": true
+  "oneOf": [
+    {"$ref": "#/$defs/health"},
+    {"$ref": "#/$defs/readiness"}
+  ],
+  "$defs": {
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "service", "version", "state", "capabilities", "alive"],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "service": {"const": "research-observatory-core"},
+        "version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+        "state": {"enum": ["starting", "ready", "stopping", "unavailable"]},
+        "capabilities": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"},
+          "uniqueItems": true
+        },
+        "alive": {"const": true}
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "service", "version", "state", "capabilities", "ready"],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "service": {"const": "research-observatory-core"},
+        "version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+        "state": {"enum": ["starting", "ready", "stopping", "unavailable"]},
+        "capabilities": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"},
+          "uniqueItems": true
+        },
+        "ready": {"type": "boolean"}
+      }
     }
   }
 }
