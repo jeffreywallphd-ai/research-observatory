@@ -9,6 +9,7 @@ import { build } from "vite";
 
 import {
   BoundaryStatePanel,
+  DataTable,
   DialogSurface,
   EvidenceStateBadge,
   StatusBadge,
@@ -16,6 +17,51 @@ import {
 } from "@research-observatory/ui-components";
 
 describe("ui-components package boundary", () => {
+  it("bounds a 10,000-row table to one accessible pagination window", () => {
+    const rows = Array.from({ length: 10_000 }, (_value, index) => ({
+      id: `record-${index}`,
+      title: `Research record ${index}`,
+    }));
+    const markup = renderToStaticMarkup(
+      <DataTable
+        caption="Large evidence inventory"
+        columns={[
+          { id: "id", label: "Identifier" },
+          { id: "title", label: "Title" },
+        ]}
+        rows={rows}
+        rowKey={(row) => String(row.id)}
+        pageSize={50}
+      />,
+    );
+
+    expect(markup.match(/<tr/g)).toHaveLength(51);
+    expect(markup).toContain('data-total-rows="10000"');
+    expect(markup).toContain('data-rendered-rows="50"');
+    expect(markup).toContain("Rows 1-50 of 10000");
+    expect(markup).toContain("Page 1 of 200");
+    expect(markup).toContain("Research record 49");
+    expect(markup).not.toContain("Research record 50");
+    expect(markup).not.toContain("Research record 9999");
+    expect(markup).toContain('aria-label="Large evidence inventory pagination"');
+  });
+
+  it("rejects page sizes that could restore eager unbounded rendering", () => {
+    const render = (pageSize: number) => renderToStaticMarkup(
+      <DataTable
+        caption="Bounded table"
+        columns={[{ id: "id", label: "Identifier" }]}
+        rows={[{ id: "record-1" }]}
+        rowKey={(row) => String(row.id)}
+        pageSize={pageSize}
+      />,
+    );
+
+    for (const invalid of ([-1, 0, 1.5, 201, Number.NaN, Number.POSITIVE_INFINITY])) {
+      expect(() => render(invalid)).toThrow("page size");
+    }
+  });
+
   it("resolves its public runtime and accessible dialog contract by package name", () => {
     const markup = renderToStaticMarkup(
       <DialogSurface id="package-dialog" title="Package dialog" open>
