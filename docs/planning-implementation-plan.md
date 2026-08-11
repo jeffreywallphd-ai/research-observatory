@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d2326cc14d7e06a6ac6dc006bc8e02b82cde57a760e2d0d85d49862099696829
+source_sha256: 4f2de039ea427c3c5b2e1d73b2a588a192e9753289d733c6f97884d61efbaefc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1169,15 +1169,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-00.S03.T02`, `CAP-01.S01.T01`
 
-#### - [ ] CAP-01.S03.T01 - Create the modular FastAPI service skeleton
+#### - [x] CAP-01.S03.T01 - Create the modular FastAPI service skeleton
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-00.S03.T02`, `CAP-01.S01.T01`
 
-**Owner / review:** codex / agent:maxwell (`changes-requested`)
+**Owner / review:** codex / agent:maxwell (`approved`)
 
 **Objective:** Typed service application with health, readiness, version, configuration, logging, and module registration endpoints.
 
@@ -1202,7 +1202,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S03.T02 - Package the Python service as a Windows sidecar artifact
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
