@@ -141,7 +141,7 @@ class BuildManifestTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = self.contract_repo(temporary)
             extra = root / "packages" / "contracts" / "unregistered.schema.json"
-            extra.parent.mkdir(parents=True)
+            extra.parent.mkdir(parents=True, exist_ok=True)
             extra.write_text(
                 '{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"urn:test:unregistered"}\n',
                 encoding="utf-8",
