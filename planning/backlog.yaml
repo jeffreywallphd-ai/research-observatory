@@ -2108,7 +2108,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-01.S01.T01
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-01.S02.T01
       capability_id: CAP-01
@@ -2369,14 +2369,15 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
+      status: APPROVED
       reviewer: agent:maxwell
-      reviewed_at: '2026-08-11T19:58:05+00:00'
+      reviewed_at: '2026-08-11T21:14:08+00:00'
       evidence:
       - artifacts/evidence/CAP-01.S02.integration.review-fix.json
-      notes: 'Requalified all S02 behavior after independent task remediations: bounded and interactively tested 10,000-row
-        DataTable, immutable sequential performance, Windows LF/CRLF checkout reproducibility, unchanged recovery/accessibility
-        behavior, and strict product/reference/test separation.'
+      notes: Independent slice review validated all eleven task evidence manifests and approval chains; current nine-command
+        product/native aggregate, real-browser 10,000-row interaction matrix, sequential performance, all three UI gates,
+        19 focused tests, quality, taskctl/views, accessibility/recovery, and product/reference/test separation passed. Residual
+        S03/S04 handoffs are accurate.
   - id: CAP-01.S03
     title: Packaged Python/FastAPI sidecar
     outcome: The desktop bundles and supervises a compatible local service with no user-managed Python installation.
@@ -2388,7 +2389,7 @@ capabilities:
     depends_on:
     - CAP-00.S03.T02
     - CAP-01.S01.T01
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-01.S03.T01
       capability_id: CAP-01
@@ -2416,11 +2417,11 @@ capabilities:
       - service
       verification_commands:
       - python tools/verify.py --profile service
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-11T21:14:08+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f2e4b7ceb0f28c05311da6baff4be4e1ceb2ebf5adff6ce77aaa15decb414ffd
+source_sha256: 9e09afb246e1b329fe2d9090f408643986ce70aa890e22a21179a5ff873e661f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1054,7 +1054,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Reusable components express status, provenance, evidence, uncertainty, and human decision states consistently.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1163,7 +1163,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The desktop bundles and supervises a compatible local service with no user-managed Python installation.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -1171,7 +1171,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S03.T01 - Create the modular FastAPI service skeleton
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
