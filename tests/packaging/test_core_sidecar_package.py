@@ -37,7 +37,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "mode": "onedir",
                 "upx": False,
                 "contentsDirectory": "research-observatory-core-runtime",
-                "excludedModules": ["pip", "pytest", "setuptools"],
+                "excludedModules": ["mypy", "pip", "pytest", "setuptools", "yaml"],
             },
         )
         self.assertEqual(contract["componentVersion"], "0.1.0")
@@ -87,7 +87,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
             self.assertEqual(verify_artifact(artifact_root, manifest), [])
             self.assertLessEqual(manifest["totalBytes"], 134_217_728)
             packaged_paths = tuple(item["path"].casefold() for item in manifest["files"])
-            for excluded_module in ("pip", "pytest", "setuptools"):
+            for excluded_module in ("mypy", "pip", "pytest", "setuptools", "yaml"):
                 self.assertFalse(
                     any(f"/{excluded_module}/" in f"/{path}/" for path in packaged_paths),
                     f"build-only module leaked into runtime: {excluded_module}",
