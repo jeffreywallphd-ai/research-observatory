@@ -32,7 +32,17 @@
         "version": {"const": "6.21.0"},
         "mode": {"const": "onedir"},
         "upx": {"const": false},
-        "excludedModules": {"const": ["mypy", "pip", "pytest", "setuptools", "yaml"]}
+        "excludedModules": {
+          "const": [
+            "mypy",
+            "pip",
+            "pydantic.mypy",
+            "pydantic.v1.mypy",
+            "pytest",
+            "setuptools",
+            "yaml"
+          ]
+        }
       }
     },
     "entrypoint": {"const": "research-observatory-core-x86_64-pc-windows-msvc.exe"},

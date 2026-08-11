@@ -54,7 +54,12 @@ the pinned Python 3.14.6 development environment. Name the executable
 `research-observatory-core-x86_64-pc-windows-msvc.exe` so it can be consumed as
 a Tauri external binary in the next task. Place dependencies in the fixed
 `research-observatory-core-runtime` directory. Exclude build/test tooling
-(`mypy`, `setuptools`, `pip`, `pytest`, and `yaml`) from the shipped runtime.
+(`mypy`, `setuptools`, `pip`, `pytest`, and top-level `yaml`) and Pydantic's
+optional mypy integration modules from the shipped runtime, including the
+executable's embedded Python archive rather than only visible onedir paths. The
+Pydantic Settings YAML-provider module remains because its provider registry
+imports it, but the external PyYAML implementation is absent and YAML settings
+are not enabled by the Core configuration contract.
 
 Commit the build contract and artifact-manifest schema, but never the generated
 binary. Each build must emit an exact sorted inventory containing path, byte
