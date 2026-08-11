@@ -1,22 +1,29 @@
 # Desktop UI conformance verification
 
-The `desktop` verification profile binds researcher-facing implementation to the
-approved UI reference. CAP-00 initially qualified the verifier and baseline with
-an `approved-reference-fixture` target. CAP-01 now uses
-`approved-reference-application`: the profile first rebuilds `apps/desktop/dist`,
-validates its exact source/output manifest, and then retains every conformance
-boundary against the shipped Tauri webview target. Missing, redirected, stale, or
-incomplete application output fails closed.
+The `desktop` verification profile uses the approved UI reference as a contract,
+never as the shipped application. The historical activation name
+`approved-reference-application` identifies the exact offline conformance fixture
+under `apps/desktop/dist`; that fixture exercises the complete reference and
+visual baseline but is not a Tauri frontend.
+
+The separately authored application lives under `apps/desktop/product-dist` and
+is the only `frontendDist` used by Tauri in production or development. Product
+checks require an exact build-input/output manifest, a CAP-01-only route
+inventory, no reference-only pages or workflow markers, no unexpected requests,
+and functioning keyboard, focus, dialog, theme, live-region, responsive, and
+accessibility behavior. Missing, redirected, stale, incomplete, or
+reference-contaminated product output fails closed.
 
 ## Checks
 
-The profile validates exact light/dark semantic-token declarations, all 32
-product route identities and all 521 exact required-region contracts, approved
+The reference-fixture portion validates exact light/dark semantic-token
+declarations, all 32 reference route identities and all 521 exact required-region contracts, approved
 primary and supporting-tool navigation, all 14 ordered workflows,
 distinct-route previous/next behavior, tab-order and Enter activation for every
 workflow link, keyboard theme/sidebar/focus behavior, accessible-name and exact
-responsive visual parity, and 64 controlled screenshots (32 pages in two
-themes). Every report cites the normative token, style, route, workflow, page,
+responsive visual parity, and 64 controlled reference screenshots (32 pages in two
+themes). The product portion separately verifies only implemented capability
+surfaces. Every report cites the normative token, style, route, workflow, page,
 and approval sources and carries the explicit illustrative exclusions. Mock
 names, studies, counts, dates, prose, and chart values are never product
 requirements.

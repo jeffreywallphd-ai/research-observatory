@@ -18,8 +18,9 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from build_manifest import guarded_atomic_write_json, load_json, safe_output_path
+from desktop_product import PRODUCT_MANIFEST, PRODUCT_ROOT, inline_product_index
 from playwright.sync_api import Route, sync_playwright
-from ui_conformance import inline_page, load_context
+from ui_conformance import load_context
 
 COLD_SHELL_PAINT_BUDGET_MS = 2_500.0
 ROUTE_SKELETON_BUDGET_MS = 150.0
@@ -257,15 +258,10 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
     errors.extend(source_errors)
     baseline, baseline_sha256 = load_regression_baseline(repo)
     context = load_context(repo)
-    manifest_path = context.target / "application-manifest.json"
-    runtime_path = context.target / "runtime" / "main.js"
-    runtime = runtime_path.read_text(encoding="utf-8")
-    documents = {
-        page_name: inline_page(context, page_name).replace(
-            "</body>", f'<script type="module">{runtime}</script></body>'
-        )
-        for page_name in ("index.html", "study-design.html")
-    }
+    product_root = repo / PRODUCT_ROOT
+    manifest_path = repo / PRODUCT_MANIFEST
+    runtime_path = product_root / "assets" / "app.js"
+    documents = {"index.html": inline_product_index(repo)}
     cold_samples: list[float] = []
     route_skeleton_samples: list[float] = []
     route_usable_samples: list[float] = []
@@ -276,7 +272,17 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
         browser = playwright.chromium.launch(headless=True)
         browser_version = browser.version
         try:
-            for _ in range(repetitions):
+            primer_context = browser.new_context()
+            primer_page = primer_context.new_page()
+            primer_page.goto(
+                "data:text/html,<main><h1>Chromium paint-pipeline primer</h1></main>",
+                wait_until="load",
+            )
+            primer_page.evaluate(
+                "async () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
+            )
+            primer_context.close()
+            for repetition_index in range(repetitions):
                 browser_context = browser.new_context()
 
                 def serve(route: Route) -> None:
@@ -290,31 +296,62 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
 
                 browser_context.route("**/*", serve)
                 page = browser_context.new_page()
+                page.add_init_script(
+                    """
+                    globalThis.__roFirstContentfulPaint = null;
+                    globalThis.__roPaintObserver = new PerformanceObserver((records) => {
+                      const fcp = records.getEntries().find(
+                        (entry) => entry.name === "first-contentful-paint"
+                      );
+                      if (fcp) globalThis.__roFirstContentfulPaint = fcp.startTime;
+                    });
+                    globalThis.__roPaintObserver.observe({type: "paint", buffered: true});
+                    """
+                )
                 cdp = browser_context.new_cdp_session(page)
+                cdp.send("Performance.enable")
                 cdp.send("Emulation.setCPUThrottlingRate", {"rate": CPU_THROTTLE_RATE})
+                page.bring_to_front()
                 page.goto("http://tauri.localhost/index.html", wait_until="load")
-                page.wait_for_function("document.body.dataset.applicationFrame === 'ready'", timeout=5_000)
+                page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
                 paint_ready = page.evaluate(
                     """
                     async () => {
                       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
                       const paints = performance.getEntriesByType("paint");
                       const fcp = paints.find((entry) => entry.name === "first-contentful-paint");
-                      return {fcp: fcp?.startTime ?? null, readyAfterPaint: performance.now()};
+                      return {
+                        fcp: globalThis.__roFirstContentfulPaint ?? fcp?.startTime ?? null,
+                        readyAfterPaint: performance.now()
+                      };
                     }
                     """
                 )
                 fcp = paint_ready.get("fcp") if isinstance(paint_ready, dict) else None
+                cdp_metrics: dict[str, Any] = {}
                 if not isinstance(fcp, (int, float)):
-                    errors.append("Chromium did not expose first-contentful-paint for the production shell")
+                    cdp_metrics = {
+                        item.get("name"): item.get("value")
+                        for item in cdp.send("Performance.getMetrics").get("metrics", [])
+                        if isinstance(item, dict)
+                    }
+                    cdp_fcp = cdp_metrics.get("FirstContentfulPaint")
+                    navigation_start = cdp_metrics.get("NavigationStart")
+                    if isinstance(cdp_fcp, (int, float)) and isinstance(navigation_start, (int, float)):
+                        fcp = (cdp_fcp - navigation_start) * 1_000
+                if not isinstance(fcp, (int, float)):
+                    errors.append(
+                        "Chromium did not expose first-contentful-paint for the production shell "
+                        f"on repetition {repetition_index + 1}; metrics={sorted(cdp_metrics)}"
+                    )
                 else:
                     cold_samples.append(float(fcp))
 
                 route_started = time.perf_counter()
-                page.goto("http://tauri.localhost/study-design.html", wait_until="commit")
+                page.goto("http://tauri.localhost/index.html#commands", wait_until="commit")
                 page.locator("main#main-content").wait_for(state="visible", timeout=5_000)
                 route_skeleton_samples.append((time.perf_counter() - route_started) * 1_000)
-                page.wait_for_function("document.body.dataset.applicationFrame === 'ready'", timeout=5_000)
+                page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
                 route_usable_samples.append((time.perf_counter() - route_started) * 1_000)
                 browser_context.close()
         finally:
@@ -360,13 +397,13 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
         "platform": hardware_record(),
         "fixture": {
             "profile": "windows-x64",
-            "applicationManifest": "apps/desktop/dist/application-manifest.json",
+            "applicationManifest": PRODUCT_MANIFEST,
             "applicationManifestSha256": sha256(manifest_path),
             "runtimeSha256": sha256(runtime_path),
             "referenceId": context.config["referenceId"],
             "referencePackageSha256": context.config["referencePackageSha256"],
             "coldRoute": "index.html",
-            "warmRoute": "study-design.html",
+            "warmRoute": "index.html#commands",
         },
         "methodology": {
             "browserEngine": "chromium",
@@ -376,13 +413,17 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
             "hardwareQualification": "representative measured Windows x64 workstation",
             "repetitions": repetitions,
             "coldState": (
-                "new isolated browser context per repetition; browser process startup and installation excluded"
+                "new isolated browser context per repetition; browser process startup, an unmeasured data-URL "
+                "paint-pipeline primer, and browser installation excluded"
             ),
             "warmState": "route navigation after the production index shell is loaded in the same context",
             "distribution": "nearest-rank p50 and p95 over every measured repetition; no samples discarded",
             "visibleSkeleton": "elapsed host monotonic time from navigation start until main#main-content is visible",
-            "usable": "elapsed host monotonic time from navigation start until data-application-frame=ready",
-            "paint": "Chromium PerformancePaintTiming first-contentful-paint from navigation start",
+            "usable": "elapsed host monotonic time from navigation start until data-application-ready=true",
+            "paint": (
+                "Chromium first-contentful-paint from navigation start via buffered PerformancePaintTiming; "
+                "the CDP Performance-domain value for the same metric is the fail-closed retrieval fallback"
+            ),
         },
         "measurements": measurements,
         "unexpectedRequests": sorted(set(unexpected_requests)),

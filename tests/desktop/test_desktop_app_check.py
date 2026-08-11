@@ -21,32 +21,31 @@ from desktop_app_check import (  # noqa: E402
     security_errors,
     tool_environment,
 )
+from desktop_product import product_build_errors  # noqa: E402
 
 
 class DesktopAppCheckTests(unittest.TestCase):
-    def test_built_runtime_activates_every_frame_and_keyboard_boundary(self) -> None:
+    def test_built_product_is_functional_cap01_only_and_keyboard_accessible(self) -> None:
         errors, details = runtime_frame_errors(REPO)
 
         self.assertEqual([], errors)
-        self.assertEqual(32, details["pages"])
-        self.assertEqual(6, details["routeRecoveryCases"])
-        self.assertEqual(2, details["hrefRecoveryCases"])
-        self.assertGreater(details["workspaceNavigationItems"], 1)
-        self.assertTrue(details["keyboardRail"])
+        self.assertEqual(1, details["pages"])
+        self.assertEqual(["CAP-01"], details["implementedCapabilities"])
+        self.assertEqual(0, details["referenceOnlyPages"])
         self.assertTrue(details["commandFocus"])
+        self.assertTrue(details["skipLink"])
+        self.assertTrue(details["shortcutDialog"])
+        self.assertTrue(details["focusContainment"])
+        self.assertTrue(details["focusRestoration"])
+        self.assertTrue(details["focusVisible"])
+        self.assertTrue(details["keyboardCommand"])
+        self.assertTrue(details["homeShortcut"])
+        self.assertTrue(details["themeToggle"])
+        self.assertTrue(details["liveRegion"])
+        self.assertEqual(2, details["responsiveCases"])
+        self.assertEqual([], details["criticalViolations"])
         self.assertEqual([], details["requests"])
         self.assertEqual(6, details["designSystem"]["cases"])
-        project = details["projectSelection"]
-        self.assertEqual(4, project["recentProjects"])
-        self.assertEqual(1, project["missingProjects"])
-        self.assertTrue(project["persistentRemoval"])
-        self.assertTrue(project["emptyState"])
-        self.assertTrue(project["preferenceRecovery"])
-        self.assertTrue(project["writeFailurePreserved"])
-        self.assertEqual(
-            ["locate-existing", "open-existing", "remove-recent", "create-new"],
-            [intent["type"] for intent in project["intents"]],
-        )
 
     def test_security_boundary_and_complete_command_plan(self) -> None:
         self.assertEqual([], security_errors(REPO))
@@ -79,6 +78,53 @@ class DesktopAppCheckTests(unittest.TestCase):
         self.assertTrue(any("development URL" in error for error in errors))
         self.assertTrue(any("Tauri CSP" in error for error in errors))
         self.assertTrue(any("zero privileged" in error for error in errors))
+
+    def test_product_bundle_rejects_reference_pages_and_tauri_fixture_redirect(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            shutil.copytree(
+                REPO / "apps" / "desktop",
+                root / "apps" / "desktop",
+                ignore=shutil.ignore_patterns("dist", "node_modules", "target"),
+            )
+            for package in ("ui-components", "ui-tokens"):
+                shutil.copytree(
+                    REPO / "packages" / package,
+                    root / "packages" / package,
+                    ignore=shutil.ignore_patterns("node_modules", "target"),
+                )
+            for relative in ("Cargo.toml", "Cargo.lock", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"):
+                destination = root / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(REPO / relative, destination)
+            activation = root / "verification" / "extensions" / "desktop-ui.json"
+            activation.parent.mkdir(parents=True)
+            shutil.copy2(REPO / "verification" / "extensions" / "desktop-ui.json", activation)
+            site = root / "design" / "ui-reference" / "SITE_MANIFEST.json"
+            site.parent.mkdir(parents=True)
+            shutil.copy2(REPO / "design" / "ui-reference" / "SITE_MANIFEST.json", site)
+            component_source = root / "packages" / "ui-components" / "src" / "index.tsx"
+            component_source.write_text(
+                component_source.read_text(encoding="utf-8") + "\n// unbound product source\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            source_errors = product_build_errors(root)
+            self.assertTrue(any("exact product build inputs" in error for error in source_errors), source_errors)
+            shutil.copy2(REPO / "packages" / "ui-components" / "src" / "index.tsx", component_source)
+            (root / "apps" / "desktop" / "product-dist" / "study-design.html").write_text(
+                "<!doctype html><title>reference leak</title>", encoding="utf-8"
+            )
+            config_path = root / "apps" / "desktop" / "src-tauri" / "tauri.conf.json"
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            config["build"]["frontendDist"] = "../dist"
+            config_path.write_text(json.dumps(config), encoding="utf-8", newline="\n")
+
+            errors = product_build_errors(root)
+
+        self.assertTrue(any("only the functional index/runtime inventory" in error for error in errors), errors)
+        self.assertTrue(any("serve only apps/desktop/product-dist" in error for error in errors), errors)
+        self.assertTrue(any("reference-only pages" in error for error in errors), errors)
 
     def test_every_unreviewed_connection_source_fails_closed(self) -> None:
         for source in (

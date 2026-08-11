@@ -17,6 +17,7 @@ from typing import Any
 import yaml
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import sync_playwright
+from desktop_product import PRODUCT_ROOT, inline_product_index, product_build_errors
 from ui_conformance import inline_page, load_context
 
 Runner = Callable[..., subprocess.CompletedProcess[str]]
@@ -445,7 +446,7 @@ def security_errors(repo: Path) -> list[str]:
     config = json_object(repo / "apps" / "desktop" / "src-tauri" / "tauri.conf.json")
     build = config.get("build")
     app = config.get("app")
-    if not isinstance(build, dict) or build.get("frontendDist") != "../dist" or "devUrl" in build:
+    if not isinstance(build, dict) or build.get("frontendDist") != "../product-dist" or "devUrl" in build:
         errors.append("Tauri must load the packaged desktop build without a development URL")
     if not isinstance(app, dict):
         errors.append("Tauri application configuration is missing")
@@ -492,11 +493,11 @@ def command_plan(repo: Path) -> list[list[str]]:
     app = str(repo / "apps" / "desktop")
     component_package = str(repo / "packages" / "ui-components")
     return [
-        [str(corepack), "pnpm", "--dir", component_package, "verify"],
-        [str(corepack), "pnpm", "--dir", app, "lint"],
-        [str(corepack), "pnpm", "--dir", app, "typecheck"],
-        [str(corepack), "pnpm", "--dir", app, "test"],
-        [str(corepack), "pnpm", "--dir", app, "build"],
+        [str(corepack), "pnpm", "--dir", component_package, "run", "verify"],
+        [str(corepack), "pnpm", "--dir", app, "run", "lint"],
+        [str(corepack), "pnpm", "--dir", app, "run", "typecheck"],
+        [str(corepack), "pnpm", "--dir", app, "run", "test"],
+        [str(corepack), "pnpm", "--dir", app, "run", "build"],
         [str(cargo), "fmt", "--all", "--check"],
         [str(cargo), "clippy", "--workspace", "--all-targets", "--locked", "--", "-D", "warnings"],
         [str(cargo), "test", "--workspace", "--locked"],
@@ -512,243 +513,183 @@ def page_error_collector(target: list[str]) -> Callable[[PlaywrightError], None]
 
 
 def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
-    errors: list[str] = []
-    context = load_context(repo)
-    runtime = (context.target / "runtime" / "main.js").read_text(encoding="utf-8")
+    errors = product_build_errors(repo)
+    runtime_path = repo / PRODUCT_ROOT / "assets" / "app.js"
+    runtime = runtime_path.read_text(encoding="utf-8") if runtime_path.is_file() else ""
     if "process.env.NODE_ENV" in runtime:
         errors.append("desktop production runtime retains an unresolved Node environment expression")
     details: dict[str, Any] = {
         "pages": 0,
-        "routeRecoveryCases": 0,
-        "hrefRecoveryCases": 0,
-        "workspaceNavigationItems": None,
-        "projectSelection": {
-            "recentProjects": 0,
-            "missingProjects": 0,
-            "persistentRemoval": False,
-            "emptyState": False,
-            "preferenceRecovery": False,
-            "writeFailurePreserved": False,
-            "intents": [],
-        },
-        "keyboardRail": False,
+        "implementedCapabilities": ["CAP-01"],
+        "referenceOnlyPages": 0,
         "commandFocus": False,
+        "skipLink": False,
+        "shortcutDialog": False,
+        "focusContainment": False,
+        "focusRestoration": False,
+        "focusVisible": False,
+        "keyboardCommand": False,
+        "homeShortcut": False,
+        "themeToggle": False,
+        "liveRegion": False,
+        "responsiveCases": 0,
+        "criticalViolations": [],
         "requests": [],
         "designSystem": {},
     }
-    documents: dict[str, str] = {}
+    if errors:
+        return errors, details
+    document = inline_product_index(repo)
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
         browser_context = browser.new_context()
 
         def serve_application(route: Any) -> None:
-            document = documents.get(route.request.url)
-            if document is None:
+            if route.request.url in {"http://tauri.localhost/", "http://tauri.localhost/index.html"}:
+                route.fulfill(status=200, content_type="text/html; charset=utf-8", body=document)
+            else:
                 details["requests"].append(route.request.url)
                 route.abort()
-            else:
-                route.fulfill(status=200, content_type="text/html; charset=utf-8", body=document)
 
         browser_context.route("**/*", serve_application)
         try:
             catalog_errors, catalog_details = component_catalog_browser_errors(repo, browser_context)
             errors.extend(catalog_errors)
             details["designSystem"] = catalog_details
-            for page_name in context.pages:
-                page = browser_context.new_page()
-                page_errors: list[str] = []
-                page.on("pageerror", page_error_collector(page_errors))
-                html = inline_page(context, page_name).replace(
-                    "</body>", f'<script type="module">{runtime}</script></body>'
+            page = browser_context.new_page()
+            page_errors: list[str] = []
+            page.on("pageerror", page_error_collector(page_errors))
+            page.goto("http://tauri.localhost/index.html", wait_until="load")
+            page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+            details["pages"] = 1
+            details["referenceOnlyPages"] = page.locator(
+                'a[href$=".html"], [data-workflow-select], [data-workflow-nav], [data-all-tools]'
+            ).count()
+            violations = page.evaluate(
+                r"""() => {
+                  const violations = [];
+                  const ids = Array.from(document.querySelectorAll('[id]')).map((node) => node.id);
+                  const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
+                  if (duplicates.length) violations.push(`duplicate ids: ${duplicates.join(',')}`);
+                  for (const node of document.querySelectorAll('[aria-labelledby]')) {
+                    for (const id of node.getAttribute('aria-labelledby').split(/\s+/)) {
+                      if (!document.getElementById(id)?.textContent?.trim()) violations.push(`dangling label: ${id}`);
+                    }
+                  }
+                  for (const node of document.querySelectorAll('a[href],button,input')) {
+                    const name = node.getAttribute('aria-label') || node.textContent?.trim()
+                      || node.labels?.[0]?.textContent?.trim() || node.getAttribute('value')
+                      || node.getAttribute('placeholder');
+                    if (!name) violations.push(`unnamed interactive: ${node.tagName}`);
+                  }
+                  if (document.querySelectorAll('h1').length !== 1) violations.push('application requires one h1');
+                  if (!document.querySelector('header') || !document.querySelector('nav')
+                    || !document.querySelector('main') || !document.querySelector('footer')) {
+                    violations.push('application landmarks are incomplete');
+                  }
+                  return violations;
+                }"""
+            )
+            details["criticalViolations"] = violations
+            errors.extend(f"desktop accessibility violation: {violation}" for violation in violations)
+
+            page.locator("body").focus()
+            page.keyboard.press("Tab")
+            details["skipLink"] = page.evaluate("document.activeElement?.classList.contains('skip-link') === true")
+            page.keyboard.press("Enter")
+            details["skipLink"] = details["skipLink"] and page.evaluate(
+                "document.activeElement?.id === 'main-content'"
+            )
+
+            page.keyboard.press("Control+K")
+            details["commandFocus"] = page.evaluate("document.activeElement?.id === 'shell-command'")
+            details["focusVisible"] = page.evaluate(
+                "parseFloat(getComputedStyle(document.activeElement).outlineWidth) >= 2"
+            )
+            page.keyboard.press("Control+/")
+            page.locator('[role="dialog"]').wait_for(state="visible", timeout=5_000)
+            details["shortcutDialog"] = page.locator('[role="dialog"][aria-modal="true"]').count() == 1
+            details["shortcutDialog"] = details["shortcutDialog"] and page.evaluate(
+                "document.activeElement?.textContent?.trim() === 'Close shortcuts'"
+            )
+            dialog_name_valid = page.evaluate(
+                """() => {
+                  const dialog = document.querySelector('[role="dialog"]');
+                  const id = dialog?.getAttribute('aria-labelledby');
+                  return Boolean(id && document.getElementById(id)?.textContent?.trim());
+                }"""
+            )
+            if not dialog_name_valid:
+                violations.append("shortcut dialog lacks a resolvable accessible name")
+                errors.append("desktop accessibility violation: shortcut dialog lacks a resolvable accessible name")
+            page.keyboard.press("Tab")
+            details["focusContainment"] = page.evaluate(
+                "document.activeElement?.textContent?.trim() === 'Close shortcuts'"
+            )
+            page.keyboard.press("Shift+Tab")
+            details["focusContainment"] = details["focusContainment"] and page.evaluate(
+                "document.activeElement?.textContent?.trim() === 'Close shortcuts'"
+            )
+            page.keyboard.press("Escape")
+            page.wait_for_function("document.activeElement?.id === 'shell-command'", timeout=5_000)
+            details["focusRestoration"] = page.locator('[role="dialog"]').count() == 0 and page.evaluate(
+                "document.activeElement?.id === 'shell-command'"
+            )
+            page.keyboard.press("Alt+H")
+            details["homeShortcut"] = page.evaluate("document.activeElement?.id === 'main-content'")
+
+            previous_theme = page.locator("html").get_attribute("data-theme")
+            page.locator('[data-command-id="toggle-theme"]').focus()
+            page.keyboard.press("Enter")
+            details["themeToggle"] = page.locator("html").get_attribute("data-theme") != previous_theme
+            details["keyboardCommand"] = details["themeToggle"]
+            page.wait_for_function(
+                "document.querySelector('[data-live-region]')?.textContent?.includes('theme active')",
+                timeout=5_000,
+            )
+            details["liveRegion"] = (
+                page.locator("[data-live-region]").get_attribute("aria-live") == "polite"
+                and "theme active" in page.locator("[data-live-region]").inner_text()
+            )
+            if page_errors:
+                errors.append(f"desktop product runtime error: {'; '.join(page_errors)}")
+            page.close()
+
+            for width, height in ((1280, 720), (720, 450)):
+                responsive = browser_context.new_page()
+                responsive.set_viewport_size({"width": width, "height": height})
+                responsive.goto("http://tauri.localhost/index.html", wait_until="load")
+                responsive.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+                overflow = responsive.evaluate(
+                    "document.documentElement.scrollWidth > document.documentElement.clientWidth"
                 )
-                page_url = f"http://tauri.localhost/{page_name}"
-                documents[page_url] = html
-                page.goto(page_url, wait_until="load")
-                page.wait_for_function("document.body.dataset.applicationFrame === 'ready'", timeout=5_000)
-                current_workspace = page.locator("body").get_attribute("data-current-workspace")
-                if current_workspace != page_name:
-                    errors.append(f"{page_name}: application frame marked current workspace {current_workspace!r}")
-                if page_name == "study-design.html":
-                    navigation_count = page.locator("body").get_attribute("data-navigation-workspaces")
-                    details["workspaceNavigationItems"] = int(navigation_count or "0")
-                if page_errors:
-                    errors.append(f"{page_name}: runtime error: {'; '.join(page_errors)}")
-                details["pages"] += 1
-                if page_name == "index.html":
-                    first = page.locator("aside.sidebar a.nav-item[href]").first
-                    first.focus()
-                    before = page.evaluate("document.activeElement?.getAttribute('href')")
-                    page.keyboard.press("ArrowDown")
-                    after = page.evaluate("document.activeElement?.getAttribute('href')")
-                    details["keyboardRail"] = isinstance(after, str) and after != before
-                    page.keyboard.press("Control+K")
-                    details["commandFocus"] = page.evaluate(
-                        "document.activeElement?.matches(\"label.global-search input[type='search']\") === true"
-                    )
-                page.close()
-            recovery_html = inline_page(context, "index.html").replace(
-                "</body>", f'<script type="module">{runtime}</script></body>'
-            )
-            for route_case in ROUTE_RECOVERY_CASES:
-                page = browser_context.new_page()
-                page_url = f"http://tauri.localhost/{route_case}"
-                documents[page_url] = recovery_html
-                page.goto(page_url, wait_until="load")
-                page.wait_for_function("document.body.dataset.applicationFrame === 'ready'", timeout=5_000)
-                current_workspace = page.locator("body").get_attribute("data-current-workspace")
-                if current_workspace != "index.html":
-                    errors.append(f"{route_case}: unsafe route recovered to {current_workspace!r}")
-                details["routeRecoveryCases"] += 1
-                page.close()
-            for href_case in HREF_RECOVERY_CASES:
-                page = browser_context.new_page()
-                page_errors = []
-                page.on("pageerror", page_error_collector(page_errors))
-                href_html = (
-                    inline_page(context, "study-design.html")
-                    .replace('href="study-design.html"', f'href="{href_case}"', 1)
-                    .replace("</body>", f'<script type="module">{runtime}</script></body>')
-                )
-                page_url = "http://tauri.localhost/study-design.html"
-                documents[page_url] = href_html
-                page.goto(page_url, wait_until="load")
-                page.wait_for_function("document.body.dataset.applicationFrame === 'ready'", timeout=5_000)
-                unsafe_anchor = page.locator(f'aside.sidebar a.nav-item[href="{href_case}"]').first
-                if unsafe_anchor.get_attribute("aria-current") == "page":
-                    errors.append(f"{href_case}: external-looking href was marked as the current local workspace")
-                unsafe_anchor.focus()
-                before_focus = page.evaluate("document.activeElement?.getAttribute('href')")
-                page.keyboard.press("ArrowDown")
-                after_focus = page.evaluate("document.activeElement?.getAttribute('href')")
-                if after_focus != before_focus:
-                    errors.append(f"{href_case}: external-looking href remained in keyboard navigation")
-                if page_errors:
-                    errors.append(f"{href_case}: runtime error: {'; '.join(page_errors)}")
-                details["hrefRecoveryCases"] += 1
-                page.close()
-            project_page = browser_context.new_page()
-            project_page.add_init_script(
-                """
-                window.__projectIntents = [];
-                document.addEventListener("research-observatory:project-intent", (event) => {
-                  window.__projectIntents.push(event.detail);
-                  event.preventDefault();
-                });
-                """
-            )
-            projects_url = "http://tauri.localhost/projects.html"
-            project_page.goto(projects_url, wait_until="load")
-            project_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
-            project_details = details["projectSelection"]
-            recent = project_page.locator("[data-recent-project-id]")
-            project_details["recentProjects"] = recent.count()
-            project_details["missingProjects"] = project_page.locator('[data-project-availability="missing"]').count()
-            expected_ids = [
-                "generative-ai-creative-cognition",
-                "community-governed-ai",
-                "recurrent-staged-loras",
-                "digital-control-worker-autonomy",
-            ]
-            observed_ids = recent.evaluate_all("nodes => nodes.map(node => node.dataset.recentProjectId)")
-            if observed_ids != expected_ids:
-                errors.append(f"project recents were not deterministic: {observed_ids}")
-
-            missing = project_page.locator('[data-project-availability="missing"]')
-            missing.locator('[data-project-action="locate-existing"]').click()
-            if project_page.url != projects_url:
-                errors.append("missing-project locate action navigated away from the existing project")
-            intents = project_page.evaluate("window.__projectIntents")
-            if intents != [{"type": "locate-existing", "projectId": "recurrent-staged-loras"}]:
-                errors.append(f"missing-project repair emitted unexpected intents: {intents}")
-
-            available = project_page.locator('[data-project-availability="available"]').first
-            available.locator('[data-project-action="open-existing"]').click()
-            if project_page.url != projects_url:
-                errors.append(
-                    "handled existing-project open intent navigated before the project authority completed it"
-                )
-
-            missing.locator('[data-project-action="remove-recent"]').click()
-            stored = project_page.evaluate("localStorage.getItem('research-observatory.project-recents.v1')")
-            if stored != '{"schemaVersion":1,"removedProjectIds":["recurrent-staged-loras"]}':
-                errors.append(f"recent-project removal was not canonical: {stored!r}")
-            project_details["intents"] = project_page.evaluate("window.__projectIntents")
-            project_page.reload(wait_until="load")
-            project_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
-            if project_page.locator('[data-recent-project-id="recurrent-staged-loras"]').count() == 0:
-                project_details["persistentRemoval"] = True
-
-            while project_page.locator("[data-recent-project-id]").count():
-                project_page.locator("[data-recent-project-id]").first.locator(
-                    '[data-project-action="remove-recent"]'
-                ).click()
-            project_details["emptyState"] = (
-                project_page.locator('[data-project-empty-state="ready"] a[href="new-project.html"]').count() == 1
-                and project_page.locator("body").get_attribute("data-recent-project-count") == "0"
-            )
-            project_page.locator('[data-project-empty-state="ready"] a[href="new-project.html"]').click()
-            project_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
-            if project_page.url != "http://tauri.localhost/new-project.html":
-                errors.append("empty project state did not open the explicit new-project flow")
-            project_page.locator('[data-project-action="create-new"]').click()
-            if project_page.url != "http://tauri.localhost/new-project.html":
-                errors.append(
-                    "handled explicit project-creation intent navigated before project authority completed it"
-                )
-            project_details["intents"].extend(project_page.evaluate("window.__projectIntents"))
-
-            project_page.evaluate(
-                "localStorage.setItem('research-observatory.project-recents.v1', "
-                '\'{"schemaVersion":2,"removedProjectIds":[]}\')'
-            )
-            project_page.goto(projects_url, wait_until="load")
-            project_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
-            recovery_status = project_page.locator('[data-project-selection-status="recovery"]')
-            raw_after_recovery = project_page.evaluate(
-                "localStorage.getItem('research-observatory.project-recents.v1')"
-            )
-            project_details["preferenceRecovery"] = (
-                recovery_status.count() == 1
-                and not recovery_status.is_hidden()
-                and raw_after_recovery == '{"schemaVersion":2,"removedProjectIds":[]}'
-                and project_page.locator("[data-recent-project-id]").count() == 4
-            )
-            project_page.close()
-
-            write_failure_page = browser_context.new_page()
-            write_failure_page.add_init_script(
-                """
-                Storage.prototype.setItem = () => { throw new Error("controlled preference write failure"); };
-                """
-            )
-            write_failure_page.goto(projects_url, wait_until="load")
-            write_failure_page.wait_for_function("document.body.dataset.projectSelection === 'ready'", timeout=5_000)
-            before_failure = write_failure_page.locator("[data-recent-project-id]").count()
-            write_failure_page.locator('[data-project-action="remove-recent"]').first.click()
-            error_status = write_failure_page.locator('[data-project-selection-status="error"]')
-            project_details["writeFailurePreserved"] = (
-                write_failure_page.locator("[data-recent-project-id]").count() == before_failure
-                and error_status.count() == 1
-                and not error_status.is_hidden()
-            )
-            write_failure_page.close()
+                if overflow:
+                    errors.append(f"desktop product overflows horizontally at {width}x{height}")
+                details["responsiveCases"] += 1
+                responsive.close()
         except (OSError, PlaywrightError, ValueError) as exc:
-            errors.append(f"desktop built-runtime browser check failed: {exc}")
+            errors.append(f"desktop product browser check failed: {exc}")
         finally:
             browser_context.close()
             browser.close()
     if details["requests"]:
-        errors.append("desktop built runtime attempted external resource requests")
-    if not details["keyboardRail"]:
-        errors.append("desktop navigation rail did not move keyboard focus to a distinct workspace")
-    if not details["commandFocus"]:
-        errors.append("desktop Ctrl+K command shortcut did not focus project search")
-    project_details = details["projectSelection"]
-    if project_details.get("recentProjects") != 4 or project_details.get("missingProjects") != 1:
-        errors.append("desktop project selection did not expose the deterministic recent/missing fixture")
-    for field in ("persistentRemoval", "emptyState", "preferenceRecovery", "writeFailurePreserved"):
-        if project_details.get(field) is not True:
-            errors.append(f"desktop project selection did not verify {field}")
+        errors.append("desktop product attempted an unexpected network or local resource request")
+    if details["referenceOnlyPages"] != 0:
+        errors.append("desktop product exposes reference-only routes or workflow fixtures")
+    for field in (
+        "commandFocus",
+        "skipLink",
+        "shortcutDialog",
+        "focusContainment",
+        "focusRestoration",
+        "focusVisible",
+        "keyboardCommand",
+        "homeShortcut",
+        "themeToggle",
+        "liveRegion",
+    ):
+        if details[field] is not True:
+            errors.append(f"desktop product did not verify {field}")
     return errors, details
 
 
@@ -770,7 +711,7 @@ def validate(repo: Path, runner: Runner = subprocess.run) -> dict[str, Any]:
         try:
             context = load_context(repo)
             if context.config["mode"] != "approved-reference-application":
-                errors.append("desktop verification did not target the built application")
+                errors.append("desktop verification did not target the built reference-conformance fixture")
             frame_errors, frame = runtime_frame_errors(repo)
             errors.extend(frame_errors)
         except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:

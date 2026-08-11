@@ -14,18 +14,17 @@ export default defineConfig({
   clearScreen: false,
   build: {
     target: "es2023",
-    outDir: "dist/runtime",
-    emptyOutDir: false,
+    outDir: "product-dist",
+    emptyOutDir: true,
     sourcemap: true,
     minify: "oxc",
-    lib: {
-      entry: "src/reference-main.tsx",
-      formats: ["es"],
-      fileName: () => "main.js",
-    },
     rollupOptions: {
       output: {
-        assetFileNames: "[name][extname]",
+        entryFileNames: "assets/app.js",
+        chunkFileNames: "assets/[name].js",
+        assetFileNames: ({ names }) => names.some((name) => name.endsWith(".css"))
+          ? "assets/app.css"
+          : "assets/[name][extname]",
       },
     },
   },
