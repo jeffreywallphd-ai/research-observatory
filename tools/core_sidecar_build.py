@@ -97,7 +97,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
         "mode": "onedir",
         "upx": False,
         "contentsDirectory": "research-observatory-core-runtime",
-        "excludedModules": ["pip", "pytest", "setuptools"],
+        "excludedModules": ["mypy", "pip", "pytest", "setuptools", "yaml"],
     }:
         raise SidecarBuildError("sidecar builder must be the approved PyInstaller 6.21.0 onedir/no-UPX profile")
     modules = contract.get("requiredModules")
