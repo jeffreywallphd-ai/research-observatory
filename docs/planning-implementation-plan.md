@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5ec5c59c009c6a6b1afce37e9c8bd202e9baffb39c467581103797c60929c424
+source_sha256: eb18b09a58fcadcb3c8826ee21bdc3687162410558207f059a2d475b7d9ad598
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1126,7 +1126,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T03 - Create consistent loading, error, offline, and recovery states
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1157,6 +1157,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S02.T03.review-fix-2.json` at `a10563f8bcc9e9bfe892be95be3907ecf3c3a4f3`
 - `artifacts/evidence/CAP-01.S02.T03.review-fix-3.json` at `b32e834d6206a9b77d71de5a664d0e5f334450a3`
 - `artifacts/evidence/CAP-01.S02.T03.review-fix-4.json` at `cf9c63e4c603eb18e2d9c919f63dff77eb6b000d`
+- `artifacts/evidence/CAP-01.S02.T03.review-fix-5.json` at `9f94e9433cb455a2c912ab4e14f3f22e92d7d929`
 
 ### CAP-01.S03 - Packaged Python/FastAPI sidecar
 

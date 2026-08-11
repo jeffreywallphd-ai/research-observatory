@@ -2294,11 +2294,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T17:04:36+00:00'
-      updated_at: '2026-08-11T21:04:52+00:00'
+      updated_at: '2026-08-11T21:07:10+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Implemented reusable eight-state operation boundaries and a truthful functional local-service
@@ -2317,7 +2317,10 @@ capabilities:
 
         Added the required real-browser 10,000-row pagination transition test with keyboard, focus, live-range, first/last
         content, 50-row bound, compact-mode, and disabled-boundary assertions; corrected evidence to state the harness is
-        test-only and the current functional product does not contain a DataTable.'
+        test-only and the current functional product does not contain a DataTable.
+
+        Canonicalized governed UTF-8 benchmark fixture hashing across clean LF/CRLF Windows materializations, retained exact
+        content-drift denial, rejected bare carriage returns, and requalified the exact post-checkout performance and UI gate.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S02.T03.json
@@ -2344,6 +2347,11 @@ capabilities:
         sha256: 085f04b102ec6cbc6b2b58e627cd383b8db78b53c6244970b39fb5f5aac95e9b
         commit: cf9c63e4c603eb18e2d9c919f63dff77eb6b000d
         recorded_at: '2026-08-11T21:00:17+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S02.T03.review-fix-5.json
+        sha256: 6285735939015be62bd1c00ff819f0711612df527c3cf9de075d38955932cebe
+        commit: 9f94e9433cb455a2c912ab4e14f3f22e92d7d929
+        recorded_at: '2026-08-11T21:06:59+00:00'
       review:
         reviewer: null
         result: null
@@ -2356,7 +2364,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-11T21:04:52+00:00'
         expires_at: '2026-08-12T05:04:52+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
