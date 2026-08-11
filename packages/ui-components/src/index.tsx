@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, Ref } from "react";
+import { useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type Ref } from "react";
 
 import {
   DESIGN_REFERENCE_ID,
@@ -12,7 +12,7 @@ import {
 } from "@research-observatory/ui-tokens";
 
 export { DESIGN_REFERENCE_ID, DESIGN_TOKEN_CONTRACT_VERSION };
-export const UI_COMPONENT_CONTRACT_VERSION = "1.1.0" as const;
+export const UI_COMPONENT_CONTRACT_VERSION = "1.2.0" as const;
 
 export const boundaryStates = [
   "loading",
@@ -120,23 +120,82 @@ export interface DataTableProps {
   readonly rows: ReadonlyArray<Readonly<Record<string, ReactNode>>>;
   readonly rowKey: (row: Readonly<Record<string, ReactNode>>, index: number) => string;
   readonly compact?: boolean;
+  readonly pageSize?: number;
+  readonly initialPage?: number;
 }
 
-export function DataTable({ caption, columns, rows, rowKey, compact = false }: DataTableProps) {
+export const DEFAULT_DATA_TABLE_PAGE_SIZE = 50;
+export const MAX_DATA_TABLE_PAGE_SIZE = 200;
+
+export function DataTable({
+  caption,
+  columns,
+  rows,
+  rowKey,
+  compact = false,
+  pageSize = DEFAULT_DATA_TABLE_PAGE_SIZE,
+  initialPage = 0,
+}: DataTableProps) {
   if (!caption.trim() || columns.length === 0 || new Set(columns.map((column) => column.id)).size !== columns.length) {
     throw new TypeError("table requires a caption and unique columns");
   }
+  if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > MAX_DATA_TABLE_PAGE_SIZE) {
+    throw new RangeError(`table page size must be an integer from 1 through ${MAX_DATA_TABLE_PAGE_SIZE}`);
+  }
+  const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
+  if (!Number.isInteger(initialPage) || initialPage < 0 || initialPage >= pageCount) {
+    throw new RangeError("table initial page must identify an available zero-based page");
+  }
+  const [requestedPage, setRequestedPage] = useState(initialPage);
+  const page = Math.min(requestedPage, pageCount - 1);
+  const firstRowIndex = page * pageSize;
+  const visibleRows = rows.slice(firstRowIndex, firstRowIndex + pageSize);
+  const rangeStart = rows.length === 0 ? 0 : firstRowIndex + 1;
+  const rangeEnd = firstRowIndex + visibleRows.length;
+
   return (
-    <div className="ro-table-scroll" tabIndex={0} aria-label={`${caption} scroll region`}>
-      <table className="ro-table" data-density={compact ? "compact" : "default"}>
-        <caption>{caption}</caption>
-        <thead><tr>{columns.map((column) => <th scope="col" key={column.id}>{column.label}</th>)}</tr></thead>
-        <tbody>
-          {rows.map((row, index) => (
-            <tr key={rowKey(row, index)}>{columns.map((column) => <td key={column.id}>{row[column.id]}</td>)}</tr>
-          ))}
-        </tbody>
-      </table>
+    <div
+      className="ro-data-table"
+      data-total-rows={rows.length}
+      data-rendered-rows={visibleRows.length}
+      data-page-size={pageSize}
+    >
+      <div className="ro-table-scroll" tabIndex={0} aria-label={`${caption} scroll region`}>
+        <table className="ro-table" data-density={compact ? "compact" : "default"}>
+          <caption>{caption}</caption>
+          <thead><tr>{columns.map((column) => <th scope="col" key={column.id}>{column.label}</th>)}</tr></thead>
+          <tbody>
+            {visibleRows.map((row, index) => (
+              <tr key={rowKey(row, firstRowIndex + index)}>
+                {columns.map((column) => <td key={column.id}>{row[column.id]}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {pageCount > 1 ? (
+        <nav className="ro-table-pagination" aria-label={`${caption} pagination`}>
+          <span aria-live="polite" aria-atomic="true">
+            Rows {rangeStart}-{rangeEnd} of {rows.length}. Page {page + 1} of {pageCount}.
+          </span>
+          <span className="ro-table-pagination__actions">
+            <Button
+              disabled={page === 0}
+              onClick={() => setRequestedPage(Math.max(0, page - 1))}
+              aria-label={`Previous page of ${caption}`}
+            >
+              Previous
+            </Button>
+            <Button
+              disabled={page >= pageCount - 1}
+              onClick={() => setRequestedPage(Math.min(pageCount - 1, page + 1))}
+              aria-label={`Next page of ${caption}`}
+            >
+              Next
+            </Button>
+          </span>
+        </nav>
+      ) : null}
     </div>
   );
 }

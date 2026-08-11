@@ -8,10 +8,12 @@ React primitives for the approved Academic Minimal experience. Components
 consume semantic custom properties from `@research-observatory/ui-tokens` and
 never own project, scholarly, filesystem, process, credential, or service state.
 
-Version `1.1.0` includes:
+Version `1.2.0` includes:
 
 - `Typography`, `Icon`, `Button`, and `Field`;
-- `DataTable` with an explicit caption and column contract;
+- `DataTable` with an explicit caption and column contract plus accessible,
+  bounded pagination. It renders 50 rows by default and rejects page sizes
+  above 200 so a 10,000-row input cannot restore eager DOM rendering;
 - `DialogSurface`, `Notification`, `StatusBadge`, and `Panel`; and
 - neutral, info, success, warning, danger, and violet tone variants;
 - `EvidenceStateBadge` variants for observed, extracted, inferred, verified,

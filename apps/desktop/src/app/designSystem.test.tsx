@@ -39,7 +39,7 @@ describe("Academic Minimal design system", () => {
       </main>,
     );
 
-    expect(UI_COMPONENT_CONTRACT_VERSION).toBe("1.1.0");
+    expect(UI_COMPONENT_CONTRACT_VERSION).toBe("1.2.0");
     expect(markup).toContain("aria-describedby=\"query-description query-error\"");
     expect(markup).toContain("aria-invalid=\"true\"");
     expect(markup).toContain("role=\"alert\"");
