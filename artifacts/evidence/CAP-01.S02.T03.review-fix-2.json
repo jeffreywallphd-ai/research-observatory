@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T03",
+  "commit": "a10563f8bcc9e9bfe892be95be3907ecf3c3a4f3",
+  "baseCommit": "10d2bfb3151f3dbe12b3ea311dc33bf1a95bc11b",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S02.T03.review-fix.json",
+    "reason": "The first remediation manifest accurately bound the code and full qualification but misstated the canonical root-level Vitest count and attributed unmount and clipboard-failure cases to a durable focused suite that did not contain them. This evidence preserves the accepted code behavior while correcting the exact command result and automated-coverage claims."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S02.T03.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\vitest\\vitest.mjs run",
+      "exitCode": 0,
+      "result": "Exact replay from the canonical repository root passes 34 tests across eight files. The local-service decoder cases accept only the exact allowlisted result and fail closed for credential-shaped RO-* values, URL/path/credential content, missing, wrong, and extra fields, arrays, nulls, primitives, and hostile proxy property access."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The exact evidence-only correction commit has a valid backlog and byte-current generated views."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S02.T03-review-fix-desktop-profile.json",
+      "exitCode": 0,
+      "result": "The unchanged remediation implementation at 10d2bfb passed all 25 commands in 521.89 seconds: 148 governed tests, 34 desktop tests, complete package/application/native builds, one functional CAP-01 product page, zero reference-only pages and requests, immutable performance thresholds, 139 workflow cases, 390 keyboard cases, 64 accessibility/responsive cases, and 64 visual captures. Report SHA-256: 977c2a61245351a6afa21161d6a9f0b7b8dfa206a949c282a5f20698063f9649. The only later tracked delta is this evidence submission and its independent review transition."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\desktop-application.json",
+      "exitCode": 0,
+      "result": "The unchanged compiled product replay at 10d2bfb passes all nine package/application/native commands. Normal retry retains command input, renders a nonblank actionable state, copies only RO-CAP01-SERVICE-NOT-PACKAGED, and performs zero requests; the product contains one functional CAP-01 page and zero reference-only pages. Report SHA-256: 75095281d59705845678fa589350c73589b014788992aa4a4e460d801baca1c0."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The runtime decoder admits only the exact two-field unavailable result containing RO-CAP01-SERVICE-NOT-PACKAGED. Every other value maps to generic failed-state text and the fixed opaque reference before React state mutation.",
+        "Durable decoder tests prove malicious diagnostics and malformed values cannot enter the view model. The compiled normal product path proves a nonblank actionable state, retained command input, fixed diagnostic copy, and zero requests.",
+        "Independent remediation review additionally injected hostile results into the compiled component and observed no leak, blank screen, unsafe clipboard content, or uncaught error; final approval remains pending in this manifest."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The canonical root Vitest command passes exactly 34 tests across eight files. Its durable local-service coverage includes allowlisted success decoding, malicious and malformed result rejection, hostile proxy containment, secret-safe thrown-error mapping, actual not-packaged probe behavior, and pre-aborted cancellation.",
+        "The attached desktop aggregate durably covers normal retry, successful fixed-reference clipboard copy, retained input, actionable recovery, responsive behavior, zero requests, and product/reference separation. This manifest does not attribute unmount or clipboard-failure automation to those durable suites.",
+        "The exact clean full desktop profile covers the broader governed package, renderer, native, browser, accessibility, keyboard, visual, performance, architecture, planning, security, and evidence matrix."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "No production source changed after the independently exercised 10d2bfb remediation. The later delta contains only the first remediation evidence record and the exact submission/review planning transition.",
+        "Component APIs, native privileges, storage, routes, sidecar packaging, approved reference bytes, and later CAP-01 behavior remain unchanged. The product still contains only functional CAP-01 implementation and no copied reference pages or illustrative records."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent final re-review must verify the corrected 34-test/eight-file replay, the narrowed durable-coverage claims, exact four-file incremental scope and supersession chain, then carry forward the already-passed compiled hostile-result and product-boundary disposition."
+  }
+}
