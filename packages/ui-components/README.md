@@ -8,7 +8,7 @@ React primitives for the approved Academic Minimal experience. Components
 consume semantic custom properties from `@research-observatory/ui-tokens` and
 never own project, scholarly, filesystem, process, credential, or service state.
 
-Version `1.0.0` includes:
+Version `1.1.0` includes:
 
 - `Typography`, `Icon`, `Button`, and `Field`;
 - `DataTable` with an explicit caption and column contract;
@@ -18,12 +18,20 @@ Version `1.0.0` includes:
   disputed, adjudicated, and stale evidence; and
 - `UncertaintyState` variants for unknown, not reported, not applicable, and
   ambiguous values.
+- `BoundaryStatePanel` variants for loading, empty, offline, denied, stale,
+  partial, failed, and recovery-required operation states. The component
+  supports bounded progress, retry, cancellation, continued local work,
+  retained content, and copyable opaque diagnostic references.
 
 Evidence and uncertainty components always render their identity as visible
 text, so their meaning never depends on color. `Notification` uses `role=status` for
 nonurgent information and `role=alert` for danger. `Field` binds label,
 description, and error text to its control. Dialog focus trapping/restoration,
 global shortcuts, and live-region scheduling are owned by `CAP-01.S02.T02`.
+Boundary components never accept raw exception text, secrets, URLs, paths, or
+stack traces as diagnostics. Their public copy surface accepts only bounded
+`RO-...` references; adapters retain and redact technical details outside the
+renderer. Failure states do not unmount caller-owned retained content.
 
 `catalog.html` is the governed local component catalog. The desktop verifier
 checks its light/dark contrast, semantic roles, minimum controls, token lineage,

@@ -12,7 +12,19 @@ import {
 } from "@research-observatory/ui-tokens";
 
 export { DESIGN_REFERENCE_ID, DESIGN_TOKEN_CONTRACT_VERSION };
-export const UI_COMPONENT_CONTRACT_VERSION = "1.0.0" as const;
+export const UI_COMPONENT_CONTRACT_VERSION = "1.1.0" as const;
+
+export const boundaryStates = [
+  "loading",
+  "empty",
+  "offline",
+  "denied",
+  "stale",
+  "partial",
+  "failed",
+  "recovery-required",
+] as const;
+export type BoundaryState = (typeof boundaryStates)[number];
 
 type TypographyVariant = "display" | "page-title" | "section-title" | "card-title" | "body" | "compact" | "label";
 type TypographyTag = "h1" | "h2" | "h3" | "p" | "span";
@@ -199,6 +211,124 @@ function requireUncertaintyState(state: UncertaintyIdentity): void {
   if (!uncertaintyStates.some((candidate) => candidate === state)) {
     throw new RangeError(`unsupported uncertainty state: ${String(state)}`);
   }
+}
+
+const BOUNDARY_STATE_LABELS: Readonly<Record<BoundaryState, string>> = {
+  loading: "Loading",
+  empty: "Empty",
+  offline: "Offline",
+  denied: "Access denied",
+  stale: "Stale",
+  partial: "Partial results",
+  failed: "Failed",
+  "recovery-required": "Recovery required",
+};
+
+const BOUNDARY_STATE_TONES: Readonly<Record<BoundaryState, SemanticTone>> = {
+  loading: "info",
+  empty: "neutral",
+  offline: "warning",
+  denied: "danger",
+  stale: "warning",
+  partial: "info",
+  failed: "danger",
+  "recovery-required": "warning",
+};
+
+const DIAGNOSTIC_REFERENCE = /^RO-[A-Z0-9]+(?:-[A-Z0-9]+){2,15}$/;
+
+function requireBoundaryState(state: BoundaryState): void {
+  if (!boundaryStates.some((candidate) => candidate === state)) {
+    throw new RangeError(`unsupported boundary state: ${String(state)}`);
+  }
+}
+
+function requireDiagnosticReference(reference: string): void {
+  if (reference.length > 96 || !DIAGNOSTIC_REFERENCE.test(reference)) {
+    throw new TypeError("diagnostic reference must be a bounded Research Observatory identifier");
+  }
+}
+
+export interface BoundaryProgress {
+  readonly label: string;
+  readonly value: number;
+}
+
+export interface BoundaryStatePanelProps {
+  readonly id?: string;
+  readonly state: BoundaryState;
+  readonly title: string;
+  readonly message: string;
+  readonly progress?: BoundaryProgress;
+  readonly diagnosticReference?: string;
+  readonly onRetry?: () => void;
+  readonly onCancel?: () => void;
+  readonly onContinueOffline?: () => void;
+  readonly onCopyDiagnostic?: (reference: string) => void;
+  readonly children?: ReactNode;
+}
+
+export function BoundaryStatePanel({
+  id,
+  state,
+  title,
+  message,
+  progress,
+  diagnosticReference,
+  onRetry,
+  onCancel,
+  onContinueOffline,
+  onCopyDiagnostic,
+  children,
+}: BoundaryStatePanelProps) {
+  requireBoundaryState(state);
+  if (!title.trim() || !message.trim()) throw new TypeError("boundary title and message must be nonempty");
+  if (progress && (!progress.label.trim() || !Number.isFinite(progress.value) || progress.value < 0 || progress.value > 100)) {
+    throw new RangeError("boundary progress requires a nonempty label and a finite value from 0 through 100");
+  }
+  if (diagnosticReference) requireDiagnosticReference(diagnosticReference);
+  const urgent = state === "denied" || state === "failed" || state === "recovery-required";
+  const tone = BOUNDARY_STATE_TONES[state];
+  return (
+    <section
+      id={id}
+      className="ro-boundary-state"
+      data-boundary-state={state}
+      data-tone={tone}
+      role={urgent ? "alert" : "status"}
+      aria-atomic="true"
+      aria-busy={state === "loading" ? true : undefined}
+    >
+      <div className="ro-boundary-state__header">
+        <Typography as="h3" variant="card-title">{title}</Typography>
+        <StatusBadge tone={tone}>State: {BOUNDARY_STATE_LABELS[state]}</StatusBadge>
+      </div>
+      <p>{message}</p>
+      {progress ? (
+        <label className="ro-boundary-state__progress">
+          <span>{progress.label}: {progress.value}%</span>
+          <progress value={progress.value} max={100}>{progress.value}%</progress>
+        </label>
+      ) : null}
+      {diagnosticReference ? (
+        <div className="ro-boundary-state__diagnostic">
+          <span>Diagnostic reference</span>
+          <code data-diagnostic-reference>{diagnosticReference}</code>
+        </div>
+      ) : null}
+      {children ? <div className="ro-boundary-state__retained">{children}</div> : null}
+      {onRetry || onCancel || onContinueOffline || (diagnosticReference && onCopyDiagnostic) ? (
+        <div className="ro-boundary-state__actions">
+          {onRetry ? <Button tone="primary" onClick={onRetry} data-retry-boundary>Retry</Button> : null}
+          {onCancel ? <Button onClick={onCancel} data-cancel-boundary>Cancel</Button> : null}
+          {onContinueOffline ? <Button onClick={onContinueOffline} data-continue-offline>Continue locally</Button> : null}
+          {diagnosticReference && onCopyDiagnostic ? (
+            <Button onClick={() => onCopyDiagnostic(diagnosticReference)} data-copy-diagnostic>Copy diagnostic reference</Button>
+          ) : null}
+        </div>
+      ) : null}
+    </section>
+  );
 }
 
 export interface EvidenceStateBadgeProps {

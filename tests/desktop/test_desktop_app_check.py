@@ -175,12 +175,21 @@ class DesktopAppCheckTests(unittest.TestCase):
             )
             transport = root / "packages" / "ui-tokens" / "index.css"
             transport.write_text('@import "https://example.invalid/tokens.css";\n', encoding="utf-8")
+            catalog = root / "packages" / "ui-components" / "catalog.html"
+            catalog.write_text(
+                catalog.read_text(encoding="utf-8").replace(
+                    'data-boundary-state="recovery-required"', 'data-boundary-state="failed"', 1
+                ),
+                encoding="utf-8",
+                newline="\n",
+            )
 
             errors = design_system_errors(root)
 
         self.assertTrue(any("governed tokens" in error for error in errors), errors)
         self.assertTrue(any("inline styles" in error for error in errors), errors)
         self.assertTrue(any("governed reference source" in error for error in errors), errors)
+        self.assertTrue(any("every governed boundary state" in error for error in errors), errors)
 
     def test_catalog_structure_and_accessible_name_cannot_be_satisfied_by_comments(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
