@@ -2294,12 +2294,12 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T17:04:36+00:00'
-      updated_at: '2026-08-11T19:39:39+00:00'
-      completed_at: null
+      updated_at: '2026-08-11T19:41:17+00:00'
+      completed_at: '2026-08-11T19:41:17+00:00'
       blocker: null
       implementation_notes: 'Implemented reusable eight-state operation boundaries and a truthful functional local-service
         recovery path with retry, cancellation seam, continued local use, retained input, safe diagnostic copy, and complete
@@ -2328,16 +2328,14 @@ capabilities:
         recorded_at: '2026-08-11T19:39:31+00:00'
       review:
         reviewer: agent:maxwell
-        result: changes-requested
-        reviewed_at: '2026-08-11T19:38:10+00:00'
-        notes: 'Code remediation passes the complete hostile-result matrix. Evidence correction required: the recorded root-level
-          Vitest command passes 34 tests across eight files, not 32 across seven, and the focused-suite narrative must not
-          claim durable unmount or clipboard-failure coverage absent from attached automated tests.'
+        result: approved
+        reviewed_at: '2026-08-11T19:41:17+00:00'
+        notes: 'APPROVED: exact root replay passes 34 tests across eight files; corrected evidence accurately separates durable
+          automation from the independent compiled hostile-result harness. Evidence hashes, base, branch, four-file scope,
+          supersession, ancestry, full-report hashes, taskctl, views, runtime safety, product/reference separation, and clean
+          state all validate.'
       base_sha: 758a1e559fefeba699e4550389d7efed0ad75db4
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-11T19:38:10+00:00'
-        expires_at: '2026-08-12T03:38:10+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
