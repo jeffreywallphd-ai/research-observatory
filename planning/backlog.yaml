@@ -2389,7 +2389,7 @@ capabilities:
     depends_on:
     - CAP-00.S03.T02
     - CAP-01.S01.T01
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-01.S03.T01
       capability_id: CAP-01
@@ -2417,11 +2417,11 @@ capabilities:
       - service
       verification_commands:
       - python tools/verify.py --profile service
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T21:15:26+00:00'
-      updated_at: '2026-08-11T21:49:35+00:00'
+      updated_at: '2026-08-11T21:53:29+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Modular local Core API, strict configuration/logging/module boundaries, deterministic OpenAPI/runtime
@@ -2433,16 +2433,17 @@ capabilities:
         commit: c7f7395699097e4f963938184449b110ee7d8a25
         recorded_at: '2026-08-11T21:49:26+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:maxwell
+        result: changes-requested
+        reviewed_at: '2026-08-11T21:53:29+00:00'
+        notes: Runtime schema rejects actual health/readiness responses because alive/ready are undeclared; original evidence
+          also misstates 18 profile commands as 16. Bind schema tests to served payloads and supersede evidence.
       base_sha: 90d7499e282eeedab151dba4af6a0c06400a9e31
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-11T21:15:26+00:00'
-        expires_at: '2026-08-12T05:15:26+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-11T21:53:29+00:00'
+        expires_at: '2026-08-12T05:53:29+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
