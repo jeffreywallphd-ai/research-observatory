@@ -27,6 +27,7 @@
     "desktop:ui-workflow": {"argv": ["{python}", "tools/ui_workflow_check.py", "--repo", "{repo}", "--report", "artifacts/tmp/desktop-ui-workflows.json"]},
     "desktop:ui-accessibility": {"argv": ["{python}", "tools/ui_accessibility_check.py", "--repo", "{repo}", "--report", "artifacts/tmp/desktop-ui-accessibility.json"]},
     "desktop:ui-visual-regression": {"argv": ["{python}", "tools/ui_visual_regression_check.py", "--repo", "{repo}", "--report", "artifacts/tmp/desktop-ui-visual.json"]},
+    "packaging:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/packaging", "-p", "test_*.py"]},
     "service:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/service", "-p", "test_*.py"]},
     "contracts:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/contracts", "-p", "test_*.py"]},
     "data:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/data", "-p", "test_*.py"]},
@@ -78,7 +79,7 @@
         {"command": "desktop:ui-visual-regression", "activationPath": "verification/extensions/desktop-ui.json", "installedBy": "CAP-00.S06"}
       ]
     },
-    "service": {"description": "Foundation plus Core API and portable-contract tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "service:unit", "activationGlob": "tests/service/test_*.py", "installedBy": "CAP-01.S03"}, {"command": "contracts:unit", "activationGlob": "tests/contracts/test_*.py", "installedBy": "CAP-01"}]},
+    "service": {"description": "Foundation plus Core API, portable-contract, and Windows sidecar packaging tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "service:unit", "activationGlob": "tests/service/test_*.py", "installedBy": "CAP-01.S03"}, {"command": "contracts:unit", "activationGlob": "tests/contracts/test_*.py", "installedBy": "CAP-01"}, {"command": "packaging:unit", "activationPath": "services/core-api/packaging/sidecar-build.json", "installedBy": "CAP-01.S03.T02"}]},
     "data": {"description": "Foundation plus data/storage and portable-contract tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "data:unit", "activationGlob": "tests/data/test_*.py", "installedBy": "CAP-02"}, {"command": "contracts:unit", "activationGlob": "tests/contracts/test_*.py", "installedBy": "CAP-01"}]},
     "documents": {"description": "Foundation plus document ingestion, parsing, anchoring, and rights tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "documents:unit", "activationGlob": "tests/documents/test_*.py", "installedBy": "CAP-05"}]},
     "search": {"description": "Foundation plus lexical, semantic, hybrid, reranking, and screening tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "search:unit", "activationGlob": "tests/search/test_*.py", "installedBy": "CAP-06"}]},

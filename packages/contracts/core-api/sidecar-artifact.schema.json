@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/core-api/sidecar-artifact.schema.json",
+  "title": "Research Observatory Core sidecar artifact manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "componentId",
+    "componentVersion",
+    "targetTriple",
+    "pythonVersion",
+    "builder",
+    "entrypoint",
+    "totalBytes",
+    "files"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "core-sidecar-artifact-manifest"},
+    "componentId": {"const": "core-api"},
+    "componentVersion": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+    "targetTriple": {"const": "x86_64-pc-windows-msvc"},
+    "pythonVersion": {"type": "string", "pattern": "^3\\.14\\.[0-9]+$"},
+    "builder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "mode", "upx", "excludedModules"],
+      "properties": {
+        "name": {"const": "PyInstaller"},
+        "version": {"const": "6.21.0"},
+        "mode": {"const": "onedir"},
+        "upx": {"const": false},
+        "excludedModules": {"const": ["pip", "pytest", "setuptools"]}
+      }
+    },
+    "entrypoint": {"const": "research-observatory-core-x86_64-pc-windows-msvc.exe"},
+    "totalBytes": {"type": "integer", "minimum": 1, "maximum": 134217728},
+    "files": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "bytes", "sha256"],
+        "properties": {
+          "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*:)[^\\u0000-\\u001f]+$"},
+          "bytes": {"type": "integer", "minimum": 0},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  }
+}
