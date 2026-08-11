@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T03",
+  "commit": "9f94e9433cb455a2c912ab4e14f3f22e92d7d929",
+  "baseCommit": "cf9c63e4c603eb18e2d9c919f63dff77eb6b000d",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S02.T03.review-fix-4.json",
+    "reason": "After the prior remediation was approved and fast-forwarded to local main, the required main/branch checkout cycle materialized governed text fixtures with Windows CRLF bytes. Raw fixture hashing then rejected an otherwise identical clean checkout. This correction canonicalizes only governed UTF-8 text line endings, rejects bare carriage returns, and preserves content-drift denial."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S02.T03.review-fix-4.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_performance_check.py",
+    "tools/desktop_performance_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\desktop-performance-line-endings-clean.json",
+      "exitCode": 0,
+      "result": "At exact clean post-checkout commit 9f94e94, the desktop and 10,000-row component measurements pass with canonical fixture hashes equal to the reviewed baseline: cold p95 36 ms, visible p95 17.215 ms, usable p95 19.092 ms, and component p95 41.193 ms below the 46.916 ms relative and 100 ms absolute limits. Report SHA-256: 8ea4aa01a1cace797aed4fde2dafc242b3223af9a0386831dca161482a932295."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_performance_check",
+      "exitCode": 0,
+      "result": "All 12 focused tests pass. The new regression proves LF and CRLF checkouts produce the same canonical fixture SHA-256, actual content drift changes the digest, and a bare carriage return fails closed; all prior strict baseline, sample, URL, budget, and methodology attacks remain denied."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 758a1e559fefeba699e4550389d7efed0ad75db4 --head 9f94e9433cb455a2c912ab4e14f3f22e92d7d929",
+      "exitCode": 0,
+      "result": "The complete active T03 range retains exactly the approved seven governed UI files and unchanged reference identity; this verifier-only portability fix introduces no application or reference content."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . && .venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 57 governed Python files, the active campaign ledger, and generated planning views pass."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The independently approved recovery behavior and bounded interactive DataTable are unchanged; the exact post-checkout benchmark now remains available on the release-authoritative Windows platform.",
+        "Only UTF-8 CRLF-to-LF canonicalization is permitted for governed text fixture identity. Content changes remain hash-visible, invalid UTF-8 fails decoding, and bare carriage returns are rejected.",
+        "No product, UI reference, component, route, service, storage, or native behavior changed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The 12 focused tests include the clean Windows line-ending regression and retain every strict baseline and sample denial test.",
+        "The exact clean performance report replays all 20 component batches and passes both regression limits after the real main/branch checkout sequence that exposed the defect.",
+        "The previously approved real-browser 10,000-row interaction harness remains byte-identical and applicable."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The six-file incremental range contains only immutable prior evidence, its task-state transitions, the existing desktop performance verifier, and its focused regression tests.",
+        "No verification-profile or protected UI-gate control changed; the active UI gate, quality checks, ledger, and generated views all pass.",
+        "The canonical digest values remain the reviewed LF source hashes, so the correction does not silently rebaseline fixture content."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent review must reproduce clean LF/CRLF equivalence, content-drift and bare-CR denial, exact six-file scope, unchanged canonical fixture hashes, clean performance, and the unchanged approved interaction/product boundaries."
+  }
+}
