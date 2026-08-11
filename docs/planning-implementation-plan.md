@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e7a8a5abdbd17f945dce3c39488c7574bcaa1f86787465657ea9e400f4fa1881
+source_sha256: 6124df5a96f9271e457c1ce1c08cfaa15f03d09cd39f2289b635bf83cb0a99fd
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1095,13 +1095,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T02 - Establish keyboard, focus, and screen-reader behavior
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S02.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Global focus management, skip links, shortcut registry, accessible names, live-region policy, and automated accessibility checks.
 
