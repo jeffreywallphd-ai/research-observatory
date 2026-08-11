@@ -11,6 +11,7 @@
     "apps/desktop/src/app/ReferenceRuntime.tsx",
     "apps/desktop/src/main.tsx",
     "apps/desktop/src/reference-main.tsx",
+    "packages/ui-components/package.json",
     "packages/ui-components/src/index.tsx"
   ],
   "reference": {
