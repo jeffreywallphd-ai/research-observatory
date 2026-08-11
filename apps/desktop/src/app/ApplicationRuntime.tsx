@@ -69,14 +69,20 @@ export function ApplicationRuntime(): ReactNode {
   }, [announce]);
 
   const openShortcuts = useCallback((trigger?: HTMLElement | null) => {
-    restoreFocusRef.current = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    if (!restoreFocusRef.current) {
+      restoreFocusRef.current = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    }
     setShortcutsOpen(true);
   }, []);
 
   const closeShortcuts = useCallback(() => {
     setShortcutsOpen(false);
     const restore = restoreFocusRef.current;
-    globalThis.window?.requestAnimationFrame(() => restore?.focus());
+    restoreFocusRef.current = null;
+    globalThis.window?.requestAnimationFrame(() => {
+      if (restore?.isConnected) restore.focus();
+      else shortcutTriggerRef.current?.focus();
+    });
   }, []);
 
   const containShortcutFocus = useCallback((event: React.KeyboardEvent<HTMLElement>) => {
@@ -99,18 +105,28 @@ export function ApplicationRuntime(): ReactNode {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
-      if (isShortcut(event, "k", "ctrl")) {
+      const commandShortcut = isShortcut(event, "k", "ctrl");
+      const helpShortcut = isShortcut(event, "/", "ctrl");
+      const homeShortcut = isShortcut(event, "h", "alt");
+      if (shortcutsOpen) {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeShortcuts();
+        } else if (commandShortcut || helpShortcut || homeShortcut) {
+          event.preventDefault();
+          shortcutCloseRef.current?.focus();
+        }
+        return;
+      }
+      if (commandShortcut) {
         event.preventDefault();
         commandRef.current?.focus();
-      } else if (isShortcut(event, "/", "ctrl")) {
+      } else if (helpShortcut) {
         event.preventDefault();
         openShortcuts();
-      } else if (isShortcut(event, "h", "alt")) {
+      } else if (homeShortcut) {
         event.preventDefault();
         homeRef.current?.focus();
-      } else if (event.key === "Escape" && shortcutsOpen) {
-        event.preventDefault();
-        closeShortcuts();
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -149,7 +165,7 @@ export function ApplicationRuntime(): ReactNode {
             Shortcuts
           </Button>
           <Button onClick={() => applyTheme(nextTheme(theme))} aria-pressed={theme === "dark"} data-theme-toggle>
-            {theme === "dark" ? "Use light theme" : "Use dark theme"}
+            Dark theme
           </Button>
         </div>
       </header>

@@ -11,6 +11,10 @@ describe("functional desktop application", () => {
     expect(html).toContain('id="main-content"');
     expect(html).toContain('id="shell-command"');
     expect(html).toContain('data-theme-toggle="true"');
+    expect(html).toContain('aria-pressed="false"');
+    expect(html).toContain(">Dark theme</button>");
+    expect(html).not.toContain("Use dark theme");
+    expect(html).not.toContain("Use light theme");
     expect(html).toContain('data-live-region="true"');
     expect(html).toContain('data-trust-footer="true"');
     expect(html).toContain("Only implemented capabilities appear here.");
