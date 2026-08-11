@@ -40,6 +40,35 @@ EXPECTED_BASELINE_P95_MS = {
     "warmRouteVisibleSkeleton": 73.033,
     "warmRouteUsable": 77.622,
 }
+UI_COMPONENT_BASELINE_PATH = "verification/baselines/ui-components-data-table-performance.json"
+EXPECTED_UI_COMPONENT_BASELINE_SHA256 = "6d98a0bb457a35cf548e71d9c41eb9c680488cf45678571e7066fbe3706294ee"
+EXPECTED_UI_COMPONENT_BASELINE_P95_MS = 43.169
+UI_COMPONENT_BATCH_BUDGET_MS = 100.0
+UI_COMPONENT_BENCHMARK_ENTRY = "tests/desktop/fixtures/data-table-10000.tsx"
+UI_COMPONENT_BENCHMARK_RUNNER = "tests/desktop/fixtures/data-table-performance.mjs"
+NODE_RUNTIME = ".local/toolchains/node-v24.19.0-win-x64/node.exe"
+EXPECTED_UI_COMPONENT_FIXTURE = {
+    "version": "data-table-10000-v1",
+    "totalRows": 10_000,
+    "columns": 3,
+    "pageSize": 50,
+    "pageCount": 200,
+    "maximumRenderedRows": 50,
+}
+EXPECTED_UI_COMPONENT_SAMPLE_METHODOLOGY = {
+    "state": "warm after five unmeasured render batches; the immutable dataset is constructed before timing",
+    "operation": "alternating first/last accessible server-rendered pagination windows",
+    "repetitions": 20,
+    "rendersPerSample": 1_000,
+    "warmupBatches": 5,
+    "distribution": "nearest-rank p50 and p95 over every measured batch; no samples discarded",
+}
+EXPECTED_UI_COMPONENT_BASELINE_METHODOLOGY = {
+    "runtime": "Node 24.19.0, React 19.2.8 production SSR, Vite 8.2.1",
+    **EXPECTED_UI_COMPONENT_SAMPLE_METHODOLOGY,
+    "hardwareQualification": "representative measured Windows x64 workstation",
+    "regressionThresholdPercent": RELATIVE_REGRESSION_PERCENT,
+}
 
 
 class MemoryStatusEx(ctypes.Structure):
@@ -214,6 +243,191 @@ def load_regression_baseline(repo: Path) -> tuple[dict[str, Any], str]:
     return baseline, payload_sha256
 
 
+def validate_ui_component_baseline(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError("UI component performance baseline must be a JSON object")
+    expected_keys = {
+        "schemaVersion",
+        "documentType",
+        "baselineSourceCommit",
+        "profile",
+        "componentContractVersion",
+        "fixture",
+        "methodology",
+        "measurements",
+    }
+    if set(value) != expected_keys:
+        raise ValueError("UI component performance baseline has unexpected or missing fields")
+    if value.get("schemaVersion") != "1.0" or value.get("documentType") != "ui-component-performance-baseline":
+        raise ValueError("UI component performance baseline identity is invalid")
+    source_commit = value.get("baselineSourceCommit")
+    if (
+        not isinstance(source_commit, str)
+        or len(source_commit) != 40
+        or any(character not in "0123456789abcdef" for character in source_commit)
+    ):
+        raise ValueError("UI component baseline source commit must be a full lowercase Git SHA")
+    if value.get("profile") != "windows-x64" or value.get("componentContractVersion") != "1.2.0":
+        raise ValueError("UI component baseline profile or contract version is invalid")
+
+    fixture = value.get("fixture")
+    expected_fixture_keys = {*EXPECTED_UI_COMPONENT_FIXTURE, "benchmarkEntrySha256", "benchmarkRunnerSha256"}
+    if not isinstance(fixture, dict) or set(fixture) != expected_fixture_keys:
+        raise ValueError("UI component baseline fixture identity is invalid")
+    if any(fixture.get(key) != expected for key, expected in EXPECTED_UI_COMPONENT_FIXTURE.items()):
+        raise ValueError("UI component baseline fixture dimensions are invalid")
+    for key in ("benchmarkEntrySha256", "benchmarkRunnerSha256"):
+        digest = fixture.get(key)
+        if (
+            not isinstance(digest, str)
+            or len(digest) != 64
+            or any(character not in "0123456789abcdef" for character in digest)
+        ):
+            raise ValueError("UI component baseline fixture hashes must be lowercase SHA-256 values")
+
+    if value.get("methodology") != EXPECTED_UI_COMPONENT_BASELINE_METHODOLOGY:
+        raise ValueError("UI component baseline methodology does not match the governed benchmark")
+    measurements = value.get("measurements")
+    if not isinstance(measurements, dict) or set(measurements) != {"warmPaginatedRenderBatch"}:
+        raise ValueError("UI component baseline measurement inventory is invalid")
+    measurement = measurements["warmPaginatedRenderBatch"]
+    if not isinstance(measurement, dict) or set(measurement) != {"absoluteBudgetMs", "baselineP95Ms"}:
+        raise ValueError("UI component baseline measurement is invalid")
+    baseline_p95 = measurement.get("baselineP95Ms")
+    if (
+        isinstance(baseline_p95, bool)
+        or not isinstance(baseline_p95, (int, float))
+        or not math.isfinite(baseline_p95)
+        or baseline_p95 <= 0
+    ):
+        raise ValueError("UI component baseline p95 must be positive and finite")
+    if (
+        measurement.get("absoluteBudgetMs") != UI_COMPONENT_BATCH_BUDGET_MS
+        or baseline_p95 > UI_COMPONENT_BATCH_BUDGET_MS
+    ):
+        raise ValueError("UI component baseline does not preserve its approved budget")
+    if baseline_p95 != EXPECTED_UI_COMPONENT_BASELINE_P95_MS:
+        raise ValueError("UI component baseline does not match its immutable reviewed p95")
+    return value
+
+
+def load_ui_component_baseline(repo: Path) -> tuple[dict[str, Any], str]:
+    value, payload, error = load_json(repo, UI_COMPONENT_BASELINE_PATH)
+    if error or payload is None:
+        raise ValueError(error or "UI component performance baseline could not be read")
+    payload_sha256 = hashlib.sha256(payload).hexdigest()
+    if payload_sha256 != EXPECTED_UI_COMPONENT_BASELINE_SHA256:
+        raise ValueError("UI component baseline bytes do not match the immutable reviewed SHA-256")
+    baseline = validate_ui_component_baseline(value)
+    ancestry = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", baseline["baselineSourceCommit"], "HEAD"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=30,
+    )
+    if ancestry.returncode != 0:
+        raise ValueError("UI component baseline source commit is not an ancestor of HEAD")
+    fixture = baseline["fixture"]
+    if sha256(repo / UI_COMPONENT_BENCHMARK_ENTRY) != fixture["benchmarkEntrySha256"]:
+        raise ValueError("UI component benchmark entry changed without a reviewed rebaseline")
+    if sha256(repo / UI_COMPONENT_BENCHMARK_RUNNER) != fixture["benchmarkRunnerSha256"]:
+        raise ValueError("UI component benchmark runner changed without a reviewed rebaseline")
+    return baseline, payload_sha256
+
+
+def validate_ui_component_samples(value: Any) -> list[float]:
+    if not isinstance(value, dict) or set(value) != {
+        "schemaVersion",
+        "documentType",
+        "fixture",
+        "methodology",
+        "samplesMs",
+    }:
+        raise ValueError("UI component benchmark samples have unexpected or missing fields")
+    if value.get("schemaVersion") != "1.0" or value.get("documentType") != "ui-component-performance-samples":
+        raise ValueError("UI component benchmark sample identity is invalid")
+    fixture = value.get("fixture")
+    if not isinstance(fixture, dict):
+        raise ValueError("UI component benchmark fixture is invalid")
+    for key, expected in EXPECTED_UI_COMPONENT_FIXTURE.items():
+        if fixture.get(key) != expected:
+            raise ValueError(f"UI component benchmark fixture {key} is invalid")
+    if set(fixture) != {*EXPECTED_UI_COMPONENT_FIXTURE, "firstPageMarkupBytes", "lastPageMarkupBytes"}:
+        raise ValueError("UI component benchmark fixture has unexpected fields")
+    if any(
+        isinstance(fixture.get(key), bool) or not isinstance(fixture.get(key), int) or fixture[key] <= 0
+        for key in ("firstPageMarkupBytes", "lastPageMarkupBytes")
+    ):
+        raise ValueError("UI component benchmark markup sizes must be positive integers")
+    if value.get("methodology") != EXPECTED_UI_COMPONENT_SAMPLE_METHODOLOGY:
+        raise ValueError("UI component benchmark methodology is invalid")
+    samples = value.get("samplesMs")
+    if not isinstance(samples, list) or len(samples) != EXPECTED_UI_COMPONENT_SAMPLE_METHODOLOGY["repetitions"]:
+        raise ValueError("UI component benchmark must retain every governed repetition")
+    if any(
+        isinstance(sample, bool) or not isinstance(sample, (int, float)) or not math.isfinite(sample) or sample <= 0
+        for sample in samples
+    ):
+        raise ValueError("UI component benchmark samples must be positive finite numbers")
+    return [float(sample) for sample in samples]
+
+
+def ui_component_benchmark(repo: Path) -> dict[str, Any]:
+    errors: list[str] = []
+    baseline, baseline_sha256 = load_ui_component_baseline(repo)
+    node = repo / NODE_RUNTIME
+    if not node.is_file():
+        raise ValueError("repository-pinned Node 24.19.0 runtime is unavailable; run bootstrap.cmd")
+    execution = subprocess.run(
+        [str(node), str(repo / UI_COMPONENT_BENCHMARK_RUNNER)],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=120,
+    )
+    if execution.returncode != 0:
+        raise ValueError(f"UI component benchmark runner failed: {execution.stderr.strip()}")
+    samples_payload = json.loads(execution.stdout)
+    samples = validate_ui_component_samples(samples_payload)
+    measurement = evaluated_measurement(
+        samples,
+        UI_COMPONENT_BATCH_BUDGET_MS,
+        EXPECTED_UI_COMPONENT_BASELINE_P95_MS,
+    )
+    if measurement["passesAbsoluteBudget"] is not True:
+        errors.append("warmPaginatedRenderBatch p95 exceeds its approved absolute budget")
+    if measurement["passesRegressionThreshold"] is not True:
+        errors.append("warmPaginatedRenderBatch p95 exceeds its committed 20% regression threshold")
+    package, _payload, package_error = load_json(repo, "packages/ui-components/package.json")
+    if package_error or not isinstance(package, dict):
+        raise ValueError(package_error or "UI component package manifest is invalid")
+    if package.get("version") != baseline["componentContractVersion"]:
+        errors.append("UI component package version does not match the benchmarked contract")
+
+    return {
+        "ok": not errors,
+        "regressionBaseline": {
+            "path": UI_COMPONENT_BASELINE_PATH,
+            "sha256": baseline_sha256,
+            "sourceCommit": baseline["baselineSourceCommit"],
+        },
+        "fixture": {
+            **samples_payload["fixture"],
+            "benchmarkEntry": UI_COMPONENT_BENCHMARK_ENTRY,
+            "benchmarkEntrySha256": sha256(repo / UI_COMPONENT_BENCHMARK_ENTRY),
+            "benchmarkRunner": UI_COMPONENT_BENCHMARK_RUNNER,
+            "benchmarkRunnerSha256": sha256(repo / UI_COMPONENT_BENCHMARK_RUNNER),
+            "componentContractVersion": package.get("version"),
+        },
+        "methodology": EXPECTED_UI_COMPONENT_BASELINE_METHODOLOGY,
+        "measurements": {"warmPaginatedRenderBatch": measurement},
+        "errors": errors,
+    }
+
+
 def approved_document_name(raw_url: str, available: set[str]) -> str | None:
     parsed = urlsplit(raw_url)
     if parsed.scheme != "http" or parsed.netloc != "tauri.localhost" or parsed.query or parsed.fragment:
@@ -257,6 +471,8 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
     source, source_errors = source_record(repo, allow_dirty)
     errors.extend(source_errors)
     baseline, baseline_sha256 = load_regression_baseline(repo)
+    ui_component_performance = ui_component_benchmark(repo)
+    errors.extend(f"UI component performance: {error}" for error in ui_component_performance["errors"])
     context = load_context(repo)
     product_root = repo / PRODUCT_ROOT
     manifest_path = repo / PRODUCT_MANIFEST
@@ -428,6 +644,7 @@ def benchmark(repo: Path, repetitions: int, allow_dirty: bool = False) -> dict[s
             ),
         },
         "measurements": measurements,
+        "uiComponentPerformance": ui_component_performance,
         "unexpectedRequests": sorted(set(unexpected_requests)),
         "errors": errors,
     }
@@ -445,7 +662,7 @@ def main() -> int:
         report = benchmark(repo, args.repetitions, allow_dirty=args.allow_dirty)
         destination = safe_output_path(repo, args.report)
         guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
-    except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+    except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
         report = {
             "schemaVersion": "1.0",
             "documentType": "desktop-performance-report",

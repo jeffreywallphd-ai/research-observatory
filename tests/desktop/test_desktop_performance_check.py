@@ -12,14 +12,23 @@ sys.path.insert(0, str(REPO / "tools"))
 
 from desktop_performance_check import (  # noqa: E402
     EXPECTED_PERFORMANCE_BASELINE_SHA256,
+    EXPECTED_UI_COMPONENT_BASELINE_METHODOLOGY,
+    EXPECTED_UI_COMPONENT_BASELINE_P95_MS,
+    EXPECTED_UI_COMPONENT_BASELINE_SHA256,
+    EXPECTED_UI_COMPONENT_FIXTURE,
+    EXPECTED_UI_COMPONENT_SAMPLE_METHODOLOGY,
     PERFORMANCE_BASELINE_PATH,
     RELATIVE_REGRESSION_PERCENT,
+    UI_COMPONENT_BASELINE_PATH,
+    UI_COMPONENT_BATCH_BUDGET_MS,
     approved_document_name,
     distribution,
     evaluated_measurement,
     hardware_record,
     percentile,
     validate_regression_baseline,
+    validate_ui_component_baseline,
+    validate_ui_component_samples,
 )
 
 VALID_BASELINE: dict[str, Any] = {
@@ -47,6 +56,38 @@ VALID_BASELINE: dict[str, Any] = {
         "warmRouteVisibleSkeleton": {"absoluteBudgetMs": 150.0, "baselineP95Ms": 73.033},
         "warmRouteUsable": {"absoluteBudgetMs": 1000.0, "baselineP95Ms": 77.622},
     },
+}
+
+VALID_UI_COMPONENT_BASELINE: dict[str, Any] = {
+    "schemaVersion": "1.0",
+    "documentType": "ui-component-performance-baseline",
+    "baselineSourceCommit": "a" * 40,
+    "profile": "windows-x64",
+    "componentContractVersion": "1.2.0",
+    "fixture": {
+        **EXPECTED_UI_COMPONENT_FIXTURE,
+        "benchmarkEntrySha256": "b" * 64,
+        "benchmarkRunnerSha256": "c" * 64,
+    },
+    "methodology": EXPECTED_UI_COMPONENT_BASELINE_METHODOLOGY,
+    "measurements": {
+        "warmPaginatedRenderBatch": {
+            "absoluteBudgetMs": UI_COMPONENT_BATCH_BUDGET_MS,
+            "baselineP95Ms": EXPECTED_UI_COMPONENT_BASELINE_P95_MS,
+        }
+    },
+}
+
+VALID_UI_COMPONENT_SAMPLES: dict[str, Any] = {
+    "schemaVersion": "1.0",
+    "documentType": "ui-component-performance-samples",
+    "fixture": {
+        **EXPECTED_UI_COMPONENT_FIXTURE,
+        "firstPageMarkupBytes": 4_879,
+        "lastPageMarkupBytes": 4_997,
+    },
+    "methodology": EXPECTED_UI_COMPONENT_SAMPLE_METHODOLOGY,
+    "samplesMs": [40.0] * 20,
 }
 
 
@@ -145,6 +186,82 @@ class DesktopPerformanceCheckTests(unittest.TestCase):
         self.assertGreater(observed["logicalCpuCount"], 0)
         self.assertGreater(observed["physicalMemoryBytes"], 0)
         self.assertNotIn("host", " ".join(observed).lower())
+
+    def test_ui_component_baseline_is_strict_and_immutably_pinned(self) -> None:
+        self.assertEqual(
+            VALID_UI_COMPONENT_BASELINE,
+            validate_ui_component_baseline(copy.deepcopy(VALID_UI_COMPONENT_BASELINE)),
+        )
+        self.assertEqual(
+            EXPECTED_UI_COMPONENT_BASELINE_SHA256,
+            hashlib.sha256((REPO / UI_COMPONENT_BASELINE_PATH).read_bytes()).hexdigest(),
+        )
+
+        for field, replacement in (
+            ("schemaVersion", "2.0"),
+            ("baselineSourceCommit", "short"),
+            ("profile", "cloud"),
+            ("componentContractVersion", "1.3.0"),
+        ):
+            invalid = copy.deepcopy(VALID_UI_COMPONENT_BASELINE)
+            invalid[field] = replacement
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                validate_ui_component_baseline(invalid)
+
+    def test_ui_component_baseline_rejects_laundered_budget_p95_and_methodology(self) -> None:
+        invalid_budget = copy.deepcopy(VALID_UI_COMPONENT_BASELINE)
+        invalid_budget["measurements"]["warmPaginatedRenderBatch"]["absoluteBudgetMs"] = 101.0
+        with self.assertRaisesRegex(ValueError, "approved budget"):
+            validate_ui_component_baseline(invalid_budget)
+
+        for replacement in (90.0, float("nan"), float("inf"), 0.0):
+            invalid_p95 = copy.deepcopy(VALID_UI_COMPONENT_BASELINE)
+            invalid_p95["measurements"]["warmPaginatedRenderBatch"]["baselineP95Ms"] = replacement
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                validate_ui_component_baseline(invalid_p95)
+
+        invalid_method = copy.deepcopy(VALID_UI_COMPONENT_BASELINE)
+        invalid_method["methodology"]["rendersPerSample"] = 1
+        with self.assertRaisesRegex(ValueError, "methodology"):
+            validate_ui_component_baseline(invalid_method)
+
+    def test_ui_component_samples_bind_all_rows_to_a_bounded_window(self) -> None:
+        self.assertEqual(
+            [40.0] * 20,
+            validate_ui_component_samples(copy.deepcopy(VALID_UI_COMPONENT_SAMPLES)),
+        )
+
+        for field, replacement in (
+            ("totalRows", 9_999),
+            ("pageSize", 51),
+            ("pageCount", 199),
+            ("maximumRenderedRows", 51),
+        ):
+            invalid = copy.deepcopy(VALID_UI_COMPONENT_SAMPLES)
+            invalid["fixture"][field] = replacement
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                validate_ui_component_samples(invalid)
+
+        incomplete = copy.deepcopy(VALID_UI_COMPONENT_SAMPLES)
+        incomplete["samplesMs"] = [40.0] * 19
+        with self.assertRaisesRegex(ValueError, "every governed repetition"):
+            validate_ui_component_samples(incomplete)
+
+        nonfinite = copy.deepcopy(VALID_UI_COMPONENT_SAMPLES)
+        nonfinite["samplesMs"][0] = float("nan")
+        with self.assertRaisesRegex(ValueError, "positive finite"):
+            validate_ui_component_samples(nonfinite)
+
+    def test_ui_component_samples_reject_methodology_and_output_shape_drift(self) -> None:
+        invalid_method = copy.deepcopy(VALID_UI_COMPONENT_SAMPLES)
+        invalid_method["methodology"]["warmupBatches"] = 0
+        with self.assertRaisesRegex(ValueError, "methodology"):
+            validate_ui_component_samples(invalid_method)
+
+        unexpected = copy.deepcopy(VALID_UI_COMPONENT_SAMPLES)
+        unexpected["unreviewedOverride"] = True
+        with self.assertRaisesRegex(ValueError, "unexpected or missing"):
+            validate_ui_component_samples(unexpected)
 
 
 if __name__ == "__main__":

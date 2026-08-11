@@ -20,7 +20,6 @@
     "foundation:backlog": {"argv": ["{python}", "tools/taskctl.py", "--file", "planning/backlog.yaml", "validate"]},
     "desktop:application": {"argv": ["{python}", "tools/desktop_app_check.py", "--repo", "{repo}", "--report", "artifacts/tmp/desktop-application.json"]},
     "desktop:performance": {"argv": ["{python}", "tools/desktop_performance_check.py", "--repo", "{repo}", "--report", "artifacts/tmp/desktop-performance.json"]},
-    "desktop:ui-component-performance": {"argv": ["{python}", "tools/ui_component_performance_check.py", "--repo", "{repo}", "--report", "artifacts/tmp/ui-component-performance.json"]},
     "desktop:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/desktop", "-p", "test_*.py"]},
     "desktop:ui-reference-integrity": {"argv": ["{python}", "tools/ui_reference_check.py", "--repo", "{repo}", "--reference", "design/ui-reference", "--report", "artifacts/tmp/desktop-ui-reference.json"]},
     "desktop:ui-token": {"argv": ["{python}", "tools/ui_token_check.py", "--repo", "{repo}", "--report", "artifacts/tmp/desktop-ui-token.json"]},
@@ -70,7 +69,6 @@
       "optionalCommands": [
         {"command": "desktop:application", "activationPath": "apps/desktop/package.json", "installedBy": "CAP-01.S01"},
         {"command": "desktop:performance", "activationPath": "apps/desktop/package.json", "installedBy": "CAP-01.S01"},
-        {"command": "desktop:ui-component-performance", "activationPath": "packages/ui-components/package.json", "installedBy": "CAP-01.S02"},
         {"command": "desktop:unit", "activationGlob": "tests/desktop/test_*.py", "installedBy": "CAP-00.S06"},
         {"command": "desktop:ui-reference-integrity", "activationPath": "verification/extensions/desktop-ui.json", "installedBy": "CAP-00.S06"},
         {"command": "desktop:ui-token", "activationPath": "verification/extensions/desktop-ui.json", "installedBy": "CAP-00.S06"},
