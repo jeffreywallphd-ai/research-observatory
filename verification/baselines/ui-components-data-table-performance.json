@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-component-performance-baseline",
+  "baselineSourceCommit": "85bd0583207eac4349b9c4957b1e10c198f09b3c",
+  "profile": "windows-x64",
+  "componentContractVersion": "1.2.0",
+  "fixture": {
+    "version": "data-table-10000-v1",
+    "totalRows": 10000,
+    "columns": 3,
+    "pageSize": 50,
+    "pageCount": 200,
+    "maximumRenderedRows": 50,
+    "benchmarkEntrySha256": "3bec54a441c32e87d7433eaa111073d7dd399575e5e580608e549bebef50ff43",
+    "benchmarkRunnerSha256": "596ec4531e32cac012887524be010a6143413a6a9d3cc34831b32a13fcba0594"
+  },
+  "methodology": {
+    "runtime": "Node 24.19.0, React 19.2.8 production SSR, Vite 8.2.1",
+    "state": "warm after five unmeasured render batches; the immutable dataset is constructed before timing",
+    "operation": "alternating first/last accessible server-rendered pagination windows",
+    "repetitions": 20,
+    "rendersPerSample": 1000,
+    "warmupBatches": 5,
+    "distribution": "nearest-rank p50 and p95 over every measured batch; no samples discarded",
+    "hardwareQualification": "representative measured Windows x64 workstation",
+    "regressionThresholdPercent": 20
+  },
+  "measurements": {
+    "warmPaginatedRenderBatch": {
+      "absoluteBudgetMs": 100.0,
+      "baselineP95Ms": 43.169
+    }
+  }
+}

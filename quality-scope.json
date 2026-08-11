@@ -42,6 +42,7 @@
     "tools/ui_visual_regression_check.py",
     "tools/ui_workflow_check.py",
     "tools/ui_change_gate.py",
+    "tools/ui_component_performance_check.py",
     "tools/verify.py",
     "tests/foundation/test_adr_check.py",
     "tests/foundation/test_agent_protocol_check.py",
@@ -64,6 +65,7 @@
     "tests/desktop/test_ui_conformance.py",
     "tests/desktop/test_desktop_app_check.py",
     "tests/desktop/test_desktop_performance_check.py",
+    "tests/desktop/test_ui_component_performance_check.py",
     "tests/contracts/test_foundation_contracts.py",
     "tests/security/test_install_trivy.py",
     "tests/security/test_security_check.py"
