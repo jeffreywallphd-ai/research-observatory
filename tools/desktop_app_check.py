@@ -122,6 +122,7 @@ REQUIRED_COMPONENT_MARKERS = (
     "ro-panel",
     "ro-evidence-state",
     "ro-uncertainty-state",
+    "ro-boundary-state",
 )
 REQUIRED_COMPONENT_EXPORTS = (
     "Typography",
@@ -135,6 +136,7 @@ REQUIRED_COMPONENT_EXPORTS = (
     "Panel",
     "EvidenceStateBadge",
     "UncertaintyState",
+    "BoundaryStatePanel",
 )
 EXPECTED_EVIDENCE_STATES = {
     "observed",
@@ -146,6 +148,16 @@ EXPECTED_EVIDENCE_STATES = {
     "stale",
 }
 EXPECTED_UNCERTAINTY_STATES = {"unknown", "not-reported", "not-applicable", "ambiguous"}
+EXPECTED_BOUNDARY_STATES = {
+    "loading",
+    "empty",
+    "offline",
+    "denied",
+    "stale",
+    "partial",
+    "failed",
+    "recovery-required",
+}
 CONTRAST_PAIRS = (
     ("text-strong", "surface-1"),
     ("text-default", "surface-1"),
@@ -334,6 +346,7 @@ class CatalogContractParser(HTMLParser):
         self.class_counts: dict[str, int] = {}
         self.evidence_states: set[str] = set()
         self.uncertainty_states: set[str] = set()
+        self.boundary_states: set[str] = set()
         self.ids: dict[str, list[str]] = {}
         self.label_references: list[str] = []
         self._id_stack: list[str | None] = []
@@ -348,6 +361,9 @@ class CatalogContractParser(HTMLParser):
         uncertainty_state = values.get("data-uncertainty-state")
         if uncertainty_state:
             self.uncertainty_states.add(uncertainty_state)
+        boundary_state = values.get("data-boundary-state")
+        if boundary_state:
+            self.boundary_states.add(boundary_state)
         element_id = values.get("id")
         if element_id:
             self.ids.setdefault(element_id, [])
@@ -385,6 +401,8 @@ def catalog_contract_errors(catalog: str) -> list[str]:
         errors.append("desktop component catalog must render every governed evidence state exactly by identity")
     if parser.uncertainty_states != EXPECTED_UNCERTAINTY_STATES:
         errors.append("desktop component catalog must render every governed uncertainty state exactly by identity")
+    if parser.boundary_states != EXPECTED_BOUNDARY_STATES:
+        errors.append("desktop component catalog must render every governed boundary state exactly by identity")
     for reference in parser.label_references:
         targets = parser.ids.get(reference)
         if targets is None or not "".join(targets).strip():
@@ -566,6 +584,8 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                         .map((node) => node.getAttribute('data-evidence-state')),
                       uncertaintyStates: Array.from(document.querySelectorAll('[data-uncertainty-state]'))
                         .map((node) => node.getAttribute('data-uncertainty-state')),
+                      boundaryStates: Array.from(document.querySelectorAll('[data-boundary-state]'))
+                        .map((node) => node.getAttribute('data-boundary-state')),
                     })
                     """.replace("__REQUIRED_COMPONENT_MARKERS__", json.dumps(list(REQUIRED_COMPONENT_MARKERS)))
                 observed = page.evaluate(catalog_script)
@@ -574,8 +594,8 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                 if float(observed.get("minimumControl") or 0) < 40 * zoom_percent / 100:
                     errors.append(f"{theme} {zoom_percent}% component controls are below their approved minimum")
                 if (
-                    observed.get("alertCount") != 1
-                    or observed.get("statusCount") != 2
+                    observed.get("alertCount") != 4
+                    or observed.get("statusCount") != 7
                     or not observed.get("dialogName")
                     or observed.get("dialogTargetCount") != 1
                     or not observed.get("dialogTargetText")
@@ -590,6 +610,8 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                     errors.append(f"{theme} {zoom_percent}% component evidence-state inventory is incomplete")
                 if set(observed.get("uncertaintyStates") or []) != EXPECTED_UNCERTAINTY_STATES:
                     errors.append(f"{theme} {zoom_percent}% component uncertainty-state inventory is incomplete")
+                if set(observed.get("boundaryStates") or []) != EXPECTED_BOUNDARY_STATES:
+                    errors.append(f"{theme} {zoom_percent}% component boundary-state inventory is incomplete")
                 details["cases"] += 1
             except PlaywrightError as exc:
                 errors.append(f"{theme} {zoom_percent}% component catalog browser check failed: {exc}")
@@ -689,6 +711,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "homeShortcut": False,
         "themeToggle": False,
         "liveRegion": False,
+        "boundaryState": False,
+        "boundaryRecovery": False,
+        "retainedInput": False,
+        "diagnosticCopy": False,
         "responsiveCases": 0,
         "criticalViolations": [],
         "requests": [],
@@ -825,6 +851,33 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 page.locator("[data-live-region]").get_attribute("aria-live") == "polite"
                 and "theme active" in page.locator("[data-live-region]").inner_text()
             )
+            command = page.locator("#shell-command")
+            command.fill("Retained local draft")
+            boundary = page.locator("[data-local-service-boundary]")
+            diagnostic = boundary.locator("[data-diagnostic-reference]").inner_text().strip()
+            details["boundaryState"] = (
+                boundary.get_attribute("data-boundary-state") == "recovery-required"
+                and re.fullmatch(r"RO-[A-Z0-9]+(?:-[A-Z0-9]+){2,15}", diagnostic) is not None
+            )
+            browser_context.grant_permissions(
+                ["clipboard-read", "clipboard-write"], origin="http://tauri.localhost"
+            )
+            boundary.locator("[data-copy-diagnostic]").click()
+            page.wait_for_function(
+                "document.querySelector('[data-live-region]')?.textContent?.includes('Diagnostic reference copied')",
+                timeout=5_000,
+            )
+            details["diagnosticCopy"] = page.evaluate("navigator.clipboard.readText()") == diagnostic
+            boundary.locator("[data-retry-boundary]").click()
+            page.wait_for_function(
+                """() => document.querySelector('[data-local-service-boundary]')
+                  ?.getAttribute('data-boundary-state') === 'recovery-required'
+                  && document.querySelector('[data-live-region]')?.textContent
+                    ?.includes('Local service check complete')""",
+                timeout=5_000,
+            )
+            details["boundaryRecovery"] = boundary.locator("[data-retry-boundary]").is_enabled()
+            details["retainedInput"] = command.input_value() == "Retained local draft"
             if page_errors:
                 errors.append(f"desktop product runtime error: {'; '.join(page_errors)}")
             page.close()
@@ -861,6 +914,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "homeShortcut",
         "themeToggle",
         "liveRegion",
+        "boundaryState",
+        "boundaryRecovery",
+        "retainedInput",
+        "diagnosticCopy",
     ):
         if details[field] is not True:
             errors.append(f"desktop product did not verify {field}")
