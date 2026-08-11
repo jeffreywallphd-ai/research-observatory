@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b1ad3362703b1bff9879dea89cb42a4a40845a29d9e0a972dd5618f456eb4250
+source_sha256: fef2e74ad8d87e855bfec8e6ef9a0286001c7ff8581abd8327c0adf294eb7b2d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1095,7 +1095,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T02 - Establish keyboard, focus, and screen-reader behavior
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1122,6 +1122,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-01.S02.T02.json` at `b7f82e64764855c5c6cd4ee9b5ce107d3cb44a24`
+- `artifacts/evidence/CAP-01.S02.T02.review-fix.json` at `c3306ffc2cfc7bd3988e99b5f43da1a9335c07a0`
 
 #### - [ ] CAP-01.S02.T03 - Create consistent loading, error, offline, and recovery states
 
