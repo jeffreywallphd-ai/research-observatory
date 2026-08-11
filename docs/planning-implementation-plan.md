@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 10299a0ed052227616a10fe3aa685c978427c8d43616731ffa392ea9b1c5d198
+source_sha256: 78a15ef3c3f9129412464e717f1788ac69f0863018f6fd3b424273315a236e4b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1054,7 +1054,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Reusable components express status, provenance, evidence, uncertainty, and human decision states consistently.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

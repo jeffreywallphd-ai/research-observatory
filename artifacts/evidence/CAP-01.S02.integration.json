@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-01.S02",
+  "stateCommit": "c87aef84d9d4261b7f3ac2948cac1cffea59f4c3",
+  "outcome": "A reusable Academic Minimal design-system and accessibility foundation now provides typed status, evidence, uncertainty, human-decision, keyboard, focus, screen-reader, and recovery behavior inside the functional CAP-01 desktop product without shipping the UI-reference site as application content.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-01.S02.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S02.T01.json", "sha256": "02724877e4d3d7a80ca5d01a5bfad13d0ee49db8cfe132112744ec756c00f5ba"},
+        {"path": "artifacts/evidence/CAP-01.S02.T01.review-fix.json", "sha256": "3097c4c28149eb61c6dba1a2d707edb91f868c422a5931d28ddf6a699bb745bd"},
+        {"path": "artifacts/evidence/CAP-01.S02.T01.review-fix-2.json", "sha256": "ec7e1d360f3fb23891ed7ca2564afa5ed66b04bb2b3c0ed77084b55984c2a4a7"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S02.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S02.T02.json", "sha256": "939b1cce6edabae0164d3ce8649689112de4ce16e36835e7b6eeaeec57a0cba2"},
+        {"path": "artifacts/evidence/CAP-01.S02.T02.review-fix.json", "sha256": "b5d00fce5e27643a4a18cd62cf4e81fcafe88f7275eab8d0b742b45e56568a4a"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S02.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S02.T03.json", "sha256": "60ae8c334b59c5712ae296039f30c3a660d24d0a233113f7b68e6f7be8fd9ddb"},
+        {"path": "artifacts/evidence/CAP-01.S02.T03.review-fix.json", "sha256": "bcae361be399abff74431a99d504ee268512827c36255c013bad6cd6f6ebf53e"},
+        {"path": "artifacts/evidence/CAP-01.S02.T03.review-fix-2.json", "sha256": "bcb7b00ef8374112bf5555aadf82e7274ace848ab2aaa80f508153606644c97a"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S02-integration-desktop.json",
+      "exitCode": 0,
+      "result": "At exact clean post-approval state c87aef8, all 25 desktop-profile commands pass in 521.85 seconds: 148 governed tests, 34 desktop tests, complete package/application/native commands, one functional CAP-01 product page, zero reference-only pages and requests, immutable performance, 139 workflow cases, 390 keyboard cases, 64 accessibility/responsive cases, and 64 visual captures. Report SHA-256: d1952896532739b4ccd65f5075222bd20ee79e4d8d2ce890968b50f740f709ff."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\desktop-application.json",
+      "exitCode": 0,
+      "result": "All nine component, renderer, and native commands pass. The compiled product provides skip-link, command, shortcut-dialog, modal focus containment/restoration, stable theme semantics, actionable recovery, fixed diagnostic copy, retained input, two responsive cases, six design-system theme/zoom cases, one functional page, zero reference-only pages, and zero requests. Report SHA-256: 75095281d59705845678fa589350c73589b014788992aa4a4e460d801baca1c0."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\desktop-performance.json",
+      "exitCode": 0,
+      "result": "Twelve controlled Windows x64 repetitions pass immutable absolute and 20-percent regression thresholds: cold-shell p95 60 ms, warm visible-skeleton p95 19.716 ms, and warm usable p95 21.617 ms, with zero unexpected requests. Report SHA-256: f3b806149f3b2885d550546fe52cec851f122b7cf9b36cc4f3ffa3e740b1a15c."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base <task-base> --head <reviewed-task-head> for CAP-01.S02.T01, T02, and T03",
+      "exitCode": 0,
+      "result": "Each independently reviewed task range passes against exactly its own UI evidence contract and the unchanged RO-UI-ACADEMIC-MINIMAL-1.3 package. The task ranges contain respectively nine T01 package files, seven T02 product/reference-boundary files, and seven T03 recovery-state files; no approved reference bytes changed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The active CAP-01 campaign, eight immutable task evidence records, three DONE tasks, three independent approvals, and generated planning views validate exactly."
+    }
+  ],
+  "integratedBehavior": [
+    "The standalone ui-tokens and ui-components packages expose versioned Academic Minimal contracts without source-path imports, undeclared runtime dependencies, literal-style drift, or generated-directory inventory gaps; direct runtime/type resolution and tree-shaking are verified.",
+    "Documented evidence, uncertainty, semantic boundary, panel, form, table, badge, dialog, notification, typography, and button identities use non-color text/symbol semantics and remain readable in light/dark themes from 100 through 200 percent scaling.",
+    "The functional desktop supplies complete landmarks, visible focus, skip navigation, a bounded shortcut registry, keyboard-only operation, modal focus containment and restoration, stable theme accessible naming/state, and live-region announcements.",
+    "Loading, empty, offline, denied, stale, partial, failed, and recovery-required states have typed identities and actionable retry, cancel, continue-locally, progress, retained-content, and diagnostic-copy contracts.",
+    "The current local-service seam truthfully reports that the sidecar is not yet packaged. Runtime adapter results remain unknown until exact allowlist decoding; malformed, credential-shaped, URL/path-bearing, extra-field, and hostile values fail closed to a nonblank generic state and fixed opaque diagnostic.",
+    "The development and production application contain exactly one functional CAP-01 page. The 32-page approved UI reference, illustrative records, future-capability routes, and nonfunctional actions remain isolated in design/conformance tooling and are never assembled into the product bundle."
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The actual packaged FastAPI sidecar and native process supervision are intentionally owned by CAP-01.S03; this slice exposes only the truthful not-packaged recovery seam.",
+      "Authenticated renderer-to-service transport, capability tokens, compatibility negotiation, and request cancellation are intentionally owned by CAP-01.S04.",
+      "Downstream research-workflow pages remain unimplemented until their owning capabilities; their approved UI-reference pages remain design/conformance inputs only."
+    ]
+  }
+}
