@@ -591,7 +591,7 @@ def component_catalog_browser_errors(repo: Path, browser_context: Any) -> tuple[
                     })
                     """.replace("__REQUIRED_COMPONENT_MARKERS__", json.dumps(list(REQUIRED_COMPONENT_MARKERS)))
                 observed = page.evaluate(catalog_script)
-                if observed.get("catalog") != "1.1.0" or observed.get("overflow") is not False:
+                if observed.get("catalog") != "1.2.0" or observed.get("overflow") is not False:
                     errors.append(f"{theme} {zoom_percent}% component catalog identity or horizontal fit failed")
                 if float(observed.get("minimumControl") or 0) < 40 * zoom_percent / 100:
                     errors.append(f"{theme} {zoom_percent}% component controls are below their approved minimum")
