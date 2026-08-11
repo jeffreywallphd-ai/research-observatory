@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T03",
+  "commit": "cf9c63e4c603eb18e2d9c919f63dff77eb6b000d",
+  "baseCommit": "b32e834d6206a9b77d71de5a664d0e5f334450a3",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S02.T03.review-fix-3.json",
+    "reason": "Independent review accepted the bounded implementation, benchmark, baseline, UI gate, and full qualification but required a durable real-browser test for live pagination transitions and correction of an overbroad compiled-product test claim. This evidence adds that test-only browser harness and identifies its exact coverage without claiming the current product page contains a DataTable."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S02.T03.review-fix-3.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/fixtures/data-table-interactive.mjs",
+    "tests/desktop/fixtures/data-table-interactive.tsx",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\desktop-application-interactive-clean.json",
+      "exitCode": 0,
+      "result": "At exact clean commit cf9c63e, all nine package/application/native commands pass. The test-only browser harness mounts the real shared DataTable with 10,000 immutable rows, renders exactly 50, traverses all 200 pages through the actual controls, uses Enter in both directions, preserves focus, verifies polite live-range changes, observes first/last contents and disabled boundaries, and confirms compact mode. The product remains one functional CAP-01 page with zero reference-only pages and zero requests. Report SHA-256: 814c4ab974776485e0c1173874a72fa5966f9f455b14cbe2e65ab9ea33081ed7."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_app_check tests.desktop.test_desktop_performance_check",
+      "exitCode": 0,
+      "result": "All 18 focused desktop application and performance tests pass in 18.999 seconds, including the actual browser transition harness, hostile baseline mutations, strict sample identity, product/reference isolation, recovery behavior, and security denials."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\desktop-performance-interactive-clean.json",
+      "exitCode": 0,
+      "result": "The clean exact-commit performance report remains green: cold-shell p95 36 ms, warm visible-skeleton p95 18.902 ms, warm usable p95 20.899 ms, and 10,000-row render-batch p95 39.209 ms against the immutable 46.916 ms regression and 100 ms absolute limits. Report SHA-256: 7080f4bd13e5948ea18f71db58d3111399a2af85f3fb9e784e0c460d042d8a0d."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 758a1e559fefeba699e4550389d7efed0ad75db4 --head cf9c63e4c603eb18e2d9c919f63dff77eb6b000d",
+      "exitCode": 0,
+      "result": "The complete T03 range still passes with exactly the approved seven governed UI files and unchanged RO-UI-ACADEMIC-MINIMAL-1.3 lineage. The interactive harness and verifier remain test-only and do not enter the UI implementation inventory or product bundle."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . && .venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 57 governed Python files pass formatting and lint checks; the campaign ledger and generated planning views are valid and current."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The previously approved recovery implementation is unchanged and the exact clean compiled-product aggregate reconfirms retained command input, actionable retry/cancel/continue-locally behavior, safe fixed diagnostic copy, a nonblank failure state, and zero requests.",
+        "The shared DataTable keeps large local inventories usable through bounded accessible pagination. Its test-only browser consumer mounts the real package component rather than a copied reference page or alternate implementation.",
+        "The current production product truthfully contains no DataTable because CAP-01 has not yet introduced a functional data-list workflow; the reusable contract is qualified for later functional consumers without shipping a demo or UI-reference catalog as application content."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The actual browser harness constructs 10,000 rows, mounts the public DataTable, renders at most 50, and operates the real Next and Previous buttons through all 200 pages.",
+        "The test asserts first-page rows 0-49, second-page live range 51-100, last-page rows 9950-9999, return to rows 1-50, exact 50-row DOM bounds throughout, polite range/page announcements, compact density, Enter-key activation, retained focus, and disabled first/last controls.",
+        "The immutable performance benchmark independently retains 20 measured 1,000-render batches after five warmups and passes both absolute and relative regression thresholds. Together the browser and performance checks cover interaction semantics and scale rather than substituting SSR snapshots for live behavior."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The remediation delta contains only the independent review record, its superseded evidence, two test-only fixture files, the existing desktop verifier, and its focused regression assertion.",
+        "No product component, route, package contract, reference byte, service boundary, native privilege, storage behavior, or verification-profile control changed after the clean full desktop qualification at b32e834.",
+        "Exact targeted replay covers every changed executable line at cf9c63e while the previously recorded clean 25-command b32e834 profile remains applicable to the unchanged production implementation."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must run or inspect the real-browser harness, verify its full first/last/keyboard/focus/live-region/boundary assertions, confirm the corrected product-scope wording, and validate the exact eight-file supersession scope before approval."
+  }
+}
