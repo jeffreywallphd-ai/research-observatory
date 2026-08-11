@@ -2294,11 +2294,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T17:04:36+00:00'
-      updated_at: '2026-08-11T19:33:11+00:00'
+      updated_at: '2026-08-11T19:38:10+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Implemented reusable eight-state operation boundaries and a truthful functional local-service
@@ -2321,17 +2321,16 @@ capabilities:
       review:
         reviewer: agent:maxwell
         result: changes-requested
-        reviewed_at: '2026-08-11T17:33:17+00:00'
-        notes: 'Injected local-service probe results are trusted before rendering: credential-shaped RO-* values can become
-          visible/copyable, while URL/path/credential results throw during React render and blank the UI. Validate adapter
-          results into a fixed allowlisted diagnostic and fail closed to a nonblank secret-safe state, with hostile-result
-          regressions.'
+        reviewed_at: '2026-08-11T19:38:10+00:00'
+        notes: 'Code remediation passes the complete hostile-result matrix. Evidence correction required: the recorded root-level
+          Vitest command passes 34 tests across eight files, not 32 across seven, and the focused-suite narrative must not
+          claim durable unmount or clipboard-failure coverage absent from attached automated tests.'
       base_sha: 758a1e559fefeba699e4550389d7efed0ad75db4
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-11T17:33:17+00:00'
-        expires_at: '2026-08-12T01:33:17+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-11T19:38:10+00:00'
+        expires_at: '2026-08-12T03:38:10+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
