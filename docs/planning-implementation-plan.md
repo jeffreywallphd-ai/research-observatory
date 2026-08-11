@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fef2e74ad8d87e855bfec8e6ef9a0286001c7ff8581abd8327c0adf294eb7b2d
+source_sha256: e97ff66e36f46853b473ac3a6e8f7ca5933bcaa9f6ca381e2e05e31f3226f2b2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1093,15 +1093,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S02.T01.review-fix.json` at `2ad4146b32ec48080cf5189f65d7e30947310a07`
 - `artifacts/evidence/CAP-01.S02.T01.review-fix-2.json` at `dc45d304489160acc9f2ab5646698e4d656c9b14`
 
-#### - [ ] CAP-01.S02.T02 - Establish keyboard, focus, and screen-reader behavior
+#### - [x] CAP-01.S02.T02 - Establish keyboard, focus, and screen-reader behavior
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S02.T01`
 
-**Owner / review:** codex / agent:maxwell (`changes-requested`)
+**Owner / review:** codex / agent:maxwell (`approved`)
 
 **Objective:** Global focus management, skip links, shortcut registry, accessible names, live-region policy, and automated accessibility checks.
 
@@ -1126,7 +1126,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T03 - Create consistent loading, error, offline, and recovery states
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
