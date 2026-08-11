@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 363ae7cf5dccd2b5af8740cfc97b9860356a7b6937970608f96e0e82070e4f18
+source_sha256: 1b8cad3850d3d6fa46459cdf95536ba732b851e4e12bfb3075b8780fcc053f30
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -51,7 +51,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 294 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 24 |
 | `DEFERRED` | 36 |
 
@@ -101,4 +101,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S02.T03` Create consistent loading, error, offline, and recovery states | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S02.T03` Create consistent loading, error, offline, and recovery states | `REVIEW` | codex | `codex/cap-01-desktop-shell` |

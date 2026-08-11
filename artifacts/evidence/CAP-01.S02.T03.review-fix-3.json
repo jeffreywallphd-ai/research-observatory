@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T03",
+  "commit": "b32e834d6206a9b77d71de5a664d0e5f334450a3",
+  "baseCommit": "a10563f8bcc9e9bfe892be95be3907ecf3c3a4f3",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S02.T03.review-fix-2.json",
+    "reason": "After the prior T03 implementation and evidence were independently approved, S02 integration review found that the approved slice plan's 10,000-row responsiveness requirement had no bounded table contract or governed benchmark. This dependency-tail remediation preserves the accepted recovery behavior while adding accessible bounded pagination and an immutable performance measurement inside the existing desktop performance gate."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/designSystem.test.tsx",
+    "artifacts/evidence/CAP-01.S02.T03.review-fix-2.json",
+    "artifacts/evidence/CAP-01.S02.integration.json",
+    "docs/planning-implementation-plan.md",
+    "packages/ui-components/README.md",
+    "packages/ui-components/catalog.html",
+    "packages/ui-components/package.json",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/src/styles.css",
+    "packages/ui-components/tests/package.test.tsx",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/fixtures/data-table-10000.tsx",
+    "tests/desktop/fixtures/data-table-performance.mjs",
+    "tests/desktop/test_desktop_performance_check.py",
+    "tools/desktop_app_check.py",
+    "tools/desktop_performance_check.py",
+    "verification/baselines/ui-components-data-table-performance.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop",
+      "exitCode": 0,
+      "result": "At exact clean commit b32e834, all 25 desktop-profile commands pass in 554.56 seconds: 148 foundation tests, 38 desktop tests, all package/application/native commands, one functional CAP-01 product page, zero reference-only pages and requests, 139 workflow cases, 390 keyboard cases, 64 accessibility/responsive cases, 64 visual captures, and a clean 0.1.0+gb32e834 build identity."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\desktop-performance.json",
+      "exitCode": 0,
+      "result": "The integrated clean Windows x64 report passes immutable absolute and 20-percent regression thresholds: cold-shell p95 36 ms, warm visible-skeleton p95 18.038 ms, warm usable p95 19.621 ms, and 10,000-row paginated render-batch p95 39.229 ms. The component fixture observes all 10,000 rows while rendering at most 50, retains 20 measured 1,000-render batches after five warmups, and performs zero unexpected requests. Report SHA-256: d0a5461225db7dce7ceb75696ca00b7c97c76af45b087410e883a7609ed2850b."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 758a1e559fefeba699e4550389d7efed0ad75db4 --head b32e834d6206a9b77d71de5a664d0e5f334450a3",
+      "exitCode": 0,
+      "result": "The complete T03 range passes its approved-reference implementation contract with the unchanged RO-UI-ACADEMIC-MINIMAL-1.3 package and exactly the original seven governed UI files. Benchmark fixtures remain verifier inputs rather than production UI content, and the range contains no final change to protected UI gate controls."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_desktop_performance_check",
+      "exitCode": 0,
+      "result": "All 11 focused tests pass, including strict baseline identity, finite immutable p95 and budget enforcement, exact 10,000-row fixture dimensions, bounded 50-row render windows, complete sample distributions, methodology drift denial, URL request denial, and actionable hardware metadata."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate && .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The active CAP-01 campaign, reopened dependency-tail task, immutable evidence chain, and generated planning views validate without drift."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The previously approved runtime decoder remains unchanged: it admits only the exact two-field unavailable result containing RO-CAP01-SERVICE-NOT-PACKAGED, while malformed, secret-bearing, extra-field, and hostile values map to a generic nonblank failed state and fixed opaque reference.",
+        "The clean compiled product retains command input, offers actionable retry/cancel/continue-locally behavior, copies only the fixed safe diagnostic, renders no reference-only page, and performs zero requests.",
+        "The shared DataTable now keeps large local inventories operational through typed, accessible pagination that clamps page size to 1-200 rows, announces the visible range and total, disables boundary controls, and never eagerly renders the complete 10,000-row fixture."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact clean desktop profile passes 148 foundation and 38 desktop tests, including the previously approved hostile local-service matrix and all package, renderer, native, browser, keyboard, accessibility, visual, and performance boundaries.",
+        "Component and compiled-application tests prove first/last-page contents, bounded row inventory, disabled pagination boundaries, compact presentation, deterministic row identity, and catalog behavior for the 10,000-row contract.",
+        "The governed component benchmark uses the repository-pinned Node 24.19.0 runtime, React 19.2.8 production SSR, Vite 8.2.1, 20 retained measured batches of 1,000 alternating renders, five unmeasured warmups, exact hardware/OS metadata, a 100 ms absolute budget, and a commit-bound 20-percent regression threshold."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The reusable package contract, documentation, catalog, tests, desktop verification, fixture, and immutable baseline are updated together; no service, storage, route, native privilege, or reference-package scope changed.",
+        "The benchmark is integrated into the existing desktop performance verifier rather than adding or modifying a verification-profile gate. Its fixtures live under desktop tests, outside the production UI package and product bundle.",
+        "The UI change gate independently confirms the exact approved seven-file implementation envelope and unchanged reference lineage; the development and production application continue to contain only functional CAP-01 UI rather than the 32-page design reference."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent review must verify the bounded DataTable behavior, 10,000-row benchmark identity and anti-laundering controls, exact supersession scope, unchanged recovery behavior, UI gate result, and clean full desktop qualification before approval."
+  }
+}
