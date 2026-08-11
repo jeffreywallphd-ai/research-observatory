@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: d2326cc14d7e06a6ac6dc006bc8e02b82cde57a760e2d0d85d49862099696829
+source_sha256: 4f2de039ea427c3c5b2e1d73b2a588a192e9753289d733c6f97884d61efbaefc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -48,10 +48,9 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 293 |
-| `READY` | 1 |
-| `REVIEW` | 1 |
-| `DONE` | 25 |
+| `NOT_STARTED` | 292 |
+| `READY` | 2 |
+| `DONE` | 26 |
 | `DEFERRED` | 36 |
 
 ## Capability progress
@@ -59,7 +58,7 @@ manual_edit: prohibited
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
 | `CAP-00` Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
-| `CAP-01` Windows-first desktop shell and supervised local runtime | `ACTIVE` | `IN_PROGRESS` | 2/5 | 6/15 | `CAP-01.S03.T01` |
+| `CAP-01` Windows-first desktop shell and supervised local runtime | `ACTIVE` | `IN_PROGRESS` | 2/5 | 7/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
 | `CAP-04` Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
@@ -98,6 +97,4 @@ manual_edit: prohibited
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-01.S03.T01` Create the modular FastAPI service skeleton | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
+No task is currently active.
