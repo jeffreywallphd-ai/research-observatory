@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e97ff66e36f46853b473ac3a6e8f7ca5933bcaa9f6ca381e2e05e31f3226f2b2
+source_sha256: b9c2f8c92ae7b93df47d845ccddbf439019e23ffbfbc6e1f3756b8eaf6e9c8d7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1126,13 +1126,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S02.T03 - Create consistent loading, error, offline, and recovery states
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S02.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Reusable boundary components for progress, partial results, retry, cancellation, degraded mode, and diagnostic references.
 
