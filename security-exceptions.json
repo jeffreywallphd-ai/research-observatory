@@ -1,5 +1,42 @@
 {
   "schemaVersion": "1.0",
   "documentType": "software-supply-chain-exceptions",
-  "exceptions": []
+  "exceptions": [
+    {
+      "findingKey": "license|Apache-2.0 OR BSD-2-Clause|Python|packaging",
+      "status": "approved",
+      "reviewedBy": "agent:maxwell",
+      "reviewedAt": "2026-08-11",
+      "expiresAt": "2026-09-07",
+      "rationale": "packaging 26.3 is a PyInstaller build-only dependency absent from the artifact; both declared alternatives are individually allowed, and this exact temporary exception addresses fail-closed SPDX disjunction handling only.",
+      "ticket": "CAP-01.S03.T02"
+    },
+    {
+      "findingKey": "license|GPL-2.0-only|Python|pyinstaller",
+      "status": "approved",
+      "reviewedBy": "agent:maxwell",
+      "reviewedAt": "2026-08-11",
+      "expiresAt": "2026-09-07",
+      "rationale": "Unmodified PyInstaller 6.21.0 is build-only; upstream GPL-2.0-or-later terms include the bootloader distribution exception and Apache-2.0 runtime hooks, while the builder package is absent from the artifact.",
+      "ticket": "CAP-01.S03.T02"
+    },
+    {
+      "findingKey": "license|GPL-2.0-only|Python|pyinstaller-hooks-contrib",
+      "status": "approved",
+      "reviewedBy": "agent:maxwell",
+      "reviewedAt": "2026-08-11",
+      "expiresAt": "2026-09-07",
+      "rationale": "PyInstaller hooks contrib 2026.6 standard hooks execute only during the approved build; runtime hooks are Apache-2.0 and the package itself is absent from the generated artifact.",
+      "ticket": "CAP-01.S03.T02"
+    },
+    {
+      "findingKey": "license|LGPL-3.0-only|Python|autocommand",
+      "status": "approved",
+      "reviewedBy": "agent:maxwell",
+      "reviewedAt": "2026-08-11",
+      "expiresAt": "2026-09-07",
+      "rationale": "autocommand 2.2.2 is vendored within build-only setuptools, which is explicitly excluded from the frozen runtime; this exception does not authorize redistribution.",
+      "ticket": "CAP-01.S03.T02"
+    }
+  ]
 }
