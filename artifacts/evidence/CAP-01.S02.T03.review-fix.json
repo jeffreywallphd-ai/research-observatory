@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T03",
+  "commit": "10d2bfb3151f3dbe12b3ea311dc33bf1a95bc11b",
+  "baseCommit": "f5386c316ee1e4e559a134d2420dd4bb6a7cec22",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S02.T03.json",
+    "reason": "Independent review proved that a runtime-injected probe could expose a credential-shaped diagnostic or pass unsafe content into BoundaryStatePanel and blank the product. This evidence binds the exact allowlisted runtime decoder, hostile-result regressions, and complete qualification."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/LocalServiceBoundary.test.tsx",
+    "apps/desktop/src/app/LocalServiceBoundary.tsx",
+    "artifacts/evidence/CAP-01.S02.T03.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S02.T03-review-fix-desktop-profile.json",
+      "exitCode": 0,
+      "result": "All 25 commands pass in 521.89 seconds at exact clean commit 10d2bfb: 148 governed tests, 34 desktop tests, the complete package/application/native build chain, one functional CAP-01 product page with zero reference-only pages and zero requests, immutable performance thresholds, 139 reference workflow cases, 390 keyboard cases, 64 accessibility/responsive cases, and 64 visual captures. Report SHA-256: 977c2a61245351a6afa21161d6a9f0b7b8dfa206a949c282a5f20698063f9649."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\desktop-application.json",
+      "exitCode": 0,
+      "result": "All nine package/application/native commands and the compiled product replay pass. Retry retains command input, renders a nonblank actionable state, copies only RO-CAP01-SERVICE-NOT-PACKAGED, and performs zero requests; the product contains one functional CAP-01 page and zero reference-only pages. Report SHA-256: 75095281d59705845678fa589350c73589b014788992aa4a4e460d801baca1c0."
+    },
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\vitest\\vitest.mjs run",
+      "exitCode": 0,
+      "result": "All 32 renderer tests across seven files pass. The local-service suite accepts only the exact two-field allowlisted result and maps credential-shaped RO-* values, URL/path/credential content, missing and wrong fields, extra fields, arrays, nulls, primitives, and hostile proxy property access to the fixed secret-safe failed view without throwing."
+    },
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\scripts\\lint.mjs && .local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\typescript\\bin\\tsc --noEmit -p apps\\desktop\\tsconfig.json",
+      "exitCode": 0,
+      "result": "The exact remediation passes the offline renderer lint and strict TypeScript contract with LocalServiceProbe output held as unknown until runtime decoding."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "LocalServiceProbe now returns untrusted runtime input. localServiceViewFromProbeResult accepts only the exact unavailable status plus the fixed RO-CAP01-SERVICE-NOT-PACKAGED reference and rejects extra keys, symbols, arrays, malformed types, hostile proxies, and every other diagnostic value.",
+        "Rejected and throwing probe results converge on a nonblank failed state with generic text and the same fixed opaque diagnostic; no raw result, error, URL, path, credential, or object content reaches render state, announcements, or the clipboard.",
+        "The compiled functional product continues to retain command input across retry, show actionable recovery controls, copy only the fixed reference, remain fully local, and make zero requests."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused suite adds credential-shaped valid-looking RO-* output, URL/path/credential content, missing/wrong/extra fields, arrays, nulls, primitives, and hostile property-access regressions while preserving success, rejection, cancellation, unmount, clipboard-failure, and retained-input coverage.",
+        "The exact clean full desktop profile replays package, renderer, native, browser, product/reference separation, accessibility, keyboard, visual, performance, architecture, planning, security, and evidence checks."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The implementation delta changes only the local-service adapter boundary and its tests; component APIs, native privileges, storage, routes, service packaging, approved reference bytes, and later CAP-01 slice behavior are unchanged.",
+        "The UI reference remains an isolated design/conformance fixture. The production and development product still contain exactly one functional CAP-01 page and no copied reference pages or illustrative records."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must inject hostile credential-shaped, URL/path/credential, malformed, extra-field, and throwing probe results into the compiled component; prove a nonblank fixed diagnostic state, safe clipboard output, cancellation/input retention, exact evidence scope, and full-report identity before approval."
+  }
+}
