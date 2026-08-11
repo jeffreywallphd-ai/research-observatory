@@ -18,6 +18,7 @@ affected_paths:
   - quality-scope.json
   - pyproject.toml
   - uv.lock
+  - security-exceptions.json
   - .gitignore
 supersedes: []
 superseded_by: null
@@ -65,7 +66,9 @@ be detected.
 PyInstaller's official license grants a special exception for bundling and
 distributing generated executables. This repository does not modify or
 redistribute PyInstaller itself; it records the builder and version as build
-provenance.
+provenance. The exact build-environment findings are independently reviewed in
+the time-bounded `CAP-01.S03.T02` security exceptions; those exceptions do not
+apply to a future builder/version or to any runtime dependency.
 
 ## Consequences
 
