@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5e3d1626d63f6a0061a421a622b0f3c5fbd767f78570124bd333b4a7d75ddc39
+source_sha256: 544c7124856cc50e0521388fb843d052d17f4763e1575116aee89e219cdefe22
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 295 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 23 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S02.T02` Establish keyboard, focus, and screen-reader behavior | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S02.T02` Establish keyboard, focus, and screen-reader behavior | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
