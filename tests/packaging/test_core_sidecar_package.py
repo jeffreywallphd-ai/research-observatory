@@ -86,7 +86,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="core-sidecar-manifest-", dir=REPO / "artifacts" / "tmp") as temporary:
             artifact = Path(temporary)
             self.assertTrue(any("schema violation" in error for error in verify_artifact(artifact, {"files": [42]})))
-            wrong_identity = {
+            wrong_identity: dict[str, object] = {
                 "schemaVersion": "1.0",
                 "documentType": "other",
                 "componentId": "other",
