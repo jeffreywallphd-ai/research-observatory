@@ -43,6 +43,14 @@
     "tools/ui_workflow_check.py",
     "tools/ui_change_gate.py",
     "tools/verify.py",
+    "services/core-api/src/research_observatory_core/__init__.py",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/config.py",
+    "services/core-api/src/research_observatory_core/contract.py",
+    "services/core-api/src/research_observatory_core/logging.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/modules.py",
     "tests/foundation/test_adr_check.py",
     "tests/foundation/test_agent_protocol_check.py",
     "tests/foundation/test_architecture_check.py",
@@ -66,6 +74,7 @@
     "tests/desktop/test_desktop_performance_check.py",
     "tests/contracts/test_foundation_contracts.py",
     "tests/security/test_install_trivy.py",
-    "tests/security/test_security_check.py"
+    "tests/security/test_security_check.py",
+    "tests/service/test_core_api.py"
   ]
 }

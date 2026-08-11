@@ -1,0 +1,6 @@
+{
+  "profile": "local",
+  "bindHost": "0.0.0.0",
+  "bindPort": 0,
+  "logLevel": "INFO"
+}
