@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S03.T01",
+  "commit": "c7f7395699097e4f963938184449b110ee7d8a25",
+  "baseCommit": "90d7499e282eeedab151dba4af6a0c06400a9e31",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/core-runtime.schema.json",
+    "packages/contracts/core-api/openapi.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pyproject.toml",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/src/research_observatory_core/__init__.py",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/config.py",
+    "services/core-api/src/research_observatory_core/contract.py",
+    "services/core-api/src/research_observatory_core/logging.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/modules.py",
+    "tests/foundation/test_build_manifest.py",
+    "tests/service/fixtures/invalid-non-loopback.json",
+    "tests/service/test_core_api.py",
+    "uv.lock"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile service --report artifacts\\tmp\\CAP-01.S03.T01-service-clean.json",
+      "exitCode": 0,
+      "result": "At exact clean implementation commit c7f7395, all 16 service-profile commands passed in 398.10 seconds: 148 foundation tests, 8 service tests, and 2 portable-contract tests. The clean build identity was 0.1.0+gc7f7395. Report SHA-256: 8bfb8b29ebbd1b723b917de143b4f07f6056e3bedbe280f9b558158659b0a742."
+    },
+    {
+      "command": ".local\\toolchains\\trivy\\0.73.0\\trivy.exe --cache-dir .local\\cache\\trivy --quiet --config NUL rootfs --format json --output artifacts\\tmp\\CAP-01.S03.T01-python-trivy.json --scanners vuln,license --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --timeout 10m --ignorefile NUL .venv && .venv\\Scripts\\python.exe tools\\security_check.py --repo . --input-report artifacts/tmp/CAP-01.S03.T01-python-trivy.json --report artifacts/tmp/CAP-01.S03.T01-python-security.json",
+      "exitCode": 0,
+      "result": "The pinned Trivy 0.73.0 Python-environment scan and repository policy evaluation passed 53 installed packages and 54 license/vulnerability findings with zero blockers, exceptions, or policy errors. Two permitted warnings are existing MPL-2.0 development transitive packages; every newly added FastAPI/Pydantic/Uvicorn/httpx2 package is allowed. Raw report SHA-256: 7227fb238460a4ff714113e44e4900a045b8bc3dc84d42b12800f731b31d175a; evaluated report SHA-256: 44391f782e99bcda48131bd5e8d2cad0e2705253524036ea96cbb9e469d8e5b4."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/service -p test_*.py",
+      "exitCode": 0,
+      "result": "All 8 service tests passed, including real Uvicorn startup on an OS-assigned 127.0.0.1 port, readiness over HTTP, clean shutdown, isolated process configuration checks, non-loopback denial, module-identity denial, structured-log redaction, deterministic OpenAPI drift detection, and runtime-schema validation."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . --report artifacts\\tmp\\CAP-01.S03.T01-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, lint, and strict type checks passed all 66 governed Python files, including every new service module and test."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "A real Uvicorn instance starts on an OS-assigned numeric loopback port, reports explicit readiness over HTTP, and exits without leaving its test thread alive; the separate --check process validates isolated startup configuration without opening a socket.",
+        "FastAPI lifespan owns the explicit starting, ready, and stopping states. Typed health, readiness, version, redacted configuration, registered-module, and capability endpoints are represented in the committed deterministic OpenAPI document (SHA-256 3021bef9629086c1ec79ae210f58c00a22bbf4d3e3e2f5167d45e2f62ca50aca).",
+        "The framework-neutral runtime schema is strict, versioned, and build-inventoried (SHA-256 aa04d35391bce569cf1f63d70c918a285c5f99a2966e8aaee165e0b24d88280e); product, component, API, and schema versions are checked together."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The success path covers lifecycle, all six runtime surfaces, exact capabilities, OpenAPI generation, isolated CLI configuration, a real loopback socket, and clean shutdown.",
+        "Boundary tests reject non-canonical and non-loopback bind hosts at both model and lifespan startup, duplicate module identity, unknown runtime state, contract drift, and credential-shaped diagnostic fields.",
+        "The direct Python dependency environment has zero policy blockers under the pinned scanner and existing repository license/vulnerability policy."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The 23-file task range contains only the three task-claim/generated planning records plus the Core composition root, portable contracts, pinned dependency declarations, quality/build inventories, service tests/fixture, the activation-sensitive build-manifest test correction, and boundary documentation.",
+        "The README documents local-only loopback configuration, stable projections, redacted diagnostics, contract locations, and the later supervision handshake handoff. No hosted infrastructure, system-Python dependency, persistence implementation, or later domain module was introduced.",
+        "No UI or approved reference file changed. The service explicitly does not serve or embed design/ui-reference; the full UI-reference and UI-change gates pass with zero governed UI files in the task range."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review must exercise actual loopback startup/readiness/shutdown, configuration and logging denial boundaries, exact OpenAPI/schema/version binding, module registration invariants, dependency policy, exact 23-file scope, and application/reference separation."
+  }
+}
