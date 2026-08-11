@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T03",
+  "commit": "f5386c316ee1e4e559a134d2420dd4bb6a7cec22",
+  "baseCommit": "758a1e559fefeba699e4550389d7efed0ad75db4",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    "apps/desktop/README.md",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/LocalServiceBoundary.test.tsx",
+    "apps/desktop/src/app/LocalServiceBoundary.tsx",
+    "apps/desktop/src/app/designSystem.test.tsx",
+    "artifacts/evidence/ui-change/CAP-01.S02.T03.json",
+    "docs/planning-implementation-plan.md",
+    "packages/ui-components/README.md",
+    "packages/ui-components/catalog.html",
+    "packages/ui-components/package.json",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/src/styles.css",
+    "packages/ui-components/tests/package.test.tsx",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S02.T03-desktop-profile.json",
+      "exitCode": 0,
+      "result": "All 25 commands pass in 540.77 seconds at exact clean commit f5386c3: 148 governed tests, 34 desktop tests, component and renderer type/lint/test/build, native Rust fmt/clippy/test/build, functional recovery browser replay, immutable performance, UI lineage, reference integrity, architecture, planning, security, accessibility, responsive, keyboard, and visual checks. Report SHA-256: f857ead0720ebeb6c43fdb8b4162bd10dbbe88d515e1be79f2ae52d4ec253dbd."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\desktop-application.json",
+      "exitCode": 0,
+      "result": "All nine package/application/native commands and six catalog theme/zoom cases pass. The compiled one-page CAP-01 product retries the truthful not-packaged local-service boundary, copies only RO-CAP01-SERVICE-NOT-PACKAGED, retains command input, announces recovery, fits both viewports, exposes zero reference pages, and makes zero requests. Report SHA-256: 75095281d59705845678fa589350c73589b014788992aa4a4e460d801baca1c0."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base 758a1e559fefeba699e4550389d7efed0ad75db4 --head f5386c316ee1e4e559a134d2420dd4bb6a7cec22",
+      "exitCode": 0,
+      "result": "The exact seven-file governed UI implementation is bound to the unchanged approved Academic Minimal 1.3 reference and T03 experience contract; the UI reference itself is unchanged and remains a verification-only fixture."
+    },
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/ui-components run verify && .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run test",
+      "exitCode": 0,
+      "result": "The standalone component package passes type/runtime/tree-shaking tests, and 22 renderer tests across seven files pass, including all eight boundary identities, service/network/data injection, cancellation, invalid progress/identity/diagnostic denial, retained content, hostile error redaction, and actual not-packaged probe cancellation."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "BoundaryStatePanel provides visible, non-color loading, empty, offline, denied, stale, partial, failed, and recovery-required states with bounded progress, retry, cancel, continue-locally, retained content, and opaque diagnostic-copy contracts.",
+        "Injected service, network, and partial-data render tests prove actionable controls and retained content. Hostile service errors containing bearer tokens, API keys, user paths, and private project names map only to generic text plus the fixed RO-CAP01-SERVICE-NOT-PACKAGED reference.",
+        "The compiled functional product fills a real command draft, copies the exact safe reference, retries the actual not-packaged local-service probe, announces completion, and proves the command draft remains unchanged with no blank screen or request."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The package and renderer suites cover normal state rendering, complete identity inventory, invalid/duplicate/missing states, nonfinite/out-of-range progress, unsafe diagnostic strings, cancellation, adapter failure redaction, and retained inputs.",
+        "The browser aggregate exercises built bytes, exact product manifests, recovery/copy actions, clipboard contents, input retention, zero-request confinement, responsive fit, and complete light/dark catalog semantics at 100%, 150%, and 200% zoom."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "UI component contract 1.1.0, catalog, styles, public package tests, product adapter seam, app documentation, product checker, immutable UI lineage, and generated planning views are updated together without native privilege, service, storage, route, or reference-package changes.",
+        "The product remains limited to functional CAP-01 code. CAP-01.S03 behavior is not implemented early: the current adapter truthfully reports that the service is not packaged, while reference HTML, illustrative records, future workflows, and nonfunctional actions remain outside production and development bundles."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Independent review must adversarially verify all eight state identities, progress/diagnostic validation, service/network/data failure actions and content retention, cancellation, secret-safe diagnostic copying, actual product retry/copy/announcement behavior, exact product/reference separation, evidence identities, and the full desktop report before approval."
+  }
+}
