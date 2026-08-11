@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S02.T02",
+  "commit": "6a14ce19aaa70fc4366c8514e1d5f4f20956e6de",
+  "baseCommit": "c1e46fad79fbfaa4f8cbb2efedff3c1a6ec5dedb",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    ".gitignore",
+    "apps/desktop/README.md",
+    "apps/desktop/index.html",
+    "apps/desktop/package.json",
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/scripts/assemble-reference.mjs",
+    "apps/desktop/scripts/clean-dist.mjs",
+    "apps/desktop/src-tauri/tauri.conf.json",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ReferenceRuntime.tsx",
+    "apps/desktop/src/main.tsx",
+    "apps/desktop/src/reference-main.tsx",
+    "apps/desktop/src/vite-env.d.ts",
+    "apps/desktop/tsconfig.json",
+    "apps/desktop/vite.config.ts",
+    "apps/desktop/vite.product.config.ts",
+    "artifacts/evidence/ui-change/CAP-01.S02.T02.json",
+    "docs/README.md",
+    "docs/automation/project-automation-guide.md",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/automation/ui-reference-validation.md",
+    "docs/planning-implementation-plan.md",
+    "package.json",
+    "packages/ui-components/package.json",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-tokens/README.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pnpm-workspace.yaml",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/foundation/test_adr_check.py",
+    "tools/desktop_app_check.py",
+    "tools/desktop_performance_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\CAP-01.S02.T02-desktop-profile.json",
+      "exitCode": 0,
+      "result": "All 25 desktop-profile commands pass in 497.372 seconds at the exact clean implementation commit: 148 governed tests, 34 desktop tests, package lint/type/test/build, Rust fmt/clippy/test/build, UI reference integrity, UI change control, product browser behavior, immutable performance thresholds, accessibility, responsive, keyboard, visual, architecture, planning, security, and packaging checks. Report SHA-256: 35dc7a94b927e8dc932062207b252dd5c790590886e85f917f26b05e611ac853."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts\\tmp\\desktop-application.json",
+      "exitCode": 0,
+      "result": "All nine package/application/native commands and six design-system theme/zoom cases pass. The browser replay proves the production bundle has exactly one functional CAP-01 page, zero reference-only pages, zero unexpected requests, pointer-free keyboard commands, skip-link operation, visible focus, modal focus containment/restoration, an accessible live region, theme state, and two responsive cases. Report SHA-256: a61cb16e8a918082683ba0a0d0aa92fd2e8eef2f9bedd4767b8b5ade24ef17f3."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_performance_check.py --repo . --report artifacts\\tmp\\desktop-performance.json",
+      "exitCode": 0,
+      "result": "Twelve-repetition Windows x64 Chromium measurements at the exact clean commit pass absolute and immutable relative thresholds: cold first-contentful-paint p95 52 ms, warm visible-skeleton p95 19.611 ms, and warm usable p95 21.814 ms, with zero unexpected requests. Report SHA-256: a6861132cd0b6dabcefa3c2cd03ac8be3ecf68a44cd57c6e3bcc9c7171a43f29."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --base c1e46fad79fbfaa4f8cbb2efedff3c1a6ec5dedb --head 6a14ce19aaa70fc4366c8514e1d5f4f20956e6de",
+      "exitCode": 0,
+      "result": "The exact seven-file governed UI implementation is bound to the approved RO-UI-ACADEMIC-MINIMAL-1.3 reference package and the task's immutable experience-change contract, while the product/reference runtime split and supporting package changes remain within the declared task range."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The functional product shell supports skip-to-content, Ctrl+K command focus, Ctrl+/ shortcut help, Alt+H home focus, theme control, visible focus, dialog focus containment, Escape dismissal with focus restoration, accessible names, and a polite live region without a pointer.",
+        "The Chromium product replay reports no critical violations, zero network requests, two responsive cases, and one CAP-01 product page with no UI-reference pages.",
+        "Tauri frontendDist targets product-dist only. The full 34-document/32-page reference package is built separately into dist solely for governed conformance verification and cannot be served as the product entry point."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The 34-test desktop suite covers product success and denial boundaries including reference-route exclusion, exact product inventory, manifest/input drift, unsafe network surfaces, focus behavior, output separation, and performance provenance.",
+        "The application unit suite covers normal shortcuts plus editable-target suppression, dialog cycling/restoration, command focus, theme persistence, and rendering boundaries; the browser aggregate replays the compiled production bundle."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Desktop build, workspace, Tauri, UI package, documentation, verification, performance, generated-output, and audit-checkout contracts are updated together with exact inventories and no native privilege expansion.",
+        "Repository documentation now states that design/ui-reference is a design and conformance authority only: mock data, future routes, illustrative content, and nonfunctional actions must never ship as the product.",
+        "The root pnpm dev wrapper continues to select the repository-pinned Node 24/Corepack runtime in cmd.exe, PowerShell, and Git Bash without launching a separate reference application."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "accessibility-review",
+    "note": "Independent review must verify pointer-free keyboard and focus behavior in the compiled product, screen-reader naming/live-region semantics, the exact product/reference boundary, denial of reference-only pages and network access, evidence identities, and the complete desktop profile before approval."
+  }
+}
