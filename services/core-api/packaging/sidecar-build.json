@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "core-sidecar-build-contract",
+  "componentId": "core-api",
+  "componentVersion": "0.1.0",
+  "targetTriple": "x86_64-pc-windows-msvc",
+  "pythonVersion": "3.14.6",
+  "builder": {
+    "name": "PyInstaller",
+    "version": "6.21.0",
+    "mode": "onedir",
+    "upx": false,
+    "contentsDirectory": "research-observatory-core-runtime",
+    "excludedModules": ["pip", "pytest", "setuptools"]
+  },
+  "entrypoint": "research-observatory-core-x86_64-pc-windows-msvc.exe",
+  "requiredModules": [
+    "fastapi",
+    "pydantic",
+    "pydantic_settings",
+    "research_observatory_core",
+    "uvicorn"
+  ],
+  "maximumBytes": 134217728
+}

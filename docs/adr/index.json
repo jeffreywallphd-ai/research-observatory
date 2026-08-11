@@ -62,6 +62,15 @@
       "linkedTasks": [
         "CAP-01.S02.T01"
       ]
+    },
+    {
+      "id": "ADR-0007",
+      "path": "docs/adr/ADR-0007-package-the-local-core-api-as-a-versioned-pyinstaller-onedir-sidecar.md",
+      "title": "Package the local Core API as a versioned PyInstaller onedir sidecar",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-01.S03.T02"
+      ]
     }
   ]
 }

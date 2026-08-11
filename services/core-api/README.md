@@ -34,3 +34,21 @@ diagnostic records.
 portable generated and hand-authored contracts. The API contains application
 behavior only; `design/ui-reference` remains a governed experience reference
 and is not served or embedded by this process.
+
+## Windows sidecar package
+
+`packaging/sidecar-build.json` fixes the W0-W5 release package to a
+Python 3.14.6, PyInstaller 6.21.0 `onedir` build named with Tauri's Windows x64
+target triple. The artifact is self-contained: a system Python installation is
+not required. Build it from the frozen development environment with:
+
+```powershell
+.venv\Scripts\python.exe tools/core_sidecar_build.py --repo .
+```
+
+The build emits only ignored files under `artifacts/tmp`, including an exact
+SHA-256 inventory and a frozen-process configuration check. The committed
+artifact schema and packaging test fail if a runtime file is absent or changed.
+Tauri process supervision is introduced by `CAP-01.S03.T03`; installer signing
+and clean-VM release qualification remain owned by the approved `CAP-01.S05`
+slice.
