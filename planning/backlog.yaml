@@ -2294,12 +2294,12 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: DONE
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T17:04:36+00:00'
-      updated_at: '2026-08-11T19:41:17+00:00'
-      completed_at: '2026-08-11T19:41:17+00:00'
+      updated_at: '2026-08-11T20:02:31+00:00'
+      completed_at: null
       blocker: null
       implementation_notes: 'Implemented reusable eight-state operation boundaries and a truthful functional local-service
         recovery path with retry, cancellation seam, continued local use, retained input, safe diagnostic copy, and complete
@@ -2327,19 +2327,22 @@ capabilities:
         commit: a10563f8bcc9e9bfe892be95be3907ecf3c3a4f3
         recorded_at: '2026-08-11T19:39:31+00:00'
       review:
-        reviewer: agent:maxwell
-        result: approved
-        reviewed_at: '2026-08-11T19:41:17+00:00'
-        notes: 'APPROVED: exact root replay passes 34 tests across eight files; corrected evidence accurately separates durable
-          automation from the independent compiled hostile-result harness. Evidence hashes, base, branch, four-file scope,
-          supersession, ancestry, full-report hashes, taskctl, views, runtime safety, product/reference separation, and clean
-          state all validate.'
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: 'Reopened: Slice integration review requires a bounded 10,000-row DataTable contract and governed performance
+          benchmark. T03 is the legal dependency-tail remediation task and its approved experience envelope already governs
+          the shared ui-components index, styles, and package files.'
       base_sha: 758a1e559fefeba699e4550389d7efed0ad75db4
-      lease: null
-      verification_state: passed
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-11T20:02:31+00:00'
+        expires_at: '2026-08-12T04:02:31+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      cancellation: null
     platform_targets:
     - windows-x64
     completion:
