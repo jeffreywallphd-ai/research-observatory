@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fdd93eef0ae82fddba4c2e4518476378c41e0be17a4c091ce2c419060a9d30a8
+source_sha256: 10299a0ed052227616a10fe3aa685c978427c8d43616731ffa392ea9b1c5d198
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1124,15 +1124,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S02.T02.json` at `b7f82e64764855c5c6cd4ee9b5ce107d3cb44a24`
 - `artifacts/evidence/CAP-01.S02.T02.review-fix.json` at `c3306ffc2cfc7bd3988e99b5f43da1a9335c07a0`
 
-#### - [ ] CAP-01.S02.T03 - Create consistent loading, error, offline, and recovery states
+#### - [x] CAP-01.S02.T03 - Create consistent loading, error, offline, and recovery states
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S02.T02`
 
-**Owner / review:** codex / agent:maxwell (`changes-requested`)
+**Owner / review:** codex / agent:maxwell (`approved`)
 
 **Objective:** Reusable boundary components for progress, partial results, retry, cancellation, degraded mode, and diagnostic references.
 
