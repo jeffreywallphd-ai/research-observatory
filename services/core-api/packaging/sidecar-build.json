@@ -11,7 +11,15 @@
     "mode": "onedir",
     "upx": false,
     "contentsDirectory": "research-observatory-core-runtime",
-    "excludedModules": ["mypy", "pip", "pytest", "setuptools", "yaml"]
+    "excludedModules": [
+      "mypy",
+      "pip",
+      "pydantic.mypy",
+      "pydantic.v1.mypy",
+      "pytest",
+      "setuptools",
+      "yaml"
+    ]
   },
   "entrypoint": "research-observatory-core-x86_64-pc-windows-msvc.exe",
   "requiredModules": [

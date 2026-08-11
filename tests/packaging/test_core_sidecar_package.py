@@ -20,6 +20,7 @@ from core_sidecar_build import (  # noqa: E402
     SidecarBuildError,
     build_sidecar,
     load_build_contract,
+    prepare_report_path,
     verify_artifact,
 )
 
@@ -37,7 +38,15 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "mode": "onedir",
                 "upx": False,
                 "contentsDirectory": "research-observatory-core-runtime",
-                "excludedModules": ["mypy", "pip", "pytest", "setuptools", "yaml"],
+                "excludedModules": [
+                    "mypy",
+                    "pip",
+                    "pydantic.mypy",
+                    "pydantic.v1.mypy",
+                    "pytest",
+                    "setuptools",
+                    "yaml",
+                ],
             },
         )
         self.assertEqual(contract["componentVersion"], "0.1.0")
@@ -73,6 +82,39 @@ class CoreSidecarPackageTests(unittest.TestCase):
             executable.write_bytes(b"changed")
             self.assertTrue(any("changed" in error for error in verify_artifact(artifact, manifest)))
 
+    def test_artifact_verifier_rejects_identity_free_and_malformed_manifests(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="core-sidecar-manifest-", dir=REPO / "artifacts" / "tmp") as temporary:
+            artifact = Path(temporary)
+            self.assertTrue(any("schema violation" in error for error in verify_artifact(artifact, {"files": [42]})))
+            wrong_identity = {
+                "schemaVersion": "1.0",
+                "documentType": "other",
+                "componentId": "other",
+                "componentVersion": "0.1.0",
+                "targetTriple": "wrong-target",
+                "pythonVersion": "3.14.6",
+                "builder": None,
+                "entrypoint": None,
+                "totalBytes": 0,
+                "files": [],
+            }
+            self.assertTrue(any("schema violation" in error for error in verify_artifact(artifact, wrong_identity)))
+            identity_free = {"files": [], "totalBytes": 0}
+            self.assertTrue(any("schema violation" in error for error in verify_artifact(artifact, identity_free)))
+
+    def test_report_path_rejects_an_existing_hardlink_without_touching_target(self) -> None:
+        scratch_root = REPO / "artifacts" / "tmp"
+        with tempfile.TemporaryDirectory(prefix="core-sidecar-report-", dir=scratch_root) as temporary:
+            checkout = Path(temporary)
+            report = checkout / "artifacts" / "tmp" / "core-sidecar-package.json"
+            report.parent.mkdir(parents=True)
+            outside = checkout / "outside.json"
+            outside.write_text("outside remains unchanged", encoding="utf-8")
+            os.link(outside, report)
+            with self.assertRaisesRegex(SidecarBuildError, "private canonical regular file"):
+                prepare_report_path(checkout, report)
+            self.assertEqual(outside.read_text(encoding="utf-8"), "outside remains unchanged")
+
     def test_packaged_sidecar_runs_without_system_python_and_detects_missing_runtime_file(self) -> None:
         scratch_root = REPO / "artifacts" / "tmp"
         scratch_root.mkdir(parents=True, exist_ok=True)
@@ -92,6 +134,24 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     any(f"/{excluded_module}/" in f"/{path}/" for path in packaged_paths),
                     f"build-only module leaked into runtime: {excluded_module}",
                 )
+            archive = subprocess.run(
+                [
+                    REPO / ".venv" / "Scripts" / "pyi-archive_viewer.exe",
+                    "--recursive",
+                    "--list",
+                    artifact_root / manifest["entrypoint"],
+                ],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            )
+            self.assertEqual(archive.returncode, 0, archive.stderr)
+            for archived_module in (
+                "pydantic.mypy",
+                "pydantic.v1.mypy",
+            ):
+                self.assertNotIn(f"'{archived_module}'", archive.stdout)
 
             environment = {
                 "COMSPEC": os.environ["COMSPEC"],

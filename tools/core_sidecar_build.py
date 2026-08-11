@@ -9,11 +9,13 @@ import json
 import os
 import platform
 import shutil
+import stat
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any
 
+from build_manifest import guarded_atomic_write_json
 from jsonschema import Draft202012Validator
 
 TARGET_TRIPLE = "x86_64-pc-windows-msvc"
@@ -97,7 +99,15 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
         "mode": "onedir",
         "upx": False,
         "contentsDirectory": "research-observatory-core-runtime",
-        "excludedModules": ["mypy", "pip", "pytest", "setuptools", "yaml"],
+        "excludedModules": [
+            "mypy",
+            "pip",
+            "pydantic.mypy",
+            "pydantic.v1.mypy",
+            "pytest",
+            "setuptools",
+            "yaml",
+        ],
     }:
         raise SidecarBuildError("sidecar builder must be the approved PyInstaller 6.21.0 onedir/no-UPX profile")
     modules = contract.get("requiredModules")
@@ -145,8 +155,17 @@ def _inventory(root: Path) -> tuple[list[dict[str, Any]], list[str]]:
     return sorted(files, key=lambda item: item["path"]), errors
 
 
-def verify_artifact(artifact_root: Path, manifest: dict[str, Any]) -> list[str]:
+def verify_artifact(
+    artifact_root: Path, manifest: dict[str, Any], *, schema: dict[str, Any] | None = None
+) -> list[str]:
     errors: list[str] = []
+    if schema is None:
+        tool_repo = Path(__file__).resolve().parents[1]
+        schema = _load_json(_fixed_file(tool_repo, SCHEMA_PATH), "sidecar artifact schema")
+    schema_errors = sorted(Draft202012Validator(schema).iter_errors(manifest), key=lambda error: list(error.path))
+    for error in schema_errors:
+        location = "/".join(str(part) for part in error.path) or "<root>"
+        errors.append(f"artifact manifest schema violation at {location}: {error.message}")
     if not artifact_root.is_dir() or _is_redirect(artifact_root):
         return ["artifact root must be a present canonical directory"]
     inventory, inventory_errors = _inventory(artifact_root)
@@ -298,7 +317,7 @@ def build_sidecar(repo: Path, output_root: Path) -> tuple[Path, dict[str, Any]]:
         )
     if manifest["totalBytes"] > contract["maximumBytes"]:
         raise SidecarBuildError("sidecar artifact exceeds the approved maximumBytes")
-    verification_errors = verify_artifact(artifact_root, manifest)
+    verification_errors = verify_artifact(artifact_root, manifest, schema=schema)
     if verification_errors:
         raise SidecarBuildError("; ".join(verification_errors))
     return artifact_root, manifest
@@ -312,14 +331,49 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
+def prepare_report_path(repo: Path, report: Path) -> Path:
+    """Remove only a private canonical prior report and deny aliases."""
+    scratch = repo / "artifacts" / "tmp"
+    if not scratch.exists():
+        parent = scratch.parent
+        if parent.resolve(strict=True) != parent or _is_redirect(parent):
+            raise SidecarBuildError("canonical artifacts parent is unavailable or redirected")
+        scratch.mkdir()
+    if scratch.resolve(strict=True) != scratch or _is_redirect(scratch):
+        raise SidecarBuildError("canonical artifact scratch root is redirected")
+    expected = scratch / "core-sidecar-package.json"
+    if report.absolute() != expected.absolute():
+        raise SidecarBuildError("report must be canonical artifacts/tmp/core-sidecar-package.json")
+    try:
+        metadata = os.lstat(report)
+    except FileNotFoundError:
+        return report
+    except OSError as exc:
+        raise SidecarBuildError(f"cannot inspect existing package report: {exc}") from exc
+    if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1 or _is_redirect(report):
+        raise SidecarBuildError("existing package report must be a private canonical regular file")
+    try:
+        report.unlink()
+    except OSError as exc:
+        raise SidecarBuildError(f"cannot remove prior private package report: {exc}") from exc
+    return report
+
+
+def write_report_exclusive(repo: Path, report: Path, value: dict[str, Any]) -> None:
+    """Publish a new report under locked canonical repository directories."""
+    try:
+        guarded_atomic_write_json(repo, report, value, repo / "artifacts" / "tmp")
+    except (OSError, ValueError) as exc:
+        raise SidecarBuildError(f"cannot publish package report in the canonical scratch root: {exc}") from exc
+
+
 def main() -> int:
     arguments = _parser().parse_args()
     repo = arguments.repo.resolve(strict=True)
     output = arguments.output if arguments.output.is_absolute() else repo / arguments.output
     report = arguments.report if arguments.report.is_absolute() else repo / arguments.report
+    report = prepare_report_path(repo, report)
     scratch = repo / "artifacts" / "tmp"
-    if report.parent.absolute() != scratch.absolute() or report.name != "core-sidecar-package.json":
-        raise SidecarBuildError("report must be canonical artifacts/tmp/core-sidecar-package.json")
     if output.exists():
         if _is_redirect(output) or output.parent.resolve(strict=True) != scratch.resolve(strict=True):
             raise SidecarBuildError("existing output is outside or redirects the canonical scratch root")
@@ -333,9 +387,7 @@ def main() -> int:
         "manifest": manifest,
         "configurationCheck": json.loads(completed.stdout) if completed.returncode == 0 else None,
     }
-    if not scratch.exists():
-        scratch.mkdir()
-    report.write_text(json.dumps(report_value, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    write_report_exclusive(repo, report, report_value)
     if completed.returncode != 0:
         raise SidecarBuildError("frozen sidecar configuration check failed")
     print(json.dumps({"ok": True, "files": len(manifest["files"]), "totalBytes": manifest["totalBytes"]}))
