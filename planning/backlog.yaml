@@ -2483,11 +2483,16 @@ capabilities:
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T22:04:42+00:00'
-      updated_at: '2026-08-11T22:04:42+00:00'
+      updated_at: '2026-08-11T23:25:44+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S03.T02.json
+        sha256: 601358ff138d164003b21b931849880b6b0be0b3f96452df6760274dff82c949
+        commit: bb7a1b9875fcc0b42e40460b350d7bf4dda11e0e
+        recorded_at: '2026-08-11T23:25:44+00:00'
       review:
         reviewer: null
         result: null
@@ -2498,7 +2503,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-11T22:04:42+00:00'
         expires_at: '2026-08-12T06:04:42+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64

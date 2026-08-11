@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S03.T02",
+  "commit": "bb7a1b9875fcc0b42e40460b350d7bf4dda11e0e",
+  "baseCommit": "e1c77668875f7b4477dfb7bbca83e9a64814af23",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    ".gitignore",
+    "docs/adr/ADR-0007-package-the-local-core-api-as-a-versioned-pyinstaller-onedir-sidecar.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/sidecar-artifact.schema.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pyproject.toml",
+    "quality-scope.json",
+    "security-exceptions.json",
+    "services/core-api/README.md",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/sidecar_entry.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/packaging/README.md",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/core_sidecar_build.py",
+    "uv.lock",
+    "verification-profiles.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile service --report artifacts\\tmp\\cap-01-s03-t02-service-approved-candidate.json",
+      "exitCode": 0,
+      "result": "At exact clean candidate bb7a1b9, all 19 service-profile commands passed in 430.043 seconds: 16 foundation commands with 148 tests, 8 Core API tests, 2 portable-contract tests, and 4 sidecar-packaging tests (one file-symlink case skipped because this Windows token cannot create file symlinks). Clean build identity was 0.1.0+gbb7a1b9. Report SHA-256: 0a070b37d1146765047f86d9e09f913f1c31a694d080a4af023be768e02914bf."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts\\tmp\\cap-01-s03-t02-desktop-approved-candidate.json",
+      "exitCode": 0,
+      "result": "At exact clean candidate bb7a1b9, all 25 desktop-profile commands passed in 600.469 seconds: 148 foundation tests, 39 desktop tests, the functional application build/native/browser aggregate, performance baseline, and route/workflow/keyboard/accessibility/visual conformance. The UI reference remained a read-only conformance source. Report SHA-256: c6766523dd5a6d84dcb166bc894d5ac331d4e5d4c0a35d33e1bb39949e2a5801."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\core_sidecar_build.py --repo .",
+      "exitCode": 0,
+      "result": "The exact candidate produced the canonical x86_64-pc-windows-msvc PyInstaller 6.21.0 onedir package and its strict manifest: 644 files, 31,621,876 bytes, exact per-file byte counts and SHA-256 values, configuration-valid frozen-process result, and no mypy, yaml, setuptools, pip, or pytest runtime paths. Package report SHA-256: 35641f9136d781bd1d1cbaa49041c70755e166b2934957f5a22730fd2478492a."
+    },
+    {
+      "command": ".local\\toolchains\\trivy\\0.73.0\\trivy.exe --cache-dir .local\\cache\\trivy --quiet --config NUL rootfs --format json --output artifacts\\tmp\\CAP-01.S03.T02-artifact-trivy-candidate.json --scanners vuln,license --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --timeout 10m --ignorefile NUL artifacts\\tmp\\core-sidecar\\dist\\research-observatory-core-x86_64-pc-windows-msvc",
+      "exitCode": 0,
+      "result": "The pinned scanner inspected the shipped artifact independently of build-environment exceptions. Repository policy evaluation with an intentionally empty exception contract passed 2 detected distribution packages and 2 findings with zero blockers, warnings, or policy errors. Raw scanner report SHA-256: d8c88861ff9055255a355b7535d9b0351697975c04006c13b7327f764842f918."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\security_check.py --repo . --input-report artifacts/tmp/CAP-01.S03.T02-python-trivy.json --report artifacts/tmp/CAP-01.S03.T02-python-security-candidate.json",
+      "exitCode": 0,
+      "result": "The pinned Python build-environment scan passed 72 packages and 73 findings with zero blockers or policy errors. Four exact build-only license findings were independently reviewed by agent:maxwell, recorded with package-specific rationale under CAP-01.S03.T02, and expire 2026-09-07; the artifact scan needs none of them. Evaluated report SHA-256: 93984b014c6344e2c18ff5e4514b9dc9dcfffa369fdfe5ea123c05e1a7fce9f7."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The exact Windows x64 contract pins Python 3.14.6, PyInstaller 6.21.0, onedir/no-UPX mode, the Tauri target-triple executable identity, a fixed runtime directory, a 128 MiB ceiling, and five explicit build/test-module exclusions.",
+        "A real frozen executable runs --check from an isolated temporary directory with PATH reduced to Windows System32 and no Python location; it returns the typed configuration-valid projection. The locked CI service profile performs the same package test on a fresh windows-2025 runner.",
+        "The generated 31,621,876-byte artifact contains 644 exactly inventoried regular files. Removing python314.dll or pydantic_core causes the verifier to report a missing manifested dependency, and restoring it returns verification to green."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Four focused packaging tests cover the strict approved build contract, a real successful frozen build and Pythonless-path execution, exact manifest/schema validation, duplicate paths, changed bytes, missing runtime files, and governed-path redirect denial where the host token supports file symlinks.",
+        "The artifact's exact inventory denies redirects and unsupported filesystem entries and binds every path, byte count, SHA-256 digest, total size, component version, Python version, target triple, builder version/mode, exclusions, and entrypoint.",
+        "The shipped-artifact scan passes without exceptions. The build environment passes only with four exact, time-bounded, independently reviewed build-license records; later versions or redistributed build packages require new review."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The 21-file base-to-candidate range contains only the claim/generated planning views, accepted ADR and index, pinned dependency and lock, build/schema/quality/profile inventories, exact security review records, sidecar entry/build tool, packaging tests, and boundary documentation.",
+        "ADR-0007 records onedir versus onefile/system-Python alternatives, the selected Tauri-compatible identity, unmodified PyInstaller license boundary, artifact inventory, rollback, and deferred supervision/installer-signing responsibilities.",
+        "No desktop application or approved UI-reference implementation file changed. Full desktop conformance passes with design/ui-reference used only as an immutable reference authority; supervision remains T03 and signed installer/clean-VM release qualification remains S05."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Independent review must rebuild and run the frozen artifact without Python on PATH, validate exact inventory/mutation/missing-file/redirect/output boundaries and excluded build modules, inspect artifact and build-environment license/vulnerability evidence, confirm exact 21-file scope and report hashes, and ensure the five pre-existing Node/Tauri blockers remain unsuppressed for later capability qualification."
+  }
+}
