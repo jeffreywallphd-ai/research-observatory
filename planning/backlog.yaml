@@ -2224,11 +2224,11 @@ capabilities:
       - desktop
       verification_commands:
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T15:29:01+00:00'
-      updated_at: '2026-08-11T16:41:57+00:00'
+      updated_at: '2026-08-11T16:49:47+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Functional CAP-01 product shell is separated from the UI-reference fixture; desktop, accessibility,
@@ -2240,16 +2240,18 @@ capabilities:
         commit: b7f82e64764855c5c6cd4ee9b5ce107d3cb44a24
         recorded_at: '2026-08-11T16:41:49+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:maxwell
+        result: changes-requested
+        reviewed_at: '2026-08-11T16:49:47+00:00'
+        notes: 'Compiled-browser review found two required accessibility defects: global shortcuts can move focus behind the
+          modal and repeated help activation can destroy the original restoration target; the theme toggle exposes a changing
+          action name with contradictory aria-pressed state. Add complete shortcut/modal and semantic toggle regressions.'
       base_sha: c1e46fad79fbfaa4f8cbb2efedff3c1a6ec5dedb
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-11T15:29:01+00:00'
-        expires_at: '2026-08-13T15:29:01+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-11T16:49:47+00:00'
+        expires_at: '2026-08-12T00:49:47+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
