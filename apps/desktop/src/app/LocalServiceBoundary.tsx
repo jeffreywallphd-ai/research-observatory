@@ -9,7 +9,9 @@ export interface LocalServiceProbeResult {
   readonly diagnosticReference: typeof LOCAL_SERVICE_DIAGNOSTIC_REFERENCE;
 }
 
-export type LocalServiceProbe = (signal: AbortSignal) => Promise<LocalServiceProbeResult>;
+// Adapter output crosses a runtime trust boundary. Keep it unknown until the
+// exact allowlisted result has been decoded below.
+export type LocalServiceProbe = (signal: AbortSignal) => Promise<unknown>;
 
 export interface LocalServiceBoundaryProps {
   readonly announce: (message: string) => void;
@@ -52,6 +54,28 @@ export function secretSafeServiceFailure(error: unknown): LocalServiceView {
   };
 }
 
+export function localServiceViewFromProbeResult(result: unknown): LocalServiceView {
+  try {
+    if (result === null || typeof result !== "object" || Array.isArray(result)) {
+      return secretSafeServiceFailure(result);
+    }
+
+    const keys = Reflect.ownKeys(result);
+    if (
+      keys.length === 2
+      && keys.every((key) => key === "status" || key === "diagnosticReference")
+      && Reflect.get(result, "status") === "unavailable"
+      && Reflect.get(result, "diagnosticReference") === LOCAL_SERVICE_DIAGNOSTIC_REFERENCE
+    ) {
+      return UNAVAILABLE_VIEW;
+    }
+  } catch {
+    // Proxies and hostile getters are untrusted adapter failures too.
+  }
+
+  return secretSafeServiceFailure(result);
+}
+
 export function LocalServiceBoundary({ announce, probe = packagedLocalServiceProbe }: LocalServiceBoundaryProps): ReactNode {
   const [view, setView] = useState<LocalServiceView>(UNAVAILABLE_VIEW);
   const activeProbe = useRef<AbortController | null>(null);
@@ -67,8 +91,13 @@ export function LocalServiceBoundary({ announce, probe = packagedLocalServicePro
     try {
       const result = await probe(controller.signal);
       if (controller.signal.aborted) return;
-      setView({ ...UNAVAILABLE_VIEW, diagnosticReference: result.diagnosticReference });
-      announce("Local service check complete. The service is not packaged; local shell input was retained.");
+      const nextView = localServiceViewFromProbeResult(result);
+      setView(nextView);
+      announce(
+        nextView.state === "recovery-required"
+          ? "Local service check complete. The service is not packaged; local shell input was retained."
+          : "Local service check failed. Local shell input was retained.",
+      );
     } catch (error) {
       if (controller.signal.aborted) return;
       setView(secretSafeServiceFailure(error));
