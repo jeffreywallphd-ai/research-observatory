@@ -49,4 +49,12 @@ class ModuleRegistry:
 
 
 def default_module_registry() -> ModuleRegistry:
-    return ModuleRegistry((ModuleDefinition(module_id="runtime", capabilities=("runtime.status",)),))
+    return ModuleRegistry(
+        (
+            ModuleDefinition(
+                module_id="operations",
+                capabilities=("operations.cancel", "operations.events", "operations.read"),
+            ),
+            ModuleDefinition(module_id="runtime", capabilities=("runtime.contract", "runtime.status")),
+        )
+    )

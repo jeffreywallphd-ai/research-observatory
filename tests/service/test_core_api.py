@@ -28,7 +28,9 @@ from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.contract import canonical_openapi_bytes  # noqa: E402
 from research_observatory_core.logging import build_log_record  # noqa: E402
 from research_observatory_core.main import supervision_handshake  # noqa: E402
+from research_observatory_core.models import OperationState  # noqa: E402
 from research_observatory_core.modules import ModuleDefinition, ModuleRegistry  # noqa: E402
+from research_observatory_core.operations import OperationRecord, OperationRegistry  # noqa: E402
 
 TOKEN = "0123456789abcdef" * 4
 OTHER_TOKEN = "fedcba9876543210" * 4
@@ -36,11 +38,12 @@ AUTHORITY = "127.0.0.1:49152"
 AUTH_HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 
 
-def authenticated_app() -> FastAPI:
+def authenticated_app(operations: OperationRegistry | None = None) -> FastAPI:
     return create_app(
         settings=CoreSettings(),
         capability_digest=capability_token_digest(TOKEN),
         expected_authority=AUTHORITY,
+        operations=operations,
     )
 
 
@@ -103,8 +106,9 @@ class CoreApiTests(unittest.TestCase):
     def test_lifespan_exposes_typed_runtime_endpoints_and_openapi(self) -> None:
         app = authenticated_app()
         self.assertNotIn(TOKEN, repr(app.user_middleware))
-        self.assertNotIn("token", app.user_middleware[0].kwargs)
-        self.assertEqual(app.user_middleware[0].kwargs["digest"], capability_token_digest(TOKEN))
+        authentication = next(item for item in app.user_middleware if "digest" in item.kwargs)
+        self.assertNotIn("token", authentication.kwargs)
+        self.assertEqual(authentication.kwargs["digest"], capability_token_digest(TOKEN))
         with authenticated_client(app) as client:
             health = client.get("/healthz")
             readiness = client.get("/readyz")
@@ -121,12 +125,18 @@ class CoreApiTests(unittest.TestCase):
         self.assertEqual(readiness.status_code, 200)
         self.assertTrue(readiness.json()["ready"])
         self.assertEqual(version.json()["version"], "0.1.0")
+        self.assertEqual(version.json()["apiVersion"], "1.0.0")
+        self.assertEqual(version.json()["minimumClientApiVersion"], "1.0.0")
+        self.assertEqual(version.json()["maximumClientApiVersionExclusive"], "2.0.0")
         self.assertEqual(
             configuration.json(),
             {"schemaVersion": "1.0", "profile": "local", "bindHost": "loopback", "bindPort": "ephemeral"},
         )
-        self.assertEqual(modules.json()["modules"][0]["moduleId"], "runtime")
-        self.assertEqual(capabilities.json()["capabilities"], ["runtime.status"])
+        self.assertEqual([module["moduleId"] for module in modules.json()["modules"]], ["operations", "runtime"])
+        self.assertEqual(
+            capabilities.json()["capabilities"],
+            ["operations.cancel", "operations.events", "operations.read", "runtime.contract", "runtime.status"],
+        )
         self.assertEqual(openapi.status_code, 200)
         self.assertEqual(openapi.json()["info"]["version"], "0.1.0")
         self.assertNotIn("0.0.0.0", json.dumps(openapi.json()))
@@ -192,6 +202,145 @@ class CoreApiTests(unittest.TestCase):
         product = json.loads((REPO / "packaging" / "product-version.json").read_text(encoding="utf-8"))
         self.assertEqual(component["version"], product["version"])
         self.assertEqual(component["version"], "0.1.0")
+        generated = subprocess.run(
+            [sys.executable, "tools/core_api_contract.py", "--repo", ".", "--check"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+        self.assertEqual(generated.returncode, 0, generated.stdout + generated.stderr)
+
+    def test_operation_contract_pages_cancels_and_replays_sse_with_trace_safe_problems(self) -> None:
+        registry = OperationRegistry()
+        first = OperationRecord(
+            operation_id="op-first",
+            kind="runtime.fixture",
+            trace_id="1" * 32,
+        )
+        first.transition(OperationState.RUNNING, 25)
+        second = OperationRecord(
+            operation_id="op-second",
+            kind="runtime.fixture",
+            trace_id="2" * 32,
+        )
+        second.transition(OperationState.SUCCEEDED, 100)
+        registry.add_fixture(first)
+        registry.add_fixture(second)
+
+        with authenticated_client(authenticated_app(registry)) as client:
+            page = client.get("/runtime/operations", params={"limit": 1})
+            self.assertEqual(page.status_code, 200)
+            self.assertEqual([item["operationId"] for item in page.json()["items"]], ["op-first"])
+            self.assertEqual(page.json()["nextCursor"], "op-first")
+            second_page = client.get("/runtime/operations", params={"limit": 1, "after": "op-first"})
+            self.assertEqual([item["operationId"] for item in second_page.json()["items"]], ["op-second"])
+            self.assertIsNone(second_page.json()["nextCursor"])
+
+            events = client.get("/runtime/operations/op-first/events", params={"afterSequence": 0})
+            self.assertEqual(events.status_code, 200)
+            self.assertEqual(events.headers["content-type"].split(";", 1)[0], "text/event-stream")
+            self.assertIn("id: 1\nevent: operation-progress\ndata: ", events.text)
+            self.assertIn('"operationId":"op-first"', events.text)
+
+            status_before_cancel = client.get("/runtime/operations/op-first")
+            self.assertEqual(status_before_cancel.headers["etag"], '"op-first-1"')
+            command_key = "3" * 32
+            cancelled = client.post(
+                "/runtime/operations/op-first/cancel",
+                headers={"If-Match": status_before_cancel.headers["etag"], "Idempotency-Key": command_key},
+            )
+            self.assertEqual(cancelled.status_code, 200)
+            self.assertEqual(cancelled.json()["state"], "cancelled")
+            self.assertTrue(cancelled.json()["cancellationRequested"])
+            self.assertEqual(cancelled.headers["etag"], '"op-first-2"')
+            repeated = client.post(
+                "/runtime/operations/op-first/cancel",
+                headers={"If-Match": status_before_cancel.headers["etag"], "Idempotency-Key": command_key},
+            )
+            self.assertEqual(repeated.status_code, 200)
+            self.assertEqual(repeated.json()["sequence"], 2)
+            replay = client.get("/runtime/operations/op-first/events", params={"afterSequence": 1})
+            self.assertIn("id: 2", replay.text)
+            self.assertIn('"state":"cancelled"', replay.text)
+
+            missing_precondition = client.post("/runtime/operations/op-first/cancel")
+            self.assertEqual(missing_precondition.status_code, 428)
+            self.assertEqual(missing_precondition.json()["code"], "RO-CORE-PRECONDITION-REQUIRED")
+            stale = client.post(
+                "/runtime/operations/op-first/cancel",
+                headers={"If-Match": '"op-first-1"', "Idempotency-Key": "4" * 32},
+            )
+            self.assertEqual(stale.status_code, 412)
+            self.assertEqual(stale.json()["code"], "RO-CORE-REVISION-CONFLICT")
+
+            terminal_status = client.get("/runtime/operations/op-second")
+            terminal = client.post(
+                "/runtime/operations/op-second/cancel",
+                headers={"If-Match": terminal_status.headers["etag"], "Idempotency-Key": "5" * 32},
+            )
+            self.assertEqual(terminal.status_code, 409)
+            problem = terminal.json()
+            self.assertEqual(problem["code"], "RO-CORE-OPERATION-TERMINAL")
+            self.assertEqual(problem["traceId"], terminal.headers["x-trace-id"])
+            self.assertNotIn("Traceback", json.dumps(problem))
+
+            reused_identity = client.post(
+                "/runtime/operations/op-second/cancel",
+                headers={"If-Match": terminal_status.headers["etag"], "Idempotency-Key": command_key},
+            )
+            self.assertEqual(reused_identity.status_code, 409)
+            self.assertEqual(reused_identity.json()["code"], "RO-CORE-IDEMPOTENCY-CONFLICT")
+
+            missing = client.get("/runtime/operations/op-missing")
+            self.assertEqual(missing.status_code, 404)
+            self.assertEqual(missing.json()["code"], "RO-CORE-OPERATION-NOT-FOUND")
+            self.assertEqual(missing.json()["traceId"], missing.headers["x-trace-id"])
+
+            invalid_cursor = client.get("/runtime/operations", params={"after": "op-missing"})
+            self.assertEqual(invalid_cursor.status_code, 422)
+            self.assertEqual(invalid_cursor.json()["code"], "RO-CORE-CURSOR-INVALID")
+
+            unknown_route = client.get("/runtime/private-database")
+            self.assertEqual(unknown_route.status_code, 404)
+            self.assertEqual(unknown_route.json()["code"], "RO-CORE-ROUTE-NOT-FOUND")
+            self.assertEqual(unknown_route.json()["traceId"], unknown_route.headers["x-trace-id"])
+
+            wrong_method = client.post("/runtime/version")
+            self.assertEqual(wrong_method.status_code, 405)
+            self.assertEqual(wrong_method.json()["code"], "RO-CORE-METHOD-DENIED")
+
+    def test_operation_event_retention_is_bounded_and_requires_status_reconciliation_after_a_gap(self) -> None:
+        registry = OperationRegistry()
+        record = OperationRecord(operation_id="op-bounded", kind="runtime.fixture", trace_id="6" * 32)
+        for progress in range(260):
+            record.transition(OperationState.RUNNING, progress % 101)
+        registry.add_fixture(record)
+        self.assertEqual(len(record.events), 256)
+
+        with authenticated_client(authenticated_app(registry)) as client:
+            gap = client.get("/runtime/operations/op-bounded/events", params={"afterSequence": 0})
+            self.assertEqual(gap.status_code, 409)
+            self.assertEqual(gap.json()["code"], "RO-CORE-EVENT-REPLAY-GAP")
+            resumed = client.get("/runtime/operations/op-bounded/events", params={"afterSequence": 4})
+            self.assertEqual(resumed.status_code, 200)
+            self.assertIn("id: 5", resumed.text)
+            self.assertIn("id: 260", resumed.text)
+
+    def test_trace_boundary_preserves_canonical_ids_and_denies_hostile_shapes(self) -> None:
+        trace = "a" * 32
+        with authenticated_client() as client:
+            accepted = client.get("/runtime/version", headers={"X-Trace-Id": trace})
+            self.assertEqual(accepted.status_code, 200)
+            self.assertEqual(accepted.headers["x-trace-id"], trace)
+
+            invalid = client.get("/runtime/version", headers={"X-Trace-Id": "../../secret"})
+            self.assertEqual(invalid.status_code, 400)
+            self.assertEqual(invalid.headers["content-type"], "application/problem+json")
+            self.assertEqual(invalid.json()["code"], "RO-CORE-TRACE-INVALID")
+            self.assertEqual(invalid.json()["traceId"], invalid.headers["x-trace-id"])
+            self.assertNotIn("secret", invalid.text)
 
     def test_isolated_process_check_has_no_socket_and_redacts_configuration_errors(self) -> None:
         environment = os.environ.copy()

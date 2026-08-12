@@ -528,7 +528,8 @@ def validate_handshake(value: Any, pid: int) -> int:
         or not isinstance(nonce, str)
         or len(nonce) != 32
         or any(item not in "0123456789abcdef" for item in nonce)
-        or value.get("capabilities") != ["runtime.status"]
+        or value.get("capabilities")
+        != ["operations.cancel", "operations.events", "operations.read", "runtime.contract", "runtime.status"]
         or value.get("databaseCompatibility") != {"minimum": "0.1.0", "maximumExclusive": "0.2.0"}
         or value.get("diagnosticCode") != "RO-CORE-STARTING"
     ):
@@ -601,7 +602,13 @@ def readiness_ok(port: int, capability_token: str) -> bool:
         "service": "research-observatory-core",
         "version": "0.1.0",
         "state": "ready",
-        "capabilities": ["runtime.status"],
+        "capabilities": [
+            "operations.cancel",
+            "operations.events",
+            "operations.read",
+            "runtime.contract",
+            "runtime.status",
+        ],
         "ready": True,
     }
 

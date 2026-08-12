@@ -75,6 +75,16 @@ stack traces are never rendered or copied. On Windows, Core is created suspended
 placed in a kill-on-close Job Object, and resumed only after containment is active;
 graceful, forced, and host-exit cleanup therefore apply to the complete process tree.
 
+After native readiness, the product verifies the generated Core API version
+through `@research-observatory/contracts/core-api`. The renderer sends only an
+allowlisted method/path/body request to Tauri; native code selects the owned
+endpoint, attaches the launch credential and trace ID, bounds and decodes HTTP,
+and returns only status, safe content type, trace ID, optional ETag, and body.
+The token, port, raw headers, and process identity never enter React. An
+incompatible contract uses the existing functional recovery panel with exact
+repair/reinstall guidance; no UI-reference fixture is rendered as application
+content.
+
 The legacy reference-activation modules are isolated behind
 `src/reference-main.tsx` for conformance tests and are not imported by the
 product entry. Project storage, scholarly workflows, sources, models, and

@@ -45,7 +45,13 @@ def supervision_handshake(*, host: str, port: int) -> dict[str, object]:
         "host": host,
         "port": port,
         "nonce": secrets.token_hex(16),
-        "capabilities": ["runtime.status"],
+        "capabilities": [
+            "operations.cancel",
+            "operations.events",
+            "operations.read",
+            "runtime.contract",
+            "runtime.status",
+        ],
         "databaseCompatibility": {
             "minimum": "0.1.0",
             "maximumExclusive": "0.2.0",

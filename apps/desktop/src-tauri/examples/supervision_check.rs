@@ -5,9 +5,11 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use research_observatory_desktop_lib::supervisor::{
-    RuntimeSnapshot, RuntimeState, RuntimeSupervisor, SupervisorConfig,
+    CoreApiRequest, RuntimeSnapshot, RuntimeState, RuntimeSupervisor, SupervisorConfig,
 };
-use research_observatory_desktop_lib::{dispatch_runtime_start, dispatch_runtime_stop};
+use research_observatory_desktop_lib::{
+    dispatch_core_api_request, dispatch_runtime_start, dispatch_runtime_stop,
+};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -30,6 +32,9 @@ struct Report {
     job_close_tree_cleanup: bool,
     stop_retry_serialized: bool,
     delayed_readiness_cleanup: bool,
+    generated_contract_request: bool,
+    problem_trace_preserved: bool,
+    unsafe_api_path_denied: bool,
 }
 
 static FIXTURE_SEQUENCE: AtomicU64 = AtomicU64::new(1);
@@ -204,6 +209,65 @@ fn main() {
     assert!(
         duplicate_start_pid_stable,
         "duplicate start created another process"
+    );
+    let version_response = tauri::async_runtime::block_on(dispatch_core_api_request(
+        graceful.clone(),
+        CoreApiRequest {
+            method: "GET".to_owned(),
+            path: "/runtime/version".to_owned(),
+            body: None,
+            if_match: None,
+            idempotency_key: None,
+        },
+    ))
+    .expect("authenticated generated-contract request");
+    let version: serde_json::Value =
+        serde_json::from_str(&version_response.body).expect("version response JSON");
+    let generated_contract_request = version_response.status == 200
+        && version_response.content_type == "application/json"
+        && version_response.trace_id.len() == 32
+        && version["service"] == "research-observatory-core"
+        && version["apiVersion"] == "1.0.0"
+        && version["minimumClientApiVersion"] == "1.0.0"
+        && version["maximumClientApiVersionExclusive"] == "2.0.0"
+        && !version_response.body.contains("Bearer")
+        && !version_response.body.contains("token");
+    assert!(
+        generated_contract_request,
+        "version contract request failed"
+    );
+
+    let missing_response = graceful
+        .api_request(&CoreApiRequest {
+            method: "GET".to_owned(),
+            path: "/runtime/operations/op-missing".to_owned(),
+            body: None,
+            if_match: None,
+            idempotency_key: None,
+        })
+        .expect("authenticated missing-operation request");
+    let missing: serde_json::Value =
+        serde_json::from_str(&missing_response.body).expect("problem response JSON");
+    let problem_trace_preserved = missing_response.status == 404
+        && missing_response.content_type == "application/problem+json"
+        && missing["code"] == "RO-CORE-OPERATION-NOT-FOUND"
+        && missing["traceId"] == missing_response.trace_id
+        && missing.get("exception").is_none()
+        && missing.get("path").is_none();
+    assert!(problem_trace_preserved, "problem trace contract failed");
+
+    let unsafe_api_path_denied = graceful
+        .api_request(&CoreApiRequest {
+            method: "GET".to_owned(),
+            path: "https://evil.invalid/runtime/version".to_owned(),
+            body: None,
+            if_match: None,
+            idempotency_key: None,
+        })
+        .is_err();
+    assert!(
+        unsafe_api_path_denied,
+        "unsafe native API path was accepted"
     );
     let graceful_stop = graceful.stop();
     require_state(&graceful_stop, RuntimeState::Stopped, "graceful stop");
@@ -452,6 +516,9 @@ fn main() {
             job_close_tree_cleanup: true,
             stop_retry_serialized: true,
             delayed_readiness_cleanup: true,
+            generated_contract_request,
+            problem_trace_preserved,
+            unsafe_api_path_denied,
         })
         .expect("serialize supervision report")
     );
