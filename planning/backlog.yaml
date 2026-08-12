@@ -2479,11 +2479,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T22:04:42+00:00'
-      updated_at: '2026-08-12T00:17:12+00:00'
+      updated_at: '2026-08-12T00:17:46+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Exact bb7a1b9 passed 19-command service and 25-command desktop profiles; 644-file/31.6 MB Pythonless-path
@@ -2492,7 +2492,10 @@ capabilities:
 
         Remediation at byte-identical candidate 1f563fd closes schema/identity validation, hardlink and guarded report confinement,
         and embedded mypy exclusions; 19-command service and 25-command desktop reports pass, 644-file/31,567,646-byte Pythonless
-        artifact and no-exception shipped scan pass.'
+        artifact and no-exception shipped scan pass.
+
+        Focused b5c30e6 remediation binds componentVersion 0.1.0, Python 3.14.6, and all artifact identity fields to the governed
+        build contract; 6 package tests plus targeted lint/type checks pass without rerunning unchanged full profiles.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S03.T02.json

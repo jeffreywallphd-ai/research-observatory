@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: d74d4bb306cd14ea66f80d2a4ba27ee670b70843417b725066ffe8ab04ad01fc
+source_sha256: 4627584349ae2ed15e2a0c58d6efff3e0be9a8f916f6370b3be61edd62c2e0f6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 292 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 26 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S03.T02` Package the Python service as a Windows sidecar artifact | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S03.T02` Package the Python service as a Windows sidecar artifact | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
