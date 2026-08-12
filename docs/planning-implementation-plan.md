@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ca1ae06552485d0e6fa4f9a58899b46cf13007d8456dfc88952ede5f6274b649
+source_sha256: 3f06b615f8e33695179deb5eb4d206e553353aee23abfb85ba4698a7b66120d3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1343,7 +1343,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S04.T03 - Build desktop diagnostics and support-bundle collection
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
