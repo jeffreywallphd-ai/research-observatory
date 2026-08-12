@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2323e8189d570de448fb1fe7579c8f96c52f279668a72fbe2c2de369a478012d
+source_sha256: bfa89d7bbcce072bad1dbd65be8ee49bbeffbef2b48240b835f0f8249db21e7f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1202,7 +1202,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S03.T02 - Package the Python service as a Windows sidecar artifact
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
