@@ -23,6 +23,8 @@ describe("functional desktop application", () => {
     expect(html).not.toContain("does not yet package");
     expect(html).toContain("Copy diagnostic reference");
     expect(html).toContain("Only implemented capabilities appear here.");
+    expect(html).toContain("Diagnostics &amp; support");
+    expect(html).toContain("Open diagnostics &amp; support");
     expect(html).not.toContain("prototype-index.html");
     expect(html).not.toContain("data-workflow-select");
     expect(html).not.toContain("study-design.html");

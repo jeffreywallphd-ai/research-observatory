@@ -7,6 +7,7 @@ use std::time::{Duration, Instant};
 use research_observatory_desktop_lib::supervisor::{
     CoreApiRequest, RuntimeSnapshot, RuntimeState, RuntimeSupervisor, SupervisorConfig,
 };
+use research_observatory_desktop_lib::support_bundle::SupportBundleManager;
 use research_observatory_desktop_lib::{
     dispatch_core_api_request, dispatch_runtime_start, dispatch_runtime_stop,
 };
@@ -36,6 +37,9 @@ struct Report {
     problem_trace_preserved: bool,
     unsafe_api_path_denied: bool,
     incompatible_api_rejected: bool,
+    support_bundle_trace_linked: bool,
+    support_bundle_redacted: bool,
+    support_bundle_exact_export: bool,
 }
 
 static FIXTURE_SEQUENCE: AtomicU64 = AtomicU64::new(1);
@@ -270,6 +274,63 @@ fn main() {
         unsafe_api_path_denied,
         "unsafe native API path was accepted"
     );
+
+    let support_root = std::env::temp_dir().join(format!(
+        "ro-support-supervision-{}-{}",
+        std::process::id(),
+        FIXTURE_SEQUENCE.fetch_add(1, Ordering::Relaxed)
+    ));
+    let support_manager = SupportBundleManager::default();
+    let support_preview = support_manager
+        .preview(&support_root, &graceful)
+        .expect("support bundle preview");
+    let support_document =
+        serde_json::to_value(support_preview.bundle()).expect("serialize support bundle document");
+    let support_bundle_trace_linked = support_document["recentDiagnostics"]
+        .as_array()
+        .expect("support diagnostics array")
+        .iter()
+        .any(|item| item["traceId"] == version_response.trace_id);
+    assert!(
+        support_bundle_trace_linked,
+        "support bundle did not retain the desktop action trace ID"
+    );
+    let support_document_text = serde_json::to_string(&support_document)
+        .expect("serialize support bundle for redaction check");
+    let support_bundle_redacted = !support_document_text.contains("Bearer")
+        && !support_document_text.contains("authorization")
+        && !support_document_text.contains("processId")
+        && !support_document_text.contains("absolutePath")
+        && !support_document_text.contains(
+            support_root
+                .to_str()
+                .expect("support root path must be Unicode"),
+        )
+        && support_document["exclusions"]
+            .as_array()
+            .is_some_and(|items| items.len() == 9);
+    assert!(
+        support_bundle_redacted,
+        "support bundle leaked excluded data"
+    );
+
+    let mut reviewed_bytes = serde_json::to_vec_pretty(support_preview.bundle())
+        .expect("serialize exact reviewed support bundle");
+    reviewed_bytes.push(b'\n');
+    assert_eq!(reviewed_bytes.len(), support_preview.byte_length());
+    let support_export = support_manager
+        .export(&support_root, support_preview.preview_id())
+        .expect("export exact reviewed support bundle");
+    let installed_bytes = fs::read(support_export.path()).expect("read exported support bundle");
+    let support_bundle_exact_export = installed_bytes == reviewed_bytes
+        && support_export.byte_length() == support_preview.byte_length()
+        && support_export.sha256() == support_preview.sha256();
+    assert!(
+        support_bundle_exact_export,
+        "support export differed from the reviewed bytes"
+    );
+    remove_fixture(support_root);
+
     let graceful_stop = graceful.stop();
     require_state(&graceful_stop, RuntimeState::Stopped, "graceful stop");
     assert_eq!(
@@ -531,6 +592,9 @@ fn main() {
             problem_trace_preserved,
             unsafe_api_path_denied,
             incompatible_api_rejected: true,
+            support_bundle_trace_linked,
+            support_bundle_redacted,
+            support_bundle_exact_export,
         })
         .expect("serialize supervision report")
     );

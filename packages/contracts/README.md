@@ -14,3 +14,11 @@ client for the local Core process. `python tools/core_api_contract.py --repo .
 The package is source-only and side-effect-free. Application code imports
 `@research-observatory/contracts/core-api`; it never imports Core implementation
 modules or reconstructs private launch state.
+
+`support-bundle/support-bundle.schema.json` is the portable, strict schema for
+the CAP-01.S04 redacted support document. The native host and renderer own the
+preview/export envelope because local output paths are privileged host state;
+the path never appears in the portable support document. Schema version `1.0`
+caps recent code-only diagnostics and defines the exact included and excluded
+categories without admitting research content, credentials, raw logs, process
+identifiers, or absolute storage paths.
