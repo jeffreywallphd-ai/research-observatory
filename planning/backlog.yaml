@@ -2389,7 +2389,7 @@ capabilities:
     depends_on:
     - CAP-00.S03.T02
     - CAP-01.S01.T01
-    status: REVIEW
+    status: IN_PROGRESS
     tasks:
     - id: CAP-01.S03.T01
       capability_id: CAP-01
@@ -2599,14 +2599,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: agent:curie
-      reviewed_at: '2026-08-12T13:45:06+00:00'
+      status: CHANGES_REQUESTED
+      reviewer: curie
+      reviewed_at: '2026-08-12T14:12:05+00:00'
       evidence:
       - artifacts/evidence/CAP-01.S03.integration.review-fix.json
-      notes: Complete-package performance identity, immutable snapshot, stale-report invalidation, retained raw samples, exact
-        hardware, and measurement-tool provenance remediated; focused quality and clean real-package qualification pass; unchanged
-        full slice profiles remain applicable under risk-based verification.
+      notes: Qualification must enforce exact current executing tool and clean measurement HEAD, and prevent transient create/use/delete
+        additions throughout every measured package lifecycle.
   - id: CAP-01.S04
     title: Authenticated desktop-service contract
     outcome: Local IPC is private, versioned, cancellable, and observable.
