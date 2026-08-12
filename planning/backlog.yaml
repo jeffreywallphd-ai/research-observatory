@@ -2709,12 +2709,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T15:10:53+00:00'
-      updated_at: '2026-08-12T16:00:05+00:00'
-      completed_at: null
+      updated_at: '2026-08-12T16:03:09+00:00'
+      completed_at: '2026-08-12T16:03:09+00:00'
       blocker: null
       implementation_notes: 'Exact candidate 072e1d6 is ready for independent agent review; full desktop/service profiles
         remain deferred to S04 integration review.
@@ -2734,16 +2734,13 @@ capabilities:
         recorded_at: '2026-08-12T15:59:55+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-12T15:54:08+00:00'
-        notes: 'Three focused blockers: cancellation idempotency lacks full request fingerprint; RO-CORE-API-INCOMPATIBLE
-          is rejected by the existing renderer snapshot decoder; generated client accepts non-200 success and non-RFC9457
-          error media types.'
+        result: approved
+        reviewed_at: '2026-08-12T16:03:09+00:00'
+        notes: 'Remediation approved: exact command fingerprints govern idempotent replay; JSON/SSE clients reject unexpected
+          status/media types; native incompatibility reaches the existing functional recovery projection. Exact evidence,
+          package, lifecycle, and clean state verified without full profiles.'
       base_sha: f578757f8f7aa5b5684f44d33110cce120d680f1
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-12T15:54:08+00:00'
-        expires_at: '2026-08-12T23:54:08+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -2778,11 +2775,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-12T16:03:09+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3014,7 +3011,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-01.S04.T02
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-02.S01.T01
       capability_id: CAP-02
@@ -3042,11 +3039,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-12T16:03:09+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

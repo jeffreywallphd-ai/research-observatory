@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ff493c013bc6be5702b63fdc67ccffb872df689613faa07084133823728a6478
+source_sha256: 3e2d5b9d872b4655929b39cc773b529ab5dd974b96ffe78d2d10895860607fac
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1309,15 +1309,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S04.T01.json` at `c2c33b3d027b4e53ca0e9371b642202c1ef9bcbb`
 - `artifacts/evidence/CAP-01.S04.T01.review-fix.json` at `10bef04ded937e7597222b3272d117041be6628e`
 
-#### - [ ] CAP-01.S04.T02 - Generate and consume versioned API contracts
+#### - [x] CAP-01.S04.T02 - Generate and consume versioned API contracts
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S04.T01`
 
-**Owner / review:** codex / agent:curie (`changes-requested`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** OpenAPI-derived TypeScript client, error envelope, pagination, job-status, cancellation, and compatibility rules.
 
@@ -1343,7 +1343,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S04.T03 - Build desktop diagnostics and support-bundle collection
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1476,7 +1476,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Projects have explicit identity, version, location, lifecycle state, and safe-open semantics.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -1484,7 +1484,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S01.T01 - Define the local project package and directory layout
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
