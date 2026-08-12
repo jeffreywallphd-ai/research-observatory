@@ -2557,7 +2557,7 @@ capabilities:
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T11:51:12+00:00'
-      updated_at: '2026-08-12T12:35:17+00:00'
+      updated_at: '2026-08-12T12:47:56+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Focused task evidence complete at ba98a62; full desktop/service/e2e-local integration profiles
@@ -2568,6 +2568,11 @@ capabilities:
         sha256: 2260c37b36812f5844a2287a00335ece928272c356fa7d49872f5a0729336b78
         commit: ba98a62eee68f428eb11fdd5064ed142a9d47d22
         recorded_at: '2026-08-12T12:24:53+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S03.T03.review-fix.json
+        sha256: 8bf933ef1bb02fbe5d0242d5ad9dce140d66110d310ae5db35e47e09e8df9813
+        commit: 45a80cc559548e100add72ef0d8bd7f947d335fa
+        recorded_at: '2026-08-12T12:47:56+00:00'
       review:
         reviewer: agent:curie
         result: changes-requested
@@ -2579,7 +2584,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-12T12:35:17+00:00'
         expires_at: '2026-08-12T20:35:17+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
