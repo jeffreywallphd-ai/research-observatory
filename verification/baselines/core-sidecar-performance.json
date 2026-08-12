@@ -1,12 +1,31 @@
 {
   "schemaVersion": "1.0",
   "documentType": "core-sidecar-performance-baseline",
-  "baselineSourceCommit": "30008d3d984111089874f861d2aa7063a8676b30",
+  "baselineSourceCommit": "7c79c7ca477b0f0d4f9b7239e7e89538c3669fda",
   "profile": "windows-x64",
+  "provenance": {
+    "measurementToolCommit": "7c79c7ca477b0f0d4f9b7239e7e89538c3669fda",
+    "measurementToolPath": "tools/core_sidecar_performance_check.py",
+    "measurementToolSha256": "e9a476553d1fd1c6d4d51feb02d70dd0098cac24911d89574aa7983571db23d0",
+    "packageEvidencePath": "artifacts/evidence/CAP-01.S03.T02.review-fix-2.json",
+    "packageEvidenceSha256": "580ce8cc08fa19eff325f870095a640dc4f066653ec101b536082b033177367c",
+    "packageReportSha256": "ebcb88b4cbfb07757d0fea6b0ad1dc2e83282fac3e9b9771586a25587edea1fd",
+    "artifactManifestSha256": "8908b324fe0545b97a93ab10a764b6b553d16b79ce786f1f680c1639f65f8e7a"
+  },
+  "hardware": {
+    "operatingSystem": "Windows-11-10.0.26200-SP0",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logicalCpuCount": 20,
+    "physicalMemoryBytes": 16984227840
+  },
   "fixture": {
     "buildContractSha256": "086e37aab1040cd6dba342b35b65f9d43de8c25a90a0adccfc1abffd40cba176",
     "targetTriple": "x86_64-pc-windows-msvc",
-    "componentVersion": "0.1.0"
+    "componentVersion": "0.1.0",
+    "entrypointSha256": "226746b87096c5f9bf9f571e0f95d695959c37ecb40aa01b6dd1ef8cb4a5e705",
+    "fileCount": 644,
+    "totalBytes": 31569506
   },
   "methodology": {
     "state": "cold packaged process with no project open; one unmeasured filesystem warmup before seven measured process lifecycles",
@@ -16,17 +35,40 @@
     "regressionThresholdPercent": 20,
     "hardwareQualification": "representative measured Windows x64 workstation"
   },
+  "rawMeasurements": {
+    "readinessMs": {
+      "samples": [817.125, 835.666, 819.779, 836.692, 819.068, 817.06, 829.388],
+      "minimum": 817.06,
+      "p50": 819.779,
+      "p95": 836.692,
+      "maximum": 836.692
+    },
+    "shutdownMs": {
+      "samples": [189.93, 185.441, 185.855, 170.555, 203.836, 210.387, 202.519],
+      "minimum": 170.555,
+      "p50": 189.93,
+      "p95": 210.387,
+      "maximum": 210.387
+    },
+    "idleWorkingSetBytes": {
+      "samples": [61403136.0, 62324736.0, 62119936.0, 61411328.0, 62439424.0, 61968384.0, 62328832.0],
+      "minimum": 61403136.0,
+      "p50": 62119936.0,
+      "p95": 62439424.0,
+      "maximum": 62439424.0
+    }
+  },
   "measurements": {
     "readinessMs": {
-      "baselineP50": 830.362,
+      "baselineP50": 819.779,
       "absoluteBudget": 3000.0
     },
     "shutdownMs": {
-      "baselineP95": 223.712,
+      "baselineP95": 210.387,
       "absoluteBudget": 5000.0
     },
     "idleWorkingSetBytes": {
-      "baselineP95": 62136320.0,
+      "baselineP95": 62439424.0,
       "absoluteBudget": 268435456
     }
   }
