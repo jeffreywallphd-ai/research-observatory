@@ -2553,11 +2553,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T11:51:12+00:00'
-      updated_at: '2026-08-12T12:25:49+00:00'
+      updated_at: '2026-08-12T12:35:17+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Focused task evidence complete at ba98a62; full desktop/service/e2e-local integration profiles
@@ -2569,16 +2569,17 @@ capabilities:
         commit: ba98a62eee68f428eb11fdd5064ed142a9d47d22
         recorded_at: '2026-08-12T12:24:53+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:curie
+        result: changes-requested
+        reviewed_at: '2026-08-12T12:35:17+00:00'
+        notes: Async IPC lifecycle dispatch, atomic Windows Job containment, stable state diagnostics, serialized stop/retry,
+          and strict failure-mode coverage are required.
       base_sha: 6743b5451a715d0585dd17798c27d23ff4dc2ba8
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-12T11:51:12+00:00'
-        expires_at: '2026-08-12T19:51:12+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-12T12:35:17+00:00'
+        expires_at: '2026-08-12T20:35:17+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
