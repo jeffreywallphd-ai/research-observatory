@@ -23,6 +23,7 @@ mod windows_fixture {
         fs::write("fixture-root.pid", std::process::id().to_string()).expect("write root PID");
         let mode = fs::read_to_string("fixture-mode.txt").expect("fixture mode");
         let mode = mode.trim();
+        let capability_token = read_startup_authentication();
 
         if mode.starts_with("child-") {
             spawn_descendant();
@@ -49,7 +50,7 @@ mod windows_fixture {
 
         let compatible = mode != "never-ready";
         let delayed = mode == "child-delayed-ready";
-        thread::spawn(move || serve(listener, compatible, delayed));
+        thread::spawn(move || serve(listener, compatible, delayed, capability_token));
         let mut line = String::new();
         std::io::stdin()
             .lock()
@@ -94,13 +95,44 @@ mod windows_fixture {
         );
     }
 
-    fn serve(listener: TcpListener, compatible: bool, delayed: bool) {
+    fn read_startup_authentication() -> String {
+        let mut line = String::new();
+        std::io::stdin()
+            .lock()
+            .read_line(&mut line)
+            .expect("read startup authentication");
+        let token = line
+            .strip_prefix("auth ")
+            .and_then(|value| value.strip_suffix('\n'))
+            .expect("strict startup authentication record");
+        assert_eq!(token.len(), 64);
+        assert!(
+            token
+                .bytes()
+                .all(|value| value.is_ascii_digit() || (b'a'..=b'f').contains(&value))
+        );
+        token.to_owned()
+    }
+
+    fn serve(listener: TcpListener, compatible: bool, delayed: bool, capability_token: String) {
         for connection in listener.incoming() {
             let Ok(mut stream) = connection else {
                 return;
             };
             let mut request = [0_u8; 1024];
-            let _ = stream.read(&mut request);
+            let received = stream.read(&mut request).unwrap_or_default();
+            let request = String::from_utf8_lossy(&request[..received]);
+            let expected_authority = format!(
+                "Host: 127.0.0.1:{}\r\n",
+                listener.local_addr().expect("listener address").port(),
+            );
+            let expected_auth = format!("Authorization: Bearer {capability_token}\r\n");
+            if !request.contains(&expected_authority) || !request.contains(&expected_auth) {
+                let _ = stream.write_all(
+                    b"HTTP/1.1 401 Unauthorized\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+                );
+                continue;
+            }
             if delayed {
                 fs::write("fixture-ready-requested.flag", b"ready")
                     .expect("write readiness marker");

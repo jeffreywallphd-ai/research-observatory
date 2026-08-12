@@ -3,6 +3,7 @@ from __future__ import annotations
 import http.client
 import json
 import os
+import socket
 import subprocess
 import sys
 import threading
@@ -12,6 +13,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import uvicorn
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from jsonschema import Draft202012Validator
 from pydantic import ValidationError
@@ -21,24 +23,55 @@ SERVICE_SRC = REPO / "services" / "core-api" / "src"
 sys.path.insert(0, str(SERVICE_SRC))
 
 from research_observatory_core.app import create_app  # noqa: E402
+from research_observatory_core.authentication import parse_startup_authentication  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.contract import canonical_openapi_bytes  # noqa: E402
 from research_observatory_core.logging import build_log_record  # noqa: E402
 from research_observatory_core.main import supervision_handshake  # noqa: E402
 from research_observatory_core.modules import ModuleDefinition, ModuleRegistry  # noqa: E402
 
+TOKEN = "0123456789abcdef" * 4
+OTHER_TOKEN = "fedcba9876543210" * 4
+AUTHORITY = "127.0.0.1:49152"
+AUTH_HEADERS = {"Authorization": f"Bearer {TOKEN}"}
+
+
+def authenticated_app() -> FastAPI:
+    return create_app(
+        settings=CoreSettings(),
+        capability_token=TOKEN,
+        expected_authority=AUTHORITY,
+    )
+
+
+def authenticated_client(app: FastAPI | None = None) -> TestClient:
+    return TestClient(
+        app or authenticated_app(),
+        base_url=f"http://{AUTHORITY}",
+        headers=AUTH_HEADERS,
+        client=("127.0.0.1", 50000),
+    )
+
 
 class CoreApiTests(unittest.TestCase):
     def test_uvicorn_starts_on_an_os_assigned_loopback_port(self) -> None:
+        listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        listener.bind(("127.0.0.1", 0))
+        assigned_host, assigned_port = listener.getsockname()
         configuration = uvicorn.Config(
-            create_app(settings=CoreSettings()),
-            host="127.0.0.1",
-            port=0,
+            create_app(
+                settings=CoreSettings(),
+                capability_token=TOKEN,
+                expected_authority=f"{assigned_host}:{assigned_port}",
+            ),
+            host=assigned_host,
+            port=assigned_port,
             log_config=None,
             access_log=False,
+            proxy_headers=False,
         )
         server = uvicorn.Server(configuration)
-        thread = threading.Thread(target=server.run, daemon=True)
+        thread = threading.Thread(target=server.run, kwargs={"sockets": [listener]}, daemon=True)
         thread.start()
         try:
             deadline = time.monotonic() + 10
@@ -51,7 +84,11 @@ class CoreApiTests(unittest.TestCase):
             self.assertGreater(socket_name[1], 0)
             connection = http.client.HTTPConnection("127.0.0.1", socket_name[1], timeout=5)
             try:
-                connection.request("GET", "/readyz")
+                connection.request(
+                    "GET",
+                    "/readyz",
+                    headers={"Authorization": f"Bearer {TOKEN}", "Host": f"{assigned_host}:{assigned_port}"},
+                )
                 response = connection.getresponse()
                 payload = json.loads(response.read())
                 self.assertEqual(response.status, 200)
@@ -64,8 +101,8 @@ class CoreApiTests(unittest.TestCase):
         self.assertFalse(thread.is_alive())
 
     def test_lifespan_exposes_typed_runtime_endpoints_and_openapi(self) -> None:
-        app = create_app(settings=CoreSettings())
-        with TestClient(app) as client:
+        app = authenticated_app()
+        with authenticated_client(app) as client:
             health = client.get("/healthz")
             readiness = client.get("/readyz")
             version = client.get("/runtime/version")
@@ -104,7 +141,7 @@ class CoreApiTests(unittest.TestCase):
         }
         with patch.dict(os.environ, environment, clear=False):
             app = create_app()
-            with self.assertRaises(ValidationError), TestClient(app):
+            with self.assertRaises(ValidationError), authenticated_client(app):
                 pass
 
     def test_module_registry_rejects_duplicate_identity(self) -> None:
@@ -132,7 +169,7 @@ class CoreApiTests(unittest.TestCase):
             (REPO / "packages" / "contracts" / "core-api" / "core-runtime.schema.json").read_text(encoding="utf-8")
         )
         validator = Draft202012Validator(schema)
-        with TestClient(create_app(settings=CoreSettings())) as client:
+        with authenticated_client() as client:
             health = client.get("/healthz").json()
             readiness = client.get("/readyz").json()
         self.assertEqual(list(validator.iter_errors(health)), [])
@@ -200,9 +237,11 @@ class CoreApiTests(unittest.TestCase):
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            text=True,
         )
         try:
+            assert process.stdin is not None
+            process.stdin.write(f"auth {TOKEN}\n".encode("ascii"))
+            process.stdin.flush()
             assert process.stdout is not None
             line = process.stdout.readline()
             handshake = json.loads(line)
@@ -216,7 +255,14 @@ class CoreApiTests(unittest.TestCase):
             response = None
             while time.monotonic() < deadline:
                 try:
-                    connection.request("GET", "/readyz")
+                    connection.request(
+                        "GET",
+                        "/readyz",
+                        headers={
+                            "Authorization": f"Bearer {TOKEN}",
+                            "Host": f"{handshake['host']}:{handshake['port']}",
+                        },
+                    )
                     response = connection.getresponse()
                     if response.status == 200:
                         break
@@ -230,10 +276,28 @@ class CoreApiTests(unittest.TestCase):
             self.assertEqual(response.status, 200)
             self.assertTrue(json.loads(response.read())["ready"])
             connection.close()
-            assert process.stdin is not None
-            process.stdin.write("shutdown\n")
+
+            denied = http.client.HTTPConnection(handshake["host"], handshake["port"], timeout=5)
+            denied.request(
+                "GET",
+                "/readyz",
+                headers={
+                    "Authorization": f"Bearer {OTHER_TOKEN}",
+                    "Host": f"{handshake['host']}:{handshake['port']}",
+                },
+            )
+            denied_response = denied.getresponse()
+            self.assertEqual(denied_response.status, 401)
+            self.assertEqual(json.loads(denied_response.read())["code"], "RO-CORE-AUTH-REQUIRED")
+            denied.close()
+
+            process.stdin.write(b"shutdown\n")
             process.stdin.flush()
             self.assertEqual(process.wait(timeout=10), 0)
+            assert process.stderr is not None
+            stderr = process.stderr.read()
+            self.assertNotIn(TOKEN.encode("ascii"), stderr)
+            self.assertNotIn(OTHER_TOKEN.encode("ascii"), stderr)
         finally:
             if process.poll() is None:
                 process.kill()
@@ -247,6 +311,89 @@ class CoreApiTests(unittest.TestCase):
         fabricated["host"] = "localhost"
         fabricated["nonce"] = "RO-TOKEN-HUNTER2"
         self.assertGreaterEqual(len(list(Draft202012Validator(schema).iter_errors(fabricated))), 3)
+
+    def test_local_transport_denies_missing_stale_remote_and_origin_requests(self) -> None:
+        with authenticated_client() as client:
+            accepted = client.get("/readyz")
+            missing = client.get("/readyz", headers={"Authorization": ""})
+            wrong = client.get("/readyz", headers={"Authorization": f"Bearer {OTHER_TOKEN}"})
+            noncanonical = client.get("/readyz", headers={"Authorization": f"Bearer {TOKEN.upper()}"})
+            duplicate = client.get(
+                "/readyz",
+                headers=[
+                    ("Authorization", f"Bearer {TOKEN}"),
+                    ("Authorization", f"Bearer {OTHER_TOKEN}"),
+                ],
+            )
+            origin = client.get("/readyz", headers={**AUTH_HEADERS, "Origin": "tauri://localhost"})
+            wrong_host = client.get("/readyz", headers={**AUTH_HEADERS, "Host": "localhost:49152"})
+        self.assertEqual(accepted.status_code, 200)
+        for response in (missing, wrong, noncanonical, duplicate):
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(response.json(), {"code": "RO-CORE-AUTH-REQUIRED", "status": 401})
+            self.assertEqual(response.headers["www-authenticate"], "Bearer")
+        self.assertEqual(origin.status_code, 403)
+        self.assertEqual(origin.json()["code"], "RO-CORE-ORIGIN-DENIED")
+        self.assertEqual(wrong_host.status_code, 403)
+        self.assertEqual(wrong_host.json()["code"], "RO-CORE-TRANSPORT-DENIED")
+
+        with TestClient(
+            authenticated_app(),
+            base_url=f"http://{AUTHORITY}",
+            headers=AUTH_HEADERS,
+            client=("192.0.2.25", 50000),
+        ) as remote:
+            denied = remote.get("/readyz")
+        self.assertEqual(denied.status_code, 403)
+        self.assertEqual(denied.json()["code"], "RO-CORE-TRANSPORT-DENIED")
+
+    def test_token_rotates_between_launches_and_startup_record_is_strict(self) -> None:
+        first = authenticated_app()
+        second = create_app(
+            settings=CoreSettings(),
+            capability_token=OTHER_TOKEN,
+            expected_authority=AUTHORITY,
+        )
+        with authenticated_client(first) as first_client:
+            self.assertEqual(first_client.get("/readyz").status_code, 200)
+        with authenticated_client(second) as second_client:
+            self.assertEqual(second_client.get("/readyz").status_code, 401)
+            self.assertEqual(
+                second_client.get("/readyz", headers={"Authorization": f"Bearer {OTHER_TOKEN}"}).status_code,
+                200,
+            )
+
+        self.assertEqual(TOKEN, parse_startup_authentication(f"auth {TOKEN}\n".encode("ascii")))
+        for invalid in (
+            b"",
+            b"auth short\n",
+            f"AUTH {TOKEN}\n".encode("ascii"),
+            f"auth {TOKEN.upper()}\n".encode("ascii"),
+            f"auth {TOKEN}\r\n".encode("ascii"),
+        ):
+            with self.subTest(invalid=invalid[:10]), self.assertRaises(ValueError):
+                parse_startup_authentication(invalid)
+
+    def test_supervised_process_rejects_malformed_startup_authentication_without_echoing_it(self) -> None:
+        environment = os.environ.copy()
+        for key in tuple(environment):
+            if key.casefold().startswith("ro_core_") or key.casefold() == "pythonpath":
+                environment.pop(key)
+        environment["PYTHONPATH"] = str(SERVICE_SRC)
+        exposed_value = TOKEN.upper()
+        rejected = subprocess.run(
+            [sys.executable, "-m", "research_observatory_core.main", "--supervised"],
+            cwd=REPO,
+            env=environment,
+            input=f"auth {exposed_value}\n".encode("ascii"),
+            capture_output=True,
+            timeout=10,
+            check=False,
+        )
+        self.assertEqual(rejected.returncode, 2)
+        self.assertEqual(json.loads(rejected.stderr)["status"], "startup-authentication-error")
+        self.assertEqual(rejected.stdout, b"")
+        self.assertNotIn(exposed_value.encode("ascii"), rejected.stderr)
 
 
 if __name__ == "__main__":

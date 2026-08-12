@@ -15,6 +15,7 @@ from pydantic import ValidationError
 
 from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
 from .app import create_app
+from .authentication import STARTUP_RECORD_BYTES, parse_startup_authentication
 from .config import CoreSettings
 
 EXIT_CONFIGURATION_ERROR = 2
@@ -67,19 +68,43 @@ def _watch_supervisor(server: uvicorn.Server) -> None:
 def run_supervised(settings: CoreSettings) -> int:
     """Bind an OS-assigned loopback socket and serve under desktop ownership."""
 
+    record = sys.stdin.buffer.readline(STARTUP_RECORD_BYTES + 1)
+    try:
+        capability_token = parse_startup_authentication(record)
+    except ValueError:
+        print(
+            json.dumps(
+                {
+                    "schemaVersion": CORE_API_SCHEMA_VERSION,
+                    "service": CORE_SERVICE_ID,
+                    "status": "startup-authentication-error",
+                },
+                sort_keys=True,
+            ),
+            file=sys.stderr,
+        )
+        return EXIT_CONFIGURATION_ERROR
     listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         listener.bind((settings.bind_host, settings.bind_port))
         assigned_host, assigned_port = listener.getsockname()
+        authority = f"{assigned_host}:{assigned_port}"
         configuration = uvicorn.Config(
-            create_app(settings=settings),
+            create_app(
+                settings=settings,
+                capability_token=capability_token,
+                expected_authority=authority,
+            ),
             host=assigned_host,
             port=assigned_port,
             log_level=settings.log_level.casefold(),
             access_log=False,
             server_header=False,
             log_config=None,
+            proxy_headers=False,
         )
+        del record
+        del capability_token
         server = uvicorn.Server(configuration)
         print(json.dumps(supervision_handshake(host=assigned_host, port=assigned_port), sort_keys=True), flush=True)
         watcher = threading.Thread(target=_watch_supervisor, args=(server,), name="supervisor-control", daemon=True)
@@ -132,6 +157,7 @@ def main(argv: list[str] | None = None) -> int:
         log_level=settings.log_level.casefold(),
         access_log=False,
         server_header=False,
+        proxy_headers=False,
     )
     return 0
 

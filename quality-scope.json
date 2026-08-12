@@ -47,6 +47,7 @@
     "tools/verify.py",
     "services/core-api/src/research_observatory_core/__init__.py",
     "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/authentication.py",
     "services/core-api/src/research_observatory_core/config.py",
     "services/core-api/src/research_observatory_core/contract.py",
     "services/core-api/src/research_observatory_core/logging.py",

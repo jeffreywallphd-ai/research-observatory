@@ -80,6 +80,15 @@
       "linkedTasks": [
         "CAP-01.S03.T03"
       ]
+    },
+    {
+      "id": "ADR-0009",
+      "path": "docs/adr/ADR-0009-authenticate-the-local-core-with-a-private-per-launch-capability.md",
+      "title": "Authenticate the local Core with a private per-launch capability",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-01.S04.T01"
+      ]
     }
   ]
 }

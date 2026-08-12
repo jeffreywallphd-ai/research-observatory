@@ -19,5 +19,8 @@ byte count, and SHA-256 digest. It contains no host paths or research data.
 from the packaged Core process to the desktop supervisor. It binds protocol and
 build compatibility, PID, numeric loopback endpoint, a process-local nonce,
 capabilities, database compatibility range, and a stable diagnostic code. The
-nonce is not exposed to the renderer; CAP-01.S04 consumes it when activating the
-authenticated desktop-service contract.
+nonce is not exposed to the renderer and remains a public process-binding value,
+not an authentication secret. CAP-01.S04 authenticates the local transport with
+a separate per-launch 256-bit credential delivered from the native supervisor to
+Core over inherited stdin before process resume. That credential is deliberately
+absent from every portable contract, handshake, log, report, and renderer API.
