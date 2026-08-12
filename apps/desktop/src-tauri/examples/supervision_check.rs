@@ -35,6 +35,7 @@ struct Report {
     generated_contract_request: bool,
     problem_trace_preserved: bool,
     unsafe_api_path_denied: bool,
+    incompatible_api_rejected: bool,
 }
 
 static FIXTURE_SEQUENCE: AtomicU64 = AtomicU64::new(1);
@@ -372,6 +373,16 @@ fn main() {
     );
     remove_fixture(timeout_root);
 
+    let (api_incompatible_root, api_incompatible_config) =
+        fixture_config(&fixture_executable, "api-incompatible");
+    require_failure(
+        api_incompatible_config,
+        RuntimeState::Incompatible,
+        "RO-CORE-API-INCOMPATIBLE",
+        "incompatible generated API contract",
+    );
+    remove_fixture(api_incompatible_root);
+
     let (command_root, command_config) = fixture_config(&fixture_executable, "never-ready");
     let command_supervisor = RuntimeSupervisor::new(Ok(command_config));
     let command_start = command_supervisor.clone();
@@ -519,6 +530,7 @@ fn main() {
             generated_contract_request,
             problem_trace_preserved,
             unsafe_api_path_denied,
+            incompatible_api_rejected: true,
         })
         .expect("serialize supervision report")
     );
