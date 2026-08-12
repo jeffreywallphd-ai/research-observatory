@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S03.T03",
+  "commit": "a380445b96ffcf0927de7818f53c16a6e32e17bb",
+  "baseCommit": "45a80cc559548e100add72ef0d8bd7f947d335fa",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S03.T03.review-fix.json",
+    "reason": "The first remediation closed all original review findings, but deterministic re-review found a late-compatible-readiness cancellation window in which stop could return before the privately held process tree finished cleanup. This follow-up closes that exact publication and ownership race."
+  },
+  "changedFiles": [
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "artifacts/evidence/CAP-01.S03.T03.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md"
+  ],
+  "checks": [
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check && cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --all-targets --locked -- -D warnings && cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --locked",
+      "exitCode": 0,
+      "result": "Focused Rust formatting and Clippy passed all targets; the same five native unit tests passed."
+    },
+    {
+      "command": "cargo build --manifest-path apps/desktop/src-tauri/Cargo.toml --example supervisor_fixture --example supervision_check --locked && supervision_check.exe <real packaged sidecar> <fixture executable>",
+      "exitCode": 0,
+      "result": "The complete focused Windows supervision report remained ok=true and added delayedReadinessCleanup=true. The fixture starts an immediate descendant, marks an in-flight compatible readiness response, delays that response, and ignores graceful shutdown. Stop during that window returned only after both root and descendant were already dead; the start worker returned Stopped and Retry was enabled only after cleanup."
+    },
+    {
+      "command": "architecture_check; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "Architecture, backlog invariants, and generated planning views passed. The incremental production change is confined to the supervisor plus its two native fixtures."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Startup rechecks the active attempt after a compatible readiness response and before returning success.",
+        "Every post-spawn startup failure now terminates and waits for the contained process tree before launch returns; a late successful launch that loses publication ownership likewise keeps launching true until private cleanup completes.",
+        "A waiting stop cannot clear stopping, return a retryable snapshot, or permit a new start until the prior root and immediate descendant are dead."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The committed delayed-compatible-readiness fixture deterministically covers the exact reviewer reproduction and asserts process liveness immediately when stop returns.",
+        "The earlier real-sidecar, async cancellation, containment, failure-classification, diagnostics, crash/retry, and restart-limit matrix remains in the same focused passing executable.",
+        "No renderer, Python service, contract, dependency, UI reference, or build behavior changed, so broader profiles remain correctly deferred to S03 integration review."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The seven-file range contains the three-file focused production/test delta plus immutable prior evidence and task review/generated-view records.",
+        "The governing ADR and documentation from the superseded remediation remain accurate: lifecycle completion is serialized through complete process-tree termination.",
+        "No scope expansion or unresolved verification item remains."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review should replay the delayed-compatible-readiness child fixture, verify stop-return liveness assertions and final attempt check/cleanup ordering, confirm exact seven-file scope, and avoid full profiles reserved for S03 slice review."
+  }
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 01b697d27151487beae0be64d6835f99af121d29e2b4c08e8d561f51b5084836
+source_sha256: ab15b630ba6b7b3f1fd559bebf283d1ddd77dfcec39dbdf266c40a74efd87c40
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1265,6 +1265,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-01.S03.T03.json` at `ba98a62eee68f428eb11fdd5064ed142a9d47d22`
 - `artifacts/evidence/CAP-01.S03.T03.review-fix.json` at `45a80cc559548e100add72ef0d8bd7f947d335fa`
+- `artifacts/evidence/CAP-01.S03.T03.review-fix-2.json` at `a380445b96ffcf0927de7818f53c16a6e32e17bb`
 
 ### CAP-01.S04 - Authenticated desktop-service contract
 
