@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T02",
+  "commit": "9536058d2a19ac1fc523eb668b568e6550219f88",
+  "baseCommit": "072e1d66c6860ad142922719573ccc69ab0f5054",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T02.json",
+    "reason": "Independent review reproduced incomplete cancellation-command fingerprinting, a native compatibility diagnostic not accepted by the existing functional recovery decoder, and permissive generated HTTP status/media-type handling. This focused remediation closes all three boundaries and requalifies the exact frozen package."
+  },
+  "changedFiles": [
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app/LocalServiceBoundary.test.tsx",
+    "artifacts/evidence/CAP-01.S04.T02.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/operations.py",
+    "tests/service/test_core_api.py",
+    "tools/core_api_contract.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check; .venv\\Scripts\\python.exe -m unittest tests.service.test_core_api; pnpm --dir packages/contracts run verify",
+      "exitCode": 0,
+      "result": "Deterministic regeneration passed, all 15 focused service tests passed, and the checked-in client typechecked with all six focused tests. A repeated cancellation with the same command key and identical operation/If-Match fingerprint replays; the same key with changed If-Match now returns an explicit RO-CORE-IDEMPOTENCY-CONFLICT. Direct client attacks using 302 success JSON, 404 text/html problem-shaped JSON through both JSON and SSE paths, malformed bodies, and mismatched trace/ETag shapes all reject."
+    },
+    {
+      "command": "vitest run apps/desktop/src/app/LocalServiceBoundary.test.tsx; cargo test --offline --manifest-path apps/desktop/src-tauri/Cargo.toml --lib; cargo clippy --offline --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --examples -- -D warnings",
+      "exitCode": 0,
+      "result": "All 14 focused functional recovery tests passed, including the exact native incompatible snapshot and repair/reinstall guidance. All nine native units and strict Clippy passed. Native startup reuses the already governed RO-CORE-INCOMPATIBLE diagnostic, so no product UI implementation or UI-reference change is present in the final task range."
+    },
+    {
+      "command": "core_sidecar_build.py; supervision_check.exe <clean-9536058-sidecar> <fixture>",
+      "exitCode": 0,
+      "result": "The exact candidate rebuilt a 644-file, 31,592,300-byte sidecar. The complete focused real-process report remained ok=true, including authenticated contract requests, trace-linked problems, unsafe-path denial, incompatible API rejection before Ready, cancellation/restart/failure classification, serialized stop/retry, and complete root-plus-descendant cleanup. Report SHA-256 f4729a1c9f149a54fdbd543ce5f32efde03507c40082cc390ab639a62d189eaf; entrypoint SHA-256 7968bd40079ce948034d79f3ec65fa1eb9bb5cd2a57116a5a208a6e2bdffe4c7."
+    },
+    {
+      "command": "quality_check; ui_change_gate --base f578757 --head 9536058; adr_check; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "Python quality passed all 75 governed files. The UI gate again passed with uiFiles=[]; accepted ADR coverage, backlog invariants, and generated views passed. The final generated TypeScript SHA-256 is c987c3b69247965446e8a54e61d7a3796dc92326efc4b8dd91b9370a8a402e77."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "A cancellation command fingerprint is the SHA-256 of its operation kind, canonical operation identity, If-Match precondition, and empty-body separator. Only an exact fingerprint replays under an existing idempotency key; changed semantics conflict.",
+        "Every generated operation requires exact HTTP 200 success. Error handling requires application/problem+json plus a status- and trace-correlated strict RFC 9457 envelope, including the SSE path.",
+        "Native compatibility failure retains the already allowlisted RO-CORE-INCOMPATIBLE identifier, which the existing functional desktop boundary maps to explicit matching-package repair/reinstall guidance."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused regressions directly exercise all three reviewer attacks and retain the prior expected contract, native lifecycle, security, and recovery paths.",
+        "The real clean-candidate package still proves authenticated version/problem requests, incompatible pre-Ready failure, and complete process cleanup without exposing credentials or endpoint identity.",
+        "No full profile was replayed for the eight-file code/test remediation; desktop, service, and security-local profiles remain correctly reserved for the completed S04 slice review."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The generated source and tool are synchronized, service behavior and tests use the same command-fingerprint rule, and ADR-0010/0011 remain accurate without amendment.",
+        "The final task range still contains no governed UI implementation file or UI-reference evidence contract; only an existing functional boundary regression test changed.",
+        "The immutable original evidence and CHANGES_REQUESTED review remain preserved. The exact twelve-file evidence range contains the eight code/test remediation files plus the original evidence and planning review records, and binds the replacement package identities."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent remediation review should replay the changed-If-Match/same-key conflict, 302 and wrong problem media-type attacks through JSON and SSE, stable incompatibility snapshot decoding, exact package behavior/identity, twelve-file evidence range/eight-file implementation scope, and evidence supersession. No full profiles are requested."
+  }
+}
