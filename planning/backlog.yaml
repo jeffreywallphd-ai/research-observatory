@@ -2646,15 +2646,21 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T14:19:15+00:00'
-      updated_at: '2026-08-12T14:19:15+00:00'
+      updated_at: '2026-08-12T14:46:26+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Per-launch local authentication complete; focused security, service, native, package, provenance,
+        and performance checks passed. Full integrated profiles deferred to S04 review.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S04.T01.json
+        sha256: 4f2e5f9bd18e6a8fd41ae129ad5d623fa6528c1a0a70323d6d371cd222a4136e
+        commit: c2c33b3d027b4e53ca0e9371b642202c1ef9bcbb
+        recorded_at: '2026-08-12T14:46:16+00:00'
       review:
         reviewer: null
         result: null
@@ -2665,7 +2671,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-12T14:19:15+00:00'
         expires_at: '2026-08-14T14:19:15+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
