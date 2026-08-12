@@ -2646,21 +2646,29 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T14:19:15+00:00'
-      updated_at: '2026-08-12T14:52:55+00:00'
+      updated_at: '2026-08-12T15:03:43+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Per-launch local authentication complete; focused security, service, native, package, provenance,
+      implementation_notes: 'Per-launch local authentication complete; focused security, service, native, package, provenance,
         and performance checks passed. Full integrated profiles deferred to S04 review.
+
+        Digest-only launch credential retention remediation complete; focused security, service, native teardown, package
+        provenance, and performance checks passed. Full integrated profiles remain deferred to S04 review.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S04.T01.json
         sha256: 4f2e5f9bd18e6a8fd41ae129ad5d623fa6528c1a0a70323d6d371cd222a4136e
         commit: c2c33b3d027b4e53ca0e9371b642202c1ef9bcbb
         recorded_at: '2026-08-12T14:46:16+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S04.T01.review-fix.json
+        sha256: 825709b4a695f180462f208ccc1ac2f16a90e82f4ce91d5685fb2233c4134d18
+        commit: 10bef04ded937e7597222b3272d117041be6628e
+        recorded_at: '2026-08-12T15:03:33+00:00'
       review:
         reviewer: curie
         result: changes-requested
@@ -2672,7 +2680,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-12T14:52:55+00:00'
         expires_at: '2026-08-12T22:52:55+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: e78dcef3a06c0abaa526a9141c7d358afb7ec9a4cda76945cd152ec1974c8b84
+source_sha256: 2ce8000b75424a4df452c07d620a3a2bfd53266bda772c010647ad960b88501c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 290 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 28 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S04.T01` Implement loopback authentication and endpoint binding controls | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S04.T01` Implement loopback authentication and endpoint binding controls | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
