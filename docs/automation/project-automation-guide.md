@@ -157,6 +157,13 @@ rewrite. A benchmark must bind its fixture and methodology, reject non-finite or
 out-of-budget baseline values, compare against an immutable reviewed baseline hash,
 and write reports only to the confined ignored artifact directory. Establish or
 change a baseline only with criterion-linked evidence and independent review.
+Artifact benchmarks must authenticate the complete package manifest, inventory,
+entrypoint, build contract, and approval evidence before executing code; run an
+immutable verified snapshot and recheck it around each lifecycle. Baselines must
+retain the raw samples, exact measured hardware, measurement-tool commit/bytes,
+and package identity needed to reproduce the comparison. Diagnostic or
+measurement-only modes are explicitly nonqualifying, and any failed invocation
+must invalidate or overwrite a stale PASS report at the requested destination.
 
 At minimum maintain checks for:
 
