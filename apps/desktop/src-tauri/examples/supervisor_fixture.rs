@@ -49,8 +49,17 @@ mod windows_fixture {
         }
 
         let compatible = mode != "never-ready";
+        let api_compatible = mode != "api-incompatible";
         let delayed = mode == "child-delayed-ready";
-        thread::spawn(move || serve(listener, compatible, delayed, capability_token));
+        thread::spawn(move || {
+            serve(
+                listener,
+                compatible,
+                api_compatible,
+                delayed,
+                capability_token,
+            )
+        });
         let mut line = String::new();
         std::io::stdin()
             .lock()
@@ -114,7 +123,13 @@ mod windows_fixture {
         token.to_owned()
     }
 
-    fn serve(listener: TcpListener, compatible: bool, delayed: bool, capability_token: String) {
+    fn serve(
+        listener: TcpListener,
+        compatible: bool,
+        api_compatible: bool,
+        delayed: bool,
+        capability_token: String,
+    ) {
         for connection in listener.incoming() {
             let Ok(mut stream) = connection else {
                 return;
@@ -133,10 +148,38 @@ mod windows_fixture {
                 );
                 continue;
             }
-            if delayed {
+            if delayed && request.starts_with("GET /readyz ") {
                 fs::write("fixture-ready-requested.flag", b"ready")
                     .expect("write readiness marker");
                 thread::sleep(Duration::from_millis(750));
+            }
+            if request.starts_with("GET /runtime/version ") {
+                let trace_id = request
+                    .split("\r\n")
+                    .find_map(|line| line.strip_prefix("X-Trace-Id: "))
+                    .expect("version request trace ID");
+                let api_version = if api_compatible { "1.0.0" } else { "2.0.0" };
+                let body = format!(
+                    concat!(
+                        "{{\"schemaVersion\":\"1.0\",",
+                        "\"service\":\"research-observatory-core\",",
+                        "\"version\":\"0.1.0\",\"apiVersion\":\"{}\",",
+                        "\"minimumClientApiVersion\":\"1.0.0\",",
+                        "\"maximumClientApiVersionExclusive\":\"2.0.0\"}}"
+                    ),
+                    api_version,
+                );
+                let response = format!(
+                    concat!(
+                        "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n",
+                        "X-Trace-Id: {}\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}"
+                    ),
+                    trace_id,
+                    body.len(),
+                    body,
+                );
+                let _ = stream.write_all(response.as_bytes());
+                continue;
             }
             let version = if compatible { "0.1.0" } else { "99.0.0" };
             let body = format!(

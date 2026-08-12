@@ -12,6 +12,7 @@ use serde::{Deserialize, Serialize};
 
 const EXPECTED_EXECUTABLE: &str = "research-observatory-core-x86_64-pc-windows-msvc.exe";
 const EXPECTED_BUILD: &str = "0.1.0";
+const CORE_API_CLIENT_VERSION: &str = "1.0.0";
 const MAX_ATTEMPTS: u8 = 3;
 const MAX_HANDSHAKE_BYTES: usize = 4096;
 const START_TIMEOUT: Duration = Duration::from_secs(10);
@@ -124,6 +125,17 @@ struct ReadinessResponse {
     state: String,
     capabilities: Vec<String>,
     ready: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct VersionResponse {
+    schema_version: String,
+    service: String,
+    version: String,
+    api_version: String,
+    minimum_client_api_version: String,
+    maximum_client_api_version_exclusive: String,
 }
 
 #[derive(Clone, Debug)]
@@ -563,6 +575,7 @@ fn launch(
         };
         let handshake = validate_handshake(&bytes, pid)?;
         wait_until_ready(&handshake, &capability_token, &mut child, &shared, attempt)?;
+        verify_core_api_contract(handshake.port, &capability_token)?;
         ensure_attempt_active(&shared, attempt)?;
         Ok(handshake.port)
     })();
@@ -967,6 +980,75 @@ fn wait_until_ready(
     Err((RuntimeState::Crashed, "RO-CORE-START-TIMEOUT"))
 }
 
+fn semantic_version(value: &str) -> Option<[u64; 3]> {
+    let mut parts = value.split('.');
+    let parse = |part: &str| {
+        if part.is_empty()
+            || (part.len() > 1 && part.starts_with('0'))
+            || !part.bytes().all(|byte| byte.is_ascii_digit())
+        {
+            return None;
+        }
+        part.parse::<u64>().ok()
+    };
+    let version = [
+        parse(parts.next()?)?,
+        parse(parts.next()?)?,
+        parse(parts.next()?)?,
+    ];
+    parts.next().is_none().then_some(version)
+}
+
+fn version_response_is_compatible(response: &CoreApiResponse) -> bool {
+    if response.status != 200
+        || response.content_type != "application/json"
+        || response.etag.is_some()
+    {
+        return false;
+    }
+    let Ok(version) = serde_json::from_str::<VersionResponse>(&response.body) else {
+        return false;
+    };
+    let Some(client) = semantic_version(CORE_API_CLIENT_VERSION) else {
+        return false;
+    };
+    let Some(api) = semantic_version(&version.api_version) else {
+        return false;
+    };
+    let Some(minimum) = semantic_version(&version.minimum_client_api_version) else {
+        return false;
+    };
+    let Some(maximum) = semantic_version(&version.maximum_client_api_version_exclusive) else {
+        return false;
+    };
+    version.schema_version == "1.0"
+        && version.service == "research-observatory-core"
+        && version.version == EXPECTED_BUILD
+        && api[0] == client[0]
+        && client >= minimum
+        && client < maximum
+}
+
+fn verify_core_api_contract(
+    port: u16,
+    capability_token: &CapabilityToken,
+) -> Result<(), (RuntimeState, &'static str)> {
+    let request = CoreApiRequest {
+        method: "GET".to_owned(),
+        path: "/runtime/version".to_owned(),
+        body: None,
+        if_match: None,
+        idempotency_key: None,
+    };
+    let response = authenticated_api_request(port, capability_token, &request)
+        .map_err(|_| (RuntimeState::Incompatible, "RO-CORE-API-INCOMPATIBLE"))?;
+    if version_response_is_compatible(&response) {
+        Ok(())
+    } else {
+        Err((RuntimeState::Incompatible, "RO-CORE-API-INCOMPATIBLE"))
+    }
+}
+
 #[cfg(windows)]
 fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
     use windows_sys::Win32::Security::Cryptography::{
@@ -1221,7 +1303,8 @@ impl ProcessTreeContainment {
 mod tests {
     use super::{
         CapabilityToken, CoreApiRequest, RuntimeState, RuntimeSupervisor, SupervisorInner,
-        parse_api_response, validate_api_request, validate_handshake,
+        parse_api_response, semantic_version, validate_api_request, validate_handshake,
+        version_response_is_compatible,
     };
     use std::collections::VecDeque;
 
@@ -1360,6 +1443,34 @@ mod tests {
                 .body,
             "hello"
         );
+    }
+
+    #[test]
+    fn native_startup_enforces_the_generated_api_compatibility_range() {
+        assert_eq!(semantic_version("1.0.0"), Some([1, 0, 0]));
+        assert_eq!(semantic_version("01.0.0"), None);
+        assert_eq!(semantic_version("1.0"), None);
+        let compatible = super::CoreApiResponse {
+            status: 200,
+            content_type: "application/json".to_owned(),
+            trace_id: "0123456789abcdef0123456789abcdef".to_owned(),
+            etag: None,
+            body: concat!(
+                "{\"schemaVersion\":\"1.0\",",
+                "\"service\":\"research-observatory-core\",",
+                "\"version\":\"0.1.0\",\"apiVersion\":\"1.0.0\",",
+                "\"minimumClientApiVersion\":\"1.0.0\",",
+                "\"maximumClientApiVersionExclusive\":\"2.0.0\"}"
+            )
+            .to_owned(),
+        };
+        assert!(version_response_is_compatible(&compatible));
+        assert!(!version_response_is_compatible(&super::CoreApiResponse {
+            body: compatible
+                .body
+                .replace("\"apiVersion\":\"1.0.0\"", "\"apiVersion\":\"2.0.0\""),
+            ..compatible
+        }));
     }
 
     #[test]

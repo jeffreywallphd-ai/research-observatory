@@ -7,9 +7,6 @@ import {
   StatusBadge,
   type BoundaryState,
 } from "@research-observatory/ui-components";
-import type { CompatibilityResult } from "@research-observatory/contracts/core-api";
-
-import { verifyPackagedCoreApiCompatibility } from "./CoreApiBoundary";
 
 export const LOCAL_SERVICE_DIAGNOSTIC_REFERENCE = "RO-CORE-SUPERVISOR-UNAVAILABLE" as const;
 
@@ -60,7 +57,6 @@ export interface LocalServiceBoundaryProps {
   readonly probe?: LocalServiceProbe;
   readonly statusProbe?: LocalServiceProbe;
   readonly stopProbe?: () => Promise<unknown>;
-  readonly compatibilityProbe?: () => Promise<CompatibilityResult>;
 }
 
 interface LocalServiceView {
@@ -229,29 +225,15 @@ export function localServiceViewFromProbeResult(result: unknown): LocalServiceVi
   }
 }
 
-export function localServiceViewFromCompatibility(result: CompatibilityResult): LocalServiceView | null {
-  if (result.ok) return null;
-  return {
-    state: "recovery-required",
-    runtimeState: "incompatible",
-    title: "Local analytical service is incompatible",
-    message: result.remediation,
-    retryAvailable: false,
-    diagnosticReference: result.code,
-  };
-}
-
 export function LocalServiceBoundary({
   announce,
   probe = packagedLocalServiceProbe,
   statusProbe = packagedLocalServiceStatusProbe,
   stopProbe = stopPackagedLocalService,
-  compatibilityProbe = verifyPackagedCoreApiCompatibility,
 }: LocalServiceBoundaryProps): ReactNode {
   const [view, setView] = useState<LocalServiceView>(() => hasTauriRuntime() ? LOADING_VIEW : UNAVAILABLE_VIEW);
   const activeProbe = useRef<AbortController | null>(null);
   const lastAnnouncedState = useRef<RuntimeState>(view.runtimeState);
-  const compatibilityChecked = useRef(false);
 
   const applyResult = useCallback((result: unknown, announceUnchanged = false): void => {
     const nextView = localServiceViewFromProbeResult(result);
@@ -307,31 +289,6 @@ export function LocalServiceBoundary({
     }, 750);
     return () => globalThis.window.clearInterval(timer);
   }, [applyResult, statusProbe, view.runtimeState]);
-
-  useEffect(() => {
-    if (view.runtimeState !== "ready") {
-      compatibilityChecked.current = false;
-      return undefined;
-    }
-    if (compatibilityChecked.current || (compatibilityProbe === verifyPackagedCoreApiCompatibility && !hasTauriRuntime())) {
-      return undefined;
-    }
-    compatibilityChecked.current = true;
-    let active = true;
-    void compatibilityProbe()
-      .then((result) => {
-        const incompatible = localServiceViewFromCompatibility(result);
-        if (!active || !incompatible) return;
-        setView(incompatible);
-        announce("Local analytical service contract is incompatible. Repair or reinstall the matching package.");
-      })
-      .catch(() => {
-        if (!active) return;
-        setView(secretSafeServiceFailure(undefined));
-        announce("Local service contract check failed. Local shell input was retained.");
-      });
-    return () => { active = false; };
-  }, [announce, compatibilityProbe, view.runtimeState]);
 
   const cancel = useCallback(async () => {
     activeProbe.current?.abort();

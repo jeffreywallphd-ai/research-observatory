@@ -53,16 +53,19 @@ in memory and rejects any byte drift. Generation uses the frozen repository
 Python environment and does not download code or schemas.
 
 The generated client depends only on a small `CoreApiTransport` port. Local
-desktop production supplies a Tauri transport. Native code selects the owned
-loopback endpoint, attaches the private launch credential and a fresh trace ID,
-allows only generated method/path shapes, bounds response bytes, strips all but
-safe headers, and returns no credential or endpoint to React. A hosted adapter
-may later implement the same transport port with its approved identity system.
+desktop production consumes the same route and response contract through its
+native Tauri boundary. Native code selects the owned loopback endpoint, attaches
+the private launch credential and a fresh trace ID, allows only generated
+method/path shapes, bounds response bytes, strips all but safe headers, and
+returns no credential or endpoint to React. A hosted adapter may later implement
+the transport port with its approved identity system.
 
 API compatibility is explicit SemVer. This client is `1.0.0`; Core declares its
 API version and an inclusive-minimum/exclusive-maximum supported client range.
-The desktop fails closed to the existing recovery surface when service identity,
-schema identity, major version, or range is incompatible. RFC 9457 problem
+The native supervisor validates `/runtime/version` before publishing readiness,
+so the desktop fails closed to the existing functional recovery surface when
+service identity, schema identity, major version, or range is incompatible.
+RFC 9457 problem
 details cross the boundary only after exact decoding and preserve one opaque
 trace ID plus safe remediation.
 
