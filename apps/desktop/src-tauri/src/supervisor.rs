@@ -288,17 +288,24 @@ impl RuntimeSupervisor {
                     .inner
                     .lock()
                     .expect("runtime supervisor mutex poisoned");
-                inner.launching = false;
-                self.shared.lifecycle.notify_all();
                 if inner.attempt != attempt || inner.state != RuntimeState::Starting {
-                    let snapshot = inner.snapshot();
                     drop(inner);
                     stop_running_process(&mut process);
+                    let mut inner = self
+                        .shared
+                        .inner
+                        .lock()
+                        .expect("runtime supervisor mutex poisoned");
+                    inner.launching = false;
+                    self.shared.lifecycle.notify_all();
+                    let snapshot = inner.snapshot();
                     return snapshot;
                 }
                 inner.process = Some(process);
                 inner.transition(RuntimeState::Ready, None, "supervisor");
                 inner.record("RO-CORE-READY", "supervisor");
+                inner.launching = false;
+                self.shared.lifecycle.notify_all();
                 inner.snapshot()
             }
             Err((state, code)) => {
@@ -456,25 +463,34 @@ fn launch(
     let stderr_inner = Arc::downgrade(&shared);
     thread::spawn(move || drain_log(BufReader::new(stderr), stderr_inner, "stderr"));
 
-    let handshake_deadline = Instant::now() + START_TIMEOUT;
-    let bytes = loop {
-        ensure_attempt_active(&shared, attempt)?;
-        let remaining = handshake_deadline.saturating_duration_since(Instant::now());
-        if remaining.is_zero() {
-            return Err((RuntimeState::Crashed, "RO-CORE-START-TIMEOUT"));
-        }
-        match handshake_rx.recv_timeout(remaining.min(Duration::from_millis(50))) {
-            Ok(result) => {
-                break result.map_err(|_| (RuntimeState::Crashed, "RO-CORE-HANDSHAKE-MISSING"))?;
+    let startup = (|| {
+        let handshake_deadline = Instant::now() + START_TIMEOUT;
+        let bytes = loop {
+            ensure_attempt_active(&shared, attempt)?;
+            let remaining = handshake_deadline.saturating_duration_since(Instant::now());
+            if remaining.is_zero() {
+                return Err((RuntimeState::Crashed, "RO-CORE-START-TIMEOUT"));
             }
-            Err(mpsc::RecvTimeoutError::Timeout) => continue,
-            Err(mpsc::RecvTimeoutError::Disconnected) => {
-                return Err((RuntimeState::Crashed, "RO-CORE-HANDSHAKE-MISSING"));
+            match handshake_rx.recv_timeout(remaining.min(Duration::from_millis(50))) {
+                Ok(result) => {
+                    break result
+                        .map_err(|_| (RuntimeState::Crashed, "RO-CORE-HANDSHAKE-MISSING"))?;
+                }
+                Err(mpsc::RecvTimeoutError::Timeout) => continue,
+                Err(mpsc::RecvTimeoutError::Disconnected) => {
+                    return Err((RuntimeState::Crashed, "RO-CORE-HANDSHAKE-MISSING"));
+                }
             }
-        }
-    };
-    let handshake = validate_handshake(&bytes, pid)?;
-    wait_until_ready(&handshake, &mut child, &shared, attempt)?;
+        };
+        let handshake = validate_handshake(&bytes, pid)?;
+        wait_until_ready(&handshake, &mut child, &shared, attempt)?;
+        ensure_attempt_active(&shared, attempt)
+    })();
+    if let Err(error) = startup {
+        containment.terminate();
+        let _ = child.wait();
+        return Err(error);
+    }
     Ok(RunningProcess {
         child,
         stdin,

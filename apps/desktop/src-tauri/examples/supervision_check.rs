@@ -29,6 +29,7 @@ struct Report {
     forced_tree_cleanup: bool,
     job_close_tree_cleanup: bool,
     stop_retry_serialized: bool,
+    delayed_readiness_cleanup: bool,
 }
 
 static FIXTURE_SEQUENCE: AtomicU64 = AtomicU64::new(1);
@@ -97,15 +98,31 @@ fn fixture_config(source: &Path, mode: &str) -> (PathBuf, SupervisorConfig) {
 }
 
 fn wait_for_child_pid(root: &Path) -> u32 {
-    let path = root.join("fixture-child.pid");
+    wait_for_pid(root.join("fixture-child.pid"), "fixture descendant")
+}
+
+fn wait_for_root_pid(root: &Path) -> u32 {
+    wait_for_pid(root.join("fixture-root.pid"), "fixture root")
+}
+
+fn wait_for_pid(path: PathBuf, label: &str) -> u32 {
     let deadline = Instant::now() + Duration::from_secs(3);
     loop {
         if let Ok(value) = fs::read_to_string(&path) {
-            return value.trim().parse().expect("fixture descendant PID");
+            return value.trim().parse().expect("fixture PID");
         }
+        assert!(Instant::now() < deadline, "{label} did not start");
+        thread::sleep(Duration::from_millis(10));
+    }
+}
+
+fn wait_for_marker(root: &Path, name: &str) {
+    let path = root.join(name);
+    let deadline = Instant::now() + Duration::from_secs(3);
+    while !path.is_file() {
         assert!(
             Instant::now() < deadline,
-            "fixture descendant did not start"
+            "fixture marker {name} was not written"
         );
         thread::sleep(Duration::from_millis(10));
     }
@@ -324,6 +341,36 @@ fn main() {
     );
     remove_fixture(command_root);
 
+    let (delayed_root, delayed_config) = fixture_config(&fixture_executable, "child-delayed-ready");
+    let delayed = RuntimeSupervisor::new(Ok(delayed_config));
+    let delayed_start = delayed.clone();
+    let delayed_thread = thread::spawn(move || delayed_start.start());
+    let delayed_root_pid = wait_for_root_pid(&delayed_root);
+    let delayed_child_pid = wait_for_child_pid(&delayed_root);
+    wait_for_marker(&delayed_root, "fixture-ready-requested.flag");
+    let delayed_stop = delayed.stop();
+    require_state(
+        &delayed_stop,
+        RuntimeState::Stopped,
+        "delayed readiness cancellation",
+    );
+    assert!(delayed_stop.retry_available);
+    assert!(
+        !process_is_alive(delayed_root_pid) && !process_is_alive(delayed_child_pid),
+        "delayed readiness stop returned while its process tree was alive"
+    );
+    require_state(
+        &delayed_thread.join().expect("delayed start thread"),
+        RuntimeState::Stopped,
+        "delayed readiness start result",
+    );
+    require_process_tree_stopped(
+        delayed_root_pid,
+        delayed_child_pid,
+        "delayed readiness cancellation",
+    );
+    remove_fixture(delayed_root);
+
     let (graceful_tree_root, graceful_tree_config) =
         fixture_config(&fixture_executable, "child-ready");
     let graceful_tree = RuntimeSupervisor::new(Ok(graceful_tree_config));
@@ -404,6 +451,7 @@ fn main() {
             forced_tree_cleanup: true,
             job_close_tree_cleanup: true,
             stop_retry_serialized: true,
+            delayed_readiness_cleanup: true,
         })
         .expect("serialize supervision report")
     );

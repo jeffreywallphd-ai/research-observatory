@@ -20,6 +20,7 @@ mod windows_fixture {
             }
         }
         assert_eq!(argument.as_deref(), Some("--supervised"));
+        fs::write("fixture-root.pid", std::process::id().to_string()).expect("write root PID");
         let mode = fs::read_to_string("fixture-mode.txt").expect("fixture mode");
         let mode = mode.trim();
 
@@ -47,13 +48,14 @@ mod windows_fixture {
         }
 
         let compatible = mode != "never-ready";
-        thread::spawn(move || serve(listener, compatible));
+        let delayed = mode == "child-delayed-ready";
+        thread::spawn(move || serve(listener, compatible, delayed));
         let mut line = String::new();
         std::io::stdin()
             .lock()
             .read_line(&mut line)
             .expect("read supervisor control");
-        if mode == "child-hung" {
+        if matches!(mode, "child-hung" | "child-delayed-ready") {
             loop {
                 thread::sleep(Duration::from_secs(60));
             }
@@ -92,13 +94,18 @@ mod windows_fixture {
         );
     }
 
-    fn serve(listener: TcpListener, compatible: bool) {
+    fn serve(listener: TcpListener, compatible: bool, delayed: bool) {
         for connection in listener.incoming() {
             let Ok(mut stream) = connection else {
                 return;
             };
             let mut request = [0_u8; 1024];
             let _ = stream.read(&mut request);
+            if delayed {
+                fs::write("fixture-ready-requested.flag", b"ready")
+                    .expect("write readiness marker");
+                thread::sleep(Duration::from_millis(750));
+            }
             let version = if compatible { "0.1.0" } else { "99.0.0" };
             let body = format!(
                 concat!(
