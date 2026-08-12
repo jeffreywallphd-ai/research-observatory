@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 2ce8000b75424a4df452c07d620a3a2bfd53266bda772c010647ad960b88501c
+source_sha256: 878d1add265861447e1b2aa693ab9099d198eacf7545fff8783ee31638449928
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -48,10 +48,9 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 290 |
-| `READY` | 1 |
-| `REVIEW` | 1 |
-| `DONE` | 28 |
+| `NOT_STARTED` | 289 |
+| `READY` | 2 |
+| `DONE` | 29 |
 | `DEFERRED` | 36 |
 
 ## Capability progress
@@ -59,7 +58,7 @@ manual_edit: prohibited
 | Capability | Campaign | Completion | Approved slices | Done tasks | Active task |
 |---|---|---|---:|---:|---|
 | `CAP-00` Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
-| `CAP-01` Windows-first desktop shell and supervised local runtime | `ACTIVE` | `IN_PROGRESS` | 3/5 | 9/15 | `CAP-01.S04.T01` |
+| `CAP-01` Windows-first desktop shell and supervised local runtime | `ACTIVE` | `IN_PROGRESS` | 3/5 | 10/15 | - |
 | `CAP-02` Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 0/5 | 0/16 | - |
 | `CAP-03` Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 0/20 | - |
 | `CAP-04` Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
@@ -98,6 +97,4 @@ manual_edit: prohibited
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-01.S04.T01` Implement loopback authentication and endpoint binding controls | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
+No task is currently active.
