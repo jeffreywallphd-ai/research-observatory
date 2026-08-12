@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: cea544427a4752460c480bb532a05c5950ba992ec47e8acbe6c872e791aed24c
+source_sha256: 2c999960907dcd9437c6480312a1ecdafc9e6f62c032f2b9806e8e4155754cc5
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1311,7 +1311,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S04.T02 - Generate and consume versioned API contracts
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1335,6 +1335,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile service
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-01.S04.T02.json` at `072e1d66c6860ad142922719573ccc69ab0f5054`
 
 #### - [ ] CAP-01.S04.T03 - Build desktop diagnostics and support-bundle collection
 

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T02",
+  "commit": "072e1d66c6860ad142922719573ccc69ab0f5054",
+  "baseCommit": "f578757f8f7aa5b5684f44d33110cce120d680f1",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "docs/adr/ADR-0010-generate-a-checked-in-typescript-client-from-core-openapi.md",
+    "docs/adr/ADR-0011-use-bounded-sse-replay-for-local-operation-progress.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/core-api/runtime-handshake.schema.json",
+    "packages/contracts/package.json",
+    "packages/contracts/tsconfig.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pnpm-lock.yaml",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/modules.py",
+    "services/core-api/src/research_observatory_core/operations.py",
+    "services/core-api/src/research_observatory_core/transport.py",
+    "tests/desktop/test_core_sidecar_performance_check.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/service/test_core_api.py",
+    "tools/core_api_contract.py",
+    "tools/core_sidecar_performance_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check; .venv\\Scripts\\python.exe -m unittest tests.service.test_core_api; .venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Deterministic OpenAPI/client regeneration passed; all 15 focused service contract, trace, RFC 9457, pagination, status, cancellation, idempotency, ETag, SSE replay, authentication, and real-lifecycle tests passed; Ruff, formatting, and mypy passed all 75 governed Python files."
+    },
+    {
+      "command": "pnpm --dir packages/contracts run verify",
+      "exitCode": 0,
+      "result": "The checked-in client typechecked and all six strict decoder, compatibility, problem-detail, pagination, operation-cancellation, and event-stream tests passed under pinned Node 24.19.0 with the frozen offline workspace lock."
+    },
+    {
+      "command": "cargo fmt --check; cargo test --offline --manifest-path apps/desktop/src-tauri/Cargo.toml --lib; cargo clippy --offline --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --examples -- -D warnings; core_sidecar_build.py; supervision_check.exe <clean-candidate-sidecar> <fixture>",
+      "exitCode": 0,
+      "result": "Formatting and strict Clippy passed and all nine native unit tests passed. The clean candidate rebuilt a 644-file, 31,592,071-byte sidecar. The real frozen process passed authenticated version and problem requests, unsafe-path denial, cancellation/restart/failure classification, serialized teardown, complete Job cleanup, and an incompatible API-version fixture that reached the product's existing functional Incompatible recovery state. Report SHA-256 8a4896af73ec527de00690a0e9248e135feba0af6338a2142df9e13affc25ecd; entrypoint SHA-256 4630769575684dc58ec362d74affa140189406afae814b51aa02ac85043aa634."
+    },
+    {
+      "command": "ui_change_gate --base f578757 --head 072e1d6; adr_check --base f578757 --head 072e1d6; architecture_check; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "UI gate passed with an empty governed UI implementation set and no evidence contract, confirming that the reference site remains reference-only. Both accepted ADRs, architecture, backlog invariants, and generated planning views passed. The OpenAPI SHA-256 is c895c0855d1b2358947d6f2df6b7f018eaaada1a4091eaf3e539028956d2b98f and generated TypeScript SHA-256 is 269e56235293dd3130fa0b65fa32982b10bc95b995b4e23db96f158d1754788b."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "FastAPI deterministically emits the canonical sorted OpenAPI 3.1 document and the checked-in transport-neutral TypeScript client records and checks its exact OpenAPI SHA-256; clean regeneration and compilation detect drift.",
+        "Before native startup publishes Ready, the supervised desktop requests and strictly decodes /runtime/version using the process-private credential and verifies service, schema, build, API major, and inclusive-minimum/exclusive-maximum compatibility. An independently exercised incompatible fixture is classified RO-CORE-API-INCOMPATIBLE and flows to the existing clear repair/reinstall recovery surface.",
+        "RFC 9457 errors retain only safe detail plus one correlated opaque trace ID across the service/native boundary; the real packaged process preserved the same trace while denying an external URL-shaped request."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused expected-path coverage spans the generated client, real authenticated frozen service, operation paging/status, optimistic ETag cancellation, idempotent replay/conflict, bounded ordered SSE replay, and compatible startup.",
+        "Material boundary coverage rejects schema drift, malformed and over-broad response shapes, unsafe native paths and headers, stale or conflicting cancellation, replay gaps, mismatched problem traces, incompatible API versions, and secret-bearing renderer envelopes.",
+        "Risk-based task verification selected contract generation, service contract tests, the portable client package, native transport/unit/lifecycle checks, exact packaging, Python quality, ADR, architecture, backlog, and UI-reference separation. Full desktop and service profiles are deferred to S04 integrated review as required by repository policy."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0010 governs deterministic OpenAPI/client generation, SemVer compatibility, and private native transport; ADR-0011 governs bounded SSE replay and explicit gap recovery. Both are accepted from the immutable approved CAP-01 packet and indexed.",
+        "The handshake schema and canonical capability list now advertise operations.read, operations.cancel, operations.events, runtime.contract, and runtime.status consistently across Python, native startup, package performance fixtures, and documentation.",
+        "No migration or user-facing reference change was required. The final task range contains no governed React/UI implementation file, and the product continues to render only functional capability-owned UI rather than any UI-reference page or fixture."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Independent review should adversarially verify deterministic OpenAPI/client drift detection, strict client decoders and compatibility math, native request allowlisting/credential secrecy/trace correlation, paging and ETag/idempotency/SSE boundaries, the real packaged sidecar plus incompatible-version fixture, exact evidence scope, and reference-only UI separation. Full profiles remain reserved for S04 slice review."
+  }
+}
