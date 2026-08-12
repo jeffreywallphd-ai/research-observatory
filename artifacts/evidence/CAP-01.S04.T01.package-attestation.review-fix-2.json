@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "core-sidecar-package-attestation",
+  "taskId": "CAP-01.S04.T01",
+  "sourceCommit": "55847372522cd877e2e0d45f20aa3861c760d972",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T01.package-attestation.review-fix.json",
+    "reason": "Independent security review found the raw capability token retained in framework middleware metadata. This replacement binds the canonical package rebuilt after digest-only retained configuration and mutable startup-record clearing."
+  },
+  "build": {
+    "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-package",
+    "profile": "windows-x64",
+    "artifactRoot": "artifacts/tmp/core-sidecar-package/dist/research-observatory-core-x86_64-pc-windows-msvc",
+    "cleanTrackedSource": true,
+    "fileCount": 644,
+    "totalBytes": 31575639,
+    "packageReportSha256": "d6fb386c86897ec1c2192cd249d17d64ad63cf97eb6872292f768d3dddbdbac8",
+    "artifactManifestSha256": "e13da8b2812c6c2ad8ca75ad7164537e9bf9a6d071f948d2ad3d26e134a060f0",
+    "entrypointSha256": "8023e4cbbfa15dfa3683affcfc3717f41d8d90484868579d24859739ebd7501f"
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 12 service tests passed. Direct assertions prove the raw bearer is absent from Starlette registration metadata and the constructed middleware stack before, during, and after lifespan; only the SHA-256 digest is retained. Valid and invalid mutable startup records are cleared in place."
+    },
+    {
+      "command": "cargo clippy/test plus three consecutive supervision_check runs against the rebuilt package",
+      "exitCode": 0,
+      "result": "Six native tests and three complete real-package lifecycle reports passed. The supervisor snapshots every concrete Job process handle before termination and waits for all captured root/descendant handles, eliminating the timing-sensitive return during kernel teardown."
+    }
+  ]
+}
