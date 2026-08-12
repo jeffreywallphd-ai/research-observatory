@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T03",
+  "commit": "88b311e06e1ac09e33b725d97ff39e938f2379c3",
+  "baseCommit": "7c75380b1163b6b6bb2e2e35ffde17fd916c4544",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    "Cargo.lock",
+    "apps/desktop/README.md",
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src-tauri/src/support_bundle.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/DiagnosticsWorkspace.test.tsx",
+    "apps/desktop/src/app/DiagnosticsWorkspace.tsx",
+    "artifacts/evidence/ui-change/CAP-01.S04.T03.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/support-bundle/support-bundle.schema.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/contracts/test_support_bundle_contract.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "cargo test --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib; cargo clippy --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --examples -- -D warnings; cargo build --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --examples; target/debug/examples/supervision_check.exe <canonical-sidecar> <supervisor-fixture>",
+      "exitCode": 0,
+      "result": "All 13 native units passed, including single-use identity, hardlink non-following, redirected-directory partial preview plus denied export, and exact-byte installation. Strict Clippy/format and example builds passed. The real frozen Core lifecycle returned every flag true, including supportBundleTraceLinked, supportBundleRedacted, and supportBundleExactExport, together with authenticated request/problem handling, cancellation/restart, and complete Job cleanup."
+    },
+    {
+      "command": "pnpm --dir apps/desktop run verify; python tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-01.S04.T03-desktop-app.json",
+      "exitCode": 0,
+      "result": "Desktop lint, strict typecheck, all 37 renderer tests, product/reference builds, and the nine-command compiled-product aggregate passed. Chromium proved the no-host recovery path and the successful functional diagnostics preview/trace/export path, exact redacted JSON inspection, responsive semantics, zero requests, and zero reference-only routes. Report SHA-256 c7296014a113ce562f1bdd0aa2995fbfefc8d47810a243a692a4091d0f0fdd13."
+    },
+    {
+      "command": "python -m unittest tests.desktop.test_desktop_app_check tests.contracts.test_support_bundle_contract; ruff check/format --check; mypy --strict; python tools/architecture_check.py --repo .; python tools/build_manifest.py --repo . --output artifacts/tmp/CAP-01.S04.T03-build-manifest-clean.json",
+      "exitCode": 0,
+      "result": "All 11 focused Python verifier/schema tests passed; Ruff and strict MyPy passed for changed Python. Architecture passed 13 areas. The clean build manifest included the new exact repository schema inventory and emitted identity 0.1.0+g88b311e with report SHA-256 85809103e8279662042fdb4e2d1e5f585cd43a8f84af52b95f7c5813d5f4270c."
+    },
+    {
+      "command": "python tools/ui_change_gate.py --repo . --base 7c75380b1163b6b6bb2e2e35ffde17fd916c4544 --head 88b311e06e1ac09e33b725d97ff39e938f2379c3; python tools/taskctl.py --file planning/backlog.yaml validate; python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The UI gate bound exactly three governed functional product files to approved reference RO-UI-ACADEMIC-MINIMAL-1.3 and UI evidence SHA-256 2837e386b17591509749cc2efd6118e9e96184e814c3e70223f69e02e8bffe36. Backlog invariants and generated views passed. The reference remains a design/conformance input only; no reference page, mock research content, or future-capability route entered the product."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The native host constructs a strict versioned JSON document capped at 65,536 bytes with at most 32 code-only diagnostics. It exposes component/contract versions, runtime state, bounded resource use, storage availability, and trace IDs while excluding nine research-content, credential, environment, log, process, and path categories by construction.",
+        "The user reviews the complete redacted JSON, its byte count and SHA-256 before export. A cryptographically random exact preview identity authorizes one export of the reviewed bytes only; mismatched, stale, redirected, hardlinked, or pre-existing destinations fail closed.",
+        "A real authenticated desktop-to-Core request records its canonical response trace ID in the supervisor diagnostic ring, and the real frozen-process support preview retained that same trace without the bearer token, raw response, endpoint, process ID, or absolute storage path."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused native tests cover expected preview/export, malformed and stale identities, single use, destination hardlinks, Windows junction redirects, and storage-unavailable partial collection.",
+        "Focused renderer tests deny extra fields, oversize envelopes, malformed trace IDs, altered exclusions, invalid export identity/path/hash, and accept the explicit storage-unavailable state.",
+        "Compiled Chromium exercises both unavailable-host recovery and successful preview/export with accessible navigation, one H1, responsive layout, trace visibility, exact JSON inspection, no unexpected network request, and no reference-fixture content."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The strict Draft 2020-12 support-bundle schema, exact build-input schema inventory, native/renderer contracts, tests, verification tool, and desktop/contracts documentation were updated together. Schema SHA-256 is 3ccc3447be7b7c5385d40187e848940750700c22983574ac066319e9ddea09ea.",
+        "The diagnostics workspace is capability-owned functional code using existing approved shell/tokens/components. Documentation explicitly prohibits using the UI-reference HTML or illustrative content as the production or development application.",
+        "Risk analysis selected native boundary/security tests, the real frozen-process lifecycle, strict contract/type/lint checks, the affected compiled-product browser aggregate, architecture, UI lineage, and manifest inventory. Complete desktop, service, and security-local profiles are deliberately deferred to the required S04 integrated slice review because this task does not change Core service behavior, Python dependencies, or the security scanner."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "agent-review",
+    "note": "Reviewer should independently attack support-document redaction/completeness, trace correlation, partial collection, preview/export identity, write confinement and races, strict renderer decoding, functional Chromium behavior, approved-reference lineage, exact evidence scope, and clean candidate provenance. Full slice profiles remain deferred until all S04 tasks are DONE."
+  }
+}

@@ -2788,11 +2788,16 @@ capabilities:
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-12T16:04:00+00:00'
+      updated_at: '2026-08-12T16:35:31+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S04.T03.json
+        sha256: e110fc008a8a6eed66e2931d9271be29d0764ea769fcc6ffb217f0bfaa939030
+        commit: 88b311e06e1ac09e33b725d97ff39e938f2379c3
+        recorded_at: '2026-08-12T16:35:31+00:00'
       review:
         reviewer: null
         result: null
@@ -2803,7 +2808,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-12T16:04:00+00:00'
         expires_at: '2026-08-13T00:04:00+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
