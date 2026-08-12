@@ -18,6 +18,37 @@ const START_TIMEOUT: Duration = Duration::from_secs(10);
 const STOP_TIMEOUT: Duration = Duration::from_secs(5);
 const HEALTH_RETRY: Duration = Duration::from_millis(50);
 const MAX_DIAGNOSTICS: usize = 64;
+const CAPABILITY_TOKEN_BYTES: usize = 32;
+
+struct CapabilityToken([u8; CAPABILITY_TOKEN_BYTES]);
+
+impl CapabilityToken {
+    fn generate() -> Result<Self, &'static str> {
+        let mut bytes = [0_u8; CAPABILITY_TOKEN_BYTES];
+        fill_secure_random(&mut bytes)?;
+        Ok(Self(bytes))
+    }
+
+    fn append_hex(&self, target: &mut Vec<u8>) {
+        const HEX: &[u8; 16] = b"0123456789abcdef";
+        for value in self.0 {
+            target.push(HEX[usize::from(value >> 4)]);
+            target.push(HEX[usize::from(value & 0x0f)]);
+        }
+    }
+}
+
+impl Drop for CapabilityToken {
+    fn drop(&mut self) {
+        zeroize_bytes(&mut self.0);
+    }
+}
+
+fn zeroize_bytes(target: &mut [u8]) {
+    for value in target {
+        unsafe { std::ptr::write_volatile(value, 0) };
+    }
+}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -117,6 +148,7 @@ struct RunningProcess {
     child: Child,
     stdin: ChildStdin,
     containment: ProcessTreeContainment,
+    _capability_token: CapabilityToken,
 }
 
 struct SupervisorInner {
@@ -407,6 +439,8 @@ fn launch(
     shared: Arc<SupervisorShared>,
     attempt: u8,
 ) -> Result<RunningProcess, (RuntimeState, &'static str)> {
+    let capability_token =
+        CapabilityToken::generate().map_err(|code| (RuntimeState::Crashed, code))?;
     let mut command = Command::new(&config.executable);
     command
         .arg("--supervised")
@@ -429,6 +463,24 @@ fn launch(
     let mut child = command
         .spawn()
         .map_err(|_| (RuntimeState::Crashed, "RO-CORE-SPAWN-FAILED"))?;
+    let mut stdin = child
+        .stdin
+        .take()
+        .ok_or((RuntimeState::Crashed, "RO-CORE-CONTROL-PIPE-FAILED"))?;
+    let mut authentication = Vec::with_capacity(70);
+    authentication.extend_from_slice(b"auth ");
+    capability_token.append_hex(&mut authentication);
+    authentication.push(b'\n');
+    let authentication_written = stdin
+        .write_all(&authentication)
+        .and_then(|_| stdin.flush())
+        .is_ok();
+    zeroize_bytes(&mut authentication);
+    if !authentication_written {
+        let _ = child.kill();
+        let _ = child.wait();
+        return Err((RuntimeState::Crashed, "RO-CORE-AUTH-PIPE-FAILED"));
+    }
     let containment = ProcessTreeContainment::attach_and_resume(&child).map_err(|code| {
         let _ = child.kill();
         let _ = child.wait();
@@ -443,11 +495,6 @@ fn launch(
         .stderr
         .take()
         .ok_or((RuntimeState::Crashed, "RO-CORE-LOG-PIPE-FAILED"))?;
-    let stdin = child
-        .stdin
-        .take()
-        .ok_or((RuntimeState::Crashed, "RO-CORE-CONTROL-PIPE-FAILED"))?;
-
     let (handshake_tx, handshake_rx) = mpsc::sync_channel(1);
     let stdout_inner = Arc::downgrade(&shared);
     thread::spawn(move || {
@@ -483,7 +530,7 @@ fn launch(
             }
         };
         let handshake = validate_handshake(&bytes, pid)?;
-        wait_until_ready(&handshake, &mut child, &shared, attempt)?;
+        wait_until_ready(&handshake, &capability_token, &mut child, &shared, attempt)?;
         ensure_attempt_active(&shared, attempt)
     })();
     if let Err(error) = startup {
@@ -495,6 +542,7 @@ fn launch(
         child,
         stdin,
         containment,
+        _capability_token: capability_token,
     })
 }
 
@@ -545,6 +593,7 @@ fn ensure_attempt_active(
 
 fn wait_until_ready(
     handshake: &RuntimeHandshake,
+    capability_token: &CapabilityToken,
     child: &mut Child,
     shared: &Arc<SupervisorShared>,
     attempt: u8,
@@ -560,8 +609,16 @@ fn wait_until_ready(
         }
         if let Ok(mut stream) = TcpStream::connect_timeout(&address, Duration::from_millis(250)) {
             let _ = stream.set_read_timeout(Some(Duration::from_millis(500)));
-            let request = b"GET /readyz HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n";
-            if stream.write_all(request).is_ok() {
+            let mut request = format!(
+                "GET /readyz HTTP/1.1\r\nHost: 127.0.0.1:{}\r\nAuthorization: Bearer ",
+                handshake.port,
+            )
+            .into_bytes();
+            capability_token.append_hex(&mut request);
+            request.extend_from_slice(b"\r\nConnection: close\r\n\r\n");
+            let written = stream.write_all(&request).is_ok();
+            request.fill(0);
+            if written {
                 let mut response = Vec::new();
                 if stream.take(65_537).read_to_end(&mut response).is_ok()
                     && response.len() <= 65_536
@@ -574,6 +631,32 @@ fn wait_until_ready(
         thread::sleep(HEALTH_RETRY);
     }
     Err((RuntimeState::Crashed, "RO-CORE-START-TIMEOUT"))
+}
+
+#[cfg(windows)]
+fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
+    use windows_sys::Win32::Security::Cryptography::{
+        BCRYPT_USE_SYSTEM_PREFERRED_RNG, BCryptGenRandom,
+    };
+    let status = unsafe {
+        BCryptGenRandom(
+            std::ptr::null_mut(),
+            target.as_mut_ptr(),
+            target.len() as u32,
+            BCRYPT_USE_SYSTEM_PREFERRED_RNG,
+        )
+    };
+    if status < 0 {
+        return Err("RO-CORE-AUTH-RANDOM-FAILED");
+    }
+    Ok(())
+}
+
+#[cfg(not(windows))]
+fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
+    std::fs::File::open("/dev/urandom")
+        .and_then(|mut source| source.read_exact(target))
+        .map_err(|_| "RO-CORE-AUTH-RANDOM-FAILED")
 }
 
 fn stop_running_process(process: &mut RunningProcess) {
@@ -727,8 +810,28 @@ impl ProcessTreeContainment {
     }
 
     fn terminate(&self) {
+        use std::mem::{size_of, zeroed};
+        use windows_sys::Win32::System::JobObjects::{
+            JOBOBJECT_BASIC_ACCOUNTING_INFORMATION, JobObjectBasicAccountingInformation,
+            QueryInformationJobObject,
+        };
         unsafe {
             windows_sys::Win32::System::JobObjects::TerminateJobObject(self.0, 1);
+            let deadline = Instant::now() + STOP_TIMEOUT;
+            loop {
+                let mut accounting: JOBOBJECT_BASIC_ACCOUNTING_INFORMATION = zeroed();
+                let queried = QueryInformationJobObject(
+                    self.0,
+                    JobObjectBasicAccountingInformation,
+                    (&raw mut accounting).cast(),
+                    size_of::<JOBOBJECT_BASIC_ACCOUNTING_INFORMATION>() as u32,
+                    std::ptr::null_mut(),
+                );
+                if queried == 0 || accounting.ActiveProcesses == 0 || Instant::now() >= deadline {
+                    break;
+                }
+                thread::sleep(Duration::from_millis(10));
+            }
         }
     }
 }
@@ -756,7 +859,9 @@ impl ProcessTreeContainment {
 
 #[cfg(test)]
 mod tests {
-    use super::{RuntimeState, RuntimeSupervisor, SupervisorInner, validate_handshake};
+    use super::{
+        CapabilityToken, RuntimeState, RuntimeSupervisor, SupervisorInner, validate_handshake,
+    };
     use std::collections::VecDeque;
 
     fn handshake(pid: u32) -> Vec<u8> {
@@ -791,6 +896,22 @@ mod tests {
         );
         assert!(validate_handshake(&extra, 42).is_err());
         assert!(validate_handshake(&vec![b'x'; 4097], 42).is_err());
+    }
+
+    #[test]
+    fn capability_tokens_are_256_bit_and_rotate() {
+        let first = CapabilityToken::generate().expect("system CSPRNG");
+        let second = CapabilityToken::generate().expect("system CSPRNG");
+        assert_eq!(first.0.len(), 32);
+        assert_ne!(first.0, second.0);
+        let mut encoded = Vec::new();
+        first.append_hex(&mut encoded);
+        assert_eq!(encoded.len(), 64);
+        assert!(
+            encoded
+                .iter()
+                .all(|value| value.is_ascii_digit() || (b'a'..=b'f').contains(value))
+        );
     }
 
     #[test]

@@ -20,7 +20,17 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
 
         self.assertEqual([], errors)
         self.assertEqual(
-            {"ADR-0001", "ADR-0002", "ADR-0003", "ADR-0004", "ADR-0005", "ADR-0006", "ADR-0007", "ADR-0008"},
+            {
+                "ADR-0001",
+                "ADR-0002",
+                "ADR-0003",
+                "ADR-0004",
+                "ADR-0005",
+                "ADR-0006",
+                "ADR-0007",
+                "ADR-0008",
+                "ADR-0009",
+            },
             set(records),
         )
         self.assertIn("CAP-00.S02.T03", records["ADR-0001"]["metadata"]["linked_tasks"])

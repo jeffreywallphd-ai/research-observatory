@@ -16,7 +16,9 @@ The service source is in `src/research_observatory_core`. It is a local-only
 FastAPI modular monolith with explicit health, readiness, version, safe
 configuration, registered-module, and capability projections. It binds only to
 a canonical numeric loopback address; port `0` delegates port selection to the
-operating system. The later supervision task owns the bounded startup handshake.
+operating system. The native host owns the bounded startup handshake and
+authenticated local transport. An unsupervised service instance has no launch
+credential and denies HTTP requests by design.
 
 Validate configuration without opening a socket:
 
@@ -54,13 +56,26 @@ and clean-VM release qualification remain owned by the approved `CAP-01.S05`
 slice.
 
 Under supervision, the desktop starts the executable with `--supervised`. Core
-binds an OS-assigned numeric-loopback port, emits one strict JSON handshake on
-stdout, and accepts exactly `shutdown\n` on inherited stdin for graceful
+first consumes exactly `auth <64 lowercase hexadecimal bytes>\n` from inherited
+stdin while the process is still suspended. The desktop generates this 256-bit
+credential with the operating-system CSPRNG for every launch and never places it
+in arguments, environment variables, files, the renderer, logs, or the handshake.
+Core retains only its SHA-256 digest. It then binds an OS-assigned IPv4
+numeric-loopback port, emits one strict JSON handshake on stdout, and accepts
+exactly `shutdown\n` on inherited stdin for graceful
 lifespan cleanup. Closing the control pipe also requests shutdown, while the
 Windows supervisor's Job Object remains the final process-tree containment
 boundary. The desktop creates Core suspended, attaches the Job Object before any
 Core code can run, and then resumes it; immediate helper descendants cannot escape
 the application's graceful, forced, or host-exit cleanup.
+
+Every HTTP request must arrive from a numeric loopback peer, carry the exact
+`127.0.0.1:<assigned-port>` Host authority, omit Origin, and present the current
+credential as a single Bearer value. Proxy forwarding is disabled. Missing,
+stale, duplicate, malformed, cross-origin, non-loopback, and authority-confused
+requests fail closed with fixed secret-safe codes. Rotation occurs on every
+start or retry, and the native credential buffer is zeroed when its supervised
+process is dropped.
 
 At slice and release qualification, benchmark the real packaged process with:
 

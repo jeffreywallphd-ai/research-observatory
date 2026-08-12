@@ -12,6 +12,7 @@ import math
 import os
 import platform
 import queue
+import secrets
 import shutil
 import statistics
 import subprocess
@@ -582,9 +583,16 @@ def working_set_bytes(pid: int) -> int:
         ctypes.windll.kernel32.CloseHandle(process)
 
 
-def readiness_ok(port: int) -> bool:
+def readiness_ok(port: int, capability_token: str) -> bool:
+    request = urllib.request.Request(
+        f"http://127.0.0.1:{port}/readyz",
+        headers={
+            "Authorization": f"Bearer {capability_token}",
+            "Host": f"127.0.0.1:{port}",
+        },
+    )
     try:
-        with urllib.request.urlopen(f"http://127.0.0.1:{port}/readyz", timeout=0.5) as response:
+        with urllib.request.urlopen(request, timeout=0.5) as response:
             value = json.loads(response.read(65_537).decode("utf-8"))
     except OSError, UnicodeError, json.JSONDecodeError:
         return False
@@ -623,13 +631,16 @@ def measure_once(executable: Path) -> tuple[float, float, float]:
     try:
         if process.stdout is None or process.stdin is None:
             raise ValueError("Core control pipes are unavailable")
+        capability_token = secrets.token_hex(32)
+        process.stdin.write(f"auth {capability_token}\n".encode("ascii"))
+        process.stdin.flush()
         handshake_line = read_line(process.stdout, 10)
         if not handshake_line or len(handshake_line) > 4_096 or not handshake_line.endswith(b"\n"):
             raise ValueError("Core benchmark received an invalid handshake record")
         handshake = json.loads(handshake_line.decode("utf-8"))
         port = validate_handshake(handshake, process.pid)
         deadline = time.perf_counter() + 10
-        while not readiness_ok(port):
+        while not readiness_ok(port, capability_token):
             if process.poll() is not None:
                 raise ValueError("Core exited before benchmark readiness")
             if time.perf_counter() >= deadline:

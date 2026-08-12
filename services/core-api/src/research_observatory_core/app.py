@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from fastapi import FastAPI, Request, Response, status
 
 from . import CORE_API_VERSION
+from .authentication import LocalAuthenticationMiddleware
 from .config import CoreSettings
 from .logging import emit_log_record
 from .models import (
@@ -31,7 +32,13 @@ class RuntimeContext:
     state: RuntimeState = RuntimeState.STARTING
 
 
-def create_app(*, settings: CoreSettings | None = None, modules: ModuleRegistry | None = None) -> FastAPI:
+def create_app(
+    *,
+    settings: CoreSettings | None = None,
+    modules: ModuleRegistry | None = None,
+    capability_token: str | None = None,
+    expected_authority: str | None = None,
+) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         resolved_settings = settings if settings is not None else CoreSettings()
@@ -57,6 +64,11 @@ def create_app(*, settings: CoreSettings | None = None, modules: ModuleRegistry 
         lifespan=lifespan,
         docs_url=None,
         redoc_url=None,
+    )
+    app.add_middleware(
+        LocalAuthenticationMiddleware,
+        token=capability_token,
+        authority=expected_authority,
     )
 
     def runtime(request: Request) -> RuntimeContext:
