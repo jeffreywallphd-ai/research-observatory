@@ -1,16 +1,11 @@
 {
   "schemaVersion": "1.0",
-  "documentType": "core-sidecar-performance-baseline",
-  "baselineSourceCommit": "eb782a75c1aec51db9baea1d7a60a2bedd31687e",
+  "documentType": "core-sidecar-performance-report",
   "profile": "windows-x64",
-  "provenance": {
-    "measurementToolCommit": "eb782a75c1aec51db9baea1d7a60a2bedd31687e",
-    "measurementToolPath": "tools/core_sidecar_performance_check.py",
-    "measurementToolSha256": "418b2a5ee9d80fc29f9dc708b4c55e7a05bef9a775df45b44649467eb27ae755",
-    "packageEvidencePath": "artifacts/evidence/CAP-01.S04.T01.package-attestation.review-fix.json",
-    "packageEvidenceSha256": "3429b9bdc04a18472732e5a7f2ee8088cc1d8435667943bbe00f46e549d2f733",
-    "packageReportSha256": "58d87509a682f61e921d4d2a2232f36f62edff82f3ed81c68aec9acae2479d95",
-    "artifactManifestSha256": "fc21da47369ce68ac8bcf92343f50ab5dd0fce23189a8427169183fe534fdb6e"
+  "comparisonAuthority": {
+    "description": "New authenticated package evaluated against unchanged S03 performance values before rebaseline",
+    "priorBaselineSourceCommit": "b9ad9c8a233da6c322b8aa612de4988b94a3cca0",
+    "priorBaselineSha256": "76c8eec8dbc22025bf573dfe98c2831e21e9867dba2ca2f5b071d080608515f4"
   },
   "hardware": {
     "operatingSystem": "Windows-11-10.0.26200-SP0",
@@ -18,6 +13,15 @@
     "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
     "logicalCpuCount": 20,
     "physicalMemoryBytes": 16984227840
+  },
+  "provenance": {
+    "measurementStateCommit": "eb782a75c1aec51db9baea1d7a60a2bedd31687e",
+    "measurementToolPath": "tools/core_sidecar_performance_check.py",
+    "measurementToolSha256": "418b2a5ee9d80fc29f9dc708b4c55e7a05bef9a775df45b44649467eb27ae755",
+    "packageEvidencePath": "artifacts/evidence/CAP-01.S04.T01.package-attestation.review-fix.json",
+    "packageEvidenceSha256": "3429b9bdc04a18472732e5a7f2ee8088cc1d8435667943bbe00f46e549d2f733",
+    "packageReportSha256": "58d87509a682f61e921d4d2a2232f36f62edff82f3ed81c68aec9acae2479d95",
+    "artifactManifestSha256": "fc21da47369ce68ac8bcf92343f50ab5dd0fce23189a8427169183fe534fdb6e"
   },
   "fixture": {
     "buildContractSha256": "086e37aab1040cd6dba342b35b65f9d43de8c25a90a0adccfc1abffd40cba176",
@@ -58,18 +62,36 @@
       "maximum": 62545920.0
     }
   },
+  "baseline": {
+    "path": "verification/baselines/core-sidecar-performance.json",
+    "sha256": "76c8eec8dbc22025bf573dfe98c2831e21e9867dba2ca2f5b071d080608515f4"
+  },
   "measurements": {
     "readinessMs": {
-      "baselineP50": 828.81,
-      "absoluteBudget": 3000.0
+      "observedStatistic": "p50",
+      "observed": 828.81,
+      "absoluteBudget": 3000.0,
+      "baseline": 822.675,
+      "maximumFutureValue": 987.21,
+      "passes": true
     },
     "shutdownMs": {
-      "baselineP95": 211.513,
-      "absoluteBudget": 5000.0
+      "observedStatistic": "p95",
+      "observed": 211.513,
+      "absoluteBudget": 5000.0,
+      "baseline": 239.032,
+      "maximumFutureValue": 286.838,
+      "passes": true
     },
     "idleWorkingSetBytes": {
-      "baselineP95": 62545920.0,
-      "absoluteBudget": 268435456
+      "observedStatistic": "p95",
+      "observed": 62545920.0,
+      "absoluteBudget": 268435456.0,
+      "baseline": 62324736.0,
+      "maximumFutureValue": 74789683.2,
+      "passes": true
     }
-  }
+  },
+  "errors": [],
+  "ok": true
 }
