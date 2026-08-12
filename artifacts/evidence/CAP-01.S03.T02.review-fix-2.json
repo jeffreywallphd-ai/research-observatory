@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S03.T02",
+  "commit": "b5c30e665e370465cc61d9c14539317121e506ff",
+  "baseCommit": "1f563fd519e6e284905152440c96fd23d4432e5a",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S03.T02.review-fix.json",
+    "reason": "The first remediation closed its three original review findings, but independent re-review showed that generic schema patterns still accepted componentVersion 99.99.99 and pythonVersion 3.14.999. This focused follow-up binds both fields, and all artifact identity fields, to the exact governed build contract."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S03.T02.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/sidecar-artifact.schema.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package -v",
+      "exitCode": 0,
+      "result": "All 6 focused packaging tests passed at exact clean commit b5c30e6 (one file-symlink case skipped because this Windows token cannot create file symlinks). The suite performs a real PyInstaller build and Pythonless-path launch and now changes only componentVersion to 99.99.99 and only pythonVersion to 3.14.999, requiring both manifests to fail exact build-contract comparison."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m ruff check tests/packaging/test_core_sidecar_package.py tools/core_sidecar_build.py && .venv\\Scripts\\python.exe -m ruff format --check tests/packaging/test_core_sidecar_package.py tools/core_sidecar_build.py",
+      "exitCode": 0,
+      "result": "Focused lint and format checks passed the two affected Python files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m mypy tools/core_sidecar_build.py tests/packaging/test_core_sidecar_package.py",
+      "exitCode": 0,
+      "result": "Strict type checking passed the verifier and its focused regression suite."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The artifact schema now requires componentVersion 0.1.0 and pythonVersion 3.14.6 exactly, rather than accepting generic semantic and 3.14 patch versions.",
+        "The verifier independently compares schema/document/component/version/target/Python/entrypoint and the complete emitted builder identity with the governed sidecar-build contract.",
+        "The prior real 644-file artifact, Pythonless execution, exact inventory, size, missing-dependency, and raw security evidence remain applicable; this incremental change only tightens manifest acceptance."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "A real focused package run proves the valid exact manifest remains accepted and both single-field version mutations are rejected.",
+        "The previously approved malformed identity, hardlink/guarded write, embedded-module, inventory mutation, and missing-dependency regressions remain in the same passing six-test module.",
+        "Risk-based verification selected the package module and changed-file lint/type checks because no service API, desktop application, dependency, UI, or runtime behavior changed."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The seven-file incremental range contains only immutable prior evidence, the recorded review transition/generated planning views, the exact schema, verifier, and regression test.",
+        "No build inputs, packaged modules, dependency locks, service behavior, desktop application, UI reference, or security policy changed.",
+        "The full service/desktop reports and artifact scan remain bound in the superseded manifest; this follow-up does not claim an unnecessary full-profile replay."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review must mutate only componentVersion and pythonVersion against an otherwise-valid real manifest, confirm exact contract comparison and seven-file scope, and verify the focused test/type/lint evidence without requiring unchanged full profiles to rerun."
+  }
+}
