@@ -60,8 +60,12 @@ describe("Academic Minimal design system", () => {
             state={state}
             title={`${state} title`}
             message={`${state} message`}
-            {...(state === "loading" ? { progress: { label: "Local progress", value: 40 } } : {})}
-            {...(state === "failed" ? { diagnosticReference: "RO-LOCAL-OPERATION-FAILED" } : {})}
+            {...(state === "loading"
+              ? {
+                  progress: { label: "Local progress", value: 40 },
+                  diagnosticReference: "RO-CORE-STARTING",
+                }
+              : {})}
           />
         ))}
       </main>,
@@ -70,7 +74,7 @@ describe("Academic Minimal design system", () => {
     for (const state of boundaryStates) expect(markup).toContain(`data-boundary-state="${state}"`);
     expect(markup).toContain("State: Partial results");
     expect(markup).toContain("Local progress: 40%");
-    expect(markup).toContain("RO-LOCAL-OPERATION-FAILED");
+    expect(markup).toContain("RO-CORE-STARTING");
   });
 
   it("maps injected service, network, and data boundaries to actionable retained states", () => {
@@ -133,16 +137,18 @@ describe("Academic Minimal design system", () => {
         <BoundaryStatePanel state={"invented" as never} title="Invalid" message="Invalid state" />,
       ),
     ).toThrow("unsupported boundary state");
-    expect(() =>
-      renderToStaticMarkup(
-        <BoundaryStatePanel
-          state="failed"
-          title="Failed"
-          message="Opaque only"
-          diagnosticReference="Bearer-secret-value"
-        />,
-      ),
-    ).toThrow("bounded Research Observatory identifier");
+    for (const diagnosticReference of ["RO-CORE", "RO-CORE-", "RO-core-starting", "Bearer-secret-value"]) {
+      expect(() =>
+        renderToStaticMarkup(
+          <BoundaryStatePanel
+            state="failed"
+            title="Failed"
+            message="Opaque only"
+            diagnosticReference={diagnosticReference}
+          />,
+        ),
+      ).toThrow("bounded Research Observatory identifier");
+    }
     expect(() =>
       renderToStaticMarkup(
         <BoundaryStatePanel
