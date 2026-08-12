@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "core-sidecar-package-attestation",
+  "taskId": "CAP-01.S04.T01",
+  "sourceCommit": "6daac0e8a4b7814844855307e7861573991158b3",
+  "branch": "codex/cap-01-desktop-shell",
+  "build": {
+    "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo .",
+    "profile": "windows-x64",
+    "cleanTrackedSource": true,
+    "fileCount": 644,
+    "totalBytes": 31575484,
+    "packageReportSha256": "c895253b14ad50004474a947d8a30d386302c7f688a0877c56ca8f646dfb0464",
+    "artifactManifestSha256": "a2b3cf652b3a382bd70b35732633fd059812843573828d0adb1c3b596589a761",
+    "entrypointSha256": "dc64e9c86aa558defad81dd717ee3259730dedd1452cbf53f261fc45216233ab"
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "Six package tests passed against a real PyInstaller build; one token-dependent symlink case was skipped on the current Windows account."
+    },
+    {
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example supervision_check --locked -- <packaged-sidecar> <fixture>",
+      "exitCode": 0,
+      "result": "Two consecutive real package and fixture lifecycle reports returned ok=true, including authenticated readiness, rotation through restarts, cancellation, serialized retry, and immediate root-plus-descendant cleanup."
+    }
+  ]
+}

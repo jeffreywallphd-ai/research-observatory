@@ -42,8 +42,8 @@ ARTIFACT_ROOT_PATH = ARTIFACT_PATH.parent
 PACKAGE_REPORT_PATH = Path("artifacts/tmp/core-sidecar-package.json")
 CONTRACT_PATH = Path("services/core-api/packaging/sidecar-build.json")
 TOOL_PATH = Path("tools/core_sidecar_performance_check.py")
-PACKAGE_EVIDENCE_PATH = Path("artifacts/evidence/CAP-01.S03.T02.review-fix-2.json")
-PACKAGE_EVIDENCE_SHA256 = "580ce8cc08fa19eff325f870095a640dc4f066653ec101b536082b033177367c"
+PACKAGE_EVIDENCE_PATH = Path("artifacts/evidence/CAP-01.S04.T01.package-attestation.json")
+PACKAGE_EVIDENCE_SHA256 = "09045a866140bc023dcf0a09dca548f45a7106ecd4b71817933eb4cbe49c28ae"
 
 
 class ProcessMemoryCountersEx(ctypes.Structure):
