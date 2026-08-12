@@ -52,3 +52,10 @@ artifact schema and packaging test fail if a runtime file is absent or changed.
 Tauri process supervision is introduced by `CAP-01.S03.T03`; installer signing
 and clean-VM release qualification remain owned by the approved `CAP-01.S05`
 slice.
+
+Under supervision, the desktop starts the executable with `--supervised`. Core
+binds an OS-assigned numeric-loopback port, emits one strict JSON handshake on
+stdout, and accepts exactly `shutdown\n` on inherited stdin for graceful
+lifespan cleanup. Closing the control pipe also requests shutdown, while the
+Windows supervisor's Job Object remains the final process-tree containment
+boundary.

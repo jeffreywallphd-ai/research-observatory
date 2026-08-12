@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/core-api/runtime-handshake.schema.json",
+  "title": "Research Observatory supervised Core runtime handshake",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocolVersion",
+    "buildId",
+    "pid",
+    "host",
+    "port",
+    "nonce",
+    "capabilities",
+    "databaseCompatibility",
+    "diagnosticCode"
+  ],
+  "properties": {
+    "protocolVersion": {"const": "1.0"},
+    "buildId": {"const": "0.1.0"},
+    "pid": {"type": "integer", "minimum": 1},
+    "host": {"const": "127.0.0.1"},
+    "port": {"type": "integer", "minimum": 1, "maximum": 65535},
+    "nonce": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+    "capabilities": {"const": ["runtime.status"]},
+    "databaseCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum", "maximumExclusive"],
+      "properties": {
+        "minimum": {"const": "0.1.0"},
+        "maximumExclusive": {"const": "0.2.0"}
+      }
+    },
+    "diagnosticCode": {"const": "RO-CORE-STARTING"}
+  }
+}

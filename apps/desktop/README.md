@@ -15,7 +15,15 @@ compatible with packaged sidecars.
 
 Use the repository-pinned Node, pnpm, Rust, and Python runtimes. The renderer is
 strict TypeScript and React 19; Tauri 2 is the only native host. Production and
-development make no network request and initially grant no privileged commands.
+development make no remote-network request. The renderer receives only the
+narrow, typed Core-supervision commands introduced by CAP-01.S03; it does not
+receive ambient shell, process, filesystem, or credential access.
+
+Launch from the repository root with `dev.cmd`; the batch launcher is also
+callable as `./dev.cmd` from Git Bash. It selects the checkout-local toolchains,
+and the app's `pnpm dev` script rebuilds the ignored development sidecar before
+starting Tauri. No system Python or machine-wide Node selection is used by the
+launched application.
 
 ```powershell
 pnpm --dir apps/desktop lint
@@ -53,12 +61,15 @@ home, skip navigation is first in the tab order, dialog focus is restored, and
 status changes use one polite live region. The shell contains no fabricated
 project, source, study, model, or workflow data.
 
-It also exposes a truthful local-service recovery boundary. Until CAP-01.S03
-packages the sidecar, retry performs a bounded local readiness check and
-reports the opaque `RO-CAP01-SERVICE-NOT-PACKAGED` reference. Copy and
-continue-locally actions are functional, and command input remains mounted
-across retry or failure. Raw exceptions, paths, URLs, credentials, and stack
-traces are never rendered or copied.
+It also exposes a truthful local-service supervision boundary. In the Tauri
+host, Core starts automatically, reaches readiness over numeric loopback, and is
+polled for crash state. Startup can be cancelled; crash retry is bounded; and
+the renderer receives only exact state, attempt, retry, and opaque diagnostic
+fields. Outside Tauri, the same product bundle reports the bounded
+`RO-CORE-SUPERVISOR-UNAVAILABLE` state instead of pretending that Core is
+running. Command input remains mounted across startup, failure, cancellation,
+and recovery. Raw exceptions, paths, URLs, credentials, process output, and
+stack traces are never rendered or copied.
 
 The legacy reference-activation modules are isolated behind
 `src/reference-main.tsx` for conformance tests and are not imported by the

@@ -19,7 +19,8 @@ describe("functional desktop application", () => {
     expect(html).toContain('data-trust-footer="true"');
     expect(html).toContain('data-local-service-boundary="true"');
     expect(html).toContain('data-boundary-state="recovery-required"');
-    expect(html).toContain("RO-CAP01-SERVICE-NOT-PACKAGED");
+    expect(html).toContain("RO-CORE-SUPERVISOR-UNAVAILABLE");
+    expect(html).not.toContain("does not yet package");
     expect(html).toContain("Copy diagnostic reference");
     expect(html).toContain("Only implemented capabilities appear here.");
     expect(html).not.toContain("prototype-index.html");

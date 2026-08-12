@@ -14,7 +14,8 @@
     "build": "node scripts/clean-dist.mjs && vite build --config vite.product.config.ts && node scripts/assemble-application.mjs && vite build && node scripts/assemble-reference.mjs",
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run build",
     "tauri": "tauri",
-    "dev": "tauri dev"
+    "sidecar:prepare": "python ../../tools/core_sidecar_build.py --repo ../.. --output artifacts/tmp/core-sidecar-package --report artifacts/tmp/core-sidecar-package.json",
+    "dev": "pnpm run sidecar:prepare && tauri dev"
   },
   "dependencies": {
     "@research-observatory/ui-components": "workspace:*",
