@@ -2483,7 +2483,7 @@ capabilities:
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T22:04:42+00:00'
-      updated_at: '2026-08-11T23:36:52+00:00'
+      updated_at: '2026-08-12T00:10:06+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Exact bb7a1b9 passed 19-command service and 25-command desktop profiles; 644-file/31.6 MB Pythonless-path
@@ -2495,6 +2495,11 @@ capabilities:
         sha256: 601358ff138d164003b21b931849880b6b0be0b3f96452df6760274dff82c949
         commit: bb7a1b9875fcc0b42e40460b350d7bf4dda11e0e
         recorded_at: '2026-08-11T23:25:44+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S03.T02.review-fix.json
+        sha256: 95f7e5be9b5a5687f670a7812cd26975e30c1fddb5e7a3a703228ac80063ba4a
+        commit: 1f563fd519e6e284905152440c96fd23d4432e5a
+        recorded_at: '2026-08-12T00:10:06+00:00'
       review:
         reviewer: agent:maxwell
         result: changes-requested
@@ -2506,7 +2511,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-11T23:36:52+00:00'
         expires_at: '2026-08-12T07:36:52+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
