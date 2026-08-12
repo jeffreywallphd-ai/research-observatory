@@ -54,6 +54,7 @@ export interface SupportBundlePreview {
   readonly outputDirectory: string;
   readonly byteLength: number;
   readonly sha256: string;
+  readonly documentJson: string;
   readonly bundle: SupportBundleDocument;
 }
 
@@ -126,10 +127,18 @@ function decodeComponent(value: unknown): ComponentVersion | null {
   return candidate as unknown as ComponentVersion;
 }
 
-export function decodeSupportBundlePreview(value: unknown): SupportBundlePreview | null {
+async function sha256(value: string): Promise<string> {
+  const encoded = new TextEncoder().encode(value);
+  const bytes = new Uint8Array(encoded.byteLength);
+  bytes.set(encoded);
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes.buffer);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+export async function decodeSupportBundlePreview(value: unknown): Promise<SupportBundlePreview | null> {
   try {
     const candidate = record(value);
-    if (!candidate || !exactKeys(candidate, ["previewId", "outputDirectory", "byteLength", "sha256", "bundle"])) return null;
+    if (!candidate || !exactKeys(candidate, ["previewId", "outputDirectory", "byteLength", "sha256", "documentJson", "bundle"])) return null;
     if (!canonicalHex(candidate.previewId, 32) || !safePath(candidate.outputDirectory)
       || !safeInteger(candidate.byteLength, 65_536) || candidate.byteLength === 0 || !canonicalHex(candidate.sha256, 64)) return null;
     const bundle = record(candidate.bundle);
@@ -160,11 +169,18 @@ export function decodeSupportBundlePreview(value: unknown): SupportBundlePreview
     if (!Array.isArray(bundle.exclusions)
       || bundle.exclusions.length !== EXPECTED_EXCLUSIONS.length
       || bundle.exclusions.some((item, index) => item !== EXPECTED_EXCLUSIONS[index])) return null;
+    if (typeof candidate.documentJson !== "string") return null;
+    const exactDocument = `${JSON.stringify(bundle, null, 2)}\n`;
+    const exactBytes = new TextEncoder().encode(exactDocument);
+    if (candidate.documentJson !== exactDocument
+      || candidate.byteLength !== exactBytes.byteLength
+      || candidate.sha256 !== await sha256(exactDocument)) return null;
     return {
       previewId: candidate.previewId,
       outputDirectory: candidate.outputDirectory,
       byteLength: candidate.byteLength,
       sha256: candidate.sha256,
+      documentJson: candidate.documentJson,
       bundle: {
         schemaVersion: "1.0",
         documentType: "research-observatory-support-bundle",
@@ -224,7 +240,7 @@ export function DiagnosticsWorkspace({
     setState("loading");
     setExported(null);
     try {
-      const decoded = decodeSupportBundlePreview(await previewProbe());
+      const decoded = await decodeSupportBundlePreview(await previewProbe());
       if (!decoded) throw new Error("RO-SUPPORT-PREVIEW-INVALID");
       setPreview(decoded);
       setState("ready");
@@ -328,7 +344,7 @@ export function DiagnosticsWorkspace({
             </div>
             <details>
               <summary>Inspect exact redacted JSON document</summary>
-              <pre className="support-json-preview">{`${JSON.stringify(preview.bundle, null, 2)}\n`}</pre>
+              <pre className="support-json-preview">{preview.documentJson}</pre>
             </details>
             <Button tone="primary" disabled={state === "exporting" || state === "exported"} onClick={() => { void exportBundle(); }}>
               {state === "exporting" ? "Exporting…" : state === "exported" ? "Bundle exported" : "Export reviewed bundle"}

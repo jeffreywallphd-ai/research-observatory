@@ -318,6 +318,11 @@ fn main() {
         .expect("serialize exact reviewed support bundle");
     reviewed_bytes.push(b'\n');
     assert_eq!(reviewed_bytes.len(), support_preview.byte_length());
+    assert_eq!(
+        support_preview.document_json().as_bytes(),
+        reviewed_bytes.as_slice(),
+        "preview JSON did not equal the exact export bytes"
+    );
     let support_export = support_manager
         .export(&support_root, support_preview.preview_id())
         .expect("export exact reviewed support bundle");
