@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T03",
+  "commit": "d0dc79f476d6d4ebd83d40a90afafc860151bfe6",
+  "baseCommit": "88b311e06e1ac09e33b725d97ff39e938f2379c3",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T03.json",
+    "reason": "Independent review proved the renderer accepted forged byteLength/SHA metadata unrelated to the JSON shown for approval. This focused remediation carries the native exact serialized document and recomputes UTF-8 length and SHA-256 before renderer acceptance."
+  },
+  "changedFiles": [
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/src/support_bundle.rs",
+    "apps/desktop/src/app/DiagnosticsWorkspace.test.tsx",
+    "apps/desktop/src/app/DiagnosticsWorkspace.tsx",
+    "artifacts/evidence/CAP-01.S04.T03.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "cargo test --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib; cargo clippy --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --examples -- -D warnings; supervision_check.exe <canonical-sidecar> <fixture>",
+      "exitCode": 0,
+      "result": "All 13 native tests and strict Clippy passed. The rebuilt real-process report returned every lifecycle/support flag true and now independently asserts documentJson bytes equal the exact bytes exported."
+    },
+    {
+      "command": "pnpm --dir apps/desktop run typecheck; vitest run DiagnosticsWorkspace.test.tsx ApplicationRuntime.test.tsx; pnpm --dir apps/desktop run build; desktop_app_check.runtime_frame_errors",
+      "exitCode": 0,
+      "result": "Strict TypeScript and six focused tests passed. Hostile SHA, byte-length, and exact-document mismatches now reject. The rebuilt production bundle passed the focused Chromium frame with exact preview and export true, zero errors, and unchanged no-reference/offline/accessibility behavior."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The native preview now carries the exact pretty-printed UTF-8 JSON string used for export. The renderer requires that string to equal the decoded bundle serialization and independently recomputes its UTF-8 byte count and SHA-256 before rendering or enabling export.",
+        "The real lifecycle probe asserts native documentJson byte identity with the exact exported bytes, preserving trace linkage and redaction."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused hostile tests reject forged SHA-256, forged byte length, altered document bytes, invalid trace IDs, changed exclusions, and extra fields while retaining the valid and storage-unavailable paths.",
+        "Focused Chromium rebuilt and exercised the hash-bound preview/export path without broad profile replay."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Only the native preview contract, real lifecycle assertion, strict renderer decoder/tests, and compiled-product verifier changed. No UI design/reference, Core service, dependency, schema, or broader task scope changed.",
+        "The original evidence and CHANGES_REQUESTED review remain immutable; full profiles remain deferred to S04 slice review."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Replay the exact prior 2,048-byte/b*64 mismatch plus altered document bytes, verify valid native and Chromium paths, and confirm five-file remediation scope/supersession. No full profiles requested."
+  }
+}
