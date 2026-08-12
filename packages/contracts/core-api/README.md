@@ -2,8 +2,12 @@
 
 `core-runtime.schema.json` defines the strict framework-neutral health and
 readiness response variants, including runtime identity, state, version, and
-capabilities. `openapi.json` is generated from the FastAPI application and
-committed so desktop/client generation can detect API drift before runtime.
+capabilities. `openapi.json` and `generated.ts` are generated from the FastAPI
+application and committed so service, desktop, and client compilation detect API
+drift before runtime. The generated source records the exact OpenAPI SHA-256 and
+generator version, exposes a deployment-neutral transport port, strictly decodes
+untrusted responses, and implements compatibility, problem-detail, pagination,
+cancellation, and bounded SSE replay calls.
 
 These contracts contain no OS paths, socket assignment, credentials, research
 content, provider types, or deployment-specific framework objects. Version or
@@ -24,3 +28,12 @@ not an authentication secret. CAP-01.S04 authenticates the local transport with
 a separate per-launch 256-bit credential delivered from the native supervisor to
 Core over inherited stdin before process resume. That credential is deliberately
 absent from every portable contract, handshake, log, report, and renderer API.
+
+Core API client version `1.0.0` is accepted only when the service identity and
+schema are exact, its declared API major matches, and the client falls within the
+inclusive-minimum/exclusive-maximum compatibility range. Failures use RFC 9457
+problem details with stable `RO-CORE-*` codes, an opaque 128-bit trace ID, and
+safe remediation. Operation status is identity-paged; cancellation is explicit;
+progress frames are monotonic SSE events replayed after an accepted sequence.
+The current in-memory operation registry is an integration seam only—CAP-03 owns
+durable workflow state and creation behavior.

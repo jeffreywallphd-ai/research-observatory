@@ -22,7 +22,15 @@
     "host": {"const": "127.0.0.1"},
     "port": {"type": "integer", "minimum": 1, "maximum": 65535},
     "nonce": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
-    "capabilities": {"const": ["runtime.status"]},
+    "capabilities": {
+      "const": [
+        "operations.cancel",
+        "operations.events",
+        "operations.read",
+        "runtime.contract",
+        "runtime.status"
+      ]
+    },
     "databaseCompatibility": {
       "type": "object",
       "additionalProperties": false,

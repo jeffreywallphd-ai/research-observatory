@@ -53,6 +53,19 @@
         "title": "ConfigurationResponse",
         "type": "object"
       },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
       "HealthResponse": {
         "additionalProperties": false,
         "properties": {
@@ -138,6 +151,224 @@
         "title": "ModulesResponse",
         "type": "object"
       },
+      "OperationPage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OperationStatus"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextcursor"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "OperationPage",
+        "type": "object"
+      },
+      "OperationProgressEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "operationId": {
+            "pattern": "^op-[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+            "title": "Operationid",
+            "type": "string"
+          },
+          "progressPercent": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Progresspercent",
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 1.0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "state": {
+            "$ref": "#/components/schemas/OperationState"
+          },
+          "terminal": {
+            "title": "Terminal",
+            "type": "boolean"
+          },
+          "traceId": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Traceid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operationId",
+          "sequence",
+          "state",
+          "progressPercent",
+          "terminal",
+          "traceId"
+        ],
+        "title": "OperationProgressEvent",
+        "type": "object"
+      },
+      "OperationState": {
+        "enum": [
+          "queued",
+          "running",
+          "succeeded",
+          "failed",
+          "cancelled"
+        ],
+        "title": "OperationState",
+        "type": "string"
+      },
+      "OperationStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "cancellationRequested": {
+            "title": "Cancellationrequested",
+            "type": "boolean"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "title": "Createdat",
+            "type": "string"
+          },
+          "kind": {
+            "pattern": "^[a-z][a-z0-9]*(?:\\.[a-z][a-z0-9]*)*$",
+            "title": "Kind",
+            "type": "string"
+          },
+          "operationId": {
+            "pattern": "^op-[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+            "title": "Operationid",
+            "type": "string"
+          },
+          "progressPercent": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Progresspercent",
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0.0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "state": {
+            "$ref": "#/components/schemas/OperationState"
+          },
+          "traceId": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Traceid",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "title": "Updatedat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operationId",
+          "kind",
+          "state",
+          "sequence",
+          "progressPercent",
+          "cancellationRequested",
+          "createdAt",
+          "updatedAt",
+          "traceId"
+        ],
+        "title": "OperationStatus",
+        "type": "object"
+      },
+      "ProblemDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "pattern": "^RO-CORE-[A-Z0-9-]+$",
+            "title": "Code",
+            "type": "string"
+          },
+          "detail": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Detail",
+            "type": "string"
+          },
+          "remediation": {
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Remediation",
+            "type": "string"
+          },
+          "retryable": {
+            "title": "Retryable",
+            "type": "boolean"
+          },
+          "status": {
+            "maximum": 599.0,
+            "minimum": 400.0,
+            "title": "Status",
+            "type": "integer"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "traceId": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Traceid",
+            "type": "string"
+          },
+          "type": {
+            "pattern": "^urn:research-observatory:problem:[a-z0-9-]+$",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "code",
+          "traceId",
+          "retryable",
+          "remediation"
+        ],
+        "title": "ProblemDetail",
+        "type": "object"
+      },
       "ReadinessResponse": {
         "additionalProperties": false,
         "properties": {
@@ -189,12 +420,62 @@
         "title": "RuntimeState",
         "type": "string"
       },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
       "VersionResponse": {
         "additionalProperties": false,
         "properties": {
-          "apiCompatibility": {
-            "default": "0.1",
-            "title": "Apicompatibility",
+          "apiVersion": {
+            "default": "1.0.0",
+            "title": "Apiversion",
+            "type": "string"
+          },
+          "maximumClientApiVersionExclusive": {
+            "default": "2.0.0",
+            "title": "Maximumclientapiversionexclusive",
+            "type": "string"
+          },
+          "minimumClientApiVersion": {
+            "default": "1.0.0",
+            "title": "Minimumclientapiversion",
             "type": "string"
           },
           "schemaVersion": {
@@ -328,6 +609,311 @@
         "summary": "Registered Modules",
         "tags": [
           "runtime"
+        ]
+      }
+    },
+    "/runtime/operations": {
+      "get": {
+        "operationId": "list_operations_runtime_operations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^op-[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "After"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "List Operations",
+        "tags": [
+          "operations"
+        ]
+      }
+    },
+    "/runtime/operations/{operation_id}": {
+      "get": {
+        "operationId": "operation_status_runtime_operations__operation_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "operation_id",
+            "required": true,
+            "schema": {
+              "pattern": "^op-[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+              "title": "Operation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Operation Status",
+        "tags": [
+          "operations"
+        ]
+      }
+    },
+    "/runtime/operations/{operation_id}/cancel": {
+      "post": {
+        "operationId": "cancel_operation_runtime_operations__operation_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "operation_id",
+            "required": true,
+            "schema": {
+              "pattern": "^op-[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+              "title": "Operation Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "412": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Failed"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "428": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Precondition Required"
+          }
+        },
+        "summary": "Cancel Operation",
+        "tags": [
+          "operations"
+        ]
+      }
+    },
+    "/runtime/operations/{operation_id}/events": {
+      "get": {
+        "operationId": "operation_events_runtime_operations__operation_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "operation_id",
+            "required": true,
+            "schema": {
+              "pattern": "^op-[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+              "title": "Operation Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "afterSequence",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Aftersequence",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationProgressEvent"
+                }
+              },
+              "text/event-stream": {}
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Operation Events",
+        "tags": [
+          "operations"
         ]
       }
     },

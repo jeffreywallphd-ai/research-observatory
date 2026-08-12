@@ -30,6 +30,8 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
                 "ADR-0007",
                 "ADR-0008",
                 "ADR-0009",
+                "ADR-0010",
+                "ADR-0011",
             },
             set(records),
         )

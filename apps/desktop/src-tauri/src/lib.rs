@@ -1,6 +1,9 @@
 pub mod supervisor;
 
-use supervisor::{RuntimeDiagnostic, RuntimeSnapshot, RuntimeSupervisor, SupervisorConfig};
+use supervisor::{
+    CoreApiRequest, CoreApiResponse, RuntimeDiagnostic, RuntimeSnapshot, RuntimeSupervisor,
+    SupervisorConfig,
+};
 use tauri::{App, Manager, Runtime, State};
 
 pub const PRODUCT_NAME: &str = "Research Observatory";
@@ -36,6 +39,14 @@ fn core_runtime_diagnostics(supervisor: State<'_, RuntimeSupervisor>) -> Vec<Run
     supervisor.diagnostics()
 }
 
+#[tauri::command]
+async fn core_api_request(
+    supervisor: State<'_, RuntimeSupervisor>,
+    request: CoreApiRequest,
+) -> Result<CoreApiResponse, &'static str> {
+    dispatch_core_api_request(supervisor.inner().clone(), request).await
+}
+
 pub async fn dispatch_runtime_start(
     supervisor: RuntimeSupervisor,
 ) -> Result<RuntimeSnapshot, &'static str> {
@@ -52,6 +63,15 @@ pub async fn dispatch_runtime_stop(
         .map_err(|_| "RO-CORE-SUPERVISOR-FAILED")
 }
 
+pub async fn dispatch_core_api_request(
+    supervisor: RuntimeSupervisor,
+    request: CoreApiRequest,
+) -> Result<CoreApiResponse, &'static str> {
+    tauri::async_runtime::spawn_blocking(move || supervisor.api_request(&request))
+        .await
+        .map_err(|_| "RO-CORE-API-FAILED")?
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -60,7 +80,8 @@ pub fn run() {
             core_runtime_status,
             core_runtime_retry,
             core_runtime_stop,
-            core_runtime_diagnostics
+            core_runtime_diagnostics,
+            core_api_request
         ])
         .setup(|app| {
             let supervisor = RuntimeSupervisor::new(runtime_config(app));

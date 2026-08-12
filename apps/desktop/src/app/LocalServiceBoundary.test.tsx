@@ -5,6 +5,7 @@ import {
   LOCAL_SERVICE_DIAGNOSTIC_REFERENCE,
   LocalServiceBoundary,
   decodeLocalServiceProbeResult,
+  localServiceViewFromCompatibility,
   localServiceViewFromProbeResult,
   packagedLocalServiceProbe,
   secretSafeServiceFailure,
@@ -44,6 +45,26 @@ describe("local service supervision boundary", () => {
       retryAvailable: false,
       diagnosticReference: "RO-CORE-RESTART-LIMIT",
     })).toMatchObject({ state: "recovery-required", retryAvailable: false });
+  });
+
+  it("maps generated-client incompatibility to an explicit repair-only product state", () => {
+    expect(localServiceViewFromCompatibility({
+      ok: false,
+      code: "RO-CORE-API-INCOMPATIBLE",
+      remediation: "Repair or reinstall the matching Research Observatory desktop and Core package.",
+    })).toEqual({
+      state: "recovery-required",
+      runtimeState: "incompatible",
+      title: "Local analytical service is incompatible",
+      message: "Repair or reinstall the matching Research Observatory desktop and Core package.",
+      retryAvailable: false,
+      diagnosticReference: "RO-CORE-API-INCOMPATIBLE",
+    });
+    expect(localServiceViewFromCompatibility({
+      ok: true,
+      code: "RO-CORE-API-COMPATIBLE",
+      remediation: "No action is required.",
+    })).toBeNull();
   });
 
   it("maps hostile adapter failures to an opaque secret-safe diagnostic", () => {

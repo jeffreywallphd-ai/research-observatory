@@ -89,6 +89,24 @@
       "linkedTasks": [
         "CAP-01.S04.T01"
       ]
+    },
+    {
+      "id": "ADR-0010",
+      "path": "docs/adr/ADR-0010-generate-a-checked-in-typescript-client-from-core-openapi.md",
+      "title": "Generate a checked-in TypeScript client from Core OpenAPI",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-01.S04.T02"
+      ]
+    },
+    {
+      "id": "ADR-0011",
+      "path": "docs/adr/ADR-0011-use-bounded-sse-replay-for-local-operation-progress.md",
+      "title": "Use bounded SSE replay for local operation progress",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-01.S04.T02"
+      ]
     }
   ]
 }

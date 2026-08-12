@@ -137,7 +137,13 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
             "host": "127.0.0.1",
             "port": 49152,
             "nonce": "a" * 32,
-            "capabilities": ["runtime.status"],
+            "capabilities": [
+                "operations.cancel",
+                "operations.events",
+                "operations.read",
+                "runtime.contract",
+                "runtime.status",
+            ],
             "databaseCompatibility": {"minimum": "0.1.0", "maximumExclusive": "0.2.0"},
             "diagnosticCode": "RO-CORE-STARTING",
         }

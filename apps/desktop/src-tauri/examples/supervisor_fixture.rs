@@ -84,7 +84,7 @@ mod windows_fixture {
             concat!(
                 "{{\"protocolVersion\":\"1.0\",\"buildId\":\"0.1.0\",",
                 "\"pid\":{},\"host\":\"127.0.0.1\",\"port\":{},",
-                "\"nonce\":\"{}\",\"capabilities\":[\"runtime.status\"],",
+                "\"nonce\":\"{}\",\"capabilities\":[\"operations.cancel\",\"operations.events\",\"operations.read\",\"runtime.contract\",\"runtime.status\"],",
                 "\"databaseCompatibility\":{{\"minimum\":\"0.1.0\",",
                 "\"maximumExclusive\":\"0.2.0\"}},",
                 "\"diagnosticCode\":\"RO-CORE-STARTING\"}}"
@@ -144,7 +144,7 @@ mod windows_fixture {
                     "{{\"schemaVersion\":\"1.0\",",
                     "\"service\":\"research-observatory-core\",",
                     "\"version\":\"{}\",\"state\":\"ready\",",
-                    "\"capabilities\":[\"runtime.status\"],\"ready\":true}}"
+                    "\"capabilities\":[\"operations.cancel\",\"operations.events\",\"operations.read\",\"runtime.contract\",\"runtime.status\"],\"ready\":true}}"
                 ),
                 version,
             );

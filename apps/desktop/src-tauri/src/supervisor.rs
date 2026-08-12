@@ -30,11 +30,7 @@ impl CapabilityToken {
     }
 
     fn append_hex(&self, target: &mut Vec<u8>) {
-        const HEX: &[u8; 16] = b"0123456789abcdef";
-        for value in self.0 {
-            target.push(HEX[usize::from(value >> 4)]);
-            target.push(HEX[usize::from(value & 0x0f)]);
-        }
+        append_hex(&self.0, target);
     }
 }
 
@@ -76,6 +72,26 @@ pub struct RuntimeDiagnostic {
     pub sequence: u64,
     pub code: &'static str,
     pub stream: &'static str,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct CoreApiRequest {
+    pub method: String,
+    pub path: String,
+    pub body: Option<String>,
+    pub if_match: Option<String>,
+    pub idempotency_key: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CoreApiResponse {
+    pub status: u16,
+    pub content_type: String,
+    pub trace_id: String,
+    pub etag: Option<String>,
+    pub body: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -148,7 +164,8 @@ struct RunningProcess {
     child: Child,
     stdin: ChildStdin,
     containment: ProcessTreeContainment,
-    _capability_token: CapabilityToken,
+    capability_token: CapabilityToken,
+    port: u16,
 }
 
 struct SupervisorInner {
@@ -377,6 +394,21 @@ impl RuntimeSupervisor {
         inner.diagnostics.iter().cloned().collect()
     }
 
+    pub fn api_request(&self, request: &CoreApiRequest) -> Result<CoreApiResponse, &'static str> {
+        validate_api_request(request)?;
+        let mut inner = self
+            .shared
+            .inner
+            .lock()
+            .expect("runtime supervisor mutex poisoned");
+        inner.refresh();
+        if inner.state != RuntimeState::Ready || inner.stopping || inner.launching {
+            return Err("RO-CORE-API-UNAVAILABLE");
+        }
+        let process = inner.process.as_ref().ok_or("RO-CORE-API-UNAVAILABLE")?;
+        authenticated_api_request(process.port, &process.capability_token, request)
+    }
+
     /// Return the supervised root PID for integration qualification only.
     /// Renderer commands deliberately do not expose this process identity.
     pub fn active_pid(&self) -> Option<u32> {
@@ -531,19 +563,314 @@ fn launch(
         };
         let handshake = validate_handshake(&bytes, pid)?;
         wait_until_ready(&handshake, &capability_token, &mut child, &shared, attempt)?;
-        ensure_attempt_active(&shared, attempt)
+        ensure_attempt_active(&shared, attempt)?;
+        Ok(handshake.port)
     })();
-    if let Err(error) = startup {
-        containment.terminate();
-        let _ = child.wait();
-        return Err(error);
-    }
+    let port = match startup {
+        Ok(port) => port,
+        Err(error) => {
+            containment.terminate();
+            let _ = child.wait();
+            return Err(error);
+        }
+    };
     Ok(RunningProcess {
         child,
         stdin,
         containment,
-        _capability_token: capability_token,
+        capability_token,
+        port,
     })
+}
+
+fn append_hex(bytes: &[u8], target: &mut Vec<u8>) {
+    const HEX: &[u8; 16] = b"0123456789abcdef";
+    for value in bytes {
+        target.push(HEX[usize::from(value >> 4)]);
+        target.push(HEX[usize::from(value & 0x0f)]);
+    }
+}
+
+fn canonical_operation_id(value: &str) -> bool {
+    let Some(rest) = value.strip_prefix("op-") else {
+        return false;
+    };
+    (1..=63).contains(&rest.len())
+        && rest
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
+        && !rest.starts_with('-')
+        && !rest.ends_with('-')
+}
+
+fn canonical_unsigned(value: &str, minimum: u64, maximum: u64) -> bool {
+    !value.is_empty()
+        && value.bytes().all(|byte| byte.is_ascii_digit())
+        && (value == "0" || !value.starts_with('0'))
+        && value
+            .parse::<u64>()
+            .is_ok_and(|number| (minimum..=maximum).contains(&number))
+}
+
+fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
+    if request.body.is_some() || request.path.len() > 2048 || !request.path.is_ascii() {
+        return Err("RO-CORE-API-REQUEST-INVALID");
+    }
+    if request
+        .path
+        .bytes()
+        .any(|byte| !(byte.is_ascii_alphanumeric() || b"/-?&=.".contains(&byte)))
+    {
+        return Err("RO-CORE-API-REQUEST-INVALID");
+    }
+    if request.method == "GET" && request.path == "/runtime/version" {
+        return if request.if_match.is_none() && request.idempotency_key.is_none() {
+            Ok(())
+        } else {
+            Err("RO-CORE-API-REQUEST-INVALID")
+        };
+    }
+    if request.method == "GET" {
+        if request.if_match.is_some() || request.idempotency_key.is_some() {
+            return Err("RO-CORE-API-REQUEST-INVALID");
+        }
+        if let Some(query) = request.path.strip_prefix("/runtime/operations?limit=") {
+            if let Some((limit, after)) = query.split_once("&after=") {
+                if canonical_unsigned(limit, 1, 100) && canonical_operation_id(after) {
+                    return Ok(());
+                }
+            } else if canonical_unsigned(query, 1, 100) {
+                return Ok(());
+            }
+        }
+        if let Some(rest) = request.path.strip_prefix("/runtime/operations/") {
+            if let Some((operation_id, sequence)) = rest.split_once("/events?afterSequence=") {
+                if canonical_operation_id(operation_id)
+                    && canonical_unsigned(sequence, 0, 9_007_199_254_740_991)
+                {
+                    return Ok(());
+                }
+            } else if canonical_operation_id(rest) {
+                return Ok(());
+            }
+        }
+    }
+    if request.method == "POST"
+        && request
+            .path
+            .strip_prefix("/runtime/operations/")
+            .and_then(|value| value.strip_suffix("/cancel"))
+            .is_some_and(canonical_operation_id)
+        && request
+            .if_match
+            .as_deref()
+            .is_some_and(canonical_operation_etag)
+        && request.idempotency_key.as_deref().is_some_and(|value| {
+            value.len() == 32
+                && value
+                    .bytes()
+                    .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+        })
+    {
+        return Ok(());
+    }
+    Err("RO-CORE-API-REQUEST-INVALID")
+}
+
+fn canonical_operation_etag(value: &str) -> bool {
+    let Some(inner) = value
+        .strip_prefix('"')
+        .and_then(|item| item.strip_suffix('"'))
+    else {
+        return false;
+    };
+    let Some((operation_id, sequence)) = inner.rsplit_once('-') else {
+        return false;
+    };
+    canonical_operation_id(operation_id) && canonical_unsigned(sequence, 0, u64::MAX)
+}
+
+fn authenticated_api_request(
+    port: u16,
+    capability_token: &CapabilityToken,
+    api_request: &CoreApiRequest,
+) -> Result<CoreApiResponse, &'static str> {
+    let mut trace_bytes = [0_u8; 16];
+    fill_secure_random(&mut trace_bytes).map_err(|_| "RO-CORE-TRACE-RANDOM-FAILED")?;
+    let mut trace = Vec::with_capacity(32);
+    append_hex(&trace_bytes, &mut trace);
+    zeroize_bytes(&mut trace_bytes);
+    let trace_id = String::from_utf8(trace.clone()).map_err(|_| "RO-CORE-TRACE-RANDOM-FAILED")?;
+
+    let address = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), port);
+    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(1))
+        .map_err(|_| "RO-CORE-API-UNAVAILABLE")?;
+    stream
+        .set_read_timeout(Some(Duration::from_secs(2)))
+        .map_err(|_| "RO-CORE-API-UNAVAILABLE")?;
+    stream
+        .set_write_timeout(Some(Duration::from_secs(1)))
+        .map_err(|_| "RO-CORE-API-UNAVAILABLE")?;
+    let mut wire = Vec::with_capacity(512);
+    wire.extend_from_slice(api_request.method.as_bytes());
+    wire.push(b' ');
+    wire.extend_from_slice(api_request.path.as_bytes());
+    wire.extend_from_slice(b" HTTP/1.1\r\nHost: 127.0.0.1:");
+    wire.extend_from_slice(port.to_string().as_bytes());
+    wire.extend_from_slice(b"\r\nAuthorization: Bearer ");
+    capability_token.append_hex(&mut wire);
+    wire.extend_from_slice(b"\r\nX-Trace-Id: ");
+    wire.extend_from_slice(&trace);
+    if let Some(if_match) = &api_request.if_match {
+        wire.extend_from_slice(b"\r\nIf-Match: ");
+        wire.extend_from_slice(if_match.as_bytes());
+    }
+    if let Some(idempotency_key) = &api_request.idempotency_key {
+        wire.extend_from_slice(b"\r\nIdempotency-Key: ");
+        wire.extend_from_slice(idempotency_key.as_bytes());
+    }
+    wire.extend_from_slice(b"\r\nAccept: application/json, text/event-stream\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+    let written = stream.write_all(&wire).and_then(|_| stream.flush()).is_ok();
+    zeroize_bytes(&mut wire);
+    zeroize_bytes(&mut trace);
+    if !written {
+        return Err("RO-CORE-API-UNAVAILABLE");
+    }
+    let mut response = Vec::new();
+    stream
+        .take(1_048_577)
+        .read_to_end(&mut response)
+        .map_err(|_| "RO-CORE-API-RESPONSE-INVALID")?;
+    if response.len() > 1_048_576 {
+        return Err("RO-CORE-API-RESPONSE-INVALID");
+    }
+    parse_api_response(&response, &trace_id)
+}
+
+fn parse_api_response(
+    response: &[u8],
+    expected_trace: &str,
+) -> Result<CoreApiResponse, &'static str> {
+    let split = response
+        .windows(4)
+        .position(|window| window == b"\r\n\r\n")
+        .ok_or("RO-CORE-API-RESPONSE-INVALID")?;
+    let header_text =
+        std::str::from_utf8(&response[..split]).map_err(|_| "RO-CORE-API-RESPONSE-INVALID")?;
+    let mut lines = header_text.split("\r\n");
+    let status_line = lines.next().ok_or("RO-CORE-API-RESPONSE-INVALID")?;
+    let mut status_parts = status_line.splitn(3, ' ');
+    if status_parts.next() != Some("HTTP/1.1") {
+        return Err("RO-CORE-API-RESPONSE-INVALID");
+    }
+    let status = status_parts
+        .next()
+        .filter(|value| value.len() == 3 && value.bytes().all(|byte| byte.is_ascii_digit()))
+        .and_then(|value| value.parse::<u16>().ok())
+        .filter(|value| (100..=599).contains(value))
+        .ok_or("RO-CORE-API-RESPONSE-INVALID")?;
+    if status_parts.next().is_none() {
+        return Err("RO-CORE-API-RESPONSE-INVALID");
+    }
+    let mut content_type: Option<String> = None;
+    let mut trace_id: Option<String> = None;
+    let mut etag: Option<String> = None;
+    let mut transfer_encoding: Option<&str> = None;
+    let mut content_length: Option<usize> = None;
+    for line in lines {
+        let (name, value) = line.split_once(':').ok_or("RO-CORE-API-RESPONSE-INVALID")?;
+        let value = value.trim();
+        if name.eq_ignore_ascii_case("content-type") {
+            if content_type.is_some() {
+                return Err("RO-CORE-API-RESPONSE-INVALID");
+            }
+            content_type = Some(value.split(';').next().unwrap_or("").to_ascii_lowercase());
+        } else if name.eq_ignore_ascii_case("x-trace-id") {
+            if trace_id.is_some() {
+                return Err("RO-CORE-API-RESPONSE-INVALID");
+            }
+            trace_id = Some(value.to_owned());
+        } else if name.eq_ignore_ascii_case("etag") {
+            if etag.is_some() || value.len() > 160 || !value.is_ascii() {
+                return Err("RO-CORE-API-RESPONSE-INVALID");
+            }
+            etag = Some(value.to_owned());
+        } else if name.eq_ignore_ascii_case("transfer-encoding") {
+            if transfer_encoding.is_some() || !value.eq_ignore_ascii_case("chunked") {
+                return Err("RO-CORE-API-RESPONSE-INVALID");
+            }
+            transfer_encoding = Some(value);
+        } else if name.eq_ignore_ascii_case("content-length") {
+            if content_length.is_some()
+                || !canonical_unsigned(value, 0, 1_048_576)
+                || value.parse::<usize>().is_err()
+            {
+                return Err("RO-CORE-API-RESPONSE-INVALID");
+            }
+            content_length = value.parse::<usize>().ok();
+        }
+    }
+    if trace_id.as_deref() != Some(expected_trace) {
+        return Err("RO-CORE-API-RESPONSE-INVALID");
+    }
+    let raw_body = &response[split + 4..];
+    if transfer_encoding.is_some() && content_length.is_some() {
+        return Err("RO-CORE-API-RESPONSE-INVALID");
+    }
+    let body_bytes = if transfer_encoding.is_some() {
+        decode_chunked(raw_body)?
+    } else {
+        if content_length != Some(raw_body.len()) {
+            return Err("RO-CORE-API-RESPONSE-INVALID");
+        }
+        raw_body.to_vec()
+    };
+    let body = String::from_utf8(body_bytes).map_err(|_| "RO-CORE-API-RESPONSE-INVALID")?;
+    Ok(CoreApiResponse {
+        status,
+        content_type: content_type.ok_or("RO-CORE-API-RESPONSE-INVALID")?,
+        trace_id: trace_id.ok_or("RO-CORE-API-RESPONSE-INVALID")?,
+        etag,
+        body,
+    })
+}
+
+fn decode_chunked(body: &[u8]) -> Result<Vec<u8>, &'static str> {
+    let mut offset = 0;
+    let mut decoded = Vec::new();
+    loop {
+        let line_end = body[offset..]
+            .windows(2)
+            .position(|window| window == b"\r\n")
+            .map(|position| offset + position)
+            .ok_or("RO-CORE-API-RESPONSE-INVALID")?;
+        let size_text = std::str::from_utf8(&body[offset..line_end])
+            .map_err(|_| "RO-CORE-API-RESPONSE-INVALID")?;
+        if size_text.is_empty()
+            || size_text.len() > 8
+            || !size_text.bytes().all(|byte| byte.is_ascii_hexdigit())
+        {
+            return Err("RO-CORE-API-RESPONSE-INVALID");
+        }
+        let size =
+            usize::from_str_radix(size_text, 16).map_err(|_| "RO-CORE-API-RESPONSE-INVALID")?;
+        offset = line_end + 2;
+        if size == 0 {
+            if body.get(offset..offset + 2) != Some(b"\r\n") {
+                return Err("RO-CORE-API-RESPONSE-INVALID");
+            }
+            return Ok(decoded);
+        }
+        let end = offset
+            .checked_add(size)
+            .filter(|end| *end <= body.len())
+            .ok_or("RO-CORE-API-RESPONSE-INVALID")?;
+        if decoded.len() + size > 1_048_576 || body.get(end..end + 2) != Some(b"\r\n") {
+            return Err("RO-CORE-API-RESPONSE-INVALID");
+        }
+        decoded.extend_from_slice(&body[offset..end]);
+        offset = end + 2;
+    }
 }
 
 fn validate_handshake(
@@ -566,7 +893,14 @@ fn validate_handshake(
         || handshake.host != "127.0.0.1"
         || handshake.port == 0
         || !nonce_valid
-        || handshake.capabilities != ["runtime.status"]
+        || handshake.capabilities
+            != [
+                "operations.cancel",
+                "operations.events",
+                "operations.read",
+                "runtime.contract",
+                "runtime.status",
+            ]
         || handshake.database_compatibility.minimum != "0.1.0"
         || handshake.database_compatibility.maximum_exclusive != "0.2.0"
         || handshake.diagnostic_code != "RO-CORE-STARTING"
@@ -691,7 +1025,14 @@ fn readiness_is_compatible(response: &[u8]) -> bool {
         && payload.service == "research-observatory-core"
         && payload.version == EXPECTED_BUILD
         && payload.state == "ready"
-        && payload.capabilities == ["runtime.status"]
+        && payload.capabilities
+            == [
+                "operations.cancel",
+                "operations.events",
+                "operations.read",
+                "runtime.contract",
+                "runtime.status",
+            ]
         && payload.ready
 }
 
@@ -879,7 +1220,8 @@ impl ProcessTreeContainment {
 #[cfg(test)]
 mod tests {
     use super::{
-        CapabilityToken, RuntimeState, RuntimeSupervisor, SupervisorInner, validate_handshake,
+        CapabilityToken, CoreApiRequest, RuntimeState, RuntimeSupervisor, SupervisorInner,
+        parse_api_response, validate_api_request, validate_handshake,
     };
     use std::collections::VecDeque;
 
@@ -889,7 +1231,7 @@ mod tests {
                 "{{\"protocolVersion\":\"1.0\",\"buildId\":\"0.1.0\",\"pid\":{},",
                 "\"host\":\"127.0.0.1\",\"port\":49152,",
                 "\"nonce\":\"0123456789abcdef0123456789abcdef\",",
-                "\"capabilities\":[\"runtime.status\"],",
+                "\"capabilities\":[\"operations.cancel\",\"operations.events\",\"operations.read\",\"runtime.contract\",\"runtime.status\"],",
                 "\"databaseCompatibility\":{{\"minimum\":\"0.1.0\",",
                 "\"maximumExclusive\":\"0.2.0\"}},",
                 "\"diagnosticCode\":\"RO-CORE-STARTING\"}}\n"
@@ -930,6 +1272,93 @@ mod tests {
             encoded
                 .iter()
                 .all(|value| value.is_ascii_digit() || (b'a'..=b'f').contains(value))
+        );
+    }
+
+    #[test]
+    fn native_api_transport_allows_only_generated_local_routes() {
+        for (method, path) in [
+            ("GET", "/runtime/version"),
+            ("GET", "/runtime/operations?limit=50"),
+            ("GET", "/runtime/operations?limit=2&after=op-first"),
+            ("GET", "/runtime/operations/op-first"),
+            ("GET", "/runtime/operations/op-first/events?afterSequence=0"),
+            ("POST", "/runtime/operations/op-first/cancel"),
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: method.to_owned(),
+                    path: path.to_owned(),
+                    body: None,
+                    if_match: (method == "POST").then(|| "\"op-first-1\"".to_owned()),
+                    idempotency_key: (method == "POST").then(|| "a".repeat(32)),
+                })
+                .is_ok(),
+                "{method} {path}",
+            );
+        }
+        for (method, path) in [
+            ("GET", "https://evil.invalid/runtime/version"),
+            ("GET", "/runtime/version\r\nHost: evil.invalid"),
+            ("GET", "/openapi.json"),
+            ("GET", "/runtime/operations?limit=0"),
+            ("GET", "/runtime/operations?limit=50&after="),
+            (
+                "GET",
+                "/runtime/operations/op-first/events?afterSequence=01",
+            ),
+            ("DELETE", "/runtime/operations/op-first"),
+            ("POST", "/runtime/operations/op-first/cancel"),
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: method.to_owned(),
+                    path: path.to_owned(),
+                    body: None,
+                    if_match: None,
+                    idempotency_key: None,
+                })
+                .is_err(),
+                "{method} {path}",
+            );
+        }
+    }
+
+    #[test]
+    fn native_api_transport_parses_only_correlated_bounded_responses() {
+        let trace = "0123456789abcdef0123456789abcdef";
+        let response = format!(
+            "HTTP/1.1 200 OK\r\ncontent-type: application/json; charset=utf-8\r\nx-trace-id: {trace}\r\ncontent-length: 2\r\n\r\n{{}}"
+        );
+        let parsed = parse_api_response(response.as_bytes(), trace).expect("valid response");
+        assert_eq!(parsed.status, 200);
+        assert_eq!(parsed.content_type, "application/json");
+        assert_eq!(parsed.body, "{}");
+        assert!(
+            parse_api_response(response.as_bytes(), "ffffffffffffffffffffffffffffffff").is_err()
+        );
+        assert!(
+            parse_api_response(response.replacen("200 OK", "200evil", 1).as_bytes(), trace)
+                .is_err()
+        );
+        assert!(
+            parse_api_response(
+                response
+                    .replacen("content-length: 2", "content-length: 3", 1)
+                    .as_bytes(),
+                trace
+            )
+            .is_err()
+        );
+
+        let chunked = format!(
+            "HTTP/1.1 200 OK\r\ncontent-type: text/event-stream\r\nx-trace-id: {trace}\r\ntransfer-encoding: chunked\r\n\r\n5\r\nhello\r\n0\r\n\r\n"
+        );
+        assert_eq!(
+            parse_api_response(chunked.as_bytes(), trace)
+                .expect("valid chunked response")
+                .body,
+            "hello"
         );
     }
 

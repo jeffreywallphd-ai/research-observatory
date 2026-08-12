@@ -32,8 +32,9 @@ and `LOG_LEVEL`). The current release accepts only the `local` profile and never
 includes raw configuration, credentials, research text, or document content in
 diagnostic records.
 
-`packages/contracts/core-api/openapi.json` and `core-runtime.schema.json` are the
-portable generated and hand-authored contracts. The API contains application
+`packages/contracts/core-api/openapi.json`, its generated TypeScript client, and
+`core-runtime.schema.json` are the portable generated and hand-authored
+contracts. Regenerate or check them with `tools/core_api_contract.py`. The API contains application
 behavior only; `design/ui-reference` remains a governed experience reference
 and is not served or embedded by this process.
 
@@ -76,6 +77,13 @@ stale, duplicate, malformed, cross-origin, non-loopback, and authority-confused
 requests fail closed with fixed secret-safe codes. Rotation occurs on every
 start or retry, and the native credential buffer is zeroed when its supervised
 process is dropped.
+
+Every accepted request also receives one canonical trace ID. Versioned failures
+use RFC 9457 problem details and omit internal exceptions, paths, credentials,
+and research content. Runtime operations expose strict status projections,
+identity-based pagination, explicit cancellation, and bounded monotonic SSE
+replay. No operation-create route or scholarly workflow is implemented here;
+CAP-03 supplies durable operation ownership behind this contract.
 
 At slice and release qualification, benchmark the real packaged process with:
 
