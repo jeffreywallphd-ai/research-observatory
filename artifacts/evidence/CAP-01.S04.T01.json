@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T01",
+  "commit": "c2c33b3d027b4e53ca0e9371b642202c1ef9bcbb",
+  "baseCommit": "5f98edf5822a3ed55d9eb5beff5e37e88d1631d1",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "artifacts/evidence/CAP-01.S04.T01.package-attestation.json",
+    "artifacts/evidence/CAP-01.S04.T01.package-attestation.review-fix.json",
+    "artifacts/evidence/CAP-01.S04.T01.performance-comparison.json",
+    "docs/adr/ADR-0009-authenticate-the-local-core-with-a-private-per-launch-capability.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/README.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/authentication.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "tests/desktop/test_core_sidecar_performance_check.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/service/test_core_api.py",
+    "tools/core_sidecar_performance_check.py",
+    "verification/baselines/core-sidecar-performance.json",
+    "verification/baselines/core-sidecar-performance.sha256"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 12 focused service tests passed. They cover current, missing, stale, uppercase, duplicate, cross-origin, wrong-authority, and non-loopback requests; strict startup authentication parsing; fixed secret-safe failures; an actual loopback Uvicorn server; and a real supervised subprocess whose stderr contains neither tested credential."
+    },
+    {
+      "command": "cargo fmt --check; cargo clippy --all-targets --locked -- -D warnings; cargo test --lib --locked; supervision_check.exe <canonical-authenticated-package> <fixture>",
+      "exitCode": 0,
+      "result": "Pinned Rust format and Clippy passed every target; six native unit tests passed. The exact 644-file authenticated release package returned ok=true for duplicate start, token-authenticated readiness, restart rotation, cancellation, failure classification, serialized stop/retry, crash recovery, and complete root-plus-descendant termination. A query-backed Job wait closed one timing-sensitive delayed-readiness cleanup race and then passed consecutive replays."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "Six focused package tests passed with a real PyInstaller build and Pythonless launch; one Windows file-symlink case was skipped because the current account lacks that creation privilege. The canonical release package is 644 files and 31,575,484 bytes with entrypoint SHA-256 dc64e9c86aa558defad81dd717ee3259730dedd1452cbf53f261fc45216233ab."
+    },
+    {
+      "command": "new authenticated package comparison against unchanged S03 values; python tools/core_sidecar_performance_check.py --repo . --report artifacts/tmp/core-sidecar-performance.json",
+      "exitCode": 0,
+      "result": "The retained pre-rebaseline comparison SHA-256 is 907ac40ddbea1769ae67615fe51f6e43b28f6522be2a2e3d77139ecb632b0d0f and passed all unchanged S03 limits. The official clean qualification then passed the new immutable package/tool authority: readiness p50 825.434 ms, shutdown p95 208.859 ms, and idle working-set p95 62,521,344 bytes. Report SHA-256: 62ebc042e9f1e7d477bca3a20c86d871b72e95cb7e7f4e314cc8fcfb47857bc1."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; python tools/adr_check.py --repo . --base 5f98edf --head HEAD; python tools/architecture_check.py --repo .; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "The 72-file Python format/lint/type scope, nine-record ADR registry over 23 changed paths, 13-area architecture contract, 356-task backlog, and generated planning views all passed. ADR-0009 records the private token channel while preserving ADR-0008 process supervision and the reference-only UI boundary."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The native host generates 32 random bytes per launch with the Windows operating-system CSPRNG, encodes them canonically, transfers them only through inherited stdin before the suspended child resumes, retains them only with the owned process, and zeroes both durable and temporary native buffers with volatile writes.",
+        "Core parses one bounded lowercase-hex startup record before binding, retains only its SHA-256 digest, disables proxy-header interpretation, and requires numeric loopback peer identity, one exact numeric Host authority, absent Origin, and one current canonical Bearer value for every HTTP endpoint including readiness.",
+        "A real frozen process denies the stale credential and publishes no token in its handshake, response, logs, or stderr. Restart creates a new native token; missing, stale, malformed, duplicate, remote, origin-bearing, and authority-confused requests fail with fixed no-store responses."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Expected-path coverage spans in-process ASGI, real Uvicorn, real Python supervision, native unit tests, the deterministic process-tree fixture, and the exact frozen release-path artifact rather than a mock-only boundary.",
+        "Material denials include missing/wrong/noncanonical/duplicate credentials, malformed startup record, remote peer, cross-origin request, wrong Host, token rotation, early exit, timeout, cancellation, crash/retry, and immediate descendant cleanup.",
+        "Risk-based task verification selected service authentication, native lifecycle, package, performance, quality, ADR, architecture, backlog, and generated-view checks. The complete service and security-local profiles remain deferred to S04 slice review; a live security scan reproduced only the five already-recorded Node/Tauri capability blockers and reported zero secret findings."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Accepted ADR-0009 makes the token-generation, private-transfer, authority/origin, hosted-adapter, cleanup, and rollback boundaries explicit without rewriting the accepted ADR-0008 supervision decision.",
+        "Core and contract documentation now state that the handshake nonce is public process binding rather than authentication, the launch credential is absent from portable contracts and renderer APIs, and unsupervised Core denies HTTP by default.",
+        "The governed quality inventory includes the new middleware. The original development-root package attestation remains immutably visible and is explicitly superseded by the canonical release-root attestation; the new package was compared against unchanged S03 performance values before its baseline identity was updated."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-security-review",
+    "requiredGate": "security-review",
+    "note": "Independent review should attack token entropy/rotation/zeroing, inherited-pipe timing, duplicate and malformed headers, loopback/Host/Origin/proxy boundaries, log and crash disclosure, canonical frozen-package identity, the superseded attestation chain, and the pre-rebaseline performance comparison. Full profiles remain reserved for S04 integration; the unchanged five Node/Tauri supply-chain blockers must be resolved before CAP-01 capability approval."
+  }
+}
