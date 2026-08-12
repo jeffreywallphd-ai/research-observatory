@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S03.T03",
+  "commit": "ba98a62eee68f428eb11fdd5064ed142a9d47d22",
+  "baseCommit": "6743b5451a715d0585dd17798c27d23ff4dc2ba8",
+  "branch": "codex/cap-01-desktop-shell",
+  "changedFiles": [
+    "Cargo.lock",
+    "apps/desktop/README.md",
+    "apps/desktop/package.json",
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/capabilities/main-window.json",
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/gen/schemas/capabilities.json",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/LocalServiceBoundary.test.tsx",
+    "apps/desktop/src/app/LocalServiceBoundary.tsx",
+    "dev.cmd",
+    "docs/adr/ADR-0008-supervise-the-local-core-process-through-a-portable-native-boundary.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/runtime-handshake.schema.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/README.md",
+    "services/core-api/src/research_observatory_core/main.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/service/test_core_api.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "pnpm --dir apps/desktop run sidecar:prepare",
+      "exitCode": 0,
+      "result": "The repository-pinned development command rebuilt the real PyInstaller onedir package through the app script: 644 exact files and 31569506 bytes. The package report SHA-256 is ebcb88b4cbfb07757d0fea6b0ad1dc2e83282fac3e9b9771586a25587edea1fd. The development app was not launched."
+    },
+    {
+      "command": "cargo run -p research-observatory-desktop --example supervision_check --locked -- <canonical packaged sidecar executable>",
+      "exitCode": 0,
+      "result": "At exact clean commit ba98a62, the real frozen sidecar reached strict readiness. Duplicate start retained one PID; startup cancellation left no process; graceful shutdown returned stopped; a forced crash was observed; retry used a different PID; and the fourth start was denied after the three-attempt budget with RO-CORE-RESTART-LIMIT."
+    },
+    {
+      "command": "cargo fmt --all -- --check && cargo clippy -p research-observatory-desktop --all-targets --locked -- -D warnings && cargo test -p research-observatory-desktop --locked",
+      "exitCode": 0,
+      "result": "Pinned Rust formatting and Clippy passed. Three native unit tests passed for product identity, exact process-bound handshake denial, and bounded opaque diagnostic collection."
+    },
+    {
+      "command": "pnpm --dir apps/desktop lint && pnpm --dir apps/desktop typecheck && pnpm --dir apps/desktop test && pnpm --dir apps/desktop build; runtime_frame_errors(repo)",
+      "exitCode": 0,
+      "result": "Desktop lint, strict typecheck, all 34 renderer tests, deterministic product/reference builds, and the affected compiled-product browser frame passed. Recovery and retained-input checks were true at two responsive sizes, with zero requests. Product application-manifest SHA-256: c0dfb265a318640fc52c2abd850b42ba5b52367e442e4f1328853e6256a5e36d."
+    },
+    {
+      "command": "ruff check/format --check <affected Python files> && mypy services/core-api/src/research_observatory_core/main.py && python -m unittest tests.service.test_core_api tests.contracts.test_foundation_contracts",
+      "exitCode": 0,
+      "result": "Affected Python lint, formatting, and strict typing passed. All 9 service tests and 2 portable-contract tests passed, including the real supervised subprocess handshake, readiness, control-pipe shutdown, and strict negative schema fixture."
+    },
+    {
+      "command": "architecture_check; adr_check --base 6743b54 --head ba98a62; build_manifest; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "Architecture passed; ADR-0008 covered all protected changes across the exact 26-file task range; the clean build identity was 0.1.0+gba98a62; backlog and generated views passed. Build-manifest SHA-256: cf1c5753444f03664ec93eb6091d0512b07c70d94853dcf05a78324bc1acc8cd."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The native Rust supervisor owns one canonical target-triple Core executable, clears ambient environment variables, waits for a strict protocol/build/PID/loopback/capability/database-compatibility handshake, and requires the exact versioned readiness response before publishing ready.",
+        "Windows Job Object containment uses KILL_ON_JOB_CLOSE; normal stop uses the inherited shutdown pipe with a five-second force boundary. The real package qualification proves duplicate-start identity, cancellable startup cleanup, graceful exit, crash detection, PID replacement, and three-attempt exhaustion.",
+        "The functional renderer automatically observes Tauri startup, polls for crash state, decodes only four exact allowlisted fields, retains command input, and offers cancel, bounded retry, local continuation, and opaque diagnostic copy without exposing endpoint, nonce, PID, output, paths, or secrets."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Expected-path coverage uses the real 644-file frozen artifact through the native supervisor, not a mocked process boundary.",
+        "Material boundaries cover hostile/extra renderer snapshots, malformed/process-mismatched handshakes, in-flight cancellation, forced post-readiness crash, duplicate start, bounded diagnostics, restart PID replacement, and restart-budget exhaustion.",
+        "Risk-based task verification selected affected Rust, renderer, service, contract, ADR, architecture, build, and compiled-product checks. The complete desktop/service/e2e-local profiles are intentionally deferred to the required CAP-01.S03 slice integration review because the task checks already exercise the changed boundaries directly."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The new strict runtime-handshake schema is included in the governed build inventory and documented for downstream CAP-01.S04 authentication without prematurely exposing the nonce or endpoint to renderer code.",
+        "Accepted ADR-0008 records the portable supervision port, Windows Job Object adapter, renderer projection, restart policy, security boundary, later-platform seam, and rollback behavior.",
+        "The repository dev.cmd remains callable from PowerShell or Git Bash and now places the repository Python environment on PATH; app pnpm dev rebuilds the ignored sidecar before Tauri starts. No reference-only UI, hosted infrastructure, project persistence, or later-capability behavior was introduced."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Independent review should replay the packaged lifecycle probe, inspect cancellation and concurrent-start publication boundaries, attack the strict handshake/renderer decoders and diagnostic redaction, verify exact base-to-commit scope, and apply only risk-proportionate focused checks. Full affected profiles belong to the subsequent S03 slice review."
+  }
+}
