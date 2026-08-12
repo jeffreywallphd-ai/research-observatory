@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4ee862c1493e5fea8a56c0520c134e63d635531a727ea2b9bd9d9bdbc839a67f
+source_sha256: 02e7c801b3a9b962ffac3cf745da26cfa6743f83a37d727b1e829c84b62616c2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1230,6 +1230,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-01.S03.T02.json` at `bb7a1b9875fcc0b42e40460b350d7bf4dda11e0e`
+- `artifacts/evidence/CAP-01.S03.T02.review-fix.json` at `1f563fd519e6e284905152440c96fd23d4432e5a`
 
 #### - [ ] CAP-01.S03.T03 - Implement sidecar lifecycle supervision in Tauri
 
