@@ -32,6 +32,7 @@ const SNAPSHOT_DIAGNOSTICS = new Set<string>([
   "RO-CORE-LOG-PIPE-FAILED",
   "RO-CORE-CONTROL-PIPE-FAILED",
   "RO-CORE-START-TIMEOUT",
+  "RO-CORE-EARLY-EXIT",
   "RO-CORE-HANDSHAKE-INVALID",
   "RO-CORE-INCOMPATIBLE",
   "RO-CORE-RESTART-LIMIT",
@@ -289,21 +290,19 @@ export function LocalServiceBoundary({
     return () => globalThis.window.clearInterval(timer);
   }, [applyResult, statusProbe, view.runtimeState]);
 
-  const cancel = useCallback(() => {
+  const cancel = useCallback(async () => {
     activeProbe.current?.abort();
     activeProbe.current = null;
-    void stopProbe().catch(() => undefined);
-    setView({
-      state: "offline",
-      runtimeState: "stopped",
-      title: "Local analytical service startup cancelled",
-      message: "Core was asked to stop. Existing command input remains unchanged.",
-      retryAvailable: true,
-      diagnosticReference: "RO-CORE-STOPPED",
-    });
-    lastAnnouncedState.current = "stopped";
-    announce("Local service startup cancelled. Local shell input was retained.");
-  }, [announce, stopProbe]);
+    setView({ ...LOADING_VIEW, title: "Stopping local analytical service" });
+    announce("Stopping the packaged local service.");
+    try {
+      const result = await stopProbe();
+      applyResult(result, true);
+    } catch (error) {
+      setView(secretSafeServiceFailure(error));
+      announce("Local service stop failed. Local shell input was retained.");
+    }
+  }, [announce, applyResult, stopProbe]);
 
   const continueLocally = useCallback(() => {
     announce("Continuing with the local desktop shell. No remote service was contacted.");
@@ -339,7 +338,7 @@ export function LocalServiceBoundary({
         {...(view.state === "loading" ? { progress: { label: "Local readiness", value: 50 } } : {})}
         {...(view.diagnosticReference ? { diagnosticReference: view.diagnosticReference } : {})}
         {...(view.state === "loading"
-          ? { onCancel: cancel }
+          ? { onCancel: () => void cancel() }
           : view.retryAvailable
             ? { onRetry: () => void retry() }
             : {})}

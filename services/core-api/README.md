@@ -58,4 +58,6 @@ binds an OS-assigned numeric-loopback port, emits one strict JSON handshake on
 stdout, and accepts exactly `shutdown\n` on inherited stdin for graceful
 lifespan cleanup. Closing the control pipe also requests shutdown, while the
 Windows supervisor's Job Object remains the final process-tree containment
-boundary.
+boundary. The desktop creates Core suspended, attaches the Job Object before any
+Core code can run, and then resumes it; immediate helper descendants cannot escape
+the application's graceful, forced, or host-exit cleanup.

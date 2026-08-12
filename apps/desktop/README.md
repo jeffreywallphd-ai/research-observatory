@@ -63,13 +63,17 @@ project, source, study, model, or workflow data.
 
 It also exposes a truthful local-service supervision boundary. In the Tauri
 host, Core starts automatically, reaches readiness over numeric loopback, and is
-polled for crash state. Startup can be cancelled; crash retry is bounded; and
+polled for crash state. Blocking native lifecycle work is dispatched away from
+the Tauri main thread. Startup can be cancelled; stop completes before retry is
+offered; crash retry is bounded; and
 the renderer receives only exact state, attempt, retry, and opaque diagnostic
 fields. Outside Tauri, the same product bundle reports the bounded
 `RO-CORE-SUPERVISOR-UNAVAILABLE` state instead of pretending that Core is
 running. Command input remains mounted across startup, failure, cancellation,
 and recovery. Raw exceptions, paths, URLs, credentials, process output, and
-stack traces are never rendered or copied.
+stack traces are never rendered or copied. On Windows, Core is created suspended,
+placed in a kill-on-close Job Object, and resumed only after containment is active;
+graceful, forced, and host-exit cleanup therefore apply to the complete process tree.
 
 The legacy reference-activation modules are isolated behind
 `src/reference-main.tsx` for conformance tests and are not imported by the

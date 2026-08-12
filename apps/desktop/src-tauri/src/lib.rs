@@ -6,8 +6,10 @@ use tauri::{App, Manager, Runtime, State};
 pub const PRODUCT_NAME: &str = "Research Observatory";
 
 #[tauri::command]
-fn core_runtime_start(supervisor: State<'_, RuntimeSupervisor>) -> RuntimeSnapshot {
-    supervisor.start()
+async fn core_runtime_start(
+    supervisor: State<'_, RuntimeSupervisor>,
+) -> Result<RuntimeSnapshot, &'static str> {
+    dispatch_runtime_start(supervisor.inner().clone()).await
 }
 
 #[tauri::command]
@@ -16,18 +18,38 @@ fn core_runtime_status(supervisor: State<'_, RuntimeSupervisor>) -> RuntimeSnaps
 }
 
 #[tauri::command]
-fn core_runtime_retry(supervisor: State<'_, RuntimeSupervisor>) -> RuntimeSnapshot {
-    supervisor.start()
+async fn core_runtime_retry(
+    supervisor: State<'_, RuntimeSupervisor>,
+) -> Result<RuntimeSnapshot, &'static str> {
+    dispatch_runtime_start(supervisor.inner().clone()).await
 }
 
 #[tauri::command]
-fn core_runtime_stop(supervisor: State<'_, RuntimeSupervisor>) -> RuntimeSnapshot {
-    supervisor.stop()
+async fn core_runtime_stop(
+    supervisor: State<'_, RuntimeSupervisor>,
+) -> Result<RuntimeSnapshot, &'static str> {
+    dispatch_runtime_stop(supervisor.inner().clone()).await
 }
 
 #[tauri::command]
 fn core_runtime_diagnostics(supervisor: State<'_, RuntimeSupervisor>) -> Vec<RuntimeDiagnostic> {
     supervisor.diagnostics()
+}
+
+pub async fn dispatch_runtime_start(
+    supervisor: RuntimeSupervisor,
+) -> Result<RuntimeSnapshot, &'static str> {
+    tauri::async_runtime::spawn_blocking(move || supervisor.start())
+        .await
+        .map_err(|_| "RO-CORE-SUPERVISOR-FAILED")
+}
+
+pub async fn dispatch_runtime_stop(
+    supervisor: RuntimeSupervisor,
+) -> Result<RuntimeSnapshot, &'static str> {
+    tauri::async_runtime::spawn_blocking(move || supervisor.stop())
+        .await
+        .map_err(|_| "RO-CORE-SUPERVISOR-FAILED")
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -49,7 +71,8 @@ pub fn run() {
         })
         .on_window_event(|window, event| {
             if matches!(event, tauri::WindowEvent::CloseRequested { .. }) {
-                let _ = window.state::<RuntimeSupervisor>().stop();
+                let supervisor = window.state::<RuntimeSupervisor>().inner().clone();
+                tauri::async_runtime::spawn_blocking(move || supervisor.stop());
             }
         })
         .run(tauri::generate_context!())
