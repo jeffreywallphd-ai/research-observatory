@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T03",
+  "commit": "f12b4a1ef6b81ac599e4bedbc74ca952de695766",
+  "baseCommit": "d0dc79f476d6d4ebd83d40a90afafc860151bfe6",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T03.review-fix.json",
+    "reason": "A live Tauri development run exposed two post-review defects: the shared boundary component rejected valid two-part RO diagnostic identifiers and the main WebView capability omitted Tauri's narrow internal DevTools-toggle permission. This remediation restores the approved functional shell and debug-build inspector without broadening the product UI."
+  },
+  "changedFiles": [
+    "apps/desktop/src-tauri/capabilities/main-window.json",
+    "apps/desktop/src-tauri/gen/schemas/capabilities.json",
+    "apps/desktop/src/app/designSystem.test.tsx",
+    "artifacts/evidence/CAP-01.S04.T03.review-fix.json",
+    "artifacts/evidence/ui-change/CAP-01.S04.T03.json",
+    "docs/planning-implementation-plan.md",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/tests/package.test.tsx",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "pnpm --dir packages/ui-components run verify",
+      "exitCode": 0,
+      "result": "Public package type checking and all four component tests passed. The exact RO-CORE-STARTING production diagnostic renders, while incomplete, trailing, lowercase, and credential-shaped references remain denied."
+    },
+    {
+      "command": "pnpm --dir apps/desktop run lint; pnpm --dir apps/desktop run typecheck; pnpm --dir apps/desktop run test; pnpm --dir apps/desktop run build",
+      "exitCode": 0,
+      "result": "Desktop lint and strict typing passed, all 37 renderer tests passed, and the functional product plus isolated reference fixture rebuilt deterministically from 24 and 16 modules respectively."
+    },
+    {
+      "command": "python -m unittest tests.desktop.test_desktop_app_check",
+      "exitCode": 0,
+      "result": "All seven focused desktop browser/security checker tests passed, including functional shell startup, diagnostics preview/export, product/reference separation, accessibility, offline request denial, exact build inputs, and least-privilege capability rejection."
+    },
+    {
+      "command": "cargo check --locked -p research-observatory-desktop",
+      "exitCode": 0,
+      "result": "The exact desktop crate and generated Tauri capability schema accepted only core:webview:allow-internal-toggle-devtools; the production devtools Cargo feature remains disabled."
+    },
+    {
+      "command": "python tools/ui_change_gate.py --repo . --base 7c75380b1163b6b6bb2e2e35ffde17fd916c4544 --head HEAD; python tools/taskctl.py --file planning/backlog.yaml validate; python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The unchanged approved RO-UI-ACADEMIC-MINIMAL-1.3 reference and cumulative T03 implementation scope passed the UI lineage gate; backlog semantics and generated views passed."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The compiled functional desktop shell no longer throws when Core reports RO-CORE-STARTING, so the diagnostics and exact support-bundle workflow remain reachable instead of leaving a blank WebView.",
+        "The focused desktop browser checker still exercises the exact redacted preview, trace-linked diagnostics, single-use export, offline product boundary, and zero reference-page contamination."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Package and application regressions exercise the actual two-part diagnostic plus malformed reference denials; 41 TypeScript tests and seven desktop checker tests passed.",
+        "The Tauri crate check regenerated and compiled the exact capability manifest containing only the narrow internal DevTools toggle permission."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Scope is limited to the diagnostic grammar, its focused regressions, the single Tauri inspector permission, generated capability metadata, and directly affected workflow/checker records.",
+        "The UI reference bytes and identity are unchanged. Full desktop, service, and security-local profiles remain deferred to the already-pending S04 slice integration review under the repository's risk-based test policy."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independently replay the RO-CORE-STARTING render and malformed-reference denials, verify the exact single Tauri permission and generated schema, then confirm the cumulative UI lineage and 12-file superseding evidence scope. No broad profile replay is requested."
+  }
+}
