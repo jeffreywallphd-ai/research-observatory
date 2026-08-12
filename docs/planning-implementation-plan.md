@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 878d1add265861447e1b2aa693ab9099d198eacf7545fff8783ee31638449928
+source_sha256: cea544427a4752460c480bb532a05c5950ba992ec47e8acbe6c872e791aed24c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1311,13 +1311,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S04.T02 - Generate and consume versioned API contracts
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S04.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** OpenAPI-derived TypeScript client, error envelope, pagination, job-status, cancellation, and compatibility rules.
 
