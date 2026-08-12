@@ -2389,7 +2389,7 @@ capabilities:
     depends_on:
     - CAP-00.S03.T02
     - CAP-01.S01.T01
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-01.S03.T01
       capability_id: CAP-01
@@ -2599,14 +2599,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
+      status: APPROVED
       reviewer: curie
-      reviewed_at: '2026-08-12T14:12:05+00:00'
+      reviewed_at: '2026-08-12T14:18:02+00:00'
       evidence:
       - artifacts/evidence/CAP-01.S03.integration.review-fix-2.json
-      notes: 'Final review blockers closed: exact current tool and clean HEAD are enforced; Windows ACL plus path handles
-        deny transient package create/write/delete/rename across every measured lifecycle; focused tests, quality, and clean
-        real-package gate pass.'
+      notes: Independent final review approved exact current-tool/clean-state provenance, complete-package identity, whole-lifecycle
+        ACL/path immutability with restored permissions, fresh real eight-lifecycle performance, eight focused tests, and
+        71-file quality.
   - id: CAP-01.S04
     title: Authenticated desktop-service contract
     outcome: Local IPC is private, versioned, cancellable, and observable.
@@ -2618,7 +2618,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-01.S03.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-01.S04.T01
       capability_id: CAP-01
@@ -2646,11 +2646,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-12T14:18:02+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
