@@ -164,6 +164,10 @@ retain the raw samples, exact measured hardware, measurement-tool commit/bytes,
 and package identity needed to reproduce the comparison. Diagnostic or
 measurement-only modes are explicitly nonqualifying, and any failed invocation
 must invalidate or overwrite a stale PASS report at the requested destination.
+The qualifying invocation must also authenticate the current executing tool and
+clean Git state. A package snapshot boundary must deny transient creation,
+replacement, deletion, and rename for the whole measured process lifetime—not
+only compare inventory before and after execution.
 
 At minimum maintain checks for:
 
