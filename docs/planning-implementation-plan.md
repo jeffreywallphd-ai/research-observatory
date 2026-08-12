@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4627584349ae2ed15e2a0c58d6efff3e0be9a8f916f6370b3be61edd62c2e0f6
+source_sha256: ba6c57200ad272ef11e7245bd8d06c7a32f5dae7d6b9a0305ac0f0e424152c1a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1200,15 +1200,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S03.T01.json` at `c7f7395699097e4f963938184449b110ee7d8a25`
 - `artifacts/evidence/CAP-01.S03.T01.review-fix.json` at `71f16111874bf006aaae18c5763678a03586c0b4`
 
-#### - [ ] CAP-01.S03.T02 - Package the Python service as a Windows sidecar artifact
+#### - [x] CAP-01.S03.T02 - Package the Python service as a Windows sidecar artifact
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-01.S03.T01`
 
-**Owner / review:** codex / agent:maxwell (`changes-requested`)
+**Owner / review:** codex / agent:maxwell (`approved`)
 
 **Objective:** Repeatable sidecar build including pinned Python runtime/dependencies and required local helper binaries.
 
@@ -1235,7 +1235,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S03.T03 - Implement sidecar lifecycle supervision in Tauri
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
