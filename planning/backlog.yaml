@@ -2646,12 +2646,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T14:19:15+00:00'
-      updated_at: '2026-08-12T15:03:43+00:00'
-      completed_at: null
+      updated_at: '2026-08-12T15:09:52+00:00'
+      completed_at: '2026-08-12T15:09:52+00:00'
       blocker: null
       implementation_notes: 'Per-launch local authentication complete; focused security, service, native, package, provenance,
         and performance checks passed. Full integrated profiles deferred to S04 review.
@@ -2671,15 +2671,13 @@ capabilities:
         recorded_at: '2026-08-12T15:03:33+00:00'
       review:
         reviewer: curie
-        result: changes-requested
-        reviewed_at: '2026-08-12T14:52:55+00:00'
-        notes: Raw capability token remains in FastAPI/Starlette user_middleware kwargs and repr for process lifetime; pass
-          only validated digest, reduce mutable startup retention, and add app/stack-construction disclosure regression.
+        result: approved
+        reviewed_at: '2026-08-12T15:09:52+00:00'
+        notes: Independent remediation security review verified raw-token absence across 278 retained objects, clearing of
+          valid and five invalid startup records, digest-only middleware retention, exact canonical frozen artifact identity,
+          all focused auth/performance checks, and full native lifecycle cleanup with no residue.
       base_sha: 5f98edf5822a3ed55d9eb5beff5e37e88d1631d1
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-12T14:52:55+00:00'
-        expires_at: '2026-08-12T22:52:55+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
@@ -2711,11 +2709,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-12T15:09:52+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
