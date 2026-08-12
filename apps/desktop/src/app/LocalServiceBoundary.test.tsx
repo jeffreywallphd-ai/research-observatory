@@ -44,6 +44,17 @@ describe("local service supervision boundary", () => {
       retryAvailable: false,
       diagnosticReference: "RO-CORE-RESTART-LIMIT",
     })).toMatchObject({ state: "recovery-required", retryAvailable: false });
+    expect(localServiceViewFromProbeResult({
+      state: "incompatible",
+      attempt: 1,
+      retryAvailable: true,
+      diagnosticReference: "RO-CORE-INCOMPATIBLE",
+    })).toMatchObject({
+      state: "recovery-required",
+      title: "Local analytical service is incompatible",
+      message: "The desktop rejected the service handshake. Repair or reinstall the matching application package.",
+      retryAvailable: true,
+    });
   });
 
   it("maps hostile adapter failures to an opaque secret-safe diagnostic", () => {

@@ -378,7 +378,7 @@ fn main() {
     require_failure(
         api_incompatible_config,
         RuntimeState::Incompatible,
-        "RO-CORE-API-INCOMPATIBLE",
+        "RO-CORE-INCOMPATIBLE",
         "incompatible generated API contract",
     );
     remove_fixture(api_incompatible_root);
