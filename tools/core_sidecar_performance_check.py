@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import ctypes
 import hashlib
 import json
@@ -18,7 +19,8 @@ import tempfile
 import threading
 import time
 import urllib.request
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import IO, Any
 
@@ -31,7 +33,7 @@ READINESS_BUDGET_MS = 3_000.0
 SHUTDOWN_BUDGET_MS = 5_000.0
 IDLE_MEMORY_BUDGET_BYTES = 268_435_456
 BASELINE_PATH = Path("verification/baselines/core-sidecar-performance.json")
-EXPECTED_BASELINE_SHA256 = "1ff9a0936d1b015b48e519896da9120c3ec0b5ce2b0d2d3c7e62b5a9ac185425"
+BASELINE_HASH_PATH = Path("verification/baselines/core-sidecar-performance.sha256")
 TARGET_TRIPLE = "x86_64-pc-windows-msvc"
 ENTRYPOINT = f"research-observatory-core-{TARGET_TRIPLE}.exe"
 ARTIFACT_PATH = Path("artifacts/tmp/core-sidecar-package/dist") / ENTRYPOINT.removesuffix(".exe") / ENTRYPOINT
@@ -294,7 +296,18 @@ def validate_baseline(value: Any) -> dict[str, Any]:
 def load_baseline(repo: Path) -> tuple[dict[str, Any], str]:
     value, payload = load_json(exact_file(repo, BASELINE_PATH))
     digest = hashlib.sha256(payload).hexdigest()
-    if digest != EXPECTED_BASELINE_SHA256:
+    expected_hash_payload = exact_file(repo, BASELINE_HASH_PATH).read_bytes()
+    try:
+        expected_hash = expected_hash_payload.decode("ascii")
+    except UnicodeDecodeError as exc:
+        raise ValueError("Core performance baseline hash authority is not ASCII") from exc
+    if (
+        len(expected_hash_payload) != 65
+        or not expected_hash.endswith("\n")
+        or any(item not in "0123456789abcdef" for item in expected_hash[:-1])
+    ):
+        raise ValueError("Core performance baseline hash authority is invalid")
+    if digest != expected_hash[:-1]:
         raise ValueError("Core performance baseline bytes do not match the immutable reviewed SHA-256")
     baseline = validate_baseline(value)
     ancestry = subprocess.run(
@@ -318,6 +331,101 @@ def load_baseline(repo: Path) -> tuple[dict[str, Any], str]:
     if hashlib.sha256(tool_at_source.stdout).hexdigest() != baseline["provenance"]["measurementToolSha256"]:
         raise ValueError("Core performance measurement tool differs from its approved source bytes")
     return baseline, digest
+
+
+def clean_measurement_state(repo: Path, baseline: dict[str, Any]) -> tuple[str, str]:
+    commit = git_head(repo)
+    status = subprocess.run(
+        ["git", "status", "--porcelain=v1", "--untracked-files=no"],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    if status.returncode or status.stdout:
+        raise ValueError("Core performance qualification requires a clean tracked Git state")
+    tool = exact_file(repo, TOOL_PATH)
+    tool_hash = sha256(tool)
+    provenance = baseline["provenance"]
+    if provenance["measurementToolPath"] != TOOL_PATH.as_posix() or provenance["measurementToolSha256"] != tool_hash:
+        raise ValueError("The executing Core performance tool differs from the approved measurement tool")
+    return commit, tool_hash
+
+
+def current_user_sid() -> str:
+    system_root = Path(os.environ.get("SYSTEMROOT", r"C:\Windows"))
+    whoami = system_root / "System32" / "whoami.exe"
+    result = subprocess.run(
+        [str(whoami), "/user", "/fo", "csv", "/nh"],
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    try:
+        row = next(csv.reader([result.stdout.decode("utf-8")]))
+    except (UnicodeDecodeError, csv.Error, StopIteration) as exc:
+        raise ValueError("Current Windows user SID is unavailable") from exc
+    sid = row[1] if len(row) == 2 else ""
+    parts = sid.split("-")
+    if result.returncode or len(parts) < 4 or parts[0] != "S" or any(not item.isdigit() for item in parts[1:]):
+        raise ValueError("Current Windows user SID is invalid")
+    return sid
+
+
+def icacls(repo: Path, arguments: list[str]) -> subprocess.CompletedProcess[bytes]:
+    system_root = Path(os.environ.get("SYSTEMROOT", r"C:\Windows"))
+    executable = system_root / "System32" / "icacls.exe"
+    return subprocess.run(
+        [str(executable), *arguments],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+        timeout=120,
+    )
+
+
+@contextmanager
+def immutable_package_snapshot(repo: Path, root: Path, manifest: dict[str, Any]) -> Iterator[None]:
+    """Deny snapshot mutation and hold every known path against replacement on Windows."""
+    if os.name != "nt":
+        raise ValueError("Core package snapshot immutability requires Windows")
+    sid = current_user_sid()
+    deny = f"*{sid}:(OI)(CI)(WD,AD,WEA,WA,DE,DC)"
+    applied = icacls(repo, [str(root), "/deny", deny, "/t", "/c", "/q"])
+    if applied.returncode:
+        icacls(repo, [str(root), "/remove:d", f"*{sid}", "/t", "/c", "/q"])
+        diagnostic = (applied.stderr or applied.stdout).decode("utf-8", errors="replace").strip()
+        raise ValueError(f"Core package snapshot could not be made read-only: {diagnostic}")
+    body_error: BaseException | None = None
+    try:
+        probe = root / ".ro-benchmark-write-probe"
+        try:
+            descriptor = os.open(probe, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except PermissionError:
+            pass
+        else:
+            os.close(descriptor)
+            raise ValueError("Core package snapshot write denial is ineffective")
+        files = [root / str(item["path"]) for item in manifest["files"]]
+        directories = {root}
+        for path in files:
+            cursor = path.parent
+            while cursor != root:
+                directories.add(cursor)
+                cursor = cursor.parent
+        with (
+            windows_path_locks(list(directories), directories=True),
+            windows_path_locks(files, directories=False),
+        ):
+            yield
+    except BaseException as exc:
+        body_error = exc
+        raise
+    finally:
+        restored = icacls(repo, [str(root), "/remove:d", f"*{sid}", "/t", "/c", "/q"])
+        if restored.returncode and body_error is None:
+            diagnostic = (restored.stderr or restored.stdout).decode("utf-8", errors="replace").strip()
+            raise ValueError(f"Core package snapshot permissions could not be restored: {diagnostic}")
 
 
 def package_configuration_identity() -> dict[str, Any]:
@@ -592,6 +700,7 @@ def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, A
         raise ValueError(f"Core performance qualification requires exactly {REPETITIONS} repetitions")
     artifact_root, manifest, identity, report_payload = load_verified_package(repo)
     assert_approved_package_identity(identity, approved_baseline)
+    measurement_commit, measurement_tool_hash = clean_measurement_state(repo, approved_baseline)
     contract = load_build_contract(repo)
     schema, _schema_payload = load_json(exact_file(repo, SCHEMA_PATH))
     scratch = repo / "artifacts" / "tmp"
@@ -605,8 +714,7 @@ def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, A
             assert_package_snapshot(snapshot_root, manifest, contract, schema)
 
         executable = snapshot_root / str(manifest["entrypoint"])
-        snapshot_files = [snapshot_root / str(item["path"]) for item in manifest["files"]]
-        with windows_path_locks(snapshot_files, directories=False):
+        with immutable_package_snapshot(repo, snapshot_root, manifest):
             guard()
             raw = benchmark_snapshot(executable, repetitions, guard)
             guard()
@@ -619,9 +727,9 @@ def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, A
         "profile": "windows-x64",
         "hardware": hardware_record(),
         "provenance": {
-            "measurementStateCommit": git_head(repo),
+            "measurementStateCommit": measurement_commit,
             "measurementToolPath": TOOL_PATH.as_posix(),
-            "measurementToolSha256": sha256(repo / TOOL_PATH),
+            "measurementToolSha256": measurement_tool_hash,
             "packageEvidencePath": PACKAGE_EVIDENCE_PATH.as_posix(),
             "packageEvidenceSha256": PACKAGE_EVIDENCE_SHA256,
             "packageReportSha256": identity["packageReportSha256"],
@@ -640,15 +748,29 @@ def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, A
     }
 
 
-def evaluate(report: dict[str, Any], baseline: dict[str, Any], baseline_hash: str) -> dict[str, Any]:
+def evaluate(
+    report: dict[str, Any], baseline: dict[str, Any], baseline_hash: str, measurement_state_commit: str
+) -> dict[str, Any]:
     if report.get("hardware") != baseline["hardware"]:
         raise ValueError("Core benchmark hardware differs from the approved baseline hardware")
     if report.get("fixture") != baseline["fixture"]:
         raise ValueError("Core benchmark package fixture differs from the approved baseline")
     provenance = report.get("provenance")
-    if not isinstance(provenance, dict):
-        raise ValueError("Core benchmark provenance is missing")
+    if not isinstance(provenance, dict) or set(provenance) != {
+        "measurementStateCommit",
+        "measurementToolPath",
+        "measurementToolSha256",
+        "packageEvidencePath",
+        "packageEvidenceSha256",
+        "packageReportSha256",
+        "artifactManifestSha256",
+    }:
+        raise ValueError("Core benchmark provenance shape is invalid")
+    if provenance.get("measurementStateCommit") != measurement_state_commit:
+        raise ValueError("Core benchmark measurement state does not match the qualifying Git HEAD")
     for field in (
+        "measurementToolPath",
+        "measurementToolSha256",
         "packageEvidencePath",
         "packageEvidenceSha256",
         "packageReportSha256",
@@ -710,7 +832,7 @@ def run(repo: Path, destination: Path, *, measure_only: bool = False) -> tuple[d
     try:
         baseline, baseline_hash = load_baseline(repo)
         measured = measured_report(repo, REPETITIONS, baseline)
-        report = evaluate(measured, baseline, baseline_hash)
+        report = evaluate(measured, baseline, baseline_hash, git_head(repo))
     except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
         report = nonqualifying_report(str(exc))
     guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
