@@ -14,6 +14,7 @@ affected_paths:
   - apps/desktop/src/**
   - apps/desktop/src-tauri/**
   - tools/core_api_contract.py
+  - quality-scope.json
   - docs/adr/**
 supersedes: []
 superseded_by: null
