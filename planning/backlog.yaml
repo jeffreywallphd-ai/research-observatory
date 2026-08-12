@@ -2784,12 +2784,12 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-12T17:28:14+00:00'
-      completed_at: null
+      updated_at: '2026-08-12T17:31:13+00:00'
+      completed_at: '2026-08-12T17:31:13+00:00'
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
         compiled-product, UI-lineage, architecture, and clean-manifest evidence; full desktop/service/security-local profiles
@@ -2817,16 +2817,15 @@ capabilities:
         commit: f12b4a1ef6b81ac599e4bedbc74ca952de695766
         recorded_at: '2026-08-12T17:27:29+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: 'Reopened: Post-review production defect: the shared boundary component rejects valid two-segment RO diagnostic
-          identifiers and the development WebView lacks the narrow internal DevTools toggle permission.'
+        reviewer: agent:curie
+        result: approved
+        reviewed_at: '2026-08-12T17:31:13+00:00'
+        notes: Independent focused replay verified RO-CORE-STARTING renders while incomplete/trailing/lowercase/credential-shaped
+          references reject; compiled product has no blank runtime; only core:webview:allow-internal-toggle-devtools is granted,
+          generated metadata matches, production devtools feature remains disabled, UI reference is unchanged, and exact superseding
+          evidence/scope/ancestry are valid.
       base_sha: 7c75380b1163b6b6bb2e2e35ffde17fd916c4544
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-12T17:18:56+00:00'
-        expires_at: '2026-08-13T01:18:56+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
