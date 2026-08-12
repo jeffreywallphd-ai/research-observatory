@@ -1041,11 +1041,11 @@ fn verify_core_api_contract(
         idempotency_key: None,
     };
     let response = authenticated_api_request(port, capability_token, &request)
-        .map_err(|_| (RuntimeState::Incompatible, "RO-CORE-API-INCOMPATIBLE"))?;
+        .map_err(|_| (RuntimeState::Incompatible, "RO-CORE-INCOMPATIBLE"))?;
     if version_response_is_compatible(&response) {
         Ok(())
     } else {
-        Err((RuntimeState::Incompatible, "RO-CORE-API-INCOMPATIBLE"))
+        Err((RuntimeState::Incompatible, "RO-CORE-INCOMPATIBLE"))
     }
 }
 

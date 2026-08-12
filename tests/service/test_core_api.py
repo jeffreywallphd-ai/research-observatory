@@ -261,6 +261,12 @@ class CoreApiTests(unittest.TestCase):
             )
             self.assertEqual(repeated.status_code, 200)
             self.assertEqual(repeated.json()["sequence"], 2)
+            changed_fingerprint = client.post(
+                "/runtime/operations/op-first/cancel",
+                headers={"If-Match": '"op-first-999"', "Idempotency-Key": command_key},
+            )
+            self.assertEqual(changed_fingerprint.status_code, 409)
+            self.assertEqual(changed_fingerprint.json()["code"], "RO-CORE-IDEMPOTENCY-CONFLICT")
             replay = client.get("/runtime/operations/op-first/events", params={"afterSequence": 1})
             self.assertIn("id: 2", replay.text)
             self.assertIn('"state":"cancelled"', replay.text)

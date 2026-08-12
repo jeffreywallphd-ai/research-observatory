@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from threading import RLock
@@ -78,7 +79,7 @@ class OperationRegistry:
 
     def __init__(self) -> None:
         self._records: dict[str, OperationRecord] = {}
-        self._idempotency: dict[str, tuple[str, OperationStatus]] = {}
+        self._idempotency: dict[str, tuple[bytes, OperationStatus]] = {}
         self._lock = RLock()
 
     def add_fixture(self, record: OperationRecord) -> None:
@@ -112,11 +113,14 @@ class OperationRegistry:
 
     def cancel(self, operation_id: str, *, if_match: str, idempotency_key: str) -> OperationStatus | None:
         with self._lock:
+            command_fingerprint = hashlib.sha256(
+                b"cancel\0" + operation_id.encode("utf-8") + b"\0" + if_match.encode("utf-8") + b"\0"
+            ).digest()
             prior = self._idempotency.get(idempotency_key)
             if prior is not None:
-                prior_operation_id, projection = prior
-                if prior_operation_id != operation_id:
-                    raise IdempotencyConflict("idempotency identity was already used for another operation")
+                prior_fingerprint, projection = prior
+                if prior_fingerprint != command_fingerprint:
+                    raise IdempotencyConflict("idempotency identity was already used for another command fingerprint")
                 return projection
             record = self._records.get(operation_id)
             if record is None:
@@ -129,7 +133,7 @@ class OperationRegistry:
                 record.cancellation_requested = True
                 record.transition(OperationState.CANCELLED, record.progress_percent)
             projection = record.projection()
-            self._idempotency[idempotency_key] = (operation_id, projection)
+            self._idempotency[idempotency_key] = (command_fingerprint, projection)
             if len(self._idempotency) > MAX_IDEMPOTENCY_RECORDS:
                 del self._idempotency[next(iter(self._idempotency))]
             return projection

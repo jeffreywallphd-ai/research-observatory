@@ -77,6 +77,9 @@ describe("generated Core API client", () => {
       problem,
     } satisfies Partial<CoreApiClientError>);
     expect(decodeProblemDetail({ ...problem, privatePath: "C:/research/private" })).toBeNull();
+    const wrongProblemMedia = createCoreApiClient(async () => response(404, problem, "text/html"));
+    await expect(wrongProblemMedia.operation("op-missing")).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+    await expect(wrongProblemMedia.events("op-missing")).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
   });
 
   it("parses monotonic SSE frames and rejects forged or reordered events", () => {
@@ -109,6 +112,8 @@ describe("generated Core API client", () => {
       body: "{not-json",
     }));
     await expect(hostile.version()).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+    const redirected = createCoreApiClient(async () => response(302, compatible));
+    await expect(redirected.version()).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
   });
 
   it("carries ETag and idempotency preconditions through cancellation", async () => {

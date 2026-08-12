@@ -292,13 +292,15 @@ async function requestJsonResponse<T>(
   if (!integer(response.status, 100, 599) || !canonicalTraceId(response.traceId) || typeof response.body !== "string") {
     throw new Error("RO-CORE-RESPONSE-INVALID");
   }
-  const value = parseJson(response.body);
   if (response.status >= 400) {
+    if (response.contentType !== "application/problem+json") throw new Error("RO-CORE-RESPONSE-INVALID");
+    const value = parseJson(response.body);
     const problem = decodeProblemDetail(value);
     if (!problem || problem.status !== response.status || problem.traceId !== response.traceId) throw new Error("RO-CORE-RESPONSE-INVALID");
     throw new CoreApiClientError(problem);
   }
-  if (response.contentType !== "application/json") throw new Error("RO-CORE-RESPONSE-INVALID");
+  if (response.status !== 200 || response.contentType !== "application/json") throw new Error("RO-CORE-RESPONSE-INVALID");
+  const value = parseJson(response.body);
   const decoded = decode(value);
   if (!decoded) throw new Error("RO-CORE-RESPONSE-INVALID");
   return { value: decoded, response };
@@ -375,7 +377,11 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         ifMatch: null,
         idempotencyKey: null,
       });
+      if (!integer(response.status, 100, 599) || !canonicalTraceId(response.traceId) || typeof response.body !== "string") {
+        throw new Error("RO-CORE-RESPONSE-INVALID");
+      }
       if (response.status >= 400) {
+        if (response.contentType !== "application/problem+json") throw new Error("RO-CORE-RESPONSE-INVALID");
         const problem = decodeProblemDetail(parseJson(response.body));
         if (!problem || problem.status !== response.status || problem.traceId !== response.traceId) throw new Error("RO-CORE-RESPONSE-INVALID");
         throw new CoreApiClientError(problem);
