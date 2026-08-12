@@ -2479,12 +2479,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-11T22:04:42+00:00'
-      updated_at: '2026-08-12T00:17:46+00:00'
-      completed_at: null
+      updated_at: '2026-08-12T00:20:03+00:00'
+      completed_at: '2026-08-12T00:20:03+00:00'
       blocker: null
       implementation_notes: 'Exact bb7a1b9 passed 19-command service and 25-command desktop profiles; 644-file/31.6 MB Pythonless-path
         artifact and exact missing/mutation/inventory boundaries pass; shipped scan has zero blockers; independently reviewed
@@ -2514,15 +2514,13 @@ capabilities:
         recorded_at: '2026-08-12T00:17:12+00:00'
       review:
         reviewer: agent:maxwell
-        result: changes-requested
-        reviewed_at: '2026-08-12T00:14:41+00:00'
-        notes: The artifact manifest schema accepted componentVersion 99.99.99 and pythonVersion 3.14.999 instead of binding
-          both fields to the exact governed build contract.
+        result: approved
+        reviewed_at: '2026-08-12T00:20:03+00:00'
+        notes: 'Approved focused remediation b5c30e6: exact 0.1.0/3.14.6 remains valid; 99.99.99 and 3.14.999 reject through
+          schema and governed-contract checks; exact scope/evidence, six packaging tests, Pythonless build/run, Ruff and mypy
+          pass; prior full profiles remain applicable.'
       base_sha: e1c77668875f7b4477dfb7bbca83e9a64814af23
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-12T00:14:41+00:00'
-        expires_at: '2026-08-12T08:14:41+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
@@ -2555,11 +2553,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-12T00:20:03+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
