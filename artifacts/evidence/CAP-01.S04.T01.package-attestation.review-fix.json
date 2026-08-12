@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "core-sidecar-package-attestation",
+  "taskId": "CAP-01.S04.T01",
+  "sourceCommit": "6daac0e8a4b7814844855307e7861573991158b3",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T01.package-attestation.json",
+    "reason": "The original attestation recorded a valid authenticated build from the task source commit but used the builder's development-default output root. This replacement binds the exact canonical release/performance artifact root and the package actually exercised by the native supervisor."
+  },
+  "build": {
+    "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-package",
+    "profile": "windows-x64",
+    "artifactRoot": "artifacts/tmp/core-sidecar-package/dist/research-observatory-core-x86_64-pc-windows-msvc",
+    "cleanTrackedSource": true,
+    "fileCount": 644,
+    "totalBytes": 31575484,
+    "packageReportSha256": "58d87509a682f61e921d4d2a2232f36f62edff82f3ed81c68aec9acae2479d95",
+    "artifactManifestSha256": "fc21da47369ce68ac8bcf92343f50ab5dd0fce23189a8427169183fe534fdb6e",
+    "entrypointSha256": "dc64e9c86aa558defad81dd717ee3259730dedd1452cbf53f261fc45216233ab"
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "Six package tests passed against a real PyInstaller build; one token-dependent symlink case was skipped on the current Windows account."
+    },
+    {
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example supervision_check --locked -- <canonical-packaged-sidecar> <fixture>",
+      "exitCode": 0,
+      "result": "The exact authenticated release-path package returned ok=true across duplicate start, current-token readiness, restart rotation, cancellation, crash/retry, failure classification, serialized stop/retry, and complete root-plus-descendant cleanup."
+    }
+  ]
+}
