@@ -2553,11 +2553,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-12T00:20:03+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/cap-01-desktop-shell
+      started_at: '2026-08-12T11:51:12+00:00'
+      updated_at: '2026-08-12T11:51:12+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2567,10 +2567,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 6743b5451a715d0585dd17798c27d23ff4dc2ba8
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-12T11:51:12+00:00'
+        expires_at: '2026-08-12T19:51:12+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
     platform_targets:
