@@ -127,6 +127,10 @@ class CoreSidecarPackageTests(unittest.TestCase):
             )
             self.assertEqual(list(Draft202012Validator(schema).iter_errors(manifest)), [])
             self.assertEqual(verify_artifact(artifact_root, manifest), [])
+            for field, invalid_value in (("componentVersion", "99.99.99"), ("pythonVersion", "3.14.999")):
+                wrong_version = {**manifest, field: invalid_value}
+                errors = verify_artifact(artifact_root, wrong_version)
+                self.assertTrue(any(f"{field} does not match the governed build contract" in error for error in errors))
             self.assertLessEqual(manifest["totalBytes"], 134_217_728)
             packaged_paths = tuple(item["path"].casefold() for item in manifest["files"])
             for excluded_module in ("mypy", "pip", "pytest", "setuptools", "yaml"):
