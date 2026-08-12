@@ -2389,7 +2389,7 @@ capabilities:
     depends_on:
     - CAP-00.S03.T02
     - CAP-01.S01.T01
-    status: REVIEW
+    status: IN_PROGRESS
     tasks:
     - id: CAP-01.S03.T01
       capability_id: CAP-01
@@ -2599,13 +2599,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: CHANGES_REQUESTED
+      reviewer: agent:curie
+      reviewed_at: '2026-08-12T13:45:06+00:00'
       evidence:
       - artifacts/evidence/CAP-01.S03.integration.json
-      notes: All three task reviews approved; desktop/service/e2e-local profiles and immutable Core lifecycle performance
-        passed once at slice integration; S04 handoff is ready.
+      notes: Core performance qualification must authenticate a stable complete package snapshot, eliminate measure-only/stale
+        PASS reports, and bind retained raw samples, hardware, tool/state, and exact artifact identity into immutable baseline
+        provenance.
   - id: CAP-01.S04
     title: Authenticated desktop-service contract
     outcome: Local IPC is private, versioned, cancellable, and observable.
