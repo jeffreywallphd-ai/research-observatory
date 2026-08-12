@@ -2553,12 +2553,12 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T11:51:12+00:00'
-      updated_at: '2026-08-12T12:57:41+00:00'
-      completed_at: null
+      updated_at: '2026-08-12T13:00:02+00:00'
+      completed_at: '2026-08-12T13:00:02+00:00'
       blocker: null
       implementation_notes: 'Focused task evidence complete at ba98a62; full desktop/service/e2e-local integration profiles
         are deferred to CAP-01.S03 slice review per risk-based verification policy.
@@ -2586,15 +2586,12 @@ capabilities:
         recorded_at: '2026-08-12T12:57:20+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-12T12:54:02+00:00'
-        notes: Delayed-compatible readiness can publish after cancellation and let stop return before the private process
-          tree has terminated.
+        result: approved
+        reviewed_at: '2026-08-12T13:00:02+00:00'
+        notes: Async dispatch, atomic Job containment, stable diagnostics, serialized lifecycle, strict failure classification,
+          descendant cleanup, and delayed-readiness cancellation independently verified.
       base_sha: 6743b5451a715d0585dd17798c27d23ff4dc2ba8
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-12T12:54:02+00:00'
-        expires_at: '2026-08-12T20:54:02+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:

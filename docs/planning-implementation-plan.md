@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e81638ada631218ad31435c60c4ad1eb9ca801a3b2cea3a3166feb447bca8eec
+source_sha256: 89af01e974f871b41ab35a3878f3de83762f73e7cb3c9e2ee62dc7ee10491db7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1233,15 +1233,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S03.T02.review-fix.json` at `1f563fd519e6e284905152440c96fd23d4432e5a`
 - `artifacts/evidence/CAP-01.S03.T02.review-fix-2.json` at `b5c30e665e370465cc61d9c14539317121e506ff`
 
-#### - [ ] CAP-01.S03.T03 - Implement sidecar lifecycle supervision in Tauri
+#### - [x] CAP-01.S03.T03 - Implement sidecar lifecycle supervision in Tauri
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-01.S03.T02`
 
-**Owner / review:** codex / agent:curie (`changes-requested`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** Desktop-controlled start, health polling, graceful stop, crash detection, bounded restart, and log collection.
 
