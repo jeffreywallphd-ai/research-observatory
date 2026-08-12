@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ba6c57200ad272ef11e7245bd8d06c7a32f5dae7d6b9a0305ac0f0e424152c1a
+source_sha256: 75bdd6fd6a93fe4966ecf3d2bea9999a4a0cabe7c7a7053a0226e55f174fc377
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1235,13 +1235,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S03.T03 - Implement sidecar lifecycle supervision in Tauri
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-01.S03.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Desktop-controlled start, health polling, graceful stop, crash detection, bounded restart, and log collection.
 
