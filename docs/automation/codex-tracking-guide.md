@@ -91,10 +91,14 @@ slice boundary as a request for another routine approval.
 
 Before claiming, use `taskctl next` and `taskctl show` to identify the active
 campaign's next `READY` task. Permitted scope is its objective, deliverables,
-criteria, dependencies, profile/platform, and governing sources. Required checks
-are its declared verification commands plus changed-path checks. Completion is
-commit-bound criterion evidence, submission, required review, clean tested local
-main integration, and continuation to the next eligible task or slice gate.
+criteria, dependencies, profile/platform, and governing sources. At task scope,
+select the narrowest checks from its declared verification coverage and the
+changed-path impact map that exercise credible failure paths. Defer unchanged
+full profiles to slice review unless an explicit criterion or profile-wide impact
+requires earlier execution, and record the breadth rationale in evidence.
+Completion is commit-bound criterion evidence, submission, required review,
+clean tested local main integration, and continuation to the next eligible task
+or slice gate.
 
 ## Evidence
 

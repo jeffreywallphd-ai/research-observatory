@@ -37,6 +37,14 @@ class AgentProtocolTests(unittest.TestCase):
 
         self.assertTrue(any("One approval and one durable campaign" in error for error in errors))
 
+    def test_task_verification_cannot_default_to_full_profiles(self) -> None:
+        protocol = copy.deepcopy(self.protocol)
+        protocol["verification"]["taskDefault"] = "all-declared-full-profiles"
+
+        errors = validate_protocol(REPO, protocol)
+
+        self.assertIn("verification.taskDefault must be 'focused-affected-checks'", errors)
+
     def test_unfamiliar_agent_can_state_scope_checks_and_completion_for_ready_task(self) -> None:
         task = {
             "id": "CAP-00.S99.T01",
@@ -55,6 +63,8 @@ class AgentProtocolTests(unittest.TestCase):
 
         self.assertEqual("Prove the task briefing contract.", brief["permittedScope"]["objective"])
         self.assertEqual(["foundation"], brief["requiredChecks"]["profiles"])
+        self.assertEqual("focused-affected-checks", brief["requiredChecks"]["taskDefault"])
+        self.assertEqual("slice-integration-review", brief["requiredChecks"]["fullProfileStage"])
         self.assertIn("required-independent-review", brief["completionProtocol"])
         self.assertIn("taskctl.py", brief["claimCommandTemplate"])
 

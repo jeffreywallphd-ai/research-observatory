@@ -86,6 +86,18 @@ def validate_protocol(
     if not scope.get("permitted") or not scope.get("prohibited"):
         errors.append("scope control must state both permitted and prohibited work")
     verification = protocol.get("verification", {})
+    expected_verification = {
+        "selectionPolicy": "credible-failure-likelihood-and-changed-path-impact",
+        "taskDefault": "focused-affected-checks",
+        "fullProfileStage": "slice-integration-review",
+        "completeMatrixStage": "capability-qualification",
+        "breadthRationaleRequiredInEvidence": True,
+    }
+    for field, expected in expected_verification.items():
+        if verification.get(field) != expected:
+            errors.append(f"verification.{field} must be {expected!r}")
+    if len(verification.get("earlyFullProfileConditions", [])) < 4:
+        errors.append("verification must retain every governed early full-profile condition")
     if not verification.get("exactCommitRequired"):
         errors.append("verification evidence must be bound to the exact commit")
     completion = protocol.get("completion", {})
@@ -125,6 +137,9 @@ def task_brief(task: dict[str, Any], protocol: dict[str, Any]) -> dict[str, Any]
             "profiles": task["verification_profiles"],
             "commands": task["verification_commands"],
             "additionalSources": protocol["verification"]["requiredSources"],
+            "selectionPolicy": protocol["verification"]["selectionPolicy"],
+            "taskDefault": protocol["verification"]["taskDefault"],
+            "fullProfileStage": protocol["verification"]["fullProfileStage"],
         },
         "completionProtocol": protocol["completion"]["orderedSteps"],
         "claimCommandTemplate": protocol["selection"]["claimCommand"],

@@ -123,7 +123,30 @@ Restoring code to an already approved reference does not require a new reference
 
 ## Verification
 
-Run the checks required by the active task contract and changed-path impact map. At minimum, validate backlog/plans, architecture, UI reference, generated review pages, type/lint/test profiles, and the primary platform when affected. See `docs/automation/project-automation-guide.md`.
+### Risk-based test selection
+
+At task implementation and task review, select checks according to the credible
+likelihood that the changed paths, contracts, dependencies, or platform behavior
+could cause them to fail. Run the narrowest deterministic unit, contract,
+boundary, lint, type, schema, and affected integration checks that prove the task
+criteria. Treat task `verification_profiles` and `verification_commands` as the
+coverage inventory from which affected checks are selected, not as an automatic
+instruction to replay every command in a full profile.
+
+Do not run a full repository or deployment-profile suite for an ordinary task or
+task remediation merely because it is available. Run the affected full profile
+early only when an acceptance criterion explicitly requires it, the change
+touches shared verification/build/security/toolchain infrastructure with credible
+profile-wide impact, a dependency or runtime change crosses the profile boundary,
+or a failure cannot be localized safely. Record that reason in evidence.
+
+Run the affected full integrated profiles once when the completed slice is being
+reviewed. Run the complete cross-slice/cross-capability matrix at capability
+qualification. Task evidence must state the risk analysis, selected checks, and
+which broader coverage is deferred to slice or capability review. Backlog/plans,
+architecture, UI-reference integrity, generated views, and the primary platform
+are checked at task level only when the changed-path impact map makes them
+plausibly affected. See `docs/automation/project-automation-guide.md`.
 
 ## Local main integration
 
