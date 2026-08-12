@@ -5,6 +5,8 @@ import json
 import math
 import sys
 import tempfile
+import threading
+import time
 import unittest
 from pathlib import Path
 from typing import Any
@@ -64,7 +66,8 @@ def sample_baseline() -> dict[str, Any]:
 class CoreSidecarPerformanceContractTests(unittest.TestCase):
     def test_committed_baseline_is_exact_valid_and_reproducibly_sourced(self) -> None:
         baseline, digest = benchmark.load_baseline(ROOT)
-        self.assertEqual(benchmark.EXPECTED_BASELINE_SHA256, digest)
+        expected = (ROOT / benchmark.BASELINE_HASH_PATH).read_text(encoding="ascii").strip()
+        self.assertEqual(expected, digest)
         self.assertEqual("7c79c7ca477b0f0d4f9b7239e7e89538c3669fda", baseline["baselineSourceCommit"])
 
     def test_strict_baseline_binds_raw_samples_hardware_tool_and_package(self) -> None:
@@ -152,8 +155,13 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
             "hardware": copy.deepcopy(baseline["hardware"]),
             "fixture": copy.deepcopy(baseline["fixture"]),
             "provenance": {
-                **copy.deepcopy(baseline["provenance"]),
                 "measurementStateCommit": "1" * 40,
+                "measurementToolPath": baseline["provenance"]["measurementToolPath"],
+                "measurementToolSha256": baseline["provenance"]["measurementToolSha256"],
+                "packageEvidencePath": baseline["provenance"]["packageEvidencePath"],
+                "packageEvidenceSha256": baseline["provenance"]["packageEvidenceSha256"],
+                "packageReportSha256": baseline["provenance"]["packageReportSha256"],
+                "artifactManifestSha256": baseline["provenance"]["artifactManifestSha256"],
             },
             "rawMeasurements": {
                 "readinessMs": {"p50": 16.0},
@@ -161,7 +169,7 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
                 "idleWorkingSetBytes": {"p95": 16.0},
             },
         }
-        evaluated = benchmark.evaluate(report, baseline, "9" * 64)
+        evaluated = benchmark.evaluate(report, baseline, "9" * 64, "1" * 40)
         self.assertFalse(evaluated["ok"])
         self.assertFalse(evaluated["measurements"]["readinessMs"]["passes"])
         for section, field in (("hardware", "processor"), ("fixture", "entrypointSha256")):
@@ -169,7 +177,55 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
                 changed = copy.deepcopy(report)
                 changed[section][field] = "substitute"
                 with self.assertRaises(ValueError):
-                    benchmark.evaluate(changed, baseline, "9" * 64)
+                    benchmark.evaluate(changed, baseline, "9" * 64, "1" * 40)
+
+        for field, value in (
+            ("measurementToolPath", "evil.py"),
+            ("measurementToolSha256", "0" * 64),
+            ("measurementStateCommit", "0" * 40),
+        ):
+            with self.subTest(field=field):
+                changed = copy.deepcopy(report)
+                changed["provenance"][field] = value
+                with self.assertRaises(ValueError):
+                    benchmark.evaluate(changed, baseline, "9" * 64, "1" * 40)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows ACL boundary")
+    def test_snapshot_acl_denies_transient_concurrent_create_write_and_delete(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "artifacts" / "tmp") as temporary:
+            snapshot = Path(temporary) / "package"
+            snapshot.mkdir()
+            executable = snapshot / "fixture.exe"
+            executable.write_bytes(b"approved")
+            manifest = {"files": [{"path": "fixture.exe"}]}
+            attempts = 0
+            successes: list[str] = []
+            stop = threading.Event()
+
+            def attack() -> None:
+                nonlocal attempts
+                injected = snapshot / "unapproved-runtime-injection.dll"
+                while not stop.is_set():
+                    attempts += 1
+                    try:
+                        injected.write_bytes(b"attacker")
+                        executable.write_bytes(b"attacker")
+                        injected.unlink()
+                        successes.append("mutation")
+                    except OSError:
+                        pass
+
+            with benchmark.immutable_package_snapshot(ROOT, snapshot, manifest):
+                worker = threading.Thread(target=attack)
+                worker.start()
+                time.sleep(0.1)
+                stop.set()
+                worker.join(timeout=5)
+                self.assertFalse(worker.is_alive())
+                self.assertGreater(attempts, 0)
+                self.assertEqual([], successes)
+                self.assertEqual(b"approved", executable.read_bytes())
+            executable.write_bytes(b"restored-write-access")
 
     def test_measure_only_and_failures_replace_stale_pass_reports(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT / "artifacts" / "tmp") as temporary:
