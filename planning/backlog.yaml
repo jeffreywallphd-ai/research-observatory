@@ -2709,15 +2709,21 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T15:10:53+00:00'
-      updated_at: '2026-08-12T15:10:53+00:00'
+      updated_at: '2026-08-12T15:45:56+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Exact candidate 072e1d6 is ready for independent agent review; full desktop/service profiles remain
+        deferred to S04 integration review.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S04.T02.json
+        sha256: bfee76512fade21f38a5ab713dbeb64d28753f99006c5119b2be63d3893030ce
+        commit: 072e1d66c6860ad142922719573ccc69ab0f5054
+        recorded_at: '2026-08-12T15:45:46+00:00'
       review:
         reviewer: null
         result: null
@@ -2728,7 +2734,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-12T15:10:53+00:00'
         expires_at: '2026-08-12T23:10:53+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
