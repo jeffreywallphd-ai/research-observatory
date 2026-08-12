@@ -2646,11 +2646,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-12T14:18:02+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/cap-01-desktop-shell
+      started_at: '2026-08-12T14:19:15+00:00'
+      updated_at: '2026-08-12T14:19:15+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -2660,10 +2660,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 5f98edf5822a3ed55d9eb5beff5e37e88d1631d1
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-12T14:19:15+00:00'
+        expires_at: '2026-08-14T14:19:15+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
     - id: CAP-01.S04.T02
