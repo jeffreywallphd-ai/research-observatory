@@ -52,6 +52,7 @@ pub struct SupportBundlePreview {
     output_directory: String,
     byte_length: usize,
     sha256: String,
+    document_json: String,
     bundle: SupportBundleDocument,
 }
 
@@ -75,6 +76,10 @@ impl SupportBundlePreview {
 
     pub fn sha256(&self) -> &str {
         &self.sha256
+    }
+
+    pub fn document_json(&self) -> &str {
+        &self.document_json
     }
 
     pub fn bundle(&self) -> &SupportBundleDocument {
@@ -183,6 +188,8 @@ impl SupportBundleManager {
             output_directory: display_path(&output_directory)?,
             byte_length: bytes.len(),
             sha256: sha256_hex(&bytes),
+            document_json: String::from_utf8(bytes.clone())
+                .map_err(|_| "RO-SUPPORT-SERIALIZE-FAILED")?,
             bundle,
         };
         *self.pending.lock().map_err(|_| "RO-SUPPORT-STATE-FAILED")? = Some(PendingPreview {

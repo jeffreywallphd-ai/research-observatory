@@ -1035,8 +1035,6 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   const preview = {
                     previewId: 'a'.repeat(32),
                     outputDirectory: 'C:\\Research Observatory\\support-exports',
-                    byteLength: 2048,
-                    sha256: 'b'.repeat(64),
                     bundle: {
                       schemaVersion: '1.0',
                       documentType: 'research-observatory-support-bundle',
@@ -1062,19 +1060,28 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       ]
                     }
                   };
+                  const completePreview = async () => {
+                    const documentJson = `${JSON.stringify(preview.bundle, null, 2)}\n`;
+                    const bytes = new TextEncoder().encode(documentJson);
+                    const digest = await crypto.subtle.digest('SHA-256', bytes);
+                    const sha256 = Array.from(new Uint8Array(digest), (byte) =>
+                      byte.toString(16).padStart(2, '0')).join('');
+                    return {...preview, documentJson, byteLength: bytes.byteLength, sha256};
+                  };
                   window.__TAURI_INTERNALS__ = {
                     invoke: async (command, args) => {
                       if (command === 'core_runtime_start' || command === 'core_runtime_status') {
                         return {state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null};
                       }
                       if (command === 'core_runtime_stop') return undefined;
-                      if (command === 'support_bundle_preview') return preview;
+                      if (command === 'support_bundle_preview') return await completePreview();
                       if (command === 'support_bundle_export' && args?.previewId === preview.previewId) {
+                        const completed = await completePreview();
                         return {
                           bundleId: preview.bundle.bundleId,
                           path: 'C:\\Research Observatory\\support-exports\\bundle.json',
-                          byteLength: preview.byteLength,
-                          sha256: preview.sha256
+                          byteLength: completed.byteLength,
+                          sha256: completed.sha256
                         };
                       }
                       throw new Error('unsupported test command');
