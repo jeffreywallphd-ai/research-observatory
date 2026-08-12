@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { Button, Field, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 
 import { LocalServiceBoundary } from "./LocalServiceBoundary";
+import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
 
 export type ApplicationTheme = "light" | "dark";
 
@@ -48,6 +49,7 @@ export function ApplicationRuntime(): ReactNode {
   const [query, setQuery] = useState("");
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("Desktop shell ready. No project is open.");
+  const [workspace, setWorkspace] = useState<"home" | "diagnostics">("home");
   const commandRef = useRef<HTMLInputElement>(null);
   const homeRef = useRef<HTMLElement>(null);
   const shortcutTriggerRef = useRef<HTMLButtonElement>(null);
@@ -137,6 +139,15 @@ export function ApplicationRuntime(): ReactNode {
 
   const commands = useMemo<readonly CommandDefinition[]>(() => [
     {
+      id: "open-diagnostics",
+      label: "Open diagnostics & support",
+      description: "Review local health and a redacted support bundle before export.",
+      run: () => {
+        setWorkspace("diagnostics");
+        announce("Diagnostics and support workspace opened.");
+      },
+    },
+    {
       id: "toggle-theme",
       label: "Toggle color theme",
       description: "Switch between the approved light and dark themes.",
@@ -148,7 +159,7 @@ export function ApplicationRuntime(): ReactNode {
       description: "Open the keyboard command reference.",
       run: () => openShortcuts(commandRef.current),
     },
-  ], [applyTheme, openShortcuts, theme]);
+  ], [announce, applyTheme, openShortcuts, theme]);
   const normalizedQuery = query.trim().toLowerCase();
   const visibleCommands = commands.filter(({ label, description }) =>
     !normalizedQuery || `${label} ${description}`.toLowerCase().includes(normalizedQuery));
@@ -175,13 +186,14 @@ export function ApplicationRuntime(): ReactNode {
       <div className="shell-body">
         <aside className="sidebar" aria-label="Available workspaces">
           <nav>
-            <a href="#main-content" aria-current="page" onClick={() => homeRef.current?.focus()}>Project home</a>
+            <button type="button" aria-current={workspace === "home" ? "page" : undefined} onClick={() => setWorkspace("home")}>Project home</button>
+            <button type="button" aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
           </nav>
           <p>Only implemented capabilities appear here.</p>
         </aside>
 
         <main id="main-content" ref={homeRef} tabIndex={-1}>
-          <div className="page-header">
+          {workspace === "home" ? <><div className="page-header">
             <Typography as="h1" variant="page-title">Desktop foundation</Typography>
             <Typography className="page-subtitle">
               A local, offline application shell. Research workspaces appear only when their capability is implemented.
@@ -220,6 +232,7 @@ export function ApplicationRuntime(): ReactNode {
             </Panel>
             <LocalServiceBoundary announce={announce} />
           </div>
+          </> : <DiagnosticsWorkspace announce={announce} />}
         </main>
       </div>
 

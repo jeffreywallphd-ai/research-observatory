@@ -73,6 +73,14 @@ pub struct RuntimeDiagnostic {
     pub sequence: u64,
     pub code: &'static str,
     pub stream: &'static str,
+    pub trace_id: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RuntimeResourceUsage {
+    pub process_running: bool,
+    pub working_set_bytes: Option<u64>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
@@ -215,11 +223,11 @@ impl SupervisorInner {
         self.state = state;
         self.state_diagnostic = diagnostic;
         if let Some(code) = diagnostic {
-            self.record(code, stream);
+            self.record(code, stream, None);
         }
     }
 
-    fn record(&mut self, code: &'static str, stream: &'static str) {
+    fn record(&mut self, code: &'static str, stream: &'static str, trace_id: Option<String>) {
         self.sequence += 1;
         if self.diagnostics.len() == MAX_DIAGNOSTICS {
             self.diagnostics.pop_front();
@@ -228,6 +236,7 @@ impl SupervisorInner {
             sequence: self.sequence,
             code,
             stream,
+            trace_id,
         });
     }
 
@@ -286,6 +295,7 @@ impl RuntimeSupervisor {
                 sequence: 1,
                 code,
                 stream: "supervisor",
+                trace_id: None,
             });
         }
         Self {
@@ -364,7 +374,7 @@ impl RuntimeSupervisor {
                 }
                 inner.process = Some(process);
                 inner.transition(RuntimeState::Ready, None, "supervisor");
-                inner.record("RO-CORE-READY", "supervisor");
+                inner.record("RO-CORE-READY", "supervisor", None);
                 inner.launching = false;
                 self.shared.lifecycle.notify_all();
                 inner.snapshot()
@@ -406,6 +416,25 @@ impl RuntimeSupervisor {
         inner.diagnostics.iter().cloned().collect()
     }
 
+    pub fn resource_usage(&self) -> RuntimeResourceUsage {
+        let mut inner = self
+            .shared
+            .inner
+            .lock()
+            .expect("runtime supervisor mutex poisoned");
+        inner.refresh();
+        let Some(process) = inner.process.as_ref() else {
+            return RuntimeResourceUsage {
+                process_running: false,
+                working_set_bytes: None,
+            };
+        };
+        RuntimeResourceUsage {
+            process_running: true,
+            working_set_bytes: process_working_set_bytes(process.child.id()),
+        }
+    }
+
     pub fn api_request(&self, request: &CoreApiRequest) -> Result<CoreApiResponse, &'static str> {
         validate_api_request(request)?;
         let mut inner = self
@@ -418,7 +447,15 @@ impl RuntimeSupervisor {
             return Err("RO-CORE-API-UNAVAILABLE");
         }
         let process = inner.process.as_ref().ok_or("RO-CORE-API-UNAVAILABLE")?;
-        authenticated_api_request(process.port, &process.capability_token, request)
+        let response = authenticated_api_request(process.port, &process.capability_token, request);
+        if let Ok(response) = &response {
+            inner.record(
+                "RO-CORE-API-REQUEST-COMPLETE",
+                "api",
+                Some(response.trace_id.clone()),
+            );
+        }
+        response
     }
 
     /// Return the supervised root PID for integration qualification only.
@@ -1137,7 +1174,7 @@ fn drain_log<R: BufRead>(mut reader: R, shared: Weak<SupervisorShared>, stream: 
             return;
         };
         if let Ok(mut locked) = shared.inner.lock() {
-            locked.record(code, stream);
+            locked.record(code, stream, None);
         }
         line.clear();
     }
@@ -1148,6 +1185,38 @@ fn configure_hidden_process(command: &mut Command) {
     use std::os::windows::process::CommandExt;
     use windows_sys::Win32::System::Threading::{CREATE_NO_WINDOW, CREATE_SUSPENDED};
     command.creation_flags(CREATE_NO_WINDOW | CREATE_SUSPENDED);
+}
+
+#[cfg(windows)]
+fn process_working_set_bytes(pid: u32) -> Option<u64> {
+    use windows_sys::Win32::Foundation::CloseHandle;
+    use windows_sys::Win32::System::ProcessStatus::{
+        K32GetProcessMemoryInfo, PROCESS_MEMORY_COUNTERS,
+    };
+    use windows_sys::Win32::System::Threading::{OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION};
+
+    unsafe {
+        let process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid);
+        if process.is_null() {
+            return None;
+        }
+        let mut counters = PROCESS_MEMORY_COUNTERS {
+            cb: std::mem::size_of::<PROCESS_MEMORY_COUNTERS>() as u32,
+            ..Default::default()
+        };
+        let result = K32GetProcessMemoryInfo(
+            process,
+            &mut counters,
+            std::mem::size_of::<PROCESS_MEMORY_COUNTERS>() as u32,
+        );
+        CloseHandle(process);
+        (result != 0).then_some(counters.WorkingSetSize as u64)
+    }
+}
+
+#[cfg(not(windows))]
+fn process_working_set_bytes(_pid: u32) -> Option<u64> {
+    None
 }
 
 #[cfg(not(windows))]
@@ -1486,10 +1555,24 @@ mod tests {
             sequence: 0,
         };
         for _ in 0..80 {
-            inner.record("RO-CORE-RUNTIME-LOG", "stderr");
+            inner.record("RO-CORE-RUNTIME-LOG", "stderr", None);
         }
         assert_eq!(inner.diagnostics.len(), 64);
         assert_eq!(inner.diagnostics.front().expect("diagnostic").sequence, 17);
+        let trace_id = "0123456789abcdef0123456789abcdef".to_owned();
+        inner.record(
+            "RO-CORE-API-REQUEST-COMPLETE",
+            "api",
+            Some(trace_id.clone()),
+        );
+        assert_eq!(
+            inner
+                .diagnostics
+                .back()
+                .expect("trace-linked diagnostic")
+                .trace_id,
+            Some(trace_id)
+        );
     }
 
     #[test]
@@ -1504,8 +1587,8 @@ mod tests {
             diagnostics: VecDeque::new(),
             sequence: 0,
         };
-        inner.record("RO-CORE-RUNTIME-LOG", "stderr");
-        inner.record("RO-CORE-LOG-OVERSIZE", "stdout");
+        inner.record("RO-CORE-RUNTIME-LOG", "stderr", None);
+        inner.record("RO-CORE-LOG-OVERSIZE", "stdout", None);
         assert_eq!(
             inner.snapshot().diagnostic_reference,
             Some("RO-CORE-CRASHED")

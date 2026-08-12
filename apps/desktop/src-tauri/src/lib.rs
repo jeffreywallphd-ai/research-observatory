@@ -1,10 +1,12 @@
 pub mod supervisor;
+pub mod support_bundle;
 
 use supervisor::{
     CoreApiRequest, CoreApiResponse, RuntimeDiagnostic, RuntimeSnapshot, RuntimeSupervisor,
     SupervisorConfig,
 };
-use tauri::{App, Manager, Runtime, State};
+use support_bundle::{SupportBundleExport, SupportBundleManager, SupportBundlePreview};
+use tauri::{App, AppHandle, Manager, Runtime, State};
 
 pub const PRODUCT_NAME: &str = "Research Observatory";
 
@@ -47,6 +49,39 @@ async fn core_api_request(
     dispatch_core_api_request(supervisor.inner().clone(), request).await
 }
 
+#[tauri::command]
+async fn support_bundle_preview(
+    app: AppHandle,
+    supervisor: State<'_, RuntimeSupervisor>,
+    manager: State<'_, SupportBundleManager>,
+) -> Result<SupportBundlePreview, &'static str> {
+    let application_data = app
+        .path()
+        .app_local_data_dir()
+        .map_err(|_| "RO-SUPPORT-PATH-UNAVAILABLE")?;
+    let supervisor = supervisor.inner().clone();
+    let manager = manager.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || manager.preview(&application_data, &supervisor))
+        .await
+        .map_err(|_| "RO-SUPPORT-COLLECTION-FAILED")?
+}
+
+#[tauri::command]
+async fn support_bundle_export(
+    app: AppHandle,
+    manager: State<'_, SupportBundleManager>,
+    preview_id: String,
+) -> Result<SupportBundleExport, &'static str> {
+    let application_data = app
+        .path()
+        .app_local_data_dir()
+        .map_err(|_| "RO-SUPPORT-PATH-UNAVAILABLE")?;
+    let manager = manager.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || manager.export(&application_data, &preview_id))
+        .await
+        .map_err(|_| "RO-SUPPORT-WRITE-FAILED")?
+}
+
 pub async fn dispatch_runtime_start(
     supervisor: RuntimeSupervisor,
 ) -> Result<RuntimeSnapshot, &'static str> {
@@ -81,11 +116,14 @@ pub fn run() {
             core_runtime_retry,
             core_runtime_stop,
             core_runtime_diagnostics,
-            core_api_request
+            core_api_request,
+            support_bundle_preview,
+            support_bundle_export
         ])
         .setup(|app| {
             let supervisor = RuntimeSupervisor::new(runtime_config(app));
             app.manage(supervisor.clone());
+            app.manage(SupportBundleManager::default());
             let startup = supervisor.clone();
             tauri::async_runtime::spawn_blocking(move || startup.start());
             Ok(())

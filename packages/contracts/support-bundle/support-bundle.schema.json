@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/support-bundle/support-bundle.schema.json",
+  "title": "Research Observatory redacted support bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "bundleId",
+    "generatedAtUnixMs",
+    "components",
+    "runtime",
+    "storage",
+    "resources",
+    "recentDiagnostics",
+    "exclusions"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-support-bundle"},
+    "bundleId": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+    "generatedAtUnixMs": {"type": "integer", "minimum": 0},
+    "components": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["componentId", "version", "contractVersion"],
+          "properties": {
+            "componentId": {"const": "desktop"},
+            "version": {"const": "0.1.0"},
+            "contractVersion": {"const": "1.0.0"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["componentId", "version", "contractVersion"],
+          "properties": {
+            "componentId": {"const": "core-api"},
+            "version": {"const": "0.1.0"},
+            "contractVersion": {"const": "1.0.0"}
+          }
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "attempt", "retryAvailable", "diagnosticReference"],
+      "properties": {
+        "state": {
+          "enum": ["starting", "ready", "crashed", "stopped", "incompatible", "recovery-required"]
+        },
+        "attempt": {"type": "integer", "minimum": 0, "maximum": 3},
+        "retryAvailable": {"type": "boolean"},
+        "diagnosticReference": {
+          "oneOf": [
+            {"type": "string", "pattern": "^RO-CORE-[A-Z0-9-]+$"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "storage": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["storageId", "status"],
+          "properties": {
+            "storageId": {"const": "application-data"},
+            "status": {"enum": ["available", "unavailable"]}
+          }
+        }
+      ],
+      "items": false,
+      "minItems": 1,
+      "maxItems": 1
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["processRunning", "workingSetBytes"],
+      "properties": {
+        "processRunning": {"type": "boolean"},
+        "workingSetBytes": {
+          "oneOf": [
+            {"type": "integer", "minimum": 0},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "recentDiagnostics": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sequence", "code", "stream", "traceId"],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1},
+          "code": {"type": "string", "pattern": "^RO-CORE-[A-Z0-9-]+$"},
+          "stream": {"enum": ["supervisor", "process", "stdout", "stderr", "api"]},
+          "traceId": {
+            "oneOf": [
+              {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+              {"type": "null"}
+            ]
+          }
+        }
+      }
+    },
+    "exclusions": {
+      "const": [
+        "project-documents",
+        "imported-sources",
+        "manuscript-content",
+        "search-and-query-text",
+        "credentials-and-tokens",
+        "environment-variables",
+        "raw-process-logs",
+        "process-identifiers",
+        "absolute-storage-paths"
+      ]
+    }
+  }
+}

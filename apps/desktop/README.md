@@ -80,3 +80,19 @@ The legacy reference-activation modules are isolated behind
 product entry. Project storage, scholarly workflows, sources, models, and
 manuscript surfaces must remain absent from the product bundle until their
 owning capability supplies real contracts and behavior.
+
+CAP-01.S04 adds one capability-owned functional diagnostics workspace. It reads
+only the narrow native supervision/support commands, shows current component
+versions, runtime health, bounded resource use, storage availability, and
+code-only recent diagnostics, and links eligible desktop actions to Core trace
+IDs. It does not copy a diagnostics page, sample records, or illustrative prose
+from `design/ui-reference/`.
+
+Support export is an explicit preview-then-export operation. The native host
+retains one exact preview, caps its JSON at 65,536 bytes, exports those exact
+reviewed bytes once under the application-data `support-exports` directory, and
+rejects redirected or pre-existing destinations. Project documents, imported
+sources, manuscript content, search/query text, credentials, environment
+variables, raw process logs, process identifiers, and absolute storage paths
+are excluded by construction. The local output path is displayed separately
+and is never embedded in the bundle.

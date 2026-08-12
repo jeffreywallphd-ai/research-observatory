@@ -845,6 +845,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "boundaryRecovery": False,
         "retainedInput": False,
         "diagnosticCopy": False,
+        "diagnosticsUnavailable": False,
+        "diagnosticsPreview": False,
+        "diagnosticsTraceLink": False,
+        "diagnosticsExactExport": False,
         "responsiveCases": 0,
         "criticalViolations": [],
         "requests": [],
@@ -1010,9 +1014,110 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             details["boundaryRecovery"] = boundary.locator("[data-retry-boundary]").is_enabled()
             details["retainedInput"] = command.input_value() == "Retained local draft"
+            page.get_by_role("button", name="Diagnostics & support", exact=True).click()
+            page.get_by_role("heading", name="Diagnostics unavailable").wait_for(state="visible", timeout=5_000)
+            details["diagnosticsUnavailable"] = (
+                page.locator("[data-diagnostics-workspace]").count() == 1
+                and page.locator("h1").inner_text().strip() == "Diagnostics & support"
+                and "No support data was exported" in page.locator("main").inner_text()
+                and page.locator("[data-workflow-select], [data-workflow-nav], [data-all-tools]").count() == 0
+            )
             if page_errors:
                 errors.append(f"desktop product runtime error: {'; '.join(page_errors)}")
             page.close()
+
+            diagnostics = browser_context.new_page()
+            diagnostics_errors: list[str] = []
+            diagnostics.on("pageerror", page_error_collector(diagnostics_errors))
+            diagnostics.add_init_script(
+                r"""(() => {
+                  const traceId = '0123456789abcdef0123456789abcdef';
+                  const preview = {
+                    previewId: 'a'.repeat(32),
+                    outputDirectory: 'C:\\Research Observatory\\support-exports',
+                    byteLength: 2048,
+                    sha256: 'b'.repeat(64),
+                    bundle: {
+                      schemaVersion: '1.0',
+                      documentType: 'research-observatory-support-bundle',
+                      bundleId: 'c'.repeat(32),
+                      generatedAtUnixMs: 1786534400000,
+                      components: [
+                        {componentId: 'desktop', version: '0.1.0', contractVersion: '1.0.0'},
+                        {componentId: 'core-api', version: '0.1.0', contractVersion: '1.0.0'}
+                      ],
+                      runtime: {state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null},
+                      storage: [{storageId: 'application-data', status: 'available'}],
+                      resources: {processRunning: true, workingSetBytes: 62230528},
+                      recentDiagnostics: [{
+                        sequence: 1,
+                        code: 'RO-CORE-API-REQUEST-COMPLETE',
+                        stream: 'api',
+                        traceId
+                      }],
+                      exclusions: [
+                        'project-documents', 'imported-sources', 'manuscript-content',
+                        'search-and-query-text', 'credentials-and-tokens', 'environment-variables',
+                        'raw-process-logs', 'process-identifiers', 'absolute-storage-paths'
+                      ]
+                    }
+                  };
+                  window.__TAURI_INTERNALS__ = {
+                    invoke: async (command, args) => {
+                      if (command === 'core_runtime_start' || command === 'core_runtime_status') {
+                        return {state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null};
+                      }
+                      if (command === 'core_runtime_stop') return undefined;
+                      if (command === 'support_bundle_preview') return preview;
+                      if (command === 'support_bundle_export' && args?.previewId === preview.previewId) {
+                        return {
+                          bundleId: preview.bundle.bundleId,
+                          path: 'C:\\Research Observatory\\support-exports\\bundle.json',
+                          byteLength: preview.byteLength,
+                          sha256: preview.sha256
+                        };
+                      }
+                      throw new Error('unsupported test command');
+                    }
+                  };
+                })()"""
+            )
+            diagnostics.goto("http://tauri.localhost/index.html", wait_until="load")
+            diagnostics.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+            diagnostics.get_by_role("button", name="Diagnostics & support", exact=True).click()
+            diagnostics.wait_for_timeout(500)
+            if diagnostics.get_by_role("heading", name="Exact support bundle preview").count() != 1:
+                raise ValueError(
+                    "functional diagnostics preview did not load: " + diagnostics.locator("main").inner_text()
+                )
+            diagnostics_text = diagnostics.locator("main").inner_text()
+            exact_json = diagnostics.locator(".support-json-preview").text_content()
+            details["diagnosticsPreview"] = (
+                diagnostics.locator("h1").count() == 1
+                and diagnostics.locator("h1").inner_text().strip() == "Diagnostics & support"
+                and "Desktop" in diagnostics_text
+                and "Core API" in diagnostics_text
+                and "65,536" not in diagnostics_text
+                and "credentials and tokens" in diagnostics_text
+                and "private manuscript" not in diagnostics_text
+                and exact_json is not None
+                and '"bundleId": "cccccccccccccccccccccccccccccccc"' in exact_json
+                and "support-exports" not in exact_json
+                and exact_json.endswith("\n")
+            )
+            details["diagnosticsTraceLink"] = "0123456789abcdef0123456789abcdef" in diagnostics_text
+            diagnostics.get_by_role("button", name="Export reviewed bundle").click()
+            exported_status = diagnostics.locator(".support-preview [role='status']")
+            exported_status.wait_for(state="visible", timeout=5_000)
+            exported_button = diagnostics.locator(".support-preview button", has_text="Bundle exported")
+            details["diagnosticsExactExport"] = (
+                exported_button.count() == 1
+                and exported_button.is_disabled()
+                and "bundle.json" in exported_status.inner_text()
+            )
+            if diagnostics_errors:
+                errors.append(f"desktop diagnostics runtime error: {'; '.join(diagnostics_errors)}")
+            diagnostics.close()
 
             for width, height in ((1280, 720), (720, 450)):
                 responsive = browser_context.new_page()
@@ -1050,6 +1155,10 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "boundaryRecovery",
         "retainedInput",
         "diagnosticCopy",
+        "diagnosticsUnavailable",
+        "diagnosticsPreview",
+        "diagnosticsTraceLink",
+        "diagnosticsExactExport",
     ):
         if details[field] is not True:
             errors.append(f"desktop product did not verify {field}")
