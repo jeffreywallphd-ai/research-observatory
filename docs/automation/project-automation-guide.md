@@ -152,6 +152,12 @@ risk analysis, selected checks, any early broad-suite rationale, and the broader
 coverage deferred to slice or capability review. A reviewer should not demand an
 unchanged full-profile replay without identifying a concrete impact path.
 
+Performance baselines are reviewed inputs, not output fields that a benchmark may
+rewrite. A benchmark must bind its fixture and methodology, reject non-finite or
+out-of-budget baseline values, compare against an immutable reviewed baseline hash,
+and write reports only to the confined ignored artifact directory. Establish or
+change a baseline only with criterion-linked evidence and independent review.
+
 At minimum maintain checks for:
 
 - backlog, plans, and review-site integrity;
