@@ -62,6 +62,11 @@ def sample_baseline() -> dict[str, Any]:
 
 
 class CoreSidecarPerformanceContractTests(unittest.TestCase):
+    def test_committed_baseline_is_exact_valid_and_reproducibly_sourced(self) -> None:
+        baseline, digest = benchmark.load_baseline(ROOT)
+        self.assertEqual(benchmark.EXPECTED_BASELINE_SHA256, digest)
+        self.assertEqual("7c79c7ca477b0f0d4f9b7239e7e89538c3669fda", baseline["baselineSourceCommit"])
+
     def test_strict_baseline_binds_raw_samples_hardware_tool_and_package(self) -> None:
         baseline = sample_baseline()
         self.assertIs(baseline, benchmark.validate_baseline(baseline))
