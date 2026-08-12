@@ -17,25 +17,24 @@ TOKEN_HEX_LENGTH = 64
 STARTUP_RECORD_BYTES = len(b"auth ") + TOKEN_HEX_LENGTH + len(b"\n")
 
 
-def capability_token_digest(token: str) -> bytes:
+def capability_token_digest(token: str | bytes | bytearray | memoryview) -> bytes:
     """Validate a canonical 256-bit token and retain only its digest."""
 
-    if len(token) != TOKEN_HEX_LENGTH or any(character not in "0123456789abcdef" for character in token):
+    encoded = token.encode("ascii") if isinstance(token, str) else token
+    if len(encoded) != TOKEN_HEX_LENGTH or any(value not in b"0123456789abcdef" for value in encoded):
         raise ValueError("capability token must be 256-bit lowercase hexadecimal")
-    return hashlib.sha256(token.encode("ascii")).digest()
+    return hashlib.sha256(encoded).digest()
 
 
-def parse_startup_authentication(record: bytes) -> str:
-    """Parse the one-shot inherited control-pipe record without echoing it."""
+def parse_startup_authentication(record: bytearray) -> bytes:
+    """Parse, clear, and reduce the inherited control-pipe record to its digest."""
 
-    if len(record) != STARTUP_RECORD_BYTES or not record.startswith(b"auth ") or not record.endswith(b"\n"):
-        raise ValueError("supervised startup authentication record is invalid")
     try:
-        token = record[5:-1].decode("ascii")
-    except UnicodeDecodeError as exc:
-        raise ValueError("supervised startup authentication record is invalid") from exc
-    capability_token_digest(token)
-    return token
+        if len(record) != STARTUP_RECORD_BYTES or not record.startswith(b"auth ") or not record.endswith(b"\n"):
+            raise ValueError("supervised startup authentication record is invalid")
+        return capability_token_digest(memoryview(record)[5:-1])
+    finally:
+        record[:] = b"\x00" * len(record)
 
 
 def _header_values(scope: dict[str, Any], name: bytes) -> list[bytes]:
@@ -57,9 +56,11 @@ def _header_values(scope: dict[str, Any], name: bytes) -> list[bytes]:
 class LocalAuthenticationMiddleware:
     """Require exact loopback peer, authority, absent Origin, and current bearer token."""
 
-    def __init__(self, app: AsgiApp, *, token: str | None, authority: str | None) -> None:
+    def __init__(self, app: AsgiApp, *, digest: bytes | None, authority: str | None) -> None:
         self.app = app
-        self._digest = capability_token_digest(token) if token is not None else None
+        if digest is not None and len(digest) != hashlib.sha256().digest_size:
+            raise ValueError("capability token digest must be SHA-256")
+        self._digest = bytes(digest) if digest is not None else None
         if authority is not None:
             if authority != authority.strip() or authority.casefold() != authority or "@" in authority:
                 raise ValueError("local HTTP authority must be canonical")

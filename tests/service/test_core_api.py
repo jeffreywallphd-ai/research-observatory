@@ -23,7 +23,7 @@ SERVICE_SRC = REPO / "services" / "core-api" / "src"
 sys.path.insert(0, str(SERVICE_SRC))
 
 from research_observatory_core.app import create_app  # noqa: E402
-from research_observatory_core.authentication import parse_startup_authentication  # noqa: E402
+from research_observatory_core.authentication import capability_token_digest, parse_startup_authentication  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.contract import canonical_openapi_bytes  # noqa: E402
 from research_observatory_core.logging import build_log_record  # noqa: E402
@@ -39,7 +39,7 @@ AUTH_HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 def authenticated_app() -> FastAPI:
     return create_app(
         settings=CoreSettings(),
-        capability_token=TOKEN,
+        capability_digest=capability_token_digest(TOKEN),
         expected_authority=AUTHORITY,
     )
 
@@ -61,7 +61,7 @@ class CoreApiTests(unittest.TestCase):
         configuration = uvicorn.Config(
             create_app(
                 settings=CoreSettings(),
-                capability_token=TOKEN,
+                capability_digest=capability_token_digest(TOKEN),
                 expected_authority=f"{assigned_host}:{assigned_port}",
             ),
             host=assigned_host,
@@ -102,6 +102,9 @@ class CoreApiTests(unittest.TestCase):
 
     def test_lifespan_exposes_typed_runtime_endpoints_and_openapi(self) -> None:
         app = authenticated_app()
+        self.assertNotIn(TOKEN, repr(app.user_middleware))
+        self.assertNotIn("token", app.user_middleware[0].kwargs)
+        self.assertEqual(app.user_middleware[0].kwargs["digest"], capability_token_digest(TOKEN))
         with authenticated_client(app) as client:
             health = client.get("/healthz")
             readiness = client.get("/readyz")
@@ -110,6 +113,8 @@ class CoreApiTests(unittest.TestCase):
             modules = client.get("/runtime/modules")
             capabilities = client.get("/runtime/capabilities")
             openapi = client.get("/openapi.json")
+        self.assertNotIn(TOKEN, repr(app.user_middleware))
+        self.assertNotIn(TOKEN, repr(app.middleware_stack))
 
         self.assertEqual(health.status_code, 200)
         self.assertEqual(health.json()["state"], "ready")
@@ -351,7 +356,7 @@ class CoreApiTests(unittest.TestCase):
         first = authenticated_app()
         second = create_app(
             settings=CoreSettings(),
-            capability_token=OTHER_TOKEN,
+            capability_digest=capability_token_digest(OTHER_TOKEN),
             expected_authority=AUTHORITY,
         )
         with authenticated_client(first) as first_client:
@@ -363,7 +368,9 @@ class CoreApiTests(unittest.TestCase):
                 200,
             )
 
-        self.assertEqual(TOKEN, parse_startup_authentication(f"auth {TOKEN}\n".encode("ascii")))
+        record = bytearray(f"auth {TOKEN}\n".encode("ascii"))
+        self.assertEqual(capability_token_digest(TOKEN), parse_startup_authentication(record))
+        self.assertEqual(record, bytearray(len(record)))
         for invalid in (
             b"",
             b"auth short\n",
@@ -371,8 +378,10 @@ class CoreApiTests(unittest.TestCase):
             f"auth {TOKEN.upper()}\n".encode("ascii"),
             f"auth {TOKEN}\r\n".encode("ascii"),
         ):
+            record = bytearray(invalid)
             with self.subTest(invalid=invalid[:10]), self.assertRaises(ValueError):
-                parse_startup_authentication(invalid)
+                parse_startup_authentication(record)
+            self.assertEqual(record, bytearray(len(record)))
 
     def test_supervised_process_rejects_malformed_startup_authentication_without_echoing_it(self) -> None:
         environment = os.environ.copy()

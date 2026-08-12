@@ -68,9 +68,9 @@ def _watch_supervisor(server: uvicorn.Server) -> None:
 def run_supervised(settings: CoreSettings) -> int:
     """Bind an OS-assigned loopback socket and serve under desktop ownership."""
 
-    record = sys.stdin.buffer.readline(STARTUP_RECORD_BYTES + 1)
+    record = bytearray(sys.stdin.buffer.readline(STARTUP_RECORD_BYTES + 1))
     try:
-        capability_token = parse_startup_authentication(record)
+        capability_digest = parse_startup_authentication(record)
     except ValueError:
         print(
             json.dumps(
@@ -92,7 +92,7 @@ def run_supervised(settings: CoreSettings) -> int:
         configuration = uvicorn.Config(
             create_app(
                 settings=settings,
-                capability_token=capability_token,
+                capability_digest=capability_digest,
                 expected_authority=authority,
             ),
             host=assigned_host,
@@ -103,8 +103,7 @@ def run_supervised(settings: CoreSettings) -> int:
             log_config=None,
             proxy_headers=False,
         )
-        del record
-        del capability_token
+        del capability_digest
         server = uvicorn.Server(configuration)
         print(json.dumps(supervision_handshake(host=assigned_host, port=assigned_port), sort_keys=True), flush=True)
         watcher = threading.Thread(target=_watch_supervisor, args=(server,), name="supervisor-control", daemon=True)
