@@ -4,7 +4,7 @@ use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpStream};
 use std::path::{Path, PathBuf};
 use std::process::{Child, ChildStdin, Command, Stdio};
-use std::sync::{Arc, Mutex, mpsc};
+use std::sync::{Arc, Condvar, Mutex, Weak, mpsc};
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -121,25 +121,40 @@ struct RunningProcess {
 
 struct SupervisorInner {
     state: RuntimeState,
+    state_diagnostic: Option<&'static str>,
     attempt: u8,
     process: Option<RunningProcess>,
+    launching: bool,
+    stopping: bool,
     diagnostics: VecDeque<RuntimeDiagnostic>,
     sequence: u64,
 }
 
 impl SupervisorInner {
     fn snapshot(&self) -> RuntimeSnapshot {
-        let diagnostic_reference = (self.state != RuntimeState::Ready)
-            .then(|| self.diagnostics.back().map(|item| item.code))
-            .flatten();
         RuntimeSnapshot {
             state: self.state,
             attempt: self.attempt,
             retry_available: matches!(
                 self.state,
                 RuntimeState::Crashed | RuntimeState::Stopped | RuntimeState::Incompatible
-            ) && self.attempt < MAX_ATTEMPTS,
-            diagnostic_reference,
+            ) && self.attempt < MAX_ATTEMPTS
+                && !self.launching
+                && !self.stopping,
+            diagnostic_reference: self.state_diagnostic,
+        }
+    }
+
+    fn transition(
+        &mut self,
+        state: RuntimeState,
+        diagnostic: Option<&'static str>,
+        stream: &'static str,
+    ) {
+        self.state = state;
+        self.state_diagnostic = diagnostic;
+        if let Some(code) = diagnostic {
+            self.record(code, stream);
         }
     }
 
@@ -163,38 +178,49 @@ impl SupervisorInner {
             Ok(Some(status)) => {
                 self.process = None;
                 if status.success() && self.state == RuntimeState::Stopped {
-                    self.record("RO-CORE-STOPPED", "process");
+                    self.transition(RuntimeState::Stopped, Some("RO-CORE-STOPPED"), "process");
                 } else {
-                    self.state = RuntimeState::Crashed;
-                    self.record("RO-CORE-CRASHED", "process");
+                    self.transition(RuntimeState::Crashed, Some("RO-CORE-CRASHED"), "process");
                 }
             }
             Ok(None) => {}
             Err(_) => {
                 self.process = None;
-                self.state = RuntimeState::Crashed;
-                self.record("RO-CORE-STATUS-FAILED", "process");
+                self.transition(
+                    RuntimeState::Crashed,
+                    Some("RO-CORE-STATUS-FAILED"),
+                    "process",
+                );
             }
         }
     }
 }
 
+struct SupervisorShared {
+    inner: Mutex<SupervisorInner>,
+    lifecycle: Condvar,
+}
+
 #[derive(Clone)]
 pub struct RuntimeSupervisor {
     config: Result<SupervisorConfig, &'static str>,
-    inner: Arc<Mutex<SupervisorInner>>,
+    shared: Arc<SupervisorShared>,
 }
 
 impl RuntimeSupervisor {
     pub fn new(config: Result<SupervisorConfig, &'static str>) -> Self {
         let configuration_failed = config.is_err();
+        let initial_diagnostic = match &config {
+            Ok(_) => "RO-CORE-STOPPED",
+            Err(code) => code,
+        };
         let initial_state = if config.is_ok() {
             RuntimeState::Stopped
         } else {
             RuntimeState::RecoveryRequired
         };
         let mut diagnostics = VecDeque::new();
-        if let Err(code) = config {
+        if let Err(code) = &config {
             diagnostics.push_back(RuntimeDiagnostic {
                 sequence: 1,
                 code,
@@ -203,13 +229,19 @@ impl RuntimeSupervisor {
         }
         Self {
             config,
-            inner: Arc::new(Mutex::new(SupervisorInner {
-                state: initial_state,
-                attempt: 0,
-                process: None,
-                diagnostics,
-                sequence: u64::from(configuration_failed),
-            })),
+            shared: Arc::new(SupervisorShared {
+                inner: Mutex::new(SupervisorInner {
+                    state: initial_state,
+                    state_diagnostic: Some(initial_diagnostic),
+                    attempt: 0,
+                    process: None,
+                    launching: false,
+                    stopping: false,
+                    diagnostics,
+                    sequence: u64::from(configuration_failed),
+                }),
+                lifecycle: Condvar::new(),
+            }),
         }
     }
 
@@ -220,30 +252,44 @@ impl RuntimeSupervisor {
         };
         let attempt = {
             let mut inner = self
+                .shared
                 .inner
                 .lock()
                 .expect("runtime supervisor mutex poisoned");
             inner.refresh();
-            if matches!(inner.state, RuntimeState::Starting | RuntimeState::Ready) {
+            if inner.stopping
+                || inner.launching
+                || matches!(inner.state, RuntimeState::Starting | RuntimeState::Ready)
+            {
                 return inner.snapshot();
             }
             if inner.attempt >= MAX_ATTEMPTS {
-                inner.state = RuntimeState::RecoveryRequired;
-                inner.record("RO-CORE-RESTART-LIMIT", "supervisor");
+                inner.transition(
+                    RuntimeState::RecoveryRequired,
+                    Some("RO-CORE-RESTART-LIMIT"),
+                    "supervisor",
+                );
                 return inner.snapshot();
             }
             inner.attempt += 1;
-            inner.state = RuntimeState::Starting;
-            inner.record("RO-CORE-STARTING", "supervisor");
+            inner.launching = true;
+            inner.transition(
+                RuntimeState::Starting,
+                Some("RO-CORE-STARTING"),
+                "supervisor",
+            );
             inner.attempt
         };
 
-        match launch(&config, Arc::clone(&self.inner), attempt) {
+        match launch(&config, Arc::clone(&self.shared), attempt) {
             Ok(mut process) => {
                 let mut inner = self
+                    .shared
                     .inner
                     .lock()
                     .expect("runtime supervisor mutex poisoned");
+                inner.launching = false;
+                self.shared.lifecycle.notify_all();
                 if inner.attempt != attempt || inner.state != RuntimeState::Starting {
                     let snapshot = inner.snapshot();
                     drop(inner);
@@ -251,21 +297,23 @@ impl RuntimeSupervisor {
                     return snapshot;
                 }
                 inner.process = Some(process);
-                inner.state = RuntimeState::Ready;
+                inner.transition(RuntimeState::Ready, None, "supervisor");
                 inner.record("RO-CORE-READY", "supervisor");
                 inner.snapshot()
             }
             Err((state, code)) => {
                 let mut inner = self
+                    .shared
                     .inner
                     .lock()
                     .expect("runtime supervisor mutex poisoned");
+                inner.launching = false;
+                self.shared.lifecycle.notify_all();
                 if inner.attempt != attempt || inner.state != RuntimeState::Starting {
                     return inner.snapshot();
                 }
                 inner.process = None;
-                inner.state = state;
-                inner.record(code, "supervisor");
+                inner.transition(state, Some(code), "supervisor");
                 inner.snapshot()
             }
         }
@@ -273,6 +321,7 @@ impl RuntimeSupervisor {
 
     pub fn status(&self) -> RuntimeSnapshot {
         let mut inner = self
+            .shared
             .inner
             .lock()
             .expect("runtime supervisor mutex poisoned");
@@ -282,6 +331,7 @@ impl RuntimeSupervisor {
 
     pub fn diagnostics(&self) -> Vec<RuntimeDiagnostic> {
         let inner = self
+            .shared
             .inner
             .lock()
             .expect("runtime supervisor mutex poisoned");
@@ -292,6 +342,7 @@ impl RuntimeSupervisor {
     /// Renderer commands deliberately do not expose this process identity.
     pub fn active_pid(&self) -> Option<u32> {
         let mut inner = self
+            .shared
             .inner
             .lock()
             .expect("runtime supervisor mutex poisoned");
@@ -300,30 +351,53 @@ impl RuntimeSupervisor {
     }
 
     pub fn stop(&self) -> RuntimeSnapshot {
-        let process = {
-            let mut inner = self
-                .inner
-                .lock()
+        if self.config.is_err() {
+            return self.status();
+        }
+        let mut inner = self
+            .shared
+            .inner
+            .lock()
+            .expect("runtime supervisor mutex poisoned");
+        inner.refresh();
+        if inner.stopping {
+            while inner.stopping {
+                inner = self
+                    .shared
+                    .lifecycle
+                    .wait(inner)
+                    .expect("runtime supervisor mutex poisoned");
+            }
+            return inner.snapshot();
+        }
+        inner.stopping = true;
+        inner.transition(RuntimeState::Stopped, Some("RO-CORE-STOPPED"), "supervisor");
+        while inner.launching {
+            inner = self
+                .shared
+                .lifecycle
+                .wait(inner)
                 .expect("runtime supervisor mutex poisoned");
-            inner.refresh();
-            inner.state = RuntimeState::Stopped;
-            inner.process.take()
-        };
+        }
+        let process = inner.process.take();
+        drop(inner);
         if let Some(mut process) = process {
             stop_running_process(&mut process);
         }
         let mut inner = self
+            .shared
             .inner
             .lock()
             .expect("runtime supervisor mutex poisoned");
-        inner.record("RO-CORE-STOPPED", "supervisor");
+        inner.stopping = false;
+        self.shared.lifecycle.notify_all();
         inner.snapshot()
     }
 }
 
 fn launch(
     config: &SupervisorConfig,
-    inner: Arc<Mutex<SupervisorInner>>,
+    shared: Arc<SupervisorShared>,
     attempt: u8,
 ) -> Result<RunningProcess, (RuntimeState, &'static str)> {
     let mut command = Command::new(&config.executable);
@@ -348,7 +422,7 @@ fn launch(
     let mut child = command
         .spawn()
         .map_err(|_| (RuntimeState::Crashed, "RO-CORE-SPAWN-FAILED"))?;
-    let containment = ProcessTreeContainment::attach(&child).map_err(|code| {
+    let containment = ProcessTreeContainment::attach_and_resume(&child).map_err(|code| {
         let _ = child.kill();
         let _ = child.wait();
         (RuntimeState::Crashed, code)
@@ -368,7 +442,7 @@ fn launch(
         .ok_or((RuntimeState::Crashed, "RO-CORE-CONTROL-PIPE-FAILED"))?;
 
     let (handshake_tx, handshake_rx) = mpsc::sync_channel(1);
-    let stdout_inner = Arc::clone(&inner);
+    let stdout_inner = Arc::downgrade(&shared);
     thread::spawn(move || {
         let mut reader = BufReader::new(stdout);
         let mut first = Vec::new();
@@ -379,12 +453,12 @@ fn launch(
         let _ = handshake_tx.send(read.map(|_| first));
         drain_log(reader, stdout_inner, "stdout");
     });
-    let stderr_inner = Arc::clone(&inner);
+    let stderr_inner = Arc::downgrade(&shared);
     thread::spawn(move || drain_log(BufReader::new(stderr), stderr_inner, "stderr"));
 
     let handshake_deadline = Instant::now() + START_TIMEOUT;
     let bytes = loop {
-        ensure_attempt_active(&inner, attempt)?;
+        ensure_attempt_active(&shared, attempt)?;
         let remaining = handshake_deadline.saturating_duration_since(Instant::now());
         if remaining.is_zero() {
             return Err((RuntimeState::Crashed, "RO-CORE-START-TIMEOUT"));
@@ -400,7 +474,7 @@ fn launch(
         }
     };
     let handshake = validate_handshake(&bytes, pid)?;
-    wait_until_ready(&handshake, &inner, attempt)?;
+    wait_until_ready(&handshake, &mut child, &shared, attempt)?;
     Ok(RunningProcess {
         child,
         stdin,
@@ -426,6 +500,7 @@ fn validate_handshake(
         || handshake.build_id != EXPECTED_BUILD
         || handshake.pid != expected_pid
         || handshake.host != "127.0.0.1"
+        || handshake.port == 0
         || !nonce_valid
         || handshake.capabilities != ["runtime.status"]
         || handshake.database_compatibility.minimum != "0.1.0"
@@ -438,10 +513,13 @@ fn validate_handshake(
 }
 
 fn ensure_attempt_active(
-    inner: &Arc<Mutex<SupervisorInner>>,
+    shared: &Arc<SupervisorShared>,
     attempt: u8,
 ) -> Result<(), (RuntimeState, &'static str)> {
-    let locked = inner.lock().expect("runtime supervisor mutex poisoned");
+    let locked = shared
+        .inner
+        .lock()
+        .expect("runtime supervisor mutex poisoned");
     if locked.attempt == attempt && locked.state == RuntimeState::Starting {
         Ok(())
     } else {
@@ -451,13 +529,19 @@ fn ensure_attempt_active(
 
 fn wait_until_ready(
     handshake: &RuntimeHandshake,
-    inner: &Arc<Mutex<SupervisorInner>>,
+    child: &mut Child,
+    shared: &Arc<SupervisorShared>,
     attempt: u8,
 ) -> Result<(), (RuntimeState, &'static str)> {
     let address = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), handshake.port);
     let deadline = Instant::now() + START_TIMEOUT;
     while Instant::now() < deadline {
-        ensure_attempt_active(inner, attempt)?;
+        ensure_attempt_active(shared, attempt)?;
+        match child.try_wait() {
+            Ok(Some(_)) => return Err((RuntimeState::Crashed, "RO-CORE-EARLY-EXIT")),
+            Ok(None) => {}
+            Err(_) => return Err((RuntimeState::Crashed, "RO-CORE-STATUS-FAILED")),
+        }
         if let Ok(mut stream) = TcpStream::connect_timeout(&address, Duration::from_millis(250)) {
             let _ = stream.set_read_timeout(Some(Duration::from_millis(500)));
             let request = b"GET /readyz HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n";
@@ -512,7 +596,7 @@ fn readiness_is_compatible(response: &[u8]) -> bool {
         && payload.ready
 }
 
-fn drain_log<R: BufRead>(mut reader: R, inner: Arc<Mutex<SupervisorInner>>, stream: &'static str) {
+fn drain_log<R: BufRead>(mut reader: R, shared: Weak<SupervisorShared>, stream: &'static str) {
     let mut line = Vec::new();
     while reader
         .by_ref()
@@ -527,7 +611,10 @@ fn drain_log<R: BufRead>(mut reader: R, inner: Arc<Mutex<SupervisorInner>>, stre
         } else {
             "RO-CORE-RUNTIME-LOG"
         };
-        if let Ok(mut locked) = inner.lock() {
+        let Some(shared) = shared.upgrade() else {
+            return;
+        };
+        if let Ok(mut locked) = shared.inner.lock() {
             locked.record(code, stream);
         }
         line.clear();
@@ -537,7 +624,8 @@ fn drain_log<R: BufRead>(mut reader: R, inner: Arc<Mutex<SupervisorInner>>, stre
 #[cfg(windows)]
 fn configure_hidden_process(command: &mut Command) {
     use std::os::windows::process::CommandExt;
-    command.creation_flags(0x0800_0000);
+    use windows_sys::Win32::System::Threading::{CREATE_NO_WINDOW, CREATE_SUSPENDED};
+    command.creation_flags(CREATE_NO_WINDOW | CREATE_SUSPENDED);
 }
 
 #[cfg(not(windows))]
@@ -551,13 +639,20 @@ unsafe impl Send for ProcessTreeContainment {}
 
 #[cfg(windows)]
 impl ProcessTreeContainment {
-    fn attach(child: &Child) -> Result<Self, &'static str> {
+    fn attach_and_resume(child: &Child) -> Result<Self, &'static str> {
         use std::mem::{size_of, zeroed};
         use std::os::windows::io::AsRawHandle;
+        use windows_sys::Win32::Foundation::{CloseHandle, INVALID_HANDLE_VALUE};
+        use windows_sys::Win32::System::Diagnostics::ToolHelp::{
+            CreateToolhelp32Snapshot, TH32CS_SNAPTHREAD, THREADENTRY32, Thread32First, Thread32Next,
+        };
         use windows_sys::Win32::System::JobObjects::{
             AssignProcessToJobObject, CreateJobObjectW, JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
             JOBOBJECT_EXTENDED_LIMIT_INFORMATION, JobObjectExtendedLimitInformation,
             SetInformationJobObject,
+        };
+        use windows_sys::Win32::System::Threading::{
+            OpenThread, ResumeThread, THREAD_SUSPEND_RESUME,
         };
         unsafe {
             let job = CreateJobObjectW(std::ptr::null(), std::ptr::null());
@@ -573,12 +668,42 @@ impl ProcessTreeContainment {
                 size_of::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>() as u32,
             );
             if configured == 0 {
-                windows_sys::Win32::Foundation::CloseHandle(job);
+                CloseHandle(job);
                 return Err("RO-CORE-CONTAINMENT-FAILED");
             }
             let assigned = AssignProcessToJobObject(job, child.as_raw_handle().cast());
             if assigned == 0 {
-                windows_sys::Win32::Foundation::CloseHandle(job);
+                CloseHandle(job);
+                return Err("RO-CORE-CONTAINMENT-FAILED");
+            }
+            let snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+            if snapshot == INVALID_HANDLE_VALUE {
+                CloseHandle(job);
+                return Err("RO-CORE-CONTAINMENT-FAILED");
+            }
+            let mut entry: THREADENTRY32 = zeroed();
+            entry.dwSize = size_of::<THREADENTRY32>() as u32;
+            let mut found = false;
+            let mut has_entry = Thread32First(snapshot, &raw mut entry) != 0;
+            while has_entry {
+                if entry.th32OwnerProcessID == child.id() {
+                    let thread = OpenThread(THREAD_SUSPEND_RESUME, 0, entry.th32ThreadID);
+                    if thread.is_null() || ResumeThread(thread) == u32::MAX {
+                        if !thread.is_null() {
+                            CloseHandle(thread);
+                        }
+                        CloseHandle(snapshot);
+                        CloseHandle(job);
+                        return Err("RO-CORE-CONTAINMENT-FAILED");
+                    }
+                    CloseHandle(thread);
+                    found = true;
+                }
+                has_entry = Thread32Next(snapshot, &raw mut entry) != 0;
+            }
+            CloseHandle(snapshot);
+            if !found {
+                CloseHandle(job);
                 return Err("RO-CORE-CONTAINMENT-FAILED");
             }
             Ok(Self(job))
@@ -606,7 +731,7 @@ struct ProcessTreeContainment;
 
 #[cfg(not(windows))]
 impl ProcessTreeContainment {
-    fn attach(_child: &Child) -> Result<Self, &'static str> {
+    fn attach_and_resume(_child: &Child) -> Result<Self, &'static str> {
         Ok(Self)
     }
 
@@ -615,7 +740,7 @@ impl ProcessTreeContainment {
 
 #[cfg(test)]
 mod tests {
-    use super::{RuntimeState, SupervisorInner, validate_handshake};
+    use super::{RuntimeState, RuntimeSupervisor, SupervisorInner, validate_handshake};
     use std::collections::VecDeque;
 
     fn handshake(pid: u32) -> Vec<u8> {
@@ -638,6 +763,11 @@ mod tests {
     fn handshake_is_exact_and_process_bound() {
         assert!(validate_handshake(&handshake(42), 42).is_ok());
         assert!(validate_handshake(&handshake(42), 43).is_err());
+        let port_zero = String::from_utf8(handshake(42))
+            .expect("UTF-8 handshake")
+            .replace("\"port\":49152", "\"port\":0")
+            .into_bytes();
+        assert!(validate_handshake(&port_zero, 42).is_err());
         let mut extra = handshake(42);
         extra.splice(
             extra.len() - 2..extra.len() - 2,
@@ -651,8 +781,11 @@ mod tests {
     fn bounded_diagnostics_discard_oldest_without_raw_content() {
         let mut inner = SupervisorInner {
             state: RuntimeState::Stopped,
+            state_diagnostic: Some("RO-CORE-STOPPED"),
             attempt: 0,
             process: None,
+            launching: false,
+            stopping: false,
             diagnostics: VecDeque::new(),
             sequence: 0,
         };
@@ -661,5 +794,37 @@ mod tests {
         }
         assert_eq!(inner.diagnostics.len(), 64);
         assert_eq!(inner.diagnostics.front().expect("diagnostic").sequence, 17);
+    }
+
+    #[test]
+    fn late_log_records_do_not_replace_the_state_diagnostic() {
+        let mut inner = SupervisorInner {
+            state: RuntimeState::Crashed,
+            state_diagnostic: Some("RO-CORE-CRASHED"),
+            attempt: 1,
+            process: None,
+            launching: false,
+            stopping: false,
+            diagnostics: VecDeque::new(),
+            sequence: 0,
+        };
+        inner.record("RO-CORE-RUNTIME-LOG", "stderr");
+        inner.record("RO-CORE-LOG-OVERSIZE", "stdout");
+        assert_eq!(
+            inner.snapshot().diagnostic_reference,
+            Some("RO-CORE-CRASHED")
+        );
+    }
+
+    #[test]
+    fn stop_cannot_launder_a_configuration_failure() {
+        let supervisor = RuntimeSupervisor::new(Err("RO-CORE-INTEGRITY-FAILED"));
+        let snapshot = supervisor.stop();
+        assert_eq!(snapshot.state, RuntimeState::RecoveryRequired);
+        assert_eq!(
+            snapshot.diagnostic_reference,
+            Some("RO-CORE-INTEGRITY-FAILED")
+        );
+        assert!(!snapshot.retry_available);
     }
 }
