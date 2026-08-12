@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "core-sidecar-performance-baseline",
+  "baselineSourceCommit": "30008d3d984111089874f861d2aa7063a8676b30",
+  "profile": "windows-x64",
+  "fixture": {
+    "buildContractSha256": "086e37aab1040cd6dba342b35b65f9d43de8c25a90a0adccfc1abffd40cba176",
+    "targetTriple": "x86_64-pc-windows-msvc",
+    "componentVersion": "0.1.0"
+  },
+  "methodology": {
+    "state": "cold packaged process with no project open; one unmeasured filesystem warmup before seven measured process lifecycles",
+    "repetitions": 7,
+    "distribution": "nearest-rank p50 and p95; no measured sample discarded",
+    "memory": "root-process working set sampled after strict ready response and 100 ms idle stabilization",
+    "regressionThresholdPercent": 20,
+    "hardwareQualification": "representative measured Windows x64 workstation"
+  },
+  "measurements": {
+    "readinessMs": {
+      "baselineP50": 830.362,
+      "absoluteBudget": 3000.0
+    },
+    "shutdownMs": {
+      "baselineP95": 223.712,
+      "absoluteBudget": 5000.0
+    },
+    "idleWorkingSetBytes": {
+      "baselineP95": 62136320.0,
+      "absoluteBudget": 268435456
+    }
+  }
+}

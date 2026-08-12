@@ -61,3 +61,15 @@ Windows supervisor's Job Object remains the final process-tree containment
 boundary. The desktop creates Core suspended, attaches the Job Object before any
 Core code can run, and then resumes it; immediate helper descendants cannot escape
 the application's graceful, forced, or host-exit cleanup.
+
+At slice and release qualification, benchmark the real packaged process with:
+
+```powershell
+.venv\Scripts\python.exe tools\core_sidecar_performance_check.py --repo . --report artifacts/tmp/core-sidecar-performance.json
+```
+
+The governed Windows x64 baseline records seven cold process lifecycles after one
+filesystem warmup, median strict readiness, p95 shutdown, and p95 idle root-process
+working set. Every metric must remain within both its absolute slice budget and a
+20 percent regression boundary. Baseline bytes are immutable without independent
+review; the tool has no automatic re-baselining path.
