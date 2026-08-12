@@ -80,10 +80,10 @@ A task claim records agent, branch, worktree, base SHA, lease, and expected scop
 
 At each iteration select only the dependency-eligible `READY` task in the active
 capability. State its permitted scope from the task deliverables and acceptance
-criteria, run its declared verification commands plus changed-path checks, bind
-evidence to the implementation commit, complete required review, and then move
-to the next eligible task. Do not use a globally READY task to leave an active
-campaign.
+criteria, use its declared verification commands/profiles and changed-path impact
+map to select risk-proportionate checks, bind evidence to the implementation
+commit, complete required review, and then move to the next eligible task. Do not
+use a globally READY task to leave an active campaign.
 
 A slice completes only after:
 
@@ -124,6 +124,33 @@ Each task evidence manifest must identify exact commit, changed files, commands,
 ## 8. Verification and CI
 
 Run fast deterministic checks on every PR; Windows desktop qualification is required during W0-W5. macOS/Linux qualification is added in W6. Expensive live-provider, large-corpus, installer matrix, and performance work belongs in scheduled or release profiles unless a slice explicitly requires it earlier.
+
+### 8.1 Verification breadth by workflow stage
+
+Verification is selected by credible failure likelihood, not by replaying every
+available suite at every task:
+
+- **Task implementation and task review:** run focused tests for the changed
+  modules, contracts, denial/failure boundaries, and directly affected
+  integrations. Run affected lint, format, type, schema, planning, architecture,
+  UI, security, or platform checks only when the changed paths can plausibly
+  invalidate them.
+- **Slice integration and slice review:** after the last task, run each affected
+  full deployment profile once, plus slice-wide end-to-end, failure,
+  cancellation, restart, recovery, accessibility, security, and performance
+  checks required by the slice plan.
+- **Capability qualification:** run the complete approved cross-slice matrix and
+  capability-level platform/release checks.
+
+Task `verification_profiles` and `verification_commands` define coverage domains
+and candidate commands. They do not, by themselves, require every command in a
+full profile at ordinary task scope. An earlier full-profile run is justified
+only by an explicit task acceptance criterion, credible profile-wide impact from
+shared verification/build/security/toolchain or dependency/runtime changes, or
+an observed failure that cannot be localized. Evidence must name the changed-path
+risk analysis, selected checks, any early broad-suite rationale, and the broader
+coverage deferred to slice or capability review. A reviewer should not demand an
+unchanged full-profile replay without identifying a concrete impact path.
 
 At minimum maintain checks for:
 

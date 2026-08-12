@@ -58,6 +58,17 @@
       "changed-path-impact-map",
       "architecture-and-experience-contracts-when-affected"
     ],
+    "selectionPolicy": "credible-failure-likelihood-and-changed-path-impact",
+    "taskDefault": "focused-affected-checks",
+    "fullProfileStage": "slice-integration-review",
+    "completeMatrixStage": "capability-qualification",
+    "earlyFullProfileConditions": [
+      "explicit-task-acceptance-criterion",
+      "shared-verification-build-security-or-toolchain-profile-wide-impact",
+      "dependency-or-runtime-change-crosses-profile-boundary",
+      "failure-cannot-be-safely-localized"
+    ],
+    "breadthRationaleRequiredInEvidence": true,
     "exactCommitRequired": true,
     "failurePolicy": "remain-in-progress-and-fix-within-approved-scope"
   },
