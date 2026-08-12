@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e78dcef3a06c0abaa526a9141c7d358afb7ec9a4cda76945cd152ec1974c8b84
+source_sha256: 2ce8000b75424a4df452c07d620a3a2bfd53266bda772c010647ad960b88501c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1279,7 +1279,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S04.T01 - Implement loopback authentication and endpoint binding controls
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1307,6 +1307,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-01.S04.T01.json` at `c2c33b3d027b4e53ca0e9371b642202c1ef9bcbb`
+- `artifacts/evidence/CAP-01.S04.T01.review-fix.json` at `10bef04ded937e7597222b3272d117041be6628e`
 
 #### - [ ] CAP-01.S04.T02 - Generate and consume versioned API contracts
 

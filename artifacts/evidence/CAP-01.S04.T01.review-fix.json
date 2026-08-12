@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T01",
+  "commit": "10bef04ded937e7597222b3272d117041be6628e",
+  "baseCommit": "c2c33b3d027b4e53ca0e9371b642202c1ef9bcbb",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T01.json",
+    "reason": "Independent security review found that the raw launch credential remained reachable through Starlette middleware configuration even though the middleware instance retained a digest. This remediation removes the raw credential from retained framework objects, clears its mutable startup record, and requalifies the exact digest-only frozen package."
+  },
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "artifacts/evidence/CAP-01.S04.T01.json",
+    "artifacts/evidence/CAP-01.S04.T01.package-attestation.review-fix-2.json",
+    "artifacts/evidence/CAP-01.S04.T01.performance-comparison.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/authentication.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "tests/desktop/test_core_sidecar_performance_check.py",
+    "tests/service/test_core_api.py",
+    "tools/core_sidecar_performance_check.py",
+    "verification/baselines/core-sidecar-performance.json",
+    "verification/baselines/core-sidecar-performance.sha256"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 12 focused service tests passed. Valid and invalid mutable startup records are cleared; Core retains only the SHA-256 digest; and the complete Starlette user-middleware configuration and constructed middleware stack contain neither the raw 64-character token nor a token keyword after successful authenticated use. Existing loopback, Host, Origin, duplicate-header, stale-token, fixed-error, and real-Uvicorn boundaries remain green."
+    },
+    {
+      "command": "cargo fmt --check; cargo clippy --all-targets --locked -- -D warnings; cargo test --lib --locked; supervision_check.exe <digest-only-package> <fixture> (three consecutive replays)",
+      "exitCode": 0,
+      "result": "Pinned Rust formatting and Clippy passed every target; six native unit tests passed. Three consecutive real frozen-package lifecycle replays passed the full token-authenticated readiness, restart rotation, cancellation, failure classification, serialized stop/retry, crash recovery, and root-plus-descendant teardown matrix. Snapshotting concrete Job process IDs before termination removes the observed accounting race and leaves no residual process."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_performance_check.py --repo . --report artifacts/tmp/core-sidecar-performance.json; .venv\\Scripts\\python.exe -m unittest tests.desktop.test_core_sidecar_performance_check",
+      "exitCode": 0,
+      "result": "The exact 644-file digest-only package passed seven measured lifecycles at clean commit 10bef04: readiness p50 835.025 ms, shutdown p95 224.999 ms, and idle working-set p95 62,484,480 bytes. The report SHA-256 is 9ba41067cb81f0f783c1811734de640e86a3d6346d3f5e2e4ce40512047c96f1. All eight focused authority, provenance, ACL, and threshold regressions passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; python tools/adr_check.py --repo . --base 95b55cf --head HEAD; python tools/architecture_check.py --repo .; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "The governed 72-file Python format/lint/type scope, accepted-ADR boundary, architecture contract, backlog invariants, and generated planning views passed. The immutable digest-only package attestation SHA-256 is 9de90ee80debc5ed5b13361d9fa85b53ee630a03a1b852c4203e2a565c980cc3; its pre-rebaseline comparison passed unchanged limits."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The inherited startup record is a mutable bytearray that is validated and cleared in a finally boundary; only its 32-byte SHA-256 digest crosses into application construction.",
+        "FastAPI/Starlette retained configuration and the built middleware stack receive only the digest. Regression assertions search both object graphs and representations and prove that the raw token and token keyword are absent after construction and authenticated use.",
+        "The exact frozen package continues to deny stale or missing authentication and unsafe peer, Host, Origin, and duplicate-header shapes while the native owner rotates and zeroes credentials per launch."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused tests cover valid and invalid startup parsing/clearing, framework retention, authenticated expected paths, material HTTP denials, actual loopback serving, real native supervision, credential rotation, and complete process-tree cleanup.",
+        "The canonical release artifact was rebuilt from the digest-only source, independently attested, compared against unchanged approved performance values, rebaselined transparently, and qualified again from the clean evidence commit.",
+        "Risk-based task verification selected only the changed service-authentication, native teardown, package-provenance, performance, quality, ADR, architecture, backlog, and view boundaries. Full service and security-local profiles remain deferred to S04 integrated review."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0009 and service/contract documentation remain accurate: raw credentials are private launch material, never portable contract or renderer state, and Core retains only a digest.",
+        "The supersession chain preserves the original finding and both package identities. The final attestation binds source commit 5584737, report d6fb386c, manifest e13da8b2, and entrypoint 8023e4cb.",
+        "No UI, public API schema, dependency, migration, reference site, or unrelated application behavior changed in the remediation."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-security-re-review",
+    "requiredGate": "security-review",
+    "note": "Independent remediation review should verify raw-token absence from retained framework configuration and constructed middleware, mutable startup-record clearing on valid and invalid paths, exact digest comparison behavior, canonical frozen-package identity, credential rotation/denial, complete Job teardown, and the evidence supersession/provenance chain. Full profiles remain reserved for S04 integration review."
+  }
+}
