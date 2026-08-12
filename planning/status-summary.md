@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: ab15b630ba6b7b3f1fd559bebf283d1ddd77dfcec39dbdf266c40a74efd87c40
+source_sha256: e81638ada631218ad31435c60c4ad1eb9ca801a3b2cea3a3166feb447bca8eec
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 291 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 27 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S03.T03` Implement sidecar lifecycle supervision in Tauri | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S03.T03` Implement sidecar lifecycle supervision in Tauri | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
