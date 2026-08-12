@@ -20,9 +20,9 @@
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "core-sidecar-artifact-manifest"},
     "componentId": {"const": "core-api"},
-    "componentVersion": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+    "componentVersion": {"const": "0.1.0"},
     "targetTriple": {"const": "x86_64-pc-windows-msvc"},
-    "pythonVersion": {"type": "string", "pattern": "^3\\.14\\.[0-9]+$"},
+    "pythonVersion": {"const": "3.14.6"},
     "builder": {
       "type": "object",
       "additionalProperties": false,

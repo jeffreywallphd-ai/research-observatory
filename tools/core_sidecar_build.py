@@ -156,16 +156,39 @@ def _inventory(root: Path) -> tuple[list[dict[str, Any]], list[str]]:
 
 
 def verify_artifact(
-    artifact_root: Path, manifest: dict[str, Any], *, schema: dict[str, Any] | None = None
+    artifact_root: Path,
+    manifest: dict[str, Any],
+    *,
+    schema: dict[str, Any] | None = None,
+    contract: dict[str, Any] | None = None,
 ) -> list[str]:
     errors: list[str] = []
+    tool_repo = Path(__file__).resolve().parents[1]
     if schema is None:
-        tool_repo = Path(__file__).resolve().parents[1]
         schema = _load_json(_fixed_file(tool_repo, SCHEMA_PATH), "sidecar artifact schema")
+    if contract is None:
+        contract = load_build_contract(tool_repo)
     schema_errors = sorted(Draft202012Validator(schema).iter_errors(manifest), key=lambda error: list(error.path))
     for error in schema_errors:
         location = "/".join(str(part) for part in error.path) or "<root>"
         errors.append(f"artifact manifest schema violation at {location}: {error.message}")
+    expected_identity = {
+        "schemaVersion": contract["schemaVersion"],
+        "documentType": "core-sidecar-artifact-manifest",
+        "componentId": contract["componentId"],
+        "componentVersion": contract["componentVersion"],
+        "targetTriple": contract["targetTriple"],
+        "pythonVersion": contract["pythonVersion"],
+        "entrypoint": contract["entrypoint"],
+    }
+    for field, expected_value in expected_identity.items():
+        if manifest.get(field) != expected_value:
+            errors.append(f"artifact manifest {field} does not match the governed build contract")
+    expected_builder = {
+        field: contract["builder"][field] for field in ("name", "version", "mode", "upx", "excludedModules")
+    }
+    if manifest.get("builder") != expected_builder:
+        errors.append("artifact manifest builder does not match the governed build contract")
     if not artifact_root.is_dir() or _is_redirect(artifact_root):
         return ["artifact root must be a present canonical directory"]
     inventory, inventory_errors = _inventory(artifact_root)
@@ -317,7 +340,7 @@ def build_sidecar(repo: Path, output_root: Path) -> tuple[Path, dict[str, Any]]:
         )
     if manifest["totalBytes"] > contract["maximumBytes"]:
         raise SidecarBuildError("sidecar artifact exceeds the approved maximumBytes")
-    verification_errors = verify_artifact(artifact_root, manifest, schema=schema)
+    verification_errors = verify_artifact(artifact_root, manifest, schema=schema, contract=contract)
     if verification_errors:
         raise SidecarBuildError("; ".join(verification_errors))
     return artifact_root, manifest
