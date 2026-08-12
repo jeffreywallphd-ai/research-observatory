@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f2e86376e0b4bd3446e6575d458256c912f8b0b0a73add69f2c25cfeea426df3
+source_sha256: 80fef33c51b293ff2c57dace4311fbab968724be4b5ed13bdc0d28160cfdd8eb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1163,7 +1163,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The desktop bundles and supervises a compatible local service with no user-managed Python installation.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -1271,7 +1271,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Local IPC is private, versioned, cancellable, and observable.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1279,7 +1279,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S04.T01 - Implement loopback authentication and endpoint binding controls
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
