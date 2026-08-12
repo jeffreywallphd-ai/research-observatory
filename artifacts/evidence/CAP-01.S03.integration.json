@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-01.S03",
+  "stateCommit": "dde0288c43def6d25fa17d4a26993f6d13b0e373",
+  "outcome": "The Windows x64 desktop owns a self-contained, exact-inventory Python/FastAPI Core sidecar, starts it without a terminal or system Python, verifies a strict versioned process-bound handshake and real readiness, supervises one contained process tree through cancellation/crash/retry/shutdown, and exposes only functional secret-safe recovery behavior to the product renderer.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-01.S03.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S03.T01.json", "sha256": "79a8e1e47a9f416ef64cdff08dbf0d452c41f613a4a72909a5e41bb579e77f69"},
+        {"path": "artifacts/evidence/CAP-01.S03.T01.review-fix.json", "sha256": "ef60df99d4c27b5bfa6646b34b14bc847fa50b12ef187be163320f45d33903c2"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S03.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S03.T02.json", "sha256": "601358ff138d164003b21b931849880b6b0be0b3f96452df6760274dff82c949"},
+        {"path": "artifacts/evidence/CAP-01.S03.T02.review-fix.json", "sha256": "95f7e5be9b5a5687f670a7812cd26975e30c1fddb5e7a3a703228ac80063ba4a"},
+        {"path": "artifacts/evidence/CAP-01.S03.T02.review-fix-2.json", "sha256": "580ce8cc08fa19eff325f870095a640dc4f066653ec101b536082b033177367c"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S03.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S03.T03.json", "sha256": "2260c37b36812f5844a2287a00335ece928272c356fa7d49872f5a0729336b78"},
+        {"path": "artifacts/evidence/CAP-01.S03.T03.review-fix.json", "sha256": "8bf933ef1bb02fbe5d0242d5ad9dce140d66110d310ae5db35e47e09e8df9813"},
+        {"path": "artifacts/evidence/CAP-01.S03.T03.review-fix-2.json", "sha256": "401c0af28bc1d1ee2cc7a7f4f393950cf815a4b7fd51e2a0c28ca1c0d0ec0ac6"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts/tmp/CAP-01.S03-desktop.json",
+      "exitCode": 0,
+      "result": "At exact clean state dde0288, the complete desktop profile passed 25 commands in 650.033 seconds: 149 foundation tests, 42 desktop tests, all component/renderer/native commands, one functional product page with zero reference-only pages or network requests, 139 workflows, 390 keyboard cases, 64 responsive/accessibility cases, 64 visual captures, and desktop/UI-component performance. Report SHA-256: 291bbf670da3ab427c81fac250160bda2f1e3f05f301e088c03c75c1c0a6cac9."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile service --report artifacts/tmp/CAP-01.S03-service.json",
+      "exitCode": 0,
+      "result": "At exact clean state dde0288, the complete service profile passed 19 commands in 468.309 seconds: 149 foundation tests, 9 real service lifecycle/configuration/contract tests, 2 portable contract tests, and 6 packaging tests including a fresh PyInstaller build and Pythonless-path launch. Report SHA-256: 4b8f726f83caa8c8c944dc07aa70565902bec746964fac78cb2acc245af1a1af."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile e2e-local --report artifacts/tmp/CAP-01.S03-e2e-local.json",
+      "exitCode": 0,
+      "result": "At exact clean state dde0288, the complete local end-to-end profile passed all 16 commands in 448.870 seconds with 149 foundation tests, exact build/architecture/backlog contracts, and no hidden hosted or remote dependency. Report SHA-256: b5ca660cbeab7ca3aebd362e55888673d2844c90b88e562657906a001a035fce."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\core_sidecar_performance_check.py --repo . --report artifacts/tmp/CAP-01.S03-performance-final.json",
+      "exitCode": 0,
+      "result": "The real packaged 0.1.0 Windows x64 Core passed its immutable seven-lifecycle baseline on Windows 11 x64: median strict readiness 817.193 ms against the 3000 ms absolute and 996.434 ms relative limits; p95 shutdown 213.432 ms against the 5000 ms absolute and 268.454 ms relative limits; p95 idle working set 62607360 bytes against the 268435456 absolute and 74563584 relative limits. Baseline SHA-256: 19884a848a54fc0ba1e5ef3381575e6ec63d5b78c33c9ed33320f49eff111215. Report SHA-256: da9a9e1eeb0fead7cc3a680b5bd30df108b92b33eee8cadfd42146c663cb0d72."
+    },
+    {
+      "command": "cargo run --manifest-path apps/desktop/src-tauri/Cargo.toml --example supervision_check --locked -- <real packaged sidecar> <deterministic fixture>",
+      "exitCode": 0,
+      "result": "The focused native matrix remained all true after slice integration: duplicate-start PID stability; async startup cancellation; strict port-zero/malformed/early-exit/readiness-timeout classification; stable late-log diagnostics; crash/PID-changing retry/three-attempt exhaustion; serialized stop/retry; and root-plus-immediate-descendant cleanup on graceful stop, forced stop, Job-handle close, and delayed compatible readiness cancellation."
+    },
+    {
+      "command": "taskctl validate; backlog_views --check; architecture_check; quality_check",
+      "exitCode": 0,
+      "result": "All three tasks are DONE with exact superseding evidence chains and independent approvals. Generated views, 13-area architecture, and 71-file Python quality inventory pass. The only profile-discovered issue was the initially omitted benchmark/test quality inventory; quality-scope.json was corrected, the focused quality check passed, and the complete authoritative desktop profile then passed from a clean commit."
+    }
+  ],
+  "integratedBehavior": [
+    "Core provides strict local-only health, readiness, version, configuration, module, OpenAPI, and runtime contracts; actual served responses validate their schema variants and malformed or hybrid states fail closed.",
+    "The self-contained Python 3.14.6/PyInstaller 6.21.0 onedir artifact has an exact 644-file identity and dependency inventory, runs without system Python on PATH, binds every identity/version field to the governed build contract, rejects mutation or missing dependencies, and writes reports through confined guarded output.",
+    "Tauri lifecycle commands dispatch blocking work off the main thread. Windows creates Core suspended, assigns KILL_ON_JOB_CLOSE containment, then resumes it, closing the descendant escape window before application code executes.",
+    "Only one lifecycle operation may own or publish the sidecar. Stop, startup cancellation, delayed readiness publication, retry, crash observation, graceful shutdown, forced shutdown, and host-drop cleanup retain ownership until the complete contained process tree is dead.",
+    "The renderer receives exactly state, bounded attempt, retry availability, and an allowlisted opaque diagnostic. It receives no endpoint, nonce, PID, path, environment, raw output, credential, or research content; malformed adapter values fail closed and command input remains mounted through recovery.",
+    "Production and development expose one functional CAP-01 application page. The 32-page HTML reference, illustrative records, future-capability routes, and nonfunctional actions remain confined to design and conformance tooling and are absent from the product bundle.",
+    "The immutable Core performance baseline binds hardware class, fixture contract, methodology, all samples, absolute budgets, and 20 percent regression thresholds; the tool offers no automatic re-baselining path."
+  ],
+  "failureAndRecoveryCoverage": [
+    "invalid/missing configuration, malformed and extra-field service contracts, and nonloopback binding denial",
+    "missing/mutated/identity-free artifact manifests, missing dependencies, hardlink/redirect output denial, and Pythonless execution",
+    "malformed/process-mismatched/port-zero handshake, early exit, readiness timeout, async cancellation, and incompatible readiness",
+    "duplicate start, crash after ready, safe retry with new PID, bounded restart exhaustion, and stable state diagnostics after late logs",
+    "graceful tree stop, hung five-second forced tree stop, immediate descendant containment, Job-handle-close cleanup, stop/retry overlap, and delayed-readiness cancellation",
+    "renderer hostile/credential/URL/path/extra-field adapter results, clipboard failure, retained input, offline continuation, responsive/accessibility behavior, and zero network requests"
+  ],
+  "downstreamHandoff": {
+    "consumer": "CAP-01.S04",
+    "contract": "packages/contracts/core-api/runtime-handshake.schema.json plus packages/contracts/core-api/openapi.json",
+    "ready": true,
+    "notes": "S04 may consume the versioned process-bound loopback/nonce handshake and public OpenAPI without importing supervisor or service-private modules. The endpoint and nonce remain native-host private until S04 adds authenticated transport and a generated renderer-safe client."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "fullAffectedProfilesPassedOnceAtSliceReview": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "Authenticated request transport, capability tokens, generated client compatibility, cancellation IDs, and request traces are intentionally owned by CAP-01.S04.",
+      "Installer signing, install/upgrade/repair/rollback, clean-VM packaging, and external artifacts are intentionally owned by CAP-01.S05.",
+      "Project persistence and scholarly workflows remain owned by later capabilities; S03 does not fabricate their UI or data."
+    ]
+  }
+}
