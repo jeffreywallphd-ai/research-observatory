@@ -2553,18 +2553,21 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T11:51:12+00:00'
-      updated_at: '2026-08-12T12:57:20+00:00'
+      updated_at: '2026-08-12T12:57:41+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Focused task evidence complete at ba98a62; full desktop/service/e2e-local integration profiles
         are deferred to CAP-01.S03 slice review per risk-based verification policy.
 
         Focused remediation complete; async dispatch, suspended Job containment, state diagnostics, serialized lifecycle,
-        and failure matrix are ready for independent re-review. Full profiles remain deferred to S03 integration.'
+        and failure matrix are ready for independent re-review. Full profiles remain deferred to S03 integration.
+
+        Late-compatible-readiness ownership race closed with immediate stop-return liveness assertions; focused re-review
+        requested.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S03.T03.json
