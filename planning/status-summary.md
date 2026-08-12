@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: d50f424bf55cf2668857d5bbbd02612c9e9b33943081d40c1eeb174d74135300
+source_sha256: ff493c013bc6be5702b63fdc67ccffb872df689613faa07084133823728a6478
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 289 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 29 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S04.T02` Generate and consume versioned API contracts | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S04.T02` Generate and consume versioned API contracts | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
