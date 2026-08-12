@@ -294,7 +294,7 @@ const BOUNDARY_STATE_TONES: Readonly<Record<BoundaryState, SemanticTone>> = {
   "recovery-required": "warning",
 };
 
-const DIAGNOSTIC_REFERENCE = /^RO-[A-Z0-9]+(?:-[A-Z0-9]+){2,15}$/;
+const DIAGNOSTIC_REFERENCE = /^RO-[A-Z0-9]+(?:-[A-Z0-9]+){1,15}$/;
 
 function requireBoundaryState(state: BoundaryState): void {
   if (!boundaryStates.some((candidate) => candidate === state)) {

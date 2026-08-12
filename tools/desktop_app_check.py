@@ -652,8 +652,10 @@ def security_errors(repo: Path) -> list[str]:
     if security.get("capabilities") != ["main-window"] or app.get("withGlobalTauri") is not False:
         errors.append("Tauri must expose only the named main-window capability without a global bridge")
     capability = json_object(repo / "apps" / "desktop" / "src-tauri" / "capabilities" / "main-window.json")
-    if capability.get("windows") != ["main"] or capability.get("permissions") != []:
-        errors.append("the initial desktop capability must grant zero privileged commands to the main window")
+    if capability.get("windows") != ["main"] or capability.get("permissions") != [
+        "core:webview:allow-internal-toggle-devtools"
+    ]:
+        errors.append("the desktop capability must grant only the narrow WebView inspector toggle command")
     return errors
 
 

@@ -72,7 +72,7 @@ describe("ui-components package boundary", () => {
           state="failed"
           title="Local operation failed"
           message="Input remains available."
-          diagnosticReference="RO-LOCAL-OPERATION-FAILED"
+          diagnosticReference="RO-CORE-STARTING"
           onRetry={() => undefined}
         >
           <p>Retained input</p>
@@ -84,7 +84,7 @@ describe("ui-components package boundary", () => {
     expect(markup).toContain('id="package-dialog-title"');
     expect(markup).toContain("Package dialog");
     expect(markup).toContain('data-boundary-state="failed"');
-    expect(markup).toContain("RO-LOCAL-OPERATION-FAILED");
+    expect(markup).toContain("RO-CORE-STARTING");
     expect(markup).toContain("Retained input");
   });
 

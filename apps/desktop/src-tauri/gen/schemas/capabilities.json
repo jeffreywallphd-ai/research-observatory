@@ -1,1 +1,1 @@
-{"main-window":{"identifier":"main-window","description":"Offline desktop window using only application-defined typed Core-supervision commands.","local":true,"windows":["main"],"permissions":[]}}
+{"main-window":{"identifier":"main-window","description":"Offline desktop window using application-defined typed Core-supervision commands and the debug-build WebView inspector shortcut.","local":true,"windows":["main"],"permissions":["core:webview:allow-internal-toggle-devtools"]}}

@@ -87,7 +87,7 @@ class DesktopAppCheckTests(unittest.TestCase):
 
         self.assertTrue(any("development URL" in error for error in errors))
         self.assertTrue(any("Tauri CSP" in error for error in errors))
-        self.assertTrue(any("zero privileged" in error for error in errors))
+        self.assertTrue(any("only the narrow WebView inspector" in error for error in errors))
 
     def test_product_bundle_rejects_reference_pages_and_tauri_fixture_redirect(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
