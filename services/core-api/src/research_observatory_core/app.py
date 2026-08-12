@@ -36,7 +36,7 @@ def create_app(
     *,
     settings: CoreSettings | None = None,
     modules: ModuleRegistry | None = None,
-    capability_token: str | None = None,
+    capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
     @asynccontextmanager
@@ -67,7 +67,7 @@ def create_app(
     )
     app.add_middleware(
         LocalAuthenticationMiddleware,
-        token=capability_token,
+        digest=capability_digest,
         authority=expected_authority,
     )
 
