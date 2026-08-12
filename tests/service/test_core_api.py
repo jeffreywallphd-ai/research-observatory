@@ -24,6 +24,7 @@ from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.contract import canonical_openapi_bytes  # noqa: E402
 from research_observatory_core.logging import build_log_record  # noqa: E402
+from research_observatory_core.main import supervision_handshake  # noqa: E402
 from research_observatory_core.modules import ModuleDefinition, ModuleRegistry  # noqa: E402
 
 
@@ -182,6 +183,70 @@ class CoreApiTests(unittest.TestCase):
         self.assertEqual(invalid.returncode, 2)
         self.assertEqual(json.loads(invalid.stderr)["status"], "configuration-error")
         self.assertNotIn("token@example", invalid.stderr)
+
+    def test_supervised_process_emits_strict_handshake_and_stops_from_control_pipe(self) -> None:
+        schema = json.loads(
+            (REPO / "packages" / "contracts" / "core-api" / "runtime-handshake.schema.json").read_text(encoding="utf-8")
+        )
+        environment = os.environ.copy()
+        for key in tuple(environment):
+            if key.casefold().startswith("ro_core_") or key.casefold() == "pythonpath":
+                environment.pop(key)
+        environment["PYTHONPATH"] = str(SERVICE_SRC)
+        process = subprocess.Popen(
+            [sys.executable, "-m", "research_observatory_core.main", "--supervised"],
+            cwd=REPO,
+            env=environment,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        try:
+            assert process.stdout is not None
+            line = process.stdout.readline()
+            handshake = json.loads(line)
+            self.assertEqual(list(Draft202012Validator(schema).iter_errors(handshake)), [])
+            # The uv-managed development interpreter may be a launcher process
+            # on Windows. The packaged executable is bound to its direct PID by
+            # the native supervisor integration check.
+            self.assertGreater(handshake["pid"], 0)
+            connection = http.client.HTTPConnection(handshake["host"], handshake["port"], timeout=5)
+            deadline = time.monotonic() + 10
+            response = None
+            while time.monotonic() < deadline:
+                try:
+                    connection.request("GET", "/readyz")
+                    response = connection.getresponse()
+                    if response.status == 200:
+                        break
+                    response.read()
+                except OSError:
+                    time.sleep(0.05)
+                    connection.close()
+                    connection = http.client.HTTPConnection(handshake["host"], handshake["port"], timeout=5)
+            self.assertIsNotNone(response)
+            assert response is not None
+            self.assertEqual(response.status, 200)
+            self.assertTrue(json.loads(response.read())["ready"])
+            connection.close()
+            assert process.stdin is not None
+            process.stdin.write("shutdown\n")
+            process.stdin.flush()
+            self.assertEqual(process.wait(timeout=10), 0)
+        finally:
+            if process.poll() is None:
+                process.kill()
+                process.wait(timeout=5)
+            for stream in (process.stdin, process.stdout, process.stderr):
+                if stream is not None:
+                    stream.close()
+
+        fabricated = supervision_handshake(host="127.0.0.1", port=49152)
+        fabricated["pid"] = 0
+        fabricated["host"] = "localhost"
+        fabricated["nonce"] = "RO-TOKEN-HUNTER2"
+        self.assertGreaterEqual(len(list(Draft202012Validator(schema).iter_errors(fabricated))), 3)
 
 
 if __name__ == "__main__":

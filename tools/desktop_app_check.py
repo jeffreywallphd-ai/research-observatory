@@ -991,7 +991,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             diagnostic = boundary.locator("[data-diagnostic-reference]").inner_text().strip()
             details["boundaryState"] = (
                 boundary.get_attribute("data-boundary-state") == "recovery-required"
-                and diagnostic == "RO-CAP01-SERVICE-NOT-PACKAGED"
+                and diagnostic == "RO-CORE-SUPERVISOR-UNAVAILABLE"
             )
             browser_context.grant_permissions(["clipboard-read", "clipboard-write"], origin="http://tauri.localhost")
             boundary.locator("[data-copy-diagnostic]").click()
@@ -1005,7 +1005,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 """() => document.querySelector('[data-local-service-boundary]')
                   ?.getAttribute('data-boundary-state') === 'recovery-required'
                   && document.querySelector('[data-live-region]')?.textContent
-                    ?.includes('Local service check complete')""",
+                    ?.includes('Local analytical service recovery-required')""",
                 timeout=5_000,
             )
             details["boundaryRecovery"] = boundary.locator("[data-retry-boundary]").is_enabled()

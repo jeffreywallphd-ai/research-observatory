@@ -4,13 +4,21 @@ import { describe, expect, it, vi } from "vitest";
 import {
   LOCAL_SERVICE_DIAGNOSTIC_REFERENCE,
   LocalServiceBoundary,
+  decodeLocalServiceProbeResult,
   localServiceViewFromProbeResult,
   packagedLocalServiceProbe,
   secretSafeServiceFailure,
 } from "./LocalServiceBoundary";
 
-describe("local service recovery boundary", () => {
-  it("renders a truthful actionable state without dropping local shell content", () => {
+const ready = {
+  state: "ready",
+  attempt: 1,
+  retryAvailable: false,
+  diagnosticReference: null,
+} as const;
+
+describe("local service supervision boundary", () => {
+  it("renders a truthful actionable host-unavailable state without dropping local shell content", () => {
     const markup = renderToStaticMarkup(<LocalServiceBoundary announce={vi.fn()} />);
 
     expect(markup).toContain('data-boundary-state="recovery-required"');
@@ -19,6 +27,23 @@ describe("local service recovery boundary", () => {
     expect(markup).toContain("Continue locally");
     expect(markup).toContain("Copy diagnostic reference");
     expect(markup).toContain("no researcher data is discarded");
+    expect(markup).not.toContain("does not yet package");
+  });
+
+  it("renders the exact native ready and recovery states", () => {
+    expect(localServiceViewFromProbeResult(ready)).toMatchObject({ state: "ready", retryAvailable: false });
+    expect(localServiceViewFromProbeResult({
+      state: "crashed",
+      attempt: 1,
+      retryAvailable: true,
+      diagnosticReference: "RO-CORE-CRASHED",
+    })).toMatchObject({ state: "failed", retryAvailable: true });
+    expect(localServiceViewFromProbeResult({
+      state: "recovery-required",
+      attempt: 3,
+      retryAvailable: false,
+      diagnosticReference: "RO-CORE-RESTART-LIMIT",
+    })).toMatchObject({ state: "recovery-required", retryAvailable: false });
   });
 
   it("maps hostile adapter failures to an opaque secret-safe diagnostic", () => {
@@ -28,56 +53,53 @@ describe("local service recovery boundary", () => {
     const serialized = JSON.stringify(failure);
 
     expect(failure.state).toBe("failed");
-    expect(failure.diagnosticReference).toBe(LOCAL_SERVICE_DIAGNOSTIC_REFERENCE);
+    expect(failure.diagnosticReference).toBe("RO-CORE-STATUS-FAILED");
     expect(serialized).not.toContain("super-secret");
     expect(serialized).not.toContain("hunter2");
     expect(serialized).not.toContain("researcher");
   });
 
   it.each([
-    ["credential-shaped reference", { status: "unavailable", diagnosticReference: "RO-TOKEN-HUNTER2-ABC123" }],
+    ["credential-shaped reference", { ...ready, diagnosticReference: "RO-TOKEN-HUNTER2-ABC123" }],
     ["URL and path content", {
-      status: "unavailable",
+      ...ready,
       diagnosticReference: `https:${String.fromCharCode(47, 47)}evil.invalid/C:/private?token=hunter2`,
     }],
-    ["missing reference", { status: "unavailable" }],
-    ["wrong status", { status: "ready", diagnosticReference: LOCAL_SERVICE_DIAGNOSTIC_REFERENCE }],
-    ["extra field", { status: "unavailable", diagnosticReference: LOCAL_SERVICE_DIAGNOSTIC_REFERENCE, secret: "hunter2" }],
-    ["array", ["unavailable", LOCAL_SERVICE_DIAGNOSTIC_REFERENCE]],
+    ["missing reference field", { state: "ready", attempt: 1, retryAvailable: false }],
+    ["unsupported state", { ...ready, state: "future" }],
+    ["noninteger attempt", { ...ready, attempt: 1.5 }],
+    ["extra field", { ...ready, secret: "hunter2" }],
+    ["array", ["ready", 1]],
     ["null", null],
     ["primitive", "Bearer hunter2"],
-  ])("fails closed for an untrusted %s probe result", (_name, result) => {
+  ])("fails closed for an untrusted %s runtime snapshot", (_name, result) => {
+    expect(decodeLocalServiceProbeResult(result)).toBeNull();
     const view = localServiceViewFromProbeResult(result);
     const serialized = JSON.stringify(view);
 
     expect(view.state).toBe("failed");
-    expect(view.diagnosticReference).toBe(LOCAL_SERVICE_DIAGNOSTIC_REFERENCE);
     expect(serialized).not.toContain("HUNTER2");
     expect(serialized).not.toContain("hunter2");
     expect(serialized).not.toContain("evil.invalid");
     expect(serialized).not.toContain("private");
   });
 
-  it("accepts only the exact allowlisted probe result and contains hostile property access", () => {
-    expect(localServiceViewFromProbeResult({
-      status: "unavailable",
-      diagnosticReference: LOCAL_SERVICE_DIAGNOSTIC_REFERENCE,
-    }).state).toBe("recovery-required");
-
-    const hostile = new Proxy({}, {
-      ownKeys: () => { throw new Error("Bearer hunter2 C:\\private"); },
-    });
+  it("accepts only the exact allowlisted snapshot and contains hostile property access", () => {
+    expect(decodeLocalServiceProbeResult(ready)).toEqual(ready);
+    const hostile = new Proxy({}, { ownKeys: () => { throw new Error("Bearer hunter2 C:\\private"); } });
     expect(() => localServiceViewFromProbeResult(hostile)).not.toThrow();
     expect(localServiceViewFromProbeResult(hostile)).toMatchObject({
       state: "failed",
-      diagnosticReference: LOCAL_SERVICE_DIAGNOSTIC_REFERENCE,
+      diagnosticReference: "RO-CORE-STATUS-FAILED",
     });
   });
 
-  it("returns the actual not-packaged state and honors cancellation", async () => {
+  it("returns the bounded non-Tauri fallback and honors cancellation", async () => {
     const active = new AbortController();
     await expect(packagedLocalServiceProbe(active.signal)).resolves.toEqual({
-      status: "unavailable",
+      state: "recovery-required",
+      attempt: 0,
+      retryAvailable: true,
       diagnosticReference: LOCAL_SERVICE_DIAGNOSTIC_REFERENCE,
     });
 

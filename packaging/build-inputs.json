@@ -17,6 +17,7 @@
     "evaluation/contracts/normalized-record.schema.json",
     "evaluation/registry.schema.json",
     "packages/contracts/core-api/core-runtime.schema.json",
+    "packages/contracts/core-api/runtime-handshake.schema.json",
     "packages/contracts/core-api/sidecar-artifact.schema.json",
     "packaging/build-manifest.schema.json",
     "packaging/component-manifest.schema.json",

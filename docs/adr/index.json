@@ -71,6 +71,15 @@
       "linkedTasks": [
         "CAP-01.S03.T02"
       ]
+    },
+    {
+      "id": "ADR-0008",
+      "path": "docs/adr/ADR-0008-supervise-the-local-core-process-through-a-portable-native-boundary.md",
+      "title": "Supervise the local Core process through a portable native boundary",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-01.S03.T03"
+      ]
     }
   ]
 }
