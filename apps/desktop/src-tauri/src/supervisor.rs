@@ -810,27 +810,46 @@ impl ProcessTreeContainment {
     }
 
     fn terminate(&self) {
-        use std::mem::{size_of, zeroed};
+        use std::mem::size_of;
+        use windows_sys::Win32::Foundation::CloseHandle;
         use windows_sys::Win32::System::JobObjects::{
-            JOBOBJECT_BASIC_ACCOUNTING_INFORMATION, JobObjectBasicAccountingInformation,
-            QueryInformationJobObject,
+            JOBOBJECT_BASIC_PROCESS_ID_LIST, JobObjectBasicProcessIdList, QueryInformationJobObject,
+        };
+        use windows_sys::Win32::System::Threading::{
+            OpenProcess, PROCESS_SYNCHRONIZE, WaitForSingleObject,
         };
         unsafe {
+            const MAX_JOB_PROCESSES: usize = 256;
+            let mut process_ids = vec![0_usize; 2 + MAX_JOB_PROCESSES];
+            let queried = QueryInformationJobObject(
+                self.0,
+                JobObjectBasicProcessIdList,
+                process_ids.as_mut_ptr().cast(),
+                (process_ids.len() * size_of::<usize>()) as u32,
+                std::ptr::null_mut(),
+            );
+            let mut process_handles = Vec::new();
+            if queried != 0 {
+                let list = &*process_ids
+                    .as_ptr()
+                    .cast::<JOBOBJECT_BASIC_PROCESS_ID_LIST>();
+                let count = usize::try_from(list.NumberOfProcessIdsInList)
+                    .unwrap_or(0)
+                    .min(MAX_JOB_PROCESSES);
+                for &pid in std::slice::from_raw_parts(list.ProcessIdList.as_ptr(), count) {
+                    let handle = OpenProcess(PROCESS_SYNCHRONIZE, 0, pid as u32);
+                    if !handle.is_null() {
+                        process_handles.push(handle);
+                    }
+                }
+            }
             windows_sys::Win32::System::JobObjects::TerminateJobObject(self.0, 1);
             let deadline = Instant::now() + STOP_TIMEOUT;
-            loop {
-                let mut accounting: JOBOBJECT_BASIC_ACCOUNTING_INFORMATION = zeroed();
-                let queried = QueryInformationJobObject(
-                    self.0,
-                    JobObjectBasicAccountingInformation,
-                    (&raw mut accounting).cast(),
-                    size_of::<JOBOBJECT_BASIC_ACCOUNTING_INFORMATION>() as u32,
-                    std::ptr::null_mut(),
-                );
-                if queried == 0 || accounting.ActiveProcesses == 0 || Instant::now() >= deadline {
-                    break;
-                }
-                thread::sleep(Duration::from_millis(10));
+            for handle in process_handles {
+                let remaining = deadline.saturating_duration_since(Instant::now());
+                let timeout = u32::try_from(remaining.as_millis()).unwrap_or(u32::MAX);
+                WaitForSingleObject(handle, timeout);
+                CloseHandle(handle);
             }
         }
     }
