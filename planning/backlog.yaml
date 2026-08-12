@@ -2389,7 +2389,7 @@ capabilities:
     depends_on:
     - CAP-00.S03.T02
     - CAP-01.S01.T01
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-01.S03.T01
       capability_id: CAP-01
@@ -2599,11 +2599,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-01.S03.integration.json
+      notes: All three task reviews approved; desktop/service/e2e-local profiles and immutable Core lifecycle performance
+        passed once at slice integration; S04 handoff is ready.
   - id: CAP-01.S04
     title: Authenticated desktop-service contract
     outcome: Local IPC is private, versioned, cancellable, and observable.
