@@ -2618,7 +2618,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-01.S03.T03
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-01.S04.T01
       capability_id: CAP-01
@@ -2646,11 +2646,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T14:19:15+00:00'
-      updated_at: '2026-08-12T14:46:26+00:00'
+      updated_at: '2026-08-12T14:52:55+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Per-launch local authentication complete; focused security, service, native, package, provenance,
@@ -2662,16 +2662,17 @@ capabilities:
         commit: c2c33b3d027b4e53ca0e9371b642202c1ef9bcbb
         recorded_at: '2026-08-12T14:46:16+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: curie
+        result: changes-requested
+        reviewed_at: '2026-08-12T14:52:55+00:00'
+        notes: Raw capability token remains in FastAPI/Starlette user_middleware kwargs and repr for process lifetime; pass
+          only validated digest, reduce mutable startup retention, and add app/stack-construction disclosure regression.
       base_sha: 5f98edf5822a3ed55d9eb5beff5e37e88d1631d1
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-12T14:19:15+00:00'
-        expires_at: '2026-08-14T14:19:15+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-12T14:52:55+00:00'
+        expires_at: '2026-08-12T22:52:55+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
