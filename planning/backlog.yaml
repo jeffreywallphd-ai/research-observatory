@@ -2784,12 +2784,12 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-12T16:44:38+00:00'
-      completed_at: null
+      updated_at: '2026-08-12T16:47:03+00:00'
+      completed_at: '2026-08-12T16:47:03+00:00'
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
         compiled-product, UI-lineage, architecture, and clean-manifest evidence; full desktop/service/security-local profiles
@@ -2810,15 +2810,12 @@ capabilities:
         recorded_at: '2026-08-12T16:44:03+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-12T16:43:04+00:00'
-        notes: Renderer accepted forged byteLength/SHA metadata unrelated to the exact JSON displayed; require exact native
-          serialized bytes plus independent UTF-8 length/SHA verification and mismatch tests.
+        result: approved
+        reviewed_at: '2026-08-12T16:47:03+00:00'
+        notes: Exact renderer/native document byte binding verified; forged SHA/length/document bytes reject, valid preview/export
+          pass, exact superseding evidence and clean state confirmed without broad profiles.
       base_sha: 7c75380b1163b6b6bb2e2e35ffde17fd916c4544
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-12T16:43:04+00:00'
-        expires_at: '2026-08-13T00:43:04+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
