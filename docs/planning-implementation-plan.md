@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5a33580d828d1dc55bb172e1c7628e0a41f949a5541dbc73546e79455f792704
+source_sha256: f2e86376e0b4bd3446e6575d458256c912f8b0b0a73add69f2c25cfeea426df3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1163,7 +1163,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** The desktop bundles and supervises a compatible local service with no user-managed Python installation.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `CHANGES_REQUESTED`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
