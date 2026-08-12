@@ -68,8 +68,17 @@ At slice and release qualification, benchmark the real packaged process with:
 .venv\Scripts\python.exe tools\core_sidecar_performance_check.py --repo . --report artifacts/tmp/core-sidecar-performance.json
 ```
 
-The governed Windows x64 baseline records seven cold process lifecycles after one
-filesystem warmup, median strict readiness, p95 shutdown, and p95 idle root-process
-working set. Every metric must remain within both its absolute slice budget and a
-20 percent regression boundary. Baseline bytes are immutable without independent
-review; the tool has no automatic re-baselining path.
+Before any process starts, the gate verifies the complete package report and
+644-file artifact inventory against the governed build contract and the exact
+artifact identity approved by the baseline. It benchmarks a private copy whose
+files remain locked and reverified around every lifecycle; a renamed executable,
+changed dependency, or mid-run substitution is nonqualifying.
+
+The governed Windows x64 baseline retains all seven cold-process samples after
+one filesystem warmup, exact hardware identity, measurement-tool commit and
+bytes, package report/manifest/evidence hashes, median strict readiness, p95
+shutdown, and p95 idle root-process working set. Every metric must remain within
+both its absolute slice budget and a 20 percent regression boundary. Baseline
+bytes are immutable without independent review. `--measure-only` is deliberately
+nonqualifying, and every failed invocation replaces a prior report with an
+explicit `ok: false` result so stale PASS evidence cannot survive.

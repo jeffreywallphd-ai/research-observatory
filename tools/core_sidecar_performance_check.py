@@ -11,15 +11,19 @@ import math
 import os
 import platform
 import queue
+import shutil
 import statistics
 import subprocess
+import tempfile
 import threading
 import time
 import urllib.request
+from collections.abc import Callable
 from pathlib import Path
 from typing import IO, Any
 
-from build_manifest import guarded_atomic_write_json, safe_output_path
+from build_manifest import guarded_atomic_write_json, safe_output_path, windows_path_locks
+from core_sidecar_build import SCHEMA_PATH, load_build_contract, verify_artifact
 
 REPETITIONS = 7
 REGRESSION_PERCENT = 20
@@ -27,11 +31,16 @@ READINESS_BUDGET_MS = 3_000.0
 SHUTDOWN_BUDGET_MS = 5_000.0
 IDLE_MEMORY_BUDGET_BYTES = 268_435_456
 BASELINE_PATH = Path("verification/baselines/core-sidecar-performance.json")
-EXPECTED_BASELINE_SHA256 = "19884a848a54fc0ba1e5ef3381575e6ec63d5b78c33c9ed33320f49eff111215"
+EXPECTED_BASELINE_SHA256 = "PENDING_REVIEWED_BASELINE"
 TARGET_TRIPLE = "x86_64-pc-windows-msvc"
 ENTRYPOINT = f"research-observatory-core-{TARGET_TRIPLE}.exe"
 ARTIFACT_PATH = Path("artifacts/tmp/core-sidecar-package/dist") / ENTRYPOINT.removesuffix(".exe") / ENTRYPOINT
+ARTIFACT_ROOT_PATH = ARTIFACT_PATH.parent
+PACKAGE_REPORT_PATH = Path("artifacts/tmp/core-sidecar-package.json")
 CONTRACT_PATH = Path("services/core-api/packaging/sidecar-build.json")
+TOOL_PATH = Path("tools/core_sidecar_performance_check.py")
+PACKAGE_EVIDENCE_PATH = Path("artifacts/evidence/CAP-01.S03.T02.review-fix-2.json")
+PACKAGE_EVIDENCE_SHA256 = "580ce8cc08fa19eff325f870095a640dc4f066653ec101b536082b033177367c"
 
 
 class ProcessMemoryCountersEx(ctypes.Structure):
@@ -47,6 +56,20 @@ class ProcessMemoryCountersEx(ctypes.Structure):
         ("pagefileUsage", ctypes.c_size_t),
         ("peakPagefileUsage", ctypes.c_size_t),
         ("privateUsage", ctypes.c_size_t),
+    ]
+
+
+class MemoryStatusEx(ctypes.Structure):
+    _fields_ = [
+        ("length", ctypes.c_ulong),
+        ("memoryLoad", ctypes.c_ulong),
+        ("totalPhysicalBytes", ctypes.c_ulonglong),
+        ("availablePhysicalBytes", ctypes.c_ulonglong),
+        ("totalPageFileBytes", ctypes.c_ulonglong),
+        ("availablePageFileBytes", ctypes.c_ulonglong),
+        ("totalVirtualBytes", ctypes.c_ulonglong),
+        ("availableVirtualBytes", ctypes.c_ulonglong),
+        ("availableExtendedVirtualBytes", ctypes.c_ulonglong),
     ]
 
 
@@ -74,12 +97,22 @@ def distribution(values: list[float]) -> dict[str, Any]:
 
 
 def hardware_record() -> dict[str, Any]:
+    memory = MemoryStatusEx()
+    memory.length = ctypes.sizeof(memory)
+    if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(memory)):
+        raise ValueError("physical memory identity is unavailable")
     return {
         "operatingSystem": platform.platform(aliased=False, terse=False),
         "machine": platform.machine(),
         "processor": platform.processor() or os.environ.get("PROCESSOR_IDENTIFIER") or "unreported",
         "logicalCpuCount": os.cpu_count(),
+        "physicalMemoryBytes": int(memory.totalPhysicalBytes),
     }
+
+
+def canonical_json_sha256(value: Any) -> str:
+    payload = json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def exact_file(repo: Path, relative: Path) -> Path:
@@ -123,8 +156,11 @@ def validate_baseline(value: Any) -> dict[str, Any]:
         "documentType",
         "baselineSourceCommit",
         "profile",
+        "provenance",
+        "hardware",
         "fixture",
         "methodology",
+        "rawMeasurements",
         "measurements",
     }:
         raise ValueError("Core performance baseline has unexpected or missing fields")
@@ -135,16 +171,98 @@ def validate_baseline(value: Any) -> dict[str, Any]:
         raise ValueError("Core performance baseline source commit is invalid")
     if value.get("profile") != "windows-x64":
         raise ValueError("Core performance baseline profile is invalid")
+    provenance = value.get("provenance")
+    if not isinstance(provenance, dict) or set(provenance) != {
+        "measurementToolCommit",
+        "measurementToolPath",
+        "packageEvidencePath",
+        "packageEvidenceSha256",
+        "packageReportSha256",
+        "artifactManifestSha256",
+        "measurementToolSha256",
+    }:
+        raise ValueError("Core performance baseline provenance is invalid")
+    if (
+        provenance.get("measurementToolCommit") != commit
+        or provenance.get("measurementToolPath") != TOOL_PATH.as_posix()
+        or provenance.get("packageEvidencePath") != PACKAGE_EVIDENCE_PATH.as_posix()
+        or provenance.get("packageEvidenceSha256") != PACKAGE_EVIDENCE_SHA256
+    ):
+        raise ValueError("Core performance baseline provenance identity is invalid")
+    for field in ("packageReportSha256", "artifactManifestSha256", "measurementToolSha256"):
+        digest = provenance.get(field)
+        if not isinstance(digest, str) or len(digest) != 64 or any(item not in "0123456789abcdef" for item in digest):
+            raise ValueError(f"Core performance baseline {field} is invalid")
+    hardware = value.get("hardware")
+    if not isinstance(hardware, dict) or set(hardware) != {
+        "operatingSystem",
+        "machine",
+        "processor",
+        "logicalCpuCount",
+        "physicalMemoryBytes",
+    }:
+        raise ValueError("Core performance baseline hardware identity is invalid")
+    if (
+        not all(
+            isinstance(hardware.get(field), str) and hardware[field]
+            for field in ("operatingSystem", "machine", "processor")
+        )
+        or not isinstance(hardware.get("logicalCpuCount"), int)
+        or isinstance(hardware.get("logicalCpuCount"), bool)
+        or hardware["logicalCpuCount"] <= 0
+        or not isinstance(hardware.get("physicalMemoryBytes"), int)
+        or isinstance(hardware.get("physicalMemoryBytes"), bool)
+        or hardware["physicalMemoryBytes"] <= 0
+    ):
+        raise ValueError("Core performance baseline hardware values are invalid")
     fixture = value.get("fixture")
-    if not isinstance(fixture, dict) or set(fixture) != {"buildContractSha256", "targetTriple", "componentVersion"}:
+    if not isinstance(fixture, dict) or set(fixture) != {
+        "buildContractSha256",
+        "targetTriple",
+        "componentVersion",
+        "entrypointSha256",
+        "fileCount",
+        "totalBytes",
+    }:
         raise ValueError("Core performance baseline fixture is invalid")
     if fixture.get("targetTriple") != TARGET_TRIPLE or fixture.get("componentVersion") != "0.1.0":
         raise ValueError("Core performance baseline fixture identity is invalid")
-    contract_hash = fixture.get("buildContractSha256")
-    if not isinstance(contract_hash, str) or len(contract_hash) != 64:
-        raise ValueError("Core performance baseline contract hash is invalid")
+    for field in ("buildContractSha256", "entrypointSha256"):
+        digest = fixture.get(field)
+        if not isinstance(digest, str) or len(digest) != 64 or any(item not in "0123456789abcdef" for item in digest):
+            raise ValueError(f"Core performance baseline {field} is invalid")
+    if (
+        not isinstance(fixture.get("fileCount"), int)
+        or isinstance(fixture.get("fileCount"), bool)
+        or fixture["fileCount"] <= 0
+        or not isinstance(fixture.get("totalBytes"), int)
+        or isinstance(fixture.get("totalBytes"), bool)
+        or fixture["totalBytes"] <= 0
+    ):
+        raise ValueError("Core performance baseline inventory identity is invalid")
     if value.get("methodology") != expected_methodology():
         raise ValueError("Core performance baseline methodology is invalid")
+    raw = value.get("rawMeasurements")
+    if not isinstance(raw, dict) or set(raw) != {"readinessMs", "shutdownMs", "idleWorkingSetBytes"}:
+        raise ValueError("Core performance baseline raw measurement inventory is invalid")
+    for name, item in raw.items():
+        if not isinstance(item, dict) or set(item) != {"samples", "minimum", "p50", "p95", "maximum"}:
+            raise ValueError(f"Core performance baseline raw {name} shape is invalid")
+        samples = item.get("samples")
+        if (
+            not isinstance(samples, list)
+            or len(samples) != REPETITIONS
+            or any(
+                isinstance(sample, bool)
+                or not isinstance(sample, (int, float))
+                or not math.isfinite(sample)
+                or sample <= 0
+                for sample in samples
+            )
+        ):
+            raise ValueError(f"Core performance baseline raw {name} samples are invalid")
+        if item != distribution([float(sample) for sample in samples]):
+            raise ValueError(f"Core performance baseline raw {name} aggregates do not match retained samples")
     measurements = value.get("measurements")
     expected = {
         "readinessMs": ("baselineP50", "absoluteBudget", READINESS_BUDGET_MS),
@@ -167,6 +285,9 @@ def validate_baseline(value: Any) -> dict[str, Any]:
             or baseline > budget
         ):
             raise ValueError(f"Core performance baseline {name} values are invalid")
+        statistic = "p50" if baseline_field == "baselineP50" else "p95"
+        if float(baseline) != float(raw[name][statistic]):
+            raise ValueError(f"Core performance baseline {name} does not match retained samples")
     return value
 
 
@@ -185,7 +306,139 @@ def load_baseline(repo: Path) -> tuple[dict[str, Any], str]:
     )
     if ancestry.returncode:
         raise ValueError("Core performance baseline source commit is not an ancestor of HEAD")
+    tool_at_source = subprocess.run(
+        ["git", "show", f"{baseline['provenance']['measurementToolCommit']}:{TOOL_PATH.as_posix()}"],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    if tool_at_source.returncode:
+        raise ValueError("Core performance measurement tool is absent from its claimed source commit")
+    if hashlib.sha256(tool_at_source.stdout).hexdigest() != baseline["provenance"]["measurementToolSha256"]:
+        raise ValueError("Core performance measurement tool differs from its approved source bytes")
     return baseline, digest
+
+
+def package_configuration_identity() -> dict[str, Any]:
+    return {
+        "configuration": {
+            "bindHost": "loopback",
+            "bindPort": "ephemeral",
+            "profile": "local",
+            "schemaVersion": "1.0",
+        },
+        "schemaVersion": "1.0",
+        "service": "research-observatory-core",
+        "status": "configuration-valid",
+    }
+
+
+def load_verified_package(repo: Path) -> tuple[Path, dict[str, Any], dict[str, Any], bytes]:
+    report_path = exact_file(repo, PACKAGE_REPORT_PATH)
+    report, report_payload = load_json(report_path)
+    if set(report) != {"ok", "artifactRoot", "manifest", "configurationCheck"} or report.get("ok") is not True:
+        raise ValueError("Core package report identity is invalid")
+    expected_root = ARTIFACT_ROOT_PATH.as_posix()
+    if (
+        report.get("artifactRoot") != expected_root
+        or report.get("configurationCheck") != package_configuration_identity()
+    ):
+        raise ValueError("Core package report does not identify the approved artifact/configuration")
+    manifest = report.get("manifest")
+    if not isinstance(manifest, dict):
+        raise ValueError("Core package report manifest is invalid")
+    contract = load_build_contract(repo)
+    schema, _payload = load_json(exact_file(repo, SCHEMA_PATH))
+    artifact_root = (repo / ARTIFACT_ROOT_PATH).resolve(strict=True)
+    if artifact_root != repo / ARTIFACT_ROOT_PATH:
+        raise ValueError("Core package artifact root is redirected")
+    errors = verify_artifact(artifact_root, manifest, schema=schema, contract=contract)
+    if errors:
+        raise ValueError("Core package inventory is invalid: " + "; ".join(errors))
+    evidence = exact_file(repo, PACKAGE_EVIDENCE_PATH)
+    if sha256(evidence) != PACKAGE_EVIDENCE_SHA256:
+        raise ValueError("Core package evidence does not match its approved SHA-256")
+    entry = next(
+        (
+            item
+            for item in manifest["files"]
+            if isinstance(item, dict) and item.get("path") == manifest.get("entrypoint")
+        ),
+        None,
+    )
+    if not isinstance(entry, dict):
+        raise ValueError("Core package manifest omits its entrypoint identity")
+    identity = {
+        "packageReportSha256": hashlib.sha256(report_payload).hexdigest(),
+        "artifactManifestSha256": canonical_json_sha256(manifest),
+        "buildContractSha256": sha256(repo / CONTRACT_PATH),
+        "entrypointSha256": entry["sha256"],
+        "targetTriple": manifest["targetTriple"],
+        "componentVersion": manifest["componentVersion"],
+        "fileCount": len(manifest["files"]),
+        "totalBytes": manifest["totalBytes"],
+    }
+    return artifact_root, manifest, identity, report_payload
+
+
+def assert_package_snapshot(
+    root: Path,
+    manifest: dict[str, Any],
+    contract: dict[str, Any],
+    schema: dict[str, Any],
+) -> None:
+    errors = verify_artifact(root, manifest, schema=schema, contract=contract)
+    if errors:
+        raise ValueError("Core benchmark package snapshot changed: " + "; ".join(errors))
+
+
+def validate_handshake(value: Any, pid: int) -> int:
+    if not isinstance(value, dict) or set(value) != {
+        "protocolVersion",
+        "buildId",
+        "pid",
+        "host",
+        "port",
+        "nonce",
+        "capabilities",
+        "databaseCompatibility",
+        "diagnosticCode",
+    }:
+        raise ValueError("Core benchmark received an invalid handshake shape")
+    nonce = value.get("nonce")
+    port = value.get("port")
+    if (
+        value.get("protocolVersion") != "1.0"
+        or value.get("buildId") != "0.1.0"
+        or value.get("pid") != pid
+        or value.get("host") != "127.0.0.1"
+        or not isinstance(port, int)
+        or isinstance(port, bool)
+        or not 1 <= port <= 65_535
+        or not isinstance(nonce, str)
+        or len(nonce) != 32
+        or any(item not in "0123456789abcdef" for item in nonce)
+        or value.get("capabilities") != ["runtime.status"]
+        or value.get("databaseCompatibility") != {"minimum": "0.1.0", "maximumExclusive": "0.2.0"}
+        or value.get("diagnosticCode") != "RO-CORE-STARTING"
+    ):
+        raise ValueError("Core benchmark received an incompatible handshake")
+    return port
+
+
+def git_head(repo: Path) -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    commit = result.stdout.decode("ascii", errors="replace").strip()
+    if result.returncode or len(commit) != 40 or any(item not in "0123456789abcdef" for item in commit):
+        raise ValueError("Core performance measurement Git state is unavailable")
+    return commit
 
 
 def read_line(source: IO[bytes], timeout: float) -> bytes:
@@ -262,26 +515,13 @@ def measure_once(executable: Path) -> tuple[float, float, float]:
     try:
         if process.stdout is None or process.stdin is None:
             raise ValueError("Core control pipes are unavailable")
-        handshake = json.loads(read_line(process.stdout, 10).decode("utf-8"))
-        if (
-            set(handshake)
-            != {
-                "protocolVersion",
-                "buildId",
-                "pid",
-                "host",
-                "port",
-                "nonce",
-                "capabilities",
-                "databaseCompatibility",
-                "diagnosticCode",
-            }
-            or handshake.get("pid") != process.pid
-            or handshake.get("host") != "127.0.0.1"
-        ):
-            raise ValueError("Core benchmark received an incompatible handshake")
+        handshake_line = read_line(process.stdout, 10)
+        if not handshake_line or len(handshake_line) > 4_096 or not handshake_line.endswith(b"\n"):
+            raise ValueError("Core benchmark received an invalid handshake record")
+        handshake = json.loads(handshake_line.decode("utf-8"))
+        port = validate_handshake(handshake, process.pid)
         deadline = time.perf_counter() + 10
-        while not readiness_ok(int(handshake["port"])):
+        while not readiness_ok(port):
             if process.poll() is not None:
                 raise ValueError("Core exited before benchmark readiness")
             if time.perf_counter() >= deadline:
@@ -302,48 +542,120 @@ def measure_once(executable: Path) -> tuple[float, float, float]:
             process.wait(timeout=5)
 
 
-def measured_report(repo: Path, repetitions: int) -> dict[str, Any]:
-    if os.name != "nt" or platform.machine().lower() not in {"amd64", "x86_64"}:
-        raise ValueError("Core performance qualification requires Windows x64")
-    if repetitions != REPETITIONS:
-        raise ValueError(f"Core performance qualification requires exactly {REPETITIONS} repetitions")
-    executable = exact_file(repo, ARTIFACT_PATH)
-    contract = exact_file(repo, CONTRACT_PATH)
-    # One unreported lifecycle warms filesystem and antivirus caches while every
-    # measured lifecycle still starts a new packaged process.
-    measure_once(executable)
+def benchmark_snapshot(
+    executable: Path,
+    repetitions: int,
+    snapshot_guard: Callable[[], None],
+    measure: Callable[[Path], tuple[float, float, float]] = measure_once,
+) -> dict[str, dict[str, Any]]:
+    snapshot_guard()
+    measure(executable)
+    snapshot_guard()
     readiness: list[float] = []
     memory: list[float] = []
     shutdown: list[float] = []
     for _index in range(repetitions):
-        ready_ms, memory_bytes, stop_ms = measure_once(executable)
+        snapshot_guard()
+        ready_ms, memory_bytes, stop_ms = measure(executable)
+        snapshot_guard()
         readiness.append(ready_ms)
         memory.append(memory_bytes)
         shutdown.append(stop_ms)
+    return {
+        "readinessMs": distribution(readiness),
+        "idleWorkingSetBytes": distribution(memory),
+        "shutdownMs": distribution(shutdown),
+    }
+
+
+def assert_approved_package_identity(identity: dict[str, Any], baseline: dict[str, Any]) -> None:
+    expected_fixture = baseline["fixture"]
+    fixture = {
+        "buildContractSha256": identity["buildContractSha256"],
+        "targetTriple": identity["targetTriple"],
+        "componentVersion": identity["componentVersion"],
+        "entrypointSha256": identity["entrypointSha256"],
+        "fileCount": identity["fileCount"],
+        "totalBytes": identity["totalBytes"],
+    }
+    if fixture != expected_fixture:
+        raise ValueError("Core package fixture does not match the approved performance baseline")
+    for field in ("packageReportSha256", "artifactManifestSha256"):
+        if identity[field] != baseline["provenance"][field]:
+            raise ValueError(f"Core package {field} does not match the approved performance baseline")
+
+
+def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, Any]) -> dict[str, Any]:
+    if os.name != "nt" or platform.machine().lower() not in {"amd64", "x86_64"}:
+        raise ValueError("Core performance qualification requires Windows x64")
+    if repetitions != REPETITIONS:
+        raise ValueError(f"Core performance qualification requires exactly {REPETITIONS} repetitions")
+    artifact_root, manifest, identity, report_payload = load_verified_package(repo)
+    assert_approved_package_identity(identity, approved_baseline)
+    contract = load_build_contract(repo)
+    schema, _schema_payload = load_json(exact_file(repo, SCHEMA_PATH))
+    scratch = repo / "artifacts" / "tmp"
+    if scratch.resolve(strict=True) != scratch or scratch.is_symlink() or scratch.is_junction():
+        raise ValueError("Core performance scratch root must be a canonical directory")
+    with tempfile.TemporaryDirectory(prefix="core-sidecar-benchmark-", dir=scratch) as temporary:
+        snapshot_root = Path(temporary) / "package"
+        shutil.copytree(artifact_root, snapshot_root)
+
+        def guard() -> None:
+            assert_package_snapshot(snapshot_root, manifest, contract, schema)
+
+        executable = snapshot_root / str(manifest["entrypoint"])
+        snapshot_files = [snapshot_root / str(item["path"]) for item in manifest["files"]]
+        with windows_path_locks(snapshot_files, directories=False):
+            guard()
+            raw = benchmark_snapshot(executable, repetitions, guard)
+            guard()
+    _root_after, manifest_after, identity_after, report_payload_after = load_verified_package(repo)
+    if report_payload_after != report_payload or manifest_after != manifest or identity_after != identity:
+        raise ValueError("Core package report or artifact changed during performance measurement")
     return {
         "schemaVersion": "1.0",
         "documentType": "core-sidecar-performance-report",
         "profile": "windows-x64",
         "hardware": hardware_record(),
+        "provenance": {
+            "measurementStateCommit": git_head(repo),
+            "measurementToolPath": TOOL_PATH.as_posix(),
+            "measurementToolSha256": sha256(repo / TOOL_PATH),
+            "packageEvidencePath": PACKAGE_EVIDENCE_PATH.as_posix(),
+            "packageEvidenceSha256": PACKAGE_EVIDENCE_SHA256,
+            "packageReportSha256": identity["packageReportSha256"],
+            "artifactManifestSha256": identity["artifactManifestSha256"],
+        },
         "fixture": {
-            "artifactSha256": sha256(executable),
-            "buildContractSha256": sha256(contract),
-            "targetTriple": TARGET_TRIPLE,
-            "componentVersion": "0.1.0",
+            "buildContractSha256": identity["buildContractSha256"],
+            "targetTriple": identity["targetTriple"],
+            "componentVersion": identity["componentVersion"],
+            "entrypointSha256": identity["entrypointSha256"],
+            "fileCount": identity["fileCount"],
+            "totalBytes": identity["totalBytes"],
         },
         "methodology": expected_methodology(),
-        "rawMeasurements": {
-            "readinessMs": distribution(readiness),
-            "idleWorkingSetBytes": distribution(memory),
-            "shutdownMs": distribution(shutdown),
-        },
+        "rawMeasurements": raw,
     }
 
 
 def evaluate(report: dict[str, Any], baseline: dict[str, Any], baseline_hash: str) -> dict[str, Any]:
-    contract_hash = report["fixture"]["buildContractSha256"]
-    if contract_hash != baseline["fixture"]["buildContractSha256"]:
-        raise ValueError("Core benchmark build contract differs from the approved baseline")
+    if report.get("hardware") != baseline["hardware"]:
+        raise ValueError("Core benchmark hardware differs from the approved baseline hardware")
+    if report.get("fixture") != baseline["fixture"]:
+        raise ValueError("Core benchmark package fixture differs from the approved baseline")
+    provenance = report.get("provenance")
+    if not isinstance(provenance, dict):
+        raise ValueError("Core benchmark provenance is missing")
+    for field in (
+        "packageEvidencePath",
+        "packageEvidenceSha256",
+        "packageReportSha256",
+        "artifactManifestSha256",
+    ):
+        if provenance.get(field) != baseline["provenance"][field]:
+            raise ValueError(f"Core benchmark {field} differs from the approved baseline")
     rules = {
         "readinessMs": ("p50", "baselineP50"),
         "shutdownMs": ("p95", "baselineP95"),
@@ -376,31 +688,51 @@ def evaluate(report: dict[str, Any], baseline: dict[str, Any], baseline_hash: st
     }
 
 
+def nonqualifying_report(error: str, *, measurement_only: bool = False) -> dict[str, Any]:
+    return {
+        "schemaVersion": "1.0",
+        "documentType": "core-sidecar-performance-nonqualification",
+        "qualificationStatus": "NONQUALIFYING",
+        "measurementOnly": measurement_only,
+        "ok": False,
+        "errors": [error],
+    }
+
+
+def run(repo: Path, destination: Path, *, measure_only: bool = False) -> tuple[dict[str, Any], int]:
+    if measure_only:
+        report = nonqualifying_report(
+            "--measure-only cannot produce qualification evidence; use the reviewed baseline gate",
+            measurement_only=True,
+        )
+        guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+        return report, 1
+    try:
+        baseline, baseline_hash = load_baseline(repo)
+        measured = measured_report(repo, REPETITIONS, baseline)
+        report = evaluate(measured, baseline, baseline_hash)
+    except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
+        report = nonqualifying_report(str(exc))
+    guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+    return report, 0 if report.get("ok") is True else 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path("."))
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--measure-only", action="store_true")
     args = parser.parse_args()
-    repo = args.repo.resolve(strict=True)
+    report: dict[str, Any]
     try:
-        report = measured_report(repo, REPETITIONS)
-        if args.measure_only:
-            report = {**report, "ok": True, "errors": []}
-        else:
-            baseline, baseline_hash = load_baseline(repo)
-            report = evaluate(report, baseline, baseline_hash)
+        repo = args.repo.resolve(strict=True)
         destination = safe_output_path(repo, args.report)
-        guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
-    except (OSError, UnicodeError, ValueError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
-        report = {
-            "schemaVersion": "1.0",
-            "documentType": "core-sidecar-performance-report",
-            "ok": False,
-            "errors": [str(exc)],
-        }
+        report, return_code = run(repo, destination, measure_only=args.measure_only)
+    except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
+        report = nonqualifying_report(str(exc), measurement_only=args.measure_only)
+        return_code = 1
     print(json.dumps(report, indent=2, sort_keys=True))
-    return 0 if report.get("ok") is True else 1
+    return return_code
 
 
 if __name__ == "__main__":
