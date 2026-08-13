@@ -211,6 +211,19 @@ class CoreApiTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(generated.returncode, 0, generated.stdout + generated.stderr)
+        generated_eol = subprocess.run(
+            ["git", "check-attr", "eol", "--", "packages/contracts/core-api/generated.ts"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+        self.assertEqual(generated_eol.returncode, 0, generated_eol.stdout + generated_eol.stderr)
+        self.assertEqual(
+            generated_eol.stdout.strip(),
+            "packages/contracts/core-api/generated.ts: eol: lf",
+        )
 
     def test_operation_contract_pages_cancels_and_replays_sse_with_trace_safe_problems(self) -> None:
         registry = OperationRegistry()
