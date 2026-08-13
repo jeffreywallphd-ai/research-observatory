@@ -129,6 +129,16 @@ REVIEW_RECORD_ENVELOPE = frozenset(
     {"docs/planning-implementation-plan.md", "planning/backlog.yaml", "planning/status-summary.md"}
 )
 AGENT_REVIEWER = re.compile(r"^agent:[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$")
+REVIEWED_HISTORICAL_HARDENING = {
+    "1cd9deebe94fa2b667ad6b0030bd07ec45d1c6bb": {
+        "taskId": "CAP-01.S04.T03",
+        "paths": frozenset({"quality-scope.json"}),
+        "evidencePath": "artifacts/evidence/CAP-01.S04.T03.review-fix-3.json",
+        "evidenceSha256": "b762711c1903cf556195118c8fc3b14a34258fdcaa77464d87a10a65b79b6ed2",
+        "approvalCommit": "43bcdec4eba110f994a540f0a1e625a6d44aff4b",
+        "reviewer": "agent:curie",
+    }
+}
 
 
 def backlog_task(backlog: dict[str, Any], task_id: str) -> dict[str, Any] | None:
@@ -185,6 +195,74 @@ def independent_review_hardening_errors(
     return []
 
 
+def reviewed_historical_hardening_errors(
+    repo: Path, commit: str, head: str, task_id: str, paths: set[str]
+) -> list[str]:
+    record = REVIEWED_HISTORICAL_HARDENING.get(commit)
+    if record is None:
+        return ["post-implementation gate hardening has no exact reviewed historical attestation"]
+    if record["taskId"] != task_id or record["paths"] != frozenset(paths) or commit_paths(repo, commit) != paths:
+        return ["reviewed historical gate hardening identity or path scope differs from its exact attestation"]
+    approval_commit = str(record["approvalCommit"])
+    if (
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", commit, approval_commit],
+            cwd=repo,
+            capture_output=True,
+            check=False,
+            timeout=30,
+        ).returncode
+        != 0
+    ):
+        return ["reviewed historical gate hardening is not ancestral to its approval commit"]
+    if (
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", approval_commit, head],
+            cwd=repo,
+            capture_output=True,
+            check=False,
+            timeout=30,
+        ).returncode
+        != 0
+    ):
+        return ["reviewed historical gate-hardening approval is not ancestral to the validated head"]
+    evidence_path = str(record["evidencePath"])
+    evidence_payload = blob(repo, approval_commit, evidence_path)
+    if hashlib.sha256(evidence_payload).hexdigest() != record["evidenceSha256"]:
+        return ["reviewed historical gate-hardening evidence differs from its exact attested hash"]
+    try:
+        evidence = json_object(evidence_payload, "reviewed historical gate-hardening evidence")
+        backlog = yaml_object(blob(repo, approval_commit, "planning/backlog.yaml"), "approval backlog")
+    except (UnicodeDecodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        return [f"invalid reviewed historical gate-hardening approval: {exc}"]
+    task = backlog_task(backlog, task_id)
+    if task is None:
+        return ["reviewed historical gate hardening approval lacks the exact task"]
+    review = task.get("review")
+    attached = task.get("evidence")
+    expected_attachment = {
+        "path": evidence_path,
+        "sha256": record["evidenceSha256"],
+        "commit": evidence.get("commit"),
+    }
+    attachment_matches = any(
+        isinstance(item, dict) and all(item.get(field) == value for field, value in expected_attachment.items())
+        for item in attached or []
+    )
+    if (
+        evidence.get("taskId") != task_id
+        or paths.isdisjoint(set(evidence.get("changedFiles", [])))
+        or not isinstance(review, dict)
+        or task.get("status") != "DONE"
+        or review.get("result") != "approved"
+        or review.get("reviewer") != record["reviewer"]
+        or not review.get("reviewed_at")
+        or not attachment_matches
+    ):
+        return ["reviewed historical gate hardening lacks its exact independent approval and evidence attachment"]
+    return []
+
+
 def application_activation_errors(
     repo: Path,
     base: str,
@@ -225,11 +303,18 @@ def application_activation_errors(
                 previous_backlog = yaml_object(
                     blob(repo, grandparent, "planning/backlog.yaml"), "pre-review parent backlog"
                 )
-                errors.extend(
-                    independent_review_hardening_errors(
-                        backlog, previous_backlog, str(contract.get("taskId")), paths_by_position[position]
-                    )
+                hardening_errors = independent_review_hardening_errors(
+                    backlog, previous_backlog, str(contract.get("taskId")), paths_by_position[position]
                 )
+                if hardening_errors and commits[position] in REVIEWED_HISTORICAL_HARDENING:
+                    hardening_errors = reviewed_historical_hardening_errors(
+                        repo,
+                        commits[position],
+                        head,
+                        str(contract.get("taskId")),
+                        paths_by_position[position],
+                    )
+                errors.extend(hardening_errors)
             except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
                 errors.append(f"invalid post-implementation gate-hardening provenance: {exc}")
     if set(protected_changes) == APPLICATION_ACTIVATION_PATHS:
@@ -499,9 +584,13 @@ def reference_state(repo: Path, commit: str, policy: dict[str, Any]) -> tuple[di
 
 def find_task(backlog: dict[str, Any], task_id: str) -> dict[str, Any] | None:
     for capability in backlog.get("capabilities", []):
+        if not isinstance(capability, dict):
+            continue
         for slice_ in capability.get("slices", []):
+            if not isinstance(slice_, dict):
+                continue
             for task in slice_.get("tasks", []):
-                if task.get("id") == task_id:
+                if isinstance(task, dict) and task.get("id") == task_id:
                     return task
     return None
 
