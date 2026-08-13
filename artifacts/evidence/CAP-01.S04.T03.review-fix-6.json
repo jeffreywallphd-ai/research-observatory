@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T03",
+  "commit": "eb2299694c24a47605e54e46e077fe6144099fa3",
+  "baseCommit": "66d54ea301ffc56236969e4f1f1811d28a6ca313",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T03.review-fix-5.json",
+    "reason": "S04 integration review found that the approved slice plan's explicit post-readiness compatibility-handshake and health-request p95 budget had not been measured. This focused remediation measures the real packaged Core through the native desktop request boundary and admits the already generated, read-only /healthz operation through the same strict local route validator."
+  },
+  "changedFiles": [
+    "apps/desktop/src-tauri/examples/supervision_check.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "artifacts/evidence/CAP-01.S04.T03.review-fix-5.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\cargo\\bin\\cargo.exe fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --all -- --check; cargo clippy --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib --example supervision_check --example supervisor_fixture -- -D warnings; cargo test --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib; .venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "Rust formatting and focused native lint passed; all 13 native supervisor/support tests passed; the deterministic OpenAPI/generated-client contract remained current."
+    },
+    {
+      "command": "cargo build --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --example supervisor_fixture --example supervision_check; target/debug/examples/supervision_check.exe <canonical frozen Core package> <fixture executable>",
+      "exitCode": 0,
+      "result": "On windows (Windows_NT), x86_64, Intel64 Family 6 Model 183 Stepping 1 GenuineIntel, 20 logical CPUs, the warm canonical authenticated PyInstaller onedir Core 0.1.0 package passed 20 requests per operation with no discarded samples. /runtime/version p50/p95/max were 0.701/0.964/0.978 ms and /healthz p50/p95/max were 0.749/1.088/1.269 ms. Both passed the 100 ms p95 budget. A 20% future regression threshold yields 1.157 ms and 1.306 ms limits respectively, bounded by the absolute budget. The same real run passed generated-contract response validation, trace propagation, unsafe-route denial, cancellation, restart, graceful/forced/job-close tree cleanup, support redaction, and exact reviewed export."
+    },
+    {
+      "command": "risk-based profile applicability review",
+      "exitCode": 0,
+      "result": "The completed S04 desktop, service, and security-local profile evidence remains applicable. The functional two-file delta changes only the native read-only route allowlist and its real-package qualification example; the affected native unit, clippy, generated-contract drift, and complete real lifecycle boundary were replayed instead of repeating unrelated broad profiles. The additional listed files are the prior evidence/submission/review and governed reopen state required by taskctl."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The existing functional diagnostics and support-bundle path remains unchanged. The real native lifecycle still links a desktop action trace into the bounded redacted support bundle and exports the exact bytes reviewed by the researcher."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The real package check now covers the approved S04 post-readiness performance boundary with 20 warm samples for compatibility/version and health, validates every response against the generated contract, enforces the 100 ms p95 budget, and records the future 20% regression thresholds. All lifecycle failure, cancellation, restart, cleanup, denial, and support-export assertions remained green."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Only the native route validator and its qualification example changed functionally. /healthz is an existing OpenAPI/generated-client operation, is GET-only with no body, precondition, or idempotency key, and remains subject to the exact loopback authenticated transport. No service contract, dependency, product UI, UI reference, scholarly content, or hosted infrastructure changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Verify the exact 66d54ea..eb22996 scope and functional two-file delta, strict /healthz route boundary, 20-sample nearest-rank distributions and budget math, real-package response validation, complete lifecycle result, applicability of the already completed S04 profiles, and clean task state. No broad profile replay is requested."
+  }
+}

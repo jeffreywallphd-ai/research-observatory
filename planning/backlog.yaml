@@ -2784,11 +2784,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-13T20:26:54+00:00'
+      updated_at: '2026-08-13T20:33:53+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
@@ -2808,7 +2808,10 @@ capabilities:
         governed quality ready for focused re-review.
 
         Exact independently reviewed security exceptions, clean zero-blocker scan, and 20 focused security tests ready for
-        re-review.'
+        re-review.
+
+        Focused S04 integration performance remediation complete: real packaged Core request p95 0.964/1.088 ms, strict health
+        route, 13 native tests, clippy/contract and full lifecycle pass; ready for independent re-review.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S04.T03.json
@@ -2840,6 +2843,11 @@ capabilities:
         sha256: 92d425802c81a0dd4f320dcbd250170e35eb5460009179a9aa3a71e278c33b42
         commit: 66d54ea301ffc56236969e4f1f1811d28a6ca313
         recorded_at: '2026-08-13T20:19:57+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S04.T03.review-fix-6.json
+        sha256: 7e451b6b195dd038930aeaadb4be295b6f9866e73f1a07c9c8ed239ea7c81e80
+        commit: eb2299694c24a47605e54e46e077fe6144099fa3
+        recorded_at: '2026-08-13T20:33:42+00:00'
       review:
         reviewer: null
         result: null
@@ -2851,7 +2859,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-13T20:26:54+00:00'
         expires_at: '2026-08-14T04:26:54+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
