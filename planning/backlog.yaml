@@ -2784,11 +2784,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-13T20:48:07+00:00'
+      updated_at: '2026-08-13T20:48:45+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
@@ -2857,17 +2857,18 @@ capabilities:
         commit: 226ad7e72bea05133da673bd2361c5b16ba07da9
         recorded_at: '2026-08-13T20:47:42+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: 'Reopened: S04 slice review requires correcting an evidence command and governing the exact independently reviewed
-          quality-scope hardening commit in cumulative UI provenance.'
+        reviewer: agent:curie
+        result: changes-requested
+        reviewed_at: '2026-08-13T20:48:45+00:00'
+        notes: 'S04 slice integration review requires two exact remediations: supersede the false pnpm package path with packages/contracts,
+          and make cumulative UI provenance recognize only the immutable independently approved 1cd9dee quality-scope hardening
+          fact without weakening ordinary gate-control denials.'
       base_sha: 7c75380b1163b6b6bb2e2e35ffde17fd916c4544
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-13T20:45:42+00:00'
-        expires_at: '2026-08-14T04:45:42+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-13T20:48:45+00:00'
+        expires_at: '2026-08-14T04:48:45+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
