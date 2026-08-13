@@ -2784,11 +2784,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-13T19:18:10+00:00'
+      updated_at: '2026-08-13T19:22:31+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
@@ -2799,7 +2799,10 @@ capabilities:
         valid Chromium, native lifecycle, and exact supersession passed.
 
         Fixed live Tauri blank shell and blocked DevTools shortcut with bounded diagnostic grammar, narrow inspector permission,
-        focused renderer/package/browser/Tauri checks, and unchanged approved UI reference; ready for independent re-review.'
+        focused renderer/package/browser/Tauri checks, and unchanged approved UI reference; ready for independent re-review.
+
+        Focused quality-scope remediation complete; exact governed inventory and eight focused tests ready for independent
+        re-review. Full profiles remain deferred to S04 slice review.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S04.T03.json
@@ -2816,6 +2819,11 @@ capabilities:
         sha256: 9686a96fedefa4532ef65f33e15f4d877f50228a87fbaaaab1eff37e2a7bfe50
         commit: f12b4a1ef6b81ac599e4bedbc74ca952de695766
         recorded_at: '2026-08-12T17:27:29+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S04.T03.review-fix-3.json
+        sha256: b762711c1903cf556195118c8fc3b14a34258fdcaa77464d87a10a65b79b6ed2
+        commit: ede8811f0448de4ace104044465ddda7803165f1
+        recorded_at: '2026-08-13T19:22:14+00:00'
       review:
         reviewer: null
         result: null
@@ -2827,7 +2835,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-13T19:18:10+00:00'
         expires_at: '2026-08-14T03:18:10+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
