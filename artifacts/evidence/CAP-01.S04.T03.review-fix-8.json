@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T03",
+  "commit": "871fa17d0e6c802fb48e329d6dd075caa9c37e05",
+  "baseCommit": "226ad7e72bea05133da673bd2361c5b16ba07da9",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T03.review-fix-7.json",
+    "reason": "This remediation closes both exact S04 slice-review findings: the actual contracts workspace command is replayed and the cumulative UI gate now recognizes only the immutable independently reviewed historical quality-scope hardening fact, while preserving every ordinary design-first and self-hardening denial."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S04.T03.review-fix-7.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 7c75380b1163b6b6bb2e2e35ffde17fd916c4544 --head HEAD",
+      "exitCode": 0,
+      "result": "The cumulative approved-reference gate passes from the exact T03 UI base through candidate 871fa17, binds reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8..., and inventories exactly four functional UI files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_ui_change_gate -v; ruff format --check; ruff check; mypy --strict tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "exitCode": 0,
+      "result": "All 16 UI gate tests pass; formatting, lint, and strict typing pass. The new matrix accepts only exact 1cd9dee/quality-scope.json/evidence b762711.../approval 43bcdec/agent:curie facts and rejects substituted commit, non-ancestral head, wrong task, and expanded path scope."
+    },
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts test",
+      "exitCode": 0,
+      "result": "The actual contracts workspace ran one Vitest file and all six generated-client contract tests passed. This is the command that superseding slice evidence must record."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --check",
+      "exitCode": 0,
+      "result": "The explicit REVIEW-to-CHANGES_REQUESTED transition, backlog semantics, and generated views pass."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Functional diagnostics, trace-linked exact support export, and the approved UI reference implementation remain byte-unchanged; the cumulative provenance gate now validates their complete history."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "All 16 focused gate tests, exact cumulative gate replay, six generated-client tests, formatting, lint, strict typing, taskctl, and views pass. Hostile substitutions for every historical attestation identity fail closed."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The gate authority is not weakened generically: only one exact historical commit/path/evidence/approval/task/reviewer tuple is recognized, and all current/future post-implementation gate changes still require the canonical immediate independent review envelope. No UI reference, product UI, API, dependency, security exception, or hosted scope changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Verify the exact six-file 226ad7e..871fa17 range, immutable historical attestation and denial matrix, cumulative base-to-head gate, actual contracts workspace command, task review provenance, and clean state. No broad profile replay is requested."
+  }
+}

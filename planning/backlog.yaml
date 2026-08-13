@@ -2784,11 +2784,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-13T20:48:45+00:00'
+      updated_at: '2026-08-13T20:53:31+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
@@ -2814,7 +2814,10 @@ capabilities:
         route, 13 native tests, clippy/contract and full lifecycle pass; ready for independent re-review.
 
         Submit the exact S04 integration-review evidence-command and cumulative UI-provenance findings for the required independent
-        CHANGES_REQUESTED transition before protected gate hardening.'
+        CHANGES_REQUESTED transition before protected gate hardening.
+
+        Both exact slice-review findings remediated: cumulative UI provenance passes through exact historical attestation
+        and real packages/contracts command passes 6/6; ready for focused re-review.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S04.T03.json
@@ -2856,6 +2859,11 @@ capabilities:
         sha256: a1af64f787414a80e83f6574a679eadbdeeeaba561a4cc0c1bdc1f4d76ccbe21
         commit: 226ad7e72bea05133da673bd2361c5b16ba07da9
         recorded_at: '2026-08-13T20:47:42+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S04.T03.review-fix-8.json
+        sha256: 4d98580a37b0cbcf51fe3722fb9590bf235f1e0c421bb565eb9443c100ff8231
+        commit: 871fa17d0e6c802fb48e329d6dd075caa9c37e05
+        recorded_at: '2026-08-13T20:53:20+00:00'
       review:
         reviewer: agent:curie
         result: changes-requested
@@ -2868,7 +2876,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-13T20:48:45+00:00'
         expires_at: '2026-08-14T04:48:45+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
