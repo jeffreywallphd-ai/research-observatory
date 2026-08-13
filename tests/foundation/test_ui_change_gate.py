@@ -19,11 +19,29 @@ from ui_change_gate import (  # noqa: E402
     APPLICATION_INVENTORY_HARDENING_ENVELOPE,
     automatic_base,
     independent_review_hardening_errors,
+    reviewed_historical_hardening_errors,
     validate,
 )
 
 
 class UiChangeGateTests(unittest.TestCase):
+    def test_historical_quality_scope_hardening_requires_exact_immutable_approval(self) -> None:
+        hardening = "1cd9deebe94fa2b667ad6b0030bd07ec45d1c6bb"
+        approval = "43bcdec4eba110f994a540f0a1e625a6d44aff4b"
+        paths = {"quality-scope.json"}
+        self.assertEqual(
+            [],
+            reviewed_historical_hardening_errors(REPO, hardening, approval, "CAP-01.S04.T03", paths),
+        )
+        for label, commit, head, task_id, changed in (
+            ("commit", "0" * 40, approval, "CAP-01.S04.T03", paths),
+            ("head", hardening, hardening, "CAP-01.S04.T03", paths),
+            ("task", hardening, approval, "CAP-01.S04.T02", paths),
+            ("scope", hardening, approval, "CAP-01.S04.T03", paths | {"tools/ui_change_gate.py"}),
+        ):
+            with self.subTest(label=label):
+                self.assertTrue(reviewed_historical_hardening_errors(REPO, commit, head, task_id, changed))
+
     def test_application_inventory_hardening_uses_the_exact_reviewed_envelope(self) -> None:
         self.assertEqual(
             {
