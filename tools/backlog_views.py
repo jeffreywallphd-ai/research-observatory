@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import os
+import re
 import tempfile
 from collections import Counter
 from pathlib import Path
@@ -42,6 +43,15 @@ def bullets(lines: list[str], values: list[Any] | None) -> None:
         lines.append("- None")
         return
     lines.extend(f"- {inline(value)}" for value in values)
+
+
+def capability_label(capability: dict[str, Any]) -> str:
+    return f"{inline(capability.get('alias', capability['id']))} (`{capability['id']}`)"
+
+
+def slice_label(slice_: dict[str, Any]) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", str(slice_.get("title", "untitled")).lower()).strip("-")
+    return f"SLICE-{slug} (`{slice_['id']}`)"
 
 
 def source_digest(payload: bytes) -> str:
@@ -175,7 +185,7 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
         done_tasks = sum(task.get("status") == "DONE" for task in cap_tasks)
         active = [task["id"] for task in cap_tasks if task.get("status") in {"IN_PROGRESS", "REVIEW", "BLOCKED"}]
         lines.append(
-            f"| `{capability['id']}` {inline(capability.get('title'))} | "
+            f"| {capability_label(capability)} — {inline(capability.get('title'))} | "
             f"`{inline((capability.get('campaign') or {}).get('status', 'NONE'))}` | "
             f"`{inline(capability.get('completion', {}).get('status'))}` | "
             f"{approved_slices}/{len(cap_slices)} | {done_tasks}/{len(cap_tasks)} | {joined(active, code=True)} |"
@@ -184,7 +194,9 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
     lines.extend(["", "## Release gates", "", "| Gate | After wave | Unlocks | Status |", "|---|---|---|---|"])
     for gate in gates:
         lines.append(
-            f"| `{gate['id']}` {inline(gate.get('name'))} | `{inline(gate.get('after_wave'))}` | "
+            f"| `{gate['id']}` — {inline(gate.get('after_wave'))} exit / "
+            f"{joined(gate.get('unlocks_waves'))} activation — {inline(gate.get('name'))} | "
+            f"`{inline(gate.get('after_wave'))}` | "
             f"{joined(gate.get('unlocks_waves'), code=True)} | `{inline(gate.get('status'))}` |"
         )
 
@@ -284,7 +296,7 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
         completion = capability.get("completion", {})
         lines.extend(
             [
-                f"## {capability['id']} - {inline(capability.get('title'))}",
+                f"## {capability_label(capability)} - {inline(capability.get('title'))}",
                 "",
                 f"**Campaign / completion:** `{inline(campaign.get('status', 'NONE'))}` / "
                 f"`{inline(completion.get('status'))}`",
@@ -302,7 +314,7 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
             slice_completion = slice_.get("completion", {})
             lines.extend(
                 [
-                    f"### {slice_['id']} - {inline(slice_.get('title'))}",
+                    f"### {slice_label(slice_)} - {inline(slice_.get('title'))}",
                     "",
                     f"**Outcome:** {inline(slice_.get('outcome'))}",
                     "",

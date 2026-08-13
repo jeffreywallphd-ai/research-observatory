@@ -100,7 +100,7 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
         "capability_id": cap["id"],
         "title": cap["title"],
         "status": "proposed",
-        "execution_mode": "long-running-capability-campaign",
+        "execution_mode": "wave-scoped-capability-increments",
         "decision_completion": "pending",
         "open_blocking_decisions": [decision_id],
         "slice_ids": [item["id"] for item in cap.get("slices", [])],
@@ -146,7 +146,7 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
             sections.append(heading + "\n\nComplete this section before approval.")
     body = (
         f"# {cap['id']} - Capability decision and execution plan\n\n"
-        "> **Generated proposed packet.** Inspect every slice, replace every placeholder with researched candidate options and an explicit recommendation, resolve the complete register, approve all slice plans, and then approve this packet before implementation.\n\n"
+        "> **Generated proposed packet.** Resolve the capability-wide decision register once, then approve only the slice plans in each wave before that capability-wave increment starts. Future-wave plans may remain proposed until their activation gate.\n\n"
         "> **Review surface.** Run `python tools/planctl.py --repo . review "
         + cap["id"]
         + "` and use the generated static pages to review all options and slice plans.\n\n"
@@ -216,8 +216,8 @@ def scaffold_slice(root: Path, cap: dict[str, Any], slice_: dict[str, Any]) -> P
         )
     body = (
         f"# {slice_['id']} - {slice_['title']}\n\n"
-        "> **Generated proposed plan.** Complete this plan using the Vision, Systems Design, authoritative backlog, approved experience reference, and current primary research. It cannot authorize implementation until approved with the capability packet.\n\n"
-        f"> **Review surface.** Run `python tools/planctl.py --repo . review {cap['id']}` and use the generated capability and slice pages during the one-time planning review.\n\n"
+        "> **Generated proposed plan.** Complete this plan using the Vision, Systems Design, authoritative backlog, approved experience reference, and current primary research. It authorizes only its ordered slice after the capability decision packet and this slice's wave are approved.\n\n"
+        f"> **Review surface.** Run `python tools/planctl.py --repo . review {cap['id']} --wave {slice_.get('wave', 'W?')}` and use the generated capability and active-wave slice pages.\n\n"
         + "\n\n".join(sections)
         + "\n"
     )
@@ -225,16 +225,18 @@ def scaffold_slice(root: Path, cap: dict[str, Any], slice_: dict[str, Any]) -> P
     return path
 
 
-def run_validator(root: Path, tool: str, capability: str, approved: bool) -> int:
+def run_validator(root: Path, tool: str, capability: str, approved: bool, wave: str | None = None) -> int:
     command = [sys.executable, str(root / "tools" / tool), "--repo", str(root), "--capability", capability]
+    if wave:
+        command.extend(["--wave", wave])
     if approved:
         command.append("--require-approved")
     return subprocess.run(command, check=False).returncode
 
 
-def validate(root: Path, capability: str, approved: bool) -> int:
-    first = run_validator(root, "capability_plan_check.py", capability, approved)
-    second = run_validator(root, "slice_plan_check.py", capability, approved)
+def validate(root: Path, capability: str, approved: bool, wave: str | None = None) -> int:
+    first = run_validator(root, "capability_plan_check.py", capability, approved, wave)
+    second = run_validator(root, "slice_plan_check.py", capability, approved, wave)
     third = subprocess.run(
         [sys.executable, str(root / "tools/plan_review_check.py"), "--repo", str(root)], check=False
     ).returncode
@@ -380,13 +382,28 @@ def adopt_recommendations(root: Path, capability: str, *, regenerate: bool = Tru
     if regenerate:
         generate_review(root, capability)
     print(f"Adopted {len(decisions)} best-in-class recommendations as completed decisions for {capability}.")
-    print("The capability and slice plans remain proposed until the one explicit capability approval.")
+    print("The capability decisions and active-wave slice plans remain proposed until explicit wave-scoped approval.")
     return 0
 
 
-def approve(root: Path, capability: str, feedback_path: Path | None, approver: str, commit: str) -> int:
+def approve(
+    root: Path,
+    capability: str,
+    feedback_path: Path | None,
+    approver: str,
+    commit: str,
+    wave: str | None = None,
+) -> int:
     plan_path = capability_plan_path(root, capability)
-    tracked_paths = [plan_path, *slice_plan_paths(root, capability)]
+    all_slice_paths = slice_plan_paths(root, capability)
+    selected_slice_paths = []
+    for path in all_slice_paths:
+        slice_meta, _ = frontmatter(path)
+        if wave is None or slice_meta.get("wave") == wave:
+            selected_slice_paths.append(path)
+    if wave and not selected_slice_paths:
+        raise ValueError(f"{capability} has no slice plan in {wave}")
+    tracked_paths = [plan_path, *selected_slice_paths]
     originals = {path: path.read_text(encoding="utf-8") for path in tracked_paths}
     try:
         if feedback_path:
@@ -402,13 +419,14 @@ def approve(root: Path, capability: str, feedback_path: Path | None, approver: s
                 "Capability decisions are not complete. Finish the researched packet and run adopt-recommendations, or apply a complete review-site override record."
             )
         approved_at = datetime.now(UTC).isoformat()
-        meta["status"] = "approved"
-        meta["approval"] = {
-            "status": "approved",
-            "approved_by": approver,
-            "approved_at": approved_at,
-            "approved_commit": commit,
-        }
+        if meta.get("status") != "approved":
+            meta["status"] = "approved"
+            meta["approval"] = {
+                "status": "approved",
+                "approved_by": approver,
+                "approved_at": approved_at,
+                "approved_commit": commit,
+            }
         write_plan(plan_path, meta, body)
         for path in tracked_paths[1:]:
             slice_meta, slice_body = frontmatter(path)
@@ -421,7 +439,7 @@ def approve(root: Path, capability: str, feedback_path: Path | None, approver: s
             }
             write_plan(path, slice_meta, slice_body)
         generate_review(root, capability)
-        if validate(root, capability, True):
+        if validate(root, capability, True, wave):
             raise ValueError("Approval-mode validation failed; all plan changes were rolled back")
     except Exception:
         for path, text in originals.items():
@@ -439,6 +457,8 @@ def main() -> int:
     for name in ("prepare", "validate", "ready", "decisions", "review", "adopt-recommendations"):
         command = sub.add_parser(name)
         command.add_argument("capability")
+        if name in ("validate", "ready", "review"):
+            command.add_argument("--wave")
         if name in ("validate", "ready"):
             command.add_argument("--require-approved", action="store_true")
 
@@ -449,16 +469,21 @@ def main() -> int:
     approve_parser = sub.add_parser("approve")
     approve_parser.add_argument("capability")
     approve_parser.add_argument("--feedback")
+    approve_parser.add_argument("--wave", required=True)
     approve_parser.add_argument("--by", required=True)
     approve_parser.add_argument("--commit", required=True)
 
     args = parser.parse_args()
     root = Path(args.repo).resolve()
     _, caps = load_backlog(root)
-    capability = args.capability
+    requested_capability = args.capability
+    capability = requested_capability
     if capability not in caps:
-        print(f"Unknown capability {capability}", file=sys.stderr)
-        return 2
+        matches = [cid for cid, candidate in caps.items() if candidate.get("alias") == requested_capability]
+        if len(matches) != 1:
+            print(f"Unknown capability {requested_capability}", file=sys.stderr)
+            return 2
+        capability = matches[0]
     cap = caps[capability]
 
     try:
@@ -478,7 +503,7 @@ def main() -> int:
                 print(f"All capability and slice planning artifacts already exist for {capability}.")
             generate_review(root, capability)
             print(
-                "Generated placeholders remain proposed until researched. After authoring the complete packet, run `adopt-recommendations`; the best-in-class defaults then count as completed decisions. One explicit capability approval is still required."
+                "Generated placeholders remain proposed until researched. After authoring the capability decisions, run `adopt-recommendations`; approve only each active wave's completed slice plans before its increment starts."
             )
             print_review_link(root, capability)
             return 0
@@ -513,21 +538,21 @@ def main() -> int:
 
         if args.command == "approve":
             feedback = Path(args.feedback).resolve() if args.feedback else None
-            result = approve(root, capability, feedback, args.by, args.commit)
-            print(f"Approved {capability} and all contained slice plans at commit {args.commit}.")
+            result = approve(root, capability, feedback, args.by, args.commit, args.wave)
+            print(f"Approved {capability}'s decision packet and {args.wave} slice plans at commit {args.commit}.")
             print_review_link(root, capability)
             return result
 
         generate_review(root, capability)
         if args.command == "validate":
-            result = validate(root, capability, args.require_approved)
+            result = validate(root, capability, args.require_approved, args.wave)
             print_review_link(root, capability)
             return result
         if args.command == "ready":
-            result = validate(root, capability, True)
+            result = validate(root, capability, True, args.wave)
             if result:
                 print(
-                    "Capability is not ready. Confirm or override the resolved recommendation defaults, approve the capability and all slice plans, and use the linked review pages.",
+                    "Capability-wave increment is not ready. Confirm or override the capability recommendation defaults, approve the capability decision packet and active-wave slice plans, and use the linked review pages.",
                     file=sys.stderr,
                 )
             print_review_link(root, capability)

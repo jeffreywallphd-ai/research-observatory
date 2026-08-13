@@ -58,6 +58,12 @@ button, input, textarea { font: inherit; }
 .page-frame { min-height: calc(100vh - 108px); display: grid; grid-template-columns: 270px minmax(0, 1fr); }
 .side-panel { position: sticky; top: 64px; height: calc(100vh - 64px); overflow: auto; padding: 24px 16px; border-right: 1px solid var(--line); background: var(--surface); }
 .side-panel h2 { margin: 0 8px 10px; color: var(--text-soft); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+.planning-nav { margin-bottom: 28px; }
+.planning-nav-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 0 0 12px; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-soft); }
+.planning-nav-tab { min-width: 0; padding: 8px 6px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--text-soft); font-size: .76rem; font-weight: 800; cursor: pointer; }
+.planning-nav-tab:hover { color: var(--text); border-color: var(--line); }
+.planning-nav-tab[aria-selected="true"] { color: var(--primary); border-color: var(--line-strong); background: var(--surface); box-shadow: 0 2px 7px rgba(16,35,61,.08); }
+.planning-nav-panel[hidden] { display: none; }
 .cap-nav, .slice-nav { display: grid; gap: 6px; margin-bottom: 28px; }
 .nav-item, .slice-nav-item { display: grid; text-decoration: none; color: var(--text); border: 1px solid transparent; border-radius: 9px; padding: 10px 11px; }
 .nav-item small, .slice-nav-item small { color: var(--text-soft); }
@@ -138,6 +144,17 @@ input:focus, textarea:focus, button:focus, a:focus { outline: 3px solid color-mi
 .recommended { display: inline-flex; margin-left: 8px; padding: .16rem .42rem; border-radius: 999px; color: var(--success); background: var(--success-soft); font-size: .67rem; font-weight: 800; }
 .decision-meta { color: var(--text-soft); font-size: .8rem; }
 .slice-list { display: grid; gap: 10px; }
+.wave-capability-list { display: grid; gap: 14px; }
+.wave-capability { padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.wave-capability h2 { margin: 4px 0; font: 700 1.25rem/1.2 var(--font-display); }
+.wave-capability h2 a { color: var(--primary); text-decoration: none; }
+.wave-capability p { margin: 4px 0; color: var(--text-soft); }
+.wave-slice-list { display: grid; gap: 7px; margin: 16px 0 0; padding: 0; list-style-position: inside; }
+.wave-slice-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--canvas); }
+.wave-slice-list li > span { display: grid; gap: 2px; font-weight: 750; }
+.wave-slice-list a { color: var(--primary); text-decoration: none; }
+.wave-slice-list small { color: var(--text-soft); font-weight: 500; }
+.gate-criteria { display: grid; gap: 7px; padding-left: 22px; }
 .slice-card { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 14px; padding: 15px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); text-decoration: none; color: var(--text); }
 .slice-card:hover { border-color: var(--primary); box-shadow: var(--shadow); }
 .slice-card-index { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-weight: 850; }

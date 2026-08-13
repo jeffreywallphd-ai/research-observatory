@@ -31,45 +31,61 @@ Do not silently resolve a material mismatch. Record it and follow `docs/governan
 
 ## Default execution model
 
-Use **Capability -> Slice -> Task**. The default unit is a capability campaign:
+Use **Roadmap -> Wave -> Capability increment -> Slice -> Task -> Wave exit gate**.
+The wave is the primary execution axis. A capability may contribute ordered
+slices to more than one wave, so the durable execution unit is one
+**capability-wave increment**, not the capability's entire future roadmap.
 
-- complete or create a plan for the capability and every contained slice;
-- inspect the complete capability before implementation;
-- document credible candidate decisions, recommendation, and rationale;
-- treat the best-in-class recommendation as the completed selected decision unless a reviewer overrides it;
-- obtain one explicit approval for the capability packet and all slice plans at one immutable commit;
-- execute slices in dependency order through production-ready end-to-end qualification; and
-- remain in the active capability rather than globally hopping among tasks.
+- inspect the complete capability before implementation and resolve its material
+  capability-wide decisions once;
+- complete and approve the ordered slice plans in the active wave before that
+  increment starts; future-wave slice plans may remain proposed until their wave;
+- treat the best-in-class recommendation as selected unless a reviewer overrides it;
+- execute the active wave's slices in declared order through production-ready
+  increment qualification; and
+- after independent slice/increment review, release the campaign so `taskctl`
+  can select other work in the same global wave.
 
-Routine implementation choices, debugging, evidence collection, independent reviews, and slice transitions do not require new approval after campaign start.
+Capabilities have two identities. The descriptive alias, such as
+`CAP-windows-desktop-runtime`, is the default human-facing name. The numeric ID,
+such as `CAP-01`, is an immutable foreign key for Git history, dependencies,
+evidence, schemas, and commands. Never renumber or rewrite it. Slices are ordered:
+show a descriptive label such as `SLICE-authenticated-desktop-service-contract`
+by default, but retain `CAP-01.S04` as the immutable sequence/evidence key.
 
-### One approval and one durable campaign
+Routine implementation choices, debugging, evidence collection, independent
+reviews, and transitions among already approved slices in the active wave do not
+require new approval after the increment starts.
 
-Before asking to start `CAP-XX`, make every capability and slice decision
-decision-complete, generate the combined review packet, and identify the one
-immutable approval commit. The start prompt must state that approval covers the
-capability packet **and every contained slice plan**. A partial slice approval,
-an unresolved slice decision, or approval spread across mismatched commits does
-not authorize capability start.
+### Progressive approval and durable increments
 
-After approval, "one run" means one durable capability campaign, not a promise
-that one operating-system process will remain alive. Resume the same active
-campaign after an ordinary tool, app, or session interruption. Claim and finish
-the next dependency-eligible task, integrate and review its slice, and continue
-through every approved slice and capability-wide production qualification. Do
-not return for routine per-slice approval or stop merely because a slice ended.
+Before starting `CAP-XX/WN`, make the capability decision packet complete and
+approve the slice plans assigned to `WN` at an immutable commit. Approval of a
+wave does not authorize a later wave. Historical approvals that covered every
+slice remain valid; they do not expand what the current global wave may execute.
+
+"One run" means one durable capability-wave increment, not one operating-system
+process. Resume it after an ordinary tool, app, or session interruption. Claim
+and finish only its next dependency-eligible task, integrate and review each
+ordered slice, and continue through increment qualification. When the increment
+is approved, close it even when the capability has future slices; do not surface
+that future slice's gate as the current program gate.
 
 Safest concise start prompt:
 
-> Start CAP-XX using the repository workflow. Verify that the capability packet
-> and every slice decision are approved together at one immutable commit, then
-> execute the full durable campaign in dependency order through production-ready
-> capability qualification. Claim only the next READY task through taskctl;
+> Start CAP-XX/WN using the repository workflow. Verify that the capability
+> decision packet and every WN slice plan are approved, then execute the durable
+> capability-wave increment in dependency order through production-ready
+> increment qualification. Claim only the next READY task through taskctl;
 > validate, attach commit-bound evidence, obtain required review, fast-forward
 > tested work into local main, and stop only at a documented unmet gate without
 > bypassing it.
 
-Pause only for demonstrated infeasibility, genuinely new consequential evidence, unavailable required external service/credential/platform/hardware, higher-authority conflict, required governed experience-reference change, destructive or external action, substantial unapproved spend, or explicit user direction.
+Pause only for wave-increment completion, demonstrated infeasibility, genuinely
+new consequential evidence, unavailable required external
+service/credential/platform/hardware, higher-authority conflict, required
+governed experience-reference change, destructive or external action,
+substantial unapproved spend, or explicit user direction.
 
 ### Stopped-gate handoff
 
@@ -90,7 +106,9 @@ decision-complete handoff that includes:
   chat response, feedback export, local merge, or planning approval as gate
   approval.
 
-If a release gate is not yet approvable, ask for a decision about the recommended
+Gate numbers are sequential roadmap transitions, not capability or slice stages:
+`G1` means W1 exit/W2 activation. A later gate mentioned by a future capability
+slice is a future blocker, never the current global gate. If a release gate is not yet approvable, ask for a decision about the recommended
 handling of the stop, not premature approval of the gate. Keep the gate pending
 and do not claim work in its locked wave.
 
@@ -98,10 +116,10 @@ and do not claim work in its locked wave.
 
 ```bash
 python tools/planctl.py --repo . prepare CAP-XX
-python tools/planctl.py --repo . review CAP-XX
-python tools/planctl.py --repo . validate CAP-XX
-python tools/planctl.py --repo . ready CAP-XX --require-approved
-python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
+python tools/planctl.py --repo . review CAP-XX --wave WN
+python tools/planctl.py --repo . validate CAP-XX --wave WN
+python tools/planctl.py --repo . ready CAP-XX --wave WN --require-approved
+python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --wave WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 ```
 
 Whenever requesting a decision, override, approval, or readiness remediation, print the `file://` URI and repository-relative path produced by `planctl review`.
@@ -124,7 +142,10 @@ Restoring code to an already approved reference does not require a new reference
 
 - Task completion requires criterion-linked machine evidence tied to the exact commit.
 - Slice completion requires integrated end-to-end evidence and independent review.
-- Capability completion requires all slices plus happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, and required-platform qualification.
+- Capability-wave completion requires its slices plus affected happy, failure,
+  denial, cancellation, migration, restart, recovery, security, accessibility,
+  and required-platform qualification. Capability completion requires every wave
+  increment and the final cross-wave qualification.
 - Narrative claims, screenshots without contracts, or tests that merely mirror implementation are not sufficient evidence.
 - Never weaken or delete a valid test solely to make work pass.
 

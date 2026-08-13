@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
   "documentType": "coding-agent-operating-contract",
   "authorities": [
     "AGENTS.md",
@@ -9,12 +9,12 @@
     "docs/automation/codex-tracking-guide.md"
   ],
   "campaign": {
-    "approvalUnit": "capability-and-all-slices-at-one-immutable-commit",
+    "approvalUnit": "capability-decisions-once-and-active-wave-slices-at-one-immutable-commit",
     "partialApprovalStartsCampaign": false,
-    "executionUnit": "durable-full-capability-campaign",
+    "executionUnit": "durable-capability-wave-increment",
     "resumeAfterOrdinaryInterruption": true,
     "routineSliceApprovalPrompts": false,
-    "terminalOutcome": "all-slices-approved-and-production-ready-capability-qualified",
+    "terminalOutcome": "active-wave-slices-approved-and-production-ready-increment-qualified",
     "permittedPauseConditions": [
       "approved-choice-infeasible",
       "consequential-new-evidence",
@@ -22,11 +22,12 @@
       "higher-authority-conflict",
       "governed-experience-change-required",
       "destructive-external-or-material-spend-authorization",
-      "explicit-user-direction"
+      "explicit-user-direction",
+      "approved-wave-increment-complete"
     ]
   },
   "selection": {
-    "scope": "active-capability-only",
+    "scope": "active-capability-wave-increment-only",
     "eligibleState": "READY",
     "dependencyPolicy": "all-task-slice-wave-and-release-gate-dependencies-satisfied",
     "inspectCommands": [
@@ -80,7 +81,7 @@
       "required-independent-review",
       "clean-tested-fast-forward-to-local-main",
       "slice-end-to-end-evidence-and-review-when-last-task",
-      "continue-next-ready-task-or-capability-qualification"
+      "continue-next-ready-task-or-wave-increment-qualification"
     ],
     "remotePushAuthorized": false,
     "gateBypassAllowed": false

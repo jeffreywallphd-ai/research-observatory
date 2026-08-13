@@ -6,7 +6,7 @@ supplemental_release: "1.3.4"
 capability_id: "CAP-XX"
 title: "Replace with capability title"
 status: proposed
-execution_mode: long-running-capability-campaign
+execution_mode: wave-scoped-capability-increments
 decision_completion: pending
 open_blocking_decisions:
   - CAP-XX-D01
@@ -41,9 +41,9 @@ All slices in `CAP-01` through `CAP-19` have individual implementation plans. If
 > **Static review page.** Generate with `python tools/planctl.py --repo . review CAP-XX`. The researched recommendation for every decision must already be selected and accepted. Reviewers confirm those defaults or override a selection with rationale, inspect every linked slice page, and then use the single capability approval gate. A feedback export is needed only when recording overrides or notes.
 
 
-> **One-time capability planning gate.** Inspect every slice and task before implementation. Create every missing slice plan from the governed template. Present credible candidates and a recommendation for each material choice, adopt every researched recommendation as the completed selected default, resolve any ADR or experience-reference changes, approve every slice plan and this packet at an immutable commit, and only then start the long-running capability campaign.
+> **Progressive capability planning gate.** Inspect the complete capability and resolve capability-wide material decisions once. Create every missing slice plan, but require detailed approval only for the ordered slices in the wave being activated. Future-wave plans remain visible for dependency analysis and may remain proposed until their gate. Start only the approved capability-wave increment.
 
-<div class="visual-flow"><span>Inventory every slice</span><b>→</b><span>Compare candidates</span><b>→</b><span>Accept decisions</span><b>→</b><span>Approve all plans</span><b>→</b><span>Execute continuously</span></div>
+<div class="visual-flow"><span>Inventory every slice</span><b>→</b><span>Compare candidates</span><b>→</b><span>Accept capability decisions</span><b>→</b><span>Approve active-wave plans</span><b>→</b><span>Execute the increment continuously</span></div>
 
 ## 0. Control and authority
 ## 1. Capability outcome and production-ready exit
@@ -59,4 +59,4 @@ All slices in `CAP-01` through `CAP-19` have individual implementation plans. If
 ## 11. Research and technical basis
 ## 12. Approval record
 
-Every section must be complete. Approval mode requires `status: approved`, `decision_completion: complete`, an empty `open_blocking_decisions`, every decision `status: accepted` with a selected option from its candidates, every slice plan approved, required ADR/UI-reference approvals complete, and immutable approval metadata.
+Every capability-wide decision section must be complete. Approval mode requires `status: approved`, `decision_completion: complete`, an empty `open_blocking_decisions`, every decision `status: accepted` with a selected option, every active-wave slice plan approved, required ADR/UI-reference approvals complete, and immutable approval metadata.

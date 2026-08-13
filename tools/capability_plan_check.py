@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate capability decision plans and the one-time planning gate."""
+"""Validate capability decision plans and wave-scoped slice approval gates."""
 
 from __future__ import annotations
 
@@ -52,6 +52,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=".")
     ap.add_argument("--capability", action="append", help="Validate only the named capability; repeatable")
+    ap.add_argument("--wave", help="Require slice-plan approval only for this wave")
     ap.add_argument("--require-approved", action="store_true")
     ns = ap.parse_args()
 
@@ -156,7 +157,12 @@ def main() -> int:
                     errors.append(f"{cid}: decision {d.get('id')} must be accepted")
                 if not d.get("selected_option"):
                     errors.append(f"{cid}: decision {d.get('id')} requires selected_option")
-            for sid in expected_slices:
+            approved_slice_ids = [
+                slice_["id"] for slice_ in cap.get("slices", []) if ns.wave is None or slice_.get("wave") == ns.wave
+            ]
+            if ns.wave and not approved_slice_ids:
+                errors.append(f"{cid}: no slices exist in requested wave {ns.wave}")
+            for sid in approved_slice_ids:
                 if not isinstance(cid, str):
                     errors.append(f"{path.name}: capability_id must be a string")
                     break
@@ -177,7 +183,10 @@ def main() -> int:
             print(f"ERROR: {error}")
         return 1
     scope = ",".join(sorted(selected)) if selected else "all authored"
-    print(f"Valid capability decision plans: {len(paths)}; scope={scope}; approval_required={ns.require_approved}")
+    print(
+        f"Valid capability decision plans: {len(paths)}; scope={scope}; wave={ns.wave or 'all'}; "
+        f"approval_required={ns.require_approved}"
+    )
     return 0
 
 

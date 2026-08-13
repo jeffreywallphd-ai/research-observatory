@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import sys
+from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
@@ -46,6 +47,9 @@ class PageParser(HTMLParser):
         self.other_choice_count = 0
         self.other_input_count = 0
         self.rationale_count = 0
+        self.planning_nav_count = 0
+        self.planning_tab_names: list[str] = []
+        self.planning_panel_names: list[str] = []
         self.html_lang: str | None = None
         self.text_parts: list[str] = []
 
@@ -69,6 +73,12 @@ class PageParser(HTMLParser):
             self.other_input_count += 1
         if "data-decision-rationale" in values:
             self.rationale_count += 1
+        if "data-planning-nav" in values:
+            self.planning_nav_count += 1
+        if values.get("data-nav-tab"):
+            self.planning_tab_names.append(values["data-nav-tab"] or "")
+        if values.get("data-nav-panel"):
+            self.planning_panel_names.append(values["data-nav-panel"] or "")
         if tag == "title":
             self.title_count += 1
         if tag == "h1":
@@ -149,8 +159,45 @@ def main() -> int:
     if set(manifest_slices) != set(slice_plans):
         errors.append(f"Manifest slice set differs from plans: {len(manifest_slices)} vs {len(slice_plans)}")
 
+    backlog = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+    backlog_waves = {str(wave["id"]): wave for wave in backlog.get("waves", [])}
+    backlog_slices = {
+        str(slice_["id"]): slice_
+        for capability in backlog.get("capabilities", [])
+        for slice_ in capability.get("slices", [])
+    }
+    manifest_waves = {str(entry["wave_id"]): entry for entry in manifest.get("waves", [])}
+    if set(manifest_waves) != set(backlog_waves):
+        errors.append(
+            f"Manifest wave set differs from backlog: manifest={sorted(manifest_waves)} backlog={sorted(backlog_waves)}"
+        )
+    assigned_slice_ids: list[str] = []
+    for wave_id, _wave in backlog_waves.items():
+        entry = manifest_waves.get(wave_id)
+        if entry is None:
+            continue
+        expected_slice_ids = [slice_id for slice_id, slice_ in backlog_slices.items() if slice_.get("wave") == wave_id]
+        actual_slice_ids = [str(slice_id) for slice_id in entry.get("slice_ids", [])]
+        assigned_slice_ids.extend(actual_slice_ids)
+        if actual_slice_ids != expected_slice_ids:
+            errors.append(f"{wave_id}: wave slice inventory differs from authoritative backlog order")
+        if entry.get("slice_count") != len(expected_slice_ids):
+            errors.append(f"{wave_id}: wave slice count mismatch")
+        page = site / str(entry.get("page"))
+        if not page.exists():
+            errors.append(f"{wave_id}: missing wave page {page}")
+        exit_gate = next(
+            (gate for gate in backlog.get("release_gates", []) if gate.get("after_wave") == wave_id),
+            None,
+        )
+        if entry.get("exit_gate_id") != (exit_gate or {}).get("id"):
+            errors.append(f"{wave_id}: exit gate differs from authoritative backlog")
+    duplicate_assignments = sorted(slice_id for slice_id, count in Counter(assigned_slice_ids).items() if count != 1)
+    if set(assigned_slice_ids) != set(backlog_slices) or duplicate_assignments:
+        errors.append(f"Every backlog slice must appear in exactly one wave page; duplicates={duplicate_assignments}")
+
     html_pages = sorted(site.rglob("*.html"))
-    expected_html = 1 + len(cap_plans) + len(slice_plans)
+    expected_html = 1 + len(backlog_waves) + len(cap_plans) + len(slice_plans)
     if len(html_pages) != expected_html:
         errors.append(f"Expected {expected_html} HTML pages, found {len(html_pages)}")
 
@@ -172,19 +219,34 @@ def main() -> int:
             errors.append(f"{rel}: missing shared review.css")
         if not any(value.endswith("assets/review.js") for value in parsed.scripts):
             errors.append(f"{rel}: missing shared review.js")
+        if parsed.planning_nav_count != 1:
+            errors.append(f"{rel}: expected one tabbed planning navigation, found {parsed.planning_nav_count}")
+        if parsed.planning_tab_names != ["capabilities", "waves"]:
+            errors.append(f"{rel}: planning tabs must be Capabilities then Waves")
+        if parsed.planning_panel_names != ["capabilities", "waves"]:
+            errors.append(f"{rel}: planning tab panels must match the two planning tabs")
         for href in parsed.hrefs + parsed.styles + parsed.scripts:
             target = local_target(page, href)
             if target is not None and not target.exists():
                 errors.append(f"{rel}: broken local reference {href}")
-        if page.name == "index.html" and page.parent != site:
+        if page.parent.name == "waves":
+            wave_id = page.stem
+            if wave_id not in backlog_waves:
+                errors.append(f"{rel}: wave page has no matching backlog wave")
+            content = " ".join(parsed.text_parts)
+            if "Capability increments and ordered slices" not in content:
+                errors.append(f"{rel}: missing wave capability-increment breakdown")
+            if "Wave exit / successor activation" not in content:
+                errors.append(f"{rel}: missing wave gate-decision breakdown")
+        elif page.name == "index.html" and page.parent.name in cap_plans:
             cid = page.parent.name
             meta = frontmatter(cap_plans[cid])
             expected = {decision["id"] for decision in meta.get("decisions", [])}
             actual = set(parsed.decision_ids)
             if expected != actual:
                 errors.append(f"{rel}: rendered decision IDs differ from capability plan")
-            if "Resolved recommendations and capability approval" not in " ".join(parsed.text_parts):
-                errors.append(f"{rel}: missing resolved-recommendation/approval surface")
+            if "Resolved capability decisions and wave approval" not in " ".join(parsed.text_parts):
+                errors.append(f"{rel}: missing resolved-decision/wave-approval surface")
             decision_count = len(expected)
             if parsed.other_choice_count != decision_count:
                 errors.append(f"{rel}: expected {decision_count} Other choices, found {parsed.other_choice_count}")
@@ -196,7 +258,7 @@ def main() -> int:
                 errors.append(
                     f"{rel}: expected {decision_count} detailed-rationale fields, found {parsed.rationale_count}"
                 )
-        elif page.parent != site:
+        elif page.parent.name in cap_plans:
             sid = page.stem
             if sid not in slice_plans:
                 errors.append(f"{rel}: slice page has no matching source plan")
@@ -213,7 +275,13 @@ def main() -> int:
     review_js = site / "assets/review.js"
     if review_js.exists():
         js_text = review_js.read_text(encoding="utf-8")
-        for marker in ('const otherSentinel = "__OTHER__"', 'schema_version: "1.1"', "other_option"):
+        for marker in (
+            'const otherSentinel = "__OTHER__"',
+            'schema_version: "1.1"',
+            "other_option",
+            'navigation.querySelectorAll("[data-nav-tab]")',
+            'event.key === "ArrowRight"',
+        ):
             if marker not in js_text:
                 errors.append(f"assets/review.js: missing Other-feedback marker {marker}")
 

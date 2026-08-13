@@ -120,7 +120,7 @@ release_gates:
   name: Executable engineering baseline
   criteria:
   - Fresh clone can run validation and build skeleton artifacts.
-  - Backlog dependencies, capability campaigns, slice reviews, and task transitions validate automatically.
+  - Backlog dependencies, capability-wave increments, ordered slice reviews, and task transitions validate automatically.
   - Architecture constraints and ADR process are documented.
   - Approved UI reference, workflow catalog, page contracts, and design-first automation are installed and validated.
   status: APPROVED
@@ -360,19 +360,20 @@ architecture_constraints:
   validate them; obtain human approval; only then implement application code.'
 selection_policy:
 - Treat the YAML backlog as the authoritative execution ledger; DOCX and Markdown are generated views.
-- The default automated execution unit is a capability campaign. Select one eligible capability, then complete its slices
-  in declared dependency order until the capability exit criteria are production-ready and independently approved.
-- Within the active capability, a slice is the integration and review checkpoint and a task is the atomic implementation/evidence
-  unit. Do not hop to unrelated capabilities merely because another task is READY.
+- The wave is the primary execution axis and every wave has one sequential exit/next-wave activation gate. The default automated
+  execution unit is one capability-wave increment.
+- Use descriptive capability aliases and slice labels in human-facing output. Preserve numeric capability IDs as immutable dependency/evidence
+  keys and numeric slice IDs as immutable sequence/evidence keys.
+- Within the active increment, a slice is an ordered integration/review checkpoint and a task is the atomic implementation/evidence
+  unit. Do not hop to unrelated capabilities while the increment has eligible work.
 - Start the next slice only after every required task in the current slice is DONE, slice-level end-to-end evidence is attached,
   and the slice review is approved.
-- Close a capability only after all slices are approved, the capability-wide end-to-end profile passes on the reviewed commit,
-  the capability exit criteria are mapped to evidence, and an independent reviewer approves the campaign.
-- A capability campaign may pause only for an external dependency, explicit human/ADR/design gate, unavailable required platform,
-  or a blocker that cannot be resolved within the capability boundary. Record the blocker and resume the same campaign when
-  cleared.
-- Select only tasks whose dependencies are DONE and whose wave activation gate is approved. The capability campaign keeps
-  priority over other eligible tasks until complete or formally paused.
+- Close an increment after all of its wave slices are independently approved. Close the capability only after all wave increments,
+  final end-to-end qualification, evidence mapping, and independent capability review pass.
+- A capability-wave increment may pause for its approved completion, an external dependency, explicit human/ADR/design gate,
+  unavailable platform, or an in-boundary blocker. Resume interrupted increments; start a new increment when a later wave activates.
+- Select only tasks whose dependencies are DONE and whose wave activation gate is approved. A future slice and its later gate
+  never replace the current global wave/gate in selection output.
 - Filter by deployment profile and platform target. W0-W5 form the Windows baseline; W6 qualifies macOS/Linux; W7-W8 add research
   production; W9 and W10 are parallel advanced-intelligence and university tracks after G8; W11 remains cloud-only after G10.
 - Claim atomically with taskctl before edits. Capability, slice, and task leases record owner, branch/worktree, base SHA,
@@ -387,8 +388,8 @@ selection_policy:
 - For intentional user-facing behavior, an approved UI-reference revision must exist before application implementation. Reference-change
   tasks precede application-change tasks.
 definition_of_ready:
-- The containing capability campaign is eligible or explicitly selected, and all predecessor capabilities required by its
-  first active slice are complete or gated.
+- The containing capability-wave increment is eligible or explicitly selected, and all predecessor work required by its
+  first active-wave slice is complete or gated.
 - Status is READY and all dependency task IDs are DONE.
 - The task wave has no activation gate or its activation gate is approved.
 - The objective, deliverable, acceptance criteria, verification profiles, platform targets, and review gate are understandable
@@ -408,9 +409,10 @@ definition_of_done:
 - The task lease is released and branch/worktree disposition is recorded.
 - User-facing implementation conforms to the approved reference ID through token, route/page-contract, workflow-navigation,
   accessibility, and visual-regression evidence.
-- Task completion does not by itself complete the slice or capability; slice and capability end-to-end reviews must also pass.
+- Task completion does not by itself complete the slice, increment, or capability; their applicable end-to-end reviews must also pass.
 capabilities:
 - id: CAP-00
+  alias: CAP-delivery-foundation
   title: Delivery foundation and Codex execution system
   objective: Create a reproducible repository, architecture and approved-experience guardrails, validation system, and machine-readable
     backlog that make small AI-authored changes safe and reviewable.
@@ -1839,6 +1841,7 @@ capabilities:
       hashes/ancestry validate; unsupported compound license forms deny; review-remediation state matrix closes; 28 focused,
       144+20 security-local, 15 desktop tests, taskctl/views pass with zero blockers.'
 - id: CAP-01
+  alias: CAP-windows-desktop-runtime
   title: Windows-first desktop shell and supervised local runtime
   objective: Deliver the canonical Windows-first desktop experience and a reliably packaged local analytical service that
     requires no external server administration.
@@ -3058,7 +3061,10 @@ capabilities:
       notes: null
   execution_mode: capability_campaign
   campaign:
-    status: ACTIVE
+    status: PAUSED
+    scope: capability-wave
+    wave: W1
+    increment_id: CAP-windows-desktop-runtime/W1
     owner: codex
     branch: codex/cap-01-desktop-shell
     worktree: C:/ai-projects/research-observatory
@@ -3066,19 +3072,18 @@ capabilities:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-09T06:52:46+00:00'
-    updated_at: '2026-08-13T19:13:16+00:00'
-    pause_reason: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-13T19:13:16+00:00'
-      expires_at: '2026-08-14T19:13:16+00:00'
+    updated_at: '2026-08-13T22:07:39+00:00'
+    pause_reason: CAP-windows-desktop-runtime/W1 independently approved; W5 packaging remains a future increment behind the global W4 exit gate.
+    pause_category: wave-complete
+    lease: null
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
     notes: null
 - id: CAP-02
+  alias: CAP-local-project-storage
   title: Local projects, durable storage, security, and recovery
   objective: Provide safe project lifecycle, local persistence, encrypted content storage, secrets management, and portable
     recovery for individual and laboratory computers.
@@ -3963,6 +3968,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-03
+  alias: CAP-research-domain-workflows
   title: Canonical domain, research intent, provenance, and durable workflows
   objective: Define canonical research objects, a versioned research-intent and primary-use-case contract, provenance, adaptive
     objective-specific workflows, durable jobs, human gates, and controlled recalculation.
@@ -5115,6 +5121,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-04
+  alias: CAP-scholarly-ingestion
   title: Scholarly ingestion, connectors, canonicalization, and corpus governance
   objective: Build a source-transparent canonical corpus from local libraries, open scholarly APIs, and later licensed adapters
     while preserving rights, versions, and discovery paths.
@@ -5971,6 +5978,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-05
+  alias: CAP-document-inspection
   title: Document acquisition, parsing, source inspection, and page anchors
   objective: Convert lawful full text into immutable, inspectable document revisions while retaining page, layout, reference,
     table, and figure context.
@@ -6978,6 +6986,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-06
+  alias: CAP-search-screening
   title: Local search, discovery, corpus diagnostics, and screening
   objective: Deliver transparent lexical, semantic, citation, and active-learning workflows that can construct high-recall
     corpora without turning retrieval into an opaque chat session.
@@ -8008,6 +8017,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-07
+  alias: CAP-model-gateway
   title: Provider-neutral model gateway and governed AI execution
   objective: Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and
     usable locally or through approved providers.
@@ -8859,6 +8869,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-08
+  alias: CAP-evidence-verification
   title: Evidence schemas, extraction, verification, and adjudication
   objective: Transform full text into source-grounded, mode-sensitive evidence records that distinguish observation, machine
     extraction, inference, verification, dispute, adjudication, and staleness.
@@ -9889,6 +9900,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-09
+  alias: CAP-scholarly-graph-synthesis
   title: Scholarly graph, comparison sets, synthesis, and reproducibility
   objective: Connect bibliographic structure to claims, constructs, methods, contexts, assumptions, evidence, and decisions;
     then produce source-grounded synthesis and reproducibility artifacts.
@@ -10926,6 +10938,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-10
+  alias: CAP-novelty-opportunities
   title: Novelty auditing, research opportunities, and plural research modes
   objective: Move from evidence mapping to defensible opportunity dossiers through nearest-prior comparison, independent challenge,
     plural gap logic, critical problematization, and living research memory.
@@ -12147,6 +12160,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-11
+  alias: CAP-windows-release
   title: Windows PC/lab product hardening, validation, packaging, and release
   objective: Turn the local architecture and research workflows into a dependable Windows product for individual researchers
     and laboratory computers before server or cloud delivery begins.
@@ -13228,6 +13242,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-12
+  alias: CAP-university-hosting
   title: University-hosted deployment, institutional identity, collaboration, and operations
   objective: Run the same scholarly application against institution-controlled services and storage while preserving the desktop
     client, domain contracts, evidence lineage, and rights-aware governance.
@@ -14227,6 +14242,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-13
+  alias: CAP-cloud-platform
   title: Managed cloud control plane, tenant data planes, governance, and SaaS operations
   objective: Deliver the same desktop-led product as a secure managed service with regional tenant isolation, elastic workers,
     metering, residency, support, and commercial operations.
@@ -15201,6 +15217,7 @@ capabilities:
     evidence: []
     notes: null
 - id: CAP-14
+  alias: CAP-cross-platform-desktop
   title: Cross-platform desktop qualification and release
   objective: Extend the production Windows local edition to Apple Silicon macOS and Ubuntu-compatible Linux x86_64/ARM64 while
     preserving one codebase, one project format, and equivalent security and scholarly behavior.
@@ -16263,6 +16280,7 @@ capabilities:
       evidence: []
       notes: null
 - id: CAP-15
+  alias: CAP-study-design
   title: Empirical study design and protocol development
   objective: Use literature evidence, opportunity dossiers, domain knowledge, and researcher constraints to propose, compare,
     and formalize rigorous empirical study designs without displacing scholarly or ethics authority.
@@ -17295,6 +17313,7 @@ capabilities:
       evidence: []
       notes: null
 - id: CAP-16
+  alias: CAP-manuscript-blueprints
   title: Manuscript blueprint, venue profiles, and article architecture
   objective: Turn approved research intent, literature structures, study plans, and publication goals into governed conference/journal
     skeletons for empirical, theory, and critical work.
@@ -18323,6 +18342,7 @@ capabilities:
       evidence: []
       notes: null
 - id: CAP-17
+  alias: CAP-results-integration
   title: Technical report and study-results integration
   objective: Ingest private technical reports of empirical work, extract and verify actual methods/results, reconcile them
     with planned designs, and make source-anchored result evidence available to manuscript drafting.
@@ -19373,6 +19393,7 @@ capabilities:
       evidence: []
       notes: null
 - id: CAP-18
+  alias: CAP-manuscript-drafting
   title: Source-grounded manuscript drafting and publication artifacts
   objective: Use approved article blueprints, literature evidence, verified technical reports/results, and researcher-authored
     content to draft and export empirical, theory, and critical conference/journal articles.
@@ -20430,6 +20451,7 @@ capabilities:
       evidence: []
       notes: null
 - id: CAP-19
+  alias: CAP-review-revision
   title: Reviewer simulation, editorial synthesis, and revision
   objective: Subject generated or uploaded empirical, theory, and critical drafts to independent multi-role simulated peer
     review, evidence-aware editorial synthesis, and author-controlled revision and response rounds.
@@ -21498,15 +21520,15 @@ capabilities:
       notes: null
 status_profile:
   name: research-observatory-lightweight
-  relationship_to_general_standard: CLAIMED is represented by IN_PROGRESS plus task lease metadata. A capability campaign
-    owns the execution context; slices are sequential integration gates; tasks remain the atomic evidence units.
+  relationship_to_general_standard: CLAIMED is represented by IN_PROGRESS plus task lease metadata. A capability-wave increment
+    owns the execution context; slices are ordered integration checkpoints; tasks remain the atomic evidence units.
   claim_transition: READY -> IN_PROGRESS
   submit_transition: IN_PROGRESS -> REVIEW
   review_transitions:
   - REVIEW -> DONE
   - REVIEW -> IN_PROGRESS
   - REVIEW -> BLOCKED
-  default_execution_unit: capability
+  default_execution_unit: capability-wave-increment
   integration_unit: slice
   atomic_evidence_unit: task
 desktop_platforms:

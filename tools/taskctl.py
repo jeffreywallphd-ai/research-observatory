@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-"""Research Observatory baseline 1.3 capability-campaign task controller.
+"""Research Observatory baseline 1.3 wave-scoped task controller.
 
-The authoritative planning hierarchy is Capability -> Slice -> Task.
-By default an automated coding agent starts one capability campaign and remains
-inside it, completing slices in order until the capability has production-ready
-end-to-end evidence and independent approval. Tasks remain the atomic claim and
-evidence unit.
+The execution hierarchy is Roadmap -> Wave -> Capability increment -> ordered
+Slice -> Task -> Wave exit gate. Descriptive aliases are human-facing; numeric
+IDs remain immutable evidence keys. Tasks remain the atomic claim/evidence unit.
 """
 
 from __future__ import annotations
@@ -43,6 +41,7 @@ PLATFORMS = {
     "ALL",
 }
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
+CAMPAIGN_SCOPES = {"capability-wave"}
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
 LEGACY_UNVERIFIED_POLICY = "pre-exact-evidence-hosted-ci-residual-v1"
 LEGACY_UNVERIFIED_REFERENCES: dict[str, dict[str, Any]] = {
@@ -311,6 +310,91 @@ def wave_map(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {wave["id"]: wave for wave in data.get("waves", [])}
 
 
+def ordered_wave_ids(data: dict[str, Any]) -> list[str]:
+    return [str(wave["id"]) for wave in data.get("waves", [])]
+
+
+def gate_after_wave(data: dict[str, Any], wave_id: str) -> dict[str, Any] | None:
+    return next(
+        (gate for gate in data.get("release_gates", []) if gate.get("after_wave") == wave_id),
+        None,
+    )
+
+
+def capability_wave_slices(capability: dict[str, Any], wave_id: str) -> list[dict[str, Any]]:
+    return [slice_ for slice_ in capability.get("slices", []) if slice_.get("wave") == wave_id]
+
+
+def campaign_wave(capability: dict[str, Any]) -> str | None:
+    value = (capability.get("campaign") or {}).get("wave")
+    return str(value) if value is not None else None
+
+
+def capability_wave_complete(capability: dict[str, Any], wave_id: str) -> bool:
+    slices = capability_wave_slices(capability, wave_id)
+    return bool(slices) and all(slice_.get("completion", {}).get("status") == "APPROVED" for slice_ in slices)
+
+
+def global_program_position(
+    data: dict[str, Any],
+    slices: dict[str, dict[str, Any]],
+    tasks: dict[str, dict[str, Any]],
+    gates: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """Return the earliest unfinished program wave or the gate that blocks it.
+
+    Waves are the primary execution axis. Capability numbering and a capability's
+    future slices never advance this position.
+    """
+
+    for wave_id in ordered_wave_ids(data):
+        incomplete_tasks = sorted(
+            task["id"] for task in tasks.values() if task.get("wave") == wave_id and task.get("status") != "DONE"
+        )
+        incomplete_slices = sorted(
+            slice_["id"]
+            for slice_ in slices.values()
+            if slice_.get("wave") == wave_id and slice_.get("completion", {}).get("status") != "APPROVED"
+        )
+        if not incomplete_tasks and not incomplete_slices:
+            continue
+        wave = wave_map(data).get(wave_id, {})
+        activation_gate_id = wave.get("activation_gate")
+        activation_gate = gates.get(activation_gate_id) if isinstance(activation_gate_id, str) else None
+        if activation_gate is not None and activation_gate.get("status") != "APPROVED":
+            return {
+                "state": "GATE_PENDING",
+                "current_wave": activation_gate.get("after_wave"),
+                "blocked_wave": wave_id,
+                "next_gate": activation_gate,
+                "incomplete_tasks": incomplete_tasks,
+                "incomplete_slices": incomplete_slices,
+            }
+        return {
+            "state": "ACTIVE_WAVE",
+            "current_wave": wave_id,
+            "blocked_wave": None,
+            "next_gate": gate_after_wave(data, wave_id),
+            "incomplete_tasks": incomplete_tasks,
+            "incomplete_slices": incomplete_slices,
+        }
+    return {
+        "state": "COMPLETE",
+        "current_wave": None,
+        "blocked_wave": None,
+        "next_gate": None,
+        "incomplete_tasks": [],
+        "incomplete_slices": [],
+    }
+
+
+def gate_transition_label(gate: dict[str, Any] | None) -> str:
+    if not gate:
+        return "none"
+    unlocks = ", ".join(str(item) for item in gate.get("unlocks_waves", [])) or "no wave"
+    return f"{gate.get('id')} — {gate.get('after_wave')} exit / {unlocks} activation"
+
+
 def gate_is_open(data: dict[str, Any], gates: dict[str, dict[str, Any]], wave_id: str) -> bool:
     wave = wave_map(data).get(wave_id)
     if not wave:
@@ -441,11 +525,25 @@ def active_capabilities(capabilities: dict[str, dict[str, Any]]) -> list[dict[st
     return [c for c in capabilities.values() if (c.get("campaign") or {}).get("status") == "ACTIVE"]
 
 
-def capability_sort_key(capability: dict[str, Any]) -> tuple[int, int, str]:
-    slices = capability.get("slices", [])
+def capability_display(capability: dict[str, Any]) -> str:
+    alias = capability.get("alias")
+    return f"{alias} ({capability['id']})" if alias else str(capability["id"])
+
+
+def display_slug(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+
+
+def slice_display(slice_: dict[str, Any]) -> str:
+    alias = slice_.get("alias") or f"SLICE-{display_slug(str(slice_.get('title', 'untitled')))}"
+    return f"{alias} ({slice_['id']})"
+
+
+def capability_sort_key(capability: dict[str, Any], wave_id: str) -> tuple[int, str]:
+    slices = capability_wave_slices(capability, wave_id)
     incomplete = [s for s in slices if s.get("completion", {}).get("status") != "APPROVED"]
     first = incomplete[0] if incomplete else slices[-1]
-    return int(first["wave"][1:]), int(first["priority"][1:]), capability["id"]
+    return int(first["priority"][1:]), capability["id"]
 
 
 def task_sort_key(task: dict[str, Any]) -> tuple[int, int, str]:
@@ -462,17 +560,30 @@ def eligible_capabilities(
     platform: str,
 ) -> list[dict[str, Any]]:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
+    program = global_program_position(data, slices, tasks, gates)
+    active_wave = program.get("current_wave") if program.get("state") == "ACTIVE_WAVE" else None
+    if not isinstance(active_wave, str):
+        return []
     eligible: list[dict[str, Any]] = []
     for capability in capabilities.values():
         if capability.get("completion", {}).get("status") == "APPROVED":
             continue
         campaign_state = (capability.get("campaign") or {}).get("status")
-        if campaign_state in {"ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}:
+        pause_category = (capability.get("campaign") or {}).get("pause_category")
+        if campaign_state in {"ACTIVE", "REVIEW", "COMPLETE", "CANCELLED"}:
             continue
-        incomplete = [s for s in capability.get("slices", []) if s.get("completion", {}).get("status") != "APPROVED"]
+        if campaign_state == "PAUSED" and pause_category != "wave-complete":
+            continue
+        incomplete = [
+            s
+            for s in capability_wave_slices(capability, active_wave)
+            if s.get("completion", {}).get("status") != "APPROVED"
+        ]
         if not incomplete:
             continue
         current = incomplete[0]
+        if not previous_slices_approved(capability, current):
+            continue
         if not profile_matches(current, profile) or not platform_matches(current, platform):
             continue
         if not gate_is_open(data, gates, current["wave"]):
@@ -482,11 +593,13 @@ def eligible_capabilities(
             for task in current["tasks"]
         ):
             eligible.append(capability)
-    return sorted(eligible, key=capability_sort_key)
+    return sorted(eligible, key=lambda capability: capability_sort_key(capability, active_wave))
 
 
-def current_slice(capability: dict[str, Any]) -> dict[str, Any] | None:
+def current_slice(capability: dict[str, Any], wave_id: str | None = None) -> dict[str, Any] | None:
     for slice_ in capability.get("slices", []):
+        if wave_id is not None and slice_.get("wave") != wave_id:
+            continue
         if slice_.get("completion", {}).get("status") != "APPROVED":
             return slice_
     return None
@@ -503,7 +616,10 @@ def ready_tasks_in_campaign(
     platform: str,
 ) -> list[dict[str, Any]]:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
-    slice_ = current_slice(capability)
+    wave_id = campaign_wave(capability)
+    if wave_id is None:
+        return []
+    slice_ = current_slice(capability, wave_id)
     if not slice_:
         return []
     return sorted(
@@ -521,6 +637,15 @@ def get(mapping: dict[str, dict[str, Any]], id_: str, label: str) -> dict[str, A
         return mapping[id_]
     except KeyError as exc:
         raise SystemExit(f"Unknown {label}: {id_}") from exc
+
+
+def get_capability(capabilities: dict[str, dict[str, Any]], identity: str) -> dict[str, Any]:
+    if identity in capabilities:
+        return capabilities[identity]
+    matches = [capability for capability in capabilities.values() if capability.get("alias") == identity]
+    if len(matches) == 1:
+        return matches[0]
+    raise SystemExit(f"Unknown capability: {identity}")
 
 
 def lease_is_active(holder: dict[str, Any]) -> bool:
@@ -599,8 +724,14 @@ def require_task_campaign_lease(
     task: dict[str, Any], capabilities: dict[str, dict[str, Any]], actor: str
 ) -> dict[str, Any]:
     capability = capabilities[task["capability_id"]]
-    if (capability.get("campaign") or {}).get("status") != "ACTIVE":
+    campaign = capability.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE":
         raise SystemExit(f"Capability {capability['id']} campaign is not ACTIVE")
+    if campaign.get("scope") != "capability-wave" or campaign.get("wave") != task.get("wave"):
+        raise SystemExit(
+            f"Task {task['id']} is outside the active "
+            f"{capability['id']}/{campaign.get('wave')} capability-wave increment"
+        )
     require_active_lease(capability, actor, f"Capability {capability['id']}")
     return capability
 
@@ -966,10 +1097,18 @@ def validate(
     waves = wave_map(data)
     active = active_capabilities(capabilities)
     if len(active) > 1:
-        errors.append("More than one ACTIVE capability campaign exists; default automation permits one campaign")
+        errors.append("More than one ACTIVE capability-wave campaign exists; default automation permits one increment")
+    aliases: dict[str, str] = {}
     for cid, capability in capabilities.items():
         if capability.get("execution_mode") != "capability_campaign":
             errors.append(f"{cid}: execution_mode must be capability_campaign")
+        alias = capability.get("alias")
+        if not isinstance(alias, str) or re.fullmatch(r"CAP-[a-z0-9]+(?:-[a-z0-9]+)*", alias) is None:
+            errors.append(f"{cid}: alias must be a stable descriptive CAP-<slug> identity")
+        elif alias in aliases:
+            errors.append(f"{cid}: alias duplicates {aliases[alias]}: {alias}")
+        else:
+            aliases[alias] = cid
         campaign = capability.get("campaign")
         if campaign:
             if campaign.get("status") not in CAMPAIGN_STATES:
@@ -980,8 +1119,20 @@ def validate(
                 or not campaign.get("base_sha")
                 or not campaign.get("worktree")
                 or not campaign.get("lease")
+                or campaign.get("scope") not in CAMPAIGN_SCOPES
+                or campaign.get("wave") not in waves
             ):
-                errors.append(f"{cid}: ACTIVE campaign lacks owner, branch, base SHA, worktree, or lease")
+                errors.append(
+                    f"{cid}: ACTIVE campaign lacks capability-wave scope, wave, owner, "
+                    "branch, base SHA, worktree, or lease"
+                )
+            campaign_wave_id = campaign.get("wave")
+            if campaign_wave_id is not None and not capability_wave_slices(capability, str(campaign_wave_id)):
+                errors.append(f"{cid}: campaign wave {campaign_wave_id} has no slice in the capability")
+            if campaign.get("pause_category") == "wave-complete" and (
+                campaign_wave_id is None or not capability_wave_complete(capability, str(campaign_wave_id))
+            ):
+                errors.append(f"{cid}: wave-complete pause requires every slice in the campaign wave to be approved")
             if campaign.get("owner") and campaign["owner"] != campaign["owner"].strip():
                 errors.append(f"{cid}: campaign owner identity is not normalized")
             if (
@@ -1100,7 +1251,21 @@ def validate(
                     errors.append(f"{tid}: CANCELLED without rationale")
                 if status == "CANCELLED" and task.get("lease") is not None:
                     errors.append(f"{tid}: CANCELLED task must release its lease")
-    for gid, gate in gates.items():
+    ordered_gates = [gate for gate in data.get("release_gates", []) if isinstance(gate, dict)]
+    for wave_id, wave in waves.items():
+        exit_gates = [gate for gate in ordered_gates if gate.get("after_wave") == wave_id]
+        if len(exit_gates) != 1:
+            errors.append(f"{wave_id}: expected exactly one wave-exit gate, found {len(exit_gates)}")
+        activation_gate_id = wave.get("activation_gate")
+        if activation_gate_id is None:
+            continue
+        activation_gate = gates.get(str(activation_gate_id))
+        if activation_gate is None:
+            errors.append(f"{wave_id}: missing activation gate {activation_gate_id}")
+        elif wave_id not in activation_gate.get("unlocks_waves", []):
+            errors.append(f"{wave_id}: activation gate {activation_gate_id} does not unlock the wave")
+    for gate_index, gate in enumerate(ordered_gates):
+        gid = str(gate.get("id"))
         if gate.get("status") == "APPROVED":
             approval = gate.get("approval", {})
             if not approval.get("approved_by") or not approval.get("approved_at") or not approval.get("evidence"):
@@ -1114,6 +1279,19 @@ def validate(
             )
             if incomplete:
                 errors.append(f"{gid}: APPROVED while preceding-wave task {incomplete[0]} is incomplete")
+            incomplete_slices = sorted(
+                slice_["id"]
+                for slice_ in slices.values()
+                if slice_.get("wave") == gate.get("after_wave")
+                and slice_.get("completion", {}).get("status") != "APPROVED"
+            )
+            if incomplete_slices:
+                errors.append(f"{gid}: APPROVED while preceding-wave slice {incomplete_slices[0]} is incomplete")
+            prior_pending = [
+                str(prior.get("id")) for prior in ordered_gates[:gate_index] if prior.get("status") != "APPROVED"
+            ]
+            if prior_pending:
+                errors.append(f"{gid}: APPROVED before upstream gate {prior_pending[0]}")
     return errors
 
 
@@ -1135,6 +1313,10 @@ def command_validate(args: argparse.Namespace, data, capabilities, slices, tasks
 
 def command_status(args, data, capabilities, slices, tasks, gates) -> None:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
+    program = global_program_position(data, slices, tasks, gates)
+    print("Program state:", program["state"])
+    print("Current global wave:", program.get("current_wave") or "complete")
+    print("Next global gate:", gate_transition_label(program.get("next_gate")))
     print(
         "Capability completion:",
         dict(sorted(Counter(c.get("completion", {}).get("status") for c in capabilities.values()).items())),
@@ -1150,48 +1332,84 @@ def command_status(args, data, capabilities, slices, tasks, gates) -> None:
     print("Task states:", dict(sorted(Counter(t["status"] for t in tasks.values()).items())))
     print("Gate states:", dict(sorted(Counter(g["status"] for g in gates.values()).items())))
     active = active_capabilities(capabilities)
-    print("Active capability:", active[0]["id"] if active else "none")
+    print(
+        "Active capability-wave increment:",
+        (f"{capability_display(active[0])}/{campaign_wave(active[0])}" if active else "none"),
+    )
 
 
 def command_next_capability(args, data, capabilities, slices, tasks, gates) -> None:
+    refresh_derived_states(data, capabilities, slices, tasks, gates)
+    program = global_program_position(data, slices, tasks, gates)
     active = active_capabilities(capabilities)
     if active:
-        print_yaml(active[0])
+        capability = active[0]
+        print_yaml(
+            {
+                "program": {
+                    "state": program["state"],
+                    "currentWave": program.get("current_wave"),
+                    "nextGlobalGate": gate_transition_label(program.get("next_gate")),
+                },
+                "activeIncrement": {
+                    "capability": capability_display(capability),
+                    "canonicalId": capability["id"],
+                    "wave": campaign_wave(capability),
+                    "campaign": capability.get("campaign"),
+                },
+            }
+        )
+        return
+    if program.get("state") == "GATE_PENDING":
+        print(global_gate_stop_handoff(args, data, program, capabilities, tasks, gates))
         return
     candidates = eligible_capabilities(data, capabilities, slices, tasks, gates, args.profile, args.platform)
     if not candidates:
-        print(f"No eligible capability for profile {args.profile} and platform {args.platform}")
+        print(
+            f"No eligible capability-wave increment in {program.get('current_wave') or 'the completed roadmap'} "
+            f"for profile {args.profile} and platform {args.platform}"
+        )
         return
     capability = candidates[0]
-    view = {k: capability[k] for k in ["id", "title", "objective", "exit_criteria"]}
-    selected_slice = current_slice(capability)
+    active_wave = str(program["current_wave"])
+    view = {
+        "program": {
+            "state": program["state"],
+            "currentWave": active_wave,
+            "nextGlobalGate": gate_transition_label(program.get("next_gate")),
+        },
+        "capability": capability_display(capability),
+        "canonicalId": capability["id"],
+        "title": capability["title"],
+        "objective": capability["objective"],
+        "exit_criteria": capability["exit_criteria"],
+        "increment": f"{capability.get('alias', capability['id'])}/{active_wave}",
+    }
+    selected_slice = current_slice(capability, active_wave)
     if selected_slice is None:
-        raise SystemExit(f"Capability {capability['id']} has no current slice")
+        raise SystemExit(f"Capability {capability['id']} has no current slice in {active_wave}")
     view["current_slice"] = selected_slice["id"]
     view["start_command"] = (
-        f"python tools/taskctl.py capability start {capability['id']} --agent <agent> "
+        f"python tools/taskctl.py capability start {capability.get('alias', capability['id'])} "
+        f"--wave {active_wave} --agent <agent> "
         f"--branch capability/{capability['id'].lower()}-<slug> --base-sha <sha> "
         f"--worktree <absolute-repository-path> --profile {args.profile} --platform {args.platform}"
     )
     print_yaml(view)
 
 
-def release_gate_stop_handoff(
+def global_gate_stop_handoff(
     args: argparse.Namespace,
     data: dict[str, Any],
-    campaign: dict[str, Any],
-    slice_: dict[str, Any] | None,
+    program: dict[str, Any],
     capabilities: dict[str, dict[str, Any]],
     tasks: dict[str, dict[str, Any]],
     gates: dict[str, dict[str, Any]],
-) -> str | None:
-    if slice_ is None:
-        return None
-    wave = wave_map(data).get(str(slice_.get("wave")))
-    gate_id = wave.get("activation_gate") if isinstance(wave, dict) else None
-    gate = gates.get(gate_id) if isinstance(gate_id, str) else None
-    if not isinstance(gate, dict) or gate.get("status") == "APPROVED":
-        return None
+) -> str:
+    gate = program.get("next_gate")
+    if not isinstance(gate, dict):
+        raise SystemExit("Global gate handoff requested without a pending release gate")
+    gate_id = str(gate["id"])
 
     repo = Path(args.file).resolve().parent.parent
 
@@ -1207,7 +1425,7 @@ def release_gate_stop_handoff(
         {
             task["capability_id"]
             for task in tasks.values()
-            if task.get("wave") == preceding_wave and task.get("status") != "DONE"
+            if task.get("wave") == preceding_wave and task.get("capability_id") in capabilities
         }
     )
     ordered_waves = [str(item.get("id")) for item in data.get("waves", []) if isinstance(item, dict)]
@@ -1220,15 +1438,16 @@ def release_gate_stop_handoff(
         and str(item.get("after_wave")) in ordered_waves
         and ordered_waves.index(str(item.get("after_wave"))) < preceding_index
     ]
-    capability_uri, capability_relative = review_link(str(campaign["id"]))
-    slice_uri, slice_relative = review_link(str(campaign["id"]), f"{slice_['id']}.html")
     criteria = "\n".join(f"  - {criterion}" for criterion in gate.get("criteria", []))
     prerequisite_links: list[str] = []
     for capability_id in prerequisite_capabilities:
         uri, relative = review_link(capability_id)
-        title = capabilities.get(capability_id, {}).get("title", capability_id)
-        prerequisite_links.append(f"  - {capability_id} {title}: {uri} ({relative})")
-    links = "\n".join(prerequisite_links) or "  - No incomplete preceding-wave capability pages."
+        capability = capabilities.get(capability_id, {})
+        title = capability.get("title", capability_id)
+        prerequisite_links.append(
+            f"  - {capability.get('alias', capability_id)} ({capability_id}) {title}: {uri} ({relative})"
+        )
+    links = "\n".join(prerequisite_links) or "  - No preceding-wave capability pages."
     readiness = (
         f"NOT CURRENTLY APPROVABLE: {len(incomplete)} {preceding_wave} tasks are not DONE"
         + (f"; upstream pending gates: {', '.join(upstream_pending)}" if upstream_pending else "")
@@ -1246,15 +1465,14 @@ def release_gate_stop_handoff(
     )
     resume = (
         f"python tools/taskctl.py gate approve {gate_id} --approver <human> --evidence <criterion-linked-evidence> "
-        f'--note "<decision rationale>"; then resume {campaign["id"]} and claim only its next READY task.'
+        f'--note "<decision rationale>"; then start only a READY capability-wave increment in '
+        f"{', '.join(gate.get('unlocks_waves', []))}."
     )
     return (
         f"STOPPED AT RELEASE GATE {gate_id}: {gate.get('name')}\n"
         f"Approval state: {readiness}.\n"
         f"What the eventual approval must establish:\n{criteria}\n"
         "Review materials:\n"
-        f"  - Active capability packet: {capability_uri} ({capability_relative})\n"
-        f"  - Blocked slice plan: {slice_uri} ({slice_relative})\n"
         f"  - Preceding-wave capability packets:\n{links}\n"
         "Decision alternatives:\n"
         f"  A (recommended): {recommendation}\n"
@@ -1266,34 +1484,61 @@ def release_gate_stop_handoff(
 
 
 def command_next(args, data, capabilities, slices, tasks, gates) -> None:
+    refresh_derived_states(data, capabilities, slices, tasks, gates)
+    program = global_program_position(data, slices, tasks, gates)
     active = active_capabilities(capabilities)
     if not active:
         command_next_capability(args, data, capabilities, slices, tasks, gates)
         return
     campaign = active[0]
+    wave_id = campaign_wave(campaign)
+    if wave_id is None:
+        raise SystemExit(f"Active capability {campaign['id']} lacks an explicit capability-wave scope")
     candidates = ready_tasks_in_campaign(
         data, campaign, capabilities, slices, tasks, gates, args.profile, args.platform
     )
     if not candidates:
-        slice_ = current_slice(campaign)
-        gate_handoff = release_gate_stop_handoff(args, data, campaign, slice_, capabilities, tasks, gates)
-        if gate_handoff:
-            print(gate_handoff)
+        slice_ = current_slice(campaign, wave_id)
+        if capability_wave_complete(campaign, wave_id) and any(
+            slice_.get("completion", {}).get("status") != "APPROVED"
+            for slice_ in campaign.get("slices", [])
+            if slice_.get("wave") != wave_id
+        ):
+            future = current_slice(campaign)
+            future_gate = None
+            if future is not None:
+                future_wave = wave_map(data).get(str(future.get("wave")), {})
+                future_gate = gates.get(future_wave.get("activation_gate"))
+            print(
+                f"CAPABILITY-WAVE INCREMENT COMPLETE: {capability_display(campaign)}/{wave_id}.\n"
+                f"Current global wave: {program.get('current_wave')}; next global gate: "
+                f"{gate_transition_label(program.get('next_gate'))}.\n"
+                f"Future increment: {campaign.get('alias', campaign['id'])}/"
+                f"{future.get('wave') if future else 'none'}; "
+                f"future blocker: {gate_transition_label(future_gate)}.\n"
+                f"Close this increment without advancing the capability: python tools/taskctl.py capability pause "
+                f"{campaign['id']} --category wave-complete --agent <agent> "
+                f'--reason "{campaign.get("alias", campaign["id"])}/{wave_id} independently approved"; '
+                "then run taskctl next to select work in the current global wave."
+            )
             return
         print(
-            f"No READY task in active capability {campaign['id']} current slice "
+            f"No READY task in active capability-wave increment {capability_display(campaign)}/{wave_id} current slice "
             f"{slice_['id'] if slice_ else 'none'}. Complete review, resolve blocker, "
             "or submit/approve the slice."
         )
         return
-    print_yaml(candidates[0])
+    task = dict(candidates[0])
+    task["displayCapability"] = capability_display(capabilities[task["capability_id"]])
+    task["displaySlice"] = slice_display(slices[task["slice_id"]])
+    print_yaml(task)
 
 
 def command_capability_prepare(args, data, capabilities, slices, tasks, gates) -> None:
-    get(capabilities, args.capability, "capability")
+    capability = get_capability(capabilities, args.capability)
     repo = Path(args.file).resolve().parent.parent
     result = subprocess.run(
-        [sys.executable, str(repo / "tools" / "planctl.py"), "--repo", str(repo), "prepare", args.capability],
+        [sys.executable, str(repo / "tools" / "planctl.py"), "--repo", str(repo), "prepare", capability["id"]],
         check=False,
     )
     if result.returncode != 0:
@@ -1302,14 +1547,16 @@ def command_capability_prepare(args, data, capabilities, slices, tasks, gates) -
 
 def command_capability_status(args, data, capabilities, slices, tasks, gates) -> None:
     if args.capability:
-        capability = get(capabilities, args.capability, "capability")
+        capability = get_capability(capabilities, args.capability)
         summary = {
             k: capability.get(k)
             for k in ["id", "title", "objective", "exit_criteria", "execution_mode", "campaign", "completion"]
         }
+        summary["display"] = capability_display(capability)
         summary["slices"] = [
             {
                 "id": s["id"],
+                "display": slice_display(s),
                 "title": s["title"],
                 "status": s["status"],
                 "completion": s["completion"],
@@ -1321,12 +1568,13 @@ def command_capability_status(args, data, capabilities, slices, tasks, gates) ->
     else:
         for c in sorted(capabilities.values(), key=lambda x: x["id"]):
             print(
-                f"{c['id']}\tcampaign={(c.get('campaign') or {}).get('status', 'NONE')}\t"
+                f"{c.get('alias', c['id'])}\tcanonical={c['id']}\t"
+                f"campaign={(c.get('campaign') or {}).get('status', 'NONE')}\t"
                 f"completion={c.get('completion', {}).get('status')}\t{c['title']}"
             )
 
 
-def require_capability_planning_ready(args, capability_id: str) -> None:
+def require_capability_planning_ready(args, capability_id: str, wave_id: str) -> None:
     if capability_id == "CAP-00":
         return
     repo = Path(args.file).resolve().parents[1]
@@ -1337,6 +1585,8 @@ def require_capability_planning_ready(args, capability_id: str) -> None:
         str(repo),
         "ready",
         capability_id,
+        "--wave",
+        wave_id,
         "--require-approved",
     ]
     result = subprocess.run(command, capture_output=True, text=True)
@@ -1357,8 +1607,9 @@ def require_capability_planning_ready(args, capability_id: str) -> None:
         review_rel = f"planning/review-site/{capability_id}/index.html"
         detail = "\n".join(streams)
         message = (
-            "Capability planning gate failed. Complete and approve the capability plan, every slice plan, "
-            "all decisions/ADRs and governed UI changes before execution.\n"
+            f"Capability-wave planning gate failed for {capability_id}/{wave_id}. Complete and approve the capability "
+            "decision packet and the active-wave slice plans, decisions/ADRs, and governed UI changes before "
+            "execution.\n"
             + (detail + "\n" if detail else "")
             + f"Planning review page: {review_uri}\nRepository-relative page: {review_rel}"
         )
@@ -1368,7 +1619,20 @@ def require_capability_planning_ready(args, capability_id: str) -> None:
 def command_capability_start(args, data, capabilities, slices, tasks, gates) -> None:
     require_positive_lease_hours(args.lease_hours)
     require_execution_target(args.profile, args.platform)
-    require_capability_planning_ready(args, args.capability)
+    program = global_program_position(data, slices, tasks, gates)
+    if program.get("state") != "ACTIVE_WAVE":
+        raise SystemExit(
+            f"No capability-wave increment can start while program state is {program.get('state')}; "
+            f"next global gate is {gate_transition_label(program.get('next_gate'))}"
+        )
+    capability = get_capability(capabilities, args.capability)
+    wave_id = getattr(args, "wave", None) or str(program["current_wave"])
+    if wave_id != program.get("current_wave"):
+        raise SystemExit(
+            f"Requested increment {capability_display(capability)}/{wave_id} is outside current global wave "
+            f"{program.get('current_wave')}"
+        )
+    require_capability_planning_ready(args, capability["id"], wave_id)
     agent, branch, base_sha, worktree = git_execution_identity(
         args.file,
         agent=args.agent,
@@ -1378,9 +1642,14 @@ def command_capability_start(args, data, capabilities, slices, tasks, gates) -> 
     )
     if active_capabilities(capabilities):
         raise SystemExit("Another capability campaign is ACTIVE. Complete or pause it before starting another.")
-    capability = get(capabilities, args.capability, "capability")
     prior_campaign = capability.get("campaign") or {}
-    if prior_campaign.get("status") not in {None, "PLANNED"}:
+    new_increment_after_completed_wave = (
+        prior_campaign.get("status") == "PAUSED"
+        and prior_campaign.get("pause_category") == "wave-complete"
+        and prior_campaign.get("wave") != wave_id
+        and capability_wave_complete(capability, str(prior_campaign.get("wave")))
+    )
+    if prior_campaign.get("status") not in {None, "PLANNED"} and not new_increment_after_completed_wave:
         raise SystemExit(f"Capability cannot start from campaign state {prior_campaign.get('status')}")
     candidates = eligible_capabilities(data, capabilities, slices, tasks, gates, args.profile, args.platform)
     if capability not in candidates:
@@ -1390,6 +1659,9 @@ def command_capability_start(args, data, capabilities, slices, tasks, gates) -> 
     now = utc_now()
     capability["campaign"] = {
         "status": "ACTIVE",
+        "scope": "capability-wave",
+        "wave": wave_id,
+        "increment_id": f"{capability.get('alias', capability['id'])}/{wave_id}",
         "owner": agent,
         "branch": branch,
         "worktree": worktree,
@@ -1399,21 +1671,27 @@ def command_capability_start(args, data, capabilities, slices, tasks, gates) -> 
         "started_at": now,
         "updated_at": now,
         "pause_reason": None,
+        "pause_category": None,
         "lease": new_lease(agent, args.lease_hours),
     }
     capability["completion"]["status"] = "IN_PROGRESS"
     persist(args, data)
-    print(f"Started capability campaign {capability['id']}")
+    print(f"Started capability-wave increment {capability_display(capability)}/{wave_id}")
 
 
 def command_capability_pause(args, data, capabilities, slices, tasks, gates) -> None:
-    capability = get(capabilities, args.capability, "capability")
+    capability = get_capability(capabilities, args.capability)
     campaign = capability.get("campaign") or {}
     if campaign.get("status") != "ACTIVE":
         raise SystemExit("Only an ACTIVE capability may be paused")
     require_active_lease(capability, args.agent, f"Capability {args.capability}")
     if any(t["status"] in {"IN_PROGRESS", "REVIEW"} for s in capability["slices"] for t in s["tasks"]):
         raise SystemExit("Resolve or explicitly block active/review tasks before pausing the capability")
+    wave_id = campaign.get("wave")
+    if args.category == "wave-complete" and (
+        not isinstance(wave_id, str) or not capability_wave_complete(capability, wave_id)
+    ):
+        raise SystemExit("wave-complete pause requires every slice in the active campaign wave to be approved")
     campaign.update(
         status="PAUSED", pause_reason=args.reason, pause_category=args.category, updated_at=utc_now(), lease=None
     )
@@ -1423,7 +1701,7 @@ def command_capability_pause(args, data, capabilities, slices, tasks, gates) -> 
 
 def command_capability_renew(args, data, capabilities, slices, tasks, gates) -> None:
     require_positive_lease_hours(args.lease_hours)
-    capability = get(capabilities, args.capability, "capability")
+    capability = get_capability(capabilities, args.capability)
     campaign = capability.get("campaign") or {}
     if campaign.get("status") != "ACTIVE":
         raise SystemExit("Only an ACTIVE capability lease may be renewed")
@@ -1440,10 +1718,9 @@ def command_capability_renew(args, data, capabilities, slices, tasks, gates) -> 
 def command_capability_resume(args, data, capabilities, slices, tasks, gates) -> None:
     require_positive_lease_hours(args.lease_hours)
     require_execution_target(args.profile, args.platform)
-    require_capability_planning_ready(args, args.capability)
     if active_capabilities(capabilities):
         raise SystemExit("Another capability campaign is ACTIVE")
-    capability = get(capabilities, args.capability, "capability")
+    capability = get_capability(capabilities, args.capability)
     campaign = capability.get("campaign") or {}
     if campaign.get("status") != "PAUSED":
         raise SystemExit("Only a PAUSED capability may be resumed")
@@ -1458,17 +1735,34 @@ def command_capability_resume(args, data, capabilities, slices, tasks, gates) ->
         raise SystemExit(f"Paused capability is owned by {campaign.get('owner')}, not {agent}")
     if campaign.get("branch") and campaign.get("branch") != branch:
         raise SystemExit("Paused capability must resume on its recorded branch")
-    selected_slice = current_slice(capability)
+    if campaign.get("pause_category") == "wave-complete":
+        raise SystemExit(
+            "A completed capability-wave increment cannot resume; start the capability in a later active wave"
+        )
+    wave_id = campaign.get("wave")
+    if not isinstance(wave_id, str):
+        raise SystemExit("Paused capability lacks a campaign wave")
+    require_capability_planning_ready(args, capability["id"], wave_id)
+    selected_slice = current_slice(capability, wave_id)
     if selected_slice is None:
         if capability.get("completion", {}).get("status") not in {"CHANGES_REQUESTED", "BLOCKED"}:
             raise SystemExit("Paused capability has no eligible slice or capability-review remediation")
-    elif (
-        not profile_matches(selected_slice, args.profile)
-        or not platform_matches(selected_slice, args.platform)
-        or not gate_is_open(data, gates, selected_slice["wave"])
-        or not slice_dependencies_done(selected_slice, tasks)
-    ):
-        raise SystemExit("Paused capability is not eligible for the requested profile/platform, gate, or dependencies")
+    else:
+        program = global_program_position(data, slices, tasks, gates)
+        if program.get("state") != "ACTIVE_WAVE" or program.get("current_wave") != wave_id:
+            raise SystemExit(
+                f"Paused increment {args.capability}/{wave_id} is outside current program position; "
+                f"next global gate is {gate_transition_label(program.get('next_gate'))}"
+            )
+        if (
+            not profile_matches(selected_slice, args.profile)
+            or not platform_matches(selected_slice, args.platform)
+            or not gate_is_open(data, gates, selected_slice["wave"])
+            or not slice_dependencies_done(selected_slice, tasks)
+        ):
+            raise SystemExit(
+                "Paused capability is not eligible for the requested profile/platform, gate, or dependencies"
+            )
     now = utc_now()
     campaign.update(
         status="ACTIVE",
@@ -1487,7 +1781,7 @@ def command_capability_resume(args, data, capabilities, slices, tasks, gates) ->
 
 
 def command_capability_submit(args, data, capabilities, slices, tasks, gates) -> None:
-    capability = get(capabilities, args.capability, "capability")
+    capability = get_capability(capabilities, args.capability)
     if (capability.get("campaign") or {}).get("status") != "ACTIVE":
         raise SystemExit("Capability campaign must be ACTIVE")
     require_active_lease(capability, args.agent, f"Capability {args.capability}")
@@ -1503,7 +1797,7 @@ def command_capability_submit(args, data, capabilities, slices, tasks, gates) ->
 
 
 def command_capability_review(args, data, capabilities, slices, tasks, gates) -> None:
-    capability = get(capabilities, args.capability, "capability")
+    capability = get_capability(capabilities, args.capability)
     if (capability.get("campaign") or {}).get("status") != "REVIEW" or capability.get("completion", {}).get(
         "status"
     ) != "REVIEW":
@@ -1542,6 +1836,7 @@ def command_slice_status(args, data, capabilities, slices, tasks, gates) -> None
             "completion",
         ]
     }
+    view["display"] = slice_display(slice_)
     view["tasks"] = [{"id": t["id"], "title": t["title"], "status": t["status"]} for t in slice_["tasks"]]
     print_yaml(view)
 
@@ -1552,8 +1847,9 @@ def command_slice_submit(args, data, capabilities, slices, tasks, gates) -> None
     if (capability.get("campaign") or {}).get("status") != "ACTIVE":
         raise SystemExit("The parent capability campaign must be ACTIVE")
     require_active_lease(capability, args.agent, f"Capability {capability['id']}")
-    if current_slice(capability) is not slice_:
-        raise SystemExit("Only the current capability slice may be submitted")
+    wave_id = campaign_wave(capability)
+    if wave_id is None or slice_.get("wave") != wave_id or current_slice(capability, wave_id) is not slice_:
+        raise SystemExit("Only the current slice in the active capability-wave increment may be submitted")
     if any(t["status"] != "DONE" for t in slice_["tasks"]):
         raise SystemExit("Every task in the slice must be DONE")
     if not args.evidence:
@@ -1569,12 +1865,31 @@ def command_slice_review(args, data, capabilities, slices, tasks, gates) -> None
         raise SystemExit("Slice must be submitted for REVIEW")
     reviewer = normalized_identity(args.reviewer, "Reviewer")
     capability = capabilities[slice_["id"].split(".")[0]]
+    campaign = capability.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE" or campaign.get("wave") != slice_.get("wave"):
+        raise SystemExit("Slice review must belong to the active capability-wave increment")
     if reviewer == (capability.get("campaign") or {}).get("owner"):
         raise SystemExit("Slice reviewer must be independent from the campaign owner")
     now = utc_now()
     if args.result == "approved":
         slice_["completion"].update(status="APPROVED", reviewer=reviewer, reviewed_at=now, notes=args.note)
         slice_["status"] = "DONE"
+        wave_id = str(slice_["wave"])
+        if capability_wave_complete(capability, wave_id) and any(
+            candidate.get("completion", {}).get("status") != "APPROVED"
+            for candidate in capability.get("slices", [])
+            if candidate.get("wave") != wave_id
+        ):
+            campaign.update(
+                status="PAUSED",
+                pause_reason=(
+                    f"Capability-wave increment {capability.get('alias', capability['id'])}/{wave_id} complete"
+                ),
+                pause_category="wave-complete",
+                updated_at=now,
+                lease=None,
+            )
+            capability["completion"]["status"] = "PAUSED"
     elif args.result == "changes-requested":
         slice_["completion"].update(status="CHANGES_REQUESTED", reviewer=reviewer, reviewed_at=now, notes=args.note)
         slice_["status"] = "IN_PROGRESS"
@@ -1610,7 +1925,9 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
     campaign = active[0]["campaign"]
     if args.profile != campaign.get("profile") or args.platform != campaign.get("platform"):
         raise SystemExit("Task claim profile/platform must match the active capability campaign")
-    selected_slice = current_slice(active[0])
+    if campaign.get("scope") != "capability-wave" or campaign.get("wave") != task.get("wave"):
+        raise SystemExit("Task is outside the active capability-wave increment")
+    selected_slice = current_slice(active[0], str(campaign["wave"]))
     if selected_slice is None or selected_slice["id"] != task["slice_id"]:
         raise SystemExit("Task is outside the active campaign's current slice")
     now = utc_now()
@@ -1782,8 +2099,8 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
     if task["status"] not in {"BLOCKED", "REVIEW", "DONE"}:
         raise SystemExit(f"Task cannot be reopened from {task['status']}")
     capability = require_task_campaign_lease(task, capabilities, agent)
-    if current_slice(capability) is not slices[task["slice_id"]]:
-        raise SystemExit("Only a task in the active campaign's current slice may be reopened")
+    if current_slice(capability, campaign_wave(capability)) is not slices[task["slice_id"]]:
+        raise SystemExit("Only a task in the active capability-wave increment's current slice may be reopened")
     if not task_can_be_ready(data, capabilities, slices, tasks, gates, task):
         raise SystemExit("Task cannot be reopened while dependencies or the activation gate are incomplete")
     if any(gate.get("status") == "APPROVED" and gate.get("after_wave") == task.get("wave") for gate in gates.values()):
@@ -1811,8 +2128,8 @@ def command_cancel(args, data, capabilities, slices, tasks, gates) -> None:
         raise SystemExit(f"{task['status']} tasks cannot transition to CANCELLED")
     actor = normalized_identity(args.actor, "Cancellation actor")
     capability = require_task_campaign_lease(task, capabilities, actor)
-    if current_slice(capability) is not slices[task["slice_id"]]:
-        raise SystemExit("Only a task in the active campaign's current slice may be cancelled")
+    if current_slice(capability, campaign_wave(capability)) is not slices[task["slice_id"]]:
+        raise SystemExit("Only a task in the active capability-wave increment's current slice may be cancelled")
     if task["status"] in {"IN_PROGRESS", "REVIEW"}:
         require_active_lease(task, actor, f"Task {task['id']}")
     task["status"] = "CANCELLED"
@@ -1829,10 +2146,12 @@ def command_cancel(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_gate_status(args, data, capabilities, slices, tasks, gates) -> None:
     if args.gate:
-        print_yaml(get(gates, args.gate, "gate"))
+        gate = dict(get(gates, args.gate, "gate"))
+        gate["display"] = gate_transition_label(gate)
+        print_yaml(gate)
     else:
         for gate in data["release_gates"]:
-            print(f"{gate['id']}\t{gate['status']}\tunlocks={','.join(gate.get('unlocks_waves', []))}\t{gate['name']}")
+            print(f"{gate_transition_label(gate)}\t{gate['status']}\t{gate['name']}")
 
 
 def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None:
@@ -1842,6 +2161,15 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
     approver = normalized_identity(args.approver, "Release-gate approver")
     if not args.evidence:
         raise SystemExit("At least one evidence reference is required")
+    ordered_gates = [candidate for candidate in data.get("release_gates", []) if isinstance(candidate, dict)]
+    gate_index = next(index for index, candidate in enumerate(ordered_gates) if candidate.get("id") == gate["id"])
+    prior_pending = [
+        str(candidate.get("id")) for candidate in ordered_gates[:gate_index] if candidate.get("status") != "APPROVED"
+    ]
+    if prior_pending:
+        raise SystemExit(
+            f"Release gate {gate['id']} cannot approve before upstream gate {prior_pending[0]} is APPROVED"
+        )
     incomplete = sorted(
         task["id"] for task in tasks.values() if task.get("wave") == gate.get("after_wave") and task["status"] != "DONE"
     )
@@ -1849,6 +2177,16 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
         raise SystemExit(
             f"Release gate {gate['id']} cannot approve before every {gate.get('after_wave')} task is DONE; "
             f"first incomplete task: {incomplete[0]}"
+        )
+    incomplete_slices = sorted(
+        slice_["id"]
+        for slice_ in slices.values()
+        if slice_.get("wave") == gate.get("after_wave") and slice_.get("completion", {}).get("status") != "APPROVED"
+    )
+    if incomplete_slices:
+        raise SystemExit(
+            f"Release gate {gate['id']} cannot approve before every {gate.get('after_wave')} slice is independently "
+            f"approved; first incomplete slice: {incomplete_slices[0]}"
         )
     gate["status"] = "APPROVED"
     gate["approval"] = {
@@ -1891,6 +2229,7 @@ def build_parser() -> argparse.ArgumentParser:
     cprep.add_argument("capability")
     cstart = cs.add_parser("start")
     cstart.add_argument("capability")
+    cstart.add_argument("--wave", required=True)
     cstart.add_argument("--agent", required=True)
     cstart.add_argument("--branch", required=True)
     cstart.add_argument("--base-sha", required=True)
@@ -1902,7 +2241,14 @@ def build_parser() -> argparse.ArgumentParser:
     cpause.add_argument("capability")
     cpause.add_argument(
         "--category",
-        choices=["infeasible", "external-dependency", "hardware-unavailable", "human-decision", "approved-design-gate"],
+        choices=[
+            "infeasible",
+            "external-dependency",
+            "hardware-unavailable",
+            "human-decision",
+            "approved-design-gate",
+            "wave-complete",
+        ],
         required=True,
     )
     cpause.add_argument("--agent", required=True)
@@ -2019,7 +2365,10 @@ def main() -> None:
     elif args.command == "next-capability":
         command_next_capability(args, data, capabilities, slices, tasks, gates)
     elif args.command == "show":
-        print_yaml(get(tasks, args.task, "task"))
+        task = dict(get(tasks, args.task, "task"))
+        task["displayCapability"] = capability_display(capabilities[task["capability_id"]])
+        task["displaySlice"] = slice_display(slices[task["slice_id"]])
+        print_yaml(task)
     elif args.command == "capability" and args.cap_command == "prepare":
         command_capability_prepare(args, data, capabilities, slices, tasks, gates)
     elif args.command == "capability" and args.cap_command == "status":

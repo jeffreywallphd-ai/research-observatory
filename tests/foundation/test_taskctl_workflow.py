@@ -37,6 +37,7 @@ from taskctl import (  # noqa: E402
     evidence_sha256,
     exact_commit_errors,
     git_execution_identity,
+    global_program_position,
     identity_snapshot,
     load,
     new_lease,
@@ -56,6 +57,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             "dependencies": [],
             "status": "READY",
             "wave": "W0",
+            "priority": "P0",
             "deployment_profiles": ["LOC"],
             "platform_targets": ["platform-neutral"],
             "owner": None,
@@ -74,8 +76,10 @@ class TaskctlWorkflowTests(unittest.TestCase):
         }
         slice_ = {
             "id": "CAP-00.S01",
+            "title": "Test workflow",
             "status": "READY",
             "wave": "W0",
+            "priority": "P0",
             "_position": 0,
             "completion": {"status": "PENDING", "reviewer": None, "reviewed_at": None, "evidence": []},
             "depends_on": [],
@@ -85,9 +89,14 @@ class TaskctlWorkflowTests(unittest.TestCase):
         }
         capability = {
             "id": "CAP-00",
+            "alias": "CAP-test-workflow",
+            "title": "Test workflow capability",
             "execution_mode": "capability_campaign",
             "campaign": {
                 "status": "ACTIVE",
+                "scope": "capability-wave",
+                "wave": "W0",
+                "increment_id": "CAP-test-workflow/W0",
                 "owner": "alice",
                 "profile": "LOC",
                 "platform": "windows-x64",
@@ -123,16 +132,41 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
     def test_next_at_pending_release_gate_prints_decision_complete_handoff(self) -> None:
         data, capabilities, slices, tasks, gates = self.workflow()
+        capability = capabilities["CAP-00"]
+        active_slice = slices.pop("CAP-00.S01")
+        active_task = tasks.pop("CAP-00.S01.T01")
+        completed_task = copy.deepcopy(active_task)
+        completed_task.update(id="CAP-00.S00.T01", slice_id="CAP-00.S00", status="DONE")
+        completed_slice = copy.deepcopy(active_slice)
+        completed_slice.update(
+            id="CAP-00.S00",
+            title="Completed foundation",
+            wave="W0",
+            status="DONE",
+            tasks=[completed_task],
+            completion={
+                "status": "APPROVED",
+                "reviewer": "agent:reviewer",
+                "reviewed_at": "2026-08-13T00:00:00+00:00",
+                "evidence": ["evidence.json"],
+            },
+        )
+        active_task.update(wave="W1")
+        active_slice.update(wave="W1", _position=1)
+        capability["slices"] = [completed_slice, active_slice]
+        capability["campaign"].update(status="PAUSED", wave="W0", pause_category="wave-complete", lease=None)
+        slices.update({completed_slice["id"]: completed_slice, active_slice["id"]: active_slice})
+        tasks.update({completed_task["id"]: completed_task, active_task["id"]: active_task})
         gate = {
             "id": "G0",
             "after_wave": "W0",
             "name": "Test release gate",
             "criteria": ["Exact evidence proves the test outcome."],
             "status": "PENDING",
-            "unlocks_waves": ["W0"],
+            "unlocks_waves": ["W1"],
             "approval": {"approved_by": None, "approved_at": None, "evidence": [], "notes": None},
         }
-        data["waves"][0]["activation_gate"] = "G0"
+        data["waves"].append({"id": "W1", "activation_gate": "G0"})
         data["release_gates"] = [gate]
         gates["G0"] = gate
         args = Namespace(
@@ -145,11 +179,10 @@ class TaskctlWorkflowTests(unittest.TestCase):
             command_next(args, data, capabilities, slices, tasks, gates)
         rendered = output.getvalue()
         self.assertIn("STOPPED AT RELEASE GATE G0: Test release gate", rendered)
-        self.assertIn("NOT CURRENTLY APPROVABLE: 1 W0 tasks are not DONE", rendered)
+        self.assertIn("READY FOR HUMAN APPROVAL", rendered)
         self.assertIn("What the eventual approval must establish", rendered)
         self.assertIn("Exact evidence proves the test outcome", rendered)
         self.assertIn("planning/review-site/CAP-00/index.html", rendered)
-        self.assertIn("planning/review-site/CAP-00/CAP-00.S01.html", rendered)
         self.assertIn("Decision alternatives", rendered)
         self.assertIn("A (recommended)", rendered)
         self.assertIn("gate approve G0 --approver <human> --evidence <criterion-linked-evidence>", rendered)
@@ -474,11 +507,140 @@ class TaskctlWorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "first incomplete task"), patch("taskctl.persist"):
             command_gate_approve(args, data, capabilities, slices, tasks, gates)
         tasks["CAP-00.S01.T01"]["status"] = "DONE"
+        slices["CAP-00.S01"]["status"] = "DONE"
+        slices["CAP-00.S01"]["completion"].update(
+            status="APPROVED",
+            reviewer="agent:reviewer",
+            reviewed_at="2026-08-13T00:00:00+00:00",
+            evidence=["report.json"],
+        )
         with patch("taskctl.persist"):
             command_gate_approve(args, data, capabilities, slices, tasks, gates)
         self.assertEqual("APPROVED", gate["status"])
         with self.assertRaisesRegex(SystemExit, "Only a PENDING"), patch("taskctl.persist"):
             command_gate_approve(args, data, capabilities, slices, tasks, gates)
+
+    def test_release_gates_must_approve_in_wave_order(self) -> None:
+        data, capabilities, slices, tasks, _ = self.workflow()
+        task = tasks["CAP-00.S01.T01"]
+        task.update(status="DONE", wave="W1")
+        slice_ = slices["CAP-00.S01"]
+        slice_.update(status="DONE", wave="W1")
+        slice_["completion"].update(
+            status="APPROVED",
+            reviewer="agent:reviewer",
+            reviewed_at="2026-08-13T00:00:00+00:00",
+            evidence=["report.json"],
+        )
+        first = {"id": "G0", "status": "PENDING", "after_wave": "W0", "unlocks_waves": ["W1"]}
+        second = {"id": "G1", "status": "PENDING", "after_wave": "W1", "unlocks_waves": ["W2"]}
+        data["release_gates"] = [first, second]
+        gates = {"G0": first, "G1": second}
+        args = Namespace(gate="G1", approver="reviewer", evidence=["report.json"], note="", file="unused")
+
+        with self.assertRaisesRegex(SystemExit, "upstream gate G0"), patch("taskctl.persist"):
+            command_gate_approve(args, data, capabilities, slices, tasks, gates)
+
+    def test_capability_start_records_the_active_wave_increment(self) -> None:
+        context = self.workflow()
+        capability = context[1]["CAP-00"]
+        capability["campaign"] = {"status": "PLANNED"}
+        capability["completion"]["status"] = "PENDING"
+        args = Namespace(
+            capability="CAP-test-workflow",
+            wave="W0",
+            agent="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        identity = ("alice", "codex/test", "a" * 40, REPO.as_posix())
+
+        with patch("taskctl.git_execution_identity", return_value=identity), patch("taskctl.persist"):
+            command_capability_start(args, *context)
+
+        self.assertEqual("capability-wave", capability["campaign"]["scope"])
+        self.assertEqual("W0", capability["campaign"]["wave"])
+        self.assertEqual("CAP-test-workflow/W0", capability["campaign"]["increment_id"])
+
+    def test_final_slice_review_closes_only_the_current_wave_increment(self) -> None:
+        context = self.workflow()
+        capability = context[1]["CAP-00"]
+        current = context[2]["CAP-00.S01"]
+        current.update(status="REVIEW")
+        current["completion"]["status"] = "REVIEW"
+        current["tasks"][0]["status"] = "DONE"
+        future = copy.deepcopy(current)
+        future.update(id="CAP-00.S02", title="Future packaging", wave="W1", status="DEFERRED", _position=1)
+        future["completion"] = {"status": "PENDING", "reviewer": None, "reviewed_at": None, "evidence": []}
+        future["tasks"] = []
+        capability["slices"].append(future)
+        context[2][future["id"]] = future
+
+        with patch("taskctl.persist"):
+            command_slice_review(
+                Namespace(slice=current["id"], reviewer="agent:reviewer", result="approved", note="", file="unused"),
+                *context,
+            )
+
+        self.assertEqual("APPROVED", current["completion"]["status"])
+        self.assertEqual("PAUSED", capability["campaign"]["status"])
+        self.assertEqual("wave-complete", capability["campaign"]["pause_category"])
+        self.assertEqual("PENDING", future["completion"]["status"])
+
+    def test_future_capability_slice_does_not_replace_the_current_global_gate(self) -> None:
+        context = self.workflow()
+        data, capabilities, slices, tasks, _ = context
+        current = slices["CAP-00.S01"]
+        current.update(status="DONE")
+        current["completion"]["status"] = "APPROVED"
+        tasks["CAP-00.S01.T01"]["status"] = "DONE"
+        future = copy.deepcopy(current)
+        future.update(id="CAP-00.S02", title="Future packaging", wave="W4", status="DEFERRED")
+        future["completion"] = {"status": "PENDING"}
+        future_task = copy.deepcopy(tasks["CAP-00.S01.T01"])
+        future_task.update(id="CAP-00.S02.T01", slice_id=future["id"], wave="W4", status="DEFERRED")
+        future["tasks"] = [future_task]
+        capabilities["CAP-00"]["slices"].append(future)
+        slices[future["id"]] = future
+        tasks[future_task["id"]] = future_task
+
+        second = copy.deepcopy(capabilities["CAP-00"])
+        second.update(id="CAP-02", alias="CAP-current-wave-work", campaign=None)
+        second_slice = copy.deepcopy(current)
+        second_slice.update(id="CAP-02.S01", title="Current wave work", wave="W1", status="READY")
+        second_slice["completion"] = {"status": "PENDING"}
+        second_task = copy.deepcopy(tasks["CAP-00.S01.T01"])
+        second_task.update(
+            id="CAP-02.S01.T01", capability_id="CAP-02", slice_id=second_slice["id"], wave="W1", status="READY"
+        )
+        second_slice["tasks"] = [second_task]
+        second["slices"] = [second_slice]
+        capabilities[second["id"]] = second
+        slices[second_slice["id"]] = second_slice
+        tasks[second_task["id"]] = second_task
+        data["capabilities"].append(second)
+        data["waves"] = [
+            {"id": "W0", "activation_gate": None},
+            {"id": "W1", "activation_gate": "G0"},
+            {"id": "W4", "activation_gate": "G3"},
+        ]
+        gates = {
+            "G0": {"id": "G0", "after_wave": "W0", "status": "APPROVED", "unlocks_waves": ["W1"]},
+            "G1": {"id": "G1", "after_wave": "W1", "status": "PENDING", "unlocks_waves": ["W2"]},
+            "G3": {"id": "G3", "after_wave": "W3", "status": "PENDING", "unlocks_waves": ["W4"]},
+            "G4": {"id": "G4", "after_wave": "W4", "status": "PENDING", "unlocks_waves": ["W5"]},
+        }
+        data["release_gates"] = list(gates.values())
+
+        program = global_program_position(data, slices, tasks, gates)
+
+        self.assertEqual("W1", program["current_wave"])
+        self.assertEqual("G1", program["next_gate"]["id"])
 
     def test_git_execution_identity_requires_real_head_branch_and_worktree(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

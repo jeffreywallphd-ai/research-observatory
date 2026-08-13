@@ -14,6 +14,35 @@
     });
   });
 
+  document.querySelectorAll("[data-planning-nav]").forEach((navigation) => {
+    const tabs = Array.from(navigation.querySelectorAll("[data-nav-tab]"));
+    const panels = Array.from(navigation.querySelectorAll("[data-nav-panel]"));
+    const activate = (name, focus = false) => {
+      tabs.forEach((tab) => {
+        const selected = tab.dataset.navTab === name;
+        tab.setAttribute("aria-selected", selected ? "true" : "false");
+        tab.tabIndex = selected ? 0 : -1;
+        if (selected && focus) tab.focus();
+      });
+      panels.forEach((panel) => { panel.hidden = panel.dataset.navPanel !== name; });
+    };
+    const initial = navigation.dataset.defaultTab || "capabilities";
+    activate(initial);
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => activate(tab.dataset.navTab || initial));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        let next = index;
+        if (event.key === "ArrowLeft") next = (index - 1 + tabs.length) % tabs.length;
+        if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+        if (event.key === "Home") next = 0;
+        if (event.key === "End") next = tabs.length - 1;
+        activate(tabs[next].dataset.navTab || initial, true);
+      });
+    });
+  });
+
   const capabilityId = document.body.dataset.capabilityId;
   if (!capabilityId || document.body.dataset.pageType !== "capability") return;
 
@@ -156,7 +185,7 @@
       capability_plan_sha256: planHash,
       reviewer: value.reviewer || null,
       reviewed_at: new Date().toISOString(),
-      requested_action: value.approval_intent ? "approve-capability-and-slices" : "record-feedback",
+      requested_action: value.approval_intent ? "approve-capability-and-active-wave" : "record-feedback",
       capability_notes: value.notes,
       decisions: Object.entries(value.decisions).map(([id, item]) => ({
         id,

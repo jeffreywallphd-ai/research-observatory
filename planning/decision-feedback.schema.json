@@ -19,7 +19,13 @@
     "capability_plan_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
     "reviewer": { "type": ["string", "null"] },
     "reviewed_at": { "type": "string" },
-    "requested_action": { "enum": ["record-feedback", "approve-capability-and-slices"] },
+    "requested_action": {
+      "enum": [
+        "record-feedback",
+        "approve-capability-and-slices",
+        "approve-capability-and-active-wave"
+      ]
+    },
     "capability_notes": { "type": "string" },
     "decisions": {
       "type": "array",

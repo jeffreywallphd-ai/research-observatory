@@ -22,8 +22,8 @@ except ImportError:  # pragma: no cover - generated site still works with plain 
     mistune = None
 
 
-SITE_SCHEMA_VERSION = "1.0"
-REVIEW_INTERFACE_RELEASE = "1.3.5"
+SITE_SCHEMA_VERSION = "1.1"
+REVIEW_INTERFACE_RELEASE = "1.3.7"
 FEEDBACK_SCHEMA_VERSION = "1.1"
 OTHER_SENTINEL = "__OTHER__"
 
@@ -73,6 +73,14 @@ def esc(value: Any) -> str:
     return html.escape("" if value is None else str(value), quote=True)
 
 
+def display_slug(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+
+
+def slice_alias(title: str) -> str:
+    return f"SLICE-{display_slug(title)}"
+
+
 def status_badge(status: str | None) -> str:
     label = status or "unknown"
     css = re.sub(r"[^a-z0-9]+", "-", label.lower()).strip("-")
@@ -106,7 +114,7 @@ def shell(*, title: str, body: str, depth: int, page_type: str, capability_id: s
       <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
     </div>
   </header>
-  {body}
+{body}
   <footer class="site-footer">
     <span>Static, local-first review surface</span>
     <span>Capability decisions precede implementation</span>
@@ -123,7 +131,7 @@ def layout(*, breadcrumbs: str, sidebar: str, main: str) -> str:
     <aside class="side-panel" aria-label="Planning navigation">{sidebar}</aside>
     <main id="main-content" class="main-panel">
       <nav class="breadcrumbs" aria-label="Breadcrumb">{breadcrumbs}</nav>
-      {main}
+{main}
     </main>
   </div>
 """
@@ -136,9 +144,54 @@ def capability_nav(capabilities: list[dict[str, Any]], active: str | None, prefi
         cls = " active" if cid == active else ""
         href = f"{prefix}{cid}/index.html"
         items.append(
-            f'<a class="nav-item{cls}" href="{href}"><span>{esc(cid)}</span><small>{esc(cap["title"])}</small></a>'
+            f'<a class="nav-item{cls}" href="{href}"><span>{esc(cap["alias"])}</span>'
+            f"<small>{esc(cid)} · {esc(cap['title'])}</small></a>"
         )
-    return "<h2>Capabilities</h2><nav class='cap-nav'>" + "".join(items) + "</nav>"
+    return "<nav class='cap-nav' aria-label='Capabilities'>" + "".join(items) + "</nav>"
+
+
+def wave_nav(waves: list[dict[str, Any]], active: str | None, prefix: str = "") -> str:
+    items = []
+    for wave in waves:
+        wave_id = str(wave["id"])
+        cls = " active" if wave_id == active else ""
+        items.append(
+            f'<a class="nav-item{cls}" href="{prefix}{esc(wave_id)}.html"><span>{esc(wave_id)}</span>'
+            f"<small>{esc(wave.get('title'))}</small></a>"
+        )
+    return "<nav class='cap-nav' aria-label='Waves'>" + "".join(items) + "</nav>"
+
+
+def planning_nav(
+    *,
+    capabilities: list[dict[str, Any]],
+    waves: list[dict[str, Any]],
+    active_capability: str | None,
+    active_wave: str | None,
+    capability_prefix: str,
+    wave_prefix: str,
+    default_tab: str,
+) -> str:
+    if default_tab not in {"capabilities", "waves"}:
+        raise ValueError(f"Unsupported planning navigation tab: {default_tab}")
+    capability_selected = "true" if default_tab == "capabilities" else "false"
+    wave_selected = "true" if default_tab == "waves" else "false"
+    capability_hidden = "" if default_tab == "capabilities" else " hidden"
+    wave_hidden = "" if default_tab == "waves" else " hidden"
+    return f"""
+<div class="planning-nav" data-planning-nav data-default-tab="{esc(default_tab)}">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="{capability_selected}" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="{wave_selected}" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities"{capability_hidden}>
+    {capability_nav(capabilities, active_capability, prefix=capability_prefix)}
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves"{wave_hidden}>
+    {wave_nav(waves, active_wave, prefix=wave_prefix)}
+  </section>
+</div>
+"""
 
 
 def slice_nav(slices: list[dict[str, Any]], active: str | None) -> str:
@@ -147,7 +200,8 @@ def slice_nav(slices: list[dict[str, Any]], active: str | None) -> str:
         sid = sl["slice_id"]
         cls = " active" if sid == active else ""
         rows.append(
-            f'<a class="slice-nav-item{cls}" href="{esc(sl["page_name"])}"><b>{index}</b><span><strong>{esc(sid)}</strong><small>{esc(sl["title"])}</small></span></a>'
+            f'<a class="slice-nav-item{cls}" href="{esc(sl["page_name"])}"><b>{index}</b><span>'
+            f"<strong>{esc(sl['alias'])}</strong><small>{esc(sid)} · {esc(sl['title'])}</small></span></a>"
         )
     return "<h2>Capability slices</h2><nav class='slice-nav'>" + "".join(rows) + "</nav>"
 
@@ -205,10 +259,18 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         raise ValueError(f"No capability plan found for {selected_capability}")
     # The site is a coherent generated set. Always rebuild all pages so links, hashes, and the manifest remain synchronized.
     cap_paths = all_cap_paths
+    backlog_capabilities = {cap["id"]: cap for cap in backlog.get("capabilities", [])}
+    waves = [wave for wave in backlog.get("waves", []) if isinstance(wave, dict)]
+    gates_by_wave = {
+        str(gate.get("after_wave")): gate for gate in backlog.get("release_gates", []) if isinstance(gate, dict)
+    }
     capabilities: list[dict[str, Any]] = []
     for path in all_cap_paths:
         meta, _ = read_frontmatter(path)
-        capabilities.append({"id": meta["capability_id"], "title": meta["title"]})
+        cid = meta["capability_id"]
+        capabilities.append(
+            {"id": cid, "alias": backlog_capabilities.get(cid, {}).get("alias", cid), "title": meta["title"]}
+        )
 
     # Rebuild into a clean directory so stale pages or convenience launchers cannot
     # be mistaken for governed review pages or break page-count validation.
@@ -239,19 +301,43 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         "generated_at": generated_at,
         "entry_point": "index.html",
         "feedback_schema_version": FEEDBACK_SCHEMA_VERSION,
+        "waves": [],
         "capabilities": [],
     }
+
+    wave_cards = []
+    for wave in waves:
+        wave_id = str(wave["id"])
+        wave_slices = [
+            slice_
+            for capability in backlog_capabilities.values()
+            for slice_ in capability.get("slices", [])
+            if slice_.get("wave") == wave_id
+        ]
+        wave_capability_ids = sorted({str(slice_["id"]).split(".")[0] for slice_ in wave_slices})
+        approved_slices = sum(slice_.get("completion", {}).get("status") == "APPROVED" for slice_ in wave_slices)
+        gate = gates_by_wave.get(wave_id, {})
+        wave_cards.append(f"""
+<a class="capability-card" href="waves/{esc(wave_id)}.html">
+  <div class="capability-card-top"><span class="eyebrow">{esc(wave_id)} · {esc(wave.get("track"))}</span>{status_badge(gate.get("status"))}</div>
+  <h2>{esc(wave.get("title"))}</h2>
+  <p>{esc(wave.get("goal"))}</p>
+  <dl><div><dt>Capabilities</dt><dd>{len(wave_capability_ids)}</dd></div><div><dt>Slices</dt><dd>{approved_slices}/{len(wave_slices)}</dd></div><div><dt>Exit gate</dt><dd>{esc(gate.get("id"))}</dd></div></dl>
+  <span class="text-link">Review wave and gate</span>
+</a>""")
 
     cards = []
     for path in all_cap_paths:
         meta, _ = read_frontmatter(path)
         cid = meta["capability_id"]
+        cap_alias = backlog_capabilities.get(cid, {}).get("alias", cid)
         decision_count = len(meta.get("decisions", []))
         unresolved = len(meta.get("open_blocking_decisions", []))
         cards.append(f"""
 <a class="capability-card" href="{esc(cid)}/index.html">
-  <div class="capability-card-top"><span class="eyebrow">{esc(cid)}</span>{status_badge(meta.get("status"))}</div>
+  <div class="capability-card-top"><span class="eyebrow">{esc(cap_alias)}</span>{status_badge(meta.get("status"))}</div>
   <h2>{esc(meta.get("title"))}</h2>
+  <p><code>{esc(cid)}</code> is the immutable evidence key.</p>
   <dl><div><dt>Slices</dt><dd>{len(meta.get("slice_ids", []))}</dd></div><div><dt>Decisions</dt><dd>{decision_count}</dd></div><div><dt>Open</dt><dd>{unresolved}</dd></div></dl>
   <span class="text-link">Review capability plan</span>
 </a>""")
@@ -259,9 +345,12 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
 <section class="hero compact">
   <span class="eyebrow">Decision-complete capability planning</span>
   <h1>Planning review center</h1>
-  <p>Review the preselected best-in-class defaults, override only where warranted, approve all slice plans together, then allow the coding agent to execute the capability as a long-running campaign.</p>
+  <p>Review capability-wide decisions once, then approve and execute only the ordered slices in the active wave. Descriptive aliases are the default presentation; canonical numeric IDs remain immutable evidence keys.</p>
 </section>
-<section class="callout callout-info"><h2>How to use this site</h2><ol><li>Select a capability.</li><li>Confirm the preselected decisions near the top, or override an option with rationale.</li><li>Review every slice page and its task sequence.</li><li>Approve the capability directly when the defaults stand; export decision-response JSON only when preserving overrides or notes.</li></ol></section>
+<section class="callout callout-info"><h2>How to use this site</h2><ol><li>Select a descriptive capability.</li><li>Confirm capability-wide decisions, or override an option with rationale.</li><li>Review the ordered slice pages in the wave being activated.</li><li>Approve that wave's slice plans; later-wave plans remain reviewable but do not block the current increment.</li></ol></section>
+<section class="section-heading"><span class="eyebrow">Primary execution axis</span><h2>Waves and exit gates</h2><p>Each wave groups the capability increments delivered together and ends in one explicit gate decision.</p></section>
+<section class="capability-grid">{"".join(wave_cards)}</section>
+<section class="section-heading"><span class="eyebrow">Product outcomes</span><h2>Capabilities</h2><p>Capabilities may contribute ordered slices to more than one wave.</p></section>
 <section class="capability-grid">{"".join(cards)}</section>
 """
     landing = shell(
@@ -270,15 +359,132 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         depth=0,
         body=layout(
             breadcrumbs='<span aria-current="page">Planning review</span>',
-            sidebar=capability_nav(capabilities, None),
+            sidebar=planning_nav(
+                capabilities=capabilities,
+                waves=waves,
+                active_capability=None,
+                active_wave=None,
+                capability_prefix="",
+                wave_prefix="waves/",
+                default_tab="waves",
+            ),
             main=landing_main,
         ),
     )
     (output / "index.html").write_text(landing, encoding="utf-8")
 
+    wave_dir = output / "waves"
+    wave_dir.mkdir(parents=True, exist_ok=True)
+    for wave in waves:
+        wave_id = str(wave["id"])
+        gate = gates_by_wave.get(wave_id, {})
+        increment_cards: list[str] = []
+        wave_slice_count = 0
+        wave_approved_count = 0
+        wave_task_count = 0
+        wave_done_count = 0
+        capability_ids: list[str] = []
+        for capability in backlog_capabilities.values():
+            increment_slices = [slice_ for slice_ in capability.get("slices", []) if slice_.get("wave") == wave_id]
+            if not increment_slices:
+                continue
+            capability_id = str(capability["id"])
+            capability_ids.append(capability_id)
+            wave_slice_count += len(increment_slices)
+            wave_approved_count += sum(
+                slice_.get("completion", {}).get("status") == "APPROVED" for slice_ in increment_slices
+            )
+            slice_rows: list[str] = []
+            for slice_ in increment_slices:
+                slice_tasks = slice_.get("tasks", [])
+                wave_task_count += len(slice_tasks)
+                wave_done_count += sum(task.get("status") == "DONE" for task in slice_tasks)
+                label = slice_alias(str(slice_.get("title")))
+                status = slice_.get("completion", {}).get("status")
+                if capability_id in {item["id"] for item in capabilities}:
+                    label_html = (
+                        f'<a href="../{esc(capability_id)}/{esc(slice_["id"])}.html">'
+                        f"{esc(label)} <small>({esc(slice_['id'])})</small></a>"
+                    )
+                else:
+                    label_html = f"{esc(label)} <small>({esc(slice_['id'])})</small>"
+                slice_rows.append(
+                    f"<li><span>{label_html}<small>{esc(slice_.get('title'))}</small></span>{status_badge(status)}</li>"
+                )
+            alias = capability.get("alias", capability_id)
+            title = capability.get("title")
+            if capability_id in {item["id"] for item in capabilities}:
+                heading = f'<a href="../{esc(capability_id)}/index.html">{esc(alias)}</a>'
+            else:
+                heading = esc(alias)
+            increment_cards.append(f"""
+<section class="wave-capability">
+  <div class="capability-card-top"><div><span class="eyebrow">{esc(capability_id)} · immutable key</span><h2>{heading}</h2><p>{esc(title)}</p></div>{status_badge((capability.get("campaign") or {}).get("status", "not started"))}</div>
+  <ol class="wave-slice-list">{"".join(slice_rows)}</ol>
+</section>""")
+
+        criteria = "".join(f"<li>{esc(criterion)}</li>" for criterion in gate.get("criteria", []))
+        unlocks = ", ".join(str(item) for item in gate.get("unlocks_waves", [])) or "No further wave"
+        approval = gate.get("approval") or {}
+        gate_main = f"""
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">{esc(wave.get("track"))} · roadmap wave</span><h1>{esc(wave_id)} — {esc(wave.get("title"))}</h1></div>{status_badge(gate.get("status"))}</div>
+  <p>{esc(wave.get("goal"))}</p>
+  <dl class="summary-grid"><div><dt>Capability increments</dt><dd>{len(capability_ids)}</dd></div><div><dt>Approved slices</dt><dd>{wave_approved_count}/{wave_slice_count}</dd></div><div><dt>Done tasks</dt><dd>{wave_done_count}/{wave_task_count}</dd></div><div><dt>Exit gate</dt><dd>{esc(gate.get("id"))}</dd></div></dl>
+</section>
+<section class="section-heading"><span class="eyebrow">Wave contents</span><h2>Capability increments and ordered slices</h2><p>Each card is the portion of a capability delivered and reviewed within {esc(wave_id)}.</p></section>
+<div class="wave-capability-list">{"".join(increment_cards)}</div>
+<section class="review-toolbar">
+  <div class="hero-top"><div><span class="eyebrow">Wave exit / successor activation</span><h2>{esc(gate.get("id"))} — {esc(wave_id)} exit / {esc(unlocks)} activation</h2></div>{status_badge(gate.get("status"))}</div>
+  <p>{esc(gate.get("name"))}. Approval is legal only after all preceding-wave tasks are DONE, all slices are independently approved, prior gates are approved, and the criteria below have exact evidence.</p>
+  <ul class="gate-criteria">{criteria}</ul>
+  <dl class="summary-grid"><div><dt>Status</dt><dd>{esc(gate.get("status"))}</dd></div><div><dt>Approved by</dt><dd>{esc(approval.get("approved_by") or "Pending")}</dd></div><div><dt>Approved at</dt><dd>{esc(approval.get("approved_at") or "Pending")}</dd></div><div><dt>Unlocks</dt><dd>{esc(unlocks)}</dd></div></dl>
+</section>
+"""
+        wave_page = shell(
+            title=f"{wave_id} {wave.get('title')}",
+            page_type="wave",
+            depth=1,
+            body=layout(
+                breadcrumbs=f'<a href="../index.html">Planning review</a><span>/</span><span aria-current="page">{esc(wave_id)}</span>',
+                sidebar=planning_nav(
+                    capabilities=capabilities,
+                    waves=waves,
+                    active_capability=None,
+                    active_wave=wave_id,
+                    capability_prefix="../",
+                    wave_prefix="",
+                    default_tab="waves",
+                ),
+                main=gate_main,
+            ),
+        )
+        (wave_dir / f"{wave_id}.html").write_text(wave_page, encoding="utf-8")
+        manifest["waves"].append(
+            {
+                "wave_id": wave_id,
+                "title": wave.get("title"),
+                "track": wave.get("track"),
+                "page": f"waves/{wave_id}.html",
+                "capability_ids": capability_ids,
+                "slice_ids": [
+                    str(slice_["id"])
+                    for capability in backlog_capabilities.values()
+                    for slice_ in capability.get("slices", [])
+                    if slice_.get("wave") == wave_id
+                ],
+                "slice_count": wave_slice_count,
+                "task_count": wave_task_count,
+                "exit_gate_id": gate.get("id"),
+                "gate_status": gate.get("status"),
+                "unlocks_waves": gate.get("unlocks_waves", []),
+            }
+        )
+
     for cap_path in cap_paths:
         meta, body_md = read_frontmatter(cap_path)
         cid = meta["capability_id"]
+        cap_alias = backlog_capabilities.get(cid, {}).get("alias", cid)
         cap_dir = output / cid
         cap_dir.mkdir(parents=True, exist_ok=True)
         cap_hash = sha256(cap_path)
@@ -294,6 +500,7 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
                     "meta": smeta,
                     "body": sbody,
                     "slice_id": smeta["slice_id"],
+                    "alias": slice_alias(smeta["title"]),
                     "title": smeta["title"],
                     "page_name": page_name,
                     "sha256": sha256(path),
@@ -307,31 +514,37 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
             slice_cards.append(f"""
 <a class="slice-card" href="{esc(sl["page_name"])}">
   <div class="slice-card-index">{idx}</div>
-  <div><span class="eyebrow">{esc(sl["slice_id"])}</span><h3>{esc(sl["title"])}</h3>
+  <div><span class="eyebrow">{esc(sl["alias"])}</span><h3>{esc(sl["title"])}</h3>
   <p>{len(smeta.get("task_ids", []))} tasks · {esc(smeta.get("wave"))} · {esc(smeta.get("priority"))}</p></div>
   {status_badge(smeta.get("status"))}
 </a>""")
 
+        wave_ids = list(dict.fromkeys(str(sl["meta"].get("wave")) for sl in slices))
+        wave_commands = "\n".join(
+            f"python tools/planctl.py --repo . approve {esc(cid)} --wave {esc(wave)} "
+            '--by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;'
+            for wave in wave_ids
+        )
         capability_main = f"""
 <section class="hero compact">
-  <div class="hero-top"><div><span class="eyebrow">{esc(cid)} · Capability decision and execution plan</span><h1>{esc(meta.get("title"))}</h1></div>{status_badge(meta.get("status"))}</div>
-  <p>Review the completed recommendation register before implementation. Once approved, the campaign executes all slices continuously except for documented infeasibility or genuinely new consequential evidence.</p>
+  <div class="hero-top"><div><span class="eyebrow">{esc(cid)} · immutable evidence key</span><h1>{esc(cap_alias)}</h1><p>{esc(meta.get("title"))}</p></div>{status_badge(meta.get("status"))}</div>
+  <p>Review the completed capability-wide recommendation register once. Each approved wave then executes only its ordered slices as a durable capability-wave increment.</p>
   <dl class="summary-grid"><div><dt>Slices</dt><dd>{len(slices)}</dd></div><div><dt>Decisions</dt><dd>{len(meta.get("decisions", []))}</dd></div><div><dt>Open blockers</dt><dd>{len(meta.get("open_blocking_decisions", []))}</dd></div><div><dt>Plan hash</dt><dd><code>{cap_hash[:12]}</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
-  <div><h2>Resolved recommendations and capability approval</h2><p>Best-in-class recommendations are preselected and decision-complete. Confirm them, override a documented option with rationale, or select Other and provide both a brief description and detailed rationale. Export a review record only when preserving overrides or notes; one explicit capability approval still authorizes implementation.</p></div>
+  <div><h2>Resolved capability decisions and wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them once, then approve only the active wave's ordered slice plans. Later-wave plans may remain proposed until their activation gate.</p></div>
   <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / {len(meta.get("decisions", []))} selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
-  <label class="approval-check"><input type="checkbox" data-approval-intent> Request approval of the capability packet and every slice plan after feedback is applied</label>
+  <label class="approval-check"><input type="checkbox" data-approval-intent> Request approval of the capability packet and the selected active-wave slice plans after feedback is applied</label>
   <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
   <div class="feedback-message" data-feedback-message role="status"></div>
   <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review {esc(cid)}
-python tools/planctl.py --repo . approve {esc(cid)} --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+{wave_commands}
 # Only for overrides or notes:
 python tools/planctl.py --repo . apply-feedback {esc(cid)} &lt;downloaded-json&gt;
-python tools/planctl.py --repo . approve {esc(cid)} --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
-python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre></details>
+python tools/planctl.py --repo . approve {esc(cid)} --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --require-approved</code></pre></details>
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">{decisions_html}</div>
@@ -340,13 +553,22 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
 <details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article">{render_markdown(strip_first_h1(body_md))}</article></details>
 """
         cap_page = shell(
-            title=f"{cid} {meta.get('title')}",
+            title=f"{cap_alias} ({cid}) {meta.get('title')}",
             page_type="capability",
             capability_id=cid,
             depth=1,
             body=layout(
-                breadcrumbs=f'<a href="../index.html">Planning review</a><span>/</span><span aria-current="page">{esc(cid)}</span>',
-                sidebar=capability_nav(capabilities, cid, prefix="../") + slice_nav(slices, None),
+                breadcrumbs=f'<a href="../index.html">Planning review</a><span>/</span><span aria-current="page">{esc(cap_alias)} ({esc(cid)})</span>',
+                sidebar=planning_nav(
+                    capabilities=capabilities,
+                    waves=waves,
+                    active_capability=cid,
+                    active_wave=None,
+                    capability_prefix="../",
+                    wave_prefix="../waves/",
+                    default_tab="capabilities",
+                )
+                + slice_nav(slices, None),
                 main=capability_main,
             ),
         )
@@ -355,10 +577,10 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
         open_decision_count = len(meta.get("open_blocking_decisions", []))
         if open_decision_count:
             gate_heading = f"Resolve {open_decision_count} capability decision{'s' if open_decision_count != 1 else ''} before implementation"
-            gate_text = "Decision options and approval controls are kept on the capability page so the complete cross-slice set is reviewed once."
+            gate_text = "Capability-wide decisions are resolved once; active-wave slice plans are approved progressively before execution."
         else:
-            gate_heading = "Recommendations resolved; one capability approval remains"
-            gate_text = "All material decisions are complete with the researched recommendations preselected. Reviewers only need to confirm or override the defaults and give the single capability approval."
+            gate_heading = "Recommendations resolved; active-wave approval controls execution"
+            gate_text = "Confirm or override capability defaults once, then approve the ordered slice plans for the wave being activated."
 
         for index, sl in enumerate(slices):
             smeta = sl["meta"]
@@ -368,8 +590,8 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
             next_link = slices[index + 1]["page_name"] if index + 1 < len(slices) else "index.html"
             slice_main = f"""
 <section class="hero compact">
-  <div class="hero-top"><div><span class="eyebrow">{esc(sl["slice_id"])} · Slice {index + 1} of {len(slices)}</span><h1>{esc(sl["title"])}</h1></div>{status_badge(smeta.get("status"))}</div>
-  <p>This plan expands the authoritative backlog tasks without creating a second hierarchy. It becomes executable only after the capability decisions and all slice plans are approved together.</p>
+  <div class="hero-top"><div><span class="eyebrow">{esc(sl["slice_id"])} · ordered slice {index + 1} of {len(slices)}</span><h1>{esc(sl["alias"])}</h1><p>{esc(sl["title"])}</p></div>{status_badge(smeta.get("status"))}</div>
+  <p>The descriptive label is the default presentation. The numeric slice ID preserves explicit dependency order and immutable evidence history. This plan becomes executable after the capability decisions and its wave's slice plans are approved.</p>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>{esc(smeta.get("wave"))}</dd></div><div><dt>Priority</dt><dd>{esc(smeta.get("priority"))}</dd></div><div><dt>Tasks</dt><dd>{len(smeta.get("task_ids", []))}</dd></div><div><dt>Plan hash</dt><dd><code>{sl["sha256"][:12]}</code></dd></div></dl>
 </section>
 <section class="callout callout-warning">
@@ -382,13 +604,22 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
 <nav class="page-turn" aria-label="Slice navigation"><a class="button button-quiet" href="{esc(prev_link)}">Previous</a><a class="button button-primary" href="{esc(next_link)}">Next</a></nav>
 """
             slice_page = shell(
-                title=f"{sl['slice_id']} {sl['title']}",
+                title=f"{sl['alias']} ({sl['slice_id']}) {sl['title']}",
                 page_type="slice",
                 capability_id=cid,
                 depth=1,
                 body=layout(
-                    breadcrumbs=f'<a href="../index.html">Planning review</a><span>/</span><a href="index.html">{esc(cid)}</a><span>/</span><span aria-current="page">{esc(sl["slice_id"])}</span>',
-                    sidebar=capability_nav(capabilities, cid, prefix="../") + slice_nav(slices, sl["slice_id"]),
+                    breadcrumbs=f'<a href="../index.html">Planning review</a><span>/</span><a href="index.html">{esc(cap_alias)}</a><span>/</span><span aria-current="page">{esc(sl["alias"])} ({esc(sl["slice_id"])})</span>',
+                    sidebar=planning_nav(
+                        capabilities=capabilities,
+                        waves=waves,
+                        active_capability=cid,
+                        active_wave=str(smeta.get("wave")),
+                        capability_prefix="../",
+                        wave_prefix="../waves/",
+                        default_tab="capabilities",
+                    )
+                    + slice_nav(slices, sl["slice_id"]),
                     main=slice_main,
                 ),
             )
@@ -397,6 +628,7 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
         manifest["capabilities"].append(
             {
                 "capability_id": cid,
+                "capability_alias": cap_alias,
                 "title": meta.get("title"),
                 "plan_path": str(cap_path.relative_to(repo)).replace(os.sep, "/"),
                 "plan_sha256": cap_hash,
@@ -406,6 +638,8 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
                 "slices": [
                     {
                         "slice_id": sl["slice_id"],
+                        "slice_alias": sl["alias"],
+                        "wave": sl["meta"].get("wave"),
                         "title": sl["title"],
                         "plan_path": str(sl["path"].relative_to(repo)).replace(os.sep, "/"),
                         "plan_sha256": sl["sha256"],
@@ -421,17 +655,17 @@ python tools/planctl.py --repo . ready {esc(cid)} --require-approved</code></pre
     total_slices = sum(len(item.get("slices", [])) for item in manifest["capabilities"])
     readme = f"""# Static planning review site
 
-Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["capabilities"])} capability pages and {total_slices} individual slice pages. Every researched best-in-class recommendation is already selected and treated as a completed planning decision. The site lets a reviewer confirm the defaults, record a reasoned documented override, choose Other with a brief description plus detailed rationale, add notes, and export a JSON feedback record before the single explicit capability approval.
+Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["waves"])} wave/gate pages, {len(manifest["capabilities"])} capability pages, and {total_slices} individual slice pages. Wave pages show contributing capability increments, ordered slices, and the exact exit/activation gate decision. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys. Capability decisions are resolved once, while slice-plan approval is progressive by active wave.
 
 Canonical commands:
 
 ```bash
 python tools/planctl.py --repo . review CAP-XX
 python tools/planctl.py --repo . adopt-recommendations CAP-XX  # already complete for authored packets
-python tools/planctl.py --repo . approve CAP-XX --by "Reviewer" --commit <git-sha>
+python tools/planctl.py --repo . approve CAP-XX --wave WN --by "Reviewer" --commit <git-sha>
 # Only when an override or note was exported:
 python tools/planctl.py --repo . apply-feedback CAP-XX <downloaded-json>
-python tools/planctl.py --repo . approve CAP-XX --feedback <downloaded-json> --by "Reviewer" --commit <git-sha>
+python tools/planctl.py --repo . approve CAP-XX --wave WN --feedback <downloaded-json> --by "Reviewer" --commit <git-sha>
 ```
 
 The Markdown plans remain authoritative. The review site is a generated human review surface and must be regenerated and validated after plan changes.
@@ -515,6 +749,12 @@ button, input, textarea { font: inherit; }
 .page-frame { min-height: calc(100vh - 108px); display: grid; grid-template-columns: 270px minmax(0, 1fr); }
 .side-panel { position: sticky; top: 64px; height: calc(100vh - 64px); overflow: auto; padding: 24px 16px; border-right: 1px solid var(--line); background: var(--surface); }
 .side-panel h2 { margin: 0 8px 10px; color: var(--text-soft); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+.planning-nav { margin-bottom: 28px; }
+.planning-nav-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 0 0 12px; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-soft); }
+.planning-nav-tab { min-width: 0; padding: 8px 6px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--text-soft); font-size: .76rem; font-weight: 800; cursor: pointer; }
+.planning-nav-tab:hover { color: var(--text); border-color: var(--line); }
+.planning-nav-tab[aria-selected="true"] { color: var(--primary); border-color: var(--line-strong); background: var(--surface); box-shadow: 0 2px 7px rgba(16,35,61,.08); }
+.planning-nav-panel[hidden] { display: none; }
 .cap-nav, .slice-nav { display: grid; gap: 6px; margin-bottom: 28px; }
 .nav-item, .slice-nav-item { display: grid; text-decoration: none; color: var(--text); border: 1px solid transparent; border-radius: 9px; padding: 10px 11px; }
 .nav-item small, .slice-nav-item small { color: var(--text-soft); }
@@ -595,6 +835,17 @@ input:focus, textarea:focus, button:focus, a:focus { outline: 3px solid color-mi
 .recommended { display: inline-flex; margin-left: 8px; padding: .16rem .42rem; border-radius: 999px; color: var(--success); background: var(--success-soft); font-size: .67rem; font-weight: 800; }
 .decision-meta { color: var(--text-soft); font-size: .8rem; }
 .slice-list { display: grid; gap: 10px; }
+.wave-capability-list { display: grid; gap: 14px; }
+.wave-capability { padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.wave-capability h2 { margin: 4px 0; font: 700 1.25rem/1.2 var(--font-display); }
+.wave-capability h2 a { color: var(--primary); text-decoration: none; }
+.wave-capability p { margin: 4px 0; color: var(--text-soft); }
+.wave-slice-list { display: grid; gap: 7px; margin: 16px 0 0; padding: 0; list-style-position: inside; }
+.wave-slice-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--canvas); }
+.wave-slice-list li > span { display: grid; gap: 2px; font-weight: 750; }
+.wave-slice-list a { color: var(--primary); text-decoration: none; }
+.wave-slice-list small { color: var(--text-soft); font-weight: 500; }
+.gate-criteria { display: grid; gap: 7px; padding-left: 22px; }
 .slice-card { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 14px; padding: 15px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); text-decoration: none; color: var(--text); }
 .slice-card:hover { border-color: var(--primary); box-shadow: var(--shadow); }
 .slice-card-index { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-weight: 850; }
@@ -657,6 +908,35 @@ REVIEW_JS = r"""
     button.addEventListener("click", () => {
       root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
       localStorage.setItem(themeKey, root.dataset.theme);
+    });
+  });
+
+  document.querySelectorAll("[data-planning-nav]").forEach((navigation) => {
+    const tabs = Array.from(navigation.querySelectorAll("[data-nav-tab]"));
+    const panels = Array.from(navigation.querySelectorAll("[data-nav-panel]"));
+    const activate = (name, focus = false) => {
+      tabs.forEach((tab) => {
+        const selected = tab.dataset.navTab === name;
+        tab.setAttribute("aria-selected", selected ? "true" : "false");
+        tab.tabIndex = selected ? 0 : -1;
+        if (selected && focus) tab.focus();
+      });
+      panels.forEach((panel) => { panel.hidden = panel.dataset.navPanel !== name; });
+    };
+    const initial = navigation.dataset.defaultTab || "capabilities";
+    activate(initial);
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => activate(tab.dataset.navTab || initial));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        let next = index;
+        if (event.key === "ArrowLeft") next = (index - 1 + tabs.length) % tabs.length;
+        if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+        if (event.key === "Home") next = 0;
+        if (event.key === "End") next = tabs.length - 1;
+        activate(tabs[next].dataset.navTab || initial, true);
+      });
     });
   });
 
@@ -802,7 +1082,7 @@ REVIEW_JS = r"""
       capability_plan_sha256: planHash,
       reviewer: value.reviewer || null,
       reviewed_at: new Date().toISOString(),
-      requested_action: value.approval_intent ? "approve-capability-and-slices" : "record-feedback",
+      requested_action: value.approval_intent ? "approve-capability-and-active-wave" : "record-feedback",
       capability_notes: value.notes,
       decisions: Object.entries(value.decisions).map(([id, item]) => ({
         id,

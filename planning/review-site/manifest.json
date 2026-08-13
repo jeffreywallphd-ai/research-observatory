@@ -1,15 +1,361 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "document_type": "planning-review-site-manifest",
   "baseline": "1.3",
   "supplemental_release": "1.3.4",
-  "review_interface_release": "1.3.5",
-  "generated_at": "2026-08-08T15:37:30.522334+00:00",
+  "review_interface_release": "1.3.7",
+  "generated_at": "2026-08-13T22:42:23.459494+00:00",
   "entry_point": "index.html",
   "feedback_schema_version": "1.1",
+  "waves": [
+    {
+      "wave_id": "W0",
+      "title": "Engineering foundation",
+      "track": "local-baseline",
+      "page": "waves/W0.html",
+      "capability_ids": [
+        "CAP-00"
+      ],
+      "slice_ids": [
+        "CAP-00.S01",
+        "CAP-00.S02",
+        "CAP-00.S03",
+        "CAP-00.S04",
+        "CAP-00.S05",
+        "CAP-00.S06"
+      ],
+      "slice_count": 6,
+      "task_count": 19,
+      "exit_gate_id": "G0",
+      "gate_status": "APPROVED",
+      "unlocks_waves": [
+        "W1"
+      ]
+    },
+    {
+      "wave_id": "W1",
+      "title": "Windows local runtime and durable core",
+      "track": "local-baseline",
+      "page": "waves/W1.html",
+      "capability_ids": [
+        "CAP-01",
+        "CAP-02",
+        "CAP-03",
+        "CAP-07"
+      ],
+      "slice_ids": [
+        "CAP-01.S01",
+        "CAP-01.S02",
+        "CAP-01.S03",
+        "CAP-01.S04",
+        "CAP-02.S01",
+        "CAP-02.S02",
+        "CAP-02.S03",
+        "CAP-02.S04",
+        "CAP-03.S01",
+        "CAP-03.S02",
+        "CAP-03.S03",
+        "CAP-03.S04",
+        "CAP-03.S05",
+        "CAP-03.S06",
+        "CAP-07.S01"
+      ],
+      "slice_count": 15,
+      "task_count": 48,
+      "exit_gate_id": "G1",
+      "gate_status": "PENDING",
+      "unlocks_waves": [
+        "W2"
+      ]
+    },
+    {
+      "wave_id": "W2",
+      "title": "Windows local evidence foundation",
+      "track": "local-baseline",
+      "page": "waves/W2.html",
+      "capability_ids": [
+        "CAP-04",
+        "CAP-05"
+      ],
+      "slice_ids": [
+        "CAP-04.S01",
+        "CAP-04.S02",
+        "CAP-04.S03",
+        "CAP-04.S04",
+        "CAP-04.S05",
+        "CAP-05.S01",
+        "CAP-05.S02",
+        "CAP-05.S03",
+        "CAP-05.S04",
+        "CAP-05.S05",
+        "CAP-05.S06"
+      ],
+      "slice_count": 11,
+      "task_count": 33,
+      "exit_gate_id": "G2",
+      "gate_status": "PENDING",
+      "unlocks_waves": [
+        "W3"
+      ]
+    },
+    {
+      "wave_id": "W3",
+      "title": "Windows local research workbench",
+      "track": "local-baseline",
+      "page": "waves/W3.html",
+      "capability_ids": [
+        "CAP-06",
+        "CAP-07",
+        "CAP-08"
+      ],
+      "slice_ids": [
+        "CAP-06.S01",
+        "CAP-06.S02",
+        "CAP-06.S03",
+        "CAP-06.S04",
+        "CAP-06.S05",
+        "CAP-06.S06",
+        "CAP-07.S02",
+        "CAP-07.S03",
+        "CAP-07.S04",
+        "CAP-07.S05",
+        "CAP-08.S01",
+        "CAP-08.S02",
+        "CAP-08.S03",
+        "CAP-08.S04",
+        "CAP-08.S05",
+        "CAP-08.S06"
+      ],
+      "slice_count": 16,
+      "task_count": 48,
+      "exit_gate_id": "G3",
+      "gate_status": "PENDING",
+      "unlocks_waves": [
+        "W4"
+      ]
+    },
+    {
+      "wave_id": "W4",
+      "title": "Windows scholarly reasoning and novelty MVP",
+      "track": "local-baseline",
+      "page": "waves/W4.html",
+      "capability_ids": [
+        "CAP-09",
+        "CAP-10"
+      ],
+      "slice_ids": [
+        "CAP-09.S01",
+        "CAP-09.S02",
+        "CAP-09.S03",
+        "CAP-09.S04",
+        "CAP-09.S05",
+        "CAP-09.S06",
+        "CAP-10.S01",
+        "CAP-10.S02",
+        "CAP-10.S03"
+      ],
+      "slice_count": 9,
+      "task_count": 27,
+      "exit_gate_id": "G4",
+      "gate_status": "PENDING",
+      "unlocks_waves": [
+        "W5"
+      ]
+    },
+    {
+      "wave_id": "W5",
+      "title": "Windows PC/lab production release",
+      "track": "local-baseline",
+      "page": "waves/W5.html",
+      "capability_ids": [
+        "CAP-01",
+        "CAP-02",
+        "CAP-11"
+      ],
+      "slice_ids": [
+        "CAP-01.S05",
+        "CAP-02.S05",
+        "CAP-11.S01",
+        "CAP-11.S02",
+        "CAP-11.S03",
+        "CAP-11.S04",
+        "CAP-11.S05",
+        "CAP-11.S06"
+      ],
+      "slice_count": 8,
+      "task_count": 25,
+      "exit_gate_id": "G5",
+      "gate_status": "PENDING",
+      "unlocks_waves": [
+        "W6"
+      ]
+    },
+    {
+      "wave_id": "W6",
+      "title": "Cross-platform desktop qualification",
+      "track": "cross-platform-desktop",
+      "page": "waves/W6.html",
+      "capability_ids": [
+        "CAP-14"
+      ],
+      "slice_ids": [
+        "CAP-14.S01",
+        "CAP-14.S02",
+        "CAP-14.S03",
+        "CAP-14.S04",
+        "CAP-14.S05",
+        "CAP-14.S06"
+      ],
+      "slice_count": 6,
+      "task_count": 18,
+      "exit_gate_id": "G6",
+      "gate_status": "PENDING",
+      "unlocks_waves": [
+        "W7"
+      ]
+    },
+    {
+      "wave_id": "W7",
+      "title": "Study design and manuscript foundations",
+      "track": "research-production",
+      "page": "waves/W7.html",
+      "capability_ids": [
+        "CAP-10",
+        "CAP-15",
+        "CAP-16"
+      ],
+      "slice_ids": [
+        "CAP-10.S05",
+        "CAP-15.S01",
+        "CAP-15.S02",
+        "CAP-15.S03",
+        "CAP-15.S04",
+        "CAP-15.S05",
+        "CAP-15.S06",
+        "CAP-16.S01",
+        "CAP-16.S02",
+        "CAP-16.S03",
+        "CAP-16.S04",
+        "CAP-16.S05",
+        "CAP-16.S06"
+      ],
+      "slice_count": 13,
+      "task_count": 39,
+      "exit_gate_id": "G7",
+      "gate_status": "PENDING",
+      "unlocks_waves": [
+        "W8"
+      ]
+    },
+    {
+      "wave_id": "W8",
+      "title": "Results integration, manuscript drafting, and reviewer simulation",
+      "track": "research-production",
+      "page": "waves/W8.html",
+      "capability_ids": [
+        "CAP-17",
+        "CAP-18",
+        "CAP-19"
+      ],
+      "slice_ids": [
+        "CAP-17.S01",
+        "CAP-17.S02",
+        "CAP-17.S03",
+        "CAP-17.S04",
+        "CAP-17.S05",
+        "CAP-17.S06",
+        "CAP-18.S01",
+        "CAP-18.S02",
+        "CAP-18.S03",
+        "CAP-18.S04",
+        "CAP-18.S05",
+        "CAP-18.S06",
+        "CAP-19.S01",
+        "CAP-19.S02",
+        "CAP-19.S03",
+        "CAP-19.S04",
+        "CAP-19.S05",
+        "CAP-19.S06"
+      ],
+      "slice_count": 18,
+      "task_count": 54,
+      "exit_gate_id": "G8",
+      "gate_status": "PENDING",
+      "unlocks_waves": [
+        "W9",
+        "W10"
+      ]
+    },
+    {
+      "wave_id": "W9",
+      "title": "Advanced research-intelligence preview",
+      "track": "research-intelligence",
+      "page": "waves/W9.html",
+      "capability_ids": [
+        "CAP-10"
+      ],
+      "slice_ids": [
+        "CAP-10.S04",
+        "CAP-10.S06",
+        "CAP-10.S07"
+      ],
+      "slice_count": 3,
+      "task_count": 9,
+      "exit_gate_id": "G9",
+      "gate_status": "PENDING",
+      "unlocks_waves": []
+    },
+    {
+      "wave_id": "W10",
+      "title": "University-hosted pilot",
+      "track": "institutional",
+      "page": "waves/W10.html",
+      "capability_ids": [
+        "CAP-12"
+      ],
+      "slice_ids": [
+        "CAP-12.S01",
+        "CAP-12.S02",
+        "CAP-12.S03",
+        "CAP-12.S04",
+        "CAP-12.S05",
+        "CAP-12.S06"
+      ],
+      "slice_count": 6,
+      "task_count": 18,
+      "exit_gate_id": "G10",
+      "gate_status": "PENDING",
+      "unlocks_waves": [
+        "W11"
+      ]
+    },
+    {
+      "wave_id": "W11",
+      "title": "Managed cloud delivery",
+      "track": "cloud",
+      "page": "waves/W11.html",
+      "capability_ids": [
+        "CAP-13"
+      ],
+      "slice_ids": [
+        "CAP-13.S01",
+        "CAP-13.S02",
+        "CAP-13.S03",
+        "CAP-13.S04",
+        "CAP-13.S05",
+        "CAP-13.S06"
+      ],
+      "slice_count": 6,
+      "task_count": 18,
+      "exit_gate_id": "G11",
+      "gate_status": "PENDING",
+      "unlocks_waves": []
+    }
+  ],
   "capabilities": [
     {
       "capability_id": "CAP-01",
+      "capability_alias": "CAP-windows-desktop-runtime",
       "title": "Windows-first desktop shell and supervised local runtime",
       "plan_path": "planning/capability-plans/CAP-01.md",
       "plan_sha256": "87f9e7b581e7228f17ca43067a360920429bf55aba290b9fdb273935ac528502",
@@ -19,6 +365,8 @@
       "slices": [
         {
           "slice_id": "CAP-01.S01",
+          "slice_alias": "SLICE-tauri-and-react-application-shell",
+          "wave": "W1",
           "title": "Tauri and React application shell",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S01-tauri-and-react-application-shell.md",
           "plan_sha256": "b614069e45f4608d7ec4c740b145c2a836c8f37153baff4846cc2851cf4bd53f",
@@ -27,6 +375,8 @@
         },
         {
           "slice_id": "CAP-01.S02",
+          "slice_alias": "SLICE-desktop-design-system-and-accessibility-foundation",
+          "wave": "W1",
           "title": "Desktop design system and accessibility foundation",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S02-desktop-design-system-and-accessibility-foundation.md",
           "plan_sha256": "86fc99fab8bc461805208d26f6ffb82af7ef278999d82f758e072439dee13209",
@@ -35,6 +385,8 @@
         },
         {
           "slice_id": "CAP-01.S03",
+          "slice_alias": "SLICE-packaged-python-fastapi-sidecar",
+          "wave": "W1",
           "title": "Packaged Python/FastAPI sidecar",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S03-packaged-python-fastapi-sidecar.md",
           "plan_sha256": "dedd4f63daa253f9cf143f3b05db57d11213f5830d254917de0b2b10fe495840",
@@ -43,6 +395,8 @@
         },
         {
           "slice_id": "CAP-01.S04",
+          "slice_alias": "SLICE-authenticated-desktop-service-contract",
+          "wave": "W1",
           "title": "Authenticated desktop-service contract",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S04-authenticated-desktop-service-contract.md",
           "plan_sha256": "73642b4a4d3833bb04246e78f3c83add189f52ab871533a0854f9e4305be2065",
@@ -51,6 +405,8 @@
         },
         {
           "slice_id": "CAP-01.S05",
+          "slice_alias": "SLICE-windows-installation-and-update-channels",
+          "wave": "W5",
           "title": "Windows installation and update channels",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S05-windows-installation-and-update-channels.md",
           "plan_sha256": "252ff3abf403663fe3ce6ad716e9b01b637f970cdb22c72d987ee6f299e8d0db",
@@ -61,6 +417,7 @@
     },
     {
       "capability_id": "CAP-02",
+      "capability_alias": "CAP-local-project-storage",
       "title": "Local projects, durable storage, security, and recovery",
       "plan_path": "planning/capability-plans/CAP-02.md",
       "plan_sha256": "115c946e8f61dbe847abafebd47caef7e3970138fe0502aac0f39deace1dea6c",
@@ -70,6 +427,8 @@
       "slices": [
         {
           "slice_id": "CAP-02.S01",
+          "slice_alias": "SLICE-local-project-lifecycle-and-directory-contract",
+          "wave": "W1",
           "title": "Local project lifecycle and directory contract",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S01-local-project-lifecycle-and-directory-contract.md",
           "plan_sha256": "81a64f717d8376f89f717bd9c4f3b27ca6bebdc05d6c6c76abb04e863d30d1bb",
@@ -78,6 +437,8 @@
         },
         {
           "slice_id": "CAP-02.S02",
+          "slice_alias": "SLICE-sqlite-schema-migrations-and-repository-layer",
+          "wave": "W1",
           "title": "SQLite schema, migrations, and repository layer",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S02-sqlite-schema-migrations-and-repository-layer.md",
           "plan_sha256": "132d500a8e56a28184fac2e9569ed544dcb50245dd7af91608eb84e61e24b27a",
@@ -86,6 +447,8 @@
         },
         {
           "slice_id": "CAP-02.S03",
+          "slice_alias": "SLICE-encrypted-local-object-and-cache-storage",
+          "wave": "W1",
           "title": "Encrypted local object and cache storage",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S03-encrypted-local-object-and-cache-storage.md",
           "plan_sha256": "3feff55cd3ca59713c6d11aff61233a8a833fdac4f323d1d3e6c08248b25f9c9",
@@ -94,6 +457,8 @@
         },
         {
           "slice_id": "CAP-02.S04",
+          "slice_alias": "SLICE-local-secrets-profiles-and-privacy-controls",
+          "wave": "W1",
           "title": "Local secrets, profiles, and privacy controls",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S04-local-secrets-profiles-and-privacy-controls.md",
           "plan_sha256": "807e1f4a1e9a193f9777488b7c85671c4ef9b9e0cf63d270a953fe9b68f7ffd4",
@@ -102,6 +467,8 @@
         },
         {
           "slice_id": "CAP-02.S05",
+          "slice_alias": "SLICE-backup-restore-relocation-and-lab-portability",
+          "wave": "W5",
           "title": "Backup, restore, relocation, and lab portability",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S05-backup-restore-relocation-and-lab-portability.md",
           "plan_sha256": "fc01d2834fbf410bf46e6fbc09df26cb1af917b90d7f21fbd581ad6dba42def3",
@@ -112,6 +479,7 @@
     },
     {
       "capability_id": "CAP-03",
+      "capability_alias": "CAP-research-domain-workflows",
       "title": "Canonical domain, research intent, provenance, and durable workflows",
       "plan_path": "planning/capability-plans/CAP-03.md",
       "plan_sha256": "3cf6cf0758144aa61b1fbb9fc88f9d386e5e7879d58efbf4833b279006746bbe",
@@ -121,6 +489,8 @@
       "slices": [
         {
           "slice_id": "CAP-03.S01",
+          "slice_alias": "SLICE-canonical-identifiers-and-domain-contracts",
+          "wave": "W1",
           "title": "Canonical identifiers and domain contracts",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S01-canonical-identifiers-and-domain-contracts.md",
           "plan_sha256": "a9c0740fb6aaff4e795cad33d65b37ad9ff81276d6380c9d3d8024e4394505af",
@@ -129,6 +499,8 @@
         },
         {
           "slice_id": "CAP-03.S02",
+          "slice_alias": "SLICE-research-intent-contract-and-mode-governance",
+          "wave": "W1",
           "title": "Research intent contract and mode governance",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S02-research-intent-contract-and-mode-governance.md",
           "plan_sha256": "470052780056bbf941b4bc0b60654fc2a4d2862d0f11f41f9cef33a5bbaa66c2",
@@ -137,6 +509,8 @@
         },
         {
           "slice_id": "CAP-03.S03",
+          "slice_alias": "SLICE-append-only-provenance-and-audit-ledger",
+          "wave": "W1",
           "title": "Append-only provenance and audit ledger",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S03-append-only-provenance-and-audit-ledger.md",
           "plan_sha256": "1f58509c0e9a75cf76f8ed57fb843b84a832d315195888e86c857011b5a8fdb7",
@@ -145,6 +519,8 @@
         },
         {
           "slice_id": "CAP-03.S04",
+          "slice_alias": "SLICE-portable-workflow-model-and-local-worker-fabric",
+          "wave": "W1",
           "title": "Portable workflow model and local worker fabric",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S04-portable-workflow-model-and-local-worker-fabric.md",
           "plan_sha256": "0622ddf0710e5af43d4f94e8489d0c4c800d950ec227ddba6c7a04f3fe54e56e",
@@ -153,6 +529,8 @@
         },
         {
           "slice_id": "CAP-03.S05",
+          "slice_alias": "SLICE-dependency-graph-staleness-and-controlled-recalculation",
+          "wave": "W1",
           "title": "Dependency graph, staleness, and controlled recalculation",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md",
           "plan_sha256": "2934a79639d64e19a69527adf8868a090adcce88ee4be922bef4c1906c26d086",
@@ -161,6 +539,8 @@
         },
         {
           "slice_id": "CAP-03.S06",
+          "slice_alias": "SLICE-use-case-profiles-and-adaptive-guided-navigation",
+          "wave": "W1",
           "title": "Use-case profiles and adaptive guided navigation",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
           "plan_sha256": "9c103b233fcca4750d0fdcf9e5d478743cf26ecd6921b4446c56d0d02aa25c3e",
@@ -171,6 +551,7 @@
     },
     {
       "capability_id": "CAP-04",
+      "capability_alias": "CAP-scholarly-ingestion",
       "title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
       "plan_path": "planning/capability-plans/CAP-04.md",
       "plan_sha256": "5a996c8d7803ea682ef03e588f0c80be42c405ab9b20edeae42fe682bc5ae5d6",
@@ -180,6 +561,8 @@
       "slices": [
         {
           "slice_id": "CAP-04.S01",
+          "slice_alias": "SLICE-reference-library-and-file-imports",
+          "wave": "W2",
           "title": "Reference-library and file imports",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S01-reference-library-and-file-imports.md",
           "plan_sha256": "b3c2194c0b97f7b1658162090413853ff47932df679055dd3277dfcccfb9731f",
@@ -188,6 +571,8 @@
         },
         {
           "slice_id": "CAP-04.S02",
+          "slice_alias": "SLICE-open-scholarly-source-adapters",
+          "wave": "W2",
           "title": "Open scholarly source adapters",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S02-open-scholarly-source-adapters.md",
           "plan_sha256": "032cd0f50b332aca97b9c49821a51ddc95a6c37a9665cf341af5f6481f93f6ce",
@@ -196,6 +581,8 @@
         },
         {
           "slice_id": "CAP-04.S03",
+          "slice_alias": "SLICE-canonical-work-version-and-identity-reconciliation",
+          "wave": "W2",
           "title": "Canonical work, version, and identity reconciliation",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S03-canonical-work-version-and-identity-reconciliation.md",
           "plan_sha256": "53cbdf74f2bea9c22466b93f4109dc5de89336b01cae88db2cc1271503034f1e",
@@ -204,6 +591,8 @@
         },
         {
           "slice_id": "CAP-04.S04",
+          "slice_alias": "SLICE-corpus-membership-discovery-path-and-rights-governance",
+          "wave": "W2",
           "title": "Corpus membership, discovery path, and rights governance",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S04-corpus-membership-discovery-path-and-rights-governance.md",
           "plan_sha256": "1ceafcccbe40064341f497c8871a18611270dbfa3ffc96feb340830ef2626d97",
@@ -212,6 +601,8 @@
         },
         {
           "slice_id": "CAP-04.S05",
+          "slice_alias": "SLICE-connector-sdk-and-controlled-extensibility",
+          "wave": "W2",
           "title": "Connector SDK and controlled extensibility",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S05-connector-sdk-and-controlled-extensibility.md",
           "plan_sha256": "38126b03a34ff8e10d933852c0ed0e33a10387026ff123978248928e3df1091f",
@@ -222,6 +613,7 @@
     },
     {
       "capability_id": "CAP-05",
+      "capability_alias": "CAP-document-inspection",
       "title": "Document acquisition, parsing, source inspection, and page anchors",
       "plan_path": "planning/capability-plans/CAP-05.md",
       "plan_sha256": "24093d1107ad3f94653a17ea0ef97ac37008a9212b07d26004e7398506ef7042",
@@ -231,6 +623,8 @@
       "slices": [
         {
           "slice_id": "CAP-05.S01",
+          "slice_alias": "SLICE-rights-aware-document-acquisition",
+          "wave": "W2",
           "title": "Rights-aware document acquisition",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
           "plan_sha256": "72b570929cd485b4338df641e9738558a3fe67d21d6f7f1d4b039c9e6f74f57d",
@@ -239,6 +633,8 @@
         },
         {
           "slice_id": "CAP-05.S02",
+          "slice_alias": "SLICE-structured-and-pdf-parsing-pipeline",
+          "wave": "W2",
           "title": "Structured and PDF parsing pipeline",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S02-structured-and-pdf-parsing-pipeline.md",
           "plan_sha256": "c118fe46d6f30c8461f09e281e009978dbf1257a40719e3b24cd369cd7973c25",
@@ -247,6 +643,8 @@
         },
         {
           "slice_id": "CAP-05.S03",
+          "slice_alias": "SLICE-immutable-document-revisions-and-source-anchors",
+          "wave": "W2",
           "title": "Immutable document revisions and source anchors",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S03-immutable-document-revisions-and-source-anchors.md",
           "plan_sha256": "02d13b4f70693226d94d1e634430ad7be88f78f12f749bd32861b4469be70ddf",
@@ -255,6 +653,8 @@
         },
         {
           "slice_id": "CAP-05.S04",
+          "slice_alias": "SLICE-source-viewer-and-evidence-inspection-experience",
+          "wave": "W2",
           "title": "Source viewer and evidence inspection experience",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md",
           "plan_sha256": "4932ca925e0364c8b68ed7948343f5868b433838ed5556ea502dce0c4effab5a",
@@ -263,6 +663,8 @@
         },
         {
           "slice_id": "CAP-05.S05",
+          "slice_alias": "SLICE-references-citation-contexts-tables-and-figures",
+          "wave": "W2",
           "title": "References, citation contexts, tables, and figures",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S05-references-citation-contexts-tables-and-figures.md",
           "plan_sha256": "33ee9ad3111e5d9683bce5451343b944794f3bb7b4a939eba5c179469f1947a5",
@@ -271,6 +673,8 @@
         },
         {
           "slice_id": "CAP-05.S06",
+          "slice_alias": "SLICE-parsing-quality-correction-and-reprocessing",
+          "wave": "W2",
           "title": "Parsing quality, correction, and reprocessing",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S06-parsing-quality-correction-and-reprocessing.md",
           "plan_sha256": "3bb69d66e7b2155ef1356e4f466b0d49de41738eae7957cd80b1d7f69f6ae61f",
@@ -281,6 +685,7 @@
     },
     {
       "capability_id": "CAP-06",
+      "capability_alias": "CAP-search-screening",
       "title": "Local search, discovery, corpus diagnostics, and screening",
       "plan_path": "planning/capability-plans/CAP-06.md",
       "plan_sha256": "d2feb55ff3b9d42f74900304aa6df2b918960875e6f9441d03d4bcbecb1c5684",
@@ -290,6 +695,8 @@
       "slices": [
         {
           "slice_id": "CAP-06.S01",
+          "slice_alias": "SLICE-fielded-lexical-search-and-local-indexing",
+          "wave": "W3",
           "title": "Fielded lexical search and local indexing",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
           "plan_sha256": "c8db5dad40ccea9131a45a3ac69b86e0286bf0a48df499c0225596af88848d74",
@@ -298,6 +705,8 @@
         },
         {
           "slice_id": "CAP-06.S02",
+          "slice_alias": "SLICE-semantic-representations-and-vector-retrieval",
+          "wave": "W3",
           "title": "Semantic representations and vector retrieval",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
           "plan_sha256": "fe0200803db76883c9331a7fe7cf4828a3a38967a8cf38c9ba76e8dd23ffc129",
@@ -306,6 +715,8 @@
         },
         {
           "slice_id": "CAP-06.S03",
+          "slice_alias": "SLICE-hybrid-retrieval-and-reranking",
+          "wave": "W3",
           "title": "Hybrid retrieval and reranking",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
           "plan_sha256": "9af6c08fc36277707267a4ed72c3627a3643434139d8b19c526c04b48776d56d",
@@ -314,6 +725,8 @@
         },
         {
           "slice_id": "CAP-06.S04",
+          "slice_alias": "SLICE-search-studio-and-transparent-expansion",
+          "wave": "W3",
           "title": "Search Studio and transparent expansion",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
           "plan_sha256": "3219bb6a998f9ab2168e668a2c8cf7c290149327b0c3b414c43750a4dd0b5815",
@@ -322,6 +735,8 @@
         },
         {
           "slice_id": "CAP-06.S05",
+          "slice_alias": "SLICE-corpus-canvas-coverage-and-reflexivity-diagnostics",
+          "wave": "W3",
           "title": "Corpus canvas, coverage, and reflexivity diagnostics",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
           "plan_sha256": "fac90388745b410c6ff880ed9f30530d93234a28c96cf4ed803f10b6b86e3730",
@@ -330,6 +745,8 @@
         },
         {
           "slice_id": "CAP-06.S06",
+          "slice_alias": "SLICE-transparent-screening-and-active-learning-governance",
+          "wave": "W3",
           "title": "Transparent screening and active-learning governance",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
           "plan_sha256": "6e369bef0b7d4dd21a44d6e7ae86d567c69c14c8a828a322a08588e4ac298710",
@@ -340,6 +757,7 @@
     },
     {
       "capability_id": "CAP-07",
+      "capability_alias": "CAP-model-gateway",
       "title": "Provider-neutral model gateway and governed AI execution",
       "plan_path": "planning/capability-plans/CAP-07.md",
       "plan_sha256": "fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24",
@@ -349,6 +767,8 @@
       "slices": [
         {
           "slice_id": "CAP-07.S01",
+          "slice_alias": "SLICE-model-task-provider-and-routing-contracts",
+          "wave": "W1",
           "title": "Model task, provider, and routing contracts",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
           "plan_sha256": "07af35ae83e6ce01a3e9dee6cdf6e3bc4726881a0bcd1cd7f5210206ade0907f",
@@ -357,6 +777,8 @@
         },
         {
           "slice_id": "CAP-07.S02",
+          "slice_alias": "SLICE-local-model-runtime-and-model-management",
+          "wave": "W3",
           "title": "Local model runtime and model management",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
           "plan_sha256": "686dbbe7e21fca6f256f4f9590f231215a556382de769981a02f466e55211945",
@@ -365,6 +787,8 @@
         },
         {
           "slice_id": "CAP-07.S03",
+          "slice_alias": "SLICE-approved-remote-model-providers",
+          "wave": "W3",
           "title": "Approved remote model providers",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
           "plan_sha256": "eea09e207224f26a129d0162006a01ee25ac143051db15d768bea56671130f22",
@@ -373,6 +797,8 @@
         },
         {
           "slice_id": "CAP-07.S04",
+          "slice_alias": "SLICE-prompt-schema-and-structured-output-registry",
+          "wave": "W3",
           "title": "Prompt, schema, and structured-output registry",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
           "plan_sha256": "dce5c9bf9d3cf0171729849776ae14d55b47db49b0fe78680c2fcfd31e5d4759",
@@ -381,6 +807,8 @@
         },
         {
           "slice_id": "CAP-07.S05",
+          "slice_alias": "SLICE-ai-observability-budgets-and-evaluation-operations",
+          "wave": "W3",
           "title": "AI observability, budgets, and evaluation operations",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
           "plan_sha256": "428c9514fe535894f297aadfa2998e48acb940b66880b59fdbfdb1ad1be09228",
@@ -391,6 +819,7 @@
     },
     {
       "capability_id": "CAP-08",
+      "capability_alias": "CAP-evidence-verification",
       "title": "Evidence schemas, extraction, verification, and adjudication",
       "plan_path": "planning/capability-plans/CAP-08.md",
       "plan_sha256": "cea372463cea43a29d2ef5176f8818577918910a8a69b2b1953ef29628c63705",
@@ -400,6 +829,8 @@
       "slices": [
         {
           "slice_id": "CAP-08.S01",
+          "slice_alias": "SLICE-core-ontology-and-schema-pack-registry",
+          "wave": "W3",
           "title": "Core ontology and schema-pack registry",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
           "plan_sha256": "6dbc0575b70df71f3bbbad84999c8b7fa9fffbd17871978fff69ac984c8e1bb2",
@@ -408,6 +839,8 @@
         },
         {
           "slice_id": "CAP-08.S02",
+          "slice_alias": "SLICE-source-grounded-extraction-pipeline",
+          "wave": "W3",
           "title": "Source-grounded extraction pipeline",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
           "plan_sha256": "7e433329647b418dfcff47817707ce738c03ddb60a1f5c39508ecc7365bc6bb6",
@@ -416,6 +849,8 @@
         },
         {
           "slice_id": "CAP-08.S03",
+          "slice_alias": "SLICE-evidence-record-status-confidence-and-uncertainty-model",
+          "wave": "W3",
           "title": "Evidence record, status, confidence, and uncertainty model",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
           "plan_sha256": "ce490c474b1037e626efd7cd0c7ae10f0de19d539ab96b0f099ebd832d15633c",
@@ -424,6 +859,8 @@
         },
         {
           "slice_id": "CAP-08.S04",
+          "slice_alias": "SLICE-independent-evidence-verification",
+          "wave": "W3",
           "title": "Independent evidence verification",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
           "plan_sha256": "7cbf1531b534919a91bc0c0af5247a2506391ac817d5a731cc707dfbe3aba970",
@@ -432,6 +869,8 @@
         },
         {
           "slice_id": "CAP-08.S05",
+          "slice_alias": "SLICE-evidence-matrix-and-source-first-analysis-ui",
+          "wave": "W3",
           "title": "Evidence matrix and source-first analysis UI",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
           "plan_sha256": "e3f3da62e470bb0e6bcfc789c6dcfd2814a5ecab9e220da05b244e6ad3b434b1",
@@ -440,6 +879,8 @@
         },
         {
           "slice_id": "CAP-08.S06",
+          "slice_alias": "SLICE-coder-comparison-adjudication-and-evidence-export",
+          "wave": "W3",
           "title": "Coder comparison, adjudication, and evidence export",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
           "plan_sha256": "09e6644e1fdb92b80eb532b4611c28c5b88a0754cc6a7bba453627529a69d612",
@@ -450,6 +891,7 @@
     },
     {
       "capability_id": "CAP-09",
+      "capability_alias": "CAP-scholarly-graph-synthesis",
       "title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
       "plan_path": "planning/capability-plans/CAP-09.md",
       "plan_sha256": "f68bc0ad2a0bedf2ae8b782bb7eebabcbee4ab68ab209dd5c532374cf5472f46",
@@ -459,6 +901,8 @@
       "slices": [
         {
           "slice_id": "CAP-09.S01",
+          "slice_alias": "SLICE-local-graph-domain-and-replaceable-graph-storage",
+          "wave": "W4",
           "title": "Local graph domain and replaceable graph storage",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S01-local-graph-domain-and-replaceable-graph-storage.md",
           "plan_sha256": "17c32c3981e76b2fc62050d4e3819eb757c293fefcc400850df3a0683b3761cf",
@@ -467,6 +911,8 @@
         },
         {
           "slice_id": "CAP-09.S02",
+          "slice_alias": "SLICE-claim-theory-construct-method-and-context-relations",
+          "wave": "W4",
           "title": "Claim, theory, construct, method, and context relations",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S02-claim-theory-construct-method-and-context-relations.md",
           "plan_sha256": "668332e52a791454a39005b125d0fe1845525e23f9dc39d7d3ea07d2ab0387ce",
@@ -475,6 +921,8 @@
         },
         {
           "slice_id": "CAP-09.S03",
+          "slice_alias": "SLICE-comparability-sets-and-contradiction-candidates",
+          "wave": "W4",
           "title": "Comparability sets and contradiction candidates",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S03-comparability-sets-and-contradiction-candidates.md",
           "plan_sha256": "b0f7acc04812e46931f60ba83d2328dffe0584481e45b2ad94ef08cff8cc7177",
@@ -483,6 +931,8 @@
         },
         {
           "slice_id": "CAP-09.S04",
+          "slice_alias": "SLICE-graph-theory-construct-and-lineage-workspaces",
+          "wave": "W4",
           "title": "Graph, theory, construct, and lineage workspaces",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S04-graph-theory-construct-and-lineage-workspaces.md",
           "plan_sha256": "d6288d13601925be0995a8c1a409987bf556cdccbc0d585e1e31c073521c014e",
@@ -491,6 +941,8 @@
         },
         {
           "slice_id": "CAP-09.S05",
+          "slice_alias": "SLICE-evidence-grounded-synthesis-and-citation-audit",
+          "wave": "W4",
           "title": "Evidence-grounded synthesis and citation audit",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S05-evidence-grounded-synthesis-and-citation-audit.md",
           "plan_sha256": "41b4d85703f7fa7260b585476b8c4930f776b3523ef0166ce91b77962d50ffd9",
@@ -499,6 +951,8 @@
         },
         {
           "slice_id": "CAP-09.S06",
+          "slice_alias": "SLICE-reproducibility-packages-and-scholarly-exports",
+          "wave": "W4",
           "title": "Reproducibility packages and scholarly exports",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S06-reproducibility-packages-and-scholarly-exports.md",
           "plan_sha256": "85d1b21a8482524914552d48db0189085c2c5e497fa05d375f88cac637765e7e",
@@ -509,6 +963,7 @@
     },
     {
       "capability_id": "CAP-10",
+      "capability_alias": "CAP-novelty-opportunities",
       "title": "Novelty auditing, research opportunities, and plural research modes",
       "plan_path": "planning/capability-plans/CAP-10.md",
       "plan_sha256": "933509875d77824fac3c4357cbef9f0bb485d9cc3e876e2746b6dc3694f8a7af",
@@ -518,6 +973,8 @@
       "slices": [
         {
           "slice_id": "CAP-10.S01",
+          "slice_alias": "SLICE-nearest-prior-novelty-workspace-mvp",
+          "wave": "W4",
           "title": "Nearest-prior novelty workspace MVP",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S01-nearest-prior-novelty-workspace-mvp.md",
           "plan_sha256": "1bc299ecce1bf9a632df84cabf6eca5adb818e9ef6c2284d8f9eec96e3405213",
@@ -526,6 +983,8 @@
         },
         {
           "slice_id": "CAP-10.S02",
+          "slice_alias": "SLICE-independent-adversarial-novelty-challenge",
+          "wave": "W4",
           "title": "Independent adversarial novelty challenge",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S02-independent-adversarial-novelty-challenge.md",
           "plan_sha256": "25ff5d05253a54f35f17f284c7f7513b134b76f20159582d60c6cf660b10c6bb",
@@ -534,6 +993,8 @@
         },
         {
           "slice_id": "CAP-10.S03",
+          "slice_alias": "SLICE-research-opportunity-dossier-and-decision-ledger",
+          "wave": "W4",
           "title": "Research opportunity dossier and decision ledger",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S03-research-opportunity-dossier-and-decision-ledger.md",
           "plan_sha256": "8474b6dedde4b7c3a744fa3864feaa33dcb866877444a0a4d9068c8d704cdfdf",
@@ -542,6 +1003,8 @@
         },
         {
           "slice_id": "CAP-10.S04",
+          "slice_alias": "SLICE-plural-opportunity-detector-ensemble",
+          "wave": "W9",
           "title": "Plural opportunity detector ensemble",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S04-plural-opportunity-detector-ensemble.md",
           "plan_sha256": "e298dd06224d470abd87d1d299932667abf3ee75edfb081edaa5ef3fb5fb5d9e",
@@ -550,6 +1013,8 @@
         },
         {
           "slice_id": "CAP-10.S05",
+          "slice_alias": "SLICE-critical-and-hermeneutic-research-support",
+          "wave": "W7",
           "title": "Critical and hermeneutic research support",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S05-critical-and-hermeneutic-research-support.md",
           "plan_sha256": "a90b72bc391333dc706233ea0e959f598b8a5d46f6a465e7af775b13fe429c6d",
@@ -558,6 +1023,8 @@
         },
         {
           "slice_id": "CAP-10.S06",
+          "slice_alias": "SLICE-opportunity-radar-ranking-and-portfolio-governance",
+          "wave": "W9",
           "title": "Opportunity radar, ranking, and portfolio governance",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S06-opportunity-radar-ranking-and-portfolio-governance.md",
           "plan_sha256": "731ad8fbbfe38052c08b8e55366c438637c517563943c76b5e9fdf29954e6680",
@@ -566,6 +1033,8 @@
         },
         {
           "slice_id": "CAP-10.S07",
+          "slice_alias": "SLICE-living-monitor-and-impact-aware-research-memory",
+          "wave": "W9",
           "title": "Living monitor and impact-aware research memory",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S07-living-monitor-and-impact-aware-research-memory.md",
           "plan_sha256": "caeab7471c136fc30526932810406d5e51f273846434e54c020d086cf79863c5",
@@ -576,6 +1045,7 @@
     },
     {
       "capability_id": "CAP-11",
+      "capability_alias": "CAP-windows-release",
       "title": "Windows PC/lab product hardening, validation, packaging, and release",
       "plan_path": "planning/capability-plans/CAP-11.md",
       "plan_sha256": "521912c5050c0004402f3b244463cfaaa2ecb59da6fce6581595c58a0f5c46e6",
@@ -585,6 +1055,8 @@
       "slices": [
         {
           "slice_id": "CAP-11.S01",
+          "slice_alias": "SLICE-performance-profiles-scale-targets-and-resource-governance",
+          "wave": "W5",
           "title": "Performance profiles, scale targets, and resource governance",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S01-performance-profiles-scale-targets-and-resource-governance.md",
           "plan_sha256": "2f6f49510e47a8e3c430392bd21e026ce116637137dedae7f12d209cccf93e55",
@@ -593,6 +1065,8 @@
         },
         {
           "slice_id": "CAP-11.S02",
+          "slice_alias": "SLICE-reliability-crash-recovery-upgrade-and-rollback",
+          "wave": "W5",
           "title": "Reliability, crash recovery, upgrade, and rollback",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S02-reliability-crash-recovery-upgrade-and-rollback.md",
           "plan_sha256": "47e4d28ea6e81233225d097e9b049d2f567fe741900773a33d0ca74473b5a2b2",
@@ -601,6 +1075,8 @@
         },
         {
           "slice_id": "CAP-11.S03",
+          "slice_alias": "SLICE-offline-privacy-and-local-security-acceptance",
+          "wave": "W5",
           "title": "Offline, privacy, and local security acceptance",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S03-offline-privacy-and-local-security-acceptance.md",
           "plan_sha256": "af3cd9ab0c265ef8ae8e268f0a48bb5c0164bdf5d10cf0064d9a559f85411197",
@@ -609,6 +1085,8 @@
         },
         {
           "slice_id": "CAP-11.S04",
+          "slice_alias": "SLICE-accessibility-usability-onboarding-and-help",
+          "wave": "W5",
           "title": "Accessibility, usability, onboarding, and help",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S04-accessibility-usability-onboarding-and-help.md",
           "plan_sha256": "6b2679fb0238e84a07778dee8f22b1407bc2c87b76fda2ea21b200856bf0e6fb",
@@ -617,6 +1095,8 @@
         },
         {
           "slice_id": "CAP-11.S05",
+          "slice_alias": "SLICE-lab-deployment-policy-maintenance-and-support",
+          "wave": "W5",
           "title": "Lab deployment, policy, maintenance, and support",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S05-lab-deployment-policy-maintenance-and-support.md",
           "plan_sha256": "f17764b844e4f2ceb5090d81a1baa7af36f05b7e9c3137bbad3f0614ead81619",
@@ -625,6 +1105,8 @@
         },
         {
           "slice_id": "CAP-11.S06",
+          "slice_alias": "SLICE-local-release-candidate-and-acceptance-gate",
+          "wave": "W5",
           "title": "Local release candidate and acceptance gate",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S06-local-release-candidate-and-acceptance-gate.md",
           "plan_sha256": "cb5a97d4908b4f9d1db6fa751bced2f571e55314edf9d407865a82fbb5f2747c",
@@ -635,6 +1117,7 @@
     },
     {
       "capability_id": "CAP-12",
+      "capability_alias": "CAP-university-hosting",
       "title": "University-hosted deployment, institutional identity, collaboration, and operations",
       "plan_path": "planning/capability-plans/CAP-12.md",
       "plan_sha256": "d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44",
@@ -644,6 +1127,8 @@
       "slices": [
         {
           "slice_id": "CAP-12.S01",
+          "slice_alias": "SLICE-desktop-remote-connection-mode-and-api-abstraction",
+          "wave": "W10",
           "title": "Desktop remote connection mode and API abstraction",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S01-desktop-remote-connection-mode-and-api-abstraction.md",
           "plan_sha256": "9b60d6c25fd8b307312379b095a9c1da6e9373b8e154717cbe0f597fe705ea7a",
@@ -652,6 +1137,8 @@
         },
         {
           "slice_id": "CAP-12.S02",
+          "slice_alias": "SLICE-institutional-service-and-data-plane-foundation",
+          "wave": "W10",
           "title": "Institutional service and data-plane foundation",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S02-institutional-service-and-data-plane-foundation.md",
           "plan_sha256": "3cd20ad16136d08d80c8097ede36b1f206962ddb48e83c6a4319d8796bfd74c3",
@@ -660,6 +1147,8 @@
         },
         {
           "slice_id": "CAP-12.S03",
+          "slice_alias": "SLICE-institutional-identity-authorization-and-project-isolation",
+          "wave": "W10",
           "title": "Institutional identity, authorization, and project isolation",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S03-institutional-identity-authorization-and-project-isolation.md",
           "plan_sha256": "0204ced428786c295eb54ee888883c45d751319afb1dc2b3519f6425a5332043",
@@ -668,6 +1157,8 @@
         },
         {
           "slice_id": "CAP-12.S04",
+          "slice_alias": "SLICE-team-collaboration-and-scholarly-adjudication",
+          "wave": "W10",
           "title": "Team collaboration and scholarly adjudication",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S04-team-collaboration-and-scholarly-adjudication.md",
           "plan_sha256": "d98adf76a31121e79be07110dc69338563e745d1196c8e13c0ca8779127de59a",
@@ -676,6 +1167,8 @@
         },
         {
           "slice_id": "CAP-12.S05",
+          "slice_alias": "SLICE-licensed-sources-institutional-rights-retention-and-compute-policy",
+          "wave": "W10",
           "title": "Licensed sources, institutional rights, retention, and compute policy",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S05-licensed-sources-institutional-rights-retention-and-compute-policy.md",
           "plan_sha256": "32c300dd72aeeb0b14ad92b8781bcfb52a2168354566e2fd4382e4be09b0cd78",
@@ -684,6 +1177,8 @@
         },
         {
           "slice_id": "CAP-12.S06",
+          "slice_alias": "SLICE-institutional-operations-disaster-recovery-and-pilot-acceptance",
+          "wave": "W10",
           "title": "Institutional operations, disaster recovery, and pilot acceptance",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S06-institutional-operations-disaster-recovery-and-pilot-acceptance.md",
           "plan_sha256": "aba0858678caa22e1fb53e5ff8f60b9c6ae79cf1de04c70d50ce86f0f5215f80",
@@ -694,6 +1189,7 @@
     },
     {
       "capability_id": "CAP-13",
+      "capability_alias": "CAP-cloud-platform",
       "title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
       "plan_path": "planning/capability-plans/CAP-13.md",
       "plan_sha256": "add501149881c293eca382c3aaa872e2f20f22b4e5766c294509d842bd0ddf23",
@@ -703,6 +1199,8 @@
       "slices": [
         {
           "slice_id": "CAP-13.S01",
+          "slice_alias": "SLICE-saas-organization-and-tenant-control-plane",
+          "wave": "W11",
           "title": "SaaS organization and tenant control plane",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S01-saas-organization-and-tenant-control-plane.md",
           "plan_sha256": "fc06bcd6e732e66aeb773713e2a2510853baaa6b705e14e138bad6bf2b05fe71",
@@ -711,6 +1209,8 @@
         },
         {
           "slice_id": "CAP-13.S02",
+          "slice_alias": "SLICE-regional-tenant-data-planes-and-isolation-tiers",
+          "wave": "W11",
           "title": "Regional tenant data planes and isolation tiers",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S02-regional-tenant-data-planes-and-isolation-tiers.md",
           "plan_sha256": "9fc24d6e38f2e31532fbeef9767f0f5bfbec1ee66c429aa24d7fee260733ef32",
@@ -719,6 +1219,8 @@
         },
         {
           "slice_id": "CAP-13.S03",
+          "slice_alias": "SLICE-cloud-identity-entitlement-metering-and-billing",
+          "wave": "W11",
           "title": "Cloud identity, entitlement, metering, and billing",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S03-cloud-identity-entitlement-metering-and-billing.md",
           "plan_sha256": "d18723d5db2dce7097e35368d4e97db70a10169ddbdff07c09390521f3bc0eb0",
@@ -727,6 +1229,8 @@
         },
         {
           "slice_id": "CAP-13.S04",
+          "slice_alias": "SLICE-elastic-workers-models-search-and-cost-governance",
+          "wave": "W11",
           "title": "Elastic workers, models, search, and cost governance",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S04-elastic-workers-models-search-and-cost-governance.md",
           "plan_sha256": "ef05ebd36198649a431341709cbe1e75d2986a3838364c99f401c17359c99f39",
@@ -735,6 +1239,8 @@
         },
         {
           "slice_id": "CAP-13.S05",
+          "slice_alias": "SLICE-cloud-security-privacy-residency-and-compliance-operations",
+          "wave": "W11",
           "title": "Cloud security, privacy, residency, and compliance operations",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S05-cloud-security-privacy-residency-and-compliance-operations.md",
           "plan_sha256": "370d4457acc2eaddb504a39c8f44b88d7124c501989ab95f6b6acb8fda1a96df",
@@ -743,6 +1249,8 @@
         },
         {
           "slice_id": "CAP-13.S06",
+          "slice_alias": "SLICE-desktop-cloud-experience-service-reliability-and-launch-gate",
+          "wave": "W11",
           "title": "Desktop-cloud experience, service reliability, and launch gate",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S06-desktop-cloud-experience-service-reliability-and-launch-gate.md",
           "plan_sha256": "05004492de8d24695230fae0447b2c41d27583c3fa7374e68b9a2469d2d4c11a",
@@ -753,6 +1261,7 @@
     },
     {
       "capability_id": "CAP-14",
+      "capability_alias": "CAP-cross-platform-desktop",
       "title": "Cross-platform desktop qualification and release",
       "plan_path": "planning/capability-plans/CAP-14.md",
       "plan_sha256": "009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55",
@@ -762,6 +1271,8 @@
       "slices": [
         {
           "slice_id": "CAP-14.S01",
+          "slice_alias": "SLICE-platform-abstraction-and-build-matrix",
+          "wave": "W6",
           "title": "Platform abstraction and build matrix",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S01-platform-abstraction-and-build-matrix.md",
           "plan_sha256": "0f4401b0e51a321a38f5be1b9ff4d66dfdfe45e6db69dcc34d614f69502f68cd",
@@ -770,6 +1281,8 @@
         },
         {
           "slice_id": "CAP-14.S02",
+          "slice_alias": "SLICE-apple-silicon-macos-product-qualification",
+          "wave": "W6",
           "title": "Apple Silicon macOS product qualification",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S02-apple-silicon-macos-product-qualification.md",
           "plan_sha256": "35c187bb6b09280cde76970a0b64fd93682613c615ea6e11321c4d89d7510d79",
@@ -778,6 +1291,8 @@
         },
         {
           "slice_id": "CAP-14.S03",
+          "slice_alias": "SLICE-linux-x86-64-and-arm64-product-qualification",
+          "wave": "W6",
           "title": "Linux x86_64 and ARM64 product qualification",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S03-linux-x86-64-and-arm64-product-qualification.md",
           "plan_sha256": "a4bec6e05aec7196230e4990ab71e9edc6401f2fbd3e0b40e76b7fc2cc5d200b",
@@ -786,6 +1301,8 @@
         },
         {
           "slice_id": "CAP-14.S04",
+          "slice_alias": "SLICE-cross-platform-scientific-and-ai-runtime",
+          "wave": "W6",
           "title": "Cross-platform scientific and AI runtime",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S04-cross-platform-scientific-and-ai-runtime.md",
           "plan_sha256": "fc5324cfc70296c11812e4703d144f7352b99fe5eb879349307cb96f9f208f98",
@@ -794,6 +1311,8 @@
         },
         {
           "slice_id": "CAP-14.S05",
+          "slice_alias": "SLICE-cross-platform-project-compatibility-and-recovery",
+          "wave": "W6",
           "title": "Cross-platform project compatibility and recovery",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S05-cross-platform-project-compatibility-and-recovery.md",
           "plan_sha256": "58f2589ae477926bc8b4689d1ba464375833ebc4277659b87d56584a8af07d73",
@@ -802,6 +1321,8 @@
         },
         {
           "slice_id": "CAP-14.S06",
+          "slice_alias": "SLICE-cross-platform-desktop-release-gate",
+          "wave": "W6",
           "title": "Cross-platform desktop release gate",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S06-cross-platform-desktop-release-gate.md",
           "plan_sha256": "c4e299c83dedb19b7e38b03c20a9310b9aa239a7e664c6644ce49b72efdf0ab1",
@@ -812,6 +1333,7 @@
     },
     {
       "capability_id": "CAP-15",
+      "capability_alias": "CAP-study-design",
       "title": "Empirical study design and protocol development",
       "plan_path": "planning/capability-plans/CAP-15.md",
       "plan_sha256": "7906eaa090945d4ce205080a46c0e5f04b9ba3ab45ca34eaeae382eaaa4b4fae",
@@ -821,6 +1343,8 @@
       "slices": [
         {
           "slice_id": "CAP-15.S01",
+          "slice_alias": "SLICE-study-design-domain-and-evidence-foundation",
+          "wave": "W7",
           "title": "Study-design domain and evidence foundation",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S01-study-design-domain-and-evidence-foundation.md",
           "plan_sha256": "c7e55a9c357a8d8a8ee57367189b10388f25cb42b9a7e2194916ad26b4108678",
@@ -829,6 +1353,8 @@
         },
         {
           "slice_id": "CAP-15.S02",
+          "slice_alias": "SLICE-research-logic-and-design-alternatives",
+          "wave": "W7",
           "title": "Research logic and design alternatives",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S02-research-logic-and-design-alternatives.md",
           "plan_sha256": "245ccc6dfe9989d0a365b87310b3ad51361bf7df688dabbb6af618582b38054b",
@@ -837,6 +1363,8 @@
         },
         {
           "slice_id": "CAP-15.S03",
+          "slice_alias": "SLICE-sampling-measurement-and-data-collection",
+          "wave": "W7",
           "title": "Sampling, measurement, and data collection",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S03-sampling-measurement-and-data-collection.md",
           "plan_sha256": "03667a0eb892cdf07112eb4dd9017f1f28c45fabd3d5b25137aa1527fe5ed608",
@@ -845,6 +1373,8 @@
         },
         {
           "slice_id": "CAP-15.S04",
+          "slice_alias": "SLICE-analysis-validity-ethics-and-reproducibility",
+          "wave": "W7",
           "title": "Analysis, validity, ethics, and reproducibility",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S04-analysis-validity-ethics-and-reproducibility.md",
           "plan_sha256": "2272ce58c102da26c6560d09fc7fcf58c6c25f204379e6b5ab56a46a6d6ef864",
@@ -853,6 +1383,8 @@
         },
         {
           "slice_id": "CAP-15.S05",
+          "slice_alias": "SLICE-study-design-studio-and-protocol-exports",
+          "wave": "W7",
           "title": "Study Design Studio and protocol exports",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S05-study-design-studio-and-protocol-exports.md",
           "plan_sha256": "6e29e140a2ef5eee2de87fd852b64aed3fb60f992df952c7e8626fd7e62db4af",
@@ -861,6 +1393,8 @@
         },
         {
           "slice_id": "CAP-15.S06",
+          "slice_alias": "SLICE-study-design-production-acceptance",
+          "wave": "W7",
           "title": "Study-design production acceptance",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S06-study-design-production-acceptance.md",
           "plan_sha256": "cf3aa582a13ec8b9f3787d6c00a2d63ecc592996bf9810182674e8efe8c3ec6d",
@@ -871,6 +1405,7 @@
     },
     {
       "capability_id": "CAP-16",
+      "capability_alias": "CAP-manuscript-blueprints",
       "title": "Manuscript blueprint, venue profiles, and article architecture",
       "plan_path": "planning/capability-plans/CAP-16.md",
       "plan_sha256": "d17eb447d75e3906d6325580ed9ce14337599f42e5bde88a0d5eb9435b4d4928",
@@ -880,6 +1415,8 @@
       "slices": [
         {
           "slice_id": "CAP-16.S01",
+          "slice_alias": "SLICE-manuscript-domain-and-template-governance",
+          "wave": "W7",
           "title": "Manuscript domain and template governance",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S01-manuscript-domain-and-template-governance.md",
           "plan_sha256": "cf85c99ea2914b5146bb827703725aa8d2a57422222a74cb02835190bb2ef822",
@@ -888,6 +1425,8 @@
         },
         {
           "slice_id": "CAP-16.S02",
+          "slice_alias": "SLICE-empirical-article-blueprints",
+          "wave": "W7",
           "title": "Empirical article blueprints",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S02-empirical-article-blueprints.md",
           "plan_sha256": "10b6cbd68eaaf46a535f035367d59b495d0413d145a6f006588f7eafb47717cb",
@@ -896,6 +1435,8 @@
         },
         {
           "slice_id": "CAP-16.S03",
+          "slice_alias": "SLICE-theory-article-blueprints",
+          "wave": "W7",
           "title": "Theory article blueprints",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S03-theory-article-blueprints.md",
           "plan_sha256": "f7d729d47a85d52b90b0213bfec279be5a185d47fb3e58a813bdc121ea76ca63",
@@ -904,6 +1445,8 @@
         },
         {
           "slice_id": "CAP-16.S04",
+          "slice_alias": "SLICE-critical-scholarship-blueprints",
+          "wave": "W7",
           "title": "Critical scholarship blueprints",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S04-critical-scholarship-blueprints.md",
           "plan_sha256": "370ebd92120e6555f85590fbbf2674b9151f9886fd4d03494e8e4e4d66cac5a6",
@@ -912,6 +1455,8 @@
         },
         {
           "slice_id": "CAP-16.S05",
+          "slice_alias": "SLICE-manuscript-blueprint-and-venue-adaptation",
+          "wave": "W7",
           "title": "Manuscript Blueprint and venue adaptation",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S05-manuscript-blueprint-and-venue-adaptation.md",
           "plan_sha256": "d9928aed01716433198614544a383cbbd8d283638a53b6e892374c79fc9f047b",
@@ -920,6 +1465,8 @@
         },
         {
           "slice_id": "CAP-16.S06",
+          "slice_alias": "SLICE-manuscript-blueprint-production-acceptance",
+          "wave": "W7",
           "title": "Manuscript blueprint production acceptance",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S06-manuscript-blueprint-production-acceptance.md",
           "plan_sha256": "73b6a1b3a24fcf201a20329a6eddce6119388026abf88919c4b31feb31fa0234",
@@ -930,6 +1477,7 @@
     },
     {
       "capability_id": "CAP-17",
+      "capability_alias": "CAP-results-integration",
       "title": "Technical report and study-results integration",
       "plan_path": "planning/capability-plans/CAP-17.md",
       "plan_sha256": "dec74cde90a6537d81a18e6e3ead9f478fc7cbf2fd489551609b28afd2343690",
@@ -939,6 +1487,8 @@
       "slices": [
         {
           "slice_id": "CAP-17.S01",
+          "slice_alias": "SLICE-private-technical-report-and-study-artifact-intake",
+          "wave": "W8",
           "title": "Private technical-report and study-artifact intake",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S01-private-technical-report-and-study-artifact-intake.md",
           "plan_sha256": "f70dde9136b0f7c083678eed78e56b8f274dfe4a5ba601428bbfeacabd418527",
@@ -947,6 +1497,8 @@
         },
         {
           "slice_id": "CAP-17.S02",
+          "slice_alias": "SLICE-technical-report-parsing-and-result-extraction",
+          "wave": "W8",
           "title": "Technical-report parsing and result extraction",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S02-technical-report-parsing-and-result-extraction.md",
           "plan_sha256": "31b5e6b9ca16e7a7943e7d68117edb83b10f4385df915ca2b0f403eb4ec026f5",
@@ -955,6 +1507,8 @@
         },
         {
           "slice_id": "CAP-17.S03",
+          "slice_alias": "SLICE-study-plan-and-result-reconciliation",
+          "wave": "W8",
           "title": "Study-plan and result reconciliation",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S03-study-plan-and-result-reconciliation.md",
           "plan_sha256": "75bc1db4e469c596f909e54275612873cee3ad040b1b7eb84229cd3f16c5c561",
@@ -963,6 +1517,8 @@
         },
         {
           "slice_id": "CAP-17.S04",
+          "slice_alias": "SLICE-results-evidence-graph-and-dependency-propagation",
+          "wave": "W8",
           "title": "Results evidence graph and dependency propagation",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S04-results-evidence-graph-and-dependency-propagation.md",
           "plan_sha256": "02ed2181beba63bfc1c637e40ca4be43c8880f2e137bc39ad48a3a1955fb0e46",
@@ -971,6 +1527,8 @@
         },
         {
           "slice_id": "CAP-17.S05",
+          "slice_alias": "SLICE-technical-reports-results-workspace",
+          "wave": "W8",
           "title": "Technical Reports & Results workspace",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S05-technical-reports-and-results-workspace.md",
           "plan_sha256": "e76c22262bb548e72090aa4c0b07b02cc16fde2f1cb27ba771c8c0d3ed0cbc71",
@@ -979,6 +1537,8 @@
         },
         {
           "slice_id": "CAP-17.S06",
+          "slice_alias": "SLICE-results-integration-production-acceptance",
+          "wave": "W8",
           "title": "Results integration production acceptance",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S06-results-integration-production-acceptance.md",
           "plan_sha256": "819e736d5990ba10d1ac0aba5732c81f1cfc902de7f1a93f3e0b2bd5e401633c",
@@ -989,6 +1549,7 @@
     },
     {
       "capability_id": "CAP-18",
+      "capability_alias": "CAP-manuscript-drafting",
       "title": "Source-grounded manuscript drafting and publication artifacts",
       "plan_path": "planning/capability-plans/CAP-18.md",
       "plan_sha256": "8e745e6a42a8b2a844c1be16c2caf6c1a4e0e936cdd0c34301b2a3ea82ab15ba",
@@ -998,6 +1559,8 @@
       "slices": [
         {
           "slice_id": "CAP-18.S01",
+          "slice_alias": "SLICE-manuscript-project-and-section-workflow",
+          "wave": "W8",
           "title": "Manuscript project and section workflow",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S01-manuscript-project-and-section-workflow.md",
           "plan_sha256": "a011f7eb03614e3a0f64085bfc988c4f8b873dd1877cb068cdc7f22f14a594e1",
@@ -1006,6 +1569,8 @@
         },
         {
           "slice_id": "CAP-18.S02",
+          "slice_alias": "SLICE-evidence-aware-drafting-engine",
+          "wave": "W8",
           "title": "Evidence-aware drafting engine",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S02-evidence-aware-drafting-engine.md",
           "plan_sha256": "3dcfeb922568757e325114b7227e37f3a3b4e2357b0df1143c63fd082fb49047",
@@ -1014,6 +1579,8 @@
         },
         {
           "slice_id": "CAP-18.S03",
+          "slice_alias": "SLICE-empirical-manuscript-drafting",
+          "wave": "W8",
           "title": "Empirical manuscript drafting",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S03-empirical-manuscript-drafting.md",
           "plan_sha256": "9d704a3788c34b6c65f8b8c12b93df5feba5ab68012d01de1aaeff91fb9bb124",
@@ -1022,6 +1589,8 @@
         },
         {
           "slice_id": "CAP-18.S04",
+          "slice_alias": "SLICE-theory-and-critical-manuscript-drafting",
+          "wave": "W8",
           "title": "Theory and critical manuscript drafting",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S04-theory-and-critical-manuscript-drafting.md",
           "plan_sha256": "9bb79e69e14cb66c7530880476b15720e1b004b4d9014bf6a01c877d5102bed7",
@@ -1030,6 +1599,8 @@
         },
         {
           "slice_id": "CAP-18.S05",
+          "slice_alias": "SLICE-manuscript-studio-and-publication-exports",
+          "wave": "W8",
           "title": "Manuscript Studio and publication exports",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S05-manuscript-studio-and-publication-exports.md",
           "plan_sha256": "b7fe59446e9a630de910a5db851c49d0e662198fc3ef9ec64e1920fb35074f8a",
@@ -1038,6 +1609,8 @@
         },
         {
           "slice_id": "CAP-18.S06",
+          "slice_alias": "SLICE-source-grounded-manuscript-production-acceptance",
+          "wave": "W8",
           "title": "Source-grounded manuscript production acceptance",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S06-source-grounded-manuscript-production-acceptance.md",
           "plan_sha256": "9885a17483c34483a8863412f660e21a74e34a8340017a58acf7ca5fa70dbbfa",
@@ -1048,6 +1621,7 @@
     },
     {
       "capability_id": "CAP-19",
+      "capability_alias": "CAP-review-revision",
       "title": "Reviewer simulation, editorial synthesis, and revision",
       "plan_path": "planning/capability-plans/CAP-19.md",
       "plan_sha256": "35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66",
@@ -1057,6 +1631,8 @@
       "slices": [
         {
           "slice_id": "CAP-19.S01",
+          "slice_alias": "SLICE-reviewer-protocol-roles-and-independence",
+          "wave": "W8",
           "title": "Reviewer protocol, roles, and independence",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S01-reviewer-protocol-roles-and-independence.md",
           "plan_sha256": "e5f5b36a2f7e34c324ca408220a7783df73b4eab8d3c6f27479911b75070ee2c",
@@ -1065,6 +1641,8 @@
         },
         {
           "slice_id": "CAP-19.S02",
+          "slice_alias": "SLICE-extended-independent-reviewer-panel",
+          "wave": "W8",
           "title": "Extended independent reviewer panel",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S02-extended-independent-reviewer-panel.md",
           "plan_sha256": "108f652bb48e046144816214557d2ee9c1a0d8414c59d8464d6317cda131c86b",
@@ -1073,6 +1651,8 @@
         },
         {
           "slice_id": "CAP-19.S03",
+          "slice_alias": "SLICE-generated-and-uploaded-draft-intake",
+          "wave": "W8",
           "title": "Generated and uploaded draft intake",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S03-generated-and-uploaded-draft-intake.md",
           "plan_sha256": "599e01bc91f55abd54fcd7912de892ebacb88638803e13c2b2b175318aea75de",
@@ -1081,6 +1661,8 @@
         },
         {
           "slice_id": "CAP-19.S04",
+          "slice_alias": "SLICE-reviewer-reports-and-editorial-synthesis",
+          "wave": "W8",
           "title": "Reviewer reports and editorial synthesis",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S04-reviewer-reports-and-editorial-synthesis.md",
           "plan_sha256": "c29a716ee50b85bba333ef0469e7b1562e6822f1c92baf8f44ab8fe6f7366bde",
@@ -1089,6 +1671,8 @@
         },
         {
           "slice_id": "CAP-19.S05",
+          "slice_alias": "SLICE-revision-and-response-workflow",
+          "wave": "W8",
           "title": "Revision and response workflow",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S05-revision-and-response-workflow.md",
           "plan_sha256": "f2954045e7ea5d303c87a3a01b93b1e90adff307c89224c6885b1bd9d8f157fa",
@@ -1097,6 +1681,8 @@
         },
         {
           "slice_id": "CAP-19.S06",
+          "slice_alias": "SLICE-reviewer-simulation-and-research-production-acceptance",
+          "wave": "W8",
           "title": "Reviewer simulation and research-production acceptance",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S06-reviewer-simulation-and-research-production-acceptance.md",
           "plan_sha256": "2fd1491f01887f1d39fcd5049be6db29dcfd3fe952072b1753b410ac5ade167a",
