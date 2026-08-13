@@ -34,6 +34,7 @@ struct Report {
     stop_retry_serialized: bool,
     delayed_readiness_cleanup: bool,
     generated_contract_request: bool,
+    contract_request_performance: ContractRequestPerformance,
     problem_trace_preserved: bool,
     unsafe_api_path_denied: bool,
     incompatible_api_rejected: bool,
@@ -42,7 +43,88 @@ struct Report {
     support_bundle_exact_export: bool,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct ContractRequestPerformance {
+    hardware: MeasurementHardware,
+    fixture: &'static str,
+    state: &'static str,
+    repetitions_per_request: usize,
+    distribution: &'static str,
+    absolute_budget_ms: f64,
+    regression_threshold_percent: f64,
+    version_request: RequestDistribution,
+    health_request: RequestDistribution,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct MeasurementHardware {
+    operating_system: String,
+    architecture: &'static str,
+    processor: String,
+    logical_cpu_count: usize,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct RequestDistribution {
+    method: &'static str,
+    path: &'static str,
+    samples_ms: Vec<f64>,
+    minimum_ms: f64,
+    p50_ms: f64,
+    p95_ms: f64,
+    maximum_ms: f64,
+    passes: bool,
+    future_regression_limit_ms: f64,
+}
+
+const REQUEST_REPETITIONS: usize = 20;
+const REQUEST_BUDGET_MS: f64 = 100.0;
+const REGRESSION_THRESHOLD_PERCENT: f64 = 20.0;
+
 static FIXTURE_SEQUENCE: AtomicU64 = AtomicU64::new(1);
+
+fn rounded_milliseconds(value: f64) -> f64 {
+    (value * 1_000.0).round() / 1_000.0
+}
+
+fn request_distribution(
+    method: &'static str,
+    path: &'static str,
+    samples: Vec<f64>,
+) -> RequestDistribution {
+    assert_eq!(samples.len(), REQUEST_REPETITIONS);
+    assert!(
+        samples
+            .iter()
+            .all(|sample| sample.is_finite() && *sample >= 0.0)
+    );
+    let mut ordered = samples.clone();
+    ordered.sort_by(f64::total_cmp);
+    let nearest_rank = |probability: f64| {
+        let rank = ((ordered.len() as f64 * probability).ceil() as usize).clamp(1, ordered.len());
+        ordered[rank - 1]
+    };
+    let minimum = ordered[0];
+    let p50 = nearest_rank(0.50);
+    let p95 = nearest_rank(0.95);
+    let maximum = ordered[ordered.len() - 1];
+    RequestDistribution {
+        method,
+        path,
+        samples_ms: samples.into_iter().map(rounded_milliseconds).collect(),
+        minimum_ms: rounded_milliseconds(minimum),
+        p50_ms: rounded_milliseconds(p50),
+        p95_ms: rounded_milliseconds(p95),
+        maximum_ms: rounded_milliseconds(maximum),
+        passes: p95 <= REQUEST_BUDGET_MS,
+        future_regression_limit_ms: rounded_milliseconds(
+            (p95 * (1.0 + REGRESSION_THRESHOLD_PERCENT / 100.0)).min(REQUEST_BUDGET_MS),
+        ),
+    }
+}
 
 fn require_state(snapshot: &RuntimeSnapshot, expected: RuntimeState, label: &str) {
     assert_eq!(snapshot.state, expected, "{label}: {snapshot:?}");
@@ -242,6 +324,106 @@ fn main() {
         "version contract request failed"
     );
 
+    let mut version_samples = Vec::with_capacity(REQUEST_REPETITIONS);
+    let mut measured_version_trace = String::new();
+    for _ in 0..REQUEST_REPETITIONS {
+        let started = Instant::now();
+        let response = tauri::async_runtime::block_on(dispatch_core_api_request(
+            graceful.clone(),
+            CoreApiRequest {
+                method: "GET".to_owned(),
+                path: "/runtime/version".to_owned(),
+                body: None,
+                if_match: None,
+                idempotency_key: None,
+            },
+        ))
+        .expect("measured version request");
+        let elapsed = started.elapsed().as_secs_f64() * 1_000.0;
+        let body: serde_json::Value =
+            serde_json::from_str(&response.body).expect("measured version response JSON");
+        assert!(
+            response.status == 200
+                && response.content_type == "application/json"
+                && body["schemaVersion"] == "1.0"
+                && body["service"] == "research-observatory-core"
+                && body["version"] == "0.1.0"
+                && body["apiVersion"] == "1.0.0"
+                && body["minimumClientApiVersion"] == "1.0.0"
+                && body["maximumClientApiVersionExclusive"] == "2.0.0",
+            "measured version response violated the generated contract"
+        );
+        measured_version_trace = response.trace_id;
+        version_samples.push(elapsed);
+    }
+
+    let mut health_samples = Vec::with_capacity(REQUEST_REPETITIONS);
+    for _ in 0..REQUEST_REPETITIONS {
+        let started = Instant::now();
+        let response = tauri::async_runtime::block_on(dispatch_core_api_request(
+            graceful.clone(),
+            CoreApiRequest {
+                method: "GET".to_owned(),
+                path: "/healthz".to_owned(),
+                body: None,
+                if_match: None,
+                idempotency_key: None,
+            },
+        ))
+        .expect("measured health request");
+        let elapsed = started.elapsed().as_secs_f64() * 1_000.0;
+        let body: serde_json::Value =
+            serde_json::from_str(&response.body).expect("measured health response JSON");
+        assert!(
+            response.status == 200
+                && response.content_type == "application/json"
+                && body["schemaVersion"] == "1.0"
+                && body["service"] == "research-observatory-core"
+                && body["version"] == "0.1.0"
+                && body["state"] == "ready"
+                && body["alive"] == true
+                && body["capabilities"]
+                    == serde_json::json!([
+                        "operations.cancel",
+                        "operations.events",
+                        "operations.read",
+                        "runtime.contract",
+                        "runtime.status"
+                    ]),
+            "measured health response violated the generated contract"
+        );
+        health_samples.push(elapsed);
+    }
+
+    let contract_request_performance = ContractRequestPerformance {
+        hardware: MeasurementHardware {
+            operating_system: format!(
+                "{} ({})",
+                std::env::consts::OS,
+                std::env::var("OS").unwrap_or_else(|_| "unreported".to_owned())
+            ),
+            architecture: std::env::consts::ARCH,
+            processor: std::env::var("PROCESSOR_IDENTIFIER")
+                .unwrap_or_else(|_| "unreported".to_owned()),
+            logical_cpu_count: std::thread::available_parallelism()
+                .map(usize::from)
+                .unwrap_or(1),
+        },
+        fixture: "canonical authenticated PyInstaller onedir Core 0.1.0 package",
+        state: "warm after strict Ready; one unmeasured version request precedes measured requests",
+        repetitions_per_request: REQUEST_REPETITIONS,
+        distribution: "nearest-rank p50 and p95; no measured sample discarded",
+        absolute_budget_ms: REQUEST_BUDGET_MS,
+        regression_threshold_percent: REGRESSION_THRESHOLD_PERCENT,
+        version_request: request_distribution("GET", "/runtime/version", version_samples),
+        health_request: request_distribution("GET", "/healthz", health_samples),
+    };
+    assert!(
+        contract_request_performance.version_request.passes
+            && contract_request_performance.health_request.passes,
+        "post-readiness Core request performance exceeded the approved 100 ms p95 budget"
+    );
+
     let missing_response = graceful
         .api_request(&CoreApiRequest {
             method: "GET".to_owned(),
@@ -290,7 +472,7 @@ fn main() {
         .as_array()
         .expect("support diagnostics array")
         .iter()
-        .any(|item| item["traceId"] == version_response.trace_id);
+        .any(|item| item["traceId"] == measured_version_trace);
     assert!(
         support_bundle_trace_linked,
         "support bundle did not retain the desktop action trace ID"
@@ -594,6 +776,7 @@ fn main() {
             stop_retry_serialized: true,
             delayed_readiness_cleanup: true,
             generated_contract_request,
+            contract_request_performance,
             problem_trace_preserved,
             unsafe_api_path_denied,
             incompatible_api_rejected: true,
