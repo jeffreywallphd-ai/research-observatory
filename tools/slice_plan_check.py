@@ -63,6 +63,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=".")
     ap.add_argument("--capability", action="append", help="Validate complete coverage for this capability; repeatable")
+    ap.add_argument("--wave", help="Require approval only for slice plans in this wave")
     ap.add_argument("--require-approved", action="store_true")
     ns = ap.parse_args()
     root = Path(ns.repo).resolve()
@@ -124,7 +125,7 @@ def main() -> int:
         words = len(re.findall(r"\b\w+[\w’-]*\b", body))
         if words < 1800:
             errors.append(f"{sid}: plan is too thin ({words} words; minimum 1800)")
-        if ns.require_approved:
+        if ns.require_approved and (ns.wave is None or meta.get("wave") == ns.wave):
             approval = meta.get("approval") or {}
             if meta.get("status") != "approved" or approval.get("status") != "approved":
                 errors.append(f"{sid}: plan is not approved")
@@ -145,7 +146,10 @@ def main() -> int:
             print(f"ERROR: {error}")
         return 1
     scope = ",".join(sorted(selected)) if selected else "all authored plans"
-    print(f"Valid slice implementation plans: {len(plans)}; scope={scope}; approval_required={ns.require_approved}")
+    print(
+        f"Valid slice implementation plans: {len(plans)}; scope={scope}; wave={ns.wave or 'all'}; "
+        f"approval_required={ns.require_approved}"
+    )
     return 0
 
 

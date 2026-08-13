@@ -1,6 +1,6 @@
 # Automation documents
 
-- `project-automation-guide.md` - capability campaigns, verification, evidence, CI, and stop conditions.
+- `project-automation-guide.md` - wave-scoped capability increments, verification, evidence, CI, and stop conditions.
 - `codex-tracking-guide.md` - coding-agent task claims, implementation, review, and completion evidence.
 - `planning-review-site.md` - static decision review, Other choices, feedback export, application, and approval.
 - `developer-bootstrap.md` - exact prerequisites, one-command setup, generated local state, and recovery.

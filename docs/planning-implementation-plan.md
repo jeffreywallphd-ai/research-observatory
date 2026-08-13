@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 927102fcd02fcc7f4c7d8b34b585754a6c939edd9aedd3486a90ce259224e219
+source_sha256: 7c63a3aa79b3dcfd0126758a1cc54aa29e953c0b02aefbded8bceceb4bb2a886
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -58,7 +58,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Criteria:**
 
 - Fresh clone can run validation and build skeleton artifacts.
-- Backlog dependencies, capability campaigns, slice reviews, and task transitions validate automatically.
+- Backlog dependencies, capability-wave increments, ordered slice reviews, and task transitions validate automatically.
 - Architecture constraints and ADR process are documented.
 - Approved UI reference, workflow catalog, page contracts, and design-first automation are installed and validated.
 
@@ -204,12 +204,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 ## Selection policy
 
 - Treat the YAML backlog as the authoritative execution ledger; DOCX and Markdown are generated views.
-- The default automated execution unit is a capability campaign. Select one eligible capability, then complete its slices in declared dependency order until the capability exit criteria are production-ready and independently approved.
-- Within the active capability, a slice is the integration and review checkpoint and a task is the atomic implementation/evidence unit. Do not hop to unrelated capabilities merely because another task is READY.
+- The wave is the primary execution axis and every wave has one sequential exit/next-wave activation gate. The default automated execution unit is one capability-wave increment.
+- Use descriptive capability aliases and slice labels in human-facing output. Preserve numeric capability IDs as immutable dependency/evidence keys and numeric slice IDs as immutable sequence/evidence keys.
+- Within the active increment, a slice is an ordered integration/review checkpoint and a task is the atomic implementation/evidence unit. Do not hop to unrelated capabilities while the increment has eligible work.
 - Start the next slice only after every required task in the current slice is DONE, slice-level end-to-end evidence is attached, and the slice review is approved.
-- Close a capability only after all slices are approved, the capability-wide end-to-end profile passes on the reviewed commit, the capability exit criteria are mapped to evidence, and an independent reviewer approves the campaign.
-- A capability campaign may pause only for an external dependency, explicit human/ADR/design gate, unavailable required platform, or a blocker that cannot be resolved within the capability boundary. Record the blocker and resume the same campaign when cleared.
-- Select only tasks whose dependencies are DONE and whose wave activation gate is approved. The capability campaign keeps priority over other eligible tasks until complete or formally paused.
+- Close an increment after all of its wave slices are independently approved. Close the capability only after all wave increments, final end-to-end qualification, evidence mapping, and independent capability review pass.
+- A capability-wave increment may pause for its approved completion, an external dependency, explicit human/ADR/design gate, unavailable platform, or an in-boundary blocker. Resume interrupted increments; start a new increment when a later wave activates.
+- Select only tasks whose dependencies are DONE and whose wave activation gate is approved. A future slice and its later gate never replace the current global wave/gate in selection output.
 - Filter by deployment profile and platform target. W0-W5 form the Windows baseline; W6 qualifies macOS/Linux; W7-W8 add research production; W9 and W10 are parallel advanced-intelligence and university tracks after G8; W11 remains cloud-only after G10.
 - Claim atomically with taskctl before edits. Capability, slice, and task leases record owner, branch/worktree, base SHA, and expiration.
 - Implement the complete selected task and the slice integration needed to satisfy its acceptance criteria. Record newly discovered work as backlog tasks rather than hidden TODOs.
@@ -220,7 +221,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## Definition of ready
 
-- The containing capability campaign is eligible or explicitly selected, and all predecessor capabilities required by its first active slice are complete or gated.
+- The containing capability-wave increment is eligible or explicitly selected, and all predecessor work required by its first active-wave slice is complete or gated.
 - Status is READY and all dependency task IDs are DONE.
 - The task wave has no activation gate or its activation gate is approved.
 - The objective, deliverable, acceptance criteria, verification profiles, platform targets, and review gate are understandable without hidden context.
@@ -239,11 +240,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Newly discovered work is recorded as explicit backlog tasks rather than hidden TODOs.
 - The task lease is released and branch/worktree disposition is recorded.
 - User-facing implementation conforms to the approved reference ID through token, route/page-contract, workflow-navigation, accessibility, and visual-regression evidence.
-- Task completion does not by itself complete the slice or capability; slice and capability end-to-end reviews must also pass.
+- Task completion does not by itself complete the slice, increment, or capability; their applicable end-to-end reviews must also pass.
 
 # Capability, slice, and task plan
 
-## CAP-00 - Delivery foundation and Codex execution system
+## CAP-delivery-foundation (`CAP-00`) - Delivery foundation and Codex execution system
 
 **Campaign / completion:** `COMPLETE` / `APPROVED`
 
@@ -256,7 +257,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Architecture changes require an ADR and automated boundary checks prevent accidental coupling.
 - The approved style guide, workflow catalog, and HTML reference are stored in-repository and deterministic checks prevent unapproved user-facing implementation or drift.
 
-### CAP-00.S01 - Repository and toolchain bootstrap
+### SLICE-repository-and-toolchain-bootstrap (`CAP-00.S01`) - Repository and toolchain bootstrap
 
 **Outcome:** A deterministic monorepo skeleton supports desktop, Python service, shared contracts, tests, packaging, and documentation.
 
@@ -361,7 +362,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S01.T03.json` at `ed7d2058e0bfe94426975711763036bc0aed1aa4`
 
-### CAP-00.S02 - Architecture and agent operating contract
+### SLICE-architecture-and-agent-operating-contract (`CAP-00.S02`) - Architecture and agent operating contract
 
 **Outcome:** Human and AI contributors receive explicit boundaries, conventions, and change-control rules.
 
@@ -464,7 +465,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S02.T03.json` at `34942ab30a6afe0f36da7ddb260bb6b9b213441a`
 
-### CAP-00.S03 - Verification, CI, and supply-chain controls
+### SLICE-verification-ci-and-supply-chain-controls (`CAP-00.S03`) - Verification, CI, and supply-chain controls
 
 **Outcome:** Every task can invoke consistent, composable verification profiles locally and in CI.
 
@@ -571,7 +572,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S03.T03.json` at `7352470d1f9fcd7cacea1bfa604df364a70c1a37`
 - `artifacts/evidence/CAP-00.S03.T03.review-fix.json` at `ce2474676425416a77822cea3e47fab804dc33d3`
 
-### CAP-00.S04 - Executable backlog and status governance
+### SLICE-executable-backlog-and-status-governance (`CAP-00.S04`) - Executable backlog and status governance
 
 **Outcome:** The YAML plan is validated and can be queried or updated safely by Codex and reviewers.
 
@@ -678,7 +679,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S04.T03.json` at `e1755e15441e685bdea7354f5fcde0d85a2f6ce5`
 - `artifacts/evidence/CAP-00.S04.T03.review-fix.json` at `5d9c1622c93a93b90afb9e2961b058fed983522c`
 
-### CAP-00.S05 - Test corpus, benchmark registry, and release metadata
+### SLICE-test-corpus-benchmark-registry-and-release-metadata (`CAP-00.S05`) - Test corpus, benchmark registry, and release metadata
 
 **Outcome:** Development begins with reusable fixtures and traceable versions rather than ad hoc documents or unverifiable demonstrations.
 
@@ -792,7 +793,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-4.json` at `d2b2f10f40abf70c65e1c2ed2da85bc49914a4f8`
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-5.json` at `8b5bc27f13965fbb949257900abc54a192abf720`
 
-### CAP-00.S06 - Approved experience reference and UI conformance automation
+### SLICE-approved-experience-reference-and-ui-conformance-automation (`CAP-00.S06`) - Approved experience reference and UI conformance automation
 
 **Outcome:** The Academic Minimal style, page contracts, fourteen use-case workflows, and linked HTML prototypes form an approved in-repository reference that must precede and validate user-facing implementation.
 
@@ -933,9 +934,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S06.T04.review-fix-2.json` at `cf4f521e8e362061afb94245986c7bb6203852b2`
 - `artifacts/evidence/CAP-00.S06.T04.review-fix-3.json` at `c9e0cec2bc295188353db3b7cf34d609c199805b`
 
-## CAP-01 - Windows-first desktop shell and supervised local runtime
+## CAP-windows-desktop-runtime (`CAP-01`) - Windows-first desktop shell and supervised local runtime
 
-**Campaign / completion:** `ACTIVE` / `IN_PROGRESS`
+**Campaign / completion:** `PAUSED` / `PAUSED`
 
 **Objective:** Deliver the canonical Windows-first desktop experience and a reliably packaged local analytical service that requires no external server administration.
 
@@ -945,7 +946,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Desktop-to-service communication is authenticated, versioned, observable, and recoverable.
 - The same client architecture and project contracts are portable to macOS/Linux in CAP-14 and later connect to university/cloud profiles without forking the UI.
 
-### CAP-01.S01 - Tauri and React application shell
+### SLICE-tauri-and-react-application-shell (`CAP-01.S01`) - Tauri and React application shell
 
 **Outcome:** A production-shaped desktop shell provides navigation, project selection, commands, and application state.
 
@@ -1050,7 +1051,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-01.S01.T03.json` at `dae49529e536663d01bdb5cf7e3de40fdfaf24a3`
 
-### CAP-01.S02 - Desktop design system and accessibility foundation
+### SLICE-desktop-design-system-and-accessibility-foundation (`CAP-01.S02`) - Desktop design system and accessibility foundation
 
 **Outcome:** Reusable components express status, provenance, evidence, uncertainty, and human decision states consistently.
 
@@ -1159,7 +1160,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S02.T03.review-fix-4.json` at `cf9c63e4c603eb18e2d9c919f63dff77eb6b000d`
 - `artifacts/evidence/CAP-01.S02.T03.review-fix-5.json` at `9f94e9433cb455a2c912ab4e14f3f22e92d7d929`
 
-### CAP-01.S03 - Packaged Python/FastAPI sidecar
+### SLICE-packaged-python-fastapi-sidecar (`CAP-01.S03`) - Packaged Python/FastAPI sidecar
 
 **Outcome:** The desktop bundles and supervises a compatible local service with no user-managed Python installation.
 
@@ -1267,7 +1268,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S03.T03.review-fix.json` at `45a80cc559548e100add72ef0d8bd7f947d335fa`
 - `artifacts/evidence/CAP-01.S03.T03.review-fix-2.json` at `a380445b96ffcf0927de7818f53c16a6e32e17bb`
 
-### CAP-01.S04 - Authenticated desktop-service contract
+### SLICE-authenticated-desktop-service-contract (`CAP-01.S04`) - Authenticated desktop-service contract
 
 **Outcome:** Local IPC is private, versioned, cancellable, and observable.
 
@@ -1381,7 +1382,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-7.json` at `226ad7e72bea05133da673bd2361c5b16ba07da9`
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-8.json` at `871fa17d0e6c802fb48e329d6dd075caa9c37e05`
 
-### CAP-01.S05 - Windows installation and update channels
+### SLICE-windows-installation-and-update-channels (`CAP-01.S05`) - Windows installation and update channels
 
 **Outcome:** The PC/lab application can be installed, upgraded, repaired, and removed predictably by individuals or lab administrators.
 
@@ -1472,7 +1473,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile e2e-local
 
-## CAP-02 - Local projects, durable storage, security, and recovery
+## CAP-local-project-storage (`CAP-02`) - Local projects, durable storage, security, and recovery
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -1484,7 +1485,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Sensitive documents and credentials are protected with explicit local threat assumptions.
 - A lab can configure approved storage and model-cache locations without converting the product into a server deployment.
 
-### CAP-02.S01 - Local project lifecycle and directory contract
+### SLICE-local-project-lifecycle-and-directory-contract (`CAP-02.S01`) - Local project lifecycle and directory contract
 
 **Outcome:** Projects have explicit identity, version, location, lifecycle state, and safe-open semantics.
 
@@ -1574,7 +1575,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
 
-### CAP-02.S02 - SQLite schema, migrations, and repository layer
+### SLICE-sqlite-schema-migrations-and-repository-layer (`CAP-02.S02`) - SQLite schema, migrations, and repository layer
 
 **Outcome:** Canonical local state is transactional, versioned, testable, and insulated from UI or model code.
 
@@ -1663,7 +1664,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile data
 
-### CAP-02.S03 - Encrypted local object and cache storage
+### SLICE-encrypted-local-object-and-cache-storage (`CAP-02.S03`) - Encrypted local object and cache storage
 
 **Outcome:** Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights metadata.
 
@@ -1753,7 +1754,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
 
-### CAP-02.S04 - Local secrets, profiles, and privacy controls
+### SLICE-local-secrets-profiles-and-privacy-controls (`CAP-02.S04`) - Local secrets, profiles, and privacy controls
 
 **Outcome:** Credentials and policy-sensitive configuration are isolated from ordinary project content.
 
@@ -1873,7 +1874,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile security-local
 - python tools/verify.py --profile e2e-local
 
-### CAP-02.S05 - Backup, restore, relocation, and lab portability
+### SLICE-backup-restore-relocation-and-lab-portability (`CAP-02.S05`) - Backup, restore, relocation, and lab portability
 
 **Outcome:** Researchers can protect and move projects without breaking identities, provenance, or evidence links.
 
@@ -1966,7 +1967,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
 
-## CAP-03 - Canonical domain, research intent, provenance, and durable workflows
+## CAP-research-domain-workflows (`CAP-03`) - Canonical domain, research intent, provenance, and durable workflows
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -1980,7 +1981,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Each project has a versioned primary use case that produces an ordered, visible workflow and next-step guidance while preserving access to all tools and prior workflow history.
 - Study designs, technical reports/results, manuscript sections, reviewer rounds, and revision actions use the same durable workflow, provenance, staleness, and human-gate model.
 
-### CAP-03.S01 - Canonical identifiers and domain contracts
+### SLICE-canonical-identifiers-and-domain-contracts (`CAP-03.S01`) - Canonical identifiers and domain contracts
 
 **Outcome:** A small stable core model defines records, documents, evidence, decisions, workflows, ontologies, graphs, opportunities, and monitoring events.
 
@@ -2072,7 +2073,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/taskctl.py validate
 - python tools/verify.py --profile service
 
-### CAP-03.S02 - Research intent contract and mode governance
+### SLICE-research-intent-contract-and-mode-governance (`CAP-03.S02`) - Research intent contract and mode governance
 
 **Outcome:** Every project declares its scholarly purpose, scope, evidence rules, autonomy, and stopping logic before consequential automation.
 
@@ -2162,7 +2163,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile security-local
 
-### CAP-03.S03 - Append-only provenance and audit ledger
+### SLICE-append-only-provenance-and-audit-ledger (`CAP-03.S03`) - Append-only provenance and audit ledger
 
 **Outcome:** The system can reconstruct how every material object and claim was produced and changed.
 
@@ -2254,7 +2255,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
 
-### CAP-03.S04 - Portable workflow model and local worker fabric
+### SLICE-portable-workflow-model-and-local-worker-fabric (`CAP-03.S04`) - Portable workflow model and local worker fabric
 
 **Outcome:** Long-running processes execute as durable, inspectable workflows instead of opaque UI calls.
 
@@ -2346,7 +2347,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
 
-### CAP-03.S05 - Dependency graph, staleness, and controlled recalculation
+### SLICE-dependency-graph-staleness-and-controlled-recalculation (`CAP-03.S05`) - Dependency graph, staleness, and controlled recalculation
 
 **Outcome:** Changes to evidence, models, schemas, or decisions identify and safely refresh affected outputs.
 
@@ -2438,7 +2439,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
 
-### CAP-03.S06 - Use-case profiles and adaptive guided navigation
+### SLICE-use-case-profiles-and-adaptive-guided-navigation (`CAP-03.S06`) - Use-case profiles and adaptive guided navigation
 
 **Outcome:** A project begins from a scholarly objective and exposes a clear, versioned primary path through the workbench, with visible progress and access to supporting tools.
 
@@ -2590,7 +2591,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/taskctl.py validate
 
-## CAP-04 - Scholarly ingestion, connectors, canonicalization, and corpus governance
+## CAP-scholarly-ingestion (`CAP-04`) - Scholarly ingestion, connectors, canonicalization, and corpus governance
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -2602,7 +2603,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Works, versions, authors, identifiers, corrections, retractions, and duplicates reconcile without losing source-specific metadata.
 - Every corpus item records how it was discovered, what rights apply, and why it is included or excluded.
 
-### CAP-04.S01 - Reference-library and file imports
+### SLICE-reference-library-and-file-imports (`CAP-04.S01`) - Reference-library and file imports
 
 **Outcome:** Researchers can import existing bibliographies with preview, mapping, validation, and repeatable merge behavior.
 
@@ -2692,7 +2693,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 
-### CAP-04.S02 - Open scholarly source adapters
+### SLICE-open-scholarly-source-adapters (`CAP-04.S02`) - Open scholarly source adapters
 
 **Outcome:** OpenAlex, Crossref, Unpaywall, and Semantic Scholar are available behind stable, observable connector contracts.
 
@@ -2782,7 +2783,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile search
 
-### CAP-04.S03 - Canonical work, version, and identity reconciliation
+### SLICE-canonical-work-version-and-identity-reconciliation (`CAP-04.S03`) - Canonical work, version, and identity reconciliation
 
 **Outcome:** Multiple provider records resolve to inspectable canonical scholarly entities without flattening uncertainty.
 
@@ -2875,7 +2876,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile graph
 
-### CAP-04.S04 - Corpus membership, discovery path, and rights governance
+### SLICE-corpus-membership-discovery-path-and-rights-governance (`CAP-04.S04`) - Corpus membership, discovery path, and rights governance
 
 **Outcome:** Corpus state is a deliberate scholarly decision with complete acquisition and inclusion provenance.
 
@@ -2967,7 +2968,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile search
 
-### CAP-04.S05 - Connector SDK and controlled extensibility
+### SLICE-connector-sdk-and-controlled-extensibility (`CAP-04.S05`) - Connector SDK and controlled extensibility
 
 **Outcome:** New data sources can be added without bypassing provenance, rights, security, or canonicalization.
 
@@ -3060,7 +3061,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
 
-## CAP-05 - Document acquisition, parsing, source inspection, and page anchors
+## CAP-document-inspection (`CAP-05`) - Document acquisition, parsing, source inspection, and page anchors
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -3072,7 +3073,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Native XML/HTML is preferred; PDF fallback produces sections, passages, references, and page-coordinate anchors with quality scores.
 - Users can inspect every evidence anchor in source context and corrections trigger controlled recalculation.
 
-### CAP-05.S01 - Rights-aware document acquisition
+### SLICE-rights-aware-document-acquisition (`CAP-05.S01`) - Rights-aware document acquisition
 
 **Outcome:** Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use.
 
@@ -3163,7 +3164,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile service
 
-### CAP-05.S02 - Structured and PDF parsing pipeline
+### SLICE-structured-and-pdf-parsing-pipeline (`CAP-05.S02`) - Structured and PDF parsing pipeline
 
 **Outcome:** A replaceable local parser pipeline produces normalized document structure with retained originals and quality signals.
 
@@ -3252,7 +3253,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile e2e-local
 
-### CAP-05.S03 - Immutable document revisions and source anchors
+### SLICE-immutable-document-revisions-and-source-anchors (`CAP-05.S03`) - Immutable document revisions and source anchors
 
 **Outcome:** Every extracted passage and downstream assertion points to a specific immutable revision and stable location.
 
@@ -3343,7 +3344,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile service
 
-### CAP-05.S04 - Source viewer and evidence inspection experience
+### SLICE-source-viewer-and-evidence-inspection-experience (`CAP-05.S04`) - Source viewer and evidence inspection experience
 
 **Outcome:** Researchers can read original pages and structured text side by side, navigate anchors, and inspect provenance without leaving the workflow.
 
@@ -3436,7 +3437,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
 
-### CAP-05.S05 - References, citation contexts, tables, and figures
+### SLICE-references-citation-contexts-tables-and-figures (`CAP-05.S05`) - References, citation contexts, tables, and figures
 
 **Outcome:** Document-internal scholarly structures become inspectable records without losing page context.
 
@@ -3527,7 +3528,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile desktop
 
-### CAP-05.S06 - Parsing quality, correction, and reprocessing
+### SLICE-parsing-quality-correction-and-reprocessing (`CAP-05.S06`) - Parsing quality, correction, and reprocessing
 
 **Outcome:** Parsing errors can be diagnosed and corrected without obscuring machine output or provenance.
 
@@ -3618,7 +3619,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
 
-## CAP-06 - Local search, discovery, corpus diagnostics, and screening
+## CAP-search-screening (`CAP-06`) - Local search, discovery, corpus diagnostics, and screening
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -3630,7 +3631,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Search evolution is stored as a visible tree of exact queries, transformations, results, and discovery paths.
 - Screening supports human inclusion decisions, uncertainty/random audits, stopping evidence, and reproducible exports.
 
-### CAP-06.S01 - Fielded lexical search and local indexing
+### SLICE-fielded-lexical-search-and-local-indexing (`CAP-06.S01`) - Fielded lexical search and local indexing
 
 **Outcome:** Exact terminology, Boolean logic, metadata filters, and reproducible ranking are available through SQLite FTS5.
 
@@ -3720,7 +3721,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile desktop
 
-### CAP-06.S02 - Semantic representations and vector retrieval
+### SLICE-semantic-representations-and-vector-retrieval (`CAP-06.S02`) - Semantic representations and vector retrieval
 
 **Outcome:** Conceptually related literature is retrievable through a replaceable, versioned local embedding interface.
 
@@ -3812,7 +3813,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile data
 
-### CAP-06.S03 - Hybrid retrieval and reranking
+### SLICE-hybrid-retrieval-and-reranking (`CAP-06.S03`) - Hybrid retrieval and reranking
 
 **Outcome:** Search ensembles combine exact, semantic, graph, and project-specific relevance while preserving component evidence.
 
@@ -3903,7 +3904,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 
-### CAP-06.S04 - Search Studio and transparent expansion
+### SLICE-search-studio-and-transparent-expansion (`CAP-06.S04`) - Search Studio and transparent expansion
 
 **Outcome:** Researchers can iteratively broaden, narrow, branch, and compare searches without losing their reasoning history.
 
@@ -3995,7 +3996,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile service
 
-### CAP-06.S05 - Corpus canvas, coverage, and reflexivity diagnostics
+### SLICE-corpus-canvas-coverage-and-reflexivity-diagnostics (`CAP-06.S05`) - Corpus canvas, coverage, and reflexivity diagnostics
 
 **Outcome:** Field structure and collection bias are visible before analytical claims are made.
 
@@ -4089,7 +4090,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile graph
 
-### CAP-06.S06 - Transparent screening and active-learning governance
+### SLICE-transparent-screening-and-active-learning-governance (`CAP-06.S06`) - Transparent screening and active-learning governance
 
 **Outcome:** Humans retain inclusion authority while machine prioritization reduces avoidable screening labor and exposes missed-paper risk.
 
@@ -4183,7 +4184,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile evidence
 
-## CAP-07 - Provider-neutral model gateway and governed AI execution
+## CAP-model-gateway (`CAP-07`) - Provider-neutral model gateway and governed AI execution
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -4195,7 +4196,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Local inference supports the complete basic PC/lab workflow; remote egress is optional and explicitly authorized.
 - Prompts, schemas, repair, evaluation, costs, and model upgrades are controlled as durable system assets.
 
-### CAP-07.S01 - Model task, provider, and routing contracts
+### SLICE-model-task-provider-and-routing-contracts (`CAP-07.S01`) - Model task, provider, and routing contracts
 
 **Outcome:** AI capabilities are invoked by scholarly task type rather than hard-coded vendor API.
 
@@ -4285,7 +4286,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile security-local
 
-### CAP-07.S02 - Local model runtime and model management
+### SLICE-local-model-runtime-and-model-management (`CAP-07.S02`) - Local model runtime and model management
 
 **Outcome:** PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model server.
 
@@ -4378,7 +4379,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile e2e-local
 
-### CAP-07.S03 - Approved remote model providers
+### SLICE-approved-remote-model-providers (`CAP-07.S03`) - Approved remote model providers
 
 **Outcome:** Remote inference is available through explicit opt-in adapters with redaction, data-class, and reproducibility controls.
 
@@ -4469,7 +4470,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile security-local
 - python tools/verify.py --profile e2e-local
 
-### CAP-07.S04 - Prompt, schema, and structured-output registry
+### SLICE-prompt-schema-and-structured-output-registry (`CAP-07.S04`) - Prompt, schema, and structured-output registry
 
 **Outcome:** AI behavior is reproducible and testable as versioned configuration rather than hidden prompt strings.
 
@@ -4560,7 +4561,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
 
-### CAP-07.S05 - AI observability, budgets, and evaluation operations
+### SLICE-ai-observability-budgets-and-evaluation-operations (`CAP-07.S05`) - AI observability, budgets, and evaluation operations
 
 **Outcome:** Model use is measurable by scholarly task, project, provider, quality, latency, and cost without exposing research content.
 
@@ -4652,7 +4653,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile desktop
 
-## CAP-08 - Evidence schemas, extraction, verification, and adjudication
+## CAP-evidence-verification (`CAP-08`) - Evidence schemas, extraction, verification, and adjudication
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -4664,7 +4665,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Every extracted value links to exact source anchors, extractor configuration, verifier outcome, confidence dimensions, and human review state.
 - Evidence matrices support comparison, disagreement, adjudication, and export without turning missing information into invented data.
 
-### CAP-08.S01 - Core ontology and schema-pack registry
+### SLICE-core-ontology-and-schema-pack-registry (`CAP-08.S01`) - Core ontology and schema-pack registry
 
 **Outcome:** A small stable scholarly core can be extended by domain and method packs under explicit version governance.
 
@@ -4755,7 +4756,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile service
 
-### CAP-08.S02 - Source-grounded extraction pipeline
+### SLICE-source-grounded-extraction-pipeline (`CAP-08.S02`) - Source-grounded extraction pipeline
 
 **Outcome:** Schema-constrained extraction selects relevant source context and emits candidate evidence without fabricating absent fields.
 
@@ -4848,7 +4849,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile service
 
-### CAP-08.S03 - Evidence record, status, confidence, and uncertainty model
+### SLICE-evidence-record-status-confidence-and-uncertainty-model (`CAP-08.S03`) - Evidence record, status, confidence, and uncertainty model
 
 **Outcome:** Extracted content is stored with decomposed certainty and explicit epistemic status.
 
@@ -4940,7 +4941,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile desktop
 
-### CAP-08.S04 - Independent evidence verification
+### SLICE-independent-evidence-verification (`CAP-08.S04`) - Independent evidence verification
 
 **Outcome:** A separate verifier tests passage entailment, schema fit, anchor validity, and unsupported inference.
 
@@ -5032,7 +5033,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile desktop
 
-### CAP-08.S05 - Evidence matrix and source-first analysis UI
+### SLICE-evidence-matrix-and-source-first-analysis-ui (`CAP-08.S05`) - Evidence matrix and source-first analysis UI
 
 **Outcome:** Researchers can inspect, filter, compare, pivot, correct, and trace evidence at scale.
 
@@ -5125,7 +5126,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile service
 
-### CAP-08.S06 - Coder comparison, adjudication, and evidence export
+### SLICE-coder-comparison-adjudication-and-evidence-export (`CAP-08.S06`) - Coder comparison, adjudication, and evidence export
 
 **Outcome:** Human plurality and review outcomes are measurable and preserved.
 
@@ -5216,7 +5217,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile security-local
 
-## CAP-09 - Scholarly graph, comparison sets, synthesis, and reproducibility
+## CAP-scholarly-graph-synthesis (`CAP-09`) - Scholarly graph, comparison sets, synthesis, and reproducibility
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -5229,7 +5230,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Synthesis and exports preserve supporting evidence, disagreement, uncertainty, rights, and exact project state.
 - Synthesis and graph outputs can become evidence packets for study design, manuscript blueprints, drafting, and review without losing source lineage.
 
-### CAP-09.S01 - Local graph domain and replaceable graph storage
+### SLICE-local-graph-domain-and-replaceable-graph-storage (`CAP-09.S01`) - Local graph domain and replaceable graph storage
 
 **Outcome:** The system can query scholarly relations locally without binding the domain to a particular graph database.
 
@@ -5319,7 +5320,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile service
 
-### CAP-09.S02 - Claim, theory, construct, method, and context relations
+### SLICE-claim-theory-construct-method-and-context-relations (`CAP-09.S02`) - Claim, theory, construct, method, and context relations
 
 **Outcome:** Internal paper semantics become a multi-granular argument representation with preserved wording and evidence.
 
@@ -5412,7 +5413,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile desktop
 
-### CAP-09.S03 - Comparability sets and contradiction candidates
+### SLICE-comparability-sets-and-contradiction-candidates (`CAP-09.S03`) - Comparability sets and contradiction candidates
 
 **Outcome:** Studies are normalized into defensible comparison sets before support, contradiction, or boundary inference.
 
@@ -5505,7 +5506,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile novelty
 
-### CAP-09.S04 - Graph, theory, construct, and lineage workspaces
+### SLICE-graph-theory-construct-and-lineage-workspaces (`CAP-09.S04`) - Graph, theory, construct, and lineage workspaces
 
 **Outcome:** Complex field structures are navigable through task-specific views rather than one undifferentiated network.
 
@@ -5598,7 +5599,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile search
 
-### CAP-09.S05 - Evidence-grounded synthesis and citation audit
+### SLICE-evidence-grounded-synthesis-and-citation-audit (`CAP-09.S05`) - Evidence-grounded synthesis and citation audit
 
 **Outcome:** Narrative and tabular synthesis is downstream of accepted evidence and preserves disagreement and uncertainty.
 
@@ -5692,7 +5693,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile novelty
 
-### CAP-09.S06 - Reproducibility packages and scholarly exports
+### SLICE-reproducibility-packages-and-scholarly-exports (`CAP-09.S06`) - Reproducibility packages and scholarly exports
 
 **Outcome:** A project can produce a rights-aware record of corpus, searches, schemas, models, decisions, analysis, and outputs.
 
@@ -5786,7 +5787,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile security-local
 
-## CAP-10 - Novelty auditing, research opportunities, and plural research modes
+## CAP-novelty-opportunities (`CAP-10`) - Novelty auditing, research opportunities, and plural research modes
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -5800,7 +5801,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Accepted opportunities can hand off explicitly to empirical study design or empirical/theory/critical manuscript-development workflows.
 - Living-monitor changes can identify affected claims, designs, manuscripts, reviews, and opportunity assessments.
 
-### CAP-10.S01 - Nearest-prior novelty workspace MVP
+### SLICE-nearest-prior-novelty-workspace-mvp (`CAP-10.S01`) - Nearest-prior novelty workspace MVP
 
 **Outcome:** A proposed research contribution can be decomposed and compared against the closest literature in a transparent local workflow.
 
@@ -5892,7 +5893,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile documents
 
-### CAP-10.S02 - Independent adversarial novelty challenge
+### SLICE-independent-adversarial-novelty-challenge (`CAP-10.S02`) - Independent adversarial novelty challenge
 
 **Outcome:** A separate workflow attempts to narrow or invalidate the proposed contribution rather than helping sell it.
 
@@ -5985,7 +5986,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile evidence
 
-### CAP-10.S03 - Research opportunity dossier and decision ledger
+### SLICE-research-opportunity-dossier-and-decision-ledger (`CAP-10.S03`) - Research opportunity dossier and decision ledger
 
 **Outcome:** A candidate moves from algorithmic signal to a reviewer-defensible, monitored scholarly object.
 
@@ -6078,7 +6079,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile graph
 
-### CAP-10.S05 - Critical and hermeneutic research support
+### SLICE-critical-and-hermeneutic-research-support (`CAP-10.S05`) - Critical and hermeneutic research support
 
 **Outcome:** The system surfaces evidence-linked candidate assumptions and alternative framings without replacing interpretive authority.
 
@@ -6171,7 +6172,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile graph
 
-### CAP-10.S04 - Plural opportunity detector ensemble
+### SLICE-plural-opportunity-detector-ensemble (`CAP-10.S04`) - Plural opportunity detector ensemble
 
 **Outcome:** Opportunity signals are separated by contribution logic, evidence requirements, and false-positive risks.
 
@@ -6265,7 +6266,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile search
 
-### CAP-10.S06 - Opportunity radar, ranking, and portfolio governance
+### SLICE-opportunity-radar-ranking-and-portfolio-governance (`CAP-10.S06`) - Opportunity radar, ranking, and portfolio governance
 
 **Outcome:** Researchers can compare candidates on transparent dimensions without collapsing them into an opaque novelty score.
 
@@ -6357,7 +6358,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile security-local
 
-### CAP-10.S07 - Living monitor and impact-aware research memory
+### SLICE-living-monitor-and-impact-aware-research-memory (`CAP-10.S07`) - Living monitor and impact-aware research memory
 
 **Outcome:** New literature is evaluated as a change to existing claims, syntheses, and opportunity assessments rather than as a generic alert.
 
@@ -6450,7 +6451,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile e2e-local
 
-## CAP-11 - Windows PC/lab product hardening, validation, packaging, and release
+## CAP-windows-release (`CAP-11`) - Windows PC/lab product hardening, validation, packaging, and release
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -6463,7 +6464,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Lab administrators can deploy, configure, diagnose, and update multiple stations while projects remain locally governed.
 - Representative users can select an objective, understand the guided path, move between primary steps and supporting tools, and complete each approved use-case workflow without external instruction.
 
-### CAP-11.S01 - Performance profiles, scale targets, and resource governance
+### SLICE-performance-profiles-scale-targets-and-resource-governance (`CAP-11.S01`) - Performance profiles, scale targets, and resource governance
 
 **Outcome:** The product has measured local limits and remains responsive under realistic corpus, document, model, and workflow loads.
 
@@ -6554,7 +6555,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile service
 
-### CAP-11.S02 - Reliability, crash recovery, upgrade, and rollback
+### SLICE-reliability-crash-recovery-upgrade-and-rollback (`CAP-11.S02`) - Reliability, crash recovery, upgrade, and rollback
 
 **Outcome:** Expected failures do not lose accepted scholarly work or leave projects in ambiguous states.
 
@@ -6647,7 +6648,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
 
-### CAP-11.S03 - Offline, privacy, and local security acceptance
+### SLICE-offline-privacy-and-local-security-acceptance (`CAP-11.S03`) - Offline, privacy, and local security acceptance
 
 **Outcome:** The local edition has verified no-account/offline behavior and a reviewed threat/control baseline.
 
@@ -6737,7 +6738,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile security-local
 - python tools/verify.py --profile e2e-local
 
-### CAP-11.S04 - Accessibility, usability, onboarding, and help
+### SLICE-accessibility-usability-onboarding-and-help (`CAP-11.S04`) - Accessibility, usability, onboarding, and help
 
 **Outcome:** Researchers can learn and operate the local product without specialist system administration or inaccessible interaction barriers.
 
@@ -6855,7 +6856,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/taskctl.py validate
 
-### CAP-11.S05 - Lab deployment, policy, maintenance, and support
+### SLICE-lab-deployment-policy-maintenance-and-support (`CAP-11.S05`) - Lab deployment, policy, maintenance, and support
 
 **Outcome:** A laboratory can manage multiple independent PCs while retaining local project operation and predictable support.
 
@@ -6947,7 +6948,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
 
-### CAP-11.S06 - Local release candidate and acceptance gate
+### SLICE-local-release-candidate-and-acceptance-gate (`CAP-11.S06`) - Local release candidate and acceptance gate
 
 **Outcome:** The PC/lab edition is released only after technical, scholarly, and operational acceptance on representative workflows.
 
@@ -7041,7 +7042,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
 
-## CAP-12 - University-hosted deployment, institutional identity, collaboration, and operations
+## CAP-university-hosting (`CAP-12`) - University-hosted deployment, institutional identity, collaboration, and operations
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -7053,7 +7054,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - University services provide SSO, project isolation, collaboration, licensed-source enforcement, durable workflows, observability, backup, and recovery.
 - A pilot research group completes a full workflow under institution-approved security and operations controls.
 
-### CAP-12.S01 - Desktop remote connection mode and API abstraction
+### SLICE-desktop-remote-connection-mode-and-api-abstraction (`CAP-12.S01`) - Desktop remote connection mode and API abstraction
 
 **Outcome:** The canonical client can connect securely to a university project home while retaining local caches and clear deployment context.
 
@@ -7146,7 +7147,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile server
 - python tools/verify.py --profile security-local
 
-### CAP-12.S02 - Institutional service and data-plane foundation
+### SLICE-institutional-service-and-data-plane-foundation (`CAP-12.S02`) - Institutional service and data-plane foundation
 
 **Outcome:** A deployable server stack implements the shared domain services with production-grade relational, object, vector, and workflow infrastructure.
 
@@ -7236,7 +7237,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile server
 - python tools/verify.py --profile service
 
-### CAP-12.S03 - Institutional identity, authorization, and project isolation
+### SLICE-institutional-identity-authorization-and-project-isolation (`CAP-12.S03`) - Institutional identity, authorization, and project isolation
 
 **Outcome:** University users authenticate through OIDC and access only permitted projects, sources, models, and administrative functions.
 
@@ -7324,7 +7325,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 
-### CAP-12.S04 - Team collaboration and scholarly adjudication
+### SLICE-team-collaboration-and-scholarly-adjudication (`CAP-12.S04`) - Team collaboration and scholarly adjudication
 
 **Outcome:** Research groups can share projects, assign work, compare decisions, discuss disputes, and retain scholarly plurality.
 
@@ -7417,7 +7418,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile graph
 
-### CAP-12.S05 - Licensed sources, institutional rights, retention, and compute policy
+### SLICE-licensed-sources-institutional-rights-retention-and-compute-policy (`CAP-12.S05`) - Licensed sources, institutional rights, retention, and compute policy
 
 **Outcome:** Institutional entitlements and unpublished materials are governed consistently across search, storage, model egress, collaboration, and export.
 
@@ -7506,7 +7507,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile server
 - python tools/verify.py --profile ai
 
-### CAP-12.S06 - Institutional operations, disaster recovery, and pilot acceptance
+### SLICE-institutional-operations-disaster-recovery-and-pilot-acceptance (`CAP-12.S06`) - Institutional operations, disaster recovery, and pilot acceptance
 
 **Outcome:** The university edition is observable, supportable, recoverable, and validated with a real research group.
 
@@ -7594,7 +7595,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 
-## CAP-13 - Managed cloud control plane, tenant data planes, governance, and SaaS operations
+## CAP-cloud-platform (`CAP-13`) - Managed cloud control plane, tenant data planes, governance, and SaaS operations
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -7606,7 +7607,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Cloud compute, model use, storage, quotas, billing, audit, incident response, backup, and disaster recovery meet declared service objectives.
 - Cloud delivery preserves the local/university evidence, provenance, rights, and bounded-novelty semantics rather than weakening them for convenience.
 
-### CAP-13.S01 - SaaS organization and tenant control plane
+### SLICE-saas-organization-and-tenant-control-plane (`CAP-13.S01`) - SaaS organization and tenant control plane
 
 **Outcome:** Organizations, regions, plans, policies, and tenant resources are provisioned through auditable lifecycle workflows.
 
@@ -7694,7 +7695,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
-### CAP-13.S02 - Regional tenant data planes and isolation tiers
+### SLICE-regional-tenant-data-planes-and-isolation-tiers (`CAP-13.S02`) - Regional tenant data planes and isolation tiers
 
 **Outcome:** Tenant data is hosted in declared regions using pooled, dedicated-schema, dedicated-database, or dedicated-deployment isolation as policy requires.
 
@@ -7782,7 +7783,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
-### CAP-13.S03 - Cloud identity, entitlement, metering, and billing
+### SLICE-cloud-identity-entitlement-metering-and-billing (`CAP-13.S03`) - Cloud identity, entitlement, metering, and billing
 
 **Outcome:** Organizations can govern membership and plans while usage is measured transparently by value-driving resource.
 
@@ -7870,7 +7871,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
-### CAP-13.S04 - Elastic workers, models, search, and cost governance
+### SLICE-elastic-workers-models-search-and-cost-governance (`CAP-13.S04`) - Elastic workers, models, search, and cost governance
 
 **Outcome:** Cloud analytical workloads scale by class without sacrificing reproducibility, rights, or budget controls.
 
@@ -7958,7 +7959,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
-### CAP-13.S05 - Cloud security, privacy, residency, and compliance operations
+### SLICE-cloud-security-privacy-residency-and-compliance-operations (`CAP-13.S05`) - Cloud security, privacy, residency, and compliance operations
 
 **Outcome:** Security and privacy controls operate continuously across tenant, regional, administrative, and software-supply-chain boundaries.
 
@@ -8046,7 +8047,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
-### CAP-13.S06 - Desktop-cloud experience, service reliability, and launch gate
+### SLICE-desktop-cloud-experience-service-reliability-and-launch-gate (`CAP-13.S06`) - Desktop-cloud experience, service reliability, and launch gate
 
 **Outcome:** Cloud customers use the canonical desktop with clear synchronization, reliability, support, and service-status behavior.
 
@@ -8135,7 +8136,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
-## CAP-14 - Cross-platform desktop qualification and release
+## CAP-cross-platform-desktop (`CAP-14`) - Cross-platform desktop qualification and release
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -8148,7 +8149,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Platform secrets, signing/update trust, paths, sidecars, parsers, vector adapters, and model backends pass platform-specific security and reliability tests.
 - Linux ARM64, including an NVIDIA DGX Spark-class lab profile where available, completes representative GPU/model and end-to-end qualification.
 
-### CAP-14.S01 - Platform abstraction and build matrix
+### SLICE-platform-abstraction-and-build-matrix (`CAP-14.S01`) - Platform abstraction and build matrix
 
 **Outcome:** One codebase builds and reports its capabilities consistently across qualified desktop operating systems.
 
@@ -8238,7 +8239,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop-cross-platform
 
-### CAP-14.S02 - Apple Silicon macOS product qualification
+### SLICE-apple-silicon-macos-product-qualification (`CAP-14.S02`) - Apple Silicon macOS product qualification
 
 **Outcome:** The local product is production-ready on supported Apple Silicon macOS versions.
 
@@ -8329,7 +8330,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile security-local
 
-### CAP-14.S03 - Linux x86_64 and ARM64 product qualification
+### SLICE-linux-x86-64-and-arm64-product-qualification (`CAP-14.S03`) - Linux x86_64 and ARM64 product qualification
 
 **Outcome:** The local product is production-ready on approved Ubuntu-compatible Linux workstation profiles.
 
@@ -8420,7 +8421,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile security-local
 
-### CAP-14.S04 - Cross-platform scientific and AI runtime
+### SLICE-cross-platform-scientific-and-ai-runtime (`CAP-14.S04`) - Cross-platform scientific and AI runtime
 
 **Outcome:** Hardware acceleration is optional, governed, observable, and portable across supported desktop platforms.
 
@@ -8514,7 +8515,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile ai
 
-### CAP-14.S05 - Cross-platform project compatibility and recovery
+### SLICE-cross-platform-project-compatibility-and-recovery (`CAP-14.S05`) - Cross-platform project compatibility and recovery
 
 **Outcome:** Projects and analytical results remain portable and semantically identical across qualified desktop operating systems.
 
@@ -8606,7 +8607,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile e2e-local
 
-### CAP-14.S06 - Cross-platform desktop release gate
+### SLICE-cross-platform-desktop-release-gate (`CAP-14.S06`) - Cross-platform desktop release gate
 
 **Outcome:** The complete local edition is release-qualified on Windows, macOS, and Linux.
 
@@ -8697,7 +8698,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop-cross-platform
 
-## CAP-15 - Empirical study design and protocol development
+## CAP-study-design (`CAP-15`) - Empirical study design and protocol development
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -8710,7 +8711,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Every consequential recommendation is source-linked or clearly labeled as inference, convention, researcher preference, or unresolved decision.
 - The platform never implies IRB/ethics approval, preregistration, or methodological validity without human/institutional review.
 
-### CAP-15.S01 - Study-design domain and evidence foundation
+### SLICE-study-design-domain-and-evidence-foundation (`CAP-15.S01`) - Study-design domain and evidence foundation
 
 **Outcome:** Study designs are first-class, versioned, source-grounded research objects.
 
@@ -8802,7 +8803,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile data
 
-### CAP-15.S02 - Research logic and design alternatives
+### SLICE-research-logic-and-design-alternatives (`CAP-15.S02`) - Research logic and design alternatives
 
 **Outcome:** Researchers receive plural, evidence-backed design options and retain final authority.
 
@@ -8892,7 +8893,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile study-design
 
-### CAP-15.S03 - Sampling, measurement, and data collection
+### SLICE-sampling-measurement-and-data-collection (`CAP-15.S03`) - Sampling, measurement, and data collection
 
 **Outcome:** The selected design contains an implementable and reviewable empirical data plan.
 
@@ -8981,7 +8982,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile study-design
 
-### CAP-15.S04 - Analysis, validity, ethics, and reproducibility
+### SLICE-analysis-validity-ethics-and-reproducibility (`CAP-15.S04`) - Analysis, validity, ethics, and reproducibility
 
 **Outcome:** The protocol states how evidence will be produced, evaluated, governed, and interpreted under alternative outcomes.
 
@@ -9071,7 +9072,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile security-local
 
-### CAP-15.S05 - Study Design Studio and protocol exports
+### SLICE-study-design-studio-and-protocol-exports (`CAP-15.S05`) - Study Design Studio and protocol exports
 
 **Outcome:** Researchers can produce a source-grounded, reviewable empirical protocol and analysis plan.
 
@@ -9163,7 +9164,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile evidence
 
-### CAP-15.S06 - Study-design production acceptance
+### SLICE-study-design-production-acceptance (`CAP-15.S06`) - Study-design production acceptance
 
 **Outcome:** The study-design capability is production-ready, source-grounded, and expert-reviewed.
 
@@ -9252,7 +9253,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile study-design
 
-## CAP-16 - Manuscript blueprint, venue profiles, and article architecture
+## CAP-manuscript-blueprints (`CAP-16`) - Manuscript blueprint, venue profiles, and article architecture
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -9265,7 +9266,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Researchers can modify and approve the blueprint before prose generation; changes preserve history and impact previews.
 - Editable DOCX, Markdown, and LaTeX skeletons retain stable section identities for source-grounded drafting and review.
 
-### CAP-16.S01 - Manuscript domain and template governance
+### SLICE-manuscript-domain-and-template-governance (`CAP-16.S01`) - Manuscript domain and template governance
 
 **Outcome:** Article architecture is versioned, inspectable, and separated from generated prose.
 
@@ -9355,7 +9356,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile data
 
-### CAP-16.S02 - Empirical article blueprints
+### SLICE-empirical-article-blueprints (`CAP-16.S02`) - Empirical article blueprints
 
 **Outcome:** Empirical conference and journal skeletons are complete, adaptable, and linked to protocol/result requirements.
 
@@ -9444,7 +9445,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile study-design
 
-### CAP-16.S03 - Theory article blueprints
+### SLICE-theory-article-blueprints (`CAP-16.S03`) - Theory article blueprints
 
 **Outcome:** Theory manuscripts receive coherent argument architecture while preserving epistemic plurality.
 
@@ -9533,7 +9534,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
-### CAP-16.S04 - Critical scholarship blueprints
+### SLICE-critical-scholarship-blueprints (`CAP-16.S04`) - Critical scholarship blueprints
 
 **Outcome:** Critical manuscripts receive rigorous evidence and argument scaffolding without epistemic flattening.
 
@@ -9622,7 +9623,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
-### CAP-16.S05 - Manuscript Blueprint and venue adaptation
+### SLICE-manuscript-blueprint-and-venue-adaptation (`CAP-16.S05`) - Manuscript Blueprint and venue adaptation
 
 **Outcome:** Researchers can approve a publication-ready article architecture before prose generation.
 
@@ -9713,7 +9714,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
-### CAP-16.S06 - Manuscript blueprint production acceptance
+### SLICE-manuscript-blueprint-production-acceptance (`CAP-16.S06`) - Manuscript blueprint production acceptance
 
 **Outcome:** The article-architecture capability is production-ready across research and output types.
 
@@ -9802,7 +9803,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
-## CAP-17 - Technical report and study-results integration
+## CAP-results-integration (`CAP-17`) - Technical report and study-results integration
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -9815,7 +9816,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - The platform never invents or reverse-engineers unreported empirical results and visibly blocks manuscript use of unresolved records.
 - Changes to authoritative reports propagate staleness to dependent drafts, reviews, tables, figures, and exports.
 
-### CAP-17.S01 - Private technical-report and study-artifact intake
+### SLICE-private-technical-report-and-study-artifact-intake (`CAP-17.S01`) - Private technical-report and study-artifact intake
 
 **Outcome:** Unpublished study results enter through a confidential, rights-aware, versioned channel.
 
@@ -9907,7 +9908,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile data
 
-### CAP-17.S02 - Technical-report parsing and result extraction
+### SLICE-technical-report-parsing-and-result-extraction (`CAP-17.S02`) - Technical-report parsing and result extraction
 
 **Outcome:** Methods and results become structured candidates linked to exact report evidence.
 
@@ -10001,7 +10002,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile ai
 
-### CAP-17.S03 - Study-plan and result reconciliation
+### SLICE-study-plan-and-result-reconciliation (`CAP-17.S03`) - Study-plan and result reconciliation
 
 **Outcome:** Actual study conduct and results are distinguished from plans and verified before authoring.
 
@@ -10093,7 +10094,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile evidence
 
-### CAP-17.S04 - Results evidence graph and dependency propagation
+### SLICE-results-evidence-graph-and-dependency-propagation (`CAP-17.S04`) - Results evidence graph and dependency propagation
 
 **Outcome:** Verified study results become durable evidence with complete downstream impact tracking.
 
@@ -10185,7 +10186,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile data
 
-### CAP-17.S05 - Technical Reports & Results workspace
+### SLICE-technical-reports-results-workspace (`CAP-17.S05`) - Technical Reports & Results workspace
 
 **Outcome:** Researchers can inspect, verify, and approve result evidence for downstream manuscripts.
 
@@ -10276,7 +10277,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile results
 
-### CAP-17.S06 - Results integration production acceptance
+### SLICE-results-integration-production-acceptance (`CAP-17.S06`) - Results integration production acceptance
 
 **Outcome:** Technical-report and result evidence is trustworthy enough for controlled manuscript use.
 
@@ -10367,7 +10368,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile results
 
-## CAP-18 - Source-grounded manuscript drafting and publication artifacts
+## CAP-manuscript-drafting (`CAP-18`) - Source-grounded manuscript drafting and publication artifacts
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -10380,7 +10381,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Theory and critical drafts preserve conceptual/interpretive plurality and author voice rather than imposing a single article logic.
 - Researchers can edit, compare, approve, audit, disclose, and export complete manuscripts and reproducibility artifacts.
 
-### CAP-18.S01 - Manuscript project and section workflow
+### SLICE-manuscript-project-and-section-workflow (`CAP-18.S01`) - Manuscript project and section workflow
 
 **Outcome:** Drafts are durable, versioned scholarly objects with human ownership and selective recalculation.
 
@@ -10470,7 +10471,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile data
 
-### CAP-18.S02 - Evidence-aware drafting engine
+### SLICE-evidence-aware-drafting-engine (`CAP-18.S02`) - Evidence-aware drafting engine
 
 **Outcome:** Generated prose is section-specific, source-grounded, inspectable, and unable to conceal unsupported content.
 
@@ -10564,7 +10565,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile security-local
 
-### CAP-18.S03 - Empirical manuscript drafting
+### SLICE-empirical-manuscript-drafting (`CAP-18.S03`) - Empirical manuscript drafting
 
 **Outcome:** The platform can draft a complete empirical article from verified study and literature evidence.
 
@@ -10657,7 +10658,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile evidence
 
-### CAP-18.S04 - Theory and critical manuscript drafting
+### SLICE-theory-and-critical-manuscript-drafting (`CAP-18.S04`) - Theory and critical manuscript drafting
 
 **Outcome:** The platform can develop full theory and critical article drafts while preserving epistemic and authorial plurality.
 
@@ -10749,7 +10750,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile ai
 
-### CAP-18.S05 - Manuscript Studio and publication exports
+### SLICE-manuscript-studio-and-publication-exports (`CAP-18.S05`) - Manuscript Studio and publication exports
 
 **Outcome:** Researchers can review, edit, approve, and export complete source-grounded manuscripts.
 
@@ -10839,7 +10840,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
-### CAP-18.S06 - Source-grounded manuscript production acceptance
+### SLICE-source-grounded-manuscript-production-acceptance (`CAP-18.S06`) - Source-grounded manuscript production acceptance
 
 **Outcome:** Manuscript drafting is accurate, auditable, editable, and production-ready across article types.
 
@@ -10930,7 +10931,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
-## CAP-19 - Reviewer simulation, editorial synthesis, and revision
+## CAP-review-revision (`CAP-19`) - Reviewer simulation, editorial synthesis, and revision
 
 **Campaign / completion:** `NONE` / `PENDING`
 
@@ -10943,7 +10944,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Editorial synthesis preserves disagreement and does not present simulated decisions as actual peer review or acceptance probability.
 - Every review comment can be triaged, linked to a revision, answered, diffed, and re-reviewed with full lineage.
 
-### CAP-19.S01 - Reviewer protocol, roles, and independence
+### SLICE-reviewer-protocol-roles-and-independence (`CAP-19.S01`) - Reviewer protocol, roles, and independence
 
 **Outcome:** Reviewer simulations are role-bounded, reproducible, and independent before editorial synthesis.
 
@@ -11034,7 +11035,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile security-local
 
-### CAP-19.S02 - Extended independent reviewer panel
+### SLICE-extended-independent-reviewer-panel (`CAP-19.S02`) - Extended independent reviewer panel
 
 **Outcome:** Generated or uploaded drafts receive complementary substantive, methodological, theoretical, critical, and integrity reviews.
 
@@ -11129,7 +11130,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile evidence
 
-### CAP-19.S03 - Generated and uploaded draft intake
+### SLICE-generated-and-uploaded-draft-intake (`CAP-19.S03`) - Generated and uploaded draft intake
 
 **Outcome:** Any draft can enter a reproducible, evidence-aware reviewer simulation without losing its original state.
 
@@ -11223,7 +11224,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile security-local
 
-### CAP-19.S04 - Reviewer reports and editorial synthesis
+### SLICE-reviewer-reports-and-editorial-synthesis (`CAP-19.S04`) - Reviewer reports and editorial synthesis
 
 **Outcome:** The system produces rigorous, transparent simulated peer review while preserving disagreement and uncertainty.
 
@@ -11315,7 +11316,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile evidence
 
-### CAP-19.S05 - Revision and response workflow
+### SLICE-revision-and-response-workflow (`CAP-19.S05`) - Revision and response workflow
 
 **Outcome:** Reviewer feedback becomes a transparent, author-controlled revision plan and auditable response.
 
@@ -11408,7 +11409,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile e2e-local
 
-### CAP-19.S06 - Reviewer simulation and research-production acceptance
+### SLICE-reviewer-simulation-and-research-production-acceptance (`CAP-19.S06`) - Reviewer simulation and research-production acceptance
 
 **Outcome:** Extended simulated review and revision are production-ready and complete the G8 local research lifecycle.
 

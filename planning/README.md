@@ -2,19 +2,29 @@
 
 This file is the repository's high-level planning router. Planning state and identity live in the files referenced below, not in chat history or this summary.
 
-## Hierarchy
+## Roadmap and execution hierarchy
 
 ```text
-Capability
-  -> Slice
-      -> Task
+Roadmap
+  -> Wave
+      -> Capability-wave increment
+          -> Ordered slice
+              -> Task
+      -> Wave exit / next-wave activation gate
 ```
 
 - `backlog.yaml` is authoritative for IDs, dependencies, waves, gates, status, claims, leases, and evidence references.
+- Waves are the primary execution axis. Every wave has one sequential exit gate;
+  the same gate activates the next wave, except the final roadmap gate.
+- Capability aliases are the default human presentation. Numeric capability IDs
+  remain immutable dependency/evidence keys.
+- Slices are ordered within a capability. Descriptive slice labels are the
+  default presentation, while numeric slice IDs preserve sequence and history.
 - `backlog.schema.json` is its executable Draft 2020-12 structural contract; every `taskctl` command validates it before reading or mutating state.
 - `capability-plans/CAP-XX.md` resolves cross-slice and material implementation decisions.
 - `slice-plans/CAP-XX/*.md` expands the existing tasks into a coherent implementation and verification contract.
-- `review-site/` is generated from the Markdown plans and is not a parallel authority.
+- `review-site/` is generated from the backlog and Markdown plans. It includes
+  wave/gate breakdowns plus capability and slice views and is not a parallel authority.
 - `../docs/planning-implementation-plan.md` and `status-summary.md` are generated from `backlog.yaml`; every section is read-only and `foundation` rejects drift.
 
 Regenerate and verify the human-readable backlog views after every authoritative
@@ -35,31 +45,32 @@ returns an actionable I/O failure. Edit `backlog.yaml`, never a generated view.
 
 ## Default planning and execution lifecycle
 
-1. Select one eligible capability.
-2. Run `planctl prepare CAP-XX`; create any missing capability or slice plan from the governed templates.
-3. Inspect all slices and adjacent capability contracts before implementation.
-4. Research each material choice; document credible candidates, best-in-class recommendation, rationale, required ADR/reference impact, and compatibility constraints.
-5. Adopt the recommendation as the completed selected decision unless a reviewer records an override.
+1. Determine the earliest unfinished global wave and its next exit gate.
+2. Select one eligible capability increment that contributes slices to that wave.
+3. Run `planctl prepare CAP-XX`; create missing capability or slice plans.
+4. Resolve capability-wide decisions once and inspect adjacent contracts.
+5. Complete and approve the ordered slice plans in the active wave. Later-wave
+   plans may remain proposed until their activation gate.
 6. Generate the static review site and provide its direct link.
-7. Obtain one explicit approval for the capability packet and all contained slice plans at an immutable commit.
-8. Start the capability campaign.
-9. Complete tasks and slices in dependency order with slice-wide integration and independent review.
-10. Complete capability-wide production qualification and independent capability review.
+7. Start `CAP-XX/WN` as the durable capability-wave increment.
+8. Complete its tasks and slices in order with focused task verification,
+   slice-wide integration, and independent review.
+9. Close the increment. Continue selecting increments in the same global wave.
+10. When the wave is fully integrated, review and approve its exit gate to activate
+    the next wave. Complete final cross-wave capability qualification only after a
+    capability's last increment.
 
-The default is sustained execution. Do not insert routine approval stops after the capability is approved.
-
-Capability approval is atomic across the capability packet and all contained
-slice plans at one immutable commit. A subset of slices cannot be approved as a
-campaign start. The campaign is durable across ordinary process or session
-interruptions and resumes in the same active capability until every approved
-slice and the production-ready capability qualification finish.
+The default is sustained execution within the active increment. Capability-wide
+decision approval is durable; slice-plan approval is progressive by wave. A
+subset of the active wave's ordered slices cannot authorize that increment, but
+future-wave plans do not block it. Historical all-slice approvals remain valid.
 
 ### Release-gate stop review
 
-When the current slice is locked by a pending release gate, `taskctl next` must
+When the global program position is a pending release gate, `taskctl next` must
 produce a decision-complete stopped-gate handoff rather than a generic "no READY
 task" message. The handoff identifies the gate criteria, incomplete preceding
-wave tasks, pending upstream gates, active and prerequisite planning-review
+wave tasks and slice reviews, pending upstream gates, and prerequisite planning-review
 pages, alternatives, recommendation, and exact resume condition.
 
 Distinguish two decisions:
@@ -68,7 +79,8 @@ Distinguish two decisions:
    approvable. The reviewer chooses whether to follow the recommended prerequisite
    sequence, defer the campaign, or authorize governed replanning. The gate stays
    `PENDING`.
-2. Only after every preceding-wave task is `DONE` and criterion-linked evidence
+2. Only after every preceding-wave task is `DONE`, every preceding-wave slice is
+   independently `APPROVED`, and criterion-linked evidence
    exists may a human approve the gate with `taskctl gate approve`. That approval
    is separate from capability-plan approval, feedback export, task/slice review,
    and local Git integration.
@@ -96,13 +108,13 @@ A non-recommended documented candidate also requires detailed rationale.
 
 ```bash
 python tools/planctl.py --repo . prepare CAP-XX
-python tools/planctl.py --repo . review CAP-XX
+python tools/planctl.py --repo . review CAP-XX --wave WN
 python tools/planctl.py --repo . decisions CAP-XX
-python tools/planctl.py --repo . validate CAP-XX
+python tools/planctl.py --repo . validate CAP-XX --wave WN
 python tools/planctl.py --repo . apply-feedback CAP-XX <feedback.json>
-python tools/planctl.py --repo . approve CAP-XX --by "<reviewer>" --commit <git-sha>
-python tools/planctl.py --repo . approve CAP-XX --feedback <feedback.json> --by "<reviewer>" --commit <git-sha>
-python tools/planctl.py --repo . ready CAP-XX --require-approved
+python tools/planctl.py --repo . approve CAP-XX --wave WN --by "<reviewer>" --commit <git-sha>
+python tools/planctl.py --repo . approve CAP-XX --wave WN --feedback <feedback.json> --by "<reviewer>" --commit <git-sha>
+python tools/planctl.py --repo . ready CAP-XX --wave WN --require-approved
 ```
 
 Any command that requests decisions or approval must print the capability page's `file://` URI and repository-relative path.
@@ -120,7 +132,8 @@ Any command that requests decisions or approval must print the capability page's
 - Site generator: `../tools/plan_review_site.py`
 - Site validator: `../tools/plan_review_check.py`
 
-A missing plan must be scaffolded, fully researched, decision-complete, validated, reviewed, and approved before its capability starts.
+A missing capability decision packet or active-wave slice plan must be scaffolded,
+fully researched, validated, reviewed, and approved before that increment starts.
 
 Backlog validation reports JSON paths for structural/type/status/timestamp errors,
 rejects duplicate capability, slice, task, wave, and gate IDs while indexing,
@@ -136,12 +149,13 @@ temporary write or replace leaves the previous ledger intact. The lock marker
 is ignored by Git.
 
 Execution commands require one concrete profile/platform and the matching
-active campaign lease. Task `block`, `renew`, `evidence`, and `submit` require
+active capability-wave lease. Task `block`, `renew`, `evidence`, and `submit` require
 `--agent` to match the task lease owner; capability/slice mutations similarly
 require the campaign owner. Start, resume, and claim also require the actual
 current branch, full current `HEAD`, and canonical absolute Git worktree; stored
-identities are trimmed. A PAUSED campaign resumes through `resume` and cannot be
-overwritten by `start`. An expired lease may be renewed only by its recorded owner:
+identities are trimmed. An interrupted PAUSED increment resumes through `resume`;
+a `wave-complete` increment can only be followed by a new `start` in a later active
+wave. An expired lease may be renewed only by its recorded owner:
 
 ```bash
 python tools/taskctl.py capability renew CAP-XX --agent <agent>
@@ -185,4 +199,4 @@ Reopen planning only for:
 - required governed experience-reference change; or
 - explicit user redirection.
 
-Update only the affected decision, ADR, plan, or reference; regenerate review pages; obtain approval; then resume the same capability campaign.
+Update only the affected decision, ADR, plan, or reference; regenerate review pages; obtain approval; then resume the same capability-wave increment.

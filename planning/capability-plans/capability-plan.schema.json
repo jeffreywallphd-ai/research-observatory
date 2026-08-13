@@ -48,7 +48,10 @@
       ]
     },
     "execution_mode": {
-      "const": "long-running-capability-campaign"
+      "enum": [
+        "long-running-capability-campaign",
+        "wave-scoped-capability-increments"
+      ]
     },
     "decision_completion": {
       "enum": [

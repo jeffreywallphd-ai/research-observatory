@@ -13,18 +13,18 @@ import yaml
 REQUIRED_DOCUMENT_ANCHORS = {
     "AGENTS.md": [
         "## Default execution model",
-        "### One approval and one durable campaign",
+        "### Progressive approval and durable increments",
         "Safest concise start prompt",
         "## Evidence and completion",
         "## Local main integration",
     ],
     "planning/README.md": [
         "## Default planning and execution lifecycle",
-        "Capability approval is atomic",
+        "Capability-wide\ndecision approval is durable; slice-plan approval is progressive by wave.",
     ],
     "docs/automation/project-automation-guide.md": [
-        "## 2. Capability-first campaign",
-        "### 2.1 Approval prompt and full-campaign meaning",
+        "## 2. Wave-first delivery with capability increments",
+        "### 2.1 Progressive approval and durable-increment meaning",
         "## 5. Task and slice execution",
     ],
     "docs/automation/codex-tracking-guide.md": [
@@ -61,12 +61,12 @@ def validate_protocol(
 
     campaign = protocol.get("campaign", {})
     expected_campaign = {
-        "approvalUnit": "capability-and-all-slices-at-one-immutable-commit",
+        "approvalUnit": "capability-decisions-once-and-active-wave-slices-at-one-immutable-commit",
         "partialApprovalStartsCampaign": False,
-        "executionUnit": "durable-full-capability-campaign",
+        "executionUnit": "durable-capability-wave-increment",
         "resumeAfterOrdinaryInterruption": True,
         "routineSliceApprovalPrompts": False,
-        "terminalOutcome": "all-slices-approved-and-production-ready-capability-qualified",
+        "terminalOutcome": "active-wave-slices-approved-and-production-ready-increment-qualified",
     }
     for field, expected in expected_campaign.items():
         if campaign.get(field) != expected:
@@ -75,8 +75,8 @@ def validate_protocol(
         errors.append("campaign must retain every governed pause condition")
 
     selection = protocol.get("selection", {})
-    if selection.get("scope") != "active-capability-only":
-        errors.append("task selection must remain inside the active capability")
+    if selection.get("scope") != "active-capability-wave-increment-only":
+        errors.append("task selection must remain inside the active capability-wave increment")
     if selection.get("eligibleState") != "READY":
         errors.append("only READY tasks may be selected")
     if "taskctl.py" not in selection.get("claimCommand", ""):
@@ -110,7 +110,7 @@ def validate_protocol(
         "required-independent-review",
         "clean-tested-fast-forward-to-local-main",
         "slice-end-to-end-evidence-and-review-when-last-task",
-        "continue-next-ready-task-or-capability-qualification",
+        "continue-next-ready-task-or-wave-increment-qualification",
     }
     if not required_steps.issubset(set(completion.get("orderedSteps", []))):
         errors.append("completion protocol lacks evidence, review, local-main, slice, or continuation steps")
@@ -176,7 +176,7 @@ def main() -> int:
             return 2
         print(json.dumps(brief, indent=2))
     else:
-        print("Agent protocol: pass - atomic all-slice approval and durable full-capability execution")
+        print("Agent protocol: pass - progressive wave approval and durable capability-wave execution")
     return 0
 
 

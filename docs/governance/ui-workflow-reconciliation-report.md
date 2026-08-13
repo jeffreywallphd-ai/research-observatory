@@ -12,7 +12,7 @@ The Vision, Systems Design, Implementation Plan/backlog, Automation Guide, gover
 | Request | Integrated direction |
 |---|---|
 | Windows computers first; Linux NVIDIA lab systems also required | W0-W5 remains Windows. W6 qualifies Apple Silicon macOS, Linux x86_64, Linux ARM64, and a DGX Spark-class ARM64 lab profile where available. |
-| Automated work should complete production outcomes rather than isolated tasks | Capability campaign is the default; slices are integration/review gates; tasks are atomic claim/evidence units. |
+| Automated work should complete production outcomes rather than isolated tasks | Wave-scoped capability increments are the default; slices are ordered integration/review checkpoints; tasks are atomic claim/evidence units. |
 | Move beyond synthesis | Literature evidence now feeds study design, article blueprints, verified results, full manuscript drafting, review, revision, and publication packages. |
 | Propose empirical study designs | CAP-15 and Study Design Studio provide comparable evidence-grounded alternatives, protocol, validity, ethics, and analysis plans. |
 | Draft empirical, theory, and critical article skeletons | CAP-16 and Manuscript Blueprint provide generic or verified venue-aware structures and evidence/claim plans. |
@@ -61,7 +61,7 @@ The approved reference contains **32 product pages plus two reference pages**. S
 
 ## 7. Automation consistency
 
-`taskctl` enforces campaign, slice, and task transitions. Verification profiles cover cross-platform desktop, study design, reports/results, manuscripts, reviewers, end-to-end local behavior, and private-content security. Experience automation validates reference approval/hashes, workflow/page/capability contracts, links, shared assets, themes, interaction, accessibility, visual baselines, and application conformance.
+`taskctl` enforces capability-wave, ordered-slice, task, and sequential wave-gate transitions. Verification profiles cover cross-platform desktop, study design, reports/results, manuscripts, reviewers, end-to-end local behavior, and private-content security. Experience automation validates reference approval/hashes, workflow/page/capability contracts, links, shared assets, themes, interaction, accessibility, visual baselines, and application conformance.
 
 ## 8. Items deliberately unchanged
 

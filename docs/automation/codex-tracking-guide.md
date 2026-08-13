@@ -4,12 +4,15 @@
 
 ## Default unit
 
-Work within one approved capability campaign. Do not select unrelated globally ready tasks while the active capability has an executable next slice/task.
+Work within one approved capability-wave increment. Do not select unrelated
+globally ready tasks while that increment has an executable next ordered
+slice/task. Close the increment after its wave slices are approved; a future
+slice in the same capability does not retain priority over the current wave.
 
 ## Before editing
 
 1. Read root `AGENTS.md`, `docs/README.md`, and `planning/README.md`.
-2. Confirm the active capability is approved and readiness passes.
+2. Confirm the capability decisions and active-wave slice plans are approved and readiness passes.
 3. Read the capability packet, active slice plan, affected ADRs/architecture, and UI reference.
 4. Claim the task with branch, worktree, base SHA, and lease.
 5. Generate the task contract and changed-path verification set.
@@ -18,9 +21,9 @@ Work within one approved capability campaign. Do not select unrelated globally r
 ## Command sequence
 
 ```bash
-python tools/planctl.py --repo . ready CAP-XX --require-approved
+python tools/planctl.py --repo . ready CAP-XX --wave WN --require-approved
 python tools/taskctl.py --file planning/backlog.yaml validate
-python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
+python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --wave WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 python tools/taskctl.py --file planning/backlog.yaml status
 python tools/backlog_views.py --repo .
 python tools/backlog_views.py --repo . --check
@@ -48,8 +51,8 @@ python tools/taskctl.py review CAP-XX.SXX.TXX --reviewer <reviewer> --result app
 
 `block`, `renew`, `evidence`, `submit`, capability pause/renew/submit, and slice
 submit verify lease ownership. There is no campaign-override claim flag. Release
-gates cannot be approved twice or while their preceding wave contains an
-incomplete task. Every mutation validates the prospective ledger before an
+gates cannot be approved twice, out of sequence, or while their preceding wave
+contains an incomplete task or unapproved slice. Every mutation validates the prospective ledger before an
 atomic compare-and-swap replacement; stale writers and failed replacements do
 not overwrite the prior file.
 
@@ -59,7 +62,8 @@ branch, commit ancestry, exact changed-file scope, named passing checks, complet
 criterion map, empty unverified list, clean tracked/untracked worktree, digest,
 and logical uniqueness are checked again on later validation. Implementation or
 campaign owners cannot review their own task, slice, or capability. Approved
-release gates remain semantically tied to a fully DONE preceding wave.
+release gates remain semantically tied to a fully DONE and independently
+integrated preceding wave.
 
 Follow-up evidence must use `supersedes.path`, set `baseCommit` to that prior
 attachment's commit, and declare the complete incremental diff. Completion does
@@ -88,16 +92,18 @@ minimum release-gate handoff and must be included or faithfully summarized.
 
 ## Continuous execution
 
-After approval, continue through tasks, slice integration, independent slice review, and the next approved slice. Ordinary test failure, debugging, implementation refinement inside the approved envelope, or use of a documented fallback is not a human stop point.
+After approval, continue through tasks, slice integration, independent slice
+review, and the next approved slice in the active wave. Ordinary test failure,
+debugging, refinement inside the approved envelope, or a documented fallback is
+not a human stop point.
 
-The approval is valid only when it covers the capability packet and every slice
-plan at one immutable commit. A capability campaign is the durable execution
-unit: resume it after ordinary process/session interruption and continue through
-all slices and capability-wide production qualification. Never reinterpret a
-slice boundary as a request for another routine approval.
+The capability-wide decision approval is durable, while slice-plan approval is
+progressive by wave. A capability-wave increment is the resumable execution unit.
+Close it after its last ordered wave slice; do not reinterpret a slice boundary
+as a routine approval prompt or a future capability gate as the current gate.
 
 Before claiming, use `taskctl next` and `taskctl show` to identify the active
-campaign's next `READY` task. Permitted scope is its objective, deliverables,
+increment's next `READY` task. Permitted scope is its objective, deliverables,
 criteria, dependencies, profile/platform, and governing sources. At task scope,
 select the narrowest checks from its declared verification coverage and the
 changed-path impact map that exercise credible failure paths. Defer unchanged

@@ -4,38 +4,47 @@
 
 ## 1. Operating objective
 
-Enable an AI coding tool to execute long-running, production-oriented capability campaigns while preserving architecture, evidence, security, privacy, rights, research integrity, user-experience governance, and human authority over consequential decisions.
+Enable an AI coding tool to execute long-running, production-oriented
+capability-wave increments while preserving architecture, evidence, security,
+privacy, rights, research integrity, user-experience governance, and human
+authority over consequential decisions.
 
-## 2. Capability-first campaign
+## 2. Wave-first delivery with capability increments
 
-Use Capability -> Slice -> Task. The controller selects one eligible capability and remains in it until all slices and capability-wide exit criteria pass.
+Use Roadmap -> Wave -> Capability increment -> ordered Slice -> Task -> Wave exit
+gate. The controller selects one eligible capability contribution to the current
+global wave and remains in that increment until its wave slices pass. Capability
+numbers are immutable foreign keys, not execution order; descriptive aliases are
+the default display. Slice numbers preserve real sequence and are shown beside a
+descriptive slice label.
 
 Before start:
 
-1. Every slice has a plan generated from `planning/slice-plans/TEMPLATE.md`.
+1. Every slice in the active wave has a plan generated from `planning/slice-plans/TEMPLATE.md`.
 2. The capability packet covers cross-slice and material slice decisions.
 3. Every decision presents at least two credible candidates, a recommendation, and rationale.
 4. The recommendation is recorded as the completed selected decision unless a reviewer overrides it.
 5. Required ADR and experience-reference changes are approved.
-6. The capability packet and all slice plans are approved at one immutable commit.
-7. `planctl ready CAP-XX --require-approved` passes.
+6. The capability decision packet and active-wave slice plans are approved at an immutable commit.
+7. `planctl ready CAP-XX --wave WN --require-approved` passes.
 
-After start, execute tasks and slices continuously. Do not request approval for ordinary debugging, code organization within approved boundaries, documented fallbacks, independent review, or transitions to the next approved slice.
+After start, execute tasks and ordered active-wave slices continuously. Do not
+request approval for ordinary debugging, code organization within approved
+boundaries, documented fallbacks, independent review, or transitions to the next
+approved slice in that increment.
 
-### 2.1 Approval prompt and full-campaign meaning
+### 2.1 Progressive approval and durable-increment meaning
 
-The capability-start approval prompt must enumerate or link the capability and
-all contained slice decisions, name their single immutable approval commit, and
-ask for one approval of the complete packet. `planctl ready CAP-XX
---require-approved` must fail if any slice is missing, unresolved, unapproved,
-or approved at a different plan state. Partial slice approval never starts a
-campaign.
+The start prompt must link the capability-wide decisions and every slice in the
+active wave. `planctl ready CAP-XX --wave WN --require-approved` fails if that
+wave's plan set is incomplete. Future-wave slice plans may remain proposed until
+their gate; a partial plan set inside the active wave never starts an increment.
 
-One campaign run is durable and resumable. A process or session may restart, but
-the active campaign remains the execution unit until every slice and the
-capability qualification are complete or a permitted pause condition occurs.
-Slice completion is an internal integration/review boundary, not a new human
-approval prompt.
+One increment run is durable and resumable. A process or session may restart,
+but the increment remains active until every ordered slice assigned to its wave
+is independently approved. Then it closes, even if the capability has future
+slices. Capability completion occurs only after its final increment and
+cross-wave qualification.
 
 ## 3. Permitted pause conditions
 
@@ -47,9 +56,10 @@ Pause only for:
 - higher-authority conflict;
 - required approved UI-reference change;
 - destructive/external action or substantial unapproved spend; or
-- explicit user direction.
+- explicit user direction; or
+- independently approved completion of the active capability-wave increment.
 
-Record the condition, update only affected authorities, regenerate review pages, obtain necessary approval, and resume the same campaign.
+Record the condition, update only affected authorities, regenerate review pages, obtain necessary approval, and resume the same increment.
 
 ### 3.1 Decision-complete stopped-gate handoff
 
@@ -60,14 +70,14 @@ review` commands, then provide:
 1. the gate name, status, criteria, and exact evidence needed for eventual approval;
 2. whether approval is currently legal, with counts/identities of unfinished
    preceding-wave work and any upstream pending gates;
-3. directly openable `file://` and repository-relative links for the active
-   capability, blocked slice, and prerequisite capability packets;
+3. directly openable `file://` and repository-relative links for the affected
+   wave and prerequisite capability packets;
 4. credible alternatives and their consequences;
 5. a recommended option with rationale; and
-6. the exact condition and command shape for approval and campaign resumption.
+6. the exact condition and command shape for approval and increment resumption.
 
 When prerequisites are incomplete, recommend keeping the gate pending, pausing
-the blocked campaign, completing and approving prerequisite waves in order, and
+the blocked increment, completing and approving prerequisite waves in order, and
 returning with criterion-linked evidence. Alternatives are explicit deferral or
 governed replanning; neither is implicit gate approval. Never ask a human to
 "approve the gate" while `taskctl gate approve` would reject the state.
@@ -76,9 +86,9 @@ governed replanning; neither is implicit gate approval. Never ask a human to
 
 ```bash
 python tools/planctl.py --repo . prepare CAP-XX
-python tools/planctl.py --repo . review CAP-XX
-python tools/planctl.py --repo . validate CAP-XX
-python tools/planctl.py --repo . ready CAP-XX --require-approved
+python tools/planctl.py --repo . review CAP-XX --wave WN
+python tools/planctl.py --repo . validate CAP-XX --wave WN
+python tools/planctl.py --repo . ready CAP-XX --wave WN --require-approved
 ```
 
 `prepare` creates missing plans as proposed scaffolds. The planning agent must replace placeholders with researched decisions and pass decision-complete validation.
@@ -100,11 +110,11 @@ The generated site adds `Other` to every decision without modifying canonical pl
 A task claim records agent, branch, worktree, base SHA, lease, and expected scope. A task contract includes goal, non-goals, dependencies, inspect/change scopes, canonical sources, criteria, required checks, security class, human gates, and evidence outputs.
 
 At each iteration select only the dependency-eligible `READY` task in the active
-capability. State its permitted scope from the task deliverables and acceptance
+capability-wave increment. State its permitted scope from the task deliverables and acceptance
 criteria, use its declared verification commands/profiles and changed-path impact
 map to select risk-proportionate checks, bind evidence to the implementation
 commit, complete required review, and then move to the next eligible task. Do not
-use a globally READY task to leave an active campaign.
+use a globally READY task to leave an active increment.
 
 A slice completes only after:
 
@@ -115,7 +125,10 @@ A slice completes only after:
 - no hidden TODO or deferred production blocker remains; and
 - an independent reviewer approves the slice.
 
-A capability completes only after all slices plus capability-level security, privacy, rights, accessibility, performance, migration, backup/restore, platform, and end-to-end criteria pass.
+A capability-wave increment completes after its ordered slices and affected
+end-to-end criteria pass. The capability completes only after all of its wave
+increments plus final security, privacy, rights, accessibility, performance,
+migration, backup/restore, platform, and end-to-end criteria pass.
 
 ## 6. Design-first experience-reference governance
 
@@ -219,4 +232,4 @@ The default handoff for tested repository work is the local `main` branch:
 4. If histories diverge, stop for explicit reconciliation, then rerun affected checks before merging.
 5. Preserve task, review, approval, dependency, and release-gate state exactly as recorded; a Git merge is not workflow approval.
 6. Do not push local `main`, publish artifacts, or update a remote without separate explicit authorization.
-7. After the requested work is fully complete and integrated, leave the repository checked out on local `main`; retain the campaign branch for audit, but do not leave it checked out for routine operation.
+7. After the requested work is fully complete and integrated, leave the repository checked out on local `main`; retain the increment branch for audit, but do not leave it checked out for routine operation.

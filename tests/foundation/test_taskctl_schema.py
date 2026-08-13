@@ -105,6 +105,20 @@ class BacklogSchemaTests(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, r"campaign\.updated_at: 'not-a-timestamp' is not a 'date-time'"):
             self.load_copy(data)
 
+    def test_every_wave_requires_one_exit_gate_and_activation_links_back(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        removed = data["release_gates"][-1]
+        removed["after_wave"] = "W10"
+        loaded = self.load_copy(data)
+        errors = validate(*loaded)
+        self.assertIn("W11: expected exactly one wave-exit gate, found 0", errors)
+
+        data = copy.deepcopy(self.canonical)
+        data["waves"][1]["activation_gate"] = "G1"
+        loaded = self.load_copy(data)
+        errors = validate(*loaded)
+        self.assertIn("W1: activation gate G1 does not unlock the wave", errors)
+
     def test_experience_change_requires_exact_machine_lineage_fields(self) -> None:
         data = copy.deepcopy(self.canonical)
         task = data["capabilities"][0]["slices"][0]["tasks"][0]
