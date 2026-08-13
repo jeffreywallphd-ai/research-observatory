@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d678e6ed804cd4afec117e2e5a58e69639d57bf36b5afd9a78556897c0b20418
+source_sha256: 45f5faccff1ac2e478ed512750df2f90607a8d6cf42076bdc2e843d57c25d8e2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1341,15 +1341,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S04.T02.json` at `072e1d66c6860ad142922719573ccc69ab0f5054`
 - `artifacts/evidence/CAP-01.S04.T02.review-fix.json` at `9536058d2a19ac1fc523eb668b568e6550219f88`
 
-#### - [ ] CAP-01.S04.T03 - Build desktop diagnostics and support-bundle collection
+#### - [x] CAP-01.S04.T03 - Build desktop diagnostics and support-bundle collection
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S04.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** Diagnostics page for component versions, health, storage paths, resource use, recent failures, and redacted support export.
 
