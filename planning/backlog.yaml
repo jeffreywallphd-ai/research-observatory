@@ -2784,12 +2784,12 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-13T19:52:14+00:00'
-      completed_at: null
+      updated_at: '2026-08-13T19:54:05+00:00'
+      completed_at: '2026-08-13T19:54:05+00:00'
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
         compiled-product, UI-lineage, architecture, and clean-manifest evidence; full desktop/service/security-local profiles
@@ -2833,16 +2833,13 @@ capabilities:
         commit: a63d974b543cef696023eb5eee4eeef4604e8302
         recorded_at: '2026-08-13T19:52:04+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: 'Reopened: Downstream task reopened so its dependency T02 can remediate the stale generated Core client found
-          by slice integration.'
+        reviewer: agent:curie
+        result: approved
+        reviewed_at: '2026-08-13T19:54:05+00:00'
+        notes: Independent focused re-review verified canonical LF checkout, unchanged generated blob, exact evidence scope
+          and ancestry, 15 service tests, six contract tests, 76-file quality, taskctl/views, and clean state.
       base_sha: 7c75380b1163b6b6bb2e2e35ffde17fd916c4544
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-13T19:49:10+00:00'
-        expires_at: '2026-08-14T03:49:10+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
