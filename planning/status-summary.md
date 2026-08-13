@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: b6115a1efce14c79b36cea2a34e51dc8e71ef43df4a0603534d372690441eff5
+source_sha256: 31d4028d18de45e9e67a5244840deb669b17b758b02755982c4d35f88b067a61
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 287 |
 | `READY` | 2 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 30 |
 | `DEFERRED` | 36 |
 
@@ -100,4 +100,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-01.S04.T03` Build desktop diagnostics and support-bundle collection | `IN_PROGRESS` | codex | `codex/cap-01-desktop-shell` |
+| `CAP-01.S04.T03` Build desktop diagnostics and support-bundle collection | `REVIEW` | codex | `codex/cap-01-desktop-shell` |
