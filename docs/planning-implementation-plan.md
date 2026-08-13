@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 803222982d6c704ac084a44a2eb69e8151eda5df134be744483eba44920c0aba
+source_sha256: aadfa9145de7cb071bac08b87ec509df1ef6d720f200548eaafa8a3401c2c30f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1343,7 +1343,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-01.S04.T03 - Build desktop diagnostics and support-bundle collection
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1379,6 +1379,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-5.json` at `66d54ea301ffc56236969e4f1f1811d28a6ca313`
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-6.json` at `eb2299694c24a47605e54e46e077fe6144099fa3`
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-7.json` at `226ad7e72bea05133da673bd2361c5b16ba07da9`
+- `artifacts/evidence/CAP-01.S04.T03.review-fix-8.json` at `871fa17d0e6c802fb48e329d6dd075caa9c37e05`
 
 ### CAP-01.S05 - Windows installation and update channels
 
