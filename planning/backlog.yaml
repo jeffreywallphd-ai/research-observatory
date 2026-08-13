@@ -2618,7 +2618,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-01.S03.T03
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-01.S04.T01
       capability_id: CAP-01
@@ -2881,13 +2881,15 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
+      status: APPROVED
       reviewer: agent:curie
-      reviewed_at: '2026-08-13T20:45:22+00:00'
+      reviewed_at: '2026-08-13T21:00:41+00:00'
       evidence:
       - artifacts/evidence/CAP-01.S04.integration.review-fix.json
-      notes: 'Both slice-review findings independently approved: actual packages/contracts command passes, cumulative UI provenance
-        passes via exact immutable reviewed attestation; all prior S04 integration evidence remains green.'
+      notes: Final independent slice review verified all 13 task evidence hashes/approvals, supersession and ancestry; corrected
+        pinned contracts command 6/6; cumulative UI gate and 16 tests; clean build 0.1.0+gf79dc0e; prior desktop/service/staged+final
+        security, lifecycle/performance, SSE/recovery, product/reference and G4 handoff evidence; taskctl/views and clean
+        state.
   - id: CAP-01.S05
     title: Windows installation and update channels
     outcome: The PC/lab application can be installed, upgraded, repaired, and removed predictably by individuals or lab administrators.
