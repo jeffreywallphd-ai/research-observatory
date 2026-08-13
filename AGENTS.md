@@ -71,6 +71,29 @@ Safest concise start prompt:
 
 Pause only for demonstrated infeasibility, genuinely new consequential evidence, unavailable required external service/credential/platform/hardware, higher-authority conflict, required governed experience-reference change, destructive or external action, substantial unapproved spend, or explicit user direction.
 
+### Stopped-gate handoff
+
+Never stop at a pending release, approval, design, readiness, or external gate
+with only a gate ID or generic blocker message. Before yielding, provide a
+decision-complete handoff that includes:
+
+- directly openable `file://` and repository-relative links to the active
+  capability/slice review pages and every prerequisite capability packet that
+  materially informs the gate;
+- the exact criteria and evidence that eventual approval must establish;
+- whether approval is legally available now, including incomplete preceding
+  tasks and upstream gates when it is not;
+- the credible alternatives, including continued prerequisite execution,
+  explicit deferral, and governed replanning/override where allowed;
+- one clear recommendation with rationale and consequences; and
+- the exact approval/resume condition and command shape, without representing a
+  chat response, feedback export, local merge, or planning approval as gate
+  approval.
+
+If a release gate is not yet approvable, ask for a decision about the recommended
+handling of the stop, not premature approval of the gate. Keep the gate pending
+and do not claim work in its locked wave.
+
 ## Planning and review commands
 
 ```bash

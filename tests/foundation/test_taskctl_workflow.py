@@ -9,7 +9,7 @@ import sys
 import tempfile
 import unittest
 from argparse import Namespace
-from contextlib import redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -27,6 +27,7 @@ from taskctl import (  # noqa: E402
     command_claim,
     command_evidence,
     command_gate_approve,
+    command_next,
     command_renew,
     command_reopen,
     command_review,
@@ -119,6 +120,39 @@ class TaskctlWorkflowTests(unittest.TestCase):
         }
         values.update(overrides)
         return Namespace(**values)
+
+    def test_next_at_pending_release_gate_prints_decision_complete_handoff(self) -> None:
+        data, capabilities, slices, tasks, gates = self.workflow()
+        gate = {
+            "id": "G0",
+            "after_wave": "W0",
+            "name": "Test release gate",
+            "criteria": ["Exact evidence proves the test outcome."],
+            "status": "PENDING",
+            "unlocks_waves": ["W0"],
+            "approval": {"approved_by": None, "approved_at": None, "evidence": [], "notes": None},
+        }
+        data["waves"][0]["activation_gate"] = "G0"
+        data["release_gates"] = [gate]
+        gates["G0"] = gate
+        args = Namespace(
+            profile="LOC",
+            platform="windows-x64",
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        output = io.StringIO()
+        with redirect_stdout(output):
+            command_next(args, data, capabilities, slices, tasks, gates)
+        rendered = output.getvalue()
+        self.assertIn("STOPPED AT RELEASE GATE G0: Test release gate", rendered)
+        self.assertIn("NOT CURRENTLY APPROVABLE: 1 W0 tasks are not DONE", rendered)
+        self.assertIn("What the eventual approval must establish", rendered)
+        self.assertIn("Exact evidence proves the test outcome", rendered)
+        self.assertIn("planning/review-site/CAP-00/index.html", rendered)
+        self.assertIn("planning/review-site/CAP-00/CAP-00.S01.html", rendered)
+        self.assertIn("Decision alternatives", rendered)
+        self.assertIn("A (recommended)", rendered)
+        self.assertIn("gate approve G0 --approver <human> --evidence <criterion-linked-evidence>", rendered)
 
     def test_claim_enforces_ready_gate_dependency_profile_and_campaign_lease(self) -> None:
         context = self.workflow()

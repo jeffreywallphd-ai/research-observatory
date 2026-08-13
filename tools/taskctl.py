@@ -1176,6 +1176,95 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
     print_yaml(view)
 
 
+def release_gate_stop_handoff(
+    args: argparse.Namespace,
+    data: dict[str, Any],
+    campaign: dict[str, Any],
+    slice_: dict[str, Any] | None,
+    capabilities: dict[str, dict[str, Any]],
+    tasks: dict[str, dict[str, Any]],
+    gates: dict[str, dict[str, Any]],
+) -> str | None:
+    if slice_ is None:
+        return None
+    wave = wave_map(data).get(str(slice_.get("wave")))
+    gate_id = wave.get("activation_gate") if isinstance(wave, dict) else None
+    gate = gates.get(gate_id) if isinstance(gate_id, str) else None
+    if not isinstance(gate, dict) or gate.get("status") == "APPROVED":
+        return None
+
+    repo = Path(args.file).resolve().parent.parent
+
+    def review_link(capability_id: str, suffix: str = "index.html") -> tuple[str, str]:
+        relative = f"planning/review-site/{capability_id}/{suffix}"
+        return (repo / relative).resolve().as_uri(), relative
+
+    preceding_wave = str(gate.get("after_wave"))
+    incomplete = sorted(
+        task["id"] for task in tasks.values() if task.get("wave") == preceding_wave and task.get("status") != "DONE"
+    )
+    prerequisite_capabilities = sorted(
+        {
+            task["capability_id"]
+            for task in tasks.values()
+            if task.get("wave") == preceding_wave and task.get("status") != "DONE"
+        }
+    )
+    ordered_waves = [str(item.get("id")) for item in data.get("waves", []) if isinstance(item, dict)]
+    preceding_index = ordered_waves.index(preceding_wave) if preceding_wave in ordered_waves else -1
+    upstream_pending = [
+        item["id"]
+        for item in data.get("release_gates", [])
+        if isinstance(item, dict)
+        and item.get("status") != "APPROVED"
+        and str(item.get("after_wave")) in ordered_waves
+        and ordered_waves.index(str(item.get("after_wave"))) < preceding_index
+    ]
+    capability_uri, capability_relative = review_link(str(campaign["id"]))
+    slice_uri, slice_relative = review_link(str(campaign["id"]), f"{slice_['id']}.html")
+    criteria = "\n".join(f"  - {criterion}" for criterion in gate.get("criteria", []))
+    prerequisite_links: list[str] = []
+    for capability_id in prerequisite_capabilities:
+        uri, relative = review_link(capability_id)
+        title = capabilities.get(capability_id, {}).get("title", capability_id)
+        prerequisite_links.append(f"  - {capability_id} {title}: {uri} ({relative})")
+    links = "\n".join(prerequisite_links) or "  - No incomplete preceding-wave capability pages."
+    readiness = (
+        f"NOT CURRENTLY APPROVABLE: {len(incomplete)} {preceding_wave} tasks are not DONE"
+        + (f"; upstream pending gates: {', '.join(upstream_pending)}" if upstream_pending else "")
+        if incomplete
+        else "READY FOR HUMAN APPROVAL with at least one exact evidence reference"
+    )
+    recommendation = (
+        "Keep the gate pending, pause this campaign at the documented release gate, complete and approve the "
+        "preceding waves/gates in order, assemble criterion-linked gate evidence, then request explicit gate approval "
+        "and resume this same campaign."
+        if incomplete
+        else (
+            "Review the criterion-linked evidence and explicitly approve the gate only if every criterion is satisfied."
+        )
+    )
+    resume = (
+        f"python tools/taskctl.py gate approve {gate_id} --approver <human> --evidence <criterion-linked-evidence> "
+        f'--note "<decision rationale>"; then resume {campaign["id"]} and claim only its next READY task.'
+    )
+    return (
+        f"STOPPED AT RELEASE GATE {gate_id}: {gate.get('name')}\n"
+        f"Approval state: {readiness}.\n"
+        f"What the eventual approval must establish:\n{criteria}\n"
+        "Review materials:\n"
+        f"  - Active capability packet: {capability_uri} ({capability_relative})\n"
+        f"  - Blocked slice plan: {slice_uri} ({slice_relative})\n"
+        f"  - Preceding-wave capability packets:\n{links}\n"
+        "Decision alternatives:\n"
+        f"  A (recommended): {recommendation}\n"
+        "  B: Defer the campaign at this gate without starting prerequisite work; preserve the gate as PENDING.\n"
+        "  C: Replan the wave/gate relationship through canonical plans, backlog governance, rationale, and required "
+        "approval; do not treat a chat instruction as a gate override.\n"
+        f"Resume condition: {resume}"
+    )
+
+
 def command_next(args, data, capabilities, slices, tasks, gates) -> None:
     active = active_capabilities(capabilities)
     if not active:
@@ -1187,6 +1276,10 @@ def command_next(args, data, capabilities, slices, tasks, gates) -> None:
     )
     if not candidates:
         slice_ = current_slice(campaign)
+        gate_handoff = release_gate_stop_handoff(args, data, campaign, slice_, capabilities, tasks, gates)
+        if gate_handoff:
+            print(gate_handoff)
+            return
         print(
             f"No READY task in active capability {campaign['id']} current slice "
             f"{slice_['id'] if slice_ else 'none'}. Complete review, resolve blocker, "

@@ -51,6 +51,27 @@ Pause only for:
 
 Record the condition, update only affected authorities, regenerate review pages, obtain necessary approval, and resume the same campaign.
 
+### 3.1 Decision-complete stopped-gate handoff
+
+A permitted gate stop is an active decision handoff, not merely a status report.
+Before yielding, the agent must run `taskctl next` and the relevant `planctl
+review` commands, then provide:
+
+1. the gate name, status, criteria, and exact evidence needed for eventual approval;
+2. whether approval is currently legal, with counts/identities of unfinished
+   preceding-wave work and any upstream pending gates;
+3. directly openable `file://` and repository-relative links for the active
+   capability, blocked slice, and prerequisite capability packets;
+4. credible alternatives and their consequences;
+5. a recommended option with rationale; and
+6. the exact condition and command shape for approval and campaign resumption.
+
+When prerequisites are incomplete, recommend keeping the gate pending, pausing
+the blocked campaign, completing and approving prerequisite waves in order, and
+returning with criterion-linked evidence. Alternatives are explicit deferral or
+governed replanning; neither is implicit gate approval. Never ask a human to
+"approve the gate" while `taskctl gate approve` would reject the state.
+
 ## 4. Planning automation
 
 ```bash
