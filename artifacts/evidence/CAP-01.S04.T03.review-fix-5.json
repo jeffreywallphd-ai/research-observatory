@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T03",
+  "commit": "66d54ea301ffc56236969e4f1f1811d28a6ca313",
+  "baseCommit": "a63d974b543cef696023eb5eee4eeef4604e8302",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T03.review-fix-4.json",
+    "reason": "The refreshed S04 security integration scan found three exact Tauri dual-license expressions that the fail-closed SPDX policy does not parse and two HIGH findings in the latest stable, development-only TypeScript native compiler. Independent security review approved five exact, expiring exceptions after verifying their package roles and absence from shipped artifacts."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S04.T03.review-fix-4.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "security-exceptions.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/security_check.py --repo . --report artifacts/tmp/CAP-01.S04-security-local.json",
+      "exitCode": 0,
+      "result": "Pinned Trivy 0.73.0 with its refreshed database inspected 584 packages and 136 findings; all five exact reviewed records were consumed and the scan completed with zero blockers or policy errors."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py",
+      "exitCode": 0,
+      "result": "All 20 security policy, scanner-installation, controlled-input, fail-closed exception, SPDX, cleanup, and secret-redaction regressions passed."
+    },
+    {
+      "command": "independent package-role and shipped-artifact review",
+      "exitCode": 0,
+      "result": "agent:curie verified the exact five finding keys and fixed versions; runtime versus development roles in the lock/importer; absence of tsc.exe, Tauri CLI native packages, node_modules, and package trees from the five-file frontend and 661-file frozen sidecar; TypeScript 7.0.2 remains latest stable while 7.1 is development-only."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --check",
+      "exitCode": 0,
+      "result": "Backlog semantics and generated planning views passed after the governed task reopen."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The shipped diagnostics/support workflow and authenticated runtime remain unchanged and contain none of the excepted build-tool packages. The runtime @tauri-apps/api declaration is bounded to its exact version and dual permissive license finding."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "A live governed scan plus all 20 security regressions cover exact exception matching, expiry, unused-record denial, blocking thresholds, controlled scanner inputs, redaction, and cleanup."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "All five records are independently approved, exact-keyed, and within the 30-day policy. Tauri license reviews expire 2026-09-07; TypeScript compiler CVE reviews expire 2026-08-27 and require replacement at the first patched stable release. No wildcard, dependency update, policy weakening, product code, API contract, or UI reference change occurred."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Verify the exact five exceptions, reviewer/date/expiry/rationales, live zero-blocker scan, 20 focused security tests, package roles and shipped-artifact absence, and five-file superseding evidence scope. No broad profile replay is requested."
+  }
+}
