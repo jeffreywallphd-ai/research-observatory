@@ -2618,7 +2618,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-01.S03.T03
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-01.S04.T01
       capability_id: CAP-01
@@ -2865,11 +2865,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-01.S04.integration.json
+      notes: All three tasks are independently approved. Full desktop/service qualification passed, security-local completed
+        as a staged run with only the remediated supply-chain command replayed, real authenticated lifecycle and post-ready
+        performance pass; ready for independent slice review.
   - id: CAP-01.S05
     title: Windows installation and update channels
     outcome: The PC/lab application can be installed, upgraded, repaired, and removed predictably by individuals or lab administrators.
