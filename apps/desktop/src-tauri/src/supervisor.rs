@@ -673,7 +673,7 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     {
         return Err("RO-CORE-API-REQUEST-INVALID");
     }
-    if request.method == "GET" && request.path == "/runtime/version" {
+    if request.method == "GET" && matches!(request.path.as_str(), "/runtime/version" | "/healthz") {
         return if request.if_match.is_none() && request.idempotency_key.is_none() {
             Ok(())
         } else {
@@ -1431,6 +1431,7 @@ mod tests {
     fn native_api_transport_allows_only_generated_local_routes() {
         for (method, path) in [
             ("GET", "/runtime/version"),
+            ("GET", "/healthz"),
             ("GET", "/runtime/operations?limit=50"),
             ("GET", "/runtime/operations?limit=2&after=op-first"),
             ("GET", "/runtime/operations/op-first"),
