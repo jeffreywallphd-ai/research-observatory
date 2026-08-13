@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: de4cf90fd125d0c7067dc92ec249aa2064e99dd771856cbc578a46fad93effa3
+source_sha256: 096d4be43228c9319b30eca0f81f50e857107ded6f4033bb4b3917bc7e8855bc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1378,6 +1378,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-4.json` at `a63d974b543cef696023eb5eee4eeef4604e8302`
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-5.json` at `66d54ea301ffc56236969e4f1f1811d28a6ca313`
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-6.json` at `eb2299694c24a47605e54e46e077fe6144099fa3`
+- `artifacts/evidence/CAP-01.S04.T03.review-fix-7.json` at `226ad7e72bea05133da673bd2361c5b16ba07da9`
 
 ### CAP-01.S05 - Windows installation and update channels
 
