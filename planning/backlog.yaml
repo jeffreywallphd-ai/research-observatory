@@ -2784,12 +2784,12 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-13T20:20:07+00:00'
-      completed_at: null
+      updated_at: '2026-08-13T20:22:00+00:00'
+      completed_at: '2026-08-13T20:22:00+00:00'
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
         compiled-product, UI-lineage, architecture, and clean-manifest evidence; full desktop/service/security-local profiles
@@ -2841,16 +2841,14 @@ capabilities:
         commit: 66d54ea301ffc56236969e4f1f1811d28a6ca313
         recorded_at: '2026-08-13T20:19:57+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: 'Reopened: S04 security integration found three fail-closed Tauri dual-license records and two build-only TypeScript
-          native compiler CVEs requiring exact independently reviewed temporary exceptions.'
+        reviewer: agent:curie
+        result: approved
+        reviewed_at: '2026-08-13T20:22:00+00:00'
+        notes: Independent security re-review verified all five exact exception records, dates and boundaries; live 584-package/136-finding
+          scan has zero blockers or policy errors; 20 security tests, shipped-artifact absence, exact evidence scope/ancestry,
+          taskctl/views, and clean state pass.
       base_sha: 7c75380b1163b6b6bb2e2e35ffde17fd916c4544
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-13T20:18:34+00:00'
-        expires_at: '2026-08-14T04:18:34+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
