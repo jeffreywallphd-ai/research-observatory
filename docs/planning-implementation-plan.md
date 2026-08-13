@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a46f4fc79185df7680dd707ab3c3d53a589bda4160e1a6e70fd893449b1171af
+source_sha256: de4cf90fd125d0c7067dc92ec249aa2064e99dd771856cbc578a46fad93effa3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1271,7 +1271,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Local IPC is private, versioned, cancellable, and observable.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `CHANGES_REQUESTED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1341,15 +1341,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S04.T02.json` at `072e1d66c6860ad142922719573ccc69ab0f5054`
 - `artifacts/evidence/CAP-01.S04.T02.review-fix.json` at `9536058d2a19ac1fc523eb668b568e6550219f88`
 
-#### - [x] CAP-01.S04.T03 - Build desktop diagnostics and support-bundle collection
+#### - [ ] CAP-01.S04.T03 - Build desktop diagnostics and support-bundle collection
 
-**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-01.S04.T02`
 
-**Owner / review:** codex / agent:curie (`approved`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Diagnostics page for component versions, health, storage paths, resource use, recent failures, and redacted support export.
 
