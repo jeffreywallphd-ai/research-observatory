@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: aadaf008faef12c470110c2dd62509feef2b97d04ebb1fb59dfa4799a702fbf6
+source_sha256: a46f4fc79185df7680dd707ab3c3d53a589bda4160e1a6e70fd893449b1171af
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1271,7 +1271,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Local IPC is private, versioned, cancellable, and observable.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

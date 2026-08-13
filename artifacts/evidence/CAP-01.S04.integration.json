@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-01.S04",
+  "stateCommit": "9f7877736a13b5af77431da65a1be8a230f8e23e",
+  "outcome": "The functional desktop uses a private, per-launch authenticated loopback Core boundary with strict versioned contracts, cancellable and bounded operations, safe trace-linked recovery, redacted exact support export, and measured post-readiness request performance.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-01.S04.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S04.T01.json", "sha256": "4f2e5f9bd18e6a8fd41ae129ad5d623fa6528c1a0a70323d6d371cd222a4136e"},
+        {"path": "artifacts/evidence/CAP-01.S04.T01.review-fix.json", "sha256": "825709b4a695f180462f208ccc1ac2f16a90e82f4ce91d5685fb2233c4134d18"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S04.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S04.T02.json", "sha256": "bfee76512fade21f38a5ab713dbeb64d28753f99006c5119b2be63d3893030ce"},
+        {"path": "artifacts/evidence/CAP-01.S04.T02.review-fix.json", "sha256": "9d8661afd8078c11520f39255b60d0938ca4c15915f14d0e455a7e802f8e3067"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-01.S04.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-01.S04.T03.json", "sha256": "e110fc008a8a6eed66e2931d9271be29d0764ea769fcc6ffb217f0bfaa939030"},
+        {"path": "artifacts/evidence/CAP-01.S04.T03.review-fix.json", "sha256": "8fa1788a6d04de4746237aba7fbf3510bf7a986410b5ac7debeece078da4dd21"},
+        {"path": "artifacts/evidence/CAP-01.S04.T03.review-fix-2.json", "sha256": "9686a96fedefa4532ef65f33e15f4d877f50228a87fbaaaab1eff37e2a7bfe50"},
+        {"path": "artifacts/evidence/CAP-01.S04.T03.review-fix-3.json", "sha256": "b762711c1903cf556195118c8fc3b14a34258fdcaa77464d87a10a65b79b6ed2"},
+        {"path": "artifacts/evidence/CAP-01.S04.T03.review-fix-4.json", "sha256": "255a75c268ee8ade32d1063b6bde800886ea0864578a5f99a54235cb7fc1f0f5"},
+        {"path": "artifacts/evidence/CAP-01.S04.T03.review-fix-5.json", "sha256": "92d425802c81a0dd4f320dcbd250170e35eb5460009179a9aa3a71e278c33b42"},
+        {"path": "artifacts/evidence/CAP-01.S04.T03.review-fix-6.json", "sha256": "7e451b6b195dd038930aeaadb4be295b6f9866e73f1a07c9c8ed239ea7c81e80"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile desktop --report artifacts/tmp/CAP-01.S04-desktop-profile.json",
+      "exitCode": 0,
+      "result": "Full S04 desktop slice review passed 25 commands in 811.01 seconds, including 149 foundation tests, 47 desktop tests, the functional compiled product, reference/product separation, keyboard/accessibility/theme/visual checks, the 10,000-row DataTable contract, offline behavior, architecture, and performance. Report SHA-256: 2b577bfaae3bd353fa58b9344f54d41d0a23e0eedc86b0b4bdde50c66b9eee91."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile service --report artifacts/tmp/CAP-01.S04-service-profile.json",
+      "exitCode": 0,
+      "result": "Full S04 service slice review passed 19 commands in 575.67 seconds, including 149 foundation tests, 15 service tests, six generated-contract tests, six package tests with one Windows-token-dependent symlink skip, quality, a real PyInstaller build, and Python-absent frozen launch. Report SHA-256: ef465ba9443e7afed9290cc14fc08c97cc41b3e3ddd46ef4fe4aa90e6213b87c."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile security-local --report artifacts/tmp/CAP-01.S04-security-local-profile.json; then replay the only affected failed command with reviewed exact exceptions",
+      "exitCode": 0,
+      "result": "The integrated security profile ran all 17 commands: 16 unaffected foundation/security commands passed, while the final supply-chain command reported the five exact findings subsequently remediated under independent review. The exact final replay inspected 584 packages and 136 findings with zero blockers and zero policy errors; all five new records were consumed and 20 security regressions passed. Initial staged profile SHA-256: 1d6727d272e620015eb468682be78f8bc33ceb0062013106695398f80490f5b5. Final supply-chain report SHA-256: dfb6c9730d43aacb14892972310b7b35c29ac25bd3c141fd445555b96f27bfe0."
+    },
+    {
+      "command": "cargo fmt/clippy/test; core_api_contract.py --check; supervision_check.exe <canonical frozen Core package> <fixture executable>",
+      "exitCode": 0,
+      "result": "The final two-file native delta passed formatting, clippy, all 13 native tests, deterministic contract drift, and independent real lifecycle replay. Reviewer measurements used exactly 20 unfiltered warm samples: /runtime/version p95 0.958 ms and /healthz p95 1.041 ms, both below 100 ms; 20-percent bounded future limits were 1.150 and 1.249 ms. Every authentication, response, trace, denial, incompatibility, cancellation, restart, cleanup, redaction, and exact-export flag passed with no residual process."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_core_api; pnpm --dir packages/contracts/core-api test",
+      "exitCode": 0,
+      "result": "The service and generated-client suites cover strict status/media/schema decoding, exact idempotency fingerprints, cancellation and preconditions, monotonic SSE parsing, maximum 256-event retention, replay-gap reconciliation, trace-safe problems, loopback/Host/Origin/token denial, and compatibility recovery. These commands also passed inside the full service/desktop profiles."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-01.S04-final-build-manifest.json",
+      "exitCode": 0,
+      "result": "The final approved task state emitted clean build identity 0.1.0+g9f78777 at exact commit 9f7877736a13b5af77431da65a1be8a230f8e23e with no dirty paths. Manifest SHA-256: 55076eed88a450472bc742775bb64921e6be42b5ceefbf2d3cc78a2d10a4f617."
+    },
+    {
+      "command": "taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "All three tasks are DONE with exact commit-bound evidence and independent approvals; campaign, backlog semantics, plan approval, generated views, and the clean codex branch validate."
+    }
+  ],
+  "integratedBehavior": [
+    "The Tauri host creates a fresh 256-bit capability for every launch, transfers it through the supervised private control channel, retains only its digest in Core framework state, uses it only on exact loopback requests, and clears mutable startup records on valid and invalid paths.",
+    "The renderer consumes generated versioned contracts through a strict native allowlist; incompatible Core versions reach functional repair/reinstall guidance, hostile status/media/schema envelopes fail closed, and the UI reference remains design/conformance material rather than the product application.",
+    "Operation listing, status, cancellation and SSE progress use canonical identities, monotonic sequences, exact preconditions and idempotency fingerprints. Retention is bounded to 256 events and stale consumers receive an explicit replay-gap response requiring authoritative status reconciliation.",
+    "Diagnostics show only bounded allowlisted values. The researcher reviews the exact support JSON bytes whose length and SHA-256 are recomputed by the renderer; export is single-use, path-confined, redacted, and trace-linked without project content, raw credentials, absolute paths, or process identifiers.",
+    "On the measured Windows x64 workstation, compatibility and health requests through the real native authenticated boundary are approximately one millisecond p95 after readiness, with an absolute 100 ms budget and a 20-percent future regression threshold."
+  ],
+  "failureAndRecoveryCoverage": [
+    "missing, stale, malformed, replayed, or raw-retained credentials; non-loopback authority; forged Host or Origin; proxy inheritance; and unauthenticated default startup",
+    "incompatible, extra-field, malformed, redirected-status, wrong-media, forged-trace, unsafe-path, and stale generated-contract responses",
+    "changed idempotency precondition, stale ETag, duplicate cancellation, bounded event-history gap, malformed/reordered SSE, early exit, startup timeout, post-ready crash, cancel during startup, delayed readiness, forced shutdown, retry serialization, and root/descendant Job cleanup",
+    "diagnostic secret/path/URL/credential-shaped values, oversized or mismatched support preview metadata, hardlink/junction output redirection, repeated export, clipboard failure, renderer decode failure, and exact-preview/export substitution",
+    "dependency vulnerabilities/licenses without exact unexpired review, unused/wildcard exceptions, scanner/config/environment bypass, raw-report cleanup failure, and build-tool packages entering shipped product artifacts"
+  ],
+  "downstreamHandoff": {
+    "consumer": "CAP-01.S05",
+    "contract": "The signed installer/updater consumes the exact functional desktop bundle, frozen authenticated Core package, product/component manifests, build identity, security report, and support/recovery behavior qualified by S04.",
+    "ready": false,
+    "notes": "The technical S04 handoff is complete, but CAP-01.S05 is W5 and cannot start until release gate G4 is explicitly satisfied. The campaign must stop at that unmet gate rather than bypass it."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "fullAffectedProfilesPassedOnceAtSliceReview": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "Installer signing, update publication, rollback, repair, clean-VM deployment, and enterprise channel behavior remain owned by gated CAP-01.S05.",
+      "The five exact S04 security exceptions are temporary: TypeScript CVE records expire 2026-08-27 and require first-patched-stable replacement; Tauri dual-permissive-license reviews expire 2026-09-07.",
+      "Durable workflow operations arrive in CAP-03; S04 intentionally provides a bounded local runtime seam rather than scholarly persistence.",
+      "macOS/Linux qualification remains W6 scope and does not weaken the release-authoritative Windows x64 result."
+    ]
+  }
+}
