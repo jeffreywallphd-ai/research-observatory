@@ -79,6 +79,13 @@ When a decision or approval is required:
 5. explain that Other requires a brief description and detailed rationale; and
 6. do not treat exported feedback as implementation approval.
 
+At a stopped release/readiness/design gate, also include the gate criteria,
+current legal approval state, unfinished prerequisites, active/blocked/prerequisite
+review links, alternatives, recommendation, and exact approval/resume condition.
+If the gate is not currently approvable, ask the human to choose how to handle
+the stop; do not ask for premature gate approval. `taskctl next` prints the
+minimum release-gate handoff and must be included or faithfully summarized.
+
 ## Continuous execution
 
 After approval, continue through tasks, slice integration, independent slice review, and the next approved slice. Ordinary test failure, debugging, implementation refinement inside the approved envelope, or use of a documented fallback is not a human stop point.

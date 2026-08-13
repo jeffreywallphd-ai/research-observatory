@@ -54,6 +54,29 @@ campaign start. The campaign is durable across ordinary process or session
 interruptions and resumes in the same active capability until every approved
 slice and the production-ready capability qualification finish.
 
+### Release-gate stop review
+
+When the current slice is locked by a pending release gate, `taskctl next` must
+produce a decision-complete stopped-gate handoff rather than a generic "no READY
+task" message. The handoff identifies the gate criteria, incomplete preceding
+wave tasks, pending upstream gates, active and prerequisite planning-review
+pages, alternatives, recommendation, and exact resume condition.
+
+Distinguish two decisions:
+
+1. If preceding-wave work or evidence is incomplete, the release gate is not
+   approvable. The reviewer chooses whether to follow the recommended prerequisite
+   sequence, defer the campaign, or authorize governed replanning. The gate stays
+   `PENDING`.
+2. Only after every preceding-wave task is `DONE` and criterion-linked evidence
+   exists may a human approve the gate with `taskctl gate approve`. That approval
+   is separate from capability-plan approval, feedback export, task/slice review,
+   and local Git integration.
+
+Every stopped-gate response must repeat the directly openable `file://` and
+repository-relative review links so the human can inspect the decision materials
+without reconstructing them from chat history.
+
 ## Decision review and Other
 
 Every decision page displays the documented candidates, preselected recommendation, and an `Other` option.
