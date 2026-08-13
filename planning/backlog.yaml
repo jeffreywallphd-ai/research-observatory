@@ -2784,11 +2784,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-13T19:49:10+00:00'
+      updated_at: '2026-08-13T19:52:14+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
@@ -2802,7 +2802,10 @@ capabilities:
         focused renderer/package/browser/Tauri checks, and unchanged approved UI reference; ready for independent re-review.
 
         Focused quality-scope remediation complete; exact governed inventory and eight focused tests ready for independent
-        re-review. Full profiles remain deferred to S04 slice review.'
+        re-review. Full profiles remain deferred to S04 slice review.
+
+        Windows checkout reproducibility remediation complete; exact LF contract, 15 service tests, six contract tests, and
+        governed quality ready for focused re-review.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-01.S04.T03.json
@@ -2824,6 +2827,11 @@ capabilities:
         sha256: b762711c1903cf556195118c8fc3b14a34258fdcaa77464d87a10a65b79b6ed2
         commit: ede8811f0448de4ace104044465ddda7803165f1
         recorded_at: '2026-08-13T19:22:14+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S04.T03.review-fix-4.json
+        sha256: 255a75c268ee8ade32d1063b6bde800886ea0864578a5f99a54235cb7fc1f0f5
+        commit: a63d974b543cef696023eb5eee4eeef4604e8302
+        recorded_at: '2026-08-13T19:52:04+00:00'
       review:
         reviewer: null
         result: null
@@ -2835,7 +2843,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-13T19:49:10+00:00'
         expires_at: '2026-08-14T03:49:10+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
