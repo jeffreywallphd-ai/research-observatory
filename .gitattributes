@@ -12,6 +12,7 @@
 *.yaml text eol=lf
 *.yml text eol=lf
 *.lock text eol=lf
+packages/contracts/core-api/generated.ts text eol=lf
 *.png binary
 *.jpg binary
 *.jpeg binary
