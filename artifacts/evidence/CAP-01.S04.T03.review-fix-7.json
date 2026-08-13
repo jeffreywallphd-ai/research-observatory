@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-01.S04.T03",
+  "commit": "226ad7e72bea05133da673bd2361c5b16ba07da9",
+  "baseCommit": "eb2299694c24a47605e54e46e077fe6144099fa3",
+  "branch": "codex/cap-01-desktop-shell",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-01.S04.T03.review-fix-6.json",
+    "reason": "S04 slice review verified the complete functional result but found a false command path in slice evidence and that cumulative UI provenance did not yet recognize the exact independently reviewed quality-scope hardening commit. This manifest submits those two exact findings for the required independent CHANGES_REQUESTED transition before modifying protected gate controls."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-01.S04.T03.review-fix-6.json",
+    "artifacts/evidence/CAP-01.S04.integration.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_core_api; pnpm --dir packages/contracts test",
+      "exitCode": 0,
+      "result": "All 15 service tests and all six generated-contract tests pass using the actual contracts workspace command. The prior slice evidence incorrectly recorded packages/contracts/core-api as a pnpm project and must be superseded."
+    },
+    {
+      "command": "independent cumulative UI provenance diagnosis",
+      "exitCode": 0,
+      "result": "The cumulative gate correctly fails closed because exact commit 1cd9deebe94fa2b667ad6b0030bd07ec45d1c6bb changed governed quality-scope.json after implementation, but the existing gate has no exact immutable attestation for its later independent evidence and approval. A narrow historical attestation is required; the reference package and product/reference separation are unchanged."
+    },
+    {
+      "command": "independent S04 slice review",
+      "exitCode": 0,
+      "result": "agent:curie verified all eleven task evidence chains/approvals, desktop/service reports, staged security completion, final package/lifecycle/performance, SSE retention/replay-gap behavior, product/reference separation, G4 handoff, taskctl/views, and clean state. Only the two exact evidence/provenance findings above require remediation."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The functional diagnostics, exact redacted support export, trace linking, and authenticated local Core remain fully approved; the integration findings concern evidence command accuracy and gate-control provenance only."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "All affected service and generated-client tests pass under the correct workspace command. The cumulative UI gate intentionally remains red until its protected control change follows an explicit independent CHANGES_REQUESTED transition."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The proposed remediation will bind only exact commit, path, evidence hash, approval commit, task, and reviewer facts for the historical quality-scope addition and will retain all ordinary design-first and post-implementation hardening denials. No UI reference, product UI, service contract, dependency, or hosted scope changes."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "changes-requested",
+    "requiredGate": "agent-review",
+    "note": "Record the already issued independent slice findings as a task-level CHANGES_REQUESTED transition. Then implement only an exact immutable historical hardening attestation plus focused denial tests, rerun the cumulative gate, and supersede the slice evidence with the real pnpm command."
+  }
+}

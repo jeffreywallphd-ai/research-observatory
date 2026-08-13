@@ -2788,7 +2788,7 @@ capabilities:
       owner: codex
       branch: codex/cap-01-desktop-shell
       started_at: '2026-08-12T16:04:00+00:00'
-      updated_at: '2026-08-13T20:45:42+00:00'
+      updated_at: '2026-08-13T20:47:42+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Functional diagnostics and exact redacted support export qualified with focused native, schema,
@@ -2848,6 +2848,11 @@ capabilities:
         sha256: 7e451b6b195dd038930aeaadb4be295b6f9866e73f1a07c9c8ed239ea7c81e80
         commit: eb2299694c24a47605e54e46e077fe6144099fa3
         recorded_at: '2026-08-13T20:33:42+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-01.S04.T03.review-fix-7.json
+        sha256: a1af64f787414a80e83f6574a679eadbdeeeaba561a4cc0c1bdc1f4d76ccbe21
+        commit: 226ad7e72bea05133da673bd2361c5b16ba07da9
+        recorded_at: '2026-08-13T20:47:42+00:00'
       review:
         reviewer: null
         result: null
@@ -2859,7 +2864,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-13T20:45:42+00:00'
         expires_at: '2026-08-14T04:45:42+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
