@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Research Observatory baseline 1.3 wave-scoped task controller.
+"""Research Observatory baseline 1.3 wave-campaign task controller.
 
-The execution hierarchy is Roadmap -> Wave -> Capability increment -> ordered
-Slice -> Task -> Wave exit gate. Descriptive aliases are human-facing; numeric
-IDs remain immutable evidence keys. Tasks remain the atomic claim/evidence unit.
+The execution hierarchy is Roadmap -> durable Wave campaign -> capability
+contribution -> ordered Slice -> Task -> Wave exit gate. Descriptive aliases are
+human-facing; numeric IDs remain immutable evidence keys. Tasks remain the
+atomic claim/evidence unit.
 """
 
 from __future__ import annotations
@@ -41,7 +42,7 @@ PLATFORMS = {
     "ALL",
 }
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
-CAMPAIGN_SCOPES = {"capability-wave"}
+CAMPAIGN_SCOPES = {"wave", "capability-wave"}  # capability-wave is retained only for historical ledgers.
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
 LEGACY_UNVERIFIED_POLICY = "pre-exact-evidence-hosted-ci-residual-v1"
 LEGACY_UNVERIFIED_REFERENCES: dict[str, dict[str, Any]] = {
@@ -310,6 +311,25 @@ def wave_map(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {wave["id"]: wave for wave in data.get("waves", [])}
 
 
+def active_wave_campaigns(data: dict[str, Any]) -> list[dict[str, Any]]:
+    return [wave for wave in data.get("waves", []) if (wave.get("campaign") or {}).get("status") == "ACTIVE"]
+
+
+def wave_complete(
+    wave_id: str,
+    slices: dict[str, dict[str, Any]],
+    tasks: dict[str, dict[str, Any]],
+) -> bool:
+    wave_slices = [slice_ for slice_ in slices.values() if slice_.get("wave") == wave_id]
+    wave_tasks = [task for task in tasks.values() if task.get("wave") == wave_id]
+    return (
+        bool(wave_slices)
+        and bool(wave_tasks)
+        and all(task.get("status") == "DONE" for task in wave_tasks)
+        and all(slice_.get("completion", {}).get("status") == "APPROVED" for slice_ in wave_slices)
+    )
+
+
 def ordered_wave_ids(data: dict[str, Any]) -> list[str]:
     return [str(wave["id"]) for wave in data.get("waves", [])]
 
@@ -356,9 +376,11 @@ def global_program_position(
             for slice_ in slices.values()
             if slice_.get("wave") == wave_id and slice_.get("completion", {}).get("status") != "APPROVED"
         )
-        if not incomplete_tasks and not incomplete_slices:
-            continue
         wave = wave_map(data).get(wave_id, {})
+        wave_completion = (wave.get("completion") or {}).get("status")
+        incomplete_wave_review = wave_completion != "APPROVED"
+        if not incomplete_tasks and not incomplete_slices and not incomplete_wave_review:
+            continue
         activation_gate_id = wave.get("activation_gate")
         activation_gate = gates.get(activation_gate_id) if isinstance(activation_gate_id, str) else None
         if activation_gate is not None and activation_gate.get("status") != "APPROVED":
@@ -369,6 +391,7 @@ def global_program_position(
                 "next_gate": activation_gate,
                 "incomplete_tasks": incomplete_tasks,
                 "incomplete_slices": incomplete_slices,
+                "wave_completion": wave_completion,
             }
         return {
             "state": "ACTIVE_WAVE",
@@ -377,6 +400,7 @@ def global_program_position(
             "next_gate": gate_after_wave(data, wave_id),
             "incomplete_tasks": incomplete_tasks,
             "incomplete_slices": incomplete_slices,
+            "wave_completion": wave_completion,
         }
     return {
         "state": "COMPLETE",
@@ -385,6 +409,7 @@ def global_program_position(
         "next_gate": None,
         "incomplete_tasks": [],
         "incomplete_slices": [],
+        "wave_completion": None,
     }
 
 
@@ -632,6 +657,30 @@ def ready_tasks_in_campaign(
     )
 
 
+def ready_tasks_in_wave(
+    data: dict[str, Any],
+    wave: dict[str, Any],
+    capabilities: dict[str, dict[str, Any]],
+    slices: dict[str, dict[str, Any]],
+    tasks: dict[str, dict[str, Any]],
+    gates: dict[str, dict[str, Any]],
+    profile: str,
+    platform: str,
+) -> list[dict[str, Any]]:
+    refresh_derived_states(data, capabilities, slices, tasks, gates)
+    return sorted(
+        [
+            task
+            for task in tasks.values()
+            if task.get("wave") == wave.get("id")
+            and task.get("status") == "READY"
+            and profile_matches(task, profile)
+            and platform_matches(task, platform)
+        ],
+        key=task_sort_key,
+    )
+
+
 def get(mapping: dict[str, dict[str, Any]], id_: str, label: str) -> dict[str, Any]:
     try:
         return mapping[id_]
@@ -721,8 +770,23 @@ def git_execution_identity(
 
 
 def require_task_campaign_lease(
-    task: dict[str, Any], capabilities: dict[str, dict[str, Any]], actor: str
+    task: dict[str, Any],
+    capabilities: dict[str, dict[str, Any]],
+    actor: str,
+    data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    if data is not None:
+        active_waves = active_wave_campaigns(data)
+        if active_waves:
+            wave = active_waves[0]
+            campaign = wave.get("campaign") or {}
+            if wave.get("id") != task.get("wave") or campaign.get("scope") != "wave":
+                raise SystemExit(f"Task {task['id']} is outside the active Wave campaign {wave.get('id')}")
+            require_active_lease(wave, actor, f"Wave {wave['id']}")
+            return wave
+
+    # Historical capability-wave campaigns remain readable and resumable only
+    # for already-recorded ledgers. New work starts through `taskctl wave start`.
     capability = capabilities[task["capability_id"]]
     campaign = capability.get("campaign") or {}
     if campaign.get("status") != "ACTIVE":
@@ -1095,13 +1159,86 @@ def validate(
     if repo is not None:
         errors.extend(evidence_reference_errors(tasks, repo))
     waves = wave_map(data)
+    active_waves = active_wave_campaigns(data)
+    if len(active_waves) > 1:
+        errors.append("More than one ACTIVE Wave campaign exists; default automation permits one Wave")
     active = active_capabilities(capabilities)
     if len(active) > 1:
-        errors.append("More than one ACTIVE capability-wave campaign exists; default automation permits one increment")
+        errors.append("More than one ACTIVE legacy capability-wave campaign exists")
+    if active_waves and active:
+        errors.append("A Wave campaign and legacy capability-wave campaign cannot be ACTIVE together")
+    for wave_id, wave in waves.items():
+        approval = wave.get("approval") or {}
+        expected_capability_ids = sorted(
+            capability["id"]
+            for capability in capabilities.values()
+            if any(slice_.get("wave") == wave_id for slice_ in capability.get("slices", []))
+        )
+        expected_slice_ids = [
+            slice_["id"]
+            for capability in capabilities.values()
+            for slice_ in capability.get("slices", [])
+            if slice_.get("wave") == wave_id
+        ]
+        if approval.get("status") not in {"PENDING", "APPROVED", "CHANGES_REQUESTED"}:
+            errors.append(f"{wave_id}: invalid pre-Wave approval status")
+        if approval.get("status") == "APPROVED" and (
+            not approval.get("approved_by")
+            or not approval.get("approved_at")
+            or re.fullmatch(r"[0-9a-f]{40}", str(approval.get("approved_commit") or "")) is None
+        ):
+            errors.append(f"{wave_id}: approved pre-Wave packet lacks reviewer, time, or immutable commit")
+        if approval.get("status") == "APPROVED" and approval.get("capability_ids") != expected_capability_ids:
+            errors.append(f"{wave_id}: approved pre-Wave capability inventory is not exact")
+        if approval.get("status") == "APPROVED" and approval.get("slice_ids") != expected_slice_ids:
+            errors.append(f"{wave_id}: approved pre-Wave slice inventory is not exact")
+        if approval.get("status") != "APPROVED" and (approval.get("capability_ids") or approval.get("slice_ids")):
+            errors.append(f"{wave_id}: pending pre-Wave approval cannot carry an approved inventory")
+        campaign = wave.get("campaign") or {}
+        if campaign:
+            if campaign.get("status") not in CAMPAIGN_STATES:
+                errors.append(f"{wave_id}: invalid Wave campaign status")
+            if campaign.get("status") == "ACTIVE" and (
+                campaign.get("scope") != "wave"
+                or not campaign.get("owner")
+                or not campaign.get("branch")
+                or not campaign.get("base_sha")
+                or not campaign.get("worktree")
+                or not campaign.get("lease")
+                or approval.get("status") != "APPROVED"
+            ):
+                errors.append(
+                    f"{wave_id}: ACTIVE Wave campaign requires approved packet, wave scope, owner, branch, "
+                    "base SHA, worktree, and lease"
+                )
+            if campaign.get("owner") and campaign["owner"] != campaign["owner"].strip():
+                errors.append(f"{wave_id}: Wave campaign owner identity is not normalized")
+            if (
+                repo is not None
+                and campaign.get("status") == "ACTIVE"
+                and campaign.get("worktree")
+                and Path(campaign["worktree"]).resolve() != repo
+            ):
+                errors.append(f"{wave_id}: ACTIVE Wave campaign worktree does not match the repository")
+            lease = campaign.get("lease")
+            if lease and lease.get("claimed_by") != campaign.get("owner"):
+                errors.append(f"{wave_id}: Wave campaign lease owner does not match campaign owner")
+        completion = wave.get("completion") or {}
+        if completion.get("status") not in COMPLETION_STATES:
+            errors.append(f"{wave_id}: invalid Wave completion status")
+        if completion.get("status") == "APPROVED" and (
+            not completion.get("reviewer") or not completion.get("reviewed_at") or not completion.get("evidence")
+        ):
+            errors.append(f"{wave_id}: approved Wave completion lacks reviewer, time, or evidence")
+        if completion.get("reviewer") and completion.get("reviewer") == campaign.get("owner"):
+            errors.append(f"{wave_id}: Wave reviewer is not independent from the campaign owner")
+        for checkpoint in wave.get("checkpoints", []):
+            if not checkpoint.get("id") or not checkpoint.get("kind") or not checkpoint.get("evidence"):
+                errors.append(f"{wave_id}: every integration checkpoint requires id, kind, and evidence")
     aliases: dict[str, str] = {}
     for cid, capability in capabilities.items():
-        if capability.get("execution_mode") != "capability_campaign":
-            errors.append(f"{cid}: execution_mode must be capability_campaign")
+        if capability.get("execution_mode") not in {"wave_contribution", "capability_campaign"}:
+            errors.append(f"{cid}: execution_mode must be wave_contribution")
         alias = capability.get("alias")
         if not isinstance(alias, str) or re.fullmatch(r"CAP-[a-z0-9]+(?:-[a-z0-9]+)*", alias) is None:
             errors.append(f"{cid}: alias must be a stable descriptive CAP-<slug> identity")
@@ -1178,6 +1315,9 @@ def validate(
                     errors.append(f"{sid}: approved completion lacks reviewer, time, or evidence")
             if completion.get("reviewer") and completion["reviewer"] == (campaign or {}).get("owner"):
                 errors.append(f"{sid}: slice reviewer is not independent from the campaign owner")
+            wave_owner = ((waves.get(str(slice_.get("wave"))) or {}).get("campaign") or {}).get("owner")
+            if completion.get("reviewer") and completion["reviewer"] == wave_owner:
+                errors.append(f"{sid}: slice reviewer is not independent from the Wave campaign owner")
             if completion.get("reviewer") and completion["reviewer"] != completion["reviewer"].strip():
                 errors.append(f"{sid}: slice reviewer identity is not normalized")
             for task in slice_["tasks"]:
@@ -1287,6 +1427,9 @@ def validate(
             )
             if incomplete_slices:
                 errors.append(f"{gid}: APPROVED while preceding-wave slice {incomplete_slices[0]} is incomplete")
+            wave_completion = (waves.get(str(gate.get("after_wave"))) or {}).get("completion", {})
+            if wave_completion.get("status") != "APPROVED":
+                errors.append(f"{gid}: APPROVED before independent Wave completion review")
             prior_pending = [
                 str(prior.get("id")) for prior in ordered_gates[:gate_index] if prior.get("status") != "APPROVED"
             ]
@@ -1322,8 +1465,8 @@ def command_status(args, data, capabilities, slices, tasks, gates) -> None:
         dict(sorted(Counter(c.get("completion", {}).get("status") for c in capabilities.values()).items())),
     )
     print(
-        "Campaign states:",
-        dict(sorted(Counter((c.get("campaign") or {}).get("status", "NONE") for c in capabilities.values()).items())),
+        "Wave campaign states:",
+        dict(sorted(Counter((wave.get("campaign") or {}).get("status", "NONE") for wave in data["waves"]).items())),
     )
     print(
         "Slice completion:",
@@ -1331,19 +1474,20 @@ def command_status(args, data, capabilities, slices, tasks, gates) -> None:
     )
     print("Task states:", dict(sorted(Counter(t["status"] for t in tasks.values()).items())))
     print("Gate states:", dict(sorted(Counter(g["status"] for g in gates.values()).items())))
-    active = active_capabilities(capabilities)
+    active_wave = active_wave_campaigns(data)
     print(
-        "Active capability-wave increment:",
-        (f"{capability_display(active[0])}/{campaign_wave(active[0])}" if active else "none"),
+        "Active Wave campaign:",
+        (str(active_wave[0]["id"]) if active_wave else "none"),
     )
 
 
 def command_next_capability(args, data, capabilities, slices, tasks, gates) -> None:
+    """Compatibility view: Wave is now the start/lease unit, not capability."""
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     program = global_program_position(data, slices, tasks, gates)
-    active = active_capabilities(capabilities)
+    active = active_wave_campaigns(data)
     if active:
-        capability = active[0]
+        wave = active[0]
         print_yaml(
             {
                 "program": {
@@ -1351,11 +1495,10 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
                     "currentWave": program.get("current_wave"),
                     "nextGlobalGate": gate_transition_label(program.get("next_gate")),
                 },
-                "activeIncrement": {
-                    "capability": capability_display(capability),
-                    "canonicalId": capability["id"],
-                    "wave": campaign_wave(capability),
-                    "campaign": capability.get("campaign"),
+                "activeWave": {
+                    "wave": wave["id"],
+                    "title": wave.get("title"),
+                    "campaign": wave.get("campaign"),
                 },
             }
         )
@@ -1363,36 +1506,64 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
     if program.get("state") == "GATE_PENDING":
         print(global_gate_stop_handoff(args, data, program, capabilities, tasks, gates))
         return
-    candidates = eligible_capabilities(data, capabilities, slices, tasks, gates, args.profile, args.platform)
-    if not candidates:
+    wave_id = str(program.get("current_wave"))
+    wave = wave_map(data).get(wave_id, {})
+    if (wave.get("approval") or {}).get("status") != "APPROVED":
+        repo = Path(args.file).resolve().parent.parent
+        relative = f"planning/review-site/waves/{wave_id}.html"
+        uri = (repo / relative).resolve().as_uri()
+        contributing = sorted(
+            {
+                capability_display(capabilities[task["capability_id"]])
+                for task in tasks.values()
+                if task.get("wave") == wave_id and task.get("capability_id") in capabilities
+            }
+        )
+        slice_ids = sorted(slice_["id"] for slice_ in slices.values() if slice_.get("wave") == wave_id)
         print(
-            f"No eligible capability-wave increment in {program.get('current_wave') or 'the completed roadmap'} "
+            f"STOPPED AT PRE-WAVE APPROVAL: {wave_id} — {wave.get('title')}\n"
+            "Approval is not yet legal for execution. The complete packet must bind every contributing capability "
+            "decision and slice plan at one immutable commit.\n"
+            f"Review materials: {uri} ({relative})\n"
+            f"Capability contributions ({len(contributing)}): {', '.join(contributing)}\n"
+            f"Ordered slices ({len(slice_ids)}): {', '.join(slice_ids)}\n"
+            "Decision alternatives:\n"
+            "  A (recommended): review the complete Wave page, apply any documented overrides, then record one "
+            "commit-bound Wave approval. This preserves coherent cross-capability interfaces and one execution lease.\n"
+            "  B: defer the Wave without executing it; preserve approval as PENDING.\n"
+            "  C: govern a Wave-scope change through canonical plans/backlog and regenerate the packet; do not approve "
+            "a subset.\n"
+            f"Approval command after a clean immutable review commit: python tools/planctl.py --repo . wave approve "
+            f"{wave_id} --by <reviewer> --commit <git-sha>"
+        )
+        return
+    if not any(
+        task.get("wave") == wave_id
+        and task.get("status") == "READY"
+        and profile_matches(task, args.profile)
+        and platform_matches(task, args.platform)
+        for task in tasks.values()
+    ):
+        print(
+            f"No eligible task in {program.get('current_wave') or 'the completed roadmap'} "
             f"for profile {args.profile} and platform {args.platform}"
         )
         return
-    capability = candidates[0]
-    active_wave = str(program["current_wave"])
     view = {
         "program": {
             "state": program["state"],
-            "currentWave": active_wave,
+            "currentWave": wave_id,
             "nextGlobalGate": gate_transition_label(program.get("next_gate")),
         },
-        "capability": capability_display(capability),
-        "canonicalId": capability["id"],
-        "title": capability["title"],
-        "objective": capability["objective"],
-        "exit_criteria": capability["exit_criteria"],
-        "increment": f"{capability.get('alias', capability['id'])}/{active_wave}",
+        "wave": wave_id,
+        "title": wave.get("title"),
+        "goal": wave.get("goal"),
+        "preWaveApproval": (wave.get("approval") or {}).get("status"),
+        "reviewPage": f"planning/review-site/waves/{wave_id}.html",
     }
-    selected_slice = current_slice(capability, active_wave)
-    if selected_slice is None:
-        raise SystemExit(f"Capability {capability['id']} has no current slice in {active_wave}")
-    view["current_slice"] = selected_slice["id"]
     view["start_command"] = (
-        f"python tools/taskctl.py capability start {capability.get('alias', capability['id'])} "
-        f"--wave {active_wave} --agent <agent> "
-        f"--branch capability/{capability['id'].lower()}-<slug> --base-sha <sha> "
+        f"python tools/taskctl.py wave start {wave_id} --agent <agent> "
+        f"--branch codex/{wave_id.lower()}-<slug> --base-sha <sha> "
         f"--worktree <absolute-repository-path> --profile {args.profile} --platform {args.platform}"
     )
     print_yaml(view)
@@ -1439,6 +1610,8 @@ def global_gate_stop_handoff(
         and ordered_waves.index(str(item.get("after_wave"))) < preceding_index
     ]
     criteria = "\n".join(f"  - {criterion}" for criterion in gate.get("criteria", []))
+    wave_relative = f"planning/review-site/waves/{preceding_wave}.html"
+    wave_uri = (repo / wave_relative).resolve().as_uri()
     prerequisite_links: list[str] = []
     for capability_id in prerequisite_capabilities:
         uri, relative = review_link(capability_id)
@@ -1465,7 +1638,7 @@ def global_gate_stop_handoff(
     )
     resume = (
         f"python tools/taskctl.py gate approve {gate_id} --approver <human> --evidence <criterion-linked-evidence> "
-        f'--note "<decision rationale>"; then start only a READY capability-wave increment in '
+        f'--note "<decision rationale>"; then approve and start only a READY Wave campaign in '
         f"{', '.join(gate.get('unlocks_waves', []))}."
     )
     return (
@@ -1473,6 +1646,7 @@ def global_gate_stop_handoff(
         f"Approval state: {readiness}.\n"
         f"What the eventual approval must establish:\n{criteria}\n"
         "Review materials:\n"
+        f"  - Complete Wave packet and exit decision: {wave_uri} ({wave_relative})\n"
         f"  - Preceding-wave capability packets:\n{links}\n"
         "Decision alternatives:\n"
         f"  A (recommended): {recommendation}\n"
@@ -1485,53 +1659,289 @@ def global_gate_stop_handoff(
 
 def command_next(args, data, capabilities, slices, tasks, gates) -> None:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
-    program = global_program_position(data, slices, tasks, gates)
-    active = active_capabilities(capabilities)
+    active = active_wave_campaigns(data)
     if not active:
         command_next_capability(args, data, capabilities, slices, tasks, gates)
         return
-    campaign = active[0]
-    wave_id = campaign_wave(campaign)
-    if wave_id is None:
-        raise SystemExit(f"Active capability {campaign['id']} lacks an explicit capability-wave scope")
-    candidates = ready_tasks_in_campaign(
-        data, campaign, capabilities, slices, tasks, gates, args.profile, args.platform
-    )
+    wave = active[0]
+    wave_id = str(wave["id"])
+    candidates = ready_tasks_in_wave(data, wave, capabilities, slices, tasks, gates, args.profile, args.platform)
     if not candidates:
-        slice_ = current_slice(campaign, wave_id)
-        if capability_wave_complete(campaign, wave_id) and any(
-            slice_.get("completion", {}).get("status") != "APPROVED"
-            for slice_ in campaign.get("slices", [])
-            if slice_.get("wave") != wave_id
-        ):
-            future = current_slice(campaign)
-            future_gate = None
-            if future is not None:
-                future_wave = wave_map(data).get(str(future.get("wave")), {})
-                future_gate = gates.get(future_wave.get("activation_gate"))
+        if wave_complete(wave_id, slices, tasks):
             print(
-                f"CAPABILITY-WAVE INCREMENT COMPLETE: {capability_display(campaign)}/{wave_id}.\n"
-                f"Current global wave: {program.get('current_wave')}; next global gate: "
-                f"{gate_transition_label(program.get('next_gate'))}.\n"
-                f"Future increment: {campaign.get('alias', campaign['id'])}/"
-                f"{future.get('wave') if future else 'none'}; "
-                f"future blocker: {gate_transition_label(future_gate)}.\n"
-                f"Close this increment without advancing the capability: python tools/taskctl.py capability pause "
-                f"{campaign['id']} --category wave-complete --agent <agent> "
-                f'--reason "{campaign.get("alias", campaign["id"])}/{wave_id} independently approved"; '
-                "then run taskctl next to select work in the current global wave."
+                f"WAVE IMPLEMENTATION COMPLETE: {wave_id}. Run the complete affected/full Wave-exit matrix, attach "
+                f"criterion-linked Wave evidence, then submit with `python tools/taskctl.py wave submit {wave_id} "
+                "--agent <agent> --evidence <wave-qualification-evidence>`."
             )
             return
+        waiting = sorted(
+            task["id"]
+            for task in tasks.values()
+            if task.get("wave") == wave_id and task.get("status") in {"IN_PROGRESS", "REVIEW", "BLOCKED"}
+        )
         print(
-            f"No READY task in active capability-wave increment {capability_display(campaign)}/{wave_id} current slice "
-            f"{slice_['id'] if slice_ else 'none'}. Complete review, resolve blocker, "
-            "or submit/approve the slice."
+            f"No READY task in active Wave campaign {wave_id}. Complete the current task/slice review or resolve the "
+            f"recorded blocker. Active items: {', '.join(waiting) or 'none'}."
         )
         return
     task = dict(candidates[0])
     task["displayCapability"] = capability_display(capabilities[task["capability_id"]])
     task["displaySlice"] = slice_display(slices[task["slice_id"]])
     print_yaml(task)
+
+
+def require_wave_planning_ready(args: argparse.Namespace, wave_id: str) -> None:
+    if wave_id == "W0":
+        return
+    repo = Path(args.file).resolve().parents[1]
+    command = [
+        sys.executable,
+        str(repo / "tools" / "planctl.py"),
+        "--repo",
+        str(repo),
+        "wave",
+        "ready",
+        wave_id,
+        "--require-approved",
+    ]
+    result = subprocess.run(command, capture_output=True, text=True)
+    if result.returncode == 0:
+        return
+    detail = "\n".join(part.strip() for part in (result.stdout, result.stderr) if part and part.strip())
+    review_page = repo / "planning" / "review-site" / "waves" / f"{wave_id}.html"
+    review_uri = review_page.resolve().as_uri() if review_page.exists() else f"file://{review_page.resolve()}"
+    raise SystemExit(
+        f"Pre-Wave planning gate failed for {wave_id}. The complete Wave packet—including every contributing "
+        "capability decision and every slice plan—must be approved together at one immutable commit.\n"
+        + (detail + "\n" if detail else "")
+        + f"Planning review page: {review_uri}\nRepository-relative page: "
+        f"planning/review-site/waves/{wave_id}.html"
+    )
+
+
+def command_wave_status(args, data, capabilities, slices, tasks, gates) -> None:
+    waves = wave_map(data)
+    selected = [get(waves, args.wave, "wave")] if args.wave else list(waves.values())
+    for wave in selected:
+        wave_id = str(wave["id"])
+        view = {
+            "id": wave_id,
+            "title": wave.get("title"),
+            "goal": wave.get("goal"),
+            "approval": wave.get("approval"),
+            "campaign": wave.get("campaign"),
+            "checkpoints": wave.get("checkpoints", []),
+            "completion": wave.get("completion"),
+            "task_states": dict(Counter(task["status"] for task in tasks.values() if task.get("wave") == wave_id)),
+            "slice_completion": dict(
+                Counter(
+                    slice_.get("completion", {}).get("status")
+                    for slice_ in slices.values()
+                    if slice_.get("wave") == wave_id
+                )
+            ),
+        }
+        print_yaml(view)
+
+
+def command_wave_start(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    require_execution_target(args.profile, args.platform)
+    wave = get(wave_map(data), args.wave, "wave")
+    program = global_program_position(data, slices, tasks, gates)
+    if program.get("state") != "ACTIVE_WAVE" or program.get("current_wave") != wave["id"]:
+        raise SystemExit(
+            f"Wave {wave['id']} cannot start at program position {program.get('state')}/"
+            f"{program.get('current_wave')}; next gate is {gate_transition_label(program.get('next_gate'))}"
+        )
+    if (wave.get("approval") or {}).get("status") != "APPROVED":
+        raise SystemExit(f"Wave {wave['id']} has no approved pre-Wave packet")
+    require_wave_planning_ready(args, str(wave["id"]))
+    if active_wave_campaigns(data) or active_capabilities(capabilities):
+        raise SystemExit("Another Wave or legacy capability campaign is ACTIVE")
+    prior = wave.get("campaign") or {}
+    if prior.get("status") not in {None, "PLANNED"}:
+        raise SystemExit(f"Wave cannot start from campaign state {prior.get('status')}")
+    agent, branch, base_sha, worktree = git_execution_identity(
+        args.file,
+        agent=args.agent,
+        branch=args.branch,
+        base_sha=args.base_sha,
+        worktree=args.worktree,
+    )
+    candidates = ready_tasks_in_wave(data, wave, capabilities, slices, tasks, gates, args.profile, args.platform)
+    if not candidates:
+        raise SystemExit("Wave has no READY task for the requested profile/platform")
+    now = utc_now()
+    wave["campaign"] = {
+        "status": "ACTIVE",
+        "scope": "wave",
+        "owner": agent,
+        "branch": branch,
+        "worktree": worktree,
+        "base_sha": base_sha,
+        "profile": args.profile,
+        "platform": args.platform,
+        "started_at": now,
+        "updated_at": now,
+        "pause_reason": None,
+        "pause_category": None,
+        "lease": new_lease(agent, args.lease_hours),
+    }
+    wave["completion"].update(status="IN_PROGRESS", reviewer=None, reviewed_at=None, evidence=[], notes=None)
+    persist(args, data)
+    print(f"Started durable Wave campaign {wave['id']} — {wave.get('title')}")
+
+
+def command_wave_pause(args, data, capabilities, slices, tasks, gates) -> None:
+    wave = get(wave_map(data), args.wave, "wave")
+    campaign = wave.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE":
+        raise SystemExit("Only an ACTIVE Wave may be paused")
+    require_active_lease(wave, args.agent, f"Wave {wave['id']}")
+    if any(
+        task.get("wave") == wave["id"] and task.get("status") in {"IN_PROGRESS", "REVIEW"} for task in tasks.values()
+    ):
+        raise SystemExit("Resolve or explicitly block active/review tasks before pausing the Wave")
+    campaign.update(
+        status="PAUSED",
+        pause_reason=args.reason,
+        pause_category=args.category,
+        updated_at=utc_now(),
+        lease=None,
+    )
+    wave["completion"]["status"] = "PAUSED"
+    persist(args, data)
+
+
+def command_wave_renew(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    wave = get(wave_map(data), args.wave, "wave")
+    campaign = wave.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE":
+        raise SystemExit("Only an ACTIVE Wave lease may be renewed")
+    if campaign.get("owner") != args.agent:
+        raise SystemExit(f"Wave {wave['id']} is owned by {campaign.get('owner')}, not {args.agent}")
+    if lease_is_active(wave):
+        require_active_lease(wave, args.agent, f"Wave {wave['id']}")
+    campaign["lease"] = new_lease(args.agent, args.lease_hours)
+    campaign["updated_at"] = utc_now()
+    persist(args, data)
+
+
+def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    require_execution_target(args.profile, args.platform)
+    wave = get(wave_map(data), args.wave, "wave")
+    campaign = wave.get("campaign") or {}
+    if campaign.get("status") != "PAUSED":
+        raise SystemExit("Only a PAUSED Wave may be resumed")
+    if active_wave_campaigns(data) or active_capabilities(capabilities):
+        raise SystemExit("Another Wave or legacy capability campaign is ACTIVE")
+    program = global_program_position(data, slices, tasks, gates)
+    review_remediation = (wave.get("completion") or {}).get("status") in {"CHANGES_REQUESTED", "BLOCKED"}
+    if not review_remediation and (program.get("state") != "ACTIVE_WAVE" or program.get("current_wave") != wave["id"]):
+        raise SystemExit("Paused Wave is outside the current program position")
+    require_wave_planning_ready(args, str(wave["id"]))
+    agent, branch, base_sha, worktree = git_execution_identity(
+        args.file,
+        agent=args.agent,
+        branch=args.branch,
+        base_sha=args.base_sha,
+        worktree=args.worktree,
+    )
+    if campaign.get("owner") != agent:
+        raise SystemExit(f"Paused Wave is owned by {campaign.get('owner')}, not {agent}")
+    if campaign.get("branch") and campaign.get("branch") != branch:
+        raise SystemExit("Paused Wave must resume on its recorded branch")
+    campaign.update(
+        status="ACTIVE",
+        branch=branch,
+        worktree=worktree,
+        base_sha=base_sha,
+        profile=args.profile,
+        platform=args.platform,
+        updated_at=utc_now(),
+        pause_reason=None,
+        pause_category=None,
+        lease=new_lease(agent, args.lease_hours),
+    )
+    wave["completion"]["status"] = "IN_PROGRESS"
+    persist(args, data)
+
+
+def command_wave_checkpoint(args, data, capabilities, slices, tasks, gates) -> None:
+    wave = get(wave_map(data), args.wave, "wave")
+    campaign = wave.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE":
+        raise SystemExit("Integration checkpoints require an ACTIVE Wave")
+    require_active_lease(wave, args.agent, f"Wave {wave['id']}")
+    if not args.evidence:
+        raise SystemExit("Integration checkpoint evidence is required")
+    checkpoints = wave.setdefault("checkpoints", [])
+    checkpoint_id = f"{wave['id']}.CP{len(checkpoints) + 1:02d}"
+    checkpoints.append(
+        {
+            "id": checkpoint_id,
+            "kind": args.kind,
+            "recorded_by": normalized_identity(args.agent, "Checkpoint actor"),
+            "recorded_at": utc_now(),
+            "evidence": args.evidence,
+            "notes": args.note,
+        }
+    )
+    campaign["updated_at"] = utc_now()
+    persist(args, data)
+    print(f"Recorded {checkpoint_id} ({args.kind})")
+
+
+def command_wave_submit(args, data, capabilities, slices, tasks, gates) -> None:
+    wave = get(wave_map(data), args.wave, "wave")
+    campaign = wave.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE":
+        raise SystemExit("Wave campaign must be ACTIVE")
+    require_active_lease(wave, args.agent, f"Wave {wave['id']}")
+    if not wave_complete(str(wave["id"]), slices, tasks):
+        raise SystemExit("Every Wave task must be DONE and every slice independently APPROVED before Wave submission")
+    if not args.evidence:
+        raise SystemExit("Full Wave-exit qualification evidence is required")
+    campaign.update(status="REVIEW", updated_at=utc_now(), lease=None)
+    wave["completion"].update(status="REVIEW", evidence=args.evidence, notes=args.note)
+    persist(args, data)
+
+
+def command_wave_review(args, data, capabilities, slices, tasks, gates) -> None:
+    wave = get(wave_map(data), args.wave, "wave")
+    campaign = wave.get("campaign") or {}
+    completion = wave.get("completion") or {}
+    if campaign.get("status") != "REVIEW" or completion.get("status") != "REVIEW":
+        raise SystemExit("Wave must be submitted for REVIEW")
+    reviewer = normalized_identity(args.reviewer, "Wave reviewer")
+    if reviewer == campaign.get("owner"):
+        raise SystemExit("Wave reviewer must be independent from the campaign owner")
+    now = utc_now()
+    if args.result == "approved":
+        campaign.update(status="COMPLETE", updated_at=now, lease=None)
+        completion.update(status="APPROVED", reviewer=reviewer, reviewed_at=now, notes=args.note)
+    elif args.result == "changes-requested":
+        campaign.update(
+            status="PAUSED",
+            updated_at=now,
+            pause_reason="Wave review changes requested",
+            pause_category="review-remediation",
+            lease=None,
+        )
+        completion.update(status="CHANGES_REQUESTED", reviewer=reviewer, reviewed_at=now, notes=args.note)
+    else:
+        campaign.update(
+            status="PAUSED",
+            updated_at=now,
+            pause_reason=args.note or "Wave review blocked",
+            pause_category="review-remediation",
+            lease=None,
+        )
+        completion.update(status="BLOCKED", reviewer=reviewer, reviewed_at=now, notes=args.note)
+    persist(args, data)
 
 
 def command_capability_prepare(args, data, capabilities, slices, tasks, gates) -> None:
@@ -1844,12 +2254,19 @@ def command_slice_status(args, data, capabilities, slices, tasks, gates) -> None
 def command_slice_submit(args, data, capabilities, slices, tasks, gates) -> None:
     slice_ = get(slices, args.slice, "slice")
     capability = capabilities[slice_["id"].split(".")[0]]
-    if (capability.get("campaign") or {}).get("status") != "ACTIVE":
-        raise SystemExit("The parent capability campaign must be ACTIVE")
-    require_active_lease(capability, args.agent, f"Capability {capability['id']}")
-    wave_id = campaign_wave(capability)
-    if wave_id is None or slice_.get("wave") != wave_id or current_slice(capability, wave_id) is not slice_:
-        raise SystemExit("Only the current slice in the active capability-wave increment may be submitted")
+    active_waves = active_wave_campaigns(data)
+    if active_waves:
+        wave = active_waves[0]
+        require_active_lease(wave, args.agent, f"Wave {wave['id']}")
+        if slice_.get("wave") != wave.get("id") or current_slice(capability, str(wave["id"])) is not slice_:
+            raise SystemExit("Only a current dependency-eligible slice in the active Wave may be submitted")
+    else:
+        if (capability.get("campaign") or {}).get("status") != "ACTIVE":
+            raise SystemExit("The parent legacy capability campaign must be ACTIVE")
+        require_active_lease(capability, args.agent, f"Capability {capability['id']}")
+        wave_id = campaign_wave(capability)
+        if wave_id is None or slice_.get("wave") != wave_id or current_slice(capability, wave_id) is not slice_:
+            raise SystemExit("Only the current slice in the active legacy capability-wave increment may be submitted")
     if any(t["status"] != "DONE" for t in slice_["tasks"]):
         raise SystemExit("Every task in the slice must be DONE")
     if not args.evidence:
@@ -1865,20 +2282,32 @@ def command_slice_review(args, data, capabilities, slices, tasks, gates) -> None
         raise SystemExit("Slice must be submitted for REVIEW")
     reviewer = normalized_identity(args.reviewer, "Reviewer")
     capability = capabilities[slice_["id"].split(".")[0]]
-    campaign = capability.get("campaign") or {}
-    if campaign.get("status") != "ACTIVE" or campaign.get("wave") != slice_.get("wave"):
-        raise SystemExit("Slice review must belong to the active capability-wave increment")
-    if reviewer == (capability.get("campaign") or {}).get("owner"):
-        raise SystemExit("Slice reviewer must be independent from the campaign owner")
+    active_waves = active_wave_campaigns(data)
+    campaign_holder: dict[str, Any]
+    if active_waves:
+        campaign_holder = active_waves[0]
+        if campaign_holder.get("id") != slice_.get("wave"):
+            raise SystemExit("Slice review must belong to the active Wave campaign")
+    else:
+        campaign_holder = capability
+        campaign = capability.get("campaign") or {}
+        if campaign.get("status") != "ACTIVE" or campaign.get("wave") != slice_.get("wave"):
+            raise SystemExit("Slice review must belong to the active legacy capability-wave increment")
+    if reviewer == (campaign_holder.get("campaign") or {}).get("owner"):
+        raise SystemExit("Slice reviewer must be independent from the Wave campaign owner")
     now = utc_now()
     if args.result == "approved":
         slice_["completion"].update(status="APPROVED", reviewer=reviewer, reviewed_at=now, notes=args.note)
         slice_["status"] = "DONE"
         wave_id = str(slice_["wave"])
-        if capability_wave_complete(capability, wave_id) and any(
-            candidate.get("completion", {}).get("status") != "APPROVED"
-            for candidate in capability.get("slices", [])
-            if candidate.get("wave") != wave_id
+        if (
+            not active_waves
+            and capability_wave_complete(capability, wave_id)
+            and any(
+                candidate.get("completion", {}).get("status") != "APPROVED"
+                for candidate in capability.get("slices", [])
+                if candidate.get("wave") != wave_id
+            )
         ):
             campaign.update(
                 status="PAUSED",
@@ -1916,18 +2345,27 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
         raise SystemExit(f"Task is {task['status']}, not READY")
     if not profile_matches(task, args.profile) or not platform_matches(task, args.platform):
         raise SystemExit("Task is not eligible for the requested profile/platform")
-    active = active_capabilities(capabilities)
-    if not active:
-        raise SystemExit(f"No ACTIVE capability campaign. Start {task['capability_id']} before claiming tasks.")
-    if active[0]["id"] != task["capability_id"]:
-        raise SystemExit(f"Active campaign is {active[0]['id']}; task belongs to {task['capability_id']}")
-    require_active_lease(active[0], agent, f"Capability {active[0]['id']}")
-    campaign = active[0]["campaign"]
+    active_waves = active_wave_campaigns(data)
+    if active_waves:
+        holder = active_waves[0]
+        campaign = holder["campaign"]
+        if holder.get("id") != task.get("wave") or campaign.get("scope") != "wave":
+            raise SystemExit("Task is outside the active Wave campaign")
+        require_active_lease(holder, agent, f"Wave {holder['id']}")
+    else:
+        active = active_capabilities(capabilities)
+        if not active:
+            raise SystemExit(f"No ACTIVE Wave campaign. Start {task['wave']} before claiming tasks.")
+        if active[0]["id"] != task["capability_id"]:
+            raise SystemExit(f"Active legacy campaign is {active[0]['id']}; task belongs to {task['capability_id']}")
+        holder = active[0]
+        campaign = active[0]["campaign"]
+        require_active_lease(holder, agent, f"Capability {active[0]['id']}")
+        if campaign.get("scope") != "capability-wave" or campaign.get("wave") != task.get("wave"):
+            raise SystemExit("Task is outside the active legacy capability-wave increment")
     if args.profile != campaign.get("profile") or args.platform != campaign.get("platform"):
-        raise SystemExit("Task claim profile/platform must match the active capability campaign")
-    if campaign.get("scope") != "capability-wave" or campaign.get("wave") != task.get("wave"):
-        raise SystemExit("Task is outside the active capability-wave increment")
-    selected_slice = current_slice(active[0], str(campaign["wave"]))
+        raise SystemExit("Task claim profile/platform must match the active Wave campaign")
+    selected_slice = current_slice(capabilities[task["capability_id"]], str(task["wave"]))
     if selected_slice is None or selected_slice["id"] != task["slice_id"]:
         raise SystemExit("Task is outside the active campaign's current slice")
     now = utc_now()
@@ -1951,7 +2389,7 @@ def command_block(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] not in {"IN_PROGRESS", "REVIEW"}:
         raise SystemExit(f"Task cannot be blocked from {task['status']}")
-    require_task_campaign_lease(task, capabilities, args.agent)
+    require_task_campaign_lease(task, capabilities, args.agent, data)
     require_active_lease(task, args.agent, f"Task {task['id']}")
     task["status"] = "BLOCKED"
     task["blocker"] = {
@@ -1972,7 +2410,7 @@ def command_renew(args, data, capabilities, slices, tasks, gates) -> None:
         raise SystemExit("Only an IN_PROGRESS or REVIEW task lease may be renewed")
     if task.get("owner") != args.agent:
         raise SystemExit(f"Task {task['id']} is owned by {task.get('owner')}, not {args.agent}")
-    require_task_campaign_lease(task, capabilities, args.agent)
+    require_task_campaign_lease(task, capabilities, args.agent, data)
     if lease_is_active(task):
         require_active_lease(task, args.agent, f"Task {task['id']}")
     task["lease"] = new_lease(args.agent, args.lease_hours)
@@ -1985,7 +2423,7 @@ def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] != "IN_PROGRESS":
         raise SystemExit("Evidence may be attached only while IN_PROGRESS")
-    require_task_campaign_lease(task, capabilities, args.agent)
+    require_task_campaign_lease(task, capabilities, args.agent, data)
     require_active_lease(task, args.agent, f"Task {task['id']}")
     repo = discover_repository(args.file)
     evidence_path = Path(args.from_file).resolve()
@@ -2050,7 +2488,7 @@ def command_submit(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] != "IN_PROGRESS":
         raise SystemExit("Only IN_PROGRESS tasks may be submitted")
-    require_task_campaign_lease(task, capabilities, args.agent)
+    require_task_campaign_lease(task, capabilities, args.agent, data)
     require_active_lease(task, args.agent, f"Task {task['id']}")
     if task.get("verification_state") != "passed" or not task.get("evidence"):
         raise SystemExit("Verification must pass and evidence must be attached before REVIEW")
@@ -2098,9 +2536,16 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] not in {"BLOCKED", "REVIEW", "DONE"}:
         raise SystemExit(f"Task cannot be reopened from {task['status']}")
-    capability = require_task_campaign_lease(task, capabilities, agent)
-    if current_slice(capability, campaign_wave(capability)) is not slices[task["slice_id"]]:
-        raise SystemExit("Only a task in the active capability-wave increment's current slice may be reopened")
+    holder = require_task_campaign_lease(task, capabilities, agent, data)
+    capability = capabilities[task["capability_id"]]
+    active_wave_id = holder.get("id") if holder in active_wave_campaigns(data) else campaign_wave(capability)
+    wave_remediation = (
+        holder in active_wave_campaigns(data)
+        and (holder.get("completion") or {}).get("status") in {"IN_PROGRESS", "CHANGES_REQUESTED", "BLOCKED"}
+        and wave_complete(str(active_wave_id), slices, tasks)
+    )
+    if not wave_remediation and current_slice(capability, str(active_wave_id)) is not slices[task["slice_id"]]:
+        raise SystemExit("Only a task in the active Wave campaign's current capability slice may be reopened")
     if not task_can_be_ready(data, capabilities, slices, tasks, gates, task):
         raise SystemExit("Task cannot be reopened while dependencies or the activation gate are incomplete")
     if any(gate.get("status") == "APPROVED" and gate.get("after_wave") == task.get("wave") for gate in gates.values()):
@@ -2119,6 +2564,10 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
         review={"reviewer": None, "result": None, "reviewed_at": None, "notes": f"Reopened: {args.reason}"},
         lease=new_lease(agent, args.lease_hours),
     )
+    if wave_remediation:
+        parent_slice = slices[task["slice_id"]]
+        parent_slice["status"] = "IN_PROGRESS"
+        parent_slice.setdefault("completion", {})["status"] = "CHANGES_REQUESTED"
     persist(args, data)
 
 
@@ -2127,9 +2576,11 @@ def command_cancel(args, data, capabilities, slices, tasks, gates) -> None:
     if task["status"] in {"DONE", "CANCELLED"}:
         raise SystemExit(f"{task['status']} tasks cannot transition to CANCELLED")
     actor = normalized_identity(args.actor, "Cancellation actor")
-    capability = require_task_campaign_lease(task, capabilities, actor)
-    if current_slice(capability, campaign_wave(capability)) is not slices[task["slice_id"]]:
-        raise SystemExit("Only a task in the active capability-wave increment's current slice may be cancelled")
+    holder = require_task_campaign_lease(task, capabilities, actor, data)
+    capability = capabilities[task["capability_id"]]
+    active_wave_id = holder.get("id") if holder in active_wave_campaigns(data) else campaign_wave(capability)
+    if current_slice(capability, str(active_wave_id)) is not slices[task["slice_id"]]:
+        raise SystemExit("Only a task in the active Wave campaign's current capability slice may be cancelled")
     if task["status"] in {"IN_PROGRESS", "REVIEW"}:
         require_active_lease(task, actor, f"Task {task['id']}")
     task["status"] = "CANCELLED"
@@ -2188,6 +2639,11 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
             f"Release gate {gate['id']} cannot approve before every {gate.get('after_wave')} slice is independently "
             f"approved; first incomplete slice: {incomplete_slices[0]}"
         )
+    wave = get(wave_map(data), str(gate.get("after_wave")), "wave")
+    if (wave.get("completion") or {}).get("status") != "APPROVED":
+        raise SystemExit(
+            f"Release gate {gate['id']} cannot approve before {wave['id']} passes independent Wave qualification review"
+        )
     gate["status"] = "APPROVED"
     gate["approval"] = {
         "approved_by": approver,
@@ -2221,6 +2677,65 @@ def build_parser() -> argparse.ArgumentParser:
     nc.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
     sh = sub.add_parser("show")
     sh.add_argument("task")
+    wave = sub.add_parser("wave")
+    ws = wave.add_subparsers(dest="wave_command", required=True)
+    wstat = ws.add_parser("status")
+    wstat.add_argument("wave", nargs="?")
+    wstart = ws.add_parser("start")
+    wstart.add_argument("wave")
+    wstart.add_argument("--agent", required=True)
+    wstart.add_argument("--branch", required=True)
+    wstart.add_argument("--base-sha", required=True)
+    wstart.add_argument("--worktree", required=True)
+    wstart.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    wstart.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    wstart.add_argument("--lease-hours", type=int, default=24)
+    wpause = ws.add_parser("pause")
+    wpause.add_argument("wave")
+    wpause.add_argument(
+        "--category",
+        choices=[
+            "infeasible",
+            "external-dependency",
+            "hardware-unavailable",
+            "human-decision",
+            "approved-design-gate",
+        ],
+        required=True,
+    )
+    wpause.add_argument("--agent", required=True)
+    wpause.add_argument("--reason", required=True)
+    wrenew = ws.add_parser("renew")
+    wrenew.add_argument("wave")
+    wrenew.add_argument("--agent", required=True)
+    wrenew.add_argument("--lease-hours", type=int, default=24)
+    wresume = ws.add_parser("resume")
+    wresume.add_argument("wave")
+    wresume.add_argument("--agent", required=True)
+    wresume.add_argument("--branch", required=True)
+    wresume.add_argument("--base-sha", required=True)
+    wresume.add_argument("--worktree", required=True)
+    wresume.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    wresume.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    wresume.add_argument("--lease-hours", type=int, default=24)
+    checkpoint = ws.add_parser("checkpoint")
+    checkpoint.add_argument("wave")
+    checkpoint.add_argument("--agent", required=True)
+    checkpoint.add_argument(
+        "--kind", choices=["interface", "risk-cluster", "mid-wave", "migration", "security"], required=True
+    )
+    checkpoint.add_argument("--evidence", action="append", required=True)
+    checkpoint.add_argument("--note", default="")
+    wsubmit = ws.add_parser("submit")
+    wsubmit.add_argument("wave")
+    wsubmit.add_argument("--agent", required=True)
+    wsubmit.add_argument("--evidence", action="append", required=True)
+    wsubmit.add_argument("--note", default="")
+    wreview = ws.add_parser("review")
+    wreview.add_argument("wave")
+    wreview.add_argument("--reviewer", required=True)
+    wreview.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
+    wreview.add_argument("--note", default="")
     cap = sub.add_parser("capability")
     cs = cap.add_subparsers(dest="cap_command", required=True)
     cstat = cs.add_parser("status")
@@ -2369,6 +2884,22 @@ def main() -> None:
         task["displayCapability"] = capability_display(capabilities[task["capability_id"]])
         task["displaySlice"] = slice_display(slices[task["slice_id"]])
         print_yaml(task)
+    elif args.command == "wave" and args.wave_command == "status":
+        command_wave_status(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "wave" and args.wave_command == "start":
+        command_wave_start(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "wave" and args.wave_command == "pause":
+        command_wave_pause(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "wave" and args.wave_command == "renew":
+        command_wave_renew(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "wave" and args.wave_command == "resume":
+        command_wave_resume(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "wave" and args.wave_command == "checkpoint":
+        command_wave_checkpoint(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "wave" and args.wave_command == "submit":
+        command_wave_submit(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "wave" and args.wave_command == "review":
+        command_wave_review(args, data, capabilities, slices, tasks, gates)
     elif args.command == "capability" and args.cap_command == "prepare":
         command_capability_prepare(args, data, capabilities, slices, tasks, gates)
     elif args.command == "capability" and args.cap_command == "status":

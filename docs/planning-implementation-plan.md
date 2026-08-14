@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7c63a3aa79b3dcfd0126758a1cc54aa29e953c0b02aefbded8bceceb4bb2a886
+source_sha256: 3f2b09e39920ce3f96df8ec21bbbdccdf6d77d19984639c38daa2f537ede3b4e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -58,7 +58,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Criteria:**
 
 - Fresh clone can run validation and build skeleton artifacts.
-- Backlog dependencies, capability-wave increments, ordered slice reviews, and task transitions validate automatically.
+- Backlog dependencies, durable Wave campaigns, ordered slice reviews, integration checkpoints, and task transitions validate automatically.
 - Architecture constraints and ADR process are documented.
 - Approved UI reference, workflow catalog, page contracts, and design-first automation are installed and validated.
 
@@ -204,15 +204,16 @@ See `planning/status-summary.md` for the generated status distributions and capa
 ## Selection policy
 
 - Treat the YAML backlog as the authoritative execution ledger; DOCX and Markdown are generated views.
-- The wave is the primary execution axis and every wave has one sequential exit/next-wave activation gate. The default automated execution unit is one capability-wave increment.
+- The wave is the approval, durable execution, integration, qualification, and handoff unit. Every wave has one sequential exit/next-wave activation gate.
 - Use descriptive capability aliases and slice labels in human-facing output. Preserve numeric capability IDs as immutable dependency/evidence keys and numeric slice IDs as immutable sequence/evidence keys.
-- Within the active increment, a slice is an ordered integration/review checkpoint and a task is the atomic implementation/evidence unit. Do not hop to unrelated capabilities while the increment has eligible work.
+- Within the active Wave, a slice is an ordered integration/review checkpoint and a task is the atomic implementation/evidence unit. Select across capability contributions only when dependencies and approved Wave order permit it.
 - Start the next slice only after every required task in the current slice is DONE, slice-level end-to-end evidence is attached, and the slice review is approved.
-- Close an increment after all of its wave slices are independently approved. Close the capability only after all wave increments, final end-to-end qualification, evidence mapping, and independent capability review pass.
-- A capability-wave increment may pause for its approved completion, an external dependency, explicit human/ADR/design gate, unavailable platform, or an in-boundary blocker. Resume interrupted increments; start a new increment when a later wave activates.
+- Record risk-cluster integration checkpoints as interfaces, migrations, security boundaries, or coherent groups of slices close. These checkpoints run the accumulated affected-profile suite but do not create new human approval gates.
+- Close a Wave only after all of its slices are independently approved, the complete Wave-exit suite passes, criterion-linked evidence is attached, and an independent Wave review approves the integrated result. Capabilities remain cross-Wave product maps.
+- A Wave campaign may pause for an external dependency, explicit human/ADR/design gate, unavailable platform, or an in-boundary blocker. Resume the same Wave campaign after ordinary process or session interruption.
 - Select only tasks whose dependencies are DONE and whose wave activation gate is approved. A future slice and its later gate never replace the current global wave/gate in selection output.
 - Filter by deployment profile and platform target. W0-W5 form the Windows baseline; W6 qualifies macOS/Linux; W7-W8 add research production; W9 and W10 are parallel advanced-intelligence and university tracks after G8; W11 remains cloud-only after G10.
-- Claim atomically with taskctl before edits. Capability, slice, and task leases record owner, branch/worktree, base SHA, and expiration.
+- Claim atomically with taskctl before edits. Wave and task leases record owner, branch/worktree, base SHA, and expiration.
 - Implement the complete selected task and the slice integration needed to satisfy its acceptance criteria. Record newly discovered work as backlog tasks rather than hidden TODOs.
 - Remain IN_PROGRESS while running verification. Attach criterion-to-evidence records tied to the exact commit, then submit to REVIEW only when required checks pass.
 - A separate reviewer or review agent approves REVIEW to DONE. Changes requested return the task to IN_PROGRESS or BLOCKED with a reason.
@@ -221,7 +222,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## Definition of ready
 
-- The containing capability-wave increment is eligible or explicitly selected, and all predecessor work required by its first active-wave slice is complete or gated.
+- The containing Wave campaign has one immutable approval covering every contributing capability decision and slice plan, and all predecessor work required by the task is complete or gated.
 - Status is READY and all dependency task IDs are DONE.
 - The task wave has no activation gate or its activation gate is approved.
 - The objective, deliverable, acceptance criteria, verification profiles, platform targets, and review gate are understandable without hidden context.
@@ -242,11 +243,134 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - User-facing implementation conforms to the approved reference ID through token, route/page-contract, workflow-navigation, accessibility, and visual-regression evidence.
 - Task completion does not by itself complete the slice, increment, or capability; their applicable end-to-end reviews must also pass.
 
-# Capability, slice, and task plan
+# Wave campaign plan
+
+## W0 - Engineering foundation
+
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `NONE` / `APPROVED`
+
+**Capability contributions:** `CAP-00`
+
+**Ordered slices:** `CAP-00.S01`, `CAP-00.S02`, `CAP-00.S03`, `CAP-00.S04`, `CAP-00.S05`, `CAP-00.S06`
+
+**Goal:** Create the repository, architecture guardrails, verification system, executable backlog, and approved experience reference.
+
+## W1 - Windows local runtime and durable core
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-01`, `CAP-02`, `CAP-03`, `CAP-07`
+
+**Ordered slices:** `CAP-01.S01`, `CAP-01.S02`, `CAP-01.S03`, `CAP-01.S04`, `CAP-02.S01`, `CAP-02.S02`, `CAP-02.S03`, `CAP-02.S04`, `CAP-03.S01`, `CAP-03.S02`, `CAP-03.S03`, `CAP-03.S04`, `CAP-03.S05`, `CAP-03.S06`, `CAP-07.S01`
+
+**Goal:** Establish the Windows desktop, sidecar, local project storage, domain contracts, provenance, and workflows.
+
+## W2 - Windows local evidence foundation
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-04`, `CAP-05`
+
+**Ordered slices:** `CAP-04.S01`, `CAP-04.S02`, `CAP-04.S03`, `CAP-04.S04`, `CAP-04.S05`, `CAP-05.S01`, `CAP-05.S02`, `CAP-05.S03`, `CAP-05.S04`, `CAP-05.S05`, `CAP-05.S06`
+
+**Goal:** Ingest scholarly records and documents, canonicalize them, parse full text, and preserve inspectable anchors.
+
+## W3 - Windows local research workbench
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-06`, `CAP-07`, `CAP-08`
+
+**Ordered slices:** `CAP-06.S01`, `CAP-06.S02`, `CAP-06.S03`, `CAP-06.S04`, `CAP-06.S05`, `CAP-06.S06`, `CAP-07.S02`, `CAP-07.S03`, `CAP-07.S04`, `CAP-07.S05`, `CAP-08.S01`, `CAP-08.S02`, `CAP-08.S03`, `CAP-08.S04`, `CAP-08.S05`, `CAP-08.S06`
+
+**Goal:** Deliver search, screening, model execution, structured extraction, verification, and evidence matrices.
+
+## W4 - Windows scholarly reasoning and novelty MVP
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-09`, `CAP-10`
+
+**Ordered slices:** `CAP-09.S01`, `CAP-09.S02`, `CAP-09.S03`, `CAP-09.S04`, `CAP-09.S05`, `CAP-09.S06`, `CAP-10.S01`, `CAP-10.S02`, `CAP-10.S03`
+
+**Goal:** Deliver the argument graph, synthesis, reproducibility, nearest-prior comparison, and bounded novelty workflow.
+
+## W5 - Windows PC/lab production release
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-01`, `CAP-02`, `CAP-11`
+
+**Ordered slices:** `CAP-01.S05`, `CAP-02.S05`, `CAP-11.S01`, `CAP-11.S02`, `CAP-11.S03`, `CAP-11.S04`, `CAP-11.S05`, `CAP-11.S06`
+
+**Goal:** Harden, package, document, and validate the complete Windows edition for individual and laboratory computers.
+
+## W6 - Cross-platform desktop qualification
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-14`
+
+**Ordered slices:** `CAP-14.S01`, `CAP-14.S02`, `CAP-14.S03`, `CAP-14.S04`, `CAP-14.S05`, `CAP-14.S06`
+
+**Goal:** Qualify the same desktop, project format, sidecars, security controls, and local workflows on macOS and Linux x86_64/ARM64 after the Windows release.
+
+## W7 - Study design and manuscript foundations
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-10`, `CAP-15`, `CAP-16`
+
+**Ordered slices:** `CAP-10.S05`, `CAP-15.S01`, `CAP-15.S02`, `CAP-15.S03`, `CAP-15.S04`, `CAP-15.S05`, `CAP-15.S06`, `CAP-16.S01`, `CAP-16.S02`, `CAP-16.S03`, `CAP-16.S04`, `CAP-16.S05`, `CAP-16.S06`
+
+**Goal:** Add production-ready critical and hermeneutic research support, evidence-grounded empirical study design, and reusable conference/journal article blueprints for empirical, theory, and critical scholarship.
+
+## W8 - Results integration, manuscript drafting, and reviewer simulation
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-17`, `CAP-18`, `CAP-19`
+
+**Ordered slices:** `CAP-17.S01`, `CAP-17.S02`, `CAP-17.S03`, `CAP-17.S04`, `CAP-17.S05`, `CAP-17.S06`, `CAP-18.S01`, `CAP-18.S02`, `CAP-18.S03`, `CAP-18.S04`, `CAP-18.S05`, `CAP-18.S06`, `CAP-19.S01`, `CAP-19.S02`, `CAP-19.S03`, `CAP-19.S04`, `CAP-19.S05`, `CAP-19.S06`
+
+**Goal:** Ingest private technical reports, map verified results, draft source-grounded manuscripts, and conduct extended independent reviewer simulations and revision rounds.
+
+## W9 - Advanced research-intelligence preview
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-10`
+
+**Ordered slices:** `CAP-10.S04`, `CAP-10.S06`, `CAP-10.S07`
+
+**Goal:** Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research memory on the cross-platform research-production foundation.
+
+## W10 - University-hosted pilot
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-12`
+
+**Ordered slices:** `CAP-12.S01`, `CAP-12.S02`, `CAP-12.S03`, `CAP-12.S04`, `CAP-12.S05`, `CAP-12.S06`
+
+**Goal:** Move the same desktop and contracts to institution-controlled services, identity, collaboration, and operations after the complete local research-production gate.
+
+## W11 - Managed cloud delivery
+
+**Pre-Wave approval / campaign / qualification:** `PENDING` / `NONE` / `PENDING`
+
+**Capability contributions:** `CAP-13`
+
+**Ordered slices:** `CAP-13.S01`, `CAP-13.S02`, `CAP-13.S03`, `CAP-13.S04`, `CAP-13.S05`, `CAP-13.S06`
+
+**Goal:** Add tenant provisioning, regional isolation, metering, cloud operations, and commercial governance.
+
+
+# Capability contributions, slices, and tasks
 
 ## CAP-delivery-foundation (`CAP-00`) - Delivery foundation and Codex execution system
 
-**Campaign / completion:** `COMPLETE` / `APPROVED`
+**Legacy campaign record / contribution completion:** `COMPLETE` / `APPROVED`
 
 **Objective:** Create a reproducible repository, architecture and approved-experience guardrails, validation system, and machine-readable backlog that make small AI-authored changes safe and reviewable.
 
@@ -936,7 +1060,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-windows-desktop-runtime (`CAP-01`) - Windows-first desktop shell and supervised local runtime
 
-**Campaign / completion:** `PAUSED` / `PAUSED`
+**Legacy campaign record / contribution completion:** `PAUSED` / `PAUSED`
 
 **Objective:** Deliver the canonical Windows-first desktop experience and a reliably packaged local analytical service that requires no external server administration.
 
@@ -1475,7 +1599,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-local-project-storage (`CAP-02`) - Local projects, durable storage, security, and recovery
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Provide safe project lifecycle, local persistence, encrypted content storage, secrets management, and portable recovery for individual and laboratory computers.
 
@@ -1969,7 +2093,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-research-domain-workflows (`CAP-03`) - Canonical domain, research intent, provenance, and durable workflows
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Define canonical research objects, a versioned research-intent and primary-use-case contract, provenance, adaptive objective-specific workflows, durable jobs, human gates, and controlled recalculation.
 
@@ -2593,7 +2717,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-scholarly-ingestion (`CAP-04`) - Scholarly ingestion, connectors, canonicalization, and corpus governance
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Build a source-transparent canonical corpus from local libraries, open scholarly APIs, and later licensed adapters while preserving rights, versions, and discovery paths.
 
@@ -3063,7 +3187,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-document-inspection (`CAP-05`) - Document acquisition, parsing, source inspection, and page anchors
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Convert lawful full text into immutable, inspectable document revisions while retaining page, layout, reference, table, and figure context.
 
@@ -3621,7 +3745,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-search-screening (`CAP-06`) - Local search, discovery, corpus diagnostics, and screening
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Deliver transparent lexical, semantic, citation, and active-learning workflows that can construct high-recall corpora without turning retrieval into an opaque chat session.
 
@@ -4186,7 +4310,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-model-gateway (`CAP-07`) - Provider-neutral model gateway and governed AI execution
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and usable locally or through approved providers.
 
@@ -4655,7 +4779,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-evidence-verification (`CAP-08`) - Evidence schemas, extraction, verification, and adjudication
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Transform full text into source-grounded, mode-sensitive evidence records that distinguish observation, machine extraction, inference, verification, dispute, adjudication, and staleness.
 
@@ -5219,7 +5343,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-scholarly-graph-synthesis (`CAP-09`) - Scholarly graph, comparison sets, synthesis, and reproducibility
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Connect bibliographic structure to claims, constructs, methods, contexts, assumptions, evidence, and decisions; then produce source-grounded synthesis and reproducibility artifacts.
 
@@ -5789,7 +5913,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-novelty-opportunities (`CAP-10`) - Novelty auditing, research opportunities, and plural research modes
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Move from evidence mapping to defensible opportunity dossiers through nearest-prior comparison, independent challenge, plural gap logic, critical problematization, and living research memory.
 
@@ -6453,7 +6577,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-windows-release (`CAP-11`) - Windows PC/lab product hardening, validation, packaging, and release
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Turn the local architecture and research workflows into a dependable Windows product for individual researchers and laboratory computers before server or cloud delivery begins.
 
@@ -7044,7 +7168,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-university-hosting (`CAP-12`) - University-hosted deployment, institutional identity, collaboration, and operations
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Run the same scholarly application against institution-controlled services and storage while preserving the desktop client, domain contracts, evidence lineage, and rights-aware governance.
 
@@ -7597,7 +7721,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-cloud-platform (`CAP-13`) - Managed cloud control plane, tenant data planes, governance, and SaaS operations
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Deliver the same desktop-led product as a secure managed service with regional tenant isolation, elastic workers, metering, residency, support, and commercial operations.
 
@@ -8138,7 +8262,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-cross-platform-desktop (`CAP-14`) - Cross-platform desktop qualification and release
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Extend the production Windows local edition to Apple Silicon macOS and Ubuntu-compatible Linux x86_64/ARM64 while preserving one codebase, one project format, and equivalent security and scholarly behavior.
 
@@ -8700,7 +8824,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-study-design (`CAP-15`) - Empirical study design and protocol development
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Use literature evidence, opportunity dossiers, domain knowledge, and researcher constraints to propose, compare, and formalize rigorous empirical study designs without displacing scholarly or ethics authority.
 
@@ -9255,7 +9379,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-manuscript-blueprints (`CAP-16`) - Manuscript blueprint, venue profiles, and article architecture
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Turn approved research intent, literature structures, study plans, and publication goals into governed conference/journal skeletons for empirical, theory, and critical work.
 
@@ -9805,7 +9929,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-results-integration (`CAP-17`) - Technical report and study-results integration
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Ingest private technical reports of empirical work, extract and verify actual methods/results, reconcile them with planned designs, and make source-anchored result evidence available to manuscript drafting.
 
@@ -10370,7 +10494,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-manuscript-drafting (`CAP-18`) - Source-grounded manuscript drafting and publication artifacts
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Use approved article blueprints, literature evidence, verified technical reports/results, and researcher-authored content to draft and export empirical, theory, and critical conference/journal articles.
 
@@ -10933,7 +11057,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## CAP-review-revision (`CAP-19`) - Reviewer simulation, editorial synthesis, and revision
 
-**Campaign / completion:** `NONE` / `PENDING`
+**Legacy campaign record / contribution completion:** `NONE` / `PENDING`
 
 **Objective:** Subject generated or uploaded empirical, theory, and critical drafts to independent multi-role simulated peer review, evidence-aware editorial synthesis, and author-controlled revision and response rounds.
 

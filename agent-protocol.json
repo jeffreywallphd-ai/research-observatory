@@ -9,12 +9,12 @@
     "docs/automation/codex-tracking-guide.md"
   ],
   "campaign": {
-    "approvalUnit": "capability-decisions-once-and-active-wave-slices-at-one-immutable-commit",
+    "approvalUnit": "complete-wave-packet-at-one-immutable-commit",
     "partialApprovalStartsCampaign": false,
-    "executionUnit": "durable-capability-wave-increment",
+    "executionUnit": "durable-wave-campaign",
     "resumeAfterOrdinaryInterruption": true,
     "routineSliceApprovalPrompts": false,
-    "terminalOutcome": "active-wave-slices-approved-and-production-ready-increment-qualified",
+    "terminalOutcome": "all-wave-slices-approved-full-suite-passed-and-wave-independently-qualified",
     "permittedPauseConditions": [
       "approved-choice-infeasible",
       "consequential-new-evidence",
@@ -22,12 +22,11 @@
       "higher-authority-conflict",
       "governed-experience-change-required",
       "destructive-external-or-material-spend-authorization",
-      "explicit-user-direction",
-      "approved-wave-increment-complete"
+      "explicit-user-direction"
     ]
   },
   "selection": {
-    "scope": "active-capability-wave-increment-only",
+    "scope": "active-wave-campaign-only",
     "eligibleState": "READY",
     "dependencyPolicy": "all-task-slice-wave-and-release-gate-dependencies-satisfied",
     "inspectCommands": [
@@ -61,8 +60,10 @@
     ],
     "selectionPolicy": "credible-failure-likelihood-and-changed-path-impact",
     "taskDefault": "focused-affected-checks",
-    "fullProfileStage": "slice-integration-review",
-    "completeMatrixStage": "capability-qualification",
+    "sliceStage": "risk-focused-affected-integration-and-adversarial-review",
+    "checkpointStage": "accumulated-affected-profiles-at-interface-or-risk-cluster-closure",
+    "fullProfileStage": "wave-exit-qualification",
+    "completeMatrixStage": "wave-exit-qualification",
     "earlyFullProfileConditions": [
       "explicit-task-acceptance-criterion",
       "shared-verification-build-security-or-toolchain-profile-wide-impact",
@@ -80,13 +81,14 @@
       "task-submit",
       "required-independent-review",
       "clean-tested-fast-forward-to-local-main",
-      "slice-end-to-end-evidence-and-review-when-last-task",
-      "continue-next-ready-task-or-wave-increment-qualification"
+      "slice-end-to-end-evidence-and-independent-review-when-last-task",
+      "risk-cluster-integration-checkpoint-when-triggered",
+      "continue-next-ready-task-until-wave-exit-qualification"
     ],
     "remotePushAuthorized": false,
     "gateBypassAllowed": false
   },
-  "capabilityQualification": [
+  "waveQualification": [
     "happy-path",
     "failure-and-denial",
     "cancellation",
@@ -96,6 +98,22 @@
     "accessibility",
     "performance",
     "required-platforms",
-    "independent-capability-review"
-  ]
+    "cross-capability-integration",
+    "full-affected-profile-and-repository-suite",
+    "independent-wave-review"
+  ],
+  "reviewPractice": {
+    "taskReviewDefault": "focused-scope-evidence-and-credible-risk-disposition",
+    "defaultDeepReviewUnit": "slice",
+    "expandedTaskReviewWhen": [
+      "security-authentication-or-credential-boundary",
+      "migration-destructive-io-or-data-loss-risk",
+      "evidence-validator-or-automation-control",
+      "public-contract-or-cross-process-boundary",
+      "explicit-plan-requirement"
+    ],
+    "remediationReview": "prior-findings-plus-incremental-risk-boundary",
+    "checkpointReview": "interface-contract-evidence-and-open-risk-delta",
+    "findingPolicy": "severity-ranked-reproducible-and-bounded-to-approved-acceptance-surface"
+  }
 }

@@ -126,6 +126,7 @@ def status_table(lines: list[str], title: str, statuses: Counter[str], order: li
 
 def render_summary(data: dict[str, Any], digest: str) -> str:
     capabilities, slices, tasks = hierarchy(data)
+    waves = data.get("waves", [])
     gates = data.get("release_gates", [])
     task_order = list(data.get("status_definitions", {}))
     lines = [
@@ -148,6 +149,7 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
         f"| Capabilities | {len(capabilities)} |",
         f"| Slices | {len(slices)} |",
         f"| Tasks | {len(tasks)} |",
+        f"| Waves | {len(waves)} |",
         f"| Release gates | {len(gates)} |",
         "",
         "## Status distributions",
@@ -160,8 +162,8 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
     )
     status_table(
         lines,
-        "Campaign state",
-        Counter(inline((capability.get("campaign") or {}).get("status", "NONE")) for capability in capabilities),
+        "Wave campaign state",
+        Counter(inline((wave.get("campaign") or {}).get("status", "NONE")) for wave in waves),
     )
     status_table(
         lines,
@@ -172,9 +174,34 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
 
     lines.extend(
         [
+            "## Wave progress",
+            "",
+            "| Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |",
+            "|---|---|---|---|---:|---:|---|",
+        ]
+    )
+    for wave in waves:
+        wave_id = wave.get("id")
+        wave_slices = [slice_ for slice_ in slices if slice_.get("wave") == wave_id]
+        wave_tasks = [task for slice_ in wave_slices for task in slice_.get("tasks", [])]
+        gate: dict[str, Any] = next((item for item in gates if item.get("after_wave") == wave_id), {})
+        approved_count = sum(item.get("completion", {}).get("status") == "APPROVED" for item in wave_slices)
+        lines.append(
+            f"| `{inline(wave_id)}` - {inline(wave.get('title'))} | "
+            f"`{inline((wave.get('approval') or {}).get('status', 'PENDING'))}` | "
+            f"`{inline((wave.get('campaign') or {}).get('status', 'NONE'))}` | "
+            f"`{inline((wave.get('completion') or {}).get('status', 'PENDING'))}` | "
+            f"{approved_count}/{len(wave_slices)} | "
+            f"{sum(item.get('status') == 'DONE' for item in wave_tasks)}/{len(wave_tasks)} | "
+            f"`{inline(gate.get('id'))}` / `{inline(gate.get('status'))}` |"
+        )
+
+    lines.extend(
+        [
+            "",
             "## Capability progress",
             "",
-            "| Capability | Campaign | Completion | Approved slices | Done tasks | Active task |",
+            "| Capability contribution | Legacy campaign | Completion | Approved slices | Done tasks | Active task |",
             "|---|---|---|---:|---:|---|",
         ]
     )
@@ -217,6 +244,7 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
 
 def render_plan(data: dict[str, Any], digest: str) -> str:
     capabilities, slices, tasks = hierarchy(data)
+    waves = data.get("waves", [])
     plan = data.get("plan", {})
     lines = [
         "---",
@@ -290,7 +318,30 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
     lines.extend(["", "## Definition of done", ""])
     bullets(lines, data.get("definition_of_done"))
 
-    lines.extend(["", "# Capability, slice, and task plan", ""])
+    lines.extend(["", "# Wave campaign plan", ""])
+    for wave in waves:
+        wave_id = wave.get("id")
+        wave_slices = [slice_ for slice_ in slices if slice_.get("wave") == wave_id]
+        wave_capabilities = sorted({str(slice_["id"]).split(".")[0] for slice_ in wave_slices})
+        lines.extend(
+            [
+                f"## {inline(wave_id)} - {inline(wave.get('title'))}",
+                "",
+                f"**Pre-Wave approval / campaign / qualification:** "
+                f"`{inline((wave.get('approval') or {}).get('status', 'PENDING'))}` / "
+                f"`{inline((wave.get('campaign') or {}).get('status', 'NONE'))}` / "
+                f"`{inline((wave.get('completion') or {}).get('status', 'PENDING'))}`",
+                "",
+                f"**Capability contributions:** {joined(wave_capabilities, code=True)}",
+                "",
+                f"**Ordered slices:** {joined([slice_['id'] for slice_ in wave_slices], code=True)}",
+                "",
+                f"**Goal:** {inline(wave.get('goal'))}",
+                "",
+            ]
+        )
+
+    lines.extend(["", "# Capability contributions, slices, and tasks", ""])
     for capability in capabilities:
         campaign = capability.get("campaign") or {}
         completion = capability.get("completion", {})
@@ -298,7 +349,7 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
             [
                 f"## {capability_label(capability)} - {inline(capability.get('title'))}",
                 "",
-                f"**Campaign / completion:** `{inline(campaign.get('status', 'NONE'))}` / "
+                f"**Legacy campaign record / contribution completion:** `{inline(campaign.get('status', 'NONE'))}` / "
                 f"`{inline(completion.get('status'))}`",
                 "",
                 f"**Objective:** {inline(capability.get('objective'))}",

@@ -13,18 +13,18 @@ import yaml
 REQUIRED_DOCUMENT_ANCHORS = {
     "AGENTS.md": [
         "## Default execution model",
-        "### Progressive approval and durable increments",
+        "### One pre-Wave approval and one durable campaign",
         "Safest concise start prompt",
         "## Evidence and completion",
         "## Local main integration",
     ],
     "planning/README.md": [
         "## Default planning and execution lifecycle",
-        "Capability-wide\ndecision approval is durable; slice-plan approval is progressive by wave.",
+        "One pre-Wave approval binds the complete Wave packet",
     ],
     "docs/automation/project-automation-guide.md": [
-        "## 2. Wave-first delivery with capability increments",
-        "### 2.1 Progressive approval and durable-increment meaning",
+        "## 2. Wave campaigns",
+        "### 2.1 One approval and durable-Wave meaning",
         "## 5. Task and slice execution",
     ],
     "docs/automation/codex-tracking-guide.md": [
@@ -61,12 +61,12 @@ def validate_protocol(
 
     campaign = protocol.get("campaign", {})
     expected_campaign = {
-        "approvalUnit": "capability-decisions-once-and-active-wave-slices-at-one-immutable-commit",
+        "approvalUnit": "complete-wave-packet-at-one-immutable-commit",
         "partialApprovalStartsCampaign": False,
-        "executionUnit": "durable-capability-wave-increment",
+        "executionUnit": "durable-wave-campaign",
         "resumeAfterOrdinaryInterruption": True,
         "routineSliceApprovalPrompts": False,
-        "terminalOutcome": "active-wave-slices-approved-and-production-ready-increment-qualified",
+        "terminalOutcome": "all-wave-slices-approved-full-suite-passed-and-wave-independently-qualified",
     }
     for field, expected in expected_campaign.items():
         if campaign.get(field) != expected:
@@ -75,8 +75,8 @@ def validate_protocol(
         errors.append("campaign must retain every governed pause condition")
 
     selection = protocol.get("selection", {})
-    if selection.get("scope") != "active-capability-wave-increment-only":
-        errors.append("task selection must remain inside the active capability-wave increment")
+    if selection.get("scope") != "active-wave-campaign-only":
+        errors.append("task selection must remain inside the active Wave campaign")
     if selection.get("eligibleState") != "READY":
         errors.append("only READY tasks may be selected")
     if "taskctl.py" not in selection.get("claimCommand", ""):
@@ -89,8 +89,8 @@ def validate_protocol(
     expected_verification = {
         "selectionPolicy": "credible-failure-likelihood-and-changed-path-impact",
         "taskDefault": "focused-affected-checks",
-        "fullProfileStage": "slice-integration-review",
-        "completeMatrixStage": "capability-qualification",
+        "fullProfileStage": "wave-exit-qualification",
+        "completeMatrixStage": "wave-exit-qualification",
         "breadthRationaleRequiredInEvidence": True,
     }
     for field, expected in expected_verification.items():
@@ -109,13 +109,21 @@ def validate_protocol(
         "criterion-linked-machine-evidence",
         "required-independent-review",
         "clean-tested-fast-forward-to-local-main",
-        "slice-end-to-end-evidence-and-review-when-last-task",
-        "continue-next-ready-task-or-wave-increment-qualification",
+        "slice-end-to-end-evidence-and-independent-review-when-last-task",
+        "risk-cluster-integration-checkpoint-when-triggered",
+        "continue-next-ready-task-until-wave-exit-qualification",
     }
     if not required_steps.issubset(set(completion.get("orderedSteps", []))):
         errors.append("completion protocol lacks evidence, review, local-main, slice, or continuation steps")
-    if len(protocol.get("capabilityQualification", [])) < 10:
-        errors.append("capability production qualification is incomplete")
+    if len(protocol.get("waveQualification", [])) < 12:
+        errors.append("Wave production qualification is incomplete")
+    review = protocol.get("reviewPractice", {})
+    if (
+        review.get("defaultDeepReviewUnit") != "slice"
+        or review.get("taskReviewDefault") != "focused-scope-evidence-and-credible-risk-disposition"
+        or not review.get("expandedTaskReviewWhen")
+    ):
+        errors.append("review practice must define focused task disposition, slice-deep review, and risk expansion")
     return errors
 
 
@@ -176,7 +184,7 @@ def main() -> int:
             return 2
         print(json.dumps(brief, indent=2))
     else:
-        print("Agent protocol: pass - progressive wave approval and durable capability-wave execution")
+        print("Agent protocol: pass - one pre-Wave approval and durable Wave execution")
     return 0
 
 

@@ -7,4 +7,4 @@
 Root `AGENTS.md` and `../README.md` delegate here; bootstrap-package documents do not replace these repository authorities.
 
 `delivery-control-model.md` records the project-specific planning model, its
-origin, execution hierarchy, aliases, progressive approval, and wave-gate rules.
+origin, execution hierarchy, aliases, complete pre-Wave approval, and Wave-gate rules.

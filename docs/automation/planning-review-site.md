@@ -1,12 +1,13 @@
-# Static capability and slice planning review
+# Static Wave, capability, and slice planning review
 
 > **Repository destination:** `docs/automation/planning-review-site.md`. The generated site under `planning/review-site/` is a review surface; capability and slice Markdown plans remain canonical.
 
 ## Entry points and navigation
 
-- `planning/review-site/index.html` - all capability packets.
-- `planning/review-site/waves/WN.html` - one wave's capability increments,
-  ordered slices, progress, and exit/activation gate decision.
+- `planning/review-site/index.html` - Wave packets and capability detail views.
+- `planning/review-site/waves/WN.html` - the complete pre-Wave approval packet:
+  every capability decision, ordered slice plan, review/testing cadence, progress,
+  and exit/activation gate decision.
 - `planning/review-site/CAP-XX/index.html` - decision register and approval surface.
 - `planning/review-site/CAP-XX/CAP-XX.SYY.html` - individual slice plan.
 
@@ -22,7 +23,7 @@ The tabs support pointer activation plus Left/Right, Home, and End keyboard
 navigation. Switching tabs changes only the navigation view; it never changes
 approval or backlog state.
 
-Use `python tools/planctl.py --repo . review CAP-XX --wave WN` to regenerate and print directly openable links.
+Use `python tools/planctl.py --repo . wave review WN` to regenerate and print the directly openable Wave link.
 
 Capability aliases and descriptive slice labels are the default presentation.
 Canonical `CAP-XX` and `CAP-XX.SYY` values remain visible because they are
@@ -89,21 +90,16 @@ Feedback is never implicit approval.
 
 ## Approval
 
-If defaults are accepted with no notes or overrides:
+After all capability feedback has been applied, approve the complete Wave packet:
 
 ```bash
-python tools/planctl.py --repo . approve CAP-XX --wave WN --by "<reviewer>" --commit <git-sha>
+python tools/planctl.py --repo . wave approve WN --by "<reviewer>" --commit <git-sha>
 ```
 
-If feedback was exported:
-
-```bash
-python tools/planctl.py --repo . approve CAP-XX --wave WN --feedback <downloaded-json> --by "<reviewer>" --commit <git-sha>
-```
-
-Approval applies to the decision-complete capability packet and every ordered
-slice plan in `WN`. Future-wave plans may remain proposed until their activation
-gate. Historical approvals covering all slices remain valid.
+Approval applies once to every decision-complete capability contribution and
+every ordered slice plan in `WN` at the same immutable commit. A subset cannot
+start execution. Future-Wave plans remain outside the approval. Historical
+approvals remain immutable evidence.
 
 ## Generation and validation
 

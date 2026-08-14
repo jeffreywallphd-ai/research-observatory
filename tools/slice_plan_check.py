@@ -85,6 +85,8 @@ def main() -> int:
         except Exception as exc:
             errors.append(f"{path.relative_to(root)}: {exc}")
             continue
+        if ns.wave is not None and meta.get("wave") != ns.wave:
+            continue
         for err in jsonschema.Draft202012Validator(schema).iter_errors(meta):
             errors.append(f"{path.relative_to(root)}: schema {err.message}")
         sid_value, cid_value = meta.get("slice_id"), meta.get("capability_id")
@@ -138,6 +140,8 @@ def main() -> int:
             errors.append(f"unknown capability {cid}")
             continue
         for sl in caps[cid].get("slices", []):
+            if ns.wave is not None and sl.get("wave") != ns.wave:
+                continue
             if sl["id"] not in seen:
                 errors.append(f"{cid}: missing slice plan {sl['id']}; run `python tools/planctl.py prepare {cid}`")
 

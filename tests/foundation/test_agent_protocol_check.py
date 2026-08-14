@@ -30,12 +30,12 @@ class AgentProtocolTests(unittest.TestCase):
         agents = (
             (REPO / "AGENTS.md")
             .read_text(encoding="utf-8")
-            .replace("### Progressive approval and durable increments", "### Campaign")
+            .replace("### One pre-Wave approval and one durable campaign", "### Campaign")
         )
 
         errors = validate_protocol(REPO, self.protocol, {"AGENTS.md": agents})
 
-        self.assertTrue(any("Progressive approval and durable increments" in error for error in errors))
+        self.assertTrue(any("One pre-Wave approval and one durable campaign" in error for error in errors))
 
     def test_task_verification_cannot_default_to_full_profiles(self) -> None:
         protocol = copy.deepcopy(self.protocol)
@@ -64,7 +64,7 @@ class AgentProtocolTests(unittest.TestCase):
         self.assertEqual("Prove the task briefing contract.", brief["permittedScope"]["objective"])
         self.assertEqual(["foundation"], brief["requiredChecks"]["profiles"])
         self.assertEqual("focused-affected-checks", brief["requiredChecks"]["taskDefault"])
-        self.assertEqual("slice-integration-review", brief["requiredChecks"]["fullProfileStage"])
+        self.assertEqual("wave-exit-qualification", brief["requiredChecks"]["fullProfileStage"])
         self.assertIn("required-independent-review", brief["completionProtocol"])
         self.assertIn("taskctl.py", brief["claimCommandTemplate"])
 

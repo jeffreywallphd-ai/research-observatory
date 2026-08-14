@@ -33,6 +33,10 @@ from taskctl import (  # noqa: E402
     command_review,
     command_slice_review,
     command_submit,
+    command_wave_checkpoint,
+    command_wave_review,
+    command_wave_start,
+    command_wave_submit,
     evidence_reference_errors,
     evidence_sha256,
     exact_commit_errors,
@@ -109,7 +113,33 @@ class TaskctlWorkflowTests(unittest.TestCase):
             "slices": [slice_],
         }
         data = {
-            "waves": [{"id": "W0", "activation_gate": None}],
+            "waves": [
+                {
+                    "id": "W0",
+                    "title": "Test wave",
+                    "goal": "Exercise workflow controls.",
+                    "activation_gate": None,
+                    "track": "local-baseline",
+                    "approval": {
+                        "status": "APPROVED",
+                        "approved_by": "reviewer",
+                        "approved_at": "2026-08-13T00:00:00+00:00",
+                        "approved_commit": "a" * 40,
+                        "capability_ids": ["CAP-00"],
+                        "slice_ids": ["CAP-00.S01"],
+                        "notes": None,
+                    },
+                    "campaign": None,
+                    "checkpoints": [],
+                    "completion": {
+                        "status": "IN_PROGRESS",
+                        "reviewer": None,
+                        "reviewed_at": None,
+                        "evidence": [],
+                        "notes": None,
+                    },
+                }
+            ],
             "capabilities": [capability],
             "release_gates": [],
         }
@@ -155,6 +185,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
         active_slice.update(wave="W1", _position=1)
         capability["slices"] = [completed_slice, active_slice]
         capability["campaign"].update(status="PAUSED", wave="W0", pause_category="wave-complete", lease=None)
+        data["waves"][0]["completion"].update(
+            status="APPROVED",
+            reviewer="agent:wave-reviewer",
+            reviewed_at="2026-08-13T00:00:00+00:00",
+            evidence=["wave-report.json"],
+        )
         slices.update({completed_slice["id"]: completed_slice, active_slice["id"]: active_slice})
         tasks.update({completed_task["id"]: completed_task, active_task["id"]: active_task})
         gate = {
@@ -514,6 +550,13 @@ class TaskctlWorkflowTests(unittest.TestCase):
             reviewed_at="2026-08-13T00:00:00+00:00",
             evidence=["report.json"],
         )
+        data["waves"][0]["completion"] = {
+            "status": "APPROVED",
+            "reviewer": "agent:wave-reviewer",
+            "reviewed_at": "2026-08-13T00:00:00+00:00",
+            "evidence": ["wave-report.json"],
+            "notes": "qualified",
+        }
         with patch("taskctl.persist"):
             command_gate_approve(args, data, capabilities, slices, tasks, gates)
         self.assertEqual("APPROVED", gate["status"])
@@ -567,6 +610,101 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("W0", capability["campaign"]["wave"])
         self.assertEqual("CAP-test-workflow/W0", capability["campaign"]["increment_id"])
 
+    def test_wave_start_requires_complete_approval_and_owns_cross_capability_execution(self) -> None:
+        context = self.workflow()
+        data, capabilities, _slices, _tasks, _gates = context
+        capabilities["CAP-00"]["campaign"] = None
+        wave = data["waves"][0]
+        wave["campaign"] = {"status": "PLANNED"}
+        wave["completion"]["status"] = "PENDING"
+        args = Namespace(
+            wave="W0",
+            agent="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        identity = ("alice", "codex/test", "a" * 40, REPO.as_posix())
+
+        wave["approval"]["status"] = "PENDING"
+        with self.assertRaisesRegex(SystemExit, "no approved pre-Wave packet"), patch("taskctl.persist"):
+            command_wave_start(args, *context)
+
+        wave["approval"]["status"] = "APPROVED"
+        with (
+            patch("taskctl.git_execution_identity", return_value=identity),
+            patch("taskctl.require_wave_planning_ready"),
+            patch("taskctl.persist"),
+        ):
+            command_wave_start(args, *context)
+
+        self.assertEqual("wave", wave["campaign"]["scope"])
+        self.assertEqual("ACTIVE", wave["campaign"]["status"])
+        self.assertEqual("IN_PROGRESS", wave["completion"]["status"])
+
+    def test_wave_checkpoint_and_exit_review_are_distinct_from_gate_approval(self) -> None:
+        context = self.workflow()
+        data, capabilities, slices, tasks, _gates = context
+        capabilities["CAP-00"]["campaign"] = None
+        wave = data["waves"][0]
+        wave["campaign"] = {
+            "status": "ACTIVE",
+            "scope": "wave",
+            "owner": "alice",
+            "profile": "LOC",
+            "platform": "windows-x64",
+            "branch": "codex/test",
+            "base_sha": "a" * 40,
+            "worktree": str(REPO),
+            "lease": new_lease("alice", 8),
+        }
+        with patch("taskctl.persist"):
+            command_wave_checkpoint(
+                Namespace(
+                    wave="W0",
+                    agent="alice",
+                    kind="risk-cluster",
+                    evidence=["checkpoint.json"],
+                    note="contract cluster closed",
+                    file="unused",
+                ),
+                *context,
+            )
+        self.assertEqual("W0.CP01", wave["checkpoints"][0]["id"])
+        self.assertEqual("ACTIVE", wave["campaign"]["status"])
+
+        tasks["CAP-00.S01.T01"]["status"] = "DONE"
+        slices["CAP-00.S01"]["status"] = "DONE"
+        slices["CAP-00.S01"]["completion"].update(
+            status="APPROVED",
+            reviewer="agent:slice-reviewer",
+            reviewed_at="2026-08-13T00:00:00+00:00",
+            evidence=["slice.json"],
+        )
+        with patch("taskctl.persist"):
+            command_wave_submit(
+                Namespace(wave="W0", agent="alice", evidence=["wave.json"], note="full suite passed", file="unused"),
+                *context,
+            )
+        self.assertEqual("REVIEW", wave["completion"]["status"])
+        with self.assertRaisesRegex(SystemExit, "independent"), patch("taskctl.persist"):
+            command_wave_review(
+                Namespace(wave="W0", reviewer="alice", result="approved", note="", file="unused"), *context
+            )
+        with patch("taskctl.persist"):
+            command_wave_review(
+                Namespace(
+                    wave="W0", reviewer="agent:wave-reviewer", result="approved", note="qualified", file="unused"
+                ),
+                *context,
+            )
+        self.assertEqual("APPROVED", wave["completion"]["status"])
+        self.assertEqual("COMPLETE", wave["campaign"]["status"])
+
     def test_final_slice_review_closes_only_the_current_wave_increment(self) -> None:
         context = self.workflow()
         capability = context[1]["CAP-00"]
@@ -599,6 +737,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
         current.update(status="DONE")
         current["completion"]["status"] = "APPROVED"
         tasks["CAP-00.S01.T01"]["status"] = "DONE"
+        data["waves"][0]["completion"].update(
+            status="APPROVED",
+            reviewer="agent:wave-reviewer",
+            reviewed_at="2026-08-13T00:00:00+00:00",
+            evidence=["wave-report.json"],
+        )
         future = copy.deepcopy(current)
         future.update(id="CAP-00.S02", title="Future packaging", wave="W4", status="DEFERRED")
         future["completion"] = {"status": "PENDING"}
@@ -625,9 +769,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
         tasks[second_task["id"]] = second_task
         data["capabilities"].append(second)
         data["waves"] = [
-            {"id": "W0", "activation_gate": None},
-            {"id": "W1", "activation_gate": "G0"},
-            {"id": "W4", "activation_gate": "G3"},
+            {"id": "W0", "activation_gate": None, "completion": {"status": "APPROVED"}},
+            {"id": "W1", "activation_gate": "G0", "completion": {"status": "PENDING"}},
+            {"id": "W4", "activation_gate": "G3", "completion": {"status": "PENDING"}},
         ]
         gates = {
             "G0": {"id": "G0", "after_wave": "W0", "status": "APPROVED", "unlocks_waves": ["W1"]},
@@ -791,7 +935,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
         slice_ = context[2]["CAP-00.S01"]
         slice_["completion"]["status"] = "REVIEW"
-        with self.assertRaisesRegex(SystemExit, "independent from the campaign owner"), patch("taskctl.persist"):
+        with self.assertRaisesRegex(SystemExit, "independent from the Wave campaign owner"), patch("taskctl.persist"):
             command_slice_review(
                 Namespace(slice=slice_["id"], reviewer="alice", result="approved", note="", file="unused"),
                 *context,
