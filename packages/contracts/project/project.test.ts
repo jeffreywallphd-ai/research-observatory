@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   PROJECT_LAYOUT_V1,
+  PROJECT_MANIFEST_SEMANTIC_RULES_V1,
   decodeProjectLayout,
   decodeProjectManifest,
   portableProjectInventory,
@@ -45,6 +46,20 @@ describe("project package contract", () => {
         applicationCompatibility: { minimum: "1.0.0", maximumExclusive: "0.1.0" },
       }),
     ).toBeNull();
+    expect(decodeProjectManifest({ ...validManifest, projectRevision: 9_007_199_254_740_992 })).toBeNull();
+    expect(decodeProjectManifest({ ...validManifest, modifiedAt: "2026-08-12T23:59:59Z" })).toBeNull();
+    expect(
+      decodeProjectManifest({
+        ...validManifest,
+        createdAt: "2026-08-13T00:00:00+00:00",
+        modifiedAt: "2026-08-13T00:00:00+00:00",
+      }),
+    ).toBeNull();
+  });
+
+  it("binds cross-field validation to the exact portable semantic-rule document", () => {
+    const path = fileURLToPath(new URL("./project-manifest.semantic-rules.json", import.meta.url));
+    expect(JSON.parse(readFileSync(path, "utf8"))).toEqual(PROJECT_MANIFEST_SEMANTIC_RULES_V1);
   });
 
   it("binds the executable layout to the exact governed JSON document", () => {

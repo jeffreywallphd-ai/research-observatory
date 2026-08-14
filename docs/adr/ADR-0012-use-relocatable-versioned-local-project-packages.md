@@ -87,6 +87,8 @@ packages; silently rewriting or ignoring the version is prohibited.
 - portable-inventory test proving every transient, rebuildable, cache, log, and
   lock class is excluded;
 - JSON Schema Draft 2020-12 schema validation and architecture/ADR checks.
+- schema/TypeScript parity attacks for UTC syntax and safe integers, plus the
+  bound language-neutral semantic rules for compatibility and timestamp order.
 
 ## Task links
 

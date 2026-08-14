@@ -20,6 +20,7 @@
     "packages/contracts/core-api/runtime-handshake.schema.json",
     "packages/contracts/core-api/sidecar-artifact.schema.json",
     "packages/contracts/project/project-layout.schema.json",
+    "packages/contracts/project/project-manifest-semantic-rules.schema.json",
     "packages/contracts/project/project-manifest.schema.json",
     "packages/contracts/support-bundle/support-bundle.schema.json",
     "packaging/build-manifest.schema.json",

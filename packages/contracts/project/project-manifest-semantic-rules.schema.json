@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/project/project-manifest-semantic-rules.schema.json",
+  "title": "Research Observatory project manifest semantic rules version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "documentType", "rules"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-project-manifest-semantic-rules"},
+    "rules": {"const": [
+      {"ruleId": "application-compatibility-range-ascending", "operator": "semver-less-than", "leftPointer": "/applicationCompatibility/minimum", "rightPointer": "/applicationCompatibility/maximumExclusive"},
+      {"ruleId": "modified-at-not-before-created-at", "operator": "instant-not-after", "leftPointer": "/createdAt", "rightPointer": "/modifiedAt"}
+    ]}
+  }
+}
