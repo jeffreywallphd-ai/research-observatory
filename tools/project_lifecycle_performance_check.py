@@ -642,11 +642,14 @@ def benchmark(repo: Path, *, measure_only: bool = False) -> dict[str, Any]:
         return _benchmark_under_snapshot(repo, state_commit, captured, measure_only=measure_only)
 
 
-def nonqualifying_report(error: str, *, measure_only: bool = False) -> dict[str, Any]:
+def nonqualifying_report(
+    error: str, *, measure_only: bool = False, qualification_phase: str = "COMPLETE"
+) -> dict[str, Any]:
     return {
         "schemaVersion": "1.0",
         "documentType": "project-lifecycle-performance-nonqualification",
         "qualificationStatus": "NONQUALIFYING",
+        "qualificationPhase": qualification_phase,
         "measurementOnly": measure_only,
         "ok": False,
         "qualified": False,
@@ -655,13 +658,24 @@ def nonqualifying_report(error: str, *, measure_only: bool = False) -> dict[str,
 
 
 def run(repo: Path, destination: Path, *, measure_only: bool = False) -> tuple[dict[str, Any], int]:
+    tombstone = nonqualifying_report(
+        "project lifecycle performance qualification has not completed",
+        measure_only=measure_only,
+        qualification_phase="IN_PROGRESS",
+    )
+    guarded_atomic_write_json(repo, destination, tombstone, repo / "artifacts" / "tmp")
     try:
         with qualification_snapshot(repo) as (state_commit, captured):
             report = _benchmark_under_snapshot(repo, state_commit, captured, measure_only=measure_only)
             guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
     except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
         report = nonqualifying_report(str(exc), measure_only=measure_only)
-        guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+        try:
+            guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+        except (OSError, UnicodeError, ValueError, RuntimeError) as publication_exc:
+            report["errors"].append(
+                f"final nonqualifying report publication failed; the IN_PROGRESS tombstone remains: {publication_exc}"
+            )
     return report, 0 if report.get("ok") is True and report.get("qualified") is True else 1
 
 
