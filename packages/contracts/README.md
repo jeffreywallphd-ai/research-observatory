@@ -34,3 +34,9 @@ status, confidence, rights, and external identifiers. The Draft 2020-12 schema
 is language-neutral authority; `node domain/generate.mjs --check` proves the
 checked-in TypeScript and Python contracts match its exact bytes. Aggregate
 lifecycles and compatibility evolution remain separate governed contracts.
+
+`storage/` defines the exact portable `sqlite-wal-v1` profile: application and
+schema identity, UUID/timestamp representation, scalar-only STRICT table
+inventory, connection controls, checkpoint authority, and integrity checks.
+The profile is not a SQL or filesystem API; only Core's governed storage
+adapter opens the project database.

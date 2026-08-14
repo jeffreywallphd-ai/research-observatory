@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
 import sys
 import tempfile
 import unittest
@@ -19,6 +20,11 @@ from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService  # noqa: E402
+from research_observatory_core.storage import (  # noqa: E402
+    APPLICATION_ID,
+    database_integrity_report,
+    open_canonical_database,
+)
 
 TOKEN = "0123456789abcdef" * 4
 AUTHORITY = "127.0.0.1:49152"
@@ -80,6 +86,33 @@ class ProjectLifecycleTests(unittest.TestCase):
         self.assertNotIn(str(root), json.dumps(event))
         self.assertNotIn("Study One", json.dumps(event))
         self.assertFalse(any(path.name.startswith(".study-one.ro-staging-") for path in self.parent.iterdir()))
+
+        database = root / "state" / "project.sqlite3"
+        connection = open_canonical_database(database, expected_project_id=projection.project_id)
+        try:
+            report = database_integrity_report(connection, expected_project_id=projection.project_id)
+            self.assertTrue(report.ok, report.errors)
+            self.assertEqual("sqlite-wal-v1", report.profile_id)
+        finally:
+            connection.close()
+
+    def test_open_rejects_mismatched_database_before_lock_or_audit_mutation(self) -> None:
+        project = self.create()
+        root = Path(project.root)
+        database = root / "state" / "project.sqlite3"
+        before_manifest = (root / "project.ro.json").read_bytes()
+        before_audit = (root / "logs" / "project-lifecycle.jsonl").read_bytes()
+        raw = sqlite3.connect(database, autocommit=True)
+        raw.execute(f"PRAGMA application_id={APPLICATION_ID + 1}")
+        raw.close()
+
+        with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-DAMAGED"):
+            self.service.open(root=project.root, trace_id=TRACE)
+        with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-DAMAGED"):
+            self.service.archive(root=project.root, trace_id=TRACE)
+        self.assertFalse((root / ".locks" / "session.lock").exists())
+        self.assertEqual(before_manifest, (root / "project.ro.json").read_bytes())
+        self.assertEqual(before_audit, (root / "logs" / "project-lifecycle.jsonl").read_bytes())
 
     def test_open_is_exclusive_close_is_owned_and_restart_can_reopen(self) -> None:
         project = self.create()
