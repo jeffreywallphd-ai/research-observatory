@@ -10,6 +10,8 @@ import json
 import os
 import re
 import shutil
+import time
+from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -250,7 +252,7 @@ def decision_card(decision: dict[str, Any], plan_hash: str) -> str:
 """
 
 
-def build_site(repo: Path, output: Path, selected_capability: str | None = None) -> dict[str, Any]:
+def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | None = None) -> dict[str, Any]:
     backlog = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
     cap_plan_dir = repo / "planning/capability-plans"
     slice_plan_dir = repo / "planning/slice-plans"
@@ -265,12 +267,18 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         str(gate.get("after_wave")): gate for gate in backlog.get("release_gates", []) if isinstance(gate, dict)
     }
     capabilities: list[dict[str, Any]] = []
+    capability_plan_meta: dict[str, dict[str, Any]] = {}
     for path in all_cap_paths:
         meta, _ = read_frontmatter(path)
         cid = meta["capability_id"]
+        capability_plan_meta[cid] = meta
         capabilities.append(
             {"id": cid, "alias": backlog_capabilities.get(cid, {}).get("alias", cid), "title": meta["title"]}
         )
+    slice_plan_meta: dict[str, dict[str, Any]] = {}
+    for path in slice_plan_dir.glob("CAP-*/*.md"):
+        meta, _ = read_frontmatter(path)
+        slice_plan_meta[str(meta["slice_id"])] = meta
 
     # Rebuild into a clean directory so stale pages or convenience launchers cannot
     # be mistaken for governed review pages or break page-count validation.
@@ -319,11 +327,11 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         gate = gates_by_wave.get(wave_id, {})
         wave_cards.append(f"""
 <a class="capability-card" href="waves/{esc(wave_id)}.html">
-  <div class="capability-card-top"><span class="eyebrow">{esc(wave_id)} · {esc(wave.get("track"))}</span>{status_badge(gate.get("status"))}</div>
+  <div class="capability-card-top"><span class="eyebrow">{esc(wave_id)} · {esc(wave.get("track"))}</span>{status_badge((wave.get("approval") or {}).get("status"))}</div>
   <h2>{esc(wave.get("title"))}</h2>
   <p>{esc(wave.get("goal"))}</p>
   <dl><div><dt>Capabilities</dt><dd>{len(wave_capability_ids)}</dd></div><div><dt>Slices</dt><dd>{approved_slices}/{len(wave_slices)}</dd></div><div><dt>Exit gate</dt><dd>{esc(gate.get("id"))}</dd></div></dl>
-  <span class="text-link">Review wave and gate</span>
+  <span class="text-link">Review complete Wave packet and gate</span>
 </a>""")
 
     cards = []
@@ -343,12 +351,12 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
 </a>""")
     landing_main = f"""
 <section class="hero compact">
-  <span class="eyebrow">Decision-complete capability planning</span>
+  <span class="eyebrow">Decision-complete Wave planning</span>
   <h1>Planning review center</h1>
-  <p>Review capability-wide decisions once, then approve and execute only the ordered slices in the active wave. Descriptive aliases are the default presentation; canonical numeric IDs remain immutable evidence keys.</p>
+  <p>Review and approve one complete Wave packet, then execute its capability contributions and ordered slices as one durable campaign. Descriptive aliases are the default presentation; canonical numeric IDs remain immutable evidence keys.</p>
 </section>
-<section class="callout callout-info"><h2>How to use this site</h2><ol><li>Select a descriptive capability.</li><li>Confirm capability-wide decisions, or override an option with rationale.</li><li>Review the ordered slice pages in the wave being activated.</li><li>Approve that wave's slice plans; later-wave plans remain reviewable but do not block the current increment.</li></ol></section>
-<section class="section-heading"><span class="eyebrow">Primary execution axis</span><h2>Waves and exit gates</h2><p>Each wave groups the capability increments delivered together and ends in one explicit gate decision.</p></section>
+<section class="callout callout-info"><h2>How to use this site</h2><ol><li>Select the Wave being activated.</li><li>Review every contributing capability decision and ordered slice plan from the Wave page.</li><li>Use the linked capability pages when you need full rationale or an override.</li><li>Approve the complete Wave packet at one immutable commit; later Waves remain unapproved.</li></ol></section>
+<section class="section-heading"><span class="eyebrow">Primary execution axis</span><h2>Waves, campaigns, and exit gates</h2><p>Each Wave is approved and executed end to end, with independent slice reviews, integration checkpoints, and one explicit exit decision.</p></section>
 <section class="capability-grid">{"".join(wave_cards)}</section>
 <section class="section-heading"><span class="eyebrow">Product outcomes</span><h2>Capabilities</h2><p>Capabilities may contribute ordered slices to more than one wave.</p></section>
 <section class="capability-grid">{"".join(cards)}</section>
@@ -383,6 +391,10 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
         wave_approved_count = 0
         wave_task_count = 0
         wave_done_count = 0
+        wave_plan_count = 0
+        wave_approved_plan_count = 0
+        wave_decision_count = 0
+        wave_accepted_decision_count = 0
         capability_ids: list[str] = []
         for capability in backlog_capabilities.values():
             increment_slices = [slice_ for slice_ in capability.get("slices", []) if slice_.get("wave") == wave_id]
@@ -390,6 +402,13 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
                 continue
             capability_id = str(capability["id"])
             capability_ids.append(capability_id)
+            cap_meta = capability_plan_meta.get(capability_id, {})
+            cap_decisions = cap_meta.get("decisions", [])
+            wave_decision_count += len(cap_decisions)
+            wave_accepted_decision_count += sum(
+                decision.get("status") == "accepted" and bool(decision.get("selected_option"))
+                for decision in cap_decisions
+            )
             wave_slice_count += len(increment_slices)
             wave_approved_count += sum(
                 slice_.get("completion", {}).get("status") == "APPROVED" for slice_ in increment_slices
@@ -401,6 +420,9 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
                 wave_done_count += sum(task.get("status") == "DONE" for task in slice_tasks)
                 label = slice_alias(str(slice_.get("title")))
                 status = slice_.get("completion", {}).get("status")
+                plan_status = slice_plan_meta.get(str(slice_["id"]), {}).get("status", "missing")
+                wave_plan_count += 1
+                wave_approved_plan_count += int(plan_status == "approved")
                 if capability_id in {item["id"] for item in capabilities}:
                     label_html = (
                         f'<a href="../{esc(capability_id)}/{esc(slice_["id"])}.html">'
@@ -409,7 +431,8 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
                 else:
                     label_html = f"{esc(label)} <small>({esc(slice_['id'])})</small>"
                 slice_rows.append(
-                    f"<li><span>{label_html}<small>{esc(slice_.get('title'))}</small></span>{status_badge(status)}</li>"
+                    f"<li><span>{label_html}<small>{esc(slice_.get('title'))} · Plan: {esc(plan_status)} · "
+                    f"Delivery: {esc(status)}</small></span>{status_badge(plan_status)}</li>"
                 )
             alias = capability.get("alias", capability_id)
             title = capability.get("title")
@@ -417,28 +440,49 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
                 heading = f'<a href="../{esc(capability_id)}/index.html">{esc(alias)}</a>'
             else:
                 heading = esc(alias)
+            decision_rows = "".join(
+                f"<li><span><strong>{esc(decision.get('title'))}</strong><small>Selected: "
+                f"{esc(decision.get('selected_option') or 'Pending')}</small></span>"
+                f"{status_badge(decision.get('status'))}</li>"
+                for decision in cap_decisions
+            )
             increment_cards.append(f"""
 <section class="wave-capability">
-  <div class="capability-card-top"><div><span class="eyebrow">{esc(capability_id)} · immutable key</span><h2>{heading}</h2><p>{esc(title)}</p></div>{status_badge((capability.get("campaign") or {}).get("status", "not started"))}</div>
+  <div class="capability-card-top"><div><span class="eyebrow">{esc(capability_id)} · immutable key</span><h2>{heading}</h2><p>{esc(title)}</p></div>{status_badge(cap_meta.get("status", "historical"))}</div>
+  {f'<details class="plan-details"><summary>{len(cap_decisions)} capability decisions in this Wave packet</summary><ul class="wave-slice-list">{decision_rows}</ul></details>' if cap_decisions else '<p class="decision-meta">Historical foundation contribution; approval is bound by the Wave record.</p>'}
   <ol class="wave-slice-list">{"".join(slice_rows)}</ol>
 </section>""")
 
         criteria = "".join(f"<li>{esc(criterion)}</li>" for criterion in gate.get("criteria", []))
         unlocks = ", ".join(str(item) for item in gate.get("unlocks_waves", [])) or "No further wave"
         approval = gate.get("approval") or {}
+        wave_approval = wave.get("approval") or {}
+        wave_completion = wave.get("completion") or {}
+        readiness = (
+            "Ready for one commit-bound pre-Wave approval"
+            if wave_plan_count == wave_approved_plan_count and wave_decision_count == wave_accepted_decision_count
+            else "Review incomplete—resolve every decision and approve every Wave slice plan"
+        )
         gate_main = f"""
 <section class="hero compact">
-  <div class="hero-top"><div><span class="eyebrow">{esc(wave.get("track"))} · roadmap wave</span><h1>{esc(wave_id)} — {esc(wave.get("title"))}</h1></div>{status_badge(gate.get("status"))}</div>
+  <div class="hero-top"><div><span class="eyebrow">{esc(wave.get("track"))} · durable Wave campaign</span><h1>{esc(wave_id)} — {esc(wave.get("title"))}</h1></div>{status_badge(wave_approval.get("status"))}</div>
   <p>{esc(wave.get("goal"))}</p>
-  <dl class="summary-grid"><div><dt>Capability increments</dt><dd>{len(capability_ids)}</dd></div><div><dt>Approved slices</dt><dd>{wave_approved_count}/{wave_slice_count}</dd></div><div><dt>Done tasks</dt><dd>{wave_done_count}/{wave_task_count}</dd></div><div><dt>Exit gate</dt><dd>{esc(gate.get("id"))}</dd></div></dl>
+  <dl class="summary-grid"><div><dt>Capability contributions</dt><dd>{len(capability_ids)}</dd></div><div><dt>Approved plans</dt><dd>{wave_approved_plan_count}/{wave_plan_count}</dd></div><div><dt>Resolved decisions</dt><dd>{wave_accepted_decision_count}/{wave_decision_count}</dd></div><div><dt>Delivery</dt><dd>{wave_done_count}/{wave_task_count} tasks</dd></div></dl>
 </section>
-<section class="section-heading"><span class="eyebrow">Wave contents</span><h2>Capability increments and ordered slices</h2><p>Each card is the portion of a capability delivered and reviewed within {esc(wave_id)}.</p></section>
+<section class="review-toolbar">
+  <div class="hero-top"><div><span class="eyebrow">One approval before execution</span><h2>Complete pre-Wave approval packet</h2></div>{status_badge(wave_approval.get("status"))}</div>
+  <p>{esc(readiness)}. Approval covers every capability decision shown below, every {esc(wave_id)} slice plan, the cross-capability dependency order, risk register, verification obligations, and the exit-gate criteria at immutable commit <code>{esc(wave_approval.get("approved_commit") or "pending")}</code>.</p>
+  <dl class="summary-grid"><div><dt>Status</dt><dd>{esc(wave_approval.get("status"))}</dd></div><div><dt>Approved by</dt><dd>{esc(wave_approval.get("approved_by") or "Pending")}</dd></div><div><dt>Approved at</dt><dd>{esc(wave_approval.get("approved_at") or "Pending")}</dd></div><div><dt>Campaign state</dt><dd>{esc((wave.get("campaign") or {}).get("status", "Not started"))}</dd></div></dl>
+  <h3>Approval command after review</h3><pre><code>python tools/planctl.py --repo . wave approve {esc(wave_id)} --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;</code></pre>
+</section>
+<section class="callout callout-info"><h2>Review and verification cadence while the Wave runs</h2><ol><li><strong>Task:</strong> risk-selected checks plus a focused independent scope/evidence disposition; expand only for high-risk boundaries.</li><li><strong>Slice:</strong> independent risk-focused end-to-end and adversarial deep review.</li><li><strong>Integration checkpoint:</strong> accumulated affected-profile checks when a shared interface, migration, security boundary, or coherent risk cluster closes.</li><li><strong>Wave exit:</strong> the complete affected/full suite, packaging, security, accessibility, performance, restart, recovery, and independent Wave review.</li></ol></section>
+<section class="section-heading"><span class="eyebrow">Wave contents</span><h2>Capability contributions and ordered slices</h2><p>Each card is the portion of a capability delivered and independently reviewed within {esc(wave_id)}.</p></section>
 <div class="wave-capability-list">{"".join(increment_cards)}</div>
 <section class="review-toolbar">
   <div class="hero-top"><div><span class="eyebrow">Wave exit / successor activation</span><h2>{esc(gate.get("id"))} — {esc(wave_id)} exit / {esc(unlocks)} activation</h2></div>{status_badge(gate.get("status"))}</div>
-  <p>{esc(gate.get("name"))}. Approval is legal only after all preceding-wave tasks are DONE, all slices are independently approved, prior gates are approved, and the criteria below have exact evidence.</p>
+  <p>{esc(gate.get("name"))}. Approval is legal only after all Wave tasks are DONE, every slice is independently approved, the full Wave-exit suite passes, independent Wave review is APPROVED, prior gates are approved, and the criteria below have exact evidence.</p>
   <ul class="gate-criteria">{criteria}</ul>
-  <dl class="summary-grid"><div><dt>Status</dt><dd>{esc(gate.get("status"))}</dd></div><div><dt>Approved by</dt><dd>{esc(approval.get("approved_by") or "Pending")}</dd></div><div><dt>Approved at</dt><dd>{esc(approval.get("approved_at") or "Pending")}</dd></div><div><dt>Unlocks</dt><dd>{esc(unlocks)}</dd></div></dl>
+  <dl class="summary-grid"><div><dt>Gate status</dt><dd>{esc(gate.get("status"))}</dd></div><div><dt>Wave review</dt><dd>{esc(wave_completion.get("status"))}</dd></div><div><dt>Approved by</dt><dd>{esc(approval.get("approved_by") or "Pending")}</dd></div><div><dt>Unlocks</dt><dd>{esc(unlocks)}</dd></div></dl>
 </section>
 """
         wave_page = shell(
@@ -477,6 +521,8 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
                 "task_count": wave_task_count,
                 "exit_gate_id": gate.get("id"),
                 "gate_status": gate.get("status"),
+                "approval_status": wave_approval.get("status"),
+                "completion_status": wave_completion.get("status"),
                 "unlocks_waves": gate.get("unlocks_waves", []),
             }
         )
@@ -521,22 +567,22 @@ def build_site(repo: Path, output: Path, selected_capability: str | None = None)
 
         wave_ids = list(dict.fromkeys(str(sl["meta"].get("wave")) for sl in slices))
         wave_commands = "\n".join(
-            f"python tools/planctl.py --repo . approve {esc(cid)} --wave {esc(wave)} "
+            f"python tools/planctl.py --repo . wave approve {esc(wave)} "
             '--by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;'
             for wave in wave_ids
         )
         capability_main = f"""
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">{esc(cid)} · immutable evidence key</span><h1>{esc(cap_alias)}</h1><p>{esc(meta.get("title"))}</p></div>{status_badge(meta.get("status"))}</div>
-  <p>Review the completed capability-wide recommendation register once. Each approved wave then executes only its ordered slices as a durable capability-wave increment.</p>
+  <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
   <dl class="summary-grid"><div><dt>Slices</dt><dd>{len(slices)}</dd></div><div><dt>Decisions</dt><dd>{len(meta.get("decisions", []))}</dd></div><div><dt>Open blockers</dt><dd>{len(meta.get("open_blocking_decisions", []))}</dd></div><div><dt>Plan hash</dt><dd><code>{cap_hash[:12]}</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
-  <div><h2>Resolved capability decisions and wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them once, then approve only the active wave's ordered slice plans. Later-wave plans may remain proposed until their activation gate.</p></div>
+  <div><h2>Resolved capability decisions within Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them here, then approve the complete active Wave packet from its Wave page. Later-Wave plans remain outside that approval.</p></div>
   <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / {len(meta.get("decisions", []))} selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
-  <label class="approval-check"><input type="checkbox" data-approval-intent> Request approval of the capability packet and the selected active-wave slice plans after feedback is applied</label>
+  <label class="approval-check"><input type="checkbox" data-approval-intent> Mark this capability review complete for inclusion in the active pre-Wave approval packet</label>
   <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
   <div class="feedback-message" data-feedback-message role="status"></div>
   <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review {esc(cid)}
@@ -577,9 +623,9 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
         open_decision_count = len(meta.get("open_blocking_decisions", []))
         if open_decision_count:
             gate_heading = f"Resolve {open_decision_count} capability decision{'s' if open_decision_count != 1 else ''} before implementation"
-            gate_text = "Capability-wide decisions are resolved once; active-wave slice plans are approved progressively before execution."
+            gate_text = "Capability-wide decisions remain durable, but execution starts only after the complete active Wave packet is approved at one immutable commit."
         else:
-            gate_heading = "Recommendations resolved; active-wave approval controls execution"
+            gate_heading = "Recommendations resolved; complete pre-Wave approval controls execution"
             gate_text = "Confirm or override capability defaults once, then approve the ordered slice plans for the wave being activated."
 
         for index, sl in enumerate(slices):
@@ -655,23 +701,57 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
     total_slices = sum(len(item.get("slices", [])) for item in manifest["capabilities"])
     readme = f"""# Static planning review site
 
-Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["waves"])} wave/gate pages, {len(manifest["capabilities"])} capability pages, and {total_slices} individual slice pages. Wave pages show contributing capability increments, ordered slices, and the exact exit/activation gate decision. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys. Capability decisions are resolved once, while slice-plan approval is progressive by active wave.
+Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["waves"])} Wave packet/gate pages, {len(manifest["capabilities"])} capability pages, and {total_slices} individual slice pages. A Wave page is the pre-execution approval surface: it aggregates every contributing capability decision, ordered slice plan, review cadence, and exit-gate decision. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys.
 
 Canonical commands:
 
 ```bash
-python tools/planctl.py --repo . review CAP-XX
+python tools/planctl.py --repo . wave review WN
 python tools/planctl.py --repo . adopt-recommendations CAP-XX  # already complete for authored packets
-python tools/planctl.py --repo . approve CAP-XX --wave WN --by "Reviewer" --commit <git-sha>
+python tools/planctl.py --repo . wave approve WN --by "Reviewer" --commit <git-sha>
 # Only when an override or note was exported:
 python tools/planctl.py --repo . apply-feedback CAP-XX <downloaded-json>
-python tools/planctl.py --repo . approve CAP-XX --wave WN --feedback <downloaded-json> --by "Reviewer" --commit <git-sha>
+python tools/planctl.py --repo . wave approve WN --by "Reviewer" --commit <git-sha>
 ```
 
 The Markdown plans remain authoritative. The review site is a generated human review surface and must be regenerated and validated after plan changes.
 """
     (output / "README.md").write_text(readme, encoding="utf-8")
     return manifest
+
+
+def build_site(repo: Path, output: Path, selected_capability: str | None = None) -> dict[str, Any]:
+    """Build one coherent site while excluding concurrent destructive rebuilds."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = output.parent / f".{output.name}.generation.lock"
+    deadline = time.monotonic() + 60.0
+    acquired = False
+    while not acquired:
+        try:
+            descriptor = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            try:
+                stale = time.time() - lock_path.stat().st_mtime > 300.0
+            except OSError:
+                stale = False
+            if stale:
+                with suppress(OSError):
+                    lock_path.unlink()
+                continue
+            if time.monotonic() >= deadline:
+                raise TimeoutError(f"Timed out waiting for planning review-site generation lock: {lock_path}") from None
+            time.sleep(0.05)
+        else:
+            try:
+                os.write(descriptor, f"pid={os.getpid()}\n".encode("ascii"))
+            finally:
+                os.close(descriptor)
+            acquired = True
+    try:
+        return _build_site_unlocked(repo, output, selected_capability)
+    finally:
+        with suppress(FileNotFoundError):
+            lock_path.unlink()
 
 
 def main() -> int:
@@ -1035,7 +1115,7 @@ REVIEW_JS = r"""
       toggleOther(card);
     });
     save();
-    if (message) message.textContent = "Recommended defaults restored. Review any intended overrides before capability approval.";
+    if (message) message.textContent = "Recommended defaults restored. Review any intended overrides before pre-Wave approval.";
   });
 
   const clearButton = document.querySelector("[data-clear-decisions]");
@@ -1082,7 +1162,7 @@ REVIEW_JS = r"""
       capability_plan_sha256: planHash,
       reviewer: value.reviewer || null,
       reviewed_at: new Date().toISOString(),
-      requested_action: value.approval_intent ? "approve-capability-and-active-wave" : "record-feedback",
+      requested_action: value.approval_intent ? "include-in-pre-wave-approval" : "record-feedback",
       capability_notes: value.notes,
       decisions: Object.entries(value.decisions).map(([id, item]) => ({
         id,

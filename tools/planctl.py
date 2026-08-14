@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare, review, apply feedback, approve, validate, and gate capability planning artifacts."""
+"""Prepare, review, approve, and validate Wave planning packets and their component plans."""
 
 from __future__ import annotations
 
@@ -37,6 +37,14 @@ def load_backlog(root: Path):
     return data, {cap["id"]: cap for cap in data.get("capabilities", [])}
 
 
+def wave_capabilities(data: dict[str, Any], wave_id: str) -> list[dict[str, Any]]:
+    return [
+        capability
+        for capability in data.get("capabilities", [])
+        if any(slice_.get("wave") == wave_id for slice_ in capability.get("slices", []))
+    ]
+
+
 def frontmatter(path: Path) -> tuple[dict[str, Any], str]:
     text = path.read_text(encoding="utf-8")
     if not text.startswith("---\n"):
@@ -71,6 +79,10 @@ def review_page(root: Path, capability: str | None = None) -> Path:
     return base / capability / "index.html" if capability else base / "index.html"
 
 
+def wave_review_page(root: Path, wave_id: str) -> Path:
+    return root / "planning" / "review-site" / "waves" / f"{wave_id}.html"
+
+
 def generate_review(root: Path, capability: str | None = None) -> int:
     command = [sys.executable, str(root / "tools/plan_review_site.py"), "--repo", str(root)]
     if capability:
@@ -87,6 +99,15 @@ def print_review_link(root: Path, capability: str | None = None) -> None:
         print(f"Planning review page has not been generated: {page}")
 
 
+def print_wave_review_link(root: Path, wave_id: str) -> None:
+    page = wave_review_page(root, wave_id)
+    if page.exists():
+        print(f"Pre-Wave approval page: {page.as_uri()}")
+        print(f"Repository-relative page: {page.relative_to(root).as_posix()}")
+    else:
+        print(f"Pre-Wave approval page has not been generated: {page}")
+
+
 def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
     path = capability_plan_path(root, cap["id"])
     if path.exists():
@@ -100,7 +121,7 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
         "capability_id": cap["id"],
         "title": cap["title"],
         "status": "proposed",
-        "execution_mode": "wave-scoped-capability-increments",
+        "execution_mode": "wave-contribution",
         "decision_completion": "pending",
         "open_blocking_decisions": [decision_id],
         "slice_ids": [item["id"] for item in cap.get("slices", [])],
@@ -146,7 +167,7 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
             sections.append(heading + "\n\nComplete this section before approval.")
     body = (
         f"# {cap['id']} - Capability decision and execution plan\n\n"
-        "> **Generated proposed packet.** Resolve the capability-wide decision register once, then approve only the slice plans in each wave before that capability-wave increment starts. Future-wave plans may remain proposed until their activation gate.\n\n"
+        "> **Generated proposed packet.** Resolve the capability-wide decision register once. Each Wave approval then binds the current capability decisions together with every slice plan assigned to that Wave at one immutable commit.\n\n"
         "> **Review surface.** Run `python tools/planctl.py --repo . review "
         + cap["id"]
         + "` and use the generated static pages to review all options and slice plans.\n\n"
@@ -217,7 +238,7 @@ def scaffold_slice(root: Path, cap: dict[str, Any], slice_: dict[str, Any]) -> P
     body = (
         f"# {slice_['id']} - {slice_['title']}\n\n"
         "> **Generated proposed plan.** Complete this plan using the Vision, Systems Design, authoritative backlog, approved experience reference, and current primary research. It authorizes only its ordered slice after the capability decision packet and this slice's wave are approved.\n\n"
-        f"> **Review surface.** Run `python tools/planctl.py --repo . review {cap['id']} --wave {slice_.get('wave', 'W?')}` and use the generated capability and active-wave slice pages.\n\n"
+        f"> **Review surface.** Run `python tools/planctl.py --repo . wave review {slice_.get('wave', 'W?')}` and use the generated complete Wave packet.\n\n"
         + "\n\n".join(sections)
         + "\n"
     )
@@ -382,7 +403,7 @@ def adopt_recommendations(root: Path, capability: str, *, regenerate: bool = Tru
     if regenerate:
         generate_review(root, capability)
     print(f"Adopted {len(decisions)} best-in-class recommendations as completed decisions for {capability}.")
-    print("The capability decisions and active-wave slice plans remain proposed until explicit wave-scoped approval.")
+    print("The capability decisions and slice plans remain proposed until the complete Wave packet is approved.")
     return 0
 
 
@@ -449,10 +470,183 @@ def approve(
     return 0
 
 
+def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
+    data, _ = load_backlog(root)
+    wave = next((item for item in data.get("waves", []) if item.get("id") == wave_id), None)
+    if wave is None:
+        raise ValueError(f"Unknown Wave {wave_id}")
+    contributing = wave_capabilities(data, wave_id)
+    if not contributing:
+        raise ValueError(f"{wave_id} has no contributing capability slices")
+    failures = 0
+    for capability in contributing:
+        capability_id = str(capability["id"])
+        if capability_id == "CAP-00" and not capability_plan_path(root, capability_id).exists():
+            continue  # W0 predates planctl packets and is bound by its migrated approval record.
+        if not capability_plan_path(root, capability_id).exists():
+            print(f"ERROR: missing capability plan for {capability_id}", file=sys.stderr)
+            failures += 1
+            continue
+        failures += int(bool(run_validator(root, "capability_plan_check.py", capability_id, approved, wave_id)))
+        failures += int(bool(run_validator(root, "slice_plan_check.py", capability_id, approved, wave_id)))
+    if approved and (wave.get("approval") or {}).get("status") != "APPROVED":
+        print(f"ERROR: {wave_id} pre-Wave packet is not explicitly APPROVED", file=sys.stderr)
+        failures += 1
+    failures += int(
+        bool(
+            subprocess.run(
+                [sys.executable, str(root / "tools/plan_review_check.py"), "--repo", str(root)], check=False
+            ).returncode
+        )
+    )
+    return 1 if failures else 0
+
+
+def prepare_wave(root: Path, wave_id: str) -> list[Path]:
+    data, _ = load_backlog(root)
+    contributing = wave_capabilities(data, wave_id)
+    if not contributing:
+        raise ValueError(f"Unknown or empty Wave {wave_id}")
+    created: list[Path] = []
+    for capability in contributing:
+        capability_id = str(capability["id"])
+        if capability_id == "CAP-00":
+            continue
+        cap_path = capability_plan_path(root, capability_id)
+        if not cap_path.exists():
+            created.append(scaffold_capability(root, capability))
+        for slice_ in capability.get("slices", []):
+            if slice_.get("wave") != wave_id:
+                continue
+            expected = root / "planning" / "slice-plans" / capability_id / f"{slice_['id']}-{slug(slice_['title'])}.md"
+            if not expected.exists():
+                created.append(scaffold_slice(root, capability, slice_))
+    generate_review(root)
+    return created
+
+
+def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str = "") -> int:
+    if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        raise ValueError("Wave approval commit must be a full lowercase Git SHA")
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=False
+    ).stdout.strip()
+    if head != commit:
+        raise ValueError("Wave approval commit must equal the current immutable Git HEAD")
+    status = subprocess.run(["git", "status", "--porcelain"], cwd=root, capture_output=True, text=True, check=False)
+    if status.returncode != 0 or status.stdout.strip():
+        raise ValueError("Wave approval requires a clean worktree so the reviewed packet is exactly commit-bound")
+
+    data, _ = load_backlog(root)
+    wave = next((item for item in data.get("waves", []) if item.get("id") == wave_id), None)
+    if wave is None:
+        raise ValueError(f"Unknown Wave {wave_id}")
+    contributing = wave_capabilities(data, wave_id)
+    capability_ids = [str(capability["id"]) for capability in contributing]
+    slice_ids = [
+        str(slice_["id"])
+        for capability in contributing
+        for slice_ in capability.get("slices", [])
+        if slice_.get("wave") == wave_id
+    ]
+    paths: list[Path] = []
+    for capability in contributing:
+        capability_id = str(capability["id"])
+        cap_path = capability_plan_path(root, capability_id)
+        if capability_id != "CAP-00":
+            if not cap_path.exists():
+                raise ValueError(f"Missing capability plan for {capability_id}")
+            paths.append(cap_path)
+        selected = []
+        for path in slice_plan_paths(root, capability_id):
+            meta, _ = frontmatter(path)
+            if meta.get("wave") == wave_id:
+                selected.append(path)
+        if capability_id != "CAP-00" and len(selected) != len(
+            [slice_ for slice_ in capability.get("slices", []) if slice_.get("wave") == wave_id]
+        ):
+            raise ValueError(f"{capability_id}/{wave_id}: missing canonical slice plans")
+        paths.extend(selected)
+
+    backlog_path = root / "planning" / "backlog.yaml"
+    originals = {path: path.read_text(encoding="utf-8") for path in [backlog_path, *paths]}
+    try:
+        approved_at = datetime.now(UTC).isoformat()
+        for capability in contributing:
+            capability_id = str(capability["id"])
+            if capability_id == "CAP-00":
+                continue
+            cap_path = capability_plan_path(root, capability_id)
+            meta, body = frontmatter(cap_path)
+            unresolved = [
+                item.get("id")
+                for item in meta.get("decisions", [])
+                if item.get("status") != "accepted" or not item.get("selected_option")
+            ]
+            if meta.get("open_blocking_decisions") or unresolved or meta.get("decision_completion") != "complete":
+                raise ValueError(f"{capability_id}: capability decisions are incomplete: {unresolved}")
+            if meta.get("status") != "approved":
+                meta["status"] = "approved"
+                meta["approval"] = {
+                    "status": "approved",
+                    "approved_by": approver,
+                    "approved_at": approved_at,
+                    "approved_commit": commit,
+                }
+                write_plan(cap_path, meta, body)
+            for path in slice_plan_paths(root, capability_id):
+                slice_meta, slice_body = frontmatter(path)
+                if slice_meta.get("wave") != wave_id:
+                    continue
+                slice_meta["status"] = "approved"
+                slice_meta["approval"] = {
+                    "status": "approved",
+                    "approved_by": approver,
+                    "approved_at": approved_at,
+                    "approved_commit": commit,
+                }
+                write_plan(path, slice_meta, slice_body)
+
+        wave["approval"] = {
+            "status": "APPROVED",
+            "approved_by": approver,
+            "approved_at": approved_at,
+            "approved_commit": commit,
+            "capability_ids": capability_ids,
+            "slice_ids": slice_ids,
+            "notes": note or None,
+        }
+        backlog_path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True, width=120), encoding="utf-8")
+        subprocess.run([sys.executable, str(root / "tools/backlog_views.py"), "--repo", str(root)], check=True)
+        generate_review(root)
+        if validate_wave(root, wave_id, True):
+            raise ValueError("Wave approval validation failed; all source changes were rolled back")
+    except Exception:
+        for path, text in originals.items():
+            path.write_text(text, encoding="utf-8")
+        subprocess.run([sys.executable, str(root / "tools/backlog_views.py"), "--repo", str(root)], check=False)
+        generate_review(root)
+        raise
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", default=".")
     sub = parser.add_subparsers(dest="command", required=True)
+
+    wave_parser = sub.add_parser("wave")
+    wave_sub = wave_parser.add_subparsers(dest="wave_command", required=True)
+    for name in ("prepare", "review", "validate", "ready"):
+        command = wave_sub.add_parser(name)
+        command.add_argument("wave")
+        if name in {"validate", "ready"}:
+            command.add_argument("--require-approved", action="store_true")
+    wave_approve = wave_sub.add_parser("approve")
+    wave_approve.add_argument("wave")
+    wave_approve.add_argument("--by", required=True)
+    wave_approve.add_argument("--commit", required=True)
+    wave_approve.add_argument("--note", default="")
 
     for name in ("prepare", "validate", "ready", "decisions", "review", "adopt-recommendations"):
         command = sub.add_parser(name)
@@ -475,7 +669,51 @@ def main() -> int:
 
     args = parser.parse_args()
     root = Path(args.repo).resolve()
-    _, caps = load_backlog(root)
+    data, caps = load_backlog(root)
+
+    if args.command == "wave":
+        wave_ids = {str(item.get("id")) for item in data.get("waves", [])}
+        if args.wave not in wave_ids:
+            print(f"Unknown Wave {args.wave}", file=sys.stderr)
+            return 2
+        try:
+            if args.wave_command == "prepare":
+                wave_created = prepare_wave(root, args.wave)
+                for path in wave_created:
+                    print("Created", path.relative_to(root))
+                if not wave_created:
+                    print(f"All planning artifacts already exist for {args.wave}.")
+                print_wave_review_link(root, args.wave)
+                return 0
+            if args.wave_command == "review":
+                result = generate_review(root)
+                print_wave_review_link(root, args.wave)
+                return result
+            if args.wave_command == "approve":
+                result = approve_wave(root, args.wave, args.by, args.commit, args.note)
+                print(
+                    f"Approved the complete {args.wave} packet—every contributing capability decision and slice "
+                    f"plan—at immutable commit {args.commit}."
+                )
+                print_wave_review_link(root, args.wave)
+                return result
+            generate_review(root)
+            require_approved = True if args.wave_command == "ready" else args.require_approved
+            result = validate_wave(root, args.wave, require_approved)
+            if result and args.wave_command == "ready":
+                print(
+                    "Wave is not ready. Resolve every capability decision, approve every Wave slice plan, and record "
+                    "one commit-bound pre-Wave approval using the linked page.",
+                    file=sys.stderr,
+                )
+            print_wave_review_link(root, args.wave)
+            return result
+        except (OSError, ValueError, json.JSONDecodeError, yaml.YAMLError, subprocess.CalledProcessError) as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            generate_review(root)
+            print_wave_review_link(root, args.wave)
+            return 1
+
     requested_capability = args.capability
     capability = requested_capability
     if capability not in caps:
@@ -503,7 +741,7 @@ def main() -> int:
                 print(f"All capability and slice planning artifacts already exist for {capability}.")
             generate_review(root, capability)
             print(
-                "Generated placeholders remain proposed until researched. After authoring the capability decisions, run `adopt-recommendations`; approve only each active wave's completed slice plans before its increment starts."
+                "Generated placeholders remain proposed until researched. After authoring decisions, use `planctl wave review WN`; approve the complete Wave packet before its campaign starts."
             )
             print_review_link(root, capability)
             return 0
@@ -529,7 +767,7 @@ def main() -> int:
             print(f"Applied decision feedback to {capability}.")
             if archive:
                 print(f"Archived feedback: {archive.relative_to(root)}")
-            print("The capability and slice plans remain unapproved until the explicit approve command is run.")
+            print("The capability and slice plans remain unapproved until the complete Wave approval command is run.")
             print(
                 "If feedback used Other, the brief description is now a canonical candidate; detailed rationale remains in the archived feedback record."
             )
@@ -552,7 +790,7 @@ def main() -> int:
             result = validate(root, capability, True, args.wave)
             if result:
                 print(
-                    "Capability-wave increment is not ready. Confirm or override the capability recommendation defaults, approve the capability decision packet and active-wave slice plans, and use the linked review pages.",
+                    "Legacy capability-scoped readiness is not satisfied. Use the complete Wave approval workflow for new execution.",
                     file=sys.stderr,
                 )
             print_review_link(root, capability)

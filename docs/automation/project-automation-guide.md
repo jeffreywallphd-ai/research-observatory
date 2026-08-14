@@ -4,47 +4,49 @@
 
 ## 1. Operating objective
 
-Enable an AI coding tool to execute long-running, production-oriented
-capability-wave increments while preserving architecture, evidence, security,
+Enable an AI coding tool to execute long-running, production-oriented Wave
+campaigns while preserving architecture, evidence, security,
 privacy, rights, research integrity, user-experience governance, and human
 authority over consequential decisions.
 
-## 2. Wave-first delivery with capability increments
+## 2. Wave campaigns
 
-Use Roadmap -> Wave -> Capability increment -> ordered Slice -> Task -> Wave exit
-gate. The controller selects one eligible capability contribution to the current
-global wave and remains in that increment until its wave slices pass. Capability
+Use Roadmap -> durable Wave campaign -> Capability contribution -> ordered Slice
+-> Task -> risk-cluster checkpoint -> Wave exit gate. The controller owns one
+Wave lease and selects its next dependency-eligible task across contributing
+capabilities. Capability
 numbers are immutable foreign keys, not execution order; descriptive aliases are
 the default display. Slice numbers preserve real sequence and are shown beside a
 descriptive slice label.
 
 Before start:
 
-1. Every slice in the active wave has a plan generated from `planning/slice-plans/TEMPLATE.md`.
-2. The capability packet covers cross-slice and material slice decisions.
+1. Every slice in the Wave has a plan generated from `planning/slice-plans/TEMPLATE.md`.
+2. Every contributing capability packet covers cross-slice and material decisions.
 3. Every decision presents at least two credible candidates, a recommendation, and rationale.
 4. The recommendation is recorded as the completed selected decision unless a reviewer overrides it.
 5. Required ADR and experience-reference changes are approved.
-6. The capability decision packet and active-wave slice plans are approved at an immutable commit.
-7. `planctl ready CAP-XX --wave WN --require-approved` passes.
+6. The complete Wave packet—every contributing capability decision and every
+   Wave slice plan—is approved together at one immutable commit.
+7. `planctl wave ready WN --require-approved` passes.
 
-After start, execute tasks and ordered active-wave slices continuously. Do not
+After start, execute tasks and ordered Wave slices continuously. Do not
 request approval for ordinary debugging, code organization within approved
 boundaries, documented fallbacks, independent review, or transitions to the next
-approved slice in that increment.
+approved slice in that Wave.
 
-### 2.1 Progressive approval and durable-increment meaning
+### 2.1 One approval and durable-Wave meaning
 
-The start prompt must link the capability-wide decisions and every slice in the
-active wave. `planctl ready CAP-XX --wave WN --require-approved` fails if that
-wave's plan set is incomplete. Future-wave slice plans may remain proposed until
-their gate; a partial plan set inside the active wave never starts an increment.
+The start prompt links the Wave page, which aggregates all capability decisions,
+slice plans, cross-capability dependencies, review cadence, risks, and exit
+criteria. `planctl wave ready WN --require-approved` fails if any component or
+the one commit-bound Wave approval is missing. Future-Wave plans remain outside
+the packet.
 
-One increment run is durable and resumable. A process or session may restart,
-but the increment remains active until every ordered slice assigned to its wave
-is independently approved. Then it closes, even if the capability has future
-slices. Capability completion occurs only after its final increment and
-cross-wave qualification.
+One Wave run is durable and resumable. A process or session may restart, but the
+campaign remains active across capability boundaries until every ordered slice
+is independently approved, integration checkpoints are complete, the full Wave
+matrix passes, and independent Wave review approves qualification.
 
 ## 3. Permitted pause conditions
 
@@ -56,10 +58,9 @@ Pause only for:
 - higher-authority conflict;
 - required approved UI-reference change;
 - destructive/external action or substantial unapproved spend; or
-- explicit user direction; or
-- independently approved completion of the active capability-wave increment.
+- explicit user direction.
 
-Record the condition, update only affected authorities, regenerate review pages, obtain necessary approval, and resume the same increment.
+Record the condition, update only affected authorities, regenerate review pages, obtain necessary approval, and resume the same Wave campaign.
 
 ### 3.1 Decision-complete stopped-gate handoff
 
@@ -74,10 +75,10 @@ review` commands, then provide:
    wave and prerequisite capability packets;
 4. credible alternatives and their consequences;
 5. a recommended option with rationale; and
-6. the exact condition and command shape for approval and increment resumption.
+6. the exact condition and command shape for approval and Wave resumption.
 
 When prerequisites are incomplete, recommend keeping the gate pending, pausing
-the blocked increment, completing and approving prerequisite waves in order, and
+the blocked Wave, completing and approving prerequisite Waves in order, and
 returning with criterion-linked evidence. Alternatives are explicit deferral or
 governed replanning; neither is implicit gate approval. Never ask a human to
 "approve the gate" while `taskctl gate approve` would reject the state.
@@ -85,10 +86,11 @@ governed replanning; neither is implicit gate approval. Never ask a human to
 ## 4. Planning automation
 
 ```bash
-python tools/planctl.py --repo . prepare CAP-XX
-python tools/planctl.py --repo . review CAP-XX --wave WN
-python tools/planctl.py --repo . validate CAP-XX --wave WN
-python tools/planctl.py --repo . ready CAP-XX --wave WN --require-approved
+python tools/planctl.py --repo . wave prepare WN
+python tools/planctl.py --repo . wave review WN
+python tools/planctl.py --repo . wave validate WN
+python tools/planctl.py --repo . wave ready WN --require-approved
+python tools/planctl.py --repo . wave approve WN --by <reviewer> --commit <git-sha>
 ```
 
 `prepare` creates missing plans as proposed scaffolds. The planning agent must replace placeholders with researched decisions and pass decision-complete validation.
@@ -110,11 +112,11 @@ The generated site adds `Other` to every decision without modifying canonical pl
 A task claim records agent, branch, worktree, base SHA, lease, and expected scope. A task contract includes goal, non-goals, dependencies, inspect/change scopes, canonical sources, criteria, required checks, security class, human gates, and evidence outputs.
 
 At each iteration select only the dependency-eligible `READY` task in the active
-capability-wave increment. State its permitted scope from the task deliverables and acceptance
+Wave campaign. State its permitted scope from the task deliverables and acceptance
 criteria, use its declared verification commands/profiles and changed-path impact
 map to select risk-proportionate checks, bind evidence to the implementation
 commit, complete required review, and then move to the next eligible task. Do not
-use a globally READY task to leave an active increment.
+use a globally READY task to leave the active Wave.
 
 A slice completes only after:
 
@@ -125,10 +127,10 @@ A slice completes only after:
 - no hidden TODO or deferred production blocker remains; and
 - an independent reviewer approves the slice.
 
-A capability-wave increment completes after its ordered slices and affected
-end-to-end criteria pass. The capability completes only after all of its wave
-increments plus final security, privacy, rights, accessibility, performance,
-migration, backup/restore, platform, and end-to-end criteria pass.
+A Wave completes after all tasks and slices pass, triggered integration
+checkpoints are recorded, the complete affected/full suite passes, and an
+independent reviewer approves cross-capability qualification. Capability status
+is derived from its accepted contributions across Waves.
 
 ## 6. Design-first experience-reference governance
 
@@ -169,12 +171,19 @@ available suite at every task:
   integrations. Run affected lint, format, type, schema, planning, architecture,
   UI, security, or platform checks only when the changed paths can plausibly
   invalidate them.
-- **Slice integration and slice review:** after the last task, run each affected
-  full deployment profile once, plus slice-wide end-to-end, failure,
-  cancellation, restart, recovery, accessibility, security, and performance
-  checks required by the slice plan.
-- **Capability qualification:** run the complete approved cross-slice matrix and
-  capability-level platform/release checks.
+- **Slice integration and slice review:** run affected end-to-end, contract,
+  failure/denial, cancellation/recovery, accessibility, security, and performance
+  checks required by credible slice risk. Do not automatically replay the full
+  deployment profile.
+- **Integration checkpoint:** when a shared interface, migration, security
+  boundary, platform adapter, or coherent cluster of roughly three to five
+  slices closes, run the union of affected profiles plus a clean build/smoke
+  path. Record contract identities, open risks, and evidence. This is not a
+  human approval gate.
+- **Wave qualification:** run the complete affected/full repository and
+  deployment-profile matrix once, with cross-capability end-to-end, packaging,
+  security, accessibility, performance, restart, recovery, and clean-build
+  checks.
 
 Task `verification_profiles` and `verification_commands` define coverage domains
 and candidate commands. They do not, by themselves, require every command in a
@@ -183,8 +192,28 @@ only by an explicit task acceptance criterion, credible profile-wide impact from
 shared verification/build/security/toolchain or dependency/runtime changes, or
 an observed failure that cannot be localized. Evidence must name the changed-path
 risk analysis, selected checks, any early broad-suite rationale, and the broader
-coverage deferred to slice or capability review. A reviewer should not demand an
+coverage deferred to slice, checkpoint, or Wave review. A reviewer should not demand an
 unchanged full-profile replay without identifying a concrete impact path.
+
+### 8.2 Review efficiency and depth
+
+Every task receives a focused independent disposition of scope, evidence truth,
+changed contracts, and credible failure paths. Expand that task review for
+authentication/secrets, migrations or destructive I/O, evidence and automation
+controls, public/cross-process contracts, security policy, or an explicit plan
+requirement. Deep/adversarial review defaults to the slice. A slice reviewer evaluates the acceptance surface,
+changed contracts, denial/failure paths, and integration evidence rather than
+repeating every implementation step.
+
+Maintain one consolidated finding ledger per slice and Wave. Each required
+finding includes severity, a deterministic reproduction, the violated contract
+or criterion, and the smallest acceptable closure. Remediation review replays
+all prior findings plus the incremental changed-path risk boundary; it does not
+restart a broad speculative audit. Adjacent improvements outside the approved
+acceptance surface become backlog items unless they expose a material safety,
+data-integrity, security, or production-correctness defect. Escalate recurring
+findings after the second remediation to root-cause/control review instead of
+continuing unbounded patch-and-rereview loops.
 
 Performance baselines are reviewed inputs, not output fields that a benchmark may
 rewrite. A benchmark must bind its fixture and methodology, reject non-finite or
@@ -232,4 +261,4 @@ The default handoff for tested repository work is the local `main` branch:
 4. If histories diverge, stop for explicit reconciliation, then rerun affected checks before merging.
 5. Preserve task, review, approval, dependency, and release-gate state exactly as recorded; a Git merge is not workflow approval.
 6. Do not push local `main`, publish artifacts, or update a remote without separate explicit authorization.
-7. After the requested work is fully complete and integrated, leave the repository checked out on local `main`; retain the increment branch for audit, but do not leave it checked out for routine operation.
+7. After the requested work is fully complete and integrated, leave the repository checked out on local `main`; retain the Wave branch for audit, but do not leave it checked out for routine operation.

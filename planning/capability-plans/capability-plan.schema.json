@@ -50,7 +50,8 @@
     "execution_mode": {
       "enum": [
         "long-running-capability-campaign",
-        "wave-scoped-capability-increments"
+        "wave-scoped-capability-increments",
+        "wave-contribution"
       ]
     },
     "decision_completion": {

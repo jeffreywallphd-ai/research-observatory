@@ -54,73 +54,273 @@ waves:
   goal: Create the repository, architecture guardrails, verification system, executable backlog, and approved experience reference.
   activation_gate: null
   track: local-baseline
+  approval:
+    status: APPROVED
+    approved_by: repository-owner
+    approved_at: '2026-08-09T06:41:32+00:00'
+    approved_commit: 2ffbdeeb622757b09c0d02e7c8114617d1c3733a
+    capability_ids:
+    - CAP-00
+    slice_ids:
+    - CAP-00.S01
+    - CAP-00.S02
+    - CAP-00.S03
+    - CAP-00.S04
+    - CAP-00.S05
+    - CAP-00.S06
+    notes: Migrated from the independently approved CAP-00 foundation qualification and G0 approval.
+  campaign: null
+  checkpoints: []
+  completion:
+    status: APPROVED
+    reviewer: repository-owner
+    reviewed_at: '2026-08-09T06:41:32+00:00'
+    evidence:
+    - artifacts/evidence/CAP-00.capability.review-fix.json
+    notes: Historical W0 qualification predates the Wave-campaign controller.
 - id: W1
   title: Windows local runtime and durable core
   goal: Establish the Windows desktop, sidecar, local project storage, domain contracts, provenance, and workflows.
   activation_gate: G0
   track: local-baseline
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W2
   title: Windows local evidence foundation
   goal: Ingest scholarly records and documents, canonicalize them, parse full text, and preserve inspectable anchors.
   activation_gate: G1
   track: local-baseline
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W3
   title: Windows local research workbench
   goal: Deliver search, screening, model execution, structured extraction, verification, and evidence matrices.
   activation_gate: G2
   track: local-baseline
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W4
   title: Windows scholarly reasoning and novelty MVP
   goal: Deliver the argument graph, synthesis, reproducibility, nearest-prior comparison, and bounded novelty workflow.
   activation_gate: G3
   track: local-baseline
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W5
   title: Windows PC/lab production release
   goal: Harden, package, document, and validate the complete Windows edition for individual and laboratory computers.
   activation_gate: G4
   track: local-baseline
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W6
   title: Cross-platform desktop qualification
   goal: Qualify the same desktop, project format, sidecars, security controls, and local workflows on macOS and Linux x86_64/ARM64
     after the Windows release.
   activation_gate: G5
   track: cross-platform-desktop
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W7
   title: Study design and manuscript foundations
   goal: Add production-ready critical and hermeneutic research support, evidence-grounded empirical study design, and reusable
     conference/journal article blueprints for empirical, theory, and critical scholarship.
   activation_gate: G6
   track: research-production
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W8
   title: Results integration, manuscript drafting, and reviewer simulation
   goal: Ingest private technical reports, map verified results, draft source-grounded manuscripts, and conduct extended independent
     reviewer simulations and revision rounds.
   activation_gate: G7
   track: research-production
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W9
   title: Advanced research-intelligence preview
   goal: Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research
     memory on the cross-platform research-production foundation.
   activation_gate: G8
   track: research-intelligence
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W10
   title: University-hosted pilot
   goal: Move the same desktop and contracts to institution-controlled services, identity, collaboration, and operations after
     the complete local research-production gate.
   activation_gate: G8
   track: institutional
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 - id: W11
   title: Managed cloud delivery
   goal: Add tenant provisioning, regional isolation, metering, cloud operations, and commercial governance.
   activation_gate: G10
   track: cloud
+  approval:
+    status: PENDING
+    approved_by: null
+    approved_at: null
+    approved_commit: null
+    capability_ids: []
+    slice_ids: []
+    notes: null
+  campaign: null
+  checkpoints: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
 release_gates:
 - id: G0
   after_wave: W0
   name: Executable engineering baseline
   criteria:
   - Fresh clone can run validation and build skeleton artifacts.
-  - Backlog dependencies, capability-wave increments, ordered slice reviews, and task transitions validate automatically.
+  - Backlog dependencies, durable Wave campaigns, ordered slice reviews, integration checkpoints, and task transitions validate automatically.
   - Architecture constraints and ADR process are documented.
   - Approved UI reference, workflow catalog, page contracts, and design-first automation are installed and validated.
   status: APPROVED
@@ -360,24 +560,25 @@ architecture_constraints:
   validate them; obtain human approval; only then implement application code.'
 selection_policy:
 - Treat the YAML backlog as the authoritative execution ledger; DOCX and Markdown are generated views.
-- The wave is the primary execution axis and every wave has one sequential exit/next-wave activation gate. The default automated
-  execution unit is one capability-wave increment.
+- The wave is the approval, durable execution, integration, qualification, and handoff unit. Every wave has one sequential
+  exit/next-wave activation gate.
 - Use descriptive capability aliases and slice labels in human-facing output. Preserve numeric capability IDs as immutable dependency/evidence
   keys and numeric slice IDs as immutable sequence/evidence keys.
-- Within the active increment, a slice is an ordered integration/review checkpoint and a task is the atomic implementation/evidence
-  unit. Do not hop to unrelated capabilities while the increment has eligible work.
+- Within the active Wave, a slice is an ordered integration/review checkpoint and a task is the atomic implementation/evidence
+  unit. Select across capability contributions only when dependencies and approved Wave order permit it.
 - Start the next slice only after every required task in the current slice is DONE, slice-level end-to-end evidence is attached,
   and the slice review is approved.
-- Close an increment after all of its wave slices are independently approved. Close the capability only after all wave increments,
-  final end-to-end qualification, evidence mapping, and independent capability review pass.
-- A capability-wave increment may pause for its approved completion, an external dependency, explicit human/ADR/design gate,
-  unavailable platform, or an in-boundary blocker. Resume interrupted increments; start a new increment when a later wave activates.
+- Record risk-cluster integration checkpoints as interfaces, migrations, security boundaries, or coherent groups of slices close.
+  These checkpoints run the accumulated affected-profile suite but do not create new human approval gates.
+- Close a Wave only after all of its slices are independently approved, the complete Wave-exit suite passes, criterion-linked
+  evidence is attached, and an independent Wave review approves the integrated result. Capabilities remain cross-Wave product maps.
+- A Wave campaign may pause for an external dependency, explicit human/ADR/design gate, unavailable platform, or an in-boundary
+  blocker. Resume the same Wave campaign after ordinary process or session interruption.
 - Select only tasks whose dependencies are DONE and whose wave activation gate is approved. A future slice and its later gate
   never replace the current global wave/gate in selection output.
 - Filter by deployment profile and platform target. W0-W5 form the Windows baseline; W6 qualifies macOS/Linux; W7-W8 add research
   production; W9 and W10 are parallel advanced-intelligence and university tracks after G8; W11 remains cloud-only after G10.
-- Claim atomically with taskctl before edits. Capability, slice, and task leases record owner, branch/worktree, base SHA,
-  and expiration.
+- Claim atomically with taskctl before edits. Wave and task leases record owner, branch/worktree, base SHA, and expiration.
 - Implement the complete selected task and the slice integration needed to satisfy its acceptance criteria. Record newly discovered
   work as backlog tasks rather than hidden TODOs.
 - Remain IN_PROGRESS while running verification. Attach criterion-to-evidence records tied to the exact commit, then submit
@@ -388,8 +589,8 @@ selection_policy:
 - For intentional user-facing behavior, an approved UI-reference revision must exist before application implementation. Reference-change
   tasks precede application-change tasks.
 definition_of_ready:
-- The containing capability-wave increment is eligible or explicitly selected, and all predecessor work required by its
-  first active-wave slice is complete or gated.
+- The containing Wave campaign has one immutable approval covering every contributing capability decision and slice plan,
+  and all predecessor work required by the task is complete or gated.
 - Status is READY and all dependency task IDs are DONE.
 - The task wave has no activation gate or its activation gate is approved.
 - The objective, deliverable, acceptance criteria, verification profiles, platform targets, and review gate are understandable
@@ -1818,7 +2019,7 @@ capabilities:
       notes: 'Independent slice review approved f78debe/adf64d8 with no required findings: all 10 task manifests and four
         task approvals validate; ADR-0003/0004 are Accepted; desktop 23/23 with 143+15 tests, focused 33/33, site 34/32/14/20,
         taskctl/views, exact 54-file package, and all design-first/conformance boundaries pass.'
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign:
     status: COMPLETE
     owner: codex
@@ -3059,7 +3260,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign:
     status: PAUSED
     scope: capability-wave
@@ -3959,7 +4160,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -5112,7 +5313,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -5969,7 +6170,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -6977,7 +7178,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -8008,7 +8209,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -8860,7 +9061,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -9891,7 +10092,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -10929,7 +11130,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -12151,7 +12352,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -13233,7 +13434,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -14233,7 +14434,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -15208,7 +15409,7 @@ capabilities:
       reviewed_at: null
       evidence: []
       notes: null
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -15228,7 +15429,7 @@ capabilities:
     security and reliability tests.
   - Linux ARM64, including an NVIDIA DGX Spark-class lab profile where available, completes representative GPU/model and end-to-end
     qualification.
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -16293,7 +16494,7 @@ capabilities:
     or unresolved decision.
   - The platform never implies IRB/ethics approval, preregistration, or methodological validity without human/institutional
     review.
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -17323,7 +17524,7 @@ capabilities:
     structures.
   - Researchers can modify and approve the blueprint before prose generation; changes preserve history and impact previews.
   - Editable DOCX, Markdown, and LaTeX skeletons retain stable section identities for source-grounded drafting and review.
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -18352,7 +18553,7 @@ capabilities:
   - The platform never invents or reverse-engineers unreported empirical results and visibly blocks manuscript use of unresolved
     records.
   - Changes to authoritative reports propagate staleness to dependent drafts, reviews, tables, figures, and exports.
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -19404,7 +19605,7 @@ capabilities:
   - Theory and critical drafts preserve conceptual/interpretive plurality and author voice rather than imposing a single article
     logic.
   - Researchers can edit, compare, approve, audit, disclose, and export complete manuscripts and reproducibility artifacts.
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -20463,7 +20664,7 @@ capabilities:
   - Editorial synthesis preserves disagreement and does not present simulated decisions as actual peer review or acceptance
     probability.
   - Every review comment can be triaged, linked to a revision, answered, diffed, and re-reviewed with full lineage.
-  execution_mode: capability_campaign
+  execution_mode: wave_contribution
   campaign: null
   completion:
     status: PENDING
@@ -21520,15 +21721,16 @@ capabilities:
       notes: null
 status_profile:
   name: research-observatory-lightweight
-  relationship_to_general_standard: CLAIMED is represented by IN_PROGRESS plus task lease metadata. A capability-wave increment
-    owns the execution context; slices are ordered integration checkpoints; tasks remain the atomic evidence units.
+  relationship_to_general_standard: CLAIMED is represented by IN_PROGRESS plus task lease metadata. A durable Wave campaign
+    owns the execution context; capabilities contribute outcomes; slices are ordered independent-review checkpoints; tasks
+    remain the atomic evidence units.
   claim_transition: READY -> IN_PROGRESS
   submit_transition: IN_PROGRESS -> REVIEW
   review_transitions:
   - REVIEW -> DONE
   - REVIEW -> IN_PROGRESS
   - REVIEW -> BLOCKED
-  default_execution_unit: capability-wave-increment
+  default_execution_unit: wave-campaign
   integration_unit: slice
   atomic_evidence_unit: task
 desktop_platforms:

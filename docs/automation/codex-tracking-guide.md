@@ -4,16 +4,15 @@
 
 ## Default unit
 
-Work within one approved capability-wave increment. Do not select unrelated
-globally ready tasks while that increment has an executable next ordered
-slice/task. Close the increment after its wave slices are approved; a future
-slice in the same capability does not retain priority over the current wave.
+Work within one approved durable Wave campaign. Do not select work outside the
+Wave while it has an executable dependency-eligible slice/task. Capability
+boundaries do not end the campaign; complete Wave qualification does.
 
 ## Before editing
 
 1. Read root `AGENTS.md`, `docs/README.md`, and `planning/README.md`.
-2. Confirm the capability decisions and active-wave slice plans are approved and readiness passes.
-3. Read the capability packet, active slice plan, affected ADRs/architecture, and UI reference.
+2. Confirm the complete pre-Wave packet is approved at one immutable commit and readiness passes.
+3. Read the Wave page, relevant capability packet, active slice plan, affected ADRs/architecture, and UI reference.
 4. Claim the task with branch, worktree, base SHA, and lease.
 5. Generate the task contract and changed-path verification set.
 6. Stop before editing if a required authority or approved plan is missing.
@@ -21,9 +20,9 @@ slice in the same capability does not retain priority over the current wave.
 ## Command sequence
 
 ```bash
-python tools/planctl.py --repo . ready CAP-XX --wave WN --require-approved
+python tools/planctl.py --repo . wave ready WN --require-approved
 python tools/taskctl.py --file planning/backlog.yaml validate
-python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --wave WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
+python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 python tools/taskctl.py --file planning/backlog.yaml status
 python tools/backlog_views.py --repo .
 python tools/backlog_views.py --repo . --check
@@ -49,7 +48,7 @@ python tools/taskctl.py submit CAP-XX.SXX.TXX --agent <agent> --note "<summary>"
 python tools/taskctl.py review CAP-XX.SXX.TXX --reviewer <reviewer> --result approved --note "<disposition>"
 ```
 
-`block`, `renew`, `evidence`, `submit`, capability pause/renew/submit, and slice
+`block`, `renew`, `evidence`, `submit`, Wave pause/renew/checkpoint/submit, and slice
 submit verify lease ownership. There is no campaign-override claim flag. Release
 gates cannot be approved twice, out of sequence, or while their preceding wave
 contains an incomplete task or unapproved slice. Every mutation validates the prospective ledger before an
@@ -60,8 +59,8 @@ Start/resume/claim metadata is bound to the actual current Git branch, full
 `HEAD`, and canonical worktree. Evidence is a single-read snapshot whose base,
 branch, commit ancestry, exact changed-file scope, named passing checks, complete
 criterion map, empty unverified list, clean tracked/untracked worktree, digest,
-and logical uniqueness are checked again on later validation. Implementation or
-campaign owners cannot review their own task, slice, or capability. Approved
+and logical uniqueness are checked again on later validation. Task owners cannot
+review their own task; Wave campaign owners cannot review their own slice or Wave. Approved
 release gates remain semantically tied to a fully DONE and independently
 integrated preceding wave.
 
@@ -77,7 +76,7 @@ residual text are fixed and the marker is invalid everywhere else.
 When a decision or approval is required:
 
 1. regenerate the review site;
-2. print its `file://` and repository-relative capability links;
+2. print its `file://` and repository-relative Wave link plus relevant capability detail links;
 3. state whether recommendations are already decision-complete;
 4. identify only unresolved or changed items;
 5. explain that Other requires a brief description and detailed rationale; and
@@ -93,22 +92,23 @@ minimum release-gate handoff and must be included or faithfully summarized.
 ## Continuous execution
 
 After approval, continue through tasks, slice integration, independent slice
-review, and the next approved slice in the active wave. Ordinary test failure,
+review, triggered integration checkpoints, and the next approved slice in the active Wave. Ordinary test failure,
 debugging, refinement inside the approved envelope, or a documented fallback is
 not a human stop point.
 
-The capability-wide decision approval is durable, while slice-plan approval is
-progressive by wave. A capability-wave increment is the resumable execution unit.
-Close it after its last ordered wave slice; do not reinterpret a slice boundary
-as a routine approval prompt or a future capability gate as the current gate.
+One pre-Wave approval binds every contributing capability decision and slice
+plan. The Wave campaign is the resumable execution unit. Close it only after the
+last ordered Wave slice, full Wave suite, and independent Wave review; do not
+reinterpret a capability or slice boundary as a routine approval prompt.
 
 Before claiming, use `taskctl next` and `taskctl show` to identify the active
-increment's next `READY` task. Permitted scope is its objective, deliverables,
+Wave campaign's next `READY` task. Permitted scope is its objective, deliverables,
 criteria, dependencies, profile/platform, and governing sources. At task scope,
 select the narrowest checks from its declared verification coverage and the
-changed-path impact map that exercise credible failure paths. Defer unchanged
-full profiles to slice review unless an explicit criterion or profile-wide impact
-requires earlier execution, and record the breadth rationale in evidence.
+changed-path impact map that exercise credible failure paths. Defer accumulated
+affected-profile checks to risk-cluster checkpoints and complete profiles to Wave
+exit unless an explicit criterion or profile-wide impact requires earlier execution,
+and record the breadth rationale in evidence.
 Completion is commit-bound criterion evidence, submission, required review,
 clean tested local main integration, and continuation to the next eligible task
 or slice gate.
@@ -124,7 +124,21 @@ transition. Stop on branch divergence and never push without explicit authority.
 
 ## Independent review
 
-Use a fresh agent context when possible. The reviewer challenges scope, architecture, tests, denial/failure/recovery paths, privacy/security, rights, UI contracts, platform behavior, hidden TODOs, and whether evidence actually proves the acceptance criteria.
+Use a fresh agent context when possible. Every task receives a focused
+independent disposition of scope, evidence truth, changed contracts, and
+credible failure paths. Expand task review for security/credential boundaries,
+migrations or destructive I/O, automation/evidence controls, public or
+cross-process contracts, and explicit plan requirements. Deep/adversarial review
+defaults to the slice. The reviewer challenges scope, architecture,
+tests, denial/failure/recovery paths, privacy/security, rights, UI contracts,
+platform behavior, hidden TODOs, and whether evidence actually proves the
+acceptance criteria.
+
+Maintain one consolidated finding ledger. Required findings are severity-ranked,
+reproducible, and criterion-bound. A remediation review replays every prior
+finding plus the incremental changed-path risk boundary; it does not restart the
+whole audit. Move nonmaterial adjacent improvements to the backlog, and escalate
+recurring findings after a second remediation to root-cause/control review.
 
 ## Experience work
 

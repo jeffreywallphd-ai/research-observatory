@@ -138,7 +138,7 @@
       toggleOther(card);
     });
     save();
-    if (message) message.textContent = "Recommended defaults restored. Review any intended overrides before capability approval.";
+    if (message) message.textContent = "Recommended defaults restored. Review any intended overrides before pre-Wave approval.";
   });
 
   const clearButton = document.querySelector("[data-clear-decisions]");
@@ -185,7 +185,7 @@
       capability_plan_sha256: planHash,
       reviewer: value.reviewer || null,
       reviewed_at: new Date().toISOString(),
-      requested_action: value.approval_intent ? "approve-capability-and-active-wave" : "record-feedback",
+      requested_action: value.approval_intent ? "include-in-pre-wave-approval" : "record-feedback",
       capability_notes: value.notes,
       decisions: Object.entries(value.decisions).map(([id, item]) => ({
         id,

@@ -1,6 +1,6 @@
 # Repository automation tools
 
-- `planctl.py` - prepare/review capability decisions and progressively approve active-wave slice plans.
+- `planctl.py` - prepare/review complete Wave packets and record one commit-bound pre-Wave approval.
 - `taskctl.py` - select wave-scoped capability increments, present descriptive aliases, claim/renew leases, enforce ordered slices and sequential wave-exit gates, attach exact-commit evidence, and atomically compare-and-swap state.
 - `backlog_views.py` - deterministically render the comprehensive Markdown plan and compact status summary from `planning/backlog.yaml`, or fail on generated-view drift with `--check`.
 - `capability_plan_check.py` and `slice_plan_check.py` - validate canonical plans.
@@ -12,7 +12,7 @@
 - `runtime_check.py` - validate exact runtime/package-manager pins and report actionable mismatches.
 - `bootstrap.py` - verify prerequisites, perform frozen installs, generate local development configuration, and run the foundation smoke gate.
 - `architecture_check.py` - validate repository-area purposes, module dependency rules, stable interfaces, and deployment-profile boundaries.
-- `agent_protocol_check.py` - enforce progressive active-wave approval, durable capability-wave execution, READY-only selection, scope/check/evidence rules, and task briefing.
+- `agent_protocol_check.py` - enforce one pre-Wave approval, durable Wave execution, READY-only selection, multi-level verification, review boundaries, and task briefing.
 - `adr_new.py` - create a task-linked Proposed ADR and update the decision index in one guarded command.
 - `adr_check.py` - validate ADR states/index/task links and require matching changed ADRs for protected architecture paths.
 - `verify.py` - run composable task-facing verification profiles and emit command, duration, failure, and JSON report evidence.

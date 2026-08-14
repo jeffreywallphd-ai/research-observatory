@@ -192,6 +192,10 @@ def main() -> int:
         )
         if entry.get("exit_gate_id") != (exit_gate or {}).get("id"):
             errors.append(f"{wave_id}: exit gate differs from authoritative backlog")
+        if entry.get("approval_status") != (backlog_waves[wave_id].get("approval") or {}).get("status"):
+            errors.append(f"{wave_id}: pre-Wave approval status differs from authoritative backlog")
+        if entry.get("completion_status") != (backlog_waves[wave_id].get("completion") or {}).get("status"):
+            errors.append(f"{wave_id}: Wave completion status differs from authoritative backlog")
     duplicate_assignments = sorted(slice_id for slice_id, count in Counter(assigned_slice_ids).items() if count != 1)
     if set(assigned_slice_ids) != set(backlog_slices) or duplicate_assignments:
         errors.append(f"Every backlog slice must appear in exactly one wave page; duplicates={duplicate_assignments}")
@@ -234,8 +238,12 @@ def main() -> int:
             if wave_id not in backlog_waves:
                 errors.append(f"{rel}: wave page has no matching backlog wave")
             content = " ".join(parsed.text_parts)
-            if "Capability increments and ordered slices" not in content:
-                errors.append(f"{rel}: missing wave capability-increment breakdown")
+            if "Complete pre-Wave approval packet" not in content:
+                errors.append(f"{rel}: missing complete pre-Wave approval surface")
+            if "Capability contributions and ordered slices" not in content:
+                errors.append(f"{rel}: missing Wave capability-contribution breakdown")
+            if "Review and verification cadence while the Wave runs" not in content:
+                errors.append(f"{rel}: missing Wave review/testing cadence")
             if "Wave exit / successor activation" not in content:
                 errors.append(f"{rel}: missing wave gate-decision breakdown")
         elif page.name == "index.html" and page.parent.name in cap_plans:
@@ -245,8 +253,8 @@ def main() -> int:
             actual = set(parsed.decision_ids)
             if expected != actual:
                 errors.append(f"{rel}: rendered decision IDs differ from capability plan")
-            if "Resolved capability decisions and wave approval" not in " ".join(parsed.text_parts):
-                errors.append(f"{rel}: missing resolved-decision/wave-approval surface")
+            if "Resolved capability decisions within Wave approval" not in " ".join(parsed.text_parts):
+                errors.append(f"{rel}: missing resolved-decision/pre-Wave-approval surface")
             decision_count = len(expected)
             if parsed.other_choice_count != decision_count:
                 errors.append(f"{rel}: expected {decision_count} Other choices, found {parsed.other_choice_count}")

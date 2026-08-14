@@ -61,7 +61,7 @@ The approved reference contains **32 product pages plus two reference pages**. S
 
 ## 7. Automation consistency
 
-`taskctl` enforces capability-wave, ordered-slice, task, and sequential wave-gate transitions. Verification profiles cover cross-platform desktop, study design, reports/results, manuscripts, reviewers, end-to-end local behavior, and private-content security. Experience automation validates reference approval/hashes, workflow/page/capability contracts, links, shared assets, themes, interaction, accessibility, visual baselines, and application conformance.
+`taskctl` enforces durable Wave campaigns, ordered-slice and task transitions, risk-cluster integration checkpoints, Wave qualification, and sequential release gates. Verification profiles cover cross-platform desktop, study design, reports/results, manuscripts, reviewers, end-to-end local behavior, and private-content security. Experience automation validates reference approval/hashes, workflow/page/capability contracts, links, shared assets, themes, interaction, accessibility, visual baselines, and application conformance.
 
 ## 8. Items deliberately unchanged
 

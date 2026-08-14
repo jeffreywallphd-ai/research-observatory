@@ -31,20 +31,23 @@ Do not silently resolve a material mismatch. Record it and follow `docs/governan
 
 ## Default execution model
 
-Use **Roadmap -> Wave -> Capability increment -> Slice -> Task -> Wave exit gate**.
-The wave is the primary execution axis. A capability may contribute ordered
-slices to more than one wave, so the durable execution unit is one
-**capability-wave increment**, not the capability's entire future roadmap.
+Use **Roadmap -> Wave campaign -> Capability contribution -> Slice -> Task ->
+Wave exit gate**. The Wave is the approval, durable execution, integration,
+qualification, and handoff unit. A capability is a cross-Wave product-outcome
+map; it does not own an execution lease.
 
-- inspect the complete capability before implementation and resolve its material
-  capability-wide decisions once;
-- complete and approve the ordered slice plans in the active wave before that
-  increment starts; future-wave slice plans may remain proposed until their wave;
-- treat the best-in-class recommendation as selected unless a reviewer overrides it;
-- execute the active wave's slices in declared order through production-ready
-  increment qualification; and
-- after independent slice/increment review, release the campaign so `taskctl`
-  can select other work in the same global wave.
+- inspect every capability contribution and ordered slice assigned to the Wave;
+- resolve all material capability, interface, security, migration, experience,
+  recovery, performance, and verification decisions before execution;
+- treat the best-in-class recommendation as selected unless the pre-Wave
+  reviewer records an override with rationale;
+- obtain one explicit approval for the complete Wave packet at one immutable
+  commit;
+- execute all dependency-eligible Wave slices through independent slice review,
+  recording bounded integration checkpoints as coherent risk clusters close;
+  and
+- run the complete affected/full qualification matrix and independent Wave
+  review before the Wave exit gate can be approved.
 
 Capabilities have two identities. The descriptive alias, such as
 `CAP-windows-desktop-runtime`, is the default human-facing name. The numeric ID,
@@ -54,35 +57,39 @@ show a descriptive label such as `SLICE-authenticated-desktop-service-contract`
 by default, but retain `CAP-01.S04` as the immutable sequence/evidence key.
 
 Routine implementation choices, debugging, evidence collection, independent
-reviews, and transitions among already approved slices in the active wave do not
-require new approval after the increment starts.
+reviews, integration checkpoints, and transitions among already approved slices
+in the active Wave do not require new human approval.
 
-### Progressive approval and durable increments
+### One pre-Wave approval and one durable campaign
 
-Before starting `CAP-XX/WN`, make the capability decision packet complete and
-approve the slice plans assigned to `WN` at an immutable commit. Approval of a
-wave does not authorize a later wave. Historical approvals that covered every
-slice remain valid; they do not expand what the current global wave may execute.
+Before starting `WN`, make the complete Wave packet decision-complete. The packet
+must include every contributing capability decision, every slice plan assigned
+to the Wave, the cross-capability dependency/interface map, risks, rollback and
+recovery duties, the multi-level verification matrix, and the Wave exit criteria.
+Approve that entire packet once at one immutable commit. Approval of one Wave
+never authorizes a later Wave.
 
-"One run" means one durable capability-wave increment, not one operating-system
-process. Resume it after an ordinary tool, app, or session interruption. Claim
-and finish only its next dependency-eligible task, integrate and review each
-ordered slice, and continue through increment qualification. When the increment
-is approved, close it even when the capability has future slices; do not surface
-that future slice's gate as the current program gate.
+"One run" means one durable Wave campaign, not one operating-system process.
+Resume it after an ordinary tool, app, or session interruption. Claim and finish
+only the next dependency-eligible Wave task, integrate and independently review
+each slice, record triggered risk-cluster checkpoints, and continue until Wave
+qualification or a documented unmet gate. Do not stop merely because a
+capability contribution ends.
 
 Safest concise start prompt:
 
-> Start CAP-XX/WN using the repository workflow. Verify that the capability
-> decision packet and every WN slice plan are approved, then execute the durable
-> capability-wave increment in dependency order through production-ready
-> increment qualification. Claim only the next READY task through taskctl;
-> validate, attach commit-bound evidence, obtain required review, fast-forward
-> tested work into local main, and stop only at a documented unmet gate without
+> Start WN using the repository workflow. Verify that every contributing
+> capability decision and every WN slice plan are approved together at one
+> immutable commit, then execute the full durable Wave campaign in dependency
+> order through production-ready Wave qualification. Claim only the next READY
+> task through taskctl; run risk-selected task checks, attach commit-bound
+> evidence, obtain required independent slice reviews, record triggered
+> integration checkpoints, fast-forward tested work into local main, run the
+> complete Wave-exit suite, and stop only at a documented unmet gate without
 > bypassing it.
 
-Pause only for wave-increment completion, demonstrated infeasibility, genuinely
-new consequential evidence, unavailable required external
+Pause only for demonstrated infeasibility, genuinely new consequential evidence,
+unavailable required external
 service/credential/platform/hardware, higher-authority conflict, required
 governed experience-reference change, destructive or external action,
 substantial unapproved spend, or explicit user direction.
@@ -93,9 +100,9 @@ Never stop at a pending release, approval, design, readiness, or external gate
 with only a gate ID or generic blocker message. Before yielding, provide a
 decision-complete handoff that includes:
 
-- directly openable `file://` and repository-relative links to the active
-  capability/slice review pages and every prerequisite capability packet that
-  materially informs the gate;
+- directly openable `file://` and repository-relative links to the active Wave
+  packet, relevant capability/slice detail pages, and every prerequisite packet
+  that materially informs the gate;
 - the exact criteria and evidence that eventual approval must establish;
 - whether approval is legally available now, including incomplete preceding
   tasks and upstream gates when it is not;
@@ -115,11 +122,12 @@ and do not claim work in its locked wave.
 ## Planning and review commands
 
 ```bash
-python tools/planctl.py --repo . prepare CAP-XX
-python tools/planctl.py --repo . review CAP-XX --wave WN
-python tools/planctl.py --repo . validate CAP-XX --wave WN
-python tools/planctl.py --repo . ready CAP-XX --wave WN --require-approved
-python tools/taskctl.py --file planning/backlog.yaml capability start CAP-XX --wave WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
+python tools/planctl.py --repo . wave prepare WN
+python tools/planctl.py --repo . wave review WN
+python tools/planctl.py --repo . wave validate WN
+python tools/planctl.py --repo . wave ready WN --require-approved
+python tools/planctl.py --repo . wave approve WN --by <reviewer> --commit <git-sha>
+python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 ```
 
 Whenever requesting a decision, override, approval, or readiness remediation, print the `file://` URI and repository-relative path produced by `planctl review`.
@@ -142,10 +150,10 @@ Restoring code to an already approved reference does not require a new reference
 
 - Task completion requires criterion-linked machine evidence tied to the exact commit.
 - Slice completion requires integrated end-to-end evidence and independent review.
-- Capability-wave completion requires its slices plus affected happy, failure,
-  denial, cancellation, migration, restart, recovery, security, accessibility,
-  and required-platform qualification. Capability completion requires every wave
-  increment and the final cross-wave qualification.
+- Wave completion requires every assigned slice plus happy, failure, denial,
+  cancellation, migration, restart, recovery, security, accessibility,
+  performance, packaging, and required-platform qualification across capability
+  boundaries. Capability status is derived from its approved Wave contributions.
 - Narrative claims, screenshots without contracts, or tests that merely mirror implementation are not sufficient evidence.
 - Never weaken or delete a valid test solely to make work pass.
 
@@ -184,13 +192,30 @@ touches shared verification/build/security/toolchain infrastructure with credibl
 profile-wide impact, a dependency or runtime change crosses the profile boundary,
 or a failure cannot be localized safely. Record that reason in evidence.
 
-Run the affected full integrated profiles once when the completed slice is being
-reviewed. Run the complete cross-slice/cross-capability matrix at capability
-qualification. Task evidence must state the risk analysis, selected checks, and
-which broader coverage is deferred to slice or capability review. Backlog/plans,
+At slice review, run affected integration and adversarial checks for the slice's
+credible risk surface; do not automatically replay the complete deployment
+profile. Record an integration checkpoint when a shared interface, migration,
+security boundary, platform adapter, or coherent group of roughly three to five
+slices closes. A checkpoint runs the accumulated affected-profile union plus a
+build/smoke path and records open risks; it is not a new approval gate.
+
+Run the complete affected/full repository and deployment-profile matrix once at
+Wave exit. Task evidence must state the risk analysis, selected checks, and which
+broader coverage is deferred to slice, checkpoint, or Wave review. Backlog/plans,
 architecture, UI-reference integrity, generated views, and the primary platform
 are checked at task level only when the changed-path impact map makes them
 plausibly affected. See `docs/automation/project-automation-guide.md`.
+
+Every task receives an independent, commit-bound disposition, but the low-risk
+task review is deliberately narrow: confirm scope, evidence truth, changed
+contracts, and credible failure paths. Deep/adversarial review defaults to the
+slice. Expand task review when work touches authentication/secrets, security
+policy, migrations or destructive I/O, evidence/automation controls, public or
+cross-process contracts, or an explicit plan criterion. Remediation review must
+replay prior findings plus the incremental risk boundary rather than restart the
+entire audit. Findings must be severity-ranked, reproducible, acceptance-bound,
+and consolidated; adjacent improvements outside the approved acceptance surface
+become backlog work unless they expose a material safety or correctness defect.
 
 ## Local main integration
 

@@ -10,7 +10,7 @@ This file is the repository's high-level document router. It delegates detailed 
 | Architecture, services, data, deployment, security, platform model | Accepted `adr/` records, then `architecture/README.md` and `architecture/source/systems-design.md` |
 | Source precedence, mismatch handling, document change control | `governance/repository-governance.md` |
 | Meaning and origin of waves, gates, capabilities, slices, aliases, and approval scope | `governance/delivery-control-model.md` |
-| Capability campaign, verification, evidence, CI, and stop rules | `automation/project-automation-guide.md` |
+| Wave campaign, verification, evidence, CI, checkpoints, and stop rules | `automation/project-automation-guide.md` |
 | Coding-agent claims, task flow, and evidence | `automation/codex-tracking-guide.md` |
 | Static decision-review behavior and feedback format | `automation/planning-review-site.md` |
 | Current work identity and plan lifecycle | `../planning/README.md` |

@@ -39,19 +39,19 @@
 
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-13 · immutable evidence key</span><h1>CAP-cloud-platform</h1><p>Managed cloud control plane, tenant data planes, governance, and SaaS operations</p></div><span class="status status-proposed">Proposed</span></div>
-  <p>Review the completed capability-wide recommendation register once. Each approved wave then executes only its ordered slices as a durable capability-wave increment.</p>
+  <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
   <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>18</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>add501149881</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
-  <div><h2>Resolved capability decisions and wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them once, then approve only the active wave's ordered slice plans. Later-wave plans may remain proposed until their activation gate.</p></div>
+  <div><h2>Resolved capability decisions within Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them here, then approve the complete active Wave packet from its Wave page. Later-Wave plans remain outside that approval.</p></div>
   <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 18 selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
-  <label class="approval-check"><input type="checkbox" data-approval-intent> Request approval of the capability packet and the selected active-wave slice plans after feedback is applied</label>
+  <label class="approval-check"><input type="checkbox" data-approval-intent> Mark this capability review complete for inclusion in the active pre-Wave approval packet</label>
   <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
   <div class="feedback-message" data-feedback-message role="status"></div>
   <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review CAP-13
-python tools/planctl.py --repo . approve CAP-13 --wave W11 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+python tools/planctl.py --repo . wave approve W11 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
 # Only for overrides or notes:
 python tools/planctl.py --repo . apply-feedback CAP-13 &lt;downloaded-json&gt;
 python tools/planctl.py --repo . approve CAP-13 --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
