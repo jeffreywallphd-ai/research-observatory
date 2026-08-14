@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e2b90700fa731056e68e05c089e655b0a723cb3634b9aa34bfd0f0c832c79d2d
+source_sha256: 05b6242490bd2d7d077c54de4718d6be4f8d998afbd559653ecde94cf75e5a70
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1685,7 +1685,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S01.T03 - Add project compatibility and safe-open checks
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
