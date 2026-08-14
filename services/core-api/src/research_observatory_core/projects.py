@@ -32,7 +32,7 @@ from .models import (
     ProjectProjection,
     ProjectRecoveryAction,
 )
-from .storage import StorageProblem, database_integrity_report, initialize_database, open_canonical_database
+from .storage import StorageProblem, initialize_database, open_canonical_database
 
 _DIRECTORY_NAME = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 _TEMPLATE_ID = re.compile(r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
@@ -498,9 +498,6 @@ class ProjectLifecycleService:
         connection = None
         try:
             connection = open_canonical_database(path / "state" / "project.sqlite3", expected_project_id=project_id)
-            report = database_integrity_report(connection, expected_project_id=project_id)
-            if not report.ok:
-                raise StorageProblem("project database integrity verification failed")
         except StorageProblem as error:
             raise ProjectLifecycleProblem(
                 status=422,

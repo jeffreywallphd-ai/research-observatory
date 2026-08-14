@@ -81,8 +81,11 @@ loadable extensions, double-quoted string literals, and enables SQLite's
 defensive connection configuration. Database and parent identities are held
 against Windows rename/delete while the connection is live. Project creation
 initializes and verifies the schema inside the unpublished staging root; a
-compatible project open runs profile, STRICT inventory, `quick_check`, and
-`foreign_key_check` before publishing a session lock or audit record.
+compatible project open verifies the immutable application/profile/schema
+fingerprint and project identity before publishing a session lock or audit
+record. Full `quick_check` and `foreign_key_check` probes remain explicit rather
+than adding a database-size scan to every interactive open; the next tasks own
+routine startup/maintenance scheduling and user-visible recovery.
 
 Schema version 1 separates stable aggregate identities from normalized common
 aggregate revisions, with exact
