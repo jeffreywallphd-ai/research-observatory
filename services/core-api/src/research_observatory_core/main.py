@@ -49,6 +49,7 @@ def supervision_handshake(*, host: str, port: int) -> dict[str, object]:
             "operations.cancel",
             "operations.events",
             "operations.read",
+            "projects.lifecycle",
             "runtime.contract",
             "runtime.status",
         ],

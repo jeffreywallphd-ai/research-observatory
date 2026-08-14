@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/project/project-profile.schema.json",
+  "title": "Research Observatory local project profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "documentType", "displayName", "templateId"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-project-profile"},
+    "displayName": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"},
+    "templateId": {"type": "string", "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$"}
+  }
+}

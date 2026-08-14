@@ -8,6 +8,7 @@ import {
   CoreApiClientError,
   createCoreApiClient,
   decodeProblemDetail,
+  decodeProjectProjection,
   decodeVersionResponse,
   evaluateCoreApiCompatibility,
   parseOperationEventStream,
@@ -151,5 +152,49 @@ describe("generated Core API client", () => {
     );
     const mismatched = createCoreApiClient(async () => response(200, operation, "application/json", '"op-other-1"'));
     await expect(mismatched.operation("op-first")).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+  });
+
+  it("binds project commands and responses to exact local lifecycle contracts", async () => {
+    const projection = {
+      schemaVersion: "1.0",
+      projectId: "11111111-1111-4111-8111-111111111111",
+      displayName: "Study One",
+      templateId: "theory-synthesis",
+      lifecycleState: "active" as const,
+      root: "C:/Research/study-one",
+      open: true,
+      revision: 0,
+      deleteConfirmation: "delete:11111111-1111-4111-8111-111111111111",
+    };
+    expect(decodeProjectProjection(projection)).toEqual(projection);
+    expect(decodeProjectProjection({ ...projection, privatePath: "C:/private" })).toBeNull();
+    expect(decodeProjectProjection({ ...projection, lifecycleState: "archived", open: true })).toBeNull();
+
+    const requests: unknown[] = [];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      return response(200, projection);
+    });
+    await client.createProject({
+      parentDirectory: "C:/Research",
+      directoryName: "study-one",
+      displayName: "Study One",
+      templateId: "theory-synthesis",
+    });
+    await client.archiveProject({ root: projection.root });
+    await client.deleteProject({ root: projection.root, confirmation: projection.deleteConfirmation });
+    expect(requests.map((request) => (request as { path: string }).path)).toEqual([
+      "/projects", "/projects/archive", "/projects/delete",
+    ]);
+    expect(JSON.parse((requests[0] as { body: string }).body)).toEqual({
+      parentDirectory: "C:/Research",
+      directoryName: "study-one",
+      displayName: "Study One",
+      templateId: "theory-synthesis",
+    });
+    await expect(client.openProject({ root: "relative/project" })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+    await expect(client.deleteProject({ root: projection.root, confirmation: "delete:wrong" })).rejects.toThrow(
+      "RO-CORE-REQUEST-INVALID",
+    );
   });
 });

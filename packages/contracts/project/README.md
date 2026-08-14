@@ -30,3 +30,10 @@ schema-only validation as successful validation is a contract violation.
 
 `fixtures/` supplies one valid relocatable manifest and one intentionally
 invalid path-bearing manifest for downstream readers and compatibility tests.
+
+`project-profile.schema.json`, `project-lock.schema.json`, and
+`project-lifecycle-event.schema.json` bind the implemented local lifecycle.
+The profile owns the display name and template selection inside the package;
+the lock owns exclusive local session identity; lifecycle events contain only
+bounded event/state/trace/time metadata. None permits project content, absolute
+paths, credentials, or arbitrary extension fields.

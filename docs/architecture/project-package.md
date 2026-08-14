@@ -60,6 +60,18 @@ caches remain outside every project package and survive project deletion.
   after the required structure and manifest validate. Interrupted staging never
   masquerades as a usable project.
 
-The lifecycle and lock implementations arrive in the next tasks; this document
-defines the stable layout and their required extension points without claiming
-those behaviors already exist.
+## Implemented lifecycle boundary
+
+Core now owns create, open, close, archive, restore, and recoverable-delete
+transitions through the generated local API. Creation stages a complete sibling
+package before publication. Open acquires an exclusive `session.lock` carrying
+only process/instance/heartbeat/recovery identity; close removes only a lock
+owned by the current supervised Core instance. Archive is reversible. Delete
+requires the exact project-specific confirmation and moves the whole closed
+package to a sibling `.research-observatory-trash` directory without touching
+application-level shared model caches. Project titles remain in the governed
+profile under `config`, never in the plaintext root manifest or audit events.
+
+Stale-lock recovery and secure purge remain separate explicit workflows; this
+boundary never guesses that an unfamiliar lock is safe to break and never
+claims that recoverable trash is cryptographic erasure.
