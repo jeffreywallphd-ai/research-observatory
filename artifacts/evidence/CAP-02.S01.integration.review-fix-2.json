@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-02.S01",
+  "stateCommit": "964ab5d6f68e0f261b45fcddc246d5dbbcc490d6",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S01.integration.review-fix.json",
+    "sha256": "bc66bbf7e0d1d4bd0ebf6e34eaf7690bc608deb4b709bd8e2c23fe4b3b2df6b2",
+    "reason": "The first remediation review verified commit/hardware binding, governed calibration authority, and unrounded thresholds, but found that a persistent final publication failure could defeat both the PASS write and its failure-report retry. This record binds the pre-measurement NONQUALIFYING/IN_PROGRESS tombstone that must publish before qualification proceeds."
+  },
+  "remediation": {
+    "baseCommit": "ec0c24033ea7850220e8889ba14c82d92e2a83e6",
+    "candidateCommit": "964ab5d6f68e0f261b45fcddc246d5dbbcc490d6",
+    "reviewTransitionCommit": "fc294827b3e134013f25663b031203f291c27200",
+    "changedFiles": [
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/status-summary.md",
+      "tests/data/test_project_lifecycle_performance_check.py",
+      "tools/project_lifecycle_performance_check.py"
+    ]
+  },
+  "outcome": "The functional local project lifecycle and all previously hardened performance authority remain intact; every attempted qualification now invalidates prior evidence before measurement, so no later failure can leave stale PASS evidence current.",
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_project_lifecycle_performance_check",
+      "exitCode": 0,
+      "result": "All ten focused tests pass. The new tests seed a stale PASS, prove the initial confined NONQUALIFYING/IN_PROGRESS tombstone replaces it, force both final PASS publication and fallback publication to fail persistently, and confirm the tombstone remains. A successful run replaces the tombstone with the current PASS; pre/mid qualification failures replace it with completed NONQUALIFYING evidence."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\project_lifecycle_performance_check.py --repo . --report artifacts/tmp/CAP-02.S01-project-performance-review-fix-2.json",
+      "exitCode": 0,
+      "result": "At exact clean state 964ab5d, the tombstone publishes first and the canonical commit-bound/hardware-bound qualification replaces it only after all checks pass. Fresh-service raw p95 19.7974 ms and warm-service raw p95 13.045 ms pass the exact unrounded 20-percent limits and 500 ms absolute budget. Report SHA-256: 543c867df68a4d44ec8a6df7b93347bf4c277f50d6ae6b2c4a6ba05d592c0793."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S01-integration-review-fix-2-build-manifest.json",
+      "exitCode": 0,
+      "result": "All 81 governed Python files pass format, lint, and typing. The exact candidate emits clean build identity 0.1.0+g964ab5d with no dirty paths; manifest SHA-256 1730f3e7c23e08e6cef6134e176fdc9b1ba94f759fcac9076c04c7386b48ea64."
+    },
+    {
+      "command": "superseded CAP-02.S01 integration evidence and review-fix evidence checks",
+      "exitCode": 0,
+      "result": "All functional lifecycle, compiled product, profile, UI/reference, contract, task evidence, calibration, source-binding, threshold, governance, and downstream-handoff results remain applicable. This incremental change affects only report publication ordering and its focused tests."
+    }
+  ],
+  "integratedBehavior": [
+    "Before any qualification snapshot or measurement begins, the confined destination is atomically replaced with a NONQUALIFYING record whose phase is IN_PROGRESS. Measurement is forbidden if that invalidation cannot publish.",
+    "A completed PASS atomically replaces the tombstone only after the canonical locked inputs, exact hardware, clean Git state, calibration authority, raw thresholds, and final state checks succeed.",
+    "If PASS publication fails, a completed NONQUALIFYING record is attempted. If that also fails persistently, the already-published IN_PROGRESS tombstone remains authoritative and the command exits nonzero.",
+    "All project lifecycle, compatibility, audit, rollback, read-only, production UI, offline, accessibility, performance-source, calibration, and downstream behavior remains unchanged."
+  ],
+  "failureAndRecoveryCoverage": [
+    "persistent final PASS and fallback publication failure after successful initial tombstone",
+    "pre-, mid-, post-measurement and publication failure with stale-evidence invalidation",
+    "successful replacement of tombstone with a current commit-bound PASS",
+    "all prior source, hardware, calibration, raw-threshold, lifecycle, recovery, denial, and product/reference cases"
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "fullAffectedProfileCommandInventoryPassedAtSliceReview": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "SQLite scholarly state and recovery remain CAP-02.S02 scope.",
+      "Cross-platform path, lock, and performance qualification remains W6 scope; Windows x64 is release-authoritative for W1."
+    ]
+  }
+}
