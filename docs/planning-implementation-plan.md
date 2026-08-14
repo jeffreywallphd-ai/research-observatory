@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5b800ab9a9e56ffd38e1b0954ec1f9a3e1ca95a5f6b8823e6aff96ab056df827
+source_sha256: d2d692b372315dd86d3d2e158c672b3f4a0c1018335376b60e2ee7a040395af7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1621,7 +1621,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S01.T01 - Define the local project package and directory layout
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
