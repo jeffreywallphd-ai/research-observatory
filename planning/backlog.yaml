@@ -3639,11 +3639,16 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T13:50:36+00:00'
-      updated_at: '2026-08-14T13:50:36+00:00'
+      updated_at: '2026-08-14T14:35:44+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S02.T01.json
+        sha256: bcdb32b79018de8296c5916ee26a9853b8d697dec4cec65e6b26381ae6376af4
+        commit: a7276abc1152c5fb76c3228804ed65c8be932948
+        recorded_at: '2026-08-14T14:35:44+00:00'
       review:
         reviewer: null
         result: null
@@ -3654,7 +3659,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-14T13:50:36+00:00'
         expires_at: '2026-08-14T21:50:36+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
