@@ -160,6 +160,25 @@ function operationState(value: unknown): value is OperationState {
   return value === "queued" || value === "running" || value === "succeeded" || value === "failed" || value === "cancelled";
 }
 
+function projectLifecycleState(value: unknown): value is ProjectLifecycleState {
+  return value === "active" || value === "archived" || value === "trash";
+}
+
+function boundedText(value: unknown, minimum: number, maximum: number): value is string {
+  return typeof value === "string" && value.length >= minimum && value.length <= maximum && !/[\u0000-\u001f\u007f]/.test(value);
+}
+
+function projectRoot(value: unknown): value is string {
+  if (!boundedText(value, 1, 4096)) return false;
+  const normalized = value.replaceAll("\\", "/");
+  if (!/^(?:[A-Za-z]:\/|\/\/[^/]+\/[^/]+\/|\/)/.test(normalized)) return false;
+  return normalized.split("/").every((part) => part !== "..");
+}
+
+function canonicalProjectId(value: unknown): value is string {
+  return typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(value);
+}
+
 export function decodeVersionResponse(value: unknown): VersionResponse | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
@@ -197,6 +216,21 @@ export function decodeOperationStatus(value: unknown): OperationStatus | null {
   if (typeof candidate.createdAt !== "string" || !Number.isFinite(Date.parse(candidate.createdAt))) return null;
   if (typeof candidate.updatedAt !== "string" || !Number.isFinite(Date.parse(candidate.updatedAt)) || !canonicalTraceId(candidate.traceId)) return null;
   return candidate as unknown as OperationStatus;
+}
+
+export function decodeProjectProjection(value: unknown): ProjectProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "projectId", "displayName", "templateId", "lifecycleState", "root", "open", "revision",
+    "deleteConfirmation",
+  ])) return null;
+  if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)) return null;
+  if (!boundedText(candidate.displayName, 1, 120) || !/^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/.test(String(candidate.templateId))) return null;
+  if (!projectLifecycleState(candidate.lifecycleState) || !projectRoot(candidate.root) || typeof candidate.open !== "boolean") return null;
+  if (!integer(candidate.revision, 0, Number.MAX_SAFE_INTEGER)) return null;
+  if (candidate.deleteConfirmation !== `delete:${candidate.projectId}`) return null;
+  if (candidate.lifecycleState !== "active" && candidate.open) return null;
+  return candidate as unknown as ProjectProjection;
 }
 
 export function decodeOperationPage(value: unknown): OperationPage | null {
@@ -293,6 +327,11 @@ function pathOperationId(operationId: string): string {
   return operationId;
 }
 
+function projectBody(value: ProjectRootRequest): string {
+  if (!projectRoot(value.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+  return JSON.stringify({ root: value.root });
+}
+
 export function parseOperationEventStream(body: string): readonly OperationProgressEvent[] {
   if (body.length > 1_048_576) throw new Error("RO-CORE-RESPONSE-INVALID");
   if (!body) return [];
@@ -318,6 +357,54 @@ export function createCoreApiClient(transport: CoreApiTransport) {
       return await requestJson(transport, {
         method: "GET", path: "/runtime/version", body: null, ifMatch: null, idempotencyKey: null,
       }, decodeVersionResponse);
+    },
+    async createProject(command: ProjectCreateRequest): Promise<ProjectProjection> {
+      if (!projectRoot(command.parentDirectory)
+        || typeof command.directoryName !== "string"
+        || !/^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/.test(command.directoryName)
+        || !boundedText(command.displayName, 1, 120)
+        || typeof command.templateId !== "string"
+        || !/^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/.test(command.templateId)) {
+        throw new Error("RO-CORE-REQUEST-INVALID");
+      }
+      return await requestJson(transport, {
+        method: "POST", path: "/projects",
+        body: JSON.stringify({
+          parentDirectory: command.parentDirectory, directoryName: command.directoryName,
+          displayName: command.displayName, templateId: command.templateId,
+        }),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeProjectProjection);
+    },
+    async openProject(command: ProjectRootRequest): Promise<ProjectProjection> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/open", body: projectBody(command), ifMatch: null, idempotencyKey: null,
+      }, decodeProjectProjection);
+    },
+    async closeProject(command: ProjectRootRequest): Promise<ProjectProjection> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/close", body: projectBody(command), ifMatch: null, idempotencyKey: null,
+      }, decodeProjectProjection);
+    },
+    async archiveProject(command: ProjectRootRequest): Promise<ProjectProjection> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/archive", body: projectBody(command), ifMatch: null, idempotencyKey: null,
+      }, decodeProjectProjection);
+    },
+    async restoreProject(command: ProjectRootRequest): Promise<ProjectProjection> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/restore", body: projectBody(command), ifMatch: null, idempotencyKey: null,
+      }, decodeProjectProjection);
+    },
+    async deleteProject(command: ProjectDeleteRequest): Promise<ProjectProjection> {
+      if (!projectRoot(command.root)
+        || typeof command.confirmation !== "string"
+        || !/^delete:[0-9a-f-]{36}$/.test(command.confirmation)) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/delete",
+        body: JSON.stringify({ root: command.root, confirmation: command.confirmation }),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeProjectProjection);
     },
     async operations(after: string | null = null, limit = 50): Promise<OperationPage> {
       if (!integer(limit, 1, 100) || (after !== null && !canonicalOperationId(after))) throw new Error("RO-CORE-REQUEST-INVALID");
@@ -393,6 +480,12 @@ def render_typescript(openapi_bytes: bytes) -> bytes:
         "operation_status_runtime_operations__operation_id__get",
         "cancel_operation_runtime_operations__operation_id__cancel_post",
         "operation_events_runtime_operations__operation_id__events_get",
+        "create_project_projects_post",
+        "open_project_projects_open_post",
+        "close_project_projects_close_post",
+        "archive_project_projects_archive_post",
+        "restore_project_projects_restore_post",
+        "delete_project_projects_delete_post",
     }
     if not required.issubset(operation_ids):
         raise ValueError(

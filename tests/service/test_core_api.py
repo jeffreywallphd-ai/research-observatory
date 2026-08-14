@@ -132,10 +132,19 @@ class CoreApiTests(unittest.TestCase):
             configuration.json(),
             {"schemaVersion": "1.0", "profile": "local", "bindHost": "loopback", "bindPort": "ephemeral"},
         )
-        self.assertEqual([module["moduleId"] for module in modules.json()["modules"]], ["operations", "runtime"])
+        self.assertEqual(
+            [module["moduleId"] for module in modules.json()["modules"]], ["operations", "projects", "runtime"]
+        )
         self.assertEqual(
             capabilities.json()["capabilities"],
-            ["operations.cancel", "operations.events", "operations.read", "runtime.contract", "runtime.status"],
+            [
+                "operations.cancel",
+                "operations.events",
+                "operations.read",
+                "projects.lifecycle",
+                "runtime.contract",
+                "runtime.status",
+            ],
         )
         self.assertEqual(openapi.status_code, 200)
         self.assertEqual(openapi.json()["info"]["version"], "0.1.0")

@@ -26,6 +26,12 @@ class RuntimeState(StrEnum):
     UNAVAILABLE = "unavailable"
 
 
+class ProjectLifecycleState(StrEnum):
+    ACTIVE = "active"
+    ARCHIVED = "archived"
+    TRASH = "trash"
+
+
 class RuntimeProjection(ContractModel):
     schema_version: str = CORE_API_SCHEMA_VERSION
     service: str = CORE_SERVICE_ID
@@ -82,6 +88,33 @@ class ProblemDetail(ContractModel):
     trace_id: str = Field(pattern=r"^[0-9a-f]{32}$")
     retryable: bool
     remediation: str = Field(min_length=1, max_length=240)
+
+
+class ProjectCreateRequest(ContractModel):
+    parent_directory: str = Field(min_length=1, max_length=4096)
+    directory_name: str = Field(pattern=r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
+    display_name: str = Field(min_length=1, max_length=120)
+    template_id: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
+
+
+class ProjectRootRequest(ContractModel):
+    root: str = Field(min_length=1, max_length=4096)
+
+
+class ProjectDeleteRequest(ProjectRootRequest):
+    confirmation: str = Field(min_length=1, max_length=80)
+
+
+class ProjectProjection(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    project_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    display_name: str = Field(min_length=1, max_length=120)
+    template_id: str = Field(pattern=r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
+    lifecycle_state: ProjectLifecycleState
+    root: str = Field(min_length=1, max_length=4096)
+    open: bool
+    revision: int = Field(ge=0, le=9_007_199_254_740_991)
+    delete_confirmation: str = Field(pattern=r"^delete:[0-9a-f-]{36}$")
 
 
 class OperationState(StrEnum):

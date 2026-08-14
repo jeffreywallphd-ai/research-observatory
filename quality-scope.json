@@ -56,6 +56,7 @@
     "services/core-api/src/research_observatory_core/models.py",
     "services/core-api/src/research_observatory_core/modules.py",
     "services/core-api/src/research_observatory_core/operations.py",
+    "services/core-api/src/research_observatory_core/projects.py",
     "services/core-api/src/research_observatory_core/transport.py",
     "services/core-api/sidecar_entry.py",
     "tests/foundation/test_adr_check.py",
@@ -86,6 +87,7 @@
     "tests/contracts/test_support_bundle_contract.py",
     "tests/security/test_install_trivy.py",
     "tests/security/test_security_check.py",
-    "tests/service/test_core_api.py"
+    "tests/service/test_core_api.py",
+    "tests/service/test_project_lifecycle.py"
   ]
 }

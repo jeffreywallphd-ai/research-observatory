@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 
@@ -25,6 +25,10 @@ from .models import (
     OperationProgressEvent,
     OperationStatus,
     ProblemDetail,
+    ProjectCreateRequest,
+    ProjectDeleteRequest,
+    ProjectProjection,
+    ProjectRootRequest,
     ReadinessResponse,
     RuntimeState,
     VersionResponse,
@@ -36,6 +40,7 @@ from .operations import (
     OperationRegistry,
     OperationReplayGap,
 )
+from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .transport import CoreProblem, TraceCorrelationMiddleware, problem_detail
 
 
@@ -44,6 +49,7 @@ class RuntimeContext:
     settings: CoreSettings
     modules: ModuleRegistry
     operations: OperationRegistry
+    projects: ProjectLifecycleService
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -52,6 +58,7 @@ def create_app(
     settings: CoreSettings | None = None,
     modules: ModuleRegistry | None = None,
     operations: OperationRegistry | None = None,
+    projects: ProjectLifecycleService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -60,7 +67,13 @@ def create_app(
         resolved_settings = settings if settings is not None else CoreSettings()
         resolved_modules = modules if modules is not None else default_module_registry()
         resolved_operations = operations if operations is not None else OperationRegistry()
-        context = RuntimeContext(settings=resolved_settings, modules=resolved_modules, operations=resolved_operations)
+        resolved_projects = projects if projects is not None else ProjectLifecycleService()
+        context = RuntimeContext(
+            settings=resolved_settings,
+            modules=resolved_modules,
+            operations=resolved_operations,
+            projects=resolved_projects,
+        )
         app.state.runtime = context
         context.state = RuntimeState.READY
         emit_log_record("runtime.started", level=resolved_settings.log_level, fields={"state": context.state.value})
@@ -68,6 +81,7 @@ def create_app(
             yield
         finally:
             context.state = RuntimeState.STOPPING
+            context.projects.shutdown()
             emit_log_record(
                 "runtime.stopping", level=resolved_settings.log_level, fields={"state": context.state.value}
             )
@@ -173,6 +187,25 @@ def create_app(
             )
         )
 
+    def project_problem(request: Request, error: ProjectLifecycleProblem) -> CoreProblem:
+        return CoreProblem(
+            problem_detail(
+                status=error.status,
+                code=error.code,
+                title=error.title,
+                detail=error.detail,
+                trace_id=request.state.trace_id,
+                retryable=error.retryable,
+                remediation=error.remediation,
+            )
+        )
+
+    def run_project_action(request: Request, action: Callable[[], ProjectProjection]) -> ProjectProjection:
+        try:
+            return action()
+        except ProjectLifecycleProblem as error:
+            raise project_problem(request, error) from error
+
     @app.get("/healthz", response_model=HealthResponse, tags=["runtime"])
     def health(request: Request) -> HealthResponse:
         context = runtime(request)
@@ -207,6 +240,63 @@ def create_app(
     @app.get("/runtime/capabilities", response_model=CapabilitiesResponse, tags=["runtime"])
     def capabilities(request: Request) -> CapabilitiesResponse:
         return CapabilitiesResponse(capabilities=runtime(request).modules.capabilities)
+
+    @app.post(
+        "/projects",
+        response_model=ProjectProjection,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["projects"],
+    )
+    def create_project(request: Request, command: ProjectCreateRequest) -> ProjectProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.create(
+                parent_directory=command.parent_directory,
+                directory_name=command.directory_name,
+                display_name=command.display_name,
+                template_id=command.template_id,
+                trace_id=request.state.trace_id,
+            ),
+        )
+
+    @app.post("/projects/open", response_model=ProjectProjection, tags=["projects"])
+    def open_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.open(root=command.root, trace_id=request.state.trace_id),
+        )
+
+    @app.post("/projects/close", response_model=ProjectProjection, tags=["projects"])
+    def close_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.close(root=command.root, trace_id=request.state.trace_id),
+        )
+
+    @app.post("/projects/archive", response_model=ProjectProjection, tags=["projects"])
+    def archive_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.archive(root=command.root, trace_id=request.state.trace_id),
+        )
+
+    @app.post("/projects/restore", response_model=ProjectProjection, tags=["projects"])
+    def restore_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.restore(root=command.root, trace_id=request.state.trace_id),
+        )
+
+    @app.post("/projects/delete", response_model=ProjectProjection, tags=["projects"])
+    def delete_project(request: Request, command: ProjectDeleteRequest) -> ProjectProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.delete(
+                root=command.root,
+                confirmation=command.confirmation,
+                trace_id=request.state.trace_id,
+            ),
+        )
 
     @app.get(
         "/runtime/operations",

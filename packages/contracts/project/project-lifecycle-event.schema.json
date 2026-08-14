@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/project/project-lifecycle-event.schema.json",
+  "title": "Research Observatory local project lifecycle audit event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "event", "state", "recordedAt", "traceId"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "event": {"enum": ["project.created", "project.opened", "project.closed", "project.archived", "project.restored", "project.trashed", "project.trash-rollback"]},
+    "state": {"enum": ["active", "archived", "trash"]},
+    "recordedAt": {"type": "string", "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "traceId": {"type": "string", "pattern": "^[0-9a-f]{32}$"}
+  }
+}

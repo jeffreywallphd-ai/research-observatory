@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/project/project-lock.schema.json",
+  "title": "Research Observatory local project session lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "documentType", "projectId", "instanceId", "processId", "heartbeatAt", "recoveryToken"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-project-lock"},
+    "projectId": {"type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"},
+    "instanceId": {"type": "string", "format": "uuid"},
+    "processId": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+    "heartbeatAt": {"type": "string", "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "recoveryToken": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -55,6 +55,7 @@ def default_module_registry() -> ModuleRegistry:
                 module_id="operations",
                 capabilities=("operations.cancel", "operations.events", "operations.read"),
             ),
+            ModuleDefinition(module_id="projects", capabilities=("projects.lifecycle",)),
             ModuleDefinition(module_id="runtime", capabilities=("runtime.contract", "runtime.status")),
         )
     )
