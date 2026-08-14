@@ -3368,7 +3368,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-01.S04.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-02.S01.T01
       capability_id: CAP-02
@@ -3586,13 +3586,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:curie
       reviewed_at: '2026-08-14T12:37:18+00:00'
       evidence:
-      - artifacts/evidence/CAP-02.S01.integration.review-fix.json
-      notes: Persistent final publication failure must leave a prepublished NONQUALIFYING/IN_PROGRESS tombstone rather than
-        preserve stale PASS evidence.
+      - artifacts/evidence/CAP-02.S01.integration.review-fix-2.json
+      notes: 'Final publication remediation complete at 964ab5d: an authoritative NONQUALIFYING/IN_PROGRESS tombstone publishes
+        before measurement and remains if final PASS and fallback publication both fail.'
   - id: CAP-02.S02
     title: SQLite schema, migrations, and repository layer
     outcome: Canonical local state is transactional, versioned, testable, and insulated from UI or model code.
