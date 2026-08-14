@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-02.S01",
+  "stateCommit": "ec0c24033ea7850220e8889ba14c82d92e2a83e6",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S01.integration.json",
+    "sha256": "82b6db0d8e75efa84e2992e734e48d832adc8c1ccd67e3db4adef4235340cc2a",
+    "reason": "The first integration review approved the functional project lifecycle, task evidence, staged profile results, compiled product/reference separation, and downstream handoff, but found four false-qualification boundaries in the new lifecycle performance gate. This record binds the exact executing and committed inputs through publication, replaces stale PASS output on failure, commits every calibration sample and source chain, and evaluates unrounded measurements."
+  },
+  "remediation": {
+    "baseCommit": "3eefcdd9fe01f852418093993f8760492204c106",
+    "candidateCommit": "ec0c24033ea7850220e8889ba14c82d92e2a83e6",
+    "reviewTransitionCommit": "74ea715c3f6abc9791cf2f6a76e7cdb8033dfb03",
+    "changedFiles": [
+      "artifacts/evidence/CAP-02.S01.integration.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/status-summary.md",
+      "tests/data/test_project_lifecycle_performance_check.py",
+      "tools/project_lifecycle_performance_check.py",
+      "verification/baselines/project-lifecycle-performance-calibration.json",
+      "verification/baselines/project-lifecycle-performance.json"
+    ]
+  },
+  "outcome": "The production-ready local project lifecycle remains integrated, and its Windows x64 performance qualification is now commit-bound, hardware-bound, self-verifying, safe against stale evidence, and strict on raw timing boundaries.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-02.S01.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-02.S01.T01.json", "sha256": "974cbb761cd3aef32bf300b2adf7998c3a4516c9c3fc87929107ced67840cda1"},
+        {"path": "artifacts/evidence/CAP-02.S01.T01.review-fix.json", "sha256": "df8d9d09e32246954d219142b4cc6248995c68967ae18d0dd3d27c4d04be6fae"},
+        {"path": "artifacts/evidence/CAP-02.S01.T01.review-fix-2.json", "sha256": "aff7b69721fc7964bfbaacaa92822c92dc96093d4d788518726d1feefe997a30"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-02.S01.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-02.S01.T02.submission.json", "sha256": "35363e1d564dfaf439215bb6dc702d29a5a79914f8f3a11911d6d34f29090957"},
+        {"path": "artifacts/evidence/CAP-02.S01.T02.review-fix.json", "sha256": "526ee7068df98b6af8c8ed8d2d600a0c67dd704212ec194cb9fe8a39fb120dd2"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-02.S01.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-02.S01.T03.json", "sha256": "9ec4055a8ae01d672b957ebcf0c6a60acd555c0e46871a9e60a76aa24177dc46"},
+        {"path": "artifacts/evidence/CAP-02.S01.T03.review-fix.json", "sha256": "8b48d63a5502b07cbcbbfa9fd5cf5846039a3b61ee3dcfa1f6a15e9f664d77de"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_project_lifecycle_performance_check; .venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Eight focused tests and all 81 governed Python files pass. Hostile cases cover copied-tool execution, changed committed input, calibration report/sample/hardware/source laundering, non-finite and inflated baselines, raw p95 rounding bypasses, measurement-only nonqualification, and replacement of a stale qualifying report after failure."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\project_lifecycle_performance_check.py --repo . --report artifacts/tmp/CAP-02.S01-project-performance-review-fix.json",
+      "exitCode": 0,
+      "result": "At exact clean state ec0c240, the canonical tool and project implementation match their state-commit blobs and are held against write/delete throughout measurement and report publication. The current hardware exactly matches the reviewed calibration workstation. Every historical run is reachable and its complete retained samples, statistics, fixture, tool, implementation, and report hash verify. Fresh-service raw p95 16.6476 ms and warm-service raw p95 16.4408 ms pass exact unrounded 20-percent limits 20.184/23.6808 ms and the 500 ms absolute budget. Report SHA-256: 7133033a2d863abc4738b91ff80045140e60c48cf474e0f723b06b5972a38cd4."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S01-integration-review-fix-build-manifest.json",
+      "exitCode": 0,
+      "result": "The final remediation state emits clean build identity 0.1.0+gec0c240 with no dirty paths. Manifest SHA-256: a31a3ae0fb0f46243bb0905e35b09fabc93dff82bdccf371cc0161394ea304e9."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The immutable Curie CHANGES_REQUESTED transition, all task approvals/evidence, slice dependencies, backlog, and generated views validate before resubmission."
+    },
+    {
+      "command": "previous staged data, desktop, performance, UI/reference, architecture, ADR, lifecycle, contract, and compiled-product integration checks",
+      "exitCode": 0,
+      "result": "The original integration evidence retains the exact hashes and results for the broad affected-profile inventory. The remediation changes only the performance qualifier, its tests, governed calibration/baseline authority, and immutable review/planning records; it changes no lifecycle service, contract, native runtime, renderer, reference, dependency, profile, or product artifact. Risk-based review therefore replays the hardened real qualification and focused quality/governance checks rather than the unchanged broad profiles."
+    }
+  ],
+  "integratedBehavior": [
+    "All functional package creation, lifecycle, locking, audit, rollback, compatibility, read-only safe-open, backup-first guidance, and production UI behavior from the original integration record remains unchanged.",
+    "Qualification runs only through the canonical repository tool at one clean Git commit. Canonical tool, implementation, baseline, and calibration files have single-link, nonredirected identities; their bytes must match the state-commit blobs and remain locked and unchanged through publication.",
+    "The governed calibration authority retains all sixty fresh and sixty warm measurements across three clean contexts, exact hardware, fixture identities, full distributions, per-run hashes, reachable commits, and exact historical tool/implementation blobs. The baseline is recomputed from the maximum retained p95 values.",
+    "Current hardware must equal the reviewed workstation. Raw unrounded p95 values are evaluated against unrounded relative and absolute limits; rounding is presentation-only.",
+    "Every caught qualification failure publishes an explicit NONQUALIFYING document over a prior PASS at a valid confined report destination."
+  ],
+  "failureAndRecoveryCoverage": [
+    "all functional, denial, rollback, compatibility, accessibility, offline, restart, recovery, and product/reference-separation coverage retained from the superseded integration evidence",
+    "copied measurement tool, dirty or changed Git state, changed tool/implementation/baseline/calibration bytes, redirect/hardlink inputs, and historical source/ancestry mismatch",
+    "altered calibration report hash, samples, statistics, fixture, hardware, methodology, run inventory, source hashes, selected maxima, and baseline bytes",
+    "stale PASS after pre-measurement, mid-measurement, post-measurement, or publication failure; measurement-only false evidence",
+    "raw p95 values that round down to an apparently passing relative or absolute boundary"
+  ],
+  "downstreamHandoff": {
+    "consumer": "CAP-02.S02",
+    "contract": "The embedded project-state slice receives the already approved strict relocatable package, stable identity, compatibility/lifecycle service, classified state directory, portable fixtures, read-only denial semantics, and a trusted Windows x64 lifecycle performance anchor.",
+    "ready": true,
+    "notes": "Actual SQLite authority, migrations, backup, integrity, and recovery points remain CAP-02.S02 scope."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "fullAffectedProfileCommandInventoryPassedAtSliceReview": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "SQLite scholarly state and recovery remain CAP-02.S02 scope.",
+      "Cross-platform path, lock, and performance qualification remains W6 scope; Windows x64 is release-authoritative for W1.",
+      "The e2e-local profile still has no activated tests/e2e files; the compiled desktop application gate supplies the functional offline end-to-end path."
+    ]
+  }
+}
