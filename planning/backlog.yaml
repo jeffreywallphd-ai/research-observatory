@@ -4335,7 +4335,7 @@ capabilities:
     depends_on:
     - CAP-00.S02.T01
     - CAP-00.S05.T03
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-03.S01.T01
       capability_id: CAP-03
@@ -4367,11 +4367,11 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T12:57:11+00:00'
-      updated_at: '2026-08-14T13:15:51+00:00'
+      updated_at: '2026-08-14T13:23:25+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Portable domain schema, deterministic Python/TypeScript generation, UUIDv7 minting boundary, hostile
@@ -4383,16 +4383,17 @@ capabilities:
         commit: a1fe663ff53311200fa7fe30a5979694a0386119
         recorded_at: '2026-08-14T13:15:07+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:curie
+        result: changes-requested
+        reviewed_at: '2026-08-14T13:23:25+00:00'
+        notes: Portable external identifiers accept local paths; decoders alias mutable caller input; Python diverges on JSON
+          integer-valued numbers; trailing CR/LF bypasses control-character denial.
       base_sha: ce0e2060ebc36eb02d5c25bf72ecbcf0a826ad25
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-14T12:57:11+00:00'
-        expires_at: '2026-08-14T20:57:11+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-14T13:23:25+00:00'
+        expires_at: '2026-08-14T21:23:25+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
