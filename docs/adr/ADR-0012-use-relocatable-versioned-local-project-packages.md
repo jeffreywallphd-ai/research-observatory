@@ -10,6 +10,7 @@ linked_tasks:
 decision_scope: Local project-root manifest, relative storage layout, authority classification, retention, backup, deletion, and portable-export membership.
 affected_paths:
   - packages/contracts/project/**
+  - packages/contracts/README.md
   - packages/contracts/package.json
   - packages/contracts/tsconfig.json
   - packaging/build-inputs.json
