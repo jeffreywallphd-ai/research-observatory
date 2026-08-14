@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-02.S01",
+  "stateCommit": "a4820baaef408f7c8c4ae9db42c0c9ab88f1974b",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S01.integration.review-fix-2.json",
+    "sha256": "0e8ce9d495abc5ebfba141790fddcf11eaf1c137ab4698e71551d437ce717728",
+    "reason": "The second remediation established the pre-measurement tombstone but still allowed PASS publication immediately before the context manager's final rejecting state check. This record moves the final commit/input assertion into the guarded atomic writer's last-moment before_replace callback while locks remain held, leaving no rejecting cleanup after PASS publication."
+  },
+  "remediation": {
+    "baseCommit": "964ab5d6f68e0f261b45fcddc246d5dbbcc490d6",
+    "candidateCommit": "a4820baaef408f7c8c4ae9db42c0c9ab88f1974b",
+    "reviewTransitionCommit": "d7ff0c7f2910636f55ad57f07de2698c7d89434b",
+    "changedFiles": [
+      "artifacts/evidence/CAP-02.S01.integration.review-fix-2.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/status-summary.md",
+      "tests/data/test_project_lifecycle_performance_check.py",
+      "tools/project_lifecycle_performance_check.py"
+    ]
+  },
+  "outcome": "The project lifecycle slice and all prior performance authority remain intact; PASS can now replace the nonqualifying tombstone only after the final clean-state and governed-input assertion succeeds at the atomic replacement boundary.",
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_project_lifecycle_performance_check",
+      "exitCode": 0,
+      "result": "All eleven focused tests pass. The exact combined regression publishes the tombstone, returns a passing measurement, forces the last-moment state assertion to fail, then forces persistent demotion publication failure; the destination remains NONQUALIFYING/IN_PROGRESS and never contains PASS. Existing persistent PASS-write failure, ordinary failure, success, source, calibration, hardware, and raw-threshold cases remain green."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\project_lifecycle_performance_check.py --repo . --report artifacts/tmp/CAP-02.S01-project-performance-review-fix-3.json",
+      "exitCode": 0,
+      "result": "At exact clean state a4820ba, the final state/input assertion executes inside guarded_atomic_write_json immediately before PASS replacement and while all four governed file handles remain locked. Fresh-service raw p95 16.3937 ms and warm-service raw p95 11.1287 ms pass the exact limits. Report SHA-256: 4c5c5c3fde26cfeabaef1955fea54ca6437fa17577bb31b07a7f0b2a4fd611f8."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S01-integration-review-fix-3-build-manifest.json; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "All 81 governed Python files pass quality; the exact candidate emits clean build identity 0.1.0+ga4820ba with manifest SHA-256 8077b253d0051c8e73461566c5674c72561e5e51ee4407a0d54a1b07a278b269; planning and generated views validate."
+    },
+    {
+      "command": "superseded CAP-02.S01 integration and remediation checks",
+      "exitCode": 0,
+      "result": "All functional lifecycle, compiled product, broad profile, UI/reference, contract, task evidence, source/hardware/calibration/raw-threshold, and downstream-handoff results remain applicable. The exact incremental range is six files and includes the prior evidence attachment."
+    }
+  ],
+  "integratedBehavior": [
+    "A confined NONQUALIFYING/IN_PROGRESS tombstone remains authoritative until the complete measurement and every rejecting commit/input/state check have passed.",
+    "The final committed-input assertion is the guarded writer's before_replace callback, immediately before atomic PASS replacement while the Windows file locks remain held.",
+    "Context cleanup after PASS replacement only releases handles and cannot reject qualification. If the final assertion or replacement fails and demotion is persistently unavailable, the preexisting tombstone remains.",
+    "All approved functional lifecycle, compatibility, recovery, UI, calibration, hardware, source, threshold, and evidence behavior is unchanged."
+  ],
+  "failureAndRecoveryCoverage": [
+    "final-state rejection immediately before PASS plus persistent demotion failure",
+    "persistent PASS-publication and demotion failure, ordinary pre/mid/post failure, and successful PASS replacement",
+    "all prior source, hardware, calibration, raw-threshold, lifecycle, denial, rollback, recovery, and product/reference cases"
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "fullAffectedProfileCommandInventoryPassedAtSliceReview": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "SQLite scholarly state and recovery remain CAP-02.S02 scope.",
+      "Cross-platform path, lock, and performance qualification remains W6 scope; Windows x64 is release-authoritative for W1."
+    ]
+  }
+}
