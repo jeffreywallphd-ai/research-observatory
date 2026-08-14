@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "documentType": "project-lifecycle-performance-baseline",
-  "baselineSourceCommit": "4ed31631644ebb7ac0bd60657350910e2d477416",
+  "baselineSourceCommit": "6f7fdfd644f83b508e83c64e742f1890b882c0ad",
   "profile": "windows-x64",
   "fixture": {
     "version": "ordinary-project-2000-objects-v1",
@@ -24,18 +24,44 @@
   },
   "source": {
     "measurementToolPath": "tools/project_lifecycle_performance_check.py",
-    "measurementToolSha256": "4c3adc1a35fd45fef1e105313033bd2bc708e9b323b81b31f0d0d85941d70d35",
+    "measurementToolSha256": "0e59fff73acdbb8051fb5be9c443a326d00df4036e2f4972a7800e05e8415a42",
     "implementationPath": "services/core-api/src/research_observatory_core/projects.py",
     "implementationSha256": "b938d7b49f5a70c615ac3893a6418226914b39a58e51f760dfc46086d6b447b8"
+  },
+  "calibration": {
+    "selectionRule": "maximum per-run nearest-rank p95 across three clean 20-sample calibration runs",
+    "runs": [
+      {
+        "context": "standalone measurement-only",
+        "stateCommit": "4ed31631644ebb7ac0bd60657350910e2d477416",
+        "reportSha256": "7664e5d218d0384b223b20546391928790fd3a9bd6b3b7232aedd6885f205fa4",
+        "freshServiceOpenP95Ms": 14.389,
+        "warmServiceReopenP95Ms": 13.238
+      },
+      {
+        "context": "standalone qualification",
+        "stateCommit": "43237db9cab1bd7f3eedc04410524cf3a5e19a14",
+        "reportSha256": "529670906de522d00e05efafee08260f1b55ee865cf97e2b8abf68ec6877ea24",
+        "freshServiceOpenP95Ms": 16.82,
+        "warmServiceReopenP95Ms": 15.109
+      },
+      {
+        "context": "immediately after the full foundation profile",
+        "stateCommit": "6f7fdfd644f83b508e83c64e742f1890b882c0ad",
+        "reportSha256": "0483b389d9d5da4a7dc49fa188fbdcb58654f0c230025df9ab9923727d658332",
+        "freshServiceOpenP95Ms": 14.319,
+        "warmServiceReopenP95Ms": 19.734
+      }
+    ]
   },
   "measurements": {
     "freshServiceOpen": {
       "absoluteBudgetMs": 500.0,
-      "baselineP95Ms": 14.389
+      "baselineP95Ms": 16.82
     },
     "warmServiceReopen": {
       "absoluteBudgetMs": 500.0,
-      "baselineP95Ms": 13.238
+      "baselineP95Ms": 19.734
     }
   }
 }
