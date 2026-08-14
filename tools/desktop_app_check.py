@@ -1180,6 +1180,11 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                           compatibilityState = 'newer-unsupported'; packageFormatVersion = '2.0.0';
                           backupRequiredBeforeRepair = true;
                           recoveryAction = 'backup-then-use-compatible-application';
+                        } else if (body.root === 'C:/Research/newer-archived') {
+                          state = 'archived'; open = false; accessMode = 'closed';
+                          compatibilityState = 'newer-unsupported'; packageFormatVersion = '2.0.0';
+                          backupRequiredBeforeRepair = true;
+                          recoveryAction = 'backup-then-use-compatible-application';
                         } else throw new Error('invalid open root');
                       } else if (request.path === '/projects/close') {
                         open = false; accessMode = 'closed';
@@ -1234,10 +1239,20 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             )
             current.get_by_role("button", name="Close project", exact=True).click()
             current.get_by_text("Closed", exact=True).wait_for(timeout=5_000)
+            projects.locator("#project-root").fill("C:/Research/newer-archived")
+            projects.get_by_role("button", name="Open project", exact=True).click()
+            current.get_by_text("archived", exact=True).wait_for(timeout=5_000)
+            archived_incompatible_valid = projects.evaluate(
+                """() => document.querySelector('[data-current-project]')?.textContent?.includes(
+                    'First create and verify a complete backup')
+                  && !Array.from(document.querySelectorAll('[data-current-project] button')).some(
+                    (button) => ['Restore project','Archive project','Move to recoverable trash'].includes(
+                      button.textContent?.trim() ?? ''))"""
+            )
             project_sequence_valid = projects.evaluate(
                 """() => JSON.stringify(window.__PROJECT_CALLS__.map((request) => request.path))
                   === JSON.stringify(['/projects','/projects/open','/projects/close','/projects/archive',
-                    '/projects/restore','/projects/delete','/projects/open','/projects/close'])
+                    '/projects/restore','/projects/delete','/projects/open','/projects/close','/projects/open'])
                   && document.querySelector('[data-current-project]')?.textContent?.includes('Revision 3')
                   && !document.querySelector('[data-workflow-select], [data-workflow-nav], [data-all-tools]')"""
             )
@@ -1245,6 +1260,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             projects.wait_for_function("document.activeElement?.id === 'shell-command'", timeout=5_000)
             details["projectsWorkflow"] = (
                 safe_open_valid
+                and archived_incompatible_valid
                 and project_sequence_valid
                 and projects.evaluate("document.activeElement?.id === 'shell-command'")
             )

@@ -256,8 +256,12 @@ export function decodeProjectProjection(value: unknown): ProjectProjection | nul
   if (candidate.compatibilityState === "compatible") {
     if (candidate.packageFormatVersion !== "1.0.0" || candidate.accessMode === "read-only"
       || candidate.backupRequiredBeforeRepair || candidate.recoveryAction !== "none") return null;
-  } else if (candidate.accessMode === "read-write" || !candidate.backupRequiredBeforeRepair || candidate.recoveryAction === "none") {
-    return null;
+  } else if (candidate.compatibilityState === "migration-required") {
+    if (candidate.accessMode === "read-write" || !candidate.backupRequiredBeforeRepair
+      || candidate.recoveryAction !== "backup-then-migrate") return null;
+  } else if (candidate.accessMode === "read-write" || !candidate.backupRequiredBeforeRepair
+    || candidate.recoveryAction !== "backup-then-use-compatible-application") {
+      return null;
   }
   return candidate as unknown as ProjectProjection;
 }

@@ -175,6 +175,10 @@ describe("generated Core API client", () => {
     expect(decodeProjectProjection({ ...projection, privatePath: "C:/private" })).toBeNull();
     expect(decodeProjectProjection({ ...projection, lifecycleState: "archived", open: true })).toBeNull();
     expect(decodeProjectProjection({ ...projection, compatibilityState: "newer-unsupported" })).toBeNull();
+    expect(decodeProjectProjection({
+      ...projection,
+      deleteConfirmation: "delete:22222222-2222-4222-8222-222222222222",
+    })).toBeNull();
     expect(decodeProjectProjection({ ...projection, packageFormatVersion: "9007199254740992.0.0" })).toBeNull();
     expect(decodeProjectProjection({
       ...projection,
@@ -191,6 +195,22 @@ describe("generated Core API client", () => {
       backupRequiredBeforeRepair: true,
       recoveryAction: "backup-then-use-compatible-application",
     });
+    expect(decodeProjectProjection({
+      ...projection,
+      accessMode: "read-only",
+      compatibilityState: "newer-unsupported",
+      packageFormatVersion: "2.0.0",
+      backupRequiredBeforeRepair: true,
+      recoveryAction: "backup-then-migrate",
+    })).toBeNull();
+    expect(decodeProjectProjection({
+      ...projection,
+      accessMode: "read-only",
+      compatibilityState: "migration-required",
+      packageFormatVersion: "0.9.0",
+      backupRequiredBeforeRepair: true,
+      recoveryAction: "backup-then-use-compatible-application",
+    })).toBeNull();
 
     const requests: unknown[] = [];
     const client = createCoreApiClient(async (request) => {

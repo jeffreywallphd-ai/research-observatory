@@ -61,6 +61,12 @@ describe("functional local projects workspace", () => {
     };
     expect(projectActionLabels(newer)).toEqual(["Close project"]);
     expect(projectActionLabels({ ...newer, open: false, accessMode: "closed" })).toEqual(["Open read-only"]);
+    expect(projectActionLabels({
+      ...newer,
+      lifecycleState: "archived",
+      open: false,
+      accessMode: "closed",
+    })).toEqual([]);
     expect(projectCompatibilityGuidance(newer)).toEqual({
       title: "Newer project format · read-only",
       message: "Keep the original unchanged. First create and verify a complete backup, then use a compatible application version with the working copy.",
