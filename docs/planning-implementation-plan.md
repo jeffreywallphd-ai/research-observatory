@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f7268f1da998049ddb05af00392c78aa1cdd9c5fdec3fa6364dc78b80a22aa56
+source_sha256: 15619c921c5bb7cf582af8b4d7ef4e3f0009323f4decf3670571ec5252365251
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1677,6 +1677,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile data
 - python tools/verify.py --profile desktop
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-02.S01.T02.submission.json` at `633aaa396548cfa9be8cbfa9e6a26d2e833244ea`
 
 #### - [ ] CAP-02.S01.T03 - Add project compatibility and safe-open checks
 
