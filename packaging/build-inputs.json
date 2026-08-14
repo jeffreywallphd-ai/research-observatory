@@ -19,6 +19,7 @@
     "packages/contracts/core-api/core-runtime.schema.json",
     "packages/contracts/core-api/runtime-handshake.schema.json",
     "packages/contracts/core-api/sidecar-artifact.schema.json",
+    "packages/contracts/domain/domain-core.schema.json",
     "packages/contracts/project/project-layout.schema.json",
     "packages/contracts/project/project-lifecycle-event.schema.json",
     "packages/contracts/project/project-lock.schema.json",

@@ -1,0 +1,334 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/domain/domain-core.schema.json",
+  "title": "Research Observatory portable core aggregate",
+  "description": "Framework-neutral identity, revision, source, epistemic, confidence, rights, and principal-aggregate envelope contract.",
+  "x-research-observatory-semanticRules": [
+    {
+      "ruleId": "modified-at-not-before-created-at",
+      "operator": "instant-not-after",
+      "leftPointer": "/createdAt",
+      "rightPointer": "/modifiedAt"
+    },
+    {
+      "ruleId": "revision-identity-distinct",
+      "operator": "not-equal",
+      "leftPointer": "/aggregateId",
+      "rightPointer": "/revisionId"
+    },
+    {
+      "ruleId": "rights-allowed-and-denied-disjoint",
+      "operator": "set-disjoint",
+      "leftPointer": "/rights/allowedUses",
+      "rightPointer": "/rights/deniedUses"
+    }
+  ],
+  "$ref": "#/$defs/CoreAggregate",
+  "$defs": {
+    "AggregateId": {
+      "type": "string",
+      "description": "Canonical lower-case RFC 9562 UUIDv7.",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "RevisionId": {
+      "type": "string",
+      "description": "Immutable revision identity represented as canonical lower-case UUIDv7.",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "RevisionNumber": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "ContractVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])$"
+    },
+    "UtcInstant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z$"
+    },
+    "AggregateKind": {
+      "type": "string",
+      "enum": [
+        "project",
+        "record",
+        "document",
+        "evidence",
+        "decision",
+        "workflow",
+        "ontology",
+        "graph",
+        "opportunity",
+        "monitoring-event"
+      ]
+    },
+    "KnowledgeStatus": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "extracted",
+        "inferred",
+        "verified",
+        "disputed",
+        "adjudicated",
+        "stale",
+        "unknown",
+        "not-reported",
+        "not-applicable",
+        "ambiguous",
+        "unavailable"
+      ]
+    },
+    "SourceAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {
+          "enum": ["record-field", "document-element", "page", "table-cell", "figure", "external-identifier"]
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        }
+      }
+    },
+    "SourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceAggregateId", "sourceRevision", "anchor", "sourceLabel"],
+      "properties": {
+        "sourceAggregateId": {"$ref": "#/$defs/AggregateId"},
+        "sourceRevision": {"$ref": "#/$defs/RevisionNumber"},
+        "anchor": {"$ref": "#/$defs/SourceAnchor"},
+        "sourceLabel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        }
+      }
+    },
+    "AlternativeDisposition": {
+      "type": "string",
+      "enum": ["candidate", "disputed", "accepted", "rejected"]
+    },
+    "TextAlternative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "disposition", "sourceReference"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "disposition": {"$ref": "#/$defs/AlternativeDisposition"},
+        "sourceReference": {"$ref": "#/$defs/SourceReference"}
+      }
+    },
+    "ObservedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observed", "normalized", "alternatives"],
+      "properties": {
+        "observed": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "normalized": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+            },
+            {"type": "null"}
+          ]
+        },
+        "alternatives": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/TextAlternative"}
+        }
+      }
+    },
+    "QuantifiedConfidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value", "basis"],
+      "properties": {
+        "kind": {"const": "quantified"},
+        "value": {"type": "number", "minimum": 0, "maximum": 1},
+        "basis": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"}
+      }
+    },
+    "QualitativeConfidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value", "basis"],
+      "properties": {
+        "kind": {"const": "qualitative"},
+        "value": {"enum": ["low", "moderate", "high", "mixed"]},
+        "basis": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"}
+      }
+    },
+    "UnknownConfidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {"kind": {"const": "unknown"}}
+    },
+    "NotApplicableConfidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {"kind": {"const": "not-applicable"}}
+    },
+    "Confidence": {
+      "oneOf": [
+        {"$ref": "#/$defs/QuantifiedConfidence"},
+        {"$ref": "#/$defs/QualitativeConfidence"},
+        {"$ref": "#/$defs/UnknownConfidence"},
+        {"$ref": "#/$defs/NotApplicableConfidence"}
+      ]
+    },
+    "RightsUse": {
+      "type": "string",
+      "enum": ["view", "extract", "analyze", "model", "share", "export"]
+    },
+    "AllowedRights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "allowedUses", "deniedUses", "sourceReferences"],
+      "properties": {
+        "status": {"const": "allowed"},
+        "allowedUses": {"type": "array", "minItems": 1, "maxItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/RightsUse"}},
+        "deniedUses": {"type": "array", "maxItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/RightsUse"}},
+        "sourceReferences": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceReference"}}
+      }
+    },
+    "DeniedRights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "allowedUses", "deniedUses", "sourceReferences"],
+      "properties": {
+        "status": {"const": "denied"},
+        "allowedUses": {"type": "array", "maxItems": 0, "items": {"$ref": "#/$defs/RightsUse"}},
+        "deniedUses": {"type": "array", "minItems": 1, "maxItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/RightsUse"}},
+        "sourceReferences": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceReference"}}
+      }
+    },
+    "UnknownRights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "allowedUses", "deniedUses", "sourceReferences"],
+      "properties": {
+        "status": {"const": "unknown"},
+        "allowedUses": {"type": "array", "maxItems": 0, "items": {"$ref": "#/$defs/RightsUse"}},
+        "deniedUses": {"type": "array", "maxItems": 0, "items": {"$ref": "#/$defs/RightsUse"}},
+        "sourceReferences": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceReference"}}
+      }
+    },
+    "NotApplicableRights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "allowedUses", "deniedUses", "sourceReferences"],
+      "properties": {
+        "status": {"const": "not-applicable"},
+        "allowedUses": {"type": "array", "maxItems": 0, "items": {"$ref": "#/$defs/RightsUse"}},
+        "deniedUses": {"type": "array", "maxItems": 0, "items": {"$ref": "#/$defs/RightsUse"}},
+        "sourceReferences": {"type": "array", "maxItems": 0, "items": {"$ref": "#/$defs/SourceReference"}}
+      }
+    },
+    "RightsDecision": {
+      "oneOf": [
+        {"$ref": "#/$defs/AllowedRights"},
+        {"$ref": "#/$defs/DeniedRights"},
+        {"$ref": "#/$defs/UnknownRights"},
+        {"$ref": "#/$defs/NotApplicableRights"}
+      ]
+    },
+    "ExternalIdentifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scheme", "observedValue", "normalizedValue", "verificationState", "sourceReference"],
+      "properties": {
+        "scheme": {"enum": ["doi", "pmid", "isbn", "issn", "arxiv", "handle", "orcid", "ror", "url", "other"]},
+        "observedValue": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"},
+        "normalizedValue": {
+          "oneOf": [
+            {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"},
+            {"type": "null"}
+          ]
+        },
+        "verificationState": {"enum": ["unverified", "verified", "disputed", "invalid"]},
+        "sourceReference": {"$ref": "#/$defs/SourceReference"}
+      }
+    },
+    "CoreAggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "documentType",
+        "contractVersion",
+        "aggregateKind",
+        "aggregateId",
+        "revisionId",
+        "revision",
+        "createdAt",
+        "modifiedAt",
+        "displayLabel",
+        "status",
+        "confidence",
+        "rights",
+        "sourceReferences",
+        "externalIdentifiers"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "1.0"},
+        "documentType": {"const": "research-observatory-core-aggregate"},
+        "contractVersion": {"$ref": "#/$defs/ContractVersion"},
+        "aggregateKind": {"$ref": "#/$defs/AggregateKind"},
+        "aggregateId": {"$ref": "#/$defs/AggregateId"},
+        "revisionId": {"$ref": "#/$defs/RevisionId"},
+        "revision": {"$ref": "#/$defs/RevisionNumber"},
+        "createdAt": {"$ref": "#/$defs/UtcInstant"},
+        "modifiedAt": {"$ref": "#/$defs/UtcInstant"},
+        "displayLabel": {"$ref": "#/$defs/ObservedText"},
+        "status": {"$ref": "#/$defs/KnowledgeStatus"},
+        "confidence": {"$ref": "#/$defs/Confidence"},
+        "rights": {"$ref": "#/$defs/RightsDecision"},
+        "sourceReferences": {"type": "array", "maxItems": 256, "uniqueItems": true, "items": {"$ref": "#/$defs/SourceReference"}},
+        "externalIdentifiers": {"type": "array", "maxItems": 128, "uniqueItems": true, "items": {"$ref": "#/$defs/ExternalIdentifier"}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "disputed"}}, "required": ["status"]},
+          "then": {
+            "properties": {
+              "displayLabel": {
+                "type": "object",
+                "properties": {
+                  "alternatives": {
+                    "type": "array",
+                    "contains": {"type": "object", "properties": {"disposition": {"const": "disputed"}}, "required": ["disposition"]},
+                    "minContains": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

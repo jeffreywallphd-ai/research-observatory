@@ -27,3 +27,10 @@ identifiers, or absolute storage paths.
 classified storage layout. Its runtime decoder fails closed on unknown or
 path-bearing manifest fields, and its portable inventory excludes every cache,
 index, model-working, log, lock, and temporary entry.
+
+`domain/` defines the common UUIDv7 aggregate/revision envelope and strict
+value objects for observed wording, alternatives, source anchors, epistemic
+status, confidence, rights, and external identifiers. The Draft 2020-12 schema
+is language-neutral authority; `node domain/generate.mjs --check` proves the
+checked-in TypeScript and Python contracts match its exact bytes. Aggregate
+lifecycles and compatibility evolution remain separate governed contracts.

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-core-aggregate",
+  "contractVersion": "1.0.0",
+  "aggregateKind": "graph",
+  "aggregateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a4",
+  "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a5",
+  "revision": 0,
+  "createdAt": "2026-08-14T12:10:00Z",
+  "modifiedAt": "2026-08-14T12:10:00Z",
+  "displayLabel": {
+    "observed": "may contribute to",
+    "normalized": null,
+    "alternatives": [
+      {
+        "value": "is associated with",
+        "disposition": "disputed",
+        "sourceReference": {
+          "sourceAggregateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a6",
+          "sourceRevision": 2,
+          "anchor": {"kind": "document-element", "value": "claim-7"},
+          "sourceLabel": "Reviewer interpretation A"
+        }
+      },
+      {
+        "value": "causes",
+        "disposition": "rejected",
+        "sourceReference": {
+          "sourceAggregateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a7",
+          "sourceRevision": 1,
+          "anchor": {"kind": "document-element", "value": "claim-9"},
+          "sourceLabel": "Reviewer interpretation B"
+        }
+      }
+    ]
+  },
+  "status": "disputed",
+  "confidence": {
+    "kind": "qualitative",
+    "value": "mixed",
+    "basis": "Competing interpretations remain unresolved."
+  },
+  "rights": {
+    "status": "unknown",
+    "allowedUses": [],
+    "deniedUses": [],
+    "sourceReferences": []
+  },
+  "sourceReferences": [],
+  "externalIdentifiers": []
+}
