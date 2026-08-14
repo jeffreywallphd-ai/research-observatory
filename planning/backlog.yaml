@@ -3606,7 +3606,7 @@ capabilities:
     depends_on:
     - CAP-02.S01.T01
     - CAP-03.S01.T01
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-02.S02.T01
       capability_id: CAP-02
@@ -3635,11 +3635,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-14T13:47:17+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4367,12 +4367,12 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T12:57:11+00:00'
-      updated_at: '2026-08-14T13:44:20+00:00'
-      completed_at: null
+      updated_at: '2026-08-14T13:47:17+00:00'
+      completed_at: '2026-08-14T13:47:17+00:00'
       blocker: null
       implementation_notes: 'Portable domain schema, deterministic Python/TypeScript generation, UUIDv7 minting boundary,
         hostile fixtures, ADR-0013, and focused checks are ready for independent review.
@@ -4399,15 +4399,12 @@ capabilities:
         recorded_at: '2026-08-14T13:43:54+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-14T13:38:30+00:00'
-        notes: Bare relative identifier paths remain accepted; Python mutable base methods bypass frozen subclasses; TypeScript
-          snapshot copying loses own __proto__ into the prototype.
+        result: approved
+        reviewed_at: '2026-08-14T13:47:17+00:00'
+        notes: Second remediation independently closes relative-path, Python immutable-base, and TypeScript prototype-copy
+          findings; all original controls remain passing.
       base_sha: ce0e2060ebc36eb02d5c25bf72ecbcf0a826ad25
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-14T13:38:30+00:00'
-        expires_at: '2026-08-14T21:38:30+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
@@ -4438,11 +4435,11 @@ capabilities:
       - service
       verification_commands:
       - python tools/verify.py --profile service
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-14T13:47:17+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

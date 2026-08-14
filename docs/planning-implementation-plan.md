@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 75783707252f2e267ff979f499b0202ce48b88d4c1f3b75de901a179693d309c
+source_sha256: 1a33724e713f25b6cc908615ed3f8ecb5f970871ce25a6cab99297fd6eb21f49
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1719,7 +1719,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Canonical local state is transactional, versioned, testable, and insulated from UI or model code.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1727,7 +1727,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S02.T01 - Create the initial normalized SQLite schema in WAL mode
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -2131,15 +2131,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-00.S02.T01`, `CAP-00.S05.T03`
 
-#### - [ ] CAP-03.S01.T01 - Define core aggregate and value-object contracts
+#### - [x] CAP-03.S01.T01 - Define core aggregate and value-object contracts
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-00.S02.T01`, `CAP-00.S05.T03`
 
-**Owner / review:** codex / agent:curie (`changes-requested`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** Language-neutral schema definitions for IDs, versions, timestamps, source references, status, confidence, rights, and principal aggregates.
 
@@ -2167,7 +2167,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T02 - Define aggregate state machines and invariants
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
