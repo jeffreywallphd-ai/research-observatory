@@ -22,8 +22,11 @@ ADR-0014 governs the first database profile; the portable machine record is
 Every connection is created by the canonical storage factory and re-verifies
 these controls. WAL activation is accepted only when SQLite returns `wal`.
 Project creation builds and checks the database before the staging directory is
-published. Compatible project open validates database identity and integrity
-before creating the session lock or appending the open audit record.
+published. Compatible project open validates application, profile, exact schema
+fingerprint, and project identity before creating the session lock or appending
+the open audit record. Full `quick_check` and `foreign_key_check` scans are
+explicit integrity operations so interactive open cost does not scale with the
+database; T02/T03 must schedule them at startup/maintenance and surface recovery.
 
 ## Normalized table inventory
 

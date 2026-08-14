@@ -625,35 +625,6 @@ def _schema_profile_errors(connection: sqlite3.Connection, expected_project_id: 
         errors.append("application-id-mismatch")
     if connection.execute("PRAGMA user_version").fetchone()[0] != DATABASE_SCHEMA_VERSION:
         errors.append("schema-version-mismatch")
-    tables = {
-        str(row[1]): int(row[5])
-        for row in connection.execute("PRAGMA table_list")
-        if row[2] == "table" and not str(row[1]).startswith("sqlite_")
-    }
-    if set(tables) != set(EXPECTED_TABLES):
-        errors.append("canonical-table-inventory-mismatch")
-    if any(tables.get(table) != 1 for table in EXPECTED_TABLES):
-        errors.append("canonical-table-not-strict")
-    triggers = tuple(
-        sorted(str(row[0]) for row in connection.execute("SELECT name FROM sqlite_schema WHERE type='trigger'"))
-    )
-    if triggers != EXPECTED_TRIGGERS:
-        errors.append("append-only-trigger-inventory-mismatch")
-    indexes = tuple(
-        sorted(
-            str(row[0])
-            for row in connection.execute("SELECT name FROM sqlite_schema WHERE type='index' AND sql IS NOT NULL")
-        )
-    )
-    if indexes != EXPECTED_INDEXES:
-        errors.append("canonical-index-inventory-mismatch")
-    if connection.execute("SELECT count(*) FROM sqlite_schema WHERE type='view'").fetchone()[0] != 0:
-        errors.append("canonical-view-inventory-mismatch")
-    declared_types = {
-        str(row[2]).upper() for table in EXPECTED_TABLES for row in connection.execute(f'PRAGMA table_xinfo("{table}")')
-    }
-    if declared_types - {"INTEGER", "REAL", "TEXT"}:
-        errors.append("canonical-column-type-mismatch")
     try:
         metadata = connection.execute(
             """
