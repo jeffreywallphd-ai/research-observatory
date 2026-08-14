@@ -85,14 +85,46 @@ waves:
   activation_gate: G0
   track: local-baseline
   approval:
-    status: PENDING
-    approved_by: null
-    approved_at: null
-    approved_commit: null
-    capability_ids: []
-    decision_ids: []
-    slice_ids: []
-    notes: null
+    status: APPROVED
+    approved_by: repository-owner
+    approved_at: '2026-08-14T01:32:27.653823+00:00'
+    approved_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
+    capability_ids:
+    - CAP-01
+    - CAP-02
+    - CAP-03
+    - CAP-07
+    decision_ids:
+    - CAP-01-D01
+    - CAP-01-D02
+    - CAP-02-D01
+    - CAP-02-D02
+    - CAP-02-D03
+    - CAP-03-D01
+    - CAP-03-D02
+    - CAP-03-D03
+    - CAP-03-D04
+    - CAP-07-D01
+    - CAP-07-D06
+    - CAP-07-D07
+    - CAP-07-D08
+    slice_ids:
+    - CAP-01.S01
+    - CAP-01.S02
+    - CAP-01.S03
+    - CAP-01.S04
+    - CAP-02.S01
+    - CAP-02.S02
+    - CAP-02.S03
+    - CAP-02.S04
+    - CAP-03.S01
+    - CAP-03.S02
+    - CAP-03.S03
+    - CAP-03.S04
+    - CAP-03.S05
+    - CAP-03.S06
+    - CAP-07.S01
+    notes: User explicitly approved the complete W1 packet in the Codex session on 2026-08-13.
   campaign: null
   checkpoints: []
   completion:
@@ -332,7 +364,8 @@ release_gates:
   name: Executable engineering baseline
   criteria:
   - Fresh clone can run validation and build skeleton artifacts.
-  - Backlog dependencies, durable Wave campaigns, ordered slice reviews, integration checkpoints, and task transitions validate automatically.
+  - Backlog dependencies, durable Wave campaigns, ordered slice reviews, integration checkpoints, and task transitions validate
+    automatically.
   - Architecture constraints and ADR process are documented.
   - Approved UI reference, workflow catalog, page contracts, and design-first automation are installed and validated.
   status: APPROVED
@@ -574,16 +607,17 @@ selection_policy:
 - Treat the YAML backlog as the authoritative execution ledger; DOCX and Markdown are generated views.
 - The wave is the approval, durable execution, integration, qualification, and handoff unit. Every wave has one sequential
   exit/next-wave activation gate.
-- Use descriptive capability aliases and slice labels in human-facing output. Preserve numeric capability IDs as immutable dependency/evidence
-  keys and numeric slice IDs as immutable sequence/evidence keys.
+- Use descriptive capability aliases and slice labels in human-facing output. Preserve numeric capability IDs as immutable
+  dependency/evidence keys and numeric slice IDs as immutable sequence/evidence keys.
 - Within the active Wave, a slice is an ordered integration/review checkpoint and a task is the atomic implementation/evidence
   unit. Select across capability contributions only when dependencies and approved Wave order permit it.
 - Start the next slice only after every required task in the current slice is DONE, slice-level end-to-end evidence is attached,
   and the slice review is approved.
-- Record risk-cluster integration checkpoints as interfaces, migrations, security boundaries, or coherent groups of slices close.
-  These checkpoints run the accumulated affected-profile suite but do not create new human approval gates.
+- Record risk-cluster integration checkpoints as interfaces, migrations, security boundaries, or coherent groups of slices
+  close. These checkpoints run the accumulated affected-profile suite but do not create new human approval gates.
 - Close a Wave only after all of its slices are independently approved, the complete Wave-exit suite passes, criterion-linked
-  evidence is attached, and an independent Wave review approves the integrated result. Capabilities remain cross-Wave product maps.
+  evidence is attached, and an independent Wave review approves the integrated result. Capabilities remain cross-Wave product
+  maps.
 - A Wave campaign may pause for an external dependency, explicit human/ADR/design gate, unavailable platform, or an in-boundary
   blocker. Resume the same Wave campaign after ordinary process or session interruption.
 - Select only tasks whose dependencies are DONE and whose wave activation gate is approved. A future slice and its later gate
@@ -622,7 +656,8 @@ definition_of_done:
 - The task lease is released and branch/worktree disposition is recorded.
 - User-facing implementation conforms to the approved reference ID through token, route/page-contract, workflow-navigation,
   accessibility, and visual-regression evidence.
-- Task completion does not by itself complete the slice, increment, or capability; their applicable end-to-end reviews must also pass.
+- Task completion does not by itself complete the slice, increment, or capability; their applicable end-to-end reviews must
+  also pass.
 capabilities:
 - id: CAP-00
   alias: CAP-delivery-foundation
@@ -3286,7 +3321,8 @@ capabilities:
     platform: windows-x64
     started_at: '2026-08-09T06:52:46+00:00'
     updated_at: '2026-08-13T22:07:39+00:00'
-    pause_reason: CAP-windows-desktop-runtime/W1 independently approved; W5 packaging remains a future increment behind the global W4 exit gate.
+    pause_reason: CAP-windows-desktop-runtime/W1 independently approved; W5 packaging remains a future increment behind the
+      global W4 exit gate.
     pause_category: wave-complete
     lease: null
   completion:

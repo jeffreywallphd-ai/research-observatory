@@ -8,7 +8,7 @@ capability_plan: planning/capability-plans/CAP-07.md
 planning_gate: capability-decision-complete
 slice_id: CAP-07.S01
 title: Model task, provider, and routing contracts
-status: proposed
+status: approved
 wave: W1
 priority: P0
 deployment_profiles:
@@ -23,10 +23,10 @@ task_ids:
 - CAP-07.S01.T03
 ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
 approval:
-  status: pending
-  approved_by: null
-  approved_at: null
-  approved_commit: null
+  status: approved
+  approved_by: repository-owner
+  approved_at: '2026-08-14T01:32:27.653823+00:00'
+  approved_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
 ---
 # CAP-07.S01 — Model task, provider, and routing contracts
 

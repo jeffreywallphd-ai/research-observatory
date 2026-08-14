@@ -24,8 +24,8 @@ ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
 approval:
   status: approved
   approved_by: repository-owner
-  approved_at: '2026-08-08T15:56:58.231475+00:00'
-  approved_commit: b0e318137b2aa3ccf34f6a21a587419991d24b03
+  approved_at: '2026-08-14T01:32:27.653823+00:00'
+  approved_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
 ---
 # CAP-01.S03 - Packaged Python/FastAPI sidecar
 > **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-01.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-01 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.
