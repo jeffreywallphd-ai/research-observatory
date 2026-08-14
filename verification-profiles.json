@@ -31,6 +31,7 @@
     "service:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/service", "-p", "test_*.py"]},
     "contracts:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/contracts", "-p", "test_*.py"]},
     "data:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/data", "-p", "test_*.py"]},
+    "data:project-lifecycle-performance": {"argv": ["{python}", "tools/project_lifecycle_performance_check.py", "--repo", "{repo}", "--report", "artifacts/tmp/project-lifecycle-performance.json"]},
     "documents:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/documents", "-p", "test_*.py"]},
     "search:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/search", "-p", "test_*.py"]},
     "ai:unit": {"argv": ["{python}", "-m", "unittest", "discover", "-s", "tests/ai", "-p", "test_*.py"]},
@@ -80,7 +81,7 @@
       ]
     },
     "service": {"description": "Foundation plus Core API, portable-contract, and Windows sidecar packaging tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "service:unit", "activationGlob": "tests/service/test_*.py", "installedBy": "CAP-01.S03"}, {"command": "contracts:unit", "activationGlob": "tests/contracts/test_*.py", "installedBy": "CAP-01"}, {"command": "packaging:unit", "activationPath": "services/core-api/packaging/sidecar-build.json", "installedBy": "CAP-01.S03.T02"}]},
-    "data": {"description": "Foundation plus data/storage and portable-contract tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "data:unit", "activationGlob": "tests/data/test_*.py", "installedBy": "CAP-02"}, {"command": "contracts:unit", "activationGlob": "tests/contracts/test_*.py", "installedBy": "CAP-01"}]},
+    "data": {"description": "Foundation plus data/storage and portable-contract tests.", "includes": ["foundation"], "commands": ["data:project-lifecycle-performance"], "optionalCommands": [{"command": "data:unit", "activationGlob": "tests/data/test_*.py", "installedBy": "CAP-02"}, {"command": "contracts:unit", "activationGlob": "tests/contracts/test_*.py", "installedBy": "CAP-01"}]},
     "documents": {"description": "Foundation plus document ingestion, parsing, anchoring, and rights tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "documents:unit", "activationGlob": "tests/documents/test_*.py", "installedBy": "CAP-05"}]},
     "search": {"description": "Foundation plus lexical, semantic, hybrid, reranking, and screening tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "search:unit", "activationGlob": "tests/search/test_*.py", "installedBy": "CAP-06"}]},
     "ai": {"description": "Foundation plus model routing, policy, structured-output, and evaluation tests.", "includes": ["foundation"], "commands": [], "optionalCommands": [{"command": "ai:unit", "activationGlob": "tests/ai/test_*.py", "installedBy": "CAP-07"}]},

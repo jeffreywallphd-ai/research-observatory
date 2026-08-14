@@ -86,6 +86,7 @@
     "tests/desktop/test_core_sidecar_performance_check.py",
     "tests/contracts/test_foundation_contracts.py",
     "tests/contracts/test_support_bundle_contract.py",
+    "tests/data/test_project_lifecycle_performance_check.py",
     "tests/security/test_install_trivy.py",
     "tests/security/test_security_check.py",
     "tests/service/test_core_api.py",
