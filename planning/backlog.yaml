@@ -3548,15 +3548,18 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T11:08:27+00:00'
-      updated_at: '2026-08-14T11:35:33+00:00'
+      updated_at: '2026-08-14T11:36:17+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Focused implementation and boundary checks pass; exact criterion evidence attached at candidate
+      implementation_notes: 'Focused implementation and boundary checks pass; exact criterion evidence attached at candidate
         4fc8e31. Broad data, desktop, and e2e-local profiles are deferred to completed-slice review under the risk-based policy.
+
+        Both independent review findings are remediated with focused Core/generated/component/compiled-product checks; superseding
+        evidence attached at exact candidate 687934e.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S01.T03.json
