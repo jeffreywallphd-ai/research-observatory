@@ -40,10 +40,10 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-07 · immutable evidence key</span><h1>CAP-model-gateway</h1><p>Provider-neutral model gateway and governed AI execution</p></div><span class="status status-proposed">Proposed</span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>20</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>fae0fbe83422</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>20</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>5c90a7c36469</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
-  <div><h2>Resolved capability decisions within Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them here, then approve the complete active Wave packet from its Wave page. Later-Wave plans remain outside that approval.</p></div>
+  <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
   <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 20 selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
@@ -58,9 +58,9 @@ python tools/planctl.py --repo . apply-feedback CAP-07 &lt;downloaded-json&gt;
 python tools/planctl.py --repo . approve CAP-07 --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
 python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --require-approved</code></pre></details>
 </section>
-<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
+<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-07-D01" data-recommendation="Provider-neutral task/result envelopes and model manifests owned by the core; provider SDK types remain inside adapters" data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D01" data-recommendation="Provider-neutral task/result envelopes and model manifests owned by the core; provider SDK types remain inside adapters" data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D01</span><h3>Gateway domain boundary</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -84,10 +84,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D02" data-recommendation="Supervised llama.cpp sidecar with pinned GGUF model manifests; ONNX Runtime for suitable encoders/classifiers" data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D02" data-recommendation="Supervised llama.cpp sidecar with pinned GGUF model manifests; ONNX Runtime for suitable encoders/classifiers" data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D02</span><h3>Local generative runtime</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -111,10 +111,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D03" data-recommendation="JSON Schema post-validation is authoritative; provider grammar/tool constraints are optimization only" data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D03" data-recommendation="JSON Schema post-validation is authoritative; provider grammar/tool constraints are optimization only" data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D03</span><h3>Structured output authority</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -138,10 +138,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D04" data-recommendation="Two adapters selected by capability/privacy/cost evidence, with OpenAI- and Anthropic-compatible contracts first and Gemini-ready port" data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D04" data-recommendation="Two adapters selected by capability/privacy/cost evidence, with OpenAI- and Anthropic-compatible contracts first and Gemini-ready port" data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D04</span><h3>Remote provider release baseline</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -165,10 +165,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D05" data-recommendation="OpenTelemetry GenAI conventions with content redaction by default and separate durable scholarly provenance" data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D05" data-recommendation="OpenTelemetry GenAI conventions with content redaction by default and separate durable scholarly provenance" data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D05</span><h3>AI telemetry</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -192,10 +192,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D06" data-recommendation="Use explicit task kinds—generation, structured extraction, embedding, reranking, classification/NLI, moderation and tool call—with task-specific input/result envelopes." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D06" data-recommendation="Use explicit task kinds—generation, structured extraction, embedding, reranking, classification/NLI, moderation and tool call—with task-specific input/result envelopes." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D06</span><h3>Task taxonomy</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -219,10 +219,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D07" data-recommendation="Route on declared task capabilities, data policy, context limits, structured-output support, deployment, evaluation status and resource/cost envelope." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D07" data-recommendation="Route on declared task capabilities, data policy, context limits, structured-output support, deployment, evaluation status and resource/cost envelope." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D07</span><h3>Capability matching</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -246,10 +246,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D08" data-recommendation="Ordered policy with deadline budget, retry classification and explicit degraded result; no silent provider/model substitution for pinned reproducible runs." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D08" data-recommendation="Ordered policy with deadline budget, retry classification and explicit degraded result; no silent provider/model substitution for pinned reproducible runs." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D08</span><h3>Fallback</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -273,10 +273,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D09" data-recommendation="llama.cpp/GGUF for local generative LLMs; ONNX Runtime or evaluated native library for encoders/rerankers/classifiers; both supervised as replaceable sidecars/workers." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D09" data-recommendation="llama.cpp/GGUF for local generative LLMs; ONNX Runtime or evaluated native library for encoders/rerankers/classifiers; both supervised as replaceable sidecars/workers." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D09</span><h3>Runtime split</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -300,10 +300,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D10" data-recommendation="Pinned revision, cryptographic hash, license/use metadata, architecture, tokenizer and runtime compatibility required before activation." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D10" data-recommendation="Pinned revision, cryptographic hash, license/use metadata, architecture, tokenizer and runtime compatibility required before activation." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D10</span><h3>Artifact acceptance</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -327,10 +327,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D11" data-recommendation="Detect CPU/RAM/GPU/VRAM/driver and choose conservative approved profiles with user override; no automatic remote fallback." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D11" data-recommendation="Detect CPU/RAM/GPU/VRAM/driver and choose conservative approved profiles with user override; no automatic remote fallback." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D11</span><h3>Hardware profiles</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -354,10 +354,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D12" data-recommendation="Implement OpenAI-compatible and Anthropic Messages/tool-use adapters first; retain a Gemini adapter contract and add only after conformance/evaluation." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D12" data-recommendation="Implement OpenAI-compatible and Anthropic Messages/tool-use adapters first; retain a Gemini adapter contract and add only after conformance/evaluation." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D12</span><h3>Initial adapters</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -381,10 +381,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D13" data-recommendation="Resolve and display the exact minimized payload after prompt assembly, including attachments, before first use or policy-sensitive changes." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D13" data-recommendation="Resolve and display the exact minimized payload after prompt assembly, including attachments, before first use or policy-sensitive changes." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D13</span><h3>Egress unit</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -408,10 +408,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D14" data-recommendation="Central network policy plus adapter deny-by-default; no automatic remote fallback from a local task unless project policy explicitly permits it." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D14" data-recommendation="Central network policy plus adapter deny-by-default; no automatic remote fallback from a local task unless project policy explicitly permits it." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D14</span><h3>Offline enforcement</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -435,10 +435,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D15" data-recommendation="JSON Schema Draft 2020-12 with versioned domain schemas; provider subsets compiled at adapter boundary." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D15" data-recommendation="JSON Schema Draft 2020-12 with versioned domain schemas; provider subsets compiled at adapter boundary." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D15</span><h3>Canonical schema</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -462,10 +462,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D16" data-recommendation="Provider constraint -&gt; parse -&gt; canonical schema validation -&gt; semantic invariants -&gt; evidence/anchor validation -&gt; accepted or typed failure." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D16" data-recommendation="Provider constraint -&gt; parse -&gt; canonical schema validation -&gt; semantic invariants -&gt; evidence/anchor validation -&gt; accepted or typed failure." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D16</span><h3>Validation pipeline</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -489,10 +489,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D17" data-recommendation="At most bounded deterministic normalization plus one or configured model repair attempt; never invent missing required evidence." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D17" data-recommendation="At most bounded deterministic normalization plus one or configured model repair attempt; never invent missing required evidence." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D17</span><h3>Repair policy</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -516,10 +516,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D18" data-recommendation="Operational spans store hashes, sizes, task/model/version, timing, usage and validation status; raw content only in project-governed artifacts when explicitly required." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D18" data-recommendation="Operational spans store hashes, sizes, task/model/version, timing, usage and validation status; raw content only in project-governed artifacts when explicitly required." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D18</span><h3>Telemetry/content boundary</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -543,10 +543,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D19" data-recommendation="Cache only deterministic/idempotent tasks by full manifest hash and data policy; never reuse across projects unless content-free/public and explicitly approved." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D19" data-recommendation="Cache only deterministic/idempotent tasks by full manifest hash and data policy; never reuse across projects unless content-free/public and explicitly approved." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D19</span><h3>Cache</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -570,10 +570,10 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-07-D20" data-recommendation="Task-specific gold/held-out sets with objective checks, expert sampling, calibration and cost/latency; promotion requires non-regression thresholds and approval." data-plan-hash="fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24">
+<section class="decision-card" data-decision-id="CAP-07-D20" data-recommendation="Task-specific gold/held-out sets with objective checks, expert sampling, calibration and cost/latency; promotion requires non-regression thresholds and approval." data-plan-hash="5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-07-D20</span><h3>Evaluation gate</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -597,7 +597,7 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W3</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 </div>
 <section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
@@ -632,9 +632,9 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
   <p>3 tasks · W3 · P0</p></div>
   <span class="status status-proposed">Proposed</span>
 </a></div>
-<details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+<details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Wave-scoped decision packet — recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Each decision is classified by the Wave in which it becomes binding. A pre-Wave approval authorizes only the decisions binding in that Wave and that Wave&#x27;s slice plans at one immutable commit; inherited and future decisions remain nonbinding context.
 
-&lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Review all slices&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Confirm or override resolved defaults&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve once&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Run long capability campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Production readiness review&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Review Wave slices&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Confirm binding decisions&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve the Wave&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Run durable Wave campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Wave exit review&lt;/span&gt;&lt;/div&gt;
 
 ## 0. Control and authority
 
@@ -642,8 +642,8 @@ python tools/planctl.py --repo . ready CAP-07 --wave &lt;active-wave&gt; --requi
 |---|---|
 | Capability | `CAP-07` — Provider-neutral model gateway and governed AI execution |
 | Objective | Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and usable locally or through approved providers. |
-| Execution mode | Capability campaign; slices complete in dependency order |
-| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Execution mode | Capability contribution map; each Wave owns its ordered execution lease |
+| Decision status | `COMPLETE` — recommendations selected, accepted, and classified by binding Wave; active-Wave approval remains separate |
 | Slice plans | `CAP-07.S01`, `CAP-07.S02`, `CAP-07.S03`, `CAP-07.S04`, `CAP-07.S05` |
 | Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
@@ -708,7 +708,7 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 
 ### Review and approval
 
-The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+The best-in-class recommendation in every row is already selected and accepted. Reviewers may confirm or override it with explicit rationale. The `binding_waves` classification controls authorization: each pre-Wave approval binds only the decisions and slice plans in its exact inventory, while inherited and future decisions remain context.
 
 
 ## 5. Cross-slice architecture contract

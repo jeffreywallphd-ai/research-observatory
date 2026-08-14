@@ -167,7 +167,7 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
             sections.append(heading + "\n\nComplete this section before approval.")
     body = (
         f"# {cap['id']} - Capability decision and execution plan\n\n"
-        "> **Generated proposed packet.** Resolve the capability-wide decision register once. Each Wave approval then binds the current capability decisions together with every slice plan assigned to that Wave at one immutable commit.\n\n"
+        "> **Generated proposed packet.** Resolve the capability-wide decision register and classify every decision by its binding Wave. Each pre-Wave approval then binds only that Wave's exact decision inventory together with every slice plan assigned to it at one immutable commit; inherited and future decisions remain nonbinding context.\n\n"
         "> **Review surface.** Run `python tools/planctl.py --repo . review "
         + cap["id"]
         + "` and use the generated static pages to review all options and slice plans.\n\n"
@@ -237,7 +237,7 @@ def scaffold_slice(root: Path, cap: dict[str, Any], slice_: dict[str, Any]) -> P
         )
     body = (
         f"# {slice_['id']} - {slice_['title']}\n\n"
-        "> **Generated proposed plan.** Complete this plan using the Vision, Systems Design, authoritative backlog, approved experience reference, and current primary research. It authorizes only its ordered slice after the capability decision packet and this slice's wave are approved.\n\n"
+        "> **Generated proposed plan.** Complete this plan using the Vision, Systems Design, authoritative backlog, approved experience reference, and current primary research. It authorizes only its ordered slice after its binding capability decisions and this slice's complete Wave packet are approved.\n\n"
         f"> **Review surface.** Run `python tools/planctl.py --repo . wave review {slice_.get('wave', 'W?')}` and use the generated complete Wave packet.\n\n"
         + "\n\n".join(sections)
         + "\n"
@@ -281,6 +281,7 @@ def decision_report(root: Path, capability: str) -> int:
                 "selected_option": decision.get("selected_option"),
                 "status": decision.get("status"),
                 "required_adr": decision.get("required_adr"),
+                "binding_waves": decision.get("binding_waves"),
             }
         )
     print(
@@ -479,6 +480,14 @@ def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
     if not contributing:
         raise ValueError(f"{wave_id} has no contributing capability slices")
     failures = 0
+    expected_capability_ids = [str(capability["id"]) for capability in contributing]
+    expected_slice_ids = [
+        str(slice_["id"])
+        for capability in contributing
+        for slice_ in capability.get("slices", [])
+        if slice_.get("wave") == wave_id
+    ]
+    expected_decision_ids: list[str] = []
     for capability in contributing:
         capability_id = str(capability["id"])
         if capability_id == "CAP-00" and not capability_plan_path(root, capability_id).exists():
@@ -487,11 +496,48 @@ def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
             print(f"ERROR: missing capability plan for {capability_id}", file=sys.stderr)
             failures += 1
             continue
+        capability_meta, _ = frontmatter(capability_plan_path(root, capability_id))
+        expected_decision_ids.extend(
+            str(decision["id"])
+            for decision in capability_meta.get("decisions", [])
+            if wave_id in (decision.get("binding_waves") or [])
+        )
         failures += int(bool(run_validator(root, "capability_plan_check.py", capability_id, approved, wave_id)))
         failures += int(bool(run_validator(root, "slice_plan_check.py", capability_id, approved, wave_id)))
-    if approved and (wave.get("approval") or {}).get("status") != "APPROVED":
-        print(f"ERROR: {wave_id} pre-Wave packet is not explicitly APPROVED", file=sys.stderr)
-        failures += 1
+    if approved:
+        wave_approval = wave.get("approval") or {}
+        if wave_approval.get("status") != "APPROVED":
+            print(f"ERROR: {wave_id} pre-Wave packet is not explicitly APPROVED", file=sys.stderr)
+            failures += 1
+        for field, expected in (
+            ("capability_ids", expected_capability_ids),
+            ("decision_ids", expected_decision_ids),
+            ("slice_ids", expected_slice_ids),
+        ):
+            if wave_approval.get(field) != expected:
+                print(f"ERROR: {wave_id} approval {field} is not the exact Wave inventory", file=sys.stderr)
+                failures += 1
+        for capability in contributing:
+            capability_id = str(capability["id"])
+            if capability_id == "CAP-00":
+                continue
+            for path in slice_plan_paths(root, capability_id):
+                slice_meta, _ = frontmatter(path)
+                if slice_meta.get("wave") != wave_id:
+                    continue
+                slice_approval = slice_meta.get("approval") or {}
+                for slice_field, wave_field in (
+                    ("approved_by", "approved_by"),
+                    ("approved_at", "approved_at"),
+                    ("approved_commit", "approved_commit"),
+                ):
+                    if slice_approval.get(slice_field) != wave_approval.get(wave_field):
+                        print(
+                            f"ERROR: {slice_meta.get('slice_id')} approval {slice_field} is not bound to the "
+                            f"exact {wave_id} approval",
+                            file=sys.stderr,
+                        )
+                        failures += 1
     failures += int(
         bool(
             subprocess.run(
@@ -543,6 +589,7 @@ def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str
         raise ValueError(f"Unknown Wave {wave_id}")
     contributing = wave_capabilities(data, wave_id)
     capability_ids = [str(capability["id"]) for capability in contributing]
+    decision_ids: list[str] = []
     slice_ids = [
         str(slice_["id"])
         for capability in contributing
@@ -557,6 +604,18 @@ def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str
             if not cap_path.exists():
                 raise ValueError(f"Missing capability plan for {capability_id}")
             paths.append(cap_path)
+            cap_meta, _ = frontmatter(cap_path)
+            unclassified = [item.get("id") for item in cap_meta.get("decisions", []) if not item.get("binding_waves")]
+            if unclassified:
+                raise ValueError(f"{capability_id}: decisions lack explicit Wave classification: {unclassified}")
+            binding_ids = [
+                str(item["id"])
+                for item in cap_meta.get("decisions", [])
+                if wave_id in (item.get("binding_waves") or [])
+            ]
+            if not binding_ids:
+                raise ValueError(f"{capability_id}: no decisions are binding in {wave_id}")
+            decision_ids.extend(binding_ids)
         selected = []
         for path in slice_plan_paths(root, capability_id):
             meta, _ = frontmatter(path)
@@ -577,7 +636,7 @@ def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str
             if capability_id == "CAP-00":
                 continue
             cap_path = capability_plan_path(root, capability_id)
-            meta, body = frontmatter(cap_path)
+            meta, _ = frontmatter(cap_path)
             unresolved = [
                 item.get("id")
                 for item in meta.get("decisions", [])
@@ -585,15 +644,6 @@ def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str
             ]
             if meta.get("open_blocking_decisions") or unresolved or meta.get("decision_completion") != "complete":
                 raise ValueError(f"{capability_id}: capability decisions are incomplete: {unresolved}")
-            if meta.get("status") != "approved":
-                meta["status"] = "approved"
-                meta["approval"] = {
-                    "status": "approved",
-                    "approved_by": approver,
-                    "approved_at": approved_at,
-                    "approved_commit": commit,
-                }
-                write_plan(cap_path, meta, body)
             for path in slice_plan_paths(root, capability_id):
                 slice_meta, slice_body = frontmatter(path)
                 if slice_meta.get("wave") != wave_id:
@@ -613,6 +663,7 @@ def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str
             "approved_at": approved_at,
             "approved_commit": commit,
             "capability_ids": capability_ids,
+            "decision_ids": decision_ids,
             "slice_ids": slice_ids,
             "notes": note or None,
         }
@@ -692,8 +743,8 @@ def main() -> int:
             if args.wave_command == "approve":
                 result = approve_wave(root, args.wave, args.by, args.commit, args.note)
                 print(
-                    f"Approved the complete {args.wave} packet—every contributing capability decision and slice "
-                    f"plan—at immutable commit {args.commit}."
+                    f"Approved the complete {args.wave} packet—every {args.wave}-binding capability decision and "
+                    f"Wave slice plan—at immutable commit {args.commit}."
                 )
                 print_wave_review_link(root, args.wave)
                 return result
@@ -702,8 +753,9 @@ def main() -> int:
             result = validate_wave(root, args.wave, require_approved)
             if result and args.wave_command == "ready":
                 print(
-                    "Wave is not ready. Resolve every capability decision, approve every Wave slice plan, and record "
-                    "one commit-bound pre-Wave approval using the linked page.",
+                    "Wave is not ready. Classify every contributing capability decision, resolve the decisions "
+                    "binding in this Wave, approve every Wave slice plan, and record one commit-bound pre-Wave "
+                    "approval using the linked page.",
                     file=sys.stderr,
                 )
             print_wave_review_link(root, args.wave)

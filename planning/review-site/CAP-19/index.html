@@ -43,7 +43,7 @@
   <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>18</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>35b4a024df84</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
-  <div><h2>Resolved capability decisions within Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them here, then approve the complete active Wave packet from its Wave page. Later-Wave plans remain outside that approval.</p></div>
+  <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
   <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 18 selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
@@ -57,7 +57,7 @@ python tools/planctl.py --repo . apply-feedback CAP-19 &lt;downloaded-json&gt;
 python tools/planctl.py --repo . approve CAP-19 --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
 python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --require-approved</code></pre></details>
 </section>
-<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
+<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
 <section class="decision-card" data-decision-id="CAP-19-D01" data-recommendation="Use governed versioned reviewer-panel profiles by research type, venue and review objective" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
   <div class="decision-heading">
@@ -83,7 +83,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>ADR-REVIEWER-PROTOCOL</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>ADR-REVIEWER-PROTOCOL</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D02" data-recommendation="Map roles and transparency settings to ANSI/NISO peer-review terminology" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -110,7 +110,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D03" data-recommendation="Run each reviewer in an isolated context with an explicit allowed-evidence manifest" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -137,7 +137,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D04" data-recommendation="Freeze an immutable manuscript, blueprint, evidence and policy snapshot for each review round" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -164,7 +164,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D05" data-recommendation="Use structured location, criterion, category, severity, confidence, evidence, rationale and requested-action fields" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -191,7 +191,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D06" data-recommendation="Include a scope, contribution, positioning, coherence and venue-fit role" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -218,7 +218,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D07" data-recommendation="Use method-family-aware analysis, validity, ethics and reproducibility criteria" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -245,7 +245,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D08" data-recommendation="Provide separate theory/argument and critical/reflexive reviewer roles" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -272,7 +272,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D09" data-recommendation="Audit citations, source entailment, result records, tables/figures and unsupported claims" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -299,7 +299,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D10" data-recommendation="Inspect disclosure, data/code/protocol availability, rights, human-subject and reproducibility claims without making institutional determinations" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -326,7 +326,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D11" data-recommendation="Use role and model diversity with deterministic manifests and compare disagreements" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -353,7 +353,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D12" data-recommendation="Prohibit acceptance-probability claims and named-reviewer impersonation" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -380,7 +380,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D13" data-recommendation="Run a separate meta-review stage over completed reports and preserve material disagreement" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -407,7 +407,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D14" data-recommendation="Benchmark comments against expert reviews and track false positives, unsupported severity and criterion drift" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -434,7 +434,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D15" data-recommendation="Keep drafts local by default and enforce explicit provider/permission policy with disclosure" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -461,7 +461,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D16" data-recommendation="Map each accepted comment to stable blocks, actions, owner, status, evidence and change sets" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -488,7 +488,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D17" data-recommendation="Generate an editable point-by-point response/rebuttal linked to comments and manuscript diffs" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -515,7 +515,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-19-D18" data-recommendation="Re-run only relevant reviewer roles/criteria against the revised snapshot and prior response" data-plan-hash="35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66">
@@ -542,7 +542,7 @@ python tools/planctl.py --repo . ready CAP-19 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 </div>
 <section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>

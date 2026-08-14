@@ -126,6 +126,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                         "approved_at": "2026-08-13T00:00:00+00:00",
                         "approved_commit": "a" * 40,
                         "capability_ids": ["CAP-00"],
+                        "decision_ids": [],
                         "slice_ids": ["CAP-00.S01"],
                         "notes": None,
                     },

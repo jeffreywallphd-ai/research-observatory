@@ -247,9 +247,40 @@ def decision_card(decision: dict[str, Any], plan_hash: str) -> str:
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>{esc(decision.get("required_adr") or "None currently identified")}</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>{esc(", ".join(decision.get("binding_waves") or []) or "Classification required")}</code> · Required ADR: <code>{esc(decision.get("required_adr") or "None currently identified")}</code></p>
 </section>
 """
+
+
+def classified_decisions(
+    decisions: list[dict[str, Any]], wave_id: str
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    current = int(wave_id[1:])
+    binding: list[dict[str, Any]] = []
+    inherited: list[dict[str, Any]] = []
+    future: list[dict[str, Any]] = []
+    unclassified: list[dict[str, Any]] = []
+    for decision in decisions:
+        waves = decision.get("binding_waves") or []
+        if not waves:
+            unclassified.append(decision)
+        elif wave_id in waves:
+            binding.append(decision)
+        elif all(int(str(item)[1:]) > current for item in waves):
+            future.append(decision)
+        else:
+            inherited.append(decision)
+    return binding, inherited, future, unclassified
+
+
+def wave_decision_rows(decisions: list[dict[str, Any]], *, context: str) -> str:
+    return "".join(
+        f"<li><span><strong>{esc(decision.get('title'))}</strong><small>{esc(context)} · "
+        f"Wave(s): {esc(', '.join(decision.get('binding_waves') or []) or 'unclassified')} · Selected: "
+        f"{esc(decision.get('selected_option') or 'Pending')}</small></span>"
+        f"{status_badge(decision.get('status'))}</li>"
+        for decision in decisions
+    )
 
 
 def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | None = None) -> dict[str, Any]:
@@ -395,6 +426,8 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         wave_approved_plan_count = 0
         wave_decision_count = 0
         wave_accepted_decision_count = 0
+        wave_unclassified_decision_count = 0
+        wave_decision_ids: list[str] = []
         capability_ids: list[str] = []
         for capability in backlog_capabilities.values():
             increment_slices = [slice_ for slice_ in capability.get("slices", []) if slice_.get("wave") == wave_id]
@@ -404,11 +437,16 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             capability_ids.append(capability_id)
             cap_meta = capability_plan_meta.get(capability_id, {})
             cap_decisions = cap_meta.get("decisions", [])
-            wave_decision_count += len(cap_decisions)
+            binding_decisions, inherited_decisions, future_decisions, unclassified_decisions = classified_decisions(
+                cap_decisions, wave_id
+            )
+            wave_decision_ids.extend(str(decision["id"]) for decision in binding_decisions)
+            wave_decision_count += len(binding_decisions)
             wave_accepted_decision_count += sum(
                 decision.get("status") == "accepted" and bool(decision.get("selected_option"))
-                for decision in cap_decisions
+                for decision in binding_decisions
             )
+            wave_unclassified_decision_count += len(unclassified_decisions)
             wave_slice_count += len(increment_slices)
             wave_approved_count += sum(
                 slice_.get("completion", {}).get("status") == "APPROVED" for slice_ in increment_slices
@@ -421,7 +459,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 label = slice_alias(str(slice_.get("title")))
                 status = slice_.get("completion", {}).get("status")
                 plan_status = slice_plan_meta.get(str(slice_["id"]), {}).get("status", "missing")
-                wave_plan_count += 1
+                wave_plan_count += int(plan_status != "missing")
                 wave_approved_plan_count += int(plan_status == "approved")
                 if capability_id in {item["id"] for item in capabilities}:
                     label_html = (
@@ -440,16 +478,45 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 heading = f'<a href="../{esc(capability_id)}/index.html">{esc(alias)}</a>'
             else:
                 heading = esc(alias)
-            decision_rows = "".join(
-                f"<li><span><strong>{esc(decision.get('title'))}</strong><small>Selected: "
-                f"{esc(decision.get('selected_option') or 'Pending')}</small></span>"
-                f"{status_badge(decision.get('status'))}</li>"
-                for decision in cap_decisions
+            decision_groups = "".join(
+                [
+                    (
+                        f'<details class="plan-details" open><summary>{len(binding_decisions)} binding {wave_id} '
+                        f'decisions</summary><ul class="wave-slice-list">'
+                        f"{wave_decision_rows(binding_decisions, context='Binding in this Wave')}</ul></details>"
+                        if binding_decisions
+                        else ""
+                    ),
+                    (
+                        f'<details class="plan-details"><summary>{len(inherited_decisions)} inherited decisions '
+                        f'(context only)</summary><ul class="wave-slice-list">'
+                        f"{wave_decision_rows(inherited_decisions, context='Previously binding; not re-approved here')}"
+                        f"</ul></details>"
+                        if inherited_decisions
+                        else ""
+                    ),
+                    (
+                        f'<details class="plan-details"><summary>{len(future_decisions)} future decisions '
+                        f'(nonbinding context)</summary><ul class="wave-slice-list">'
+                        f"{wave_decision_rows(future_decisions, context='Future context; not authorized by this Wave')}"
+                        f"</ul></details>"
+                        if future_decisions
+                        else ""
+                    ),
+                    (
+                        f'<details class="plan-details" open><summary>{len(unclassified_decisions)} decisions require '
+                        f'Wave classification</summary><ul class="wave-slice-list">'
+                        f"{wave_decision_rows(unclassified_decisions, context='Classification required before approval')}"
+                        f"</ul></details>"
+                        if unclassified_decisions
+                        else ""
+                    ),
+                ]
             )
             increment_cards.append(f"""
 <section class="wave-capability">
   <div class="capability-card-top"><div><span class="eyebrow">{esc(capability_id)} · immutable key</span><h2>{heading}</h2><p>{esc(title)}</p></div>{status_badge(cap_meta.get("status", "historical"))}</div>
-  {f'<details class="plan-details"><summary>{len(cap_decisions)} capability decisions in this Wave packet</summary><ul class="wave-slice-list">{decision_rows}</ul></details>' if cap_decisions else '<p class="decision-meta">Historical foundation contribution; approval is bound by the Wave record.</p>'}
+  {decision_groups if cap_decisions else '<p class="decision-meta">Historical foundation contribution; approval is bound by the Wave record.</p>'}
   <ol class="wave-slice-list">{"".join(slice_rows)}</ol>
 </section>""")
 
@@ -460,18 +527,20 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         wave_completion = wave.get("completion") or {}
         readiness = (
             "Ready for one commit-bound pre-Wave approval"
-            if wave_plan_count == wave_approved_plan_count and wave_decision_count == wave_accepted_decision_count
-            else "Review incomplete—resolve every decision and approve every Wave slice plan"
+            if wave_plan_count == wave_slice_count
+            and wave_decision_count == wave_accepted_decision_count
+            and wave_unclassified_decision_count == 0
+            else "Review incomplete—classify every contributing decision, resolve binding decisions, and approve every Wave slice plan"
         )
         gate_main = f"""
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">{esc(wave.get("track"))} · durable Wave campaign</span><h1>{esc(wave_id)} — {esc(wave.get("title"))}</h1></div>{status_badge(wave_approval.get("status"))}</div>
   <p>{esc(wave.get("goal"))}</p>
-  <dl class="summary-grid"><div><dt>Capability contributions</dt><dd>{len(capability_ids)}</dd></div><div><dt>Approved plans</dt><dd>{wave_approved_plan_count}/{wave_plan_count}</dd></div><div><dt>Resolved decisions</dt><dd>{wave_accepted_decision_count}/{wave_decision_count}</dd></div><div><dt>Delivery</dt><dd>{wave_done_count}/{wave_task_count} tasks</dd></div></dl>
+  <dl class="summary-grid"><div><dt>Capability contributions</dt><dd>{len(capability_ids)}</dd></div><div><dt>Slice plans present</dt><dd>{wave_plan_count}/{wave_slice_count}</dd></div><div><dt>Binding decisions resolved</dt><dd>{wave_accepted_decision_count}/{wave_decision_count}</dd></div><div><dt>Delivery</dt><dd>{wave_done_count}/{wave_task_count} tasks</dd></div></dl>
 </section>
 <section class="review-toolbar">
   <div class="hero-top"><div><span class="eyebrow">One approval before execution</span><h2>Complete pre-Wave approval packet</h2></div>{status_badge(wave_approval.get("status"))}</div>
-  <p>{esc(readiness)}. Approval covers every capability decision shown below, every {esc(wave_id)} slice plan, the cross-capability dependency order, risk register, verification obligations, and the exit-gate criteria at immutable commit <code>{esc(wave_approval.get("approved_commit") or "pending")}</code>.</p>
+  <p>{esc(readiness)}. Approval covers exactly the decisions labeled <strong>Binding in this Wave</strong>, every {esc(wave_id)} slice plan, the cross-capability dependency order, risk register, verification obligations, and the exit-gate criteria at immutable commit <code>{esc(wave_approval.get("approved_commit") or "pending")}</code>. Inherited and future decisions are context only and are not authorized here.</p>
   <dl class="summary-grid"><div><dt>Status</dt><dd>{esc(wave_approval.get("status"))}</dd></div><div><dt>Approved by</dt><dd>{esc(wave_approval.get("approved_by") or "Pending")}</dd></div><div><dt>Approved at</dt><dd>{esc(wave_approval.get("approved_at") or "Pending")}</dd></div><div><dt>Campaign state</dt><dd>{esc((wave.get("campaign") or {}).get("status", "Not started"))}</dd></div></dl>
   <h3>Approval command after review</h3><pre><code>python tools/planctl.py --repo . wave approve {esc(wave_id)} --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;</code></pre>
 </section>
@@ -511,6 +580,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 "track": wave.get("track"),
                 "page": f"waves/{wave_id}.html",
                 "capability_ids": capability_ids,
+                "decision_ids": wave_decision_ids,
                 "slice_ids": [
                     str(slice_["id"])
                     for capability in backlog_capabilities.values()
@@ -578,7 +648,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
   <dl class="summary-grid"><div><dt>Slices</dt><dd>{len(slices)}</dd></div><div><dt>Decisions</dt><dd>{len(meta.get("decisions", []))}</dd></div><div><dt>Open blockers</dt><dd>{len(meta.get("open_blocking_decisions", []))}</dd></div><div><dt>Plan hash</dt><dd><code>{cap_hash[:12]}</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
-  <div><h2>Resolved capability decisions within Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them here, then approve the complete active Wave packet from its Wave page. Later-Wave plans remain outside that approval.</p></div>
+  <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
   <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / {len(meta.get("decisions", []))} selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
@@ -592,7 +662,7 @@ python tools/planctl.py --repo . apply-feedback {esc(cid)} &lt;downloaded-json&g
 python tools/planctl.py --repo . approve {esc(cid)} --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
 python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --require-approved</code></pre></details>
 </section>
-<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
+<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">{decisions_html}</div>
 <section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
 <div class="slice-list">{"".join(slice_cards)}</div>

@@ -267,13 +267,14 @@
           },
           "approval": {
             "type": "object",
-            "required": ["status", "approved_by", "approved_at", "approved_commit", "capability_ids", "slice_ids", "notes"],
+            "required": ["status", "approved_by", "approved_at", "approved_commit", "capability_ids", "decision_ids", "slice_ids", "notes"],
             "properties": {
               "status": {"enum": ["PENDING", "APPROVED", "CHANGES_REQUESTED"]},
               "approved_by": {"type": ["string", "null"]},
               "approved_at": {"$ref": "#/$defs/nullableTimestamp"},
               "approved_commit": {"$ref": "#/$defs/nullableCommit"},
               "capability_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}$"}, "uniqueItems": true},
+              "decision_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}-D[0-9]{2,3}$"}, "uniqueItems": true},
               "slice_ids": {"type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}$"}, "uniqueItems": true},
               "notes": {"type": ["string", "null"]}
             },

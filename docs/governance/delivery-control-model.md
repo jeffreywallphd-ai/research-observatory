@@ -61,11 +61,12 @@ The canonical ID remains visible beside the alias.
 ## Planning and approval
 
 The complete pre-Wave packet is approved once at one immutable commit. It
-contains every contributing capability decision, every Wave slice plan, the
-cross-capability dependency/interface map, material risks, migration and
-recovery obligations, verification levels, and the Wave exit criteria. A subset
-cannot authorize execution. Future-Wave plans remain visible for dependency
-analysis but outside the active approval.
+contains every contributing capability decision classified as binding in that
+Wave, every Wave slice plan, the cross-capability dependency/interface map,
+material risks, migration and recovery obligations, verification levels, and
+the Wave exit criteria. A subset cannot authorize execution. Inherited and
+future decisions remain visible for dependency analysis but outside the active
+approval.
 
 Historical capability and slice approvals remain evidence. When a later Wave
 packet reuses an already approved capability decision, the Wave approval binds

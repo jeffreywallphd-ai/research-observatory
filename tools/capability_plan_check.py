@@ -109,10 +109,26 @@ def main() -> int:
             candidates = d.get("candidates") or []
             recommendation = d.get("recommendation")
             selected_option = d.get("selected_option")
+            binding_waves = d.get("binding_waves")
             if recommendation not in candidates:
                 errors.append(f"{cid}: {d.get('id')} recommendation must be one of candidates")
             if selected_option is not None and selected_option not in candidates:
                 errors.append(f"{cid}: {d.get('id')} selected_option must be one of candidates")
+            if binding_waves:
+                capability_waves = {str(slice_.get("wave")) for slice_ in cap.get("slices", [])}
+                invalid_waves = sorted(set(binding_waves) - capability_waves)
+                if invalid_waves:
+                    errors.append(
+                        f"{cid}: {d.get('id')} binding_waves are outside the capability slice map: {invalid_waves}"
+                    )
+
+        if ns.wave:
+            unclassified = [d.get("id") for d in decisions if not d.get("binding_waves")]
+            if unclassified:
+                errors.append(f"{cid}: decisions lack explicit Wave classification: {unclassified}")
+            binding_ids = [d.get("id") for d in decisions if ns.wave in (d.get("binding_waves") or [])]
+            if not binding_ids:
+                errors.append(f"{cid}: no decisions are binding in requested wave {ns.wave}")
 
         # Authored packets may remain unapproved, but their researched best-in-class
         # defaults must already be completed decisions. Generated placeholder packets
@@ -141,18 +157,33 @@ def main() -> int:
 
         if ns.require_approved:
             approval = meta.get("approval") or {}
-            if meta.get("status") != "approved":
-                errors.append(f"{cid}: status must be approved")
             if meta.get("decision_completion") != "complete":
                 errors.append(f"{cid}: decision_completion must be complete")
             if meta.get("open_blocking_decisions"):
                 errors.append(f"{cid}: open_blocking_decisions must be empty")
-            if approval.get("status") != "approved":
-                errors.append(f"{cid}: approval.status must be approved")
-            for key in ("approved_by", "approved_at", "approved_commit"):
-                if not approval.get(key):
-                    errors.append(f"{cid}: approval.{key} is required")
-            for d in decisions:
+            if ns.wave:
+                wave: dict[str, Any] = next(
+                    (item for item in backlog.get("waves", []) if item.get("id") == ns.wave), {}
+                )
+                wave_approval = wave.get("approval") or {}
+                expected_ids = [d.get("id") for d in decisions if ns.wave in (d.get("binding_waves") or [])]
+                approved_ids = set(wave_approval.get("decision_ids") or [])
+                if wave_approval.get("status") != "APPROVED":
+                    errors.append(f"{cid}: {ns.wave} pre-Wave approval is not APPROVED")
+                missing_ids = [decision_id for decision_id in expected_ids if decision_id not in approved_ids]
+                if missing_ids:
+                    errors.append(f"{cid}: {ns.wave} approval omits binding decisions {missing_ids}")
+                decisions_to_confirm = [d for d in decisions if d.get("id") in expected_ids]
+            else:
+                if meta.get("status") != "approved":
+                    errors.append(f"{cid}: status must be approved")
+                if approval.get("status") != "approved":
+                    errors.append(f"{cid}: approval.status must be approved")
+                for key in ("approved_by", "approved_at", "approved_commit"):
+                    if not approval.get(key):
+                        errors.append(f"{cid}: approval.{key} is required")
+                decisions_to_confirm = decisions
+            for d in decisions_to_confirm:
                 if d.get("status") != "accepted":
                     errors.append(f"{cid}: decision {d.get('id')} must be accepted")
                 if not d.get("selected_option"):

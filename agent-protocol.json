@@ -10,6 +10,7 @@
   ],
   "campaign": {
     "approvalUnit": "complete-wave-packet-at-one-immutable-commit",
+    "decisionScope": "exact-wave-binding-decisions; inherited-and-future-decisions-are-nonbinding-context",
     "partialApprovalStartsCampaign": false,
     "executionUnit": "durable-wave-campaign",
     "resumeAfterOrdinaryInterruption": true,

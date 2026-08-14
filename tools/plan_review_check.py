@@ -166,6 +166,7 @@ def main() -> int:
         for capability in backlog.get("capabilities", [])
         for slice_ in capability.get("slices", [])
     }
+    backlog_capabilities = {str(capability["id"]): capability for capability in backlog.get("capabilities", [])}
     manifest_waves = {str(entry["wave_id"]): entry for entry in manifest.get("waves", [])}
     if set(manifest_waves) != set(backlog_waves):
         errors.append(
@@ -177,8 +178,24 @@ def main() -> int:
         if entry is None:
             continue
         expected_slice_ids = [slice_id for slice_id, slice_ in backlog_slices.items() if slice_.get("wave") == wave_id]
+        expected_capability_ids = [
+            capability_id
+            for capability_id, capability in backlog_capabilities.items()
+            if any(slice_.get("wave") == wave_id for slice_ in capability.get("slices", []))
+        ]
+        expected_decision_ids = [
+            str(decision["id"])
+            for capability_id in expected_capability_ids
+            if capability_id in cap_plans
+            for decision in frontmatter(cap_plans[capability_id]).get("decisions", [])
+            if wave_id in decision.get("binding_waves", [])
+        ]
         actual_slice_ids = [str(slice_id) for slice_id in entry.get("slice_ids", [])]
         assigned_slice_ids.extend(actual_slice_ids)
+        if [str(capability_id) for capability_id in entry.get("capability_ids", [])] != expected_capability_ids:
+            errors.append(f"{wave_id}: wave capability inventory differs from authoritative backlog order")
+        if [str(decision_id) for decision_id in entry.get("decision_ids", [])] != expected_decision_ids:
+            errors.append(f"{wave_id}: wave binding-decision inventory differs from capability plans")
         if actual_slice_ids != expected_slice_ids:
             errors.append(f"{wave_id}: wave slice inventory differs from authoritative backlog order")
         if entry.get("slice_count") != len(expected_slice_ids):
@@ -240,6 +257,10 @@ def main() -> int:
             content = " ".join(parsed.text_parts)
             if "Complete pre-Wave approval packet" not in content:
                 errors.append(f"{rel}: missing complete pre-Wave approval surface")
+            if "Approval covers exactly" not in content or "Binding in this Wave" not in content:
+                errors.append(f"{rel}: missing exact Wave-binding approval boundary")
+            if "Inherited and future decisions are context only" not in content:
+                errors.append(f"{rel}: missing nonbinding decision-context boundary")
             if "Capability contributions and ordered slices" not in content:
                 errors.append(f"{rel}: missing Wave capability-contribution breakdown")
             if "Review and verification cadence while the Wave runs" not in content:
@@ -253,8 +274,8 @@ def main() -> int:
             actual = set(parsed.decision_ids)
             if expected != actual:
                 errors.append(f"{rel}: rendered decision IDs differ from capability plan")
-            if "Resolved capability decisions within Wave approval" not in " ".join(parsed.text_parts):
-                errors.append(f"{rel}: missing resolved-decision/pre-Wave-approval surface")
+            if "Capability decisions classified by Wave approval" not in " ".join(parsed.text_parts):
+                errors.append(f"{rel}: missing Wave-classified decision surface")
             decision_count = len(expected)
             if parsed.other_choice_count != decision_count:
                 errors.append(f"{rel}: expected {decision_count} Other choices, found {parsed.other_choice_count}")

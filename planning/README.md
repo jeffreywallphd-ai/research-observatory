@@ -53,8 +53,10 @@ returns an actionable I/O failure. Edit `backlog.yaml`, never a generated view.
    risk, rollback/recovery duty, and verification obligation for the Wave.
 4. Generate the static review site and review the complete Wave packet from its
    Wave page, using capability/slice pages for full rationale or overrides.
-5. Approve every contributing capability decision and every Wave slice plan
-   together at one immutable commit. A partial packet cannot start execution.
+5. Classify every contributing capability decision by binding Wave, then
+   approve every decision binding in the active Wave and every Wave slice plan
+   together at one immutable commit. Inherited and future decisions remain
+   nonbinding context. A partial packet cannot start execution.
 6. Start `WN` as one durable Wave campaign.
 7. Claim only the next dependency-eligible READY task across the Wave. Use
    risk-selected task checks and commit-bound evidence.
@@ -136,9 +138,10 @@ Any command that requests decisions or approval must print the Wave page's `file
 - Site generator: `../tools/plan_review_site.py`
 - Site validator: `../tools/plan_review_check.py`
 
-A missing contributing capability decision packet or Wave slice plan must be
-scaffolded, fully researched, validated, reviewed, and included in the one
-pre-Wave approval before the campaign starts.
+A missing classification for any contributing capability decision, binding
+decision packet, or Wave slice plan must be scaffolded, fully researched,
+validated, reviewed, and included in the one pre-Wave approval before the
+campaign starts.
 
 Backlog validation reports JSON paths for structural/type/status/timestamp errors,
 rejects duplicate capability, slice, task, wave, and gate IDs while indexing,

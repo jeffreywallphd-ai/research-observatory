@@ -43,7 +43,7 @@
   <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>4</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>5a996c8d7803</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
-  <div><h2>Resolved capability decisions within Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them here, then approve the complete active Wave packet from its Wave page. Later-Wave plans remain outside that approval.</p></div>
+  <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
   <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 4 selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
@@ -57,7 +57,7 @@ python tools/planctl.py --repo . apply-feedback CAP-04 &lt;downloaded-json&gt;
 python tools/planctl.py --repo . approve CAP-04 --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
 python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --require-approved</code></pre></details>
 </section>
-<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
+<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
 <section class="decision-card" data-decision-id="CAP-04-D01" data-recommendation="OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures" data-plan-hash="5a996c8d7803ea682ef03e588f0c80be42c405ab9b20edeae42fe682bc5ae5d6">
   <div class="decision-heading">
@@ -83,7 +83,7 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-04-D02" data-recommendation="Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review" data-plan-hash="5a996c8d7803ea682ef03e588f0c80be42c405ab9b20edeae42fe682bc5ae5d6">
@@ -110,7 +110,7 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-04-D03" data-recommendation="Every import records discovery path, source terms, access status, license/rights and retrieval time" data-plan-hash="5a996c8d7803ea682ef03e588f0c80be42c405ab9b20edeae42fe682bc5ae5d6">
@@ -137,7 +137,7 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
 <section class="decision-card" data-decision-id="CAP-04-D04" data-recommendation="Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures" data-plan-hash="5a996c8d7803ea682ef03e588f0c80be42c405ab9b20edeae42fe682bc5ae5d6">
@@ -164,7 +164,7 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 </div>
 <section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
