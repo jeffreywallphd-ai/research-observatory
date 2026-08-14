@@ -95,3 +95,6 @@ design contract, and the portable project-bundle format. Breaking semantics,
 profile exposure, transport/authentication changes, or execution-substrate
 changes require compatibility evidence and the ADR workflow established by
 CAP-00.S02.T03.
+
+The W1 local project package and classified storage contract are documented in
+[`project-package.md`](project-package.md) and governed by ADR-0012.

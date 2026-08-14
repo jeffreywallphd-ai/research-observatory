@@ -107,6 +107,15 @@
       "linkedTasks": [
         "CAP-01.S04.T02"
       ]
+    },
+    {
+      "id": "ADR-0012",
+      "path": "docs/adr/ADR-0012-use-relocatable-versioned-local-project-packages.md",
+      "title": "Use relocatable versioned local project packages with classified storage",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-02.S01.T01"
+      ]
     }
   ]
 }

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 42ee0ab922f92b7e56c1358cf2b96bb52410b1b31bc37f1ffe1fbd5965f461d0
+source_sha256: ebe8f7336880c87ae7617c2656373961cac00b3f8fe3334b74ca3868ba88b6e4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -257,7 +257,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W1 - Windows local runtime and durable core
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `NONE` / `PENDING`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
 
 **Capability contributions:** `CAP-01`, `CAP-02`, `CAP-03`, `CAP-07`
 
@@ -1621,13 +1621,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S01.T01 - Define the local project package and directory layout
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-00.S01.T03`, `CAP-01.S04.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Documented layout for database, objects, indexes, caches, models, exports, locks, configuration, and temporary work.
 

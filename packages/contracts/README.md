@@ -22,3 +22,8 @@ the path never appears in the portable support document. Schema version `1.0`
 caps recent code-only diagnostics and defines the exact included and excluded
 categories without admitting research content, credentials, raw logs, process
 identifiers, or absolute storage paths.
+
+`project/` defines the versioned, relocatable local project manifest and exact
+classified storage layout. Its runtime decoder fails closed on unknown or
+path-bearing manifest fields, and its portable inventory excludes every cache,
+index, model-working, log, lock, and temporary entry.
