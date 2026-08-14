@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5d2c091e6bac8241f89211c6ddd3a93904b174976aedc01e111e56a28dc8e302
+source_sha256: 6f2b41e750193c891730d85027673f2f18caf0382a8192614e32eb7a201a9eb0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2163,6 +2163,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-03.S01.T01.json` at `a1fe663ff53311200fa7fe30a5979694a0386119`
 - `artifacts/evidence/CAP-03.S01.T01.review-fix.json` at `787e5014de1d09a5dc0f678b6a26beab9a570298`
+- `artifacts/evidence/CAP-03.S01.T01.review-fix-2.json` at `300a1a42e2697bcfc4ebf443e94b26bb8735abf8`
 
 #### - [ ] CAP-03.S01.T02 - Define aggregate state machines and invariants
 

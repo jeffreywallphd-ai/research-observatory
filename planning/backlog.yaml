@@ -4371,7 +4371,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T12:57:11+00:00'
-      updated_at: '2026-08-14T13:38:30+00:00'
+      updated_at: '2026-08-14T13:43:54+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Portable domain schema, deterministic Python/TypeScript generation, UUIDv7 minting boundary,
@@ -4390,6 +4390,11 @@ capabilities:
         sha256: 9fc32010fb10697f7320b71488bf70f6b0072d0b6a2ebc1c113ab3cf73eafd01
         commit: 787e5014de1d09a5dc0f678b6a26beab9a570298
         recorded_at: '2026-08-14T13:34:04+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-03.S01.T01.review-fix-2.json
+        sha256: 4c0dbe6c87484ed4d775061ccde1e1fb435978efc37acf543e915b11e7d6a931
+        commit: 300a1a42e2697bcfc4ebf443e94b26bb8735abf8
+        recorded_at: '2026-08-14T13:43:54+00:00'
       review:
         reviewer: agent:curie
         result: changes-requested
@@ -4401,7 +4406,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-14T13:38:30+00:00'
         expires_at: '2026-08-14T21:38:30+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
