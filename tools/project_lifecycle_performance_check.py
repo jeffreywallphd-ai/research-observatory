@@ -22,10 +22,36 @@ from build_manifest import guarded_atomic_write_json, safe_output_path
 TOOL_PATH = Path("tools/project_lifecycle_performance_check.py")
 IMPLEMENTATION_PATH = Path("services/core-api/src/research_observatory_core/projects.py")
 BASELINE_PATH = Path("verification/baselines/project-lifecycle-performance.json")
-EXPECTED_BASELINE_SHA256 = "67f3fd35d56fb38a37481ee87a4eb41e7ff2dca632b37c54bf54cf0ffdfa4a72"
+EXPECTED_BASELINE_SHA256 = "babb103fcdd2770465bfcba520e9d11795f0cb7a0d2e645da052484e3ac6e91b"
 EXPECTED_BASELINE_P95_MS = {
-    "freshServiceOpen": 14.389,
-    "warmServiceReopen": 13.238,
+    "freshServiceOpen": 16.82,
+    "warmServiceReopen": 19.734,
+}
+EXPECTED_CALIBRATION: dict[str, Any] = {
+    "selectionRule": "maximum per-run nearest-rank p95 across three clean 20-sample calibration runs",
+    "runs": [
+        {
+            "context": "standalone measurement-only",
+            "stateCommit": "4ed31631644ebb7ac0bd60657350910e2d477416",
+            "reportSha256": "7664e5d218d0384b223b20546391928790fd3a9bd6b3b7232aedd6885f205fa4",
+            "freshServiceOpenP95Ms": 14.389,
+            "warmServiceReopenP95Ms": 13.238,
+        },
+        {
+            "context": "standalone qualification",
+            "stateCommit": "43237db9cab1bd7f3eedc04410524cf3a5e19a14",
+            "reportSha256": "529670906de522d00e05efafee08260f1b55ee865cf97e2b8abf68ec6877ea24",
+            "freshServiceOpenP95Ms": 16.82,
+            "warmServiceReopenP95Ms": 15.109,
+        },
+        {
+            "context": "immediately after the full foundation profile",
+            "stateCommit": "6f7fdfd644f83b508e83c64e742f1890b882c0ad",
+            "reportSha256": "0483b389d9d5da4a7dc49fa188fbdcb58654f0c230025df9ab9923727d658332",
+            "freshServiceOpenP95Ms": 14.319,
+            "warmServiceReopenP95Ms": 19.734,
+        },
+    ],
 }
 ABSOLUTE_BUDGET_MS = 500.0
 REGRESSION_PERCENT = 20
@@ -177,6 +203,7 @@ def validate_baseline_document(value: Any, raw_sha256: str) -> dict[str, Any]:
         "fixture",
         "methodology",
         "source",
+        "calibration",
         "measurements",
     }:
         raise ValueError("project lifecycle performance baseline shape is invalid")
@@ -191,6 +218,8 @@ def validate_baseline_document(value: Any, raw_sha256: str) -> dict[str, Any]:
         raise ValueError("project lifecycle performance baseline profile or fixture is invalid")
     if value.get("methodology") != EXPECTED_METHODOLOGY:
         raise ValueError("project lifecycle performance baseline methodology is invalid")
+    if value.get("calibration") != EXPECTED_CALIBRATION:
+        raise ValueError("project lifecycle performance baseline calibration is invalid")
     source = value.get("source")
     if not isinstance(source, dict) or set(source) != {
         "measurementToolPath",
@@ -223,6 +252,10 @@ def validate_baseline_document(value: Any, raw_sha256: str) -> dict[str, Any]:
             or measurement.get("baselineP95Ms") != expected_p95
         ):
             raise ValueError(f"project lifecycle performance baseline {name} values are invalid")
+        calibration_field = f"{name}P95Ms"
+        selected_p95 = max(float(run[calibration_field]) for run in EXPECTED_CALIBRATION["runs"])
+        if expected_p95 != selected_p95:
+            raise ValueError(f"project lifecycle performance baseline {name} is not the maximum calibrated p95")
     return value
 
 

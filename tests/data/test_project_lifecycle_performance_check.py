@@ -26,6 +26,7 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
         baseline = benchmark.load_baseline(REPO)
         self.assertEqual(benchmark.EXPECTED_FIXTURE, baseline["fixture"])
         self.assertEqual(benchmark.EXPECTED_METHODOLOGY, baseline["methodology"])
+        self.assertEqual(benchmark.EXPECTED_CALIBRATION, baseline["calibration"])
 
     def test_baseline_rejects_identity_methodology_source_and_value_laundering(self) -> None:
         baseline = self.baseline()
@@ -39,6 +40,9 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
         wrong_source = copy.deepcopy(baseline)
         wrong_source["source"]["measurementToolPath"] = "tools/evil.py"  # type: ignore[index]
         mutations.append(wrong_source)
+        wrong_calibration = copy.deepcopy(baseline)
+        wrong_calibration["calibration"]["runs"][0]["warmServiceReopenP95Ms"] = 499.0  # type: ignore[index]
+        mutations.append(wrong_calibration)
         inflated = copy.deepcopy(baseline)
         inflated["measurements"]["freshServiceOpen"]["baselineP95Ms"] = 499.0  # type: ignore[index]
         mutations.append(inflated)
