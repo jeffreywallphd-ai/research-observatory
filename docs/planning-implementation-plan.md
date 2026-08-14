@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ebe8f7336880c87ae7617c2656373961cac00b3f8fe3334b74ca3868ba88b6e4
+source_sha256: 5b800ab9a9e56ffd38e1b0954ec1f9a3e1ca95a5f6b8823e6aff96ab056df827
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1644,6 +1644,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile data
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-02.S01.T01.json` at `eb290dbef9f870243e7c8909491cd1ebbe16b1c8`
 
 #### - [ ] CAP-02.S01.T02 - Implement create, open, close, archive, and delete workflows
 
