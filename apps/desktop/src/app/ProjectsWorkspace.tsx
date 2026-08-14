@@ -34,7 +34,9 @@ export function projectActionLabels(project: ProjectProjection | null): readonly
     actions.push(project.compatibilityState === "compatible" ? "Open project" : "Open read-only");
   }
   if (project.lifecycleState === "active" && project.compatibilityState === "compatible") actions.push("Archive project");
-  if (project.lifecycleState === "archived") actions.push("Restore project");
+  if (project.lifecycleState === "archived" && project.compatibilityState === "compatible") {
+    actions.push("Restore project");
+  }
   if (project.lifecycleState !== "trash" && project.compatibilityState === "compatible") {
     actions.push("Move to recoverable trash");
   }
@@ -201,7 +203,7 @@ export function ProjectsWorkspace({
                   Archive project
                 </Button>
               ) : null}
-              {project.lifecycleState === "archived" ? (
+              {project.lifecycleState === "archived" && project.compatibilityState === "compatible" ? (
                 <Button disabled={busy !== null} onClick={() => void run("Restore project", () => client.restoreProject({ root: project.root }))}>
                   Restore project
                 </Button>

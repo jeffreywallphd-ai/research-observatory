@@ -147,6 +147,8 @@ class ProjectProjection(ContractModel):
 
     @model_validator(mode="after")
     def validate_safe_open_state(self) -> ProjectProjection:
+        if self.delete_confirmation != f"delete:{self.project_id}":
+            raise ValueError("project deletion confirmation must match the project identity")
         if self.open != (self.access_mode is not ProjectAccessMode.CLOSED):
             raise ValueError("project open state must match its access mode")
         if (
@@ -161,11 +163,22 @@ class ProjectProjection(ContractModel):
                 raise ValueError("compatible projects do not use compatibility read-only mode")
             if self.backup_required_before_repair or self.recovery_action is not ProjectRecoveryAction.NONE:
                 raise ValueError("compatible projects do not require compatibility repair")
+        elif self.compatibility_state is ProjectCompatibilityState.MIGRATION_REQUIRED:
+            if self.access_mode is ProjectAccessMode.READ_WRITE:
+                raise ValueError("incompatible projects cannot open for write")
+            if (
+                not self.backup_required_before_repair
+                or self.recovery_action is not ProjectRecoveryAction.BACKUP_THEN_MIGRATE
+            ):
+                raise ValueError("migration-required projects require the backup-then-migrate action")
         else:
             if self.access_mode is ProjectAccessMode.READ_WRITE:
                 raise ValueError("incompatible projects cannot open for write")
-            if not self.backup_required_before_repair or self.recovery_action is ProjectRecoveryAction.NONE:
-                raise ValueError("incompatible projects require a backup-first recovery action")
+            if (
+                not self.backup_required_before_repair
+                or self.recovery_action is not ProjectRecoveryAction.BACKUP_THEN_USE_COMPATIBLE_APPLICATION
+            ):
+                raise ValueError("newer-unsupported projects require the backup-then-use-compatible-application action")
         return self
 
 

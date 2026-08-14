@@ -28,7 +28,7 @@ from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.contract import canonical_openapi_bytes  # noqa: E402
 from research_observatory_core.logging import build_log_record  # noqa: E402
 from research_observatory_core.main import supervision_handshake  # noqa: E402
-from research_observatory_core.models import OperationState  # noqa: E402
+from research_observatory_core.models import OperationState, ProjectProjection  # noqa: E402
 from research_observatory_core.modules import ModuleDefinition, ModuleRegistry  # noqa: E402
 from research_observatory_core.operations import OperationRecord, OperationRegistry  # noqa: E402
 
@@ -57,6 +57,45 @@ def authenticated_client(app: FastAPI | None = None) -> TestClient:
 
 
 class CoreApiTests(unittest.TestCase):
+    def test_project_projection_binds_identity_and_exact_compatibility_recovery(self) -> None:
+        projection = {
+            "schemaVersion": "1.0",
+            "projectId": "11111111-1111-4111-8111-111111111111",
+            "displayName": "Study One",
+            "templateId": "theory-synthesis",
+            "lifecycleState": "active",
+            "root": "C:/Research/study-one",
+            "open": True,
+            "accessMode": "read-only",
+            "compatibilityState": "newer-unsupported",
+            "packageFormatVersion": "2.0.0",
+            "backupRequiredBeforeRepair": True,
+            "recoveryAction": "backup-then-use-compatible-application",
+            "revision": 0,
+            "deleteConfirmation": "delete:11111111-1111-4111-8111-111111111111",
+        }
+        self.assertEqual("newer-unsupported", ProjectProjection.model_validate(projection).compatibility_state)
+        for field, value in (
+            ("recoveryAction", "backup-then-migrate"),
+            ("deleteConfirmation", "delete:22222222-2222-4222-8222-222222222222"),
+        ):
+            with self.subTest(field=field), self.assertRaises(ValidationError):
+                ProjectProjection.model_validate({**projection, field: value})
+        migration = {
+            **projection,
+            "compatibilityState": "migration-required",
+            "packageFormatVersion": "0.9.0",
+            "recoveryAction": "backup-then-migrate",
+        }
+        self.assertEqual("migration-required", ProjectProjection.model_validate(migration).compatibility_state)
+        with self.assertRaises(ValidationError):
+            ProjectProjection.model_validate(
+                {
+                    **migration,
+                    "recoveryAction": "backup-then-use-compatible-application",
+                }
+            )
+
     def test_uvicorn_starts_on_an_os_assigned_loopback_port(self) -> None:
         listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         listener.bind(("127.0.0.1", 0))
