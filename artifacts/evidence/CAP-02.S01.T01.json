@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S01.T01",
+  "commit": "eb290dbef9f870243e7c8909491cd1ebbe16b1c8",
+  "baseCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/adr/ADR-0012-use-relocatable-versioned-local-project-packages.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/project-package.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/package.json",
+    "packages/contracts/project/README.md",
+    "packages/contracts/project/fixtures/invalid-project-manifest-extra-path.json",
+    "packages/contracts/project/fixtures/valid-project-manifest.v1.json",
+    "packages/contracts/project/index.ts",
+    "packages/contracts/project/project-layout.schema.json",
+    "packages/contracts/project/project-layout.v1.json",
+    "packages/contracts/project/project-manifest.schema.json",
+    "packages/contracts/project/project.test.ts",
+    "packages/contracts/tsconfig.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-01/CAP-01.S01.html",
+    "planning/review-site/CAP-01/CAP-01.S02.html",
+    "planning/review-site/CAP-01/CAP-01.S03.html",
+    "planning/review-site/CAP-01/CAP-01.S04.html",
+    "planning/review-site/CAP-02/CAP-02.S01.html",
+    "planning/review-site/CAP-02/CAP-02.S02.html",
+    "planning/review-site/CAP-02/CAP-02.S03.html",
+    "planning/review-site/CAP-02/CAP-02.S04.html",
+    "planning/review-site/CAP-03/CAP-03.S01.html",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/CAP-03/CAP-03.S04.html",
+    "planning/review-site/CAP-03/CAP-03.S05.html",
+    "planning/review-site/CAP-03/CAP-03.S06.html",
+    "planning/review-site/CAP-07/CAP-07.S01.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "tests/contracts/test_foundation_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages\\contracts typecheck; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages\\contracts test",
+      "exitCode": 0,
+      "result": "The portable contracts typecheck passed and both Vitest files passed 10 tests. Project tests bind the exact JSON layout to the frozen TypeScript contract, resolve every governed path beneath distinct Windows and POSIX roots, prove the portable inventory is exact, and reject unknown/path/credential fields, reversed compatibility ranges, and a redirected layout path."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.contracts.test_foundation_contracts",
+      "exitCode": 0,
+      "result": "All three focused Python contract tests passed. Draft 2020-12 validates both schemas and the canonical fixtures; extra absolute-path manifest data and traversal-bearing layout mutations fail closed. Ruff check and format --check also passed for the changed governed Python test."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\adr_check.py --repo . --base 901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701 --head eb290dbef9f870243e7c8909491cd1ebbe16b1c8; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S01.T01-clean-build-manifest.json",
+      "exitCode": 0,
+      "result": "ADR-0012 covers all protected contract changes across the exact 37-file task range; the 12-record ADR registry and architecture contract pass. The clean build manifest passes as 0.1.0+geb290db and inventories both new schemas. Manifest report SHA-256 is 71cd169eaffb95229e1b07d3b6f2d593a0e6b48544ea6680d53c6dac89cbe98d."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "The 143-page planning review site, 356-task backlog, generated views, and diff hygiene pass. Campaign/claim and regenerated view files are the only non-product scope in the task range. Risk selection was contract/schema/ADR/build focused: a full data profile is intentionally deferred to completed-slice review because this task adds no persistence adapter, runtime dependency, desktop behavior, migration, or external platform interaction."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The exact layout classifies database, objects, indexes, caches, models, configuration, exports, logs, locks, and temporary work with explicit authority, retention, backup, deletion, and portable-export semantics.",
+        "All locations are bounded project-relative paths. The portable inventory is exactly project.ro.json, state/project.sqlite3, objects, config, and exports; indexes, cache, model working data, logs, locks, and temporary work are excluded.",
+        "The architecture guide documents relocation without manifest rewriting, recoverable project deletion, shared model-cache separation, staged creation, and the fact that lifecycle/locking behavior remains later-task work."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Ten focused TypeScript tests and three focused Python contract tests cover valid decoding, exact layout binding, two-root relocation, export membership, hostile unknown/path/secret fields, traversal, reversed compatibility, and strict schema behavior.",
+        "The valid and intentionally invalid manifest fixtures are checked in for downstream lifecycle readers and compatibility qualification."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0012 records candidates, selected decision, compatibility/security consequences, rollback, and verification under the immutable W1 approval. The ADR index and architecture map link the new authority.",
+        "The contracts package exports @research-observatory/contracts/project, includes the new source in typechecking, and the governed build schema inventory includes both new schemas. No database migration or audit event is claimed because T01 defines the pre-persistence contract; those behaviors remain explicitly assigned to later approved tasks.",
+        "Canonical SHA-256 values are project layout 2f619125083ca886601eaf66ed81d3e104894ec87388a7681c4e515e32230515, manifest schema 75d0cdf5bbe05ba43176eb3f77b4593916ad1bfec8594fe6c8b5be893770dbba, and layout schema be4c54cb268579862e60cdcf0ea8a79a2b27038d4dedd9aca71e5cb4c61ab70f."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Independent review should verify exact base/candidate scope and ancestry, manifest sensitivity and strict decoding, ten-class lifecycle semantics, relocation and portable-export denial behavior, JSON/TypeScript/schema equivalence, ADR coverage, clean build schema inventory, focused test claims, and the absence of premature lifecycle/persistence implementation. No full profile is requested at task review."
+  }
+}
