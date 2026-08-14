@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 669ec4ea0798d86b790d703c5c173155e9413ebce503641dc6a981572d6a12e5
+source_sha256: e2b90700fa731056e68e05c089e655b0a723cb3634b9aa34bfd0f0c832c79d2d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1713,6 +1713,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-02.S01.T03.json` at `4fc8e31631f2cb3f4afaf4310d428cd0c190e133`
+- `artifacts/evidence/CAP-02.S01.T03.review-fix.json` at `687934e659577aa68152d377d01b88beeb7301b7`
 
 ### SLICE-sqlite-schema-migrations-and-repository-layer (`CAP-02.S02`) - SQLite schema, migrations, and repository layer
 

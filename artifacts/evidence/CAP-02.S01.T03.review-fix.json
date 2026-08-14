@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S01.T03",
+  "commit": "687934e659577aa68152d377d01b88beeb7301b7",
+  "baseCommit": "4fc8e31631f2cb3f4afaf4310d428cd0c190e133",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S01.T03.json",
+    "sha256": "9ec4055a8ae01d672b957ebcf0c6a60acd555c0e46871a9e60a76aa24177dc46",
+    "reason": "Independent review found incomplete exact recovery-action and deletion-identity validation plus an archived-incompatible Restore control. This evidence preserves the original record and binds the focused remediation."
+  },
+  "changedFiles": [
+    "apps/desktop/src/app/ProjectsWorkspace.test.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx",
+    "artifacts/evidence/CAP-02.S01.T03.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/models.py",
+    "tests/service/test_core_api.py",
+    "tools/core_api_contract.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_core_api tests.service.test_project_lifecycle",
+      "exitCode": 0,
+      "result": "All 30 focused service tests pass. Direct model regressions reject swapped recovery actions and a delete confirmation for another project while accepting each exact compatible mapping."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\core_api_contract.py --repo . --check; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts test; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts typecheck",
+      "exitCode": 0,
+      "result": "Deterministic generation is current; all 12 contract tests and strict typecheck pass. Hostile decoders reject both swapped state/action pairs and mismatched deletion identity."
+    },
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop lint; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop test; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop typecheck; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop build",
+      "exitCode": 0,
+      "result": "Desktop lint, all 40 component/application tests, strict typecheck, and production build pass. Action derivation returns no mutation action for an archived incompatible projection."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-02.S01.T03-review-fix-frame.json",
+      "exitCode": 0,
+      "result": "Compiled Chromium replay now injects a valid archived/newer-unsupported projection and confirms backup-first guidance with Restore, Archive, and recoverable-delete controls all absent; projectsWorkflow passes with zero requests and report SHA-256 2cc8fecfb79bb213d62c09b2d281a341c75522b1cb9be9035817edf571308b2e."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . --report artifacts/tmp/CAP-02.S01.T03-review-fix-quality.json; .venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 473aa00fe9c9b8784804e745a311e2ca56cce80f --head 687934e659577aa68152d377d01b88beeb7301b7",
+      "exitCode": 0,
+      "result": "Python quality passes 79 governed files (report SHA-256 1151a881...), and the cumulative UI gate passes with the unchanged approved reference and exact two-file functional UI scope."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S01.T03-review-fix-build-manifest.json",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+g687934e is bound with dirty=false; report SHA-256 is 9c96b2954e141ece1944099aae8e2b6f2d08dc073cd21ac64696960d5efbcc1a."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Core and the generated decoder now require migration-required to pair only with backup-then-migrate, and newer-unsupported only with backup-then-use-compatible-application.",
+        "Core also binds deleteConfirmation exactly to projectId, matching the generated decoder; focused hostile cases reject every swapped or mismatched form."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "A valid archived incompatible projection exposes no Restore, Archive, or recoverable-delete mutation in both component derivation and the compiled Chromium product."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The remediation changes only strict contract validation, focused regressions, and the functional action gate. Approved-reference bytes, dependencies, native runtime, project persistence, and future migration/backup behavior remain unchanged."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The remediation is limited to model/decoder invariants and one compatibility-aware action control. Focused service, contract, component, compiled-product, generation, quality, and cumulative UI-gate checks cover its credible impact.",
+    "deferred": "Full data, desktop, and e2e-local profiles remain deferred to completed-slice review."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Re-review only the two prior findings, exact 12-file incremental scope, supersession, focused checks, and unchanged approved reference. Do not run broad profiles."
+  }
+}
