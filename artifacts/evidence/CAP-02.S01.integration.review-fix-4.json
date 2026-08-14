@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-02.S01",
+  "stateCommit": "5dbc6f8b2e0347e38e22aa3abb7ee12ef368dc43",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S01.integration.review-fix-3.json",
+    "sha256": "1cb0fe6de2b6e4b5dc653f10ba8fd7c141038b841c7b0a09119756e292e280ac",
+    "reason": "The third remediation moved the final state check before replacement but still used the generic writer, whose post-replace validations could reject after PASS publication. This record binds a performance-gate-only terminal publication primitive that validates the directory, temporary identity/bytes, and committed inputs before held atomic replacement and performs only non-throwing handle cleanup afterward."
+  },
+  "remediation": {
+    "baseCommit": "a4820baaef408f7c8c4ae9db42c0c9ab88f1974b",
+    "candidateCommit": "5dbc6f8b2e0347e38e22aa3abb7ee12ef368dc43",
+    "reviewTransitionCommit": "009f01057a7c973f30fe8a454b0a7ae8df4142c9",
+    "changedFiles": [
+      "artifacts/evidence/CAP-02.S01.integration.review-fix-3.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/status-summary.md",
+      "tests/data/test_project_lifecycle_performance_check.py",
+      "tools/project_lifecycle_performance_check.py"
+    ]
+  },
+  "outcome": "The full local project lifecycle and trusted performance authority remain intact; terminal PASS publication now has no potentially rejecting operation after a successful atomic replacement.",
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_project_lifecycle_performance_check",
+      "exitCode": 0,
+      "result": "All twelve focused tests pass. The final PASS path is structurally isolated from the generic writer's injected post-replace rejection. Every directory, temporary-file, exact-byte, and committed-input check occurs before terminal held replacement. Final-state failure, persistent final-publication failure, and persistent demotion all retain the initial tombstone; success publishes exact current PASS."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\project_lifecycle_performance_check.py --repo . --report artifacts/tmp/CAP-02.S01-project-performance-review-fix-4.json",
+      "exitCode": 0,
+      "result": "At exact clean state 5dbc6f8, the gate publishes through the narrow terminal primitive under both governed-input and destination-directory locks. Fresh-service raw p95 13.8893 ms and warm-service raw p95 20.2955 ms pass exact limits. Report SHA-256: da8f0664b8882a941d11690d5f3a65283ee4d3d09a2c222985d57d6fdedc1d3f."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S01-integration-review-fix-4-build-manifest.json; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "All 81 governed Python files pass quality; the exact candidate emits clean build identity 0.1.0+g5dbc6f8 with manifest SHA-256 f96731f592ff1251c6fcd947815636ea2bfcdb36025bf99eff98d64ccc7e1e0a; planning and views validate."
+    },
+    {
+      "command": "superseded CAP-02.S01 integration and remediation checks",
+      "exitCode": 0,
+      "result": "All functional lifecycle, compiled product, profile, UI/reference, contract, source/hardware/calibration/raw-threshold, task evidence, and downstream-handoff results remain applicable. The generic build-manifest writer and its post-validation remain unchanged. The exact incremental range is six files and includes the prior evidence attachment."
+    }
+  ],
+  "integratedBehavior": [
+    "The initial NONQUALIFYING/IN_PROGRESS tombstone remains current until every qualification and publication precondition passes.",
+    "The gate-only terminal writer holds canonical destination directories, creates and fsyncs a same-directory temporary, holds its file identity against write/delete, verifies exact bytes and directory identity, runs the final committed-input assertion, and then performs the atomic replacement as its final potentially rejecting action.",
+    "After successful replacement, the writer only releases Windows handles through cleanup paths that ignore close return values and do not raise. Generic build-manifest publication behavior is untouched.",
+    "All prior project lifecycle, compatibility, recovery, UI, performance-source, calibration, hardware, and evidence behavior remains unchanged."
+  ],
+  "failureAndRecoveryCoverage": [
+    "generic post-replace rejection is absent from terminal PASS publication",
+    "final-state, final-publication, and persistent-demotion failure with tombstone retention",
+    "successful terminal PASS replacement and all prior source, calibration, threshold, lifecycle, denial, recovery, and product/reference cases"
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "fullAffectedProfileCommandInventoryPassedAtSliceReview": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "SQLite scholarly state and recovery remain CAP-02.S02 scope.",
+      "Cross-platform path, lock, and performance qualification remains W6 scope; Windows x64 is release-authoritative for W1."
+    ]
+  }
+}
