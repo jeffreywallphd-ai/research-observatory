@@ -26,8 +26,10 @@ Before start:
 3. Every decision presents at least two credible candidates, a recommendation, and rationale.
 4. The recommendation is recorded as the completed selected decision unless a reviewer overrides it.
 5. Required ADR and experience-reference changes are approved.
-6. The complete Wave packet—every contributing capability decision and every
-   Wave slice plan—is approved together at one immutable commit.
+6. Every contributing capability decision is classified by binding Wave. The
+   complete active Wave packet—every decision binding in that Wave and every
+   Wave slice plan—is approved together at one immutable commit. Inherited and
+   future decisions are nonbinding context.
 7. `planctl wave ready WN --require-approved` passes.
 
 After start, execute tasks and ordered Wave slices continuously. Do not
@@ -37,11 +39,12 @@ approved slice in that Wave.
 
 ### 2.1 One approval and durable-Wave meaning
 
-The start prompt links the Wave page, which aggregates all capability decisions,
-slice plans, cross-capability dependencies, review cadence, risks, and exit
-criteria. `planctl wave ready WN --require-approved` fails if any component or
-the one commit-bound Wave approval is missing. Future-Wave plans remain outside
-the packet.
+The start prompt links the Wave page, which classifies all contributing
+capability decisions as binding, inherited, or future context and aggregates
+the Wave slice plans, cross-capability dependencies, review cadence, risks, and
+exit criteria. `planctl wave ready WN --require-approved` fails if any decision
+is unclassified, any binding component is missing, or the one commit-bound Wave
+approval is missing. Future-Wave decisions remain outside the packet.
 
 One Wave run is durable and resumable. A process or session may restart, but the
 campaign remains active across capability boundaries until every ordered slice

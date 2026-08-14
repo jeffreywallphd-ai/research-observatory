@@ -63,9 +63,12 @@ in the active Wave do not require new human approval.
 ### One pre-Wave approval and one durable campaign
 
 Before starting `WN`, make the complete Wave packet decision-complete. The packet
-must include every contributing capability decision, every slice plan assigned
-to the Wave, the cross-capability dependency/interface map, risks, rollback and
-recovery duties, the multi-level verification matrix, and the Wave exit criteria.
+must include every contributing capability decision classified as binding in
+that Wave, every slice plan assigned to the Wave, the cross-capability
+dependency/interface map, risks, rollback and recovery duties, the multi-level
+verification matrix, and the Wave exit criteria. Decisions classified as
+inherited or future context remain visible but are not authorized by this
+approval.
 Approve that entire packet once at one immutable commit. Approval of one Wave
 never authorizes a later Wave.
 
@@ -78,7 +81,7 @@ capability contribution ends.
 
 Safest concise start prompt:
 
-> Start WN using the repository workflow. Verify that every contributing
+> Start WN using the repository workflow. Verify that every WN-binding
 > capability decision and every WN slice plan are approved together at one
 > immutable commit, then execute the full durable Wave campaign in dependency
 > order through production-ready Wave qualification. Claim only the next READY

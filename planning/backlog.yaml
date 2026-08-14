@@ -61,6 +61,7 @@ waves:
     approved_commit: 2ffbdeeb622757b09c0d02e7c8114617d1c3733a
     capability_ids:
     - CAP-00
+    decision_ids: []
     slice_ids:
     - CAP-00.S01
     - CAP-00.S02
@@ -89,6 +90,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -110,6 +112,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -131,6 +134,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -152,6 +156,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -173,6 +178,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -195,6 +201,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -217,6 +224,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -239,6 +247,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -261,6 +270,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -283,6 +293,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null
@@ -304,6 +315,7 @@ waves:
     approved_at: null
     approved_commit: null
     capability_ids: []
+    decision_ids: []
     slice_ids: []
     notes: null
   campaign: null

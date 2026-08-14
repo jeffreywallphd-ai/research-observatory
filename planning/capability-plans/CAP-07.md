@@ -26,6 +26,8 @@ decisions:
   selected_option: Provider-neutral task/result envelopes and model manifests owned by the core; provider SDK types remain inside adapters
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 - id: CAP-07-D02
   title: Local generative runtime
   candidates:
@@ -36,6 +38,8 @@ decisions:
   selected_option: Supervised llama.cpp sidecar with pinned GGUF model manifests; ONNX Runtime for suitable encoders/classifiers
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D03
   title: Structured output authority
   candidates:
@@ -46,6 +50,8 @@ decisions:
   selected_option: JSON Schema post-validation is authoritative; provider grammar/tool constraints are optimization only
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D04
   title: Remote provider release baseline
   candidates:
@@ -56,6 +62,8 @@ decisions:
   selected_option: Two adapters selected by capability/privacy/cost evidence, with OpenAI- and Anthropic-compatible contracts first and Gemini-ready port
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D05
   title: AI telemetry
   candidates:
@@ -66,6 +74,8 @@ decisions:
   selected_option: OpenTelemetry GenAI conventions with content redaction by default and separate durable scholarly provenance
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D06
   title: Task taxonomy
   candidates:
@@ -76,6 +86,8 @@ decisions:
   selected_option: Use explicit task kinds—generation, structured extraction, embedding, reranking, classification/NLI, moderation and tool call—with task-specific input/result envelopes.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 - id: CAP-07-D07
   title: Capability matching
   candidates:
@@ -86,6 +98,8 @@ decisions:
   selected_option: Route on declared task capabilities, data policy, context limits, structured-output support, deployment, evaluation status and resource/cost envelope.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 - id: CAP-07-D08
   title: Fallback
   candidates:
@@ -96,6 +110,8 @@ decisions:
   selected_option: Ordered policy with deadline budget, retry classification and explicit degraded result; no silent provider/model substitution for pinned reproducible runs.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 - id: CAP-07-D09
   title: Runtime split
   candidates:
@@ -106,6 +122,8 @@ decisions:
   selected_option: llama.cpp/GGUF for local generative LLMs; ONNX Runtime or evaluated native library for encoders/rerankers/classifiers; both supervised as replaceable sidecars/workers.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D10
   title: Artifact acceptance
   candidates:
@@ -116,6 +134,8 @@ decisions:
   selected_option: Pinned revision, cryptographic hash, license/use metadata, architecture, tokenizer and runtime compatibility required before activation.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D11
   title: Hardware profiles
   candidates:
@@ -126,6 +146,8 @@ decisions:
   selected_option: Detect CPU/RAM/GPU/VRAM/driver and choose conservative approved profiles with user override; no automatic remote fallback.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D12
   title: Initial adapters
   candidates:
@@ -136,6 +158,8 @@ decisions:
   selected_option: Implement OpenAI-compatible and Anthropic Messages/tool-use adapters first; retain a Gemini adapter contract and add only after conformance/evaluation.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D13
   title: Egress unit
   candidates:
@@ -146,6 +170,8 @@ decisions:
   selected_option: Resolve and display the exact minimized payload after prompt assembly, including attachments, before first use or policy-sensitive changes.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D14
   title: Offline enforcement
   candidates:
@@ -156,6 +182,8 @@ decisions:
   selected_option: Central network policy plus adapter deny-by-default; no automatic remote fallback from a local task unless project policy explicitly permits it.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D15
   title: Canonical schema
   candidates:
@@ -166,6 +194,8 @@ decisions:
   selected_option: JSON Schema Draft 2020-12 with versioned domain schemas; provider subsets compiled at adapter boundary.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D16
   title: Validation pipeline
   candidates:
@@ -176,6 +206,8 @@ decisions:
   selected_option: Provider constraint -> parse -> canonical schema validation -> semantic invariants -> evidence/anchor validation -> accepted or typed failure.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D17
   title: Repair policy
   candidates:
@@ -186,6 +218,8 @@ decisions:
   selected_option: At most bounded deterministic normalization plus one or configured model repair attempt; never invent missing required evidence.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D18
   title: Telemetry/content boundary
   candidates:
@@ -196,6 +230,8 @@ decisions:
   selected_option: Operational spans store hashes, sizes, task/model/version, timing, usage and validation status; raw content only in project-governed artifacts when explicitly required.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D19
   title: Cache
   candidates:
@@ -206,6 +242,8 @@ decisions:
   selected_option: Cache only deterministic/idempotent tasks by full manifest hash and data policy; never reuse across projects unless content-free/public and explicitly approved.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 - id: CAP-07-D20
   title: Evaluation gate
   candidates:
@@ -216,6 +254,8 @@ decisions:
   selected_option: Task-specific gold/held-out sets with objective checks, expert sampling, calibration and cost/latency; promotion requires non-regression thresholds and approval.
   status: accepted
   required_adr: null
+  binding_waves:
+  - W3
 approval:
   status: pending
   approved_by: null
@@ -224,9 +264,9 @@ approval:
 ---
 # CAP-07 — Capability decision and execution plan
 
-> **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+> **Wave-scoped decision packet — recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Each decision is classified by the Wave in which it becomes binding. A pre-Wave approval authorizes only the decisions binding in that Wave and that Wave's slice plans at one immutable commit; inherited and future decisions remain nonbinding context.
 
-<div class="visual-flow"><span>Review all slices</span><b>→</b><span>Confirm or override resolved defaults</span><b>→</b><span>Approve once</span><b>→</b><span>Run long capability campaign</span><b>→</b><span>Production readiness review</span></div>
+<div class="visual-flow"><span>Review Wave slices</span><b>→</b><span>Confirm binding decisions</span><b>→</b><span>Approve the Wave</span><b>→</b><span>Run durable Wave campaign</span><b>→</b><span>Wave exit review</span></div>
 
 ## 0. Control and authority
 
@@ -234,8 +274,8 @@ approval:
 |---|---|
 | Capability | `CAP-07` — Provider-neutral model gateway and governed AI execution |
 | Objective | Make embeddings, rerankers, NLI models, extractors, and LLMs replaceable, policy-controlled, reproducible, and usable locally or through approved providers. |
-| Execution mode | Capability campaign; slices complete in dependency order |
-| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Execution mode | Capability contribution map; each Wave owns its ordered execution lease |
+| Decision status | `COMPLETE` — recommendations selected, accepted, and classified by binding Wave; active-Wave approval remains separate |
 | Slice plans | `CAP-07.S01`, `CAP-07.S02`, `CAP-07.S03`, `CAP-07.S04`, `CAP-07.S05` |
 | Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
@@ -300,7 +340,7 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 
 ### Review and approval
 
-The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+The best-in-class recommendation in every row is already selected and accepted. Reviewers may confirm or override it with explicit rationale. The `binding_waves` classification controls authorization: each pre-Wave approval binds only the decisions and slice plans in its exact inventory, while inherited and future decisions remain context.
 
 
 ## 5. Cross-slice architecture contract

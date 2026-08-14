@@ -26,6 +26,8 @@ decisions:
   selected_option: Tauri 2 with React/TypeScript, Rust command boundary and shared Academic Minimal tokens
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 - id: CAP-01-D02
   title: Local service
   candidates:
@@ -36,6 +38,8 @@ decisions:
   selected_option: Signed/versioned Python FastAPI sidecar supervised by Tauri with authenticated loopback contract
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 - id: CAP-01-D03
   title: Installer/update
   candidates:
@@ -46,6 +50,8 @@ decisions:
   selected_option: Windows NSIS/MSI qualification with signed artifacts, stable/beta channels and rollback evidence
   status: accepted
   required_adr: null
+  binding_waves:
+  - W5
 approval:
   status: approved
   approved_by: repository-owner
@@ -54,9 +60,9 @@ approval:
 ---
 # CAP-01 — Capability decision and execution plan
 
-> **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+> **Wave-scoped decision packet — recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Each decision is classified by the Wave in which it becomes binding. A pre-Wave approval authorizes only the decisions binding in that Wave and that Wave's slice plans at one immutable commit; inherited and future decisions remain nonbinding context.
 
-<div class="visual-flow"><span>Review all slices</span><b>→</b><span>Confirm or override resolved defaults</span><b>→</b><span>Approve once</span><b>→</b><span>Run long capability campaign</span><b>→</b><span>Production readiness review</span></div>
+<div class="visual-flow"><span>Review Wave slices</span><b>→</b><span>Confirm binding decisions</span><b>→</b><span>Approve the Wave</span><b>→</b><span>Run durable Wave campaign</span><b>→</b><span>Wave exit review</span></div>
 
 ## 0. Control and authority
 
@@ -64,8 +70,8 @@ approval:
 |---|---|
 | Capability | `CAP-01` — Windows-first desktop shell and supervised local runtime |
 | Objective | Deliver the canonical Windows-first desktop experience and a reliably packaged local analytical service that requires no external server administration. |
-| Execution mode | Capability campaign; slices complete in dependency order |
-| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Execution mode | Capability contribution map; each Wave owns its ordered execution lease |
+| Decision status | `COMPLETE` — recommendations selected, accepted, and classified by binding Wave; active-Wave approval remains separate |
 | Slice plans | `CAP-01.S01`, `CAP-01.S02`, `CAP-01.S03`, `CAP-01.S04`, `CAP-01.S05` |
 | Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
@@ -113,7 +119,7 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 
 ### Review and approval
 
-The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+The best-in-class recommendation in every row is already selected and accepted. Reviewers may confirm or override it with explicit rationale. The `binding_waves` classification controls authorization: each pre-Wave approval binds only the decisions and slice plans in its exact inventory, while inherited and future decisions remain context.
 
 
 ## 5. Cross-slice architecture contract

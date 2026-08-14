@@ -40,10 +40,10 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-03 · immutable evidence key</span><h1>CAP-research-domain-workflows</h1><p>Canonical domain, research intent, provenance, and durable workflows</p></div><span class="status status-proposed">Proposed</span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>4</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>3cf6cf075814</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>4</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>6b84c484c809</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
-  <div><h2>Resolved capability decisions within Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Confirm them here, then approve the complete active Wave packet from its Wave page. Later-Wave plans remain outside that approval.</p></div>
+  <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
   <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 4 selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
@@ -57,9 +57,9 @@ python tools/planctl.py --repo . apply-feedback CAP-03 &lt;downloaded-json&gt;
 python tools/planctl.py --repo . approve CAP-03 --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
 python tools/planctl.py --repo . ready CAP-03 --wave &lt;active-wave&gt; --require-approved</code></pre></details>
 </section>
-<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. Capability approval authorizes the current set. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
+<section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-03-D01" data-recommendation="UUIDv7-compatible portable IDs with immutable revisions and typed domain contracts" data-plan-hash="3cf6cf0758144aa61b1fbb9fc88f9d386e5e7879d58efbf4833b279006746bbe">
+<section class="decision-card" data-decision-id="CAP-03-D01" data-recommendation="UUIDv7-compatible portable IDs with immutable revisions and typed domain contracts" data-plan-hash="6b84c484c80924625cb88164ed904b12adada6bf9a4de9ca85306fd14b6051f1">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-03-D01</span><h3>Identifiers</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -83,10 +83,10 @@ python tools/planctl.py --repo . ready CAP-03 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-03-D02" data-recommendation="Append-only W3C PROV-aligned ledger plus outbox events and dependency/staleness graph" data-plan-hash="3cf6cf0758144aa61b1fbb9fc88f9d386e5e7879d58efbf4833b279006746bbe">
+<section class="decision-card" data-decision-id="CAP-03-D02" data-recommendation="Append-only W3C PROV-aligned ledger plus outbox events and dependency/staleness graph" data-plan-hash="6b84c484c80924625cb88164ed904b12adada6bf9a4de9ca85306fd14b6051f1">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-03-D02</span><h3>Provenance</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -110,10 +110,10 @@ python tools/planctl.py --repo . ready CAP-03 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-03-D03" data-recommendation="Durable local workflow state machine with idempotency, cancellation, checkpoints and human tasks" data-plan-hash="3cf6cf0758144aa61b1fbb9fc88f9d386e5e7879d58efbf4833b279006746bbe">
+<section class="decision-card" data-decision-id="CAP-03-D03" data-recommendation="Durable local workflow state machine with idempotency, cancellation, checkpoints and human tasks" data-plan-hash="6b84c484c80924625cb88164ed904b12adada6bf9a4de9ca85306fd14b6051f1">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-03-D03</span><h3>Workflow</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -137,10 +137,10 @@ python tools/planctl.py --repo . ready CAP-03 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-03-D04" data-recommendation="Versioned Research Intent Contract selects one approved workflow profile and adaptive ordered navigation" data-plan-hash="3cf6cf0758144aa61b1fbb9fc88f9d386e5e7879d58efbf4833b279006746bbe">
+<section class="decision-card" data-decision-id="CAP-03-D04" data-recommendation="Versioned Research Intent Contract selects one approved workflow profile and adaptive ordered navigation" data-plan-hash="6b84c484c80924625cb88164ed904b12adada6bf9a4de9ca85306fd14b6051f1">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-03-D04</span><h3>Use-case navigation</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -164,7 +164,7 @@ python tools/planctl.py --repo . ready CAP-03 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 </div>
 <section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
@@ -205,9 +205,9 @@ python tools/planctl.py --repo . ready CAP-03 --wave &lt;active-wave&gt; --requi
   <p>5 tasks · W1 · P0</p></div>
   <span class="status status-proposed">Proposed</span>
 </a></div>
-<details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+<details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Wave-scoped decision packet — recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Each decision is classified by the Wave in which it becomes binding. A pre-Wave approval authorizes only the decisions binding in that Wave and that Wave&#x27;s slice plans at one immutable commit; inherited and future decisions remain nonbinding context.
 
-&lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Review all slices&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Confirm or override resolved defaults&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve once&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Run long capability campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Production readiness review&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Review Wave slices&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Confirm binding decisions&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve the Wave&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Run durable Wave campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Wave exit review&lt;/span&gt;&lt;/div&gt;
 
 ## 0. Control and authority
 
@@ -215,8 +215,8 @@ python tools/planctl.py --repo . ready CAP-03 --wave &lt;active-wave&gt; --requi
 |---|---|
 | Capability | `CAP-03` — Canonical domain, research intent, provenance, and durable workflows |
 | Objective | Define canonical research objects, a versioned research-intent and primary-use-case contract, provenance, adaptive objective-specific workflows, durable jobs, human gates, and controlled recalculation. |
-| Execution mode | Capability campaign; slices complete in dependency order |
-| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Execution mode | Capability contribution map; each Wave owns its ordered execution lease |
+| Decision status | `COMPLETE` — recommendations selected, accepted, and classified by binding Wave; active-Wave approval remains separate |
 | Slice plans | `CAP-03.S01`, `CAP-03.S02`, `CAP-03.S03`, `CAP-03.S04`, `CAP-03.S05`, `CAP-03.S06` |
 | Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
@@ -268,7 +268,7 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 
 ### Review and approval
 
-The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+The best-in-class recommendation in every row is already selected and accepted. Reviewers may confirm or override it with explicit rationale. The `binding_waves` classification controls authorization: each pre-Wave approval binds only the decisions and slice plans in its exact inventory, while inherited and future decisions remain context.
 
 
 ## 5. Cross-slice architecture contract

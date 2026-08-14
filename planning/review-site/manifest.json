@@ -16,6 +16,7 @@
       "capability_ids": [
         "CAP-00"
       ],
+      "decision_ids": [],
       "slice_ids": [
         "CAP-00.S01",
         "CAP-00.S02",
@@ -44,6 +45,21 @@
         "CAP-02",
         "CAP-03",
         "CAP-07"
+      ],
+      "decision_ids": [
+        "CAP-01-D01",
+        "CAP-01-D02",
+        "CAP-02-D01",
+        "CAP-02-D02",
+        "CAP-02-D03",
+        "CAP-03-D01",
+        "CAP-03-D02",
+        "CAP-03-D03",
+        "CAP-03-D04",
+        "CAP-07-D01",
+        "CAP-07-D06",
+        "CAP-07-D07",
+        "CAP-07-D08"
       ],
       "slice_ids": [
         "CAP-01.S01",
@@ -81,6 +97,7 @@
         "CAP-04",
         "CAP-05"
       ],
+      "decision_ids": [],
       "slice_ids": [
         "CAP-04.S01",
         "CAP-04.S02",
@@ -113,6 +130,24 @@
         "CAP-06",
         "CAP-07",
         "CAP-08"
+      ],
+      "decision_ids": [
+        "CAP-07-D02",
+        "CAP-07-D03",
+        "CAP-07-D04",
+        "CAP-07-D05",
+        "CAP-07-D09",
+        "CAP-07-D10",
+        "CAP-07-D11",
+        "CAP-07-D12",
+        "CAP-07-D13",
+        "CAP-07-D14",
+        "CAP-07-D15",
+        "CAP-07-D16",
+        "CAP-07-D17",
+        "CAP-07-D18",
+        "CAP-07-D19",
+        "CAP-07-D20"
       ],
       "slice_ids": [
         "CAP-06.S01",
@@ -151,6 +186,7 @@
         "CAP-09",
         "CAP-10"
       ],
+      "decision_ids": [],
       "slice_ids": [
         "CAP-09.S01",
         "CAP-09.S02",
@@ -182,6 +218,10 @@
         "CAP-02",
         "CAP-11"
       ],
+      "decision_ids": [
+        "CAP-01-D03",
+        "CAP-02-D03"
+      ],
       "slice_ids": [
         "CAP-01.S05",
         "CAP-02.S05",
@@ -210,6 +250,7 @@
       "capability_ids": [
         "CAP-14"
       ],
+      "decision_ids": [],
       "slice_ids": [
         "CAP-14.S01",
         "CAP-14.S02",
@@ -238,6 +279,7 @@
         "CAP-15",
         "CAP-16"
       ],
+      "decision_ids": [],
       "slice_ids": [
         "CAP-10.S05",
         "CAP-15.S01",
@@ -273,6 +315,7 @@
         "CAP-18",
         "CAP-19"
       ],
+      "decision_ids": [],
       "slice_ids": [
         "CAP-17.S01",
         "CAP-17.S02",
@@ -312,6 +355,7 @@
       "capability_ids": [
         "CAP-10"
       ],
+      "decision_ids": [],
       "slice_ids": [
         "CAP-10.S04",
         "CAP-10.S06",
@@ -333,6 +377,7 @@
       "capability_ids": [
         "CAP-12"
       ],
+      "decision_ids": [],
       "slice_ids": [
         "CAP-12.S01",
         "CAP-12.S02",
@@ -359,6 +404,7 @@
       "capability_ids": [
         "CAP-13"
       ],
+      "decision_ids": [],
       "slice_ids": [
         "CAP-13.S01",
         "CAP-13.S02",
@@ -382,7 +428,7 @@
       "capability_alias": "CAP-windows-desktop-runtime",
       "title": "Windows-first desktop shell and supervised local runtime",
       "plan_path": "planning/capability-plans/CAP-01.md",
-      "plan_sha256": "87f9e7b581e7228f17ca43067a360920429bf55aba290b9fdb273935ac528502",
+      "plan_sha256": "9856c9aaeabde8960990fa1ba0f70540ecaaf21e683e7e2e5befbd8982004271",
       "page": "CAP-01/index.html",
       "decision_count": 3,
       "slice_count": 5,
@@ -444,7 +490,7 @@
       "capability_alias": "CAP-local-project-storage",
       "title": "Local projects, durable storage, security, and recovery",
       "plan_path": "planning/capability-plans/CAP-02.md",
-      "plan_sha256": "115c946e8f61dbe847abafebd47caef7e3970138fe0502aac0f39deace1dea6c",
+      "plan_sha256": "91a2fb4a5f422c93f00f9f1af70eb1ec946c1307f0259c14a467d4da289785b0",
       "page": "CAP-02/index.html",
       "decision_count": 3,
       "slice_count": 5,
@@ -506,7 +552,7 @@
       "capability_alias": "CAP-research-domain-workflows",
       "title": "Canonical domain, research intent, provenance, and durable workflows",
       "plan_path": "planning/capability-plans/CAP-03.md",
-      "plan_sha256": "3cf6cf0758144aa61b1fbb9fc88f9d386e5e7879d58efbf4833b279006746bbe",
+      "plan_sha256": "6b84c484c80924625cb88164ed904b12adada6bf9a4de9ca85306fd14b6051f1",
       "page": "CAP-03/index.html",
       "decision_count": 4,
       "slice_count": 6,
@@ -784,7 +830,7 @@
       "capability_alias": "CAP-model-gateway",
       "title": "Provider-neutral model gateway and governed AI execution",
       "plan_path": "planning/capability-plans/CAP-07.md",
-      "plan_sha256": "fae0fbe8342200317b987e5617b438e1c93c8c4128f20a89f41ca94e4eba4c24",
+      "plan_sha256": "5c90a7c3646977fa8773ddf1bb0ffeedc359d4e2ccb5d8db6358339454490d9d",
       "page": "CAP-07/index.html",
       "decision_count": 20,
       "slice_count": 5,

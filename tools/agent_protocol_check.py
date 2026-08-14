@@ -62,6 +62,7 @@ def validate_protocol(
     campaign = protocol.get("campaign", {})
     expected_campaign = {
         "approvalUnit": "complete-wave-packet-at-one-immutable-commit",
+        "decisionScope": "exact-wave-binding-decisions; inherited-and-future-decisions-are-nonbinding-context",
         "partialApprovalStartsCampaign": False,
         "executionUnit": "durable-wave-campaign",
         "resumeAfterOrdinaryInterruption": True,

@@ -27,6 +27,8 @@ decisions:
   selected_option: UUIDv7-compatible portable IDs with immutable revisions and typed domain contracts
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 - id: CAP-03-D02
   title: Provenance
   candidates:
@@ -37,6 +39,8 @@ decisions:
   selected_option: Append-only W3C PROV-aligned ledger plus outbox events and dependency/staleness graph
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 - id: CAP-03-D03
   title: Workflow
   candidates:
@@ -47,6 +51,8 @@ decisions:
   selected_option: Durable local workflow state machine with idempotency, cancellation, checkpoints and human tasks
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 - id: CAP-03-D04
   title: Use-case navigation
   candidates:
@@ -57,6 +63,8 @@ decisions:
   selected_option: Versioned Research Intent Contract selects one approved workflow profile and adaptive ordered navigation
   status: accepted
   required_adr: null
+  binding_waves:
+  - W1
 approval:
   status: pending
   approved_by: null
@@ -65,9 +73,9 @@ approval:
 ---
 # CAP-03 — Capability decision and execution plan
 
-> **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+> **Wave-scoped decision packet — recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Each decision is classified by the Wave in which it becomes binding. A pre-Wave approval authorizes only the decisions binding in that Wave and that Wave's slice plans at one immutable commit; inherited and future decisions remain nonbinding context.
 
-<div class="visual-flow"><span>Review all slices</span><b>→</b><span>Confirm or override resolved defaults</span><b>→</b><span>Approve once</span><b>→</b><span>Run long capability campaign</span><b>→</b><span>Production readiness review</span></div>
+<div class="visual-flow"><span>Review Wave slices</span><b>→</b><span>Confirm binding decisions</span><b>→</b><span>Approve the Wave</span><b>→</b><span>Run durable Wave campaign</span><b>→</b><span>Wave exit review</span></div>
 
 ## 0. Control and authority
 
@@ -75,8 +83,8 @@ approval:
 |---|---|
 | Capability | `CAP-03` — Canonical domain, research intent, provenance, and durable workflows |
 | Objective | Define canonical research objects, a versioned research-intent and primary-use-case contract, provenance, adaptive objective-specific workflows, durable jobs, human gates, and controlled recalculation. |
-| Execution mode | Capability campaign; slices complete in dependency order |
-| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Execution mode | Capability contribution map; each Wave owns its ordered execution lease |
+| Decision status | `COMPLETE` — recommendations selected, accepted, and classified by binding Wave; active-Wave approval remains separate |
 | Slice plans | `CAP-03.S01`, `CAP-03.S02`, `CAP-03.S03`, `CAP-03.S04`, `CAP-03.S05`, `CAP-03.S06` |
 | Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
@@ -128,7 +136,7 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 
 ### Review and approval
 
-The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+The best-in-class recommendation in every row is already selected and accepted. Reviewers may confirm or override it with explicit rationale. The `binding_waves` classification controls authorization: each pre-Wave approval binds only the decisions and slice plans in its exact inventory, while inherited and future decisions remain context.
 
 
 ## 5. Cross-slice architecture contract

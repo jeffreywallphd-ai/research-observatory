@@ -51,7 +51,7 @@ class PlanctlWaveApprovalTests(unittest.TestCase):
             self.assertEqual(1, maximum_active)
             self.assertFalse((output.parent / ".review-site.generation.lock").exists())
 
-    def test_one_wave_approval_binds_every_capability_and_slice_at_one_commit(self) -> None:
+    def test_one_wave_approval_binds_exact_wave_decisions_and_slices_at_one_commit(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             (root / "planning").mkdir()
@@ -66,6 +66,7 @@ class PlanctlWaveApprovalTests(unittest.TestCase):
                             "approved_at": None,
                             "approved_commit": None,
                             "capability_ids": [],
+                            "decision_ids": [],
                             "slice_ids": [],
                             "notes": None,
                         },
@@ -87,7 +88,14 @@ class PlanctlWaveApprovalTests(unittest.TestCase):
                         "status": "proposed",
                         "decision_completion": "complete",
                         "open_blocking_decisions": [],
-                        "decisions": [],
+                        "decisions": [
+                            {
+                                "id": f"{capability_id}-D01",
+                                "status": "accepted",
+                                "selected_option": "Selected",
+                                "binding_waves": ["W1"],
+                            }
+                        ],
                         "approval": dict(pending),
                     },
                     "# Capability\n",
@@ -123,13 +131,54 @@ class PlanctlWaveApprovalTests(unittest.TestCase):
             wave_approval = approved["waves"][0]["approval"]
             self.assertEqual("APPROVED", wave_approval["status"])
             self.assertEqual(["CAP-02", "CAP-03"], wave_approval["capability_ids"])
+            self.assertEqual(["CAP-02-D01", "CAP-03-D01"], wave_approval["decision_ids"])
             self.assertEqual(["CAP-02.S01", "CAP-03.S01"], wave_approval["slice_ids"])
             for capability_id in ("CAP-02", "CAP-03"):
+                capability_meta, _ = frontmatter(root / "planning" / "capability-plans" / f"{capability_id}.md")
+                self.assertEqual("proposed", capability_meta["status"])
                 meta, _ = frontmatter(
                     root / "planning" / "slice-plans" / capability_id / f"{capability_id}.S01-slice.md"
                 )
                 self.assertEqual("approved", meta["status"])
                 self.assertEqual(commit, meta["approval"]["approved_commit"])
+
+    def test_wave_approval_rejects_unclassified_capability_decision(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "planning").mkdir()
+            commit = "a" * 40
+            backlog = {
+                "waves": [{"id": "W1", "approval": {"status": "PENDING"}}],
+                "capabilities": [{"id": "CAP-02", "slices": [{"id": "CAP-02.S01", "wave": "W1", "title": "Slice"}]}],
+            }
+            write_plan(
+                root / "planning" / "capability-plans" / "CAP-02.md",
+                {
+                    "capability_id": "CAP-02",
+                    "status": "proposed",
+                    "decision_completion": "complete",
+                    "open_blocking_decisions": [],
+                    "decisions": [{"id": "CAP-02-D01", "status": "accepted", "selected_option": "Selected"}],
+                },
+                "# Capability\n",
+            )
+            write_plan(
+                root / "planning" / "slice-plans" / "CAP-02" / "CAP-02.S01-slice.md",
+                {"capability_id": "CAP-02", "slice_id": "CAP-02.S01", "wave": "W1", "status": "proposed"},
+                "# Slice\n",
+            )
+            (root / "planning" / "backlog.yaml").write_text(yaml.safe_dump(backlog, sort_keys=False), encoding="utf-8")
+
+            def fake_run(command, **_kwargs):
+                if command[:3] == ["git", "rev-parse", "HEAD"]:
+                    return subprocess.CompletedProcess(command, 0, stdout=commit + "\n", stderr="")
+                return subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+
+            with (
+                patch("planctl.subprocess.run", side_effect=fake_run),
+                self.assertRaisesRegex(ValueError, "lack explicit Wave classification"),
+            ):
+                approve_wave(root, "W1", "human:reviewer", commit)
 
     def test_capability_decisions_are_approved_once_and_slice_plans_progress_by_wave(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

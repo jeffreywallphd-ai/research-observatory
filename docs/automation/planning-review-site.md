@@ -6,7 +6,8 @@
 
 - `planning/review-site/index.html` - Wave packets and capability detail views.
 - `planning/review-site/waves/WN.html` - the complete pre-Wave approval packet:
-  every capability decision, ordered slice plan, review/testing cadence, progress,
+  every Wave-binding capability decision, inherited/future decisions as
+  nonbinding context, ordered slice plan, review/testing cadence, progress,
   and exit/activation gate decision.
 - `planning/review-site/CAP-XX/index.html` - decision register and approval surface.
 - `planning/review-site/CAP-XX/CAP-XX.SYY.html` - individual slice plan.

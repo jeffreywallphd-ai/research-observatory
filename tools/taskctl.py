@@ -1192,7 +1192,11 @@ def validate(
             errors.append(f"{wave_id}: approved pre-Wave capability inventory is not exact")
         if approval.get("status") == "APPROVED" and approval.get("slice_ids") != expected_slice_ids:
             errors.append(f"{wave_id}: approved pre-Wave slice inventory is not exact")
-        if approval.get("status") != "APPROVED" and (approval.get("capability_ids") or approval.get("slice_ids")):
+        if approval.get("status") == "APPROVED" and wave_id != "W0" and not approval.get("decision_ids"):
+            errors.append(f"{wave_id}: approved pre-Wave packet lacks its binding decision inventory")
+        if approval.get("status") != "APPROVED" and (
+            approval.get("capability_ids") or approval.get("decision_ids") or approval.get("slice_ids")
+        ):
             errors.append(f"{wave_id}: pending pre-Wave approval cannot carry an approved inventory")
         campaign = wave.get("campaign") or {}
         if campaign:
@@ -1711,8 +1715,9 @@ def require_wave_planning_ready(args: argparse.Namespace, wave_id: str) -> None:
     review_page = repo / "planning" / "review-site" / "waves" / f"{wave_id}.html"
     review_uri = review_page.resolve().as_uri() if review_page.exists() else f"file://{review_page.resolve()}"
     raise SystemExit(
-        f"Pre-Wave planning gate failed for {wave_id}. The complete Wave packet—including every contributing "
-        "capability decision and every slice plan—must be approved together at one immutable commit.\n"
+        f"Pre-Wave planning gate failed for {wave_id}. The complete Wave packet—including every decision "
+        "classified as binding in this Wave and every Wave slice plan—must be approved together at one immutable "
+        "commit. Inherited and future decisions are nonbinding context.\n"
         + (detail + "\n" if detail else "")
         + f"Planning review page: {review_uri}\nRepository-relative page: "
         f"planning/review-site/waves/{wave_id}.html"

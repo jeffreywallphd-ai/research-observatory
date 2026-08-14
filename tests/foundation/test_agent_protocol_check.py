@@ -26,6 +26,14 @@ class AgentProtocolTests(unittest.TestCase):
 
         self.assertIn("campaign.partialApprovalStartsCampaign must be False", errors)
 
+    def test_wave_approval_cannot_authorize_inherited_or_future_decisions(self) -> None:
+        protocol = copy.deepcopy(self.protocol)
+        protocol["campaign"]["decisionScope"] = "all-capability-decisions"
+
+        errors = validate_protocol(REPO, protocol)
+
+        self.assertTrue(any("campaign.decisionScope" in error for error in errors))
+
     def test_missing_continuous_campaign_instruction_is_rejected(self) -> None:
         agents = (
             (REPO / "AGENTS.md")
