@@ -16,6 +16,7 @@
     "vitest": "4.1.10"
   },
   "exports": {
-    "./core-api": "./core-api/generated.ts"
+    "./core-api": "./core-api/generated.ts",
+    "./project": "./project/index.ts"
   }
 }

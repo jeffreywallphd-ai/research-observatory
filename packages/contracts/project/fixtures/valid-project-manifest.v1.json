@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-project-manifest",
+  "projectId": "018f47a2-4d6b-4f78-9f2e-7fb76c86d9a1",
+  "projectRevision": 0,
+  "packageFormatVersion": "1.0.0",
+  "layoutVersion": "1.0",
+  "lifecycleState": "active",
+  "applicationCompatibility": {
+    "minimum": "0.1.0",
+    "maximumExclusive": "1.0.0"
+  },
+  "databaseProfile": "sqlite-wal-v1",
+  "objectFormat": "encrypted-content-addressed-v1",
+  "createdAt": "2026-08-13T00:00:00Z",
+  "modifiedAt": "2026-08-13T00:00:00Z"
+}

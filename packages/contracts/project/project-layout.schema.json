@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/project/project-layout.schema.json",
+  "title": "Research Observatory project layout version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "documentType", "manifestFile", "entries"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-project-layout"},
+    "manifestFile": {"const": "project.ro.json"},
+    "entries": {"const": [
+      {"storageClass": "database", "kind": "file", "relativePath": "state/project.sqlite3", "authority": "authoritative", "retention": "project-lifetime", "backup": "required", "deletion": "recoverable-project-delete", "portableExport": "include"},
+      {"storageClass": "objects", "kind": "directory", "relativePath": "objects", "authority": "authoritative", "retention": "project-lifetime", "backup": "required", "deletion": "recoverable-project-delete", "portableExport": "include"},
+      {"storageClass": "indexes", "kind": "directory", "relativePath": "indexes", "authority": "derived", "retention": "rebuildable", "backup": "excluded", "deletion": "rebuildable-delete", "portableExport": "exclude"},
+      {"storageClass": "caches", "kind": "directory", "relativePath": "cache", "authority": "cache", "retention": "bounded", "backup": "excluded", "deletion": "cache-eviction", "portableExport": "exclude"},
+      {"storageClass": "models", "kind": "directory", "relativePath": "models", "authority": "derived", "retention": "rebuildable", "backup": "excluded", "deletion": "rebuildable-delete", "portableExport": "exclude"},
+      {"storageClass": "configuration", "kind": "directory", "relativePath": "config", "authority": "authoritative", "retention": "project-lifetime", "backup": "required", "deletion": "recoverable-project-delete", "portableExport": "include"},
+      {"storageClass": "exports", "kind": "directory", "relativePath": "exports", "authority": "authoritative", "retention": "project-lifetime", "backup": "required", "deletion": "recoverable-project-delete", "portableExport": "include"},
+      {"storageClass": "logs", "kind": "directory", "relativePath": "logs", "authority": "operational", "retention": "bounded", "backup": "excluded", "deletion": "retention-expiry", "portableExport": "exclude"},
+      {"storageClass": "locks", "kind": "directory", "relativePath": ".locks", "authority": "operational", "retention": "lease-bound", "backup": "excluded", "deletion": "close-or-stale-recovery", "portableExport": "exclude"},
+      {"storageClass": "temporary", "kind": "directory", "relativePath": ".tmp", "authority": "transient", "retention": "operation-scoped", "backup": "excluded", "deletion": "operation-cleanup", "portableExport": "exclude"}
+    ]}
+  }
+}

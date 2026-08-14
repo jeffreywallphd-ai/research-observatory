@@ -125,10 +125,26 @@ waves:
     - CAP-03.S06
     - CAP-07.S01
     notes: User explicitly approved the complete W1 packet in the Codex session on 2026-08-13.
-  campaign: null
+  campaign:
+    status: ACTIVE
+    scope: wave
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    worktree: C:/workspace/research-observatory
+    base_sha: 901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-08-14T01:36:01+00:00'
+    updated_at: '2026-08-14T01:36:01+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-14T01:36:01+00:00'
+      expires_at: '2026-08-15T01:36:01+00:00'
   checkpoints: []
   completion:
-    status: PENDING
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -3380,11 +3396,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-12T16:03:09+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      started_at: '2026-08-14T01:36:30+00:00'
+      updated_at: '2026-08-14T01:36:30+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3394,10 +3410,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-14T01:36:30+00:00'
+        expires_at: '2026-08-14T09:36:30+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
     - id: CAP-02.S01.T02

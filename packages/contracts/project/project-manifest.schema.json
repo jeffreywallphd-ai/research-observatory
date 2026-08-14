@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/project/project-manifest.schema.json",
+  "title": "Research Observatory local project manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "documentType", "projectId", "projectRevision", "packageFormatVersion", "layoutVersion", "lifecycleState", "applicationCompatibility", "databaseProfile", "objectFormat", "createdAt", "modifiedAt"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-project-manifest"},
+    "projectId": {"type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"},
+    "projectRevision": {"type": "integer", "minimum": 0},
+    "packageFormatVersion": {"const": "1.0.0"},
+    "layoutVersion": {"const": "1.0"},
+    "lifecycleState": {"enum": ["active", "archived", "trash"]},
+    "applicationCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum", "maximumExclusive"],
+      "properties": {
+        "minimum": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+        "maximumExclusive": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"}
+      }
+    },
+    "databaseProfile": {"const": "sqlite-wal-v1"},
+    "objectFormat": {"const": "encrypted-content-addressed-v1"},
+    "createdAt": {"type": "string", "format": "date-time"},
+    "modifiedAt": {"type": "string", "format": "date-time"}
+  }
+}
