@@ -3396,11 +3396,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T01:36:30+00:00'
-      updated_at: '2026-08-14T02:04:20+00:00'
+      updated_at: '2026-08-14T02:06:58+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Focused contract, schema, relocation, export-denial, ADR, architecture, build-inventory, and
@@ -3422,16 +3422,16 @@ capabilities:
       review:
         reviewer: agent:curie
         result: changes-requested
-        reviewed_at: '2026-08-14T01:56:38+00:00'
-        notes: 'Portable contract parity blocker: JSON Schema accepted reversed compatibility, modified-before-created, RFC3339
-          offset timestamps, and projectRevision above the JavaScript safe integer while the strict TypeScript decoder rejected
-          them. Align schema lexical/numeric rules and bind equivalent cross-field semantic validation before resubmission.'
+        reviewed_at: '2026-08-14T02:06:58+00:00'
+        notes: 'Portable semantic-version numeric-domain blocker: combined schema plus Python semantic rules accept unsafe-integer
+          SemVer operands such as 9007199254740992.0.0 while the strict TypeScript decoder rejects them. Bind one exact safe-integer
+          component domain across schema, rule contract, and all evaluators and add a parity regression.'
       base_sha: 901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-14T01:56:38+00:00'
-        expires_at: '2026-08-14T09:56:38+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-14T02:06:58+00:00'
+        expires_at: '2026-08-14T10:06:58+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
