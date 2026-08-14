@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: eafa84afd0ef63835099c43ae05fe249e86ef68d8d0a2325e4c8b187e8b1ff50
+source_sha256: 7c2f1b9f86ee8f103d09e6c54590741bd4163196fa5d8363f7d08e691938891c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2125,7 +2125,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** A small stable core model defines records, documents, evidence, decisions, workflows, ontologies, graphs, opportunities, and monitoring events.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -2133,13 +2133,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T01 - Define core aggregate and value-object contracts
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-00.S02.T01`, `CAP-00.S05.T03`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:curie (`changes-requested`)
 
 **Objective:** Language-neutral schema definitions for IDs, versions, timestamps, source references, status, confidence, rights, and principal aggregates.
 
