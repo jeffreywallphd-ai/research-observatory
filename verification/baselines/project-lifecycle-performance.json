@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "project-lifecycle-performance-baseline",
+  "baselineSourceCommit": "4ed31631644ebb7ac0bd60657350910e2d477416",
+  "profile": "windows-x64",
+  "fixture": {
+    "version": "ordinary-project-2000-objects-v1",
+    "templateId": "theory-synthesis",
+    "packageFormatVersion": "1.0.0",
+    "objectFileCount": 2000,
+    "objectBytes": 128000
+  },
+  "methodology": {
+    "timer": "time.perf_counter_ns",
+    "operation": "ProjectLifecycleService.open through returned manifest/compatibility projection",
+    "excluded": "fixture construction, credential prompt, database integrity checks, close, and shutdown",
+    "freshState": "new service instance for every measured open; operating-system filesystem cache is not flushed",
+    "warmState": "same service instance after three unmeasured open/close cycles",
+    "repetitions": 20,
+    "warmupRepetitions": 3,
+    "distribution": "nearest-rank p50 and p95 over every measured sample; no samples discarded",
+    "regressionThresholdPercent": 20,
+    "hardwareQualification": "release-authoritative Windows x64 workstation"
+  },
+  "source": {
+    "measurementToolPath": "tools/project_lifecycle_performance_check.py",
+    "measurementToolSha256": "4c3adc1a35fd45fef1e105313033bd2bc708e9b323b81b31f0d0d85941d70d35",
+    "implementationPath": "services/core-api/src/research_observatory_core/projects.py",
+    "implementationSha256": "b938d7b49f5a70c615ac3893a6418226914b39a58e51f760dfc46086d6b447b8"
+  },
+  "measurements": {
+    "freshServiceOpen": {
+      "absoluteBudgetMs": 500.0,
+      "baselineP95Ms": 14.389
+    },
+    "warmServiceReopen": {
+      "absoluteBudgetMs": 500.0,
+      "baselineP95Ms": 13.238
+    }
+  }
+}

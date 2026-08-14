@@ -22,10 +22,10 @@ from build_manifest import guarded_atomic_write_json, safe_output_path
 TOOL_PATH = Path("tools/project_lifecycle_performance_check.py")
 IMPLEMENTATION_PATH = Path("services/core-api/src/research_observatory_core/projects.py")
 BASELINE_PATH = Path("verification/baselines/project-lifecycle-performance.json")
-EXPECTED_BASELINE_SHA256 = "pending-baseline"
+EXPECTED_BASELINE_SHA256 = "67f3fd35d56fb38a37481ee87a4eb41e7ff2dca632b37c54bf54cf0ffdfa4a72"
 EXPECTED_BASELINE_P95_MS = {
-    "freshServiceOpen": 0.0,
-    "warmServiceReopen": 0.0,
+    "freshServiceOpen": 14.389,
+    "warmServiceReopen": 13.238,
 }
 ABSOLUTE_BUDGET_MS = 500.0
 REGRESSION_PERCENT = 20
