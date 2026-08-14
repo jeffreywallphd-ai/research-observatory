@@ -14,44 +14,38 @@ import subprocess
 import sys
 import tempfile
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
-from build_manifest import guarded_atomic_write_json, safe_output_path
+from build_manifest import guarded_atomic_write_json, safe_output_path, safe_snapshot, windows_path_locks
 
 TOOL_PATH = Path("tools/project_lifecycle_performance_check.py")
 IMPLEMENTATION_PATH = Path("services/core-api/src/research_observatory_core/projects.py")
 BASELINE_PATH = Path("verification/baselines/project-lifecycle-performance.json")
-EXPECTED_BASELINE_SHA256 = "babb103fcdd2770465bfcba520e9d11795f0cb7a0d2e645da052484e3ac6e91b"
+CALIBRATION_PATH = Path("verification/baselines/project-lifecycle-performance-calibration.json")
+EXPECTED_BASELINE_SHA256 = "89d2d0aad25a3ab1a69c5afb4d1d9300094c47df9ecfb4b560f2d005ef11126d"
+EXPECTED_CALIBRATION_SHA256 = "aeaa90c55d9529b238d4eeac399543a880e772426303f068ecda27a5ad55beb5"
 EXPECTED_BASELINE_P95_MS = {
     "freshServiceOpen": 16.82,
     "warmServiceReopen": 19.734,
 }
-EXPECTED_CALIBRATION: dict[str, Any] = {
-    "selectionRule": "maximum per-run nearest-rank p95 across three clean 20-sample calibration runs",
-    "runs": [
-        {
-            "context": "standalone measurement-only",
-            "stateCommit": "4ed31631644ebb7ac0bd60657350910e2d477416",
-            "reportSha256": "7664e5d218d0384b223b20546391928790fd3a9bd6b3b7232aedd6885f205fa4",
-            "freshServiceOpenP95Ms": 14.389,
-            "warmServiceReopenP95Ms": 13.238,
-        },
-        {
-            "context": "standalone qualification",
-            "stateCommit": "43237db9cab1bd7f3eedc04410524cf3a5e19a14",
-            "reportSha256": "529670906de522d00e05efafee08260f1b55ee865cf97e2b8abf68ec6877ea24",
-            "freshServiceOpenP95Ms": 16.82,
-            "warmServiceReopenP95Ms": 15.109,
-        },
-        {
-            "context": "immediately after the full foundation profile",
-            "stateCommit": "6f7fdfd644f83b508e83c64e742f1890b882c0ad",
-            "reportSha256": "0483b389d9d5da4a7dc49fa188fbdcb58654f0c230025df9ab9923727d658332",
-            "freshServiceOpenP95Ms": 14.319,
-            "warmServiceReopenP95Ms": 19.734,
-        },
-    ],
+CALIBRATION_SELECTION_RULE = "maximum per-run nearest-rank p95 across three clean 20-sample calibration runs"
+CALIBRATION_CONTEXTS = (
+    "standalone measurement-only",
+    "standalone qualification",
+    "immediately after the full foundation profile",
+)
+EXPECTED_CALIBRATION_HARDWARE = {
+    "operatingSystem": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logicalCpuCount": 20,
+    "physicalMemoryBytes": 16984227840,
 }
 ABSOLUTE_BUDGET_MS = 500.0
 REGRESSION_PERCENT = 20
@@ -121,8 +115,8 @@ def sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
-def file_sha256(path: Path) -> str:
-    return sha256_bytes(path.read_bytes())
+def canonical_json_bytes(value: Any) -> bytes:
+    return (json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True) + "\n").encode("utf-8")
 
 
 def git(repo: Path, *args: str, text: bool = True) -> str | bytes:
@@ -156,6 +150,47 @@ def git_blob_sha256(repo: Path, commit: str, path: Path) -> str:
     return sha256_bytes(value)
 
 
+def governed_snapshot(repo: Path, path: Path) -> bytes:
+    lexical = repo / path
+    try:
+        metadata = lexical.lstat()
+    except OSError as exc:
+        raise ValueError(f"governed performance input is unavailable: {path.as_posix()}: {exc}") from exc
+    if metadata.st_nlink != 1:
+        raise ValueError(f"governed performance input must have exactly one filesystem link: {path.as_posix()}")
+    payload, error = safe_snapshot(repo, path.as_posix())
+    if error or payload is None:
+        raise ValueError(f"governed performance input is unsafe: {path.as_posix()}: {error}")
+    return payload
+
+
+def assert_committed_inputs(repo: Path, commit: str, captured: dict[Path, bytes]) -> None:
+    if clean_state_commit(repo) != commit:
+        raise ValueError("project lifecycle performance Git state changed during qualification")
+    for path, expected in captured.items():
+        if governed_snapshot(repo, path) != expected:
+            raise ValueError(f"governed performance input changed during qualification: {path.as_posix()}")
+        if git_blob_sha256(repo, commit, path) != sha256_bytes(expected):
+            raise ValueError(f"governed performance input differs from its state commit: {path.as_posix()}")
+
+
+@contextmanager
+def qualification_snapshot(repo: Path) -> Iterator[tuple[str, dict[Path, bytes]]]:
+    canonical_tool = (repo / TOOL_PATH).resolve(strict=True)
+    if Path(__file__).resolve(strict=True) != canonical_tool:
+        raise ValueError("the executing performance tool is not the canonical repository tool")
+    paths = [TOOL_PATH, IMPLEMENTATION_PATH, BASELINE_PATH, CALIBRATION_PATH]
+    lexical_paths = [repo / path for path in paths]
+    with windows_path_locks(lexical_paths, directories=False):
+        commit = clean_state_commit(repo)
+        captured = {path: governed_snapshot(repo, path) for path in paths}
+        assert_committed_inputs(repo, commit, captured)
+        try:
+            yield commit, captured
+        finally:
+            assert_committed_inputs(repo, commit, captured)
+
+
 def percentile(samples: list[float], probability: float) -> float:
     if not samples or not 0 < probability <= 1 or any(not math.isfinite(value) or value < 0 for value in samples):
         raise ValueError("percentile requires finite non-negative samples and a probability in (0, 1]")
@@ -179,22 +214,168 @@ def evaluated_measurement(samples: list[float], baseline_p95_ms: float) -> dict[
     if not math.isfinite(baseline_p95_ms) or baseline_p95_ms <= 0:
         raise ValueError("baseline p95 must be a finite positive number")
     measured = distribution(samples)
-    p95 = float(measured["p95Ms"])
-    relative_limit = round(min(ABSOLUTE_BUDGET_MS, baseline_p95_ms * 1.2), 3)
+    raw_p95 = percentile(samples, 0.95)
+    raw_relative_limit = min(ABSOLUTE_BUDGET_MS, baseline_p95_ms * (1 + REGRESSION_PERCENT / 100))
     return {
         **measured,
+        "rawP95Ms": raw_p95,
         "absoluteBudgetMs": ABSOLUTE_BUDGET_MS,
-        "passesAbsoluteBudget": p95 <= ABSOLUTE_BUDGET_MS,
-        "passesRegressionThreshold": p95 <= relative_limit,
+        "passesAbsoluteBudget": raw_p95 <= ABSOLUTE_BUDGET_MS,
+        "passesRegressionThreshold": raw_p95 <= raw_relative_limit,
         "regressionThreshold": {
             "baselineP95Ms": baseline_p95_ms,
             "maximumIncreasePercent": REGRESSION_PERCENT,
-            "maximumP95Ms": relative_limit,
+            "maximumP95Ms": round(raw_relative_limit, 3),
         },
     }
 
 
-def validate_baseline_document(value: Any, raw_sha256: str) -> dict[str, Any]:
+def valid_digest(value: Any) -> bool:
+    return isinstance(value, str) and len(value) == 64 and all(character in "0123456789abcdef" for character in value)
+
+
+def validate_hardware(value: Any) -> dict[str, Any]:
+    fields = {
+        "operatingSystem",
+        "system",
+        "release",
+        "version",
+        "machine",
+        "processor",
+        "logicalCpuCount",
+        "physicalMemoryBytes",
+    }
+    if not isinstance(value, dict) or set(value) != fields:
+        raise ValueError("project lifecycle calibration hardware shape is invalid")
+    text_fields = fields - {"logicalCpuCount", "physicalMemoryBytes"}
+    if not all(isinstance(value[field], str) and value[field] for field in text_fields):
+        raise ValueError("project lifecycle calibration hardware identity is invalid")
+    for field in ("logicalCpuCount", "physicalMemoryBytes"):
+        if isinstance(value[field], bool) or not isinstance(value[field], int) or value[field] <= 0:
+            raise ValueError("project lifecycle calibration hardware capacity is invalid")
+    if value != EXPECTED_CALIBRATION_HARDWARE:
+        raise ValueError("project lifecycle calibration hardware differs from the reviewed workstation")
+    return value
+
+
+def calibration_report_hash(run: dict[str, Any]) -> str:
+    payload = {key: item for key, item in run.items() if key != "reportSha256"}
+    return sha256_bytes(canonical_json_bytes(payload))
+
+
+def validate_calibration_document(value: Any, raw_sha256: str) -> dict[str, Any]:
+    if raw_sha256 != EXPECTED_CALIBRATION_SHA256:
+        raise ValueError("project lifecycle calibration bytes differ from the reviewed authority")
+    if not isinstance(value, dict) or set(value) != {
+        "schemaVersion",
+        "documentType",
+        "profile",
+        "selectionRule",
+        "fixture",
+        "methodology",
+        "hardware",
+        "runs",
+    }:
+        raise ValueError("project lifecycle calibration shape is invalid")
+    if (
+        value.get("schemaVersion") != "1.0"
+        or value.get("documentType") != "project-lifecycle-performance-calibration"
+        or value.get("profile") != "windows-x64"
+        or value.get("selectionRule") != CALIBRATION_SELECTION_RULE
+        or value.get("fixture") != EXPECTED_FIXTURE
+        or value.get("methodology") != EXPECTED_METHODOLOGY
+    ):
+        raise ValueError("project lifecycle calibration identity is invalid")
+    validate_hardware(value.get("hardware"))
+    runs = value.get("runs")
+    if not isinstance(runs, list) or len(runs) != len(CALIBRATION_CONTEXTS):
+        raise ValueError("project lifecycle calibration run inventory is invalid")
+    for index, run in enumerate(runs):
+        if not isinstance(run, dict) or set(run) != {
+            "context",
+            "stateCommit",
+            "reportSha256",
+            "source",
+            "fixture",
+            "measurements",
+        }:
+            raise ValueError("project lifecycle calibration run shape is invalid")
+        if run.get("context") != CALIBRATION_CONTEXTS[index]:
+            raise ValueError("project lifecycle calibration context ordering is invalid")
+        commit = run.get("stateCommit")
+        if not isinstance(commit, str) or len(commit) != 40 or any(c not in "0123456789abcdef" for c in commit):
+            raise ValueError("project lifecycle calibration state commit is invalid")
+        if not valid_digest(run.get("reportSha256")) or run["reportSha256"] != calibration_report_hash(run):
+            raise ValueError("project lifecycle calibration report bytes do not match their SHA-256")
+        source = run.get("source")
+        if not isinstance(source, dict) or set(source) != {
+            "dirty",
+            "measurementToolPath",
+            "measurementToolSha256",
+            "implementationPath",
+            "implementationSha256",
+        }:
+            raise ValueError("project lifecycle calibration source shape is invalid")
+        if (
+            source.get("dirty") is not False
+            or source.get("measurementToolPath") != TOOL_PATH.as_posix()
+            or source.get("implementationPath") != IMPLEMENTATION_PATH.as_posix()
+            or not valid_digest(source.get("measurementToolSha256"))
+            or not valid_digest(source.get("implementationSha256"))
+        ):
+            raise ValueError("project lifecycle calibration source identity is invalid")
+        fixture = run.get("fixture")
+        if (
+            not isinstance(fixture, dict)
+            or set(fixture) != {*EXPECTED_FIXTURE, "manifestSha256", "profileSha256"}
+            or any(fixture.get(field) != expected for field, expected in EXPECTED_FIXTURE.items())
+            or not valid_digest(fixture.get("manifestSha256"))
+            or not valid_digest(fixture.get("profileSha256"))
+        ):
+            raise ValueError("project lifecycle calibration fixture is invalid")
+        measurements = run.get("measurements")
+        if not isinstance(measurements, dict) or set(measurements) != set(EXPECTED_BASELINE_P95_MS):
+            raise ValueError("project lifecycle calibration measurement inventory is invalid")
+        for name, measurement in measurements.items():
+            if not isinstance(measurement, dict) or set(measurement) != {
+                "samplesMs",
+                "minimumMs",
+                "p50Ms",
+                "p95Ms",
+                "maximumMs",
+            }:
+                raise ValueError(f"project lifecycle calibration {name} shape is invalid")
+            samples = measurement.get("samplesMs")
+            if (
+                not isinstance(samples, list)
+                or len(samples) != REPETITIONS
+                or any(isinstance(sample, bool) or not isinstance(sample, (int, float)) for sample in samples)
+            ):
+                raise ValueError(f"project lifecycle calibration {name} samples are invalid")
+            if distribution([float(sample) for sample in samples]) != measurement:
+                raise ValueError(f"project lifecycle calibration {name} statistics do not match retained samples")
+    return value
+
+
+def calibration_summary(calibration: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "path": CALIBRATION_PATH.as_posix(),
+        "sha256": EXPECTED_CALIBRATION_SHA256,
+        "selectionRule": CALIBRATION_SELECTION_RULE,
+        "runs": [
+            {
+                "context": run["context"],
+                "stateCommit": run["stateCommit"],
+                "reportSha256": run["reportSha256"],
+                "freshServiceOpenP95Ms": run["measurements"]["freshServiceOpen"]["p95Ms"],
+                "warmServiceReopenP95Ms": run["measurements"]["warmServiceReopen"]["p95Ms"],
+            }
+            for run in calibration["runs"]
+        ],
+    }
+
+
+def validate_baseline_document(value: Any, raw_sha256: str, calibration: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(value, dict) or set(value) != {
         "schemaVersion",
         "documentType",
@@ -218,7 +399,7 @@ def validate_baseline_document(value: Any, raw_sha256: str) -> dict[str, Any]:
         raise ValueError("project lifecycle performance baseline profile or fixture is invalid")
     if value.get("methodology") != EXPECTED_METHODOLOGY:
         raise ValueError("project lifecycle performance baseline methodology is invalid")
-    if value.get("calibration") != EXPECTED_CALIBRATION:
+    if value.get("calibration") != calibration_summary(calibration):
         raise ValueError("project lifecycle performance baseline calibration is invalid")
     source = value.get("source")
     if not isinstance(source, dict) or set(source) != {
@@ -253,17 +434,37 @@ def validate_baseline_document(value: Any, raw_sha256: str) -> dict[str, Any]:
         ):
             raise ValueError(f"project lifecycle performance baseline {name} values are invalid")
         calibration_field = f"{name}P95Ms"
-        selected_p95 = max(float(run[calibration_field]) for run in EXPECTED_CALIBRATION["runs"])
+        selected_p95 = max(float(run[calibration_field]) for run in calibration_summary(calibration)["runs"])
         if expected_p95 != selected_p95:
             raise ValueError(f"project lifecycle performance baseline {name} is not the maximum calibrated p95")
     return value
 
 
-def load_baseline(repo: Path) -> dict[str, Any]:
-    path = repo / BASELINE_PATH
-    raw = path.read_bytes()
+def load_calibration(repo: Path) -> dict[str, Any]:
+    raw = governed_snapshot(repo, CALIBRATION_PATH)
+    calibration = validate_calibration_document(json.loads(raw.decode("utf-8")), sha256_bytes(raw))
+    for run in calibration["runs"]:
+        source_commit = run["stateCommit"]
+        ancestor = subprocess.run(
+            ["git", "merge-base", "--is-ancestor", source_commit, "HEAD"],
+            cwd=repo,
+            capture_output=True,
+            check=False,
+        )
+        if ancestor.returncode:
+            raise ValueError("project lifecycle calibration state is not reachable from HEAD")
+        source = run["source"]
+        if git_blob_sha256(repo, source_commit, TOOL_PATH) != source["measurementToolSha256"]:
+            raise ValueError("project lifecycle calibration tool does not match its state commit")
+        if git_blob_sha256(repo, source_commit, IMPLEMENTATION_PATH) != source["implementationSha256"]:
+            raise ValueError("project lifecycle calibration implementation does not match its state commit")
+    return calibration
+
+
+def load_baseline(repo: Path, calibration: dict[str, Any]) -> dict[str, Any]:
+    raw = governed_snapshot(repo, BASELINE_PATH)
     value = json.loads(raw.decode("utf-8"))
-    baseline = validate_baseline_document(value, sha256_bytes(raw))
+    baseline = validate_baseline_document(value, sha256_bytes(raw), calibration)
     source_commit = str(baseline["baselineSourceCommit"])
     ancestor = subprocess.run(
         ["git", "merge-base", "--is-ancestor", source_commit, "HEAD"],
@@ -376,16 +577,22 @@ def measure(repo: Path) -> tuple[dict[str, list[float]], dict[str, Any]]:
         return {"freshServiceOpen": fresh, "warmServiceReopen": warm}, fixture
 
 
-def benchmark(repo: Path, *, measure_only: bool = False) -> dict[str, Any]:
-    state_commit = clean_state_commit(repo)
+def _benchmark_under_snapshot(
+    repo: Path, state_commit: str, captured: dict[Path, bytes], *, measure_only: bool = False
+) -> dict[str, Any]:
+    calibration = load_calibration(repo)
+    baseline = load_baseline(repo, calibration)
+    measured_hardware = hardware_record()
+    if measured_hardware != calibration["hardware"]:
+        raise ValueError("project lifecycle performance hardware differs from the reviewed calibration hardware")
     samples, fixture = measure(repo)
     source = {
         "stateCommit": state_commit,
         "dirty": False,
         "measurementToolPath": TOOL_PATH.as_posix(),
-        "measurementToolSha256": file_sha256(repo / TOOL_PATH),
+        "measurementToolSha256": sha256_bytes(captured[TOOL_PATH]),
         "implementationPath": IMPLEMENTATION_PATH.as_posix(),
-        "implementationSha256": file_sha256(repo / IMPLEMENTATION_PATH),
+        "implementationSha256": sha256_bytes(captured[IMPLEMENTATION_PATH]),
     }
     if measure_only:
         measurements = {name: distribution(values) for name, values in samples.items()}
@@ -396,13 +603,12 @@ def benchmark(repo: Path, *, measure_only: bool = False) -> dict[str, Any]:
             "qualified": False,
             "profile": "windows-x64",
             "source": source,
-            "hardware": hardware_record(),
+            "hardware": measured_hardware,
             "fixture": fixture,
             "methodology": EXPECTED_METHODOLOGY,
             "measurements": measurements,
             "errors": ["measurement-only reports are not qualification evidence"],
         }
-    baseline = load_baseline(repo)
     measurements = {
         name: evaluated_measurement(values, EXPECTED_BASELINE_P95_MS[name]) for name, values in samples.items()
     }
@@ -423,12 +629,40 @@ def benchmark(repo: Path, *, measure_only: bool = False) -> dict[str, Any]:
             "sha256": EXPECTED_BASELINE_SHA256,
             "sourceCommit": baseline["baselineSourceCommit"],
         },
-        "hardware": hardware_record(),
+        "hardware": measured_hardware,
         "fixture": fixture,
         "methodology": EXPECTED_METHODOLOGY,
         "measurements": measurements,
         "errors": errors,
     }
+
+
+def benchmark(repo: Path, *, measure_only: bool = False) -> dict[str, Any]:
+    with qualification_snapshot(repo) as (state_commit, captured):
+        return _benchmark_under_snapshot(repo, state_commit, captured, measure_only=measure_only)
+
+
+def nonqualifying_report(error: str, *, measure_only: bool = False) -> dict[str, Any]:
+    return {
+        "schemaVersion": "1.0",
+        "documentType": "project-lifecycle-performance-nonqualification",
+        "qualificationStatus": "NONQUALIFYING",
+        "measurementOnly": measure_only,
+        "ok": False,
+        "qualified": False,
+        "errors": [error],
+    }
+
+
+def run(repo: Path, destination: Path, *, measure_only: bool = False) -> tuple[dict[str, Any], int]:
+    try:
+        with qualification_snapshot(repo) as (state_commit, captured):
+            report = _benchmark_under_snapshot(repo, state_commit, captured, measure_only=measure_only)
+            guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+    except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
+        report = nonqualifying_report(str(exc), measure_only=measure_only)
+        guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+    return report, 0 if report.get("ok") is True and report.get("qualified") is True else 1
 
 
 def main() -> int:
@@ -437,21 +671,16 @@ def main() -> int:
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--measure-only", action="store_true")
     args = parser.parse_args()
-    repo = args.repo.resolve(strict=True)
+    report: dict[str, Any]
     try:
+        repo = args.repo.resolve(strict=True)
         destination = safe_output_path(repo, args.report)
-        report = benchmark(repo, measure_only=args.measure_only)
-        guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
-    except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
-        report = {
-            "schemaVersion": "1.0",
-            "documentType": "project-lifecycle-performance-report",
-            "ok": False,
-            "qualified": False,
-            "errors": [str(exc)],
-        }
+        report, return_code = run(repo, destination, measure_only=args.measure_only)
+    except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
+        report = nonqualifying_report(str(exc), measure_only=args.measure_only)
+        return_code = 1
     print(json.dumps(report, indent=2, sort_keys=True))
-    return 0 if report.get("ok") is True and report.get("qualified") is True else 1
+    return return_code
 
 
 if __name__ == "__main__":

@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "project-lifecycle-performance-calibration",
+  "profile": "windows-x64",
+  "selectionRule": "maximum per-run nearest-rank p95 across three clean 20-sample calibration runs",
+  "fixture": {
+    "version": "ordinary-project-2000-objects-v1",
+    "templateId": "theory-synthesis",
+    "packageFormatVersion": "1.0.0",
+    "objectFileCount": 2000,
+    "objectBytes": 128000
+  },
+  "methodology": {
+    "timer": "time.perf_counter_ns",
+    "operation": "ProjectLifecycleService.open through returned manifest/compatibility projection",
+    "excluded": "fixture construction, credential prompt, database integrity checks, close, and shutdown",
+    "freshState": "new service instance for every measured open; operating-system filesystem cache is not flushed",
+    "warmState": "same service instance after three unmeasured open/close cycles",
+    "repetitions": 20,
+    "warmupRepetitions": 3,
+    "distribution": "nearest-rank p50 and p95 over every measured sample; no samples discarded",
+    "regressionThresholdPercent": 20,
+    "hardwareQualification": "release-authoritative Windows x64 workstation"
+  },
+  "hardware": {
+    "operatingSystem": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logicalCpuCount": 20,
+    "physicalMemoryBytes": 16984227840
+  },
+  "runs": [
+    {
+      "context": "standalone measurement-only",
+      "stateCommit": "4ed31631644ebb7ac0bd60657350910e2d477416",
+      "reportSha256": "0dc690d448a0a9eed1a7c3a59bac34ad868cff9f2f29b0169310de972e5c9fb3",
+      "source": {
+        "dirty": false,
+        "measurementToolPath": "tools/project_lifecycle_performance_check.py",
+        "measurementToolSha256": "4c3adc1a35fd45fef1e105313033bd2bc708e9b323b81b31f0d0d85941d70d35",
+        "implementationPath": "services/core-api/src/research_observatory_core/projects.py",
+        "implementationSha256": "b938d7b49f5a70c615ac3893a6418226914b39a58e51f760dfc46086d6b447b8"
+      },
+      "fixture": {
+        "version": "ordinary-project-2000-objects-v1",
+        "templateId": "theory-synthesis",
+        "packageFormatVersion": "1.0.0",
+        "objectFileCount": 2000,
+        "objectBytes": 128000,
+        "manifestSha256": "61bf9042e8bf4877206af2c82bfeedfc1957ae7d9bf219c59d79f644183ddaaf",
+        "profileSha256": "df116edb64660e1cc09e88085b5cf944f068caaf2849fd8ed626ba80750647cc"
+      },
+      "measurements": {
+        "freshServiceOpen": {
+          "samplesMs": [15.464, 10.466, 10.683, 10.773, 11.802, 11.151, 12.472, 11.78, 11.621, 11.697, 12.188, 11.346, 12.634, 13.887, 13.027, 14.389, 13.742, 10.941, 10.953, 10.79],
+          "minimumMs": 10.466,
+          "p50Ms": 11.697,
+          "p95Ms": 14.389,
+          "maximumMs": 15.464
+        },
+        "warmServiceReopen": {
+          "samplesMs": [10.859, 10.415, 10.584, 12.285, 11.512, 10.32, 12.975, 9.464, 13.1, 11.222, 12.009, 18.11, 13.238, 11.361, 12.144, 12.007, 10.57, 11.421, 10.738, 13.196],
+          "minimumMs": 9.464,
+          "p50Ms": 11.421,
+          "p95Ms": 13.238,
+          "maximumMs": 18.11
+        }
+      }
+    },
+    {
+      "context": "standalone qualification",
+      "stateCommit": "43237db9cab1bd7f3eedc04410524cf3a5e19a14",
+      "reportSha256": "764ed5f48bc7d8d9eb950d5ce4cfeefa08c82926ba49fd47a20a9862303bc689",
+      "source": {
+        "dirty": false,
+        "measurementToolPath": "tools/project_lifecycle_performance_check.py",
+        "measurementToolSha256": "0e59fff73acdbb8051fb5be9c443a326d00df4036e2f4972a7800e05e8415a42",
+        "implementationPath": "services/core-api/src/research_observatory_core/projects.py",
+        "implementationSha256": "b938d7b49f5a70c615ac3893a6418226914b39a58e51f760dfc46086d6b447b8"
+      },
+      "fixture": {
+        "version": "ordinary-project-2000-objects-v1",
+        "templateId": "theory-synthesis",
+        "packageFormatVersion": "1.0.0",
+        "objectFileCount": 2000,
+        "objectBytes": 128000,
+        "manifestSha256": "0ac5920dfa88d7797e98102f9343e9176935788aeb6b616cb5b6c7585dbdc301",
+        "profileSha256": "df116edb64660e1cc09e88085b5cf944f068caaf2849fd8ed626ba80750647cc"
+      },
+      "measurements": {
+        "freshServiceOpen": {
+          "samplesMs": [16.82, 11.399, 10.25, 11.801, 12.011, 14.941, 12.655, 12.665, 11.943, 11.37, 18.78, 15.523, 11.092, 9.521, 11.296, 11.365, 12.773, 11.027, 11.323, 10.138],
+          "minimumMs": 9.521,
+          "p50Ms": 11.399,
+          "p95Ms": 16.82,
+          "maximumMs": 18.78
+        },
+        "warmServiceReopen": {
+          "samplesMs": [14.938, 12.646, 14.442, 12.77, 12.117, 9.94, 12.831, 9.756, 11.748, 11.54, 10.495, 12.341, 10.325, 10.222, 12.581, 10.046, 15.109, 18.948, 12.585, 10.496],
+          "minimumMs": 9.756,
+          "p50Ms": 12.117,
+          "p95Ms": 15.109,
+          "maximumMs": 18.948
+        }
+      }
+    },
+    {
+      "context": "immediately after the full foundation profile",
+      "stateCommit": "6f7fdfd644f83b508e83c64e742f1890b882c0ad",
+      "reportSha256": "e6100a8763b12504ab2e619aa86d3defbc180b0dd261c46a83779ff4296f0502",
+      "source": {
+        "dirty": false,
+        "measurementToolPath": "tools/project_lifecycle_performance_check.py",
+        "measurementToolSha256": "0e59fff73acdbb8051fb5be9c443a326d00df4036e2f4972a7800e05e8415a42",
+        "implementationPath": "services/core-api/src/research_observatory_core/projects.py",
+        "implementationSha256": "b938d7b49f5a70c615ac3893a6418226914b39a58e51f760dfc46086d6b447b8"
+      },
+      "fixture": {
+        "version": "ordinary-project-2000-objects-v1",
+        "templateId": "theory-synthesis",
+        "packageFormatVersion": "1.0.0",
+        "objectFileCount": 2000,
+        "objectBytes": 128000,
+        "manifestSha256": "32c7f45a1cdaf0e07a6368d511c461732a9d7562bf9be0a626576d759f444999",
+        "profileSha256": "df116edb64660e1cc09e88085b5cf944f068caaf2849fd8ed626ba80750647cc"
+      },
+      "measurements": {
+        "freshServiceOpen": {
+          "samplesMs": [16.371, 11.262, 10.243, 10.795, 14.319, 9.955, 11.129, 9.814, 13.181, 10.333, 10.653, 10.979, 11.708, 11.341, 10.575, 10.866, 10.783, 10.145, 9.964, 10.012],
+          "minimumMs": 9.814,
+          "p50Ms": 10.783,
+          "p95Ms": 14.319,
+          "maximumMs": 16.371
+        },
+        "warmServiceReopen": {
+          "samplesMs": [11.726, 10.991, 11.88, 10.813, 13.954, 11.089, 10.367, 10.899, 11.338, 17.209, 19.734, 11.549, 11.609, 11.959, 13.04, 11.902, 11.236, 21.087, 14.341, 12.797],
+          "minimumMs": 10.367,
+          "p50Ms": 11.726,
+          "p95Ms": 19.734,
+          "maximumMs": 21.087
+        }
+      }
+    }
+  ]
+}
