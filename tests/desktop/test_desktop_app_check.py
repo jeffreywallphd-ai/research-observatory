@@ -25,12 +25,12 @@ from desktop_app_check import (  # noqa: E402
 
 
 class DesktopAppCheckTests(unittest.TestCase):
-    def test_built_product_is_functional_cap01_only_and_keyboard_accessible(self) -> None:
+    def test_built_product_exposes_only_implemented_functional_workspaces_and_is_keyboard_accessible(self) -> None:
         errors, details = runtime_frame_errors(REPO)
 
         self.assertEqual([], errors)
         self.assertEqual(1, details["pages"])
-        self.assertEqual(["CAP-01"], details["implementedCapabilities"])
+        self.assertEqual(["CAP-01", "CAP-02.S01.T02"], details["implementedCapabilities"])
         self.assertEqual(0, details["referenceOnlyPages"])
         self.assertTrue(details["commandFocus"])
         self.assertTrue(details["skipLink"])

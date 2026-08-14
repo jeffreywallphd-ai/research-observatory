@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-02.S01.T02",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-02.S01.T02.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
+    "version": "1.3",
+    "packageSha256": "db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2",
+    "approvalCommit": "7e625150c57f518327d8dcce430371902ecaed10",
+    "approvedBy": "Project-owner direction",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.2"
+  },
+  "focusedEvidence": [
+    {
+      "command": ".local/toolchains/node-v24.19.0-win-x64/corepack.cmd pnpm --dir apps/desktop lint; typecheck; test; build",
+      "result": "passed",
+      "scope": "Strict renderer lint and typing, 39 functional unit tests, deterministic production assembly, and isolated reference-fixture assembly"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_desktop_app_check",
+      "result": "passed",
+      "scope": "Compiled product create/open/close/archive/restore/delete interaction, exact request envelopes, keyboard handoff, accessibility landmarks, reference-content denial, responsive fit, and zero requests"
+    },
+    {
+      "command": ".local/toolchains/cargo/bin/cargo.exe test --offline --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+      "result": "passed",
+      "scope": "Thirteen native unit tests including strict project-request allowlisting and hostile body/path denial"
+    }
+  ],
+  "implementationScope": "Implement only the approved local-project lifecycle regions needed by CAP-02.S01.T02 in the functional Tauri product. Reuse shared Academic Minimal components and tokens without copying reference pages, illustrative records, future routes, or nonfunctional reference actions into production or development."
+}

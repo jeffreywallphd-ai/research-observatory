@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { Button, Field, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
+import type { ProjectProjection } from "@research-observatory/contracts/core-api";
 
 import { LocalServiceBoundary } from "./LocalServiceBoundary";
 import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
+import { ProjectsWorkspace } from "./ProjectsWorkspace";
 
 export type ApplicationTheme = "light" | "dark";
 
@@ -49,7 +51,8 @@ export function ApplicationRuntime(): ReactNode {
   const [query, setQuery] = useState("");
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("Desktop shell ready. No project is open.");
-  const [workspace, setWorkspace] = useState<"home" | "diagnostics">("home");
+  const [workspace, setWorkspace] = useState<"projects" | "home" | "diagnostics">("home");
+  const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
   const commandRef = useRef<HTMLInputElement>(null);
   const homeRef = useRef<HTMLElement>(null);
   const shortcutTriggerRef = useRef<HTMLButtonElement>(null);
@@ -124,13 +127,15 @@ export function ApplicationRuntime(): ReactNode {
       }
       if (commandShortcut) {
         event.preventDefault();
-        commandRef.current?.focus();
+        setWorkspace("home");
+        globalThis.window?.requestAnimationFrame(() => commandRef.current?.focus());
       } else if (helpShortcut) {
         event.preventDefault();
         openShortcuts();
       } else if (homeShortcut) {
         event.preventDefault();
-        homeRef.current?.focus();
+        setWorkspace("home");
+        globalThis.window?.requestAnimationFrame(() => homeRef.current?.focus());
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -138,6 +143,15 @@ export function ApplicationRuntime(): ReactNode {
   }, [closeShortcuts, openShortcuts, shortcutsOpen]);
 
   const commands = useMemo<readonly CommandDefinition[]>(() => [
+    {
+      id: "open-projects",
+      label: "Open local projects",
+      description: "Create, open, archive, restore, or delete a governed local project package.",
+      run: () => {
+        setWorkspace("projects");
+        announce("Local projects workspace opened.");
+      },
+    },
     {
       id: "open-diagnostics",
       label: "Open diagnostics & support",
@@ -173,7 +187,9 @@ export function ApplicationRuntime(): ReactNode {
           <span>Research Observatory</span>
         </a>
         <div className="topbar-actions">
-          <span className="project-context" data-project-context>No project open</span>
+          <span className="project-context" data-project-context>
+            {currentProject ? `${currentProject.displayName} · ${currentProject.open ? "Open" : currentProject.lifecycleState}` : "No project open"}
+          </span>
           <Button ref={shortcutTriggerRef} onClick={() => openShortcuts(shortcutTriggerRef.current)} aria-haspopup="dialog" data-shortcut-help>
             Shortcuts
           </Button>
@@ -186,6 +202,7 @@ export function ApplicationRuntime(): ReactNode {
       <div className="shell-body">
         <aside className="sidebar" aria-label="Available workspaces">
           <nav>
+            <button type="button" aria-current={workspace === "projects" ? "page" : undefined} onClick={() => setWorkspace("projects")}>Local projects</button>
             <button type="button" aria-current={workspace === "home" ? "page" : undefined} onClick={() => setWorkspace("home")}>Project home</button>
             <button type="button" aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
           </nav>
@@ -193,7 +210,9 @@ export function ApplicationRuntime(): ReactNode {
         </aside>
 
         <main id="main-content" ref={homeRef} tabIndex={-1}>
-          {workspace === "home" ? <><div className="page-header">
+          {workspace === "projects" ? (
+            <ProjectsWorkspace announce={announce} onProjectChange={setCurrentProject} />
+          ) : workspace === "home" ? <><div className="page-header">
             <Typography as="h1" variant="page-title">Desktop foundation</Typography>
             <Typography className="page-subtitle">
               A local, offline application shell. Research workspaces appear only when their capability is implemented.
