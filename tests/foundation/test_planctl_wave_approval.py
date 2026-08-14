@@ -15,11 +15,20 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from plan_review_site import build_site  # noqa: E402
+from plan_review_site import build_site, delivery_status, status_stack  # noqa: E402
 from planctl import approve, approve_wave, frontmatter, write_plan  # noqa: E402
 
 
 class PlanctlWaveApprovalTests(unittest.TestCase):
+    def test_review_site_stacks_plan_decision_and_authoritative_delivery_status(self) -> None:
+        self.assertEqual("not-started", delivery_status([{"status": "READY"}, {"status": "NOT_STARTED"}]))
+        self.assertEqual("in-progress", delivery_status([{"status": "DONE"}, {"status": "IN_PROGRESS"}]))
+        self.assertEqual("completed", delivery_status([{"status": "DONE"}, {"status": "DONE"}]))
+        self.assertEqual("completed", delivery_status([], {"status": "APPROVED"}))
+        badges = status_stack("approved", "in-progress")
+        self.assertIn('class="status-stack"', badges)
+        self.assertLess(badges.index("Approved"), badges.index("In Progress"))
+
     def test_review_site_rebuilds_are_serialized(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

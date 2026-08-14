@@ -25,7 +25,7 @@ except ImportError:  # pragma: no cover - generated site still works with plain 
 
 
 SITE_SCHEMA_VERSION = "1.1"
-REVIEW_INTERFACE_RELEASE = "1.3.7"
+REVIEW_INTERFACE_RELEASE = "1.3.8"
 FEEDBACK_SCHEMA_VERSION = "1.1"
 OTHER_SENTINEL = "__OTHER__"
 
@@ -87,6 +87,24 @@ def status_badge(status: str | None) -> str:
     label = status or "unknown"
     css = re.sub(r"[^a-z0-9]+", "-", label.lower()).strip("-")
     return f'<span class="status status-{esc(css)}">{esc(label.replace("-", " ").title())}</span>'
+
+
+def delivery_status(tasks: list[dict[str, Any]], completion: dict[str, Any] | None = None) -> str:
+    """Project authoritative task state into one deliberately coarse delivery label."""
+
+    states = [str(task.get("status", "NOT_STARTED")) for task in tasks]
+    if (completion or {}).get("status") == "APPROVED" or (states and all(state == "DONE" for state in states)):
+        return "completed"
+    if any(state not in {"NOT_STARTED", "READY"} for state in states):
+        return "in-progress"
+    return "not-started"
+
+
+def status_stack(decision_status: str | None, execution_status: str) -> str:
+    return (
+        '<span class="status-stack" aria-label="Decision and completion status">'
+        f"{status_badge(decision_status)}{status_badge(execution_status)}</span>"
+    )
 
 
 def relative_assets(depth: int) -> str:
@@ -293,6 +311,11 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
     # The site is a coherent generated set. Always rebuild all pages so links, hashes, and the manifest remain synchronized.
     cap_paths = all_cap_paths
     backlog_capabilities = {cap["id"]: cap for cap in backlog.get("capabilities", [])}
+    backlog_slices = {
+        str(slice_["id"]): slice_
+        for capability in backlog_capabilities.values()
+        for slice_ in capability.get("slices", [])
+    }
     waves = [wave for wave in backlog.get("waves", []) if isinstance(wave, dict)]
     gates_by_wave = {
         str(gate.get("after_wave")): gate for gate in backlog.get("release_gates", []) if isinstance(gate, dict)
@@ -356,9 +379,10 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         wave_capability_ids = sorted({str(slice_["id"]).split(".")[0] for slice_ in wave_slices})
         approved_slices = sum(slice_.get("completion", {}).get("status") == "APPROVED" for slice_ in wave_slices)
         gate = gates_by_wave.get(wave_id, {})
+        wave_tasks = [task for slice_ in wave_slices for task in slice_.get("tasks", [])]
         wave_cards.append(f"""
 <a class="capability-card" href="waves/{esc(wave_id)}.html">
-  <div class="capability-card-top"><span class="eyebrow">{esc(wave_id)} · {esc(wave.get("track"))}</span>{status_badge((wave.get("approval") or {}).get("status"))}</div>
+  <div class="capability-card-top"><span class="eyebrow">{esc(wave_id)} · {esc(wave.get("track"))}</span>{status_stack((wave.get("approval") or {}).get("status"), delivery_status(wave_tasks, wave.get("completion")))}</div>
   <h2>{esc(wave.get("title"))}</h2>
   <p>{esc(wave.get("goal"))}</p>
   <dl><div><dt>Capabilities</dt><dd>{len(wave_capability_ids)}</dd></div><div><dt>Slices</dt><dd>{approved_slices}/{len(wave_slices)}</dd></div><div><dt>Exit gate</dt><dd>{esc(gate.get("id"))}</dd></div></dl>
@@ -372,9 +396,11 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         cap_alias = backlog_capabilities.get(cid, {}).get("alias", cid)
         decision_count = len(meta.get("decisions", []))
         unresolved = len(meta.get("open_blocking_decisions", []))
+        backlog_capability = backlog_capabilities.get(cid, {})
+        capability_tasks = [task for slice_ in backlog_capability.get("slices", []) for task in slice_.get("tasks", [])]
         cards.append(f"""
 <a class="capability-card" href="{esc(cid)}/index.html">
-  <div class="capability-card-top"><span class="eyebrow">{esc(cap_alias)}</span>{status_badge(meta.get("status"))}</div>
+  <div class="capability-card-top"><span class="eyebrow">{esc(cap_alias)}</span>{status_stack(meta.get("status"), delivery_status(capability_tasks, backlog_capability.get("completion")))}</div>
   <h2>{esc(meta.get("title"))}</h2>
   <p><code>{esc(cid)}</code> is the immutable evidence key.</p>
   <dl><div><dt>Slices</dt><dd>{len(meta.get("slice_ids", []))}</dd></div><div><dt>Decisions</dt><dd>{decision_count}</dd></div><div><dt>Open</dt><dd>{unresolved}</dd></div></dl>
@@ -470,7 +496,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     label_html = f"{esc(label)} <small>({esc(slice_['id'])})</small>"
                 slice_rows.append(
                     f"<li><span>{label_html}<small>{esc(slice_.get('title'))} · Plan: {esc(plan_status)} · "
-                    f"Delivery: {esc(status)}</small></span>{status_badge(plan_status)}</li>"
+                    f"Delivery: {esc(status)}</small></span>{status_stack(plan_status, delivery_status(slice_tasks, slice_.get('completion')))}</li>"
                 )
             alias = capability.get("alias", capability_id)
             title = capability.get("title")
@@ -515,7 +541,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             )
             increment_cards.append(f"""
 <section class="wave-capability">
-  <div class="capability-card-top"><div><span class="eyebrow">{esc(capability_id)} · immutable key</span><h2>{heading}</h2><p>{esc(title)}</p></div>{status_badge(cap_meta.get("status", "historical"))}</div>
+  <div class="capability-card-top"><div><span class="eyebrow">{esc(capability_id)} · immutable key</span><h2>{heading}</h2><p>{esc(title)}</p></div>{status_stack(cap_meta.get("status", "historical"), delivery_status([task for slice_ in increment_slices for task in slice_.get("tasks", [])]))}</div>
   {decision_groups if cap_decisions else '<p class="decision-meta">Historical foundation contribution; approval is bound by the Wave record.</p>'}
   <ol class="wave-slice-list">{"".join(slice_rows)}</ol>
 </section>""")
@@ -525,6 +551,16 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         approval = gate.get("approval") or {}
         wave_approval = wave.get("approval") or {}
         wave_completion = wave.get("completion") or {}
+        wave_execution_status = delivery_status(
+            [
+                task
+                for capability in backlog_capabilities.values()
+                for slice_ in capability.get("slices", [])
+                if slice_.get("wave") == wave_id
+                for task in slice_.get("tasks", [])
+            ],
+            wave_completion,
+        )
         readiness = (
             "Ready for one commit-bound pre-Wave approval"
             if wave_plan_count == wave_slice_count
@@ -534,7 +570,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         )
         gate_main = f"""
 <section class="hero compact">
-  <div class="hero-top"><div><span class="eyebrow">{esc(wave.get("track"))} · durable Wave campaign</span><h1>{esc(wave_id)} — {esc(wave.get("title"))}</h1></div>{status_badge(wave_approval.get("status"))}</div>
+  <div class="hero-top"><div><span class="eyebrow">{esc(wave.get("track"))} · durable Wave campaign</span><h1>{esc(wave_id)} — {esc(wave.get("title"))}</h1></div>{status_stack(wave_approval.get("status"), wave_execution_status)}</div>
   <p>{esc(wave.get("goal"))}</p>
   <dl class="summary-grid"><div><dt>Capability contributions</dt><dd>{len(capability_ids)}</dd></div><div><dt>Slice plans present</dt><dd>{wave_plan_count}/{wave_slice_count}</dd></div><div><dt>Binding decisions resolved</dt><dd>{wave_accepted_decision_count}/{wave_decision_count}</dd></div><div><dt>Delivery</dt><dd>{wave_done_count}/{wave_task_count} tasks</dd></div></dl>
 </section>
@@ -610,6 +646,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         for path in slice_files:
             smeta, sbody = read_frontmatter(path)
             page_name = f"{smeta['slice_id']}.html"
+            backlog_slice = backlog_slices.get(str(smeta["slice_id"]), {})
             slices.append(
                 {
                     "path": path,
@@ -620,6 +657,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     "title": smeta["title"],
                     "page_name": page_name,
                     "sha256": sha256(path),
+                    "delivery_status": delivery_status(backlog_slice.get("tasks", []), backlog_slice.get("completion")),
                 }
             )
 
@@ -632,10 +670,15 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
   <div class="slice-card-index">{idx}</div>
   <div><span class="eyebrow">{esc(sl["alias"])}</span><h3>{esc(sl["title"])}</h3>
   <p>{len(smeta.get("task_ids", []))} tasks · {esc(smeta.get("wave"))} · {esc(smeta.get("priority"))}</p></div>
-  {status_badge(smeta.get("status"))}
+  {status_stack(smeta.get("status"), sl["delivery_status"])}
 </a>""")
 
         wave_ids = list(dict.fromkeys(str(sl["meta"].get("wave")) for sl in slices))
+        backlog_capability = backlog_capabilities.get(cid, {})
+        capability_execution_status = delivery_status(
+            [task for slice_ in backlog_capability.get("slices", []) for task in slice_.get("tasks", [])],
+            backlog_capability.get("completion"),
+        )
         wave_commands = "\n".join(
             f"python tools/planctl.py --repo . wave approve {esc(wave)} "
             '--by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;'
@@ -643,7 +686,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         )
         capability_main = f"""
 <section class="hero compact">
-  <div class="hero-top"><div><span class="eyebrow">{esc(cid)} · immutable evidence key</span><h1>{esc(cap_alias)}</h1><p>{esc(meta.get("title"))}</p></div>{status_badge(meta.get("status"))}</div>
+  <div class="hero-top"><div><span class="eyebrow">{esc(cid)} · immutable evidence key</span><h1>{esc(cap_alias)}</h1><p>{esc(meta.get("title"))}</p></div>{status_stack(meta.get("status"), capability_execution_status)}</div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
   <dl class="summary-grid"><div><dt>Slices</dt><dd>{len(slices)}</dd></div><div><dt>Decisions</dt><dd>{len(meta.get("decisions", []))}</dd></div><div><dt>Open blockers</dt><dd>{len(meta.get("open_blocking_decisions", []))}</dd></div><div><dt>Plan hash</dt><dd><code>{cap_hash[:12]}</code></dd></div></dl>
 </section>
@@ -706,7 +749,7 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
             next_link = slices[index + 1]["page_name"] if index + 1 < len(slices) else "index.html"
             slice_main = f"""
 <section class="hero compact">
-  <div class="hero-top"><div><span class="eyebrow">{esc(sl["slice_id"])} · ordered slice {index + 1} of {len(slices)}</span><h1>{esc(sl["alias"])}</h1><p>{esc(sl["title"])}</p></div>{status_badge(smeta.get("status"))}</div>
+  <div class="hero-top"><div><span class="eyebrow">{esc(sl["slice_id"])} · ordered slice {index + 1} of {len(slices)}</span><h1>{esc(sl["alias"])}</h1><p>{esc(sl["title"])}</p></div>{status_stack(smeta.get("status"), sl["delivery_status"])}</div>
   <p>The descriptive label is the default presentation. The numeric slice ID preserves explicit dependency order and immutable evidence history. This plan becomes executable after the capability decisions and its wave's slice plans are approved.</p>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>{esc(smeta.get("wave"))}</dd></div><div><dt>Priority</dt><dd>{esc(smeta.get("priority"))}</dd></div><div><dt>Tasks</dt><dd>{len(smeta.get("task_ids", []))}</dd></div><div><dt>Plan hash</dt><dd><code>{sl["sha256"][:12]}</code></dd></div></dl>
 </section>
@@ -928,6 +971,10 @@ button, input, textarea { font: inherit; }
 .status-proposed, .status-pending, .status-recommended { color: var(--warning); background: var(--warning-soft); }
 .status-approved, .status-accepted, .status-complete { color: var(--success); background: var(--success-soft); }
 .status-rejected, .status-reopened { color: var(--danger); background: var(--danger-soft); }
+.status-stack { display: inline-grid; justify-items: end; gap: 5px; width: fit-content; }
+.status-not-started { color: var(--text-soft); background: var(--surface-soft); }
+.status-in-progress { color: var(--primary); background: var(--primary-soft); }
+.status-completed { color: var(--success); background: var(--success-soft); }
 .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(110px, 1fr)); gap: 10px; margin: 24px 0 0; }
 .summary-grid div, .capability-card dl div { padding: 12px 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
 dt { color: var(--text-soft); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
@@ -1032,7 +1079,7 @@ input:focus, textarea:focus, button:focus, a:focus { outline: 3px solid color-mi
   .review-progress { position: static; width: fit-content; margin: 8px 0; }
   .summary-grid { grid-template-columns: 1fr 1fr; }
   .slice-card { grid-template-columns: 34px 1fr; }
-  .slice-card .status { grid-column: 2; }
+  .slice-card .status-stack { grid-column: 2; justify-items: start; }
 }
 @media print {
   .site-header, .side-panel, .site-footer, .review-toolbar, .page-turn { display: none !important; }
