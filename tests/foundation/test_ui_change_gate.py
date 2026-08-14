@@ -17,6 +17,7 @@ sys.path.insert(0, str(REPO / "tools"))
 
 from ui_change_gate import (  # noqa: E402
     APPLICATION_INVENTORY_HARDENING_ENVELOPE,
+    additive_preimplementation_quality_scope_errors,
     automatic_base,
     independent_review_hardening_errors,
     reviewed_historical_hardening_errors,
@@ -25,6 +26,57 @@ from ui_change_gate import (  # noqa: E402
 
 
 class UiChangeGateTests(unittest.TestCase):
+    def test_pre_ui_quality_inventory_is_only_additive_same_commit_non_ui_python(self) -> None:
+        policy = {
+            "implementationRoots": ["apps/desktop/src"],
+            "implementationExtensions": [".css", ".tsx"],
+            "ignoredImplementationSuffixes": [".test.tsx"],
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            root.mkdir()
+            self.git(root, "init", "-b", "main")
+            self.git(root, "config", "user.name", "UI Gate Test")
+            self.git(root, "config", "user.email", "ui-gate@example.invalid")
+            self.git(root, "config", "core.autocrlf", "false")
+            self.write_json(
+                root / "quality-scope.json",
+                {
+                    "schemaVersion": "1.0",
+                    "documentType": "python-quality-scope",
+                    "governedRoots": ["services", "tests", "tools"],
+                    "pythonFiles": ["services/core/existing.py"],
+                },
+            )
+            existing = root / "services/core/existing.py"
+            existing.parent.mkdir(parents=True)
+            existing.write_text("EXISTING = True\n", encoding="utf-8")
+            self.commit(root, "baseline quality scope")
+
+            source = root / "services/core/projects.py"
+            test = root / "tests/service/test_projects.py"
+            source.write_text("PROJECTS = True\n", encoding="utf-8")
+            test.parent.mkdir(parents=True)
+            test.write_text("def test_projects(): pass\n", encoding="utf-8")
+            scope = json.loads((root / "quality-scope.json").read_text(encoding="utf-8"))
+            scope["pythonFiles"].extend(["services/core/projects.py", "tests/service/test_projects.py"])
+            self.write_json(root / "quality-scope.json", scope)
+            additive = self.commit(root, "add service quality inventory before UI")
+            self.assertEqual([], additive_preimplementation_quality_scope_errors(root, additive, policy))
+
+            scope["pythonFiles"].remove("services/core/existing.py")
+            self.write_json(root / "quality-scope.json", scope)
+            removal = self.commit(root, "remove existing inventory")
+            self.assertTrue(additive_preimplementation_quality_scope_errors(root, removal, policy))
+
+            gate = root / "tools/ui_change_gate.py"
+            gate.parent.mkdir(parents=True)
+            gate.write_text("GATE = True\n", encoding="utf-8")
+            scope["pythonFiles"].append("tools/ui_change_gate.py")
+            self.write_json(root / "quality-scope.json", scope)
+            gate_addition = self.commit(root, "attempt gate inventory addition")
+            self.assertTrue(additive_preimplementation_quality_scope_errors(root, gate_addition, policy))
+
     def test_historical_quality_scope_hardening_requires_exact_immutable_approval(self) -> None:
         hardening = "1cd9deebe94fa2b667ad6b0030bd07ec45d1c6bb"
         approval = "43bcdec4eba110f994a540f0a1e625a6d44aff4b"
