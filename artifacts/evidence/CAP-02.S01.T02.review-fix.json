@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S01.T02",
+  "commit": "75272b85dbaff88e473b6c924831163297e4c2cc",
+  "baseCommit": "633aaa396548cfa9be8cbfa9e6a26d2e833244ea",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S01.T02.submission.json",
+    "reason": "Independent review found a narrow UI-gate false rejection plus audit hardlink, audit-failure transactionality, stable path identity, and Windows device/install-root denial gaps. This remediation preserves the original evidence and binds the exact reviewed fixes."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S01.T02.submission.json",
+    "docs/architecture/project-package.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/projects.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tests/service/test_project_lifecycle.py",
+    "tools/ui_change_gate.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_project_lifecycle tests.service.test_core_api tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "All 43 focused tests pass: 26 lifecycle/API tests and 17 UI-gate tests. Direct regressions cover audit hardlinks, delete/open audit rollback, held-root substitution, device/install roots, and additive pre-UI quality inventory denial/allowance."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 25a24f08649e88c0fbba821b6d98c1caa83d2ab1 --head 75272b85dbaff88e473b6c924831163297e4c2cc",
+      "exitCode": 0,
+      "result": "The exact cumulative task range passes with the unchanged approved RO-UI-ACADEMIC-MINIMAL-1.3 reference (db13c8d5...) and exactly the three declared functional application files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Python quality passes for all 79 governed files after the reviewed quality-inventory hardening."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "Backlog invariants and generated planning views pass. Broad data/desktop profiles remain deferred to completed-slice review under the risk-based test policy."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The original create/open/close/archive/restore/recoverable-delete product behavior is unchanged. Release-authoritative Windows operations now hold stable directory identities through validation, manifest/lock mutation, audit, and handle-based publication/trash rename.",
+        "Audit writes reject redirects, hardlinks, non-regular targets, identity changes, incomplete JSONL, and oversized history, then publish by bounded atomic replacement. Failed open/delete/close/transition audit paths restore exact lock, internal-open, and manifest state or return an explicit rollback-failed recovery boundary.",
+        "Device namespace paths and roots beneath Windows installation directories are denied before project access."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused regressions reproduce every independent finding: outside hardlink bytes stay unchanged; audit-failed delete preserves the exact manifest; audit-failed open leaves no lock/internal state; root substitution is denied while both project identities remain unchanged; device/install roots reject."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The exact independent CHANGES_REQUESTED planning transition immediately precedes the two-file UI-gate hardening. The hardening permits only same-commit additive non-UI services/tests Python entries before UI implementation and rejects removals, reordering, UI paths, gate paths, and post-UI self-modification.",
+        "The task now carries the exact approved-reference experience lineage, the architecture documents the handle/audit boundary, and the cumulative UI gate passes without changing any approved-reference bytes.",
+        "No API, generated client, dependency, renderer, native request, migration, cloud, cache, or future-wave behavior changed in remediation; the original focused product qualification remains applicable."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Re-review only the four prior findings, exact two-file gate-hardening provenance, experience lineage, nine-file incremental scope, and focused checks. No broad profile is requested."
+  }
+}

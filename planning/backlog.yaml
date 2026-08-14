@@ -3479,7 +3479,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T10:10:18+00:00'
-      updated_at: '2026-08-14T10:49:37+00:00'
+      updated_at: '2026-08-14T11:01:07+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Submitted for focused independent review. Functional checks pass; cumulative UI provenance correctly
@@ -3490,6 +3490,11 @@ capabilities:
         sha256: 35363e1d564dfaf439215bb6dc702d29a5a79914f8f3a11911d6d34f29090957
         commit: 633aaa396548cfa9be8cbfa9e6a26d2e833244ea
         recorded_at: '2026-08-14T10:42:55+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S01.T02.review-fix.json
+        sha256: 526ee7068df98b6af8c8ed8d2d600a0c67dd704212ec194cb9fe8a39fb120dd2
+        commit: 75272b85dbaff88e473b6c924831163297e4c2cc
+        recorded_at: '2026-08-14T11:01:07+00:00'
       review:
         reviewer: agent:curie
         result: changes-requested
@@ -3502,7 +3507,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-14T10:49:37+00:00'
         expires_at: '2026-08-14T18:49:37+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
