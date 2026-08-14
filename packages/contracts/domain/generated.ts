@@ -97,13 +97,21 @@ export type RightsDecision = AllowedRights | DeniedRights | UnknownRights | NotA
 
 export interface ExternalIdentifier {
   readonly scheme: "doi" | "pmid" | "isbn" | "issn" | "arxiv" | "handle" | "orcid" | "ror" | "url" | "other";
-  readonly observedValue: PortableIdentifierText;
-  readonly normalizedValue: PortableIdentifierText | null;
+  readonly observedValue: ExternalIdentifierText;
+  readonly normalizedValue: ExternalIdentifierText | null;
   readonly verificationState: "unverified" | "verified" | "disputed" | "invalid";
   readonly sourceReference: SourceReference;
 }
 
+export type ExternalIdentifierText = PortableIdentifierText | DoiIdentifierText | ArxivIdentifierText | HandleIdentifierText | WebIdentifierText;
+
 export type PortableIdentifierText = string;
+
+export type DoiIdentifierText = string;
+
+export type ArxivIdentifierText = string;
+
+export type HandleIdentifierText = string;
 
 export type WebIdentifierText = string;
 
@@ -125,7 +133,7 @@ export interface CoreAggregate {
   readonly externalIdentifiers: ReadonlyArray<ExternalIdentifier>;
 }
 
-export const CORE_DOMAIN_SCHEMA_SHA256 = "7fc254970fffd5f32342837e75972144372ee80d2bdd97af2b18096c13ecf23b";
+export const CORE_DOMAIN_SCHEMA_SHA256 = "43c4a40b07d96a7fd54a6b63c053d33c999763d0273f63b90a9aaea045524abd";
 
 const CORE_DOMAIN_SCHEMA = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -631,12 +639,12 @@ const CORE_DOMAIN_SCHEMA = {
           ]
         },
         "observedValue": {
-          "$ref": "#/$defs/PortableIdentifierText"
+          "$ref": "#/$defs/ExternalIdentifierText"
         },
         "normalizedValue": {
           "oneOf": [
             {
-              "$ref": "#/$defs/PortableIdentifierText"
+              "$ref": "#/$defs/ExternalIdentifierText"
             },
             {
               "type": "null"
@@ -656,6 +664,93 @@ const CORE_DOMAIN_SCHEMA = {
         }
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "doi"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observedValue": {
+                "$ref": "#/$defs/DoiIdentifierText"
+              },
+              "normalizedValue": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/DoiIdentifierText"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "arxiv"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observedValue": {
+                "$ref": "#/$defs/ArxivIdentifierText"
+              },
+              "normalizedValue": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/ArxivIdentifierText"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "handle"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observedValue": {
+                "$ref": "#/$defs/HandleIdentifierText"
+              },
+              "normalizedValue": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/HandleIdentifierText"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
         {
           "if": {
             "properties": {
@@ -684,6 +779,61 @@ const CORE_DOMAIN_SCHEMA = {
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "enum": [
+                  "pmid",
+                  "isbn",
+                  "issn",
+                  "orcid",
+                  "ror",
+                  "other"
+                ]
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observedValue": {
+                "$ref": "#/$defs/PortableIdentifierText"
+              },
+              "normalizedValue": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/PortableIdentifierText"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ExternalIdentifierText": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PortableIdentifierText"
+        },
+        {
+          "$ref": "#/$defs/DoiIdentifierText"
+        },
+        {
+          "$ref": "#/$defs/ArxivIdentifierText"
+        },
+        {
+          "$ref": "#/$defs/HandleIdentifierText"
+        },
+        {
+          "$ref": "#/$defs/WebIdentifierText"
         }
       ]
     },
@@ -692,14 +842,35 @@ const CORE_DOMAIN_SCHEMA = {
       "minLength": 1,
       "maxLength": 512,
       "description": "Portable identifier text that cannot encode a local filesystem location.",
-      "pattern": "^(?![A-Za-z]:)(?![\\\\/])(?!~[\\\\/])(?!\\.\\.?[\\\\/])(?![Ff][Ii][Ll][Ee]:)[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+      "pattern": "^(?![A-Za-z]:)(?![Ff][Ii][Ll][Ee]:)[^\\\\/\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+    },
+    "DoiIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "DOI text or an HTTP(S) resolver form; local path syntax is forbidden.",
+      "pattern": "^(?:(?:[Dd][Oo][Ii]:[ ]*)?10\\.[0-9]{4,9}/[^\\\\\\u0000-\\u001f\\u007f]+|[Hh][Tt][Tt][Pp][Ss]?://[^\\\\\\u0000-\\u001f\\u007f]+)(?![\\s\\S])"
+    },
+    "ArxivIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Modern or legacy arXiv text or an HTTP(S) resolver form; local path syntax is forbidden.",
+      "pattern": "^(?:(?:[Aa][Rr][Xx][Ii][Vv]:[ ]*)?(?:[0-9]{4}\\.[0-9]{4,5}|[A-Za-z.-]+/[0-9]{7})(?:v[0-9]+)?|[Hh][Tt][Tt][Pp][Ss]?://[^\\\\\\u0000-\\u001f\\u007f]+)(?![\\s\\S])"
+    },
+    "HandleIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Numeric-prefix Handle text or an HTTP(S) resolver form; local path syntax is forbidden.",
+      "pattern": "^(?:[0-9]+(?:\\.[0-9]+)*/[^\\\\\\u0000-\\u001f\\u007f]+|[Hh][Tt][Tt][Pp][Ss]?://[^\\\\\\u0000-\\u001f\\u007f]+)(?![\\s\\S])"
     },
     "WebIdentifierText": {
       "type": "string",
       "minLength": 1,
       "maxLength": 512,
       "description": "Portable HTTP(S) URL identifier; local and file URI forms are forbidden.",
-      "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+      "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://[^\\\\\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
     },
     "CoreAggregate": {
       "type": "object",
@@ -859,7 +1030,7 @@ function ownedFrozenSnapshot(value: unknown): unknown {
   if (!candidate) return value;
   const keys = Object.keys(candidate);
   if (keys.length > MAX_SNAPSHOT_COLLECTION_ITEMS) throw new Error("domain snapshot object exceeds bound");
-  const owned: Record<string, unknown> = {};
+  const owned = Object.create(null) as Record<string, unknown>;
   for (const key of keys) owned[key] = ownedFrozenSnapshot(candidate[key]);
   return Object.freeze(owned);
 }

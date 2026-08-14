@@ -262,10 +262,10 @@
       "required": ["scheme", "observedValue", "normalizedValue", "verificationState", "sourceReference"],
       "properties": {
         "scheme": {"enum": ["doi", "pmid", "isbn", "issn", "arxiv", "handle", "orcid", "ror", "url", "other"]},
-        "observedValue": {"$ref": "#/$defs/PortableIdentifierText"},
+        "observedValue": {"$ref": "#/$defs/ExternalIdentifierText"},
         "normalizedValue": {
           "oneOf": [
-            {"$ref": "#/$defs/PortableIdentifierText"},
+            {"$ref": "#/$defs/ExternalIdentifierText"},
             {"type": "null"}
           ]
         },
@@ -273,6 +273,33 @@
         "sourceReference": {"$ref": "#/$defs/SourceReference"}
       },
       "allOf": [
+        {
+          "if": {"properties": {"scheme": {"const": "doi"}}, "required": ["scheme"]},
+          "then": {
+            "properties": {
+              "observedValue": {"$ref": "#/$defs/DoiIdentifierText"},
+              "normalizedValue": {"oneOf": [{"$ref": "#/$defs/DoiIdentifierText"}, {"type": "null"}]}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"scheme": {"const": "arxiv"}}, "required": ["scheme"]},
+          "then": {
+            "properties": {
+              "observedValue": {"$ref": "#/$defs/ArxivIdentifierText"},
+              "normalizedValue": {"oneOf": [{"$ref": "#/$defs/ArxivIdentifierText"}, {"type": "null"}]}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"scheme": {"const": "handle"}}, "required": ["scheme"]},
+          "then": {
+            "properties": {
+              "observedValue": {"$ref": "#/$defs/HandleIdentifierText"},
+              "normalizedValue": {"oneOf": [{"$ref": "#/$defs/HandleIdentifierText"}, {"type": "null"}]}
+            }
+          }
+        },
         {
           "if": {"properties": {"scheme": {"const": "url"}}, "required": ["scheme"]},
           "then": {
@@ -286,7 +313,28 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {"scheme": {"enum": ["pmid", "isbn", "issn", "orcid", "ror", "other"]}},
+            "required": ["scheme"]
+          },
+          "then": {
+            "properties": {
+              "observedValue": {"$ref": "#/$defs/PortableIdentifierText"},
+              "normalizedValue": {"oneOf": [{"$ref": "#/$defs/PortableIdentifierText"}, {"type": "null"}]}
+            }
+          }
         }
+      ]
+    },
+    "ExternalIdentifierText": {
+      "anyOf": [
+        {"$ref": "#/$defs/PortableIdentifierText"},
+        {"$ref": "#/$defs/DoiIdentifierText"},
+        {"$ref": "#/$defs/ArxivIdentifierText"},
+        {"$ref": "#/$defs/HandleIdentifierText"},
+        {"$ref": "#/$defs/WebIdentifierText"}
       ]
     },
     "PortableIdentifierText": {
@@ -294,14 +342,35 @@
       "minLength": 1,
       "maxLength": 512,
       "description": "Portable identifier text that cannot encode a local filesystem location.",
-      "pattern": "^(?![A-Za-z]:)(?![\\\\/])(?!~[\\\\/])(?!\\.\\.?[\\\\/])(?![Ff][Ii][Ll][Ee]:)[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+      "pattern": "^(?![A-Za-z]:)(?![Ff][Ii][Ll][Ee]:)[^\\\\/\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+    },
+    "DoiIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "DOI text or an HTTP(S) resolver form; local path syntax is forbidden.",
+      "pattern": "^(?:(?:[Dd][Oo][Ii]:[ ]*)?10\\.[0-9]{4,9}/[^\\\\\\u0000-\\u001f\\u007f]+|[Hh][Tt][Tt][Pp][Ss]?://[^\\\\\\u0000-\\u001f\\u007f]+)(?![\\s\\S])"
+    },
+    "ArxivIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Modern or legacy arXiv text or an HTTP(S) resolver form; local path syntax is forbidden.",
+      "pattern": "^(?:(?:[Aa][Rr][Xx][Ii][Vv]:[ ]*)?(?:[0-9]{4}\\.[0-9]{4,5}|[A-Za-z.-]+/[0-9]{7})(?:v[0-9]+)?|[Hh][Tt][Tt][Pp][Ss]?://[^\\\\\\u0000-\\u001f\\u007f]+)(?![\\s\\S])"
+    },
+    "HandleIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Numeric-prefix Handle text or an HTTP(S) resolver form; local path syntax is forbidden.",
+      "pattern": "^(?:[0-9]+(?:\\.[0-9]+)*/[^\\\\\\u0000-\\u001f\\u007f]+|[Hh][Tt][Tt][Pp][Ss]?://[^\\\\\\u0000-\\u001f\\u007f]+)(?![\\s\\S])"
     },
     "WebIdentifierText": {
       "type": "string",
       "minLength": 1,
       "maxLength": 512,
       "description": "Portable HTTP(S) URL identifier; local and file URI forms are forbidden.",
-      "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+      "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://[^\\\\\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
     },
     "CoreAggregate": {
       "type": "object",

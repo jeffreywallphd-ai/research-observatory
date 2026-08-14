@@ -80,7 +80,7 @@ function pyDefinition(name, node) {
     if (Array.isArray(alternatives)) {
       const alias = `type ${name} = ${alternatives.map(pyType).join(" | ")}`;
       if (alias.length <= 120) return alias;
-      return `type ${name} = (\n${alternatives.map((item, index) => `    ${index === 0 ? "" : "| "}${pyType(item)}`).join("\n")}\n)`;
+      return `type ${name} = (\n    ${alternatives.map(pyType).join(" | ")}\n)`;
     }
     return `type ${name} = ${pyType(node)}`;
   }
@@ -148,7 +148,7 @@ function ownedFrozenSnapshot(value: unknown): unknown {
   if (!candidate) return value;
   const keys = Object.keys(candidate);
   if (keys.length > MAX_SNAPSHOT_COLLECTION_ITEMS) throw new Error("domain snapshot object exceeds bound");
-  const owned: Record<string, unknown> = {};
+  const owned = Object.create(null) as Record<string, unknown>;
   for (const key of keys) owned[key] = ownedFrozenSnapshot(candidate[key]);
   return Object.freeze(owned);
 }
@@ -309,11 +309,16 @@ import math
 import re
 import secrets
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from datetime import UTC, datetime
+from types import MappingProxyType
 from typing import Any, Literal, ${needsNotRequired ? "NotRequired, " : ""}TypedDict, cast
 
 ${pyDefinitions}
+
+
+type FrozenJsonValue = None | bool | int | float | str | tuple["FrozenJsonValue", ...] | Mapping[str, "FrozenJsonValue"]
+type CoreAggregateSnapshot = Mapping[str, FrozenJsonValue]
 
 
 CORE_DOMAIN_SCHEMA_SHA256 = "${schemaSha256}"
@@ -323,8 +328,8 @@ _UTC = re.compile(r"^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d{1,3})
 _MAX_SNAPSHOT_COLLECTION_ITEMS = 256
 
 
-def _record(value: object) -> dict[str, Any] | None:
-    return cast(dict[str, Any], value) if isinstance(value, dict) else None
+def _record(value: object) -> Mapping[str, Any] | None:
+    return cast(Mapping[str, Any], value) if isinstance(value, Mapping) else None
 
 
 def _deep_equal(left: object, right: object) -> bool:
@@ -332,50 +337,26 @@ def _deep_equal(left: object, right: object) -> bool:
 
 
 def _stable_json(value: object) -> str:
+    if isinstance(value, Mapping):
+        return (
+            "{"
+            + ",".join(f"{json.dumps(key, ensure_ascii=False)}:{_stable_json(value[key])}" for key in sorted(value))
+            + "}"
+        )
+    if isinstance(value, (list, tuple)):
+        return "[" + ",".join(_stable_json(item) for item in value) + "]"
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
-class _FrozenDict(dict[str, Any]):
-    def _immutable(self, *_args: object, **_kwargs: object) -> None:
-        raise TypeError("decoded domain snapshot is immutable")
-
-    __setitem__ = _immutable
-    __delitem__ = _immutable
-    clear = _immutable
-    pop = _immutable
-    popitem = _immutable  # type: ignore[assignment]
-    setdefault = _immutable
-    update = _immutable
-    __ior__ = _immutable  # type: ignore[assignment]
-
-
-class _FrozenList(list[Any]):
-    def _immutable(self, *_args: object, **_kwargs: object) -> None:
-        raise TypeError("decoded domain snapshot is immutable")
-
-    __setitem__ = _immutable
-    __delitem__ = _immutable
-    append = _immutable
-    clear = _immutable
-    extend = _immutable
-    insert = _immutable
-    pop = _immutable
-    remove = _immutable
-    reverse = _immutable
-    sort = _immutable
-    __iadd__ = _immutable  # type: ignore[assignment]
-    __imul__ = _immutable  # type: ignore[assignment]
-
-
 def _owned_frozen_json(value: object) -> object:
-    if isinstance(value, dict):
+    if isinstance(value, Mapping):
         if len(value) > _MAX_SNAPSHOT_COLLECTION_ITEMS:
             raise ValueError("domain snapshot object exceeds bound")
-        return _FrozenDict({key: _owned_frozen_json(item) for key, item in value.items()})
-    if isinstance(value, list):
+        return MappingProxyType({key: _owned_frozen_json(item) for key, item in value.items()})
+    if isinstance(value, (list, tuple)):
         if len(value) > _MAX_SNAPSHOT_COLLECTION_ITEMS:
             raise ValueError("domain snapshot collection exceeds bound")
-        return _FrozenList(_owned_frozen_json(item) for item in value)
+        return tuple(_owned_frozen_json(item) for item in value)
     return value
 
 
@@ -390,12 +371,14 @@ def _owned_frozen_snapshot(value: object, node: dict[str, Any]) -> object:
                 return _owned_frozen_snapshot(value, candidate)
     if node.get("type") == "integer" and isinstance(value, float) and value.is_integer():
         return int(value)
-    if node.get("type") == "array" and isinstance(value, list):
+    if node.get("type") == "array" and isinstance(value, (list, tuple)):
         item_schema = cast(dict[str, Any], node.get("items", {}))
-        return _FrozenList(_owned_frozen_snapshot(item, item_schema) for item in value)
-    if node.get("type") == "object" and isinstance(value, dict):
+        return tuple(_owned_frozen_snapshot(item, item_schema) for item in value)
+    if node.get("type") == "object" and isinstance(value, Mapping):
         properties = cast(dict[str, dict[str, Any]], node.get("properties", {}))
-        return _FrozenDict({key: _owned_frozen_snapshot(item, properties.get(key, {})) for key, item in value.items()})
+        return MappingProxyType(
+            {key: _owned_frozen_snapshot(item, properties.get(key, {})) for key, item in value.items()}
+        )
     return value
 
 
@@ -467,7 +450,7 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
             if node.get("format") == "date-time" and not _canonical_utc(value):
                 errors.append(f"{path}: canonical UTC date-time")
     if kind == "array":
-        if not isinstance(value, list):
+        if not isinstance(value, (list, tuple)):
             errors.append(f"{path}: array")
         else:
             if isinstance(node.get("minItems"), int) and len(value) < node["minItems"]:
@@ -555,7 +538,7 @@ def _semantic_errors(value: object) -> list[str]:
             )
         if rule["operator"] == "not-equal":
             valid = not _deep_equal(left, right)
-        if rule["operator"] == "set-disjoint" and isinstance(left, list) and isinstance(right, list):
+        if rule["operator"] == "set-disjoint" and isinstance(left, (list, tuple)) and isinstance(right, (list, tuple)):
             right_values = {_stable_json(item) for item in right}
             valid = all(_stable_json(item) not in right_values for item in left)
         if not valid:
@@ -600,14 +583,20 @@ def domain_contract_errors(value: object) -> tuple[str, ...]:
         return ("semantic-rule-input-invalid",)
 
 
-def decode_core_aggregate(value: object) -> CoreAggregate | None:
+def core_aggregate_snapshot_json(value: CoreAggregateSnapshot) -> str:
+    """Serialize an immutable decoded snapshot using canonical JSON key order."""
+
+    return _stable_json(value)
+
+
+def decode_core_aggregate(value: object) -> CoreAggregateSnapshot | None:
     try:
         owned = _owned_frozen_json(value)
     except ValueError:
         return None
     if domain_contract_errors(owned):
         return None
-    return cast(CoreAggregate, _owned_frozen_snapshot(owned, _CORE_DOMAIN_SCHEMA))
+    return cast(CoreAggregateSnapshot, _owned_frozen_snapshot(owned, _CORE_DOMAIN_SCHEMA))
 `;
 
 function update(path, expected, check) {

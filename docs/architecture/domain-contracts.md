@@ -38,6 +38,14 @@ Each envelope carries:
   action and consequential decisions bound to source references; and
 - typed source anchors and external identifiers with no filesystem path.
 
+External-identifier validation is scheme-aware: DOI, arXiv, Handle, and HTTP(S)
+forms may retain their governed separator syntax, while bare Windows or POSIX
+path forms are rejected. Decoders validate an owned snapshot rather than a
+caller-owned object. TypeScript returns deeply frozen null-prototype records;
+Python returns a read-only `Mapping`/tuple graph and exposes
+`core_aggregate_snapshot_json` for canonical serialization. These boundaries
+prevent both post-validation mutation and mutable base-class bypasses.
+
 Aggregate-specific fields and lifecycle transitions are intentionally not in
 this common envelope. CAP-03.S01.T02 owns lifecycle invariants; T03 owns
 compatibility, deprecation, and migration rules.
