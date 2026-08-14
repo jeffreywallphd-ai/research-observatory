@@ -43,6 +43,10 @@ class ProjectLifecycleTests(unittest.TestCase):
             trace_id=TRACE,
         )
 
+    @staticmethod
+    def package_bytes(root: Path) -> dict[str, bytes]:
+        return {path.relative_to(root).as_posix(): path.read_bytes() for path in root.rglob("*") if path.is_file()}
+
     def test_create_publishes_exact_relocatable_package_and_schema_valid_records(self) -> None:
         projection = self.create()
         root = Path(projection.root)
@@ -81,6 +85,8 @@ class ProjectLifecycleTests(unittest.TestCase):
         project = self.create()
         opened = self.service.open(root=project.root, trace_id=TRACE)
         self.assertTrue(opened.open)
+        self.assertEqual("read-write", opened.access_mode)
+        self.assertEqual("compatible", opened.compatibility_state)
         lock_path = Path(project.root) / ".locks" / "session.lock"
         lock = json.loads(lock_path.read_text(encoding="utf-8"))
         schema = json.loads(
@@ -148,8 +154,106 @@ class ProjectLifecycleTests(unittest.TestCase):
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         manifest["databaseProfile"] = "unapproved-database"
         manifest_path.write_text(json.dumps(manifest) + "\n", encoding="utf-8", newline="\n")
-        with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-MANIFEST-INVALID"):
+        with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-DAMAGED"):
             self.service.open(root=project.root, trace_id=TRACE)
+
+    def test_newer_and_older_projects_open_read_only_without_mutating_package_bytes(self) -> None:
+        for name, fixture_name, compatibility, recovery_action in (
+            (
+                "newer-project",
+                "newer-unsupported-project-manifest.v2.json",
+                "newer-unsupported",
+                "backup-then-use-compatible-application",
+            ),
+            (
+                "older-project",
+                "migration-required-project-manifest.v0.json",
+                "migration-required",
+                "backup-then-migrate",
+            ),
+        ):
+            project = self.create(name)
+            root = Path(project.root)
+            manifest_path = root / "project.ro.json"
+            fixture = REPO / "packages" / "contracts" / "project" / "fixtures" / fixture_name
+            manifest_path.write_bytes(fixture.read_bytes())
+            before = self.package_bytes(root)
+
+            opened = self.service.open(root=project.root, trace_id=TRACE)
+            self.assertTrue(opened.open)
+            self.assertEqual("read-only", opened.access_mode)
+            self.assertEqual(compatibility, opened.compatibility_state)
+            self.assertTrue(opened.backup_required_before_repair)
+            self.assertEqual(recovery_action, opened.recovery_action)
+            self.assertEqual(before, self.package_bytes(root))
+            self.assertFalse((root / ".locks" / "session.lock").exists())
+            with self.assertRaisesRegex(
+                ProjectLifecycleProblem,
+                "RO-CORE-PROJECT-NEWER-UNSUPPORTED|RO-CORE-PROJECT-MIGRATION-REQUIRED",
+            ):
+                self.service.archive(root=project.root, trace_id=TRACE)
+            self.assertEqual(before, self.package_bytes(root))
+
+            closed = self.service.close(root=project.root, trace_id=TRACE)
+            self.assertFalse(closed.open)
+            self.assertEqual("closed", closed.access_mode)
+            self.assertEqual(before, self.package_bytes(root))
+
+            restarted = ProjectLifecycleService()
+            reopened = restarted.open(root=project.root, trace_id=TRACE)
+            self.assertEqual("read-only", reopened.access_mode)
+            restarted.shutdown()
+            self.assertEqual(before, self.package_bytes(root))
+
+    def test_application_compatibility_range_can_force_read_only_without_format_mutation(self) -> None:
+        project = self.create("future-application")
+        root = Path(project.root)
+        manifest_path = root / "project.ro.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["applicationCompatibility"] = {"minimum": "0.2.0", "maximumExclusive": "1.0.0"}
+        manifest_path.write_text(json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+        before = self.package_bytes(root)
+        opened = self.service.open(root=project.root, trace_id=TRACE)
+        self.assertEqual("newer-unsupported", opened.compatibility_state)
+        self.assertEqual("read-only", opened.access_mode)
+        self.assertEqual(before, self.package_bytes(root))
+
+    def test_damaged_and_incomplete_projects_fail_without_mutation_and_name_backup_first_recovery(self) -> None:
+        damaged = self.create("damaged-project")
+        damaged_root = Path(damaged.root)
+        manifest_path = damaged_root / "project.ro.json"
+        manifest_path.write_text("{not-json\n", encoding="utf-8", newline="\n")
+        damaged_before = self.package_bytes(damaged_root)
+        with self.assertRaises(ProjectLifecycleProblem) as damaged_failure:
+            self.service.open(root=damaged.root, trace_id=TRACE)
+        self.assertEqual("RO-CORE-PROJECT-DAMAGED", damaged_failure.exception.code)
+        self.assertIn("First make and verify a complete backup", damaged_failure.exception.remediation)
+        self.assertEqual(damaged_before, self.package_bytes(damaged_root))
+        self.assertFalse((damaged_root / ".locks" / "session.lock").exists())
+
+        incomplete = self.create("incomplete-project")
+        incomplete_root = Path(incomplete.root)
+        (incomplete_root / "config" / "project-profile.json").unlink()
+        incomplete_before = self.package_bytes(incomplete_root)
+        with self.assertRaises(ProjectLifecycleProblem) as incomplete_failure:
+            self.service.open(root=incomplete.root, trace_id=TRACE)
+        self.assertEqual("RO-CORE-PROJECT-INCOMPLETE", incomplete_failure.exception.code)
+        self.assertIn("First make and verify a complete backup", incomplete_failure.exception.remediation)
+        self.assertEqual(incomplete_before, self.package_bytes(incomplete_root))
+        self.assertFalse((incomplete_root / ".locks" / "session.lock").exists())
+
+        linked = self.create("linked-manifest")
+        linked_root = Path(linked.root)
+        manifest_path = linked_root / "project.ro.json"
+        outside_manifest = self.parent / "outside-project-manifest.json"
+        outside_manifest.write_bytes(manifest_path.read_bytes())
+        manifest_path.unlink()
+        os.link(outside_manifest, manifest_path)
+        outside_before = outside_manifest.read_bytes()
+        with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-DAMAGED"):
+            self.service.open(root=linked.root, trace_id=TRACE)
+        self.assertEqual(outside_before, outside_manifest.read_bytes())
+        self.assertFalse((linked_root / ".locks" / "session.lock").exists())
 
     def test_failed_delete_restores_exact_prior_archived_manifest(self) -> None:
         project = self.create()

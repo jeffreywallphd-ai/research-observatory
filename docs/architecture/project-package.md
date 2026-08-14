@@ -81,6 +81,18 @@ rolls manifest and lock state back before the request reports failure. Project
 publication and recoverable-trash movement rename the held directory itself, so
 another local process cannot substitute a different validated project by path.
 
+Open classifies the stable manifest envelope before granting access. The
+current package format and application range receive an exclusive `read-write`
+session. A structurally sound older package (`migration-required`) or newer
+package/application range (`newer-unsupported`) receives only an in-process
+`read-only` inspection session: Core writes no lock, audit, manifest, profile,
+or other package byte. Close therefore only releases that read-only session.
+Mutation commands reject the incompatible package and name the exact
+backup-first migration or compatible-application recovery action. Malformed
+metadata is reported as `RO-CORE-PROJECT-DAMAGED`; missing required entries are
+reported as `RO-CORE-PROJECT-INCOMPLETE`. Both fail before any package write and
+direct repair to a verified working copy rather than the original.
+
 Stale-lock recovery and secure purge remain separate explicit workflows; this
 boundary never guesses that an unfamiliar lock is safe to break and never
 claims that recoverable trash is cryptographic erasure.

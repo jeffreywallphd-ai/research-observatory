@@ -30,7 +30,7 @@ class DesktopAppCheckTests(unittest.TestCase):
 
         self.assertEqual([], errors)
         self.assertEqual(1, details["pages"])
-        self.assertEqual(["CAP-01", "CAP-02.S01.T02"], details["implementedCapabilities"])
+        self.assertEqual(["CAP-01", "CAP-02.S01.T03"], details["implementedCapabilities"])
         self.assertEqual(0, details["referenceOnlyPages"])
         self.assertTrue(details["commandFocus"])
         self.assertTrue(details["skipLink"])

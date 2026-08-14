@@ -81,7 +81,7 @@ const manifest = {
   schemaVersion: "1.0",
   documentType: "desktop-product-build-manifest",
   buildRole: "tauri-frontend",
-  implementedCapabilities: ["CAP-01", "CAP-02.S01.T02"],
+  implementedCapabilities: ["CAP-01", "CAP-02.S01.T03"],
   routes: ["index.html"],
   referenceUse: "design-contract-only",
   referenceId: "RO-UI-ACADEMIC-MINIMAL-1.3",

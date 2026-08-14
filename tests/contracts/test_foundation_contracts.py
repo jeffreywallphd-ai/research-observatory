@@ -91,6 +91,12 @@ class FoundationPortableContractTests(unittest.TestCase):
         invalid_manifest = json.loads(
             (contract_root / "fixtures" / "invalid-project-manifest-extra-path.json").read_text(encoding="utf-8")
         )
+        newer_safe_open = json.loads(
+            (contract_root / "fixtures" / "newer-unsupported-project-manifest.v2.json").read_text(encoding="utf-8")
+        )
+        migration_safe_open = json.loads(
+            (contract_root / "fixtures" / "migration-required-project-manifest.v0.json").read_text(encoding="utf-8")
+        )
 
         Draft202012Validator.check_schema(manifest_schema)
         Draft202012Validator.check_schema(semantic_schema)
@@ -107,6 +113,9 @@ class FoundationPortableContractTests(unittest.TestCase):
         self.assertEqual([], list(semantic_validator.iter_errors(semantic_rules)))
         self.assertEqual([], manifest_semantic_errors(manifest, semantic_rules))
         self.assertTrue(list(manifest_validator.iter_errors(invalid_manifest)))
+        for safe_open_fixture in (newer_safe_open, migration_safe_open):
+            self.assertTrue(list(manifest_validator.iter_errors(safe_open_fixture)))
+            self.assertEqual([], manifest_semantic_errors(safe_open_fixture, semantic_rules))
 
         path_bearing = copy.deepcopy(manifest)
         path_bearing["absolutePath"] = "C:\\private\\study"

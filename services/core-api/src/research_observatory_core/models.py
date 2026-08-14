@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
 
@@ -30,6 +30,24 @@ class ProjectLifecycleState(StrEnum):
     ACTIVE = "active"
     ARCHIVED = "archived"
     TRASH = "trash"
+
+
+class ProjectAccessMode(StrEnum):
+    CLOSED = "closed"
+    READ_WRITE = "read-write"
+    READ_ONLY = "read-only"
+
+
+class ProjectCompatibilityState(StrEnum):
+    COMPATIBLE = "compatible"
+    MIGRATION_REQUIRED = "migration-required"
+    NEWER_UNSUPPORTED = "newer-unsupported"
+
+
+class ProjectRecoveryAction(StrEnum):
+    NONE = "none"
+    BACKUP_THEN_MIGRATE = "backup-then-migrate"
+    BACKUP_THEN_USE_COMPATIBLE_APPLICATION = "backup-then-use-compatible-application"
 
 
 class RuntimeProjection(ContractModel):
@@ -113,8 +131,42 @@ class ProjectProjection(ContractModel):
     lifecycle_state: ProjectLifecycleState
     root: str = Field(min_length=1, max_length=4096)
     open: bool
+    access_mode: ProjectAccessMode
+    compatibility_state: ProjectCompatibilityState
+    package_format_version: str = Field(
+        pattern=(
+            r"^(?:0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\."
+            r"(?:0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\."
+            r"(?:0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])$"
+        )
+    )
+    backup_required_before_repair: bool
+    recovery_action: ProjectRecoveryAction
     revision: int = Field(ge=0, le=9_007_199_254_740_991)
     delete_confirmation: str = Field(pattern=r"^delete:[0-9a-f-]{36}$")
+
+    @model_validator(mode="after")
+    def validate_safe_open_state(self) -> ProjectProjection:
+        if self.open != (self.access_mode is not ProjectAccessMode.CLOSED):
+            raise ValueError("project open state must match its access mode")
+        if (
+            self.lifecycle_state is not ProjectLifecycleState.ACTIVE
+            and self.access_mode is not ProjectAccessMode.CLOSED
+        ):
+            raise ValueError("only active projects may be open")
+        if self.compatibility_state is ProjectCompatibilityState.COMPATIBLE:
+            if self.package_format_version != "1.0.0":
+                raise ValueError("compatible projects must use the current package format")
+            if self.access_mode is ProjectAccessMode.READ_ONLY:
+                raise ValueError("compatible projects do not use compatibility read-only mode")
+            if self.backup_required_before_repair or self.recovery_action is not ProjectRecoveryAction.NONE:
+                raise ValueError("compatible projects do not require compatibility repair")
+        else:
+            if self.access_mode is ProjectAccessMode.READ_WRITE:
+                raise ValueError("incompatible projects cannot open for write")
+            if not self.backup_required_before_repair or self.recovery_action is ProjectRecoveryAction.NONE:
+                raise ValueError("incompatible projects require a backup-first recovery action")
+        return self
 
 
 class OperationState(StrEnum):

@@ -28,8 +28,20 @@ every release-version component to the shared `0..9007199254740991` numeric
 domain so language runtimes cannot disagree through numeric precision. Treating
 schema-only validation as successful validation is a contract violation.
 
-`fixtures/` supplies one valid relocatable manifest and one intentionally
-invalid path-bearing manifest for downstream readers and compatibility tests.
+`fixtures/` supplies a valid relocatable current manifest, an intentionally
+invalid path-bearing manifest, and exact older/newer safe-open fixtures. The
+older/newer fixtures deliberately fall outside the current writable manifest
+schema. Core may inspect their stable identity envelope, but it must never
+claim that they satisfy the current writable contract.
+
+Safe-open has three machine states: `compatible`, `migration-required`, and
+`newer-unsupported`. Only `compatible` may become `read-write`. A structurally
+sound older or newer envelope may become `read-only` without changing any
+project-package byte. A malformed current envelope is `damaged`; a missing
+required package entry is `incomplete`. Both fail before lock or audit writes
+and return backup-first recovery guidance. Migration and repair operate only
+on a verified working copy; CAP-02.S02 and CAP-02.S05 own the later migration
+and backup implementations.
 
 `project-profile.schema.json`, `project-lock.schema.json`, and
 `project-lifecycle-event.schema.json` bind the implemented local lifecycle.
