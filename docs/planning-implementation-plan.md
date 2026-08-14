@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 20057ef0fb18dea5019c7e498e674f100a52f5f2dca2dda4971fbe5db2d14054
+source_sha256: eafa84afd0ef63835099c43ae05fe249e86ef68d8d0a2325e4c8b187e8b1ff50
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2133,7 +2133,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T01 - Define core aggregate and value-object contracts
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
