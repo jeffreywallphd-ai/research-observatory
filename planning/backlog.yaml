@@ -4367,15 +4367,18 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T12:57:11+00:00'
-      updated_at: '2026-08-14T13:34:04+00:00'
+      updated_at: '2026-08-14T13:34:33+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Portable domain schema, deterministic Python/TypeScript generation, UUIDv7 minting boundary, hostile
-        fixtures, ADR-0013, and focused checks are ready for independent review.
+      implementation_notes: 'Portable domain schema, deterministic Python/TypeScript generation, UUIDv7 minting boundary,
+        hostile fixtures, ADR-0013, and focused checks are ready for independent review.
+
+        Focused remediation closes all four independent review findings with cross-runtime path/control/parity and immutable-snapshot
+        regressions.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-03.S01.T01.json
