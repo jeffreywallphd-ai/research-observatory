@@ -188,7 +188,7 @@ export function ApplicationRuntime(): ReactNode {
         </a>
         <div className="topbar-actions">
           <span className="project-context" data-project-context>
-            {currentProject ? `${currentProject.displayName} · ${currentProject.open ? "Open" : currentProject.lifecycleState}` : "No project open"}
+            {currentProject ? `${currentProject.displayName} · ${currentProject.accessMode === "read-only" ? "Read-only" : currentProject.open ? "Open" : currentProject.lifecycleState}` : "No project open"}
           </span>
           <Button ref={shortcutTriggerRef} onClick={() => openShortcuts(shortcutTriggerRef.current)} aria-haspopup="dialog" data-shortcut-help>
             Shortcuts

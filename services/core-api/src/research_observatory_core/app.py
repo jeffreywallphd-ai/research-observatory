@@ -259,35 +259,60 @@ def create_app(
             ),
         )
 
-    @app.post("/projects/open", response_model=ProjectProjection, tags=["projects"])
+    @app.post(
+        "/projects/open",
+        response_model=ProjectProjection,
+        responses={404: {"model": ProblemDetail}, 409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+        tags=["projects"],
+    )
     def open_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
         return run_project_action(
             request,
             lambda: runtime(request).projects.open(root=command.root, trace_id=request.state.trace_id),
         )
 
-    @app.post("/projects/close", response_model=ProjectProjection, tags=["projects"])
+    @app.post(
+        "/projects/close",
+        response_model=ProjectProjection,
+        responses={404: {"model": ProblemDetail}, 409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+        tags=["projects"],
+    )
     def close_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
         return run_project_action(
             request,
             lambda: runtime(request).projects.close(root=command.root, trace_id=request.state.trace_id),
         )
 
-    @app.post("/projects/archive", response_model=ProjectProjection, tags=["projects"])
+    @app.post(
+        "/projects/archive",
+        response_model=ProjectProjection,
+        responses={404: {"model": ProblemDetail}, 409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+        tags=["projects"],
+    )
     def archive_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
         return run_project_action(
             request,
             lambda: runtime(request).projects.archive(root=command.root, trace_id=request.state.trace_id),
         )
 
-    @app.post("/projects/restore", response_model=ProjectProjection, tags=["projects"])
+    @app.post(
+        "/projects/restore",
+        response_model=ProjectProjection,
+        responses={404: {"model": ProblemDetail}, 409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+        tags=["projects"],
+    )
     def restore_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
         return run_project_action(
             request,
             lambda: runtime(request).projects.restore(root=command.root, trace_id=request.state.trace_id),
         )
 
-    @app.post("/projects/delete", response_model=ProjectProjection, tags=["projects"])
+    @app.post(
+        "/projects/delete",
+        response_model=ProjectProjection,
+        responses={404: {"model": ProblemDetail}, 409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+        tags=["projects"],
+    )
     def delete_project(request: Request, command: ProjectDeleteRequest) -> ProjectProjection:
         return run_project_action(
             request,

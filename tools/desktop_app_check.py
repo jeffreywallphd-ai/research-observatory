@@ -197,7 +197,7 @@ def product_build_errors(repo: Path) -> list[str]:
         "schemaVersion": "1.0",
         "documentType": "desktop-product-build-manifest",
         "buildRole": "tauri-frontend",
-        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T02"],
+        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T03"],
         "routes": ["index.html"],
         "referenceUse": "design-contract-only",
     }
@@ -831,7 +831,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         errors.append("desktop production runtime retains an unresolved Node environment expression")
     details: dict[str, Any] = {
         "pages": 0,
-        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T02"],
+        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T03"],
         "referenceOnlyPages": 0,
         "commandFocus": False,
         "skipLink": False,
@@ -1141,10 +1141,17 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   let revision = 0;
                   let state = 'active';
                   let open = false;
+                  let accessMode = 'closed';
+                  let compatibilityState = 'compatible';
+                  let packageFormatVersion = '1.0.0';
+                  let backupRequiredBeforeRepair = false;
+                  let recoveryAction = 'none';
                   window.__PROJECT_CALLS__ = [];
                   const projection = () => ({
                     schemaVersion: '1.0', projectId, displayName: 'Study One', templateId: 'theory-synthesis',
-                    lifecycleState: state, root: 'C:/Research/study-one', open, revision,
+                    lifecycleState: state, root: 'C:/Research/study-one', open, accessMode,
+                    compatibilityState, packageFormatVersion,
+                    backupRequiredBeforeRepair, recoveryAction, revision,
                     deleteConfirmation: `delete:${projectId}`
                   });
                   window.__TAURI_INTERNALS__ = {
@@ -1166,10 +1173,16 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                           throw new Error('invalid create body');
                         }
                       } else if (request.path === '/projects/open') {
-                        if (body.root !== 'C:/Research/study-one') throw new Error('invalid open root');
-                        open = true;
+                        if (body.root === 'C:/Research/study-one') {
+                          open = true; accessMode = 'read-write';
+                        } else if (body.root === 'C:/Research/newer-study') {
+                          state = 'active'; open = true; accessMode = 'read-only';
+                          compatibilityState = 'newer-unsupported'; packageFormatVersion = '2.0.0';
+                          backupRequiredBeforeRepair = true;
+                          recoveryAction = 'backup-then-use-compatible-application';
+                        } else throw new Error('invalid open root');
                       } else if (request.path === '/projects/close') {
-                        open = false;
+                        open = false; accessMode = 'closed';
                       } else if (request.path === '/projects/archive') {
                         state = 'archived'; revision += 1;
                       } else if (request.path === '/projects/restore') {
@@ -1208,17 +1221,32 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             current.locator("#project-delete-confirmation").fill(confirmation)
             current.get_by_role("button", name="Move to recoverable trash", exact=True).click()
             current.get_by_text("trash", exact=True).wait_for(timeout=5_000)
+            projects.locator("#project-root").fill("C:/Research/newer-study")
+            projects.get_by_role("button", name="Open project", exact=True).click()
+            current.get_by_text("Read-only inspection open", exact=True).wait_for(timeout=5_000)
+            current.get_by_text("Newer project format · read-only", exact=True).wait_for(timeout=5_000)
+            safe_open_valid = projects.evaluate(
+                """() => document.querySelector('[data-current-project]')?.textContent?.includes(
+                    'First create and verify a complete backup')
+                  && !Array.from(document.querySelectorAll('[data-current-project] button')).some(
+                    (button) => ['Archive project','Move to recoverable trash'].includes(
+                      button.textContent?.trim() ?? ''))"""
+            )
+            current.get_by_role("button", name="Close project", exact=True).click()
+            current.get_by_text("Closed", exact=True).wait_for(timeout=5_000)
             project_sequence_valid = projects.evaluate(
                 """() => JSON.stringify(window.__PROJECT_CALLS__.map((request) => request.path))
                   === JSON.stringify(['/projects','/projects/open','/projects/close','/projects/archive',
-                    '/projects/restore','/projects/delete'])
+                    '/projects/restore','/projects/delete','/projects/open','/projects/close'])
                   && document.querySelector('[data-current-project]')?.textContent?.includes('Revision 3')
                   && !document.querySelector('[data-workflow-select], [data-workflow-nav], [data-all-tools]')"""
             )
             projects.keyboard.press("Control+K")
             projects.wait_for_function("document.activeElement?.id === 'shell-command'", timeout=5_000)
-            details["projectsWorkflow"] = project_sequence_valid and projects.evaluate(
-                "document.activeElement?.id === 'shell-command'"
+            details["projectsWorkflow"] = (
+                safe_open_valid
+                and project_sequence_valid
+                and projects.evaluate("document.activeElement?.id === 'shell-command'")
             )
             if project_errors:
                 errors.append(f"desktop projects runtime error: {'; '.join(project_errors)}")
@@ -1297,14 +1325,36 @@ def validate(repo: Path, runner: Runner = subprocess.run) -> dict[str, Any]:
     return {"ok": not errors, "commands": commands, "errors": errors, "frame": frame}
 
 
+def validate_built_frame(repo: Path) -> dict[str, Any]:
+    """Validate the already-built functional product without replaying unrelated toolchain commands."""
+
+    errors = [*security_errors(repo), *design_system_errors(repo)]
+    frame: dict[str, Any] = {}
+    if not errors:
+        try:
+            context = load_context(repo)
+            if context.config["mode"] != "approved-reference-application":
+                errors.append("desktop verification did not target the built reference-conformance fixture")
+            frame_errors, frame = runtime_frame_errors(repo)
+            errors.extend(frame_errors)
+        except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(str(exc))
+    return {"ok": not errors, "commands": [], "errors": errors, "frame": frame}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path("."))
     parser.add_argument("--report", type=Path)
+    parser.add_argument(
+        "--built-frame-only",
+        action="store_true",
+        help="validate the existing functional product build without replaying the full desktop command plan",
+    )
     args = parser.parse_args()
     repo = args.repo.resolve(strict=True)
     try:
-        report = validate(repo)
+        report = validate_built_frame(repo) if args.built_frame_only else validate(repo)
     except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
         report = {"ok": False, "commands": [], "errors": [str(exc)]}
     payload = json.dumps(report, indent=2, sort_keys=True) + "\n"

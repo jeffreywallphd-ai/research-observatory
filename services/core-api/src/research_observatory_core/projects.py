@@ -12,6 +12,7 @@ import os
 import re
 import secrets
 import shutil
+import stat
 import sys
 import threading
 import uuid
@@ -22,7 +23,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from .models import ProjectLifecycleState, ProjectProjection
+from .logging import emit_log_record
+from .models import (
+    ProjectAccessMode,
+    ProjectCompatibilityState,
+    ProjectLifecycleState,
+    ProjectProjection,
+    ProjectRecoveryAction,
+)
 
 _DIRECTORY_NAME = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 _TEMPLATE_ID = re.compile(r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
@@ -49,6 +57,9 @@ _PROJECT_DIRECTORIES = ("state", "objects", "indexes", "cache", "models", "confi
 _IMPLEMENTED_TEMPLATES = {"theory-synthesis"}
 _MAX_SAFE_INTEGER = 9_007_199_254_740_991
 _MAX_AUDIT_BYTES = 8 * 1024 * 1024
+_MAX_PROJECT_DOCUMENT_BYTES = 256 * 1024
+_CURRENT_PACKAGE_FORMAT = (1, 0, 0)
+_CURRENT_APPLICATION_VERSION = (0, 1, 0)
 
 
 def _path_identity(path: Path) -> tuple[int, int]:
@@ -319,6 +330,49 @@ def _atomic_json(path: Path, value: dict[str, Any]) -> None:
             temporary.unlink(missing_ok=True)
 
 
+def _read_project_document(path: Path) -> Any:
+    descriptor: int | None = None
+    try:
+        before = path.stat(follow_symlinks=False)
+        if (
+            _redirect(path)
+            or not stat.S_ISREG(before.st_mode)
+            or before.st_nlink != 1
+            or before.st_size > _MAX_PROJECT_DOCUMENT_BYTES
+        ):
+            raise OSError("project document is redirected, linked, non-regular, or oversized")
+        descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_BINARY", 0))
+        opened = os.fstat(descriptor)
+        if (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino):
+            raise OSError("project document changed before open")
+        with os.fdopen(descriptor, "rb", closefd=True) as stream:
+            descriptor = None
+            payload = stream.read(_MAX_PROJECT_DOCUMENT_BYTES + 1)
+            after_read = os.fstat(stream.fileno())
+        after_path = path.stat(follow_symlinks=False)
+        if (
+            len(payload) > _MAX_PROJECT_DOCUMENT_BYTES
+            or (after_read.st_dev, after_read.st_ino) != (before.st_dev, before.st_ino)
+            or (after_path.st_dev, after_path.st_ino) != (before.st_dev, before.st_ino)
+            or after_path.st_nlink != 1
+        ):
+            raise OSError("project document changed during snapshot")
+        return json.loads(payload.decode("utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise ProjectLifecycleProblem(
+            status=422,
+            code="RO-CORE-PROJECT-DAMAGED",
+            title="Project metadata is damaged",
+            detail="The project manifest or profile is unavailable, unsafe, oversized, or malformed.",
+            remediation=(
+                "Keep the original unchanged. First make and verify a complete backup; repair only a working copy."
+            ),
+        ) from error
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+
+
 def _atomic_audit_append(path: Path, record: dict[str, Any]) -> None:
     existing = b""
     if path.exists() or _redirect(path):
@@ -430,7 +484,7 @@ class ProjectLifecycleService:
 
     def __init__(self) -> None:
         self._instance_id = str(uuid.uuid4())
-        self._opened: set[Path] = set()
+        self._opened: dict[Path, ProjectAccessMode] = {}
         self._mutex = threading.RLock()
 
     @staticmethod
@@ -573,6 +627,9 @@ class ProjectLifecycleService:
 
         with self._mutex:
             for path in tuple(self._opened):
+                if self._opened.get(path) is ProjectAccessMode.READ_ONLY:
+                    self._opened.pop(path, None)
+                    continue
                 lock = path / ".locks" / "session.lock"
                 try:
                     with _stable_directories(self._project_guard_paths(path)):
@@ -588,14 +645,14 @@ class ProjectLifecycleService:
                 except OSError, UnicodeError, json.JSONDecodeError, ProjectLifecycleProblem:
                     continue
                 finally:
-                    self._opened.discard(path)
+                    self._opened.pop(path, None)
 
     def open(self, *, root: str, trace_id: str) -> ProjectProjection:
         with self._mutex:
             path = _canonical_directory(root)
             with _stable_directories(self._project_guard_paths(path)):
                 self._validate_layout(path)
-                manifest, profile = self._documents(path)
+                manifest, profile, compatibility = self._assess_documents(path)
                 if manifest["lifecycleState"] != "active":
                     raise ProjectLifecycleProblem(
                         status=409,
@@ -613,6 +670,23 @@ class ProjectLifecycleService:
                         detail="A concurrent local open was detected and no project bytes were changed.",
                         remediation="Return to the existing project window or close its verified session first.",
                     )
+                if compatibility is not ProjectCompatibilityState.COMPATIBLE:
+                    emit_log_record(
+                        "project.compatibility",
+                        level="WARNING",
+                        fields={
+                            "state": compatibility.value,
+                            "reasonCode": "read-only-safe-open",
+                            "traceId": trace_id,
+                        },
+                    )
+                    self._opened[path] = ProjectAccessMode.READ_ONLY
+                    return self._projection(
+                        path,
+                        manifest=manifest,
+                        profile=profile,
+                        compatibility=compatibility,
+                    )
                 record = {
                     "schemaVersion": "1.0",
                     "documentType": "research-observatory-project-lock",
@@ -623,11 +697,11 @@ class ProjectLifecycleService:
                     "recoveryToken": secrets.token_hex(32),
                 }
                 self._write_lock(lock, record)
-                self._opened.add(path)
+                self._opened[path] = ProjectAccessMode.READ_WRITE
                 try:
                     self._audit(path, "project.opened", "active", trace_id)
                 except ProjectLifecycleProblem as error:
-                    self._opened.discard(path)
+                    self._opened.pop(path, None)
                     try:
                         lock.unlink()
                     except OSError as rollback_error:
@@ -640,9 +714,17 @@ class ProjectLifecycleService:
             path = _canonical_directory(root)
             with _stable_directories(self._project_guard_paths(path)):
                 self._validate_layout(path)
-                manifest, profile = self._documents(path)
+                manifest, profile, compatibility = self._assess_documents(path)
                 lock = path / ".locks" / "session.lock"
-                if path in self._opened:
+                if self._opened.get(path) is ProjectAccessMode.READ_ONLY:
+                    self._opened.pop(path, None)
+                    return self._projection(
+                        path,
+                        manifest=manifest,
+                        profile=profile,
+                        compatibility=compatibility,
+                    )
+                if self._opened.get(path) is ProjectAccessMode.READ_WRITE:
                     try:
                         record = json.loads(lock.read_text(encoding="utf-8"))
                         status = lock.stat(follow_symlinks=False)
@@ -671,13 +753,13 @@ class ProjectLifecycleService:
                             remediation="Keep the application open and retry close before using recovery.",
                             retryable=True,
                         ) from error
-                    self._opened.remove(path)
+                    self._opened.pop(path, None)
                     try:
                         self._audit(path, "project.closed", str(manifest["lifecycleState"]), trace_id)
                     except ProjectLifecycleProblem as error:
                         try:
                             self._write_lock(lock, record)
-                            self._opened.add(path)
+                            self._opened[path] = ProjectAccessMode.READ_WRITE
                         except ProjectLifecycleProblem as rollback_error:
                             raise ProjectLifecycleProblem.rollback_failed() from rollback_error
                         raise error
@@ -689,7 +771,12 @@ class ProjectLifecycleService:
                         detail="This Core instance will not remove an unverified project lock.",
                         remediation="Return to the owning session or use the reviewed stale-lock recovery workflow.",
                     )
-                return self._projection(path, manifest=manifest, profile=profile)
+                return self._projection(
+                    path,
+                    manifest=manifest,
+                    profile=profile,
+                    compatibility=compatibility,
+                )
 
     def archive(self, *, root: str, trace_id: str) -> ProjectProjection:
         return self._transition(
@@ -809,18 +896,41 @@ class ProjectLifecycleService:
             )
 
     def _documents(self, path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
-        try:
-            manifest = json.loads((path / "project.ro.json").read_text(encoding="utf-8"))
-            profile = json.loads((path / "config" / "project-profile.json").read_text(encoding="utf-8"))
-        except (OSError, UnicodeError, json.JSONDecodeError) as error:
-            raise ProjectLifecycleProblem(
-                status=422,
-                code="RO-CORE-PROJECT-MANIFEST-INVALID",
-                title="Project metadata is invalid",
-                detail="The project manifest or profile is unavailable or malformed.",
-                remediation="Do not modify the project; use the safe-open repair workflow.",
-            ) from error
+        manifest, profile, compatibility = self._assess_documents(path)
+        if compatibility is not ProjectCompatibilityState.COMPATIBLE:
+            raise self._compatibility_problem(compatibility)
+        return manifest, profile
+
+    @staticmethod
+    def _compatibility_problem(compatibility: ProjectCompatibilityState) -> ProjectLifecycleProblem:
+        if compatibility is ProjectCompatibilityState.NEWER_UNSUPPORTED:
+            return ProjectLifecycleProblem(
+                status=409,
+                code="RO-CORE-PROJECT-NEWER-UNSUPPORTED",
+                title="Project requires a newer compatible application",
+                detail="This project is available only for read-only inspection in the current application.",
+                remediation=(
+                    "First create and verify a complete backup, then reopen it with a compatible application version."
+                ),
+            )
+        return ProjectLifecycleProblem(
+            status=409,
+            code="RO-CORE-PROJECT-MIGRATION-REQUIRED",
+            title="Project migration is required",
+            detail="This older project is available only for read-only inspection until a reviewed migration is run.",
+            remediation=(
+                "First create and verify a complete backup, then run the reviewed project migration against a copy."
+            ),
+        )
+
+    def _assess_documents(
+        self,
+        path: Path,
+    ) -> tuple[dict[str, Any], dict[str, Any], ProjectCompatibilityState]:
+        manifest = _read_project_document(path / "project.ro.json")
+        profile = _read_project_document(path / "config" / "project-profile.json")
         compatibility = manifest.get("applicationCompatibility") if isinstance(manifest, dict) else None
+        package_format = _release_version(manifest.get("packageFormatVersion")) if isinstance(manifest, dict) else None
         minimum = _release_version(compatibility.get("minimum")) if isinstance(compatibility, dict) else None
         maximum = _release_version(compatibility.get("maximumExclusive")) if isinstance(compatibility, dict) else None
         created = _utc_datetime(manifest.get("createdAt")) if isinstance(manifest, dict) else None
@@ -836,10 +946,13 @@ class ProjectLifecycleService:
             or not isinstance(manifest.get("projectRevision"), int)
             or isinstance(manifest.get("projectRevision"), bool)
             or not 0 <= manifest.get("projectRevision", -1) <= _MAX_SAFE_INTEGER
-            or manifest.get("packageFormatVersion") != "1.0.0"
-            or manifest.get("layoutVersion") != "1.0"
-            or manifest.get("databaseProfile") != "sqlite-wal-v1"
-            or manifest.get("objectFormat") != "encrypted-content-addressed-v1"
+            or package_format is None
+            or not isinstance(manifest.get("layoutVersion"), str)
+            or not re.fullmatch(r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)", str(manifest.get("layoutVersion")))
+            or not isinstance(manifest.get("databaseProfile"), str)
+            or not _TEMPLATE_ID.fullmatch(str(manifest.get("databaseProfile")))
+            or not isinstance(manifest.get("objectFormat"), str)
+            or not _TEMPLATE_ID.fullmatch(str(manifest.get("objectFormat")))
             or not isinstance(compatibility, dict)
             or set(compatibility) != {"minimum", "maximumExclusive"}
             or minimum is None
@@ -851,10 +964,12 @@ class ProjectLifecycleService:
         ):
             raise ProjectLifecycleProblem(
                 status=422,
-                code="RO-CORE-PROJECT-MANIFEST-INVALID",
-                title="Project manifest is invalid",
+                code="RO-CORE-PROJECT-DAMAGED",
+                title="Project manifest is damaged",
                 detail="The project root does not match the implemented versioned manifest contract.",
-                remediation="Do not modify the project; use the safe-open repair workflow.",
+                remediation=(
+                    "Keep the original unchanged. First make and verify a complete backup; repair only a working copy."
+                ),
             )
         if (
             not isinstance(profile, dict)
@@ -870,26 +985,82 @@ class ProjectLifecycleService:
         ):
             raise ProjectLifecycleProblem(
                 status=422,
-                code="RO-CORE-PROJECT-PROFILE-INVALID",
-                title="Project profile is invalid",
+                code="RO-CORE-PROJECT-DAMAGED",
+                title="Project profile is damaged",
                 detail="The local project profile does not match its exact versioned contract.",
-                remediation="Do not modify the project; use the safe-open repair workflow.",
+                remediation=(
+                    "Keep the original unchanged. First make and verify a complete backup; repair only a working copy."
+                ),
             )
-        return manifest, profile
+        if package_format > _CURRENT_PACKAGE_FORMAT or minimum > _CURRENT_APPLICATION_VERSION:
+            state = ProjectCompatibilityState.NEWER_UNSUPPORTED
+        elif package_format < _CURRENT_PACKAGE_FORMAT or maximum <= _CURRENT_APPLICATION_VERSION:
+            state = ProjectCompatibilityState.MIGRATION_REQUIRED
+        elif (
+            manifest["layoutVersion"] != "1.0"
+            or manifest["databaseProfile"] != "sqlite-wal-v1"
+            or manifest["objectFormat"] != "encrypted-content-addressed-v1"
+        ):
+            raise ProjectLifecycleProblem(
+                status=422,
+                code="RO-CORE-PROJECT-DAMAGED",
+                title="Current project format is internally inconsistent",
+                detail="Current-format storage metadata does not match the implemented project contract.",
+                remediation=(
+                    "Keep the original unchanged. First make and verify a complete backup; repair only a working copy."
+                ),
+            )
+        else:
+            state = ProjectCompatibilityState.COMPATIBLE
+        return manifest, profile, state
 
     @staticmethod
     def _validate_layout(path: Path) -> None:
         expected = {*_PROJECT_DIRECTORIES, "project.ro.json"}
         try:
-            if {entry.name for entry in path.iterdir()} != expected:
+            present = {entry.name for entry in path.iterdir()}
+            if expected - present:
+                raise ProjectLifecycleProblem(
+                    status=422,
+                    code="RO-CORE-PROJECT-INCOMPLETE",
+                    title="Project package is incomplete",
+                    detail="One or more required project package entries are missing.",
+                    remediation=(
+                        "Keep the original unchanged. First make and verify a complete backup, "
+                        "then restore missing entries."
+                    ),
+                )
+            if present != expected:
                 raise ProjectLifecycleProblem.invalid_path()
             for relative in _PROJECT_DIRECTORIES:
                 directory = path / relative
-                if _redirect(directory) or not directory.is_dir():
+                if _redirect(directory):
                     raise ProjectLifecycleProblem.invalid_path()
+                if not directory.is_dir():
+                    raise ProjectLifecycleProblem(
+                        status=422,
+                        code="RO-CORE-PROJECT-INCOMPLETE",
+                        title="Project package is incomplete",
+                        detail="A required project package directory is unavailable.",
+                        remediation=(
+                            "Keep the original unchanged. First make and verify a complete backup, "
+                            "then restore the directory."
+                        ),
+                    )
             for document in (path / "project.ro.json", path / "config" / "project-profile.json"):
-                if _redirect(document) or not document.is_file():
+                if _redirect(document):
                     raise ProjectLifecycleProblem.invalid_path()
+                if not document.is_file():
+                    raise ProjectLifecycleProblem(
+                        status=422,
+                        code="RO-CORE-PROJECT-INCOMPLETE",
+                        title="Project package is incomplete",
+                        detail="A required project metadata document is unavailable.",
+                        remediation=(
+                            "Keep the original unchanged. First make and verify a complete backup, "
+                            "then restore the document."
+                        ),
+                    )
         except ProjectLifecycleProblem:
             raise
         except OSError as error:
@@ -901,16 +1072,29 @@ class ProjectLifecycleService:
         *,
         manifest: dict[str, Any] | None = None,
         profile: dict[str, Any] | None = None,
+        compatibility: ProjectCompatibilityState | None = None,
     ) -> ProjectProjection:
-        if manifest is None or profile is None:
-            manifest, profile = self._documents(path)
+        if manifest is None or profile is None or compatibility is None:
+            manifest, profile, compatibility = self._assess_documents(path)
+        access_mode = self._opened.get(path, ProjectAccessMode.CLOSED)
+        if compatibility is ProjectCompatibilityState.COMPATIBLE:
+            recovery_action = ProjectRecoveryAction.NONE
+        elif compatibility is ProjectCompatibilityState.MIGRATION_REQUIRED:
+            recovery_action = ProjectRecoveryAction.BACKUP_THEN_MIGRATE
+        else:
+            recovery_action = ProjectRecoveryAction.BACKUP_THEN_USE_COMPATIBLE_APPLICATION
         return ProjectProjection(
             project_id=str(manifest["projectId"]),
             display_name=str(profile["displayName"]),
             template_id=str(profile["templateId"]),
             lifecycle_state=ProjectLifecycleState(str(manifest["lifecycleState"])),
             root=str(path),
-            open=path in self._opened,
+            open=access_mode is not ProjectAccessMode.CLOSED,
+            access_mode=access_mode,
+            compatibility_state=compatibility,
+            package_format_version=str(manifest["packageFormatVersion"]),
+            backup_required_before_repair=compatibility is not ProjectCompatibilityState.COMPATIBLE,
+            recovery_action=recovery_action,
             revision=int(manifest["projectRevision"]),
             delete_confirmation=f"delete:{manifest['projectId']}",
         )

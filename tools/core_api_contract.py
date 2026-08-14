@@ -164,6 +164,24 @@ function projectLifecycleState(value: unknown): value is ProjectLifecycleState {
   return value === "active" || value === "archived" || value === "trash";
 }
 
+function projectAccessMode(value: unknown): value is ProjectAccessMode {
+  return value === "closed" || value === "read-write" || value === "read-only";
+}
+
+function projectCompatibilityState(value: unknown): value is ProjectCompatibilityState {
+  return value === "compatible" || value === "migration-required" || value === "newer-unsupported";
+}
+
+function projectRecoveryAction(value: unknown): value is ProjectRecoveryAction {
+  return value === "none" || value === "backup-then-migrate" || value === "backup-then-use-compatible-application";
+}
+
+function safeReleaseVersion(value: unknown): value is string {
+  return typeof value === "string"
+    && /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(value)
+    && value.split(".").every((part) => Number.isSafeInteger(Number(part)));
+}
+
 function boundedText(value: unknown, minimum: number, maximum: number): value is string {
   return typeof value === "string" && value.length >= minimum && value.length <= maximum && !/[\u0000-\u001f\u007f]/.test(value);
 }
@@ -222,14 +240,25 @@ export function decodeProjectProjection(value: unknown): ProjectProjection | nul
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
     "schemaVersion", "projectId", "displayName", "templateId", "lifecycleState", "root", "open", "revision",
+    "accessMode", "compatibilityState", "packageFormatVersion", "backupRequiredBeforeRepair", "recoveryAction",
     "deleteConfirmation",
   ])) return null;
   if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)) return null;
   if (!boundedText(candidate.displayName, 1, 120) || !/^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/.test(String(candidate.templateId))) return null;
   if (!projectLifecycleState(candidate.lifecycleState) || !projectRoot(candidate.root) || typeof candidate.open !== "boolean") return null;
+  if (!projectAccessMode(candidate.accessMode) || !projectCompatibilityState(candidate.compatibilityState)) return null;
+  if (!safeReleaseVersion(candidate.packageFormatVersion) || typeof candidate.backupRequiredBeforeRepair !== "boolean") return null;
+  if (!projectRecoveryAction(candidate.recoveryAction)) return null;
   if (!integer(candidate.revision, 0, Number.MAX_SAFE_INTEGER)) return null;
   if (candidate.deleteConfirmation !== `delete:${candidate.projectId}`) return null;
-  if (candidate.lifecycleState !== "active" && candidate.open) return null;
+  if (candidate.open !== (candidate.accessMode !== "closed")) return null;
+  if (candidate.lifecycleState !== "active" && candidate.accessMode !== "closed") return null;
+  if (candidate.compatibilityState === "compatible") {
+    if (candidate.packageFormatVersion !== "1.0.0" || candidate.accessMode === "read-only"
+      || candidate.backupRequiredBeforeRepair || candidate.recoveryAction !== "none") return null;
+  } else if (candidate.accessMode === "read-write" || !candidate.backupRequiredBeforeRepair || candidate.recoveryAction === "none") {
+    return null;
+  }
   return candidate as unknown as ProjectProjection;
 }
 

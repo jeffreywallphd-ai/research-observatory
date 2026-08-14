@@ -28,17 +28,42 @@ export async function packagedProjectTransport(request: CoreApiRequest): Promise
 
 export function projectActionLabels(project: ProjectProjection | null): readonly string[] {
   if (!project) return [];
+  if (project.open) return ["Close project"];
   const actions: string[] = [];
-  if (project.lifecycleState === "active") actions.push(project.open ? "Close project" : "Open project");
-  if (project.lifecycleState === "active" && !project.open) actions.push("Archive project");
+  if (project.lifecycleState === "active") {
+    actions.push(project.compatibilityState === "compatible" ? "Open project" : "Open read-only");
+  }
+  if (project.lifecycleState === "active" && project.compatibilityState === "compatible") actions.push("Archive project");
   if (project.lifecycleState === "archived") actions.push("Restore project");
-  if (!project.open && project.lifecycleState !== "trash") actions.push("Move to recoverable trash");
+  if (project.lifecycleState !== "trash" && project.compatibilityState === "compatible") {
+    actions.push("Move to recoverable trash");
+  }
   return actions;
+}
+
+export function projectCompatibilityGuidance(project: ProjectProjection): {
+  readonly title: string;
+  readonly message: string;
+} | null {
+  if (project.compatibilityState === "compatible") return null;
+  if (project.compatibilityState === "migration-required") {
+    return {
+      title: "Migration required · read-only",
+      message: "Keep the original unchanged. First create and verify a complete backup, then run the reviewed migration against a working copy.",
+    };
+  }
+  return {
+    title: "Newer project format · read-only",
+    message: "Keep the original unchanged. First create and verify a complete backup, then use a compatible application version with the working copy.",
+  };
 }
 
 function safeFailure(error: unknown): { readonly title: string; readonly message: string } {
   if (error instanceof CoreApiClientError) {
-    return { title: error.problem.code, message: error.problem.remediation };
+    return {
+      title: `${error.problem.title} (${error.problem.code})`,
+      message: `${error.problem.detail} ${error.problem.remediation}`,
+    };
   }
   return {
     title: "RO-CORE-PROJECT-ACTION-FAILED",
@@ -147,6 +172,11 @@ export function ProjectsWorkspace({
       <Panel title="Current project" tone={project ? "success" : "neutral"}>
         {!project ? <p>No project is selected. Create one or open an existing local project.</p> : (
           <div className="current-project" data-current-project={project.projectId}>
+            {projectCompatibilityGuidance(project) ? (
+              <Notification tone="warning" title={projectCompatibilityGuidance(project)?.title ?? "Read-only project"}>
+                {projectCompatibilityGuidance(project)?.message}
+              </Notification>
+            ) : null}
             <div>
               <Typography as="h2" variant="section-title">{project.displayName}</Typography>
               <p><code>{project.root}</code></p>
@@ -154,7 +184,8 @@ export function ProjectsWorkspace({
                 <StatusBadge tone={project.lifecycleState === "active" ? "success" : "warning"}>
                   {project.lifecycleState}
                 </StatusBadge>
-                <span>{project.open ? "Exclusive local session open" : "Closed"}</span>
+                <span>{project.accessMode === "read-write" ? "Exclusive local session open" : project.accessMode === "read-only" ? "Read-only inspection open" : "Closed"}</span>
+                <span>{project.compatibilityState}</span>
                 <span>Revision {project.revision}</span>
               </div>
             </div>
@@ -163,9 +194,9 @@ export function ProjectsWorkspace({
                 <Button disabled={busy !== null} onClick={() => void run(
                   project.open ? "Close project" : "Open project",
                   () => project.open ? client.closeProject({ root: project.root }) : client.openProject({ root: project.root }),
-                )}>{project.open ? "Close project" : "Open project"}</Button>
+                )}>{project.open ? "Close project" : project.compatibilityState === "compatible" ? "Open project" : "Open read-only"}</Button>
               ) : null}
-              {project.lifecycleState === "active" && !project.open ? (
+              {project.lifecycleState === "active" && !project.open && project.compatibilityState === "compatible" ? (
                 <Button disabled={busy !== null} onClick={() => void run("Archive project", () => client.archiveProject({ root: project.root }))}>
                   Archive project
                 </Button>
@@ -176,7 +207,7 @@ export function ProjectsWorkspace({
                 </Button>
               ) : null}
             </div>
-            {!project.open && project.lifecycleState !== "trash" ? (
+            {!project.open && project.lifecycleState !== "trash" && project.compatibilityState === "compatible" ? (
               <div className="project-delete-boundary">
                 <Typography as="h3" variant="section-title">Move to recoverable trash</Typography>
                 <p>This moves only this project package. The shared model cache is not deleted.</p>

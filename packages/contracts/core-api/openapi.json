@@ -369,6 +369,24 @@
         "title": "ProblemDetail",
         "type": "object"
       },
+      "ProjectAccessMode": {
+        "enum": [
+          "closed",
+          "read-write",
+          "read-only"
+        ],
+        "title": "ProjectAccessMode",
+        "type": "string"
+      },
+      "ProjectCompatibilityState": {
+        "enum": [
+          "compatible",
+          "migration-required",
+          "newer-unsupported"
+        ],
+        "title": "ProjectCompatibilityState",
+        "type": "string"
+      },
       "ProjectCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -439,6 +457,16 @@
       "ProjectProjection": {
         "additionalProperties": false,
         "properties": {
+          "accessMode": {
+            "$ref": "#/components/schemas/ProjectAccessMode"
+          },
+          "backupRequiredBeforeRepair": {
+            "title": "Backuprequiredbeforerepair",
+            "type": "boolean"
+          },
+          "compatibilityState": {
+            "$ref": "#/components/schemas/ProjectCompatibilityState"
+          },
           "deleteConfirmation": {
             "pattern": "^delete:[0-9a-f-]{36}$",
             "title": "Deleteconfirmation",
@@ -457,10 +485,18 @@
             "title": "Open",
             "type": "boolean"
           },
+          "packageFormatVersion": {
+            "pattern": "^(?:0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(?:0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(?:0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])$",
+            "title": "Packageformatversion",
+            "type": "string"
+          },
           "projectId": {
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
             "title": "Projectid",
             "type": "string"
+          },
+          "recoveryAction": {
+            "$ref": "#/components/schemas/ProjectRecoveryAction"
           },
           "revision": {
             "maximum": 9007199254740991.0,
@@ -492,11 +528,25 @@
           "lifecycleState",
           "root",
           "open",
+          "accessMode",
+          "compatibilityState",
+          "packageFormatVersion",
+          "backupRequiredBeforeRepair",
+          "recoveryAction",
           "revision",
           "deleteConfirmation"
         ],
         "title": "ProjectProjection",
         "type": "object"
+      },
+      "ProjectRecoveryAction": {
+        "enum": [
+          "none",
+          "backup-then-migrate",
+          "backup-then-use-compatible-application"
+        ],
+        "title": "ProjectRecoveryAction",
+        "type": "string"
       },
       "ProjectRootRequest": {
         "additionalProperties": false,
@@ -758,15 +808,35 @@
             },
             "description": "Successful Response"
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
           "422": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             },
-            "description": "Validation Error"
+            "description": "Unprocessable Content"
           }
         },
         "summary": "Archive Project",
@@ -799,15 +869,35 @@
             },
             "description": "Successful Response"
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
           "422": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             },
-            "description": "Validation Error"
+            "description": "Unprocessable Content"
           }
         },
         "summary": "Close Project",
@@ -840,15 +930,35 @@
             },
             "description": "Successful Response"
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
           "422": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             },
-            "description": "Validation Error"
+            "description": "Unprocessable Content"
           }
         },
         "summary": "Delete Project",
@@ -881,15 +991,35 @@
             },
             "description": "Successful Response"
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
           "422": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             },
-            "description": "Validation Error"
+            "description": "Unprocessable Content"
           }
         },
         "summary": "Open Project",
@@ -922,15 +1052,35 @@
             },
             "description": "Successful Response"
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
           "422": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             },
-            "description": "Validation Error"
+            "description": "Unprocessable Content"
           }
         },
         "summary": "Restore Project",
