@@ -77,7 +77,7 @@ describe("portable core domain contract", () => {
       confidence: Record<string, unknown>;
       externalIdentifiers: Array<{ scheme: string; observedValue: string; normalizedValue: string | null }>;
     };
-    for (const local of ["C:\\private\\paper.pdf", "C:private\\paper.pdf", "\\\\server\\paper.pdf", "/home/private/paper.pdf", "~/private/paper.pdf", "../private/paper.pdf", "file:///private/paper.pdf"]) {
+    for (const local of ["C:\\private\\paper.pdf", "C:private\\paper.pdf", "\\\\server\\paper.pdf", "/home/private/paper.pdf", "~/private/paper.pdf", "../private/paper.pdf", "private/paper.pdf", "private\\paper.pdf", "file:///private/paper.pdf"]) {
       for (const field of ["observedValue", "normalizedValue"] as const) {
         const value = structuredClone(base);
         value.externalIdentifiers[0]![field] = local;
@@ -100,6 +100,14 @@ describe("portable core domain contract", () => {
       normalizedValue: "https://example.org/article/7",
     };
     expect(decodeCoreAggregate(web)).not.toBeNull();
+    const handle = structuredClone(base);
+    handle.externalIdentifiers[0] = {
+      ...handle.externalIdentifiers[0]!,
+      scheme: "handle",
+      observedValue: "20.500.12345/research-item-7",
+      normalizedValue: "https://hdl.handle.net/20.500.12345/research-item-7",
+    };
+    expect(decodeCoreAggregate(handle)).not.toBeNull();
   });
 
   it("returns an owned deeply frozen revision snapshot", () => {
@@ -116,6 +124,20 @@ describe("portable core domain contract", () => {
     expect(Object.isFrozen(decoded)).toBe(true);
     expect(Object.isFrozen(decoded?.displayLabel)).toBe(true);
     expect(Object.isFrozen(decoded?.sourceReferences)).toBe(true);
+  });
+
+  it("preserves serialized dangerous keys for fail-closed validation without prototype injection", () => {
+    const serialized = JSON.stringify(fixture("valid-core-aggregate.v1.json")).replace(
+      "{",
+      '{"__proto__":{"credential":"secret"},',
+    );
+    const hostile = JSON.parse(serialized) as Record<string, unknown>;
+    expect(Object.hasOwn(hostile, "__proto__")).toBe(true);
+    expect(domainContractErrors(hostile)).toContain("$/__proto__: additional property");
+    expect(decodeCoreAggregate(hostile)).toBeNull();
+    const valid = decodeCoreAggregate(fixture("valid-core-aggregate.v1.json"));
+    expect(Object.getPrototypeOf(valid)).toBeNull();
+    expect((valid as unknown as Record<string, unknown>).credential).toBeUndefined();
   });
 
   it("accepts serialized Draft integer-valued numbers", () => {

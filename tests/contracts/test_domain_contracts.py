@@ -6,6 +6,7 @@ import json
 import sys
 import unittest
 from pathlib import Path
+from typing import Any, cast
 
 from jsonschema import Draft202012Validator, FormatChecker
 
@@ -15,6 +16,7 @@ sys.path.insert(0, str(REPO / "services" / "core-api" / "src"))
 
 from research_observatory_core.domain_contracts import (  # noqa: E402
     CORE_DOMAIN_SCHEMA_SHA256,
+    core_aggregate_snapshot_json,
     decode_core_aggregate,
     domain_contract_errors,
     is_uuid_v7,
@@ -40,10 +42,11 @@ class CoreDomainContractTests(unittest.TestCase):
 
         disputed = decode_core_aggregate(fixture("disputed-core-aggregate.v1.json"))
         assert disputed is not None
-        self.assertEqual("may contribute to", disputed["displayLabel"]["observed"])
+        disputed_view = cast(Any, disputed)
+        self.assertEqual("may contribute to", disputed_view["displayLabel"]["observed"])
         self.assertEqual(
             ["is associated with", "causes"],
-            [item["value"] for item in disputed["displayLabel"]["alternatives"]],
+            [item["value"] for item in disputed_view["displayLabel"]["alternatives"]],
         )
 
     def test_schema_and_generated_python_fail_closed_on_material_boundaries(self) -> None:
@@ -64,6 +67,10 @@ class CoreDomainContractTests(unittest.TestCase):
         unknown["credential"] = "secret"
         self.assertTrue(list(validator.iter_errors(unknown)))
         self.assertIsNone(decode_core_aggregate(unknown))
+        prototype_key = json.loads(
+            json.dumps(fixture("valid-core-aggregate.v1.json")).replace("{", '{"__proto__":{"credential":"secret"},', 1)
+        )
+        self.assertIsNone(decode_core_aggregate(prototype_key))
 
         semantic = copy.deepcopy(fixture("valid-core-aggregate.v1.json"))
         assert isinstance(semantic, dict)
@@ -108,6 +115,8 @@ class CoreDomainContractTests(unittest.TestCase):
             "/home/private/paper.pdf",
             "~/private/paper.pdf",
             "../private/paper.pdf",
+            "private/paper.pdf",
+            r"private\paper.pdf",
             "file:///private/paper.pdf",
         ):
             for field in ("observedValue", "normalizedValue"):
@@ -143,17 +152,20 @@ class CoreDomainContractTests(unittest.TestCase):
         self.assertEqual([], list(validator.iter_errors(value)))
         decoded = decode_core_aggregate(value)
         assert decoded is not None
+        decoded_view = cast(Any, decoded)
         self.assertIsNot(decoded, value)
-        self.assertIsInstance(decoded["revision"], int)
-        self.assertIsInstance(decoded["sourceReferences"][0]["sourceRevision"], int)
-        before = json.dumps(decoded, sort_keys=True)
+        self.assertIsInstance(decoded_view["revision"], int)
+        self.assertIsInstance(decoded_view["sourceReferences"][0]["sourceRevision"], int)
+        before = core_aggregate_snapshot_json(decoded)
         value["displayLabel"]["observed"] = "mutated after validation"
         value["sourceReferences"][0]["sourceLabel"] = "mutated source"
-        self.assertEqual(before, json.dumps(decoded, sort_keys=True))
+        self.assertEqual(before, core_aggregate_snapshot_json(decoded))
         with self.assertRaises(TypeError):
-            decoded["displayLabel"]["observed"] = "forbidden"
+            decoded_view["displayLabel"]["observed"] = "forbidden"
         with self.assertRaises(TypeError):
-            decoded["sourceReferences"].clear()
+            dict.__setitem__(decoded_view["displayLabel"], "observed", "base-class-bypass")
+        with self.assertRaises(TypeError):
+            list.append(decoded_view["sourceReferences"], {"bypass": True})
 
 
 if __name__ == "__main__":
