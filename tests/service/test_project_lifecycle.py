@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -155,17 +156,109 @@ class ProjectLifecycleTests(unittest.TestCase):
         archived = self.service.archive(root=project.root, trace_id=TRACE)
         manifest_path = Path(project.root) / "project.ro.json"
         before = manifest_path.read_bytes()
-        with (
-            patch("research_observatory_core.projects.os.rename", side_effect=OSError("simulated move failure")),
-            self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-DELETE-FAILED"),
-        ):
-            self.service.delete(
-                root=project.root,
-                confirmation=archived.delete_confirmation,
-                trace_id=TRACE,
-            )
+        with patch("research_observatory_core.projects._held_directory_renamer") as held_renamer:
+            held_renamer.return_value.__enter__.return_value.side_effect = OSError("simulated move failure")
+            with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-DELETE-FAILED"):
+                self.service.delete(
+                    root=project.root,
+                    confirmation=archived.delete_confirmation,
+                    trace_id=TRACE,
+                )
         self.assertEqual(before, manifest_path.read_bytes())
         self.assertEqual("archived", json.loads(before)["lifecycleState"])
+
+    def test_audit_hardlink_and_failure_leave_project_state_unchanged(self) -> None:
+        project = self.create("audit-boundary")
+        root = Path(project.root)
+        audit = root / "logs" / "project-lifecycle.jsonl"
+        outside = self.parent / "outside-audit-target.txt"
+        outside.write_text("outside\n", encoding="utf-8", newline="\n")
+        audit.unlink()
+        os.link(outside, audit)
+        manifest_before = (root / "project.ro.json").read_bytes()
+        outside_before = outside.read_bytes()
+        with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-AUDIT-FAILED"):
+            self.service.archive(root=project.root, trace_id=TRACE)
+        self.assertEqual(outside_before, outside.read_bytes())
+        self.assertEqual(manifest_before, (root / "project.ro.json").read_bytes())
+
+        audit.unlink()
+        audit.write_text("", encoding="utf-8", newline="\n")
+        with (
+            patch.object(
+                self.service,
+                "_audit",
+                side_effect=ProjectLifecycleProblem(
+                    status=500,
+                    code="RO-CORE-PROJECT-AUDIT-FAILED",
+                    title="audit failed",
+                    detail="audit failed",
+                    remediation="retry",
+                ),
+            ),
+            self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-AUDIT-FAILED"),
+        ):
+            self.service.delete(root=project.root, confirmation=project.delete_confirmation, trace_id=TRACE)
+        self.assertEqual(manifest_before, (root / "project.ro.json").read_bytes())
+
+    def test_failed_open_audit_removes_lock_and_internal_open_state(self) -> None:
+        project = self.create("open-audit-boundary")
+        failure = ProjectLifecycleProblem(
+            status=500,
+            code="RO-CORE-PROJECT-AUDIT-FAILED",
+            title="audit failed",
+            detail="audit failed",
+            remediation="retry",
+        )
+        with (
+            patch.object(self.service, "_audit", side_effect=failure),
+            self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-AUDIT-FAILED"),
+        ):
+            self.service.open(root=project.root, trace_id=TRACE)
+        self.assertFalse((Path(project.root) / ".locks" / "session.lock").exists())
+        self.assertNotIn(Path(project.root), self.service._opened)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
+    def test_open_holds_project_identity_and_rejects_device_and_install_roots(self) -> None:
+        first = self.create("identity-first")
+        second = self.create("identity-second")
+        first_root = Path(first.root)
+        second_root = Path(second.root)
+        holding = self.parent / "identity-holding"
+        original_validate = ProjectLifecycleService._validate_layout
+
+        def swap_after_validation(path: Path) -> None:
+            original_validate(path)
+            os.rename(first_root, holding)
+            os.rename(second_root, first_root)
+            os.rename(holding, second_root)
+
+        with (
+            patch.object(ProjectLifecycleService, "_validate_layout", side_effect=swap_after_validation),
+            self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-PATH-INVALID"),
+        ):
+            self.service.open(root=first.root, trace_id=TRACE)
+        self.assertEqual(first.project_id, json.loads((first_root / "project.ro.json").read_text())["projectId"])
+        self.assertEqual(second.project_id, json.loads((second_root / "project.ro.json").read_text())["projectId"])
+
+        with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-PATH-INVALID"):
+            self.service.create(
+                parent_directory=f"\\\\?\\{self.parent}",
+                directory_name="device-path",
+                display_name="Device path",
+                template_id="theory-synthesis",
+                trace_id=TRACE,
+            )
+        program_files = os.environ.get("PROGRAMFILES")
+        if program_files and Path(program_files).is_dir():
+            with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-PATH-INVALID"):
+                self.service.create(
+                    parent_directory=program_files,
+                    directory_name="install-root",
+                    display_name="Install root",
+                    template_id="theory-synthesis",
+                    trace_id=TRACE,
+                )
 
     def test_authenticated_api_exposes_functional_lifecycle_and_secret_safe_conflicts(self) -> None:
         app = create_app(
