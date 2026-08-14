@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S01.T01",
+  "commit": "28fd5fd6c90ea5c8e51e80e67a102fbe57356c1f",
+  "baseCommit": "23580f1c40c8211062455bfacf07c88cdbb41e1d",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S01.T01.review-fix.json",
+    "reason": "The second independent review confirmed the four original parity fixes but found that unbounded semantic-version components remained a cross-language false green. This follow-up binds one exact numeric domain into the governed semantic-rule document, its schema, TypeScript, and the portable evaluator."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S01.T01.review-fix.json",
+    "docs/adr/ADR-0012-use-relocatable-versioned-local-project-packages.md",
+    "docs/architecture/project-package.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/project/README.md",
+    "packages/contracts/project/index.ts",
+    "packages/contracts/project/project-manifest-semantic-rules.schema.json",
+    "packages/contracts/project/project-manifest.semantic-rules.json",
+    "packages/contracts/project/project.test.ts",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/contracts/test_foundation_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages\\contracts typecheck; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages\\contracts test",
+      "exitCode": 0,
+      "result": "The package typechecks and both Vitest files pass 11 tests. The strict decoder rejects the exact unsafe-component range 9007199254740992.0.0 to 9007199254740993.0.0 while retaining canonical and ordered-range behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.contracts.test_foundation_contracts; .venv\\Scripts\\ruff.exe check tests/contracts/test_foundation_contracts.py; .venv\\Scripts\\ruff.exe format --check tests/contracts/test_foundation_contracts.py",
+      "exitCode": 0,
+      "result": "All three portable-contract tests and both Ruff checks pass. The language-neutral evaluator reads maximumComponent=9007199254740991 from the exact governed rule and rejects the reviewer attack while canonical and ascending safe-integer ranges pass."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\adr_check.py --repo . --base 4127e37 --head 28fd5fd; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S01.T01-review-fix-2-clean-build-manifest.json",
+      "exitCode": 0,
+      "result": "ADR validation passes over the exact eight-file functional remediation. The clean build manifest passes as 0.1.0+g28fd5fd with SHA-256 581393ed90731d58f1982f2fdc9ec9041253a7647dc16bb2b84bb0499ba5cf5d."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The original ten-class relocatable package layout and exact portable-export inventory are unchanged."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "maximumComponent=9007199254740991 is byte-semantically identical in the frozen TypeScript rule table and governed JSON rule document, whose exact schema also requires it.",
+        "Both evaluators reject components outside that domain before applying the unchanged strict ascending-range comparison; the exact second-review attack is a direct regression in TypeScript and Python."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "README, architecture, and ADR-0012 name the exact shared component domain and require both validation layers. The original and first remediation evidence remain immutable; this manifest supersedes the first remediation at SHA-256 df8d9d09e32246954d219142b4cc6248995c68967ae18d0dd3d27c4d04be6fae.",
+        "No lifecycle, persistence, migration, UI, dependency, runtime, or platform code changed. The full data profile remains deferred to completed-slice review under the repository risk-based test policy."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent re-review should replay the exact unsafe-component attack and canonical/ascending controls across the JSON rule schema, portable evaluator, and TypeScript decoder; verify the exact incremental scope and supersession. No broad profile is requested."
+  }
+}

@@ -3400,7 +3400,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T01:36:30+00:00'
-      updated_at: '2026-08-14T02:06:58+00:00'
+      updated_at: '2026-08-14T02:09:57+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Focused contract, schema, relocation, export-denial, ADR, architecture, build-inventory, and
@@ -3419,6 +3419,11 @@ capabilities:
         sha256: df8d9d09e32246954d219142b4cc6248995c68967ae18d0dd3d27c4d04be6fae
         commit: 23580f1c40c8211062455bfacf07c88cdbb41e1d
         recorded_at: '2026-08-14T02:03:36+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S01.T01.review-fix-2.json
+        sha256: aff7b69721fc7964bfbaacaa92822c92dc96093d4d788518726d1feefe997a30
+        commit: 28fd5fd6c90ea5c8e51e80e67a102fbe57356c1f
+        recorded_at: '2026-08-14T02:09:57+00:00'
       review:
         reviewer: agent:curie
         result: changes-requested
@@ -3431,7 +3436,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-14T02:06:58+00:00'
         expires_at: '2026-08-14T10:06:58+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
