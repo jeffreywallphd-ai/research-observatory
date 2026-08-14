@@ -5,6 +5,7 @@
     {
       "ruleId": "application-compatibility-range-ascending",
       "operator": "semver-less-than",
+      "maximumComponent": 9007199254740991,
       "leftPointer": "/applicationCompatibility/minimum",
       "rightPointer": "/applicationCompatibility/maximumExclusive"
     },

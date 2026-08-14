@@ -47,6 +47,15 @@ describe("project package contract", () => {
       }),
     ).toBeNull();
     expect(decodeProjectManifest({ ...validManifest, projectRevision: 9_007_199_254_740_992 })).toBeNull();
+    expect(
+      decodeProjectManifest({
+        ...validManifest,
+        applicationCompatibility: {
+          minimum: "9007199254740992.0.0",
+          maximumExclusive: "9007199254740993.0.0",
+        },
+      }),
+    ).toBeNull();
     expect(decodeProjectManifest({ ...validManifest, modifiedAt: "2026-08-12T23:59:59Z" })).toBeNull();
     expect(
       decodeProjectManifest({

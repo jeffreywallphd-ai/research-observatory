@@ -26,14 +26,19 @@ def pointer_value(document: dict[str, Any], pointer: str) -> object:
     return value
 
 
-def release_version(value: object) -> tuple[int, int, int]:
+def release_version(value: object, maximum_component: object) -> tuple[int, int, int]:
     if not isinstance(value, str):
         raise ValueError("semantic version operand must be a string")
+    if not isinstance(maximum_component, int) or isinstance(maximum_component, bool):
+        raise ValueError("semantic version component maximum must be an integer")
     parts = value.split(".")
     if len(parts) != 3 or any(not part.isdigit() for part in parts):
         raise ValueError("semantic version operand must be a release version")
     major, minor, patch = parts
-    return int(major), int(minor), int(patch)
+    version = int(major), int(minor), int(patch)
+    if any(component > maximum_component for component in version):
+        raise ValueError("semantic version operand exceeds the governed numeric domain")
+    return version
 
 
 def manifest_semantic_errors(manifest: dict[str, Any], rules: dict[str, Any]) -> list[str]:
@@ -44,7 +49,11 @@ def manifest_semantic_errors(manifest: dict[str, Any], rules: dict[str, Any]) ->
         right = pointer_value(manifest, rule["rightPointer"])
         operator = rule["operator"]
         if operator == "semver-less-than":
-            valid = release_version(left) < release_version(right)
+            maximum_component = cast(dict[str, object], raw_rule)["maximumComponent"]
+            try:
+                valid = release_version(left, maximum_component) < release_version(right, maximum_component)
+            except ValueError:
+                valid = False
         elif operator == "instant-not-after":
             valid = datetime.fromisoformat(str(left).replace("Z", "+00:00")) <= datetime.fromisoformat(
                 str(right).replace("Z", "+00:00")
@@ -116,12 +125,19 @@ class FoundationPortableContractTests(unittest.TestCase):
         offset_timestamps["modifiedAt"] = "2026-08-13T00:00:00+00:00"
         unsafe_revision = copy.deepcopy(manifest)
         unsafe_revision["projectRevision"] = 9_007_199_254_740_992
+        unsafe_compatibility = copy.deepcopy(manifest)
+        unsafe_compatibility["applicationCompatibility"] = {
+            "minimum": "9007199254740992.0.0",
+            "maximumExclusive": "9007199254740993.0.0",
+        }
 
         for candidate in (reversed_range, older_modified):
             self.assertEqual([], list(manifest_validator.iter_errors(candidate)))
             self.assertTrue(manifest_semantic_errors(candidate, semantic_rules))
         for candidate in (offset_timestamps, unsafe_revision):
             self.assertTrue(list(manifest_validator.iter_errors(candidate)))
+        self.assertEqual([], list(manifest_validator.iter_errors(unsafe_compatibility)))
+        self.assertTrue(manifest_semantic_errors(unsafe_compatibility, semantic_rules))
 
 
 if __name__ == "__main__":

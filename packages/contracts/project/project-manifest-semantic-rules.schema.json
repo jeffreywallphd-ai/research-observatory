@@ -9,7 +9,7 @@
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "research-observatory-project-manifest-semantic-rules"},
     "rules": {"const": [
-      {"ruleId": "application-compatibility-range-ascending", "operator": "semver-less-than", "leftPointer": "/applicationCompatibility/minimum", "rightPointer": "/applicationCompatibility/maximumExclusive"},
+      {"ruleId": "application-compatibility-range-ascending", "operator": "semver-less-than", "maximumComponent": 9007199254740991, "leftPointer": "/applicationCompatibility/minimum", "rightPointer": "/applicationCompatibility/maximumExclusive"},
       {"ruleId": "modified-at-not-before-created-at", "operator": "instant-not-after", "leftPointer": "/createdAt", "rightPointer": "/modifiedAt"}
     ]}
   }
