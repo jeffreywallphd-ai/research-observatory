@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 8855f4dfcd0164ec1f4dea8f924ca472c4f0a4fcece4567eb861f45bdff1029e
+source_sha256: a9d99aa11e6044e2218b03e813b724c7101cc3012c004fcae751c1ffe3c19b99
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 287 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 31 |
 | `DEFERRED` | 36 |
 
@@ -117,4 +117,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S01.T01` Define the local project package and directory layout | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S01.T01` Define the local project package and directory layout | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
