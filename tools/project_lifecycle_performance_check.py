@@ -14,12 +14,21 @@ import subprocess
 import sys
 import tempfile
 import time
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
-from build_manifest import guarded_atomic_write_json, safe_output_path, safe_snapshot, windows_path_locks
+from build_manifest import (
+    destination_guard,
+    guarded_atomic_write_json,
+    held_file_renamer,
+    path_identity,
+    safe_output_path,
+    safe_snapshot,
+    validate_directory_guard,
+    windows_path_locks,
+)
 
 TOOL_PATH = Path("tools/project_lifecycle_performance_check.py")
 IMPLEMENTATION_PATH = Path("services/core-api/src/research_observatory_core/projects.py")
@@ -186,6 +195,50 @@ def qualification_snapshot(repo: Path) -> Iterator[tuple[str, dict[Path, bytes]]
         captured = {path: governed_snapshot(repo, path) for path in paths}
         assert_committed_inputs(repo, commit, captured)
         yield commit, captured
+
+
+def guarded_final_publication(
+    repo: Path,
+    destination: Path,
+    value: Any,
+    allowed_root: Path,
+    before_replace: Callable[[], None],
+) -> None:
+    """Publish PASS with every rejecting check before the atomic replacement."""
+    repo = repo.resolve(strict=True)
+    parent = destination.absolute().parent
+    relative_parent = parent.relative_to(repo)
+    directory_chain = [repo]
+    cursor = repo
+    for part in relative_parent.parts:
+        cursor /= part
+        directory_chain.append(cursor)
+    temporary: Path | None = None
+    replaced = False
+    encoded = (json.dumps(value, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    try:
+        with windows_path_locks(directory_chain, directories=True):
+            guard = destination_guard(repo, destination, allowed_root)
+            validate_directory_guard(guard)
+            with tempfile.NamedTemporaryFile(
+                mode="wb", dir=destination.parent, prefix=destination.name, delete=False
+            ) as handle:
+                temporary = Path(handle.name)
+                handle.write(encoded)
+                handle.flush()
+                os.fsync(handle.fileno())
+            temporary_identity = path_identity(temporary)
+            with held_file_renamer(temporary) as (replace_held, read_held):
+                validate_directory_guard(guard)
+                if path_identity(temporary) != temporary_identity or read_held() != encoded:
+                    raise ValueError("temporary qualification JSON changed before final publication")
+                before_replace()
+                replace_held(destination)
+                replaced = True
+    except OSError, ValueError:
+        if not replaced and temporary is not None:
+            temporary.unlink(missing_ok=True)
+        raise
 
 
 def percentile(samples: list[float], probability: float) -> float:
@@ -664,12 +717,12 @@ def run(repo: Path, destination: Path, *, measure_only: bool = False) -> tuple[d
     try:
         with qualification_snapshot(repo) as (state_commit, captured):
             report = _benchmark_under_snapshot(repo, state_commit, captured, measure_only=measure_only)
-            guarded_atomic_write_json(
+            guarded_final_publication(
                 repo,
                 destination,
                 report,
                 repo / "artifacts" / "tmp",
-                before_replace=lambda: assert_committed_inputs(repo, state_commit, captured),
+                lambda: assert_committed_inputs(repo, state_commit, captured),
             )
     except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
         report = nonqualifying_report(str(exc), measure_only=measure_only)

@@ -182,7 +182,6 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
             destination: Path,
             value: object,
             scratch: Path,
-            before_replace: object = None,
         ) -> None:
             nonlocal calls
             calls += 1
@@ -198,11 +197,16 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
                 patch.object(benchmark, "qualification_snapshot", return_value=nullcontext(("c" * 40, captured))),
                 patch.object(benchmark, "_benchmark_under_snapshot", return_value=passing),
                 patch.object(benchmark, "guarded_atomic_write_json", side_effect=writer),
+                patch.object(
+                    benchmark,
+                    "guarded_final_publication",
+                    side_effect=OSError("permanent final publication failure"),
+                ),
             ):
                 report, code = benchmark.run(REPO, destination)
             self.assertEqual(1, code)
             self.assertFalse(report["ok"])
-            self.assertEqual(3, calls)
+            self.assertEqual(2, calls)
             persisted = json.loads(destination.read_text(encoding="utf-8"))
             self.assertFalse(persisted["ok"])
             self.assertEqual("NONQUALIFYING", persisted["qualificationStatus"])
@@ -223,12 +227,11 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
             destination: Path,
             value: object,
             scratch: Path,
-            before_replace: object = None,
         ) -> None:
             nonlocal calls
             calls += 1
-            if calls <= 2:
-                original_writer(repo, destination, value, scratch, before_replace=before_replace)  # type: ignore[arg-type]
+            if calls == 1:
+                original_writer(repo, destination, value, scratch)
                 return
             raise OSError("persistent demotion failure")
 
@@ -244,7 +247,7 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
                 report, code = benchmark.run(REPO, destination)
             self.assertEqual(1, code)
             self.assertFalse(report["ok"])
-            self.assertEqual(3, calls)
+            self.assertEqual(2, calls)
             persisted = json.loads(destination.read_text(encoding="utf-8"))
             self.assertFalse(persisted["ok"])
             self.assertEqual("IN_PROGRESS", persisted["qualificationPhase"])
@@ -266,6 +269,37 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
             ):
                 report, code = benchmark.run(REPO, destination)
             self.assertEqual(0, code)
+            self.assertEqual(passing, report)
+            self.assertEqual(passing, json.loads(destination.read_text(encoding="utf-8")))
+
+    def test_final_pass_is_not_exposed_to_generic_post_replace_rejection(self) -> None:
+        captured = {
+            benchmark.TOOL_PATH: b"tool",
+            benchmark.IMPLEMENTATION_PATH: b"implementation",
+        }
+        passing = {"ok": True, "qualified": True, "sentinel": "current-pass"}
+        original_writer = benchmark.guarded_atomic_write_json
+        generic_calls = 0
+
+        def generic_writer(repo: Path, destination: Path, value: object, scratch: Path) -> None:
+            nonlocal generic_calls
+            generic_calls += 1
+            original_writer(repo, destination, value, scratch)
+            if isinstance(value, dict) and value.get("qualified") is True:
+                raise ValueError("injected generic post-replace rejection")
+
+        with tempfile.TemporaryDirectory(dir=REPO / "artifacts" / "tmp") as temporary:
+            destination = Path(temporary) / "performance.json"
+            destination.write_text('{"ok":true,"qualified":true,"sentinel":"stale"}\n', encoding="utf-8")
+            with (
+                patch.object(benchmark, "qualification_snapshot", return_value=nullcontext(("c" * 40, captured))),
+                patch.object(benchmark, "_benchmark_under_snapshot", return_value=passing),
+                patch.object(benchmark, "assert_committed_inputs", return_value=None),
+                patch.object(benchmark, "guarded_atomic_write_json", side_effect=generic_writer),
+            ):
+                report, code = benchmark.run(REPO, destination)
+            self.assertEqual(0, code)
+            self.assertEqual(1, generic_calls)
             self.assertEqual(passing, report)
             self.assertEqual(passing, json.loads(destination.read_text(encoding="utf-8")))
 
