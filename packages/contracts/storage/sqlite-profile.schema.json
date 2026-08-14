@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/storage/sqlite-profile.schema.json",
+  "title": "Research Observatory SQLite profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "profileId",
+    "databaseSchemaVersion",
+    "applicationId",
+    "schemaFingerprintSha256",
+    "minimumSqliteVersion",
+    "identifierStorage",
+    "timestampStorage",
+    "canonicalColumnTypes",
+    "derivedBinaryStorage",
+    "connectionProfile",
+    "checkpointPolicy",
+    "integrityChecks",
+    "canonicalTables"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-sqlite-profile"},
+    "profileId": {"const": "sqlite-wal-v1"},
+    "databaseSchemaVersion": {"const": 1},
+    "applicationId": {"const": 1380926035},
+    "schemaFingerprintSha256": {"const": "e572a38ba24b00ab1faaa1771a577bfd44710b021a55c1f186f46a9bcbb87785"},
+    "minimumSqliteVersion": {"const": "3.37.0"},
+    "identifierStorage": {
+      "const": {
+        "project": "uuid4-bridge-or-uuid7-lowercase-text",
+        "aggregate": "uuid7-lowercase-text",
+        "revision": "uuid7-lowercase-text",
+        "event": "uuid7-lowercase-text",
+        "setting": "uuid7-lowercase-text"
+      }
+    },
+    "timestampStorage": {"const": "utc-rfc3339-millisecond-text"},
+    "canonicalColumnTypes": {"const": ["INTEGER", "REAL", "TEXT"]},
+    "derivedBinaryStorage": {"const": "digest-reference-only"},
+    "connectionProfile": {
+      "const": {
+        "foreignKeys": true,
+        "journalMode": "wal",
+        "synchronous": "full",
+        "busyTimeoutMilliseconds": 5000,
+        "trustedSchema": false,
+        "defensive": true,
+        "doubleQuotedStringLiterals": false,
+        "loadableExtensions": false,
+        "recursiveTriggers": true,
+        "walAutocheckpointPages": 1000,
+        "lockingMode": "normal"
+      }
+    },
+    "checkpointPolicy": {
+      "const": {
+        "automaticMode": "passive",
+        "automaticPages": 1000,
+        "manualAuthority": "migration-backup-and-maintenance-only"
+      }
+    },
+    "integrityChecks": {
+      "const": ["quick_check", "foreign_key_check", "strict_table_inventory"]
+    },
+    "canonicalTables": {
+      "const": [
+        "schema_metadata",
+        "projects",
+        "object_records",
+        "aggregate_identities",
+        "aggregate_revisions",
+        "scholarly_records",
+        "documents",
+        "workflows",
+        "evidence",
+        "ontologies",
+        "decisions",
+        "provenance_events",
+        "settings",
+        "outbox_events"
+      ]
+    }
+  }
+}

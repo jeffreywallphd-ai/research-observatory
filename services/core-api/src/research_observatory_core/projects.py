@@ -1,8 +1,9 @@
 """Local project package lifecycle authority.
 
-The project package is authoritative.  This module deliberately avoids the
-SQLite repository owned by CAP-02.S02 and operates only on the versioned
-manifest, classified directories, profile document, lock, and audit seam.
+The project package is authoritative. This module owns the versioned manifest,
+classified directories, lock, and audit seam and delegates canonical database
+creation and validation to the storage adapter. Domain repositories remain
+outside this lifecycle boundary.
 """
 
 from __future__ import annotations
@@ -31,6 +32,7 @@ from .models import (
     ProjectProjection,
     ProjectRecoveryAction,
 )
+from .storage import StorageProblem, database_integrity_report, initialize_database, open_canonical_database
 
 _DIRECTORY_NAME = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 _TEMPLATE_ID = re.compile(r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
@@ -489,7 +491,29 @@ class ProjectLifecycleService:
 
     @staticmethod
     def _project_guard_paths(path: Path) -> list[Path]:
-        return [path, path / ".locks", path / "config", path / "logs"]
+        return [path, path / ".locks", path / "config", path / "logs", path / "state"]
+
+    @staticmethod
+    def _validate_database(path: Path, project_id: str) -> None:
+        connection = None
+        try:
+            connection = open_canonical_database(path / "state" / "project.sqlite3", expected_project_id=project_id)
+            report = database_integrity_report(connection, expected_project_id=project_id)
+            if not report.ok:
+                raise StorageProblem("project database integrity verification failed")
+        except StorageProblem as error:
+            raise ProjectLifecycleProblem(
+                status=422,
+                code="RO-CORE-PROJECT-DAMAGED",
+                title="Project database is damaged or incompatible",
+                detail="The canonical local database did not satisfy its versioned identity and integrity contract.",
+                remediation=(
+                    "Keep the original unchanged. First make and verify a complete backup; repair only a working copy."
+                ),
+            ) from error
+        finally:
+            if connection is not None:
+                connection.close()
 
     @staticmethod
     def _write_lock(lock: Path, record: dict[str, Any]) -> None:
@@ -602,14 +626,29 @@ class ProjectLifecycleService:
                 "templateId": template_id,
             }
             with _held_directory_renamer(staging) as rename_staging:
-                with _stable_directories([staging / ".locks", staging / "config", staging / "logs"]):
+                with _stable_directories([staging / ".locks", staging / "config", staging / "logs", staging / "state"]):
                     _atomic_json(staging / "project.ro.json", manifest)
                     _atomic_json(staging / "config" / "project-profile.json", profile)
+                    initialize_database(
+                        staging / "state" / "project.sqlite3",
+                        project_id=project_id,
+                        project_created_at=now,
+                    )
                     self._audit(staging, "project.created", "active", trace_id)
                 rename_staging(target)
         except ProjectLifecycleProblem:
             self._remove_staging(staging)
             raise
+        except StorageProblem as error:
+            self._remove_staging(staging)
+            raise ProjectLifecycleProblem(
+                status=500,
+                code="RO-CORE-PROJECT-CREATE-FAILED",
+                title="Project creation did not complete",
+                detail="Creation stopped before the staged project and canonical database were published.",
+                remediation="Remove any named staging directory after inspection, then retry.",
+                retryable=True,
+            ) from error
         except OSError as error:
             self._remove_staging(staging)
             raise ProjectLifecycleProblem(
@@ -687,6 +726,7 @@ class ProjectLifecycleService:
                         profile=profile,
                         compatibility=compatibility,
                     )
+                self._validate_database(path, str(manifest["projectId"]))
                 record = {
                     "schemaVersion": "1.0",
                     "documentType": "research-observatory-project-lock",
@@ -801,7 +841,7 @@ class ProjectLifecycleService:
                     trash.mkdir(mode=0o700)
                 trash = _canonical_directory(str(trash))
                 with _held_directory_renamer(path) as rename_project:
-                    with _stable_directories([path / ".locks", path / "config", path / "logs"]):
+                    with _stable_directories([path / ".locks", path / "config", path / "logs", path / "state"]):
                         self._validate_layout(path)
                         manifest, profile = self._documents(path)
                         self._require_closed(path)
@@ -835,7 +875,7 @@ class ProjectLifecycleService:
                         rename_project(destination)
                     except OSError as error:
                         try:
-                            with _stable_directories([path / ".locks", path / "config", path / "logs"]):
+                            with _stable_directories([path / ".locks", path / "config", path / "logs", path / "state"]):
                                 _atomic_json(path / "project.ro.json", original_manifest)
                                 self._audit(
                                     path,
@@ -899,6 +939,7 @@ class ProjectLifecycleService:
         manifest, profile, compatibility = self._assess_documents(path)
         if compatibility is not ProjectCompatibilityState.COMPATIBLE:
             raise self._compatibility_problem(compatibility)
+        self._validate_database(path, str(manifest["projectId"]))
         return manifest, profile
 
     @staticmethod

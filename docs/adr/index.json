@@ -125,6 +125,17 @@
       "linkedTasks": [
         "CAP-03.S01.T01"
       ]
+    },
+    {
+      "id": "ADR-0014",
+      "path": "docs/adr/ADR-0014-use-a-strict-versioned-sqlite-wal-profile-for-local-canonical-state.md",
+      "title": "Use a strict versioned SQLite WAL profile for local canonical state",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-02.S02.T01",
+        "CAP-02.S02.T02",
+        "CAP-02.S02.T03"
+      ]
     }
   ]
 }
