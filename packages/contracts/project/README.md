@@ -20,5 +20,11 @@ bridge, pre-migration backup, and a superseding ADR. Unknown top-level fields
 fail closed; future extensibility is introduced through a versioned contract,
 not by accepting arbitrary fields.
 
+Manifest validation always applies both `project-manifest.schema.json` and its
+bound `project-manifest.semantic-rules.json`. The schema owns constraints it can
+express; the two exact semantic operators enforce ascending application
+compatibility and `createdAt <= modifiedAt`. Treating schema-only validation as
+successful validation is a contract violation.
+
 `fixtures/` supplies one valid relocatable manifest and one intentionally
 invalid path-bearing manifest for downstream readers and compatibility tests.

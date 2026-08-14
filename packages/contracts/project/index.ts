@@ -54,6 +54,25 @@ export interface ProjectLayout {
   readonly entries: readonly ProjectLayoutEntry[];
 }
 
+export const PROJECT_MANIFEST_SEMANTIC_RULES_V1 = Object.freeze({
+  schemaVersion: "1.0",
+  documentType: "research-observatory-project-manifest-semantic-rules",
+  rules: Object.freeze([
+    Object.freeze({
+      ruleId: "application-compatibility-range-ascending",
+      operator: "semver-less-than",
+      leftPointer: "/applicationCompatibility/minimum",
+      rightPointer: "/applicationCompatibility/maximumExclusive",
+    }),
+    Object.freeze({
+      ruleId: "modified-at-not-before-created-at",
+      operator: "instant-not-after",
+      leftPointer: "/createdAt",
+      rightPointer: "/modifiedAt",
+    }),
+  ]),
+} as const);
+
 export const PROJECT_LAYOUT_V1 = {
   schemaVersion: "1.0",
   documentType: "research-observatory-project-layout",
@@ -135,6 +154,19 @@ export function isPortableProjectRelativePath(value: unknown): value is string {
   return segments.every((segment) => segment !== "" && segment !== "." && segment !== ".." && PORTABLE_SEGMENT.test(segment));
 }
 
+export function projectManifestSemanticErrors(manifest: ProjectManifest): readonly string[] {
+  const minimum = releaseVersion(manifest.applicationCompatibility.minimum);
+  const maximum = releaseVersion(manifest.applicationCompatibility.maximumExclusive);
+  const errors: string[] = [];
+  if (!minimum || !maximum || compareReleaseVersions(minimum, maximum) >= 0) {
+    errors.push(PROJECT_MANIFEST_SEMANTIC_RULES_V1.rules[0]!.ruleId);
+  }
+  if (Date.parse(manifest.createdAt) > Date.parse(manifest.modifiedAt)) {
+    errors.push(PROJECT_MANIFEST_SEMANTIC_RULES_V1.rules[1]!.ruleId);
+  }
+  return errors;
+}
+
 export function decodeProjectManifest(value: unknown): ProjectManifest | null {
   try {
     if (!isRecord(value) || !hasExactKeys(value, MANIFEST_KEYS)) return null;
@@ -142,9 +174,8 @@ export function decodeProjectManifest(value: unknown): ProjectManifest | null {
     if (!isRecord(compatibility) || !hasExactKeys(compatibility, COMPATIBILITY_KEYS)) return null;
     const minimum = releaseVersion(compatibility.minimum);
     const maximum = releaseVersion(compatibility.maximumExclusive);
-    if (!minimum || !maximum || compareReleaseVersions(minimum, maximum) >= 0) return null;
+    if (!minimum || !maximum) return null;
     if (!isUtcTimestamp(value.createdAt) || !isUtcTimestamp(value.modifiedAt)) return null;
-    if (Date.parse(value.modifiedAt) < Date.parse(value.createdAt)) return null;
     if (
       value.schemaVersion !== "1.0" ||
       value.documentType !== "research-observatory-project-manifest" ||
@@ -158,7 +189,7 @@ export function decodeProjectManifest(value: unknown): ProjectManifest | null {
       value.databaseProfile !== "sqlite-wal-v1" ||
       value.objectFormat !== "encrypted-content-addressed-v1"
     ) return null;
-    return {
+    const manifest: ProjectManifest = {
       schemaVersion: "1.0",
       documentType: "research-observatory-project-manifest",
       projectId: value.projectId,
@@ -172,6 +203,7 @@ export function decodeProjectManifest(value: unknown): ProjectManifest | null {
       createdAt: value.createdAt,
       modifiedAt: value.modifiedAt,
     };
+    return projectManifestSemanticErrors(manifest).length === 0 ? manifest : null;
   } catch {
     return null;
   }

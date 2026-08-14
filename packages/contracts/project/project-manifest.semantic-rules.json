@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-project-manifest-semantic-rules",
+  "rules": [
+    {
+      "ruleId": "application-compatibility-range-ascending",
+      "operator": "semver-less-than",
+      "leftPointer": "/applicationCompatibility/minimum",
+      "rightPointer": "/applicationCompatibility/maximumExclusive"
+    },
+    {
+      "ruleId": "modified-at-not-before-created-at",
+      "operator": "instant-not-after",
+      "leftPointer": "/createdAt",
+      "rightPointer": "/modifiedAt"
+    }
+  ]
+}
