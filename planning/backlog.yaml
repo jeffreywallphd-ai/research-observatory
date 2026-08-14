@@ -3548,12 +3548,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T11:08:27+00:00'
-      updated_at: '2026-08-14T11:36:17+00:00'
-      completed_at: null
+      updated_at: '2026-08-14T11:38:34+00:00'
+      completed_at: '2026-08-14T11:38:34+00:00'
       blocker: null
       implementation_notes: 'Focused implementation and boundary checks pass; exact criterion evidence attached at candidate
         4fc8e31. Broad data, desktop, and e2e-local profiles are deferred to completed-slice review under the risk-based policy.
@@ -3573,16 +3573,12 @@ capabilities:
         recorded_at: '2026-08-14T11:35:33+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-14T11:32:06+00:00'
-        notes: Strict projection semantics must bind each incompatible state to its exact recovery action and bind delete
-          confirmation to project identity; archived incompatible projects must not expose Restore. All other focused boundaries
-          passed.
+        result: approved
+        reviewed_at: '2026-08-14T11:38:34+00:00'
+        notes: Exact recovery mappings, deletion identity, and archived-incompatible mutation suppression independently verified.
+          Focused Core/client/component/compiled-product checks, evidence, scope, ancestry, UI lineage, and cleanliness pass.
       base_sha: 473aa00fe9c9b8784804e745a311e2ca56cce80f
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-14T11:32:06+00:00'
-        expires_at: '2026-08-14T19:32:06+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
