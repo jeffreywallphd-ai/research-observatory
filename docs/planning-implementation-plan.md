@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fb4660cdc5c09d2818460b7cf677be8d2a97c89654d5e40846604d45f58410a9
+source_sha256: 166bc2d9c82db21f011747ea7a155f4adb6dcde4a48cffe7fb343ea899188510
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1719,7 +1719,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Canonical local state is transactional, versioned, testable, and insulated from UI or model code.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1727,13 +1727,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S02.T01 - Create the initial normalized SQLite schema in WAL mode
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S01.T01`, `CAP-03.S01.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:curie (`changes-requested`)
 
 **Objective:** Core tables for projects, scholarly records, documents, workflows, evidence, ontologies, decisions, provenance, and settings.
 

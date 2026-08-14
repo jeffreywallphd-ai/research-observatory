@@ -3606,7 +3606,7 @@ capabilities:
     depends_on:
     - CAP-02.S01.T01
     - CAP-03.S01.T01
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-02.S02.T01
       capability_id: CAP-02
@@ -3635,11 +3635,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T13:50:36+00:00'
-      updated_at: '2026-08-14T14:36:17+00:00'
+      updated_at: '2026-08-14T14:41:24+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Strict SQLite v1 schema, connection profile, project lifecycle integration, focused concurrency/denial
@@ -3652,16 +3652,19 @@ capabilities:
         commit: a7276abc1152c5fb76c3228804ed65c8be932948
         recorded_at: '2026-08-14T14:35:44+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:curie
+        result: changes-requested
+        reviewed_at: '2026-08-14T14:41:24+00:00'
+        notes: 'P1: canonical DDL permits valid-value UPDATE/DELETE of project identity, stable aggregate identity, aggregate
+          revisions/kind extensions, and versioned settings despite documented immutability. Add fingerprinted denial triggers,
+          preserve intentional mutable object/outbox state and T02 migration authority, and add direct canonical-connection
+          hostile regressions. All other focused boundaries passed.'
       base_sha: 538683ea3c5797b1bd9dae77fd5f40d12995403f
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-14T13:50:36+00:00'
-        expires_at: '2026-08-14T21:50:36+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-14T14:41:24+00:00'
+        expires_at: '2026-08-14T22:41:24+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
