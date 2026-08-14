@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 89be7bd51405353b22c7137ab57bbfd36da0072728f018b69c0db6eb39c53275
+source_sha256: 5d2c091e6bac8241f89211c6ddd3a93904b174976aedc01e111e56a28dc8e302
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -49,7 +49,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 285 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 34 |
 | `DEFERRED` | 36 |
 
@@ -116,4 +116,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-03.S01.T01` Define core aggregate and value-object contracts | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-03.S01.T01` Define core aggregate and value-object contracts | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
