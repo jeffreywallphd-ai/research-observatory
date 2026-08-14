@@ -3466,14 +3466,15 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T10:10:18+00:00'
-      updated_at: '2026-08-14T10:42:55+00:00'
+      updated_at: '2026-08-14T10:43:40+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
+      implementation_notes: Submitted for focused independent review. Functional checks pass; cumulative UI provenance correctly
+        requires a reviewed quality-inventory hardening follow-up before approval.
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S01.T02.submission.json
