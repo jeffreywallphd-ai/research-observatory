@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a8179181805b50cccb6f51ae48319c16fb7c9a70c3e77949e2ee22518dcef678
+source_sha256: d02b11aae38588f372603feaef4af7d07119b00ac956335cb2adccda42e690bb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1685,13 +1685,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S01.T03 - Add project compatibility and safe-open checks
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S01.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Project format version, migration requirement, damaged/incomplete indicators, read-only fallback, and repair entry points.
 
