@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S01.T03",
+  "commit": "4fc8e31631f2cb3f4afaf4310d428cd0c190e133",
+  "baseCommit": "473aa00fe9c9b8784804e745a311e2ca56cce80f",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.test.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx",
+    "artifacts/evidence/ui-change/CAP-02.S01.T03.json",
+    "docs/architecture/project-package.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/project/README.md",
+    "packages/contracts/project/fixtures/migration-required-project-manifest.v0.json",
+    "packages/contracts/project/fixtures/newer-unsupported-project-manifest.v2.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/projects.py",
+    "tests/contracts/test_foundation_contracts.py",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/service/test_project_lifecycle.py",
+    "tools/core_api_contract.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_project_lifecycle tests.service.test_core_api tests.contracts.test_foundation_contracts",
+      "exitCode": 0,
+      "result": "All 32 focused Python service and contract tests pass, including exact-byte read-only open/close/restart, malformed/incomplete/redirected manifest denial, and compatibility projection invariants."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\core_api_contract.py --repo . --check; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts test; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts typecheck",
+      "exitCode": 0,
+      "result": "The deterministic Core API/OpenAPI/client contract is current; 12 package contract tests and strict TypeScript type checking pass, including hostile contradictory access-state and unsafe-version decoding."
+    },
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop lint; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop typecheck; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop test; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop build",
+      "exitCode": 0,
+      "result": "Desktop lint, typecheck, all 40 focused component/application tests, and the production renderer build pass."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-02.S01.T03-desktop-frame.json",
+      "exitCode": 0,
+      "result": "The compiled functional product frame passes in Chromium with a real read-only safe-open flow, visible backup-first guidance, absent mutation controls, functional close, zero network requests, no reference-only pages, and report SHA-256 2cc8fecfb79bb213d62c09b2d281a341c75522b1cb9be9035817edf571308b2e."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . --report artifacts/tmp/CAP-02.S01.T03-quality.json; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "Python quality passes for 79 governed files (report SHA-256 b524f568d987ca09c6ad47f8d37d5b5d2bb514018d099b420dcd4e0c58c52168), and architecture validation passes 13 areas, 12 modules, 5 interfaces, and 3 profiles."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base 473aa00fe9c9b8784804e745a311e2ca56cce80f --head 4fc8e31631f2cb3f4afaf4310d428cd0c190e133; .venv\\Scripts\\python.exe -m unittest tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "The cumulative task UI gate and all 17 focused gate tests pass with unchanged approved reference RO-UI-ACADEMIC-MINIMAL-1.3 (package db13c8d5...) and exactly ApplicationRuntime.tsx plus ProjectsWorkspace.tsx as functional UI changes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools\\planctl.py --repo . wave ready W1 --require-approved",
+      "exitCode": 0,
+      "result": "The backlog, generated planning views, and immutable W1 approval packet all pass."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S01.T03-build-manifest.json",
+      "exitCode": 0,
+      "result": "The clean build manifest binds 0.1.0+g4fc8e31, dirty=false, and the governed dependency/schema/component identities; report SHA-256 is 908064e8f1823a99a21c08b4c49b57cc393caa2789c7c9c9531566c9a0ff466c."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "ProjectProjection now has strict accessMode, compatibilityState, packageFormatVersion, backupRequiredBeforeRepair, and recoveryAction fields. Structurally valid older/newer/application-incompatible projects open only read-only and never receive a writable project lock.",
+        "Compatible current packages remain read-write. Unsupported newer formats and older migration-required formats are never silently upgraded or written."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Malformed, incomplete, redirected, hardlinked, oversized, and internally contradictory project documents fail before mutation with stable damaged/incomplete problem references.",
+        "Focused tests snapshot every governed project-package byte across failed validation and read-only open/close/restart and confirm no lock or audit write occurs."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The functional Projects workspace shows the exact compatibility state and a bounded backup-first recovery path; incompatible cards expose read-only open and close but no archive or recoverable-delete action.",
+        "Docs and fixtures define the current writable contract versus migration-required and newer-unsupported examples, while explicitly deferring actual migration/backup implementation to approved downstream slices."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The task changes project compatibility contracts, Core lifecycle handling, generated clients, and the functional project workspace. Focused service/contract/decoder/component/compiled-Chromium checks therefore cover the credible failure boundaries. It does not change dependencies, packaging, security policy, native supervisor code, or the approved UI reference.",
+    "deferred": "The complete data, desktop, and e2e-local profiles are deferred to the completed CAP-02.S01 slice review. A preliminary aggregate desktop run reached an inherited unchanged supervisor.rs Clippy warning before the browser phase; the focused compiled product frame was then replayed independently and passed."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Review exact contract parity, no-write read-only behavior, path/document denial, functional backup-first UI, unchanged reference lineage, and the focused evidence. Do not run broad profiles at task review."
+  }
+}
