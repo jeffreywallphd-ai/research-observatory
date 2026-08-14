@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1a33724e713f25b6cc908615ed3f8ecb5f970871ce25a6cab99297fd6eb21f49
+source_sha256: f7afd92d43995dec16508bb8e62d8261cbc4b01e38cb6e51779065a206ae9d9e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1727,13 +1727,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S02.T01 - Create the initial normalized SQLite schema in WAL mode
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S01.T01`, `CAP-03.S01.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Core tables for projects, scholarly records, documents, workflows, evidence, ontologies, decisions, provenance, and settings.
 

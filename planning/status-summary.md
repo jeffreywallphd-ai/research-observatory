@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 1a33724e713f25b6cc908615ed3f8ecb5f970871ce25a6cab99297fd6eb21f49
+source_sha256: f7afd92d43995dec16508bb8e62d8261cbc4b01e38cb6e51779065a206ae9d9e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -49,7 +49,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 283 |
-| `READY` | 2 |
+| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 35 |
 | `DEFERRED` | 36 |
 
@@ -76,7 +77,7 @@ manual_edit: prohibited
 |---|---|---|---:|---:|---|
 | CAP-delivery-foundation (`CAP-00`) — Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
 | CAP-windows-desktop-runtime (`CAP-01`) — Windows-first desktop shell and supervised local runtime | `PAUSED` | `PAUSED` | 4/5 | 12/15 | - |
-| CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 1/5 | 3/16 | - |
+| CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 1/5 | 3/16 | `CAP-02.S02.T01` |
 | CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 1/20 | - |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -114,4 +115,6 @@ manual_edit: prohibited
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `CAP-02.S02.T01` Create the initial normalized SQLite schema in WAL mode | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
