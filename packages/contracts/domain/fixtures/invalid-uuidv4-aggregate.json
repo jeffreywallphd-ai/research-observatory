@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-core-aggregate",
+  "contractVersion": "1.0.0",
+  "aggregateKind": "record",
+  "aggregateId": "018f47a2-4d6b-4f78-9f2e-7fb76c86d9a1",
+  "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a5",
+  "revision": 0,
+  "createdAt": "2026-08-14T12:10:00Z",
+  "modifiedAt": "2026-08-14T12:10:00Z",
+  "displayLabel": {"observed": "Observed record", "normalized": null, "alternatives": []},
+  "status": "observed",
+  "confidence": {"kind": "unknown"},
+  "rights": {"status": "unknown", "allowedUses": [], "deniedUses": [], "sourceReferences": []},
+  "sourceReferences": [],
+  "externalIdentifiers": []
+}

@@ -116,6 +116,15 @@
       "linkedTasks": [
         "CAP-02.S01.T01"
       ]
+    },
+    {
+      "id": "ADR-0013",
+      "path": "docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md",
+      "title": "Adopt UUIDv7 aggregate identities and schema-generated domain contracts",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-03.S01.T01"
+      ]
     }
   ]
 }

@@ -1,0 +1,527 @@
+#!/usr/bin/env node
+import { createHash } from "node:crypto";
+import { readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
+
+const repo = resolve(fileURLToPath(new URL("../../..", import.meta.url)));
+const schemaPath = resolve(repo, "packages/contracts/domain/domain-core.schema.json");
+const typescriptPath = resolve(repo, "packages/contracts/domain/generated.ts");
+const pythonPath = resolve(repo, "services/core-api/src/research_observatory_core/domain_contracts.py");
+const schemaBytes = readFileSync(schemaPath);
+const schema = JSON.parse(schemaBytes.toString("utf8"));
+const schemaSha256 = createHash("sha256").update(schemaBytes).digest("hex");
+
+if (schema.$schema !== "https://json-schema.org/draft/2020-12/schema" || typeof schema.$defs !== "object") {
+  throw new Error("domain-core.schema.json must be a Draft 2020-12 schema with $defs");
+}
+if (!Array.isArray(schema["x-research-observatory-semanticRules"])) {
+  throw new Error("domain-core.schema.json must declare language-neutral semantic rules");
+}
+
+function referenceName(reference) {
+  const prefix = "#/$defs/";
+  if (typeof reference !== "string" || !reference.startsWith(prefix) || reference.length === prefix.length) {
+    throw new Error(`unsupported schema reference: ${String(reference)}`);
+  }
+  return reference.slice(prefix.length);
+}
+
+function tsType(node) {
+  if (node.$ref) return referenceName(node.$ref);
+  if (Object.hasOwn(node, "const")) return JSON.stringify(node.const);
+  if (Array.isArray(node.enum)) return node.enum.map((value) => JSON.stringify(value)).join(" | ");
+  const alternatives = node.oneOf ?? node.anyOf;
+  if (Array.isArray(alternatives)) return alternatives.map(tsType).join(" | ");
+  if (node.type === "array") return `ReadonlyArray<${tsType(node.items ?? {})}>`;
+  if (node.type === "integer" || node.type === "number") return "number";
+  if (node.type === "boolean") return "boolean";
+  if (node.type === "null") return "null";
+  if (node.type === "object") return "Readonly<Record<string, unknown>>";
+  return "string";
+}
+
+function tsDefinition(name, node) {
+  if (node.type !== "object" || !node.properties) return `export type ${name} = ${tsType(node)};`;
+  const required = new Set(node.required ?? []);
+  const lines = [`export interface ${name} {`];
+  for (const [property, propertySchema] of Object.entries(node.properties)) {
+    lines.push(`  readonly ${property}${required.has(property) ? "" : "?"}: ${tsType(propertySchema)};`);
+  }
+  lines.push("}");
+  return lines.join("\n");
+}
+
+function pyLiteral(value) {
+  return JSON.stringify(value);
+}
+
+function pyType(node) {
+  if (node.$ref) return referenceName(node.$ref);
+  if (Object.hasOwn(node, "const")) return `Literal[${pyLiteral(node.const)}]`;
+  if (Array.isArray(node.enum)) return `Literal[${node.enum.map(pyLiteral).join(", ")}]`;
+  const alternatives = node.oneOf ?? node.anyOf;
+  if (Array.isArray(alternatives)) return alternatives.map(pyType).join(" | ");
+  if (node.type === "array") return `list[${pyType(node.items ?? {})}]`;
+  if (node.type === "integer") return "int";
+  if (node.type === "number") return "float";
+  if (node.type === "boolean") return "bool";
+  if (node.type === "null") return "None";
+  if (node.type === "object") return "dict[str, object]";
+  return "str";
+}
+
+function pyDefinition(name, node) {
+  if (node.type !== "object" || !node.properties) {
+    if (Array.isArray(node.enum)) {
+      return `type ${name} = Literal[\n${node.enum.map((value) => `    ${pyLiteral(value)},`).join("\n")}\n]`;
+    }
+    const alternatives = node.oneOf ?? node.anyOf;
+    if (Array.isArray(alternatives)) {
+      const alias = `type ${name} = ${alternatives.map(pyType).join(" | ")}`;
+      if (alias.length <= 120) return alias;
+      return `type ${name} = (\n${alternatives.map((item, index) => `    ${index === 0 ? "" : "| "}${pyType(item)}`).join("\n")}\n)`;
+    }
+    return `type ${name} = ${pyType(node)}`;
+  }
+  const required = new Set(node.required ?? []);
+  const lines = [`class ${name}(TypedDict):`];
+  for (const [property, propertySchema] of Object.entries(node.properties)) {
+    const type = pyType(propertySchema);
+    lines.push(`    ${property}: ${required.has(property) ? type : `NotRequired[${type}]`}`);
+  }
+  if (lines.length === 1) lines.push("    pass");
+  return lines.join("\n");
+}
+
+const tsDefinitions = Object.entries(schema.$defs).map(([name, node]) => tsDefinition(name, node)).join("\n\n");
+const pyDefinitions = Object.entries(schema.$defs).map(([name, node]) => pyDefinition(name, node)).join("\n\n\n");
+const schemaJson = JSON.stringify(schema, null, 2);
+const needsNotRequired = Object.values(schema.$defs).some((node) => node.type === "object"
+  && node.properties && Object.keys(node.properties).some((key) => !(node.required ?? []).includes(key)));
+
+const typescript = `// Generated by packages/contracts/domain/generate.mjs. Do not edit by hand.
+// Source: packages/contracts/domain/domain-core.schema.json
+
+${tsDefinitions}
+
+export const CORE_DOMAIN_SCHEMA_SHA256 = "${schemaSha256}";
+
+const CORE_DOMAIN_SCHEMA = ${schemaJson} as const;
+const UUID_V7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+type JsonRecord = Readonly<Record<string, unknown>>;
+
+function record(value: unknown): JsonRecord | null {
+  return value !== null && typeof value === "object" && !Array.isArray(value) ? value as JsonRecord : null;
+}
+
+function deepEqual(left: unknown, right: unknown): boolean {
+  if (Object.is(left, right)) return true;
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return Array.isArray(left) && Array.isArray(right) && left.length === right.length
+      && left.every((item, index) => deepEqual(item, right[index]));
+  }
+  const leftRecord = record(left);
+  const rightRecord = record(right);
+  if (!leftRecord || !rightRecord) return false;
+  const leftKeys = Object.keys(leftRecord).sort();
+  const rightKeys = Object.keys(rightRecord).sort();
+  return leftKeys.length === rightKeys.length
+    && leftKeys.every((key, index) => key === rightKeys[index] && deepEqual(leftRecord[key], rightRecord[key]));
+}
+
+function stableJson(value: unknown): string {
+  if (Array.isArray(value)) return \`[\${value.map(stableJson).join(",")}]\`;
+  const candidate = record(value);
+  if (candidate) return \`{\${Object.keys(candidate).sort().map((key) => \`\${JSON.stringify(key)}:\${stableJson(candidate[key])}\`).join(",")}}\`;
+  return JSON.stringify(value);
+}
+
+function schemaRecord(value: unknown): JsonRecord {
+  const candidate = record(value);
+  if (!candidate) throw new Error("generated domain schema is malformed");
+  return candidate;
+}
+
+function resolveReference(reference: unknown): JsonRecord {
+  const prefix = "#/$defs/";
+  if (typeof reference !== "string" || !reference.startsWith(prefix)) throw new Error("unsupported domain schema reference");
+  const definitions = schemaRecord(CORE_DOMAIN_SCHEMA.$defs);
+  return schemaRecord(definitions[reference.slice(prefix.length)]);
+}
+
+function canonicalUtc(value: string): boolean {
+  const match = /^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d{1,3}))?Z$/.exec(value);
+  if (!match) return false;
+  const timestamp = Date.parse(value);
+  if (!Number.isFinite(timestamp)) return false;
+  const expected = \`\${match[1]}.\${(match[2] ?? "").padEnd(3, "0")}Z\`;
+  return new Date(timestamp).toISOString() === expected;
+}
+
+function validationErrors(value: unknown, rawSchema: unknown, path: string): string[] {
+  const node = schemaRecord(rawSchema);
+  if (node.$ref !== undefined) return validationErrors(value, resolveReference(node.$ref), path);
+  const errors: string[] = [];
+  if (Object.hasOwn(node, "const") && !deepEqual(value, node.const)) errors.push(\`\${path}: const\`);
+  if (Array.isArray(node.enum) && !node.enum.some((item) => deepEqual(value, item))) errors.push(\`\${path}: enum\`);
+  const alternatives = Array.isArray(node.oneOf) ? node.oneOf : Array.isArray(node.anyOf) ? node.anyOf : null;
+  if (alternatives) {
+    const matches = alternatives.filter((item) => validationErrors(value, item, path).length === 0).length;
+    if ((Array.isArray(node.oneOf) && matches !== 1) || (Array.isArray(node.anyOf) && matches === 0)) errors.push(\`\${path}: alternatives\`);
+  }
+  const type = node.type;
+  if (type === "null" && value !== null) errors.push(\`\${path}: null\`);
+  if (type === "boolean" && typeof value !== "boolean") errors.push(\`\${path}: boolean\`);
+  if (type === "integer" && (typeof value !== "number" || !Number.isSafeInteger(value))) errors.push(\`\${path}: safe integer\`);
+  if (type === "number" && (typeof value !== "number" || !Number.isFinite(value))) errors.push(\`\${path}: finite number\`);
+  if (typeof value === "number" && Number.isFinite(value)) {
+    if (typeof node.minimum === "number" && value < node.minimum) errors.push(\`\${path}: minimum\`);
+    if (typeof node.maximum === "number" && value > node.maximum) errors.push(\`\${path}: maximum\`);
+  }
+  if (type === "string") {
+    if (typeof value !== "string") errors.push(\`\${path}: string\`);
+    else {
+      const length = Array.from(value).length;
+      if (typeof node.minLength === "number" && length < node.minLength) errors.push(\`\${path}: minLength\`);
+      if (typeof node.maxLength === "number" && length > node.maxLength) errors.push(\`\${path}: maxLength\`);
+      if (typeof node.pattern === "string" && !new RegExp(node.pattern, "u").test(value)) errors.push(\`\${path}: pattern\`);
+      if (node.format === "date-time" && !canonicalUtc(value)) errors.push(\`\${path}: canonical UTC date-time\`);
+    }
+  }
+  if (type === "array") {
+    if (!Array.isArray(value)) errors.push(\`\${path}: array\`);
+    else {
+      if (typeof node.minItems === "number" && value.length < node.minItems) errors.push(\`\${path}: minItems\`);
+      if (typeof node.maxItems === "number" && value.length > node.maxItems) errors.push(\`\${path}: maxItems\`);
+      if (node.uniqueItems === true && new Set(value.map(stableJson)).size !== value.length) errors.push(\`\${path}: uniqueItems\`);
+      if (node.items !== undefined) value.forEach((item, index) => errors.push(...validationErrors(item, node.items, \`\${path}/\${index}\`)));
+      if (node.contains !== undefined) {
+        const matches = value.filter((item) => validationErrors(item, node.contains, path).length === 0).length;
+        if (matches < (typeof node.minContains === "number" ? node.minContains : 1)) errors.push(\`\${path}: minContains\`);
+      }
+    }
+  }
+  if (type === "object") {
+    const candidate = record(value);
+    if (!candidate) errors.push(\`\${path}: object\`);
+    else {
+      const required = Array.isArray(node.required) ? node.required.filter((item): item is string => typeof item === "string") : [];
+      for (const key of required) if (!Object.hasOwn(candidate, key)) errors.push(\`\${path}/\${key}: required\`);
+      const properties = node.properties === undefined ? {} : schemaRecord(node.properties);
+      if (node.additionalProperties === false) {
+        for (const key of Object.keys(candidate)) if (!Object.hasOwn(properties, key)) errors.push(\`\${path}/\${key}: additional property\`);
+      }
+      for (const [key, propertySchema] of Object.entries(properties)) {
+        if (Object.hasOwn(candidate, key)) errors.push(...validationErrors(candidate[key], propertySchema, \`\${path}/\${key}\`));
+      }
+    }
+  } else if (node.properties !== undefined) {
+    const candidate = record(value);
+    if (candidate) {
+      for (const [key, propertySchema] of Object.entries(schemaRecord(node.properties))) {
+        if (Object.hasOwn(candidate, key)) errors.push(...validationErrors(candidate[key], propertySchema, \`\${path}/\${key}\`));
+      }
+    }
+  }
+  if (Array.isArray(node.allOf)) for (const item of node.allOf) errors.push(...validationErrors(value, item, path));
+  if (node.if !== undefined && validationErrors(value, node.if, path).length === 0 && node.then !== undefined) {
+    errors.push(...validationErrors(value, node.then, path));
+  }
+  return errors;
+}
+
+function pointerValue(value: unknown, pointer: unknown): unknown {
+  if (typeof pointer !== "string" || !pointer.startsWith("/")) throw new Error("invalid semantic-rule pointer");
+  let current: unknown = value;
+  for (const segment of pointer.slice(1).split("/")) {
+    const candidate = record(current);
+    if (!candidate || !Object.hasOwn(candidate, segment)) throw new Error("semantic-rule pointer is missing");
+    current = candidate[segment];
+  }
+  return current;
+}
+
+function semanticErrors(value: unknown): string[] {
+  const errors: string[] = [];
+  for (const rawRule of CORE_DOMAIN_SCHEMA["x-research-observatory-semanticRules"]) {
+    const rule = schemaRecord(rawRule);
+    const left = pointerValue(value, rule.leftPointer);
+    const right = pointerValue(value, rule.rightPointer);
+    let valid = false;
+    if (rule.operator === "instant-not-after" && typeof left === "string" && typeof right === "string") valid = Date.parse(left) <= Date.parse(right);
+    if (rule.operator === "not-equal") valid = !deepEqual(left, right);
+    if (rule.operator === "set-disjoint" && Array.isArray(left) && Array.isArray(right)) {
+      const rightValues = new Set(right.map(stableJson));
+      valid = left.every((item) => !rightValues.has(stableJson(item)));
+    }
+    if (!valid) errors.push(String(rule.ruleId));
+  }
+  return errors;
+}
+
+export function isUuidV7(value: unknown): value is AggregateId {
+  return typeof value === "string" && UUID_V7.test(value);
+}
+
+export function domainContractErrors(value: unknown): readonly string[] {
+  const errors = validationErrors(value, CORE_DOMAIN_SCHEMA, "$");
+  if (errors.length > 0) return errors;
+  try { return semanticErrors(value); } catch { return ["semantic-rule-input-invalid"]; }
+}
+
+export function decodeCoreAggregate(value: unknown): CoreAggregate | null {
+  return domainContractErrors(value).length === 0 ? value as CoreAggregate : null;
+}
+`;
+
+const python = `# Generated by packages/contracts/domain/generate.mjs. Do not edit by hand.
+# Source: packages/contracts/domain/domain-core.schema.json
+# ruff: noqa: E501 - embedded governed JSON Schema values retain exact readable text
+from __future__ import annotations
+
+import json
+import math
+import re
+import secrets
+import time
+from collections.abc import Callable
+from datetime import UTC, datetime
+from typing import Any, Literal, ${needsNotRequired ? "NotRequired, " : ""}TypedDict, cast
+
+${pyDefinitions}
+
+
+CORE_DOMAIN_SCHEMA_SHA256 = "${schemaSha256}"
+_CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""${schemaJson}""")
+_UUID_V7 = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+_UTC = re.compile(r"^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d{1,3}))?Z$")
+
+
+def _record(value: object) -> dict[str, Any] | None:
+    return cast(dict[str, Any], value) if isinstance(value, dict) else None
+
+
+def _deep_equal(left: object, right: object) -> bool:
+    return left == right and type(left) is type(right)
+
+
+def _stable_json(value: object) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def _resolve_reference(reference: object) -> dict[str, Any]:
+    prefix = "#/$defs/"
+    if not isinstance(reference, str) or not reference.startswith(prefix):
+        raise ValueError("unsupported domain schema reference")
+    return cast(dict[str, Any], _CORE_DOMAIN_SCHEMA["$defs"][reference[len(prefix) :]])
+
+
+def _canonical_utc(value: str) -> bool:
+    match = _UTC.fullmatch(value)
+    if match is None:
+        return False
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(UTC)
+    except ValueError:
+        return False
+    expected = f"{match.group(1)}.{(match.group(2) or '').ljust(3, '0')}Z"
+    return parsed.isoformat(timespec="milliseconds").replace("+00:00", "Z") == expected
+
+
+def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[str]:
+    if "$ref" in node:
+        return _validation_errors(value, _resolve_reference(node["$ref"]), path)
+    errors: list[str] = []
+    if "const" in node and not _deep_equal(value, node["const"]):
+        errors.append(f"{path}: const")
+    enum = node.get("enum")
+    if isinstance(enum, list) and not any(_deep_equal(value, item) for item in enum):
+        errors.append(f"{path}: enum")
+    alternatives = node.get("oneOf") if isinstance(node.get("oneOf"), list) else node.get("anyOf")
+    if isinstance(alternatives, list):
+        matches = sum(not _validation_errors(value, cast(dict[str, Any], item), path) for item in alternatives)
+        if ("oneOf" in node and matches != 1) or ("anyOf" in node and matches == 0):
+            errors.append(f"{path}: alternatives")
+    kind = node.get("type")
+    if kind == "null" and value is not None:
+        errors.append(f"{path}: null")
+    if kind == "boolean" and not isinstance(value, bool):
+        errors.append(f"{path}: boolean")
+    if kind == "integer" and (
+        not isinstance(value, int) or isinstance(value, bool) or abs(value) > 9_007_199_254_740_991
+    ):
+        errors.append(f"{path}: safe integer")
+    if kind == "number" and (
+        not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(value)
+    ):
+        errors.append(f"{path}: finite number")
+    if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value):
+        if isinstance(node.get("minimum"), (int, float)) and value < node["minimum"]:
+            errors.append(f"{path}: minimum")
+        if isinstance(node.get("maximum"), (int, float)) and value > node["maximum"]:
+            errors.append(f"{path}: maximum")
+    if kind == "string":
+        if not isinstance(value, str):
+            errors.append(f"{path}: string")
+        else:
+            if isinstance(node.get("minLength"), int) and len(value) < node["minLength"]:
+                errors.append(f"{path}: minLength")
+            if isinstance(node.get("maxLength"), int) and len(value) > node["maxLength"]:
+                errors.append(f"{path}: maxLength")
+            if isinstance(node.get("pattern"), str) and re.search(node["pattern"], value) is None:
+                errors.append(f"{path}: pattern")
+            if node.get("format") == "date-time" and not _canonical_utc(value):
+                errors.append(f"{path}: canonical UTC date-time")
+    if kind == "array":
+        if not isinstance(value, list):
+            errors.append(f"{path}: array")
+        else:
+            if isinstance(node.get("minItems"), int) and len(value) < node["minItems"]:
+                errors.append(f"{path}: minItems")
+            if isinstance(node.get("maxItems"), int) and len(value) > node["maxItems"]:
+                errors.append(f"{path}: maxItems")
+            if node.get("uniqueItems") is True and len({_stable_json(item) for item in value}) != len(value):
+                errors.append(f"{path}: uniqueItems")
+            if isinstance(node.get("items"), dict):
+                for index, item in enumerate(value):
+                    errors.extend(_validation_errors(item, node["items"], f"{path}/{index}"))
+            if isinstance(node.get("contains"), dict):
+                matches = sum(not _validation_errors(item, node["contains"], path) for item in value)
+                minimum = node.get("minContains", 1)
+                if not isinstance(minimum, int) or matches < minimum:
+                    errors.append(f"{path}: minContains")
+    if kind == "object":
+        candidate = _record(value)
+        if candidate is None:
+            errors.append(f"{path}: object")
+        else:
+            required = node.get("required", [])
+            if isinstance(required, list):
+                for key in required:
+                    if isinstance(key, str) and key not in candidate:
+                        errors.append(f"{path}/{key}: required")
+            properties = node.get("properties", {})
+            if not isinstance(properties, dict):
+                raise ValueError("generated domain schema properties are malformed")
+            if node.get("additionalProperties") is False:
+                for key in candidate:
+                    if key not in properties:
+                        errors.append(f"{path}/{key}: additional property")
+            for key, property_schema in properties.items():
+                if key in candidate:
+                    errors.extend(
+                        _validation_errors(candidate[key], cast(dict[str, Any], property_schema), f"{path}/{key}")
+                    )
+    elif isinstance(node.get("properties"), dict):
+        candidate = _record(value)
+        if candidate is not None:
+            for key, property_schema in node["properties"].items():
+                if key in candidate:
+                    errors.extend(
+                        _validation_errors(candidate[key], cast(dict[str, Any], property_schema), f"{path}/{key}")
+                    )
+    if isinstance(node.get("allOf"), list):
+        for item in node["allOf"]:
+            errors.extend(_validation_errors(value, cast(dict[str, Any], item), path))
+    if (
+        isinstance(node.get("if"), dict)
+        and not _validation_errors(value, node["if"], path)
+        and isinstance(node.get("then"), dict)
+    ):
+        errors.extend(_validation_errors(value, node["then"], path))
+    return errors
+
+
+def _pointer_value(value: object, pointer: object) -> object:
+    if not isinstance(pointer, str) or not pointer.startswith("/"):
+        raise ValueError("invalid semantic-rule pointer")
+    current = value
+    for segment in pointer[1:].split("/"):
+        candidate = _record(current)
+        if candidate is None or segment not in candidate:
+            raise ValueError("semantic-rule pointer is missing")
+        current = candidate[segment]
+    return current
+
+
+def _semantic_errors(value: object) -> list[str]:
+    errors: list[str] = []
+    rules = _CORE_DOMAIN_SCHEMA["x-research-observatory-semanticRules"]
+    if not isinstance(rules, list):
+        raise ValueError("semantic rules are malformed")
+    for raw_rule in rules:
+        rule = cast(dict[str, object], raw_rule)
+        left = _pointer_value(value, rule["leftPointer"])
+        right = _pointer_value(value, rule["rightPointer"])
+        valid = False
+        if rule["operator"] == "instant-not-after" and isinstance(left, str) and isinstance(right, str):
+            valid = datetime.fromisoformat(left.replace("Z", "+00:00")) <= datetime.fromisoformat(
+                right.replace("Z", "+00:00")
+            )
+        if rule["operator"] == "not-equal":
+            valid = not _deep_equal(left, right)
+        if rule["operator"] == "set-disjoint" and isinstance(left, list) and isinstance(right, list):
+            right_values = {_stable_json(item) for item in right}
+            valid = all(_stable_json(item) not in right_values for item in left)
+        if not valid:
+            errors.append(str(rule["ruleId"]))
+    return errors
+
+
+def is_uuid_v7(value: object) -> bool:
+    return isinstance(value, str) and _UUID_V7.fullmatch(value) is not None
+
+
+def new_uuid_v7(
+    *,
+    timestamp_ms: int | None = None,
+    random_source: Callable[[int], bytes] = secrets.token_bytes,
+) -> str:
+    """Mint a canonical UUIDv7 at the trusted Core boundary using RFC 9562 layout."""
+
+    instant = time.time_ns() // 1_000_000 if timestamp_ms is None else timestamp_ms
+    if not isinstance(instant, int) or isinstance(instant, bool) or not 0 <= instant < 2**48:
+        raise ValueError("UUIDv7 timestamp must be an unsigned 48-bit Unix millisecond value")
+    random = random_source(10)
+    if not isinstance(random, bytes) or len(random) != 10:
+        raise ValueError("UUIDv7 random source must return exactly 10 bytes")
+    value = bytearray(16)
+    value[0:6] = instant.to_bytes(6, "big")
+    value[6] = 0x70 | (random[0] & 0x0F)
+    value[7] = random[1]
+    value[8] = 0x80 | (random[2] & 0x3F)
+    value[9:16] = random[3:10]
+    hexadecimal = value.hex()
+    return f"{hexadecimal[:8]}-{hexadecimal[8:12]}-{hexadecimal[12:16]}-{hexadecimal[16:20]}-{hexadecimal[20:]}"
+
+
+def domain_contract_errors(value: object) -> tuple[str, ...]:
+    errors = _validation_errors(value, _CORE_DOMAIN_SCHEMA, "$")
+    if errors:
+        return tuple(errors)
+    try:
+        return tuple(_semantic_errors(value))
+    except KeyError, TypeError, ValueError:
+        return ("semantic-rule-input-invalid",)
+
+
+def decode_core_aggregate(value: object) -> CoreAggregate | None:
+    return cast(CoreAggregate, value) if not domain_contract_errors(value) else None
+`;
+
+function update(path, expected, check) {
+  let actual = null;
+  try { actual = readFileSync(path, "utf8"); } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+  }
+  if (actual === expected) return false;
+  if (check) throw new Error(`${path.slice(repo.length + 1)} is stale; run node packages/contracts/domain/generate.mjs`);
+  writeFileSync(path, expected, { encoding: "utf8" });
+  return true;
+}
+
+const check = process.argv.includes("--check");
+const changed = [update(typescriptPath, typescript, check), update(pythonPath, python, check)].some(Boolean);
+console.log(changed ? "Core domain contract: UPDATED" : "Core domain contract: PASS");
