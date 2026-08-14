@@ -195,6 +195,63 @@ def independent_review_hardening_errors(
     return []
 
 
+def additive_preimplementation_quality_scope_errors(repo: Path, commit: str, policy: dict[str, Any]) -> list[str]:
+    """Allow only additive, non-UI Python inventory introduced with its source.
+
+    A quality inventory entry is not a UI gate implementation change when the
+    governed Python file is added in the same commit, lives under services or
+    tests, and the commit precedes every UI implementation commit.  Keep this
+    boundary deliberately narrower than ordinary reviewed gate hardening.
+    """
+
+    paths = commit_paths(repo, commit)
+    if paths & GATE_CONTROL_PATHS != {"quality-scope.json"}:
+        return ["pre-UI quality inventory may change only quality-scope.json among UI gate controls"]
+    if any(is_implementation_path(path, policy) for path in paths):
+        return ["pre-UI quality inventory cannot share a commit with UI implementation"]
+    try:
+        parent = resolve_commit(repo, f"{commit}^")
+        before = json_object(blob(repo, parent, "quality-scope.json"), "parent quality scope")
+        after = json_object(blob(repo, commit, "quality-scope.json"), "quality scope")
+    except (UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        return [f"invalid pre-UI quality inventory: {exc}"]
+    if {key: value for key, value in before.items() if key != "pythonFiles"} != {
+        key: value for key, value in after.items() if key != "pythonFiles"
+    }:
+        return ["pre-UI quality inventory may not change quality-scope metadata or governed roots"]
+    before_files = before.get("pythonFiles")
+    after_files = after.get("pythonFiles")
+    if (
+        not isinstance(before_files, list)
+        or not isinstance(after_files, list)
+        or not all(isinstance(path, str) and path for path in before_files + after_files)
+        or len(before_files) != len(set(before_files))
+        or len(after_files) != len(set(after_files))
+    ):
+        return ["pre-UI quality inventory requires unique non-empty Python file paths"]
+    cursor = 0
+    for path in after_files:
+        if cursor < len(before_files) and path == before_files[cursor]:
+            cursor += 1
+    additions = set(after_files) - set(before_files)
+    if cursor != len(before_files) or not additions or set(before_files) - set(after_files):
+        return ["pre-UI quality inventory must be strictly additive without reordering existing entries"]
+    invalid = sorted(
+        path
+        for path in additions
+        if path not in paths
+        or not path.endswith(".py")
+        or not path.startswith(("services/", "tests/"))
+        or path in GATE_CONTROL_PATHS
+        or is_implementation_path(path, policy)
+    )
+    if invalid:
+        return [
+            "pre-UI quality inventory additions must be same-commit non-UI services/tests Python files: " + invalid[0]
+        ]
+    return []
+
+
 def reviewed_historical_hardening_errors(
     repo: Path, commit: str, head: str, task_id: str, paths: set[str]
 ) -> list[str]:
@@ -292,6 +349,9 @@ def application_activation_errors(
         else []
     )
     activation_positions = [position for position in protected_positions if position not in late_protected]
+    activation_errors: list[str] = []
+    for position in activation_positions:
+        activation_errors.extend(additive_preimplementation_quality_scope_errors(repo, commits[position], policy))
     if late_protected:
         for position in late_protected:
             try:
@@ -352,7 +412,13 @@ def application_activation_errors(
         )
         if invalid_order:
             errors.append("first-application gate activation must be committed before every UI implementation commit")
-    elif not late_protected or len(late_protected) != len(protected_positions) or errors:
+    elif (
+        not late_protected
+        or len(late_protected) + len(activation_positions) != len(protected_positions)
+        or activation_errors
+        or errors
+    ):
+        errors.extend(activation_errors)
         errors.append(
             "UI implementation cannot change its own design-first gate controls without an exact independently "
             "reviewed post-implementation hardening commit"
