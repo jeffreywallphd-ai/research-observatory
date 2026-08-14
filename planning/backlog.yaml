@@ -3368,7 +3368,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-01.S04.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-02.S01.T01
       capability_id: CAP-02
@@ -3586,14 +3586,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:curie
       reviewed_at: '2026-08-14T12:49:23+00:00'
       evidence:
-      - artifacts/evidence/CAP-02.S01.integration.review-fix-3.json
-      notes: Final PASS publication must use a narrow primitive that performs every directory/temp/input guard before atomic
-        replacement and has no potentially rejecting operation after successful replacement; generic build-manifest post-validation
-        remains unchanged.
+      - artifacts/evidence/CAP-02.S01.integration.review-fix-4.json
+      notes: 'Terminal PASS publication remediated at 5dbc6f8: every guard/check precedes held atomic replacement, which is
+        the final potentially rejecting action; generic build-manifest publication remains unchanged.'
   - id: CAP-02.S02
     title: SQLite schema, migrations, and repository layer
     outcome: Canonical local state is transactional, versioned, testable, and insulated from UI or model code.
