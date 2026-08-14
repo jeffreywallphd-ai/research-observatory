@@ -31,6 +31,7 @@
     "tools/plan_review_check.py",
     "tools/plan_review_site.py",
     "tools/planctl.py",
+    "tools/project_lifecycle_performance_check.py",
     "tools/quality_check.py",
     "tools/repository_structure_check.py",
     "tools/runtime_check.py",

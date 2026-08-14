@@ -680,8 +680,8 @@ fn canonical_project_root(value: &str) -> bool {
     absolute && normalized.split('/').all(|part| part != "..")
 }
 
-fn exact_json_strings<'a>(
-    body: &'a str,
+fn exact_json_strings(
+    body: &str,
     expected: &[&str],
 ) -> Option<serde_json::Map<String, serde_json::Value>> {
     if body.is_empty() || body.len() > 16_384 {
