@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d2d692b372315dd86d3d2e158c672b3f4a0c1018335376b60e2ee7a040395af7
+source_sha256: 4032c2d11efb5eabb3527cf7b347c023c2e3989977008ea5a3a9b068b317ba88
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1613,7 +1613,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Projects have explicit identity, version, location, lifecycle state, and safe-open semantics.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -1621,13 +1621,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S01.T01 - Define the local project package and directory layout
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-00.S01.T03`, `CAP-01.S04.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:curie (`changes-requested`)
 
 **Objective:** Documented layout for database, objects, indexes, caches, models, exports, locks, configuration, and temporary work.
 
