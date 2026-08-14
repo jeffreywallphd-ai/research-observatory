@@ -3368,7 +3368,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-01.S04.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-02.S01.T01
       capability_id: CAP-02
@@ -3586,14 +3586,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:curie
       reviewed_at: '2026-08-14T12:43:42+00:00'
       evidence:
-      - artifacts/evidence/CAP-02.S01.integration.review-fix-2.json
-      notes: PASS publication must perform the final committed-input/state assertion immediately before atomic replacement
-        while locks are held, with no rejecting cleanup afterward; evidence scope must include the prior integration review-fix
-        attachment.
+      - artifacts/evidence/CAP-02.S01.integration.review-fix-3.json
+      notes: 'Final-state PASS ordering remediated at a4820ba: the last rejecting committed-input assertion now runs inside
+        the atomic writer immediately before replacement while locks remain held; cleanup afterward cannot reject.'
   - id: CAP-02.S02
     title: SQLite schema, migrations, and repository layer
     outcome: Canonical local state is transactional, versioned, testable, and insulated from UI or model code.

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 74374e80117dc51bf98e401b7c38deda680386297a5bae59eb6912f62d8b4349
+source_sha256: ad57e5c2feb75d7adb0c6b254ea42feeb959a9326f9e49ac81d7143c08ff1760
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1613,7 +1613,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Projects have explicit identity, version, location, lifecycle state, and safe-open semantics.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `CHANGES_REQUESTED`
+**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
