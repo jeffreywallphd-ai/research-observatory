@@ -185,10 +185,7 @@ def qualification_snapshot(repo: Path) -> Iterator[tuple[str, dict[Path, bytes]]
         commit = clean_state_commit(repo)
         captured = {path: governed_snapshot(repo, path) for path in paths}
         assert_committed_inputs(repo, commit, captured)
-        try:
-            yield commit, captured
-        finally:
-            assert_committed_inputs(repo, commit, captured)
+        yield commit, captured
 
 
 def percentile(samples: list[float], probability: float) -> float:
@@ -667,7 +664,13 @@ def run(repo: Path, destination: Path, *, measure_only: bool = False) -> tuple[d
     try:
         with qualification_snapshot(repo) as (state_commit, captured):
             report = _benchmark_under_snapshot(repo, state_commit, captured, measure_only=measure_only)
-            guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+            guarded_atomic_write_json(
+                repo,
+                destination,
+                report,
+                repo / "artifacts" / "tmp",
+                before_replace=lambda: assert_committed_inputs(repo, state_commit, captured),
+            )
     except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
         report = nonqualifying_report(str(exc), measure_only=measure_only)
         try:

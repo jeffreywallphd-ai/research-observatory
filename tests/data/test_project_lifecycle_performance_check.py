@@ -177,7 +177,13 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
         original_writer = benchmark.guarded_atomic_write_json
         calls = 0
 
-        def writer(repo: Path, destination: Path, value: object, scratch: Path) -> None:
+        def writer(
+            repo: Path,
+            destination: Path,
+            value: object,
+            scratch: Path,
+            before_replace: object = None,
+        ) -> None:
             nonlocal calls
             calls += 1
             if calls == 1:
@@ -203,6 +209,47 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
             self.assertEqual("IN_PROGRESS", persisted["qualificationPhase"])
             self.assertNotIn("stale", persisted.values())
 
+    def test_final_state_failure_and_persistent_demotion_leave_tombstone(self) -> None:
+        captured = {
+            benchmark.TOOL_PATH: b"tool",
+            benchmark.IMPLEMENTATION_PATH: b"implementation",
+        }
+        passing = {"ok": True, "qualified": True, "sentinel": "current-pass"}
+        original_writer = benchmark.guarded_atomic_write_json
+        calls = 0
+
+        def writer(
+            repo: Path,
+            destination: Path,
+            value: object,
+            scratch: Path,
+            before_replace: object = None,
+        ) -> None:
+            nonlocal calls
+            calls += 1
+            if calls <= 2:
+                original_writer(repo, destination, value, scratch, before_replace=before_replace)  # type: ignore[arg-type]
+                return
+            raise OSError("persistent demotion failure")
+
+        with tempfile.TemporaryDirectory(dir=REPO / "artifacts" / "tmp") as temporary:
+            destination = Path(temporary) / "performance.json"
+            destination.write_text('{"ok":true,"qualified":true,"sentinel":"stale"}\n', encoding="utf-8")
+            with (
+                patch.object(benchmark, "qualification_snapshot", return_value=nullcontext(("c" * 40, captured))),
+                patch.object(benchmark, "_benchmark_under_snapshot", return_value=passing),
+                patch.object(benchmark, "assert_committed_inputs", side_effect=ValueError("post failure")),
+                patch.object(benchmark, "guarded_atomic_write_json", side_effect=writer),
+            ):
+                report, code = benchmark.run(REPO, destination)
+            self.assertEqual(1, code)
+            self.assertFalse(report["ok"])
+            self.assertEqual(3, calls)
+            persisted = json.loads(destination.read_text(encoding="utf-8"))
+            self.assertFalse(persisted["ok"])
+            self.assertEqual("IN_PROGRESS", persisted["qualificationPhase"])
+            self.assertNotIn("current-pass", persisted.values())
+
     def test_success_replaces_initial_tombstone_with_pass(self) -> None:
         captured = {
             benchmark.TOOL_PATH: b"tool",
@@ -215,6 +262,7 @@ class ProjectLifecyclePerformanceCheckTests(unittest.TestCase):
             with (
                 patch.object(benchmark, "qualification_snapshot", return_value=nullcontext(("c" * 40, captured))),
                 patch.object(benchmark, "_benchmark_under_snapshot", return_value=passing),
+                patch.object(benchmark, "assert_committed_inputs", return_value=None),
             ):
                 report, code = benchmark.run(REPO, destination)
             self.assertEqual(0, code)
