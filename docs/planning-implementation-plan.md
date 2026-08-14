@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 05b6242490bd2d7d077c54de4718d6be4f8d998afbd559653ecde94cf75e5a70
+source_sha256: bee76f5a084f60317064f2f81b1e8bc7c4ab1f152a774145284516afe3e024e2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1683,15 +1683,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S01.T02.submission.json` at `633aaa396548cfa9be8cbfa9e6a26d2e833244ea`
 - `artifacts/evidence/CAP-02.S01.T02.review-fix.json` at `75272b85dbaff88e473b6c924831163297e4c2cc`
 
-#### - [ ] CAP-02.S01.T03 - Add project compatibility and safe-open checks
+#### - [x] CAP-02.S01.T03 - Add project compatibility and safe-open checks
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S01.T02`
 
-**Owner / review:** codex / agent:curie (`changes-requested`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** Project format version, migration requirement, damaged/incomplete indicators, read-only fallback, and repair entry points.
 
