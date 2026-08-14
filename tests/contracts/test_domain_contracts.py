@@ -96,6 +96,65 @@ class CoreDomainContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             new_uuid_v7(timestamp_ms=1, random_source=lambda _size: b"short")
 
+    def test_portable_identifiers_and_text_deny_local_paths_and_trailing_controls(self) -> None:
+        base = fixture("valid-core-aggregate.v1.json")
+        assert isinstance(base, dict)
+        schema = json.loads((CONTRACT_ROOT / "domain-core.schema.json").read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema, format_checker=FormatChecker())
+        for local in (
+            r"C:\private\paper.pdf",
+            r"C:private\paper.pdf",
+            r"\\server\paper.pdf",
+            "/home/private/paper.pdf",
+            "~/private/paper.pdf",
+            "../private/paper.pdf",
+            "file:///private/paper.pdf",
+        ):
+            for field in ("observedValue", "normalizedValue"):
+                value = copy.deepcopy(base)
+                value["externalIdentifiers"][0][field] = local
+                self.assertTrue(list(validator.iter_errors(value)), f"{field}: {local}")
+                self.assertIsNone(decode_core_aggregate(value), f"{field}: {local}")
+        for text in ("word\n", "word\r"):
+            observed = copy.deepcopy(base)
+            observed["displayLabel"]["observed"] = text
+            self.assertTrue(list(validator.iter_errors(observed)))
+            self.assertIsNone(decode_core_aggregate(observed))
+            confidence = copy.deepcopy(base)
+            confidence["confidence"] = {"kind": "quantified", "value": 0.5, "basis": text}
+            self.assertTrue(list(validator.iter_errors(confidence)))
+            self.assertIsNone(decode_core_aggregate(confidence))
+
+        web = copy.deepcopy(base)
+        web["externalIdentifiers"][0] = {
+            "scheme": "url",
+            "observedValue": "HTTPS://example.org/article/7",
+            "normalizedValue": "https://example.org/article/7",
+            "verificationState": "verified",
+            "sourceReference": base["externalIdentifiers"][0]["sourceReference"],
+        }
+        self.assertIsNotNone(decode_core_aggregate(web))
+
+    def test_python_decoder_owns_freezes_and_normalizes_the_revision_snapshot(self) -> None:
+        value = fixture("valid-integral-float-core-aggregate.v1.json")
+        assert isinstance(value, dict)
+        schema = json.loads((CONTRACT_ROOT / "domain-core.schema.json").read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema, format_checker=FormatChecker())
+        self.assertEqual([], list(validator.iter_errors(value)))
+        decoded = decode_core_aggregate(value)
+        assert decoded is not None
+        self.assertIsNot(decoded, value)
+        self.assertIsInstance(decoded["revision"], int)
+        self.assertIsInstance(decoded["sourceReferences"][0]["sourceRevision"], int)
+        before = json.dumps(decoded, sort_keys=True)
+        value["displayLabel"]["observed"] = "mutated after validation"
+        value["sourceReferences"][0]["sourceLabel"] = "mutated source"
+        self.assertEqual(before, json.dumps(decoded, sort_keys=True))
+        with self.assertRaises(TypeError):
+            decoded["displayLabel"]["observed"] = "forbidden"
+        with self.assertRaises(TypeError):
+            decoded["sourceReferences"].clear()
+
 
 if __name__ == "__main__":
     unittest.main()
