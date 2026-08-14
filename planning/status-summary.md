@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: e1b9b58afdf47919a92ebb5bcc9d852417848499a4ac685b18ab6f7741d8a8e2
+source_sha256: c575ebbeff5dfa259acd01252c203e13bf2df990a76796c523862bf3b1fc690a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 286 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 32 |
 | `DEFERRED` | 36 |
 
@@ -117,4 +117,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S01.T02` Implement create, open, close, archive, and delete workflows | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S01.T02` Implement create, open, close, archive, and delete workflows | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
