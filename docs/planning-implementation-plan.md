@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 36322447ff7d9986d41f2a1562675ba47b243363e193f6dc0548cadc39e267fe
+source_sha256: 761240bd6b0b9ee3f92a5b63fd7bc2c416664aec1ecc6922d6f92b386c214346
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1619,15 +1619,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-00.S01.T03`, `CAP-01.S04.T02`
 
-#### - [ ] CAP-02.S01.T01 - Define the local project package and directory layout
+#### - [x] CAP-02.S01.T01 - Define the local project package and directory layout
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-00.S01.T03`, `CAP-01.S04.T02`
 
-**Owner / review:** codex / agent:curie (`changes-requested`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** Documented layout for database, objects, indexes, caches, models, exports, locks, configuration, and temporary work.
 
@@ -1653,7 +1653,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S01.T02 - Implement create, open, close, archive, and delete workflows
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 

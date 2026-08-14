@@ -3396,12 +3396,12 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T01:36:30+00:00'
-      updated_at: '2026-08-14T02:10:54+00:00'
-      completed_at: null
+      updated_at: '2026-08-14T02:12:59+00:00'
+      completed_at: '2026-08-14T02:12:59+00:00'
       blocker: null
       implementation_notes: 'Focused contract, schema, relocation, export-denial, ADR, architecture, build-inventory, and
         planning checks passed; full data profile deferred to completed-slice review under the risk-based test policy.
@@ -3429,16 +3429,13 @@ capabilities:
         recorded_at: '2026-08-14T02:09:57+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-14T02:06:58+00:00'
-        notes: 'Portable semantic-version numeric-domain blocker: combined schema plus Python semantic rules accept unsafe-integer
-          SemVer operands such as 9007199254740992.0.0 while the strict TypeScript decoder rejects them. Bind one exact safe-integer
-          component domain across schema, rule contract, and all evaluators and add a parity regression.'
+        result: approved
+        reviewed_at: '2026-08-14T02:12:59+00:00'
+        notes: 'Final focused re-review approved: unsafe semantic-version components reject consistently in portable and TypeScript
+          paths; canonical and maximum-safe ascending ranges pass; reversed ranges reject; evidence, exact scope, ancestry,
+          focused tests, ADR, taskctl, views, and cleanliness pass.'
       base_sha: 901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-14T02:06:58+00:00'
-        expires_at: '2026-08-14T10:06:58+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
@@ -3469,11 +3466,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile desktop
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-14T02:12:59+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
