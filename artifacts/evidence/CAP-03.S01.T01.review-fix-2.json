@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S01.T01",
+  "commit": "300a1a42e2697bcfc4ebf443e94b26bb8735abf8",
+  "baseCommit": "787e5014de1d09a5dc0f678b6a26beab9a570298",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-03.S01.T01.review-fix.json",
+    "sha256": "9fc32010fb10697f7320b71488bf70f6b0072d0b6a2ebc1c113ab3cf73eafd01",
+    "reason": "The first remediation closed the original attacks, but focused re-review found bare relative separator forms, Python mutable-base bypasses, and a TypeScript __proto__ snapshot-copy bypass. This record preserves both prior manifests and binds the second focused remediation."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-03.S01.T01.review-fix.json",
+    "docs/architecture/domain-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/domain/domain-core.schema.json",
+    "packages/contracts/domain/domain.test.ts",
+    "packages/contracts/domain/generate.mjs",
+    "packages/contracts/domain/generated.ts",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/domain_contracts.py",
+    "tests/contracts/test_domain_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate.mjs --check; $env:PATH = (Resolve-Path .local\\toolchains\\node-v24.19.0-win-x64).Path + ';' + $env:PATH; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts verify",
+      "exitCode": 0,
+      "result": "Deterministic generation, strict TypeScript typecheck, and all 20 contract tests across three files pass. Bare relative separators reject, known DOI/HTTP/Handle controls accept, and serialized __proto__ remains an own unknown key that rejects without prototype injection."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.contracts.test_domain_contracts tests.foundation.test_adr_check tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "All 55 focused contract/foundation tests pass. Draft and generated Python reject both relative separator forms in observed/normalized fields; the immutable Mapping/tuple snapshot rejects ordinary assignment plus dict.__setitem__ and list.append base-method attacks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 16 focused Core API tests pass with the new truthful read-only Python decoder return type and canonical snapshot serializer."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T01-review-fix-2-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff lint, and mypy pass for all 83 governed Python files. Report SHA-256: 66d2d9d2ea73427f656186ebca993bdb9232306b1647ce34c3608824c76b16b6."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base ce0e2060ebc36eb02d5c25bf72ecbcf0a826ad25 --head 300a1a42e2697bcfc4ebf443e94b26bb8735abf8; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "ADR-0013 covers all 34 protected base-to-remediation paths and architecture passes. The domain-contract guide now states the scheme-aware separator and immutable Python serialization boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T01-review-fix-2-build.json; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "Clean deterministic build identity 0.1.0+g300a1a4 passes; build-manifest SHA-256 is c0980ee70208627184d9592cb3ff2fbd4c489f8bc5838c751597c7cee00c1205. Planning and generated views validate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "External identifiers are now selected through a scheme-aware union: separator-free portable text for ordinary schemes, recognized DOI/arXiv/Handle forms for scholarly separators, and HTTP(S) for URL identifiers. Bare forward- or backslash-relative path strings reject in both fields and runtimes.",
+        "Python decoders now return a truthful read-only Mapping/tuple graph rather than mutable subclasses, with canonical serialization through core_aggregate_snapshot_json; mutable base-class descriptors cannot apply.",
+        "TypeScript copies records into null-prototype containers, preserving every own JSON key through validation and preventing __proto__ assignment from changing the decoded prototype."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Cross-runtime/Draft tests cover private/paper.pdf and private\\paper.pdf in observed and normalized fields, valid DOI/HTTP/Handle controls, dict.__setitem__, list.append, and an own serialized __proto__ object.",
+        "All original path/control/integer/caller-alias attacks remain covered and passing."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The second remediation changes only the portable schema/generator/generated artifacts, focused regressions, and truthful architecture documentation. Persistence, lifecycle, UI, dependencies, migrations, and T02/T03 ownership are unchanged."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The remaining defects were isolated to separator classification and runtime snapshot representation. Focused schema/decoder, generated type, service import, quality, ADR, architecture, and build-inventory checks cover their credible impact.",
+    "deferred": "Full foundation/service profiles and cross-task lifecycle, restart, migration, and end-to-end qualification remain deferred to CAP-03.S01 slice review."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Re-review only the three second-review findings, exact 11-file 787e501..300a1a4 range, supersession chain, and focused checks. Do not run broad profiles."
+  }
+}
