@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-03.S01.T01",
+  "commit": "a1fe663ff53311200fa7fe30a5979694a0386119",
+  "baseCommit": "ce0e2060ebc36eb02d5c25bf72ecbcf0a826ad25",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    ".gitattributes",
+    "docs/adr/ADR-0013-adopt-uuidv7-aggregate-identities-and-schema-generated-domain-contracts.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/domain-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/domain/domain-core.schema.json",
+    "packages/contracts/domain/domain.test.ts",
+    "packages/contracts/domain/fixtures/disputed-core-aggregate.v1.json",
+    "packages/contracts/domain/fixtures/invalid-disputed-without-alternative.json",
+    "packages/contracts/domain/fixtures/invalid-path-bearing-source-reference.json",
+    "packages/contracts/domain/fixtures/invalid-uuidv4-aggregate.json",
+    "packages/contracts/domain/fixtures/valid-core-aggregate.v1.json",
+    "packages/contracts/domain/generate.mjs",
+    "packages/contracts/domain/generated.ts",
+    "packages/contracts/package.json",
+    "packages/contracts/tsconfig.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-02/CAP-02.S01.html",
+    "planning/review-site/CAP-02/index.html",
+    "planning/review-site/CAP-03/CAP-03.S01.html",
+    "planning/review-site/CAP-03/index.html",
+    "planning/review-site/index.html",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/domain_contracts.py",
+    "tests/contracts/test_domain_contracts.py",
+    "tests/foundation/test_adr_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe packages/contracts/domain/generate.mjs --check; $env:PATH = (Resolve-Path .local\\toolchains\\node-v24.19.0-win-x64).Path + ';' + $env:PATH; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts verify",
+      "exitCode": 0,
+      "result": "Deterministic generation is current; strict TypeScript typecheck and all 16 contract tests across three files pass. The expected and disputed fixtures retain exact wording and alternatives, while UUIDv4, path-bearing, missing-dispute, unknown-field, timestamp-order, identical-revision, and contradictory-rights attacks fail closed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.contracts.test_domain_contracts tests.foundation.test_adr_check tests.foundation.test_build_manifest tests.foundation.test_quality_check tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "All 53 focused contract/foundation tests pass. Draft 2020-12 and generated Python accept both current fixtures, reject the hostile matrix, bind exact schema bytes, and reproduce the RFC 9562 UUIDv7 vector. ADR, schema inventory, quality inventory, and future cumulative UI-gate protections pass."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 16 focused Core API tests pass, proving the generated dependency-neutral Python module does not change or break the current service boundary."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-03.S01.T01-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff lint, and mypy pass for all 83 governed Python files. Report SHA-256: 6a0406b38abfe1c73410ba69482d63cfc3ed10da1125f256131b8a133406c190."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base ce0e2060ebc36eb02d5c25bf72ecbcf0a826ad25 --head HEAD; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "ADR-0013 covers every protected portable-contract change across the exact 31-file base-to-implementation scope; the repository architecture contract passes with no new product dependency."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-03.S01.T01-build.json",
+      "exitCode": 0,
+      "result": "The clean deterministic build manifest passes as 0.1.0+ga1fe663 with dirty=false and exact inclusion of domain-core.schema.json. Report SHA-256: 1b6df501f8f74f12958e5ae52dc589f5460f7dfd7711ddfa44f35245bafccf90."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The exact Draft 2020-12 schema SHA-256 is 0c1f7b5522949f35cc23deddab129fcd924cbe7c5b4294beda757137110569e4 and deterministically generates strict TypeScript (36ce2e4516ba28e4c809387b335bf9b126bb3f8f5677ad2936b6f92e612c6893) and Python (2818dbfc8f65f4e49ea0ccdd93b3808d3c7a896955db4cc5aa4eab6759505ed3) contracts.",
+        "The disputed fixture preserves the exact observed phrase plus both independently sourced alternative phrases and dispositions; expected and disputed fixtures decode identically in Python and TypeScript.",
+        "The schema distinguishes observed, extracted, inferred, verified, disputed, adjudicated, stale, unknown, not-reported, not-applicable, ambiguous, and unavailable states, with separate confidence and fail-closed rights variants."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The expected fixtures pass both language decoders and Draft 2020-12 validation; the hostile fixtures and in-memory semantic attacks cover UUID version/variant/case, filesystem-path anchors, missing disputed alternatives, unknown fields, timestamp reversal, duplicate revision identity, and overlapping allow/deny rights.",
+        "The Core-only generator reproduces RFC 9562 Appendix A.6 from fixed timestamp and entropy and rejects invalid timestamp or entropy boundaries."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0013 and domain-contracts.md document identity, revision, source, status, confidence, rights, minting authority, schema generation, security limits, and the explicit ADR-0012 UUIDv4 project-manifest bridge.",
+        "No persistence, lifecycle, UI, migration, or audit behavior is introduced prematurely: T02 retains lifecycle ownership and T03 retains compatibility/migration ownership. The package export, schema inventory, Python quality inventory, and LF generated-artifact rule are the only integration changes."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk task changes a protected cross-language contract and generator but adds no persistence, API route, UI, dependency, or destructive behavior. Focused schema/decoder/generator, service-import, ADR, architecture, quality, build-inventory, and future UI-gate checks cover the credible task-level failure surface.",
+    "deferred": "Complete foundation/service profiles and cross-task lifecycle, restart, migration, and end-to-end qualification are deferred to CAP-03.S01 slice review, where T02 state machines and T03 compatibility policy are present."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Review exact schema/generated-language parity, UUIDv7 representation and Core-only minting, observed/disputed preservation, rights and path denial, ADR-0012 bridge scope, deterministic generation, and exact 31-file base-to-candidate provenance. Do not run broad profiles at task scope."
+  }
+}
