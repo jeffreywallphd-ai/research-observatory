@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S01.T01",
+  "commit": "23580f1c40c8211062455bfacf07c88cdbb41e1d",
+  "baseCommit": "eb290dbef9f870243e7c8909491cd1ebbe16b1c8",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S01.T01.json",
+    "reason": "Independent review found that schema-only readers accepted four manifests rejected by the strict TypeScript decoder. This remediation adds schema-expressible UTC and safe-integer limits, binds the remaining cross-field invariants to an exact language-neutral semantic-rule document, and directly replays all four parity attacks."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S01.T01.json",
+    "docs/adr/ADR-0012-use-relocatable-versioned-local-project-packages.md",
+    "docs/architecture/project-package.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/project/README.md",
+    "packages/contracts/project/index.ts",
+    "packages/contracts/project/project-manifest-semantic-rules.schema.json",
+    "packages/contracts/project/project-manifest.schema.json",
+    "packages/contracts/project/project-manifest.semantic-rules.json",
+    "packages/contracts/project/project.test.ts",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "tests/contracts/test_foundation_contracts.py"
+  ],
+  "checks": [
+    {
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages\\contracts typecheck; .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages\\contracts test",
+      "exitCode": 0,
+      "result": "The contracts package typechecks and both Vitest files pass 11 tests. The strict decoder still rejects reversed compatibility, modified-before-created, RFC3339 offset timestamps, and projectRevision 9007199254740992. A new regression binds the exact frozen TypeScript rule table to project-manifest.semantic-rules.json."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.contracts.test_foundation_contracts; .venv\\Scripts\\ruff.exe check tests/contracts/test_foundation_contracts.py; .venv\\Scripts\\ruff.exe format --check tests/contracts/test_foundation_contracts.py",
+      "exitCode": 0,
+      "result": "All three focused Python contract tests and both Ruff checks pass. The Draft 2020-12 path directly rejects offset timestamps and unsafe integers; the schema-bound portable semantic evaluator rejects reversed compatibility and modified-before-created. Combined validation rejects all four original reviewer attacks while accepting the canonical fixture."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\adr_check.py --repo . --base d4cd504 --head 23580f1; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S01.T01-review-fix-clean-build-manifest.json",
+      "exitCode": 0,
+      "result": "ADR validation passes for the exact ten-file remediation range. The clean build manifest passes as 0.1.0+g23580f1 and exactly inventories the added semantic-rules schema; report SHA-256 is 8ac076a89bc6a5f155bfe9f88d18f656709afd80d7f08314543946c3ec520676."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The original ten-class layout, relative-path rules, and exact portable inventory are unchanged. The remediation affects only manifest validation parity and its governed documentation."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused suite now contains an exact machine regression for every independently reproduced false green. UTC syntax and JavaScript-safe revision limits are schema-enforced; the two cross-field comparisons remain meaningful and are enforced by both TypeScript and the portable semantic-rule consumer.",
+        "The semantic rules document SHA-256 is d3f040883f9c8798c152a48a1733cb05f9f5832215265742980c4c73061449da and its exact schema SHA-256 is 48763fc485b460349d5c88e80987abc12c3a84aa021ca9c7acefd29e2135617e."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Architecture documentation and ADR-0012 now define successful validation as Draft 2020-12 plus its exact bound semantic-rule document; schema-only acceptance is explicitly a contract violation.",
+        "The original evidence remains immutable at SHA-256 974cbb761cd3aef32bf300b2adf7998c3a4516c9c3fc87929107ced67840cda1 and is superseded rather than rewritten. No lifecycle, persistence, migration, UI, dependency, or platform behavior changed, so the broader data profile remains deferred to slice review."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Independent remediation review should replay all four original schema/decoder attacks against the exact combined validation contract, verify semantic-rule/schema/TypeScript byte-semantic equivalence and build inventory, and confirm the ten-file remediation scope plus immutable supersession. No full profile is requested."
+  }
+}
