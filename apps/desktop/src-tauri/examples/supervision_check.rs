@@ -387,6 +387,7 @@ fn main() {
                         "operations.cancel",
                         "operations.events",
                         "operations.read",
+                        "projects.lifecycle",
                         "runtime.contract",
                         "runtime.status"
                     ]),

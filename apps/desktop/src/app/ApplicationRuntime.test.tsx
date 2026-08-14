@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { ApplicationRuntime, nextTheme, SHORTCUTS, storedTheme } from "./ApplicationRuntime";
 
 describe("functional desktop application", () => {
-  it("renders only implemented CAP-01 shell behavior with complete accessibility landmarks", () => {
+  it("renders implemented shell behavior and only functional workspace navigation", () => {
     const html = renderToStaticMarkup(<ApplicationRuntime />);
 
     expect(html).toContain('class="skip-link"');
@@ -23,7 +23,9 @@ describe("functional desktop application", () => {
     expect(html).not.toContain("does not yet package");
     expect(html).toContain("Copy diagnostic reference");
     expect(html).toContain("Only implemented capabilities appear here.");
+    expect(html).toContain("Local projects");
     expect(html).toContain("Diagnostics &amp; support");
+    expect(html).toContain("Open local projects");
     expect(html).toContain("Open diagnostics &amp; support");
     expect(html).not.toContain("prototype-index.html");
     expect(html).not.toContain("data-workflow-select");

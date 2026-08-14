@@ -197,7 +197,7 @@ def product_build_errors(repo: Path) -> list[str]:
         "schemaVersion": "1.0",
         "documentType": "desktop-product-build-manifest",
         "buildRole": "tauri-frontend",
-        "implementedCapabilities": ["CAP-01"],
+        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T02"],
         "routes": ["index.html"],
         "referenceUse": "design-contract-only",
     }
@@ -831,7 +831,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         errors.append("desktop production runtime retains an unresolved Node environment expression")
     details: dict[str, Any] = {
         "pages": 0,
-        "implementedCapabilities": ["CAP-01"],
+        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T02"],
         "referenceOnlyPages": 0,
         "commandFocus": False,
         "skipLink": False,
@@ -851,6 +851,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsPreview": False,
         "diagnosticsTraceLink": False,
         "diagnosticsExactExport": False,
+        "projectsWorkflow": False,
         "responsiveCases": 0,
         "criticalViolations": [],
         "requests": [],
@@ -923,6 +924,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             details["skipLink"] = details["skipLink"] and page.evaluate("document.activeElement?.id === 'main-content'")
 
             page.keyboard.press("Control+K")
+            page.wait_for_function("document.activeElement?.id === 'shell-command'", timeout=5_000)
             details["commandFocus"] = page.evaluate("document.activeElement?.id === 'shell-command'")
             details["focusVisible"] = page.evaluate(
                 "parseFloat(getComputedStyle(document.activeElement).outlineWidth) >= 2"
@@ -966,6 +968,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 "document.activeElement?.id === 'shell-command'"
             )
             page.keyboard.press("Alt+H")
+            page.wait_for_function("document.activeElement?.id === 'main-content'", timeout=5_000)
             details["homeShortcut"] = page.evaluate("document.activeElement?.id === 'main-content'")
 
             theme_toggle = page.locator("[data-theme-toggle]")
@@ -1128,6 +1131,99 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 errors.append(f"desktop diagnostics runtime error: {'; '.join(diagnostics_errors)}")
             diagnostics.close()
 
+            projects = browser_context.new_page()
+            project_errors: list[str] = []
+            projects.on("pageerror", page_error_collector(project_errors))
+            projects.add_init_script(
+                r"""(() => {
+                  const traceId = '0123456789abcdef0123456789abcdef';
+                  const projectId = '11111111-1111-4111-8111-111111111111';
+                  let revision = 0;
+                  let state = 'active';
+                  let open = false;
+                  window.__PROJECT_CALLS__ = [];
+                  const projection = () => ({
+                    schemaVersion: '1.0', projectId, displayName: 'Study One', templateId: 'theory-synthesis',
+                    lifecycleState: state, root: 'C:/Research/study-one', open, revision,
+                    deleteConfirmation: `delete:${projectId}`
+                  });
+                  window.__TAURI_INTERNALS__ = {
+                    invoke: async (command, args) => {
+                      if (command === 'core_runtime_start' || command === 'core_runtime_status') {
+                        return {state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null};
+                      }
+                      if (command === 'core_runtime_stop') return undefined;
+                      if (command !== 'core_api_request') throw new Error('unsupported test command');
+                      const request = args?.request;
+                      window.__PROJECT_CALLS__.push(request);
+                      if (request?.method !== 'POST' || request?.ifMatch !== null || request?.idempotencyKey !== null) {
+                        throw new Error('invalid project request envelope');
+                      }
+                      const body = JSON.parse(request.body);
+                      if (request.path === '/projects') {
+                        if (body.parentDirectory !== 'C:/Research' || body.directoryName !== 'study-one'
+                          || body.displayName !== 'Study One' || body.templateId !== 'theory-synthesis') {
+                          throw new Error('invalid create body');
+                        }
+                      } else if (request.path === '/projects/open') {
+                        if (body.root !== 'C:/Research/study-one') throw new Error('invalid open root');
+                        open = true;
+                      } else if (request.path === '/projects/close') {
+                        open = false;
+                      } else if (request.path === '/projects/archive') {
+                        state = 'archived'; revision += 1;
+                      } else if (request.path === '/projects/restore') {
+                        state = 'active'; revision += 1;
+                      } else if (request.path === '/projects/delete') {
+                        if (body.confirmation !== `delete:${projectId}`) throw new Error('invalid confirmation');
+                        state = 'trash'; revision += 1;
+                      } else {
+                        throw new Error('unsupported project path');
+                      }
+                      return {
+                        status: 200, contentType: 'application/json', traceId, etag: null,
+                        body: JSON.stringify(projection())
+                      };
+                    }
+                  };
+                })()"""
+            )
+            projects.goto("http://tauri.localhost/index.html", wait_until="load")
+            projects.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+            projects.get_by_role("button", name="Local projects", exact=True).click()
+            projects.locator("#project-parent-directory").fill("C:/Research")
+            projects.locator("#project-directory-name").fill("study-one")
+            projects.locator("#project-display-name").fill("Study One")
+            projects.get_by_role("button", name="Create project", exact=True).click()
+            projects.locator("[data-current-project]").wait_for(state="visible", timeout=5_000)
+            current = projects.locator("[data-current-project]")
+            current.get_by_role("button", name="Open project", exact=True).click()
+            current.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
+            current.get_by_role("button", name="Close project", exact=True).click()
+            current.get_by_text("Closed", exact=True).wait_for(timeout=5_000)
+            current.get_by_role("button", name="Archive project", exact=True).click()
+            current.get_by_role("button", name="Restore project", exact=True).wait_for(timeout=5_000)
+            current.get_by_role("button", name="Restore project", exact=True).click()
+            confirmation = "delete:11111111-1111-4111-8111-111111111111"
+            current.locator("#project-delete-confirmation").fill(confirmation)
+            current.get_by_role("button", name="Move to recoverable trash", exact=True).click()
+            current.get_by_text("trash", exact=True).wait_for(timeout=5_000)
+            project_sequence_valid = projects.evaluate(
+                """() => JSON.stringify(window.__PROJECT_CALLS__.map((request) => request.path))
+                  === JSON.stringify(['/projects','/projects/open','/projects/close','/projects/archive',
+                    '/projects/restore','/projects/delete'])
+                  && document.querySelector('[data-current-project]')?.textContent?.includes('Revision 3')
+                  && !document.querySelector('[data-workflow-select], [data-workflow-nav], [data-all-tools]')"""
+            )
+            projects.keyboard.press("Control+K")
+            projects.wait_for_function("document.activeElement?.id === 'shell-command'", timeout=5_000)
+            details["projectsWorkflow"] = project_sequence_valid and projects.evaluate(
+                "document.activeElement?.id === 'shell-command'"
+            )
+            if project_errors:
+                errors.append(f"desktop projects runtime error: {'; '.join(project_errors)}")
+            projects.close()
+
             for width, height in ((1280, 720), (720, 450)):
                 responsive = browser_context.new_page()
                 responsive.set_viewport_size({"width": width, "height": height})
@@ -1168,6 +1264,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsPreview",
         "diagnosticsTraceLink",
         "diagnosticsExactExport",
+        "projectsWorkflow",
     ):
         if details[field] is not True:
             errors.append(f"desktop product did not verify {field}")

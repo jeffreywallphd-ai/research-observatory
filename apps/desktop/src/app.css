@@ -28,6 +28,16 @@ main { min-width: 0; width: min(100%, 80rem); padding: var(--space-7); }
 .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); gap: var(--space-4); }
 .status-grid .ro-panel { display: grid; align-content: start; gap: var(--space-3); }
 .status-grid [data-local-service-boundary] { min-width: 0; }
+.projects-workspace { display: grid; gap: var(--space-5); }
+.project-workflow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr)); gap: var(--space-4); }
+.project-workflow-grid .ro-panel, .current-project { display: grid; align-content: start; gap: var(--space-4); }
+.project-form { display: grid; gap: var(--space-4); }
+.field-note { margin: 0; color: var(--text-muted); font-size: var(--text-sm); }
+.project-status-row, .project-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.project-status-row { color: var(--text-muted); }
+.current-project code { overflow-wrap: anywhere; }
+.project-delete-boundary { display: grid; gap: var(--space-3); margin-block-start: var(--space-2); padding: var(--space-4); border: 1px solid var(--danger-border); border-radius: var(--radius-sm); }
+.project-delete-boundary p { margin: 0; }
 .diagnostics-workspace { display: grid; gap: var(--space-5); }
 .diagnostics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: var(--space-4); }
 .diagnostics-grid .ro-panel { display: grid; align-content: start; gap: var(--space-3); }

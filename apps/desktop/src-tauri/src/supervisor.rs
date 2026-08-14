@@ -662,8 +662,111 @@ fn canonical_unsigned(value: &str, minimum: u64, maximum: u64) -> bool {
             .is_ok_and(|number| (minimum..=maximum).contains(&number))
 }
 
+fn bounded_project_text(value: &str, minimum: usize, maximum: usize) -> bool {
+    (minimum..=maximum).contains(&value.len())
+        && !value.chars().any(|character| character.is_control())
+}
+
+fn canonical_project_root(value: &str) -> bool {
+    if !bounded_project_text(value, 1, 4096) {
+        return false;
+    }
+    let normalized = value.replace('\\', "/");
+    let absolute = normalized.starts_with('/')
+        || (normalized.len() >= 3
+            && normalized.as_bytes()[0].is_ascii_alphabetic()
+            && normalized.as_bytes()[1] == b':'
+            && normalized.as_bytes()[2] == b'/');
+    absolute && normalized.split('/').all(|part| part != "..")
+}
+
+fn exact_json_strings<'a>(
+    body: &'a str,
+    expected: &[&str],
+) -> Option<serde_json::Map<String, serde_json::Value>> {
+    if body.is_empty() || body.len() > 16_384 {
+        return None;
+    }
+    let value = serde_json::from_str::<serde_json::Value>(body).ok()?;
+    let object = value.as_object()?;
+    if object.len() != expected.len()
+        || !expected
+            .iter()
+            .all(|key| object.get(*key).is_some_and(serde_json::Value::is_string))
+    {
+        return None;
+    }
+    Some(object.clone())
+}
+
+fn validate_project_api_request(path: &str, body: &str) -> bool {
+    if path == "/projects" {
+        let Some(value) = exact_json_strings(
+            body,
+            &[
+                "parentDirectory",
+                "directoryName",
+                "displayName",
+                "templateId",
+            ],
+        ) else {
+            return false;
+        };
+        let parent = value["parentDirectory"].as_str().unwrap_or_default();
+        let directory = value["directoryName"].as_str().unwrap_or_default();
+        let display = value["displayName"].as_str().unwrap_or_default();
+        let template = value["templateId"].as_str().unwrap_or_default();
+        return canonical_project_root(parent)
+            && (1..=64).contains(&directory.len())
+            && directory
+                .bytes()
+                .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
+            && directory
+                .bytes()
+                .next()
+                .is_some_and(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit())
+            && directory
+                .bytes()
+                .last()
+                .is_some_and(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit())
+            && bounded_project_text(display, 1, 120)
+            && (1..=120).contains(&template.len())
+            && template.bytes().all(|byte| {
+                byte.is_ascii_lowercase() || byte.is_ascii_digit() || b".-".contains(&byte)
+            })
+            && template
+                .bytes()
+                .next()
+                .is_some_and(|byte| byte.is_ascii_lowercase());
+    }
+    if matches!(
+        path,
+        "/projects/open" | "/projects/close" | "/projects/archive" | "/projects/restore"
+    ) {
+        return exact_json_strings(body, &["root"])
+            .and_then(|value| value["root"].as_str().map(canonical_project_root))
+            .unwrap_or(false);
+    }
+    if path == "/projects/delete" {
+        let Some(value) = exact_json_strings(body, &["root", "confirmation"]) else {
+            return false;
+        };
+        let confirmation = value["confirmation"].as_str().unwrap_or_default();
+        return canonical_project_root(value["root"].as_str().unwrap_or_default())
+            && confirmation
+                .strip_prefix("delete:")
+                .is_some_and(|identity| {
+                    identity.len() == 36
+                        && identity
+                            .bytes()
+                            .all(|byte| byte.is_ascii_hexdigit() || byte == b'-')
+                });
+    }
+    false
+}
+
 fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
-    if request.body.is_some() || request.path.len() > 2048 || !request.path.is_ascii() {
+    if request.path.len() > 2048 || !request.path.is_ascii() {
         return Err("RO-CORE-API-REQUEST-INVALID");
     }
     if request
@@ -674,14 +777,18 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
         return Err("RO-CORE-API-REQUEST-INVALID");
     }
     if request.method == "GET" && matches!(request.path.as_str(), "/runtime/version" | "/healthz") {
-        return if request.if_match.is_none() && request.idempotency_key.is_none() {
+        return if request.body.is_none()
+            && request.if_match.is_none()
+            && request.idempotency_key.is_none()
+        {
             Ok(())
         } else {
             Err("RO-CORE-API-REQUEST-INVALID")
         };
     }
     if request.method == "GET" {
-        if request.if_match.is_some() || request.idempotency_key.is_some() {
+        if request.body.is_some() || request.if_match.is_some() || request.idempotency_key.is_some()
+        {
             return Err("RO-CORE-API-REQUEST-INVALID");
         }
         if let Some(query) = request.path.strip_prefix("/runtime/operations?limit=") {
@@ -706,6 +813,16 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
         }
     }
     if request.method == "POST"
+        && request.if_match.is_none()
+        && request.idempotency_key.is_none()
+        && request
+            .body
+            .as_deref()
+            .is_some_and(|body| validate_project_api_request(&request.path, body))
+    {
+        return Ok(());
+    }
+    if request.method == "POST"
         && request
             .path
             .strip_prefix("/runtime/operations/")
@@ -721,6 +838,7 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
                     .bytes()
                     .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
         })
+        && request.body.is_none()
     {
         return Ok(());
     }
@@ -779,7 +897,23 @@ fn authenticated_api_request(
         wire.extend_from_slice(b"\r\nIdempotency-Key: ");
         wire.extend_from_slice(idempotency_key.as_bytes());
     }
-    wire.extend_from_slice(b"\r\nAccept: application/json, text/event-stream\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+    wire.extend_from_slice(b"\r\nAccept: application/json, text/event-stream");
+    if api_request.body.is_some() {
+        wire.extend_from_slice(b"\r\nContent-Type: application/json");
+    }
+    wire.extend_from_slice(b"\r\nContent-Length: ");
+    wire.extend_from_slice(
+        api_request
+            .body
+            .as_ref()
+            .map_or(0, String::len)
+            .to_string()
+            .as_bytes(),
+    );
+    wire.extend_from_slice(b"\r\nConnection: close\r\n\r\n");
+    if let Some(body) = &api_request.body {
+        wire.extend_from_slice(body.as_bytes());
+    }
     let written = stream.write_all(&wire).and_then(|_| stream.flush()).is_ok();
     zeroize_bytes(&mut wire);
     zeroize_bytes(&mut trace);
@@ -948,6 +1082,7 @@ fn validate_handshake(
                 "operations.cancel",
                 "operations.events",
                 "operations.read",
+                "projects.lifecycle",
                 "runtime.contract",
                 "runtime.status",
             ]
@@ -1149,6 +1284,7 @@ fn readiness_is_compatible(response: &[u8]) -> bool {
                 "operations.cancel",
                 "operations.events",
                 "operations.read",
+                "projects.lifecycle",
                 "runtime.contract",
                 "runtime.status",
             ]
@@ -1383,7 +1519,7 @@ mod tests {
                 "{{\"protocolVersion\":\"1.0\",\"buildId\":\"0.1.0\",\"pid\":{},",
                 "\"host\":\"127.0.0.1\",\"port\":49152,",
                 "\"nonce\":\"0123456789abcdef0123456789abcdef\",",
-                "\"capabilities\":[\"operations.cancel\",\"operations.events\",\"operations.read\",\"runtime.contract\",\"runtime.status\"],",
+                "\"capabilities\":[\"operations.cancel\",\"operations.events\",\"operations.read\",\"projects.lifecycle\",\"runtime.contract\",\"runtime.status\"],",
                 "\"databaseCompatibility\":{{\"minimum\":\"0.1.0\",",
                 "\"maximumExclusive\":\"0.2.0\"}},",
                 "\"diagnosticCode\":\"RO-CORE-STARTING\"}}\n"
@@ -1448,6 +1584,57 @@ mod tests {
                 })
                 .is_ok(),
                 "{method} {path}",
+            );
+        }
+        for (path, body) in [
+            (
+                "/projects",
+                r#"{"parentDirectory":"C:/Research","directoryName":"study-one","displayName":"Study One","templateId":"theory-synthesis"}"#,
+            ),
+            ("/projects/open", r#"{"root":"C:/Research/study-one"}"#),
+            ("/projects/close", r#"{"root":"C:/Research/study-one"}"#),
+            ("/projects/archive", r#"{"root":"C:/Research/study-one"}"#),
+            ("/projects/restore", r#"{"root":"C:/Research/study-one"}"#),
+            (
+                "/projects/delete",
+                r#"{"root":"C:/Research/study-one","confirmation":"delete:11111111-1111-4111-8111-111111111111"}"#,
+            ),
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: "POST".to_owned(),
+                    path: path.to_owned(),
+                    body: Some(body.to_owned()),
+                    if_match: None,
+                    idempotency_key: None,
+                })
+                .is_ok(),
+                "POST {path}",
+            );
+        }
+        for (path, body) in [
+            ("/projects/open", r#"{"root":"../escape"}"#),
+            (
+                "/projects/open",
+                r#"{"root":"C:/Study","extra":"untrusted"}"#,
+            ),
+            (
+                "/projects/delete",
+                r#"{"root":"C:/Study","confirmation":"delete:wrong"}"#,
+            ),
+            ("/projects", r#"{"parentDirectory":"C:/Research"}"#),
+            ("/openapi.json", r#"{}"#),
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: "POST".to_owned(),
+                    path: path.to_owned(),
+                    body: Some(body.to_owned()),
+                    if_match: None,
+                    idempotency_key: None,
+                })
+                .is_err(),
+                "POST {path}",
             );
         }
         for (method, path) in [

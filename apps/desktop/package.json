@@ -18,6 +18,7 @@
     "dev": "pnpm run sidecar:prepare && tauri dev"
   },
   "dependencies": {
+    "@research-observatory/contracts": "workspace:*",
     "@research-observatory/ui-components": "workspace:*",
     "@research-observatory/ui-tokens": "workspace:*",
     "@tauri-apps/api": "2.11.1",

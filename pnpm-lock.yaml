@@ -10,6 +10,9 @@ importers:
 
   apps/desktop:
     dependencies:
+      '@research-observatory/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@research-observatory/ui-components':
         specifier: workspace:*
         version: link:../../packages/ui-components
