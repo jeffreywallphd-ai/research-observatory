@@ -28,12 +28,12 @@
     "AggregateId": {
       "type": "string",
       "description": "Canonical lower-case RFC 9562 UUIDv7.",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
     },
     "RevisionId": {
       "type": "string",
       "description": "Immutable revision identity represented as canonical lower-case UUIDv7.",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
     },
     "RevisionNumber": {
       "type": "integer",
@@ -42,12 +42,12 @@
     },
     "ContractVersion": {
       "type": "string",
-      "pattern": "^(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])$"
+      "pattern": "^(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])(?![\\s\\S])"
     },
     "UtcInstant": {
       "type": "string",
       "format": "date-time",
-      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z$"
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z(?![\\s\\S])"
     },
     "AggregateKind": {
       "type": "string",
@@ -91,7 +91,7 @@
         },
         "value": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}(?![\\s\\S])"
         }
       }
     },
@@ -107,7 +107,7 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 240,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         }
       }
     },
@@ -124,7 +124,7 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 4096,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         },
         "disposition": {"$ref": "#/$defs/AlternativeDisposition"},
         "sourceReference": {"$ref": "#/$defs/SourceReference"}
@@ -139,7 +139,7 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 4096,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         },
         "normalized": {
           "oneOf": [
@@ -147,7 +147,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 4096,
-              "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+              "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
             },
             {"type": "null"}
           ]
@@ -167,7 +167,7 @@
       "properties": {
         "kind": {"const": "quantified"},
         "value": {"type": "number", "minimum": 0, "maximum": 1},
-        "basis": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"}
+        "basis": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"}
       }
     },
     "QualitativeConfidence": {
@@ -177,7 +177,7 @@
       "properties": {
         "kind": {"const": "qualitative"},
         "value": {"enum": ["low", "moderate", "high", "mixed"]},
-        "basis": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"}
+        "basis": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"}
       }
     },
     "UnknownConfidence": {
@@ -262,16 +262,46 @@
       "required": ["scheme", "observedValue", "normalizedValue", "verificationState", "sourceReference"],
       "properties": {
         "scheme": {"enum": ["doi", "pmid", "isbn", "issn", "arxiv", "handle", "orcid", "ror", "url", "other"]},
-        "observedValue": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"},
+        "observedValue": {"$ref": "#/$defs/PortableIdentifierText"},
         "normalizedValue": {
           "oneOf": [
-            {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[^\\u0000-\\u001f\\u007f]+$"},
+            {"$ref": "#/$defs/PortableIdentifierText"},
             {"type": "null"}
           ]
         },
         "verificationState": {"enum": ["unverified", "verified", "disputed", "invalid"]},
         "sourceReference": {"$ref": "#/$defs/SourceReference"}
-      }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"scheme": {"const": "url"}}, "required": ["scheme"]},
+          "then": {
+            "properties": {
+              "observedValue": {"$ref": "#/$defs/WebIdentifierText"},
+              "normalizedValue": {
+                "oneOf": [
+                  {"$ref": "#/$defs/WebIdentifierText"},
+                  {"type": "null"}
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "PortableIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Portable identifier text that cannot encode a local filesystem location.",
+      "pattern": "^(?![A-Za-z]:)(?![\\\\/])(?!~[\\\\/])(?!\\.\\.?[\\\\/])(?![Ff][Ii][Ll][Ee]:)[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+    },
+    "WebIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Portable HTTP(S) URL identifier; local and file URI forms are forbidden.",
+      "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
     },
     "CoreAggregate": {
       "type": "object",

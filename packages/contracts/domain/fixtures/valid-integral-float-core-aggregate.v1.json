@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-core-aggregate",
+  "contractVersion": "1.0.0",
+  "aggregateKind": "evidence",
+  "aggregateId": "017f22e2-79b0-7cc3-98c4-dc0c0c07398f",
+  "revisionId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a2",
+  "revision": 1.0,
+  "createdAt": "2026-08-14T12:00:00Z",
+  "modifiedAt": "2026-08-14T12:05:00.125Z",
+  "displayLabel": {
+    "observed": "The intervention was associated with lower attrition.",
+    "normalized": "Intervention associated with lower attrition",
+    "alternatives": []
+  },
+  "status": "verified",
+  "confidence": {
+    "kind": "quantified",
+    "value": 0.92,
+    "basis": "Independent human verification against the cited passage."
+  },
+  "rights": {
+    "status": "allowed",
+    "allowedUses": ["view", "extract", "analyze"],
+    "deniedUses": ["share", "export"],
+    "sourceReferences": [
+      {
+        "sourceAggregateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a3",
+        "sourceRevision": 1.0,
+        "anchor": {"kind": "record-field", "value": "rights-statement"},
+        "sourceLabel": "Publisher rights statement"
+      }
+    ]
+  },
+  "sourceReferences": [
+    {
+      "sourceAggregateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a3",
+      "sourceRevision": 1.0,
+      "anchor": {"kind": "document-element", "value": "element-12"},
+      "sourceLabel": "Methods, paragraph 3"
+    }
+  ],
+  "externalIdentifiers": [
+    {
+      "scheme": "doi",
+      "observedValue": "10.1234/Example.2026.7",
+      "normalizedValue": "10.1234/example.2026.7",
+      "verificationState": "verified",
+      "sourceReference": {
+        "sourceAggregateId": "018f47a2-4d6b-7f78-9f2e-7fb76c86d9a3",
+        "sourceRevision": 1.0,
+        "anchor": {"kind": "record-field", "value": "doi"},
+        "sourceLabel": "Source DOI field"
+      }
+    }
+  ]
+}

@@ -155,10 +155,16 @@ type RightsDecision = AllowedRights | DeniedRights | UnknownRights | NotApplicab
 
 class ExternalIdentifier(TypedDict):
     scheme: Literal["doi", "pmid", "isbn", "issn", "arxiv", "handle", "orcid", "ror", "url", "other"]
-    observedValue: str
-    normalizedValue: str | None
+    observedValue: PortableIdentifierText
+    normalizedValue: PortableIdentifierText | None
     verificationState: Literal["unverified", "verified", "disputed", "invalid"]
     sourceReference: SourceReference
+
+
+type PortableIdentifierText = str
+
+
+type WebIdentifierText = str
 
 
 class CoreAggregate(TypedDict):
@@ -179,7 +185,7 @@ class CoreAggregate(TypedDict):
     externalIdentifiers: list[ExternalIdentifier]
 
 
-CORE_DOMAIN_SCHEMA_SHA256 = "0c1f7b5522949f35cc23deddab129fcd924cbe7c5b4294beda757137110569e4"
+CORE_DOMAIN_SCHEMA_SHA256 = "7fc254970fffd5f32342837e75972144372ee80d2bdd97af2b18096c13ecf23b"
 _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://research-observatory.local/contracts/domain/domain-core.schema.json",
@@ -210,12 +216,12 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
     "AggregateId": {
       "type": "string",
       "description": "Canonical lower-case RFC 9562 UUIDv7.",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
     },
     "RevisionId": {
       "type": "string",
       "description": "Immutable revision identity represented as canonical lower-case UUIDv7.",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
     },
     "RevisionNumber": {
       "type": "integer",
@@ -224,12 +230,12 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
     },
     "ContractVersion": {
       "type": "string",
-      "pattern": "^(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])$"
+      "pattern": "^(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])(?![\\s\\S])"
     },
     "UtcInstant": {
       "type": "string",
       "format": "date-time",
-      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z$"
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z(?![\\s\\S])"
     },
     "AggregateKind": {
       "type": "string",
@@ -283,7 +289,7 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
         },
         "value": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}(?![\\s\\S])"
         }
       }
     },
@@ -310,7 +316,7 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
           "type": "string",
           "minLength": 1,
           "maxLength": 240,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         }
       }
     },
@@ -336,7 +342,7 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
           "type": "string",
           "minLength": 1,
           "maxLength": 4096,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         },
         "disposition": {
           "$ref": "#/$defs/AlternativeDisposition"
@@ -359,7 +365,7 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
           "type": "string",
           "minLength": 1,
           "maxLength": 4096,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         },
         "normalized": {
           "oneOf": [
@@ -367,7 +373,7 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
               "type": "string",
               "minLength": 1,
               "maxLength": 4096,
-              "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+              "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
             },
             {
               "type": "null"
@@ -405,7 +411,7 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
           "type": "string",
           "minLength": 1,
           "maxLength": 500,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         }
       }
     },
@@ -433,7 +439,7 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
           "type": "string",
           "minLength": 1,
           "maxLength": 500,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         }
       }
     },
@@ -684,18 +690,12 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
           ]
         },
         "observedValue": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 512,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "$ref": "#/$defs/PortableIdentifierText"
         },
         "normalizedValue": {
           "oneOf": [
             {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 512,
-              "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+              "$ref": "#/$defs/PortableIdentifierText"
             },
             {
               "type": "null"
@@ -713,7 +713,52 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
         "sourceReference": {
           "$ref": "#/$defs/SourceReference"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "url"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observedValue": {
+                "$ref": "#/$defs/WebIdentifierText"
+              },
+              "normalizedValue": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/WebIdentifierText"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "PortableIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Portable identifier text that cannot encode a local filesystem location.",
+      "pattern": "^(?![A-Za-z]:)(?![\\\\/])(?!~[\\\\/])(?!\\.\\.?[\\\\/])(?![Ff][Ii][Ll][Ee]:)[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+    },
+    "WebIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Portable HTTP(S) URL identifier; local and file URI forms are forbidden.",
+      "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
     },
     "CoreAggregate": {
       "type": "object",
@@ -835,6 +880,7 @@ _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""{
 }""")
 _UUID_V7 = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 _UTC = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,3}))?Z$")
+_MAX_SNAPSHOT_COLLECTION_ITEMS = 256
 
 
 def _record(value: object) -> dict[str, Any] | None:
@@ -847,6 +893,70 @@ def _deep_equal(left: object, right: object) -> bool:
 
 def _stable_json(value: object) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+class _FrozenDict(dict[str, Any]):
+    def _immutable(self, *_args: object, **_kwargs: object) -> None:
+        raise TypeError("decoded domain snapshot is immutable")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    clear = _immutable
+    pop = _immutable
+    popitem = _immutable  # type: ignore[assignment]
+    setdefault = _immutable
+    update = _immutable
+    __ior__ = _immutable  # type: ignore[assignment]
+
+
+class _FrozenList(list[Any]):
+    def _immutable(self, *_args: object, **_kwargs: object) -> None:
+        raise TypeError("decoded domain snapshot is immutable")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    append = _immutable
+    clear = _immutable
+    extend = _immutable
+    insert = _immutable
+    pop = _immutable
+    remove = _immutable
+    reverse = _immutable
+    sort = _immutable
+    __iadd__ = _immutable  # type: ignore[assignment]
+    __imul__ = _immutable  # type: ignore[assignment]
+
+
+def _owned_frozen_json(value: object) -> object:
+    if isinstance(value, dict):
+        if len(value) > _MAX_SNAPSHOT_COLLECTION_ITEMS:
+            raise ValueError("domain snapshot object exceeds bound")
+        return _FrozenDict({key: _owned_frozen_json(item) for key, item in value.items()})
+    if isinstance(value, list):
+        if len(value) > _MAX_SNAPSHOT_COLLECTION_ITEMS:
+            raise ValueError("domain snapshot collection exceeds bound")
+        return _FrozenList(_owned_frozen_json(item) for item in value)
+    return value
+
+
+def _owned_frozen_snapshot(value: object, node: dict[str, Any]) -> object:
+    if "$ref" in node:
+        return _owned_frozen_snapshot(value, _resolve_reference(node["$ref"]))
+    alternatives = node.get("oneOf") if isinstance(node.get("oneOf"), list) else node.get("anyOf")
+    if isinstance(alternatives, list):
+        for alternative in alternatives:
+            candidate = cast(dict[str, Any], alternative)
+            if not _validation_errors(value, candidate, "$"):
+                return _owned_frozen_snapshot(value, candidate)
+    if node.get("type") == "integer" and isinstance(value, float) and value.is_integer():
+        return int(value)
+    if node.get("type") == "array" and isinstance(value, list):
+        item_schema = cast(dict[str, Any], node.get("items", {}))
+        return _FrozenList(_owned_frozen_snapshot(item, item_schema) for item in value)
+    if node.get("type") == "object" and isinstance(value, dict):
+        properties = cast(dict[str, dict[str, Any]], node.get("properties", {}))
+        return _FrozenDict({key: _owned_frozen_snapshot(item, properties.get(key, {})) for key, item in value.items()})
+    return value
 
 
 def _resolve_reference(reference: object) -> dict[str, Any]:
@@ -888,7 +998,11 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
     if kind == "boolean" and not isinstance(value, bool):
         errors.append(f"{path}: boolean")
     if kind == "integer" and (
-        not isinstance(value, int) or isinstance(value, bool) or abs(value) > 9_007_199_254_740_991
+        not isinstance(value, (int, float))
+        or isinstance(value, bool)
+        or not math.isfinite(value)
+        or not float(value).is_integer()
+        or abs(value) > 9_007_199_254_740_991
     ):
         errors.append(f"{path}: safe integer")
     if kind == "number" and (
@@ -920,6 +1034,7 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
                 errors.append(f"{path}: minItems")
             if isinstance(node.get("maxItems"), int) and len(value) > node["maxItems"]:
                 errors.append(f"{path}: maxItems")
+                return errors
             if node.get("uniqueItems") is True and len({_stable_json(item) for item in value}) != len(value):
                 errors.append(f"{path}: uniqueItems")
             if isinstance(node.get("items"), dict):
@@ -1046,4 +1161,10 @@ def domain_contract_errors(value: object) -> tuple[str, ...]:
 
 
 def decode_core_aggregate(value: object) -> CoreAggregate | None:
-    return cast(CoreAggregate, value) if not domain_contract_errors(value) else None
+    try:
+        owned = _owned_frozen_json(value)
+    except ValueError:
+        return None
+    if domain_contract_errors(owned):
+        return None
+    return cast(CoreAggregate, _owned_frozen_snapshot(owned, _CORE_DOMAIN_SCHEMA))

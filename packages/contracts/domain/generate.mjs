@@ -108,7 +108,8 @@ ${tsDefinitions}
 export const CORE_DOMAIN_SCHEMA_SHA256 = "${schemaSha256}";
 
 const CORE_DOMAIN_SCHEMA = ${schemaJson} as const;
-const UUID_V7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const UUID_V7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])/;
+const MAX_SNAPSHOT_COLLECTION_ITEMS = 256;
 
 type JsonRecord = Readonly<Record<string, unknown>>;
 
@@ -136,6 +137,20 @@ function stableJson(value: unknown): string {
   const candidate = record(value);
   if (candidate) return \`{\${Object.keys(candidate).sort().map((key) => \`\${JSON.stringify(key)}:\${stableJson(candidate[key])}\`).join(",")}}\`;
   return JSON.stringify(value);
+}
+
+function ownedFrozenSnapshot(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    if (value.length > MAX_SNAPSHOT_COLLECTION_ITEMS) throw new Error("domain snapshot collection exceeds bound");
+    return Object.freeze(value.map(ownedFrozenSnapshot));
+  }
+  const candidate = record(value);
+  if (!candidate) return value;
+  const keys = Object.keys(candidate);
+  if (keys.length > MAX_SNAPSHOT_COLLECTION_ITEMS) throw new Error("domain snapshot object exceeds bound");
+  const owned: Record<string, unknown> = {};
+  for (const key of keys) owned[key] = ownedFrozenSnapshot(candidate[key]);
+  return Object.freeze(owned);
 }
 
 function schemaRecord(value: unknown): JsonRecord {
@@ -194,7 +209,10 @@ function validationErrors(value: unknown, rawSchema: unknown, path: string): str
     if (!Array.isArray(value)) errors.push(\`\${path}: array\`);
     else {
       if (typeof node.minItems === "number" && value.length < node.minItems) errors.push(\`\${path}: minItems\`);
-      if (typeof node.maxItems === "number" && value.length > node.maxItems) errors.push(\`\${path}: maxItems\`);
+      if (typeof node.maxItems === "number" && value.length > node.maxItems) {
+        errors.push(\`\${path}: maxItems\`);
+        return errors;
+      }
       if (node.uniqueItems === true && new Set(value.map(stableJson)).size !== value.length) errors.push(\`\${path}: uniqueItems\`);
       if (node.items !== undefined) value.forEach((item, index) => errors.push(...validationErrors(item, node.items, \`\${path}/\${index}\`)));
       if (node.contains !== undefined) {
@@ -272,7 +290,12 @@ export function domainContractErrors(value: unknown): readonly string[] {
 }
 
 export function decodeCoreAggregate(value: unknown): CoreAggregate | null {
-  return domainContractErrors(value).length === 0 ? value as CoreAggregate : null;
+  try {
+    const snapshot = ownedFrozenSnapshot(value);
+    return domainContractErrors(snapshot).length === 0 ? snapshot as CoreAggregate : null;
+  } catch {
+    return null;
+  }
 }
 `;
 
@@ -297,6 +320,7 @@ CORE_DOMAIN_SCHEMA_SHA256 = "${schemaSha256}"
 _CORE_DOMAIN_SCHEMA: dict[str, Any] = json.loads(r"""${schemaJson}""")
 _UUID_V7 = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 _UTC = re.compile(r"^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d{1,3}))?Z$")
+_MAX_SNAPSHOT_COLLECTION_ITEMS = 256
 
 
 def _record(value: object) -> dict[str, Any] | None:
@@ -309,6 +333,70 @@ def _deep_equal(left: object, right: object) -> bool:
 
 def _stable_json(value: object) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+class _FrozenDict(dict[str, Any]):
+    def _immutable(self, *_args: object, **_kwargs: object) -> None:
+        raise TypeError("decoded domain snapshot is immutable")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    clear = _immutable
+    pop = _immutable
+    popitem = _immutable  # type: ignore[assignment]
+    setdefault = _immutable
+    update = _immutable
+    __ior__ = _immutable  # type: ignore[assignment]
+
+
+class _FrozenList(list[Any]):
+    def _immutable(self, *_args: object, **_kwargs: object) -> None:
+        raise TypeError("decoded domain snapshot is immutable")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    append = _immutable
+    clear = _immutable
+    extend = _immutable
+    insert = _immutable
+    pop = _immutable
+    remove = _immutable
+    reverse = _immutable
+    sort = _immutable
+    __iadd__ = _immutable  # type: ignore[assignment]
+    __imul__ = _immutable  # type: ignore[assignment]
+
+
+def _owned_frozen_json(value: object) -> object:
+    if isinstance(value, dict):
+        if len(value) > _MAX_SNAPSHOT_COLLECTION_ITEMS:
+            raise ValueError("domain snapshot object exceeds bound")
+        return _FrozenDict({key: _owned_frozen_json(item) for key, item in value.items()})
+    if isinstance(value, list):
+        if len(value) > _MAX_SNAPSHOT_COLLECTION_ITEMS:
+            raise ValueError("domain snapshot collection exceeds bound")
+        return _FrozenList(_owned_frozen_json(item) for item in value)
+    return value
+
+
+def _owned_frozen_snapshot(value: object, node: dict[str, Any]) -> object:
+    if "$ref" in node:
+        return _owned_frozen_snapshot(value, _resolve_reference(node["$ref"]))
+    alternatives = node.get("oneOf") if isinstance(node.get("oneOf"), list) else node.get("anyOf")
+    if isinstance(alternatives, list):
+        for alternative in alternatives:
+            candidate = cast(dict[str, Any], alternative)
+            if not _validation_errors(value, candidate, "$"):
+                return _owned_frozen_snapshot(value, candidate)
+    if node.get("type") == "integer" and isinstance(value, float) and value.is_integer():
+        return int(value)
+    if node.get("type") == "array" and isinstance(value, list):
+        item_schema = cast(dict[str, Any], node.get("items", {}))
+        return _FrozenList(_owned_frozen_snapshot(item, item_schema) for item in value)
+    if node.get("type") == "object" and isinstance(value, dict):
+        properties = cast(dict[str, dict[str, Any]], node.get("properties", {}))
+        return _FrozenDict({key: _owned_frozen_snapshot(item, properties.get(key, {})) for key, item in value.items()})
+    return value
 
 
 def _resolve_reference(reference: object) -> dict[str, Any]:
@@ -350,7 +438,11 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
     if kind == "boolean" and not isinstance(value, bool):
         errors.append(f"{path}: boolean")
     if kind == "integer" and (
-        not isinstance(value, int) or isinstance(value, bool) or abs(value) > 9_007_199_254_740_991
+        not isinstance(value, (int, float))
+        or isinstance(value, bool)
+        or not math.isfinite(value)
+        or not float(value).is_integer()
+        or abs(value) > 9_007_199_254_740_991
     ):
         errors.append(f"{path}: safe integer")
     if kind == "number" and (
@@ -382,6 +474,7 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
                 errors.append(f"{path}: minItems")
             if isinstance(node.get("maxItems"), int) and len(value) > node["maxItems"]:
                 errors.append(f"{path}: maxItems")
+                return errors
             if node.get("uniqueItems") is True and len({_stable_json(item) for item in value}) != len(value):
                 errors.append(f"{path}: uniqueItems")
             if isinstance(node.get("items"), dict):
@@ -508,7 +601,13 @@ def domain_contract_errors(value: object) -> tuple[str, ...]:
 
 
 def decode_core_aggregate(value: object) -> CoreAggregate | None:
-    return cast(CoreAggregate, value) if not domain_contract_errors(value) else None
+    try:
+        owned = _owned_frozen_json(value)
+    except ValueError:
+        return None
+    if domain_contract_errors(owned):
+        return None
+    return cast(CoreAggregate, _owned_frozen_snapshot(owned, _CORE_DOMAIN_SCHEMA))
 `;
 
 function update(path, expected, check) {

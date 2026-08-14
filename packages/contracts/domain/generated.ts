@@ -97,11 +97,15 @@ export type RightsDecision = AllowedRights | DeniedRights | UnknownRights | NotA
 
 export interface ExternalIdentifier {
   readonly scheme: "doi" | "pmid" | "isbn" | "issn" | "arxiv" | "handle" | "orcid" | "ror" | "url" | "other";
-  readonly observedValue: string;
-  readonly normalizedValue: string | null;
+  readonly observedValue: PortableIdentifierText;
+  readonly normalizedValue: PortableIdentifierText | null;
   readonly verificationState: "unverified" | "verified" | "disputed" | "invalid";
   readonly sourceReference: SourceReference;
 }
+
+export type PortableIdentifierText = string;
+
+export type WebIdentifierText = string;
 
 export interface CoreAggregate {
   readonly schemaVersion: "1.0";
@@ -121,7 +125,7 @@ export interface CoreAggregate {
   readonly externalIdentifiers: ReadonlyArray<ExternalIdentifier>;
 }
 
-export const CORE_DOMAIN_SCHEMA_SHA256 = "0c1f7b5522949f35cc23deddab129fcd924cbe7c5b4294beda757137110569e4";
+export const CORE_DOMAIN_SCHEMA_SHA256 = "7fc254970fffd5f32342837e75972144372ee80d2bdd97af2b18096c13ecf23b";
 
 const CORE_DOMAIN_SCHEMA = {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -153,12 +157,12 @@ const CORE_DOMAIN_SCHEMA = {
     "AggregateId": {
       "type": "string",
       "description": "Canonical lower-case RFC 9562 UUIDv7.",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
     },
     "RevisionId": {
       "type": "string",
       "description": "Immutable revision identity represented as canonical lower-case UUIDv7.",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\\s\\S])"
     },
     "RevisionNumber": {
       "type": "integer",
@@ -167,12 +171,12 @@ const CORE_DOMAIN_SCHEMA = {
     },
     "ContractVersion": {
       "type": "string",
-      "pattern": "^(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])$"
+      "pattern": "^(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])\\.(0|[1-9][0-9]{0,14}|[1-8][0-9]{15}|900719925474099[01])(?![\\s\\S])"
     },
     "UtcInstant": {
       "type": "string",
       "format": "date-time",
-      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z$"
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?Z(?![\\s\\S])"
     },
     "AggregateKind": {
       "type": "string",
@@ -226,7 +230,7 @@ const CORE_DOMAIN_SCHEMA = {
         },
         "value": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}(?![\\s\\S])"
         }
       }
     },
@@ -253,7 +257,7 @@ const CORE_DOMAIN_SCHEMA = {
           "type": "string",
           "minLength": 1,
           "maxLength": 240,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         }
       }
     },
@@ -279,7 +283,7 @@ const CORE_DOMAIN_SCHEMA = {
           "type": "string",
           "minLength": 1,
           "maxLength": 4096,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         },
         "disposition": {
           "$ref": "#/$defs/AlternativeDisposition"
@@ -302,7 +306,7 @@ const CORE_DOMAIN_SCHEMA = {
           "type": "string",
           "minLength": 1,
           "maxLength": 4096,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         },
         "normalized": {
           "oneOf": [
@@ -310,7 +314,7 @@ const CORE_DOMAIN_SCHEMA = {
               "type": "string",
               "minLength": 1,
               "maxLength": 4096,
-              "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+              "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
             },
             {
               "type": "null"
@@ -348,7 +352,7 @@ const CORE_DOMAIN_SCHEMA = {
           "type": "string",
           "minLength": 1,
           "maxLength": 500,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         }
       }
     },
@@ -376,7 +380,7 @@ const CORE_DOMAIN_SCHEMA = {
           "type": "string",
           "minLength": 1,
           "maxLength": 500,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
         }
       }
     },
@@ -627,18 +631,12 @@ const CORE_DOMAIN_SCHEMA = {
           ]
         },
         "observedValue": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 512,
-          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          "$ref": "#/$defs/PortableIdentifierText"
         },
         "normalizedValue": {
           "oneOf": [
             {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 512,
-              "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+              "$ref": "#/$defs/PortableIdentifierText"
             },
             {
               "type": "null"
@@ -656,7 +654,52 @@ const CORE_DOMAIN_SCHEMA = {
         "sourceReference": {
           "$ref": "#/$defs/SourceReference"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "url"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observedValue": {
+                "$ref": "#/$defs/WebIdentifierText"
+              },
+              "normalizedValue": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/WebIdentifierText"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "PortableIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Portable identifier text that cannot encode a local filesystem location.",
+      "pattern": "^(?![A-Za-z]:)(?![\\\\/])(?!~[\\\\/])(?!\\.\\.?[\\\\/])(?![Ff][Ii][Ll][Ee]:)[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+    },
+    "WebIdentifierText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "description": "Portable HTTP(S) URL identifier; local and file URI forms are forbidden.",
+      "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
     },
     "CoreAggregate": {
       "type": "object",
@@ -776,7 +819,8 @@ const CORE_DOMAIN_SCHEMA = {
     }
   }
 } as const;
-const UUID_V7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const UUID_V7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}(?![\s\S])/;
+const MAX_SNAPSHOT_COLLECTION_ITEMS = 256;
 
 type JsonRecord = Readonly<Record<string, unknown>>;
 
@@ -804,6 +848,20 @@ function stableJson(value: unknown): string {
   const candidate = record(value);
   if (candidate) return `{${Object.keys(candidate).sort().map((key) => `${JSON.stringify(key)}:${stableJson(candidate[key])}`).join(",")}}`;
   return JSON.stringify(value);
+}
+
+function ownedFrozenSnapshot(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    if (value.length > MAX_SNAPSHOT_COLLECTION_ITEMS) throw new Error("domain snapshot collection exceeds bound");
+    return Object.freeze(value.map(ownedFrozenSnapshot));
+  }
+  const candidate = record(value);
+  if (!candidate) return value;
+  const keys = Object.keys(candidate);
+  if (keys.length > MAX_SNAPSHOT_COLLECTION_ITEMS) throw new Error("domain snapshot object exceeds bound");
+  const owned: Record<string, unknown> = {};
+  for (const key of keys) owned[key] = ownedFrozenSnapshot(candidate[key]);
+  return Object.freeze(owned);
 }
 
 function schemaRecord(value: unknown): JsonRecord {
@@ -862,7 +920,10 @@ function validationErrors(value: unknown, rawSchema: unknown, path: string): str
     if (!Array.isArray(value)) errors.push(`${path}: array`);
     else {
       if (typeof node.minItems === "number" && value.length < node.minItems) errors.push(`${path}: minItems`);
-      if (typeof node.maxItems === "number" && value.length > node.maxItems) errors.push(`${path}: maxItems`);
+      if (typeof node.maxItems === "number" && value.length > node.maxItems) {
+        errors.push(`${path}: maxItems`);
+        return errors;
+      }
       if (node.uniqueItems === true && new Set(value.map(stableJson)).size !== value.length) errors.push(`${path}: uniqueItems`);
       if (node.items !== undefined) value.forEach((item, index) => errors.push(...validationErrors(item, node.items, `${path}/${index}`)));
       if (node.contains !== undefined) {
@@ -940,5 +1001,10 @@ export function domainContractErrors(value: unknown): readonly string[] {
 }
 
 export function decodeCoreAggregate(value: unknown): CoreAggregate | null {
-  return domainContractErrors(value).length === 0 ? value as CoreAggregate : null;
+  try {
+    const snapshot = ownedFrozenSnapshot(value);
+    return domainContractErrors(snapshot).length === 0 ? snapshot as CoreAggregate : null;
+  } catch {
+    return null;
+  }
 }
