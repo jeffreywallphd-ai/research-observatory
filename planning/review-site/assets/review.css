@@ -87,6 +87,10 @@ button, input, textarea { font: inherit; }
 .status-proposed, .status-pending, .status-recommended { color: var(--warning); background: var(--warning-soft); }
 .status-approved, .status-accepted, .status-complete { color: var(--success); background: var(--success-soft); }
 .status-rejected, .status-reopened { color: var(--danger); background: var(--danger-soft); }
+.status-stack { display: inline-grid; justify-items: end; gap: 5px; width: fit-content; }
+.status-not-started { color: var(--text-soft); background: var(--surface-soft); }
+.status-in-progress { color: var(--primary); background: var(--primary-soft); }
+.status-completed { color: var(--success); background: var(--success-soft); }
 .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(110px, 1fr)); gap: 10px; margin: 24px 0 0; }
 .summary-grid div, .capability-card dl div { padding: 12px 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
 dt { color: var(--text-soft); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
@@ -191,7 +195,7 @@ input:focus, textarea:focus, button:focus, a:focus { outline: 3px solid color-mi
   .review-progress { position: static; width: fit-content; margin: 8px 0; }
   .summary-grid { grid-template-columns: 1fr 1fr; }
   .slice-card { grid-template-columns: 34px 1fr; }
-  .slice-card .status { grid-column: 2; }
+  .slice-card .status-stack { grid-column: 2; justify-items: start; }
 }
 @media print {
   .site-header, .side-panel, .site-footer, .review-toolbar, .page-turn { display: none !important; }
