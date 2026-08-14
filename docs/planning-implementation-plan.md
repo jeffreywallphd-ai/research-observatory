@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: aabf1482a2cd49616282494c1d35320b35b753b5c22fb5563fec7ddec066176a
+source_sha256: 8d26a58ba5af9ab92fe9d3db975dd2e864ff7faf43999d46c690efa0c88a8b86
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2133,13 +2133,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-03.S01.T01 - Define core aggregate and value-object contracts
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-00.S02.T01`, `CAP-00.S05.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Language-neutral schema definitions for IDs, versions, timestamps, source references, status, confidence, rights, and principal aggregates.
 
