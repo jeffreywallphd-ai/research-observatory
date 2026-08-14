@@ -3466,11 +3466,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile desktop
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T10:10:18+00:00'
-      updated_at: '2026-08-14T10:43:40+00:00'
+      updated_at: '2026-08-14T10:49:37+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Submitted for focused independent review. Functional checks pass; cumulative UI provenance correctly
@@ -3482,16 +3482,18 @@ capabilities:
         commit: 633aaa396548cfa9be8cbfa9e6a26d2e833244ea
         recorded_at: '2026-08-14T10:42:55+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:curie
+        result: changes-requested
+        reviewed_at: '2026-08-14T10:49:37+00:00'
+        notes: 'Required: narrow reviewed UI-gate hardening for pre-UI additive non-gate quality inventory; deny audit hardlink
+          escape; roll back audit-failed delete/open; bind project validation and mutation to stable identities and reject
+          Windows device/install roots. Focused functional controls otherwise pass.'
       base_sha: 25a24f08649e88c0fbba821b6d98c1caa83d2ab1
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-14T10:10:18+00:00'
-        expires_at: '2026-08-14T18:10:18+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-14T10:49:37+00:00'
+        expires_at: '2026-08-14T18:49:37+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64

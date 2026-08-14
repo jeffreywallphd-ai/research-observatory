@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: aabbc56fd13172921c8f799a91c8009ee2748ce72827bd1abedff2415b8f6fe1
+source_sha256: 4a530f5f391738aafdd3b6e2198ccd0717057bd8fd40eb16717cd5d80f457718
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1653,13 +1653,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S01.T02 - Implement create, open, close, archive, and delete workflows
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S01.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:curie (`changes-requested`)
 
 **Objective:** Service and desktop flows for project lifecycle with names, IDs, locations, templates, and confirmation gates.
 
