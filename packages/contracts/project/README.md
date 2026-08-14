@@ -23,8 +23,10 @@ not by accepting arbitrary fields.
 Manifest validation always applies both `project-manifest.schema.json` and its
 bound `project-manifest.semantic-rules.json`. The schema owns constraints it can
 express; the two exact semantic operators enforce ascending application
-compatibility and `createdAt <= modifiedAt`. Treating schema-only validation as
-successful validation is a contract violation.
+compatibility and `createdAt <= modifiedAt`. The compatibility rule also fixes
+every release-version component to the shared `0..9007199254740991` numeric
+domain so language runtimes cannot disagree through numeric precision. Treating
+schema-only validation as successful validation is a contract violation.
 
 `fixtures/` supplies one valid relocatable manifest and one intentionally
 invalid path-bearing manifest for downstream readers and compatibility tests.

@@ -54,6 +54,8 @@ export interface ProjectLayout {
   readonly entries: readonly ProjectLayoutEntry[];
 }
 
+export const PROJECT_MANIFEST_MAX_SEMVER_COMPONENT = 9_007_199_254_740_991;
+
 export const PROJECT_MANIFEST_SEMANTIC_RULES_V1 = Object.freeze({
   schemaVersion: "1.0",
   documentType: "research-observatory-project-manifest-semantic-rules",
@@ -61,6 +63,7 @@ export const PROJECT_MANIFEST_SEMANTIC_RULES_V1 = Object.freeze({
     Object.freeze({
       ruleId: "application-compatibility-range-ascending",
       operator: "semver-less-than",
+      maximumComponent: PROJECT_MANIFEST_MAX_SEMVER_COMPONENT,
       leftPointer: "/applicationCompatibility/minimum",
       rightPointer: "/applicationCompatibility/maximumExclusive",
     }),
@@ -111,12 +114,12 @@ function hasExactKeys(value: Record<string, unknown>, expected: readonly string[
   return actual.length === expected.length && [...expected].sort().every((key, index) => key === actual[index]);
 }
 
-function releaseVersion(value: unknown): readonly [number, number, number] | null {
+function releaseVersion(value: unknown, maximumComponent: number): readonly [number, number, number] | null {
   if (typeof value !== "string") return null;
   const match = RELEASE_SEMVER.exec(value);
   if (!match) return null;
   const version = [Number(match[1]), Number(match[2]), Number(match[3])] as const;
-  return version.every(Number.isSafeInteger) ? version : null;
+  return version.every((component) => Number.isSafeInteger(component) && component <= maximumComponent) ? version : null;
 }
 
 function compareReleaseVersions(left: readonly number[], right: readonly number[]): number {
@@ -155,11 +158,11 @@ export function isPortableProjectRelativePath(value: unknown): value is string {
 }
 
 export function projectManifestSemanticErrors(manifest: ProjectManifest): readonly string[] {
-  const minimum = releaseVersion(manifest.applicationCompatibility.minimum);
-  const maximum = releaseVersion(manifest.applicationCompatibility.maximumExclusive);
+  const minimum = releaseVersion(manifest.applicationCompatibility.minimum, PROJECT_MANIFEST_MAX_SEMVER_COMPONENT);
+  const maximum = releaseVersion(manifest.applicationCompatibility.maximumExclusive, PROJECT_MANIFEST_MAX_SEMVER_COMPONENT);
   const errors: string[] = [];
   if (!minimum || !maximum || compareReleaseVersions(minimum, maximum) >= 0) {
-    errors.push(PROJECT_MANIFEST_SEMANTIC_RULES_V1.rules[0]!.ruleId);
+    errors.push("application-compatibility-range-ascending");
   }
   if (Date.parse(manifest.createdAt) > Date.parse(manifest.modifiedAt)) {
     errors.push(PROJECT_MANIFEST_SEMANTIC_RULES_V1.rules[1]!.ruleId);
@@ -172,8 +175,8 @@ export function decodeProjectManifest(value: unknown): ProjectManifest | null {
     if (!isRecord(value) || !hasExactKeys(value, MANIFEST_KEYS)) return null;
     const compatibility = value.applicationCompatibility;
     if (!isRecord(compatibility) || !hasExactKeys(compatibility, COMPATIBILITY_KEYS)) return null;
-    const minimum = releaseVersion(compatibility.minimum);
-    const maximum = releaseVersion(compatibility.maximumExclusive);
+    const minimum = releaseVersion(compatibility.minimum, PROJECT_MANIFEST_MAX_SEMVER_COMPONENT);
+    const maximum = releaseVersion(compatibility.maximumExclusive, PROJECT_MANIFEST_MAX_SEMVER_COMPONENT);
     if (!minimum || !maximum) return null;
     if (!isUtcTimestamp(value.createdAt) || !isUtcTimestamp(value.modifiedAt)) return null;
     if (

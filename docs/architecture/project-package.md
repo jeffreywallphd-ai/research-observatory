@@ -19,7 +19,10 @@ The exact machine contract is the combination of
 `project-manifest.semantic-rules.json` beside it. Draft 2020-12 owns lexical,
 shape, format, UTC, and safe-integer constraints; the language-neutral semantic
 rules own compatibility-range and timestamp ordering that JSON Schema cannot
-compare across fields. A reader that runs only one layer is incomplete. The
+compare across fields. The compatibility rule fixes every semantic-version
+component to the inclusive JavaScript-safe integer domain
+`0..9007199254740991`; all readers apply that exact bound before comparing the
+range. A reader that runs only one layer is incomplete. The
 canonical layout and its schema live beside them. Core is the project-home
 authority; desktop code, workers, and downstream modules consume the contract
 and never build paths by string concatenation.
