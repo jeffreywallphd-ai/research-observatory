@@ -12,9 +12,11 @@ import os
 import re
 import secrets
 import shutil
+import sys
 import threading
 import uuid
-from contextlib import suppress
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager, suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -46,6 +48,194 @@ _PROFILE_KEYS = {"schemaVersion", "documentType", "displayName", "templateId"}
 _PROJECT_DIRECTORIES = ("state", "objects", "indexes", "cache", "models", "config", "exports", "logs", ".locks", ".tmp")
 _IMPLEMENTED_TEMPLATES = {"theory-synthesis"}
 _MAX_SAFE_INTEGER = 9_007_199_254_740_991
+_MAX_AUDIT_BYTES = 8 * 1024 * 1024
+
+
+def _path_identity(path: Path) -> tuple[int, int]:
+    status = path.stat(follow_symlinks=False)
+    return (status.st_dev, status.st_ino)
+
+
+def _inside(path: Path, root: Path) -> bool:
+    try:
+        return os.path.commonpath((os.path.normcase(str(path)), os.path.normcase(str(root)))) == os.path.normcase(
+            str(root)
+        )
+    except ValueError:
+        return False
+
+
+def _installation_roots() -> tuple[Path, ...]:
+    roots = {
+        Path(value)
+        for name in ("ProgramFiles", "ProgramFiles(x86)", "ProgramW6432", "SystemRoot")
+        if (value := os.environ.get(name))
+    }
+    if getattr(sys, "frozen", False):
+        roots.add(Path(sys.executable).parent)
+    return tuple(roots)
+
+
+@contextmanager
+def _windows_directory_locks(paths: list[Path]) -> Iterator[None]:
+    """Deny directory rename/delete for the duration of a path-based operation."""
+
+    if os.name != "nt":
+        yield
+        return
+    import ctypes
+    from ctypes import wintypes
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    create_file = kernel32.CreateFileW
+    create_file.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create_file.restype = wintypes.HANDLE
+    close_handle = kernel32.CloseHandle
+    close_handle.argtypes = (wintypes.HANDLE,)
+    close_handle.restype = wintypes.BOOL
+    file_read_attributes = 0x00000080
+    file_share_read = 0x00000001
+    file_share_write = 0x00000002
+    open_existing = 3
+    file_flag_open_reparse_point = 0x00200000
+    file_flag_backup_semantics = 0x02000000
+    invalid_handle = wintypes.HANDLE(-1).value
+    handles: list[int] = []
+    try:
+        for path in sorted(set(paths), key=lambda item: str(item).casefold()):
+            handle = create_file(
+                str(path),
+                file_read_attributes,
+                file_share_read | file_share_write,
+                None,
+                open_existing,
+                file_flag_open_reparse_point | file_flag_backup_semantics,
+                None,
+            )
+            if handle == invalid_handle:
+                raise ctypes.WinError(ctypes.get_last_error())
+            handles.append(handle)
+        yield
+    finally:
+        for handle in reversed(handles):
+            close_handle(handle)
+
+
+@contextmanager
+def _held_directory_renamer(source: Path) -> Iterator[Callable[[Path], None]]:
+    """Hold a Windows directory against replacement and rename through that handle."""
+
+    identity = _path_identity(source)
+    if os.name != "nt":
+
+        def rename_portable(destination: Path) -> None:
+            if _path_identity(source) != identity:
+                raise ProjectLifecycleProblem.invalid_path()
+            os.rename(source, destination)
+
+        yield rename_portable
+        return
+    import ctypes
+    from ctypes import wintypes
+
+    class FileRenameInfo(ctypes.Structure):
+        _fields_ = (
+            ("ReplaceIfExists", wintypes.BOOLEAN),
+            ("RootDirectory", wintypes.HANDLE),
+            ("FileNameLength", wintypes.DWORD),
+            ("FileName", wintypes.WCHAR * 1),
+        )
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    create_file = kernel32.CreateFileW
+    create_file.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create_file.restype = wintypes.HANDLE
+    set_file_information = kernel32.SetFileInformationByHandle
+    set_file_information.argtypes = (wintypes.HANDLE, ctypes.c_int, wintypes.LPVOID, wintypes.DWORD)
+    set_file_information.restype = wintypes.BOOL
+    close_handle = kernel32.CloseHandle
+    close_handle.argtypes = (wintypes.HANDLE,)
+    close_handle.restype = wintypes.BOOL
+    delete_access = 0x00010000
+    file_read_attributes = 0x00000080
+    file_share_read = 0x00000001
+    file_share_write = 0x00000002
+    open_existing = 3
+    file_rename_info = 3
+    file_flag_open_reparse_point = 0x00200000
+    file_flag_backup_semantics = 0x02000000
+    invalid_handle = wintypes.HANDLE(-1).value
+    handle = create_file(
+        str(source),
+        delete_access | file_read_attributes,
+        file_share_read | file_share_write,
+        None,
+        open_existing,
+        file_flag_open_reparse_point | file_flag_backup_semantics,
+        None,
+    )
+    if handle == invalid_handle:
+        raise ctypes.WinError(ctypes.get_last_error())
+    if _redirect(source) or _path_identity(source) != identity:
+        close_handle(handle)
+        raise ProjectLifecycleProblem.invalid_path()
+
+    def rename(destination: Path) -> None:
+        encoded = str(destination).encode("utf-16-le")
+        size = FileRenameInfo.FileName.offset + len(encoded) + ctypes.sizeof(wintypes.WCHAR)
+        buffer = ctypes.create_string_buffer(size)
+        info = ctypes.cast(buffer, ctypes.POINTER(FileRenameInfo)).contents
+        info.ReplaceIfExists = False
+        info.RootDirectory = None
+        info.FileNameLength = len(encoded)
+        ctypes.memmove(ctypes.addressof(buffer) + FileRenameInfo.FileName.offset, encoded, len(encoded))
+        if not set_file_information(handle, file_rename_info, buffer, size):
+            raise ctypes.WinError(ctypes.get_last_error())
+
+    try:
+        yield rename
+    finally:
+        close_handle(handle)
+
+
+@contextmanager
+def _stable_directories(paths: list[Path]) -> Iterator[None]:
+    try:
+        identities = {path: _path_identity(path) for path in paths}
+        with _windows_directory_locks(paths):
+            if any(
+                _redirect(path) or not path.is_dir() or _path_identity(path) != identity
+                for path, identity in identities.items()
+            ):
+                raise ProjectLifecycleProblem.invalid_path()
+            try:
+                yield
+            finally:
+                if any(
+                    _redirect(path) or not path.is_dir() or _path_identity(path) != identity
+                    for path, identity in identities.items()
+                ):
+                    raise ProjectLifecycleProblem.invalid_path()
+    except ProjectLifecycleProblem:
+        raise
+    except OSError as error:
+        raise ProjectLifecycleProblem.invalid_path() from error
 
 
 def _timestamp() -> str:
@@ -66,7 +256,13 @@ def _redirect(path: Path) -> bool:
 
 
 def _canonical_directory(value: str) -> Path:
-    if not value or len(value) > 4096 or "\x00" in value:
+    windows_value = value.replace("/", "\\").casefold()
+    if (
+        not value
+        or len(value) > 4096
+        or "\x00" in value
+        or windows_value.startswith(("\\\\?\\", "\\\\.\\", "\\??\\", "\\device\\"))
+    ):
         raise ProjectLifecycleProblem.invalid_path()
     path = Path(value)
     if not path.is_absolute() or any(part == ".." for part in path.parts):
@@ -86,7 +282,12 @@ def _canonical_directory(value: str) -> Path:
             detail="The selected local project directory is unavailable.",
             remediation="Locate the project directory or choose another local location.",
         ) from error
-    if resolved != path or not path.is_dir() or _redirect(path):
+    if (
+        resolved != path
+        or not path.is_dir()
+        or _redirect(path)
+        or (os.name == "nt" and any(_inside(resolved, root) for root in _installation_roots()))
+    ):
         raise ProjectLifecycleProblem.invalid_path()
     return path
 
@@ -110,6 +311,63 @@ def _atomic_json(path: Path, value: dict[str, Any]) -> None:
             title="Project update could not be published",
             detail="The local project remained unchanged or recoverable after a filesystem write failed.",
             remediation="Check local storage availability and retry once.",
+        ) from error
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        with suppress(OSError):
+            temporary.unlink(missing_ok=True)
+
+
+def _atomic_audit_append(path: Path, record: dict[str, Any]) -> None:
+    existing = b""
+    if path.exists() or _redirect(path):
+        try:
+            status = path.stat(follow_symlinks=False)
+            identity = (status.st_dev, status.st_ino)
+            if _redirect(path) or not path.is_file() or status.st_nlink != 1 or status.st_size > _MAX_AUDIT_BYTES:
+                raise OSError("audit target is redirected, linked, non-regular, or oversized")
+            existing = path.read_bytes()
+            after = path.stat(follow_symlinks=False)
+            if (after.st_dev, after.st_ino) != identity or after.st_nlink != 1:
+                raise OSError("audit target changed during snapshot")
+            existing.decode("utf-8")
+            if existing and not existing.endswith(b"\n"):
+                raise OSError("audit target is not a complete JSON-lines document")
+        except (OSError, UnicodeError) as error:
+            raise ProjectLifecycleProblem(
+                status=500,
+                code="RO-CORE-PROJECT-AUDIT-FAILED",
+                title="Project audit record could not be written",
+                detail="The lifecycle action did not complete without its required local audit record.",
+                remediation="Check local storage availability and retry.",
+            ) from error
+    line = (json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+    if len(existing) + len(line) > _MAX_AUDIT_BYTES:
+        raise ProjectLifecycleProblem(
+            status=500,
+            code="RO-CORE-PROJECT-AUDIT-FAILED",
+            title="Project audit record could not be written",
+            detail="The bounded lifecycle audit reached its current local size limit.",
+            remediation="Preserve the project and request a reviewed audit rollover before retrying.",
+        )
+    temporary = path.with_name(f".{path.name}.{secrets.token_hex(8)}.tmp")
+    descriptor: int | None = None
+    try:
+        descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(descriptor, "wb", closefd=True) as stream:
+            descriptor = None
+            stream.write(existing + line)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    except OSError as error:
+        raise ProjectLifecycleProblem(
+            status=500,
+            code="RO-CORE-PROJECT-AUDIT-FAILED",
+            title="Project audit record could not be written",
+            detail="The lifecycle action did not complete without its required local audit record.",
+            remediation="Check local storage availability and retry.",
         ) from error
     finally:
         if descriptor is not None:
@@ -156,6 +414,16 @@ class ProjectLifecycleProblem(Exception):
             remediation="Choose a direct local directory outside symbolic links and junctions.",
         )
 
+    @classmethod
+    def rollback_failed(cls) -> ProjectLifecycleProblem:
+        return cls(
+            status=500,
+            code="RO-CORE-PROJECT-ROLLBACK-FAILED",
+            title="Project operation requires recovery",
+            detail="A failed lifecycle operation could not restore its exact prior local state.",
+            remediation="Keep the application open and use the reviewed project recovery workflow.",
+        )
+
 
 class ProjectLifecycleService:
     """Serialize package lifecycle operations for one supervised Core process."""
@@ -164,6 +432,37 @@ class ProjectLifecycleService:
         self._instance_id = str(uuid.uuid4())
         self._opened: set[Path] = set()
         self._mutex = threading.RLock()
+
+    @staticmethod
+    def _project_guard_paths(path: Path) -> list[Path]:
+        return [path, path / ".locks", path / "config", path / "logs"]
+
+    @staticmethod
+    def _write_lock(lock: Path, record: dict[str, Any]) -> None:
+        try:
+            descriptor = os.open(lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
+                json.dump(record, stream, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
+                stream.write("\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+        except FileExistsError as error:
+            raise ProjectLifecycleProblem(
+                status=409,
+                code="RO-CORE-PROJECT-ALREADY-OPEN",
+                title="Project is already open",
+                detail="A concurrent local open acquired the project lock first.",
+                remediation="Return to the existing project window or close its verified session first.",
+            ) from error
+        except OSError as error:
+            raise ProjectLifecycleProblem(
+                status=500,
+                code="RO-CORE-PROJECT-LOCK-FAILED",
+                title="Project lock could not be acquired",
+                detail="The project was not opened because exclusive access could not be established.",
+                remediation="Check local filesystem permissions and retry.",
+                retryable=True,
+            ) from error
 
     def create(
         self,
@@ -194,6 +493,24 @@ class ProjectLifecycleService:
                 detail="The selected project template is not a canonical local template identifier.",
                 remediation="Choose an implemented project template.",
             )
+        with _stable_directories([parent]):
+            return self._create_at(
+                parent=parent,
+                directory_name=directory_name,
+                display_name=clean_name,
+                template_id=template_id,
+                trace_id=trace_id,
+            )
+
+    def _create_at(
+        self,
+        *,
+        parent: Path,
+        directory_name: str,
+        display_name: str,
+        template_id: str,
+        trace_id: str,
+    ) -> ProjectProjection:
         target = parent / directory_name
         if target.exists() or _redirect(target):
             raise ProjectLifecycleProblem(
@@ -227,13 +544,15 @@ class ProjectLifecycleService:
             profile = {
                 "schemaVersion": "1.0",
                 "documentType": "research-observatory-project-profile",
-                "displayName": clean_name,
+                "displayName": display_name,
                 "templateId": template_id,
             }
-            _atomic_json(staging / "project.ro.json", manifest)
-            _atomic_json(staging / "config" / "project-profile.json", profile)
-            self._audit(staging, "project.created", "active", trace_id)
-            os.rename(staging, target)
+            with _held_directory_renamer(staging) as rename_staging:
+                with _stable_directories([staging / ".locks", staging / "config", staging / "logs"]):
+                    _atomic_json(staging / "project.ro.json", manifest)
+                    _atomic_json(staging / "config" / "project-profile.json", profile)
+                    self._audit(staging, "project.created", "active", trace_id)
+                rename_staging(target)
         except ProjectLifecycleProblem:
             self._remove_staging(staging)
             raise
@@ -256,10 +575,17 @@ class ProjectLifecycleService:
             for path in tuple(self._opened):
                 lock = path / ".locks" / "session.lock"
                 try:
-                    record = json.loads(lock.read_text(encoding="utf-8"))
-                    if isinstance(record, dict) and record.get("instanceId") == self._instance_id:
-                        lock.unlink()
-                except OSError, UnicodeError, json.JSONDecodeError:
+                    with _stable_directories(self._project_guard_paths(path)):
+                        record = json.loads(lock.read_text(encoding="utf-8"))
+                        status = lock.stat(follow_symlinks=False)
+                        if (
+                            isinstance(record, dict)
+                            and record.get("instanceId") == self._instance_id
+                            and not _redirect(lock)
+                            and status.st_nlink == 1
+                        ):
+                            lock.unlink()
+                except OSError, UnicodeError, json.JSONDecodeError, ProjectLifecycleProblem:
                     continue
                 finally:
                     self._opened.discard(path)
@@ -267,102 +593,103 @@ class ProjectLifecycleService:
     def open(self, *, root: str, trace_id: str) -> ProjectProjection:
         with self._mutex:
             path = _canonical_directory(root)
-            self._validate_layout(path)
-            manifest, profile = self._documents(path)
-            if manifest["lifecycleState"] != "active":
-                raise ProjectLifecycleProblem(
-                    status=409,
-                    code="RO-CORE-PROJECT-NOT-ACTIVE",
-                    title="Project is not active",
-                    detail="Archived or trashed projects cannot open for mutation.",
-                    remediation="Restore an archived project before opening it.",
-                )
-            lock = path / ".locks" / "session.lock"
-            if path in self._opened or lock.exists() or _redirect(lock):
-                raise ProjectLifecycleProblem(
-                    status=409,
-                    code="RO-CORE-PROJECT-ALREADY-OPEN",
-                    title="Project is already open",
-                    detail="A concurrent local open was detected and no project bytes were changed.",
-                    remediation="Return to the existing project window or close its verified session first.",
-                )
-            record = {
-                "schemaVersion": "1.0",
-                "documentType": "research-observatory-project-lock",
-                "projectId": manifest["projectId"],
-                "instanceId": self._instance_id,
-                "processId": os.getpid(),
-                "heartbeatAt": _timestamp(),
-                "recoveryToken": secrets.token_hex(32),
-            }
-            try:
-                descriptor = os.open(lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-                with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
-                    json.dump(record, stream, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
-                    stream.write("\n")
-                    stream.flush()
-                    os.fsync(stream.fileno())
-            except FileExistsError as error:
-                raise ProjectLifecycleProblem(
-                    status=409,
-                    code="RO-CORE-PROJECT-ALREADY-OPEN",
-                    title="Project is already open",
-                    detail="A concurrent local open acquired the project lock first.",
-                    remediation="Return to the existing project window or close its verified session first.",
-                ) from error
-            except OSError as error:
-                raise ProjectLifecycleProblem(
-                    status=500,
-                    code="RO-CORE-PROJECT-LOCK-FAILED",
-                    title="Project lock could not be acquired",
-                    detail="The project was not opened because exclusive access could not be established.",
-                    remediation="Check local filesystem permissions and retry.",
-                    retryable=True,
-                ) from error
-            self._opened.add(path)
-            self._audit(path, "project.opened", "active", trace_id)
-            return self._projection(path, manifest=manifest, profile=profile)
+            with _stable_directories(self._project_guard_paths(path)):
+                self._validate_layout(path)
+                manifest, profile = self._documents(path)
+                if manifest["lifecycleState"] != "active":
+                    raise ProjectLifecycleProblem(
+                        status=409,
+                        code="RO-CORE-PROJECT-NOT-ACTIVE",
+                        title="Project is not active",
+                        detail="Archived or trashed projects cannot open for mutation.",
+                        remediation="Restore an archived project before opening it.",
+                    )
+                lock = path / ".locks" / "session.lock"
+                if path in self._opened or lock.exists() or _redirect(lock):
+                    raise ProjectLifecycleProblem(
+                        status=409,
+                        code="RO-CORE-PROJECT-ALREADY-OPEN",
+                        title="Project is already open",
+                        detail="A concurrent local open was detected and no project bytes were changed.",
+                        remediation="Return to the existing project window or close its verified session first.",
+                    )
+                record = {
+                    "schemaVersion": "1.0",
+                    "documentType": "research-observatory-project-lock",
+                    "projectId": manifest["projectId"],
+                    "instanceId": self._instance_id,
+                    "processId": os.getpid(),
+                    "heartbeatAt": _timestamp(),
+                    "recoveryToken": secrets.token_hex(32),
+                }
+                self._write_lock(lock, record)
+                self._opened.add(path)
+                try:
+                    self._audit(path, "project.opened", "active", trace_id)
+                except ProjectLifecycleProblem as error:
+                    self._opened.discard(path)
+                    try:
+                        lock.unlink()
+                    except OSError as rollback_error:
+                        raise ProjectLifecycleProblem.rollback_failed() from rollback_error
+                    raise error
+                return self._projection(path, manifest=manifest, profile=profile)
 
     def close(self, *, root: str, trace_id: str) -> ProjectProjection:
         with self._mutex:
             path = _canonical_directory(root)
-            self._validate_layout(path)
-            manifest, profile = self._documents(path)
-            lock = path / ".locks" / "session.lock"
-            if path in self._opened:
-                try:
-                    record = json.loads(lock.read_text(encoding="utf-8"))
-                    if record.get("instanceId") != self._instance_id:
+            with _stable_directories(self._project_guard_paths(path)):
+                self._validate_layout(path)
+                manifest, profile = self._documents(path)
+                lock = path / ".locks" / "session.lock"
+                if path in self._opened:
+                    try:
+                        record = json.loads(lock.read_text(encoding="utf-8"))
+                        status = lock.stat(follow_symlinks=False)
+                        if (
+                            not isinstance(record, dict)
+                            or record.get("instanceId") != self._instance_id
+                            or _redirect(lock)
+                            or status.st_nlink != 1
+                        ):
+                            raise ProjectLifecycleProblem(
+                                status=409,
+                                code="RO-CORE-PROJECT-LOCK-CHANGED",
+                                title="Project lock identity changed",
+                                detail="The lock no longer belongs to this supervised Core instance.",
+                                remediation="Do not break the lock; use the safe-open recovery workflow.",
+                            )
+                        lock.unlink()
+                    except ProjectLifecycleProblem:
+                        raise
+                    except (OSError, UnicodeError, json.JSONDecodeError) as error:
                         raise ProjectLifecycleProblem(
-                            status=409,
-                            code="RO-CORE-PROJECT-LOCK-CHANGED",
-                            title="Project lock identity changed",
-                            detail="The lock no longer belongs to this supervised Core instance.",
-                            remediation="Do not break the lock; use the safe-open recovery workflow.",
-                        )
-                    lock.unlink()
-                except ProjectLifecycleProblem:
-                    raise
-                except (OSError, UnicodeError, json.JSONDecodeError) as error:
+                            status=500,
+                            code="RO-CORE-PROJECT-CLOSE-FAILED",
+                            title="Project close did not complete",
+                            detail="The verified project lock could not be removed.",
+                            remediation="Keep the application open and retry close before using recovery.",
+                            retryable=True,
+                        ) from error
+                    self._opened.remove(path)
+                    try:
+                        self._audit(path, "project.closed", str(manifest["lifecycleState"]), trace_id)
+                    except ProjectLifecycleProblem as error:
+                        try:
+                            self._write_lock(lock, record)
+                            self._opened.add(path)
+                        except ProjectLifecycleProblem as rollback_error:
+                            raise ProjectLifecycleProblem.rollback_failed() from rollback_error
+                        raise error
+                elif lock.exists() or _redirect(lock):
                     raise ProjectLifecycleProblem(
-                        status=500,
-                        code="RO-CORE-PROJECT-CLOSE-FAILED",
-                        title="Project close did not complete",
-                        detail="The verified project lock could not be removed.",
-                        remediation="Keep the application open and retry close before using recovery.",
-                        retryable=True,
-                    ) from error
-                self._opened.remove(path)
-                self._audit(path, "project.closed", str(manifest["lifecycleState"]), trace_id)
-            elif lock.exists() or _redirect(lock):
-                raise ProjectLifecycleProblem(
-                    status=409,
-                    code="RO-CORE-PROJECT-OPEN-ELSEWHERE",
-                    title="Project is owned by another session",
-                    detail="This Core instance will not remove an unverified project lock.",
-                    remediation="Return to the owning session or use the reviewed stale-lock recovery workflow.",
-                )
-            return self._projection(path, manifest=manifest, profile=profile)
+                        status=409,
+                        code="RO-CORE-PROJECT-OPEN-ELSEWHERE",
+                        title="Project is owned by another session",
+                        detail="This Core instance will not remove an unverified project lock.",
+                        remediation="Return to the owning session or use the reviewed stale-lock recovery workflow.",
+                    )
+                return self._projection(path, manifest=manifest, profile=profile)
 
     def archive(self, *, root: str, trace_id: str) -> ProjectProjection:
         return self._transition(
@@ -377,69 +704,98 @@ class ProjectLifecycleService:
     def delete(self, *, root: str, confirmation: str, trace_id: str) -> ProjectProjection:
         with self._mutex:
             path = _canonical_directory(root)
-            self._validate_layout(path)
-            manifest, profile = self._documents(path)
-            self._require_closed(path)
-            expected = f"delete:{manifest['projectId']}"
-            if not secrets.compare_digest(confirmation, expected):
-                raise ProjectLifecycleProblem(
-                    status=422,
-                    code="RO-CORE-PROJECT-DELETE-CONFIRMATION-INVALID",
-                    title="Project deletion was not confirmed",
-                    detail="Deletion requires the exact project-specific confirmation shown by the application.",
-                    remediation="Review the consequences and enter the exact confirmation phrase.",
-                )
-            trash = path.parent / ".research-observatory-trash"
-            if trash.exists():
-                if not trash.is_dir() or _redirect(trash):
-                    raise ProjectLifecycleProblem.invalid_path()
-            else:
-                trash.mkdir(mode=0o700)
-            trash = _canonical_directory(str(trash))
-            original_manifest = manifest
-            manifest = self._updated_manifest(manifest, "trash")
-            _atomic_json(path / "project.ro.json", manifest)
-            self._audit(path, "project.trashed", "trash", trace_id)
-            destination = trash / f"{manifest['projectId']}-{secrets.token_hex(6)}"
-            try:
-                os.rename(path, destination)
-            except OSError as error:
-                _atomic_json(path / "project.ro.json", original_manifest)
-                self._audit(path, "project.trash-rollback", str(original_manifest["lifecycleState"]), trace_id)
-                raise ProjectLifecycleProblem(
-                    status=500,
-                    code="RO-CORE-PROJECT-DELETE-FAILED",
-                    title="Project was not moved to recoverable trash",
-                    detail="The lifecycle state was rolled back because the recoverable move failed.",
-                    remediation="Check local storage permissions and retry.",
-                    retryable=True,
-                ) from error
-            return self._projection(destination, manifest=manifest, profile=profile)
+            parent = _canonical_directory(str(path.parent))
+            with _stable_directories([parent]):
+                trash = parent / ".research-observatory-trash"
+                if trash.exists():
+                    if not trash.is_dir() or _redirect(trash):
+                        raise ProjectLifecycleProblem.invalid_path()
+                else:
+                    trash.mkdir(mode=0o700)
+                trash = _canonical_directory(str(trash))
+                with _held_directory_renamer(path) as rename_project:
+                    with _stable_directories([path / ".locks", path / "config", path / "logs"]):
+                        self._validate_layout(path)
+                        manifest, profile = self._documents(path)
+                        self._require_closed(path)
+                        expected = f"delete:{manifest['projectId']}"
+                        if not secrets.compare_digest(confirmation, expected):
+                            raise ProjectLifecycleProblem(
+                                status=422,
+                                code="RO-CORE-PROJECT-DELETE-CONFIRMATION-INVALID",
+                                title="Project deletion was not confirmed",
+                                detail=(
+                                    "Deletion requires the exact project-specific confirmation "
+                                    "shown by the application."
+                                ),
+                                remediation="Review the consequences and enter the exact confirmation phrase.",
+                            )
+                        original_manifest = manifest
+                        manifest = self._updated_manifest(manifest, "trash")
+                        _atomic_json(path / "project.ro.json", manifest)
+                        try:
+                            self._audit(path, "project.trashed", "trash", trace_id)
+                        except ProjectLifecycleProblem as error:
+                            try:
+                                _atomic_json(path / "project.ro.json", original_manifest)
+                            except ProjectLifecycleProblem as rollback_error:
+                                raise ProjectLifecycleProblem.rollback_failed() from rollback_error
+                            raise error
+                        destination = trash / f"{manifest['projectId']}-{secrets.token_hex(6)}"
+                        if destination.exists() or _redirect(destination):
+                            raise ProjectLifecycleProblem.invalid_path()
+                    try:
+                        rename_project(destination)
+                    except OSError as error:
+                        try:
+                            with _stable_directories([path / ".locks", path / "config", path / "logs"]):
+                                _atomic_json(path / "project.ro.json", original_manifest)
+                                self._audit(
+                                    path,
+                                    "project.trash-rollback",
+                                    str(original_manifest["lifecycleState"]),
+                                    trace_id,
+                                )
+                        except ProjectLifecycleProblem as rollback_error:
+                            raise ProjectLifecycleProblem.rollback_failed() from rollback_error
+                        raise ProjectLifecycleProblem(
+                            status=500,
+                            code="RO-CORE-PROJECT-DELETE-FAILED",
+                            title="Project was not moved to recoverable trash",
+                            detail="The lifecycle state was rolled back because the recoverable move failed.",
+                            remediation="Check local storage permissions and retry.",
+                            retryable=True,
+                        ) from error
+                return self._projection(destination, manifest=manifest, profile=profile)
 
     def _transition(self, *, root: str, expected: str, target: str, event: str, trace_id: str) -> ProjectProjection:
         with self._mutex:
             path = _canonical_directory(root)
-            self._validate_layout(path)
-            manifest, profile = self._documents(path)
-            self._require_closed(path)
-            if manifest["lifecycleState"] != expected:
-                raise ProjectLifecycleProblem(
-                    status=409,
-                    code="RO-CORE-PROJECT-STATE-CONFLICT",
-                    title="Project lifecycle state changed",
-                    detail=f"This action requires a project in the {expected} state.",
-                    remediation="Refresh project state before choosing another lifecycle action.",
-                    retryable=True,
-                )
-            original_manifest = manifest
-            manifest = self._updated_manifest(original_manifest, target)
-            _atomic_json(path / "project.ro.json", manifest)
-            try:
-                self._audit(path, event, target, trace_id)
-            except ProjectLifecycleProblem:
-                _atomic_json(path / "project.ro.json", original_manifest)
-                raise
-            return self._projection(path, manifest=manifest, profile=profile)
+            with _stable_directories(self._project_guard_paths(path)):
+                self._validate_layout(path)
+                manifest, profile = self._documents(path)
+                self._require_closed(path)
+                if manifest["lifecycleState"] != expected:
+                    raise ProjectLifecycleProblem(
+                        status=409,
+                        code="RO-CORE-PROJECT-STATE-CONFLICT",
+                        title="Project lifecycle state changed",
+                        detail=f"This action requires a project in the {expected} state.",
+                        remediation="Refresh project state before choosing another lifecycle action.",
+                        retryable=True,
+                    )
+                original_manifest = manifest
+                manifest = self._updated_manifest(original_manifest, target)
+                _atomic_json(path / "project.ro.json", manifest)
+                try:
+                    self._audit(path, event, target, trace_id)
+                except ProjectLifecycleProblem as error:
+                    try:
+                        _atomic_json(path / "project.ro.json", original_manifest)
+                    except ProjectLifecycleProblem as rollback_error:
+                        raise ProjectLifecycleProblem.rollback_failed() from rollback_error
+                    raise error
+                return self._projection(path, manifest=manifest, profile=profile)
 
     def _require_closed(self, path: Path) -> None:
         lock = path / ".locks" / "session.lock"
@@ -591,21 +947,7 @@ class ProjectLifecycleService:
             "recordedAt": _timestamp(),
             "traceId": trace_id,
         }
-        path = root / "logs" / "project-lifecycle.jsonl"
-        try:
-            descriptor = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
-            with os.fdopen(descriptor, "a", encoding="utf-8", newline="\n") as stream:
-                stream.write(json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n")
-                stream.flush()
-                os.fsync(stream.fileno())
-        except OSError as error:
-            raise ProjectLifecycleProblem(
-                status=500,
-                code="RO-CORE-PROJECT-AUDIT-FAILED",
-                title="Project audit record could not be written",
-                detail="The lifecycle action did not complete without its required local audit record.",
-                remediation="Check local storage availability and retry.",
-            ) from error
+        _atomic_audit_append(root / "logs" / "project-lifecycle.jsonl", record)
 
     @staticmethod
     def _remove_staging(staging: Path) -> None:

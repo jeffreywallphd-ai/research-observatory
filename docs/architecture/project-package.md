@@ -72,6 +72,15 @@ package to a sibling `.research-observatory-trash` directory without touching
 application-level shared model caches. Project titles remain in the governed
 profile under `config`, never in the plaintext root manifest or audit events.
 
+On the release-authoritative Windows path, lifecycle operations hold canonical
+project, lock, configuration, and audit directories by stable handles that deny
+rename/delete until validation and mutation complete. Device paths and roots
+inside Windows installation directories are rejected. Audit JSONL updates use a
+bounded atomic replacement and reject redirects or hardlinks; an audit failure
+rolls manifest and lock state back before the request reports failure. Project
+publication and recoverable-trash movement rename the held directory itself, so
+another local process cannot substitute a different validated project by path.
+
 Stale-lock recovery and secure purge remain separate explicit workflows; this
 boundary never guesses that an unfamiliar lock is safe to break and never
 claims that recoverable trash is cryptographic erasure.
