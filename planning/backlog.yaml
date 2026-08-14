@@ -3368,7 +3368,7 @@ capabilities:
     depends_on:
     - CAP-00.S01.T03
     - CAP-01.S04.T02
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-02.S01.T01
       capability_id: CAP-02
@@ -3396,11 +3396,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T01:36:30+00:00'
-      updated_at: '2026-08-14T01:50:51+00:00'
+      updated_at: '2026-08-14T01:56:38+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Focused contract, schema, relocation, export-denial, ADR, architecture, build-inventory, and planning
@@ -3412,16 +3412,18 @@ capabilities:
         commit: eb290dbef9f870243e7c8909491cd1ebbe16b1c8
         recorded_at: '2026-08-14T01:49:41+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:curie
+        result: changes-requested
+        reviewed_at: '2026-08-14T01:56:38+00:00'
+        notes: 'Portable contract parity blocker: JSON Schema accepted reversed compatibility, modified-before-created, RFC3339
+          offset timestamps, and projectRevision above the JavaScript safe integer while the strict TypeScript decoder rejected
+          them. Align schema lexical/numeric rules and bind equivalent cross-field semantic validation before resubmission.'
       base_sha: 901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-14T01:36:30+00:00'
-        expires_at: '2026-08-14T09:36:30+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-14T01:56:38+00:00'
+        expires_at: '2026-08-14T09:56:38+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
