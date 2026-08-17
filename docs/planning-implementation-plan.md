@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3d226a6ad51b9f02cf6ff7a48dee51d8c88a262e4f3b4d582bdf4536e2b4232b
+source_sha256: 073e3926d9be87d0f49e6fcbc23f38afa793a5da151a2106e0e7ddeffe8e5d51
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1727,7 +1727,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S02.T01 - Create the initial normalized SQLite schema in WAL mode
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

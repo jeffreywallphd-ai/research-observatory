@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3d226a6ad51b9f02cf6ff7a48dee51d8c88a262e4f3b4d582bdf4536e2b4232b
+source_sha256: 073e3926d9be87d0f49e6fcbc23f38afa793a5da151a2106e0e7ddeffe8e5d51
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 283 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 35 |
 | `DEFERRED` | 36 |
 
@@ -117,4 +117,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S02.T01` Create the initial normalized SQLite schema in WAL mode | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S02.T01` Create the initial normalized SQLite schema in WAL mode | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
