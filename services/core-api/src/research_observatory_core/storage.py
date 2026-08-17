@@ -117,8 +117,8 @@ class StorageProblem(RuntimeError):
     """Bounded local storage failure without project content or path disclosure."""
 
 
-class CanonicalConnection(sqlite3.Connection):
-    """SQLite connection retaining file and directory identity guards on Windows."""
+class _GuardedConnection(sqlite3.Connection):
+    """Internal SQLite handle retaining file and directory identity guards."""
 
     _guard_handles: list[int]
     _guard_descriptor: int | None
@@ -134,6 +134,81 @@ class CanonicalConnection(sqlite3.Connection):
             handles = getattr(self, "_guard_handles", [])
             self._guard_handles = []
             _close_windows_handles(handles)
+
+
+class CanonicalCursor:
+    """Restricted result cursor without a back-reference to the raw connection."""
+
+    __slots__ = ("__cursor",)
+
+    def __init__(self, cursor: sqlite3.Cursor) -> None:
+        self.__cursor = cursor
+
+    def __iter__(self) -> CanonicalCursor:
+        return self
+
+    def __next__(self) -> Any:
+        return next(self.__cursor)
+
+    def fetchone(self) -> Any:
+        return self.__cursor.fetchone()
+
+    def fetchmany(self, size: int | None = None) -> list[Any]:
+        if size is None:
+            return self.__cursor.fetchmany()
+        return self.__cursor.fetchmany(size)
+
+    def fetchall(self) -> list[Any]:
+        return self.__cursor.fetchall()
+
+    @property
+    def description(self) -> tuple[Any, ...] | None:
+        return self.__cursor.description
+
+    @property
+    def lastrowid(self) -> int | None:
+        return self.__cursor.lastrowid
+
+    @property
+    def rowcount(self) -> int:
+        return self.__cursor.rowcount
+
+
+class CanonicalConnection:
+    """Restricted ordinary database capability with no configuration escape hatches."""
+
+    __slots__ = ("__connection",)
+
+    def __init__(self, connection: _GuardedConnection) -> None:
+        self.__connection = connection
+
+    def execute(self, sql: str, parameters: Any = ()) -> CanonicalCursor:
+        return CanonicalCursor(self.__connection.execute(sql, parameters))
+
+    def executemany(self, sql: str, parameters: Any) -> CanonicalCursor:
+        return CanonicalCursor(self.__connection.executemany(sql, parameters))
+
+    def commit(self) -> None:
+        self.__connection.commit()
+
+    def rollback(self) -> None:
+        self.__connection.rollback()
+
+    @property
+    def in_transaction(self) -> bool:
+        return self.__connection.in_transaction
+
+    def close(self) -> None:
+        self.__connection.close()
+
+    def __enter__(self) -> CanonicalConnection:
+        return self
+
+    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
+        if exc_type is None:
+            self.commit()
+        else:
+            self.rollback()
 
 
 @dataclass(frozen=True, slots=True)
@@ -596,6 +671,28 @@ _SCHEMA_MUTATION_ACTIONS = frozenset(
     )
 )
 
+_PROTECTED_WRITE_PRAGMAS = frozenset(
+    {
+        "application_id",
+        "busy_timeout",
+        "defer_foreign_keys",
+        "foreign_keys",
+        "ignore_check_constraints",
+        "journal_mode",
+        "legacy_alter_table",
+        "locking_mode",
+        "query_only",
+        "recursive_triggers",
+        "schema_version",
+        "synchronous",
+        "trusted_schema",
+        "user_version",
+        "wal_autocheckpoint",
+        "writable_schema",
+    }
+)
+_PROTECTED_COMMAND_PRAGMAS = frozenset({"incremental_vacuum", "optimize", "wal_checkpoint"})
+
 
 def _initialization_authorizer(
     action: int,
@@ -618,6 +715,10 @@ def _canonical_authorizer(
 ) -> int:
     if action in _SCHEMA_MUTATION_ACTIONS:
         return sqlite3.SQLITE_DENY
+    if action == sqlite3.SQLITE_PRAGMA and arg1 is not None:
+        pragma = arg1.casefold()
+        if pragma in _PROTECTED_COMMAND_PRAGMAS or (pragma in _PROTECTED_WRITE_PRAGMAS and arg2 is not None):
+            return sqlite3.SQLITE_DENY
     return _initialization_authorizer(action, arg1, arg2, database, trigger)
 
 
@@ -631,7 +732,7 @@ def _configure_connection(connection: sqlite3.Connection, *, initialize: bool) -
     connection.setconfig(sqlite3.SQLITE_DBCONFIG_TRUSTED_SCHEMA, False)
     connection.setconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE, True)
     connection.enable_load_extension(False)
-    connection.set_authorizer(_initialization_authorizer if initialize else _canonical_authorizer)
+    connection.set_authorizer(_initialization_authorizer)
     connection.execute("PRAGMA foreign_keys=ON")
     connection.execute(f"PRAGMA busy_timeout={BUSY_TIMEOUT_MILLISECONDS}")
     connection.execute("PRAGMA trusted_schema=OFF")
@@ -654,14 +755,16 @@ def _configure_connection(connection: sqlite3.Connection, *, initialize: bool) -
     for pragma, value in expected.items():
         if connection.execute(f"PRAGMA {pragma}").fetchone()[0] != value:
             raise StorageProblem("canonical database connection profile was not applied")
+    if not initialize:
+        connection.set_authorizer(_canonical_authorizer)
 
 
-def _connect_held(database: Path) -> CanonicalConnection:
+def _connect_held(database: Path) -> _GuardedConnection:
     parent_before = database.parent.stat(follow_symlinks=False)
     before = database.stat(follow_symlinks=False)
     descriptor: int | None = None
     handles: list[int] = []
-    connection: CanonicalConnection | None = None
+    connection: _GuardedConnection | None = None
     try:
         descriptor = os.open(database, os.O_RDONLY | getattr(os, "O_BINARY", 0))
         opened = os.fstat(descriptor)
@@ -679,7 +782,7 @@ def _connect_held(database: Path) -> CanonicalConnection:
             uri=True,
             autocommit=True,
             timeout=BUSY_TIMEOUT_MILLISECONDS / 1_000,
-            factory=CanonicalConnection,
+            factory=_GuardedConnection,
         )
         connection.row_factory = sqlite3.Row
         after = database.stat(follow_symlinks=False)
@@ -700,7 +803,9 @@ def _connect_held(database: Path) -> CanonicalConnection:
         _close_windows_handles(handles)
 
 
-def _schema_profile_errors(connection: sqlite3.Connection, expected_project_id: str | None) -> list[str]:
+def _schema_profile_errors(
+    connection: sqlite3.Connection | CanonicalConnection, expected_project_id: str | None
+) -> list[str]:
     errors: list[str] = []
     if connection.execute("PRAGMA application_id").fetchone()[0] != APPLICATION_ID:
         errors.append("application-id-mismatch")
@@ -744,7 +849,7 @@ def open_canonical_database(path: Path, *, expected_project_id: str | None = Non
         errors = _schema_profile_errors(connection, expected_project_id)
         if errors:
             raise StorageProblem("canonical database profile is incompatible")
-        return connection
+        return CanonicalConnection(connection)
     except (sqlite3.Error, StorageProblem) as error:
         connection.close()
         if isinstance(error, StorageProblem):
@@ -752,7 +857,7 @@ def open_canonical_database(path: Path, *, expected_project_id: str | None = Non
         raise StorageProblem("canonical database profile could not be verified") from error
 
 
-def _schema_fingerprint(connection: sqlite3.Connection) -> str:
+def _schema_fingerprint(connection: sqlite3.Connection | CanonicalConnection) -> str:
     rows = [
         {"type": str(row[0]), "name": str(row[1]), "table": str(row[2]), "sql": str(row[3])}
         for row in connection.execute(
@@ -769,7 +874,7 @@ def _schema_fingerprint(connection: sqlite3.Connection) -> str:
 
 
 def database_integrity_report(
-    connection: sqlite3.Connection,
+    connection: sqlite3.Connection | CanonicalConnection,
     *,
     expected_project_id: str | None = None,
 ) -> DatabaseIntegrityReport:
@@ -835,7 +940,7 @@ def initialize_database(
     project_id, project_id_scheme = _project_identity(project_id)
     created_at = _normalize_utc_millisecond(project_created_at)
     descriptor: int | None = None
-    connection: CanonicalConnection | None = None
+    connection: _GuardedConnection | None = None
     created = False
     succeeded = False
     try:

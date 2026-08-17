@@ -23,6 +23,7 @@ from research_observatory_core.storage import (  # noqa: E402
     EXPECTED_TRIGGERS,
     IMMUTABLE_ROW_TABLES,
     MUTABLE_STATE_TABLES,
+    CanonicalConnection,
     StorageProblem,
     database_integrity_report,
     initialize_database,
@@ -42,7 +43,7 @@ DOCUMENT_REVISION_ID = "01890f6e-6a40-7cc5-98b7-123456789ad1"
 OBJECT_SHA256 = "c" * 64
 
 
-def insert_identity(connection: sqlite3.Connection) -> None:
+def insert_identity(connection: sqlite3.Connection | CanonicalConnection) -> None:
     connection.execute(
         """
         INSERT OR IGNORE INTO aggregate_identities (
@@ -53,7 +54,7 @@ def insert_identity(connection: sqlite3.Connection) -> None:
     )
 
 
-def insert_revision(connection: sqlite3.Connection) -> None:
+def insert_revision(connection: sqlite3.Connection | CanonicalConnection) -> None:
     insert_identity(connection)
     connection.execute(
         """
@@ -510,6 +511,82 @@ class SqliteSchemaTests(unittest.TestCase):
 
             with self.assertRaises(sqlite3.DatabaseError):
                 connection.execute("DROP TRIGGER settings_no_update")
+        finally:
+            connection.close()
+
+    def test_ordinary_connection_is_a_sealed_non_migration_capability(self) -> None:
+        self.initialize()
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            self.assertNotIsInstance(connection, sqlite3.Connection)
+            for escape_hatch in (
+                "backup",
+                "create_aggregate",
+                "create_collation",
+                "create_function",
+                "cursor",
+                "deserialize",
+                "enable_load_extension",
+                "getconfig",
+                "load_extension",
+                "serialize",
+                "set_authorizer",
+                "set_progress_handler",
+                "set_trace_callback",
+                "setconfig",
+            ):
+                self.assertFalse(hasattr(connection, escape_hatch), escape_hatch)
+
+            cursor = connection.execute("SELECT 1")
+            self.assertFalse(hasattr(cursor, "connection"))
+            self.assertEqual(1, cursor.fetchone()[0])
+
+            connection.execute(
+                """
+                INSERT INTO settings (
+                    setting_id, project_id, setting_key, revision, value_type,
+                    boolean_value, created_at, modified_at
+                ) VALUES (?, ?, 'privacy.local-only', 0, 'boolean', 1, ?, ?)
+                """,
+                (SETTING_ID, PROJECT_ID, CREATED_AT, CREATED_AT),
+            )
+            protected_writes = (
+                f"PRAGMA application_id={APPLICATION_ID + 1}",
+                f"PRAGMA user_version={DATABASE_SCHEMA_VERSION + 1}",
+                "PRAGMA schema_version=999",
+                "PRAGMA foreign_keys=OFF",
+                "PRAGMA trusted_schema=ON",
+                "PRAGMA recursive_triggers=OFF",
+                "PRAGMA journal_mode=DELETE",
+                "PRAGMA synchronous=OFF",
+                "PRAGMA wal_autocheckpoint=1",
+                "PRAGMA locking_mode=EXCLUSIVE",
+                "PRAGMA busy_timeout=1",
+                "PRAGMA writable_schema=ON",
+                "PRAGMA ignore_check_constraints=ON",
+                "PRAGMA defer_foreign_keys=ON",
+            )
+            for statement in protected_writes:
+                with self.subTest(statement=statement), self.assertRaises(sqlite3.DatabaseError):
+                    connection.execute(statement)
+
+            with self.assertRaises(sqlite3.DatabaseError):
+                connection.execute("DROP TRIGGER settings_no_update")
+            with self.assertRaises(sqlite3.DatabaseError):
+                connection.execute("UPDATE settings SET boolean_value=0 WHERE setting_id=?", (SETTING_ID,))
+            with self.assertRaises(sqlite3.DatabaseError):
+                connection.execute("SELECT load_extension('untrusted')")
+
+            self.assertEqual(APPLICATION_ID, connection.execute("PRAGMA application_id").fetchone()[0])
+            self.assertEqual(DATABASE_SCHEMA_VERSION, connection.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(1, connection.execute("PRAGMA foreign_keys").fetchone()[0])
+            self.assertEqual(0, connection.execute("PRAGMA trusted_schema").fetchone()[0])
+            self.assertEqual(1, connection.execute("PRAGMA recursive_triggers").fetchone()[0])
+            self.assertEqual("wal", connection.execute("PRAGMA journal_mode").fetchone()[0])
+            self.assertEqual(2, connection.execute("PRAGMA synchronous").fetchone()[0])
+            self.assertEqual(1_000, connection.execute("PRAGMA wal_autocheckpoint").fetchone()[0])
+            self.assertEqual("normal", connection.execute("PRAGMA locking_mode").fetchone()[0])
+            self.assertEqual(5_000, connection.execute("PRAGMA busy_timeout").fetchone()[0])
         finally:
             connection.close()
 

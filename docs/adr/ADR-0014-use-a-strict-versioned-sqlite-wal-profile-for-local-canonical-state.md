@@ -78,8 +78,10 @@ Each canonical connection explicitly enables and verifies foreign keys, WAL,
 FULL synchronization, a 5-second busy timeout, untrusted schema, recursive
 triggers, normal locking, and a 1000-page passive auto-checkpoint. It disables
 loadable extensions, double-quoted string literals, and enables SQLite's
-defensive connection configuration. Ordinary canonical connections also deny
-schema-changing SQL; only the backed-up migration connection introduced by T02
+defensive connection configuration. Ordinary application code receives only a
+restricted connection/cursor capability: it cannot replace the authorizer,
+change connection configuration, enable extensions, reach a raw-cursor back-reference,
+or issue write-form identity, security, or durability PRAGMAs. Only the backed-up migration connection introduced by T02
 may replace governed DDL and its fingerprint. Database and parent identities are held
 against Windows rename/delete while the connection is live. Project creation
 initializes and verifies the schema inside the unpublished staging root; a
