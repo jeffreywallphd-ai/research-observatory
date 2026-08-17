@@ -3635,12 +3635,12 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T13:50:36+00:00'
-      updated_at: '2026-08-17T23:05:44+00:00'
-      completed_at: null
+      updated_at: '2026-08-17T23:08:52+00:00'
+      completed_at: '2026-08-17T23:08:52+00:00'
       blocker: null
       implementation_notes: 'Strict SQLite v1 schema, connection profile, project lifecycle integration, focused concurrency/denial
         tests, clean build, and performance qualification are ready for independent review; full data profile remains deferred
@@ -3677,18 +3677,13 @@ capabilities:
         recorded_at: '2026-08-17T23:05:10+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-17T23:01:14+00:00'
-        notes: 'P1: restricted wrappers still expose raw SQLite handles through discoverable name-mangled slots, enabling
-          set_authorizer(None), trigger removal, and protected-row mutation. Move raw connections/cursors into module-owned
-          opaque registry authority, return only opaque tokens/approved operations, remove registry entries on close/exhaustion,
-          and add exact dir/slots/name-mangled/cursor-chain attacks. SQL PRAGMA denial, initialization, triggers, mutable
-          state, evidence, and performance otherwise pass.'
+        result: approved
+        reviewed_at: '2026-08-17T23:08:52+00:00'
+        notes: 'Approved focused third remediation: opaque-token registry removes raw connection/cursor back-references; exact
+          dir/slots/name-mangled and cleanup attacks pass; prior SQL/PRAGMA/immutable/mutable/initialization controls, 40
+          focused tests, quality, current performance, evidence, and workflow state pass. No broad profile run.'
       base_sha: 538683ea3c5797b1bd9dae77fd5f40d12995403f
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-17T23:01:14+00:00'
-        expires_at: '2026-08-18T07:01:14+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -3720,11 +3715,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-17T23:08:52+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
