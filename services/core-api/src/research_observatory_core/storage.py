@@ -39,13 +39,30 @@ EXPECTED_TABLES = (
     "settings",
     "outbox_events",
 )
-EXPECTED_TRIGGERS = ("provenance_events_no_delete", "provenance_events_no_update")
+IMMUTABLE_ROW_TABLES = (
+    "schema_metadata",
+    "projects",
+    "aggregate_identities",
+    "aggregate_revisions",
+    "scholarly_records",
+    "documents",
+    "workflows",
+    "evidence",
+    "ontologies",
+    "decisions",
+    "provenance_events",
+    "settings",
+)
+MUTABLE_STATE_TABLES = ("object_records", "outbox_events")
+EXPECTED_TRIGGERS = tuple(
+    sorted(f"{table}_no_{operation}" for table in IMMUTABLE_ROW_TABLES for operation in ("delete", "update"))
+)
 EXPECTED_INDEXES = (
     "aggregate_revisions_project_kind",
     "outbox_events_dispatch",
     "provenance_events_project_time",
 )
-EXPECTED_SCHEMA_SHA256 = "e572a38ba24b00ab1faaa1771a577bfd44710b021a55c1f186f46a9bcbb87785"
+EXPECTED_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -65,6 +82,8 @@ _PROFILE_DOCUMENT: dict[str, Any] = {
     "timestampStorage": "utc-rfc3339-millisecond-text",
     "canonicalColumnTypes": ["INTEGER", "REAL", "TEXT"],
     "derivedBinaryStorage": "digest-reference-only",
+    "immutableRowTables": list(IMMUTABLE_ROW_TABLES),
+    "mutableStateTables": list(MUTABLE_STATE_TABLES),
     "connectionProfile": {
         "foreignKeys": True,
         "journalMode": "wal",
@@ -77,6 +96,7 @@ _PROFILE_DOCUMENT: dict[str, Any] = {
         "recursiveTriggers": True,
         "walAutocheckpointPages": WAL_AUTOCHECKPOINT_PAGES,
         "lockingMode": "normal",
+        "schemaChanges": "dedicated-backed-up-migration-connection-only",
     },
     "checkpointPolicy": {
         "automaticMode": "passive",
@@ -202,6 +222,41 @@ def _subtype_table(name: str, kind: str) -> str:
     """
 
 
+def _immutable_triggers(table: str, message: str) -> tuple[str, str]:
+    return (
+        f"""
+            CREATE TRIGGER {table}_no_update
+            BEFORE UPDATE ON {table}
+            BEGIN
+                SELECT RAISE(ABORT, '{message}');
+            END
+        """,
+        f"""
+            CREATE TRIGGER {table}_no_delete
+            BEFORE DELETE ON {table}
+            BEGIN
+                SELECT RAISE(ABORT, '{message}');
+            END
+        """,
+    )
+
+
+_IMMUTABLE_ROW_POLICIES = (
+    ("schema_metadata", "schema metadata is immutable outside a reviewed migration"),
+    ("projects", "project identity is immutable"),
+    ("aggregate_identities", "aggregate identities are immutable"),
+    ("aggregate_revisions", "aggregate revisions are immutable"),
+    ("scholarly_records", "scholarly record revisions are immutable"),
+    ("documents", "document revisions are immutable"),
+    ("workflows", "workflow revisions are immutable"),
+    ("evidence", "evidence revisions are immutable"),
+    ("ontologies", "ontology revisions are immutable"),
+    ("decisions", "decision revisions are immutable"),
+    ("provenance_events", "provenance events are append-only"),
+    ("settings", "settings history is append-only"),
+)
+
+
 _DDL_STATEMENTS = (
     f"""
         CREATE TABLE schema_metadata (
@@ -287,7 +342,7 @@ _DDL_STATEMENTS = (
                 storage_state IN ('pending', 'available', 'quarantined', 'deleted')
             ),
             created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
-            verified_at TEXT CHECK ({_timestamp_check("verified_at")}),
+            verified_at TEXT CHECK (verified_at IS NULL OR ({_timestamp_check("verified_at")})),
             FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
             CHECK (verified_at IS NULL OR verified_at >= created_at),
             UNIQUE (object_sha256, project_id)
@@ -373,7 +428,7 @@ _DDL_STATEMENTS = (
             available_at TEXT NOT NULL CHECK ({_timestamp_check("available_at")}),
             state TEXT NOT NULL CHECK (state IN ('pending', 'publishing', 'published', 'failed')),
             attempt_count INTEGER NOT NULL DEFAULT 0 CHECK (attempt_count BETWEEN 0 AND 1000),
-            published_at TEXT CHECK ({_timestamp_check("published_at")}),
+            published_at TEXT CHECK (published_at IS NULL OR ({_timestamp_check("published_at")})),
             idempotency_key TEXT NOT NULL CHECK (length(idempotency_key) BETWEEN 1 AND 200),
             record_sha256 TEXT NOT NULL CHECK ({_sha256_check("record_sha256")}),
             FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
@@ -387,20 +442,7 @@ _DDL_STATEMENTS = (
             UNIQUE (project_id, idempotency_key)
         ) STRICT
     """,
-    """
-        CREATE TRIGGER provenance_events_no_update
-        BEFORE UPDATE ON provenance_events
-        BEGIN
-            SELECT RAISE(ABORT, 'provenance events are append-only');
-        END
-    """,
-    """
-        CREATE TRIGGER provenance_events_no_delete
-        BEFORE DELETE ON provenance_events
-        BEGIN
-            SELECT RAISE(ABORT, 'provenance events are append-only');
-        END
-    """,
+    *(statement for table, message in _IMMUTABLE_ROW_POLICIES for statement in _immutable_triggers(table, message)),
     "CREATE INDEX aggregate_revisions_project_kind ON aggregate_revisions (project_id, aggregate_kind, revision)",
     "CREATE INDEX provenance_events_project_time ON provenance_events (project_id, occurred_at, event_id)",
     "CREATE INDEX outbox_events_dispatch ON outbox_events (state, available_at, outbox_id)",
@@ -528,7 +570,34 @@ def _close_windows_handles(handles: list[int]) -> None:
         close_handle(handle)
 
 
-def _canonical_authorizer(
+_SCHEMA_MUTATION_ACTIONS = frozenset(
+    getattr(sqlite3, name)
+    for name in (
+        "SQLITE_ALTER_TABLE",
+        "SQLITE_CREATE_INDEX",
+        "SQLITE_CREATE_TABLE",
+        "SQLITE_CREATE_TEMP_INDEX",
+        "SQLITE_CREATE_TEMP_TABLE",
+        "SQLITE_CREATE_TEMP_TRIGGER",
+        "SQLITE_CREATE_TEMP_VIEW",
+        "SQLITE_CREATE_TRIGGER",
+        "SQLITE_CREATE_VIEW",
+        "SQLITE_CREATE_VTABLE",
+        "SQLITE_DROP_INDEX",
+        "SQLITE_DROP_TABLE",
+        "SQLITE_DROP_TEMP_INDEX",
+        "SQLITE_DROP_TEMP_TABLE",
+        "SQLITE_DROP_TEMP_TRIGGER",
+        "SQLITE_DROP_TEMP_VIEW",
+        "SQLITE_DROP_TRIGGER",
+        "SQLITE_DROP_VIEW",
+        "SQLITE_DROP_VTABLE",
+        "SQLITE_REINDEX",
+    )
+)
+
+
+def _initialization_authorizer(
     action: int,
     _arg1: str | None,
     _arg2: str | None,
@@ -538,6 +607,18 @@ def _canonical_authorizer(
     if action in {sqlite3.SQLITE_ATTACH, sqlite3.SQLITE_DETACH}:
         return sqlite3.SQLITE_DENY
     return sqlite3.SQLITE_OK
+
+
+def _canonical_authorizer(
+    action: int,
+    arg1: str | None,
+    arg2: str | None,
+    database: str | None,
+    trigger: str | None,
+) -> int:
+    if action in _SCHEMA_MUTATION_ACTIONS:
+        return sqlite3.SQLITE_DENY
+    return _initialization_authorizer(action, arg1, arg2, database, trigger)
 
 
 def _configure_connection(connection: sqlite3.Connection, *, initialize: bool) -> None:
@@ -550,7 +631,7 @@ def _configure_connection(connection: sqlite3.Connection, *, initialize: bool) -
     connection.setconfig(sqlite3.SQLITE_DBCONFIG_TRUSTED_SCHEMA, False)
     connection.setconfig(sqlite3.SQLITE_DBCONFIG_DEFENSIVE, True)
     connection.enable_load_extension(False)
-    connection.set_authorizer(_canonical_authorizer)
+    connection.set_authorizer(_initialization_authorizer if initialize else _canonical_authorizer)
     connection.execute("PRAGMA foreign_keys=ON")
     connection.execute(f"PRAGMA busy_timeout={BUSY_TIMEOUT_MILLISECONDS}")
     connection.execute("PRAGMA trusted_schema=OFF")
@@ -807,6 +888,7 @@ def initialize_database(
                 """,
                 (project_id, project_id_scheme, created_at),
             )
+            connection.set_authorizer(_canonical_authorizer)
             report = database_integrity_report(connection, expected_project_id=project_id)
             if not report.ok:
                 raise StorageProblem("new database did not satisfy its integrity contract")

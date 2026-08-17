@@ -78,7 +78,9 @@ Each canonical connection explicitly enables and verifies foreign keys, WAL,
 FULL synchronization, a 5-second busy timeout, untrusted schema, recursive
 triggers, normal locking, and a 1000-page passive auto-checkpoint. It disables
 loadable extensions, double-quoted string literals, and enables SQLite's
-defensive connection configuration. Database and parent identities are held
+defensive connection configuration. Ordinary canonical connections also deny
+schema-changing SQL; only the backed-up migration connection introduced by T02
+may replace governed DDL and its fingerprint. Database and parent identities are held
 against Windows rename/delete while the connection is live. Project creation
 initializes and verifies the schema inside the unpublished staging root; a
 compatible project open verifies the immutable application/profile/schema
@@ -90,14 +92,20 @@ routine startup/maintenance scheduling and user-visible recovery.
 Schema version 1 separates stable aggregate identities from normalized common
 aggregate revisions, with exact
 kind extension tables for scholarly records, documents, workflows, evidence,
-ontologies, and decisions. Typed settings cannot store arbitrary JSON or
-binaries. Provenance rows are append-only through denial triggers. The outbox
-is an integration seam with typed metadata and a record digest; the repository
-task will supply atomic domain-event behavior rather than smuggling payload
-blobs into this schema.
+ontologies, and decisions. Project/schema identities, aggregate identities,
+aggregate revisions and their kind-extension rows are insert-only through
+fingerprinted update/delete denial triggers. Typed settings cannot store
+arbitrary JSON or binaries, and each versioned setting row is likewise
+append-only. Provenance rows remain append-only. Object availability metadata
+and outbox delivery metadata are the only intentionally mutable version-1 row
+classes. The repository task will supply atomic domain-event behavior rather
+than smuggling payload blobs into this schema.
 
 Alembic forward migrations, backup-before-migrate, recovery manifests, and
-checkpointed snapshots belong to `CAP-02.S02.T02`. SQLAlchemy 2 typed
+checkpointed snapshots belong to `CAP-02.S02.T02`. Its dedicated migration
+connection must replace denial triggers only inside the reviewed, backed-up
+schema transition and publish the successor fingerprint before ordinary access.
+SQLAlchemy 2 typed
 repositories and explicit units of work belong to `CAP-02.S02.T03`; business
 and renderer code never receive a SQLite connection. The bootstrap adapter may
 issue only its governed schema/profile SQL. Manual FULL/RESTART/TRUNCATE
@@ -136,7 +144,8 @@ not discard accepted revisions, provenance, or decisions.
 - exact Draft 2020-12 storage-profile validation and runtime semantic parity;
 - version/application/profile/STRICT table and trigger inventory checks;
 - fixed UUID, UTC millisecond, scalar type, typed-setting, FK, kind, and
-  append-only provenance constraint attacks;
+  immutable identity/revision/extension/settings and append-only provenance
+  constraint attacks;
 - concurrent WAL reader/writer snapshot plus bounded second-writer wait;
 - close/reopen integrity and exact project-identity verification;
 - existing-file, hardlink, wrong-application-ID, and project-open denial with

@@ -16,6 +16,8 @@
     "timestampStorage",
     "canonicalColumnTypes",
     "derivedBinaryStorage",
+    "immutableRowTables",
+    "mutableStateTables",
     "connectionProfile",
     "checkpointPolicy",
     "integrityChecks",
@@ -27,7 +29,7 @@
     "profileId": {"const": "sqlite-wal-v1"},
     "databaseSchemaVersion": {"const": 1},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "e572a38ba24b00ab1faaa1771a577bfd44710b021a55c1f186f46a9bcbb87785"},
+    "schemaFingerprintSha256": {"const": "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {
@@ -41,6 +43,23 @@
     "timestampStorage": {"const": "utc-rfc3339-millisecond-text"},
     "canonicalColumnTypes": {"const": ["INTEGER", "REAL", "TEXT"]},
     "derivedBinaryStorage": {"const": "digest-reference-only"},
+    "immutableRowTables": {
+      "const": [
+        "schema_metadata",
+        "projects",
+        "aggregate_identities",
+        "aggregate_revisions",
+        "scholarly_records",
+        "documents",
+        "workflows",
+        "evidence",
+        "ontologies",
+        "decisions",
+        "provenance_events",
+        "settings"
+      ]
+    },
+    "mutableStateTables": {"const": ["object_records", "outbox_events"]},
     "connectionProfile": {
       "const": {
         "foreignKeys": true,
@@ -53,7 +72,8 @@
         "loadableExtensions": false,
         "recursiveTriggers": true,
         "walAutocheckpointPages": 1000,
-        "lockingMode": "normal"
+        "lockingMode": "normal",
+        "schemaChanges": "dedicated-backed-up-migration-connection-only"
       }
     },
     "checkpointPolicy": {
