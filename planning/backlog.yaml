@@ -3635,16 +3635,19 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T13:50:36+00:00'
-      updated_at: '2026-08-17T22:46:43+00:00'
+      updated_at: '2026-08-17T22:47:28+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Strict SQLite v1 schema, connection profile, project lifecycle integration, focused concurrency/denial
+      implementation_notes: 'Strict SQLite v1 schema, connection profile, project lifecycle integration, focused concurrency/denial
         tests, clean build, and performance qualification are ready for independent review; full data profile remains deferred
         to slice review.
+
+        Immutable-row triggers, ordinary schema DDL denial, nullable mutable-state regression, focused integration, clean
+        build, and transparent performance replay are ready for remediation-only independent review.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S02.T01.json
