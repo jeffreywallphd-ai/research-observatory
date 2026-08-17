@@ -3715,11 +3715,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-17T23:09:55+00:00'
-      updated_at: '2026-08-17T23:41:30+00:00'
+      updated_at: '2026-08-17T23:47:37+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Submitted backup-first forward migration framework at f26f548 with exact v1 fixture, verified
@@ -3732,16 +3732,18 @@ capabilities:
         commit: f26f5485e4290894fb3e1e288d8df140a8bfb98f
         recorded_at: '2026-08-17T23:40:43+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:curie
+        result: changes-requested
+        reviewed_at: '2026-08-17T23:47:37+00:00'
+        notes: 'P1: backup and recovery-manifest close-to-lock gaps allow valid-content mutation or hardlink aliasing before
+          verification authority; maintain uninterrupted stable held-file identity through commit. P2: add intermediate revision
+          failpoints or narrow the claim and prove rollback at each material migration step. Focused controls otherwise pass.'
       base_sha: 7734063b43e34e7a71bd84d23711f903a2a7eaf4
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-17T23:09:55+00:00'
-        expires_at: '2026-08-18T07:09:55+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-17T23:47:37+00:00'
+        expires_at: '2026-08-18T07:47:37+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
