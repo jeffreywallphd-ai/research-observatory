@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b7e9673b0e20b0d8c766792a33e863e140f7173762f2b39cc21e11c4443a2773
+source_sha256: 3069865aa652194510eb990b89d48f3185be3fcd3441d0eb20d2c3ea78944e64
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1784,6 +1784,10 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
+
+**Evidence:**
+
+- `artifacts/evidence/CAP-02.S02.T02.json` at `f26f5485e4290894fb3e1e288d8df140a8bfb98f`
 
 #### - [ ] CAP-02.S02.T03 - Build typed repositories and transaction boundaries
 
