@@ -540,6 +540,19 @@ class SqliteSchemaTests(unittest.TestCase):
             cursor = connection.execute("SELECT 1")
             self.assertFalse(hasattr(cursor, "connection"))
             self.assertEqual(1, cursor.fetchone()[0])
+            self.assertNotIn("_CanonicalConnection__connection", dir(connection))
+            self.assertNotIn("_CanonicalCursor__cursor", dir(cursor))
+            with self.assertRaises(AttributeError):
+                object.__getattribute__(connection, "_CanonicalConnection__connection")
+            with self.assertRaises(AttributeError):
+                object.__getattribute__(cursor, "_CanonicalCursor__cursor")
+            for slot in CanonicalConnection.__slots__:
+                value = getattr(connection, f"_CanonicalConnection{slot}")
+                self.assertNotIsInstance(value, (sqlite3.Connection, sqlite3.Cursor))
+                self.assertIsInstance(value, str)
+            for slot in type(cursor).__slots__:
+                value = getattr(cursor, f"_CanonicalCursor{slot}")
+                self.assertNotIsInstance(value, (sqlite3.Connection, sqlite3.Cursor))
 
             connection.execute(
                 """
@@ -587,6 +600,11 @@ class SqliteSchemaTests(unittest.TestCase):
             self.assertEqual(1_000, connection.execute("PRAGMA wal_autocheckpoint").fetchone()[0])
             self.assertEqual("normal", connection.execute("PRAGMA locking_mode").fetchone()[0])
             self.assertEqual(5_000, connection.execute("PRAGMA busy_timeout").fetchone()[0])
+
+            pending = connection.execute("SELECT 1 UNION ALL SELECT 2")
+            connection.close()
+            with self.assertRaisesRegex(sqlite3.ProgrammingError, "cursor is closed"):
+                pending.fetchone()
         finally:
             connection.close()
 
