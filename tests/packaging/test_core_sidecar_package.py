@@ -188,8 +188,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
             self.assertEqual(completed.returncode, 0, completed.stderr)
             checked = json.loads(completed.stdout)
             self.assertEqual(checked["status"], "configuration-valid")
-            self.assertEqual(["0002_schema_history"], checked["storageMigration"]["revisions"])
-            self.assertTrue(checked["storageMigration"]["backupRequired"])
+            self.assertNotIn("storageMigration", checked)
             self.assertNotIn("python", environment["PATH"].casefold())
 
             runtime_candidates = sorted(

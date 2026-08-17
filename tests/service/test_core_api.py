@@ -427,17 +427,7 @@ class CoreApiTests(unittest.TestCase):
         self.assertEqual(valid.returncode, 0, valid.stderr)
         checked = json.loads(valid.stdout)
         self.assertEqual(checked["status"], "configuration-valid")
-        self.assertEqual(
-            {
-                "backend": "alembic-1.18.5",
-                "targetSchemaVersion": 2,
-                "supportedSourceSchemaVersions": [1],
-                "revisions": ["0002_schema_history"],
-                "backupRequired": True,
-                "downgradeMode": "restore-verified-backup",
-            },
-            checked["storageMigration"],
-        )
+        self.assertNotIn("storageMigration", checked)
         self.assertNotIn("http", valid.stdout)
 
         environment["RO_CORE_BIND_HOST"] = "https://token@example.invalid"
