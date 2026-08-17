@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 92a7f8368e893a6a4106ad9e8425a2f8e1b607987db98a23c4c36fb4d86fbd12
+source_sha256: 3d226a6ad51b9f02cf6ff7a48dee51d8c88a262e4f3b4d582bdf4536e2b4232b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1756,6 +1756,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S02.T01.json` at `a7276abc1152c5fb76c3228804ed65c8be932948`
 - `artifacts/evidence/CAP-02.S02.T01.review-fix.json` at `30364ee2156ef23c6609aa84e108fb90a2035c27`
 - `artifacts/evidence/CAP-02.S02.T01.review-fix-2.json` at `5e5541c81c4445bb3df77f32d4f11f8125c9a00b`
+- `artifacts/evidence/CAP-02.S02.T01.review-fix-3.json` at `74212e9cb79afe87ec5c09b3494a5353abc44034`
 
 #### - [ ] CAP-02.S02.T02 - Implement forward migrations and backup-before-migrate policy
 
