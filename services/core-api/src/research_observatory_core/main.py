@@ -143,6 +143,10 @@ def main(argv: list[str] | None = None) -> int:
         )
         return EXIT_CONFIGURATION_ERROR
     if arguments.check:
+        # Construct the migration projection so frozen-package qualification
+        # proves the governed migration runtime is loadable without expanding
+        # the stable public configuration-check envelope.
+        migration_framework_projection()
         print(
             json.dumps(
                 {
@@ -150,7 +154,6 @@ def main(argv: list[str] | None = None) -> int:
                     "service": CORE_SERVICE_ID,
                     "status": "configuration-valid",
                     "configuration": settings.public_projection(),
-                    "storageMigration": migration_framework_projection(),
                 },
                 sort_keys=True,
             )
