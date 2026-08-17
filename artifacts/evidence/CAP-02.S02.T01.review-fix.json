@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T01",
+  "commit": "30364ee2156ef23c6609aa84e108fb90a2035c27",
+  "baseCommit": "a7276abc1152c5fb76c3228804ed65c8be932948",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S02.T01.json",
+    "sha256": "bcdb32b79018de8296c5916ee26a9853b8d697dec4cec65e6b26381ae6376af4",
+    "reason": "Independent review found that the original schema documented stable and immutable history but permitted valid-value UPDATE and DELETE operations. This record preserves the original evidence and binds the focused immutable-row, migration-authority, and nullable mutable-state remediation."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S02.T01.json",
+    "docs/adr/ADR-0014-use-a-strict-versioned-sqlite-wal-profile-for-local-canonical-state.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/data/test_sqlite_schema.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.service.test_project_lifecycle tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 39 focused tests pass. Eight SQLite tests directly deny valid-value UPDATE/DELETE of project/schema identity, aggregate identity, aggregate revisions, all six kind extensions, and versioned settings; prove the ordinary connection cannot drop the denial triggers; preserve mutable object verification and outbox delivery transitions with nullable timestamps; and retain the original WAL, concurrency, path, fingerprint, lifecycle, and API controls."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_adr_check tests.foundation.test_build_manifest tests.foundation.test_quality_check",
+      "exitCode": 0,
+      "result": "All 32 affected governance/build/quality tests pass after the storage profile schema and ADR changes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/projects.py tests/data/test_sqlite_schema.py tests/service/test_project_lifecycle.py; .venv\\Scripts\\python.exe -m ruff check services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/projects.py tests/data/test_sqlite_schema.py tests/service/test_project_lifecycle.py; .venv\\Scripts\\python.exe -m mypy services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/projects.py",
+      "exitCode": 0,
+      "result": "Affected formatting, Ruff lint, and mypy checks pass."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S02.T01-review-fix-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff lint, and mypy pass for all 85 governed Python files. Report SHA-256: 427802254ff48d884b88a6d7251c3aeacd55baa15f6052e6242c03db2010fcc2."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/project_lifecycle_performance_check.py --repo . --report artifacts/tmp/CAP-02.S02.T01-review-fix-project-lifecycle-performance-run2.json",
+      "exitCode": 0,
+      "result": "The clean commit-bound Windows x64 qualification passes without changing the reviewed baseline: fresh-service open p95 17.5292 ms versus 20.184 ms and warm reopen p95 21.6191 ms versus 23.681 ms. Report SHA-256: 3893e7ffd0469db1be733154a077b3a07bbab0ef8a288544c2980042eba9ee6d."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/project_lifecycle_performance_check.py --repo . --report artifacts/tmp/CAP-02.S02.T01-review-fix-project-lifecycle-performance-run3.json",
+      "exitCode": 0,
+      "result": "A second clean qualifying replay passes: fresh-service open p95 15.3708 ms and warm reopen p95 15.8764 ms. Report SHA-256: 7fe7e7eac2fce9a82e18ce769bbd7089939ffac35e5a872917163c7373524b3a."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .; .venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T01-review-fix-build.json",
+      "exitCode": 0,
+      "result": "ADR registry, architecture, repository structure, and clean build identity 0.1.0+g30364ee pass. Build-manifest SHA-256: f698a3b63344e7aaddf5eb9003e4f048f449828fce45c10b6aa097ea9b2f08b5."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/planctl.py --repo . wave ready W1 --require-approved; .venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base a7276abc1152c5fb76c3228804ed65c8be932948 --head 30364ee2156ef23c6609aa84e108fb90a2035c27; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The immutable W1 packet remains approved and ready; the incremental UI gate reports no UI/reference changes; the 143-page planning site, authoritative backlog, and generated views validate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The portable sqlite-wal-v1 profile and runtime pin the exact 61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9 DDL fingerprint and exact 24-trigger immutable-row inventory.",
+        "Project/schema identity, aggregate identity, aggregate revisions, all normalized kind-extension rows, versioned settings, and provenance are insert-only under direct database denial triggers. Canonical-connection hostile tests reject valid replacement values and deletion, not merely malformed data.",
+        "Object availability/verification metadata and outbox delivery metadata remain the only intentionally mutable version-1 row classes; pending NULL timestamps and their governed state transitions are covered directly.",
+        "Foreign keys, STRICT typing, project ownership, kind relationships, UTC timestamps, WAL reader/writer behavior, and bounded writer waiting remain passing without storing arbitrary derived blobs."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Focused tests deny UPDATE/DELETE for every immutable row class and deny ordinary canonical SQL from dropping the protecting triggers.",
+        "The original hostile UUID/timestamp/kind/FK/setting, existing-file, hardlink, mismatch, ATTACH, forged-schema, and project lifecycle boundary tests remain passing.",
+        "Two consecutive clean governed performance qualifications pass the unchanged reviewed thresholds. An earlier retained run produced one nonqualifying fresh p95 of 24.282 ms due to two workstation outliers; the subsequent raw distributions are retained and disclosed rather than replacing the baseline."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0014, the architecture guide, and the portable storage contract now distinguish immutable history from intentionally mutable object/outbox state and bind the exact trigger inventory.",
+        "Ordinary canonical connections deny schema-changing SQL. CAP-02.S02.T02 must introduce a separate, tightly scoped backup-first migration connection that replaces governed DDL and publishes a successor fingerprint; this task does not pre-implement or bypass migration authority.",
+        "No UI, dependency, repository layer, encryption, secret-management, or unrelated runtime scope was added. Broader migration/repository/backup/recovery qualification remains assigned to the rest of the approved slice and W1 campaign."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This remediation changes the canonical database integrity contract and ordinary schema-authority boundary. Selected checks directly attack every immutable row class, preserve the two intentionally mutable row classes, exercise project lifecycle/API integration, and revalidate the storage profile schema, ADR/architecture, clean build, UI separation, and governed open-latency baseline.",
+    "deferred": "The full data profile, migration runner, repository/unit-of-work layer, backup/recovery, and complete slice matrix remain deferred to CAP-02.S02 slice integration; the complete repository/deployment matrix remains deferred to W1 exit under the approved risk-based workflow.",
+    "performanceNote": "Three clean governed runs were retained. The first was nonqualifying because two fresh-open workstation outliers produced p95 24.282 ms; the next two independently qualified at fresh p95 17.5292 and 15.3708 ms. The baseline, methodology, fixture class, tool, and implementation authority were not changed."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Replay the prior valid-value immutable-row UPDATE/DELETE finding plus the incremental nullable mutable-state and ordinary schema-authorizer boundaries. Confirm exact profile/DDL fingerprint and evidence scope. Use focused checks only; do not rerun broad profiles."
+  }
+}
