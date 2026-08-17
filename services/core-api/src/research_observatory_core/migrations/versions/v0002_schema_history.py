@@ -104,6 +104,22 @@ SCHEMA_METADATA_TRIGGERS = (
     """,
 )
 
+MATERIAL_MIGRATION_STEPS = (
+    "metadata-trigger-removal",
+    "metadata-v1-rename",
+    "metadata-v2-create",
+    "metadata-v2-copy",
+    "metadata-v1-drop",
+    "migration-history-create",
+    "immutable-triggers-create",
+    "migration-history-insert",
+    "user-version-advance",
+)
+
+
+def _migration_step_completed(_step: str) -> None:
+    """Private deterministic failpoint seam for transactional rollback proof."""
+
 
 def apply(operations: Operations, parameters: dict[str, Any]) -> None:
     """Apply the exact v1-to-v2 DDL inside the caller-owned transaction."""
@@ -114,8 +130,11 @@ def apply(operations: Operations, parameters: dict[str, Any]) -> None:
         raise ValueError("migration target profile authority mismatch")
     operations.execute("DROP TRIGGER schema_metadata_no_update")
     operations.execute("DROP TRIGGER schema_metadata_no_delete")
+    _migration_step_completed("metadata-trigger-removal")
     operations.rename_table("schema_metadata", "schema_metadata_v1")
+    _migration_step_completed("metadata-v1-rename")
     operations.execute(SCHEMA_METADATA_V2_DDL)
+    _migration_step_completed("metadata-v2-create")
     bind = operations.get_bind()
     if bind is None:
         raise ValueError("online migration connection is required")
@@ -133,10 +152,14 @@ def apply(operations: Operations, parameters: dict[str, Any]) -> None:
         ),
         {"profile_sha256": TARGET_PROFILE_SHA256, "schema_sha256": TARGET_SCHEMA_SHA256},
     )
+    _migration_step_completed("metadata-v2-copy")
     operations.drop_table("schema_metadata_v1")
+    _migration_step_completed("metadata-v1-drop")
     operations.execute(SCHEMA_MIGRATIONS_DDL)
+    _migration_step_completed("migration-history-create")
     for statement in (*SCHEMA_METADATA_TRIGGERS, *SCHEMA_MIGRATIONS_TRIGGERS):
         operations.execute(statement)
+    _migration_step_completed("immutable-triggers-create")
     bind.execute(
         text(
             """
@@ -152,7 +175,9 @@ def apply(operations: Operations, parameters: dict[str, Any]) -> None:
         ),
         parameters,
     )
+    _migration_step_completed("migration-history-insert")
     operations.execute("PRAGMA user_version=2")
+    _migration_step_completed("user-version-advance")
 
 
 def upgrade() -> None:

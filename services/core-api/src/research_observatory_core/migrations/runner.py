@@ -88,6 +88,43 @@ class _SourceProfile:
     project_id: str
 
 
+@dataclass(slots=True)
+class _HeldFileAuthority:
+    """One exclusively created file held without write/delete sharing."""
+
+    path: Path
+    descriptor: int
+    identity: tuple[int, int]
+
+    def validate(self) -> None:
+        opened = os.fstat(self.descriptor)
+        visible = self.path.stat(follow_symlinks=False)
+        if (
+            not stat.S_ISREG(opened.st_mode)
+            or opened.st_nlink != 1
+            or visible.st_nlink != 1
+            or (opened.st_dev, opened.st_ino) != self.identity
+            or (visible.st_dev, visible.st_ino) != self.identity
+            or storage._redirect(self.path)
+        ):
+            raise MigrationProblem("migration-backup-file-invalid")
+
+    def read_bytes(self) -> bytes:
+        os.lseek(self.descriptor, 0, os.SEEK_SET)
+        payload = bytearray()
+        while block := os.read(self.descriptor, 1024 * 1024):
+            payload.extend(block)
+        return bytes(payload)
+
+    def sha256(self) -> str:
+        return _sha256_descriptor(self.descriptor)
+
+    def close(self) -> None:
+        if self.descriptor >= 0:
+            os.close(self.descriptor)
+            self.descriptor = -1
+
+
 @dataclass(frozen=True, slots=True)
 class _VerifiedBackup:
     directory: Path
@@ -96,6 +133,12 @@ class _VerifiedBackup:
     database_sha256: str
     manifest_sha256: str
     manifest_payload: dict[str, Any]
+    database_authority: _HeldFileAuthority
+    manifest_authority: _HeldFileAuthority
+
+    def close(self) -> None:
+        self.manifest_authority.close()
+        self.database_authority.close()
 
 
 _SUPPORTED_PROFILES = {
@@ -110,11 +153,22 @@ _SUPPORTED_PROFILES = {
 }
 
 
-def _sha256_file(path: Path) -> str:
+def _sha256_descriptor(descriptor: int) -> str:
     digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
+    os.lseek(descriptor, 0, os.SEEK_SET)
+    while block := os.read(descriptor, 1024 * 1024):
+        digest.update(block)
+    return digest.hexdigest()
+
+
+def _logical_database_sha256(connection: sqlite3.Connection) -> str:
+    """Hash the complete deterministic logical database, not file layout."""
+
+    digest = hashlib.sha256()
+    for statement in connection.iterdump():
+        payload = statement.encode("utf-8")
+        digest.update(len(payload).to_bytes(8, "big"))
+        digest.update(payload)
     return digest.hexdigest()
 
 
@@ -309,14 +363,102 @@ def _held_windows_paths(paths: tuple[tuple[Path, bool], ...], *, deny_writes: bo
             close_handle(handle)
 
 
-def _create_exclusive_file(path: Path, payload: bytes) -> None:
-    descriptor: int | None = None
-    try:
-        descriptor = os.open(
+def _exclusive_descriptor(path: Path) -> int:
+    if os.name != "nt":
+        return os.open(
             path,
-            os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0),
+            os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0),
             0o600,
         )
+    import ctypes
+    import msvcrt
+    from ctypes import wintypes
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    create_file = kernel32.CreateFileW
+    create_file.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create_file.restype = wintypes.HANDLE
+    generic_read = 0x80000000
+    generic_write = 0x40000000
+    create_new = 1
+    file_attribute_normal = 0x00000080
+    file_flag_open_reparse_point = 0x00200000
+    invalid_handle = wintypes.HANDLE(-1).value
+    handle = create_file(
+        str(path),
+        generic_read | generic_write,
+        0,
+        None,
+        create_new,
+        file_attribute_normal | file_flag_open_reparse_point,
+        None,
+    )
+    if handle == invalid_handle:
+        raise ctypes.WinError(ctypes.get_last_error())
+    try:
+        return msvcrt.open_osfhandle(handle, os.O_RDWR | getattr(os, "O_BINARY", 0))
+    except Exception:
+        kernel32.CloseHandle(handle)
+        raise
+
+
+def _lock_descriptor_writes(descriptor: int) -> None:
+    """Bridge an untrusted SQLite working file into an immutable copy step."""
+
+    if os.name != "nt":
+        import importlib
+
+        fcntl = importlib.import_module("fcntl")
+        fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        return
+    import ctypes
+    import msvcrt
+    from ctypes import wintypes
+
+    class Overlapped(ctypes.Structure):
+        _fields_ = (
+            ("internal", ctypes.c_void_p),
+            ("internal_high", ctypes.c_void_p),
+            ("offset", wintypes.DWORD),
+            ("offset_high", wintypes.DWORD),
+            ("event", wintypes.HANDLE),
+        )
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    lock_file = kernel32.LockFileEx
+    lock_file.argtypes = (
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        ctypes.POINTER(Overlapped),
+    )
+    lock_file.restype = wintypes.BOOL
+    overlapped = Overlapped()
+    if not lock_file(
+        msvcrt.get_osfhandle(descriptor),
+        0x00000002 | 0x00000001,
+        0,
+        0xFFFFFFFF,
+        0xFFFFFFFF,
+        ctypes.byref(overlapped),
+    ):
+        raise ctypes.WinError(ctypes.get_last_error())
+
+
+def _create_exclusive_file(path: Path, payload: bytes) -> _HeldFileAuthority:
+    descriptor: int | None = None
+    try:
+        descriptor = _exclusive_descriptor(path)
         offset = 0
         while offset < len(payload):
             offset += os.write(descriptor, payload[offset:])
@@ -330,11 +472,31 @@ def _create_exclusive_file(path: Path, payload: bytes) -> None:
             or storage._redirect(path)
         ):
             raise MigrationProblem("migration-backup-file-invalid")
+        authority = _HeldFileAuthority(path, descriptor, (status.st_dev, status.st_ino))
+        authority.validate()
+        descriptor = None
+        return authority
     except (OSError, ValueError) as error:
         raise MigrationProblem("migration-backup-file-invalid") from error
     finally:
         if descriptor is not None:
             os.close(descriptor)
+
+
+def _copy_to_exclusive_file(path: Path, source_descriptor: int) -> _HeldFileAuthority:
+    authority = _create_exclusive_file(path, b"")
+    try:
+        os.lseek(source_descriptor, 0, os.SEEK_SET)
+        while block := os.read(source_descriptor, 1024 * 1024):
+            offset = 0
+            while offset < len(block):
+                offset += os.write(authority.descriptor, block[offset:])
+        os.fsync(authority.descriptor)
+        authority.validate()
+        return authority
+    except Exception:
+        authority.close()
+        raise
 
 
 def _create_verified_backup(
@@ -359,53 +521,74 @@ def _create_verified_backup(
         with _held_windows_paths(((attempt, True),)):
             if _ensure_canonical_directory(attempt, create=False) != attempt_identity:
                 raise MigrationProblem("migration-backup-path-invalid")
-            backup = attempt / _BACKUP_FILE_NAME
-            descriptor = os.open(
-                backup,
+            working = attempt / f".working-{secrets.token_hex(16)}.sqlite3"
+            working_descriptor = os.open(
+                working,
                 os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0),
                 0o600,
             )
+            backup_authority: _HeldFileAuthority | None = None
+            manifest_authority: _HeldFileAuthority | None = None
+            target: sqlite3.Connection | None = None
+            backup_source: sqlite3.Connection | None = None
             try:
-                created = os.fstat(descriptor)
-                visible = backup.stat(follow_symlinks=False)
+                created = os.fstat(working_descriptor)
+                visible = working.stat(follow_symlinks=False)
                 if (
                     not stat.S_ISREG(created.st_mode)
                     or created.st_nlink != 1
                     or (created.st_dev, created.st_ino) != (visible.st_dev, visible.st_ino)
-                    or storage._redirect(backup)
+                    or storage._redirect(working)
                 ):
                     raise MigrationProblem("migration-backup-file-invalid")
-                with _held_windows_paths(((backup, False),)):
-                    backup_source = storage._connect_held(database)
-                    target = sqlite3.connect(backup.as_uri() + "?mode=rw", uri=True, autocommit=True)
-                    try:
-                        storage._configure_connection(backup_source, initialize=False)
-                        if _source_profile(backup_source, expected_project_id) != source_profile:
-                            raise MigrationProblem("migration-source-changed-before-backup")
-                        backup_source.set_authorizer(storage._initialization_authorizer)
-                        passive = tuple(
-                            int(value) for value in backup_source.execute("PRAGMA wal_checkpoint(PASSIVE)").fetchone()
-                        )
-                        if passive[0] != 0 or passive[1] != passive[2]:
-                            raise MigrationProblem("migration-checkpoint-incomplete")
-                        backup_source.backup(target, pages=256, sleep=0.01)
-                    except sqlite3.Error as error:
-                        raise MigrationProblem("migration-backup-failed") from error
-                    finally:
-                        target.close()
-                        backup_source.close()
-            finally:
-                os.close(descriptor)
-            with _held_windows_paths(((backup, False),), deny_writes=True):
-                verification = storage._connect_held(backup)
-                try:
-                    storage._configure_connection(verification, initialize=False)
-                    if _source_profile(verification, expected_project_id) != source_profile:
-                        raise MigrationProblem("migration-backup-verification-failed")
-                finally:
-                    verification.close()
-                backup_sha256 = _sha256_file(backup)
-                backup_size = backup.stat(follow_symlinks=False).st_size
+                working_identity = (created.st_dev, created.st_ino)
+                backup_source = storage._connect_held(database)
+                target = sqlite3.connect(working.as_uri() + "?mode=rw", uri=True, autocommit=True)
+                storage._configure_connection(backup_source, initialize=False)
+                if _source_profile(backup_source, expected_project_id) != source_profile:
+                    raise MigrationProblem("migration-source-changed-before-backup")
+                backup_source.set_authorizer(storage._initialization_authorizer)
+                passive = tuple(
+                    int(value) for value in backup_source.execute("PRAGMA wal_checkpoint(PASSIVE)").fetchone()
+                )
+                if passive[0] != 0 or passive[1] != passive[2]:
+                    raise MigrationProblem("migration-checkpoint-incomplete")
+                backup_source.backup(target, pages=256, sleep=0.01)
+                target_checkpoint = tuple(
+                    int(value) for value in target.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone()
+                )
+                if target_checkpoint != (0, 0, 0):
+                    raise MigrationProblem("migration-backup-verification-failed")
+                os.fsync(working_descriptor)
+                working_sha256_before = _sha256_descriptor(working_descriptor)
+                if _logical_database_sha256(target) != _logical_database_sha256(backup_source):
+                    raise MigrationProblem("migration-backup-verification-failed")
+                # Keep the exclusive creation descriptor continuously open
+                # while SQLite releases its writer handle, then lock that same
+                # file identity. Raw hashes on both sides of the handoff detect
+                # any compatible-content mutation in the lock transition.
+                target.close()
+                target = None
+                _lock_descriptor_writes(working_descriptor)
+                locked = os.fstat(working_descriptor)
+                locked_visible = working.stat(follow_symlinks=False)
+                if (
+                    locked.st_nlink != 1
+                    or locked_visible.st_nlink != 1
+                    or (locked.st_dev, locked.st_ino) != working_identity
+                    or (locked_visible.st_dev, locked_visible.st_ino) != working_identity
+                    or storage._redirect(working)
+                ):
+                    raise MigrationProblem("migration-backup-file-invalid")
+                if _sha256_descriptor(working_descriptor) != working_sha256_before:
+                    raise MigrationProblem("migration-backup-changed-before-lock")
+                backup = attempt / _BACKUP_FILE_NAME
+                backup_authority = _copy_to_exclusive_file(backup, working_descriptor)
+                if backup_authority.sha256() != working_sha256_before:
+                    raise MigrationProblem("migration-backup-copy-invalid")
+                backup_authority.validate()
+                backup_sha256 = working_sha256_before
+                backup_size = os.fstat(backup_authority.descriptor).st_size
                 manifest_payload: dict[str, Any] = {
                     "schemaVersion": "1.0",
                     "documentType": _MANIFEST_DOCUMENT_TYPE,
@@ -433,19 +616,50 @@ def _create_verified_backup(
                 }
                 manifest = attempt / _MANIFEST_FILE_NAME
                 encoded = _json_bytes(manifest_payload)
-                _create_exclusive_file(manifest, encoded)
-                with _held_windows_paths(((manifest, False),), deny_writes=True):
-                    if manifest.read_bytes() != encoded:
-                        raise MigrationProblem("migration-backup-manifest-invalid")
-                    manifest_sha256 = hashlib.sha256(encoded).hexdigest()
-                    return _VerifiedBackup(
-                        directory=attempt,
-                        database=backup,
-                        manifest=manifest,
-                        database_sha256=backup_sha256,
-                        manifest_sha256=manifest_sha256,
-                        manifest_payload=manifest_payload,
-                    )
+                manifest_authority = _create_exclusive_file(manifest, encoded)
+                manifest_authority.validate()
+                if manifest_authority.read_bytes() != encoded:
+                    raise MigrationProblem("migration-backup-manifest-invalid")
+                manifest_sha256 = hashlib.sha256(encoded).hexdigest()
+                verified = _VerifiedBackup(
+                    directory=attempt,
+                    database=backup,
+                    manifest=manifest,
+                    database_sha256=backup_sha256,
+                    manifest_sha256=manifest_sha256,
+                    manifest_payload=manifest_payload,
+                    database_authority=backup_authority,
+                    manifest_authority=manifest_authority,
+                )
+                _assert_verified_backup(verified)
+                backup_authority = None
+                manifest_authority = None
+                return verified
+            except sqlite3.Error as error:
+                raise MigrationProblem("migration-backup-failed") from error
+            finally:
+                if target is not None:
+                    target.close()
+                if backup_source is not None:
+                    backup_source.close()
+                os.close(working_descriptor)
+                with suppress(OSError):
+                    working.unlink()
+                if manifest_authority is not None:
+                    manifest_authority.close()
+                if backup_authority is not None:
+                    backup_authority.close()
+
+
+def _assert_verified_backup(verified: _VerifiedBackup) -> None:
+    verified.database_authority.validate()
+    verified.manifest_authority.validate()
+    if (
+        verified.database_authority.sha256() != verified.database_sha256
+        or verified.manifest_authority.sha256() != verified.manifest_sha256
+        or verified.manifest_authority.read_bytes() != _json_bytes(verified.manifest_payload)
+    ):
+        raise MigrationProblem("migration-backup-changed-before-execution")
 
 
 def _write_failure(verified: _VerifiedBackup, code: str) -> None:
@@ -462,7 +676,8 @@ def _write_failure(verified: _VerifiedBackup, code: str) -> None:
     # The immutable verified backup manifest remains the recovery authority if
     # publishing the optional bounded failure record is itself unavailable.
     with suppress(MigrationProblem):
-        _create_exclusive_file(destination, _json_bytes(payload))
+        authority = _create_exclusive_file(destination, _json_bytes(payload))
+        authority.close()
 
 
 def _run_v1_to_v2(
@@ -532,27 +747,21 @@ def migrate_database(path: Path, *, expected_project_id: str) -> MigrationResult
         )
         backup_relative_path = _relative_to_project(database, verified_backup.database)
         manifest_relative_path = _relative_to_project(database, verified_backup.manifest)
-        with _held_windows_paths(
-            ((verified_backup.database, False), (verified_backup.manifest, False)),
-            deny_writes=True,
-        ):
-            if (
-                _sha256_file(verified_backup.database) != verified_backup.database_sha256
-                or hashlib.sha256(verified_backup.manifest.read_bytes()).hexdigest() != verified_backup.manifest_sha256
-                or verified_backup.manifest.read_bytes() != _json_bytes(verified_backup.manifest_payload)
-            ):
-                raise MigrationProblem("migration-backup-changed-before-execution")
-            _run_v1_to_v2(
-                sqlalchemy_connection,
-                applied_at=started_at,
-                backup_manifest_sha256=verified_backup.manifest_sha256,
-            )
-            connection.set_authorizer(storage._canonical_authorizer)
-            errors = storage._schema_profile_errors(connection, expected_project_id)
-            integrity = storage.database_integrity_report(connection, expected_project_id=expected_project_id)
-            if errors or not integrity.ok:
-                raise MigrationProblem("migration-target-verification-failed")
-            connection.execute("COMMIT")
+        _assert_verified_backup(verified_backup)
+        _run_v1_to_v2(
+            sqlalchemy_connection,
+            applied_at=started_at,
+            backup_manifest_sha256=verified_backup.manifest_sha256,
+        )
+        connection.set_authorizer(storage._canonical_authorizer)
+        errors = storage._schema_profile_errors(connection, expected_project_id)
+        integrity = storage.database_integrity_report(connection, expected_project_id=expected_project_id)
+        if errors or not integrity.ok:
+            raise MigrationProblem("migration-target-verification-failed")
+        # The final backup/manifest identity check occurs immediately before
+        # commit while both exclusive creation handles remain held.
+        _assert_verified_backup(verified_backup)
+        connection.execute("COMMIT")
         return MigrationResult(
             status="migrated",
             source_schema_version=source.schema_version,
@@ -588,3 +797,6 @@ def migrate_database(path: Path, *, expected_project_id: str) -> MigrationResult
             engine.dispose()
         with suppress(Exception):
             connection.close()
+        if verified_backup is not None:
+            with suppress(Exception):
+                verified_backup.close()

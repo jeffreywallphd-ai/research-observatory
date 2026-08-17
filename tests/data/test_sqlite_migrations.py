@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sqlite3
 import subprocess
 import sys
@@ -193,38 +194,129 @@ class SqliteMigrationTests(unittest.TestCase):
         self.assertIsNone(repeated.backup_relative_path)
         self.assertEqual(backup_directories, tuple((self.state / "migration-backups").iterdir()))
 
-    def test_failed_revision_rolls_back_every_schema_change_and_retains_recovery(self) -> None:
-        self.create_v1()
-        original_upgrade = v0002_schema_history.apply
+    def test_every_material_revision_step_rolls_back_to_exact_v1_and_retries(self) -> None:
+        for index, failpoint in enumerate(v0002_schema_history.MATERIAL_MIGRATION_STEPS):
+            with self.subTest(failpoint=failpoint):
+                project = self.project / f"failure-{index}"
+                database = project / "state" / "project.sqlite3"
+                create_version_1_fixture(database)
 
-        def fail_after_ddl(operations: object, parameters: dict[str, object]) -> None:
-            original_upgrade(operations, parameters)  # type: ignore[arg-type]
-            raise RuntimeError("deterministic-test-failure")
+                def fail_at_step(completed: str, expected: str = failpoint) -> None:
+                    if completed == expected:
+                        raise RuntimeError(f"deterministic-failure-after-{expected}")
+
+                with (
+                    patch.object(v0002_schema_history, "_migration_step_completed", fail_at_step),
+                    self.assertRaisesRegex(MigrationProblem, "migration-execution-failed") as raised,
+                ):
+                    migrate_database(database, expected_project_id=PROJECT_ID)
+                self.assertIsNotNone(raised.exception.recovery_manifest_relative_path)
+                plan = plan_database_migration(database, expected_project_id=PROJECT_ID)
+                self.assertEqual(1, plan.source_schema_version)
+                inspection = sqlite3.connect(database, autocommit=True)
+                try:
+                    self.assertEqual(storage.PREVIOUS_SCHEMA_SHA256, storage._schema_fingerprint(inspection))
+                    self.assertIsNone(
+                        inspection.execute("SELECT name FROM sqlite_schema WHERE name='schema_migrations'").fetchone()
+                    )
+                    self.assertEqual("dark", inspection.execute("SELECT text_value FROM settings").fetchone()[0])
+                finally:
+                    inspection.close()
+                manifest = project / str(raised.exception.recovery_manifest_relative_path)
+                failure = manifest.parent / "failure.json"
+                self.assertTrue(manifest.is_file())
+                self.assertTrue((manifest.parent / "project.sqlite3").is_file())
+                self.assertEqual("migration-failed", json.loads(failure.read_text(encoding="utf-8"))["status"])
+
+                recovered = migrate_database(database, expected_project_id=PROJECT_ID)
+                self.assertEqual("migrated", recovered.status)
+
+    def test_compatible_content_injection_before_working_lock_is_denied(self) -> None:
+        self.create_v1()
+        original_lock = runner._lock_descriptor_writes
+
+        def inject_then_lock(descriptor: int) -> None:
+            attempt = next((self.state / "migration-backups").iterdir())
+            working = next(attempt.glob(".working-*.sqlite3"))
+            attacker = sqlite3.connect(working, autocommit=True)
+            try:
+                attacker.execute(
+                    """
+                    INSERT INTO settings (
+                        setting_id, project_id, setting_key, revision, value_type,
+                        text_value, created_at, modified_at
+                    ) VALUES ('01890f6e-6a40-7cc5-98b7-123456789ac0', ?,
+                              'attacker.valid-setting', 0, 'text', 'forged', ?, ?)
+                    """,
+                    (PROJECT_ID, CREATED_AT, CREATED_AT),
+                )
+            finally:
+                attacker.close()
+            original_lock(descriptor)
 
         with (
-            patch.object(v0002_schema_history, "apply", fail_after_ddl),
-            self.assertRaisesRegex(MigrationProblem, "migration-execution-failed") as raised,
+            patch.object(runner, "_lock_descriptor_writes", inject_then_lock),
+            self.assertRaisesRegex(MigrationProblem, "migration-backup-changed-before-lock"),
         ):
             migrate_database(self.database, expected_project_id=PROJECT_ID)
-        self.assertIsNotNone(raised.exception.recovery_manifest_relative_path)
-        plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
-        self.assertEqual(1, plan.source_schema_version)
-        inspection = sqlite3.connect(self.database, autocommit=True)
+        self.assertEqual(
+            1, plan_database_migration(self.database, expected_project_id=PROJECT_ID).source_schema_version
+        )
+        source = sqlite3.connect(self.database, autocommit=True)
         try:
-            self.assertIsNone(
-                inspection.execute("SELECT name FROM sqlite_schema WHERE name='schema_migrations'").fetchone()
+            self.assertEqual(
+                0,
+                source.execute("SELECT count(*) FROM settings WHERE setting_key='attacker.valid-setting'").fetchone()[
+                    0
+                ],
             )
-            self.assertEqual("dark", inspection.execute("SELECT text_value FROM settings").fetchone()[0])
         finally:
-            inspection.close()
-        manifest = self.project / str(raised.exception.recovery_manifest_relative_path)
-        failure = manifest.parent / "failure.json"
-        self.assertTrue(manifest.is_file())
-        self.assertTrue((manifest.parent / "project.sqlite3").is_file())
-        self.assertEqual("migration-failed", json.loads(failure.read_text(encoding="utf-8"))["status"])
+            source.close()
 
-        recovered = migrate_database(self.database, expected_project_id=PROJECT_ID)
-        self.assertEqual("migrated", recovered.status)
+    def test_backup_and_manifest_hardlinks_at_creation_handoffs_are_denied(self) -> None:
+        for protected_name in ("project.sqlite3", "recovery-manifest.json"):
+            with self.subTest(protected_name=protected_name):
+                project = self.project / protected_name.replace(".", "-")
+                database = project / "state" / "project.sqlite3"
+                create_version_1_fixture(database)
+                outside = self.project / f"outside-{protected_name}"
+                original_file = runner._create_exclusive_file
+                original_copy = runner._copy_to_exclusive_file
+
+                def alias_file(
+                    path: Path,
+                    payload: bytes,
+                    original: object = original_file,
+                    expected: str = protected_name,
+                    alias: Path = outside,
+                ) -> runner._HeldFileAuthority:
+                    authority = original(path, payload)  # type: ignore[operator]
+                    if expected == "recovery-manifest.json" and path.name == expected:
+                        os.link(path, alias)
+                    return authority
+
+                def alias_copy(
+                    path: Path,
+                    descriptor: int,
+                    original: object = original_copy,
+                    expected: str = protected_name,
+                    alias: Path = outside,
+                ) -> runner._HeldFileAuthority:
+                    authority = original(path, descriptor)  # type: ignore[operator]
+                    if expected == "project.sqlite3" and path.name == expected:
+                        os.link(path, alias)
+                    return authority
+
+                with (
+                    patch.object(runner, "_create_exclusive_file", alias_file),
+                    patch.object(runner, "_copy_to_exclusive_file", alias_copy),
+                    self.assertRaisesRegex(MigrationProblem, "migration-backup-file-invalid"),
+                ):
+                    migrate_database(database, expected_project_id=PROJECT_ID)
+                self.assertEqual(
+                    1, plan_database_migration(database, expected_project_id=PROJECT_ID).source_schema_version
+                )
+                outside.unlink()
 
     def test_writer_reservation_spans_backup_through_migration(self) -> None:
         self.create_v1()
