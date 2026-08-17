@@ -61,8 +61,12 @@ migrations, backup-before-migrate, checkpointed snapshots, prior-schema
 fixtures, and failure recovery. T03 owns SQLAlchemy repositories, optimistic
 concurrency, transaction/outbox publication, and units of work. Central
 bootstrap/migration code is the only allowed source of schema SQL; domain and UI
-code must use the repository ports. Ordinary canonical connections deny schema
-DDL. T02 must introduce a separate, tightly scoped migration connection that
+code must use the repository ports. Ordinary canonical access returns a
+restricted connection/cursor capability rather than a raw `sqlite3.Connection`:
+authorizer, configuration, extension-loading, raw-cursor, backup, serialization,
+and callback escape hatches are not exposed. Its underlying authorizer denies
+schema DDL plus write-form identity, security, and durability PRAGMAs. T02 must
+introduce a separate, tightly scoped migration connection that
 operates only after verified backup, replaces the denial triggers as part of the
 successor DDL, and publishes the new exact fingerprint before normal access.
 
