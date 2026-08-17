@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 073e3926d9be87d0f49e6fcbc23f38afa793a5da151a2106e0e7ddeffe8e5d51
+source_sha256: 425b42fd740a4779d4e73afeed10c2b9bfdff1b9ca33b51db90267433bbf6eb9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1725,15 +1725,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-02.S01.T01`, `CAP-03.S01.T01`
 
-#### - [ ] CAP-02.S02.T01 - Create the initial normalized SQLite schema in WAL mode
+#### - [x] CAP-02.S02.T01 - Create the initial normalized SQLite schema in WAL mode
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S01.T01`, `CAP-03.S01.T01`
 
-**Owner / review:** codex / agent:curie (`changes-requested`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** Core tables for projects, scholarly records, documents, workflows, evidence, ontologies, decisions, provenance, and settings.
 
@@ -1760,7 +1760,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S02.T02 - Implement forward migrations and backup-before-migrate policy
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
