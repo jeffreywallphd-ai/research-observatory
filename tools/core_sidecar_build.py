@@ -35,7 +35,15 @@ ALLOWED_CONTRACT_KEYS = {
     "requiredModules",
     "maximumBytes",
 }
-ALLOWED_BUILDER_KEYS = {"name", "version", "mode", "upx", "contentsDirectory", "excludedModules"}
+ALLOWED_BUILDER_KEYS = {
+    "name",
+    "version",
+    "mode",
+    "upx",
+    "contentsDirectory",
+    "excludedModules",
+    "hiddenModules",
+}
 
 
 class SidecarBuildError(RuntimeError):
@@ -108,6 +116,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "setuptools",
             "yaml",
         ],
+        "hiddenModules": ["research_observatory_core.migrations.runner"],
     }:
         raise SidecarBuildError("sidecar builder must be the approved PyInstaller 6.21.0 onedir/no-UPX profile")
     modules = contract.get("requiredModules")
@@ -308,6 +317,8 @@ def build_sidecar(repo: Path, output_root: Path) -> tuple[Path, dict[str, Any]]:
         ]
         for excluded_module in contract["builder"]["excludedModules"]:
             arguments.extend(["--exclude-module", excluded_module])
+        for hidden_module in contract["builder"]["hiddenModules"]:
+            arguments.extend(["--hidden-import", hidden_module])
         pyinstaller_run(arguments)
     finally:
         if env_before is None:

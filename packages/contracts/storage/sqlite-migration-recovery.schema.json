@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/storage/sqlite-migration-recovery.schema.json",
+  "title": "Research Observatory SQLite migration recovery manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "attemptId",
+    "createdAt",
+    "status",
+    "databaseRelativePath",
+    "projectId",
+    "sourceSchemaVersion",
+    "targetSchemaVersion",
+    "migrationIds",
+    "sourceSchemaSha256",
+    "targetSchemaSha256",
+    "checkpoint",
+    "backup"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-sqlite-migration-recovery"},
+    "attemptId": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+    "createdAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    },
+    "status": {"const": "backup-verified"},
+    "databaseRelativePath": {"const": "state/project.sqlite3"},
+    "projectId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "sourceSchemaVersion": {"const": 1},
+    "targetSchemaVersion": {"const": 2},
+    "migrationIds": {"const": ["0002_schema_history"]},
+    "sourceSchemaSha256": {
+      "const": "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
+    },
+    "targetSchemaSha256": {
+      "const": "afd48fbe857de4172215e9cb61a0f6137e73edec685dcc116bedbb66eb519dda"
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "logFrames", "checkpointedFrames"],
+      "properties": {
+        "mode": {"const": "passive-under-writer-reservation"},
+        "logFrames": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+        "checkpointedFrames": {"type": "integer", "minimum": 0, "maximum": 2147483647}
+      }
+    },
+    "backup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relativePath", "sha256", "sizeBytes", "quickCheck"],
+      "properties": {
+        "relativePath": {
+          "type": "string",
+          "pattern": "^state/migration-backups/v1-to-v2-[0-9a-f]{32}/project\\.sqlite3$"
+        },
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sizeBytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+        "quickCheck": {"const": "ok"}
+      }
+    }
+  }
+}

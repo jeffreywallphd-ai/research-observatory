@@ -17,6 +17,7 @@ from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
 from .app import create_app
 from .authentication import STARTUP_RECORD_BYTES, parse_startup_authentication
 from .config import CoreSettings
+from .migrations.runner import migration_framework_projection
 
 EXIT_CONFIGURATION_ERROR = 2
 SUPERVISION_PROTOCOL_VERSION = "1.0"
@@ -149,6 +150,7 @@ def main(argv: list[str] | None = None) -> int:
                     "service": CORE_SERVICE_ID,
                     "status": "configuration-valid",
                     "configuration": settings.public_projection(),
+                    "storageMigration": migration_framework_projection(),
                 },
                 sort_keys=True,
             )
