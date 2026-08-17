@@ -3635,11 +3635,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T13:50:36+00:00'
-      updated_at: '2026-08-17T22:57:51+00:00'
+      updated_at: '2026-08-17T23:01:14+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Strict SQLite v1 schema, connection profile, project lifecycle integration, focused concurrency/denial
@@ -3670,18 +3670,18 @@ capabilities:
       review:
         reviewer: agent:curie
         result: changes-requested
-        reviewed_at: '2026-08-17T22:51:14+00:00'
-        notes: 'P1: ordinary CanonicalConnection exposes set_authorizer(None), permitting trigger removal and protected-row
-          mutation; write-form application_id, user_version, and schema_version PRAGMAs also persist. Return a sealed/restricted
-          ordinary capability, deny identity/security/durability PRAGMA writes, retain explicit initialization and future
-          T02 migration authority, and add exact escape-hatch regressions. Prior immutable-row finding and disclosed performance
-          variance are accepted.'
+        reviewed_at: '2026-08-17T23:01:14+00:00'
+        notes: 'P1: restricted wrappers still expose raw SQLite handles through discoverable name-mangled slots, enabling
+          set_authorizer(None), trigger removal, and protected-row mutation. Move raw connections/cursors into module-owned
+          opaque registry authority, return only opaque tokens/approved operations, remove registry entries on close/exhaustion,
+          and add exact dir/slots/name-mangled/cursor-chain attacks. SQL PRAGMA denial, initialization, triggers, mutable
+          state, evidence, and performance otherwise pass.'
       base_sha: 538683ea3c5797b1bd9dae77fd5f40d12995403f
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-17T22:51:14+00:00'
-        expires_at: '2026-08-18T06:51:14+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-17T23:01:14+00:00'
+        expires_at: '2026-08-18T07:01:14+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
