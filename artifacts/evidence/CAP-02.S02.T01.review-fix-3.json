@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T01",
+  "commit": "74212e9cb79afe87ec5c09b3494a5353abc44034",
+  "baseCommit": "5e5541c81c4445bb3df77f32d4f11f8125c9a00b",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S02.T01.review-fix-2.json",
+    "sha256": "9eb9177816e7fb633e8f8a7715cd3c211877436e494cc46b820e40321df135ce",
+    "reason": "The second remediation denied public connection methods and protected PRAGMAs, but raw SQLite handles remained in discoverable name-mangled object slots. This record preserves that evidence and binds the module-owned opaque-token registry remediation."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S02.T01.review-fix-2.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/data/test_sqlite_schema.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.service.test_project_lifecycle tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 40 focused tests pass. Exact hostile checks prove dir(), __slots__, and name-mangled attribute access reveal only opaque tokens/metadata and no sqlite3.Connection or sqlite3.Cursor; the prior raw-handle chain is absent, connection close invalidates outstanding cursor tokens, and all SQL/trigger/PRAGMA/lifecycle/API controls remain passing."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/projects.py tests/data/test_sqlite_schema.py tests/service/test_project_lifecycle.py; .venv\\Scripts\\python.exe -m ruff check services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/projects.py tests/data/test_sqlite_schema.py tests/service/test_project_lifecycle.py; .venv\\Scripts\\python.exe -m mypy services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/projects.py",
+      "exitCode": 0,
+      "result": "Affected formatting, Ruff lint, and mypy checks pass."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S02.T01-review-fix-3-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff lint, and mypy pass for all 85 governed Python files. Report SHA-256: 593da9f4f6417f0bb0f1fce13d9727b05225436c225eaf504097e0541a3a0606."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/project_lifecycle_performance_check.py --repo . --report artifacts/tmp/CAP-02.S02.T01-review-fix-3-project-lifecycle-performance.json",
+      "exitCode": 0,
+      "result": "The clean commit-bound Windows x64 qualification passes after the registry change: fresh-service open p95 18.3255 ms versus 20.184 ms and warm reopen p95 15.5377 ms versus 23.681 ms. Report SHA-256: b2b4d7ee084dc86c6d2ad1550a692d2d0658593b71d5d3cdfc7c54e8a8f07303."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T01-review-fix-3-build.json",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+g74212e9 passes. Build-manifest SHA-256: 487c3fecd74e114636c4d4884d898d851e65abc83e303700c3cec0a57af64537."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 5e5541c81c4445bb3df77f32d4f11f8125c9a00b --head 74212e9cb79afe87ec5c09b3494a5353abc44034; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The incremental UI gate reports no UI/reference changes; the authoritative backlog and generated views validate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Raw SQLite connections and live result cursors are held only by module-owned registry authority. Returned connection and cursor capabilities retain random 256-bit opaque tokens plus inert cursor metadata; object inspection exposes no raw SQLite handle.",
+        "Cursor registry entries are removed when exhausted, explicitly closed, garbage-collected, or when their owning connection closes; connection close removes all remaining cursor entries and closes the guarded raw connection.",
+        "The prior protected PRAGMA, authorizer, trigger, immutable-row, mutable-state, WAL/FK/concurrency, and exact DDL fingerprint controls remain unchanged and passing.",
+        "Initialization remains an internal explicit authority; CAP-02.S02.T02 still owns the separately constructed backup-first migration capability."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact reviewer attack names `_CanonicalConnection__connection` and `_CanonicalCursor__cursor` are absent and raise AttributeError; every actual slot value is asserted not to be sqlite3.Connection or sqlite3.Cursor.",
+        "Connection-close cleanup invalidates an outstanding SELECT cursor, preventing a live cursor chain after capability teardown.",
+        "All 40 focused tests and current clean performance qualification pass without changing the reviewed baseline."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "This incremental remediation changes only the storage adapter implementation and its direct regression test, plus immutable evidence/planning transitions.",
+        "The already accepted ADR/architecture description of module-owned restricted ordinary access remains accurate; no migration factory, schema/profile fingerprint, UI, dependency, repository layer, encryption, or unrelated runtime behavior changed.",
+        "Broader migration/repository/backup/recovery and complete Wave qualification remain at the approved slice/checkpoint/Wave stages."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The only new risk is opaque capability/registry lifecycle correctness. Checks inspect every returned slot and hostile name-mangled path, verify cursor invalidation on connection close, replay all affected database/lifecycle/API behavior, and requalify quality, clean build, UI separation, task state, and performance.",
+    "deferred": "No broad profile is justified for this two-file internal adapter correction. Full data, migration, repository, backup/recovery, checkpoint, and Wave matrices remain at their approved later stages.",
+    "performanceNote": "The exact current commit qualifies at fresh/warm p95 18.3255/15.5377 ms. The immutable supersession chain retains all earlier performance reports and the accepted workstation-variance assessment."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Replay the exact dir/slots/name-mangled raw connection and cursor chain attack plus registry cleanup. Confirm prior SQL, trigger, initialization, mutable-state, evidence, and performance conclusions remain. Focused remediation review only."
+  }
+}
