@@ -6,8 +6,10 @@ import hashlib
 import json
 import os
 import re
+import secrets
 import sqlite3
 import stat
+import threading
 from contextlib import suppress
 from dataclasses import dataclass
 from datetime import datetime
@@ -136,72 +138,205 @@ class _GuardedConnection(sqlite3.Connection):
             _close_windows_handles(handles)
 
 
+@dataclass(frozen=True, slots=True)
+class _CursorEntry:
+    connection_token: str
+    cursor: sqlite3.Cursor
+
+
+class _CapabilityRegistry:
+    """Module-owned raw SQLite authority, never returned to ordinary callers."""
+
+    def __init__(self) -> None:
+        self._lock = threading.RLock()
+        self._connections: dict[str, _GuardedConnection] = {}
+        self._cursors: dict[str, _CursorEntry] = {}
+
+    def _token(self) -> str:
+        while True:
+            token = secrets.token_hex(32)
+            if token not in self._connections and token not in self._cursors:
+                return token
+
+    def register_connection(self, connection: _GuardedConnection) -> str:
+        with self._lock:
+            token = self._token()
+            self._connections[token] = connection
+            return token
+
+    def connection(self, token: str | None) -> _GuardedConnection:
+        if token is None:
+            raise sqlite3.ProgrammingError("canonical connection is closed")
+        with self._lock:
+            connection = self._connections.get(token)
+        if connection is None:
+            raise sqlite3.ProgrammingError("canonical connection is closed")
+        return connection
+
+    def close_connection(self, token: str | None) -> None:
+        if token is None:
+            return
+        with self._lock:
+            connection = self._connections.pop(token, None)
+            cursors = [cursor_token for cursor_token, entry in self._cursors.items() if entry.connection_token == token]
+            entries = [self._cursors.pop(cursor_token) for cursor_token in cursors]
+        for entry in entries:
+            with suppress(sqlite3.Error):
+                entry.cursor.close()
+        if connection is not None:
+            connection.close()
+
+    def register_cursor(self, connection_token: str, cursor: sqlite3.Cursor) -> str:
+        with self._lock:
+            if connection_token not in self._connections:
+                cursor.close()
+                raise sqlite3.ProgrammingError("canonical connection is closed")
+            token = self._token()
+            self._cursors[token] = _CursorEntry(connection_token=connection_token, cursor=cursor)
+            return token
+
+    def cursor(self, token: str | None) -> sqlite3.Cursor:
+        if token is None:
+            raise sqlite3.ProgrammingError("canonical cursor is closed")
+        with self._lock:
+            entry = self._cursors.get(token)
+        if entry is None:
+            raise sqlite3.ProgrammingError("canonical cursor is closed")
+        return entry.cursor
+
+    def close_cursor(self, token: str | None) -> None:
+        if token is None:
+            return
+        with self._lock:
+            entry = self._cursors.pop(token, None)
+        if entry is not None:
+            with suppress(sqlite3.Error):
+                entry.cursor.close()
+
+
+_CAPABILITY_REGISTRY = _CapabilityRegistry()
+
+
 class CanonicalCursor:
-    """Restricted result cursor without a back-reference to the raw connection."""
+    """Restricted result cursor carrying only an opaque registry token and metadata."""
 
-    __slots__ = ("__cursor",)
+    __slots__ = ("__description", "__lastrowid", "__rowcount", "__token")
 
-    def __init__(self, cursor: sqlite3.Cursor) -> None:
-        self.__cursor = cursor
+    def __init__(
+        self,
+        token: str | None,
+        *,
+        description: tuple[Any, ...] | None,
+        lastrowid: int | None,
+        rowcount: int,
+    ) -> None:
+        self.__token = token
+        self.__description = description
+        self.__lastrowid = lastrowid
+        self.__rowcount = rowcount
 
     def __iter__(self) -> CanonicalCursor:
         return self
 
     def __next__(self) -> Any:
-        return next(self.__cursor)
+        try:
+            return next(_CAPABILITY_REGISTRY.cursor(self.__token))
+        except StopIteration:
+            self.close()
+            raise
 
     def fetchone(self) -> Any:
-        return self.__cursor.fetchone()
+        row = _CAPABILITY_REGISTRY.cursor(self.__token).fetchone()
+        if row is None:
+            self.close()
+        return row
 
     def fetchmany(self, size: int | None = None) -> list[Any]:
-        if size is None:
-            return self.__cursor.fetchmany()
-        return self.__cursor.fetchmany(size)
+        cursor = _CAPABILITY_REGISTRY.cursor(self.__token)
+        rows = cursor.fetchmany() if size is None else cursor.fetchmany(size)
+        if not rows:
+            self.close()
+        return rows
 
     def fetchall(self) -> list[Any]:
-        return self.__cursor.fetchall()
+        try:
+            return _CAPABILITY_REGISTRY.cursor(self.__token).fetchall()
+        finally:
+            self.close()
+
+    def close(self) -> None:
+        token = self.__token
+        self.__token = None
+        _CAPABILITY_REGISTRY.close_cursor(token)
 
     @property
     def description(self) -> tuple[Any, ...] | None:
-        return self.__cursor.description
+        return self.__description
 
     @property
     def lastrowid(self) -> int | None:
-        return self.__cursor.lastrowid
+        return self.__lastrowid
 
     @property
     def rowcount(self) -> int:
-        return self.__cursor.rowcount
+        return self.__rowcount
+
+    def __del__(self) -> None:
+        with suppress(Exception):
+            self.close()
+
+
+def _restricted_cursor(connection_token: str, cursor: sqlite3.Cursor) -> CanonicalCursor:
+    description = cursor.description
+    lastrowid = cursor.lastrowid
+    rowcount = cursor.rowcount
+    token: str | None = None
+    if description is None:
+        cursor.close()
+    else:
+        token = _CAPABILITY_REGISTRY.register_cursor(connection_token, cursor)
+    return CanonicalCursor(token, description=description, lastrowid=lastrowid, rowcount=rowcount)
 
 
 class CanonicalConnection:
-    """Restricted ordinary database capability with no configuration escape hatches."""
+    """Restricted ordinary database capability carrying only an opaque registry token."""
 
-    __slots__ = ("__connection",)
+    __slots__ = ("__token",)
 
-    def __init__(self, connection: _GuardedConnection) -> None:
-        self.__connection = connection
+    def __init__(self, token: str) -> None:
+        self.__token: str | None = token
 
     def execute(self, sql: str, parameters: Any = ()) -> CanonicalCursor:
-        return CanonicalCursor(self.__connection.execute(sql, parameters))
+        token = self.__token
+        if token is None:
+            raise sqlite3.ProgrammingError("canonical connection is closed")
+        connection = _CAPABILITY_REGISTRY.connection(token)
+        return _restricted_cursor(token, connection.execute(sql, parameters))
 
     def executemany(self, sql: str, parameters: Any) -> CanonicalCursor:
-        return CanonicalCursor(self.__connection.executemany(sql, parameters))
+        token = self.__token
+        if token is None:
+            raise sqlite3.ProgrammingError("canonical connection is closed")
+        connection = _CAPABILITY_REGISTRY.connection(token)
+        return _restricted_cursor(token, connection.executemany(sql, parameters))
 
     def commit(self) -> None:
-        self.__connection.commit()
+        _CAPABILITY_REGISTRY.connection(self.__token).commit()
 
     def rollback(self) -> None:
-        self.__connection.rollback()
+        _CAPABILITY_REGISTRY.connection(self.__token).rollback()
 
     @property
     def in_transaction(self) -> bool:
-        return self.__connection.in_transaction
+        return _CAPABILITY_REGISTRY.connection(self.__token).in_transaction
 
     def close(self) -> None:
-        self.__connection.close()
+        token = self.__token
+        self.__token = None
+        _CAPABILITY_REGISTRY.close_connection(token)
 
     def __enter__(self) -> CanonicalConnection:
+        _CAPABILITY_REGISTRY.connection(self.__token)
         return self
 
     def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
@@ -209,6 +344,10 @@ class CanonicalConnection:
             self.commit()
         else:
             self.rollback()
+
+    def __del__(self) -> None:
+        with suppress(Exception):
+            self.close()
 
 
 @dataclass(frozen=True, slots=True)
@@ -849,7 +988,7 @@ def open_canonical_database(path: Path, *, expected_project_id: str | None = Non
         errors = _schema_profile_errors(connection, expected_project_id)
         if errors:
             raise StorageProblem("canonical database profile is incompatible")
-        return CanonicalConnection(connection)
+        return CanonicalConnection(_CAPABILITY_REGISTRY.register_connection(connection))
     except (sqlite3.Error, StorageProblem) as error:
         connection.close()
         if isinstance(error, StorageProblem):
