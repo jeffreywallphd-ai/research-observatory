@@ -6,11 +6,11 @@ business modules do not receive filesystem paths or SQLite connection objects.
 ADR-0014 governs the first database profile; the portable machine record is
 [`sqlite-profile.v1.json`](../../packages/contracts/storage/sqlite-profile.v1.json).
 
-## Version-1 authority
+## Current version-2 authority
 
-| Concern | Version-1 rule |
+| Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=1`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=2`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge is explicitly tagged |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -33,6 +33,7 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | Table | Authority |
 |---|---|
 | `schema_metadata` | immutable singleton schema/profile/application identity |
+| `schema_migrations` | append-only successful forward-migration identity, backup-manifest binding, and source/target fingerprints |
 | `projects` | immutable project identity anchor; mutable lifecycle remains manifest-owned until repository integration |
 | `object_records` | content digest, size, media type, rights, protection, retention, and verification metadata; never object bytes or paths |
 | `aggregate_identities` | immutable project-scoped aggregate identity and kind |
@@ -49,26 +50,34 @@ derived blob columns.
 
 Every row in `schema_metadata`, `projects`, `aggregate_identities`,
 `aggregate_revisions`, the six kind-extension tables, `provenance_events`, and
-`settings` denies UPDATE and DELETE in fingerprinted DDL. New revisions and
+`settings`, and `schema_migrations` deny UPDATE and DELETE in fingerprinted DDL. New revisions and
 setting values are inserts. `object_records` may advance availability and
 verification state, while `outbox_events` may advance delivery state; these are
-the only intentionally mutable version-1 tables.
+the only intentionally mutable current-profile tables.
 
 ## Evolution and recovery boundary
 
-T01 owns only schema version 1 and its connection factory. T02 owns forward
-migrations, backup-before-migrate, checkpointed snapshots, prior-schema
-fixtures, and failure recovery. T03 owns SQLAlchemy repositories, optimistic
+T01 established schema version 1 and its sealed ordinary connection factory.
+T02 advances the current schema to version 2 and owns forward migrations,
+backup-before-migrate, checkpointed snapshots, the exact supported version-1
+fixture, and failure recovery. The migration runner validates and checkpoints
+version 1, reserves SQLite's writer lock, creates and verifies an online backup
+through a second held connection, and only then runs the reviewed Alembic
+revision in one transaction. The immutable recovery manifest binds the backup
+bytes and both schema fingerprints; a failed transaction rolls back while the
+verified backup remains available. A current version-2 database is detected
+idempotently and is never backed up or rewritten. T03 owns SQLAlchemy repositories, optimistic
 concurrency, transaction/outbox publication, and units of work. Central
 bootstrap/migration code is the only allowed source of schema SQL; domain and UI
 code must use the repository ports. Ordinary canonical access returns a
 restricted connection/cursor capability rather than a raw `sqlite3.Connection`:
 authorizer, configuration, extension-loading, raw-cursor, backup, serialization,
 and callback escape hatches are not exposed. Its underlying authorizer denies
-schema DDL plus write-form identity, security, and durability PRAGMAs. T02 must
-introduce a separate, tightly scoped migration connection that
-operates only after verified backup, replaces the denial triggers as part of the
-successor DDL, and publishes the new exact fingerprint before normal access.
+schema DDL plus write-form identity, security, and durability PRAGMAs. T02
+uses a separate, tightly scoped migration connection that is never returned to
+ordinary code, operates only after verified backup, replaces the affected denial
+triggers as part of the successor DDL, and publishes the new exact fingerprint
+before normal access resumes.
 
 WAL and SHM files are live database state. A backup or relocation implementation
 must use SQLite's backup/checkpoint facilities and never copy only the main file

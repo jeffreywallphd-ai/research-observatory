@@ -47,8 +47,11 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "setuptools",
                     "yaml",
                 ],
+                "hiddenModules": ["research_observatory_core.migrations.runner"],
             },
         )
+        self.assertIn("alembic", contract["requiredModules"])
+        self.assertIn("sqlalchemy", contract["requiredModules"])
         self.assertEqual(contract["componentVersion"], "0.1.0")
 
     def test_build_contract_rejects_a_redirected_governed_file(self) -> None:
@@ -156,6 +159,13 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "pydantic.v1.mypy",
             ):
                 self.assertNotIn(f"'{archived_module}'", archive.stdout)
+            for required_module in (
+                "alembic.operations",
+                "research_observatory_core.migrations.runner",
+                "research_observatory_core.migrations.versions.v0002_schema_history",
+                "sqlalchemy.engine",
+            ):
+                self.assertIn(f"'{required_module}'", archive.stdout)
 
             environment = {
                 "COMSPEC": os.environ["COMSPEC"],
@@ -176,7 +186,10 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 check=False,
             )
             self.assertEqual(completed.returncode, 0, completed.stderr)
-            self.assertEqual(json.loads(completed.stdout)["status"], "configuration-valid")
+            checked = json.loads(completed.stdout)
+            self.assertEqual(checked["status"], "configuration-valid")
+            self.assertEqual(["0002_schema_history"], checked["storageMigration"]["revisions"])
+            self.assertTrue(checked["storageMigration"]["backupRequired"])
             self.assertNotIn("python", environment["PATH"].casefold())
 
             runtime_candidates = sorted(

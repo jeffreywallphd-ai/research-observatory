@@ -19,14 +19,19 @@
       "pytest",
       "setuptools",
       "yaml"
+    ],
+    "hiddenModules": [
+      "research_observatory_core.migrations.runner"
     ]
   },
   "entrypoint": "research-observatory-core-x86_64-pc-windows-msvc.exe",
   "requiredModules": [
+    "alembic",
     "fastapi",
     "pydantic",
     "pydantic_settings",
     "research_observatory_core",
+    "sqlalchemy",
     "uvicorn"
   ],
   "maximumBytes": 134217728

@@ -109,3 +109,6 @@ tracked Git state and proves the currently executing tool path/SHA and current
 HEAD in the report. `--measure-only` is deliberately nonqualifying, and every
 failed invocation replaces a prior report with an explicit `ok: false` result so
 stale PASS evidence cannot survive.
+The frozen sidecar explicitly includes the governed Alembic migration runner and
+its pinned SQLAlchemy runtime so backup-first schema recovery remains available
+without a system Python installation.

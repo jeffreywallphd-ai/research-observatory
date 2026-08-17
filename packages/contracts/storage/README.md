@@ -1,7 +1,7 @@
 # Local storage contracts
 
-`sqlite-profile.v1.json` is the exact portable profile for the first canonical
-local database. It fixes the database identity, version, scalar storage domain,
+`sqlite-profile.v1.json` is the exact portable profile contract for the current
+version-2 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -9,8 +9,10 @@ table sets plus the dedicated backed-up migration-only schema-change boundary.
 
 The profile is not an API for issuing SQL. Core owns the SQLite adapter, the
 desktop never opens the database, and downstream modules consume repository
-ports introduced by the storage slice. Migration files and prior-version
-database fixtures belong to the next task rather than being hidden in this
-initial profile. Ordinary connections deny schema DDL; T02 must introduce the
-narrow migration authority that replaces these fingerprinted controls only
-inside a verified backup-first transition.
+ports introduced by the storage slice. Ordinary connections deny schema DDL.
+The separately constructed T02 Alembic authority is never returned to ordinary
+callers: it checkpoints and validates the exact version-1 fixture, reserves the
+writer, creates and verifies an online backup, and only then replaces the
+affected controls in one transaction. `sqlite-migration-recovery.schema.json`
+binds the immutable backup manifest to exact backup bytes, the reviewed revision,
+and both schema fingerprints.

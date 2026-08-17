@@ -17,9 +17,16 @@ from pathlib import Path
 from typing import Any
 from uuid import UUID
 
+from research_observatory_core.migrations.versions.v0002_schema_history import (
+    SCHEMA_METADATA_V2_DDL,
+    SCHEMA_MIGRATIONS_DDL,
+    SCHEMA_MIGRATIONS_TRIGGERS,
+)
+
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 1
+DATABASE_SCHEMA_VERSION = 2
+PREVIOUS_DATABASE_SCHEMA_VERSION = 1
 BUSY_TIMEOUT_MILLISECONDS = 5_000
 WAL_AUTOCHECKPOINT_PAGES = 1_000
 MAX_SAFE_INTEGER = 9_007_199_254_740_991
@@ -27,6 +34,7 @@ MINIMUM_SQLITE_VERSION = (3, 37, 0)
 
 EXPECTED_TABLES = (
     "schema_metadata",
+    "schema_migrations",
     "projects",
     "object_records",
     "aggregate_identities",
@@ -43,6 +51,7 @@ EXPECTED_TABLES = (
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
+    "schema_migrations",
     "projects",
     "aggregate_identities",
     "aggregate_revisions",
@@ -64,7 +73,9 @@ EXPECTED_INDEXES = (
     "outbox_events_dispatch",
     "provenance_events_project_time",
 )
-EXPECTED_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
+PREVIOUS_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
+PREVIOUS_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
+EXPECTED_SCHEMA_SHA256 = "afd48fbe857de4172215e9cb61a0f6137e73edec685dcc116bedbb66eb519dda"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -111,6 +122,9 @@ _PROFILE_DOCUMENT: dict[str, Any] = {
 _PROFILE_SHA256 = hashlib.sha256(
     json.dumps(_PROFILE_DOCUMENT, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
 ).hexdigest()
+EXPECTED_PROFILE_SHA256 = "29454c72d0b357c2ece14a8991db57bfb87414d7ade85d1a2e8048a648a17cc2"
+if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
+    raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
 _UTC_INPUT = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$")
 
@@ -455,7 +469,7 @@ def _immutable_triggers(table: str, message: str) -> tuple[str, str]:
     )
 
 
-_IMMUTABLE_ROW_POLICIES = (
+_V1_IMMUTABLE_ROW_POLICIES = (
     ("schema_metadata", "schema metadata is immutable outside a reviewed migration"),
     ("projects", "project identity is immutable"),
     ("aggregate_identities", "aggregate identities are immutable"),
@@ -470,12 +484,17 @@ _IMMUTABLE_ROW_POLICIES = (
     ("settings", "settings history is append-only"),
 )
 
+_IMMUTABLE_ROW_POLICIES = (
+    *_V1_IMMUTABLE_ROW_POLICIES,
+    ("schema_migrations", "schema migration history is append-only"),
+)
 
-_DDL_STATEMENTS = (
+
+_V1_DDL_STATEMENTS = (
     f"""
         CREATE TABLE schema_metadata (
             singleton INTEGER PRIMARY KEY CHECK (singleton = 1),
-            schema_version INTEGER NOT NULL CHECK (schema_version = {DATABASE_SCHEMA_VERSION}),
+            schema_version INTEGER NOT NULL CHECK (schema_version = {PREVIOUS_DATABASE_SCHEMA_VERSION}),
             database_profile TEXT NOT NULL CHECK (database_profile = '{DATABASE_PROFILE}'),
             application_id INTEGER NOT NULL CHECK (application_id = {APPLICATION_ID}),
             profile_sha256 TEXT NOT NULL CHECK ({_sha256_check("profile_sha256")}),
@@ -656,10 +675,17 @@ _DDL_STATEMENTS = (
             UNIQUE (project_id, idempotency_key)
         ) STRICT
     """,
-    *(statement for table, message in _IMMUTABLE_ROW_POLICIES for statement in _immutable_triggers(table, message)),
+    *(statement for table, message in _V1_IMMUTABLE_ROW_POLICIES for statement in _immutable_triggers(table, message)),
     "CREATE INDEX aggregate_revisions_project_kind ON aggregate_revisions (project_id, aggregate_kind, revision)",
     "CREATE INDEX provenance_events_project_time ON provenance_events (project_id, occurred_at, event_id)",
     "CREATE INDEX outbox_events_dispatch ON outbox_events (state, available_at, outbox_id)",
+)
+
+_DDL_STATEMENTS = (
+    SCHEMA_METADATA_V2_DDL,
+    *_V1_DDL_STATEMENTS[1:],
+    SCHEMA_MIGRATIONS_DDL,
+    *SCHEMA_MIGRATIONS_TRIGGERS,
 )
 
 
@@ -853,6 +879,8 @@ def _canonical_authorizer(
     trigger: str | None,
 ) -> int:
     if action in _SCHEMA_MUTATION_ACTIONS:
+        return sqlite3.SQLITE_DENY
+    if action in {sqlite3.SQLITE_INSERT, sqlite3.SQLITE_UPDATE, sqlite3.SQLITE_DELETE} and arg1 == "schema_migrations":
         return sqlite3.SQLITE_DENY
     if action == sqlite3.SQLITE_PRAGMA and arg1 is not None:
         pragma = arg1.casefold()
@@ -1073,7 +1101,7 @@ def initialize_database(
     project_id: str,
     project_created_at: str,
 ) -> DatabaseIntegrityReport:
-    """Atomically initialize schema version 1 without replacing any existing entry."""
+    """Atomically initialize the current schema without replacing any existing entry."""
 
     database = _canonical_database_path(Path(path), must_exist=False)
     project_id, project_id_scheme = _project_identity(project_id)
