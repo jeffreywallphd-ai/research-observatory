@@ -4,7 +4,7 @@
   "profileId": "sqlite-wal-v1",
   "databaseSchemaVersion": 1,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "e572a38ba24b00ab1faaa1771a577bfd44710b021a55c1f186f46a9bcbb87785",
+  "schemaFingerprintSha256": "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -16,6 +16,21 @@
   "timestampStorage": "utc-rfc3339-millisecond-text",
   "canonicalColumnTypes": ["INTEGER", "REAL", "TEXT"],
   "derivedBinaryStorage": "digest-reference-only",
+  "immutableRowTables": [
+    "schema_metadata",
+    "projects",
+    "aggregate_identities",
+    "aggregate_revisions",
+    "scholarly_records",
+    "documents",
+    "workflows",
+    "evidence",
+    "ontologies",
+    "decisions",
+    "provenance_events",
+    "settings"
+  ],
+  "mutableStateTables": ["object_records", "outbox_events"],
   "connectionProfile": {
     "foreignKeys": true,
     "journalMode": "wal",
@@ -27,7 +42,8 @@
     "loadableExtensions": false,
     "recursiveTriggers": true,
     "walAutocheckpointPages": 1000,
-    "lockingMode": "normal"
+    "lockingMode": "normal",
+    "schemaChanges": "dedicated-backed-up-migration-connection-only"
   },
   "checkpointPolicy": {
     "automaticMode": "passive",

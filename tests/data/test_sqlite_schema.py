@@ -20,6 +20,9 @@ from research_observatory_core.storage import (  # noqa: E402
     APPLICATION_ID,
     DATABASE_SCHEMA_VERSION,
     EXPECTED_TABLES,
+    EXPECTED_TRIGGERS,
+    IMMUTABLE_ROW_TABLES,
+    MUTABLE_STATE_TABLES,
     StorageProblem,
     database_integrity_report,
     initialize_database,
@@ -91,6 +94,8 @@ class SqliteSchemaTests(unittest.TestCase):
         self.assertEqual(DATABASE_SCHEMA_VERSION, profile["databaseSchemaVersion"])
         self.assertEqual(APPLICATION_ID, profile["applicationId"])
         self.assertEqual(list(EXPECTED_TABLES), profile["canonicalTables"])
+        self.assertEqual(list(IMMUTABLE_ROW_TABLES), profile["immutableRowTables"])
+        self.assertEqual(list(MUTABLE_STATE_TABLES), profile["mutableStateTables"])
 
         hostile = dict(profile)
         hostile["unexpectedOverride"] = True
@@ -117,6 +122,10 @@ class SqliteSchemaTests(unittest.TestCase):
             }
             self.assertEqual(set(EXPECTED_TABLES), set(tables))
             self.assertTrue(all(tables[table] == 1 for table in EXPECTED_TABLES))
+            triggers = tuple(
+                sorted(row[0] for row in connection.execute("SELECT name FROM sqlite_schema WHERE type='trigger'"))
+            )
+            self.assertEqual(EXPECTED_TRIGGERS, triggers)
             project = connection.execute("SELECT project_id, project_id_scheme, created_at FROM projects").fetchone()
             self.assertEqual((PROJECT_ID, "uuid4-bridge", CREATED_AT), tuple(project))
             with self.assertRaises(sqlite3.DatabaseError):
@@ -348,6 +357,159 @@ class SqliteSchemaTests(unittest.TestCase):
                     """,
                     ("01890f6e-6a40-7cc5-98b7-123456789ac0", PROJECT_ID, CREATED_AT, CREATED_AT),
                 )
+        finally:
+            connection.close()
+
+    def test_identity_revision_extension_and_setting_rows_are_immutable(self) -> None:
+        self.initialize()
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "project identity is immutable"):
+                connection.execute("UPDATE projects SET project_id=?", (SECOND_PROJECT_ID,))
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "project identity is immutable"):
+                connection.execute("DELETE FROM projects")
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "schema metadata is immutable"):
+                connection.execute("UPDATE schema_metadata SET created_at=created_at")
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "schema metadata is immutable"):
+                connection.execute("DELETE FROM schema_metadata")
+
+            identities: dict[str, tuple[str, str]] = {}
+            table_kinds = {
+                "scholarly_records": "record",
+                "documents": "document",
+                "workflows": "workflow",
+                "evidence": "evidence",
+                "ontologies": "ontology",
+                "decisions": "decision",
+            }
+            for offset, (table, kind) in enumerate(table_kinds.items(), start=1):
+                aggregate_id = f"01890f6e-6a40-7cc5-98b7-{offset:012x}"
+                revision_id = f"01890f6e-6a40-7cc5-98b7-{offset + 100:012x}"
+                identities[table] = (aggregate_id, revision_id)
+                connection.execute(
+                    """
+                    INSERT INTO aggregate_identities (
+                        aggregate_id, project_id, aggregate_kind, created_at
+                    ) VALUES (?, ?, ?, ?)
+                    """,
+                    (aggregate_id, PROJECT_ID, kind, CREATED_AT),
+                )
+                connection.execute(
+                    """
+                    INSERT INTO aggregate_revisions (
+                        revision_id, aggregate_id, aggregate_kind, project_id, revision,
+                        contract_version, created_at, modified_at, display_label_observed,
+                        knowledge_status, rights_status
+                    ) VALUES (?, ?, ?, ?, 0, '1.0.0', ?, ?, ?, 'observed', 'unknown')
+                    """,
+                    (revision_id, aggregate_id, kind, PROJECT_ID, CREATED_AT, CREATED_AT, f"{kind} title"),
+                )
+                if table == "documents":
+                    connection.execute(
+                        "INSERT INTO documents (revision_id, project_id) VALUES (?, ?)",
+                        (revision_id, PROJECT_ID),
+                    )
+                else:
+                    connection.execute(f"INSERT INTO {table} (revision_id) VALUES (?)", (revision_id,))
+
+            unreferenced_id = "01890f6e-6a40-7cc5-98b7-0000000000ff"
+            connection.execute(
+                """
+                INSERT INTO aggregate_identities (
+                    aggregate_id, project_id, aggregate_kind, created_at
+                ) VALUES (?, ?, 'record', ?)
+                """,
+                (unreferenced_id, PROJECT_ID, CREATED_AT),
+            )
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "aggregate identities are immutable"):
+                connection.execute(
+                    "UPDATE aggregate_identities SET aggregate_id=? WHERE aggregate_id=?",
+                    ("01890f6e-6a40-7cc5-98b7-0000000000fe", unreferenced_id),
+                )
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "aggregate identities are immutable"):
+                connection.execute("DELETE FROM aggregate_identities WHERE aggregate_id=?", (unreferenced_id,))
+
+            record_revision = identities["scholarly_records"][1]
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "aggregate revisions are immutable"):
+                connection.execute(
+                    "UPDATE aggregate_revisions SET display_label_observed='changed' WHERE revision_id=?",
+                    (record_revision,),
+                )
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "aggregate revisions are immutable"):
+                connection.execute("DELETE FROM aggregate_revisions WHERE revision_id=?", (record_revision,))
+
+            for table, (_, revision_id) in identities.items():
+                with self.assertRaisesRegex(sqlite3.IntegrityError, "immutable"):
+                    connection.execute(
+                        f"UPDATE {table} SET revision_id=revision_id WHERE revision_id=?", (revision_id,)
+                    )
+                with self.assertRaisesRegex(sqlite3.IntegrityError, "immutable"):
+                    connection.execute(f"DELETE FROM {table} WHERE revision_id=?", (revision_id,))
+
+            connection.execute(
+                """
+                INSERT INTO settings (
+                    setting_id, project_id, setting_key, revision, value_type,
+                    boolean_value, created_at, modified_at
+                ) VALUES (?, ?, 'privacy.local-only', 0, 'boolean', 1, ?, ?)
+                """,
+                (SETTING_ID, PROJECT_ID, CREATED_AT, CREATED_AT),
+            )
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "settings history is append-only"):
+                connection.execute("UPDATE settings SET boolean_value=0 WHERE setting_id=?", (SETTING_ID,))
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "settings history is append-only"):
+                connection.execute("DELETE FROM settings WHERE setting_id=?", (SETTING_ID,))
+
+            connection.execute(
+                """
+                INSERT INTO object_records (
+                    object_sha256, project_id, byte_length, media_type, rights_status,
+                    protection_profile, retention_class, storage_state, created_at
+                ) VALUES (?, ?, 1, 'application/pdf', 'allowed', 'encrypted-object-v1',
+                          'project-lifetime', 'pending', ?)
+                """,
+                (OBJECT_SHA256, PROJECT_ID, CREATED_AT),
+            )
+            connection.execute(
+                "UPDATE object_records SET storage_state='available', verified_at=? WHERE object_sha256=?",
+                ("2026-08-14T12:00:01.000Z", OBJECT_SHA256),
+            )
+            self.assertEqual(
+                ("available", "2026-08-14T12:00:01.000Z"),
+                tuple(
+                    connection.execute(
+                        "SELECT storage_state, verified_at FROM object_records WHERE object_sha256=?",
+                        (OBJECT_SHA256,),
+                    ).fetchone()
+                ),
+            )
+
+            outbox_id = "01890f6e-6a40-7cc5-98b7-000000000301"
+            connection.execute(
+                """
+                INSERT INTO outbox_events (
+                    outbox_id, project_id, revision_id, event_type, occurred_at,
+                    available_at, state, idempotency_key, record_sha256
+                ) VALUES (?, ?, ?, 'record.created', ?, ?, 'pending', 'record-created-1', ?)
+                """,
+                (outbox_id, PROJECT_ID, record_revision, CREATED_AT, CREATED_AT, "d" * 64),
+            )
+            connection.execute(
+                "UPDATE outbox_events SET state='publishing', attempt_count=1 WHERE outbox_id=?",
+                (outbox_id,),
+            )
+            self.assertEqual(
+                ("publishing", 1),
+                tuple(
+                    connection.execute(
+                        "SELECT state, attempt_count FROM outbox_events WHERE outbox_id=?",
+                        (outbox_id,),
+                    ).fetchone()
+                ),
+            )
+
+            with self.assertRaises(sqlite3.DatabaseError):
+                connection.execute("DROP TRIGGER settings_no_update")
         finally:
             connection.close()
 
