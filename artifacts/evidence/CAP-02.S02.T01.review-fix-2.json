@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T01",
+  "commit": "5e5541c81c4445bb3df77f32d4f11f8125c9a00b",
+  "baseCommit": "30364ee2156ef23c6609aa84e108fb90a2035c27",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S02.T01.review-fix.json",
+    "sha256": "1d66806d59b072de04a22d61d9356a800698cfc85800799a229e3bacb1c32730",
+    "reason": "The first remediation closed immutable-row mutation but independent re-review found that ordinary callers could remove the authorizer and persistently mutate identity/profile PRAGMAs. This record preserves that evidence and binds the restricted ordinary connection/cursor capability and protected-PRAGMA remediation."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S02.T01.review-fix.json",
+    "docs/adr/ADR-0014-use-a-strict-versioned-sqlite-wal-profile-for-local-canonical-state.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/data/test_sqlite_schema.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.service.test_project_lifecycle tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 40 focused tests pass. The new direct test proves ordinary access is not a sqlite3.Connection, does not expose raw cursor/authorizer/configuration/extension/backup/serialization/callback methods, and denies protected PRAGMA writes, trigger removal, protected-row mutation, and extension loading while normal reads/writes and lifecycle/API behavior remain passing."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_adr_check tests.foundation.test_build_manifest tests.foundation.test_quality_check",
+      "exitCode": 0,
+      "result": "All 32 affected ADR/build/quality tests pass."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/projects.py tests/data/test_sqlite_schema.py tests/service/test_project_lifecycle.py; .venv\\Scripts\\python.exe -m ruff check services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/projects.py tests/data/test_sqlite_schema.py tests/service/test_project_lifecycle.py; .venv\\Scripts\\python.exe -m mypy services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/projects.py",
+      "exitCode": 0,
+      "result": "Affected formatting, Ruff lint, and mypy checks pass."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S02.T01-review-fix-2-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, Ruff lint, and mypy pass for all 85 governed Python files. Report SHA-256: 0acf118f6574f9ba150ca957059a9d8c9820ed1211e1afa621475376974d0028."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/project_lifecycle_performance_check.py --repo . --report artifacts/tmp/CAP-02.S02.T01-review-fix-2-project-lifecycle-performance.json",
+      "exitCode": 0,
+      "result": "The clean commit-bound Windows x64 qualification passes the unchanged reviewed baseline after adding the restricted wrapper: fresh-service open p95 15.9756 ms versus 20.184 ms and warm reopen p95 13.8814 ms versus 23.681 ms. Report SHA-256: 16d7dafdbdbc551b0276cb376ba824e6f33e60e3431c1458a67238489439cbc1."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .; .venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T01-review-fix-2-build.json",
+      "exitCode": 0,
+      "result": "ADR registry, architecture, repository structure, and clean build identity 0.1.0+g5e5541c pass. Build-manifest SHA-256: 3646d4cc7d29a720270ea0604d58eb49b13f6809fd8b325dc585d4a2ed7f9ed8."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 30364ee2156ef23c6609aa84e108fb90a2035c27 --head 5e5541c81c4445bb3df77f32d4f11f8125c9a00b; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The incremental UI gate reports no UI/reference changes; the authoritative backlog and generated views validate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The exact 24-trigger immutable-row contract and 61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9 DDL fingerprint from the first remediation remain unchanged and passing.",
+        "Ordinary access returns a restricted connection/cursor capability rather than a raw sqlite3.Connection or cursor with a connection back-reference. Authorizer, configuration, extension, callback, backup, serialization, and raw-cursor escape hatches are absent from the public capability.",
+        "The internal authorizer denies write-form application_id, user_version, schema_version, foreign-key, trusted-schema, recursive-trigger, journal, synchronization, checkpoint, locking, timeout, writable-schema, ignored-check, and deferred-FK PRAGMAs; governed trigger removal and protected-row mutation remain denied.",
+        "Initialization retains its explicit internal capability, while the future backed-up migration capability remains absent and assigned to CAP-02.S02.T02."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Direct regressions reproduce and deny both prior reviewer attacks: set_authorizer is not exposed and identity/profile PRAGMA writes fail with no persisted change.",
+        "All prior immutable-row, intentionally mutable object/outbox, WAL concurrency, path/link/fingerprint, lifecycle, and API regressions remain passing.",
+        "Current clean performance qualification passes, while the earlier disclosed nonqualifying and two qualifying run histories remain immutable in the superseded evidence."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0014 and the architecture guide describe the restricted ordinary capability and the separately governed T02 backup-first migration authority.",
+        "No DDL/profile fingerprint, UI, dependency, migration runner, repository layer, encryption, or unrelated runtime scope changed in this incremental remediation.",
+        "The complete migration/repository/backup/recovery matrix remains assigned to the rest of CAP-02.S02 and W1 qualification under the approved workflow."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The incremental risk is capability escape from Python's raw sqlite3 connection/cursor API plus persistent security/identity PRAGMA mutation. Checks therefore enumerate and deny every relevant public escape hatch, exercise the protected PRAGMA matrix, replay trigger/history attacks, and rerun lifecycle/API, quality, clean build, architecture, UI separation, and open performance.",
+    "deferred": "Full data, migration, repository, backup/recovery, checkpoint, and Wave matrices remain at their approved slice/checkpoint/Wave stages; no broad profile was run for this focused remediation.",
+    "performanceNote": "The current wrapper-qualified run passes at fresh/warm p95 15.9756/13.8814 ms. The previous evidence retains the one disclosed nonqualifying run and two qualifying same-authority replays; no baseline or methodology field was changed."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Replay the exact authorizer-removal and identity/profile PRAGMA findings plus the incremental restricted cursor/method surface. Confirm initialization works and future migration authority remains explicit but absent. Remediation-only review; no broad profiles."
+  }
+}

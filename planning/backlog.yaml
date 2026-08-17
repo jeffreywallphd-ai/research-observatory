@@ -3639,7 +3639,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-14T13:50:36+00:00'
-      updated_at: '2026-08-17T22:51:14+00:00'
+      updated_at: '2026-08-17T22:57:18+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Strict SQLite v1 schema, connection profile, project lifecycle integration, focused concurrency/denial
@@ -3659,6 +3659,11 @@ capabilities:
         sha256: 1d66806d59b072de04a22d61d9356a800698cfc85800799a229e3bacb1c32730
         commit: 30364ee2156ef23c6609aa84e108fb90a2035c27
         recorded_at: '2026-08-17T22:46:43+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S02.T01.review-fix-2.json
+        sha256: 9eb9177816e7fb633e8f8a7715cd3c211877436e494cc46b820e40321df135ce
+        commit: 5e5541c81c4445bb3df77f32d4f11f8125c9a00b
+        recorded_at: '2026-08-17T22:57:18+00:00'
       review:
         reviewer: agent:curie
         result: changes-requested
@@ -3673,7 +3678,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-17T22:51:14+00:00'
         expires_at: '2026-08-18T06:51:14+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
