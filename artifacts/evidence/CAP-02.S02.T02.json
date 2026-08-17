@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T02",
+  "commit": "f26f5485e4290894fb3e1e288d8df140a8bfb98f",
+  "baseCommit": "7734063b43e34e7a71bd84d23711f903a2a7eaf4",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "pyproject.toml",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/__init__.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/__init__.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0002_schema_history.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/data/README.md",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/service/test_core_api.py",
+    "tools/core_sidecar_build.py",
+    "uv.lock"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.service.test_project_lifecycle tests.service.test_core_api tests.contracts.test_foundation_contracts tests.foundation.test_build_manifest",
+      "exitCode": 0,
+      "result": "All 74 risk-selected schema, migration, project-lifecycle, Core API, contract, and build-manifest tests pass. The matrix covers the exact version-1 fixture, dry-run nonmutation, verified recovery manifest, backup reopening, successful and current-version idempotence, post-DDL rollback, retained failure recovery, writer reservation, redirected or substituted paths, concurrent tamper denial, unsupported versions, and ordinary migration-history mutation denial."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy pass for all 90 governed Python files; architecture passes for 13 areas, 12 modules, 5 stable interfaces, and 3 deployment profiles; all 14 ADR registry entries validate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six focused packaging tests pass with one Windows-token-dependent symlink test skipped. A real PyInstaller 6.21.0 build contains Alembic, SQLAlchemy, the governed migration runner and revision, excludes denied build modules, and its configuration check succeeds with Python absent from PATH."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-package --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "The clean canonical Windows x64 sidecar package passes exact inventory and frozen-process validation: 661 files, 38,275,997 bytes, entrypoint SHA-256 f2b2e6cc92188fc4d23991504ab8e65bd1d2df2c28abba2d6f13f2ddd8df9320. Package report SHA-256: 8881081385978826843c8d59a9d9af7edbcfac0fef9cd711dc7262383241c1cb."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_core_sidecar_performance_check",
+      "exitCode": 0,
+      "result": "All eight strict Core performance authority and failure-publication tests pass. The final package was also presented to the real qualification gate, which truthfully emitted NONQUALIFYING because the new 661-file migration runtime differs from the approved CAP-01 644-file package fixture; the retained report SHA-256 is 6428a92c14e6c685bfd819ab631cd396d8c597a26dd656efd61b9b545c3de363 and recalibration is deferred to the S02 integration checkpoint after T03 completes the package-changing slice."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T02-build-manifest.json",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+gf26f548 passes and includes the new recovery schema and exact dependency-lock identities. Build-manifest SHA-256: 3e43688dd5a3853ebf5e488eebdb1431d4f6a34dc154b771a45874ff8f8c37fb."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 7734063b43e34e7a71bd84d23711f903a2a7eaf4 --head f26f5485e4290894fb3e1e288d8df140a8bfb98f; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The incremental UI gate reports no product or reference UI changes; the authoritative backlog and generated views validate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The programmatic Alembic registry accepts only the exact fingerprinted version-1 predecessor and applies one ordered forward-only 0002_schema_history revision inside the caller-owned SQLite transaction.",
+        "Before revision execution, the runner obtains a writer reservation, verifies complete WAL checkpointing, creates a second-connection SQLite online backup under stable held Windows paths, reopens it against the exact source profile, and publishes a schema-valid immutable recovery manifest bound to the backup bytes and source/target fingerprints.",
+        "A deterministic failure after every migration DDL statement rolls the source back to exact version-1 schema/data semantics, retains the verified backup and bounded failure record, and a later retry succeeds. Fresh/current version-2 detection is idempotent and creates no backup.",
+        "The exact supported prior-schema inventory contains version 1 only; both the dry-run and full backup/migrate/recover paths execute against that frozen fixture."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Eight dedicated migration tests plus the existing nine storage tests cover success, dry-run, rollback, retry/restart, lock contention, wrong location/version/fingerprint, redirected backup roots, live backup/manifest write denial, and ordinary forged history mutations.",
+        "The real frozen package is built and inspected, not mocked: Alembic operations, SQLAlchemy engine support, the migration runner, and the exact governed revision are all present and loadable without system Python.",
+        "The stable Core --check response contract is preserved; migration-runtime loadability is exercised internally and archive identity proves the new runtime is shipped."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The portable SQLite profile advances to schema version 2 with exact table/trigger/profile fingerprints; the new recovery-manifest schema, storage documentation, Core/package documentation, build-input inventory, quality scope, and locked dependencies are updated together.",
+        "Alembic 1.18.5 and SQLAlchemy 2.0.51 are exact direct locks. The final scanner report identifies their transitive Python set and all five new-package license findings as ALLOW with no new blocking finding.",
+        "No UI/reference content, project-lifecycle mutation workflow, repository implementation, encryption, object storage, or unrelated capability behavior was added; T03 remains responsible for typed repositories and units of work."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk task changes schema identity, destructive migration authority, backup destinations, SQLite transactions, frozen packaging, and runtime dependencies. The selected checks therefore cover exact old/new fixtures, transactional failure after complete DDL, concurrent writers, Windows junction/tamper boundaries, portable schemas, existing project lifecycle and Core API compatibility, quality/architecture, clean build provenance, and a real Pythonless frozen package.",
+    "deferred": "The broad data and e2e-local profiles are not replayed at task level under the Wave risk-based policy. T03 will still change the Core/storage package; the accumulated affected-profile union, backup/restore lifecycle, and complete performance/package/security qualification are due at the CAP-02.S02 integration checkpoint and W1 exit.",
+    "performanceNote": "The exact old CAP-01 performance authority correctly rejects the changed package fixture rather than auto-rebaselining it. Report SHA-256 6428a92c14e6c685bfd819ab631cd396d8c597a26dd656efd61b9b545c3de363 is retained as NONQUALIFYING; no baseline, threshold, or methodology field was changed.",
+    "securityNote": "The exact final repository scan report SHA-256 is 93d32c290a22376905124b4bfd971f3ca5317055a68a04328f05d559f078d442. It reports eight existing high-severity findings in the dev-only TypeScript 7.0.2 native compiler; none belongs to the new migration dependencies. Alembic/Mako/SQLAlchemy are MIT, MarkupSafe is BSD-3-Clause, and greenlet is MIT AND PSF-2.0, all ALLOW. The eight repository blockers remain an explicit W1 exit risk and are not represented as task-pass evidence."
+  },
+  "reviewerDisposition": {
+    "status": "pending",
+    "requiredGate": "agent-review",
+    "note": "Review the backup-before-migrate transaction, recovery-manifest truth, path/hardlink/junction confinement, rollback and retry behavior, migration authority separation, dependency/package changes, and the disclosed performance/security deferrals. Use focused high-risk checks; do not run broad profiles."
+  }
+}
