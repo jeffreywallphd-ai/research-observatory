@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S03.T02",
+  "commit": "4d55d5ed0345a6265d296f6d7d9a774804c6b2d6",
+  "baseCommit": "ba98e5c07f6c492ddf59432df4963e4be61e7631",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/architecture/local-object-storage.md",
+    "docs/automation/supply-chain-security.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/object-store-profile.schema.json",
+    "packages/contracts/storage/object-store-profile.v1.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "pyproject.toml",
+    "quality-scope.json",
+    "security-policy.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0003_object_envelopes.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/object_store_keys.py",
+    "services/core-api/src/research_observatory_core/projects.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/contracts/test_object_store_contract.py",
+    "tests/data/test_encrypted_object_store.py",
+    "tests/data/test_local_object_store.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/data/test_sqlite_schema.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/security/test_security_check.py",
+    "tests/service/test_project_lifecycle.py",
+    "uv.lock"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile data --report artifacts/tmp/CAP-02.S03.T02-data-profile-final.json",
+      "exitCode": 0,
+      "result": "The complete data profile passed in 704.63 seconds at implementation commit 3dfeb266467edc57fa79113bb91aec1731c4dfa5: 166 foundation tests, the performance gate with freshServiceOpen p95 16.633 ms against the 20.184 ms limit, 69 data tests, and 15 storage-contract tests. Report SHA-256: 15ce9041934b2845a1822964b866f2f5265532752e3339c6ba94dcbe7fe0b958. The only later commit classified cffi's declared MIT-0 license in security policy, documentation, and its security test; the exact final commit then replayed the affected data, contract, security, and service union below."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile security-local --report artifacts/tmp/CAP-02.S03.T02-security-local-profile-final.json",
+      "exitCode": 0,
+      "result": "The complete security-local profile passed at exact task commit 4d55d5ed0345a6265d296f6d7d9a774804c6b2d6 in 658.81 seconds: 166 foundation tests, a live 599-package dependency scan with 151 normalized findings and zero blocking findings, and all 21 security tests. Report SHA-256: 00be40cf5bc16857684c74bec3a336ba0090092ea124934e9c5568480ccbce9d."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/data -p \"test_*.py\"; .venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p \"test_*.py\"; .venv\\Scripts\\python.exe -m unittest discover -s tests/security -p \"test_*.py\"; .venv\\Scripts\\python.exe -m unittest tests.service.test_project_lifecycle",
+      "exitCode": 0,
+      "result": "The exact final task commit passes the 121-test affected union: 69 data tests, 15 contract tests, 21 security tests, and 16 project-lifecycle service tests. This binds encryption, schema/migration recovery, portable profiles, dependency policy, and the directory-snapshot performance remediation to the final commit."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "A fresh real PyInstaller 6.21.0 Python 3.14.6 Windows x64 onedir build passes its Pythonless configuration check at the exact final task commit. The hook-nacl collection is present and the artifact binds 664 files / 38,871,073 bytes. Report SHA-256: 9fdc526e557892e7d3d8397c6f08930d2d4221c099bdc9e6d7d57c33a2771edd."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "The final task commit is clean on codex/w1-windows-local-runtime. All 20 capabilities, 117 slices, 356 tasks, and 12 release gates validate; generated backlog views have no drift; and patch hygiene passes."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Protected objects use a versioned streaming XChaCha20-Poly1305 secretstream envelope. Every object receives a random 256-bit data key, and the data key is wrapped with XChaCha20-Poly1305 under a versioned project key. Only authenticated ciphertext and key-version metadata are persisted; plaintext is streamed directly from the caller and never staged in a temporary file or written to logs.",
+        "Open authenticates the complete envelope and checks plaintext length and SHA-256 before returning the controlled reader. Ciphertext, header, wrapped-key, and metadata tampering fail closed and quarantine the object without exposing a plaintext byte.",
+        "A missing or unusable project key raises the bounded ObjectKeyUnavailable error and does not silently classify recoverable key loss as object corruption. Rotation selects the current key for new objects while prior key versions remain readable."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Seven direct encrypted-object tests cover successful round trip with no plaintext residue, ciphertext/header/wrapped-key tampering, missing keys, rotation with old-key readability, process restart, interrupted writes, and the explicitly gated plaintext fixture mode.",
+        "The 69-test data suite covers version-3 migration from empty, v1, and v2 databases; rollback and retry at every material v2/v3 failpoint; schema history; restart; corruption; alias/race denial; and the existing local-object boundaries. The exact-final 121-test affected union and both full task profiles pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Strict portable object-store and SQLite profiles now bind encrypted-envelope version, cipher suite, key identifier/version, nonce/header handling, wrapped-key metadata, plaintext-fixture gating, schema version 3, and migration recovery history. The v0003 migration is transactional, failpoint-tested, and idempotently retryable.",
+        "The dependency-neutral object-store key port, architecture guide, implementation plan, packaging inventory, quality scope, frozen-sidecar hook, PyNaCl lockfile, and supply-chain policy are updated together. MIT-0 is documented and tested for the cffi transitive dependency while an adjacent unlisted license remains denied.",
+        "There is no UI/reference change and no quota, garbage-collection, cache-policy, or later-slice expansion. Unencrypted storage is available only through the explicit allow_plaintext_fixture test construction; production construction without a key provider fails closed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk security task changes authenticated local persistence, key selection and loss behavior, the SQLite schema and recovery path, strict public storage profiles, a runtime cryptographic dependency, supply-chain policy, Windows filesystem race defenses, performance-sensitive project open, and frozen packaging. Both task-listed full profiles were therefore justified, along with exact-final affected tests and one real frozen-sidecar build. The data profile ran before a final security-only dependency-license classification commit; the final commit replayed every affected data, contract, security, and service test, while the security profile and package build ran directly at that final commit.",
+    "deferred": "Slice review must perform independent adversarial integration review across object publication/open, migration/restart, and key-boundary behavior. T03 owns quotas, leases, garbage collection, cache eviction, and representative storage benchmarks. Cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows qualification remain due at the appropriate integration checkpoint and W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "security-review",
+    "note": "Perform an independent high-risk security review of nonce/header construction, secretstream final-tag and authenticate-before-use behavior, per-object data-key generation and wrapping context, key-version rotation/loss semantics, tamper quarantine versus key-unavailable handling, absence of plaintext staging/logging, schema-v3 rollback/retry/history, filesystem alias and rename-race defenses, strict fixture gating, dependency/license policy, and exact frozen-package inclusion. Replay the direct adversarial tests and investigate failures; do not claim the next task until this disposition is recorded."
+  }
+}
