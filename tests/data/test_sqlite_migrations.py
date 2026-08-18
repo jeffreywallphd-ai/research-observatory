@@ -94,6 +94,20 @@ class SqliteMigrationTests(unittest.TestCase):
         self.database = self.state / "project.sqlite3"
 
     def tearDown(self) -> None:
+        if os.name == "nt":
+            subprocess.run(
+                [
+                    str(Path(os.environ["SYSTEMROOT"]) / "System32" / "icacls.exe"),
+                    self.temporary.name,
+                    "/reset",
+                    "/t",
+                    "/c",
+                    "/q",
+                ],
+                capture_output=True,
+                check=False,
+                timeout=30,
+            )
         self.temporary.cleanup()
 
     def create_v1(self) -> None:
@@ -226,7 +240,14 @@ class SqliteMigrationTests(unittest.TestCase):
                 failure = manifest.parent / "failure.json"
                 self.assertTrue(manifest.is_file())
                 self.assertTrue((manifest.parent / "project.sqlite3").is_file())
-                self.assertEqual("migration-failed", json.loads(failure.read_text(encoding="utf-8"))["status"])
+                failure_bytes = failure.read_bytes()
+                self.assertEqual("migration-failed", json.loads(failure_bytes)["status"])
+                if os.name == "nt":
+                    with self.assertRaises(PermissionError):
+                        failure.write_bytes(b"changed")
+                    with self.assertRaises(PermissionError):
+                        failure.unlink()
+                    self.assertEqual(failure_bytes, failure.read_bytes())
 
                 recovered = migrate_database(database, expected_project_id=PROJECT_ID)
                 self.assertEqual("migrated", recovered.status)
@@ -321,6 +342,8 @@ class SqliteMigrationTests(unittest.TestCase):
     @unittest.skipUnless(os.name == "nt", "Windows durable recovery ACL boundary")
     def test_recovery_acl_denies_links_after_final_validation_and_commit(self) -> None:
         self.create_v1()
+        replacement = self.project / "outside-replacement.txt"
+        replacement.write_text("replacement", encoding="utf-8")
         late_database = self.project / "outside-late-database.sqlite3"
         late_manifest = self.project / "outside-late-manifest.json"
         after_commit_database = self.project / "outside-committed-database.sqlite3"
@@ -338,12 +361,36 @@ class SqliteMigrationTests(unittest.TestCase):
                     os.link(verified.database, late_database)
                 with self.assertRaises(PermissionError):
                     os.link(verified.manifest, late_manifest)
+                with self.assertRaises(PermissionError):
+                    verified.database.unlink()
+                with self.assertRaises(PermissionError):
+                    verified.manifest.unlink()
+                with self.assertRaises(PermissionError):
+                    os.replace(verified.database, self.project / "outside-late-moved.sqlite3")
+                with self.assertRaises(PermissionError):
+                    os.replace(verified.manifest, self.project / "outside-late-moved.json")
+                with self.assertRaises(PermissionError):
+                    os.replace(replacement, verified.database)
+                with self.assertRaises(PermissionError):
+                    os.replace(replacement, verified.manifest)
 
         def link_then_close(verified: runner._VerifiedBackup) -> None:
             with self.assertRaises(PermissionError):
                 os.link(verified.database, after_commit_database)
             with self.assertRaises(PermissionError):
                 os.link(verified.manifest, after_commit_manifest)
+            with self.assertRaises(PermissionError):
+                verified.database.unlink()
+            with self.assertRaises(PermissionError):
+                verified.manifest.unlink()
+            with self.assertRaises(PermissionError):
+                os.replace(verified.database, self.project / "outside-committed-moved.sqlite3")
+            with self.assertRaises(PermissionError):
+                os.replace(verified.manifest, self.project / "outside-committed-moved.json")
+            with self.assertRaises(PermissionError):
+                os.replace(replacement, verified.database)
+            with self.assertRaises(PermissionError):
+                os.replace(replacement, verified.manifest)
             original_close(verified)
 
         with (
@@ -356,6 +403,7 @@ class SqliteMigrationTests(unittest.TestCase):
 
         backup = self.project / str(migrated.backup_relative_path)
         manifest = self.project / str(migrated.recovery_manifest_relative_path)
+        self.assertEqual([], list(manifest.parent.glob(".working-*.sqlite3")))
         backup_before = backup.read_bytes()
         manifest_before = manifest.read_bytes()
         with self.assertRaises(PermissionError):
@@ -366,6 +414,18 @@ class SqliteMigrationTests(unittest.TestCase):
             backup.write_bytes(b"changed")
         with self.assertRaises(PermissionError):
             manifest.write_bytes(b"changed")
+        with self.assertRaises(PermissionError):
+            backup.unlink()
+        with self.assertRaises(PermissionError):
+            manifest.unlink()
+        with self.assertRaises(PermissionError):
+            os.replace(backup, self.project / "outside-released-moved.sqlite3")
+        with self.assertRaises(PermissionError):
+            os.replace(manifest, self.project / "outside-released-moved.json")
+        with self.assertRaises(PermissionError):
+            os.replace(replacement, backup)
+        with self.assertRaises(PermissionError):
+            os.replace(replacement, manifest)
         self.assertEqual(backup_before, backup.read_bytes())
         self.assertEqual(manifest_before, manifest.read_bytes())
 
