@@ -3802,11 +3802,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-18T00:37:15+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      started_at: '2026-08-18T00:38:49+00:00'
+      updated_at: '2026-08-18T00:38:49+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3816,10 +3816,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 6a177be5774f6b252978ee617a1a6a815a92f9bd
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-18T00:38:49+00:00'
+        expires_at: '2026-08-18T08:38:49+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
     platform_targets:
