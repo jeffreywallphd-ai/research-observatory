@@ -29,6 +29,11 @@
     "keyWrapping",
     "plaintextTemporaryStorage",
     "plaintextFixtureMode",
+    "priorEnvelopeUpgrade",
+    "upgradePhases",
+    "upgradeRollback",
+    "malformedEnvelopeFailure",
+    "wrappedKeyAuthenticationFailure",
     "keyUnavailableBehavior",
     "releaseQualification"
   ],
@@ -68,6 +73,20 @@
     "keyWrapping": {"const": "xchacha20poly1305-ietf-versioned-project-master-key"},
     "plaintextTemporaryStorage": {"const": "forbidden"},
     "plaintextFixtureMode": {"const": "explicit-test-only"},
+    "priorEnvelopeUpgrade": {"const": "pre-open-durable-journaled-verified-copy-on-write"},
+    "upgradePhases": {
+      "const": [
+        "legacy-detected",
+        "replacement-writing",
+        "replacement-verified",
+        "swap-intent",
+        "metadata-committed",
+        "complete"
+      ]
+    },
+    "upgradeRollback": {"const": "retain-plaintext-outside-temp-until-production-open-verifies"},
+    "malformedEnvelopeFailure": {"const": "corrupt-quarantine"},
+    "wrappedKeyAuthenticationFailure": {"const": "key-unavailable-preserve"},
     "keyUnavailableBehavior": {"const": "bounded-failure-preserve-for-recovery"},
     "releaseQualification": {"const": "authenticated-encrypted-object-adapter"}
   }

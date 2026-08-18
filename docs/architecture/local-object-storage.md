@@ -47,18 +47,35 @@ cache decisions.
 feeding bounded memory chunks directly into libsodium secretstream
 XChaCha20-Poly1305; the project temporary directory therefore contains only an
 authenticated encrypted envelope, never a plaintext staging file. Each object has
-a random 256-bit data key. SQLite schema v3 records the secretstream envelope
+a random 256-bit data key. SQLite schema v3 introduced the secretstream envelope
 version, ciphertext length, master-key version, random wrapping nonce, and the data
 key wrapped with XChaCha20-Poly1305 under the versioned project master-key port.
 Neither key bytes nor plaintext paths enter SQLite, logs, or returned metadata.
 
 Open obtains the exact recorded key version, unwraps the data key, authenticates
 the complete held envelope, and rechecks the plaintext length and SHA-256 identity
-before returning a controlled decrypting stream. Ciphertext or framing failure is
-quarantined before first-byte use. Missing or unusable key material instead returns
-the bounded `RO-CORE-OBJECT-KEY-UNAVAILABLE` failure and preserves the object for
-key recovery. Rotation changes the active key version for new objects while older
-objects remain readable through their recorded version.
+before returning a controlled decrypting stream. Malformed magic, header, framing,
+final-tag, trailing-content, or structurally invalid metadata is corrupt and is
+quarantined before first-byte use. A missing key version/provider or authenticated
+unwrap failure for otherwise well-formed wrapped-key metadata instead returns the
+bounded `RO-CORE-OBJECT-KEY-UNAVAILABLE` failure and preserves the object for key
+recovery. Wrong retained master-key bytes and a modified valid-shape wrapped key are
+intentionally indistinguishable at that boundary. Rotation changes the active key
+version for new objects while older objects remain readable through their recorded
+version.
+
+Schema v4 preserves the committed v3 history and adds
+`object_envelope_upgrades`, the durable pre-open journal required by ADR-0016.
+Prior plaintext rows are never relabeled as release-compatible fixtures. Project
+open holds the exclusive session lock while each legacy source is verified, streamed
+directly into an encrypted same-volume replacement, authenticated, journaled before
+the guarded swap, committed with encrypted metadata, and opened through the ordinary
+production reader. The original becomes a bounded rollback sibling in the objects
+class—not a plaintext temporary file—and is removed only after production-open
+verification. Restart reconciles the journal plus stable file identities at every
+phase; it never guesses from filenames alone. Missing keys, corrupt sources,
+interruption, rename failure, and SQLite failure leave either the original canonical
+file or its verified rollback authority intact and keep ordinary access closed.
 
 `plaintext-fixture-v1` remains available only when the adapter is constructed with
 the explicit test-fixture flag. Constructing an ordinary store without a key
@@ -74,7 +91,10 @@ governed by ADR-0015.
 - streaming, restart, duplicate, project-scope, and opaque-name fixtures;
 - interrupted source and expected-hash mismatch leave no visible object or row;
 - corruption and hardlink aliases are denied before a byte reaches a caller;
-- encrypted restart, ciphertext tamper, missing-key, and key-version rotation fixtures;
+- v2 and committed-v3 upgrade, every journal/swap/commit/cleanup restart boundary,
+  missing-key, corrupt-source, and project-open lock fixtures;
+- magic, header, frame, final-tag, trailing-content, wrapped-key, wrap-nonce, and
+  key-version adversarial classification fixtures;
 - explicit plaintext fixture gating and no plaintext bytes in encrypted staging or object files;
 - denied/unknown rights states and concurrent rights transitions cannot overtake
   an authorized held stream;

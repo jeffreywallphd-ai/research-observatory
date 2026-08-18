@@ -110,5 +110,6 @@ HEAD in the report. `--measure-only` is deliberately nonqualifying, and every
 failed invocation replaces a prior report with an explicit `ok: false` result so
 stale PASS evidence cannot survive.
 The frozen sidecar explicitly includes the governed Alembic migration runner and
-its pinned SQLAlchemy runtime so backup-first schema recovery remains available
-without a system Python installation.
+its pinned SQLAlchemy runtime, immutable v2/v3 revisions, and v4 object-upgrade
+journal revision so backup-first schema and pre-open envelope recovery remain
+available without a system Python installation.

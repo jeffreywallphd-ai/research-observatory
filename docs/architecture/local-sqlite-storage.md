@@ -6,11 +6,11 @@ business modules do not receive filesystem paths or SQLite connection objects.
 ADR-0014 governs the first database profile; the portable machine record is
 [`sqlite-profile.v1.json`](../../packages/contracts/storage/sqlite-profile.v1.json).
 
-## Current version-2 authority
+## Current version-4 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=2`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=4`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge is explicitly tagged |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -23,8 +23,9 @@ Every connection is created by the canonical storage factory and re-verifies
 these controls. WAL activation is accepted only when SQLite returns `wal`.
 Project creation builds and checks the database before the staging directory is
 published. Compatible project open validates application, profile, exact schema
-fingerprint, and project identity before creating the session lock or appending
-the open audit record. Full `quick_check` and `foreign_key_check` scans are
+fingerprint, and project identity while holding the exclusive session lock; any
+required object-envelope upgrade completes before the open audit record. Full
+`quick_check` and `foreign_key_check` scans are
 explicit integrity operations so interactive open cost does not scale with the
 database; T02/T03 must schedule them at startup/maintenance and surface recovery.
 
@@ -36,6 +37,7 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `schema_migrations` | append-only successful forward-migration identity, backup-manifest binding, and source/target fingerprints |
 | `projects` | immutable project identity anchor; mutable lifecycle remains manifest-owned until repository integration |
 | `object_records` | content digest, size, media type, rights, protection, retention, and verification metadata; never object bytes or paths |
+| `object_envelope_upgrades` | mutable pre-open copy-on-write phase, stable file identities, bounded failure code, and pending encrypted-envelope metadata |
 | `aggregate_identities` | immutable project-scoped aggregate identity and kind |
 | `aggregate_revisions` | immutable common scholarly aggregate revision envelope |
 | `scholarly_records`, `documents`, `workflows`, `evidence`, `ontologies`, `decisions` | immutable kind extension rows keyed to a common revision |
@@ -52,21 +54,23 @@ Every row in `schema_metadata`, `projects`, `aggregate_identities`,
 `aggregate_revisions`, the six kind-extension tables, `provenance_events`, and
 `settings`, and `schema_migrations` deny UPDATE and DELETE in fingerprinted DDL. New revisions and
 setting values are inserts. `object_records` may advance availability and
-verification state, while `outbox_events` may advance delivery state; these are
-the only intentionally mutable current-profile tables.
+verification state, `object_envelope_upgrades` may advance the durable verified
+copy-on-write recovery phases, and `outbox_events` may advance delivery state;
+these are the only intentionally mutable current-profile tables.
 
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-T02 advances the current schema to version 2 and owns forward migrations,
-backup-before-migrate, checkpointed snapshots, the exact supported version-1
-fixture, and failure recovery. The migration runner validates and checkpoints
-version 1, reserves SQLite's writer lock, creates and verifies an online backup
+The backup-first migration authority now advances exact supported v1, v2, and v3
+profiles to current schema v4. It owns forward migrations, backup-before-migrate,
+checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
+runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-2 database is detected
-idempotently and is never backed up or rewritten. T03 owns SQLAlchemy repositories, optimistic
+verified backup remains available. A current version-4 database is detected
+idempotently and is never backed up or rewritten. Committed v3 history is never
+rewritten; v4 adds only the post-schema object-envelope upgrade journal. T03 owns SQLAlchemy repositories, optimistic
 concurrency, transaction/outbox publication, and units of work. Central
 bootstrap/migration code is the only allowed source of schema SQL; domain and UI
 code must use the repository ports. Ordinary canonical access returns a

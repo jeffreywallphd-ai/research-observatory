@@ -36,6 +36,16 @@ class ObjectStoreContractTests(unittest.TestCase):
         self.assertEqual("secretstream-xchacha20poly1305-v1", self.profile["encryptionBoundary"])
         self.assertEqual("explicit-test-only", self.profile["plaintextFixtureMode"])
         self.assertEqual("forbidden", self.profile["plaintextTemporaryStorage"])
+        self.assertEqual(
+            "pre-open-durable-journaled-verified-copy-on-write",
+            self.profile["priorEnvelopeUpgrade"],
+        )
+        self.assertEqual(
+            "retain-plaintext-outside-temp-until-production-open-verifies",
+            self.profile["upgradeRollback"],
+        )
+        self.assertEqual("corrupt-quarantine", self.profile["malformedEnvelopeFailure"])
+        self.assertEqual("key-unavailable-preserve", self.profile["wrappedKeyAuthenticationFailure"])
         self.assertEqual("authenticated-encrypted-object-adapter", self.profile["releaseQualification"])
 
         changed = copy.deepcopy(self.profile)

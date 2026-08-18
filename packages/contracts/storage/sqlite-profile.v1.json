@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 3,
+  "databaseSchemaVersion": 4,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356",
+  "schemaFingerprintSha256": "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -31,7 +31,7 @@
     "provenance_events",
     "settings"
   ],
-  "mutableStateTables": ["object_records", "outbox_events"],
+  "mutableStateTables": ["object_records", "object_envelope_upgrades", "outbox_events"],
   "connectionProfile": {
     "foreignKeys": true,
     "journalMode": "wal",
@@ -57,6 +57,7 @@
     "schema_migrations",
     "projects",
     "object_records",
+    "object_envelope_upgrades",
     "aggregate_identities",
     "aggregate_revisions",
     "scholarly_records",
