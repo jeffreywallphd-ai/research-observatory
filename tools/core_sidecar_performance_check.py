@@ -42,8 +42,8 @@ ARTIFACT_ROOT_PATH = ARTIFACT_PATH.parent
 PACKAGE_REPORT_PATH = Path("artifacts/tmp/core-sidecar-package.json")
 CONTRACT_PATH = Path("services/core-api/packaging/sidecar-build.json")
 TOOL_PATH = Path("tools/core_sidecar_performance_check.py")
-PACKAGE_EVIDENCE_PATH = Path("artifacts/evidence/CAP-01.S04.T01.package-attestation.review-fix-2.json")
-PACKAGE_EVIDENCE_SHA256 = "9de90ee80debc5ed5b13361d9fa85b53ee630a03a1b852c4203e2a565c980cc3"
+PACKAGE_EVIDENCE_PATH = Path("artifacts/evidence/CAP-02.S02.T03.review-fix-2.json")
+PACKAGE_EVIDENCE_SHA256 = "89da43c32339f6360710a03d86f13b83cb2ce4fdd3e61084947485d8bda7c6f4"
 
 
 class ProcessMemoryCountersEx(ctypes.Structure):
@@ -334,7 +334,7 @@ def load_baseline(repo: Path) -> tuple[dict[str, Any], str]:
     return baseline, digest
 
 
-def clean_measurement_state(repo: Path, baseline: dict[str, Any]) -> tuple[str, str]:
+def current_measurement_state(repo: Path) -> tuple[str, str]:
     commit = git_head(repo)
     status = subprocess.run(
         ["git", "status", "--porcelain=v1", "--untracked-files=no"],
@@ -346,7 +346,22 @@ def clean_measurement_state(repo: Path, baseline: dict[str, Any]) -> tuple[str, 
     if status.returncode or status.stdout:
         raise ValueError("Core performance qualification requires a clean tracked Git state")
     tool = exact_file(repo, TOOL_PATH)
-    tool_hash = sha256(tool)
+    tool_payload = tool.read_bytes()
+    tool_hash = hashlib.sha256(tool_payload).hexdigest()
+    committed_tool = subprocess.run(
+        ["git", "show", f"{commit}:{TOOL_PATH.as_posix()}"],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    if committed_tool.returncode or committed_tool.stdout != tool_payload:
+        raise ValueError("The executing Core performance tool differs from the clean Git state")
+    return commit, tool_hash
+
+
+def clean_measurement_state(repo: Path, baseline: dict[str, Any]) -> tuple[str, str]:
+    commit, tool_hash = current_measurement_state(repo)
     provenance = baseline["provenance"]
     if provenance["measurementToolPath"] != TOOL_PATH.as_posix() or provenance["measurementToolSha256"] != tool_hash:
         raise ValueError("The executing Core performance tool differs from the approved measurement tool")
@@ -711,14 +726,17 @@ def assert_approved_package_identity(identity: dict[str, Any], baseline: dict[st
             raise ValueError(f"Core package {field} does not match the approved performance baseline")
 
 
-def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, Any]) -> dict[str, Any]:
+def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, Any] | None) -> dict[str, Any]:
     if os.name != "nt" or platform.machine().lower() not in {"amd64", "x86_64"}:
         raise ValueError("Core performance qualification requires Windows x64")
     if repetitions != REPETITIONS:
         raise ValueError(f"Core performance qualification requires exactly {REPETITIONS} repetitions")
     artifact_root, manifest, identity, report_payload = load_verified_package(repo)
-    assert_approved_package_identity(identity, approved_baseline)
-    measurement_commit, measurement_tool_hash = clean_measurement_state(repo, approved_baseline)
+    if approved_baseline is None:
+        measurement_commit, measurement_tool_hash = current_measurement_state(repo)
+    else:
+        assert_approved_package_identity(identity, approved_baseline)
+        measurement_commit, measurement_tool_hash = clean_measurement_state(repo, approved_baseline)
     contract = load_build_contract(repo)
     schema, _schema_payload = load_json(exact_file(repo, SCHEMA_PATH))
     scratch = repo / "artifacts" / "tmp"
@@ -739,6 +757,9 @@ def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, A
     _root_after, manifest_after, identity_after, report_payload_after = load_verified_package(repo)
     if report_payload_after != report_payload or manifest_after != manifest or identity_after != identity:
         raise ValueError("Core package report or artifact changed during performance measurement")
+    state_after = current_measurement_state(repo)
+    if state_after != (measurement_commit, measurement_tool_hash):
+        raise ValueError("Core performance measurement Git state changed during execution")
     return {
         "schemaVersion": "1.0",
         "documentType": "core-sidecar-performance-report",
@@ -839,7 +860,11 @@ def nonqualifying_report(error: str, *, measurement_only: bool = False) -> dict[
     }
 
 
-def run(repo: Path, destination: Path, *, measure_only: bool = False) -> tuple[dict[str, Any], int]:
+def run(
+    repo: Path, destination: Path, *, measure_only: bool = False, proposal: bool = False
+) -> tuple[dict[str, Any], int]:
+    if measure_only and proposal:
+        raise ValueError("--measure-only and --proposal are mutually exclusive")
     if measure_only:
         report = nonqualifying_report(
             "--measure-only cannot produce qualification evidence; use the reviewed baseline gate",
@@ -847,6 +872,28 @@ def run(repo: Path, destination: Path, *, measure_only: bool = False) -> tuple[d
         )
         guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
         return report, 1
+    if proposal:
+        try:
+            measured = measured_report(repo, REPETITIONS, None)
+            report = {
+                **measured,
+                "documentType": "core-sidecar-performance-proposal",
+                "qualificationStatus": "PROPOSAL",
+                "proposalGenerated": True,
+                "ok": False,
+                "errors": ["Proposal measurements require independently reviewed committed baseline authority"],
+            }
+        except (
+            OSError,
+            UnicodeError,
+            ValueError,
+            RuntimeError,
+            json.JSONDecodeError,
+            subprocess.TimeoutExpired,
+        ) as exc:
+            report = nonqualifying_report(str(exc))
+        guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+        return report, 0 if report.get("proposalGenerated") is True else 1
     try:
         baseline, baseline_hash = load_baseline(repo)
         measured = measured_report(repo, REPETITIONS, baseline)
@@ -861,13 +908,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path("."))
     parser.add_argument("--report", type=Path, required=True)
-    parser.add_argument("--measure-only", action="store_true")
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--measure-only", action="store_true")
+    modes.add_argument("--proposal", action="store_true")
     args = parser.parse_args()
     report: dict[str, Any]
     try:
         repo = args.repo.resolve(strict=True)
         destination = safe_output_path(repo, args.report)
-        report, return_code = run(repo, destination, measure_only=args.measure_only)
+        report, return_code = run(repo, destination, measure_only=args.measure_only, proposal=args.proposal)
     except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
         report = nonqualifying_report(str(exc), measurement_only=args.measure_only)
         return_code = 1
