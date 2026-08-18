@@ -21,6 +21,7 @@
       "yaml"
     ],
     "hiddenModules": [
+      "_cffi_backend",
       "research_observatory_core.migrations.runner",
       "research_observatory_core.object_store",
       "research_observatory_core.repositories"
@@ -28,6 +29,7 @@
   },
   "entrypoint": "research-observatory-core-x86_64-pc-windows-msvc.exe",
   "requiredModules": [
+    "_cffi_backend",
     "alembic",
     "fastapi",
     "nacl",

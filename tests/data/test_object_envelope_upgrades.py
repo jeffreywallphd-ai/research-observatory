@@ -12,13 +12,20 @@ from contextlib import AbstractContextManager
 from pathlib import Path
 from unittest.mock import patch
 
+from fastapi.testclient import TestClient
+
 REPO = Path(__file__).resolve().parents[2]
 SERVICE_SRC = REPO / "services" / "core-api" / "src"
 sys.path.insert(0, str(SERVICE_SRC))
 
 from research_observatory_core import object_store, storage  # noqa: E402
+from research_observatory_core.config import CoreSettings  # noqa: E402
+from research_observatory_core.main import create_runtime_app  # noqa: E402
 from research_observatory_core.migrations.versions import v0002_schema_history  # noqa: E402
-from research_observatory_core.object_store import create_local_object_store  # noqa: E402
+from research_observatory_core.object_store import (  # noqa: E402
+    create_local_object_store,
+    upgrade_local_object_envelopes,
+)
 from research_observatory_core.ports.object_store import (  # noqa: E402
     ObjectCorrupt,
     ObjectKeyUnavailable,
@@ -26,6 +33,7 @@ from research_observatory_core.ports.object_store import (  # noqa: E402
     ObjectStoreProblem,
 )
 from research_observatory_core.ports.object_store_keys import ObjectMasterKey  # noqa: E402
+from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService  # noqa: E402
 
 PROJECT_ID = "01890f6e-6a40-4cc5-98b7-7f3f36b60210"
 CREATED_AT = "2026-08-18T12:00:00.000Z"
@@ -189,8 +197,6 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
             connection.close()
 
     def test_project_open_holds_the_session_lock_until_upgrade_and_verification_complete(self) -> None:
-        from research_observatory_core.projects import ProjectLifecycleService
-
         parent = Path(self.temporary.name).resolve(strict=True) / "projects"
         parent.mkdir(mode=0o700)
         bootstrap = ProjectLifecycleService()
@@ -225,17 +231,111 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
             self.assertEqual(plaintext, stream.read())
         lifecycle.shutdown()
 
+    def test_default_core_composition_runs_upgrade_or_returns_explicit_key_recovery(self) -> None:
+        parent = Path(self.temporary.name).resolve(strict=True) / "default-composition"
+        parent.mkdir(mode=0o700)
+        bootstrap = ProjectLifecycleService()
+
+        encrypted_project = bootstrap.create(
+            parent_directory=str(parent),
+            directory_name="upgrade-success",
+            display_name="Upgrade success",
+            template_id="theory-synthesis",
+            trace_id="c" * 32,
+        )
+        encrypted_root = Path(encrypted_project.root)
+        (encrypted_root / "state" / "project.sqlite3").unlink()
+        plaintext = b"default composition protected legacy object"
+        encrypted_id = str(encrypted_project.project_id)
+        digest, encrypted_physical = create_v2_project(
+            encrypted_root,
+            plaintext,
+            project_id=encrypted_id,
+        )
+        application = create_runtime_app(settings=CoreSettings(), object_key_provider=self.provider)
+        with TestClient(application):
+            opened = application.state.runtime.projects.open(root=str(encrypted_root), trace_id="d" * 32)
+            self.assertEqual("read-write", opened.access_mode.value)
+        self.assertNotEqual(plaintext, encrypted_physical.read_bytes())
+        store = create_local_object_store(encrypted_root, encrypted_id, key_provider=self.provider)
+        with store.open(digest, purpose="document-analysis") as stream:
+            self.assertEqual(plaintext, stream.read())
+
+        unavailable_project = bootstrap.create(
+            parent_directory=str(parent),
+            directory_name="upgrade-key-unavailable",
+            display_name="Upgrade key unavailable",
+            template_id="theory-synthesis",
+            trace_id="e" * 32,
+        )
+        unavailable_root = Path(unavailable_project.root)
+        unavailable_database = unavailable_root / "state" / "project.sqlite3"
+        unavailable_database.unlink()
+        unavailable_plaintext = b"only retained plaintext authority"
+        unavailable_id = str(unavailable_project.project_id)
+        _, unavailable_physical = create_v2_project(
+            unavailable_root,
+            unavailable_plaintext,
+            project_id=unavailable_id,
+        )
+        application = create_runtime_app(settings=CoreSettings())
+        with TestClient(application), self.assertRaises(ProjectLifecycleProblem) as raised:
+            application.state.runtime.projects.open(root=str(unavailable_root), trace_id="f" * 32)
+        self.assertEqual("RO-CORE-PROJECT-UPGRADE-KEY-UNAVAILABLE", raised.exception.code)
+        self.assertEqual(unavailable_plaintext, unavailable_physical.read_bytes())
+        self.assertFalse((unavailable_root / ".locks" / "session.lock").exists())
+        connection = sqlite3.connect(unavailable_database)
+        try:
+            self.assertEqual(4, int(connection.execute("PRAGMA user_version").fetchone()[0]))
+            self.assertEqual(
+                ("replacement-writing", "key-unavailable"),
+                tuple(connection.execute("SELECT phase, failure_code FROM object_envelope_upgrades").fetchone()),
+            )
+        finally:
+            connection.close()
+
     def test_every_upgrade_boundary_restarts_to_one_verified_encrypted_object(self) -> None:
         boundaries = (
-            "legacy-detected",
-            "replacement-writing",
-            "replacement-verified",
-            "swap-intent",
-            "original-moved-to-rollback",
-            "replacement-moved-to-canonical",
-            "metadata-committed",
-            "rollback-removed",
-            "complete",
+            "before-legacy-source-verification",
+            "after-legacy-source-verification",
+            "before-journal-replacement-writing-commit",
+            "after-journal-replacement-writing-commit",
+            "before-writing-source-verification",
+            "after-writing-source-verification",
+            "before-replacement-fsync",
+            "after-replacement-fsync",
+            "before-staged-to-replacement-rename",
+            "after-staged-to-replacement-rename",
+            "before-replacement-verification",
+            "after-replacement-verification",
+            "before-journal-replacement-verified-commit",
+            "after-journal-replacement-verified-commit",
+            "before-pre-swap-source-verification",
+            "after-pre-swap-source-verification",
+            "before-pre-swap-replacement-verification",
+            "after-pre-swap-replacement-verification",
+            "before-journal-swap-intent-commit",
+            "after-journal-swap-intent-commit",
+            "before-original-to-rollback-rename",
+            "after-original-to-rollback-rename",
+            "before-replacement-to-canonical-rename",
+            "after-replacement-to-canonical-rename",
+            "before-rollback-authority-verification",
+            "after-rollback-authority-verification",
+            "before-canonical-replacement-verification",
+            "after-canonical-replacement-verification",
+            "before-metadata-and-journal-commit",
+            "after-metadata-and-journal-commit",
+            "before-production-reader-verification",
+            "after-production-reader-verification",
+            "before-rollback-cleanup-verification",
+            "after-rollback-cleanup-verification",
+            "before-rollback-cleanup",
+            "after-rollback-cleanup",
+            "before-journal-complete-commit",
+            "after-journal-complete-commit",
+            "before-completed-reader-verification",
+            "after-completed-reader-verification",
         )
         for index, boundary in enumerate(boundaries):
             with self.subTest(boundary=boundary):
@@ -262,6 +362,75 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
                 for candidate in (root / ".tmp").rglob("*"):
                     if candidate.is_file():
                         self.assertNotIn(plaintext, candidate.read_bytes())
+
+    def test_partial_cleanup_and_cancellation_resume_from_verified_authority(self) -> None:
+        for index, boundary in enumerate(("before-partial-cleanup", "after-partial-cleanup")):
+            with self.subTest(boundary=boundary):
+                root = self.root / f"partial-{index}"
+                plaintext = f"partial cleanup {boundary}".encode()
+                digest, physical = create_v2_project(root, plaintext)
+
+                def interrupt(completed: str, expected: str = boundary) -> None:
+                    if completed == expected:
+                        raise ObjectStoreProblem("deterministic partial cleanup interruption")
+
+                with (
+                    patch.object(object_store, "_write_all", side_effect=OSError("injected write failure")),
+                    patch.object(object_store, "_upgrade_step_completed", interrupt),
+                    self.assertRaises(ObjectStoreProblem),
+                ):
+                    upgrade_local_object_envelopes(root, PROJECT_ID, key_provider=self.provider)
+                self.assertEqual(plaintext, physical.read_bytes())
+                upgrade_local_object_envelopes(root, PROJECT_ID, key_provider=self.provider)
+                self.assertEqual((), tuple((root / ".tmp").rglob("*.partial")))
+                store = create_local_object_store(root, PROJECT_ID, key_provider=self.provider)
+                with store.open(digest, purpose="document-analysis") as stream:
+                    self.assertEqual(plaintext, stream.read())
+
+        for index, cancelled_phase in enumerate(("replacement-writing", "metadata-committed")):
+            with self.subTest(cancelled_phase=cancelled_phase):
+                root = self.root / f"cancel-{index}"
+                plaintext = f"cancel at {cancelled_phase}".encode()
+                digest, _physical = create_v2_project(root, plaintext)
+
+                def cancel_at_phase(phase: str, expected: str = cancelled_phase) -> bool:
+                    return phase == expected
+
+                with self.assertRaises(ObjectStoreProblem):
+                    upgrade_local_object_envelopes(
+                        root,
+                        PROJECT_ID,
+                        key_provider=self.provider,
+                        cancellation_requested=cancel_at_phase,
+                    )
+                connection = storage.open_canonical_database(
+                    root / "state" / "project.sqlite3", expected_project_id=PROJECT_ID
+                )
+                try:
+                    self.assertEqual(
+                        (cancelled_phase, "cancelled"),
+                        tuple(
+                            connection.execute("SELECT phase, failure_code FROM object_envelope_upgrades").fetchone()
+                        ),
+                    )
+                finally:
+                    connection.close()
+                self.assertTrue(
+                    any(
+                        candidate.is_file() and candidate.read_bytes() == plaintext
+                        for candidate in (root / "objects").rglob("*")
+                    )
+                )
+                upgrade_local_object_envelopes(root, PROJECT_ID, key_provider=self.provider)
+                store = create_local_object_store(root, PROJECT_ID, key_provider=self.provider)
+                with store.open(digest, purpose="document-analysis") as stream:
+                    self.assertEqual(plaintext, stream.read())
+                self.assertFalse(
+                    any(
+                        candidate.is_file() and candidate.read_bytes() == plaintext
+                        for candidate in (root / "objects").rglob("*")
+                    )
+                )
 
     def test_missing_key_and_corrupt_source_preserve_the_only_plaintext_authority(self) -> None:
         plaintext = b"recoverable legacy source"

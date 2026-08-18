@@ -48,12 +48,14 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "yaml",
                 ],
                 "hiddenModules": [
+                    "_cffi_backend",
                     "research_observatory_core.migrations.runner",
                     "research_observatory_core.object_store",
                     "research_observatory_core.repositories",
                 ],
             },
         )
+        self.assertIn("_cffi_backend", contract["requiredModules"])
         self.assertIn("alembic", contract["requiredModules"])
         self.assertIn("nacl", contract["requiredModules"])
         self.assertIn("sqlalchemy", contract["requiredModules"])
