@@ -16,3 +16,12 @@ writer, creates and verifies an online backup, and only then replaces the
 affected controls in one transaction. `sqlite-migration-recovery.schema.json`
 binds the immutable backup manifest to exact backup bytes, the reviewed revision,
 and both schema fingerprints.
+
+The Core repository layer is the executable consumer boundary for this profile.
+Business modules type against aggregate-repository and unit-of-work ports; the
+SQLite/SQLAlchemy adapter stays private to the data layer. Each aggregate write
+atomically appends the common revision, its kind extension, a provenance fact,
+and a pending outbox record. Stale expected revisions and unknown aggregate IDs
+are distinct bounded outcomes. These Python ports are adapter APIs, not new
+portable storage documents, so they do not change this JSON profile or its
+schema fingerprint.

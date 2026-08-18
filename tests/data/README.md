@@ -7,5 +7,10 @@ STRICT/WAL connection, schema, concurrency, restart, integrity, and denial
 boundaries. `test_sqlite_migrations.py` exercises the exact supported version-1
 fixture, mutation-free planning, writer-locked verified backup, transactional
 upgrade/rollback, recovery records, and idempotent current-schema detection.
+`test_sqlite_repositories.py` exercises typed aggregate projections, explicit
+unit-of-work commit/rollback, optimistic conflict, not-found behavior, atomic
+revision/provenance/outbox publication, and the no-SQL-outside-data-layer
+boundary. Deterministic draft/event helpers supply fixed IDs and timestamps
+without weakening production validation.
 Complete data and recovery profiles run once the integrated storage
 slice is reviewed.

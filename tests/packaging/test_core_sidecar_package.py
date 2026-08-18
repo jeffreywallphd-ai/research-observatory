@@ -47,7 +47,10 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "setuptools",
                     "yaml",
                 ],
-                "hiddenModules": ["research_observatory_core.migrations.runner"],
+                "hiddenModules": [
+                    "research_observatory_core.migrations.runner",
+                    "research_observatory_core.repositories",
+                ],
             },
         )
         self.assertIn("alembic", contract["requiredModules"])
@@ -163,6 +166,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "alembic.operations",
                 "research_observatory_core.migrations.runner",
                 "research_observatory_core.migrations.versions.v0002_schema_history",
+                "research_observatory_core.repositories",
                 "sqlalchemy.engine",
             ):
                 self.assertIn(f"'{required_module}'", archive.stdout)
