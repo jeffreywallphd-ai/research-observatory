@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-02.S02",
+  "stateCommit": "078e983044435a8598035f6e1573518b651720ac",
+  "outcome": "Canonical project state now uses a strict, versioned SQLite WAL profile with sealed ordinary connection authority, backup-first forward migration and durable recovery artifacts, dependency-neutral repository ports, bounded unit-of-work failures, exact idempotent replay, and independently measured Windows package performance.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-02.S02.T01",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-02.S02.T01.json", "sha256": "bcdb32b79018de8296c5916ee26a9853b8d697dec4cec65e6b26381ae6376af4"},
+        {"path": "artifacts/evidence/CAP-02.S02.T01.review-fix.json", "sha256": "1d66806d59b072de04a22d61d9356a800698cfc85800799a229e3bacb1c32730"},
+        {"path": "artifacts/evidence/CAP-02.S02.T01.review-fix-2.json", "sha256": "9eb9177816e7fb633e8f8a7715cd3c211877436e494cc46b820e40321df135ce"},
+        {"path": "artifacts/evidence/CAP-02.S02.T01.review-fix-3.json", "sha256": "815327953403046a913cb28dafbb4eeda56957c21484fae16e6b396ff732d987"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-02.S02.T02",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-02.S02.T02.json", "sha256": "b2d2db635851e352345520f6b9490d319322ce3f91f230e7556009d0581a5a01"},
+        {"path": "artifacts/evidence/CAP-02.S02.T02.review-fix.json", "sha256": "c645fdb4beb663c8bb8b406209e27e0b7678aa827f1445fd4512a9d6130652c9"},
+        {"path": "artifacts/evidence/CAP-02.S02.T02.review-fix-2.json", "sha256": "50e2dbf9221e11db7896e74e5b13226d131aa0d1220b93d4aa9fd621484229e6"},
+        {"path": "artifacts/evidence/CAP-02.S02.T02.review-fix-3.json", "sha256": "08fa119533aed11ac8c9c6faeba5775070f982d67622b3582b5e73e525ac80df"},
+        {"path": "artifacts/evidence/CAP-02.S02.T02.review-fix-4.json", "sha256": "076ba0298610f6c576362b417c80b8da02bdd2b03c580f6dca150491f3c83c2e"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    },
+    {
+      "taskId": "CAP-02.S02.T03",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-02.S02.T03.json", "sha256": "dbb2f49d7e60adb773f8cddb7b5e5d388141068b8d0ceda0f8ce3f1858217a04"},
+        {"path": "artifacts/evidence/CAP-02.S02.T03.review-fix.json", "sha256": "820f210a8b354a8bb6398aa4877ce92587ce221569c19903eb86b73dc68d0959"},
+        {"path": "artifacts/evidence/CAP-02.S02.T03.review-fix-2.json", "sha256": "89da43c32339f6360710a03d86f13b83cb2ce4fdd3e61084947485d8bda7c6f4"}
+      ],
+      "status": "DONE",
+      "review": "approved"
+    }
+  ],
+  "integrationChanges": {
+    "baseCommit": "5038b612435087e9c58eda098854a8fb3a212f2d",
+    "candidateCommit": "078e983044435a8598035f6e1573518b651720ac",
+    "changedFiles": [
+      "planning/review-site/CAP-02/CAP-02.S02.html",
+      "planning/review-site/CAP-02/index.html",
+      "planning/review-site/waves/W1.html",
+      "security-exceptions.json",
+      "tests/data/test_sqlite_repositories.py",
+      "tests/desktop/test_core_sidecar_performance_check.py",
+      "tools/core_sidecar_performance_check.py",
+      "verification/baselines/core-sidecar-performance.json",
+      "verification/baselines/core-sidecar-performance.sha256"
+    ]
+  },
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile data --report artifacts/tmp/CAP-02.S02-data-profile.json",
+      "exitCode": 0,
+      "result": "The full affected data profile passed all 19 commands in 622.671 seconds at the approved-task state. It included 166 foundation tests, 42 data tests, 13 contract tests, architecture, ADR, build, UI/reference integrity, quality, and the governed 20-repetition project lifecycle benchmark. Report SHA-256: f9a5f3cb31d28ab9032563d0d4c1f655afba99bef6ffad591d08d203eeeefd31."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_core_sidecar_performance_check tests.data.test_sqlite_repositories tests.data.test_sqlite_migrations tests.data.test_sqlite_schema tests.security.test_security_check",
+      "exitCode": 0,
+      "result": "All 55 affected tests pass after integration. They cover the exact package baseline/proposal authority, immutable package snapshot, strict handshake, the complete schema and migration rollback/recovery matrix, sealed ordinary SQLite authority, immutable and intentionally mutable row policies, bounded transaction failures, exact idempotent replay, project create-relocate-restart handoff, critical aggregate/idempotency EXPLAIN plans, and exception policy."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\core_sidecar_performance_check.py --repo . --report artifacts/tmp/CAP-02.S02-core-performance-final.json",
+      "exitCode": 0,
+      "result": "The reviewed baseline is SHA-256 42adb10ad373f533c889dc414a59ad0c5951e3f7bbb7d3265793ba2cb03022e0 and retains every proposal sample. The normal gate independently remeasured the exact 661-file / 38,301,316-byte package at candidate 078e983: readiness p50 1016.807 ms, shutdown p95 319.958 ms, and idle memory p95 86,781,952 bytes all pass absolute and 20-percent limits. Qualified report SHA-256: ed8ebad163d00e764e9a22a26d21c53107dfb21d6d917ee7619bc47af816f2b3."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\security_check.py --repo . --report artifacts/tmp/CAP-02.S02-security-local-final.json; .venv\\Scripts\\python.exe -m unittest tests.security.test_security_check",
+      "exitCode": 0,
+      "result": "The live scan reports 593 packages, 148 findings, zero blocking findings, 17 exact consumed exceptions, six warnings, and zero policy errors. Curie independently approved only the eight new development-only native TypeScript compiler records through 2026-08-31 after verifying no patched stable package and absence from both shipped artifacts. Report SHA-256: 5372690bcc09de7314aff1fc04c223654e2e991d92c686bc1d68e979c1bc257d."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . --report artifacts/tmp/CAP-02.S02-integration-quality.json; .venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02-build-manifest.json",
+      "exitCode": 0,
+      "result": "All 94 governed Python files pass formatting, Ruff, and mypy. The exact candidate emits clean build identity 0.1.0+g078e983 with no dirty paths. Quality SHA-256: 9c9656f32e343601543d2fc06c214789ae36c5915def21a330fd8a42b0cbce51; build-manifest SHA-256: 66c17ab6d11659efd3a4b659085a340f1faad5e854ea3c0a0f4aa5834422d241."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\python.exe tools\\adr_check.py --repo . --base 6a177be5774f6b252978ee617a1a6a815a92f9bd --head 608f03fbd9afd26db954a90df8852a16e559ae72",
+      "exitCode": 0,
+      "result": "The architecture contract passes 13 areas, 12 modules, five stable interfaces and three deployment profiles. The diff-aware ADR gate validates all 29 changed paths against 14 indexed ADRs. Dependency-neutral repository ports remain separate from private SQLite composition authority."
+    },
+    {
+      "command": "ui_change_gate.py for CAP-02.S01.T02 at 25a24f0..75272b8 and CAP-02.S01.T03 at 473aa00..687934e; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "Both exact UI implementation ranges remain PASS with approved reference RO-UI-ACADEMIC-MINIMAL-1.3 and package db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2. No integration change touches product UI or reference bytes. Backlog, Wave campaign, generated views, and patch hygiene validate."
+    }
+  ],
+  "integratedBehavior": [
+    "Project creation publishes the canonical strict SQLite database; the typed unit-of-work adapter commits aggregate identity, immutable revision, subtype fact, provenance and outbox event atomically. A relocated project reopens under a new lifecycle service and a newly composed factory returns the identical detached revision.",
+    "Ordinary database consumers receive opaque connection/cursor capabilities, cannot reach raw sqlite3 handles, replace the authorizer, mutate schema identity/security PRAGMAs, or remove governed triggers. Dedicated initialization and migration authorities stay separate.",
+    "Forward migration validates the exact prior profile, creates and verifies a restorable backup and manifest, preserves their canonical path and bytes through persistent Windows authority, runs nine material-step rollback failpoints, and allows healthy future migration attempts and SQLite checkpoint/reopen.",
+    "Repository ports contain no SQLite or SQLAlchemy dependency. Adapter failures cross the boundary as bounded context-free repository errors; conflict, not-found, busy-writer retry, late failure rollback, and changed-command idempotency conflicts are deterministic.",
+    "The current frozen Core package is authenticated by exact evidence/report/manifest/entrypoint identity before every performance lifecycle. Proposal mode can retain new-package samples but is structurally nonqualifying; only exact reviewed baseline bytes enable the normal gate.",
+    "The two implemented critical repository reads use governed unique indexes: latest aggregate revision uses sqlite_autoindex_aggregate_revisions_2 and idempotency replay uses sqlite_autoindex_outbox_events_2. No list/search repository port exists in this slice, so no unimplemented list/search workload is represented as measured."
+  ],
+  "failureAndRecoveryCoverage": [
+    "invalid, redirected, hardlinked, wrong-project, wrong-application, malformed-profile, mutable-authorizer, unsafe PRAGMA, schema replacement, busy writer, and raw-handle escape",
+    "compatible-content injection and hardlink/substitution at backup/manifest handoffs; post-verification, post-COMMIT and post-return link/write/delete/rename/replace; attempt/root relocation; ACL/protection failure; exact rollback and retry after nine migration failpoints",
+    "optimistic revision conflict, missing aggregate, changed idempotency payload/precondition/schedule/outbox identity, duplicate outbox failure, uncommitted context rollback, incompatible database authority, and concrete exception disclosure",
+    "substituted package/evidence/report/manifest/entrypoint, changed or dirty measurement tool/state, transient package mutation, forged baseline values/hash/hardware/methodology, nonqualifying proposal/measure-only output, and absolute/relative performance regression",
+    "unreviewed, expired, unused, wildcard or mismatched security exception; shipped-toolchain inclusion; and absence of a patched stable TypeScript compiler package"
+  ],
+  "downstreamHandoff": {
+    "consumers": ["CAP-02.S03", "CAP-03 aggregate and provenance slices", "later replaceable hosted adapters"],
+    "contract": "Consumers import only research_observatory_core.ports.repositories. The local composition root supplies a UnitOfWorkFactory; aggregate revisions, atomic provenance/outbox events, bounded errors, exact replay and optimistic preconditions are stable without exposing a path, SQL statement, connection, cursor or SQLite-specific type.",
+    "ready": true,
+    "notes": "CAP-02.S03 may add content-addressed objects against the existing documents/object-record contract. Future domain list/search ports must add their own representative workload, EXPLAIN plan and budget rather than extrapolate from the two current indexed point lookups."
+  },
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "fullAffectedProfileUnionPassedAtSliceReview": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The e2e-local profile has no activated tests/e2e system command yet; its foundation union passed, while this slice's real project-create, relocation, restart and repository handoff is exercised in the affected data integration suite.",
+      "The eight new TypeScript compiler exceptions expire 2026-08-31 and authorize only the pinned development-only, governed-input, non-shipped boundary. Upgrade at the first patched stable package and remove them.",
+      "Encrypted content-addressed object storage, key-version metadata, quotas and cache eviction are CAP-02.S03; local secrets/privacy controls are CAP-02.S04.",
+      "The complete cross-Wave full qualification matrix remains required once at W1 exit; this slice review used the affected profile union and focused incremental replay in accordance with the repository test policy."
+    ]
+  }
+}
