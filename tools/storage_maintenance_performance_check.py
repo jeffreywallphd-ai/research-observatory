@@ -38,7 +38,7 @@ from research_observatory_core.storage import initialize_database  # noqa: E402
 TOOL_PATH = Path("tools/storage_maintenance_performance_check.py")
 IMPLEMENTATION_PATH = Path("services/core-api/src/research_observatory_core/object_store.py")
 BASELINE_PATH = Path("verification/baselines/storage-maintenance-performance.json")
-EXPECTED_BASELINE_SHA256 = "PENDING"
+EXPECTED_BASELINE_SHA256 = "a79cd4f1697ab9e69572f380e182935b8ebd27adf6b30529b067ff835b6d3f98"
 REPETITIONS = 10
 CACHE_FILE_COUNT = 2_000
 DERIVED_OBJECT_COUNT = 100
