@@ -37,6 +37,7 @@
     "tools/runtime_check.py",
     "tools/security_check.py",
     "tools/slice_plan_check.py",
+    "tools/storage_maintenance_performance_check.py",
     "tools/taskctl.py",
     "tools/ui_reference_check.py",
     "tools/ui_accessibility_check.py",
