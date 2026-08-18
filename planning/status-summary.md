@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 49ed8ccb640f9e1b047f5767b0ec3ad9e5f8b546a250261647af465ba6a9e50b
+source_sha256: b7f4571e78998ba19c2d6d3ad7ec3f0270e2fa3a2f7e3c2c61c725f74fb1af47
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 279 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 39 |
 | `DEFERRED` | 36 |
 
@@ -117,4 +117,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S03.T02` Add encryption-at-rest and key-version metadata | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S03.T02` Add encryption-at-rest and key-version metadata | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
