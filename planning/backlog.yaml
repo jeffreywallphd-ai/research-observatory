@@ -3806,11 +3806,16 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T00:38:49+00:00'
-      updated_at: '2026-08-18T00:38:49+00:00'
+      updated_at: '2026-08-18T00:54:09+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S02.T03.json
+        sha256: dbb2f49d7e60adb773f8cddb7b5e5d388141068b8d0ceda0f8ce3f1858217a04
+        commit: 83d6b230ade28a876efada0d68e1eb378ffe19c8
+        recorded_at: '2026-08-18T00:54:09+00:00'
       review:
         reviewer: null
         result: null
@@ -3821,7 +3826,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-18T00:38:49+00:00'
         expires_at: '2026-08-18T08:38:49+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
