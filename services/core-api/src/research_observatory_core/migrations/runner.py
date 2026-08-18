@@ -125,6 +125,31 @@ class _HeldFileAuthority:
             self.descriptor = -1
 
 
+@dataclass(slots=True)
+class _HeldDirectoryAuthority:
+    """One canonical directory held against rename with a persistent DACL."""
+
+    path: Path
+    handle: int | None
+    identity: tuple[int, int]
+
+    def validate(self) -> None:
+        if _ensure_canonical_directory(self.path, create=False) != self.identity:
+            raise MigrationProblem("migration-backup-path-invalid")
+
+    def close(self) -> None:
+        if self.handle is None:
+            return
+        import ctypes
+        from ctypes import wintypes
+
+        close_handle = ctypes.WinDLL("kernel32", use_last_error=True).CloseHandle
+        close_handle.argtypes = (wintypes.HANDLE,)
+        close_handle.restype = wintypes.BOOL
+        close_handle(self.handle)
+        self.handle = None
+
+
 @dataclass(frozen=True, slots=True)
 class _VerifiedBackup:
     directory: Path
@@ -135,10 +160,12 @@ class _VerifiedBackup:
     manifest_payload: dict[str, Any]
     database_authority: _HeldFileAuthority
     manifest_authority: _HeldFileAuthority
+    directory_authority: _HeldDirectoryAuthority
 
     def close(self) -> None:
         self.manifest_authority.close()
         self.database_authority.close()
+        self.directory_authority.close()
 
 
 _SUPPORTED_PROFILES = {
@@ -456,15 +483,13 @@ def _lock_descriptor_writes(descriptor: int) -> None:
         raise ctypes.WinError(ctypes.get_last_error())
 
 
-def _deny_future_file_writes(authority: _HeldFileAuthority) -> None:
-    """Persist a Windows deny-write ACE without releasing held file identity."""
+def _deny_windows_handle_rights(handle: int, denied_rights: int) -> None:
+    """Merge a current-user deny ACE into the DACL of one held handle."""
 
-    authority.validate()
     if os.name != "nt":
         return
 
     import ctypes
-    import msvcrt
     from ctypes import wintypes
 
     class SidAndAttributes(ctypes.Structure):
@@ -559,7 +584,7 @@ def _deny_future_file_writes(authority: _HeldFileAuthority) -> None:
 
         existing_acl = ctypes.c_void_p()
         status = get_security_info(
-            msvcrt.get_osfhandle(authority.descriptor),
+            handle,
             1,
             0x00000004,
             None,
@@ -570,9 +595,8 @@ def _deny_future_file_writes(authority: _HeldFileAuthority) -> None:
         )
         if status:
             raise OSError(status, "GetSecurityInfo failed")
-        write_rights = 0x0002 | 0x0004 | 0x0010 | 0x0100 | 0x00010000
         entry = ExplicitAccess(
-            write_rights,
+            denied_rights,
             3,
             0,
             Trustee(None, 0, 0, 1, ctypes.cast(current_sid, wintypes.LPWSTR)),
@@ -581,7 +605,7 @@ def _deny_future_file_writes(authority: _HeldFileAuthority) -> None:
         if status:
             raise OSError(status, "SetEntriesInAclW failed")
         status = set_security_info(
-            msvcrt.get_osfhandle(authority.descriptor),
+            handle,
             1,
             0x00000004,
             None,
@@ -591,7 +615,6 @@ def _deny_future_file_writes(authority: _HeldFileAuthority) -> None:
         )
         if status:
             raise OSError(status, "SetSecurityInfo failed")
-        authority.validate()
     except (OSError, ValueError) as error:
         raise MigrationProblem("migration-backup-protection-failed") from error
     finally:
@@ -601,6 +624,74 @@ def _deny_future_file_writes(authority: _HeldFileAuthority) -> None:
             local_free(security_descriptor)
         if token.value:
             close_handle(token)
+
+
+def _deny_future_file_writes(authority: _HeldFileAuthority) -> None:
+    """Persist a Windows deny-write ACE without releasing held file identity."""
+
+    authority.validate()
+    if os.name == "nt":
+        import msvcrt
+
+        _deny_windows_handle_rights(
+            msvcrt.get_osfhandle(authority.descriptor),
+            0x0002 | 0x0004 | 0x0010 | 0x0100 | 0x00010000,
+        )
+    authority.validate()
+
+
+def _protect_recovery_directory(path: Path) -> _HeldDirectoryAuthority:
+    """Deny child removal/rename while retaining a stable directory handle."""
+
+    identity = _ensure_canonical_directory(path, create=False)
+    if os.name != "nt":
+        return _HeldDirectoryAuthority(path, None, identity)
+    import ctypes
+    from ctypes import wintypes
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    create_file = kernel32.CreateFileW
+    create_file.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create_file.restype = wintypes.HANDLE
+    file_read_attributes = 0x00000080
+    read_control = 0x00020000
+    write_dac = 0x00040000
+    file_share_read = 0x00000001
+    file_share_write = 0x00000002
+    open_existing = 3
+    file_flag_open_reparse_point = 0x00200000
+    file_flag_backup_semantics = 0x02000000
+    invalid_handle = wintypes.HANDLE(-1).value
+    handle = create_file(
+        str(path),
+        file_read_attributes | read_control | write_dac,
+        file_share_read | file_share_write,
+        None,
+        open_existing,
+        file_flag_open_reparse_point | file_flag_backup_semantics,
+        None,
+    )
+    if handle == invalid_handle:
+        raise MigrationProblem("migration-backup-protection-failed")
+    authority = _HeldDirectoryAuthority(path, handle, identity)
+    try:
+        authority.validate()
+        # FILE_DELETE_CHILD prevents removal/replacement of the recovery pair;
+        # DELETE and FILE_WRITE_ATTRIBUTES protect the held directory itself.
+        _deny_windows_handle_rights(handle, 0x0040 | 0x0100 | 0x00010000)
+        authority.validate()
+        return authority
+    except Exception:
+        authority.close()
+        raise
 
 
 def _create_exclusive_file(path: Path, payload: bytes) -> _HeldFileAuthority:
@@ -677,6 +768,7 @@ def _create_verified_backup(
             )
             backup_authority: _HeldFileAuthority | None = None
             manifest_authority: _HeldFileAuthority | None = None
+            directory_authority: _HeldDirectoryAuthority | None = None
             target: sqlite3.Connection | None = None
             backup_source: sqlite3.Connection | None = None
             try:
@@ -775,6 +867,12 @@ def _create_verified_backup(
                 # denies new hardlinks and content changes even after return.
                 _deny_future_file_writes(backup_authority)
                 _deny_future_file_writes(manifest_authority)
+                # Remove the untrusted staging database before the parent DACL
+                # begins denying child deletion/replacement.
+                os.close(working_descriptor)
+                working_descriptor = -1
+                working.unlink()
+                directory_authority = _protect_recovery_directory(attempt)
                 verified = _VerifiedBackup(
                     directory=attempt,
                     database=backup,
@@ -784,10 +882,12 @@ def _create_verified_backup(
                     manifest_payload=manifest_payload,
                     database_authority=backup_authority,
                     manifest_authority=manifest_authority,
+                    directory_authority=directory_authority,
                 )
                 _assert_verified_backup(verified)
                 backup_authority = None
                 manifest_authority = None
+                directory_authority = None
                 return verified
             except sqlite3.Error as error:
                 raise MigrationProblem("migration-backup-failed") from error
@@ -796,13 +896,16 @@ def _create_verified_backup(
                     target.close()
                 if backup_source is not None:
                     backup_source.close()
-                os.close(working_descriptor)
+                if working_descriptor >= 0:
+                    os.close(working_descriptor)
                 with suppress(OSError):
                     working.unlink()
                 if manifest_authority is not None:
                     manifest_authority.close()
                 if backup_authority is not None:
                     backup_authority.close()
+                if directory_authority is not None:
+                    directory_authority.close()
 
 
 def _assert_verified_backup(verified: _VerifiedBackup) -> None:
@@ -831,6 +934,7 @@ def _write_failure(verified: _VerifiedBackup, code: str) -> None:
     # publishing the optional bounded failure record is itself unavailable.
     with suppress(MigrationProblem):
         authority = _create_exclusive_file(destination, _json_bytes(payload))
+        _deny_future_file_writes(authority)
         authority.close()
 
 
