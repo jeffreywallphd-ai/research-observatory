@@ -454,6 +454,26 @@ def _stream_to_staging(source: BinaryIO, staging: Path) -> tuple[Path, str, int]
 
 
 def _publish(staging: Path, destination: Path) -> bool:
+    if os.name == "nt":
+        import ctypes
+        from ctypes import wintypes
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        move_file = kernel32.MoveFileExW
+        move_file.argtypes = (wintypes.LPCWSTR, wintypes.LPCWSTR, wintypes.DWORD)
+        move_file.restype = wintypes.BOOL
+        move_file_write_through = 0x00000008
+        if move_file(str(staging), str(destination), move_file_write_through):
+            return True
+        error = ctypes.get_last_error()
+        if error in (80, 183):  # ERROR_FILE_EXISTS / ERROR_ALREADY_EXISTS
+            with suppress(OSError):
+                staging.unlink()
+            return False
+        with suppress(OSError):
+            staging.unlink()
+        raise ctypes.WinError(error)
+
     try:
         os.link(staging, destination, follow_symlinks=False)
         created = True
@@ -462,7 +482,37 @@ def _publish(staging: Path, destination: Path) -> bool:
     finally:
         with suppress(OSError):
             staging.unlink()
+    _sync_directory(destination.parent)
+    _sync_directory(staging.parent)
     return created
+
+
+def _sync_directory(directory: Path) -> None:
+    descriptor = os.open(directory, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _move_no_replace(source: Path, destination: Path) -> None:
+    if os.name != "nt":
+        os.rename(source, destination)
+        _sync_directory(source.parent)
+        if source.parent != destination.parent:
+            _sync_directory(destination.parent)
+        return
+
+    import ctypes
+    from ctypes import wintypes
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    move_file = kernel32.MoveFileExW
+    move_file.argtypes = (wintypes.LPCWSTR, wintypes.LPCWSTR, wintypes.DWORD)
+    move_file.restype = wintypes.BOOL
+    move_file_write_through = 0x00000008
+    if not move_file(str(source), str(destination), move_file_write_through):
+        raise ctypes.WinError(ctypes.get_last_error())
 
 
 def _cleanup_staging(directory: Path) -> None:
@@ -716,7 +766,7 @@ class _LocalObjectStore:
                     reader = _verified_reader(destination, digest, metadata.byte_length)
                     reader.close()
                     moved = staging / f"delete-{secrets.token_hex(24)}.partial"
-                    os.rename(destination, moved)
+                    _move_no_replace(destination, moved)
                     connection.execute(
                         """
                         UPDATE object_records SET storage_state='deleted', verified_at=NULL
@@ -742,7 +792,7 @@ class _LocalObjectStore:
                         connection.execute("ROLLBACK")
                 if moved is not None and destination is not None:
                     with suppress(OSError):
-                        os.rename(moved, destination)
+                        _move_no_replace(moved, destination)
                 _mark_quarantined(state, digest)
                 failure = _bounded(ObjectCorrupt, "object delete verification failed")
             except sqlite3.Error, StorageProblem:
@@ -751,7 +801,7 @@ class _LocalObjectStore:
                         connection.execute("ROLLBACK")
                 if moved is not None and destination is not None:
                     with suppress(OSError):
-                        os.rename(moved, destination)
+                        _move_no_replace(moved, destination)
                 failure = _bounded(ObjectStoreProblem, "object delete failed")
             finally:
                 if connection is not None:
