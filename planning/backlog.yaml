@@ -3715,11 +3715,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-17T23:09:55+00:00'
-      updated_at: '2026-08-18T00:21:56+00:00'
+      updated_at: '2026-08-18T00:22:28+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Submitted backup-first forward migration framework at f26f548 with exact v1 fixture, verified
@@ -3731,7 +3731,11 @@ capabilities:
 
         Final Windows remediation f94fba6 persists deny-write/delete ACLs through held backup and manifest handles; exact
         late-window and post-return link/write regressions pass. Focused matrix and package pass; performance remains NONQUALIFYING
-        pending S02 integration.'
+        pending S02 integration.
+
+        Final path-authority remediation bf3fb1e holds and protects the attempt directory, removes staging before lockdown,
+        preserves immutable failure publication, and denies both artifacts'' link/write/delete/rename/replace at every reviewed
+        window.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S02.T02.json
