@@ -596,9 +596,9 @@ class _LocalObjectStore:
                     with suppress(OSError):
                         staging.unlink()
                     raise _bounded(ObjectIntegrityMismatch, "object content hash did not match")
-                destination, buckets = _object_path(state.objects, state.project_id, digest, create=True)
                 publication_failure: ObjectStoreProblem | None = None
                 try:
+                    destination, buckets = _object_path(state.objects, state.project_id, digest, create=True)
                     with _stable_directories(
                         [state.root, state.state, state.objects, state.temporary, staging_directory, *buckets]
                     ):
@@ -700,7 +700,7 @@ class _LocalObjectStore:
             buckets: tuple[Path, ...] = ()
             try:
                 destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
-            except OSError:
+            except OSError, ObjectStoreProblem:
                 _mark_quarantined(state, digest)
                 path_failure = _bounded(ObjectCorrupt, "object integrity verification failed")
             if path_failure is not None or destination is None:
@@ -833,9 +833,15 @@ def create_local_object_store(project_root: Path, project_id: str) -> ObjectStor
             connection.close()
     if authority_failure is not None:
         raise authority_failure
-    staging = _staging_directory(temporary)
-    with _stable_directories([root, state_directory, objects, temporary, staging]):
-        _cleanup_staging(staging)
+    staging_failure: ObjectStoreProblem | None = None
+    try:
+        staging = _staging_directory(temporary)
+        with _stable_directories([root, state_directory, objects, temporary, staging]):
+            _cleanup_staging(staging)
+    except OSError, ProjectLifecycleProblem, ObjectStoreProblem:
+        staging_failure = _bounded(ObjectStoreProblem, "object staging reconciliation failed")
+    if staging_failure is not None:
+        raise staging_failure
     return _LocalObjectStore(
         _StoreState(
             root=root,
