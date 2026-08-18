@@ -8,7 +8,7 @@ capability_plan: planning/capability-plans/CAP-02.md
 planning_gate: capability-decision-complete
 slice_id: CAP-02.S03
 title: Encrypted local object and cache storage
-status: approved
+status: proposed
 wave: W1
 priority: P0
 deployment_profiles:
@@ -22,10 +22,10 @@ task_ids:
 - CAP-02.S03.T03
 ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
 approval:
-  status: approved
-  approved_by: repository-owner
-  approved_at: '2026-08-14T01:32:27.653823+00:00'
-  approved_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
+  status: pending
+  approved_by: null
+  approved_at: null
+  approved_commit: null
 ---
 # CAP-02.S03 - Encrypted local object and cache storage
 > **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-02.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-02 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.
@@ -42,7 +42,7 @@ approval:
 | Backlog tasks | `CAP-02.S03.T01`, `CAP-02.S03.T02`, `CAP-02.S03.T03` |
 | Slice dependencies | `CAP-02.S02.T01` |
 | Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.3` for user-facing implementation |
-| Approval state | Pending human approval |
+| Approval state | Replanning amendment pending complete W1 packet approval |
 
 ## 1. Purpose and contribution to the larger vision
 Store permitted documents, derived artifacts, models, reports, and caches locally without exposing content, duplicating bytes, or coupling downstream logic to filesystem layout.
@@ -60,6 +60,7 @@ This slice contributes to the capability objective: **Provide safe project lifec
 ### 2.1 In scope
 - Streaming put/get/delete, hashes, metadata, reference counting, atomic writes, and corruption detection.
 - Authenticated encryption for protected objects, key identifiers, nonce handling, rotation-ready metadata, and unencrypted fixture mode for tests.
+- Durable verified copy-on-write upgrade of supported prior plaintext object profiles before ordinary project open.
 - Per-project and shared-cache usage metrics, soft/hard thresholds, orphan detection, preview, and safe cleanup.
 
 ### 2.2 Explicit non-goals
@@ -119,6 +120,7 @@ The following decisions are the default implementation direction for this slice.
 4. **Write to a temporary file, fsync, verify, atomically rename, then commit metadata/reference linkage.**
 5. **Separate durable originals/accepted artifacts from rebuildable cache and temporary work; never evict durable referenced objects.**
 6. **Garbage collection is mark-and-sweep from canonical references plus leases/tombstones, with dry-run evidence.**
+7. **Upgrade prior plaintext objects before ordinary project open through the ADR-0016 durable post-schema state machine; never perform key-dependent file I/O inside the Alembic DDL transaction or lazily after access is granted.**
 
 ### 4.1 Replaceability rule
 External products and infrastructure remain behind ports. Domain identities, provenance, workflow state, rights decisions, accepted human judgments, source anchors, and portable contracts must survive replacement of any UI framework detail, parser, vector engine, model, API provider, cryptographic envelope version, or deployment adapter.
@@ -137,6 +139,7 @@ External products and infrastructure remain behind ports. Domain identities, pro
 - Object-store port and local encrypted filesystem adapter.
 - Envelope format, key wrapping/versioning, streaming reader/writer, and integrity verifier.
 - Object metadata/reference repositories and transactional staging protocol.
+- Durable object-upgrade journal and restart reconciler spanning SQLite metadata and guarded same-volume file replacement.
 - Quota, accounting, cache policy, garbage collection, orphan repair, and diagnostics.
 
 ### 5.2 Data model and state ownership
@@ -149,6 +152,7 @@ The following durable types are recommended. Final field names belong in version
 - `ObjectLease`
 - `CacheEntry`
 - `GarbageCollectionRun`
+- `ObjectEnvelopeUpgradeOperation`
 
 **Required invariants**
 - Every durable identity and revision follows CAP-03 canonical identifier/version rules or creates the necessary contract in this slice when CAP-03 is not yet available.
@@ -192,7 +196,9 @@ The following durable types are recommended. Final field names belong in version
 
 ## 8. Failure, cancellation, restart and recovery
 - Recover abandoned staging files, orphan metadata, missing files, tag failures, wrong keys, and partial GC.
+- Reconcile every prior-envelope upgrade phase after interruption; preserve the verified original or a journaled rollback copy until encrypted production-open verification succeeds.
 - A corrupt object is quarantined and dependents become unavailable/stale; the system never returns unauthenticated partial plaintext.
+- Structurally valid wrapped-key AEAD failure is key-unavailable and preserved; malformed envelope/framing/metadata is corrupt and quarantined. Both classifications deny before first byte.
 - GC uses a generation/lease barrier so concurrent readers and writers cannot lose objects.
 
 Each material scenario must have: deterministic trigger fixture, durable state expectation, user-visible state, retry/cancel rule, cleanup/repair rule, provenance/audit expectation, and an automated test where feasible.
@@ -244,13 +250,15 @@ python tools/verify.py --profile data
 
 **Expected deliverables**
 - Authenticated encryption for protected objects, key identifiers, nonce handling, rotation-ready metadata, and unencrypted fixture mode for tests.
+- ADR-0016 successor-profile upgrade journal and verified copy-on-write migration for supported v2 and rejected-v3 plaintext objects.
 
 **Ordered implementation sequence**
 1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-02.S03.T02`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
-2. Implement the domain/core path behind the approved port or aggregate boundary. Keep side effects behind adapters, use explicit transaction/idempotency boundaries, and emit provenance/dependency facts atomically where the governing architecture requires them.
-3. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
-4. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-5. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+2. Preserve committed migration history and add the successor relational profile plus strict object-upgrade operation journal. The schema transition may classify legacy work but may not claim that plaintext bytes are encrypted or ordinarily readable.
+3. Implement ADR-0016's project-open upgrade phases behind the existing key-provider and object-store boundaries: verify legacy source, stream encrypted replacement, authenticate, record swap intent, retain rollback, commit envelope metadata, verify through production open, then remove plaintext.
+4. Add deterministic failpoints around every journal, fsync, rename, verification, SQLite commit, and cleanup boundary. Restart must finish or restore from stable identities without filename guessing; missing keys, corrupt sources, low disk, cancellation, and busy/failure states remain explicit and recoverable.
+5. Add committed adversarial cases for magic/header, framing, missing/final tag, trailing content, wrapped key, wrap nonce, and key-version mutations. Align contracts, documentation, and evidence with the selected corruption-versus-key-unavailable classification.
+6. Run the task verification commands plus targeted unit/contract/integration and real package checks. Attach a superseding criterion manifest and obtain an independent remediation review that replays P1/P2 plus the incremental migration risk.
 
 **Acceptance criteria from the authoritative backlog**
 - Ciphertext tampering is detected; plaintext is not persisted in logs or temporary directories; key loss produces a bounded, explicit failure rather than silent corruption.
@@ -355,7 +363,10 @@ Runtime telemetry and support diagnostics are distinct from durable scholarly pr
 **Handoff acceptance rule:** A downstream slice must be able to consume the documented contract and fixture without importing private implementation modules or reconstructing hidden state.
 
 ## 14. Migration and backward compatibility
-- Envelope/key-version upgrades rewrite objects through verified copy-on-write and retain rollback until new integrity verification passes.
+- Preserve the committed v3 migration record and introduce a forward successor schema/profile for the durable upgrade journal and explicit legacy-object state.
+- Envelope/key-version upgrades run before ordinary project open through ADR-0016's verified copy-on-write state machine. They retain the plaintext rollback copy until the canonical encrypted object, relational envelope metadata, and production reader all verify the recorded length and SHA-256.
+- A restart at any phase deterministically finishes or restores the last safe state. Missing keys, corrupt sources, insufficient disk, cancellation, rename failure, and SQLite failure never silently advance compatibility or delete the only verified source.
+- Successful project upgrade leaves no legacy plaintext canonical, staging, or rollback file. Incomplete upgrade remains explicitly unavailable for ordinary use and resumes when its prerequisite is restored.
 - Object metadata remains portable across local and hosted object-store adapters.
 
 Every compatibility-sensitive artifact records its format/schema/protocol/parser/component version. Breaking evolution requires an accepted ADR, tested migration or bridge path, and explicit behavior for older projects/clients.
@@ -416,8 +427,8 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-- ADR: Local object encryption envelope and cryptographic library.
-- ADR: Opaque physical path derivation and cross-project deduplication policy.
+- `ADR-0016` REQUIRED: local object encryption envelope, prior-profile copy-on-write upgrade, recovery journal, and tamper/key-unavailable classification.
+- `ADR-0015`: opaque physical path derivation and cross-project deduplication policy.
 - ADR: Durable-object versus cache classification.
 
 A listed item beginning with `ADR REQUIRED` blocks the relevant implementation choice. Other ADRs may be completed within the first task only when that task explicitly owns the decision and the capability campaign approval permits it.
@@ -427,6 +438,9 @@ A listed item beginning with `ADR REQUIRED` blocks the relevant implementation c
 |---|---|---|
 | `SECRETSTREAM` | [Libsodium Secretstream](https://doc.libsodium.org/secret-key_cryptography/secretstream) - Libsodium | Authenticated streaming encryption of objects and backups. |
 | `XCHACHA20` | [Libsodium XChaCha20-Poly1305](https://doc.libsodium.org/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction) - Libsodium | Authenticated encryption envelope construction. |
+| `SQLITE-TXN` | [SQLite transactions](https://www.sqlite.org/lang_transaction.html) - SQLite | Atomicity is limited to SQLite state, so cross-filesystem upgrade phases require an application journal. |
+| `SQLITE-WAL` | [SQLite WAL](https://www.sqlite.org/wal.html) - SQLite | One writer, durable commit records, checkpoint behavior, and restart constraints for the upgrade journal. |
+| `MOVEFILEEX` | [MoveFileExW](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-movefileexw) - Microsoft | Guarded same-volume replacement uses write-through moves while the journal coordinates multi-step recovery. |
 | `ARGON2` | [RFC 9106 - Argon2](https://www.rfc-editor.org/rfc/rfc9106.html) - IETF | Passphrase-derived recovery/export keys. |
 
 These sources constrain implementation choices but do not replace repository-specific benchmarks, threat analysis, licensing review, accessibility testing, or ADR approval. Source access should be rechecked when implementation begins because APIs, libraries, platform guidance, and license terms can change.

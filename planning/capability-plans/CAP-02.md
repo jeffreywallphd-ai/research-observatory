@@ -53,6 +53,20 @@ decisions:
   binding_waves:
   - W1
   - W5
+- id: CAP-02-D04
+  title: Prior object-envelope upgrade coordination
+  candidates:
+  - Durable post-schema project-upgrade state machine with a SQLite operation journal, verified same-volume copy-on-write replacement, and retained rollback until production-open verification
+  - Encrypt object files inside the Alembic schema transaction
+  - Rewrite lazily on first open or duplicate put
+  - Reject prior projects and require destructive re-import
+  recommendation: Durable post-schema project-upgrade state machine with a SQLite operation journal, verified same-volume copy-on-write replacement, and retained rollback until production-open verification
+  recommendation_basis: SQLite and filesystem replacement are separate durability domains; an explicit journal is the only candidate that preserves bounded streaming, restart reconciliation, prior project compatibility, and deletion of plaintext only after verified encrypted use.
+  selected_option: Durable post-schema project-upgrade state machine with a SQLite operation journal, verified same-volume copy-on-write replacement, and retained rollback until production-open verification
+  status: accepted
+  required_adr: ADR-0016
+  binding_waves:
+  - W1
 approval:
   status: pending
   approved_by: null
@@ -117,6 +131,7 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 | `CAP-02-D01` | **Canonical local store** | SQLite STRICT tables behind repository ports with versioned migrations and SQLCipher or approved equivalent | Plain JSON files; external PostgreSQL for desktop | SQLite supports local portability and transactions; protected storage satisfies confidential research requirements. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
 | `CAP-02-D02` | **Object storage** | Encrypted content-addressed project object store with atomic writes and manifest verification | Store all binaries directly in relational BLOBs | Separates large artifacts while supporting dedupe, integrity, backup and relocation. | [RFC 8493 - The BagIt File Packaging Format](https://www.rfc-editor.org/rfc/rfc8493.html) |
 | `CAP-02-D03` | **Secrets and recovery** | OS credential store, project privacy profiles and tested backup/restore/rekey/recovery | Secrets in config files | Credential and recovery behavior must be platform-specific at the adapter boundary and production qualified. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
+| `CAP-02-D04` | **Prior object-envelope upgrade coordination** | Durable post-schema project-upgrade state machine with a SQLite operation journal, verified same-volume copy-on-write replacement, and retained rollback until production-open verification | Encrypt inside Alembic; lazy first-use rewrite; destructive re-import | SQLite and filesystem replacement are separate durability domains. A journaled project-open upgrade preserves restart recovery and removes plaintext only after verified encrypted use. | [SQLite transactions](https://www.sqlite.org/lang_transaction.html); [MoveFileExW](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-movefileexw) |
 
 ### Review and approval
 
