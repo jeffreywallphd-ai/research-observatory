@@ -318,6 +318,57 @@ class SqliteMigrationTests(unittest.TestCase):
                 )
                 outside.unlink()
 
+    @unittest.skipUnless(os.name == "nt", "Windows durable recovery ACL boundary")
+    def test_recovery_acl_denies_links_after_final_validation_and_commit(self) -> None:
+        self.create_v1()
+        late_database = self.project / "outside-late-database.sqlite3"
+        late_manifest = self.project / "outside-late-manifest.json"
+        after_commit_database = self.project / "outside-committed-database.sqlite3"
+        after_commit_manifest = self.project / "outside-committed-manifest.json"
+        original_assert = runner._assert_verified_backup
+        original_close = runner._VerifiedBackup.close
+        final_checks = 0
+
+        def check_then_link(verified: runner._VerifiedBackup) -> None:
+            nonlocal final_checks
+            original_assert(verified)
+            final_checks += 1
+            if final_checks == 3:
+                with self.assertRaises(PermissionError):
+                    os.link(verified.database, late_database)
+                with self.assertRaises(PermissionError):
+                    os.link(verified.manifest, late_manifest)
+
+        def link_then_close(verified: runner._VerifiedBackup) -> None:
+            with self.assertRaises(PermissionError):
+                os.link(verified.database, after_commit_database)
+            with self.assertRaises(PermissionError):
+                os.link(verified.manifest, after_commit_manifest)
+            original_close(verified)
+
+        with (
+            patch.object(runner, "_assert_verified_backup", check_then_link),
+            patch.object(runner._VerifiedBackup, "close", link_then_close),
+        ):
+            migrated = migrate_database(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual("migrated", migrated.status)
+        self.assertEqual(3, final_checks)
+
+        backup = self.project / str(migrated.backup_relative_path)
+        manifest = self.project / str(migrated.recovery_manifest_relative_path)
+        backup_before = backup.read_bytes()
+        manifest_before = manifest.read_bytes()
+        with self.assertRaises(PermissionError):
+            os.link(backup, self.project / "outside-released-database.sqlite3")
+        with self.assertRaises(PermissionError):
+            os.link(manifest, self.project / "outside-released-manifest.json")
+        with self.assertRaises(PermissionError):
+            backup.write_bytes(b"changed")
+        with self.assertRaises(PermissionError):
+            manifest.write_bytes(b"changed")
+        self.assertEqual(backup_before, backup.read_bytes())
+        self.assertEqual(manifest_before, manifest.read_bytes())
+
     def test_writer_reservation_spans_backup_through_migration(self) -> None:
         self.create_v1()
         entered = threading.Event()
