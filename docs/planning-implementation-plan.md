@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d8c195b5af5bd57408f4c5bdbf597bc5cd837035f42cd207c08f0cb23aff43b5
+source_sha256: 292b5cbb81e1a985f3cf3615c9fa9ab27108b98f303aa0503285e0db52dc178b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1823,6 +1823,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-02.S02.T03.json` at `83d6b230ade28a876efada0d68e1eb378ffe19c8`
 - `artifacts/evidence/CAP-02.S02.T03.review-fix.json` at `0a5d559d5887ca0f37b54f0bce5efe0996b1c784`
+- `artifacts/evidence/CAP-02.S02.T03.review-fix-2.json` at `7eefe2fdff13932c43c8daed5475573342af5074`
 
 ### SLICE-encrypted-local-object-and-cache-storage (`CAP-02.S03`) - Encrypted local object and cache storage
 

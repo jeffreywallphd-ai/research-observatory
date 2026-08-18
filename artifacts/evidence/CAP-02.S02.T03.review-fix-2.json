@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T03",
+  "commit": "7eefe2fdff13932c43c8daed5475573342af5074",
+  "baseCommit": "0a5d559d5887ca0f37b54f0bce5efe0996b1c784",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S02.T03.review-fix.json",
+    "sha256": "820f210a8b354a8bb6398aa4877ce92587ce221569c19903eb86b73dc68d0959",
+    "reason": "The first remediation closed the principal port, transaction, idempotency, and ADR defects, but package-style imports still exposed the storage/private-adapter modules and bounded entry failures still retained raw adapter exceptions through __context__. This record binds the exact import matrix and context-free adapter translation."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S02.T03.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "tests/data/test_sqlite_repositories.py",
+    "tests/foundation/test_architecture_check.py",
+    "tools/architecture_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_repositories tests.foundation.test_architecture_check",
+      "exitCode": 0,
+      "result": "All 15 focused tests pass. The architecture suite denies all four aliased/package-attribute storage and concrete-repository imports. Repository tests prove incompatible authority, a real 5-second busy writer, and late adapter failure expose neither __cause__ nor __context__; release/retry, rollback, exact replay, and changed-command conflicts remain passing."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S02.T03-review-fix-2-quality.json; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 6a177be5774f6b252978ee617a1a6a815a92f9bd --head 7eefe2fdff13932c43c8daed5475573342af5074",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy pass for 94 governed Python files. The live architecture contract passes, and the diff-aware ADR gate validates 22 changed paths against updated ADR-0014. Quality-report SHA-256: 70b94695bbad922f2e5808946b18b1ac3cef0ffba47f0ae4fc96af669ae7e637."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package; .venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-package --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "All six focused packaging tests pass with one Windows-token-dependent symlink test skipped. The exact final frozen package verifies 661 files / 38,301,316 bytes, entrypoint SHA-256 e7c9ad3011d6c6b7e6fe703d6420dc7e6b108534f87f920187f2a9b9d604d5f9, and package-report SHA-256 34f6eeef071cc127708b81401721ee94bd33388fa80b906a058d70e1803239dc."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T03-review-fix-2-build-manifest.json; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+g7eefe2f passes with build-manifest SHA-256 8a6d4d3e8f6a3dd343ddf77777d38941a0e3857dc7503094c5f4c776577f3b98. Backlog, generated views, and patch hygiene validate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The architecture scanner resolves full ast.Import modules and ast.ImportFrom package attributes. Outside the two data adapters and the explicit main composition root, aliased storage modules and concrete repository modules are rejected while dependency-neutral ports remain importable.",
+        "Exact attacks using import research_observatory_core.storage as store, from research_observatory_core import storage, import research_observatory_core.repositories as adapter, and from research_observatory_core import repositories each fail the foundation architecture gate.",
+        "Every caught SQLite, storage-profile, query, insert, and commit failure is converted only after the concrete exception handler has exited. The shared bounded factories explicitly carry no cause/context; business or telemetry code cannot inspect a retained path, SQL lock message, StorageProblem, sqlite3 error, or OSError."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "A real incompatible project identity and competing writer return RO-CORE-REPOSITORY-TRANSACTION-FAILED with __cause__ and __context__ both None. Releasing the writer permits an immediate successful retry.",
+        "A late duplicate-outbox constraint returns a context-free bounded RepositoryProblem, marks the unit failed, and rolls back every aggregate, subtype, provenance, and outbox fact.",
+        "All first-remediation controls remain passing: port-only import loads no database libraries; exact idempotent replay inserts no duplicate facts; changed payload, precondition, availability schedule, or outbox identity conflicts."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The incremental functional scope is exactly the repository adapter, architecture gate, and their two focused test modules. ADR, storage profile/schema, migration, public API, dependency, UI/reference, security, and performance authority are unchanged.",
+        "The final candidate passes focused quality, architecture, diff-aware ADR, real frozen package, clean build, task-state, and generated-view checks."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The incremental risk is confined to two prior-review seams: complete static recognition of module-level adapter authority and removal of retained concrete exception objects. The selected tests directly exercise all four imports, incompatible and busy entry, late adapter failure, rollback/retry, quality, architecture, package, and build identity.",
+    "deferred": "No broad profile is justified for this four-file correction. The complete data/e2e-local profiles, migration recovery matrix, cross-task integration, security scan, and lifecycle performance recalibration remain at CAP-02.S02 slice review; full qualification remains at W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Replay only the four package-style import attacks and concrete-exception __context__ checks for incompatible, busy, and late adapter failure. Retain the first remediation conclusions and verify exact eight-file scope, evidence hashes, final package/build identity, live REVIEW, and cleanliness. No broad profile."
+  }
+}
