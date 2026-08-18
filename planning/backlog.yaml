@@ -3968,7 +3968,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T03:31:31+00:00'
-      updated_at: '2026-08-18T11:38:44+00:00'
+      updated_at: '2026-08-18T13:16:21+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Implemented authenticated encrypted object envelopes, versioned wrapped keys, schema-v3 recovery,
@@ -3980,6 +3980,11 @@ capabilities:
         sha256: 3b9c3042c02811564323bbb7e19a0ea4be3b2a19fbdc371a301db7e3ce5239d9
         commit: 4d55d5ed0345a6265d296f6d7d9a774804c6b2d6
         recorded_at: '2026-08-18T05:55:34+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S03.T02.review-fix.json
+        sha256: 4ca8a569b3a56b868e751aa84cc5efb26a1fd99c6e04fa0e561a7552d2cfb4f7
+        commit: 5898fc634bcd0e6cf33915b81ea62670947f83e2
+        recorded_at: '2026-08-18T13:16:21+00:00'
       review:
         reviewer: null
         result: null
@@ -3991,7 +3996,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-18T11:38:44+00:00'
         expires_at: '2026-08-18T19:38:44+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
