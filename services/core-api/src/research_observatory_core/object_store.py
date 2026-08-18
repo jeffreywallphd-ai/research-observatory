@@ -10,6 +10,7 @@ import re
 import secrets
 import sqlite3
 import stat
+import struct
 import threading
 from contextlib import suppress
 from dataclasses import dataclass
@@ -17,12 +18,16 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, BinaryIO, cast
 
+from nacl import bindings as sodium
+from nacl.exceptions import CryptoError
+
 from .ports.object_store import (
     ObjectAccessDenied,
     ObjectBusy,
     ObjectConflict,
     ObjectCorrupt,
     ObjectIntegrityMismatch,
+    ObjectKeyUnavailable,
     ObjectNotFound,
     ObjectPutCommand,
     ObjectReferenced,
@@ -34,6 +39,7 @@ from .ports.object_store import (
     StoredObject,
     VerifiedObjectStream,
 )
+from .ports.object_store_keys import ObjectMasterKey, ObjectMasterKeyProvider
 from .projects import ProjectLifecycleProblem, _stable_directories
 from .storage import (
     MAX_SAFE_INTEGER,
@@ -47,10 +53,18 @@ _CHUNK_BYTES = 1024 * 1024
 _MAX_SOURCE_CHUNK_BYTES = 4 * _CHUNK_BYTES
 _DIGEST = re.compile(r"^[0-9a-f]{64}$")
 _IDENTIFIER = re.compile(r"^[a-z][a-z0-9._-]{0,119}$")
+_KEY_VERSION = re.compile(r"^[a-z][a-z0-9.-]{0,119}$")
 _MEDIA_TYPE = re.compile(r"^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$")
 _RIGHTS: frozenset[str] = frozenset(("allowed", "denied", "unknown", "not-applicable"))
 _RETENTION: frozenset[str] = frozenset(("project-lifetime", "derived-rebuildable", "export-retained"))
 _READABLE_RIGHTS: frozenset[str] = frozenset(("allowed", "not-applicable"))
+_PLAINTEXT_FIXTURE = "plaintext-fixture-v1"
+_ENCRYPTED_ENVELOPE = "secretstream-xchacha20poly1305-v1"
+_ENCRYPTED_PROFILE = "project-encrypted-v1"
+_ENVELOPE_MAGIC = b"ROO1"
+_FRAME_LENGTH = struct.Struct(">I")
+_STREAM_AAD_PREFIX = b"research-observatory-object-stream-v1\0"
+_WRAP_AAD_PREFIX = b"research-observatory-object-key-v1\0"
 
 
 def _bounded(exception: type[ObjectStoreProblem], message: str) -> ObjectStoreProblem:
@@ -133,6 +147,84 @@ def _validate_command(command: ObjectPutCommand) -> ObjectPutCommand:
 def _validate_purpose(purpose: str) -> None:
     if not isinstance(purpose, str) or _IDENTIFIER.fullmatch(purpose) is None:
         raise _bounded(ObjectStoreProblem, "object access purpose is invalid")
+
+
+def _validate_key_version(value: str) -> str:
+    if (
+        not isinstance(value, str)
+        or _KEY_VERSION.fullmatch(value) is None
+        or ".." in value
+        or "--" in value
+        or value.endswith((".", "-"))
+    ):
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    return value
+
+
+def _master_key(
+    provider: ObjectMasterKeyProvider | None,
+    *,
+    key_version: str | None = None,
+) -> ObjectMasterKey:
+    if provider is None:
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    try:
+        candidate = (
+            provider.active_object_master_key() if key_version is None else provider.object_master_key(key_version)
+        )
+    except Exception:
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable") from None
+    if candidate is None or not isinstance(candidate, ObjectMasterKey):
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    version = _validate_key_version(candidate.key_version)
+    if key_version is not None and version != key_version:
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    if (
+        not isinstance(candidate.key_bytes, bytes)
+        or len(candidate.key_bytes) != sodium.crypto_secretstream_xchacha20poly1305_KEYBYTES
+    ):
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    return candidate
+
+
+def _frame_aad(project_id: str, frame_index: int) -> bytes:
+    return _STREAM_AAD_PREFIX + project_id.encode("ascii") + frame_index.to_bytes(8, "big")
+
+
+def _wrap_aad(project_id: str, object_sha256: str, key_version: str) -> bytes:
+    return (
+        _WRAP_AAD_PREFIX
+        + project_id.encode("ascii")
+        + b"\0"
+        + object_sha256.encode("ascii")
+        + b"\0"
+        + key_version.encode("ascii")
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class _EnvelopeMetadata:
+    envelope_version: str
+    key_version: str | None
+    wrapped_key: str | None
+    wrap_nonce: str | None
+    ciphertext_byte_length: int
+
+
+def _read_source_block(source: BinaryIO) -> bytes:
+    block = source.read(_CHUNK_BYTES)
+    if not isinstance(block, bytes) or len(block) > _MAX_SOURCE_CHUNK_BYTES:
+        raise ValueError("object source returned an invalid chunk")
+    return block
+
+
+def _write_all(descriptor: int, payload: bytes) -> None:
+    view = memoryview(payload)
+    while view:
+        written = os.write(descriptor, view)
+        if written <= 0:
+            raise OSError("staging write failed")
+        view = view[written:]
 
 
 def _opaque_name(project_id: str, object_sha256: str) -> str:
@@ -246,9 +338,253 @@ def _verified_reader(path: Path, expected_sha256: str, expected_length: int) -> 
         raise
 
 
+def _read_exact(reader: io.FileIO, size: int) -> bytes:
+    payload = bytearray()
+    while len(payload) < size:
+        block = reader.read(size - len(payload))
+        if block == b"":
+            raise OSError("encrypted object is truncated")
+        payload.extend(block)
+    return bytes(payload)
+
+
+def _unwrap_data_key(
+    provider: ObjectMasterKeyProvider | None,
+    *,
+    project_id: str,
+    object_sha256: str,
+    key_version: str | None,
+    wrapped_key: str | None,
+    wrap_nonce: str | None,
+) -> bytes:
+    if key_version is None or wrapped_key is None or wrap_nonce is None:
+        raise _bounded(ObjectCorrupt, "object encryption metadata is invalid")
+    version = _validate_key_version(key_version)
+    try:
+        wrapped = bytes.fromhex(wrapped_key)
+        nonce = bytes.fromhex(wrap_nonce)
+    except ValueError:
+        raise _bounded(ObjectCorrupt, "object encryption metadata is invalid") from None
+    if (
+        len(wrapped)
+        != sodium.crypto_secretstream_xchacha20poly1305_KEYBYTES + sodium.crypto_aead_xchacha20poly1305_ietf_ABYTES
+        or len(nonce) != sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
+    ):
+        raise _bounded(ObjectCorrupt, "object encryption metadata is invalid")
+    master = _master_key(provider, key_version=version)
+    try:
+        data_key = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+            wrapped,
+            _wrap_aad(project_id, object_sha256, version),
+            nonce,
+            master.key_bytes,
+        )
+    except CryptoError:
+        # A present key version with unusable bytes is operationally equivalent
+        # to key loss. Preserve the object for recovery instead of quarantining it.
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable") from None
+    if len(data_key) != sodium.crypto_secretstream_xchacha20poly1305_KEYBYTES:
+        raise _bounded(ObjectCorrupt, "object encryption metadata is invalid")
+    return data_key
+
+
+def _start_pull(reader: io.FileIO, data_key: bytes) -> sodium.crypto_secretstream_xchacha20poly1305_state:
+    if _read_exact(reader, len(_ENVELOPE_MAGIC)) != _ENVELOPE_MAGIC:
+        raise OSError("encrypted object header is invalid")
+    header = _read_exact(reader, sodium.crypto_secretstream_xchacha20poly1305_HEADERBYTES)
+    stream_state = sodium.crypto_secretstream_xchacha20poly1305_state()
+    try:
+        sodium.crypto_secretstream_xchacha20poly1305_init_pull(stream_state, header, data_key)
+    except CryptoError:
+        raise OSError("encrypted object header is invalid") from None
+    return stream_state
+
+
+def _pull_frame(
+    reader: io.FileIO,
+    stream_state: sodium.crypto_secretstream_xchacha20poly1305_state,
+    *,
+    project_id: str,
+    frame_index: int,
+) -> tuple[bytes, bool]:
+    frame_size = _FRAME_LENGTH.unpack(_read_exact(reader, _FRAME_LENGTH.size))[0]
+    if not (
+        sodium.crypto_secretstream_xchacha20poly1305_ABYTES
+        <= frame_size
+        <= _MAX_SOURCE_CHUNK_BYTES + sodium.crypto_secretstream_xchacha20poly1305_ABYTES
+    ):
+        raise OSError("encrypted object frame is invalid")
+    ciphertext = _read_exact(reader, frame_size)
+    try:
+        message, tag = sodium.crypto_secretstream_xchacha20poly1305_pull(
+            stream_state,
+            ciphertext,
+            ad=_frame_aad(project_id, frame_index),
+        )
+    except CryptoError:
+        raise OSError("encrypted object authentication failed") from None
+    if tag == sodium.crypto_secretstream_xchacha20poly1305_TAG_FINAL:
+        if reader.read(1) != b"":
+            raise OSError("encrypted object has trailing content")
+        return message, True
+    if tag != sodium.crypto_secretstream_xchacha20poly1305_TAG_MESSAGE or not message:
+        raise OSError("encrypted object frame tag is invalid")
+    return message, False
+
+
+def _verify_encrypted_payload(
+    reader: io.FileIO,
+    data_key: bytes,
+    *,
+    project_id: str,
+    expected_sha256: str,
+    expected_length: int,
+) -> None:
+    stream_state = _start_pull(reader, data_key)
+    digest = hashlib.sha256()
+    length = 0
+    frame_index = 0
+    while True:
+        message, final = _pull_frame(
+            reader,
+            stream_state,
+            project_id=project_id,
+            frame_index=frame_index,
+        )
+        digest.update(message)
+        length += len(message)
+        if length > MAX_SAFE_INTEGER:
+            raise OSError("encrypted object plaintext is too large")
+        if final:
+            break
+        frame_index += 1
+    if digest.hexdigest() != expected_sha256 or length != expected_length:
+        raise OSError("encrypted object plaintext identity differs")
+
+
+class _EncryptedReader:
+    __slots__ = (
+        "_buffer",
+        "_finished",
+        "_frame_index",
+        "_identity",
+        "_path",
+        "_project_id",
+        "_reader",
+        "_state",
+    )
+
+    def __init__(
+        self,
+        reader: io.FileIO,
+        data_key: bytes,
+        *,
+        project_id: str,
+        path: Path,
+        identity: tuple[int, int],
+    ) -> None:
+        self._reader = reader
+        self._path = path
+        self._identity = identity
+        self._project_id = project_id
+        self._state = _start_pull(reader, data_key)
+        self._frame_index = 0
+        self._buffer = bytearray()
+        self._finished = False
+
+    def _next(self) -> None:
+        if self._finished:
+            return
+        message, final = _pull_frame(
+            self._reader,
+            self._state,
+            project_id=self._project_id,
+            frame_index=self._frame_index,
+        )
+        self._buffer.extend(message)
+        self._finished = final
+        if not final:
+            self._frame_index += 1
+
+    def read(self, size: int = -1) -> bytes:
+        if size == 0:
+            return b""
+        while not self._finished and (size < 0 or len(self._buffer) < size):
+            self._next()
+        if size < 0:
+            result = bytes(self._buffer)
+            self._buffer.clear()
+            return result
+        result = bytes(self._buffer[:size])
+        del self._buffer[:size]
+        return result
+
+    def close(self) -> None:
+        self._buffer.clear()
+        self._reader.close()
+
+    def matches(self) -> bool:
+        return _file_matches(self._path, self._reader.fileno(), self._identity)
+
+
+def _verified_encrypted_reader(
+    path: Path,
+    *,
+    project_id: str,
+    object_sha256: str,
+    byte_length: int,
+    ciphertext_byte_length: int,
+    key_version: str | None,
+    wrapped_key: str | None,
+    wrap_nonce: str | None,
+    key_provider: ObjectMasterKeyProvider | None,
+) -> _EncryptedReader:
+    data_key = _unwrap_data_key(
+        key_provider,
+        project_id=project_id,
+        object_sha256=object_sha256,
+        key_version=key_version,
+        wrapped_key=wrapped_key,
+        wrap_nonce=wrap_nonce,
+    )
+    reader = _open_read_locked(path)
+    try:
+        status = os.fstat(reader.fileno())
+        identity = (status.st_dev, status.st_ino)
+        if status.st_size != ciphertext_byte_length or not _file_matches(path, reader.fileno(), identity):
+            raise OSError("encrypted object identity differs")
+        _verify_encrypted_payload(
+            reader,
+            data_key,
+            project_id=project_id,
+            expected_sha256=object_sha256,
+            expected_length=byte_length,
+        )
+        if not _file_matches(path, reader.fileno(), identity):
+            raise OSError("encrypted object identity changed")
+        reader.seek(0)
+        return _EncryptedReader(
+            reader,
+            data_key,
+            project_id=project_id,
+            path=path,
+            identity=identity,
+        )
+    except BaseException:
+        reader.close()
+        raise
+
+
+def _held_reader_matches(path: Path, reader: Any) -> bool:
+    if isinstance(reader, _EncryptedReader):
+        return reader.matches()
+    status = os.fstat(reader.fileno())
+    return _file_matches(path, reader.fileno(), (status.st_dev, status.st_ino))
+
+
 @dataclass(slots=True)
 class _ReaderEntry:
-    reader: io.FileIO
+    reader: Any
     connection: CanonicalConnection
     project_id: str
     object_sha256: str
@@ -261,7 +597,7 @@ class _ReaderRegistry:
 
     def register(
         self,
-        reader: io.FileIO,
+        reader: Any,
         connection: CanonicalConnection,
         project_id: str,
         object_sha256: str,
@@ -313,7 +649,7 @@ class _VerifiedObjectStream:
 
     def __init__(
         self,
-        reader: io.FileIO,
+        reader: Any,
         connection: CanonicalConnection,
         project_id: str,
         object_sha256: str,
@@ -360,6 +696,8 @@ class _StoreState:
     temporary: Path
     database: Path
     project_id: str
+    key_provider: ObjectMasterKeyProvider | None
+    allow_plaintext_fixture: bool
     lock: threading.RLock
 
 
@@ -402,6 +740,9 @@ def _row_metadata(row: Any) -> StoredObject:
         created_at=str(row[7]),
         verified_at=None if row[8] is None else str(row[8]),
         reference_count=int(row[9]),
+        envelope_version=str(row[10]),
+        key_version=None if row[11] is None else str(row[11]),
+        ciphertext_byte_length=int(row[12]),
     )
 
 
@@ -411,7 +752,8 @@ _METADATA_SQL = """
            object.storage_state, object.created_at, object.verified_at,
            (SELECT count(*) FROM documents AS document
              WHERE document.project_id = object.project_id
-               AND document.object_sha256 = object.object_sha256) AS reference_count
+               AND document.object_sha256 = object.object_sha256) AS reference_count,
+           object.envelope_version, object.key_version, object.ciphertext_byte_length
     FROM object_records AS object
     WHERE object.project_id = ? AND object.object_sha256 = ?
 """
@@ -420,6 +762,56 @@ _METADATA_SQL = """
 def _metadata(connection: CanonicalConnection, project_id: str, object_sha256: str) -> StoredObject | None:
     row = connection.execute(_METADATA_SQL, (project_id, object_sha256)).fetchone()
     return None if row is None else _row_metadata(row)
+
+
+def _encryption_material(
+    connection: CanonicalConnection,
+    project_id: str,
+    object_sha256: str,
+) -> tuple[str | None, str | None]:
+    row = connection.execute(
+        """
+        SELECT wrapped_key, wrap_nonce FROM object_records
+         WHERE project_id=? AND object_sha256=?
+        """,
+        (project_id, object_sha256),
+    ).fetchone()
+    if row is None:
+        raise ObjectNotFound("object encryption metadata is unavailable")
+    return (
+        None if row[0] is None else str(row[0]),
+        None if row[1] is None else str(row[1]),
+    )
+
+
+def _verified_stored_reader(
+    state: _StoreState,
+    connection: CanonicalConnection,
+    path: Path,
+    metadata: StoredObject,
+) -> Any:
+    if metadata.envelope_version == _PLAINTEXT_FIXTURE:
+        if metadata.protection_profile != _PLAINTEXT_FIXTURE or not state.allow_plaintext_fixture:
+            raise _bounded(ObjectAccessDenied, "plaintext object fixtures are disabled")
+        return _verified_reader(path, metadata.object_sha256, metadata.byte_length)
+    if metadata.envelope_version != _ENCRYPTED_ENVELOPE or metadata.protection_profile != _ENCRYPTED_PROFILE:
+        raise _bounded(ObjectCorrupt, "object encryption profile is invalid")
+    wrapped_key, wrap_nonce = _encryption_material(
+        connection,
+        state.project_id,
+        metadata.object_sha256,
+    )
+    return _verified_encrypted_reader(
+        path,
+        project_id=state.project_id,
+        object_sha256=metadata.object_sha256,
+        byte_length=metadata.byte_length,
+        ciphertext_byte_length=metadata.ciphertext_byte_length,
+        key_version=metadata.key_version,
+        wrapped_key=wrapped_key,
+        wrap_nonce=wrap_nonce,
+        key_provider=state.key_provider,
+    )
 
 
 def _publication_state(
@@ -486,7 +878,21 @@ def _sqlite_busy(error: sqlite3.Error) -> bool:
     return isinstance(code, int) and (code & 0xFF) in (sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED)
 
 
-def _stream_to_staging(source: BinaryIO, staging: Path) -> tuple[Path, str, int]:
+def _stream_to_staging(
+    source: BinaryIO,
+    staging: Path,
+    *,
+    project_id: str,
+    protection_profile: str,
+    key_provider: ObjectMasterKeyProvider | None,
+    allow_plaintext_fixture: bool,
+) -> tuple[Path, str, int, _EnvelopeMetadata]:
+    encrypted = protection_profile == _ENCRYPTED_PROFILE
+    plaintext_fixture = protection_profile == _PLAINTEXT_FIXTURE and allow_plaintext_fixture
+    if not encrypted and not plaintext_fixture:
+        raise _bounded(ObjectStoreProblem, "object protection profile is unavailable")
+    master = _master_key(key_provider) if encrypted else None
+    data_key = sodium.crypto_secretstream_xchacha20poly1305_keygen() if encrypted else None
     destination = staging / f"{secrets.token_hex(24)}.partial"
     descriptor = -1
     succeeded = False
@@ -507,27 +913,77 @@ def _stream_to_staging(source: BinaryIO, staging: Path) -> tuple[Path, str, int]
             raise OSError("staging identity is invalid")
         digest = hashlib.sha256()
         length = 0
-        while True:
-            block = source.read(_CHUNK_BYTES)
-            if block == b"":
-                break
-            if not isinstance(block, bytes) or len(block) > _MAX_SOURCE_CHUNK_BYTES:
-                raise ValueError("object source returned an invalid chunk")
-            length += len(block)
-            if length > MAX_SAFE_INTEGER:
-                raise ValueError("object exceeds the supported length")
-            digest.update(block)
-            view = memoryview(block)
-            while view:
-                written = os.write(descriptor, view)
-                if written <= 0:
-                    raise OSError("staging write failed")
-                view = view[written:]
+        if encrypted:
+            if master is None or data_key is None:
+                raise ObjectKeyUnavailable("object encryption key is unavailable")
+            stream_state = sodium.crypto_secretstream_xchacha20poly1305_state()
+            header = sodium.crypto_secretstream_xchacha20poly1305_init_push(stream_state, data_key)
+            _write_all(descriptor, _ENVELOPE_MAGIC)
+            _write_all(descriptor, header)
+            frame_index = 0
+            block = _read_source_block(source)
+            while True:
+                next_block = b"" if block == b"" else _read_source_block(source)
+                final = next_block == b""
+                length += len(block)
+                if length > MAX_SAFE_INTEGER:
+                    raise ValueError("object exceeds the supported length")
+                digest.update(block)
+                ciphertext = sodium.crypto_secretstream_xchacha20poly1305_push(
+                    stream_state,
+                    block,
+                    ad=_frame_aad(project_id, frame_index),
+                    tag=(
+                        sodium.crypto_secretstream_xchacha20poly1305_TAG_FINAL
+                        if final
+                        else sodium.crypto_secretstream_xchacha20poly1305_TAG_MESSAGE
+                    ),
+                )
+                _write_all(descriptor, _FRAME_LENGTH.pack(len(ciphertext)))
+                _write_all(descriptor, ciphertext)
+                if final:
+                    break
+                block = next_block
+                frame_index += 1
+        else:
+            while block := _read_source_block(source):
+                length += len(block)
+                if length > MAX_SAFE_INTEGER:
+                    raise ValueError("object exceeds the supported length")
+                digest.update(block)
+                _write_all(descriptor, block)
         os.fsync(descriptor)
         if not _file_matches(destination, descriptor, identity):
             raise OSError("staging identity changed")
+        object_sha256 = digest.hexdigest()
+        ciphertext_byte_length = int(os.fstat(descriptor).st_size)
+        if encrypted:
+            if master is None or data_key is None:
+                raise ObjectKeyUnavailable("object encryption key is unavailable")
+            nonce = secrets.token_bytes(sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES)
+            wrapped_key = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+                data_key,
+                _wrap_aad(project_id, object_sha256, master.key_version),
+                nonce,
+                master.key_bytes,
+            )
+            envelope = _EnvelopeMetadata(
+                envelope_version=_ENCRYPTED_ENVELOPE,
+                key_version=master.key_version,
+                wrapped_key=wrapped_key.hex(),
+                wrap_nonce=nonce.hex(),
+                ciphertext_byte_length=ciphertext_byte_length,
+            )
+        else:
+            envelope = _EnvelopeMetadata(
+                envelope_version=_PLAINTEXT_FIXTURE,
+                key_version=None,
+                wrapped_key=None,
+                wrap_nonce=None,
+                ciphertext_byte_length=length,
+            )
         succeeded = True
-        return destination, digest.hexdigest(), length
+        return destination, object_sha256, length, envelope
     finally:
         if descriptor >= 0:
             os.close(descriptor)
@@ -603,9 +1059,7 @@ _DELETE_STAGING = re.compile(r"^delete-([0-9a-f]{64})\.partial$")
 
 def _reconcile_staging(
     directory: Path,
-    objects: Path,
-    database: Path,
-    project_id: str,
+    state: _StoreState,
 ) -> None:
     failure: ObjectStoreProblem | None = None
     try:
@@ -617,14 +1071,14 @@ def _reconcile_staging(
         raise failure
     connection: CanonicalConnection | None = None
     try:
-        connection = open_canonical_database(database, expected_project_id=project_id)
+        connection = open_canonical_database(state.database, expected_project_id=state.project_id)
         rows = tuple(
             connection.execute(
                 """
-                SELECT object_sha256, byte_length, storage_state
+                SELECT object_sha256
                   FROM object_records WHERE project_id=?
                 """,
-                (project_id,),
+                (state.project_id,),
             ).fetchall()
         )
     except sqlite3.Error, StorageProblem:
@@ -636,8 +1090,9 @@ def _reconcile_staging(
     if failure is not None:
         raise failure
 
-    delete_rows = {_opaque_name(project_id, str(row[0])): (str(row[0]), int(row[1]), str(row[2])) for row in rows}
+    delete_rows = {_opaque_name(state.project_id, str(row[0])): str(row[0]) for row in rows}
     for candidate in candidates:
+        record_connection: CanonicalConnection | None = None
         try:
             status = candidate.stat(follow_symlinks=False)
             if not (
@@ -654,25 +1109,35 @@ def _reconcile_staging(
             row = delete_rows.get(match.group(1))
             if row is None:
                 raise OSError("delete recovery metadata is unavailable")
-            digest, length, storage_state = row
-            destination, buckets = _object_path(objects, project_id, digest, create=False)
-            with _stable_directories([objects, *buckets]):
-                reader = _verified_reader(candidate, digest, length)
+            digest = row
+            record_connection = open_canonical_database(
+                state.database,
+                expected_project_id=state.project_id,
+            )
+            metadata = _metadata(record_connection, state.project_id, digest)
+            if metadata is None:
+                raise OSError("delete recovery metadata is unavailable")
+            destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
+            with _stable_directories([state.objects, *buckets]):
+                reader = _verified_stored_reader(state, record_connection, candidate, metadata)
                 reader.close()
-                if storage_state == "deleted":
+                if metadata.storage_state == "deleted":
                     if destination.exists():
                         raise OSError("deleted object has conflicting bytes")
                     candidate.unlink()
-                elif storage_state in ("available", "quarantined"):
+                elif metadata.storage_state in ("available", "quarantined"):
                     if destination.exists():
                         raise OSError("object recovery destination already exists")
                     _move_no_replace(candidate, destination)
-                    restored = _verified_reader(destination, digest, length)
+                    restored = _verified_stored_reader(state, record_connection, destination, metadata)
                     restored.close()
                 else:
                     raise OSError("object recovery state is invalid")
         except OSError:
             failure = _bounded(ObjectStoreProblem, "abandoned object staging cannot be reconciled")
+        finally:
+            if record_connection is not None:
+                record_connection.close()
         if failure is not None:
             raise failure
 
@@ -715,8 +1180,9 @@ class _LocalObjectStore:
         created_file = False
         destination: Path | None = None
         connection: CanonicalConnection | None = None
-        reader: io.FileIO | None = None
-        identity: tuple[int, int] | None = None
+        reader: Any | None = None
+        publication_guard: io.FileIO | None = None
+        publication_identity: tuple[int, int] | None = None
         remove_after_close = False
         quarantine_after_close = False
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
@@ -726,11 +1192,21 @@ class _LocalObjectStore:
                 staging: Path | None = None
                 digest = ""
                 length = 0
+                envelope: _EnvelopeMetadata | None = None
                 try:
-                    staging, digest, length = _stream_to_staging(source, staging_directory)
+                    staging, digest, length, envelope = _stream_to_staging(
+                        source,
+                        staging_directory,
+                        project_id=state.project_id,
+                        protection_profile=command.protection_profile,
+                        key_provider=state.key_provider,
+                        allow_plaintext_fixture=state.allow_plaintext_fixture,
+                    )
+                except ObjectStoreProblem as problem:
+                    staging_failure = _bounded(type(problem), str(problem))
                 except Exception:
                     staging_failure = _bounded(ObjectStoreProblem, "object source could not be staged")
-                if staging_failure is not None or staging is None:
+                if staging_failure is not None or staging is None or envelope is None:
                     raise staging_failure or _bounded(ObjectStoreProblem, "object source could not be staged")
                 if command.expected_sha256 is not None and digest != command.expected_sha256:
                     with suppress(OSError):
@@ -743,18 +1219,25 @@ class _LocalObjectStore:
                         [state.root, state.state, state.objects, state.temporary, staging_directory, *buckets]
                     ):
                         created_file = _publish(staging, destination)
-                        reader = _verified_reader(destination, digest, length)
+                        publication_guard = _open_read_locked(destination)
+                        guard_status = os.fstat(publication_guard.fileno())
+                        publication_identity = (guard_status.st_dev, guard_status.st_ino)
+                        if not _file_matches(destination, publication_guard.fileno(), publication_identity):
+                            raise ObjectCorrupt("object identity changed before metadata reservation")
                         connection = open_canonical_database(state.database, expected_project_id=state.project_id)
                         connection.execute("BEGIN IMMEDIATE")
                         existing = _metadata(connection, state.project_id, digest)
                         verified_at = max(command.created_at, _now())
                         if existing is None:
+                            if not created_file:
+                                raise ObjectConflict("object bytes exist without canonical encryption metadata")
                             connection.execute(
                                 """
                                 INSERT INTO object_records (
                                     object_sha256, project_id, byte_length, media_type, rights_status,
-                                    protection_profile, retention_class, storage_state, created_at, verified_at
-                                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'available', ?, ?)
+                                    protection_profile, retention_class, storage_state, created_at, verified_at,
+                                    envelope_version, key_version, wrapped_key, wrap_nonce, ciphertext_byte_length
+                                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'available', ?, ?, ?, ?, ?, ?, ?)
                                 """,
                                 (
                                     digest,
@@ -766,6 +1249,11 @@ class _LocalObjectStore:
                                     command.retention_class,
                                     command.created_at,
                                     verified_at,
+                                    envelope.envelope_version,
+                                    envelope.key_version,
+                                    envelope.wrapped_key,
+                                    envelope.wrap_nonce,
+                                    envelope.ciphertext_byte_length,
                                 ),
                             )
                         else:
@@ -787,45 +1275,75 @@ class _LocalObjectStore:
                                 raise ObjectConflict("object metadata conflicts with its content identity")
                             if existing.storage_state == "quarantined":
                                 raise ObjectCorrupt("quarantined object requires explicit repair")
-                            connection.execute(
-                                """
-                                UPDATE object_records
-                                   SET storage_state='available', verified_at=?
-                                 WHERE project_id=? AND object_sha256=?
-                                """,
-                                (verified_at, state.project_id, digest),
-                            )
+                            if existing.storage_state == "deleted":
+                                if not created_file:
+                                    raise ObjectCorrupt("deleted object has unexpected visible bytes")
+                                connection.execute(
+                                    """
+                                    UPDATE object_records
+                                       SET storage_state='available', verified_at=?,
+                                           envelope_version=?, key_version=?, wrapped_key=?,
+                                           wrap_nonce=?, ciphertext_byte_length=?
+                                     WHERE project_id=? AND object_sha256=?
+                                    """,
+                                    (
+                                        verified_at,
+                                        envelope.envelope_version,
+                                        envelope.key_version,
+                                        envelope.wrapped_key,
+                                        envelope.wrap_nonce,
+                                        envelope.ciphertext_byte_length,
+                                        state.project_id,
+                                        digest,
+                                    ),
+                                )
+                            elif existing.storage_state == "available":
+                                if created_file:
+                                    quarantine_after_close = True
+                                    raise ObjectCorrupt("available object bytes were unexpectedly absent")
+                                connection.execute(
+                                    """
+                                    UPDATE object_records SET verified_at=?
+                                     WHERE project_id=? AND object_sha256=?
+                                    """,
+                                    (verified_at, state.project_id, digest),
+                                )
+                            else:
+                                raise ObjectConflict("object storage state cannot be published")
                         result = _metadata(connection, state.project_id, digest)
                         if result is None:
                             raise ObjectStoreProblem("object metadata publication failed")
-                        identity = (os.fstat(reader.fileno()).st_dev, os.fstat(reader.fileno()).st_ino)
-                        if not _file_matches(destination, reader.fileno(), identity):
+                        reader = _verified_stored_reader(state, connection, destination, result)
+                        if not _held_reader_matches(destination, reader) or not _file_matches(
+                            destination,
+                            publication_guard.fileno(),
+                            publication_identity,
+                        ):
                             raise ObjectCorrupt("object identity changed before metadata publication")
                         connection.execute("COMMIT")
-                        if not _file_matches(destination, reader.fileno(), identity):
+                        if not _held_reader_matches(destination, reader) or not _file_matches(
+                            destination,
+                            publication_guard.fileno(),
+                            publication_identity,
+                        ):
                             quarantine_after_close = True
                             raise ObjectCorrupt("object identity changed during metadata publication")
                         return result
-                except ObjectStoreProblem:
+                except ObjectStoreProblem as problem:
                     if connection is not None and connection.in_transaction:
                         with suppress(sqlite3.Error, StorageProblem):
                             connection.execute("ROLLBACK")
                     publication_state, _result = _publication_state(state, digest, length, command)
                     if created_file and destination is not None and publication_state == "absent":
                         remove_after_close = True
-                    raise
+                    raise _bounded(type(problem), str(problem)) from None
                 except OSError, ProjectLifecycleProblem, sqlite3.Error, StorageProblem, ValueError:
                     if connection is not None and connection.in_transaction:
                         with suppress(sqlite3.Error, StorageProblem):
                             connection.execute("ROLLBACK")
                     publication_state, reconciled = _publication_state(state, digest, length, command)
                     if publication_state == "committed" and reconciled is not None:
-                        if (
-                            reader is not None
-                            and destination is not None
-                            and identity is not None
-                            and _file_matches(destination, reader.fileno(), identity)
-                        ):
+                        if reader is not None and destination is not None and _held_reader_matches(destination, reader):
                             return reconciled
                         quarantine_after_close = True
                         publication_failure = _bounded(
@@ -839,6 +1357,8 @@ class _LocalObjectStore:
                 finally:
                     if reader is not None:
                         reader.close()
+                    if publication_guard is not None:
+                        publication_guard.close()
                     if remove_after_close and destination is not None:
                         with suppress(OSError):
                             destination.unlink()
@@ -855,7 +1375,7 @@ class _LocalObjectStore:
         state = self._state()
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
             connection: CanonicalConnection | None = None
-            reader: io.FileIO | None = None
+            reader: Any | None = None
             failure: ObjectStoreProblem | None = None
             destination: Path | None = None
             buckets: tuple[Path, ...] = ()
@@ -876,7 +1396,7 @@ class _LocalObjectStore:
                     raise ObjectAccessDenied("object access is not authorized")
                 destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
                 with _stable_directories([state.root, state.objects, *buckets]):
-                    reader = _verified_reader(destination, digest, metadata.byte_length)
+                    reader = _verified_stored_reader(state, connection, destination, metadata)
                 updated = connection.execute(
                     """
                     UPDATE object_records SET verified_at=?
@@ -935,7 +1455,7 @@ class _LocalObjectStore:
                     return
                 destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
                 with _stable_directories([state.root, state.state, state.objects, state.temporary, staging, *buckets]):
-                    reader = _verified_reader(destination, digest, metadata.byte_length)
+                    reader = _verified_stored_reader(state, connection, destination, metadata)
                     reader.close()
                     moved = staging / f"delete-{_opaque_name(state.project_id, digest)}.partial"
                     _move_no_replace(destination, moved)
@@ -994,8 +1514,21 @@ class _LocalObjectStore:
                 raise failure
 
 
-def create_local_object_store(project_root: Path, project_id: str) -> ObjectStore:
+def create_local_object_store(
+    project_root: Path,
+    project_id: str,
+    *,
+    key_provider: ObjectMasterKeyProvider | None = None,
+    allow_plaintext_fixture: bool = False,
+) -> ObjectStore:
     """Create the project-local adapter behind the dependency-neutral port."""
+
+    if not isinstance(allow_plaintext_fixture, bool):
+        raise _bounded(ObjectStoreProblem, "plaintext fixture policy is invalid")
+    if key_provider is None and not allow_plaintext_fixture:
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    if key_provider is not None and not isinstance(key_provider, ObjectMasterKeyProvider):
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
 
     path_failure: ObjectStoreProblem | None = None
     try:
@@ -1017,26 +1550,29 @@ def create_local_object_store(project_root: Path, project_id: str) -> ObjectStor
             connection.close()
     if authority_failure is not None:
         raise authority_failure
+    store_state = _StoreState(
+        root=root,
+        state=state_directory,
+        objects=objects,
+        temporary=temporary,
+        database=database,
+        project_id=project_id,
+        key_provider=key_provider,
+        allow_plaintext_fixture=allow_plaintext_fixture,
+        lock=threading.RLock(),
+    )
     staging_failure: ObjectStoreProblem | None = None
     try:
         staging = _staging_directory(temporary)
         with _stable_directories([root, state_directory, objects, temporary, staging]):
-            _reconcile_staging(staging, objects, database, project_id)
-    except OSError, ProjectLifecycleProblem, ObjectStoreProblem:
+            _reconcile_staging(staging, store_state)
+    except ObjectStoreProblem as problem:
+        staging_failure = _bounded(type(problem), "object staging reconciliation failed")
+    except OSError, ProjectLifecycleProblem:
         staging_failure = _bounded(ObjectStoreProblem, "object staging reconciliation failed")
     if staging_failure is not None:
         raise staging_failure
-    return _LocalObjectStore(
-        _StoreState(
-            root=root,
-            state=state_directory,
-            objects=objects,
-            temporary=temporary,
-            database=database,
-            project_id=project_id,
-            lock=threading.RLock(),
-        )
-    )
+    return _LocalObjectStore(store_state)
 
 
 __all__ = ["create_local_object_store"]

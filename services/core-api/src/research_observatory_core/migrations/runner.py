@@ -22,7 +22,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.pool import StaticPool
 
 from research_observatory_core import storage
-from research_observatory_core.migrations.versions import v0002_schema_history
+from research_observatory_core.migrations.versions import v0002_schema_history, v0003_object_envelopes
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
 _FAILURE_DOCUMENT_TYPE = "research-observatory-sqlite-migration-failure"
@@ -73,8 +73,11 @@ def migration_framework_projection() -> dict[str, Any]:
     return {
         "backend": "alembic-1.18.5",
         "targetSchemaVersion": storage.DATABASE_SCHEMA_VERSION,
-        "supportedSourceSchemaVersions": [storage.PREVIOUS_DATABASE_SCHEMA_VERSION],
-        "revisions": list(_migration_ids(storage.PREVIOUS_DATABASE_SCHEMA_VERSION)),
+        "supportedSourceSchemaVersions": [
+            storage.OLDEST_DATABASE_SCHEMA_VERSION,
+            storage.PREVIOUS_DATABASE_SCHEMA_VERSION,
+        ],
+        "revisions": [v0002_schema_history.revision, v0003_object_envelopes.revision],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
     }
@@ -170,6 +173,10 @@ class _VerifiedBackup:
 
 
 _SUPPORTED_PROFILES = {
+    storage.OLDEST_DATABASE_SCHEMA_VERSION: (
+        storage.V1_PROFILE_SHA256,
+        storage.V1_SCHEMA_SHA256,
+    ),
     storage.PREVIOUS_DATABASE_SCHEMA_VERSION: (
         storage.PREVIOUS_PROFILE_SHA256,
         storage.PREVIOUS_SCHEMA_SHA256,
@@ -214,6 +221,8 @@ def _source_profile(connection: sqlite3.Connection, expected_project_id: str) ->
         application_id = int(connection.execute("PRAGMA application_id").fetchone()[0])
         schema_version = int(connection.execute("PRAGMA user_version").fetchone()[0])
         expected = _SUPPORTED_PROFILES.get(schema_version)
+        if expected is None:
+            raise MigrationProblem("migration-source-version-unsupported")
         metadata = connection.execute(
             """
             SELECT schema_version, database_profile, application_id, profile_sha256, schema_sha256
@@ -225,7 +234,7 @@ def _source_profile(connection: sqlite3.Connection, expected_project_id: str) ->
         quick_check = tuple(str(row[0]) for row in connection.execute("PRAGMA quick_check"))
         foreign_key_violations = tuple(connection.execute("PRAGMA foreign_key_check"))
         history_rows: tuple[tuple[Any, ...], ...] = ()
-        if schema_version == storage.DATABASE_SCHEMA_VERSION:
+        if schema_version >= storage.PREVIOUS_DATABASE_SCHEMA_VERSION:
             history_rows = tuple(
                 tuple(row)
                 for row in connection.execute(
@@ -239,8 +248,6 @@ def _source_profile(connection: sqlite3.Connection, expected_project_id: str) ->
             )
     except sqlite3.Error as error:
         raise MigrationProblem("migration-source-profile-invalid") from error
-    if expected is None:
-        raise MigrationProblem("migration-source-version-unsupported")
     profile_sha256, expected_schema_sha256 = expected
     if (
         application_id != storage.APPLICATION_ID
@@ -264,42 +271,73 @@ def _source_profile(connection: sqlite3.Connection, expected_project_id: str) ->
 
 
 def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], ...]) -> bool:
-    if schema_version == storage.PREVIOUS_DATABASE_SCHEMA_VERSION:
+    if schema_version == storage.OLDEST_DATABASE_SCHEMA_VERSION:
         return not rows
     if not rows:
-        return True  # Fresh initialization at the current schema has no applied migration.
-    if len(rows) != 1:
+        return True  # Fresh initialization at v2/v3 has no applied migration.
+    expected_rows: list[tuple[object, ...]] = []
+    if schema_version >= 2 and rows and rows[0][0] == v0002_schema_history.revision:
+        expected_rows.append(
+            (
+                v0002_schema_history.revision,
+                1,
+                2,
+                storage.V1_SCHEMA_SHA256,
+                storage.PREVIOUS_SCHEMA_SHA256,
+            )
+        )
+    if schema_version == 3:
+        expected_rows.append(
+            (
+                v0003_object_envelopes.revision,
+                2,
+                3,
+                storage.PREVIOUS_SCHEMA_SHA256,
+                storage.EXPECTED_SCHEMA_SHA256,
+            )
+        )
+    if len(rows) != len(expected_rows):
         return False
-    row = rows[0]
-    try:
-        storage._normalize_utc_millisecond(str(row[3]))
-    except storage.StorageProblem:
-        return False
-    return (
-        row[0] == v0002_schema_history.revision
-        and row[1] == v0002_schema_history.source_schema_version
-        and row[2] == v0002_schema_history.target_schema_version
-        and isinstance(row[4], str)
-        and len(row[4]) == 64
-        and all(character in "0123456789abcdef" for character in row[4])
-        and row[5] == storage.PREVIOUS_SCHEMA_SHA256
-        and row[6] == storage.EXPECTED_SCHEMA_SHA256
-        and row[7] == "alembic-1.18.5"
-    )
+    for row, expected in zip(rows, expected_rows, strict=True):
+        try:
+            storage._normalize_utc_millisecond(str(row[3]))
+        except storage.StorageProblem:
+            return False
+        if not (
+            row[0] == expected[0]
+            and row[1] == expected[1]
+            and row[2] == expected[2]
+            and isinstance(row[4], str)
+            and len(row[4]) == 64
+            and all(character in "0123456789abcdef" for character in row[4])
+            and row[5] == expected[3]
+            and row[6] == expected[4]
+            and row[7] == "alembic-1.18.5"
+        ):
+            return False
+    return True
 
 
 def _migration_ids(source_version: int) -> tuple[str, ...]:
     if source_version == storage.DATABASE_SCHEMA_VERSION:
         return ()
+    registry_valid = (
+        v0002_schema_history.down_revision is None
+        and v0002_schema_history.target_schema_version == storage.PREVIOUS_DATABASE_SCHEMA_VERSION
+        and v0002_schema_history.TARGET_SCHEMA_SHA256 == storage.PREVIOUS_SCHEMA_SHA256
+        and v0002_schema_history.TARGET_PROFILE_SHA256 == storage.PREVIOUS_PROFILE_SHA256
+        and v0003_object_envelopes.down_revision == v0002_schema_history.revision
+        and v0003_object_envelopes.source_schema_version == storage.PREVIOUS_DATABASE_SCHEMA_VERSION
+        and v0003_object_envelopes.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0003_object_envelopes.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0003_object_envelopes.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+    )
+    if not registry_valid:
+        raise MigrationProblem("migration-registry-invalid")
     if source_version == v0002_schema_history.source_schema_version:
-        if (
-            v0002_schema_history.down_revision is not None
-            or v0002_schema_history.target_schema_version != storage.DATABASE_SCHEMA_VERSION
-            or v0002_schema_history.TARGET_SCHEMA_SHA256 != storage.EXPECTED_SCHEMA_SHA256
-            or v0002_schema_history.TARGET_PROFILE_SHA256 != storage.EXPECTED_PROFILE_SHA256
-        ):
-            raise MigrationProblem("migration-registry-invalid")
-        return (v0002_schema_history.revision,)
+        return (v0002_schema_history.revision, v0003_object_envelopes.revision)
+    if source_version == v0003_object_envelopes.source_schema_version:
+        return (v0003_object_envelopes.revision,)
     raise MigrationProblem("migration-source-version-unsupported")
 
 
@@ -944,24 +982,39 @@ def _write_failure(verified: _VerifiedBackup, code: str) -> None:
         authority.close()
 
 
-def _run_v1_to_v2(
+def _run_migrations(
     sqlalchemy_connection: Connection,
     *,
+    source_schema_version: int,
     applied_at: str,
     backup_manifest_sha256: str,
 ) -> None:
     context = MigrationContext.configure(sqlalchemy_connection, opts={"transactional_ddl": False})
     operations = Operations(context)
-    v0002_schema_history.apply(
+    if source_schema_version == storage.OLDEST_DATABASE_SCHEMA_VERSION:
+        v0002_schema_history.apply(
+            operations,
+            {
+                "migration_id": v0002_schema_history.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.V1_SCHEMA_SHA256,
+                "target_schema_sha256": storage.PREVIOUS_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.PREVIOUS_SCHEMA_SHA256,
+                "targetProfileSha256": storage.PREVIOUS_PROFILE_SHA256,
+            },
+        )
+    v0003_object_envelopes.apply(
         operations,
         {
-            "migration_id": v0002_schema_history.revision,
+            "migration_id": v0003_object_envelopes.revision,
             "applied_at": applied_at,
             "backup_manifest_sha256": backup_manifest_sha256,
             "source_schema_sha256": storage.PREVIOUS_SCHEMA_SHA256,
             "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
             "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
             "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
+            "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
         },
     )
 
@@ -1012,8 +1065,9 @@ def migrate_database(path: Path, *, expected_project_id: str) -> MigrationResult
         backup_relative_path = _relative_to_project(database, verified_backup.database)
         manifest_relative_path = _relative_to_project(database, verified_backup.manifest)
         _assert_verified_backup(verified_backup)
-        _run_v1_to_v2(
+        _run_migrations(
             sqlalchemy_connection,
+            source_schema_version=source.schema_version,
             applied_at=started_at,
             backup_manifest_sha256=verified_backup.manifest_sha256,
         )

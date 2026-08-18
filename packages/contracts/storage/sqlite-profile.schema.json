@@ -27,9 +27,9 @@
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "research-observatory-sqlite-profile"},
     "profileId": {"const": "sqlite-wal-v1"},
-    "databaseSchemaVersion": {"const": 2},
+    "databaseSchemaVersion": {"const": 3},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "afd48fbe857de4172215e9cb61a0f6137e73edec685dcc116bedbb66eb519dda"},
+    "schemaFingerprintSha256": {"const": "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {

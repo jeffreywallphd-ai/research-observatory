@@ -20,7 +20,7 @@ class ObjectStoreContractTests(unittest.TestCase):
         self.schema = json.loads((contract_root / "object-store-profile.schema.json").read_text(encoding="utf-8"))
         self.validator = Draft202012Validator(self.schema)
 
-    def test_exact_profile_is_strict_and_declares_the_staged_encryption_boundary(self) -> None:
+    def test_exact_profile_is_strict_and_declares_the_encrypted_storage_boundary(self) -> None:
         self.assertEqual([], list(self.validator.iter_errors(self.profile)))
         self.assertEqual("project-only", self.profile["deduplicationScope"])
         self.assertEqual("verified-controlled-stream-no-path", self.profile["openMode"])
@@ -33,8 +33,10 @@ class ObjectStoreContractTests(unittest.TestCase):
             "document-link-requires-available-object",
             self.profile["referenceAvailability"],
         )
-        self.assertEqual("CAP-02.S03.T02", self.profile["encryptionBoundary"])
-        self.assertIn("not-release-qualified", self.profile["releaseQualification"])
+        self.assertEqual("secretstream-xchacha20poly1305-v1", self.profile["encryptionBoundary"])
+        self.assertEqual("explicit-test-only", self.profile["plaintextFixtureMode"])
+        self.assertEqual("forbidden", self.profile["plaintextTemporaryStorage"])
+        self.assertEqual("authenticated-encrypted-object-adapter", self.profile["releaseQualification"])
 
         changed = copy.deepcopy(self.profile)
         changed["deduplicationScope"] = "cross-project"

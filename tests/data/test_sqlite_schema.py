@@ -213,9 +213,10 @@ class SqliteSchemaTests(unittest.TestCase):
                 """
                 INSERT INTO object_records (
                     object_sha256, project_id, byte_length, media_type, rights_status,
-                    protection_profile, retention_class, storage_state, created_at, verified_at
-                ) VALUES (?, ?, 4096, 'application/pdf', 'allowed', 'encrypted-object-v1',
-                          'project-lifetime', 'available', ?, ?)
+                    protection_profile, retention_class, storage_state, created_at, verified_at,
+                    ciphertext_byte_length
+                ) VALUES (?, ?, 4096, 'application/pdf', 'allowed', 'plaintext-fixture-v1',
+                          'project-lifetime', 'available', ?, ?, 4096)
                 """,
                 (OBJECT_SHA256, PROJECT_ID, CREATED_AT, CREATED_AT),
             )
@@ -465,9 +466,10 @@ class SqliteSchemaTests(unittest.TestCase):
                 """
                 INSERT INTO object_records (
                     object_sha256, project_id, byte_length, media_type, rights_status,
-                    protection_profile, retention_class, storage_state, created_at
-                ) VALUES (?, ?, 1, 'application/pdf', 'allowed', 'encrypted-object-v1',
-                          'project-lifetime', 'pending', ?)
+                    protection_profile, retention_class, storage_state, created_at,
+                    ciphertext_byte_length
+                ) VALUES (?, ?, 1, 'application/pdf', 'allowed', 'plaintext-fixture-v1',
+                          'project-lifetime', 'pending', ?, 1)
                 """,
                 (OBJECT_SHA256, PROJECT_ID, CREATED_AT),
             )
