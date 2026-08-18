@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c0f12f9e3b695d3c81f90bce62f7df643a1142b8b3d2042ff8ed0003827d4751
+source_sha256: 00bd81a20b5ce3d5b863ce595f66c281c275fab54685a2e6a2bda247b971782d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1719,7 +1719,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Canonical local state is transactional, versioned, testable, and insulated from UI or model code.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1829,7 +1829,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights metadata.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -1837,7 +1837,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S03.T01 - Implement content-addressed object storage abstraction
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
