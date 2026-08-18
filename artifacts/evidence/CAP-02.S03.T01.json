@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S03.T01",
+  "commit": "d204efb89f2540f051d0168a90fa991729306fc3",
+  "baseCommit": "99cc2ee17b3ebf7aaf7fa459392e6f440fa27d10",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/adr/ADR-0015-use-project-scoped-opaque-content-addressed-object-storage.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/local-object-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/object-store-profile.schema.json",
+    "packages/contracts/storage/object-store-profile.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-02/CAP-02.S03.html",
+    "planning/review-site/CAP-02/index.html",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/object_store.py",
+    "tests/contracts/test_object_store_contract.py",
+    "tests/data/test_local_object_store.py",
+    "tests/foundation/test_architecture_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/architecture_check.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_local_object_store tests.data.test_sqlite_repositories tests.contracts.test_object_store_contract tests.foundation.test_architecture_check tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound tests.foundation.test_build_manifest.BuildManifestTests.test_schema_inventory_drift_is_rejected",
+      "exitCode": 0,
+      "result": "All 32 task-risk tests pass. Eleven direct object-store tests cover streaming, concurrent duplicate publication, cross-project separation, restart, metadata conflict, interruption, hash mismatch, rights denial, missing/tampered/hardlinked content, reference counting, deletion rollback, held-stream stability, and staging reconciliation. Repository, contract, architecture, packaging-contract, and schema-inventory controls remain passing."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S03.T01-quality.json; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 99cc2ee17b3ebf7aaf7fa459392e6f440fa27d10 --head d204efb89f2540f051d0168a90fa991729306fc3",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy pass for all 98 governed Python files. Architecture passes with the object store recognized only as a private data adapter, both concrete import forms denied outside the adapter/composition boundary, and the port dependency-neutral. ADR-0015 covers all 25 changed paths. Quality-report SHA-256: 4e42fe5ec233484a9bea9cc49ba443bacf0af3dc45b7522cabe1ae894496c9f5."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S03.T01-build-manifest.json; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+gd204efb passes with build-manifest SHA-256 d7d4fdbc0feddcb8d592337b554ae6062e1971e0ba225286779a13424e11931e. The exact new object-store profile schema is in the governed schema inventory. Task state, generated views, and patch hygiene pass."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar --report artifacts/tmp/core-sidecar-package.json; .venv\\Scripts\\pyi-archive_viewer.exe --recursive --list artifacts/tmp/core-sidecar/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe",
+      "exitCode": 0,
+      "result": "A fresh real PyInstaller 6.21.0 Python 3.14.6 onedir build passes its Pythonless configuration check. The exact report binds 661 files / 38,326,438 bytes, entrypoint SHA-256 49962f3795ffd41a0e08a905f2bd093aeb67506b547214ffafcdd8883ecc77a5, and report SHA-256 38872aabcf1ad8cd02a9adf87cc288301437eb4c48d1f75c650c1a1a65cc09dc. Recursive archive inspection finds both research_observatory_core.object_store and research_observatory_core.ports.object_store."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The dependency-neutral ObjectStore port accepts a binary stream and returns detached metadata or a controlled verified stream; neither the store nor stream exposes a filesystem path, raw SQLite connection, file name, or file descriptor.",
+        "Plaintext SHA-256 is immutable identity inside one project. The local adapter derives a different HMAC-SHA-256 physical name for each project, streams to an exclusive operation-scoped file, fsyncs, verifies stable single-link identity and exact bytes, then uses create-if-absent write-through publication before committing metadata.",
+        "Six concurrent identical puts and a restart produce one physical file and one metadata row. The same bytes in a second project retain the plaintext identity but use a different physical name; cross-project deduplication and equality exposure are absent.",
+        "Source interruption, caller hash mismatch, and invalid metadata leave no object row, published object, or partial staging file. Duplicate content with conflicting immutable metadata is rejected without changing the prior bytes or projection.",
+        "Open verifies full length/digest/identity before returning the held reader. On Windows, attempted write and unlink while that reader is live are denied. Missing, modified, or hardlinked content returns RO-CORE-OBJECT-CORRUPT before a byte is exposed and advances metadata to quarantined.",
+        "Reference counts are derived from immutable document revisions rather than a mutable counter. Two revisions referencing one object yield count 2 and deny deletion. Their repository transactions also produce two provenance and two outbox facts; an unreferenced byte put does not invent scholarly provenance."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Eleven direct tests cover success, concurrency, restart, rights, reference, corruption, hardlink, interruption, rollback, and controlled-stream boundaries. A forced SQLite failure after the object is moved for deletion rolls the file and metadata back exactly and exposes neither __cause__ nor __context__.",
+        "A hardlinked abandoned staging entry fails closed without mutating the outside alias. Denied and unknown rights states cannot be opened; allowed and not-applicable are the only readable states in the exact profile."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0015 and the strict Draft 2020-12 project-object-store-v1 profile bind content identity, project deduplication scope, opaque physical identity, atomic publication, canonical metadata/reference authority, rights, verified streaming, and the staged encryption handoff.",
+        "No SQLite migration is required: the approved version-2 object_records and immutable documents relations already provide the exact metadata and first reference authorities. T03 owns expansion of the reference graph rather than a premature schema counter.",
+        "The architecture guide explicitly marks plaintext-fixture-v1 as an intermediate unencrypted adapter that is not release-qualified. T02 must add authenticated streaming encryption/key metadata; T03 owns quotas, leases, garbage collection, cache eviction, and the slice performance benchmark.",
+        "The real frozen Core sidecar contains both the private adapter and dependency-neutral port, while architecture checks deny direct concrete-adapter imports outside the governed data/composition boundary. No UI or approved reference bytes changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk task changes local byte persistence, filesystem confinement, rights denial, SQLite metadata/reference integration, a protected port, architecture enforcement, and sidecar packaging. Verification therefore covers adversarial file identity, failure rollback, concurrent publication, restart, reference/provenance linkage, strict portable policy, dependency boundaries, all governed Python quality, clean build identity, and one real Pythonless package build.",
+    "deferred": "The complete data profile is intentionally deferred to CAP-02.S03 slice review under the Wave risk-based testing rule. Authenticated encryption/key-loss/tamper qualification belongs to T02; quotas/GC/cache behavior and representative throughput/open-latency budgets belong to T03; e2e-local, security-local, full affected profiles, and cross-capability qualification run at the appropriate slice/checkpoint/W1 exit reviews."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Perform a focused high-risk review of stream-before-use integrity, create-if-absent/write-through publication, file/directory identity and alias attacks, rollback/restart visibility, project-scoped physical identity, derived document reference counts/provenance, rights denial, port/concrete-adapter separation, strict profile truth, and exact frozen-package inclusion. Do not run broad profiles."
+  }
+}
