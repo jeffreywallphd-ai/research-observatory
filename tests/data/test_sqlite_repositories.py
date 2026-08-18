@@ -136,6 +136,51 @@ class SqliteRepositoryTests(unittest.TestCase):
         restarted.close(root=str(relocated_root), trace_id="c" * 32)
         self.assertFalse((relocated_root / ".locks" / "session.lock").exists())
 
+    def test_critical_lookup_and_idempotency_replay_use_governed_indexes(self) -> None:
+        with self.factory() as unit:
+            unit.aggregates.append(draft(1), event(0), expected_revision=None)
+            unit.commit()
+
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            latest_plan = connection.execute(
+                """
+                EXPLAIN QUERY PLAN
+                SELECT revisions.revision_id
+                FROM aggregate_revisions AS revisions
+                LEFT JOIN documents
+                  ON revisions.revision_id = documents.revision_id
+                 AND revisions.project_id = documents.project_id
+                WHERE revisions.aggregate_id = ? AND revisions.project_id = ?
+                ORDER BY revisions.revision DESC
+                LIMIT 1
+                """,
+                (draft(1).aggregate_id, PROJECT_ID),
+            ).fetchall()
+            replay_plan = connection.execute(
+                """
+                EXPLAIN QUERY PLAN
+                SELECT record_sha256, revision_id
+                FROM outbox_events
+                WHERE project_id = ? AND idempotency_key = ?
+                """,
+                (PROJECT_ID, event(0).idempotency_key),
+            ).fetchall()
+        finally:
+            connection.close()
+        latest_details = tuple(str(row[3]) for row in latest_plan)
+        replay_details = tuple(str(row[3]) for row in replay_plan)
+        self.assertTrue(
+            any(
+                "SEARCH revisions USING INDEX sqlite_autoindex_aggregate_revisions_2" in item for item in latest_details
+            ),
+            latest_details,
+        )
+        self.assertTrue(
+            any("SEARCH outbox_events USING INDEX sqlite_autoindex_outbox_events_2" in item for item in replay_details),
+            replay_details,
+        )
+
     def test_optimistic_conflict_and_not_found_are_bounded(self) -> None:
         with self.factory() as unit:
             aggregate = unit.aggregates.append(draft(1), event(0), expected_revision=None)
