@@ -3715,11 +3715,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-17T23:09:55+00:00'
-      updated_at: '2026-08-18T00:12:05+00:00'
+      updated_at: '2026-08-18T00:15:35+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Submitted backup-first forward migration framework at f26f548 with exact v1 fixture, verified
@@ -3751,16 +3751,16 @@ capabilities:
       review:
         reviewer: agent:curie
         result: changes-requested
-        reviewed_at: '2026-08-18T00:05:40+00:00'
-        notes: 'P1: Windows can add backup/manifest hardlinks after final nlink validation and before COMMIT; migration can
-          return success with mutable aliases. Establish durable authority that blocks new aliases through commit/return and
-          add post-final-validation and post-COMMIT regressions. All prior findings otherwise close.'
+        reviewed_at: '2026-08-18T00:15:35+00:00'
+        notes: 'P1: file ACL closes late link/write mutation, but parent FILE_DELETE_CHILD still permits post-return unlink/rename
+          of backup and manifest. Protect stable directory paths through commit/return, preserve failure publication, and
+          add final-window/post-return unlink/replace/substitution regressions.'
       base_sha: 7734063b43e34e7a71bd84d23711f903a2a7eaf4
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-18T00:05:40+00:00'
-        expires_at: '2026-08-18T08:05:40+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-18T00:15:35+00:00'
+        expires_at: '2026-08-18T08:15:35+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
