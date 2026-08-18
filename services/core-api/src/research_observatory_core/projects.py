@@ -740,7 +740,12 @@ class ProjectLifecycleService:
                     except OSError as rollback_error:
                         raise ProjectLifecycleProblem.rollback_failed() from rollback_error
                     raise error
-                return self._projection(path, manifest=manifest, profile=profile)
+                return self._projection(
+                    path,
+                    manifest=manifest,
+                    profile=profile,
+                    compatibility=compatibility,
+                )
 
     def close(self, *, root: str, trace_id: str) -> ProjectProjection:
         with self._mutex:
