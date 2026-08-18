@@ -48,3 +48,14 @@ verification, metadata-commit, cleanup, and cancellation recovery boundary are
 portable obligations rather than optional composition details. The profile also
 states that the unencrypted fixture adapter is explicitly test-only. It carries
 no operating-system path.
+
+The same profile fixes T03's categorized physical accounting and maintenance
+boundary. Deployment configuration supplies optional project and shared-cache
+soft/hard byte limits plus the mandatory local free-space reserve. Low disk or a
+hard project limit denies new object writes without denying verified reads or
+cleanup. Cleanup is always preceded by an attributable one-time preview lease;
+execution revalidates immutable references, active readers, file identity, size,
+link count, and category authority. Automatic canonical reclamation is limited to
+unreferenced `derived-rebuildable` objects. Durable and export-retained objects
+remain non-reclaimable, shared-cache authority requires an explicit root, and its
+layout remains owned by CAP-02.S05.

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8e05b9ae39c80f3e5c872a24331fa1b75daf179553e55458288b95fccad2338e
+source_sha256: bf68aa14b8c264e7054a51cb69ea5668ef34d3a2848d9942cffb26a10e7a5d1d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1867,15 +1867,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S03.T01.review-fix.json` at `747391f58b55e0205b43ae80887fd0e7136e68bf`
 - `artifacts/evidence/CAP-02.S03.T01.review-fix-2.json` at `971cef3edfe7a1af46c68b0891fa74db04b9a405`
 
-#### - [ ] CAP-02.S03.T02 - Add encryption-at-rest and key-version metadata
+#### - [x] CAP-02.S03.T02 - Add encryption-at-rest and key-version metadata
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S03.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / t02_security_review (`approved`)
 
 **Objective:** Authenticated encryption for protected objects, key identifiers, nonce handling, rotation-ready metadata, and unencrypted fixture mode for tests.
 
@@ -1897,16 +1897,17 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-02.S03.T02.json` at `4d55d5ed0345a6265d296f6d7d9a774804c6b2d6`
+- `artifacts/evidence/CAP-02.S03.T02.review-fix.json` at `5898fc634bcd0e6cf33915b81ea62670947f83e2`
 
 #### - [ ] CAP-02.S03.T03 - Implement storage accounting, quotas, garbage collection, and cache eviction
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S03.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Per-project and shared-cache usage metrics, soft/hard thresholds, orphan detection, preview, and safe cleanup.
 

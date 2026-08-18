@@ -109,6 +109,7 @@
     "tests/data/test_sqlite_migrations.py",
     "tests/data/test_sqlite_repositories.py",
     "tests/data/test_sqlite_schema.py",
+    "tests/data/test_storage_maintenance.py",
     "tests/security/test_install_trivy.py",
     "tests/security/test_security_check.py",
     "tests/service/test_core_api.py",

@@ -48,5 +48,27 @@
   "malformedEnvelopeFailure": "corrupt-quarantine",
   "wrappedKeyAuthenticationFailure": "key-unavailable-preserve",
   "keyUnavailableBehavior": "bounded-failure-preserve-for-recovery",
+  "accountingCategories": [
+    "canonical-metadata",
+    "durable-objects",
+    "derived-objects",
+    "orphaned-objects",
+    "indexes",
+    "project-cache",
+    "models",
+    "configuration",
+    "exports",
+    "operational",
+    "shared-cache"
+  ],
+  "quotaPolicy": "deployment-supplied-project-and-shared-cache-soft-hard-thresholds",
+  "lowDiskBehavior": "deny-new-object-writes-preserve-reads-and-cleanup",
+  "automaticCanonicalReclamation": "unreferenced-derived-rebuildable-only",
+  "garbageCollection": "preview-lease-revalidate-reference-reader-and-file-identity",
+  "cacheEviction": "exclusive-regular-rebuildable-files-only",
+  "orphanCleanup": "opaque-inventory-without-metadata-exclusive-file-only",
+  "cleanupAudit": "content-free-intent-and-completion-project-audit",
+  "cleanupRestart": "item-atomic-rescan-and-resume",
+  "sharedCacheAuthority": "optional-explicit-root-layout-deferred-to-cap-02-s05",
   "releaseQualification": "authenticated-encrypted-object-adapter"
 }
