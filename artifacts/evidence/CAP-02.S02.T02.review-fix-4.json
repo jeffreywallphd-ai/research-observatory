@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T02",
+  "commit": "f66606cf2f2d4f982f461747a847f1bcba699207",
+  "baseCommit": "bf3fb1e985effb83366465b1169365d736af6b0b",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S02.T02.review-fix-3.json",
+    "sha256": "08fa119533aed11ac8c9c6faeba5775070f982d67622b3582b5e73e525ac80df",
+    "reason": "The prior remediation protected both files and their attempt directory, but the attempt could move through its recovery-root parent. This record binds continuously held and persistent child-delete denial for the full recovery-owned hierarchy through the canonical state trust boundary."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S02.T02.review-fix-3.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "tests/data/test_sqlite_migrations.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.service.test_project_lifecycle tests.service.test_core_api tests.contracts.test_foundation_contracts tests.foundation.test_build_manifest",
+      "exitCode": 0,
+      "result": "All 77 risk-selected tests pass. The recovery test retains the prior 30-operation file matrix and additionally denies post-return rename of the attempt and migration-backups root, proves both returned files remain at exact paths, permits a future attempt directory, and reopens/checkpoints/quick-checks the migrated database."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy pass for 90 governed Python files; architecture passes for 13 areas, 12 modules, 5 stable interfaces, and 3 deployment profiles; 14 ADR entries validate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six focused packaging tests pass with one Windows-token-dependent symlink test skipped; the governed migration runtime remains present and Pythonless-loadable."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-package --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "The exact package passes: 661 files, 38,284,618 bytes, entrypoint SHA-256 b8694afd6602629d33890f5680496cd5affa17fd407bef75d79dd8b3b6b52582. Package-report SHA-256: 21fedf80b862490d0f6a4790a24bfe15f829f4ca0e56eb830527e8869bda0eae."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_core_sidecar_performance_check",
+      "exitCode": 0,
+      "result": "All eight strict authority tests pass; the changed package remains truthfully NONQUALIFYING at SHA-256 6428a92c14e6c685bfd819ab631cd396d8c597a26dd656efd61b9b545c3de363 pending S02 integration."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T02-review-fix-4-build-manifest.json",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+gf66606c passes. Build-manifest SHA-256: a8139c5214a25649f8ba020ec47fc3ceae49436468d25f76e898a7c1172ac14b."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bf3fb1e985effb83366465b1169365d736af6b0b --head f66606cf2f2d4f982f461747a847f1bcba699207; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "No UI/reference paths changed; backlog and generated views validate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The attempt, migration-backups root, and canonical state trust-boundary directories are each opened with stable READ_CONTROL/WRITE_DAC authority and no delete sharing while migration is active, then receive persistent DELETE_CHILD/WRITE_ATTRIBUTES/DELETE denial.",
+        "The directory ACE intentionally permits ADD_FILE and ADD_SUBDIRECTORY: rollback can publish an immutable failure record and a later migration can create a new attempt, while existing recovery entries cannot be removed, renamed, or substituted.",
+        "After return, moving either the attempt or migration-backups root is denied; both backup and manifest remain readable at their exact project-relative paths. A fresh SQLite connection, WAL checkpoint, and quick_check succeed under the state-boundary policy.",
+        "All prior staging cleanup, file mutation/path denial, compatible-content handoff, hardlink, and nine-step rollback/retry controls remain passing."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact independent attempt-directory move is denied after all held handles close, and recovery bytes remain at both returned paths.",
+        "Future recovery creation and ordinary migrated-database health remain functional, demonstrating the ancestor DACL is narrow rather than a blanket write denial.",
+        "All affected tests, quality/architecture/ADR checks, and the real package pass at the exact commit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The functional delta remains confined to the runner and direct Windows regression plus immutable planning/evidence transitions.",
+        "No schema, dependency, public API, UI/reference, security policy, or performance baseline changed.",
+        "Performance recalibration remains explicitly deferred to S02 integration after T03; the current fixture is not represented as qualified."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The incremental risk is ancestor path stability without blocking future recovery creation or database use. Checks directly cover attempt/root rename denial, returned-path retention, future child creation, post-policy SQLite checkpoint/integrity, and all previously accepted file/failure/rollback/package boundaries.",
+    "deferred": "No broad profile is justified for this two-file ancestor-authority correction. Full data/e2e-local, recovery lifecycle, package/security/performance recalibration, and cross-slice qualification remain at S02 integration and W1 exit.",
+    "performanceNote": "The strict authority retains NONQUALIFYING report SHA-256 6428a92c14e6c685bfd819ab631cd396d8c597a26dd656efd61b9b545c3de363; no authority field changed."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Replay post-return attempt and migration-backups root rename/substitution, confirm returned paths and bytes, future-attempt creation, and fresh database checkpoint/integrity. Retain prior findings as closed; focused review only."
+  }
+}
