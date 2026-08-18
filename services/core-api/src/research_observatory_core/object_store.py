@@ -19,6 +19,7 @@ from typing import Any, BinaryIO, cast
 
 from .ports.object_store import (
     ObjectAccessDenied,
+    ObjectBusy,
     ObjectConflict,
     ObjectCorrupt,
     ObjectIntegrityMismatch,
@@ -34,7 +35,13 @@ from .ports.object_store import (
     VerifiedObjectStream,
 )
 from .projects import ProjectLifecycleProblem, _stable_directories
-from .storage import MAX_SAFE_INTEGER, CanonicalConnection, StorageProblem, open_canonical_database
+from .storage import (
+    MAX_SAFE_INTEGER,
+    CanonicalConnection,
+    StorageProblem,
+    _open_thread_transferable_canonical_database,
+    open_canonical_database,
+)
 
 _CHUNK_BYTES = 1024 * 1024
 _MAX_SOURCE_CHUNK_BYTES = 4 * _CHUNK_BYTES
@@ -103,11 +110,15 @@ def _validate_sha256(value: str) -> str:
 def _validate_command(command: ObjectPutCommand) -> ObjectPutCommand:
     if not isinstance(command, ObjectPutCommand):
         raise _bounded(ObjectStoreProblem, "object metadata is invalid")
-    if _MEDIA_TYPE.fullmatch(command.media_type) is None or len(command.media_type) > 200:
+    if (
+        not isinstance(command.media_type, str)
+        or _MEDIA_TYPE.fullmatch(command.media_type) is None
+        or len(command.media_type) > 200
+    ):
         raise _bounded(ObjectStoreProblem, "object media type is invalid")
     if command.rights_status not in _RIGHTS:
         raise _bounded(ObjectStoreProblem, "object rights state is invalid")
-    if _IDENTIFIER.fullmatch(command.protection_profile) is None:
+    if not isinstance(command.protection_profile, str) or _IDENTIFIER.fullmatch(command.protection_profile) is None:
         raise _bounded(ObjectStoreProblem, "object protection profile is invalid")
     if command.retention_class not in _RETENTION:
         raise _bounded(ObjectStoreProblem, "object retention class is invalid")
@@ -238,6 +249,9 @@ def _verified_reader(path: Path, expected_sha256: str, expected_length: int) -> 
 @dataclass(slots=True)
 class _ReaderEntry:
     reader: io.FileIO
+    connection: CanonicalConnection
+    project_id: str
+    object_sha256: str
 
 
 class _ReaderRegistry:
@@ -245,13 +259,26 @@ class _ReaderRegistry:
         self._lock = threading.RLock()
         self._readers: dict[str, _ReaderEntry] = {}
 
-    def register(self, reader: io.FileIO) -> str:
+    def register(
+        self,
+        reader: io.FileIO,
+        connection: CanonicalConnection,
+        project_id: str,
+        object_sha256: str,
+    ) -> str:
         with self._lock:
             while True:
                 token = secrets.token_hex(32)
                 if token not in self._readers:
-                    self._readers[token] = _ReaderEntry(reader)
+                    self._readers[token] = _ReaderEntry(reader, connection, project_id, object_sha256)
                     return token
+
+    def in_use(self, project_id: str, object_sha256: str) -> bool:
+        with self._lock:
+            return any(
+                entry.project_id == project_id and entry.object_sha256 == object_sha256
+                for entry in self._readers.values()
+            )
 
     def read(self, token: str | None, size: int) -> bytes:
         with self._lock:
@@ -266,7 +293,16 @@ class _ReaderRegistry:
         with self._lock:
             entry = self._readers.pop(token, None)
         if entry is not None:
-            entry.reader.close()
+            try:
+                if entry.connection.in_transaction:
+                    entry.connection.execute("COMMIT")
+            except sqlite3.Error, StorageProblem:
+                if entry.connection.in_transaction:
+                    with suppress(sqlite3.Error, StorageProblem):
+                        entry.connection.execute("ROLLBACK")
+            finally:
+                entry.reader.close()
+                entry.connection.close()
 
 
 _READERS = _ReaderRegistry()
@@ -275,8 +311,14 @@ _READERS = _ReaderRegistry()
 class _VerifiedObjectStream:
     __slots__ = ("__token",)
 
-    def __init__(self, reader: io.FileIO) -> None:
-        self.__token: str | None = _READERS.register(reader)
+    def __init__(
+        self,
+        reader: io.FileIO,
+        connection: CanonicalConnection,
+        project_id: str,
+        object_sha256: str,
+    ) -> None:
+        self.__token: str | None = _READERS.register(reader, connection, project_id, object_sha256)
 
     def read(self, size: int = -1) -> bytes:
         if not isinstance(size, int) or size < -1:
@@ -380,6 +422,42 @@ def _metadata(connection: CanonicalConnection, project_id: str, object_sha256: s
     return None if row is None else _row_metadata(row)
 
 
+def _publication_state(
+    state: _StoreState,
+    digest: str,
+    length: int,
+    command: ObjectPutCommand,
+) -> tuple[str, StoredObject | None]:
+    connection: CanonicalConnection | None = None
+    try:
+        connection = open_canonical_database(state.database, expected_project_id=state.project_id)
+        result = _metadata(connection, state.project_id, digest)
+    except sqlite3.Error, StorageProblem:
+        return ("unknown", None)
+    finally:
+        if connection is not None:
+            connection.close()
+    if result is None:
+        return ("absent", None)
+    expected = (
+        length,
+        command.media_type,
+        command.rights_status,
+        command.protection_profile,
+        command.retention_class,
+        "available",
+    )
+    actual = (
+        result.byte_length,
+        result.media_type,
+        result.rights_status,
+        result.protection_profile,
+        result.retention_class,
+        result.storage_state,
+    )
+    return ("committed", result) if actual == expected else ("retained", result)
+
+
 def _mark_quarantined(state: _StoreState, object_sha256: str) -> None:
     connection: CanonicalConnection | None = None
     try:
@@ -401,6 +479,11 @@ def _mark_quarantined(state: _StoreState, object_sha256: str) -> None:
     finally:
         if connection is not None:
             connection.close()
+
+
+def _sqlite_busy(error: sqlite3.Error) -> bool:
+    code = getattr(error, "sqlite_errorcode", None)
+    return isinstance(code, int) and (code & 0xFF) in (sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED)
 
 
 def _stream_to_staging(source: BinaryIO, staging: Path) -> tuple[Path, str, int]:
@@ -515,7 +598,15 @@ def _move_no_replace(source: Path, destination: Path) -> None:
         raise ctypes.WinError(ctypes.get_last_error())
 
 
-def _cleanup_staging(directory: Path) -> None:
+_DELETE_STAGING = re.compile(r"^delete-([0-9a-f]{64})\.partial$")
+
+
+def _reconcile_staging(
+    directory: Path,
+    objects: Path,
+    database: Path,
+    project_id: str,
+) -> None:
     failure: ObjectStoreProblem | None = None
     try:
         candidates = tuple(directory.iterdir())
@@ -524,6 +615,28 @@ def _cleanup_staging(directory: Path) -> None:
         failure = _bounded(ObjectStoreProblem, "object staging inventory is unavailable")
     if failure is not None:
         raise failure
+    connection: CanonicalConnection | None = None
+    try:
+        connection = open_canonical_database(database, expected_project_id=project_id)
+        rows = tuple(
+            connection.execute(
+                """
+                SELECT object_sha256, byte_length, storage_state
+                  FROM object_records WHERE project_id=?
+                """,
+                (project_id,),
+            ).fetchall()
+        )
+    except sqlite3.Error, StorageProblem:
+        rows = ()
+        failure = _bounded(ObjectStoreProblem, "object staging metadata is unavailable")
+    finally:
+        if connection is not None:
+            connection.close()
+    if failure is not None:
+        raise failure
+
+    delete_rows = {_opaque_name(project_id, str(row[0])): (str(row[0]), int(row[1]), str(row[2])) for row in rows}
     for candidate in candidates:
         try:
             status = candidate.stat(follow_symlinks=False)
@@ -534,7 +647,30 @@ def _cleanup_staging(directory: Path) -> None:
                 and not _redirect(candidate)
             ):
                 raise OSError("unexpected object staging entry")
-            candidate.unlink()
+            match = _DELETE_STAGING.fullmatch(candidate.name)
+            if match is None:
+                candidate.unlink()
+                continue
+            row = delete_rows.get(match.group(1))
+            if row is None:
+                raise OSError("delete recovery metadata is unavailable")
+            digest, length, storage_state = row
+            destination, buckets = _object_path(objects, project_id, digest, create=False)
+            with _stable_directories([objects, *buckets]):
+                reader = _verified_reader(candidate, digest, length)
+                reader.close()
+                if storage_state == "deleted":
+                    if destination.exists():
+                        raise OSError("deleted object has conflicting bytes")
+                    candidate.unlink()
+                elif storage_state in ("available", "quarantined"):
+                    if destination.exists():
+                        raise OSError("object recovery destination already exists")
+                    _move_no_replace(candidate, destination)
+                    restored = _verified_reader(destination, digest, length)
+                    restored.close()
+                else:
+                    raise OSError("object recovery state is invalid")
         except OSError:
             failure = _bounded(ObjectStoreProblem, "abandoned object staging cannot be reconciled")
         if failure is not None:
@@ -579,6 +715,9 @@ class _LocalObjectStore:
         created_file = False
         destination: Path | None = None
         connection: CanonicalConnection | None = None
+        reader: io.FileIO | None = None
+        remove_after_close = False
+        quarantine_after_close = False
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
             staging_directory = _staging_directory(state.temporary)
             with _stable_directories([state.root, state.state, state.objects, state.temporary, staging_directory]):
@@ -604,7 +743,6 @@ class _LocalObjectStore:
                     ):
                         created_file = _publish(staging, destination)
                         reader = _verified_reader(destination, digest, length)
-                        reader.close()
                         connection = open_canonical_database(state.database, expected_project_id=state.project_id)
                         connection.execute("BEGIN IMMEDIATE")
                         existing = _metadata(connection, state.project_id, digest)
@@ -659,27 +797,42 @@ class _LocalObjectStore:
                         result = _metadata(connection, state.project_id, digest)
                         if result is None:
                             raise ObjectStoreProblem("object metadata publication failed")
+                        identity = (os.fstat(reader.fileno()).st_dev, os.fstat(reader.fileno()).st_ino)
+                        if not _file_matches(destination, reader.fileno(), identity):
+                            raise ObjectCorrupt("object identity changed before metadata publication")
                         connection.execute("COMMIT")
+                        if not _file_matches(destination, reader.fileno(), identity):
+                            quarantine_after_close = True
+                            raise ObjectCorrupt("object identity changed during metadata publication")
                         return result
                 except ObjectStoreProblem:
                     if connection is not None and connection.in_transaction:
                         with suppress(sqlite3.Error, StorageProblem):
                             connection.execute("ROLLBACK")
-                    if created_file and destination is not None:
-                        with suppress(OSError):
-                            destination.unlink()
+                    publication_state, _result = _publication_state(state, digest, length, command)
+                    if created_file and destination is not None and publication_state == "absent":
+                        remove_after_close = True
                     raise
                 except OSError, ProjectLifecycleProblem, sqlite3.Error, StorageProblem, ValueError:
                     if connection is not None and connection.in_transaction:
                         with suppress(sqlite3.Error, StorageProblem):
                             connection.execute("ROLLBACK")
-                    if created_file and destination is not None:
-                        with suppress(OSError):
-                            destination.unlink()
+                    publication_state, reconciled = _publication_state(state, digest, length, command)
+                    if publication_state == "committed" and reconciled is not None:
+                        return reconciled
+                    if created_file and destination is not None and publication_state == "absent":
+                        remove_after_close = True
                     publication_failure = _bounded(ObjectStoreProblem, "object publication failed")
                 finally:
+                    if reader is not None:
+                        reader.close()
+                    if remove_after_close and destination is not None:
+                        with suppress(OSError):
+                            destination.unlink()
                     if connection is not None:
                         connection.close()
+                    if quarantine_after_close:
+                        _mark_quarantined(state, digest)
                 if publication_failure is not None:
                     raise publication_failure
 
@@ -688,58 +841,62 @@ class _LocalObjectStore:
         _validate_purpose(purpose)
         state = self._state()
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
-            metadata = self.metadata(digest)
-            if metadata.storage_state == "quarantined":
-                raise _bounded(ObjectCorrupt, "object is quarantined")
-            if metadata.storage_state != "available":
-                raise _bounded(ObjectNotFound, "object is unavailable")
-            if metadata.rights_status not in _READABLE_RIGHTS:
-                raise _bounded(ObjectAccessDenied, "object access is not authorized")
-            path_failure: ObjectStoreProblem | None = None
+            connection: CanonicalConnection | None = None
+            reader: io.FileIO | None = None
+            failure: ObjectStoreProblem | None = None
             destination: Path | None = None
             buckets: tuple[Path, ...] = ()
             try:
+                connection = _open_thread_transferable_canonical_database(
+                    state.database,
+                    expected_project_id=state.project_id,
+                )
+                connection.execute("BEGIN IMMEDIATE")
+                metadata = _metadata(connection, state.project_id, digest)
+                if metadata is None:
+                    raise ObjectNotFound("object is unavailable")
+                if metadata.storage_state == "quarantined":
+                    raise ObjectCorrupt("object is quarantined")
+                if metadata.storage_state != "available":
+                    raise ObjectNotFound("object is unavailable")
+                if metadata.rights_status not in _READABLE_RIGHTS:
+                    raise ObjectAccessDenied("object access is not authorized")
                 destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
-            except OSError, ObjectStoreProblem:
-                _mark_quarantined(state, digest)
-                path_failure = _bounded(ObjectCorrupt, "object integrity verification failed")
-            if path_failure is not None or destination is None:
-                raise path_failure or _bounded(ObjectCorrupt, "object integrity verification failed")
-            integrity_failure: ObjectStoreProblem | None = None
-            reader: io.FileIO | None = None
-            try:
                 with _stable_directories([state.root, state.objects, *buckets]):
                     reader = _verified_reader(destination, digest, metadata.byte_length)
-            except OSError, ProjectLifecycleProblem:
-                _mark_quarantined(state, digest)
-                integrity_failure = _bounded(ObjectCorrupt, "object integrity verification failed")
-            if integrity_failure is not None or reader is None:
-                raise integrity_failure or _bounded(ObjectCorrupt, "object integrity verification failed")
-            connection: CanonicalConnection | None = None
-            state_failure: ObjectStoreProblem | None = None
-            try:
-                connection = open_canonical_database(state.database, expected_project_id=state.project_id)
-                connection.execute("BEGIN IMMEDIATE")
-                connection.execute(
+                updated = connection.execute(
                     """
                     UPDATE object_records SET verified_at=?
                      WHERE project_id=? AND object_sha256=? AND storage_state='available'
+                       AND rights_status IN ('allowed', 'not-applicable')
                     """,
                     (max(metadata.created_at, _now()), state.project_id, digest),
                 )
-                connection.execute("COMMIT")
+                if updated.rowcount != 1:
+                    raise ObjectAccessDenied("object access state changed")
+                stream = _VerifiedObjectStream(reader, connection, state.project_id, digest)
+                reader = None
+                connection = None
+                return stream
+            except ObjectStoreProblem as problem:
+                failure = _bounded(type(problem), str(problem))
+            except OSError, ProjectLifecycleProblem:
+                failure = _bounded(ObjectCorrupt, "object integrity verification failed")
             except sqlite3.Error, StorageProblem:
-                reader.close()
-                if connection is not None and connection.in_transaction:
-                    with suppress(sqlite3.Error, StorageProblem):
-                        connection.execute("ROLLBACK")
-                state_failure = _bounded(ObjectStoreProblem, "object verification state could not be recorded")
+                failure = _bounded(ObjectStoreProblem, "object verification state could not be recorded")
             finally:
+                if reader is not None:
+                    reader.close()
                 if connection is not None:
+                    if connection.in_transaction:
+                        with suppress(sqlite3.Error, StorageProblem):
+                            connection.execute("ROLLBACK")
                     connection.close()
-            if state_failure is not None:
-                raise state_failure
-            return _VerifiedObjectStream(reader)
+            if isinstance(failure, ObjectCorrupt):
+                _mark_quarantined(state, digest)
+            if failure is not None:
+                raise failure
+            raise _bounded(ObjectStoreProblem, "object verification failed")
 
     def delete(self, object_sha256: str) -> None:
         digest = _validate_sha256(object_sha256)
@@ -749,6 +906,8 @@ class _LocalObjectStore:
         destination: Path | None = None
         failure: ObjectStoreProblem | None = None
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
+            if _READERS.in_use(state.project_id, digest):
+                raise _bounded(ObjectBusy, "object is in active use; retry after the reader closes")
             staging = _staging_directory(state.temporary)
             try:
                 connection = open_canonical_database(state.database, expected_project_id=state.project_id)
@@ -765,7 +924,7 @@ class _LocalObjectStore:
                 with _stable_directories([state.root, state.state, state.objects, state.temporary, staging, *buckets]):
                     reader = _verified_reader(destination, digest, metadata.byte_length)
                     reader.close()
-                    moved = staging / f"delete-{secrets.token_hex(24)}.partial"
+                    moved = staging / f"delete-{_opaque_name(state.project_id, digest)}.partial"
                     _move_no_replace(destination, moved)
                     connection.execute(
                         """
@@ -795,7 +954,19 @@ class _LocalObjectStore:
                         _move_no_replace(moved, destination)
                 _mark_quarantined(state, digest)
                 failure = _bounded(ObjectCorrupt, "object delete verification failed")
-            except sqlite3.Error, StorageProblem:
+            except sqlite3.Error as error:
+                if connection is not None and connection.in_transaction:
+                    with suppress(sqlite3.Error, StorageProblem):
+                        connection.execute("ROLLBACK")
+                if moved is not None and destination is not None:
+                    with suppress(OSError):
+                        _move_no_replace(moved, destination)
+                failure = (
+                    _bounded(ObjectBusy, "object is busy; retry the delete")
+                    if _sqlite_busy(error)
+                    else _bounded(ObjectStoreProblem, "object delete failed")
+                )
+            except StorageProblem:
                 if connection is not None and connection.in_transaction:
                     with suppress(sqlite3.Error, StorageProblem):
                         connection.execute("ROLLBACK")
@@ -837,7 +1008,7 @@ def create_local_object_store(project_root: Path, project_id: str) -> ObjectStor
     try:
         staging = _staging_directory(temporary)
         with _stable_directories([root, state_directory, objects, temporary, staging]):
-            _cleanup_staging(staging)
+            _reconcile_staging(staging, objects, database, project_id)
     except OSError, ProjectLifecycleProblem, ObjectStoreProblem:
         staging_failure = _bounded(ObjectStoreProblem, "object staging reconciliation failed")
     if staging_failure is not None:

@@ -17,9 +17,11 @@ REPO = Path(__file__).resolve().parents[2]
 SERVICE_SRC = REPO / "services" / "core-api" / "src"
 sys.path.insert(0, str(SERVICE_SRC))
 
+from research_observatory_core import object_store as object_store_module  # noqa: E402
 from research_observatory_core.object_store import create_local_object_store  # noqa: E402
 from research_observatory_core.ports.object_store import (  # noqa: E402
     ObjectAccessDenied,
+    ObjectBusy,
     ObjectConflict,
     ObjectCorrupt,
     ObjectIntegrityMismatch,
@@ -31,6 +33,7 @@ from research_observatory_core.ports.object_store import (  # noqa: E402
 from research_observatory_core.ports.repositories import (  # noqa: E402
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
+    RepositoryConflict,
 )
 from research_observatory_core.repositories import create_sqlite_unit_of_work_factory  # noqa: E402
 from research_observatory_core.storage import (  # noqa: E402
@@ -193,6 +196,13 @@ class LocalObjectStoreTests(unittest.TestCase):
         self.assertEqual((), self.object_files())
         self.assertEqual((), tuple((self.project / ".tmp").rglob("*.partial")))
 
+    def test_hostile_non_string_command_fields_are_bounded(self) -> None:
+        for field in ("media_type", "protection_profile"):
+            with self.subTest(field=field), self.assertRaises(ObjectStoreProblem) as raised:
+                self.store.put(io.BytesIO(b"hostile metadata"), put_command(**{field: 123}))
+            self.assertIsNone(raised.exception.__cause__)
+            self.assertIsNone(raised.exception.__context__)
+
     def test_duplicate_metadata_conflict_preserves_original_bytes_and_projection(self) -> None:
         content = b"stable identity and meaning"
         original = self.store.put(io.BytesIO(content), put_command())
@@ -262,6 +272,42 @@ class LocalObjectStoreTests(unittest.TestCase):
         with self.store.open(referenced.object_sha256, purpose="document-analysis") as stream:
             self.assertEqual(content, stream.read())
 
+    def test_document_linkage_requires_currently_available_object_state(self) -> None:
+        factory = create_sqlite_unit_of_work_factory(self.database, PROJECT_ID)
+        for index, storage_state in enumerate(("deleted", "quarantined", "pending"), start=20):
+            stored = self.store.put(io.BytesIO(f"state-{storage_state}".encode()), put_command())
+            connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+            try:
+                connection.execute("BEGIN IMMEDIATE")
+                connection.execute(
+                    "UPDATE object_records SET storage_state=?, verified_at=NULL WHERE object_sha256=?",
+                    (storage_state, stored.object_sha256),
+                )
+                connection.execute("COMMIT")
+            finally:
+                connection.close()
+            with (
+                self.subTest(storage_state=storage_state),
+                factory() as unit,
+                self.assertRaises(RepositoryConflict),
+            ):
+                unit.aggregates.append(
+                    document_draft(index, stored.object_sha256),
+                    event(index),
+                    expected_revision=None,
+                )
+
+        available = self.store.put(io.BytesIO(b"available-document"), put_command())
+        with factory() as unit:
+            unit.aggregates.append(document_draft(30, available.object_sha256), event(30), expected_revision=None)
+            unit.commit()
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            for table in ("aggregate_revisions", "documents", "provenance_events", "outbox_events"):
+                self.assertEqual(1, connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
+        finally:
+            connection.close()
+
     def test_unreferenced_delete_is_durable_and_restart_cleans_abandoned_staging(self) -> None:
         stored = self.store.put(io.BytesIO(b"disposable derivative"), put_command())
         self.store.delete(stored.object_sha256)
@@ -276,6 +322,68 @@ class LocalObjectStoreTests(unittest.TestCase):
         abandoned.write_bytes(b"not published")
         create_local_object_store(self.project, PROJECT_ID)
         self.assertFalse(abandoned.exists())
+
+    def test_delete_crash_recovery_restores_before_commit_and_discards_after_commit(self) -> None:
+        precommit = self.store.put(io.BytesIO(b"precommit-delete-recovery"), put_command())
+        original_execute = CanonicalConnection.execute
+
+        def crash_before_update(connection: CanonicalConnection, sql: str, parameters: object = ()):
+            if "SET storage_state='deleted'" in sql:
+                raise KeyboardInterrupt("injected precommit process death")
+            return original_execute(connection, sql, parameters)
+
+        with patch.object(CanonicalConnection, "execute", crash_before_update), self.assertRaises(KeyboardInterrupt):
+            self.store.delete(precommit.object_sha256)
+        staged = tuple((self.project / ".tmp" / "object-store").glob("delete-*.partial"))
+        self.assertEqual(1, len(staged))
+        self.assertEqual((), self.object_files())
+        restarted = create_local_object_store(self.project, PROJECT_ID)
+        self.assertFalse(staged[0].exists())
+        with restarted.open(precommit.object_sha256, purpose="document-analysis") as stream:
+            self.assertEqual(b"precommit-delete-recovery", stream.read())
+
+        postcommit = restarted.put(io.BytesIO(b"postcommit-delete-recovery"), put_command())
+        crashed = False
+
+        def crash_after_commit(connection: CanonicalConnection, sql: str, parameters: object = ()):
+            nonlocal crashed
+            result = original_execute(connection, sql, parameters)
+            if sql.strip() == "COMMIT" and not crashed:
+                crashed = True
+                raise KeyboardInterrupt("injected postcommit process death")
+            return result
+
+        with patch.object(CanonicalConnection, "execute", crash_after_commit), self.assertRaises(KeyboardInterrupt):
+            restarted.delete(postcommit.object_sha256)
+        staged_after = tuple((self.project / ".tmp" / "object-store").glob("delete-*.partial"))
+        self.assertEqual(1, len(staged_after))
+        recovered = create_local_object_store(self.project, PROJECT_ID)
+        self.assertFalse(staged_after[0].exists())
+        self.assertEqual("deleted", recovered.metadata(postcommit.object_sha256).storage_state)
+        with self.assertRaises(ObjectNotFound):
+            recovered.open(postcommit.object_sha256, purpose="document-analysis")
+
+    def test_failed_delete_restore_retains_recovery_bytes_for_retry(self) -> None:
+        stored = self.store.put(io.BytesIO(b"restore-must-be-retryable"), put_command())
+        original_execute = CanonicalConnection.execute
+
+        def crash_before_update(connection: CanonicalConnection, sql: str, parameters: object = ()):
+            if "SET storage_state='deleted'" in sql:
+                raise KeyboardInterrupt("injected precommit process death")
+            return original_execute(connection, sql, parameters)
+
+        with patch.object(CanonicalConnection, "execute", crash_before_update), self.assertRaises(KeyboardInterrupt):
+            self.store.delete(stored.object_sha256)
+        staged = next((self.project / ".tmp" / "object-store").glob("delete-*.partial"))
+        with (
+            patch.object(object_store_module, "_move_no_replace", side_effect=OSError("injected restore failure")),
+            self.assertRaises(ObjectStoreProblem),
+        ):
+            create_local_object_store(self.project, PROJECT_ID)
+        self.assertTrue(staged.exists())
+        restarted = create_local_object_store(self.project, PROJECT_ID)
+        with restarted.open(stored.object_sha256, purpose="document-analysis") as stream:
+            self.assertEqual(b"restore-must-be-retryable", stream.read())
 
     def test_delete_database_failure_rolls_file_and_metadata_back(self) -> None:
         content = b"transactionally preserved"
@@ -301,6 +409,136 @@ class LocalObjectStoreTests(unittest.TestCase):
         self.assertEqual("available", self.store.metadata(stored.object_sha256).storage_state)
         with self.store.open(stored.object_sha256, purpose="document-analysis") as stream:
             self.assertEqual(content, stream.read())
+
+    def test_put_holds_verified_bytes_through_commit_and_reconciles_commit_ack_failure(self) -> None:
+        content = b"held-through-object-publication"
+        original_execute = CanonicalConnection.execute
+        mutation_attempted = False
+        mutation_denied = False
+        replacement_denied = False
+
+        def mutate_before_begin(connection: CanonicalConnection, sql: str, parameters: object = ()):
+            nonlocal mutation_attempted, mutation_denied, replacement_denied
+            if sql.strip() == "BEGIN IMMEDIATE" and not mutation_attempted and self.object_files():
+                mutation_attempted = True
+                try:
+                    self.object_files()[0].write_bytes(b"late substitution")
+                except PermissionError:
+                    mutation_denied = True
+                replacement = self.project.parent / "late-replacement.bin"
+                replacement.write_bytes(b"late replacement")
+                try:
+                    os.replace(replacement, self.object_files()[0])
+                except PermissionError:
+                    replacement_denied = True
+            return original_execute(connection, sql, parameters)
+
+        with patch.object(CanonicalConnection, "execute", mutate_before_begin):
+            held = self.store.put(io.BytesIO(content), put_command())
+        self.assertTrue(mutation_attempted)
+        self.assertTrue(mutation_denied)
+        if os.name == "nt":
+            self.assertTrue(replacement_denied)
+        with self.store.open(held.object_sha256, purpose="document-analysis") as stream:
+            self.assertEqual(content, stream.read())
+
+        acknowledged = False
+
+        def fail_after_real_commit(connection: CanonicalConnection, sql: str, parameters: object = ()):
+            nonlocal acknowledged
+            result = original_execute(connection, sql, parameters)
+            if sql.strip() == "COMMIT" and not acknowledged:
+                acknowledged = True
+                raise sqlite3.OperationalError("injected lost commit acknowledgement")
+            return result
+
+        committed_content = b"committed-before-acknowledgement-failure"
+        with patch.object(CanonicalConnection, "execute", fail_after_real_commit):
+            committed = self.store.put(io.BytesIO(committed_content), put_command())
+        self.assertEqual("available", committed.storage_state)
+        with self.store.open(committed.object_sha256, purpose="document-analysis") as stream:
+            self.assertEqual(committed_content, stream.read())
+
+        if hasattr(os, "link"):
+            alias = self.project.parent / "late-publication-link.bin"
+            linked = False
+
+            def link_during_commit(connection: CanonicalConnection, sql: str, parameters: object = ()):
+                nonlocal linked
+                if sql.strip() == "COMMIT" and not linked:
+                    linked = True
+                    target = next(
+                        path for path in self.object_files() if path.read_bytes() == b"late-hardlink-publication"
+                    )
+                    os.link(target, alias)
+                return original_execute(connection, sql, parameters)
+
+            with (
+                patch.object(CanonicalConnection, "execute", link_during_commit),
+                self.assertRaises(ObjectCorrupt),
+            ):
+                self.store.put(io.BytesIO(b"late-hardlink-publication"), put_command())
+            self.assertTrue(alias.exists())
+            hardlinked_digest = hashlib.sha256(b"late-hardlink-publication").hexdigest()
+            self.assertEqual("quarantined", self.store.metadata(hardlinked_digest).storage_state)
+
+    def test_open_serializes_rights_transition_and_delete_is_retryable_while_stream_active(self) -> None:
+        content = b"rights-and-reader-serialization"
+        stored = self.store.put(io.BytesIO(content), put_command())
+        with self.store.open(stored.object_sha256, purpose="document-analysis") as stream:
+            with self.assertRaises(ObjectBusy):
+                self.store.delete(stored.object_sha256)
+            self.assertEqual("available", self.store.metadata(stored.object_sha256).storage_state)
+            self.assertEqual(content, stream.read())
+        self.store.delete(stored.object_sha256)
+        self.assertEqual("deleted", self.store.metadata(stored.object_sha256).storage_state)
+
+        rights_content = b"rights-transition-private-content"
+        rights_object = self.store.put(io.BytesIO(rights_content), put_command())
+        verified = threading.Event()
+        continue_open = threading.Event()
+        writer_started = threading.Event()
+        writer_done = threading.Event()
+        original_verified_reader = object_store_module._verified_reader
+
+        def delayed_reader(path: Path, digest: str, length: int):
+            reader = original_verified_reader(path, digest, length)
+            if digest == rights_object.object_sha256:
+                verified.set()
+                self.assertTrue(continue_open.wait(5))
+            return reader
+
+        def deny_rights() -> None:
+            connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+            try:
+                writer_started.set()
+                connection.execute("BEGIN IMMEDIATE")
+                connection.execute(
+                    "UPDATE object_records SET rights_status='denied' WHERE object_sha256=?",
+                    (rights_object.object_sha256,),
+                )
+                connection.execute("COMMIT")
+            finally:
+                connection.close()
+                writer_done.set()
+
+        with (
+            patch.object(object_store_module, "_verified_reader", delayed_reader),
+            ThreadPoolExecutor(max_workers=2) as executor,
+        ):
+            opened = executor.submit(self.store.open, rights_object.object_sha256, purpose="document-analysis")
+            self.assertTrue(verified.wait(5))
+            changed = executor.submit(deny_rights)
+            self.assertTrue(writer_started.wait(5))
+            self.assertFalse(writer_done.wait(0.1))
+            continue_open.set()
+            stream = opened.result(timeout=5)
+            self.assertFalse(writer_done.wait(0.1))
+            self.assertEqual(rights_content, stream.read())
+            stream.close()
+            changed.result(timeout=5)
+        with self.assertRaises(ObjectAccessDenied):
+            self.store.open(rights_object.object_sha256, purpose="document-analysis")
 
     @unittest.skipUnless(hasattr(os, "link"), "hardlink support is unavailable")
     def test_hardlink_alias_is_treated_as_corruption_without_outside_mutation(self) -> None:
