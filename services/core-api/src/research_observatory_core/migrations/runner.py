@@ -160,12 +160,13 @@ class _VerifiedBackup:
     manifest_payload: dict[str, Any]
     database_authority: _HeldFileAuthority
     manifest_authority: _HeldFileAuthority
-    directory_authority: _HeldDirectoryAuthority
+    directory_authorities: tuple[_HeldDirectoryAuthority, ...]
 
     def close(self) -> None:
         self.manifest_authority.close()
         self.database_authority.close()
-        self.directory_authority.close()
+        for authority in self.directory_authorities:
+            authority.close()
 
 
 _SUPPORTED_PROFILES = {
@@ -768,7 +769,7 @@ def _create_verified_backup(
             )
             backup_authority: _HeldFileAuthority | None = None
             manifest_authority: _HeldFileAuthority | None = None
-            directory_authority: _HeldDirectoryAuthority | None = None
+            directory_authorities: list[_HeldDirectoryAuthority] = []
             target: sqlite3.Connection | None = None
             backup_source: sqlite3.Connection | None = None
             try:
@@ -872,7 +873,12 @@ def _create_verified_backup(
                 os.close(working_descriptor)
                 working_descriptor = -1
                 working.unlink()
-                directory_authority = _protect_recovery_directory(attempt)
+                # Anchor every recovery-owned entry up to the canonical state
+                # trust boundary. ADD_FILE/ADD_SUBDIRECTORY remain allowed, so
+                # later failure records and migration attempts can be created;
+                # DELETE_CHILD cannot invalidate already returned paths.
+                for protected_directory in (attempt, backup_root, database.parent):
+                    directory_authorities.append(_protect_recovery_directory(protected_directory))
                 verified = _VerifiedBackup(
                     directory=attempt,
                     database=backup,
@@ -882,12 +888,12 @@ def _create_verified_backup(
                     manifest_payload=manifest_payload,
                     database_authority=backup_authority,
                     manifest_authority=manifest_authority,
-                    directory_authority=directory_authority,
+                    directory_authorities=tuple(directory_authorities),
                 )
                 _assert_verified_backup(verified)
                 backup_authority = None
                 manifest_authority = None
-                directory_authority = None
+                directory_authorities = []
                 return verified
             except sqlite3.Error as error:
                 raise MigrationProblem("migration-backup-failed") from error
@@ -904,8 +910,8 @@ def _create_verified_backup(
                     manifest_authority.close()
                 if backup_authority is not None:
                     backup_authority.close()
-                if directory_authority is not None:
-                    directory_authority.close()
+                for authority in directory_authorities:
+                    authority.close()
 
 
 def _assert_verified_backup(verified: _VerifiedBackup) -> None:
