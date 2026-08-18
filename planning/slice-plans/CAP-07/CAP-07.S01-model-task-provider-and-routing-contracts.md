@@ -25,8 +25,8 @@ ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
 approval:
   status: approved
   approved_by: repository-owner
-  approved_at: '2026-08-14T01:32:27.653823+00:00'
-  approved_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
+  approved_at: '2026-08-18T11:35:36.198538+00:00'
+  approved_commit: c5bbd97c0cdc665eecb973f5862478ef7be97752
 ---
 # CAP-07.S01 — Model task, provider, and routing contracts
 

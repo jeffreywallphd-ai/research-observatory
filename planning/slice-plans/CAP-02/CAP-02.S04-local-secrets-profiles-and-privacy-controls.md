@@ -26,8 +26,8 @@ ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
 approval:
   status: approved
   approved_by: repository-owner
-  approved_at: '2026-08-14T01:32:27.653823+00:00'
-  approved_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
+  approved_at: '2026-08-18T11:35:36.198538+00:00'
+  approved_commit: c5bbd97c0cdc665eecb973f5862478ef7be97752
 ---
 # CAP-02.S04 - Local secrets, profiles, and privacy controls
 > **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-02.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-02 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.

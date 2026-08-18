@@ -8,7 +8,7 @@ capability_plan: planning/capability-plans/CAP-02.md
 planning_gate: capability-decision-complete
 slice_id: CAP-02.S03
 title: Encrypted local object and cache storage
-status: proposed
+status: approved
 wave: W1
 priority: P0
 deployment_profiles:
@@ -22,10 +22,10 @@ task_ids:
 - CAP-02.S03.T03
 ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
 approval:
-  status: pending
-  approved_by: null
-  approved_at: null
-  approved_commit: null
+  status: approved
+  approved_by: repository-owner
+  approved_at: '2026-08-18T11:35:36.198538+00:00'
+  approved_commit: c5bbd97c0cdc665eecb973f5862478ef7be97752
 ---
 # CAP-02.S03 - Encrypted local object and cache storage
 > **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-02.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-02 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.
