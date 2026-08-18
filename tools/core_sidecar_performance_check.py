@@ -16,16 +16,25 @@ import secrets
 import shutil
 import statistics
 import subprocess
+import sys
 import tempfile
 import threading
 import time
 import urllib.request
 from collections.abc import Callable, Iterator
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from pathlib import Path
 from typing import IO, Any
 
-from build_manifest import guarded_atomic_write_json, safe_output_path, windows_path_locks
+from build_manifest import (
+    destination_guard,
+    guarded_atomic_write_json,
+    held_file_renamer,
+    path_identity,
+    safe_output_path,
+    validate_directory_guard,
+    windows_path_locks,
+)
 from core_sidecar_build import SCHEMA_PATH, load_build_contract, verify_artifact
 
 REPETITIONS = 7
@@ -90,12 +99,17 @@ def percentile(values: list[float], probability: float) -> float:
 
 
 def distribution(values: list[float]) -> dict[str, Any]:
+    if len(values) != REPETITIONS or any(not math.isfinite(value) or value <= 0 for value in values):
+        raise ValueError(f"Core performance requires exactly {REPETITIONS} finite positive samples")
     return {
-        "samples": [round(value, 3) for value in values],
-        "minimum": round(min(values), 3),
-        "p50": round(statistics.median(values), 3),
-        "p95": round(percentile(values, 0.95), 3),
-        "maximum": round(max(values), 3),
+        # These values are qualification authority, not presentation-only
+        # summaries. Retain their raw binary-float values so threshold checks
+        # cannot admit a measurement that only rounds down to the boundary.
+        "samples": list(values),
+        "minimum": min(values),
+        "p50": statistics.median(values),
+        "p95": percentile(values, 0.95),
+        "maximum": max(values),
     }
 
 
@@ -366,6 +380,155 @@ def clean_measurement_state(repo: Path, baseline: dict[str, Any]) -> tuple[str, 
     if provenance["measurementToolPath"] != TOOL_PATH.as_posix() or provenance["measurementToolSha256"] != tool_hash:
         raise ValueError("The executing Core performance tool differs from the approved measurement tool")
     return commit, tool_hash
+
+
+def git_blob(repo: Path, commit: str, path: Path) -> bytes:
+    result = subprocess.run(
+        ["git", "show", f"{commit}:{path.as_posix()}"],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    if result.returncode:
+        raise ValueError(f"Core performance governed input is absent from {commit}: {path.as_posix()}")
+    return result.stdout
+
+
+def qualification_paths() -> tuple[Path, ...]:
+    return (
+        TOOL_PATH,
+        BASELINE_PATH,
+        BASELINE_HASH_PATH,
+        PACKAGE_EVIDENCE_PATH,
+        CONTRACT_PATH,
+        SCHEMA_PATH,
+    )
+
+
+def assert_qualification_inputs(repo: Path, snapshot: dict[str, Any]) -> None:
+    commit = str(snapshot["stateCommit"])
+    tool_hash = str(snapshot["toolSha256"])
+    if current_measurement_state(repo) != (commit, tool_hash):
+        raise ValueError("Core performance Git state changed during qualification")
+    captured = snapshot["trackedInputs"]
+    if not isinstance(captured, dict):
+        raise ValueError("Core performance captured-input authority is invalid")
+    for path, expected in captured.items():
+        if not isinstance(path, Path) or not isinstance(expected, bytes):
+            raise ValueError("Core performance captured-input authority is invalid")
+        current = exact_file(repo, path).read_bytes()
+        if current != expected or git_blob(repo, commit, path) != expected:
+            raise ValueError(f"Core performance governed input changed: {path.as_posix()}")
+    baseline, baseline_hash = load_baseline(repo)
+    if baseline != snapshot["baseline"] or baseline_hash != snapshot["baselineSha256"]:
+        raise ValueError("Core performance baseline changed during qualification")
+    artifact_root, manifest, identity, report_payload = load_verified_package(repo)
+    if (
+        artifact_root != snapshot["artifactRoot"]
+        or manifest != snapshot["manifest"]
+        or identity != snapshot["identity"]
+        or report_payload != snapshot["packageReportBytes"]
+    ):
+        raise ValueError("Core package identity changed during performance qualification")
+    contract = load_build_contract(repo)
+    schema, _schema_payload = load_json(exact_file(repo, SCHEMA_PATH))
+    assert_package_snapshot(artifact_root, manifest, contract, schema)
+
+
+@contextmanager
+def qualification_snapshot(repo: Path) -> Iterator[dict[str, Any]]:
+    """Hold every qualification authority through the final PASS replacement."""
+    canonical_tool = (repo / TOOL_PATH).resolve(strict=True)
+    if Path(__file__).resolve(strict=True) != canonical_tool:
+        raise ValueError("the executing Core performance tool is not the canonical repository tool")
+
+    # The first read discovers the exact package inventory. Everything is then
+    # locked and reread before it becomes qualification authority.
+    initial_root, initial_manifest, _initial_identity, _initial_report = load_verified_package(repo)
+    artifact_files = [initial_root / str(item["path"]) for item in initial_manifest["files"]]
+    governed_files = [repo / path for path in (*qualification_paths(), PACKAGE_REPORT_PATH)]
+    with windows_path_locks([*governed_files, *artifact_files], directories=False):
+        baseline, baseline_hash = load_baseline(repo)
+        artifact_root, manifest, identity, report_payload = load_verified_package(repo)
+        if artifact_root != initial_root:
+            raise ValueError("Core package root changed before qualification locking")
+        commit, tool_hash = clean_measurement_state(repo, baseline)
+        captured = {path: exact_file(repo, path).read_bytes() for path in qualification_paths()}
+        for path, payload in captured.items():
+            if git_blob(repo, commit, path) != payload:
+                raise ValueError(f"Core performance governed input differs from Git state: {path.as_posix()}")
+
+        package_guard = immutable_package_snapshot(repo, artifact_root, manifest)
+        package_guard.__enter__()
+        snapshot: dict[str, Any] = {
+            "stateCommit": commit,
+            "toolSha256": tool_hash,
+            "trackedInputs": captured,
+            "baseline": baseline,
+            "baselineSha256": baseline_hash,
+            "artifactRoot": artifact_root,
+            "manifest": manifest,
+            "identity": identity,
+            "packageReportBytes": report_payload,
+        }
+        try:
+            assert_qualification_inputs(repo, snapshot)
+            yield snapshot
+        except BaseException:
+            exception = sys.exc_info()
+            with suppress(BaseException):
+                package_guard.__exit__(*exception)
+            raise
+        else:
+            # After an atomic PASS replacement, cleanup must not create a new
+            # rejecting state. Handle/ACL cleanup is intentionally best effort.
+            with suppress(BaseException):
+                package_guard.__exit__(None, None, None)
+
+
+def guarded_final_publication(
+    repo: Path,
+    destination: Path,
+    value: Any,
+    allowed_root: Path,
+    before_replace: Callable[[], None],
+) -> None:
+    """Publish PASS with the atomic replacement as the last rejecting action."""
+    repo = repo.resolve(strict=True)
+    parent = destination.absolute().parent
+    relative_parent = parent.relative_to(repo)
+    directory_chain = [repo]
+    cursor = repo
+    for part in relative_parent.parts:
+        cursor /= part
+        directory_chain.append(cursor)
+    temporary: Path | None = None
+    replaced = False
+    encoded = (json.dumps(value, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    try:
+        with windows_path_locks(directory_chain, directories=True):
+            guard = destination_guard(repo, destination, allowed_root)
+            validate_directory_guard(guard)
+            with tempfile.NamedTemporaryFile(
+                mode="wb", dir=destination.parent, prefix=destination.name, delete=False
+            ) as handle:
+                temporary = Path(handle.name)
+                handle.write(encoded)
+                handle.flush()
+                os.fsync(handle.fileno())
+            temporary_identity = path_identity(temporary)
+            with held_file_renamer(temporary) as (replace_held, read_held):
+                validate_directory_guard(guard)
+                if path_identity(temporary) != temporary_identity or read_held() != encoded:
+                    raise ValueError("temporary Core qualification JSON changed before publication")
+                before_replace()
+                replace_held(destination)
+                replaced = True
+    except OSError, ValueError:
+        if not replaced and temporary is not None:
+            temporary.unlink(missing_ok=True)
+        raise
 
 
 def current_user_sid() -> str:
@@ -734,14 +897,29 @@ def assert_approved_package_identity(identity: dict[str, Any], baseline: dict[st
             raise ValueError(f"Core package {field} does not match the approved performance baseline")
 
 
-def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, Any] | None) -> dict[str, Any]:
+def measured_report(
+    repo: Path,
+    repetitions: int,
+    approved_baseline: dict[str, Any] | None,
+    qualification: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     if os.name != "nt" or platform.machine().lower() not in {"amd64", "x86_64"}:
         raise ValueError("Core performance qualification requires Windows x64")
     if repetitions != REPETITIONS:
         raise ValueError(f"Core performance qualification requires exactly {REPETITIONS} repetitions")
-    artifact_root, manifest, identity, report_payload = load_verified_package(repo)
+    if qualification is None:
+        artifact_root, manifest, identity, report_payload = load_verified_package(repo)
+    else:
+        artifact_root = qualification["artifactRoot"]
+        manifest = qualification["manifest"]
+        identity = qualification["identity"]
+        report_payload = qualification["packageReportBytes"]
     if approved_baseline is None:
         measurement_commit, measurement_tool_hash = current_measurement_state(repo)
+    elif qualification is not None:
+        assert_approved_package_identity(identity, approved_baseline)
+        measurement_commit = str(qualification["stateCommit"])
+        measurement_tool_hash = str(qualification["toolSha256"])
     else:
         assert_approved_package_identity(identity, approved_baseline)
         measurement_commit, measurement_tool_hash = clean_measurement_state(repo, approved_baseline)
@@ -762,12 +940,15 @@ def measured_report(repo: Path, repetitions: int, approved_baseline: dict[str, A
             guard()
             raw = benchmark_snapshot(executable, repetitions, guard)
             guard()
-    _root_after, manifest_after, identity_after, report_payload_after = load_verified_package(repo)
-    if report_payload_after != report_payload or manifest_after != manifest or identity_after != identity:
-        raise ValueError("Core package report or artifact changed during performance measurement")
-    state_after = current_measurement_state(repo)
-    if state_after != (measurement_commit, measurement_tool_hash):
-        raise ValueError("Core performance measurement Git state changed during execution")
+    if qualification is None:
+        _root_after, manifest_after, identity_after, report_payload_after = load_verified_package(repo)
+        if report_payload_after != report_payload or manifest_after != manifest or identity_after != identity:
+            raise ValueError("Core package report or artifact changed during performance measurement")
+        state_after = current_measurement_state(repo)
+        if state_after != (measurement_commit, measurement_tool_hash):
+            raise ValueError("Core performance measurement Git state changed during execution")
+    else:
+        assert_qualification_inputs(repo, qualification)
     return {
         "schemaVersion": "1.0",
         "documentType": "core-sidecar-performance-report",
@@ -857,11 +1038,14 @@ def evaluate(
     }
 
 
-def nonqualifying_report(error: str, *, measurement_only: bool = False) -> dict[str, Any]:
+def nonqualifying_report(
+    error: str, *, measurement_only: bool = False, qualification_phase: str = "COMPLETE"
+) -> dict[str, Any]:
     return {
         "schemaVersion": "1.0",
         "documentType": "core-sidecar-performance-nonqualification",
         "qualificationStatus": "NONQUALIFYING",
+        "qualificationPhase": qualification_phase,
         "measurementOnly": measurement_only,
         "ok": False,
         "errors": [error],
@@ -902,13 +1086,36 @@ def run(
             report = nonqualifying_report(str(exc))
         guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
         return report, 0 if report.get("proposalGenerated") is True else 1
+    tombstone = nonqualifying_report(
+        "Core performance qualification has not completed",
+        qualification_phase="IN_PROGRESS",
+    )
+    guarded_atomic_write_json(repo, destination, tombstone, repo / "artifacts" / "tmp")
     try:
-        baseline, baseline_hash = load_baseline(repo)
-        measured = measured_report(repo, REPETITIONS, baseline)
-        report = evaluate(measured, baseline, baseline_hash, git_head(repo))
+        with qualification_snapshot(repo) as qualification:
+            baseline = qualification["baseline"]
+            baseline_hash = str(qualification["baselineSha256"])
+            state_commit = str(qualification["stateCommit"])
+            measured = measured_report(repo, REPETITIONS, baseline, qualification)
+            report = evaluate(measured, baseline, baseline_hash, state_commit)
+            if report.get("ok") is True:
+                guarded_final_publication(
+                    repo,
+                    destination,
+                    report,
+                    repo / "artifacts" / "tmp",
+                    lambda: assert_qualification_inputs(repo, qualification),
+                )
+            else:
+                guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
     except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
         report = nonqualifying_report(str(exc))
-    guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+        try:
+            guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+        except (OSError, UnicodeError, ValueError, RuntimeError) as publication_exc:
+            report["errors"].append(
+                f"final nonqualifying report publication failed; the IN_PROGRESS tombstone remains: {publication_exc}"
+            )
     return report, 0 if report.get("ok") is True else 1
 
 

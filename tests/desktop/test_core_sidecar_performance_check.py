@@ -8,6 +8,7 @@ import tempfile
 import threading
 import time
 import unittest
+from contextlib import nullcontext
 from pathlib import Path
 from typing import Any
 from unittest import mock
@@ -179,6 +180,15 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
         evaluated = benchmark.evaluate(report, baseline, "9" * 64, "1" * 40)
         self.assertFalse(evaluated["ok"])
         self.assertFalse(evaluated["measurements"]["readinessMs"]["passes"])
+
+        precision_boundary = copy.deepcopy(report)
+        precision_baseline = copy.deepcopy(baseline)
+        precision_baseline["measurements"]["readinessMs"]["baselineP50"] = 1017.191
+        precision_boundary["rawMeasurements"]["readinessMs"]["p50"] = 1220.6294
+        precision = benchmark.evaluate(precision_boundary, precision_baseline, "9" * 64, "1" * 40)
+        self.assertFalse(precision["ok"])
+        self.assertFalse(precision["measurements"]["readinessMs"]["passes"])
+        self.assertGreater(1220.6294, 1017.191 * 1.2)
         for section, field in (("hardware", "processor"), ("fixture", "entrypointSha256")):
             with self.subTest(section=section):
                 changed = copy.deepcopy(report)
@@ -253,6 +263,100 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
             persisted = json.loads(destination.read_text(encoding="utf-8"))
             self.assertFalse(persisted["ok"])
             self.assertIn("baseline rejected", persisted["errors"][0])
+
+    def test_interruption_after_initial_invalidation_leaves_nonqualifying_tombstone(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT / "artifacts" / "tmp") as temporary:
+            destination = Path(temporary) / "performance.json"
+            destination.write_text('{"ok":true,"sentinel":"stale"}\n', encoding="utf-8")
+            with (
+                mock.patch.object(benchmark, "qualification_snapshot", side_effect=KeyboardInterrupt),
+                self.assertRaises(KeyboardInterrupt),
+            ):
+                benchmark.run(ROOT, destination)
+            persisted = json.loads(destination.read_text(encoding="utf-8"))
+            self.assertFalse(persisted["ok"])
+            self.assertEqual("NONQUALIFYING", persisted["qualificationStatus"])
+            self.assertEqual("IN_PROGRESS", persisted["qualificationPhase"])
+            self.assertNotIn("stale", persisted.values())
+
+    def test_late_state_change_is_rejected_before_pass_replacement(self) -> None:
+        qualification = {
+            "baseline": sample_baseline(),
+            "baselineSha256": "9" * 64,
+            "stateCommit": "1" * 40,
+        }
+        measured = {"measurement": True}
+        passing = {"ok": True, "sentinel": "candidate-pass"}
+
+        def publish(
+            _repo: Path,
+            _destination: Path,
+            _value: object,
+            _root: Path,
+            before_replace: Any,
+        ) -> None:
+            before_replace()
+            self.fail("PASS must not replace the tombstone after final state rejection")
+
+        with tempfile.TemporaryDirectory(dir=ROOT / "artifacts" / "tmp") as temporary:
+            destination = Path(temporary) / "performance.json"
+            destination.write_text('{"ok":true,"sentinel":"stale"}\n', encoding="utf-8")
+            with (
+                mock.patch.object(benchmark, "qualification_snapshot", return_value=nullcontext(qualification)),
+                mock.patch.object(benchmark, "measured_report", return_value=measured),
+                mock.patch.object(benchmark, "evaluate", return_value=passing),
+                mock.patch.object(
+                    benchmark,
+                    "assert_qualification_inputs",
+                    side_effect=ValueError("post-measure input changed"),
+                ),
+                mock.patch.object(benchmark, "guarded_final_publication", side_effect=publish),
+            ):
+                report, code = benchmark.run(ROOT, destination)
+            self.assertEqual(1, code)
+            self.assertFalse(report["ok"])
+            persisted = json.loads(destination.read_text(encoding="utf-8"))
+            self.assertFalse(persisted["ok"])
+            self.assertIn("post-measure input changed", persisted["errors"][0])
+
+    def test_persistent_pass_and_demotion_publication_failure_leaves_tombstone(self) -> None:
+        qualification = {
+            "baseline": sample_baseline(),
+            "baselineSha256": "9" * 64,
+            "stateCommit": "1" * 40,
+        }
+        original_writer = benchmark.guarded_atomic_write_json
+        generic_calls = 0
+
+        def generic_writer(repo: Path, destination: Path, value: object, root: Path) -> None:
+            nonlocal generic_calls
+            generic_calls += 1
+            if generic_calls == 1:
+                original_writer(repo, destination, value, root)
+                return
+            raise OSError("persistent demotion publication failure")
+
+        with tempfile.TemporaryDirectory(dir=ROOT / "artifacts" / "tmp") as temporary:
+            destination = Path(temporary) / "performance.json"
+            destination.write_text('{"ok":true,"sentinel":"stale"}\n', encoding="utf-8")
+            with (
+                mock.patch.object(benchmark, "qualification_snapshot", return_value=nullcontext(qualification)),
+                mock.patch.object(benchmark, "measured_report", return_value={"measurement": True}),
+                mock.patch.object(benchmark, "evaluate", return_value={"ok": True}),
+                mock.patch.object(
+                    benchmark,
+                    "guarded_final_publication",
+                    side_effect=OSError("persistent PASS publication failure"),
+                ),
+                mock.patch.object(benchmark, "guarded_atomic_write_json", side_effect=generic_writer),
+            ):
+                report, code = benchmark.run(ROOT, destination)
+            self.assertEqual(1, code)
+            self.assertFalse(report["ok"])
+            persisted = json.loads(destination.read_text(encoding="utf-8"))
+            self.assertFalse(persisted["ok"])
+            self.assertEqual("IN_PROGRESS", persisted["qualificationPhase"])
+            self.assertEqual(2, generic_calls)
 
     def test_proposal_retains_measurements_but_cannot_qualify(self) -> None:
         measured = {
