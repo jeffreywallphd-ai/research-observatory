@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 365379ec1e30db9d524f942dce46a5a5ac7ead82d2ffba82efc2aaf4dca73331
+source_sha256: aed6844b87408bb6223c0ce236ca4f2669e7d5d28c4b6ccf85f945a601f10058
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1829,7 +1829,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights metadata.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -1837,13 +1837,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S03.T01 - Implement content-addressed object storage abstraction
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S02.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:curie (`changes-requested`)
 
 **Objective:** Streaming put/get/delete, hashes, metadata, reference counting, atomic writes, and corruption detection.
 

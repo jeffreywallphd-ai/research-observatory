@@ -3865,7 +3865,7 @@ capabilities:
     - LAB
     depends_on:
     - CAP-02.S02.T01
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-02.S03.T01
       capability_id: CAP-02
@@ -3891,11 +3891,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T02:27:48+00:00'
-      updated_at: '2026-08-18T02:55:01+00:00'
+      updated_at: '2026-08-18T03:05:31+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Focused object-store, contract, architecture, quality, clean build, and real frozen-package evidence
@@ -3907,16 +3907,17 @@ capabilities:
         commit: e5ff3c8f54dd2e8a2bbc37e398d73ecddac45bf8
         recorded_at: '2026-08-18T02:54:50+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: agent:curie
+        result: changes-requested
+        reviewed_at: '2026-08-18T03:05:31+00:00'
+        notes: Delete crash recovery, put publication, reference availability, authorization race, active-reader retry semantics,
+          and hostile input typing require remediation.
       base_sha: 99cc2ee17b3ebf7aaf7fa459392e6f440fa27d10
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-18T02:27:48+00:00'
-        expires_at: '2026-08-18T10:27:48+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-18T03:05:31+00:00'
+        expires_at: '2026-08-18T11:05:31+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
