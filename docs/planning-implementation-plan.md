@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 943d2b2160edaea994538a3f14fe755f327e38a079bf02486c903982d5f191d4
+source_sha256: 53f0fe0267f37fbeb1ebb5055577a6e195578e3eb40a7087fe5cb182c5524520
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1793,15 +1793,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S02.T02.review-fix-3.json` at `bf3fb1e985effb83366465b1169365d736af6b0b`
 - `artifacts/evidence/CAP-02.S02.T02.review-fix-4.json` at `f66606cf2f2d4f982f461747a847f1bcba699207`
 
-#### - [ ] CAP-02.S02.T03 - Build typed repositories and transaction boundaries
+#### - [x] CAP-02.S02.T03 - Build typed repositories and transaction boundaries
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S02.T02`
 
-**Owner / review:** codex / agent:curie (`changes-requested`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** Repository interfaces for canonical aggregates plus unit-of-work patterns and deterministic test helpers.
 
