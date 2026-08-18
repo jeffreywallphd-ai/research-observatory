@@ -134,6 +134,11 @@ class LocalObjectStoreTests(unittest.TestCase):
         with restarted.open(expected, purpose="document-analysis") as stream:
             self.assertFalse(hasattr(stream, "name"))
             self.assertFalse(hasattr(stream, "fileno"))
+            if os.name == "nt":
+                with self.assertRaises(PermissionError):
+                    files[0].write_bytes(b"late mutation")
+                with self.assertRaises(PermissionError):
+                    files[0].unlink()
             self.assertEqual(content, stream.read())
         self.assertEqual(first, restarted.metadata(expected))
         self.assertFalse(hasattr(restarted, "root"))
