@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fc46c7b3a9923e66e2da5aade0686c957be2e0210dbb83ca80acac679adb8ec1
+source_sha256: dfe5a54cc3c15efd46c813b78fd8e2cbc6a5bc0eb9a346f00329fd8b941587ec
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1758,15 +1758,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S02.T01.review-fix-2.json` at `5e5541c81c4445bb3df77f32d4f11f8125c9a00b`
 - `artifacts/evidence/CAP-02.S02.T01.review-fix-3.json` at `74212e9cb79afe87ec5c09b3494a5353abc44034`
 
-#### - [ ] CAP-02.S02.T02 - Implement forward migrations and backup-before-migrate policy
+#### - [x] CAP-02.S02.T02 - Implement forward migrations and backup-before-migrate policy
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S02.T01`
 
-**Owner / review:** codex / agent:curie (`changes-requested`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** Ordered migration framework, schema history, dry-run/reporting, automatic pre-migration backup, and failure rollback.
 
@@ -1795,7 +1795,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S02.T03 - Build typed repositories and transaction boundaries
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
