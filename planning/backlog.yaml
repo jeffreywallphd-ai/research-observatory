@@ -3891,11 +3891,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T02:27:48+00:00'
-      updated_at: '2026-08-18T03:19:36+00:00'
+      updated_at: '2026-08-18T03:24:48+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Focused object-store, contract, architecture, quality, clean build, and real frozen-package evidence
@@ -3917,15 +3917,15 @@ capabilities:
       review:
         reviewer: agent:curie
         result: changes-requested
-        reviewed_at: '2026-08-18T03:05:31+00:00'
-        notes: Delete crash recovery, put publication, reference availability, authorization race, active-reader retry semantics,
-          and hostile input typing require remediation.
+        reviewed_at: '2026-08-18T03:24:48+00:00'
+        notes: Combined late-hardlink plus lost-COMMIT-acknowledgement reconciliation can return available without revalidating
+          the held single-link identity.
       base_sha: 99cc2ee17b3ebf7aaf7fa459392e6f440fa27d10
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-18T03:05:31+00:00'
-        expires_at: '2026-08-18T11:05:31+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-18T03:24:48+00:00'
+        expires_at: '2026-08-18T11:24:48+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
