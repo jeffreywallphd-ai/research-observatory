@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/storage/object-store-profile.schema.json",
+  "title": "Research Observatory object-store profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "profileId",
+    "contentIdentity",
+    "deduplicationScope",
+    "physicalIdentity",
+    "objectBytesLocation",
+    "metadataAuthority",
+    "referenceAuthority",
+    "atomicPublication",
+    "storageStates",
+    "retentionClasses",
+    "readableRightsStates",
+    "openMode",
+    "corruptionBehavior",
+    "encryptionBoundary",
+    "releaseQualification"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-object-store-profile"},
+    "profileId": {"const": "project-object-store-v1"},
+    "contentIdentity": {"const": "plaintext-sha256"},
+    "deduplicationScope": {"const": "project-only"},
+    "physicalIdentity": {"const": "hmac-sha256-project-identity"},
+    "objectBytesLocation": {"const": "project-objects-class"},
+    "metadataAuthority": {"const": "sqlite-object-records"},
+    "referenceAuthority": {"const": ["immutable-document-revisions"]},
+    "atomicPublication": {
+      "const": [
+        "exclusive-project-staging",
+        "stream-and-hash",
+        "fsync-complete-file",
+        "verify-identity-and-content",
+        "create-if-absent-publication",
+        "commit-metadata"
+      ]
+    },
+    "storageStates": {"const": ["pending", "available", "quarantined", "deleted"]},
+    "retentionClasses": {"const": ["project-lifetime", "derived-rebuildable", "export-retained"]},
+    "readableRightsStates": {"const": ["allowed", "not-applicable"]},
+    "openMode": {"const": "verified-controlled-stream-no-path"},
+    "corruptionBehavior": {"const": "deny-before-first-byte-and-quarantine"},
+    "encryptionBoundary": {"const": "CAP-02.S03.T02"},
+    "releaseQualification": {"const": "intermediate-unencrypted-adapter-not-release-qualified"}
+  }
+}

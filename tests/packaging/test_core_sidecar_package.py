@@ -49,6 +49,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 ],
                 "hiddenModules": [
                     "research_observatory_core.migrations.runner",
+                    "research_observatory_core.object_store",
                     "research_observatory_core.repositories",
                 ],
             },
@@ -166,6 +167,8 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "alembic.operations",
                 "research_observatory_core.migrations.runner",
                 "research_observatory_core.migrations.versions.v0002_schema_history",
+                "research_observatory_core.object_store",
+                "research_observatory_core.ports.object_store",
                 "research_observatory_core.ports.repositories",
                 "research_observatory_core.repositories",
                 "sqlalchemy.engine",

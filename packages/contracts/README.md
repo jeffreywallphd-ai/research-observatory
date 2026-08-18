@@ -40,3 +40,8 @@ schema identity, UUID/timestamp representation, scalar-only STRICT table
 inventory, connection controls, checkpoint authority, and integrity checks.
 The profile is not a SQL or filesystem API; only Core's governed storage
 adapter opens the project database.
+It also defines the `project-object-store-v1` policy: project-scoped plaintext
+content identity, opaque physical identity, complete-file publication,
+metadata/reference authority, verified controlled streams, rights states, and
+the explicit T01-to-T02 encryption handoff. The contract exposes no filesystem
+path or database handle.

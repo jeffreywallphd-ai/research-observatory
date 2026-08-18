@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-object-store-profile",
+  "profileId": "project-object-store-v1",
+  "contentIdentity": "plaintext-sha256",
+  "deduplicationScope": "project-only",
+  "physicalIdentity": "hmac-sha256-project-identity",
+  "objectBytesLocation": "project-objects-class",
+  "metadataAuthority": "sqlite-object-records",
+  "referenceAuthority": ["immutable-document-revisions"],
+  "atomicPublication": [
+    "exclusive-project-staging",
+    "stream-and-hash",
+    "fsync-complete-file",
+    "verify-identity-and-content",
+    "create-if-absent-publication",
+    "commit-metadata"
+  ],
+  "storageStates": ["pending", "available", "quarantined", "deleted"],
+  "retentionClasses": ["project-lifetime", "derived-rebuildable", "export-retained"],
+  "readableRightsStates": ["allowed", "not-applicable"],
+  "openMode": "verified-controlled-stream-no-path",
+  "corruptionBehavior": "deny-before-first-byte-and-quarantine",
+  "encryptionBoundary": "CAP-02.S03.T02",
+  "releaseQualification": "intermediate-unencrypted-adapter-not-release-qualified"
+}

@@ -104,3 +104,6 @@ contract boundary is documented in
 The versioned local SQLite identity, STRICT schema, connection, WAL, checkpoint,
 and integrity boundary is documented in
 [`local-sqlite-storage.md`](local-sqlite-storage.md) and governed by ADR-0014.
+The project-scoped content identity, opaque physical object name, atomic
+publication, verified-stream, rights, and staged-encryption boundary is documented
+in [`local-object-storage.md`](local-object-storage.md) and governed by ADR-0015.

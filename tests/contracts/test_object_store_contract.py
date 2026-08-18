@@ -1,0 +1,51 @@
+from __future__ import annotations
+
+import copy
+import importlib
+import json
+import sys
+import unittest
+from pathlib import Path
+
+from jsonschema import Draft202012Validator
+
+REPO = Path(__file__).resolve().parents[2]
+SERVICE_SRC = REPO / "services" / "core-api" / "src"
+
+
+class ObjectStoreContractTests(unittest.TestCase):
+    def setUp(self) -> None:
+        contract_root = REPO / "packages" / "contracts" / "storage"
+        self.profile = json.loads((contract_root / "object-store-profile.v1.json").read_text(encoding="utf-8"))
+        self.schema = json.loads((contract_root / "object-store-profile.schema.json").read_text(encoding="utf-8"))
+        self.validator = Draft202012Validator(self.schema)
+
+    def test_exact_profile_is_strict_and_declares_the_staged_encryption_boundary(self) -> None:
+        self.assertEqual([], list(self.validator.iter_errors(self.profile)))
+        self.assertEqual("project-only", self.profile["deduplicationScope"])
+        self.assertEqual("verified-controlled-stream-no-path", self.profile["openMode"])
+        self.assertEqual("CAP-02.S03.T02", self.profile["encryptionBoundary"])
+        self.assertIn("not-release-qualified", self.profile["releaseQualification"])
+
+        changed = copy.deepcopy(self.profile)
+        changed["deduplicationScope"] = "cross-project"
+        self.assertTrue(list(self.validator.iter_errors(changed)))
+        expanded = copy.deepcopy(self.profile)
+        expanded["filesystemPath"] = "objects/plaintext-hash"
+        self.assertTrue(list(self.validator.iter_errors(expanded)))
+
+    def test_port_import_is_dependency_neutral_and_exposes_no_adapter_factory(self) -> None:
+        sys.path.insert(0, str(SERVICE_SRC))
+        try:
+            before_sqlite = "sqlite3" in sys.modules
+            before_sqlalchemy = "sqlalchemy" in sys.modules
+            port = importlib.import_module("research_observatory_core.ports.object_store")
+            self.assertEqual(before_sqlite, "sqlite3" in sys.modules)
+            self.assertEqual(before_sqlalchemy, "sqlalchemy" in sys.modules)
+            self.assertFalse(hasattr(port, "create_local_object_store"))
+        finally:
+            sys.path.remove(str(SERVICE_SRC))
+
+
+if __name__ == "__main__":
+    unittest.main()

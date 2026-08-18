@@ -84,6 +84,22 @@ class ArchitectureContractTests(unittest.TestCase):
                 ),
                 "concrete repository adapter",
             ),
+            "object-store-module.py": (
+                (
+                    "import research_observatory_core.object_store as adapter\n"
+                    "def attack(root, project_id):\n"
+                    "    return adapter.create_local_object_store(root, project_id)\n"
+                ),
+                "concrete object-store adapter",
+            ),
+            "object-store-attribute.py": (
+                (
+                    "from research_observatory_core import object_store\n"
+                    "def attack(root, project_id):\n"
+                    "    return object_store.create_local_object_store(root, project_id)\n"
+                ),
+                "concrete object-store adapter",
+            ),
         }
         for name, (source, expected) in attacks.items():
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
