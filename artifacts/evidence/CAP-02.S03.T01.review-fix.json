@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S03.T01",
+  "commit": "747391f58b55e0205b43ae80887fd0e7136e68bf",
+  "baseCommit": "e5ff3c8f54dd2e8a2bbc37e398d73ecddac45bf8",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S03.T01.submission.json",
+    "reason": "Independent review reproduced delete-crash data loss, unstable put publication and commit ambiguity, references to unavailable objects, a rights-transition read bypass, false quarantine during active reads, and unbounded hostile metadata types. This manifest records the focused consistency remediation."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S03.T01.submission.json",
+    "docs/architecture/local-object-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/object-store-profile.schema.json",
+    "packages/contracts/storage/object-store-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/object_store.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/contracts/test_object_store_contract.py",
+    "tests/data/test_local_object_store.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_local_object_store tests.data.test_sqlite_repositories tests.data.test_sqlite_schema tests.contracts.test_object_store_contract tests.foundation.test_architecture_check",
+      "exitCode": 0,
+      "result": "All 45 task-risk tests pass. The focused regressions cover pre- and post-COMMIT delete crashes, failed restore retry, held put bytes, late write/replace/hardlink attempts, lost COMMIT acknowledgement, deleted/quarantined/pending document-link denial, rights-transition serialization, active-reader busy retry, and hostile non-string metadata."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S03.T01-review-fix-quality.json; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 99cc2ee17b3ebf7aaf7fa459392e6f440fa27d10 --head 747391f58b55e0205b43ae80887fd0e7136e68bf",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy pass for all 98 governed Python files. Architecture passes for the private object-store/repository adapters and dependency-neutral ports. Diff-aware ADR enforcement passes with 15 records and 27 changed paths. Quality-report SHA-256: 18bf2de2032ab9d7325c5919e63549d2e421b03f06e97a0719f158acd706ab01."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package; .venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "All six runnable focused packaging tests pass with one Windows-token symlink skip. A fresh real PyInstaller 6.21.0 / Python 3.14.6 package passes Pythonless verification and binds 661 files / 38,331,086 bytes, entrypoint SHA-256 c5d096701193023ba821cd2ac19cd0c313b4a2c657aa4daf49d060c4bd66f69a, and report SHA-256 c939eba7da16c69b928ab272020ffa5014424df86bc24872fd4e422217c82f57."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S03.T01-review-fix-build-manifest.json; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+g747391f passes with build-manifest SHA-256 ac1a9af863ebdc83405a6159967b08e2bba4158b753c225d7bf2cb9a87a800fc. The strict remediated object-store profile and schema are in the governed schema inventory; task state, generated views, and patch hygiene pass."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Put retains the exact verified, write/delete-denying file handle through definitive SQLite metadata publication. It validates single-link identity before and after COMMIT; a late hardlink advances the committed row to quarantined instead of returning available bytes, while write and replacement attempts are denied.",
+        "A COMMIT that succeeds but loses its acknowledgement is reconciled through a fresh canonical metadata read while the exact file remains held. Exact committed metadata returns the available projection and the new file is never removed; an absent row permits cleanup only after the held reader closes.",
+        "Delete stages bytes at a deterministic project-opaque recovery identity. Restart verifies and restores exact bytes when metadata remained available/quarantined, removes them only when deletion committed, and retains the recovery artifact when restore itself fails so a later restart can retry.",
+        "Open reserves current metadata before verification and transfers both the guarded SQLite transaction and exact verified reader into the controlled stream. Rights/state writers cannot overtake plaintext use; local active-reader deletion returns RO-CORE-OBJECT-BUSY without quarantining intact bytes.",
+        "The canonical repository transaction checks that a non-null document object reference is currently available before inserting any immutable revision, document, provenance, or outbox fact. Pending, quarantined, deleted, and missing objects fail atomically; an available object remains linkable."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Seventeen direct object-store tests now include the six independent-review attack classes alongside prior streaming, deduplication, project-scope, corruption, staging-alias, restart, reference-count, and rollback coverage.",
+        "The reserved metadata transaction serializes rights and storage-state transitions for the held stream. A real concurrent writer remains blocked through verification and reading, then commits after stream close; the next open denies access.",
+        "Both hostile integer media_type and protection_profile values produce bounded ObjectStoreProblem outcomes with no retained cause or context."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The strict project-object-store-v1 profile now machine-binds held-handle publication, COMMIT-ack reconciliation, delete crash recovery, reserved access serialization, active-reader retry, and available-only document linkage.",
+        "The architecture guide describes the exact pre-/post-COMMIT recovery protocol and the T01 bounded reader serialization seam while retaining T02 authenticated-encryption and T03 full lease/quota/GC ownership.",
+        "The real frozen Core package contains the remediated object-store, repository, storage, and port modules; no UI or approved UI-reference bytes changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The remediation changes destructive object deletion, filesystem/SQLite commit coupling, rights authorization, repository reference integrity, a low-level transferable guarded connection, strict portable policy, and frozen sidecar bytes. Verification therefore replays every prior finding, the adjacent late alias/state boundaries, all affected storage/schema/repository/architecture contracts, all governed Python quality, clean build identity, and one real Pythonless package build.",
+    "deferred": "The complete data profile remains deferred to CAP-02.S03 slice review under the Wave risk-based rule. Authenticated encryption/key loss/tamper belongs to T02; full leases, quotas, GC/cache and the representative performance benchmark belong to T03; complete affected/full qualification runs once at W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Re-review only the six prior findings and the incremental held-handle, restart-reconciliation, available-reference, cross-thread stream-close, busy-retry, strict-profile, and frozen-package boundaries. Do not run broad profiles."
+  }
+}
