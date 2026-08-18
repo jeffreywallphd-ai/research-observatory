@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6ff388719faf8fb3d82b89c3aa460ac9670364f41b41baf7053044c54ab1fd3d
+source_sha256: 8e05b9ae39c80f3e5c872a24331fa1b75daf179553e55458288b95fccad2338e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -257,7 +257,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W1 - Windows local runtime and durable core
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
 
 **Capability contributions:** `CAP-01`, `CAP-02`, `CAP-03`, `CAP-07`
 
@@ -1869,13 +1869,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S03.T02 - Add encryption-at-rest and key-version metadata
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S03.T01`
 
-**Owner / review:** codex / /root/t02_security_review (`changes-requested`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Authenticated encryption for protected objects, key identifiers, nonce handling, rotation-ready metadata, and unencrypted fixture mode for tests.
 

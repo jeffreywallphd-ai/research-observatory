@@ -128,23 +128,25 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
-    base_sha: 901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701
+    base_sha: a223a6fcd5730d4ed6d0081673e6192c6977e25c
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-18T11:20:50+00:00'
-    pause_reason: Governed replanning for CAP-02.S03.T02 copy-on-write encryption migration and tamper-classification recovery
-      contract.
-    pause_category: human-decision
-    lease: null
+    updated_at: '2026-08-18T11:38:28+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-18T11:38:28+00:00'
+      expires_at: '2026-08-19T11:38:28+00:00'
   checkpoints: []
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -3962,19 +3964,13 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile security-local
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T03:31:31+00:00'
-      updated_at: '2026-08-18T11:20:35+00:00'
+      updated_at: '2026-08-18T11:38:44+00:00'
       completed_at: null
-      blocker:
-        reason: Security review exposed an unresolved key-dependent v2-to-v3 object rewrite and recovery decision not specified
-          to implementation depth in the approved W1 packet.
-        next_action: Approve the amended W1 packet and accepted object-envelope migration ADR, resume W1, then reopen CAP-02.S03.T02
-          for remediation.
-        recorded_at: '2026-08-18T11:20:35+00:00'
-        owner: codex
+      blocker: null
       implementation_notes: Implemented authenticated encrypted object envelopes, versioned wrapped keys, schema-v3 recovery,
         explicit key-loss and fixture boundaries, supply-chain classification, performance remediation, and Windows package
         inclusion; full data/security-local profiles plus exact-final affected tests pass.
@@ -3985,21 +3981,21 @@ capabilities:
         commit: 4d55d5ed0345a6265d296f6d7d9a774804c6b2d6
         recorded_at: '2026-08-18T05:55:34+00:00'
       review:
-        reviewer: /root/t02_security_review
-        result: changes-requested
-        reviewed_at: '2026-08-18T11:12:30+00:00'
-        notes: 'P1: v2 plaintext objects are relabeled as plaintext fixtures by schema v3, remain unencrypted, are denied
-          by production open, and conflict on encrypted re-put; implement verified copy-on-write re-encryption with rollback,
-          restart, retry, missing-key, corrupt-source, and partial-upgrade tests. P2: evidence overclaims header and wrapped-key
-          tamper coverage and quarantine classification; add committed envelope-metadata adversarial tests and align evidence,
-          contracts, and documentation with the selected classification. Reviewed implementation 4d55d5ed0345a6265d296f6d7d9a774804c6b2d6;
-          25 focused checks passed.'
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: 'Reopened: Repository owner approved the amended W1 packet at c5bbd97c0cdc665eecb973f5862478ef7be97752; ADR-0016
+          is accepted and the Wave readiness gate passes.'
       base_sha: ba98e5c07f6c492ddf59432df4963e4be61e7631
-      lease: null
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-18T11:38:44+00:00'
+        expires_at: '2026-08-18T19:38:44+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      cancellation: null
     - id: CAP-02.S03.T03
       capability_id: CAP-02
       slice_id: CAP-02.S03
