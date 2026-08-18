@@ -3802,12 +3802,12 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T00:38:49+00:00'
-      updated_at: '2026-08-18T01:28:03+00:00'
-      completed_at: null
+      updated_at: '2026-08-18T01:31:40+00:00'
+      completed_at: '2026-08-18T01:31:40+00:00'
       blocker: null
       implementation_notes: 'Implementation 83d6b23; focused evidence dbb2f49d; ready for independent repository/UoW review.
 
@@ -3832,15 +3832,12 @@ capabilities:
         recorded_at: '2026-08-18T01:27:24+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-18T01:21:25+00:00'
-        notes: 'P1: package-style/aliased storage and repositories imports bypass the no-SQL boundary; bounded adapter errors
-          retain raw StorageProblem/sqlite failures in __context__.'
+        result: approved
+        reviewed_at: '2026-08-18T01:31:40+00:00'
+        notes: 'Approved focused remediation at 7eefe2f: package-style adapter imports deny; bounded errors retain no cause/context;
+          idempotency, rollback/retry, ADR, package, build, and exact evidence verify.'
       base_sha: 6a177be5774f6b252978ee617a1a6a815a92f9bd
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-18T01:21:25+00:00'
-        expires_at: '2026-08-18T09:21:25+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
