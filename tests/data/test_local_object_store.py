@@ -107,7 +107,7 @@ class LocalObjectStoreTests(unittest.TestCase):
             (self.project / relative).mkdir(parents=True, mode=0o700)
         self.database = self.project / "state" / "project.sqlite3"
         initialize_database(self.database, project_id=PROJECT_ID, project_created_at=CREATED_AT)
-        self.store = create_local_object_store(self.project, PROJECT_ID)
+        self.store = create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)
 
     def tearDown(self) -> None:
         self.temporary.cleanup()
@@ -133,7 +133,7 @@ class LocalObjectStoreTests(unittest.TestCase):
         self.assertNotIn(expected, relative.parts)
         self.assertEqual(64 + len(".blob"), len(relative.name))
 
-        restarted = create_local_object_store(self.project, PROJECT_ID)
+        restarted = create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)
         with restarted.open(expected, purpose="document-analysis") as stream:
             self.assertFalse(hasattr(stream, "name"))
             self.assertFalse(hasattr(stream, "fileno"))
@@ -168,7 +168,7 @@ class LocalObjectStoreTests(unittest.TestCase):
             project_id=SECOND_PROJECT_ID,
             project_created_at=CREATED_AT,
         )
-        second_store = create_local_object_store(second, SECOND_PROJECT_ID)
+        second_store = create_local_object_store(second, SECOND_PROJECT_ID, allow_plaintext_fixture=True)
         second_stored = second_store.put(io.BytesIO(content), put_command())
         self.assertEqual(digests[0], second_stored.object_sha256)
         first_name = self.object_files()[0].name
@@ -320,7 +320,7 @@ class LocalObjectStoreTests(unittest.TestCase):
         abandoned = self.project / ".tmp" / "object-store" / "abandoned.partial"
         abandoned.parent.mkdir(parents=True, exist_ok=True)
         abandoned.write_bytes(b"not published")
-        create_local_object_store(self.project, PROJECT_ID)
+        create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)
         self.assertFalse(abandoned.exists())
 
     def test_delete_crash_recovery_restores_before_commit_and_discards_after_commit(self) -> None:
@@ -337,7 +337,7 @@ class LocalObjectStoreTests(unittest.TestCase):
         staged = tuple((self.project / ".tmp" / "object-store").glob("delete-*.partial"))
         self.assertEqual(1, len(staged))
         self.assertEqual((), self.object_files())
-        restarted = create_local_object_store(self.project, PROJECT_ID)
+        restarted = create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)
         self.assertFalse(staged[0].exists())
         with restarted.open(precommit.object_sha256, purpose="document-analysis") as stream:
             self.assertEqual(b"precommit-delete-recovery", stream.read())
@@ -357,7 +357,7 @@ class LocalObjectStoreTests(unittest.TestCase):
             restarted.delete(postcommit.object_sha256)
         staged_after = tuple((self.project / ".tmp" / "object-store").glob("delete-*.partial"))
         self.assertEqual(1, len(staged_after))
-        recovered = create_local_object_store(self.project, PROJECT_ID)
+        recovered = create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)
         self.assertFalse(staged_after[0].exists())
         self.assertEqual("deleted", recovered.metadata(postcommit.object_sha256).storage_state)
         with self.assertRaises(ObjectNotFound):
@@ -379,9 +379,9 @@ class LocalObjectStoreTests(unittest.TestCase):
             patch.object(object_store_module, "_move_no_replace", side_effect=OSError("injected restore failure")),
             self.assertRaises(ObjectStoreProblem),
         ):
-            create_local_object_store(self.project, PROJECT_ID)
+            create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)
         self.assertTrue(staged.exists())
-        restarted = create_local_object_store(self.project, PROJECT_ID)
+        restarted = create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)
         with restarted.open(stored.object_sha256, purpose="document-analysis") as stream:
             self.assertEqual(b"restore-must-be-retryable", stream.read())
 
@@ -587,7 +587,7 @@ class LocalObjectStoreTests(unittest.TestCase):
         before = outside.read_bytes()
 
         with self.assertRaises(ObjectStoreProblem):
-            create_local_object_store(self.project, PROJECT_ID)
+            create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)
 
         self.assertEqual(before, outside.read_bytes())
         self.assertTrue(hostile.exists())

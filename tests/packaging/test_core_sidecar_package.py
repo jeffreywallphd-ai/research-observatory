@@ -55,6 +55,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
             },
         )
         self.assertIn("alembic", contract["requiredModules"])
+        self.assertIn("nacl", contract["requiredModules"])
         self.assertIn("sqlalchemy", contract["requiredModules"])
         self.assertEqual(contract["componentVersion"], "0.1.0")
 

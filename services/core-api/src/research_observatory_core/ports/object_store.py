@@ -47,6 +47,10 @@ class ObjectBusy(ObjectStoreProblem):
     code = "RO-CORE-OBJECT-BUSY"
 
 
+class ObjectKeyUnavailable(ObjectStoreProblem):
+    code = "RO-CORE-OBJECT-KEY-UNAVAILABLE"
+
+
 @dataclass(frozen=True, slots=True)
 class ObjectPutCommand:
     """Caller-owned metadata for one immutable plaintext content identity."""
@@ -73,6 +77,9 @@ class StoredObject:
     created_at: str
     verified_at: str | None
     reference_count: int
+    envelope_version: str
+    key_version: str | None
+    ciphertext_byte_length: int
 
 
 @runtime_checkable
@@ -105,6 +112,7 @@ __all__ = [
     "ObjectConflict",
     "ObjectCorrupt",
     "ObjectIntegrityMismatch",
+    "ObjectKeyUnavailable",
     "ObjectNotFound",
     "ObjectPutCommand",
     "ObjectReferenced",

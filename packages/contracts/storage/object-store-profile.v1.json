@@ -10,9 +10,9 @@
   "referenceAuthority": ["immutable-document-revisions"],
   "atomicPublication": [
     "exclusive-project-staging",
-    "stream-and-hash",
+    "stream-encrypt-and-hash-plaintext",
     "fsync-complete-file",
-    "verify-identity-and-content",
+    "verify-identity-authentication-and-content",
     "create-if-absent-publication",
     "retain-verified-handle-through-commit",
     "reconcile-commit-acknowledgement",
@@ -27,6 +27,11 @@
   "readableRightsStates": ["allowed", "not-applicable"],
   "openMode": "verified-controlled-stream-no-path",
   "corruptionBehavior": "deny-before-first-byte-and-quarantine",
-  "encryptionBoundary": "CAP-02.S03.T02",
-  "releaseQualification": "intermediate-unencrypted-adapter-not-release-qualified"
+  "encryptionBoundary": "secretstream-xchacha20poly1305-v1",
+  "dataKeyProfile": "random-256-bit-key-per-object",
+  "keyWrapping": "xchacha20poly1305-ietf-versioned-project-master-key",
+  "plaintextTemporaryStorage": "forbidden",
+  "plaintextFixtureMode": "explicit-test-only",
+  "keyUnavailableBehavior": "bounded-failure-preserve-for-recovery",
+  "releaseQualification": "authenticated-encrypted-object-adapter"
 }

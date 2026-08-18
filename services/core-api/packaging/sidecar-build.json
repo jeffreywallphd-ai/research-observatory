@@ -30,6 +30,7 @@
   "requiredModules": [
     "alembic",
     "fastapi",
+    "nacl",
     "pydantic",
     "pydantic_settings",
     "research_observatory_core",

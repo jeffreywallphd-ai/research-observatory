@@ -25,6 +25,11 @@
     "openMode",
     "corruptionBehavior",
     "encryptionBoundary",
+    "dataKeyProfile",
+    "keyWrapping",
+    "plaintextTemporaryStorage",
+    "plaintextFixtureMode",
+    "keyUnavailableBehavior",
     "releaseQualification"
   ],
   "properties": {
@@ -40,9 +45,9 @@
     "atomicPublication": {
       "const": [
         "exclusive-project-staging",
-        "stream-and-hash",
+        "stream-encrypt-and-hash-plaintext",
         "fsync-complete-file",
-        "verify-identity-and-content",
+        "verify-identity-authentication-and-content",
         "create-if-absent-publication",
         "retain-verified-handle-through-commit",
         "reconcile-commit-acknowledgement",
@@ -58,7 +63,12 @@
     "readableRightsStates": {"const": ["allowed", "not-applicable"]},
     "openMode": {"const": "verified-controlled-stream-no-path"},
     "corruptionBehavior": {"const": "deny-before-first-byte-and-quarantine"},
-    "encryptionBoundary": {"const": "CAP-02.S03.T02"},
-    "releaseQualification": {"const": "intermediate-unencrypted-adapter-not-release-qualified"}
+    "encryptionBoundary": {"const": "secretstream-xchacha20poly1305-v1"},
+    "dataKeyProfile": {"const": "random-256-bit-key-per-object"},
+    "keyWrapping": {"const": "xchacha20poly1305-ietf-versioned-project-master-key"},
+    "plaintextTemporaryStorage": {"const": "forbidden"},
+    "plaintextFixtureMode": {"const": "explicit-test-only"},
+    "keyUnavailableBehavior": {"const": "bounded-failure-preserve-for-recovery"},
+    "releaseQualification": {"const": "authenticated-encrypted-object-adapter"}
   }
 }

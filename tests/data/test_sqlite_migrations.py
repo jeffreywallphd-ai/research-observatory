@@ -25,7 +25,10 @@ from research_observatory_core.migrations.runner import (  # noqa: E402
     migrate_database,
     plan_database_migration,
 )
-from research_observatory_core.migrations.versions import v0002_schema_history  # noqa: E402
+from research_observatory_core.migrations.versions import (  # noqa: E402
+    v0002_schema_history,
+    v0003_object_envelopes,
+)
 
 PROJECT_ID = "123e4567-e89b-42d3-a456-426614174000"
 CREATED_AT = "2026-08-14T12:00:00.000Z"
@@ -41,11 +44,11 @@ def create_version_1_fixture(database: Path) -> None:
         storage._configure_connection(connection, initialize=True)
         connection.execute("BEGIN IMMEDIATE")
         connection.execute(f"PRAGMA application_id={storage.APPLICATION_ID}")
-        connection.execute(f"PRAGMA user_version={storage.PREVIOUS_DATABASE_SCHEMA_VERSION}")
+        connection.execute(f"PRAGMA user_version={storage.OLDEST_DATABASE_SCHEMA_VERSION}")
         for statement in storage._V1_DDL_STATEMENTS:
             connection.execute(statement)
         self_fingerprint = storage._schema_fingerprint(connection)
-        if self_fingerprint != storage.PREVIOUS_SCHEMA_SHA256:
+        if self_fingerprint != storage.V1_SCHEMA_SHA256:
             raise AssertionError(self_fingerprint)
         connection.execute(
             """
@@ -57,8 +60,8 @@ def create_version_1_fixture(database: Path) -> None:
             (
                 storage.DATABASE_PROFILE,
                 storage.APPLICATION_ID,
-                storage.PREVIOUS_PROFILE_SHA256,
-                storage.PREVIOUS_SCHEMA_SHA256,
+                storage.V1_PROFILE_SHA256,
+                storage.V1_SCHEMA_SHA256,
                 CREATED_AT,
             ),
         )
@@ -77,6 +80,67 @@ def create_version_1_fixture(database: Path) -> None:
             ) VALUES (?, ?, 'display.theme', 0, 'text', 'dark', ?, ?)
             """,
             (SETTING_ID, PROJECT_ID, CREATED_AT, CREATED_AT),
+        )
+        connection.execute("COMMIT")
+        checkpoint = tuple(connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone())
+        if checkpoint != (0, 0, 0):
+            raise AssertionError(checkpoint)
+    finally:
+        connection.close()
+
+
+def create_version_2_fixture(database: Path) -> None:
+    """Materialize the exact immediately previous schema for the v2-to-v3 path."""
+
+    database.parent.mkdir(parents=True)
+    connection = sqlite3.connect(database, autocommit=True)
+    try:
+        storage._configure_connection(connection, initialize=True)
+        connection.execute("BEGIN IMMEDIATE")
+        connection.execute(f"PRAGMA application_id={storage.APPLICATION_ID}")
+        connection.execute(f"PRAGMA user_version={storage.PREVIOUS_DATABASE_SCHEMA_VERSION}")
+        statements = (
+            v0002_schema_history.SCHEMA_METADATA_V2_DDL,
+            *storage._V1_DDL_STATEMENTS[1:],
+            v0002_schema_history.SCHEMA_MIGRATIONS_DDL,
+            *v0002_schema_history.SCHEMA_MIGRATIONS_TRIGGERS,
+        )
+        for statement in statements:
+            connection.execute(statement)
+        self_fingerprint = storage._schema_fingerprint(connection)
+        if self_fingerprint != storage.PREVIOUS_SCHEMA_SHA256:
+            raise AssertionError(self_fingerprint)
+        connection.execute(
+            """
+            INSERT INTO schema_metadata (
+                singleton, schema_version, database_profile, application_id,
+                profile_sha256, schema_sha256, created_at
+            ) VALUES (1, 2, ?, ?, ?, ?, ?)
+            """,
+            (
+                storage.DATABASE_PROFILE,
+                storage.APPLICATION_ID,
+                storage.PREVIOUS_PROFILE_SHA256,
+                storage.PREVIOUS_SCHEMA_SHA256,
+                CREATED_AT,
+            ),
+        )
+        connection.execute(
+            """
+            INSERT INTO projects (singleton, project_id, project_id_scheme, created_at)
+            VALUES (1, ?, 'uuid4-bridge', ?)
+            """,
+            (PROJECT_ID, CREATED_AT),
+        )
+        connection.execute(
+            """
+            INSERT INTO object_records (
+                object_sha256, project_id, byte_length, media_type, rights_status,
+                protection_profile, retention_class, storage_state, created_at, verified_at
+            ) VALUES (?, ?, 27, 'application/pdf', 'allowed', 'plaintext-fixture-v1',
+                      'project-lifetime', 'available', ?, ?)
+            """,
+            ("e" * 64, PROJECT_ID, CREATED_AT, CREATED_AT),
         )
         connection.execute("COMMIT")
         checkpoint = tuple(connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone())
@@ -118,10 +182,10 @@ class SqliteMigrationTests(unittest.TestCase):
         before = self.database.read_bytes()
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(1, plan.source_schema_version)
-        self.assertEqual(2, plan.target_schema_version)
+        self.assertEqual(3, plan.target_schema_version)
         self.assertTrue(plan.migration_required)
-        self.assertEqual(("0002_schema_history",), plan.migration_ids)
-        self.assertEqual(storage.PREVIOUS_SCHEMA_SHA256, plan.source_schema_sha256)
+        self.assertEqual(("0002_schema_history", "0003_object_envelopes"), plan.migration_ids)
+        self.assertEqual(storage.V1_SCHEMA_SHA256, plan.source_schema_sha256)
         self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, plan.target_schema_sha256)
         self.assertEqual(before, self.database.read_bytes())
         self.assertFalse((self.state / "migration-backups").exists())
@@ -131,8 +195,8 @@ class SqliteMigrationTests(unittest.TestCase):
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertEqual(1, result.source_schema_version)
-        self.assertEqual(2, result.target_schema_version)
-        self.assertEqual(("0002_schema_history",), result.migration_ids)
+        self.assertEqual(3, result.target_schema_version)
+        self.assertEqual(("0002_schema_history", "0003_object_envelopes"), result.migration_ids)
         self.assertIsNotNone(result.backup_relative_path)
         self.assertIsNotNone(result.recovery_manifest_relative_path)
         backup = self.project / str(result.backup_relative_path)
@@ -164,20 +228,31 @@ class SqliteMigrationTests(unittest.TestCase):
                 SELECT migration_id, from_schema_version, to_schema_version,
                        backup_manifest_sha256, source_schema_sha256, target_schema_sha256,
                        migration_tool
-                FROM schema_migrations
+                FROM schema_migrations ORDER BY to_schema_version
                 """
-            ).fetchone()
+            ).fetchall()
             self.assertEqual(
                 (
-                    "0002_schema_history",
-                    1,
-                    2,
-                    result.recovery_manifest_sha256,
-                    storage.PREVIOUS_SCHEMA_SHA256,
-                    storage.EXPECTED_SCHEMA_SHA256,
-                    "alembic-1.18.5",
+                    (
+                        "0002_schema_history",
+                        1,
+                        2,
+                        result.recovery_manifest_sha256,
+                        storage.V1_SCHEMA_SHA256,
+                        storage.PREVIOUS_SCHEMA_SHA256,
+                        "alembic-1.18.5",
+                    ),
+                    (
+                        "0003_object_envelopes",
+                        2,
+                        3,
+                        result.recovery_manifest_sha256,
+                        storage.PREVIOUS_SCHEMA_SHA256,
+                        storage.EXPECTED_SCHEMA_SHA256,
+                        "alembic-1.18.5",
+                    ),
                 ),
-                tuple(history),
+                tuple(tuple(row) for row in history),
             )
             with self.assertRaises(sqlite3.DatabaseError):
                 current.execute("UPDATE schema_migrations SET migration_tool='forged'")
@@ -208,9 +283,53 @@ class SqliteMigrationTests(unittest.TestCase):
         self.assertIsNone(repeated.backup_relative_path)
         self.assertEqual(backup_directories, tuple((self.state / "migration-backups").iterdir()))
 
+    def test_migrates_exact_v2_fixture_and_backfills_plaintext_envelope_metadata(self) -> None:
+        create_version_2_fixture(self.database)
+        plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual(2, plan.source_schema_version)
+        self.assertEqual(3, plan.target_schema_version)
+        self.assertEqual(("0003_object_envelopes",), plan.migration_ids)
+
+        result = migrate_database(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual("migrated", result.status)
+        self.assertEqual(("0003_object_envelopes",), result.migration_ids)
+        current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            envelope = current.execute(
+                """
+                SELECT envelope_version, key_version, wrapped_key, wrap_nonce,
+                       byte_length, ciphertext_byte_length
+                  FROM object_records WHERE object_sha256=?
+                """,
+                ("e" * 64,),
+            ).fetchone()
+            self.assertEqual(("plaintext-fixture-v1", None, None, None, 27, 27), tuple(envelope))
+            history = current.execute(
+                """
+                SELECT migration_id, from_schema_version, to_schema_version,
+                       source_schema_sha256, target_schema_sha256
+                  FROM schema_migrations
+                """
+            ).fetchone()
+            self.assertEqual(
+                (
+                    "0003_object_envelopes",
+                    2,
+                    3,
+                    storage.PREVIOUS_SCHEMA_SHA256,
+                    storage.EXPECTED_SCHEMA_SHA256,
+                ),
+                tuple(history),
+            )
+        finally:
+            current.close()
+
     def test_every_material_revision_step_rolls_back_to_exact_v1_and_retries(self) -> None:
-        for index, failpoint in enumerate(v0002_schema_history.MATERIAL_MIGRATION_STEPS):
-            with self.subTest(failpoint=failpoint):
+        failpoints = tuple(
+            (v0002_schema_history, step) for step in v0002_schema_history.MATERIAL_MIGRATION_STEPS
+        ) + tuple((v0003_object_envelopes, step) for step in v0003_object_envelopes.MATERIAL_MIGRATION_STEPS)
+        for index, (revision_module, failpoint) in enumerate(failpoints):
+            with self.subTest(revision=revision_module.revision, failpoint=failpoint):
                 project = self.project / f"failure-{index}"
                 database = project / "state" / "project.sqlite3"
                 create_version_1_fixture(database)
@@ -220,7 +339,7 @@ class SqliteMigrationTests(unittest.TestCase):
                         raise RuntimeError(f"deterministic-failure-after-{expected}")
 
                 with (
-                    patch.object(v0002_schema_history, "_migration_step_completed", fail_at_step),
+                    patch.object(revision_module, "_migration_step_completed", fail_at_step),
                     self.assertRaisesRegex(MigrationProblem, "migration-execution-failed") as raised,
                 ):
                     migrate_database(database, expected_project_id=PROJECT_ID)
@@ -229,7 +348,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 self.assertEqual(1, plan.source_schema_version)
                 inspection = sqlite3.connect(database, autocommit=True)
                 try:
-                    self.assertEqual(storage.PREVIOUS_SCHEMA_SHA256, storage._schema_fingerprint(inspection))
+                    self.assertEqual(storage.V1_SCHEMA_SHA256, storage._schema_fingerprint(inspection))
                     self.assertIsNone(
                         inspection.execute("SELECT name FROM sqlite_schema WHERE name='schema_migrations'").fetchone()
                     )
@@ -534,7 +653,7 @@ class SqliteMigrationTests(unittest.TestCase):
         finally:
             backup_root.rmdir()
 
-        original = runner._run_v1_to_v2
+        original = runner._run_migrations
 
         def tamper_then_migrate(*args: object, **kwargs: object) -> None:
             attempt = next((self.state / "migration-backups").iterdir())
@@ -543,7 +662,7 @@ class SqliteMigrationTests(unittest.TestCase):
                     protected.write_bytes(b"attacker")
             original(*args, **kwargs)  # type: ignore[arg-type]
 
-        with patch.object(runner, "_run_v1_to_v2", tamper_then_migrate):
+        with patch.object(runner, "_run_migrations", tamper_then_migrate):
             result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
 
@@ -557,7 +676,7 @@ class SqliteMigrationTests(unittest.TestCase):
         self.create_v1()
         raw = sqlite3.connect(self.database, autocommit=True)
         try:
-            raw.execute("PRAGMA user_version=3")
+            raw.execute("PRAGMA user_version=99")
         finally:
             raw.close()
         with self.assertRaisesRegex(MigrationProblem, "migration-source-version-unsupported"):

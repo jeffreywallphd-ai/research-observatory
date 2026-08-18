@@ -41,14 +41,29 @@ revision also appends its provenance and outbox facts; that linkage is the first
 auditable reference authority. T03 later adds audited garbage-collection and
 cache decisions.
 
-## Deliberate staged boundary
+## T02 authenticated-encryption boundary
 
-`plaintext-fixture-v1` is an intermediate T01 adapter profile, not release-qualified
-protection for sensitive research. CAP-02.S03.T02 replaces the byte adapter with
-authenticated streaming encryption, versioned wrapped data keys, and protected
-temporary-memory handling without changing plaintext content identity or the port.
-CAP-02.S03.T03 extends the canonical reference graph, leases, quotas, garbage
-collection, and cache eviction. Neither later responsibility is claimed by T01.
+`project-encrypted-v1` is the ordinary adapter profile. Put hashes plaintext while
+feeding bounded memory chunks directly into libsodium secretstream
+XChaCha20-Poly1305; the project temporary directory therefore contains only an
+authenticated encrypted envelope, never a plaintext staging file. Each object has
+a random 256-bit data key. SQLite schema v3 records the secretstream envelope
+version, ciphertext length, master-key version, random wrapping nonce, and the data
+key wrapped with XChaCha20-Poly1305 under the versioned project master-key port.
+Neither key bytes nor plaintext paths enter SQLite, logs, or returned metadata.
+
+Open obtains the exact recorded key version, unwraps the data key, authenticates
+the complete held envelope, and rechecks the plaintext length and SHA-256 identity
+before returning a controlled decrypting stream. Ciphertext or framing failure is
+quarantined before first-byte use. Missing or unusable key material instead returns
+the bounded `RO-CORE-OBJECT-KEY-UNAVAILABLE` failure and preserves the object for
+key recovery. Rotation changes the active key version for new objects while older
+objects remain readable through their recorded version.
+
+`plaintext-fixture-v1` remains available only when the adapter is constructed with
+the explicit test-fixture flag. Constructing an ordinary store without a key
+provider fails closed. CAP-02.S03.T03 still owns the broader reference graph,
+leases, quotas, garbage collection, and cache eviction.
 
 The exact portable policy is
 [`object-store-profile.v1.json`](../../packages/contracts/storage/object-store-profile.v1.json),
@@ -59,6 +74,8 @@ governed by ADR-0015.
 - streaming, restart, duplicate, project-scope, and opaque-name fixtures;
 - interrupted source and expected-hash mismatch leave no visible object or row;
 - corruption and hardlink aliases are denied before a byte reaches a caller;
+- encrypted restart, ciphertext tamper, missing-key, and key-version rotation fixtures;
+- explicit plaintext fixture gating and no plaintext bytes in encrypted staging or object files;
 - denied/unknown rights states and concurrent rights transitions cannot overtake
   an authorized held stream;
 - crash recovery distinguishes pre-commit delete restoration from post-commit
