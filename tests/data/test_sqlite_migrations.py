@@ -429,6 +429,25 @@ class SqliteMigrationTests(unittest.TestCase):
         self.assertEqual(backup_before, backup.read_bytes())
         self.assertEqual(manifest_before, manifest.read_bytes())
 
+        attempt = manifest.parent
+        backup_root = attempt.parent
+        with self.assertRaises(PermissionError):
+            os.replace(attempt, self.project / "outside-released-attempt")
+        with self.assertRaises(PermissionError):
+            os.replace(backup_root, self.project / "outside-released-backup-root")
+        self.assertTrue(backup.is_file())
+        self.assertTrue(manifest.is_file())
+
+        future_attempt = backup_root / "future-attempt"
+        future_attempt.mkdir()
+        self.assertTrue(future_attempt.is_dir())
+        reopened = sqlite3.connect(self.database, autocommit=True)
+        try:
+            self.assertEqual((0, 0, 0), tuple(reopened.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone()))
+            self.assertEqual("ok", reopened.execute("PRAGMA quick_check").fetchone()[0])
+        finally:
+            reopened.close()
+
     def test_writer_reservation_spans_backup_through_migration(self) -> None:
         self.create_v1()
         entered = threading.Event()
