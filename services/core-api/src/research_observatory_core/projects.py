@@ -21,6 +21,7 @@ from collections.abc import Callable, Iterator
 from contextlib import contextmanager, suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from functools import cache
 from pathlib import Path
 from typing import Any
 
@@ -69,6 +70,16 @@ def _path_identity(path: Path) -> tuple[int, int]:
     return (status.st_dev, status.st_ino)
 
 
+def _stable_directory_identity(path: Path) -> tuple[int, int] | None:
+    """Return one non-following directory identity snapshot, rejecting redirects."""
+
+    status = path.stat(follow_symlinks=False)
+    reparse_point = bool(getattr(status, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0))
+    if not stat.S_ISDIR(status.st_mode) or reparse_point:
+        return None
+    return (status.st_dev, status.st_ino)
+
+
 def _inside(path: Path, root: Path) -> bool:
     try:
         return os.path.commonpath((os.path.normcase(str(path)), os.path.normcase(str(root)))) == os.path.normcase(
@@ -89,13 +100,10 @@ def _installation_roots() -> tuple[Path, ...]:
     return tuple(roots)
 
 
-@contextmanager
-def _windows_directory_locks(paths: list[Path]) -> Iterator[None]:
-    """Deny directory rename/delete for the duration of a path-based operation."""
+@cache
+def _windows_directory_lock_api() -> tuple[Any, Any, int]:
+    """Bind the immutable Windows directory-lock API once per Core process."""
 
-    if os.name != "nt":
-        yield
-        return
     import ctypes
     from ctypes import wintypes
 
@@ -114,13 +122,28 @@ def _windows_directory_locks(paths: list[Path]) -> Iterator[None]:
     close_handle = kernel32.CloseHandle
     close_handle.argtypes = (wintypes.HANDLE,)
     close_handle.restype = wintypes.BOOL
+    invalid_handle = wintypes.HANDLE(-1).value
+    if invalid_handle is None:
+        raise RuntimeError("Windows returned an invalid null handle sentinel")
+    return create_file, close_handle, invalid_handle
+
+
+@contextmanager
+def _windows_directory_locks(paths: list[Path]) -> Iterator[None]:
+    """Deny directory rename/delete for the duration of a path-based operation."""
+
+    if os.name != "nt":
+        yield
+        return
+    import ctypes
+
+    create_file, close_handle, invalid_handle = _windows_directory_lock_api()
     file_read_attributes = 0x00000080
     file_share_read = 0x00000001
     file_share_write = 0x00000002
     open_existing = 3
     file_flag_open_reparse_point = 0x00200000
     file_flag_backup_semantics = 0x02000000
-    invalid_handle = wintypes.HANDLE(-1).value
     handles: list[int] = []
     try:
         for path in sorted(set(paths), key=lambda item: str(item).casefold()):
@@ -230,20 +253,16 @@ def _held_directory_renamer(source: Path) -> Iterator[Callable[[Path], None]]:
 @contextmanager
 def _stable_directories(paths: list[Path]) -> Iterator[None]:
     try:
-        identities = {path: _path_identity(path) for path in paths}
+        identities = {path: _stable_directory_identity(path) for path in paths}
+        if any(identity is None for identity in identities.values()):
+            raise ProjectLifecycleProblem.invalid_path()
         with _windows_directory_locks(paths):
-            if any(
-                _redirect(path) or not path.is_dir() or _path_identity(path) != identity
-                for path, identity in identities.items()
-            ):
+            if any(_stable_directory_identity(path) != identity for path, identity in identities.items()):
                 raise ProjectLifecycleProblem.invalid_path()
             try:
                 yield
             finally:
-                if any(
-                    _redirect(path) or not path.is_dir() or _path_identity(path) != identity
-                    for path, identity in identities.items()
-                ):
+                if any(_stable_directory_identity(path) != identity for path, identity in identities.items()):
                     raise ProjectLifecycleProblem.invalid_path()
     except ProjectLifecycleProblem:
         raise

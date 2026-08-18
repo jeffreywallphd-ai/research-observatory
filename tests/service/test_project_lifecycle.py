@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -396,6 +397,29 @@ class ProjectLifecycleTests(unittest.TestCase):
                     template_id="theory-synthesis",
                     trace_id=TRACE,
                 )
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
+    def test_open_rejects_a_junctioned_guard_directory(self) -> None:
+        project = self.create("junctioned-config")
+        root = Path(project.root)
+        config = root / "config"
+        target = root / "config-target"
+        config.rename(target)
+        created = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(config), str(target)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if created.returncode != 0:
+            target.rename(config)
+            self.skipTest(f"directory junctions are unavailable: {created.stderr.strip()}")
+        try:
+            with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-PATH-INVALID"):
+                self.service.open(root=project.root, trace_id=TRACE)
+        finally:
+            os.rmdir(config)
+            target.rename(config)
 
     def test_authenticated_api_exposes_functional_lifecycle_and_secret_safe_conflicts(self) -> None:
         app = create_app(
