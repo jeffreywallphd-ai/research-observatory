@@ -32,6 +32,18 @@
   "keyWrapping": "xchacha20poly1305-ietf-versioned-project-master-key",
   "plaintextTemporaryStorage": "forbidden",
   "plaintextFixtureMode": "explicit-test-only",
+  "priorEnvelopeUpgrade": "pre-open-durable-journaled-verified-copy-on-write",
+  "upgradePhases": [
+    "legacy-detected",
+    "replacement-writing",
+    "replacement-verified",
+    "swap-intent",
+    "metadata-committed",
+    "complete"
+  ],
+  "upgradeRollback": "retain-plaintext-outside-temp-until-production-open-verifies",
+  "malformedEnvelopeFailure": "corrupt-quarantine",
+  "wrappedKeyAuthenticationFailure": "key-unavailable-preserve",
   "keyUnavailableBehavior": "bounded-failure-preserve-for-recovery",
   "releaseQualification": "authenticated-encrypted-object-adapter"
 }

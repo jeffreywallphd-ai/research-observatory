@@ -1054,6 +1054,550 @@ def _move_no_replace(source: Path, destination: Path) -> None:
         raise ctypes.WinError(ctypes.get_last_error())
 
 
+@dataclass(frozen=True, slots=True)
+class _UpgradeRecord:
+    object_sha256: str
+    phase: str
+    source_identity: tuple[int, int] | None
+    replacement_identity: tuple[int, int] | None
+    rollback_identity: tuple[int, int] | None
+    envelope: _EnvelopeMetadata | None
+
+
+def _upgrade_step_completed(_step: str) -> None:
+    """Private deterministic failpoint seam for restart/recovery proof."""
+
+
+def _optional_identity(device: Any, inode: Any) -> tuple[int, int] | None:
+    if device is None and inode is None:
+        return None
+    if not isinstance(device, str) or not isinstance(inode, str):
+        raise _bounded(ObjectStoreProblem, "object upgrade identity is invalid")
+    try:
+        identity = (int(device), int(inode))
+    except ValueError:
+        raise _bounded(ObjectStoreProblem, "object upgrade identity is invalid") from None
+    if identity[0] < 0 or identity[1] < 0:
+        raise _bounded(ObjectStoreProblem, "object upgrade identity is invalid")
+    return identity
+
+
+def _upgrade_record(connection: CanonicalConnection, project_id: str, digest: str) -> _UpgradeRecord:
+    row = connection.execute(
+        """
+        SELECT phase, source_device, source_inode, replacement_device, replacement_inode,
+               rollback_device, rollback_inode, key_version, wrapped_key, wrap_nonce,
+               ciphertext_byte_length
+          FROM object_envelope_upgrades
+         WHERE project_id=? AND object_sha256=?
+        """,
+        (project_id, digest),
+    ).fetchone()
+    if row is None:
+        raise _bounded(ObjectStoreProblem, "object upgrade state is unavailable")
+    key_version = None if row[7] is None else str(row[7])
+    wrapped_key = None if row[8] is None else str(row[8])
+    wrap_nonce = None if row[9] is None else str(row[9])
+    ciphertext_length = None if row[10] is None else int(row[10])
+    envelope: _EnvelopeMetadata | None = None
+    if any(value is not None for value in (key_version, wrapped_key, wrap_nonce, ciphertext_length)):
+        if None in (key_version, wrapped_key, wrap_nonce, ciphertext_length):
+            raise _bounded(ObjectStoreProblem, "object upgrade encryption state is invalid")
+        envelope = _EnvelopeMetadata(
+            envelope_version=_ENCRYPTED_ENVELOPE,
+            key_version=key_version,
+            wrapped_key=wrapped_key,
+            wrap_nonce=wrap_nonce,
+            ciphertext_byte_length=cast(int, ciphertext_length),
+        )
+    return _UpgradeRecord(
+        object_sha256=digest,
+        phase=str(row[0]),
+        source_identity=_optional_identity(row[1], row[2]),
+        replacement_identity=_optional_identity(row[3], row[4]),
+        rollback_identity=_optional_identity(row[5], row[6]),
+        envelope=envelope,
+    )
+
+
+def _upgrade_paths(destination: Path) -> tuple[Path, Path]:
+    return (
+        destination.with_name(f".{destination.name}.upgrade-replacement"),
+        destination.with_name(f".{destination.name}.upgrade-rollback"),
+    )
+
+
+def _exclusive_identity(path: Path) -> tuple[int, int]:
+    status = path.stat(follow_symlinks=False)
+    identity = (status.st_dev, status.st_ino)
+    if not stat.S_ISREG(status.st_mode) or status.st_nlink != 1 or _redirect(path):
+        raise OSError("object upgrade file identity is invalid")
+    return identity
+
+
+def _matches_identity(path: Path, expected: tuple[int, int] | None) -> bool:
+    if expected is None:
+        return False
+    try:
+        return _exclusive_identity(path) == expected
+    except OSError:
+        return False
+
+
+def _verify_legacy_source(
+    path: Path,
+    *,
+    digest: str,
+    byte_length: int,
+    expected_identity: tuple[int, int] | None = None,
+) -> tuple[int, int]:
+    try:
+        identity = _exclusive_identity(path)
+        if expected_identity is not None and identity != expected_identity:
+            raise OSError("legacy object identity changed")
+        reader = _verified_reader(path, digest, byte_length)
+        reader.close()
+        if _exclusive_identity(path) != identity:
+            raise OSError("legacy object identity changed")
+        return identity
+    except OSError:
+        raise _bounded(ObjectCorrupt, "legacy object source is corrupt") from None
+
+
+def _verify_upgrade_replacement(
+    state: _StoreState,
+    path: Path,
+    metadata: StoredObject,
+    envelope: _EnvelopeMetadata,
+    *,
+    expected_identity: tuple[int, int] | None = None,
+) -> tuple[int, int]:
+    try:
+        identity = _exclusive_identity(path)
+        if expected_identity is not None and identity != expected_identity:
+            raise OSError("encrypted replacement identity changed")
+        reader = _verified_encrypted_reader(
+            path,
+            project_id=state.project_id,
+            object_sha256=metadata.object_sha256,
+            byte_length=metadata.byte_length,
+            ciphertext_byte_length=envelope.ciphertext_byte_length,
+            key_version=envelope.key_version,
+            wrapped_key=envelope.wrapped_key,
+            wrap_nonce=envelope.wrap_nonce,
+            key_provider=state.key_provider,
+        )
+        reader.close()
+        if _exclusive_identity(path) != identity:
+            raise OSError("encrypted replacement identity changed")
+        return identity
+    except ObjectKeyUnavailable:
+        raise
+    except OSError:
+        raise _bounded(ObjectCorrupt, "encrypted object replacement is corrupt") from None
+
+
+def _record_upgrade_failure(state: _StoreState, digest: str, code: str) -> None:
+    connection: CanonicalConnection | None = None
+    try:
+        connection = open_canonical_database(state.database, expected_project_id=state.project_id)
+        connection.execute("BEGIN IMMEDIATE")
+        connection.execute(
+            """
+            UPDATE object_envelope_upgrades
+               SET failure_code=?, updated_at=?
+             WHERE project_id=? AND object_sha256=? AND phase <> 'complete'
+            """,
+            (code, _now(), state.project_id, digest),
+        )
+        connection.execute("COMMIT")
+    except sqlite3.Error, StorageProblem:
+        if connection is not None and connection.in_transaction:
+            with suppress(sqlite3.Error, StorageProblem):
+                connection.execute("ROLLBACK")
+    finally:
+        if connection is not None:
+            connection.close()
+
+
+def _set_upgrade_phase(
+    state: _StoreState,
+    digest: str,
+    *,
+    expected_phase: str,
+    phase: str,
+    source_identity: tuple[int, int] | None = None,
+    replacement_identity: tuple[int, int] | None = None,
+    rollback_identity: tuple[int, int] | None = None,
+    envelope: _EnvelopeMetadata | None = None,
+) -> None:
+    connection = open_canonical_database(state.database, expected_project_id=state.project_id)
+    try:
+        connection.execute("BEGIN IMMEDIATE")
+        updated = connection.execute(
+            """
+            UPDATE object_envelope_upgrades
+               SET phase=?, source_device=?, source_inode=?,
+                   replacement_device=?, replacement_inode=?,
+                   rollback_device=?, rollback_inode=?, key_version=?, wrapped_key=?,
+                   wrap_nonce=?, ciphertext_byte_length=?, failure_code=NULL, updated_at=?
+             WHERE project_id=? AND object_sha256=? AND phase=?
+            """,
+            (
+                phase,
+                None if source_identity is None else str(source_identity[0]),
+                None if source_identity is None else str(source_identity[1]),
+                None if replacement_identity is None else str(replacement_identity[0]),
+                None if replacement_identity is None else str(replacement_identity[1]),
+                None if rollback_identity is None else str(rollback_identity[0]),
+                None if rollback_identity is None else str(rollback_identity[1]),
+                None if envelope is None else envelope.key_version,
+                None if envelope is None else envelope.wrapped_key,
+                None if envelope is None else envelope.wrap_nonce,
+                None if envelope is None else envelope.ciphertext_byte_length,
+                _now(),
+                state.project_id,
+                digest,
+                expected_phase,
+            ),
+        )
+        if updated.rowcount != 1:
+            raise _bounded(ObjectStoreProblem, "object upgrade state changed")
+        connection.execute("COMMIT")
+    except BaseException:
+        if connection.in_transaction:
+            with suppress(sqlite3.Error, StorageProblem):
+                connection.execute("ROLLBACK")
+        raise
+    finally:
+        connection.close()
+
+
+def _commit_upgrade_metadata(
+    state: _StoreState,
+    metadata: StoredObject,
+    record: _UpgradeRecord,
+    rollback_identity: tuple[int, int],
+) -> None:
+    if record.envelope is None or record.source_identity is None or record.replacement_identity is None:
+        raise _bounded(ObjectStoreProblem, "object upgrade state is incomplete")
+    connection = open_canonical_database(state.database, expected_project_id=state.project_id)
+    try:
+        connection.execute("BEGIN IMMEDIATE")
+        object_updated = connection.execute(
+            """
+            UPDATE object_records
+               SET protection_profile=?, envelope_version=?, key_version=?, wrapped_key=?,
+                   wrap_nonce=?, ciphertext_byte_length=?, verified_at=NULL
+             WHERE project_id=? AND object_sha256=?
+               AND envelope_version=? AND protection_profile=?
+            """,
+            (
+                _ENCRYPTED_PROFILE,
+                _ENCRYPTED_ENVELOPE,
+                record.envelope.key_version,
+                record.envelope.wrapped_key,
+                record.envelope.wrap_nonce,
+                record.envelope.ciphertext_byte_length,
+                state.project_id,
+                metadata.object_sha256,
+                _PLAINTEXT_FIXTURE,
+                _PLAINTEXT_FIXTURE,
+            ),
+        )
+        journal_updated = connection.execute(
+            """
+            UPDATE object_envelope_upgrades
+               SET phase='metadata-committed', rollback_device=?, rollback_inode=?,
+                   failure_code=NULL, updated_at=?
+             WHERE project_id=? AND object_sha256=? AND phase='swap-intent'
+            """,
+            (
+                str(rollback_identity[0]),
+                str(rollback_identity[1]),
+                _now(),
+                state.project_id,
+                metadata.object_sha256,
+            ),
+        )
+        if object_updated.rowcount != 1 or journal_updated.rowcount != 1:
+            raise _bounded(ObjectStoreProblem, "object upgrade metadata changed")
+        connection.execute("COMMIT")
+    except BaseException:
+        if connection.in_transaction:
+            with suppress(sqlite3.Error, StorageProblem):
+                connection.execute("ROLLBACK")
+        raise
+    finally:
+        connection.close()
+
+
+def _load_upgrade(
+    state: _StoreState,
+    digest: str,
+) -> tuple[_UpgradeRecord, StoredObject]:
+    connection = open_canonical_database(state.database, expected_project_id=state.project_id)
+    try:
+        record = _upgrade_record(connection, state.project_id, digest)
+        metadata = _metadata(connection, state.project_id, digest)
+        if metadata is None:
+            raise _bounded(ObjectStoreProblem, "object upgrade metadata is unavailable")
+        return record, metadata
+    finally:
+        connection.close()
+
+
+def _complete_metadata_upgrade(
+    state: _StoreState,
+    metadata: StoredObject,
+    record: _UpgradeRecord,
+    destination: Path,
+    replacement: Path,
+    rollback: Path,
+) -> None:
+    connection = open_canonical_database(state.database, expected_project_id=state.project_id)
+    try:
+        current = _metadata(connection, state.project_id, metadata.object_sha256)
+        if current is None or current.envelope_version != _ENCRYPTED_ENVELOPE:
+            raise _bounded(ObjectStoreProblem, "object upgrade metadata is incomplete")
+        reader = _verified_stored_reader(state, connection, destination, current)
+        reader.close()
+    finally:
+        connection.close()
+    if replacement.exists() or _redirect(replacement):
+        raise _bounded(ObjectStoreProblem, "object upgrade replacement conflicts")
+    if rollback.exists():
+        _verify_legacy_source(
+            rollback,
+            digest=metadata.object_sha256,
+            byte_length=metadata.byte_length,
+            expected_identity=record.rollback_identity or record.source_identity,
+        )
+        rollback.unlink()
+        if os.name != "nt":
+            _sync_directory(rollback.parent)
+    elif record.phase == "metadata-committed" and record.rollback_identity is not None:
+        # Cleanup may have completed immediately before interruption.
+        pass
+    _upgrade_step_completed("rollback-removed")
+    _set_upgrade_phase(
+        state,
+        metadata.object_sha256,
+        expected_phase="metadata-committed",
+        phase="complete",
+    )
+    _upgrade_step_completed("complete")
+
+
+def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> None:
+    while True:
+        record, metadata = _load_upgrade(state, digest)
+        destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
+        replacement, rollback = _upgrade_paths(destination)
+        with _stable_directories([state.root, state.state, state.objects, state.temporary, staging, *buckets]):
+            if record.phase == "complete":
+                if replacement.exists() or rollback.exists() or _redirect(replacement) or _redirect(rollback):
+                    raise _bounded(ObjectStoreProblem, "completed object upgrade has residual files")
+                connection = open_canonical_database(state.database, expected_project_id=state.project_id)
+                try:
+                    current = _metadata(connection, state.project_id, digest)
+                    if current is None:
+                        raise _bounded(ObjectStoreProblem, "completed object upgrade metadata is unavailable")
+                    reader = _verified_stored_reader(state, connection, destination, current)
+                    reader.close()
+                finally:
+                    connection.close()
+                return
+
+            if record.phase == "legacy-detected":
+                source_identity = _verify_legacy_source(
+                    destination,
+                    digest=digest,
+                    byte_length=metadata.byte_length,
+                )
+                if replacement.exists() or rollback.exists() or _redirect(replacement) or _redirect(rollback):
+                    raise _bounded(ObjectStoreProblem, "legacy object upgrade files conflict")
+                _set_upgrade_phase(
+                    state,
+                    digest,
+                    expected_phase="legacy-detected",
+                    phase="replacement-writing",
+                    source_identity=source_identity,
+                )
+                _upgrade_step_completed("legacy-detected")
+                continue
+
+            if record.phase == "replacement-writing":
+                if record.source_identity is None:
+                    raise _bounded(ObjectStoreProblem, "legacy object identity is unavailable")
+                _verify_legacy_source(
+                    destination,
+                    digest=digest,
+                    byte_length=metadata.byte_length,
+                    expected_identity=record.source_identity,
+                )
+                if rollback.exists() or _redirect(rollback):
+                    raise _bounded(ObjectStoreProblem, "object upgrade rollback conflicts")
+                if replacement.exists():
+                    if _redirect(replacement):
+                        raise _bounded(ObjectStoreProblem, "object upgrade replacement conflicts")
+                    _exclusive_identity(replacement)
+                    replacement.unlink()
+                    if os.name != "nt":
+                        _sync_directory(replacement.parent)
+                _upgrade_step_completed("replacement-writing")
+                source = _open_read_locked(destination)
+                staged: Path | None = None
+                try:
+                    staged, staged_digest, staged_length, envelope = _stream_to_staging(
+                        source,
+                        staging,
+                        project_id=state.project_id,
+                        protection_profile=_ENCRYPTED_PROFILE,
+                        key_provider=state.key_provider,
+                        allow_plaintext_fixture=False,
+                    )
+                finally:
+                    source.close()
+                if staged_digest != digest or staged_length != metadata.byte_length:
+                    if staged is not None:
+                        with suppress(OSError):
+                            staged.unlink()
+                    raise _bounded(ObjectCorrupt, "legacy object source is corrupt")
+                _move_no_replace(staged, replacement)
+                replacement_identity = _verify_upgrade_replacement(state, replacement, metadata, envelope)
+                _set_upgrade_phase(
+                    state,
+                    digest,
+                    expected_phase="replacement-writing",
+                    phase="replacement-verified",
+                    source_identity=record.source_identity,
+                    replacement_identity=replacement_identity,
+                    envelope=envelope,
+                )
+                _upgrade_step_completed("replacement-verified")
+                continue
+
+            if record.phase == "replacement-verified":
+                if record.source_identity is None or record.replacement_identity is None or record.envelope is None:
+                    raise _bounded(ObjectStoreProblem, "verified object replacement state is incomplete")
+                _verify_legacy_source(
+                    destination,
+                    digest=digest,
+                    byte_length=metadata.byte_length,
+                    expected_identity=record.source_identity,
+                )
+                _verify_upgrade_replacement(
+                    state,
+                    replacement,
+                    metadata,
+                    record.envelope,
+                    expected_identity=record.replacement_identity,
+                )
+                if rollback.exists() or _redirect(rollback):
+                    raise _bounded(ObjectStoreProblem, "object upgrade rollback conflicts")
+                _set_upgrade_phase(
+                    state,
+                    digest,
+                    expected_phase="replacement-verified",
+                    phase="swap-intent",
+                    source_identity=record.source_identity,
+                    replacement_identity=record.replacement_identity,
+                    envelope=record.envelope,
+                )
+                _upgrade_step_completed("swap-intent")
+                continue
+
+            if record.phase == "swap-intent":
+                if record.source_identity is None or record.replacement_identity is None or record.envelope is None:
+                    raise _bounded(ObjectStoreProblem, "object swap intent is incomplete")
+                canonical_is_source = _matches_identity(destination, record.source_identity)
+                canonical_is_replacement = _matches_identity(destination, record.replacement_identity)
+                rollback_is_source = _matches_identity(rollback, record.source_identity)
+                replacement_is_expected = _matches_identity(replacement, record.replacement_identity)
+                if canonical_is_source:
+                    if rollback.exists() or _redirect(rollback):
+                        raise _bounded(ObjectStoreProblem, "object upgrade rollback conflicts")
+                    _move_no_replace(destination, rollback)
+                    rollback_is_source = True
+                    canonical_is_source = False
+                    _upgrade_step_completed("original-moved-to-rollback")
+                if not rollback_is_source:
+                    raise _bounded(ObjectCorrupt, "object upgrade rollback authority is unavailable")
+                if not destination.exists():
+                    if not replacement_is_expected:
+                        raise _bounded(ObjectCorrupt, "object upgrade replacement authority is unavailable")
+                    _move_no_replace(replacement, destination)
+                    canonical_is_replacement = True
+                    replacement_is_expected = False
+                    _upgrade_step_completed("replacement-moved-to-canonical")
+                if not canonical_is_replacement or replacement_is_expected:
+                    raise _bounded(ObjectCorrupt, "object upgrade canonical identity is invalid")
+                rollback_identity = _verify_legacy_source(
+                    rollback,
+                    digest=digest,
+                    byte_length=metadata.byte_length,
+                    expected_identity=record.source_identity,
+                )
+                _verify_upgrade_replacement(
+                    state,
+                    destination,
+                    metadata,
+                    record.envelope,
+                    expected_identity=record.replacement_identity,
+                )
+                _commit_upgrade_metadata(state, metadata, record, rollback_identity)
+                _upgrade_step_completed("metadata-committed")
+                continue
+
+            if record.phase == "metadata-committed":
+                _complete_metadata_upgrade(state, metadata, record, destination, replacement, rollback)
+                continue
+
+            raise _bounded(ObjectStoreProblem, "object upgrade phase is invalid")
+
+
+def _reconcile_envelope_upgrades(directory: Path, state: _StoreState) -> None:
+    connection = open_canonical_database(state.database, expected_project_id=state.project_id)
+    try:
+        rows = tuple(
+            str(row[0])
+            for row in connection.execute(
+                """
+                SELECT object_sha256
+                  FROM object_envelope_upgrades
+                 WHERE project_id=?
+                 ORDER BY object_sha256
+                """,
+                (state.project_id,),
+            ).fetchall()
+        )
+    finally:
+        connection.close()
+    for digest in rows:
+        try:
+            _reconcile_one_upgrade(state, directory, digest)
+        except ObjectKeyUnavailable:
+            _record_upgrade_failure(state, digest, "key-unavailable")
+            raise
+        except ObjectCorrupt as error:
+            code = "source-corrupt"
+            try:
+                phase = _load_upgrade(state, digest)[0].phase
+                if phase not in ("legacy-detected", "replacement-writing"):
+                    code = "upgrade-corrupt"
+            except ObjectStoreProblem:
+                code = "upgrade-state-unavailable"
+            _record_upgrade_failure(state, digest, code)
+            raise _bounded(ObjectCorrupt, str(error)) from None
+        except ObjectStoreProblem as error:
+            _record_upgrade_failure(state, digest, "interrupted")
+            raise _bounded(type(error), str(error)) from None
+        except OSError, sqlite3.Error, StorageProblem:
+            _record_upgrade_failure(state, digest, "io-failure")
+            raise _bounded(ObjectStoreProblem, "object envelope upgrade did not complete") from None
+
+
 _DELETE_STAGING = re.compile(r"^delete-([0-9a-f]{64})\.partial$")
 
 
@@ -1301,13 +1845,6 @@ class _LocalObjectStore:
                                 if created_file:
                                     quarantine_after_close = True
                                     raise ObjectCorrupt("available object bytes were unexpectedly absent")
-                                connection.execute(
-                                    """
-                                    UPDATE object_records SET verified_at=?
-                                     WHERE project_id=? AND object_sha256=?
-                                    """,
-                                    (verified_at, state.project_id, digest),
-                                )
                             else:
                                 raise ObjectConflict("object storage state cannot be published")
                         result = _metadata(connection, state.project_id, digest)
@@ -1399,7 +1936,7 @@ class _LocalObjectStore:
                     reader = _verified_stored_reader(state, connection, destination, metadata)
                 updated = connection.execute(
                     """
-                    UPDATE object_records SET verified_at=?
+                    UPDATE object_records SET verified_at=COALESCE(verified_at, ?)
                      WHERE project_id=? AND object_sha256=? AND storage_state='available'
                        AND rights_status IN ('allowed', 'not-applicable')
                     """,
@@ -1539,6 +2076,19 @@ def create_local_object_store(
     if path_failure is not None:
         raise path_failure
     database = state_directory / "project.sqlite3"
+    migration_failure: ObjectStoreProblem | None = None
+    try:
+        from .migrations.runner import migrate_database
+
+        with _stable_directories([root, state_directory, objects, temporary]):
+            migrate_database(database, expected_project_id=project_id)
+    except OSError, StorageProblem, ProjectLifecycleProblem:
+        migration_failure = _bounded(
+            ObjectStoreProblem,
+            "project object-store schema upgrade did not complete",
+        )
+    if migration_failure is not None:
+        raise migration_failure
     connection: CanonicalConnection | None = None
     authority_failure: ObjectStoreProblem | None = None
     try:
@@ -1565,6 +2115,7 @@ def create_local_object_store(
     try:
         staging = _staging_directory(temporary)
         with _stable_directories([root, state_directory, objects, temporary, staging]):
+            _reconcile_envelope_upgrades(staging, store_state)
             _reconcile_staging(staging, store_state)
     except ObjectStoreProblem as problem:
         staging_failure = _bounded(type(problem), "object staging reconciliation failed")

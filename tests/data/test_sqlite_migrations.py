@@ -28,6 +28,7 @@ from research_observatory_core.migrations.runner import (  # noqa: E402
 from research_observatory_core.migrations.versions import (  # noqa: E402
     v0002_schema_history,
     v0003_object_envelopes,
+    v0004_object_envelope_upgrades,
 )
 
 PROJECT_ID = "123e4567-e89b-42d3-a456-426614174000"
@@ -150,6 +151,85 @@ def create_version_2_fixture(database: Path) -> None:
         connection.close()
 
 
+def create_version_3_fixture(database: Path, *, legacy_object: bool) -> None:
+    """Materialize the immutable committed v3 profile with optional v2-origin history."""
+
+    database.parent.mkdir(parents=True)
+    connection = sqlite3.connect(database, autocommit=True)
+    try:
+        storage._configure_connection(connection, initialize=True)
+        connection.execute("BEGIN IMMEDIATE")
+        connection.execute(f"PRAGMA application_id={storage.APPLICATION_ID}")
+        connection.execute(f"PRAGMA user_version={storage.OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION}")
+        for statement in (
+            v0003_object_envelopes.SCHEMA_METADATA_V3_DDL,
+            *storage._V1_DDL_STATEMENTS[1:],
+            v0002_schema_history.SCHEMA_MIGRATIONS_DDL,
+            *v0002_schema_history.SCHEMA_MIGRATIONS_TRIGGERS,
+            *v0003_object_envelopes.OBJECT_ENVELOPE_COLUMNS,
+            "UPDATE object_records SET ciphertext_byte_length=byte_length",
+            *v0003_object_envelopes.OBJECT_ENVELOPE_TRIGGERS,
+        ):
+            connection.execute(statement)
+        if storage._schema_fingerprint(connection) != storage.OBJECT_ENVELOPE_SCHEMA_SHA256:
+            raise AssertionError(storage._schema_fingerprint(connection))
+        connection.execute(
+            """
+            INSERT INTO schema_metadata (
+                singleton, schema_version, database_profile, application_id,
+                profile_sha256, schema_sha256, created_at
+            ) VALUES (1, 3, ?, ?, ?, ?, ?)
+            """,
+            (
+                storage.DATABASE_PROFILE,
+                storage.APPLICATION_ID,
+                storage.OBJECT_ENVELOPE_PROFILE_SHA256,
+                storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+                CREATED_AT,
+            ),
+        )
+        connection.execute(
+            """
+            INSERT INTO projects (singleton, project_id, project_id_scheme, created_at)
+            VALUES (1, ?, 'uuid4-bridge', ?)
+            """,
+            (PROJECT_ID, CREATED_AT),
+        )
+        if legacy_object:
+            connection.execute(
+                """
+                INSERT INTO object_records (
+                    object_sha256, project_id, byte_length, media_type, rights_status,
+                    protection_profile, retention_class, storage_state, created_at, verified_at,
+                    envelope_version, ciphertext_byte_length
+                ) VALUES (?, ?, 27, 'application/pdf', 'allowed', 'plaintext-fixture-v1',
+                          'project-lifetime', 'available', ?, ?, 'plaintext-fixture-v1', 27)
+                """,
+                ("e" * 64, PROJECT_ID, CREATED_AT, CREATED_AT),
+            )
+            connection.execute(
+                """
+                INSERT INTO schema_migrations (
+                    migration_id, from_schema_version, to_schema_version, applied_at,
+                    backup_manifest_sha256, source_schema_sha256, target_schema_sha256,
+                    migration_tool
+                ) VALUES ('0003_object_envelopes', 2, 3, ?, ?, ?, ?, 'alembic-1.18.5')
+                """,
+                (
+                    CREATED_AT,
+                    "a" * 64,
+                    storage.PREVIOUS_SCHEMA_SHA256,
+                    storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+                ),
+            )
+        connection.execute("COMMIT")
+        checkpoint = tuple(connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone())
+        if checkpoint != (0, 0, 0):
+            raise AssertionError(checkpoint)
+    finally:
+        connection.close()
+
+
 class SqliteMigrationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-sqlite-migrations-")
@@ -182,9 +262,12 @@ class SqliteMigrationTests(unittest.TestCase):
         before = self.database.read_bytes()
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(1, plan.source_schema_version)
-        self.assertEqual(3, plan.target_schema_version)
+        self.assertEqual(4, plan.target_schema_version)
         self.assertTrue(plan.migration_required)
-        self.assertEqual(("0002_schema_history", "0003_object_envelopes"), plan.migration_ids)
+        self.assertEqual(
+            ("0002_schema_history", "0003_object_envelopes", "0004_object_envelope_upgrades"),
+            plan.migration_ids,
+        )
         self.assertEqual(storage.V1_SCHEMA_SHA256, plan.source_schema_sha256)
         self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, plan.target_schema_sha256)
         self.assertEqual(before, self.database.read_bytes())
@@ -195,8 +278,11 @@ class SqliteMigrationTests(unittest.TestCase):
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertEqual(1, result.source_schema_version)
-        self.assertEqual(3, result.target_schema_version)
-        self.assertEqual(("0002_schema_history", "0003_object_envelopes"), result.migration_ids)
+        self.assertEqual(4, result.target_schema_version)
+        self.assertEqual(
+            ("0002_schema_history", "0003_object_envelopes", "0004_object_envelope_upgrades"),
+            result.migration_ids,
+        )
         self.assertIsNotNone(result.backup_relative_path)
         self.assertIsNotNone(result.recovery_manifest_relative_path)
         backup = self.project / str(result.backup_relative_path)
@@ -248,6 +334,15 @@ class SqliteMigrationTests(unittest.TestCase):
                         3,
                         result.recovery_manifest_sha256,
                         storage.PREVIOUS_SCHEMA_SHA256,
+                        storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+                        "alembic-1.18.5",
+                    ),
+                    (
+                        "0004_object_envelope_upgrades",
+                        3,
+                        4,
+                        result.recovery_manifest_sha256,
+                        storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                         "alembic-1.18.5",
                     ),
@@ -283,16 +378,16 @@ class SqliteMigrationTests(unittest.TestCase):
         self.assertIsNone(repeated.backup_relative_path)
         self.assertEqual(backup_directories, tuple((self.state / "migration-backups").iterdir()))
 
-    def test_migrates_exact_v2_fixture_and_backfills_plaintext_envelope_metadata(self) -> None:
+    def test_migrates_exact_v2_fixture_and_journals_plaintext_envelope_upgrade(self) -> None:
         create_version_2_fixture(self.database)
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(2, plan.source_schema_version)
-        self.assertEqual(3, plan.target_schema_version)
-        self.assertEqual(("0003_object_envelopes",), plan.migration_ids)
+        self.assertEqual(4, plan.target_schema_version)
+        self.assertEqual(("0003_object_envelopes", "0004_object_envelope_upgrades"), plan.migration_ids)
 
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
-        self.assertEqual(("0003_object_envelopes",), result.migration_ids)
+        self.assertEqual(("0003_object_envelopes", "0004_object_envelope_upgrades"), result.migration_ids)
         current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
             envelope = current.execute(
@@ -304,30 +399,88 @@ class SqliteMigrationTests(unittest.TestCase):
                 ("e" * 64,),
             ).fetchone()
             self.assertEqual(("plaintext-fixture-v1", None, None, None, 27, 27), tuple(envelope))
+            self.assertEqual(
+                ("legacy-detected", None),
+                tuple(
+                    current.execute(
+                        """
+                        SELECT phase, failure_code FROM object_envelope_upgrades
+                         WHERE object_sha256=?
+                        """,
+                        ("e" * 64,),
+                    ).fetchone()
+                ),
+            )
             history = current.execute(
                 """
                 SELECT migration_id, from_schema_version, to_schema_version,
                        source_schema_sha256, target_schema_sha256
-                  FROM schema_migrations
+                  FROM schema_migrations ORDER BY to_schema_version
                 """
-            ).fetchone()
+            ).fetchall()
             self.assertEqual(
                 (
-                    "0003_object_envelopes",
-                    2,
-                    3,
-                    storage.PREVIOUS_SCHEMA_SHA256,
-                    storage.EXPECTED_SCHEMA_SHA256,
+                    (
+                        "0003_object_envelopes",
+                        2,
+                        3,
+                        storage.PREVIOUS_SCHEMA_SHA256,
+                        storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+                    ),
+                    (
+                        "0004_object_envelope_upgrades",
+                        3,
+                        4,
+                        storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+                        storage.EXPECTED_SCHEMA_SHA256,
+                    ),
                 ),
-                tuple(history),
+                tuple(tuple(row) for row in history),
             )
         finally:
             current.close()
 
+    def test_preserves_committed_v3_history_and_only_journals_prior_plaintext(self) -> None:
+        for index, legacy_object in enumerate((False, True)):
+            with self.subTest(legacy_object=legacy_object):
+                database = self.project / f"v3-{index}" / "state" / "project.sqlite3"
+                create_version_3_fixture(database, legacy_object=legacy_object)
+                plan = plan_database_migration(database, expected_project_id=PROJECT_ID)
+                self.assertEqual(3, plan.source_schema_version)
+                self.assertEqual(("0004_object_envelope_upgrades",), plan.migration_ids)
+                result = migrate_database(database, expected_project_id=PROJECT_ID)
+                self.assertEqual(("0004_object_envelope_upgrades",), result.migration_ids)
+                current = storage.open_canonical_database(database, expected_project_id=PROJECT_ID)
+                try:
+                    rows = tuple(current.execute("SELECT object_sha256, phase FROM object_envelope_upgrades"))
+                    self.assertEqual(
+                        ((("e" * 64), "legacy-detected"),) if legacy_object else (),
+                        tuple(tuple(row) for row in rows),
+                    )
+                    history = tuple(
+                        str(row[0])
+                        for row in current.execute(
+                            "SELECT migration_id FROM schema_migrations ORDER BY to_schema_version"
+                        )
+                    )
+                    self.assertEqual(
+                        ("0003_object_envelopes", "0004_object_envelope_upgrades")
+                        if legacy_object
+                        else ("0004_object_envelope_upgrades",),
+                        history,
+                    )
+                finally:
+                    current.close()
+
     def test_every_material_revision_step_rolls_back_to_exact_v1_and_retries(self) -> None:
-        failpoints = tuple(
-            (v0002_schema_history, step) for step in v0002_schema_history.MATERIAL_MIGRATION_STEPS
-        ) + tuple((v0003_object_envelopes, step) for step in v0003_object_envelopes.MATERIAL_MIGRATION_STEPS)
+        failpoints = (
+            tuple((v0002_schema_history, step) for step in v0002_schema_history.MATERIAL_MIGRATION_STEPS)
+            + tuple((v0003_object_envelopes, step) for step in v0003_object_envelopes.MATERIAL_MIGRATION_STEPS)
+            + tuple(
+                (v0004_object_envelope_upgrades, step)
+                for step in v0004_object_envelope_upgrades.MATERIAL_MIGRATION_STEPS
+            )
+        )
         for index, (revision_module, failpoint) in enumerate(failpoints):
             with self.subTest(revision=revision_module.revision, failpoint=failpoint):
                 project = self.project / f"failure-{index}"

@@ -24,12 +24,16 @@ from research_observatory_core.migrations.versions.v0002_schema_history import (
 from research_observatory_core.migrations.versions.v0003_object_envelopes import (
     OBJECT_ENVELOPE_COLUMNS,
     OBJECT_ENVELOPE_TRIGGERS,
-    SCHEMA_METADATA_V3_DDL,
+)
+from research_observatory_core.migrations.versions.v0004_object_envelope_upgrades import (
+    OBJECT_ENVELOPE_UPGRADES_DDL,
+    SCHEMA_METADATA_V4_DDL,
 )
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 3
+DATABASE_SCHEMA_VERSION = 4
+OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION = 3
 PREVIOUS_DATABASE_SCHEMA_VERSION = 2
 OLDEST_DATABASE_SCHEMA_VERSION = 1
 BUSY_TIMEOUT_MILLISECONDS = 5_000
@@ -42,6 +46,7 @@ EXPECTED_TABLES = (
     "schema_migrations",
     "projects",
     "object_records",
+    "object_envelope_upgrades",
     "aggregate_identities",
     "aggregate_revisions",
     "scholarly_records",
@@ -69,7 +74,7 @@ IMMUTABLE_ROW_TABLES = (
     "provenance_events",
     "settings",
 )
-MUTABLE_STATE_TABLES = ("object_records", "outbox_events")
+MUTABLE_STATE_TABLES = ("object_records", "object_envelope_upgrades", "outbox_events")
 EXPECTED_TRIGGERS = tuple(
     sorted(
         [f"{table}_no_{operation}" for table in IMMUTABLE_ROW_TABLES for operation in ("delete", "update")]
@@ -85,7 +90,9 @@ V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6d
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
 PREVIOUS_SCHEMA_SHA256 = "afd48fbe857de4172215e9cb61a0f6137e73edec685dcc116bedbb66eb519dda"
 PREVIOUS_PROFILE_SHA256 = "29454c72d0b357c2ece14a8991db57bfb87414d7ade85d1a2e8048a648a17cc2"
-EXPECTED_SCHEMA_SHA256 = "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356"
+OBJECT_ENVELOPE_SCHEMA_SHA256 = "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356"
+OBJECT_ENVELOPE_PROFILE_SHA256 = "78f1ea999a50641758b0b618af33dc18739d6d6c99644d97823af959583ac2d9"
+EXPECTED_SCHEMA_SHA256 = "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -132,7 +139,7 @@ _PROFILE_DOCUMENT: dict[str, Any] = {
 _PROFILE_SHA256 = hashlib.sha256(
     json.dumps(_PROFILE_DOCUMENT, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
 ).hexdigest()
-EXPECTED_PROFILE_SHA256 = "78f1ea999a50641758b0b618af33dc18739d6d6c99644d97823af959583ac2d9"
+EXPECTED_PROFILE_SHA256 = "12cd2d187b6abf8e3cc597288c103277f1079e77b2cd206ad2821730181dbffb"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -692,13 +699,14 @@ _V1_DDL_STATEMENTS = (
 )
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V3_DDL,
+    SCHEMA_METADATA_V4_DDL,
     *_V1_DDL_STATEMENTS[1:],
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
     *OBJECT_ENVELOPE_COLUMNS,
     "UPDATE object_records SET ciphertext_byte_length=byte_length",
     *OBJECT_ENVELOPE_TRIGGERS,
+    OBJECT_ENVELOPE_UPGRADES_DDL,
 )
 
 

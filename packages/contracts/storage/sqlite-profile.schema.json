@@ -27,9 +27,9 @@
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "research-observatory-sqlite-profile"},
     "profileId": {"const": "sqlite-wal-v1"},
-    "databaseSchemaVersion": {"const": 3},
+    "databaseSchemaVersion": {"const": 4},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356"},
+    "schemaFingerprintSha256": {"const": "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {
@@ -60,7 +60,7 @@
         "settings"
       ]
     },
-    "mutableStateTables": {"const": ["object_records", "outbox_events"]},
+    "mutableStateTables": {"const": ["object_records", "object_envelope_upgrades", "outbox_events"]},
     "connectionProfile": {
       "const": {
         "foreignKeys": true,
@@ -93,6 +93,7 @@
         "schema_migrations",
         "projects",
         "object_records",
+        "object_envelope_upgrades",
         "aggregate_identities",
         "aggregate_revisions",
         "scholarly_records",

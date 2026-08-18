@@ -33,6 +33,7 @@ from .models import (
     ProjectProjection,
     ProjectRecoveryAction,
 )
+from .ports.object_store import ObjectKeyUnavailable, ObjectStoreProblem
 from .storage import StorageProblem, initialize_database, validate_canonical_database
 
 _DIRECTORY_NAME = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
@@ -503,10 +504,13 @@ class ProjectLifecycleProblem(Exception):
 class ProjectLifecycleService:
     """Serialize package lifecycle operations for one supervised Core process."""
 
-    def __init__(self) -> None:
+    def __init__(self, *, object_upgrade: Callable[[Path, str], object] | None = None) -> None:
+        if object_upgrade is not None and not callable(object_upgrade):
+            raise TypeError("object upgrade must be a callable composition boundary")
         self._instance_id = str(uuid.uuid4())
         self._opened: dict[Path, ProjectAccessMode] = {}
         self._mutex = threading.RLock()
+        self._object_upgrade = object_upgrade
 
     @staticmethod
     def _project_guard_paths(path: Path) -> list[Path]:
@@ -738,7 +742,6 @@ class ProjectLifecycleService:
                         profile=profile,
                         compatibility=compatibility,
                     )
-                self._validate_database(path, str(manifest["projectId"]))
                 record = {
                     "schemaVersion": "1.0",
                     "documentType": "research-observatory-project-lock",
@@ -749,8 +752,33 @@ class ProjectLifecycleService:
                     "recoveryToken": secrets.token_hex(32),
                 }
                 self._write_lock(lock, record)
-                self._opened[path] = ProjectAccessMode.READ_WRITE
                 try:
+                    if self._object_upgrade is not None:
+                        try:
+                            self._object_upgrade(path, str(manifest["projectId"]))
+                        except ObjectKeyUnavailable as error:
+                            raise ProjectLifecycleProblem(
+                                status=409,
+                                code="RO-CORE-PROJECT-UPGRADE-KEY-UNAVAILABLE",
+                                title="Project encryption key is unavailable",
+                                detail=(
+                                    "The project remained closed because its supported prior objects "
+                                    "could not be upgraded without the retained project key."
+                                ),
+                                remediation="Restore the required local project key and retry open.",
+                                retryable=True,
+                            ) from error
+                        except ObjectStoreProblem as error:
+                            raise ProjectLifecycleProblem(
+                                status=500,
+                                code="RO-CORE-PROJECT-UPGRADE-FAILED",
+                                title="Project object upgrade did not complete",
+                                detail=("The project remained closed with its verified recovery authority retained."),
+                                remediation="Keep the project unchanged, restore the prerequisite, and retry open.",
+                                retryable=True,
+                            ) from error
+                    self._validate_database(path, str(manifest["projectId"]))
+                    self._opened[path] = ProjectAccessMode.READ_WRITE
                     self._audit(path, "project.opened", "active", trace_id)
                 except ProjectLifecycleProblem as error:
                     self._opened.pop(path, None)
