@@ -1024,6 +1024,13 @@ def open_canonical_database(path: Path, *, expected_project_id: str | None = Non
         raise StorageProblem("canonical database profile could not be verified") from error
 
 
+def validate_canonical_database(path: Path, *, expected_project_id: str | None = None) -> None:
+    """Validate and close a canonical database without returning connection authority."""
+
+    connection = open_canonical_database(path, expected_project_id=expected_project_id)
+    connection.close()
+
+
 def _schema_fingerprint(connection: sqlite3.Connection | CanonicalConnection) -> str:
     rows = [
         {"type": str(row[0]), "name": str(row[1]), "table": str(row[2]), "sql": str(row[3])}

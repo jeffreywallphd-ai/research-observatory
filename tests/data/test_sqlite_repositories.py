@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-import ast
+import json
+import os
+import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from dataclasses import replace
 from pathlib import Path
@@ -10,9 +13,12 @@ from typing import cast
 
 REPO = Path(__file__).resolve().parents[2]
 SERVICE_SRC = REPO / "services" / "core-api" / "src"
+TOOLS = REPO / "tools"
 sys.path.insert(0, str(SERVICE_SRC))
+sys.path.insert(0, str(TOOLS))
 
-from research_observatory_core.repositories import (  # noqa: E402
+from architecture_check import core_data_boundary_errors  # noqa: E402
+from research_observatory_core.ports.repositories import (  # noqa: E402
     AggregateKind,
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
@@ -20,10 +26,8 @@ from research_observatory_core.repositories import (  # noqa: E402
     RepositoryNotFound,
     RepositoryProblem,
     RepositoryTransactionFailed,
-    SqliteAggregateRepository,
-    SqliteUnitOfWork,
-    SqliteUnitOfWorkFactory,
 )
+from research_observatory_core.repositories import create_sqlite_unit_of_work_factory  # noqa: E402
 from research_observatory_core.storage import initialize_database, open_canonical_database  # noqa: E402
 
 PROJECT_ID = "01890f6e-6a40-4cc5-98b7-123456789abc"
@@ -66,7 +70,7 @@ class SqliteRepositoryTests(unittest.TestCase):
         self.state.mkdir()
         self.database = self.state / "project.sqlite3"
         initialize_database(self.database, project_id=PROJECT_ID, project_created_at=CREATED_AT)
-        self.factory = SqliteUnitOfWorkFactory(self.database, PROJECT_ID)
+        self.factory = create_sqlite_unit_of_work_factory(self.database, PROJECT_ID)
 
     def tearDown(self) -> None:
         self.temporary.cleanup()
@@ -127,16 +131,18 @@ class SqliteRepositoryTests(unittest.TestCase):
             unit.rollback()
 
     def test_late_outbox_failure_rolls_back_every_aggregate_fact(self) -> None:
+        first_event = event(0, key="first-key")
         with self.factory() as unit:
-            first = unit.aggregates.append(draft(1), event(0, key="duplicate-key"), expected_revision=None)
+            first = unit.aggregates.append(draft(1), first_event, expected_revision=None)
             unit.commit()
 
         second_id = "01890f6e-6a40-7cc5-98b7-000000000202"
+        late_failure = replace(event(2, key="second-key"), outbox_id=first_event.outbox_id)
         with self.factory() as unit:
             with self.assertRaises(RepositoryProblem):
                 unit.aggregates.append(
                     draft(2, aggregate_id=second_id),
-                    event(2, key="duplicate-key"),
+                    late_failure,
                     expected_revision=None,
                 )
             with self.assertRaises(RepositoryTransactionFailed):
@@ -153,6 +159,78 @@ class SqliteRepositoryTests(unittest.TestCase):
             )
         finally:
             connection.close()
+
+    def test_idempotency_replays_exact_command_and_rejects_changed_payload_or_precondition(self) -> None:
+        command = draft(1)
+        command_event = event(0, key="stable-command-key")
+        with self.factory() as unit:
+            original = unit.aggregates.append(command, command_event, expected_revision=None)
+            unit.commit()
+
+        with self.factory() as unit:
+            replay = unit.aggregates.append(command, command_event, expected_revision=None)
+            self.assertEqual(original, replay)
+            unit.commit()
+
+        changed = replace(command, display_label_observed="Changed payload")
+        with self.factory() as unit, self.assertRaises(RepositoryConflict):
+            unit.aggregates.append(changed, command_event, expected_revision=None)
+
+        with self.factory() as unit, self.assertRaises(RepositoryConflict):
+            unit.aggregates.append(command, command_event, expected_revision=0)
+
+        changed_events = (
+            replace(command_event, available_at="2026-08-09T12:00:03.000Z"),
+            replace(command_event, outbox_id="01890f6e-6a40-7cc5-98b7-000000000299"),
+        )
+        for changed_event in changed_events:
+            with (
+                self.subTest(changed_event=changed_event),
+                self.factory() as unit,
+                self.assertRaises(RepositoryConflict),
+            ):
+                unit.aggregates.append(command, changed_event, expected_revision=None)
+
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            for table in (
+                "aggregate_identities",
+                "aggregate_revisions",
+                "scholarly_records",
+                "provenance_events",
+                "outbox_events",
+            ):
+                with self.subTest(table=table):
+                    self.assertEqual(1, connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
+        finally:
+            connection.close()
+
+    def test_incompatible_authority_and_busy_writer_are_bounded_and_retryable(self) -> None:
+        wrong_factory = create_sqlite_unit_of_work_factory(
+            self.database,
+            "11890f6e-6a40-4cc5-98b7-123456789abc",
+        )
+        with self.assertRaises(RepositoryTransactionFailed) as incompatible, wrong_factory():
+            pass
+        self.assertNotIn(str(self.database), str(incompatible.exception))
+        self.assertIsNone(incompatible.exception.__cause__)
+
+        first = self.factory()
+        entered = first.__enter__()
+        started = time.monotonic()
+        try:
+            with self.assertRaises(RepositoryTransactionFailed) as busy, self.factory():
+                pass
+            self.assertGreaterEqual(time.monotonic() - started, 4.5)
+            self.assertIsNone(busy.exception.__cause__)
+            self.assertNotIn("locked", str(busy.exception).casefold())
+        finally:
+            entered.rollback()
+            entered.__exit__(None, None, None)
+
+        with self.factory() as retry:
+            retry.aggregates.append(draft(1), event(0), expected_revision=None)
+            retry.commit()
 
     def test_document_fk_failure_and_uncommitted_context_leave_no_partial_rows(self) -> None:
         document = replace(draft(1), aggregate_kind="document", object_sha256="a" * 64)
@@ -215,66 +293,63 @@ class SqliteRepositoryTests(unittest.TestCase):
             connection.close()
 
     def test_business_ports_retain_no_database_path_or_connection(self) -> None:
-        unit = cast(SqliteUnitOfWork, self.factory())
+        unit = self.factory()
         for port in (self.factory, unit):
-            for slot in type(port).__slots__:
-                value = getattr(port, f"_{type(port).__name__}{slot}")
+            slots = cast(tuple[str, ...], vars(type(port))["__slots__"])
+            for slot in slots:
+                value = getattr(port, f"_{type(port).__name__.lstrip('_')}{slot}")
                 self.assertIsInstance(value, (str, type(None)))
                 if isinstance(value, str):
                     self.assertRegex(value, r"^[0-9a-f]{64}$")
                 self.assertNotIsInstance(value, Path)
         with unit as entered:
-            repository = cast(SqliteAggregateRepository, entered.aggregates)
-            for slot in type(repository).__slots__:
-                value = getattr(repository, f"_{type(repository).__name__}{slot}")
+            repository = entered.aggregates
+            slots = cast(tuple[str, ...], vars(type(repository))["__slots__"])
+            for slot in slots:
+                value = getattr(repository, f"_{type(repository).__name__.lstrip('_')}{slot}")
                 self.assertIsInstance(value, str)
                 self.assertRegex(value, r"^[0-9a-f]{64}$")
             entered.rollback()
 
     def test_business_modules_have_no_sql_or_database_dependency(self) -> None:
-        source_root = Path("services/core-api/src/research_observatory_core")
-        permitted = {
-            Path("services/core-api/src/research_observatory_core/repositories.py"),
-            Path("services/core-api/src/research_observatory_core/storage.py"),
-        }
-        failures: list[str] = []
-        sql_prefixes = (
-            "alter ",
-            "attach ",
-            "begin",
-            "commit",
-            "create ",
-            "delete ",
-            "drop ",
-            "insert ",
-            "pragma ",
-            "rollback",
-            "select ",
-            "update ",
-            "vacuum",
+        source_root = REPO / "services" / "core-api" / "src" / "research_observatory_core"
+        self.assertEqual([], core_data_boundary_errors(source_root))
+
+        hostile_root = self.root / "hostile-core"
+        hostile_root.mkdir()
+        (hostile_root / "business.py").write_text(
+            "from research_observatory_core.storage import open_canonical_database\n"
+            "QUERY = 'SELECT project_id FROM projects'\n"
+            "def attack(connection):\n"
+            "    return connection.execute(QUERY)\n",
+            encoding="utf-8",
         )
-        for path in sorted(source_root.rglob("*.py")):
-            repository_path = Path(path.as_posix())
-            if repository_path in permitted or "migrations" in path.parts:
-                continue
-            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-            for node in ast.walk(tree):
-                if isinstance(node, (ast.Import, ast.ImportFrom)):
-                    modules = [alias.name for alias in node.names]
-                    if isinstance(node, ast.ImportFrom) and node.module:
-                        modules.append(node.module)
-                    if any(module == "sqlite3" or module.startswith("sqlalchemy") for module in modules):
-                        failures.append(f"{path.as_posix()}:{node.lineno}: database dependency")
-                if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
-                    continue
-                if node.func.attr not in {"execute", "executemany"} or not node.args:
-                    continue
-                argument = node.args[0]
-                if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
-                    normalized = " ".join(argument.value.split()).casefold()
-                    if normalized.startswith(sql_prefixes):
-                        failures.append(f"{path.as_posix()}:{node.lineno}: ad hoc SQL")
-        self.assertEqual([], failures)
+        errors = core_data_boundary_errors(hostile_root)
+        self.assertTrue(any("open_canonical_database" in error for error in errors), errors)
+        self.assertTrue(any("database call execute" in error for error in errors), errors)
+
+    def test_dependency_neutral_ports_do_not_load_sqlite_or_sqlalchemy(self) -> None:
+        command = (
+            "import json,sys; "
+            "import research_observatory_core.ports.repositories as ports; "
+            "print(json.dumps({'sqlite3': 'sqlite3' in sys.modules, "
+            "'sqlalchemy': any(name == 'sqlalchemy' or name.startswith('sqlalchemy.') for name in sys.modules), "
+            "'module': ports.UnitOfWorkFactory.__module__}, sort_keys=True))"
+        )
+        result = subprocess.run(
+            [str(REPO / ".venv" / "Scripts" / "python.exe"), "-c", command],
+            cwd=REPO,
+            env={**os.environ, "PYTHONPATH": str(SERVICE_SRC)},
+            capture_output=True,
+            check=False,
+            text=True,
+            timeout=30,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(
+            {"module": "research_observatory_core.ports.repositories", "sqlalchemy": False, "sqlite3": False},
+            json.loads(result.stdout),
+        )
 
 
 if __name__ == "__main__":

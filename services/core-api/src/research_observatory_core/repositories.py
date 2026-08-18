@@ -1,8 +1,4 @@
-"""Typed aggregate repositories and explicit local SQLite units of work.
-
-Business modules consume the protocols in this module. Only this adapter owns
-SQLAlchemy statements or the restricted canonical database capability.
-"""
+"""Private SQLAlchemy/SQLite adapter for the dependency-neutral repository ports."""
 
 from __future__ import annotations
 
@@ -14,135 +10,28 @@ import threading
 from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Literal, Protocol, cast, runtime_checkable
+from typing import Any, cast
 
 from sqlalchemy import Column, Integer, MetaData, String, Table, desc, insert, select
 from sqlalchemy.dialects.sqlite import dialect as sqlite_dialect
 from sqlalchemy.sql import ClauseElement
 
-from .storage import MAX_SAFE_INTEGER, CanonicalConnection, open_canonical_database
-
-AggregateKind = Literal["record", "document", "workflow", "evidence", "ontology", "decision"]
-KnowledgeStatus = Literal[
-    "observed",
-    "extracted",
-    "inferred",
-    "verified",
-    "disputed",
-    "adjudicated",
-    "stale",
-    "unknown",
-    "not-reported",
-    "not-applicable",
-    "ambiguous",
-    "unavailable",
-]
-RightsStatus = Literal["allowed", "denied", "unknown", "not-applicable"]
-ActorType = Literal["human", "system", "worker", "model"]
-
-
-class RepositoryProblem(RuntimeError):
-    """Bounded repository failure that does not disclose canonical content."""
-
-    code = "RO-CORE-REPOSITORY-FAILED"
-
-    def __init__(self, message: str = "canonical repository operation failed") -> None:
-        super().__init__(message)
-
-
-class RepositoryNotFound(RepositoryProblem):
-    code = "RO-CORE-REPOSITORY-NOT-FOUND"
-
-
-class RepositoryConflict(RepositoryProblem):
-    code = "RO-CORE-REPOSITORY-CONFLICT"
-
-
-class RepositoryTransactionFailed(RepositoryProblem):
-    code = "RO-CORE-REPOSITORY-TRANSACTION-FAILED"
-
-
-@dataclass(frozen=True, slots=True)
-class AggregateRevision:
-    """Detached domain projection returned across the persistence boundary."""
-
-    revision_id: str
-    aggregate_id: str
-    aggregate_kind: AggregateKind
-    project_id: str
-    revision: int
-    contract_version: str
-    created_at: str
-    modified_at: str
-    display_label_observed: str
-    display_label_normalized: str | None
-    knowledge_status: KnowledgeStatus
-    rights_status: RightsStatus
-    object_sha256: str | None = None
-
-
-@dataclass(frozen=True, slots=True)
-class AggregateRevisionDraft:
-    """Caller-owned values for one immutable aggregate revision."""
-
-    revision_id: str
-    aggregate_id: str
-    aggregate_kind: AggregateKind
-    created_at: str
-    modified_at: str
-    display_label_observed: str
-    display_label_normalized: str | None
-    knowledge_status: KnowledgeStatus
-    rights_status: RightsStatus
-    object_sha256: str | None = None
-
-
-@dataclass(frozen=True, slots=True)
-class AtomicRepositoryEvent:
-    """Provenance and outbox identities committed with a revision."""
-
-    event_id: str
-    outbox_id: str
-    event_type: str
-    occurred_at: str
-    available_at: str
-    trace_id: str
-    actor_type: ActorType
-    actor_id: str | None
-    idempotency_key: str
-
-
-@runtime_checkable
-class AggregateRepository(Protocol):
-    def get(self, aggregate_id: str) -> AggregateRevision: ...
-
-    def append(
-        self,
-        draft: AggregateRevisionDraft,
-        event: AtomicRepositoryEvent,
-        *,
-        expected_revision: int | None,
-    ) -> AggregateRevision: ...
-
-
-@runtime_checkable
-class UnitOfWork(Protocol):
-    @property
-    def aggregates(self) -> AggregateRepository: ...
-
-    def commit(self) -> None: ...
-
-    def rollback(self) -> None: ...
-
-    def __enter__(self) -> UnitOfWork: ...
-
-    def __exit__(self, exc_type: object, exc_value: object, traceback: object) -> None: ...
-
-
-@runtime_checkable
-class UnitOfWorkFactory(Protocol):
-    def __call__(self) -> UnitOfWork: ...
-
+from .ports.repositories import (
+    AggregateKind,
+    AggregateRepository,
+    AggregateRevision,
+    AggregateRevisionDraft,
+    AtomicRepositoryEvent,
+    KnowledgeStatus,
+    RepositoryConflict,
+    RepositoryNotFound,
+    RepositoryProblem,
+    RepositoryTransactionFailed,
+    RightsStatus,
+    UnitOfWork,
+    UnitOfWorkFactory,
+)
+from .storage import MAX_SAFE_INTEGER, CanonicalConnection, StorageProblem, open_canonical_database
 
 _METADATA = MetaData()
 _IDENTITIES = Table(
@@ -269,12 +158,12 @@ class _UnitOfWorkRegistry:
         try:
             state.connection.execute("COMMIT" if commit else "ROLLBACK")
             state.completed = True
-        except sqlite3.Error as error:
+        except sqlite3.Error, StorageProblem:
             state.failed = True
             if state.connection.in_transaction:
                 with suppress(sqlite3.Error):
                     state.connection.execute("ROLLBACK")
-            raise RepositoryTransactionFailed() from error
+            raise RepositoryTransactionFailed() from None
 
     def close(self, token: str | None) -> None:
         if token is None:
@@ -323,17 +212,35 @@ class _FactoryRegistry:
 _FACTORIES = _FactoryRegistry()
 
 
-def _event_digest(project_id: str, revision: AggregateRevision, event: AtomicRepositoryEvent) -> str:
+def _command_fingerprint(
+    project_id: str,
+    revision: AggregateRevision,
+    event: AtomicRepositoryEvent,
+    expected_revision: int | None,
+) -> str:
     document = {
         "actorId": event.actor_id,
         "actorType": event.actor_type,
         "aggregateId": revision.aggregate_id,
+        "aggregateKind": revision.aggregate_kind,
+        "availableAt": event.available_at,
+        "contractVersion": revision.contract_version,
+        "createdAt": revision.created_at,
+        "displayLabelNormalized": revision.display_label_normalized,
+        "displayLabelObserved": revision.display_label_observed,
         "eventId": event.event_id,
         "eventType": event.event_type,
+        "expectedRevision": expected_revision,
+        "idempotencyKey": event.idempotency_key,
+        "knowledgeStatus": revision.knowledge_status,
+        "modifiedAt": revision.modified_at,
+        "objectSha256": revision.object_sha256,
         "occurredAt": event.occurred_at,
+        "outboxId": event.outbox_id,
         "projectId": project_id,
         "revision": revision.revision,
         "revisionId": revision.revision_id,
+        "rightsStatus": revision.rights_status,
         "traceId": event.trace_id,
     }
     payload = json.dumps(document, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -359,7 +266,7 @@ def _projection(row: Any) -> AggregateRevision:
     )
 
 
-class SqliteAggregateRepository:
+class _SqliteAggregateRepository:
     """SQLAlchemy 2 Core adapter for the canonical aggregate repository port."""
 
     __slots__ = ("__token",)
@@ -399,7 +306,11 @@ class SqliteAggregateRepository:
             .order_by(desc(_REVISIONS.c.revision))
             .limit(1)
         )
-        row = _execute(state.connection, statement).fetchone()
+        try:
+            row = _execute(state.connection, statement).fetchone()
+        except sqlite3.Error:
+            self._mark_failed()
+            raise RepositoryTransactionFailed() from None
         if row is None:
             raise RepositoryNotFound("aggregate was not found")
         return _projection(row)
@@ -423,25 +334,7 @@ class SqliteAggregateRepository:
             self._mark_failed()
             raise RepositoryProblem("object identity is only valid for documents")
 
-        current = self._current(draft.aggregate_id)
-        if current is None:
-            if expected_revision is not None:
-                self._mark_failed()
-                raise RepositoryNotFound("aggregate was not found")
-            revision_number = 0
-        else:
-            if expected_revision is None or current.revision != expected_revision:
-                self._mark_failed()
-                raise RepositoryConflict("aggregate revision changed")
-            if (
-                current.aggregate_kind != draft.aggregate_kind
-                or current.created_at != draft.created_at
-                or draft.modified_at < current.modified_at
-            ):
-                self._mark_failed()
-                raise RepositoryConflict("aggregate identity contract changed")
-            revision_number = current.revision + 1
-
+        revision_number = 0 if expected_revision is None else expected_revision + 1
         projection = AggregateRevision(
             revision_id=draft.revision_id,
             aggregate_id=draft.aggregate_id,
@@ -457,6 +350,27 @@ class SqliteAggregateRepository:
             rights_status=draft.rights_status,
             object_sha256=draft.object_sha256,
         )
+        fingerprint = _command_fingerprint(state.project_id, projection, event, expected_revision)
+        replay = self._replay(event.idempotency_key, fingerprint)
+        if replay is not None:
+            return replay
+
+        current = self._current(draft.aggregate_id)
+        if current is None:
+            if expected_revision is not None:
+                self._mark_failed()
+                raise RepositoryNotFound("aggregate was not found")
+        else:
+            if expected_revision is None or current.revision != expected_revision:
+                self._mark_failed()
+                raise RepositoryConflict("aggregate revision changed")
+            if (
+                current.aggregate_kind != draft.aggregate_kind
+                or current.created_at != draft.created_at
+                or draft.modified_at < current.modified_at
+            ):
+                self._mark_failed()
+                raise RepositoryConflict("aggregate identity contract changed")
         try:
             if current is None:
                 _execute(
@@ -499,7 +413,6 @@ class SqliteAggregateRepository:
                     state.connection,
                     insert(_EXTENSIONS[projection.aggregate_kind]).values(revision_id=projection.revision_id),
                 )
-            record_sha256 = _event_digest(state.project_id, projection, event)
             _execute(
                 state.connection,
                 insert(_PROVENANCE).values(
@@ -511,7 +424,7 @@ class SqliteAggregateRepository:
                     trace_id=event.trace_id,
                     actor_type=event.actor_type,
                     actor_id=event.actor_id,
-                    record_sha256=record_sha256,
+                    record_sha256=fingerprint,
                 ),
             )
             _execute(
@@ -527,13 +440,69 @@ class SqliteAggregateRepository:
                     attempt_count=0,
                     published_at=None,
                     idempotency_key=event.idempotency_key,
-                    record_sha256=record_sha256,
+                    record_sha256=fingerprint,
                 ),
             )
-        except (KeyError, sqlite3.Error, ValueError) as error:
+        except KeyError, sqlite3.Error, ValueError:
             self._mark_failed()
-            raise RepositoryProblem() from error
+            raise RepositoryProblem() from None
         return projection
+
+    def _replay(self, idempotency_key: str, fingerprint: str) -> AggregateRevision | None:
+        state = self._state()
+        statement = select(_OUTBOX.c.record_sha256, _OUTBOX.c.revision_id).where(
+            (_OUTBOX.c.project_id == state.project_id) & (_OUTBOX.c.idempotency_key == idempotency_key)
+        )
+        try:
+            row = _execute(state.connection, statement).fetchone()
+        except sqlite3.Error:
+            self._mark_failed()
+            raise RepositoryTransactionFailed() from None
+        if row is None:
+            return None
+        if str(row[0]) != fingerprint:
+            self._mark_failed()
+            raise RepositoryConflict("idempotency key was used for a different command")
+        replay = self._by_revision_id(str(row[1]))
+        if replay is None:
+            self._mark_failed()
+            raise RepositoryTransactionFailed("idempotency record is incomplete")
+        return replay
+
+    def _by_revision_id(self, revision_id: str) -> AggregateRevision | None:
+        state = self._state()
+        statement = (
+            select(
+                _REVISIONS.c.revision_id,
+                _REVISIONS.c.aggregate_id,
+                _REVISIONS.c.aggregate_kind,
+                _REVISIONS.c.project_id,
+                _REVISIONS.c.revision,
+                _REVISIONS.c.contract_version,
+                _REVISIONS.c.created_at,
+                _REVISIONS.c.modified_at,
+                _REVISIONS.c.display_label_observed,
+                _REVISIONS.c.display_label_normalized,
+                _REVISIONS.c.knowledge_status,
+                _REVISIONS.c.rights_status,
+                _DOCUMENTS.c.object_sha256,
+            )
+            .select_from(
+                _REVISIONS.outerjoin(
+                    _DOCUMENTS,
+                    (_REVISIONS.c.revision_id == _DOCUMENTS.c.revision_id)
+                    & (_REVISIONS.c.project_id == _DOCUMENTS.c.project_id),
+                )
+            )
+            .where((_REVISIONS.c.revision_id == revision_id) & (_REVISIONS.c.project_id == state.project_id))
+            .limit(1)
+        )
+        try:
+            row = _execute(state.connection, statement).fetchone()
+        except sqlite3.Error:
+            self._mark_failed()
+            raise RepositoryTransactionFailed() from None
+        return None if row is None else _projection(row)
 
     def _current(self, aggregate_id: str) -> AggregateRevision | None:
         try:
@@ -545,7 +514,7 @@ class SqliteAggregateRepository:
         _UNIT_OF_WORKS.fail(self.__token)
 
 
-class SqliteUnitOfWork:
+class _SqliteUnitOfWork:
     """One explicit SQLite writer transaction with no exposed database handle."""
 
     __slots__ = ("__factory_token", "__token")
@@ -559,22 +528,26 @@ class SqliteUnitOfWork:
         if self.__token is None:
             raise RepositoryTransactionFailed("unit of work is not active")
         _UNIT_OF_WORKS.state(self.__token)
-        return SqliteAggregateRepository(self.__token)
+        return _SqliteAggregateRepository(self.__token)
 
-    def __enter__(self) -> SqliteUnitOfWork:
+    def __enter__(self) -> _SqliteUnitOfWork:
         if self.__token is not None:
             raise RepositoryTransactionFailed("unit of work cannot be re-entered")
         configuration = _FACTORIES.configuration(self.__factory_token)
-        connection = open_canonical_database(
-            configuration.database,
-            expected_project_id=configuration.project_id,
-        )
+        connection: CanonicalConnection | None = None
         try:
+            connection = open_canonical_database(
+                configuration.database,
+                expected_project_id=configuration.project_id,
+            )
             connection.execute("BEGIN IMMEDIATE")
             self.__token = _UNIT_OF_WORKS.register(connection, configuration.project_id)
             return self
-        except BaseException:
-            connection.close()
+        except BaseException as error:
+            if connection is not None:
+                connection.close()
+            if isinstance(error, (OSError, sqlite3.Error, StorageProblem)):
+                raise RepositoryTransactionFailed("canonical transaction could not start") from None
             raise
 
     def commit(self) -> None:
@@ -598,7 +571,7 @@ class SqliteUnitOfWork:
             _UNIT_OF_WORKS.close(token)
 
 
-class SqliteUnitOfWorkFactory:
+class _SqliteUnitOfWorkFactory:
     """Composition-root adapter; business services should type against UnitOfWorkFactory."""
 
     __slots__ = ("__token",)
@@ -607,23 +580,13 @@ class SqliteUnitOfWorkFactory:
         self.__token = _FACTORIES.register(database, project_id)
 
     def __call__(self) -> UnitOfWork:
-        return SqliteUnitOfWork(self.__token)
+        return _SqliteUnitOfWork(self.__token)
 
 
-__all__ = [
-    "ActorType",
-    "AggregateKind",
-    "AggregateRepository",
-    "AggregateRevision",
-    "AggregateRevisionDraft",
-    "AtomicRepositoryEvent",
-    "KnowledgeStatus",
-    "RepositoryConflict",
-    "RepositoryNotFound",
-    "RepositoryProblem",
-    "RepositoryTransactionFailed",
-    "RightsStatus",
-    "SqliteUnitOfWorkFactory",
-    "UnitOfWork",
-    "UnitOfWorkFactory",
-]
+def create_sqlite_unit_of_work_factory(database: Path, project_id: str) -> UnitOfWorkFactory:
+    """Create the local adapter behind the dependency-neutral factory port."""
+
+    return _SqliteUnitOfWorkFactory(database, project_id)
+
+
+__all__ = ["create_sqlite_unit_of_work_factory"]

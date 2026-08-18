@@ -14,9 +14,15 @@ affected_paths:
   - packages/contracts/storage/**
   - packages/contracts/README.md
   - services/core-api/src/research_observatory_core/storage.py
+  - services/core-api/src/research_observatory_core/ports/**
+  - services/core-api/src/research_observatory_core/repositories.py
   - services/core-api/src/research_observatory_core/projects.py
+  - services/core-api/packaging/sidecar-build.json
   - tests/data/**
+  - tests/packaging/test_core_sidecar_package.py
   - tests/service/test_project_lifecycle.py
+  - tools/architecture_check.py
+  - tools/core_sidecar_build.py
   - packaging/build-inputs.json
   - quality-scope.json
   - docs/architecture/local-sqlite-storage.md
@@ -109,7 +115,12 @@ connection must replace denial triggers only inside the reviewed, backed-up
 schema transition and publish the successor fingerprint before ordinary access.
 SQLAlchemy 2 typed
 repositories and explicit units of work belong to `CAP-02.S02.T03`; business
-and renderer code never receive a SQLite connection. The bootstrap adapter may
+and renderer code never receive a SQLite connection. Dependency-neutral domain
+values, bounded outcomes, and repository/unit-of-work protocols live under the
+Core `ports` package; importing those ports does not load SQLite, SQLAlchemy, or
+the local adapter. The private SQLAlchemy 2 Core adapter compiles parameterized
+statements against the sealed canonical connection and is constructed only at
+the composition boundary. The bootstrap adapter may
 issue only its governed schema/profile SQL. Manual FULL/RESTART/TRUNCATE
 checkpoints are reserved for migration, backup, snapshot, or maintenance code.
 
@@ -150,6 +161,9 @@ not discard accepted revisions, provenance, or decisions.
   constraint attacks;
 - concurrent WAL reader/writer snapshot plus bounded second-writer wait;
 - close/reopen integrity and exact project-identity verification;
+- dependency-neutral port import plus dynamic/indirect SQL denial outside data adapters;
+- optimistic conflict, exact command/precondition idempotency replay, changed-command conflict,
+  bounded busy/incompatible authority, and atomic revision/provenance/outbox rollback;
 - existing-file, hardlink, wrong-application-ID, and project-open denial with
   no lock, audit, or outside-file mutation;
 - focused Core lifecycle, quality, architecture/ADR, task, and generated-view

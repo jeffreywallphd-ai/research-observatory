@@ -81,9 +81,11 @@ before normal access resumes.
 
 ## Repository and transaction boundary
 
-Business modules depend on the typed `AggregateRepository`, `UnitOfWork`, and
-`UnitOfWorkFactory` ports. They never import SQLite or SQLAlchemy and never
-receive a database connection. The local adapter uses SQLAlchemy 2 Core
+Business modules depend on the dependency-neutral `AggregateRepository`,
+`UnitOfWork`, and `UnitOfWorkFactory` ports under the Core `ports` package.
+Importing those ports loads neither SQLite nor SQLAlchemy. Business modules
+never import the concrete adapter and never receive a database connection. The
+local adapter uses SQLAlchemy 2 Core
 statements behind an opaque unit-of-work token. A single explicit writer
 transaction inserts an immutable aggregate revision, its kind-extension row,
 one provenance event, and one pending outbox event. `commit()` is explicit;
@@ -92,10 +94,13 @@ revision rolls the whole transaction back.
 
 The generic aggregate port covers record, document, workflow, evidence,
 ontology, and decision revisions. It returns detached frozen domain
-projections, reports not-found and optimistic-conflict outcomes through bounded
-repository exceptions, preserves aggregate kind and creation identity across
-revisions, and never exposes ORM rows. The outbox record carries a digest of
-the bounded provenance fact rather than a content payload. Dispatch state
+projections, reports not-found, optimistic-conflict, busy-writer, and
+incompatible-authority outcomes through bounded repository exceptions,
+preserves aggregate kind and creation identity across revisions, and never
+exposes ORM rows. The outbox and provenance records share a SHA-256 fingerprint
+over the full command, precondition, scheduling, and event identity. An exact
+idempotency-key/fingerprint retry returns the original projection without
+duplicate facts; any changed payload or precondition is a conflict. Dispatch state
 transitions remain a later worker concern.
 
 WAL and SHM files are live database state. A backup or relocation implementation

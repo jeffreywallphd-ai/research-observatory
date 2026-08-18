@@ -62,6 +62,8 @@
     "services/core-api/src/research_observatory_core/models.py",
     "services/core-api/src/research_observatory_core/modules.py",
     "services/core-api/src/research_observatory_core/operations.py",
+    "services/core-api/src/research_observatory_core/ports/__init__.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
     "services/core-api/src/research_observatory_core/projects.py",
     "services/core-api/src/research_observatory_core/repositories.py",
     "services/core-api/src/research_observatory_core/storage.py",
