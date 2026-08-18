@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 46732a6e4f54b2da9d52630861eba64005f8edc721c4d0ef83cc2c4c41ec933e
+source_sha256: d48d8f3b5b63cfef1e0fed0e9f47b56eb3e298e4a6568dbae7f2430e3e94f632
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 282 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 36 |
 | `DEFERRED` | 36 |
 
@@ -117,4 +117,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S02.T02` Implement forward migrations and backup-before-migrate policy | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S02.T02` Implement forward migrations and backup-before-migrate policy | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
