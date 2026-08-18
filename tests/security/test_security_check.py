@@ -191,6 +191,37 @@ class SecurityPolicyTests(unittest.TestCase):
         self.assertIn("component that is not explicitly allowed", evaluated[2]["policyReason"])
         self.assertTrue(all("not an allowed SPDX conjunction" in item["policyReason"] for item in evaluated[3:]))
 
+    def test_reviewed_mit_zero_is_allowed_without_allowing_other_mit_variants(self) -> None:
+        base = {
+            "kind": "license",
+            "severity": "UNKNOWN",
+            "category": "unknown",
+            "target": "Python",
+            "package": "controlled-package",
+            "title": "Controlled MIT variant fixture",
+        }
+        reviewed = {
+            **base,
+            "key": "license|MIT-0|Python|controlled-package",
+            "id": "MIT-0",
+        }
+        unlisted = {
+            **base,
+            "key": "license|MIT-Modern-Variant|Python|controlled-package",
+            "id": "MIT-Modern-Variant",
+        }
+        exceptions = {
+            "schemaVersion": "1.0",
+            "documentType": "software-supply-chain-exceptions",
+            "exceptions": [],
+        }
+
+        evaluated, errors, warnings = evaluate([reviewed, unlisted], self.policy, exceptions, today=date(2026, 8, 8))
+
+        self.assertEqual([], errors)
+        self.assertEqual([], warnings)
+        self.assertEqual(["ALLOW", "BLOCK"], [item["disposition"] for item in evaluated])
+
     def test_unlisted_reciprocal_license_blocks_while_explicit_mpl_allowance_remains_visible(self) -> None:
         reciprocal = {
             "key": "license|GPL-3.0-only|Python|controlled-package",
