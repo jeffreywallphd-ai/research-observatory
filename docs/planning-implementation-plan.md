@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 845d03ac83f89194dca17e6c62c896e9f60ca91a051a3ee8a1ee758e893d9151
+source_sha256: 7e2ca38aabf595c7c09be17f1aa156ab943c3ff9c05dc073767b31cce8f4045a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1837,7 +1837,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S03.T01 - Implement content-addressed object storage abstraction
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
