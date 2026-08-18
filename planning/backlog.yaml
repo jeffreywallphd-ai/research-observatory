@@ -126,7 +126,7 @@ waves:
     - CAP-07.S01
     notes: User explicitly approved the complete W1 packet in the Codex session on 2026-08-13.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -135,16 +135,14 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-17T22:42:44+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-17T22:42:44+00:00'
-      expires_at: '2026-08-18T22:42:44+00:00'
+    updated_at: '2026-08-18T11:20:50+00:00'
+    pause_reason: Governed replanning for CAP-02.S03.T02 copy-on-write encryption migration and tamper-classification recovery
+      contract.
+    pause_category: human-decision
+    lease: null
   checkpoints: []
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -3962,13 +3960,19 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T03:31:31+00:00'
-      updated_at: '2026-08-18T11:12:30+00:00'
+      updated_at: '2026-08-18T11:20:35+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: Security review exposed an unresolved key-dependent v2-to-v3 object rewrite and recovery decision not specified
+          to implementation depth in the approved W1 packet.
+        next_action: Approve the amended W1 packet and accepted object-envelope migration ADR, resume W1, then reopen CAP-02.S03.T02
+          for remediation.
+        recorded_at: '2026-08-18T11:20:35+00:00'
+        owner: codex
       implementation_notes: Implemented authenticated encrypted object envelopes, versioned wrapped keys, schema-v3 recovery,
         explicit key-loss and fixture boundaries, supply-chain classification, performance remediation, and Windows package
         inclusion; full data/security-local profiles plus exact-final affected tests pass.
@@ -3989,10 +3993,7 @@ capabilities:
           contracts, and documentation with the selected classification. Reviewed implementation 4d55d5ed0345a6265d296f6d7d9a774804c6b2d6;
           25 focused checks passed.'
       base_sha: ba98e5c07f6c492ddf59432df4963e4be61e7631
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-18T11:12:30+00:00'
-        expires_at: '2026-08-18T19:12:30+00:00'
+      lease: null
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
