@@ -3715,16 +3715,19 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-17T23:09:55+00:00'
-      updated_at: '2026-08-18T00:00:27+00:00'
+      updated_at: '2026-08-18T00:01:05+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Submitted backup-first forward migration framework at f26f548 with exact v1 fixture, verified
+      implementation_notes: 'Submitted backup-first forward migration framework at f26f548 with exact v1 fixture, verified
         recovery manifest, rollback/retry, Windows confinement, frozen package, and disclosed checkpoint-level performance/security
         follow-up.
+
+        Remediation cf3fc55 closes continuous backup/manifest authority and nine material-step rollback findings; focused
+        checks and exact package pass, while performance remains truthfully NONQUALIFYING pending S02 integration.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S02.T02.json
