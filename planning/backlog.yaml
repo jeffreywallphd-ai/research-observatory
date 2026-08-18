@@ -3891,12 +3891,12 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T02:27:48+00:00'
-      updated_at: '2026-08-18T03:27:32+00:00'
-      completed_at: null
+      updated_at: '2026-08-18T03:29:56+00:00'
+      completed_at: '2026-08-18T03:29:56+00:00'
       blocker: null
       implementation_notes: 'Focused object-store, contract, architecture, quality, clean build, and real frozen-package evidence
         attached; full data/e2e/security/performance qualification remains at slice/Wave review.
@@ -3924,15 +3924,12 @@ capabilities:
         recorded_at: '2026-08-18T03:27:21+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-18T03:24:48+00:00'
-        notes: Combined late-hardlink plus lost-COMMIT-acknowledgement reconciliation can return available without revalidating
-          the held single-link identity.
+        result: approved
+        reviewed_at: '2026-08-18T03:29:56+00:00'
+        notes: Final remediation independently closes all six original defects and the combined late-hardlink plus lost-COMMIT-ack
+          reconciliation boundary.
       base_sha: 99cc2ee17b3ebf7aaf7fa459392e6f440fa27d10
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-18T03:24:48+00:00'
-        expires_at: '2026-08-18T11:24:48+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
@@ -3965,11 +3962,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile security-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-18T03:29:56+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
