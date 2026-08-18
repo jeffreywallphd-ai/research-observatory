@@ -3719,7 +3719,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-17T23:09:55+00:00'
-      updated_at: '2026-08-18T00:05:40+00:00'
+      updated_at: '2026-08-18T00:11:30+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Submitted backup-first forward migration framework at f26f548 with exact v1 fixture, verified
@@ -3739,6 +3739,11 @@ capabilities:
         sha256: c645fdb4beb663c8bb8b406209e27e0b7678aa827f1445fd4512a9d6130652c9
         commit: cf3fc55cc6eb62a710567db9e14d943c37dfedf8
         recorded_at: '2026-08-18T00:00:27+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S02.T02.review-fix-2.json
+        sha256: 50e2dbf9221e11db7896e74e5b13226d131aa0d1220b93d4aa9fd621484229e6
+        commit: f94fba6d216806052148eedf9bf94b89202a133b
+        recorded_at: '2026-08-18T00:11:30+00:00'
       review:
         reviewer: agent:curie
         result: changes-requested
@@ -3751,7 +3756,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-18T00:05:40+00:00'
         expires_at: '2026-08-18T08:05:40+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
