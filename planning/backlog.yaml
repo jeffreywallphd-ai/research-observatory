@@ -3606,7 +3606,7 @@ capabilities:
     depends_on:
     - CAP-02.S01.T01
     - CAP-03.S01.T01
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-02.S02.T01
       capability_id: CAP-02
@@ -3845,15 +3845,15 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: agent:curie
       reviewed_at: '2026-08-18T02:10:33+00:00'
       evidence:
-      - artifacts/evidence/CAP-02.S02.integration.json
-      notes: Performance qualification must compare raw thresholds and publish only through a commit-bound, input-locked tombstone-to-PASS
-        boundary; exact 1220.6294ms precision, post-measure mutation, interruption, and persistent publication-failure regressions
-        are required. All SQLite functional, recovery, package, security, UI-reference, evidence-chain, and downstream handoff
-        controls otherwise passed.
+      - artifacts/evidence/CAP-02.S02.integration.review-fix.json
+      notes: 'Independent slice-review finding remediated: raw precision is retained, previous PASS is tombstoned before qualification,
+        exact commit/package inputs remain locked through final validation, and atomic PASS replacement is the last rejecting
+        operation. Twelve focused regressions, real package qualification, full quality, clean build, and retained functional
+        slice evidence are ready for remediation-only re-review.'
   - id: CAP-02.S03
     title: Encrypted local object and cache storage
     outcome: Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights
