@@ -3715,12 +3715,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-17T23:09:55+00:00'
-      updated_at: '2026-08-18T00:33:29+00:00'
-      completed_at: null
+      updated_at: '2026-08-18T00:37:15+00:00'
+      completed_at: '2026-08-18T00:37:15+00:00'
       blocker: null
       implementation_notes: 'Submitted backup-first forward migration framework at f26f548 with exact v1 fixture, verified
         recovery manifest, rollback/retry, Windows confinement, frozen package, and disclosed checkpoint-level performance/security
@@ -3767,16 +3767,13 @@ capabilities:
         recorded_at: '2026-08-18T00:32:55+00:00'
       review:
         reviewer: agent:curie
-        result: changes-requested
-        reviewed_at: '2026-08-18T00:28:50+00:00'
-        notes: 'P1: attempt directory remains renameable through migration-backups FILE_DELETE_CHILD after handle close, invalidating
-          both returned paths. Anchor the attempt entry through the recovery root and add post-return attempt/root ancestor
-          rename checks while preserving future attempt creation.'
+        result: approved
+        reviewed_at: '2026-08-18T00:37:15+00:00'
+        notes: 'Approved focused remediation at f66606c: held/persistent recovery hierarchy, exact file/path denial, staging
+          cleanup, immutable failure record, nine rollback/retries, package/build truth, and explicit NONQUALIFYING performance
+          all verify.'
       base_sha: 7734063b43e34e7a71bd84d23711f903a2a7eaf4
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-18T00:28:50+00:00'
-        expires_at: '2026-08-18T08:28:50+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -3805,11 +3802,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-18T00:37:15+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
