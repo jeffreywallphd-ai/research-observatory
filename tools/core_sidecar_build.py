@@ -116,7 +116,10 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "setuptools",
             "yaml",
         ],
-        "hiddenModules": ["research_observatory_core.migrations.runner"],
+        "hiddenModules": [
+            "research_observatory_core.migrations.runner",
+            "research_observatory_core.repositories",
+        ],
     }:
         raise SidecarBuildError("sidecar builder must be the approved PyInstaller 6.21.0 onedir/no-UPX profile")
     modules = contract.get("requiredModules")

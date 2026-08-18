@@ -21,7 +21,8 @@
       "yaml"
     ],
     "hiddenModules": [
-      "research_observatory_core.migrations.runner"
+      "research_observatory_core.migrations.runner",
+      "research_observatory_core.repositories"
     ]
   },
   "entrypoint": "research-observatory-core-x86_64-pc-windows-msvc.exe",
