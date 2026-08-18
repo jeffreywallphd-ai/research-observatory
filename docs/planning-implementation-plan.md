@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 914d598b1f449c1cd950567407423de6b550fb2158bd361e890967e5bf4a3f99
+source_sha256: 25de9b03dd4ca25438ec2bc1d13a9ca2e8862a7de5b8e669ddceb42d1ec2b574
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1795,7 +1795,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S02.T03 - Build typed repositories and transaction boundaries
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
