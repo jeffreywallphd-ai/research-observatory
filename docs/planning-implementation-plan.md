@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dfe5a54cc3c15efd46c813b78fd8e2cbc6a5bc0eb9a346f00329fd8b941587ec
+source_sha256: ba173b3db6724f47bab7a4793e7b737f78fede8210f5aa05e4a1b5235a400430
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1795,13 +1795,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S02.T03 - Build typed repositories and transaction boundaries
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S02.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Repository interfaces for canonical aggregates plus unit-of-work patterns and deterministic test helpers.
 
