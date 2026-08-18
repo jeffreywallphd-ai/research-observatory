@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ab219d955f201d00cc09eac1562b961009cc39739fba03c5ceebf4b994aeabf9
+source_sha256: 31902d306270fdf7ded8d89be95f651859751d2bb71524eb2343ee4f20516ce7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1835,15 +1835,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-02.S02.T01`
 
-#### - [ ] CAP-02.S03.T01 - Implement content-addressed object storage abstraction
+#### - [x] CAP-02.S03.T01 - Implement content-addressed object storage abstraction
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S02.T01`
 
-**Owner / review:** codex / agent:curie (`changes-requested`)
+**Owner / review:** codex / agent:curie (`approved`)
 
 **Objective:** Streaming put/get/delete, hashes, metadata, reference counting, atomic writes, and corruption detection.
 
@@ -1869,7 +1869,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S03.T02 - Add encryption-at-rest and key-version metadata
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
