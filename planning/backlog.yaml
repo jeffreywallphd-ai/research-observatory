@@ -87,8 +87,8 @@ waves:
   approval:
     status: APPROVED
     approved_by: repository-owner
-    approved_at: '2026-08-14T01:32:27.653823+00:00'
-    approved_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
+    approved_at: '2026-08-18T11:35:36.198538+00:00'
+    approved_commit: c5bbd97c0cdc665eecb973f5862478ef7be97752
     capability_ids:
     - CAP-01
     - CAP-02
@@ -100,6 +100,7 @@ waves:
     - CAP-02-D01
     - CAP-02-D02
     - CAP-02-D03
+    - CAP-02-D04
     - CAP-03-D01
     - CAP-03-D02
     - CAP-03-D03
@@ -124,7 +125,8 @@ waves:
     - CAP-03.S05
     - CAP-03.S06
     - CAP-07.S01
-    notes: User explicitly approved the complete W1 packet in the Codex session on 2026-08-13.
+    notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
+      in Codex on 2026-08-18.
   campaign:
     status: PAUSED
     scope: wave

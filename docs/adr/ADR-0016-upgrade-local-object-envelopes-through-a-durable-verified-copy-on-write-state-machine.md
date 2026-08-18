@@ -1,9 +1,10 @@
 ---
 id: ADR-0016
 title: Upgrade local object envelopes through a durable verified copy-on-write state machine
-status: Proposed
+status: Accepted
 date: 2026-08-18
-deciders: []
+deciders:
+  - repository-owner
 linked_tasks:
   - CAP-02.S03.T02
 decision_scope: The release-compatible local object-envelope format, key-wrapping failure classification, and the durable coordination of prior plaintext object upgrades across SQLite and same-volume filesystem state.

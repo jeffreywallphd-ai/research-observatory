@@ -440,7 +440,7 @@
           "wave": "W1",
           "title": "Tauri and React application shell",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S01-tauri-and-react-application-shell.md",
-          "plan_sha256": "5ba5fa1dbef7342c61c7f8eb867d01150356c4d56dc56f32d558d50fee896d69",
+          "plan_sha256": "5f13332b8890b6a7e412241a4427d1b181cef12ae74b063878115f11b8e7990c",
           "page": "CAP-01/CAP-01.S01.html",
           "task_count": 3
         },
@@ -450,7 +450,7 @@
           "wave": "W1",
           "title": "Desktop design system and accessibility foundation",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S02-desktop-design-system-and-accessibility-foundation.md",
-          "plan_sha256": "5ea6c925ea8a1ab62574b87b5d8cfe95d001478efb1e756317e294168a47ef47",
+          "plan_sha256": "f7c7cd63ae637620733e7f3bd20b9fac207b20b89cd8dd9d8e3b3e6ebcafadce",
           "page": "CAP-01/CAP-01.S02.html",
           "task_count": 3
         },
@@ -460,7 +460,7 @@
           "wave": "W1",
           "title": "Packaged Python/FastAPI sidecar",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S03-packaged-python-fastapi-sidecar.md",
-          "plan_sha256": "2944819d6b2ee0347d36df7c658da3e029fbd972548a563513bd0fe57158aa70",
+          "plan_sha256": "9d0b8de6ffc12bc70cca20457cf54292d9698c1af4ab9220580d20880b5cdc08",
           "page": "CAP-01/CAP-01.S03.html",
           "task_count": 3
         },
@@ -470,7 +470,7 @@
           "wave": "W1",
           "title": "Authenticated desktop-service contract",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S04-authenticated-desktop-service-contract.md",
-          "plan_sha256": "01f293500ad712f39e6d485157bac81a8cb3e6db98ff42a2bc639a6c8854887a",
+          "plan_sha256": "6d5183b7112787988eecbfaec0308a50023868d07796cef58688383a38064dc6",
           "page": "CAP-01/CAP-01.S04.html",
           "task_count": 3
         },
@@ -502,7 +502,7 @@
           "wave": "W1",
           "title": "Local project lifecycle and directory contract",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S01-local-project-lifecycle-and-directory-contract.md",
-          "plan_sha256": "c7df4b349cb66eafc2eef7fa5814d90ead0c81ffb93ea602f713c335cfdf7fab",
+          "plan_sha256": "202165e0a4d330858342944e856aee10e132f7e7af19d2b69d7e3df7ba0691d2",
           "page": "CAP-02/CAP-02.S01.html",
           "task_count": 3
         },
@@ -512,7 +512,7 @@
           "wave": "W1",
           "title": "SQLite schema, migrations, and repository layer",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S02-sqlite-schema-migrations-and-repository-layer.md",
-          "plan_sha256": "6e7e54370c5635345f0acdf99c2f3a31833a876efbb62597cb6502fe0f2ca7ee",
+          "plan_sha256": "3f6b6653f198cadad8177968d1af816237bb4f1d462415bafeaff9a1f7d39fdd",
           "page": "CAP-02/CAP-02.S02.html",
           "task_count": 3
         },
@@ -522,7 +522,7 @@
           "wave": "W1",
           "title": "Encrypted local object and cache storage",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S03-encrypted-local-object-and-cache-storage.md",
-          "plan_sha256": "1771517ac294bd88bfe19ece12750bb9589297bd770d98a1792f6bc9ef629810",
+          "plan_sha256": "04c180aacbc4aa5a9b1f9d50db2bbfe5fc8ed805c16851bbea4dd89ff715a386",
           "page": "CAP-02/CAP-02.S03.html",
           "task_count": 3
         },
@@ -532,7 +532,7 @@
           "wave": "W1",
           "title": "Local secrets, profiles, and privacy controls",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S04-local-secrets-profiles-and-privacy-controls.md",
-          "plan_sha256": "89b3a818638c86a40a8fe0feea89aab5ee70dff625514f62e3d3f5f177b0b360",
+          "plan_sha256": "20fcc0ca51e58f35c85fbe2612a8214fbc11d76364ec5dd19138298ce8306046",
           "page": "CAP-02/CAP-02.S04.html",
           "task_count": 4
         },
@@ -564,7 +564,7 @@
           "wave": "W1",
           "title": "Canonical identifiers and domain contracts",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S01-canonical-identifiers-and-domain-contracts.md",
-          "plan_sha256": "66833887c33cc02be5c3eb59adc7757798093fedca3117b6f08efea9b1b88c24",
+          "plan_sha256": "d1a407aac619189299e65be61d1e959a03d370f48bedd3084c5ffa449bcaafbb",
           "page": "CAP-03/CAP-03.S01.html",
           "task_count": 3
         },
@@ -574,7 +574,7 @@
           "wave": "W1",
           "title": "Research intent contract and mode governance",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S02-research-intent-contract-and-mode-governance.md",
-          "plan_sha256": "fed38091327298f2a14d50a07fd41d0264ecf86514a3b26d20c8160f1f52c34e",
+          "plan_sha256": "8c78a520c5d66a34aa35b636b50695cabe593192eaf20b1e2c01f749ba4a7771",
           "page": "CAP-03/CAP-03.S02.html",
           "task_count": 3
         },
@@ -584,7 +584,7 @@
           "wave": "W1",
           "title": "Append-only provenance and audit ledger",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S03-append-only-provenance-and-audit-ledger.md",
-          "plan_sha256": "476be5f99192b86ed4d084a443e40f202ce3754e926c3e7af911d490446bfdbe",
+          "plan_sha256": "13dbd89b7768e6a278bc1a0b9e70da7ed791196aa00c226c67b0467349a3fa59",
           "page": "CAP-03/CAP-03.S03.html",
           "task_count": 3
         },
@@ -594,7 +594,7 @@
           "wave": "W1",
           "title": "Portable workflow model and local worker fabric",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S04-portable-workflow-model-and-local-worker-fabric.md",
-          "plan_sha256": "fbb66a12c02d76a1cb198116b3a40d685769d8742670d21f44d774d3e6ffc61b",
+          "plan_sha256": "89740561909d240fb93b79d07585fee6797e8d29796523ec92e17788b0d8cc6d",
           "page": "CAP-03/CAP-03.S04.html",
           "task_count": 3
         },
@@ -604,7 +604,7 @@
           "wave": "W1",
           "title": "Dependency graph, staleness, and controlled recalculation",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md",
-          "plan_sha256": "c80070a23ed771cc972a12a74be24812da7d7c0347773a5f7c46006e9cf3b12f",
+          "plan_sha256": "9b0e8bd7c4f866779bcf1b859542c2af975f94a2b19ee53c907708a321c5b8f6",
           "page": "CAP-03/CAP-03.S05.html",
           "task_count": 3
         },
@@ -614,7 +614,7 @@
           "wave": "W1",
           "title": "Use-case profiles and adaptive guided navigation",
           "plan_path": "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
-          "plan_sha256": "b60e4cb2fc780270fe0728874867c200ae9a704ca616721596e7ea7b859411bd",
+          "plan_sha256": "bd353fff98ded63264965eeaa89a2b1b61b7b095e0221be9f6de744292bbcf7d",
           "page": "CAP-03/CAP-03.S06.html",
           "task_count": 5
         }
@@ -842,7 +842,7 @@
           "wave": "W1",
           "title": "Model task, provider, and routing contracts",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
-          "plan_sha256": "1b12c20ddd74482cfd6f9b0f46af01f717610634a6979d2139e55286cd7d6568",
+          "plan_sha256": "2dc787870069e3815c70c407abc1a206ef1655a1f164e3354d8c12bb72089026",
           "page": "CAP-07/CAP-07.S01.html",
           "task_count": 3
         },
