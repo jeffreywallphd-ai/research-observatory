@@ -3891,11 +3891,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-18T02:25:33+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      started_at: '2026-08-18T02:27:48+00:00'
+      updated_at: '2026-08-18T02:27:48+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -3905,10 +3905,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 99cc2ee17b3ebf7aaf7fa459392e6f440fa27d10
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-18T02:27:48+00:00'
+        expires_at: '2026-08-18T10:27:48+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
     - id: CAP-02.S03.T02
