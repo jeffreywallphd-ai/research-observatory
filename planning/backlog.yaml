@@ -3606,7 +3606,7 @@ capabilities:
     depends_on:
     - CAP-02.S01.T01
     - CAP-03.S01.T01
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-02.S02.T01
       capability_id: CAP-02
@@ -3845,15 +3845,15 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
+      status: APPROVED
       reviewer: agent:curie
-      reviewed_at: '2026-08-18T02:10:33+00:00'
+      reviewed_at: '2026-08-18T02:25:33+00:00'
       evidence:
       - artifacts/evidence/CAP-02.S02.integration.review-fix.json
-      notes: 'Independent slice-review finding remediated: raw precision is retained, previous PASS is tombstoned before qualification,
-        exact commit/package inputs remain locked through final validation, and atomic PASS replacement is the last rejecting
-        operation. Twelve focused regressions, real package qualification, full quality, clean build, and retained functional
-        slice evidence are ready for remediation-only re-review.'
+      notes: Remediation approved. Raw thresholds deny exact overflow; stale PASS is tombstoned before qualification; exact
+        committed tool/baseline/hash/evidence/contract/schema and 661-file package authority remain write-locked through the
+        final callback; atomic PASS replacement is the last rejecting operation. Twelve focused tests, real qualification,
+        quality, clean build, evidence scope, and retained functional slice results verified.
   - id: CAP-02.S03
     title: Encrypted local object and cache storage
     outcome: Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights
@@ -3865,7 +3865,7 @@ capabilities:
     - LAB
     depends_on:
     - CAP-02.S02.T01
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-02.S03.T01
       capability_id: CAP-02
@@ -3891,11 +3891,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-18T02:25:33+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
