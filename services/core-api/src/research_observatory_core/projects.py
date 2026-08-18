@@ -32,7 +32,7 @@ from .models import (
     ProjectProjection,
     ProjectRecoveryAction,
 )
-from .storage import StorageProblem, initialize_database, open_canonical_database
+from .storage import StorageProblem, initialize_database, validate_canonical_database
 
 _DIRECTORY_NAME = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 _TEMPLATE_ID = re.compile(r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
@@ -495,9 +495,8 @@ class ProjectLifecycleService:
 
     @staticmethod
     def _validate_database(path: Path, project_id: str) -> None:
-        connection = None
         try:
-            connection = open_canonical_database(path / "state" / "project.sqlite3", expected_project_id=project_id)
+            validate_canonical_database(path / "state" / "project.sqlite3", expected_project_id=project_id)
         except StorageProblem as error:
             raise ProjectLifecycleProblem(
                 status=422,
@@ -508,9 +507,6 @@ class ProjectLifecycleService:
                     "Keep the original unchanged. First make and verify a complete backup; repair only a working copy."
                 ),
             ) from error
-        finally:
-            if connection is not None:
-                connection.close()
 
     @staticmethod
     def _write_lock(lock: Path, record: dict[str, Any]) -> None:

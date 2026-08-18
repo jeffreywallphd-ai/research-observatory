@@ -18,10 +18,14 @@ binds the immutable backup manifest to exact backup bytes, the reviewed revision
 and both schema fingerprints.
 
 The Core repository layer is the executable consumer boundary for this profile.
-Business modules type against aggregate-repository and unit-of-work ports; the
-SQLite/SQLAlchemy adapter stays private to the data layer. Each aggregate write
+Business modules type against dependency-neutral aggregate-repository and
+unit-of-work ports under the Core `ports` package; the SQLite/SQLAlchemy adapter
+stays private to the data layer. Each aggregate write
 atomically appends the common revision, its kind extension, a provenance fact,
-and a pending outbox record. Stale expected revisions and unknown aggregate IDs
+and a pending outbox record. The shared record digest binds the full command,
+expected revision, schedule, and event identity so an exact idempotent replay
+returns the original projection while changed reuse conflicts. Stale expected
+revisions, unknown aggregate IDs, incompatible authority, and writer contention
 are distinct bounded outcomes. These Python ports are adapter APIs, not new
 portable storage documents, so they do not change this JSON profile or its
 schema fingerprint.

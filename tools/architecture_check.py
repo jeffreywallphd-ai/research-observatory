@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 from pathlib import Path
 from typing import Any
@@ -20,10 +21,51 @@ REQUIRED_STABLE_INTERFACES = {
     "academic-minimal-design-contract",
     "portable-project-bundle",
 }
+_DATABASE_MODULES = {"sqlite3", "sqlalchemy"}
+_DATABASE_CALLS = {"connect", "cursor", "execute", "executemany", "executescript"}
+_CONNECTION_AUTHORITIES = {"CanonicalConnection", "open_canonical_database"}
 
 
 def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def core_data_boundary_errors(source_root: Path) -> list[str]:
+    """Deny database dependencies and dynamic SQL outside Core data adapters."""
+
+    root = Path(source_root)
+    errors: list[str] = []
+    for path in sorted(root.rglob("*.py")):
+        relative = path.relative_to(root).as_posix()
+        parts = path.relative_to(root).parts
+        is_adapter = relative in {"repositories.py", "storage.py"} or "migrations" in parts
+        is_port = "ports" in parts
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported = {alias.name.split(".")[0] for alias in node.names}
+                if (is_port or not is_adapter) and imported & _DATABASE_MODULES:
+                    errors.append(f"{relative}:{node.lineno}: database dependency outside adapter")
+            elif isinstance(node, ast.ImportFrom):
+                module = (node.module or "").split(".")[0]
+                imported = {alias.name for alias in node.names}
+                if (is_port or not is_adapter) and module in _DATABASE_MODULES:
+                    errors.append(f"{relative}:{node.lineno}: database dependency outside adapter")
+                if is_port and (node.module or "").split(".")[-1] in {"repositories", "storage"}:
+                    errors.append(f"{relative}:{node.lineno}: port depends on concrete data adapter")
+                if not is_adapter and (node.module or "").split(".")[-1] == "storage":
+                    for authority in sorted(imported & _CONNECTION_AUTHORITIES):
+                        errors.append(f"{relative}:{node.lineno}: imports {authority} connection authority")
+                if not is_adapter and path.name != "main.py" and (node.module or "").split(".")[-1] == "repositories":
+                    errors.append(f"{relative}:{node.lineno}: business module imports concrete repository adapter")
+            elif (
+                not is_adapter
+                and isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Attribute)
+                and node.func.attr in _DATABASE_CALLS
+            ):
+                errors.append(f"{relative}:{node.lineno}: database call {node.func.attr} outside adapter")
+    return errors
 
 
 def validate_contract(repo: Path, contract: dict[str, Any]) -> list[str]:
@@ -123,6 +165,7 @@ def main() -> int:
     repo = Path(args.repo).resolve()
     contract = load_json(repo / "architecture-boundaries.json")
     errors = validate_contract(repo, contract)
+    errors.extend(core_data_boundary_errors(repo / "services" / "core-api" / "src" / "research_observatory_core"))
     if errors:
         for error in errors:
             print(f"ERROR: {error}")

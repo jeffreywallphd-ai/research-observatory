@@ -11,6 +11,8 @@ upgrade/rollback, recovery records, and idempotent current-schema detection.
 unit-of-work commit/rollback, optimistic conflict, not-found behavior, atomic
 revision/provenance/outbox publication, and the no-SQL-outside-data-layer
 boundary. Deterministic draft/event helpers supply fixed IDs and timestamps
-without weakening production validation.
+without weakening production validation. Hostile cases also cover dependency-
+neutral port imports, indirect SQL, bounded writer contention and incompatible
+authority, exact idempotent replay, and changed payload/precondition conflict.
 Complete data and recovery profiles run once the integrated storage
 slice is reviewed.

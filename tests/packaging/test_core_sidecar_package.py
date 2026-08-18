@@ -166,6 +166,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "alembic.operations",
                 "research_observatory_core.migrations.runner",
                 "research_observatory_core.migrations.versions.v0002_schema_history",
+                "research_observatory_core.ports.repositories",
                 "research_observatory_core.repositories",
                 "sqlalchemy.engine",
             ):
