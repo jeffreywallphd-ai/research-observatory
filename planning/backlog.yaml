@@ -3802,14 +3802,16 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T00:38:49+00:00'
-      updated_at: '2026-08-18T01:16:37+00:00'
+      updated_at: '2026-08-18T01:17:21+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Implementation 83d6b23; focused evidence dbb2f49d; ready for independent repository/UoW review.
+      implementation_notes: 'Implementation 83d6b23; focused evidence dbb2f49d; ready for independent repository/UoW review.
+
+        Remediation 0a5d559; superseding evidence 820f210a; four prior findings closed with focused commit-bound checks.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S02.T03.json
