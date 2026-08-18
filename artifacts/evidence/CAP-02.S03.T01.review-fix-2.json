@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S03.T01",
+  "commit": "971cef3edfe7a1af46c68b0891fa74db04b9a405",
+  "baseCommit": "747391f58b55e0205b43ae80887fd0e7136e68bf",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S03.T01.review-fix.json",
+    "reason": "Remediation re-review proved that a combined late hardlink and lost COMMIT acknowledgement could bypass the normal post-COMMIT identity check. This manifest binds identical held-file validation to the committed reconciliation path."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S03.T01.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "tests/data/test_local_object_store.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_local_object_store.LocalObjectStoreTests.test_put_holds_verified_bytes_through_commit_and_reconciles_commit_ack_failure",
+      "exitCode": 0,
+      "result": "The exact publication test passes ordinary held write/replace denial, plain lost-ack reconciliation, normal late-hardlink quarantine, and the combined real-COMMIT plus late-hardlink plus lost-ack regression. The combined path raises RO-CORE-OBJECT-CORRUPT and leaves metadata quarantined rather than returning available."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_local_object_store tests.data.test_sqlite_repositories tests.data.test_sqlite_schema tests.contracts.test_object_store_contract tests.foundation.test_architecture_check",
+      "exitCode": 0,
+      "result": "All 45 focused task-risk tests pass. Every original finding and the one incremental combined attack remain covered without a broad profile replay."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S03.T01-review-fix-2-quality.json; .venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S03.T01-review-fix-2-build-manifest.json; .venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "Quality passes for all 98 governed Python files (report SHA-256 e3775648b9340f026198bd4ab1a22f3f10eab51d9e4a16e0a6d48f1631b161ee). Clean build 0.1.0+g971cef3 has manifest SHA-256 fff1464440589265b385d06db6129c4952c61af2abcf5267431d5d28b4080b16. Fresh package SHA-256 006661ef5b1777b546f8589b8bc1a074f6166a13bf16bfcfb47a95e9ab897bb3 binds 661 files / 38,331,209 bytes and entrypoint b664d6630e46ceac23a45efda05f0a384d8e0d306ca8d55ad9165639c4780bd0."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "Task state, immutable evidence chain, generated views, patch hygiene, and the clean codex worktree pass."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Every committed reconciliation return now requires the exact still-held path, descriptor identity, and single-link state to match. A valid held file returns the committed projection; any mismatch sets quarantine-before-return and raises ObjectCorrupt.",
+        "The combined hostile sequence executes the real COMMIT, adds a hardlink while the verified reader remains held, and raises a lost-acknowledgement OperationalError. Reconciliation detects nlink 2 and never returns an available projection."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The combined attack is part of the direct object-store test and the full 45-test affected union. All six original findings remain independently passing."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The two-file functional delta changes only the private object-store adapter and its direct regression; strict profile, architecture, repository, storage, package, and staged T02/T03 boundaries are unchanged and revalidated proportionally."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This second remediation changes only the committed-publication exception path and its direct test. Verification replays the exact combined attack, the complete 45-test affected union, governed Python quality, clean build identity, and a fresh real frozen sidecar package.",
+    "deferred": "Broad data, security, e2e, performance, and full repository profiles remain deferred to the slice/W1 review points required by the Wave test policy."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Replay the combined hardlink plus real COMMIT plus lost acknowledgement case, confirm the original six closures remain intact, and verify exact six-file evidence scope/package identity. No broad profiles."
+  }
+}

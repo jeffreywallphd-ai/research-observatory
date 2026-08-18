@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7e2ca38aabf595c7c09be17f1aa156ab943c3ff9c05dc073767b31cce8f4045a
+source_sha256: ab219d955f201d00cc09eac1562b961009cc39739fba03c5ceebf4b994aeabf9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1837,7 +1837,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S03.T01 - Implement content-addressed object storage abstraction
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -1865,6 +1865,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-02.S03.T01.submission.json` at `e5ff3c8f54dd2e8a2bbc37e398d73ecddac45bf8`
 - `artifacts/evidence/CAP-02.S03.T01.review-fix.json` at `747391f58b55e0205b43ae80887fd0e7136e68bf`
+- `artifacts/evidence/CAP-02.S03.T01.review-fix-2.json` at `971cef3edfe7a1af46c68b0891fa74db04b9a405`
 
 #### - [ ] CAP-02.S03.T02 - Add encryption-at-rest and key-version metadata
 
