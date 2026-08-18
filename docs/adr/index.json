@@ -136,6 +136,17 @@
         "CAP-02.S02.T02",
         "CAP-02.S02.T03"
       ]
+    },
+    {
+      "id": "ADR-0015",
+      "path": "docs/adr/ADR-0015-use-project-scoped-opaque-content-addressed-object-storage.md",
+      "title": "Use project-scoped opaque content-addressed local object storage",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-02.S03.T01",
+        "CAP-02.S03.T02",
+        "CAP-02.S03.T03"
+      ]
     }
   ]
 }

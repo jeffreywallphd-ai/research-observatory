@@ -29,3 +29,11 @@ revisions, unknown aggregate IDs, incompatible authority, and writer contention
 are distinct bounded outcomes. These Python ports are adapter APIs, not new
 portable storage documents, so they do not change this JSON profile or its
 schema fingerprint.
+
+`object-store-profile.v1.json` is the exact portable policy for the
+project-scoped object adapter introduced by CAP-02.S03. It binds plaintext
+SHA-256 identity, project-only deduplication, opaque HMAC-derived physical
+identity, complete-file publication before metadata, immutable document
+references, rights-aware verified streams, and corruption quarantine. It also
+states that T01's unencrypted fixture adapter is not release-qualified and that
+authenticated encryption belongs to T02. It carries no operating-system path.

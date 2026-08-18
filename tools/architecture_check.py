@@ -35,6 +35,11 @@ def _is_concrete_repository_module(module: str) -> bool:
     return bool(parts) and parts[-1] == "repositories" and (len(parts) < 2 or parts[-2] != "ports")
 
 
+def _is_concrete_object_store_module(module: str) -> bool:
+    parts = module.split(".")
+    return bool(parts) and parts[-1] == "object_store" and (len(parts) < 2 or parts[-2] != "ports")
+
+
 def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -47,7 +52,7 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
     for path in sorted(root.rglob("*.py")):
         relative = path.relative_to(root).as_posix()
         parts = path.relative_to(root).parts
-        is_adapter = relative in {"repositories.py", "storage.py"} or "migrations" in parts
+        is_adapter = relative in {"object_store.py", "repositories.py", "storage.py"} or "migrations" in parts
         is_port = "ports" in parts
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         for node in ast.walk(tree):
@@ -60,6 +65,8 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
                         errors.append(f"{relative}:{node.lineno}: imports storage connection authority")
                     if not is_adapter and path.name != "main.py" and _is_concrete_repository_module(alias.name):
                         errors.append(f"{relative}:{node.lineno}: imports concrete repository adapter")
+                    if not is_adapter and path.name != "main.py" and _is_concrete_object_store_module(alias.name):
+                        errors.append(f"{relative}:{node.lineno}: imports concrete object-store adapter")
             elif isinstance(node, ast.ImportFrom):
                 full_module = node.module or ""
                 module = full_module.split(".")[0]
@@ -89,6 +96,18 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
                     )
                 ):
                     errors.append(f"{relative}:{node.lineno}: business module imports concrete repository adapter")
+                if (
+                    not is_adapter
+                    and path.name != "main.py"
+                    and (
+                        _is_concrete_object_store_module(full_module)
+                        or (
+                            "object_store" in imported
+                            and (not full_module or full_module.endswith("research_observatory_core"))
+                        )
+                    )
+                ):
+                    errors.append(f"{relative}:{node.lineno}: business module imports concrete object-store adapter")
             elif (
                 not is_adapter
                 and isinstance(node, ast.Call)
