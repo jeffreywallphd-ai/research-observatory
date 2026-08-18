@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b7f4571e78998ba19c2d6d3ad7ec3f0270e2fa3a2f7e3c2c61c725f74fb1af47
+source_sha256: 109e3694c53304bb0b0200a0c8741b530aac30decc6e719925783202404885f4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1869,13 +1869,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S03.T02 - Add encryption-at-rest and key-version metadata
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S03.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / /root/t02_security_review (`changes-requested`)
 
 **Objective:** Authenticated encryption for protected objects, key identifiers, nonce handling, rotation-ready metadata, and unencrypted fixture mode for tests.
 
