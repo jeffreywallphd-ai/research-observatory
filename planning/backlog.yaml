@@ -3606,7 +3606,7 @@ capabilities:
     depends_on:
     - CAP-02.S01.T01
     - CAP-03.S01.T01
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-02.S02.T01
       capability_id: CAP-02
@@ -3845,11 +3845,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-02.S02.integration.json
+      notes: All three tasks are DONE and independently approved; full data profile, focused migration/repository/performance/security
+        integration, exact frozen package qualification, zero-blocker reviewed security scan, downstream port handoff, clean
+        build, and commit-bound integration evidence are ready for independent slice review.
   - id: CAP-02.S03
     title: Encrypted local object and cache storage
     outcome: Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights
