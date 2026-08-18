@@ -147,6 +147,15 @@
         "CAP-02.S03.T02",
         "CAP-02.S03.T03"
       ]
+    },
+    {
+      "id": "ADR-0016",
+      "path": "docs/adr/ADR-0016-upgrade-local-object-envelopes-through-a-durable-verified-copy-on-write-state-machine.md",
+      "title": "Upgrade local object envelopes through a durable verified copy-on-write state machine",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-02.S03.T02"
+      ]
     }
   ]
 }

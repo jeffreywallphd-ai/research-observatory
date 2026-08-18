@@ -52,6 +52,7 @@
         "CAP-02-D01",
         "CAP-02-D02",
         "CAP-02-D03",
+        "CAP-02-D04",
         "CAP-03-D01",
         "CAP-03-D02",
         "CAP-03-D03",
@@ -83,7 +84,7 @@
       "exit_gate_id": "G1",
       "gate_status": "PENDING",
       "approval_status": "APPROVED",
-      "completion_status": "IN_PROGRESS",
+      "completion_status": "PAUSED",
       "unlocks_waves": [
         "W2"
       ]
@@ -490,9 +491,9 @@
       "capability_alias": "CAP-local-project-storage",
       "title": "Local projects, durable storage, security, and recovery",
       "plan_path": "planning/capability-plans/CAP-02.md",
-      "plan_sha256": "782de87c8d28ce952237cf77de6f61b8c9267ec37e201720183725a02bbc06dd",
+      "plan_sha256": "855efa2e050558b0e891deff535a95662d7a791e6d7856018f481b8d1370a2aa",
       "page": "CAP-02/index.html",
-      "decision_count": 3,
+      "decision_count": 4,
       "slice_count": 5,
       "slices": [
         {
@@ -521,7 +522,7 @@
           "wave": "W1",
           "title": "Encrypted local object and cache storage",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S03-encrypted-local-object-and-cache-storage.md",
-          "plan_sha256": "b4f33d53aa37e7fccb367e63a5aed2734b1dc0c7d5209f0abb969a8b22e00b2d",
+          "plan_sha256": "1771517ac294bd88bfe19ece12750bb9589297bd770d98a1792f6bc9ef629810",
           "page": "CAP-02/CAP-02.S03.html",
           "task_count": 3
         },

@@ -40,11 +40,11 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-02 · immutable evidence key</span><h1>CAP-local-project-storage</h1><p>Local projects, durable storage, security, and recovery</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-in-progress">In Progress</span></span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>3</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>782de87c8d28</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>4</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>855efa2e0505</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
-  <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 3 selected</div>
+  <div class="review-progress" aria-live="polite"><strong data-selected-count>0</strong> / 4 selected</div>
   <label class="field-label">Reviewer name<input type="text" data-reviewer-name placeholder="Name or review role"></label>
   <label class="field-label">Capability-level notes<textarea rows="3" data-review-notes placeholder="Cross-slice constraints, required benchmarks, or approval conditions"></textarea></label>
   <label class="approval-check"><input type="checkbox" data-approval-intent> Mark this capability review complete for inclusion in the active pre-Wave approval packet</label>
@@ -60,7 +60,7 @@ python tools/planctl.py --repo . ready CAP-02 --wave &lt;active-wave&gt; --requi
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-02-D01" data-recommendation="SQLite STRICT tables behind repository ports with versioned migrations and SQLCipher or approved equivalent" data-plan-hash="782de87c8d28ce952237cf77de6f61b8c9267ec37e201720183725a02bbc06dd">
+<section class="decision-card" data-decision-id="CAP-02-D01" data-recommendation="SQLite STRICT tables behind repository ports with versioned migrations and SQLCipher or approved equivalent" data-plan-hash="855efa2e050558b0e891deff535a95662d7a791e6d7856018f481b8d1370a2aa">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-02-D01</span><h3>Canonical local store</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -87,7 +87,7 @@ python tools/planctl.py --repo . ready CAP-02 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-02-D02" data-recommendation="Encrypted content-addressed project object store with atomic writes and manifest verification" data-plan-hash="782de87c8d28ce952237cf77de6f61b8c9267ec37e201720183725a02bbc06dd">
+<section class="decision-card" data-decision-id="CAP-02-D02" data-recommendation="Encrypted content-addressed project object store with atomic writes and manifest verification" data-plan-hash="855efa2e050558b0e891deff535a95662d7a791e6d7856018f481b8d1370a2aa">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-02-D02</span><h3>Object storage</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -114,7 +114,7 @@ python tools/planctl.py --repo . ready CAP-02 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-02-D03" data-recommendation="OS credential store, project privacy profiles and tested backup/restore/rekey/recovery" data-plan-hash="782de87c8d28ce952237cf77de6f61b8c9267ec37e201720183725a02bbc06dd">
+<section class="decision-card" data-decision-id="CAP-02-D03" data-recommendation="OS credential store, project privacy profiles and tested backup/restore/rekey/recovery" data-plan-hash="855efa2e050558b0e891deff535a95662d7a791e6d7856018f481b8d1370a2aa">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-02-D03</span><h3>Secrets and recovery</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -140,6 +140,39 @@ python tools/planctl.py --repo . ready CAP-02 --wave &lt;active-wave&gt; --requi
   </label>
   <p class="decision-meta">Binding Wave approval(s): <code>W1, W5</code> · Required ADR: <code>None currently identified</code></p>
 </section>
+
+<section class="decision-card" data-decision-id="CAP-02-D04" data-recommendation="Durable post-schema project-upgrade state machine with a SQLite operation journal, verified same-volume copy-on-write replacement, and retained rollback until production-open verification" data-plan-hash="855efa2e050558b0e891deff535a95662d7a791e6d7856018f481b8d1370a2aa">
+  <div class="decision-heading">
+    <div><span class="eyebrow">CAP-02-D04</span><h3>Prior object-envelope upgrade coordination</h3></div>
+    <span class="status status-accepted">Accepted</span>
+  </div>
+  <p class="decision-basis">SQLite and filesystem replacement are separate durability domains; an explicit journal is the only candidate that preserves bounded streaming, restart reconciliation, prior project compatibility, and deletion of plaintext only after verified encrypted use.</p>
+  <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-02-D04-option-0">
+  <input id="CAP-02-D04-option-0" type="radio" name="CAP-02-D04" value="Durable post-schema project-upgrade state machine with a SQLite operation journal, verified same-volume copy-on-write replacement, and retained rollback until production-open verification" data-decision-option checked>
+  <span><strong>Durable post-schema project-upgrade state machine with a SQLite operation journal, verified same-volume copy-on-write replacement, and retained rollback until production-open verification</strong><span class="recommended">Recommended</span></span>
+</label><label class="decision-option" for="CAP-02-D04-option-1">
+  <input id="CAP-02-D04-option-1" type="radio" name="CAP-02-D04" value="Encrypt object files inside the Alembic schema transaction" data-decision-option>
+  <span><strong>Encrypt object files inside the Alembic schema transaction</strong></span>
+</label><label class="decision-option" for="CAP-02-D04-option-2">
+  <input id="CAP-02-D04-option-2" type="radio" name="CAP-02-D04" value="Rewrite lazily on first open or duplicate put" data-decision-option>
+  <span><strong>Rewrite lazily on first open or duplicate put</strong></span>
+</label><label class="decision-option" for="CAP-02-D04-option-3">
+  <input id="CAP-02-D04-option-3" type="radio" name="CAP-02-D04" value="Reject prior projects and require destructive re-import" data-decision-option>
+  <span><strong>Reject prior projects and require destructive re-import</strong></span>
+</label><label class="decision-option decision-option-other" for="CAP-02-D04-option-other">
+  <input id="CAP-02-D04-option-other" type="radio" name="CAP-02-D04" value="__OTHER__" data-decision-option data-other-choice>
+  <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
+</label>
+<label class="other-option-field" data-other-option-field>
+  <span>Brief Other description</span>
+  <input type="text" maxlength="180" data-decision-other placeholder="Briefly name the alternative direction" aria-describedby="CAP-02-D04-other-help">
+  <small id="CAP-02-D04-other-help">Required when Other is selected. Use the feedback field below for detailed reasoning and constraints.</small>
+</label></fieldset>
+  <label class="field-label">Detailed feedback, rationale, or implementation conditions
+    <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
+  </label>
+  <p class="decision-meta">Binding Wave approval(s): <code>W1</code> · Required ADR: <code>ADR-0016</code></p>
+</section>
 </div>
 <section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
 <div class="slice-list">
@@ -159,7 +192,7 @@ python tools/planctl.py --repo . ready CAP-02 --wave &lt;active-wave&gt; --requi
   <div class="slice-card-index">3</div>
   <div><span class="eyebrow">SLICE-encrypted-local-object-and-cache-storage</span><h3>Encrypted local object and cache storage</h3>
   <p>3 tasks · W1 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-in-progress">In Progress</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-in-progress">In Progress</span></span>
 </a>
 <a class="slice-card" href="CAP-02.S04.html">
   <div class="slice-card-index">4</div>
@@ -229,6 +262,7 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 | `CAP-02-D01` | **Canonical local store** | SQLite STRICT tables behind repository ports with versioned migrations and SQLCipher or approved equivalent | Plain JSON files; external PostgreSQL for desktop | SQLite supports local portability and transactions; protected storage satisfies confidential research requirements. | [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html) |
 | `CAP-02-D02` | **Object storage** | Encrypted content-addressed project object store with atomic writes and manifest verification | Store all binaries directly in relational BLOBs | Separates large artifacts while supporting dedupe, integrity, backup and relocation. | [RFC 8493 - The BagIt File Packaging Format](https://www.rfc-editor.org/rfc/rfc8493.html) |
 | `CAP-02-D03` | **Secrets and recovery** | OS credential store, project privacy profiles and tested backup/restore/rekey/recovery | Secrets in config files | Credential and recovery behavior must be platform-specific at the adapter boundary and production qualified. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
+| `CAP-02-D04` | **Prior object-envelope upgrade coordination** | Durable post-schema project-upgrade state machine with a SQLite operation journal, verified same-volume copy-on-write replacement, and retained rollback until production-open verification | Encrypt inside Alembic; lazy first-use rewrite; destructive re-import | SQLite and filesystem replacement are separate durability domains. A journaled project-open upgrade preserves restart recovery and removes plaintext only after verified encrypted use. | [SQLite transactions](https://www.sqlite.org/lang_transaction.html); [MoveFileExW](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-movefileexw) |
 
 ### Review and approval
 
