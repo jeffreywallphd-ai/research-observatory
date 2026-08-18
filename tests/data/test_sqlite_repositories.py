@@ -27,6 +27,7 @@ from research_observatory_core.ports.repositories import (  # noqa: E402
     RepositoryProblem,
     RepositoryTransactionFailed,
 )
+from research_observatory_core.projects import ProjectLifecycleService  # noqa: E402
 from research_observatory_core.repositories import create_sqlite_unit_of_work_factory  # noqa: E402
 from research_observatory_core.storage import initialize_database, open_canonical_database  # noqa: E402
 
@@ -100,6 +101,40 @@ class SqliteRepositoryTests(unittest.TestCase):
             self.assertEqual([row[0] for row in digests], [row[0] for row in outbox_digests])
         finally:
             connection.close()
+
+    def test_project_creation_relocation_restart_and_repository_port_handoff(self) -> None:
+        projects = self.root / "projects"
+        projects.mkdir()
+        lifecycle = ProjectLifecycleService()
+        created_project = lifecycle.create(
+            parent_directory=str(projects),
+            directory_name="portable-study",
+            display_name="Portable Study",
+            template_id="theory-synthesis",
+            trace_id="a" * 32,
+        )
+        original_root = Path(created_project.root)
+        factory = create_sqlite_unit_of_work_factory(
+            original_root / "state" / "project.sqlite3", created_project.project_id
+        )
+        with factory() as unit:
+            created_revision = unit.aggregates.append(draft(1), event(0), expected_revision=None)
+            unit.commit()
+
+        relocated_root = projects / "relocated-study"
+        original_root.rename(relocated_root)
+        restarted = ProjectLifecycleService()
+        opened_project = restarted.open(root=str(relocated_root), trace_id="b" * 32)
+        self.assertEqual(created_project.project_id, opened_project.project_id)
+
+        restarted_factory = create_sqlite_unit_of_work_factory(
+            relocated_root / "state" / "project.sqlite3", opened_project.project_id
+        )
+        with restarted_factory() as unit:
+            self.assertEqual(created_revision, unit.aggregates.get(created_revision.aggregate_id))
+            unit.rollback()
+        restarted.close(root=str(relocated_root), trace_id="c" * 32)
+        self.assertFalse((relocated_root / ".locks" / "session.lock").exists())
 
     def test_optimistic_conflict_and_not_found_are_bounded(self) -> None:
         with self.factory() as unit:
