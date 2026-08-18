@@ -38,8 +38,10 @@ therefore cannot suppress a finding outside `security-exceptions.json`.
 findings are reported for review. Licenses must match an allowed SPDX identifier
 or allowed Trivy category; explicitly denied identifiers and denied, restricted,
 forbidden, reciprocal, or unknown categories block. The small explicit allowances for
-MPL-2.0 and PSF-2.0 cover the current locked development environment and do not
-authorize unreviewed additions to that list. A conjunction such as
+MIT-0, MPL-2.0, and PSF-2.0 cover the current locked environment and do not
+authorize unreviewed additions to that list. MIT-0 is the SPDX `MIT No
+Attribution` identifier used by the locked cffi dependency; SPDX describes it as
+the common MIT license with the attribution paragraph removed. A conjunction such as
 `MIT AND PSF-2.0` is allowed only when every component is individually present
 in the allowlist. Disjunctions, license exceptions, malformed expressions, and
 any conjunction containing an unlisted or denied component continue to fail
@@ -78,3 +80,8 @@ Primary scanner sources:
 - https://trivy.dev/docs/latest/target/filesystem/
 - https://trivy.dev/docs/latest/guide/scanner/secret/
 - https://trivy.dev/docs/latest/scanner/license/
+
+Reviewed MIT-0 classification sources:
+
+- https://spdx.org/licenses/MIT-0.html
+- https://github.com/python-cffi/cffi/blob/main/LICENSE
