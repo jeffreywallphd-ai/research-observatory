@@ -104,6 +104,7 @@
     "tests/contracts/test_domain_contracts.py",
     "tests/contracts/test_support_bundle_contract.py",
     "tests/data/test_project_lifecycle_performance_check.py",
+    "tests/data/test_storage_maintenance_performance_check.py",
     "tests/data/test_encrypted_object_store.py",
     "tests/data/test_local_object_store.py",
     "tests/data/test_object_envelope_upgrades.py",

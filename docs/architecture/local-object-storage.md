@@ -124,6 +124,21 @@ Content-free started/completed audit records preserve actor, trace, selected
 categories, aggregate counts, and the opaque preview identity without recording
 object digests, content, or paths.
 
+The Windows x64 storage-performance authority uses ten retained samples for each
+measurement. Encrypted production put and authenticated open/read are measured
+for 1 MiB PDF, 4 MiB report, and 16 MiB model fixtures. Accounting plus cleanup
+preview and execution are measured with 2,000 cache files plus 100 unreferenced
+derived objects. Fixture construction and the execution preview are outside the
+timed intervals; operating-system filesystem caches are not flushed. The hard
+limits are at least 5 MiB/s p50 for every encrypted streaming case, at most 2 s
+p95 for accounting/preview, and at most 5 s p95 for 2,100-item cleanup. A further
+20% regression from the conservative three-run Windows baseline also blocks the
+data profile. Every report retains all samples, hardware/OS identity, fixture and
+method version, source commit and hashes, and the exact reviewed baseline hash.
+The existing project-lifecycle performance gate remains the project-open latency
+authority; together the two gates satisfy the slice's throughput, open-latency,
+and GC-pause duties.
+
 The exact portable policy is
 [`object-store-profile.v1.json`](../../packages/contracts/storage/object-store-profile.v1.json),
 governed by ADR-0015.
@@ -147,5 +162,6 @@ governed by ADR-0015.
 - categorized project/shared-cache accounting, soft/hard pressure, and low-disk read continuity;
 - preview-only inspection, one-time cleanup leases, reference/reader rechecks, partial-GC restart, and
   hardlink/changed-identity refusal;
+- commit-bound Windows encrypted-throughput and 2,100-item accounting/GC-pause qualification;
 - port-only import remains dependency-neutral and concrete adapter imports are
   rejected outside the composition/data boundary.

@@ -1,0 +1,576 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "object-storage-performance-baseline",
+  "baselineSourceCommit": "6e9c7238317695b381d543fb365bbb8bacfff4c6",
+  "profile": "windows-x64",
+  "fixture": {
+    "version": "encrypted-storage-and-maintenance-windows-v1",
+    "streaming": {
+      "protectionProfile": "project-encrypted-v1",
+      "sizesBytes": {
+        "pdf": 1048576,
+        "report": 4194304,
+        "model": 16777216
+      }
+    },
+    "maintenance": {
+      "cacheFileCount": 2000,
+      "derivedObjectCount": 100,
+      "itemBytes": 64,
+      "reclaimableItemCount": 2100,
+      "reclaimablePlaintextBytes": 134400
+    }
+  },
+  "methodology": {
+    "timer": "time.perf_counter_ns",
+    "operations": {
+      "putThroughput": "encrypted streaming put including fsync, guarded publication, and SQLite metadata commit",
+      "openThroughput": "production encrypted open, full authentication, and controlled-stream read to EOF",
+      "usagePreview": "categorized usage scan followed by one-time cleanup preview",
+      "cleanup": "execute preview across project-cache and unreferenced derived objects"
+    },
+    "excluded": "payload and fixture construction, project initialization, and cleanup preview before execution timing",
+    "state": "operating-system filesystem cache is not flushed; each cleanup sample receives a fresh fixture",
+    "repetitions": 10,
+    "distribution": "nearest-rank p50 and p95 over every sample; latency gates p95 and throughput gates p50; no samples discarded",
+    "regressionThresholdPercent": 20,
+    "hardwareQualification": "release-authoritative Windows x64 workstation"
+  },
+  "hardware": {
+    "operatingSystem": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logicalCpuCount": 20,
+    "physicalMemoryBytes": 16984227840
+  },
+  "source": {
+    "measurementToolPath": "tools/storage_maintenance_performance_check.py",
+    "measurementToolSha256": "516f0f9a15f1381d31e6f47c790329289c22eaee6a97bffe20f9fe4b53b8205d",
+    "implementationPath": "services/core-api/src/research_observatory_core/object_store.py",
+    "implementationSha256": "9311e5c779dcd63bf810b276512fb5b7e2c843a97ecdfada86c3f9e25d0dcd58"
+  },
+  "calibrationRuns": [
+    {
+      "context": "standalone measurement-only run 1",
+      "stateCommit": "6e9c7238317695b381d543fb365bbb8bacfff4c6",
+      "source": {
+        "dirty": false,
+        "stateCommit": "6e9c7238317695b381d543fb365bbb8bacfff4c6",
+        "measurementToolPath": "tools/storage_maintenance_performance_check.py",
+        "measurementToolSha256": "516f0f9a15f1381d31e6f47c790329289c22eaee6a97bffe20f9fe4b53b8205d",
+        "implementationPath": "services/core-api/src/research_observatory_core/object_store.py",
+        "implementationSha256": "9311e5c779dcd63bf810b276512fb5b7e2c843a97ecdfada86c3f9e25d0dcd58"
+      },
+      "measurements": {
+        "putPdf": {
+          "samplesMiBPerSecond": [
+            37.313,
+            38.054,
+            36.813,
+            39.289,
+            37.069,
+            38.176,
+            37.598,
+            35.363,
+            35.801,
+            37.557
+          ],
+          "minimumMiBPerSecond": 35.363,
+          "p50MiBPerSecond": 37.313,
+          "p95MiBPerSecond": 39.289,
+          "maximumMiBPerSecond": 39.289
+        },
+        "openPdf": {
+          "samplesMiBPerSecond": [
+            103.439,
+            99.994,
+            101.651,
+            106.673,
+            103.698,
+            103.88,
+            97.604,
+            106.824,
+            106.159,
+            102.358
+          ],
+          "minimumMiBPerSecond": 97.604,
+          "p50MiBPerSecond": 103.439,
+          "p95MiBPerSecond": 106.824,
+          "maximumMiBPerSecond": 106.824
+        },
+        "putReport": {
+          "samplesMiBPerSecond": [
+            94.232,
+            83.763,
+            86.472,
+            86.549,
+            82.718,
+            87.159,
+            83.992,
+            82.042,
+            83.167,
+            82.004
+          ],
+          "minimumMiBPerSecond": 82.004,
+          "p50MiBPerSecond": 83.763,
+          "p95MiBPerSecond": 94.232,
+          "maximumMiBPerSecond": 94.232
+        },
+        "openReport": {
+          "samplesMiBPerSecond": [
+            157.358,
+            160.612,
+            158.396,
+            158.092,
+            158.346,
+            161.49,
+            162.119,
+            154.966,
+            160.367,
+            163.085
+          ],
+          "minimumMiBPerSecond": 154.966,
+          "p50MiBPerSecond": 158.396,
+          "p95MiBPerSecond": 163.085,
+          "maximumMiBPerSecond": 163.085
+        },
+        "putModel": {
+          "samplesMiBPerSecond": [
+            147.067,
+            128.597,
+            151.181,
+            152.055,
+            142.171,
+            153.913,
+            160.186,
+            146.235,
+            138.329,
+            146.836
+          ],
+          "minimumMiBPerSecond": 128.597,
+          "p50MiBPerSecond": 146.836,
+          "p95MiBPerSecond": 160.186,
+          "maximumMiBPerSecond": 160.186
+        },
+        "openModel": {
+          "samplesMiBPerSecond": [
+            170.683,
+            170.21,
+            171.408,
+            170.884,
+            170.038,
+            175.274,
+            174.704,
+            168.876,
+            169.098,
+            169.653
+          ],
+          "minimumMiBPerSecond": 168.876,
+          "p50MiBPerSecond": 170.21,
+          "p95MiBPerSecond": 175.274,
+          "maximumMiBPerSecond": 175.274
+        },
+        "usagePreview": {
+          "samplesMs": [
+            317.657,
+            317.3,
+            312.853,
+            318.004,
+            316.217,
+            315.912,
+            315.77,
+            316.446,
+            317.692,
+            319.486
+          ],
+          "minimumMs": 312.853,
+          "p50Ms": 316.446,
+          "p95Ms": 319.486,
+          "maximumMs": 319.486
+        },
+        "cleanup": {
+          "samplesMs": [
+            3645.104,
+            3593.625,
+            3550.649,
+            3605.493,
+            3549.214,
+            3601.032,
+            3630.492,
+            3605.012,
+            3621.631,
+            3611.586
+          ],
+          "minimumMs": 3549.214,
+          "p50Ms": 3605.012,
+          "p95Ms": 3645.104,
+          "maximumMs": 3645.104
+        }
+      },
+      "recordSha256": "6f683508c28965cd71bc67d2a9e45eb7557e8fab2790d36ce1ab99dcdb400022"
+    },
+    {
+      "context": "standalone measurement-only run 2",
+      "stateCommit": "6e9c7238317695b381d543fb365bbb8bacfff4c6",
+      "source": {
+        "dirty": false,
+        "stateCommit": "6e9c7238317695b381d543fb365bbb8bacfff4c6",
+        "measurementToolPath": "tools/storage_maintenance_performance_check.py",
+        "measurementToolSha256": "516f0f9a15f1381d31e6f47c790329289c22eaee6a97bffe20f9fe4b53b8205d",
+        "implementationPath": "services/core-api/src/research_observatory_core/object_store.py",
+        "implementationSha256": "9311e5c779dcd63bf810b276512fb5b7e2c843a97ecdfada86c3f9e25d0dcd58"
+      },
+      "measurements": {
+        "putPdf": {
+          "samplesMiBPerSecond": [
+            39.379,
+            39.971,
+            40.351,
+            38.088,
+            35.598,
+            38.335,
+            38.049,
+            35.915,
+            35.026,
+            36.458
+          ],
+          "minimumMiBPerSecond": 35.026,
+          "p50MiBPerSecond": 38.049,
+          "p95MiBPerSecond": 40.351,
+          "maximumMiBPerSecond": 40.351
+        },
+        "openPdf": {
+          "samplesMiBPerSecond": [
+            101.366,
+            105.239,
+            106.815,
+            104.519,
+            100.888,
+            101.744,
+            102.727,
+            105.379,
+            103.674,
+            101.769
+          ],
+          "minimumMiBPerSecond": 100.888,
+          "p50MiBPerSecond": 102.727,
+          "p95MiBPerSecond": 106.815,
+          "maximumMiBPerSecond": 106.815
+        },
+        "putReport": {
+          "samplesMiBPerSecond": [
+            94.782,
+            94.118,
+            86.691,
+            88.94,
+            88.403,
+            88.334,
+            90.173,
+            87.03,
+            43.601,
+            87.038
+          ],
+          "minimumMiBPerSecond": 43.601,
+          "p50MiBPerSecond": 88.334,
+          "p95MiBPerSecond": 94.782,
+          "maximumMiBPerSecond": 94.782
+        },
+        "openReport": {
+          "samplesMiBPerSecond": [
+            157.603,
+            159.546,
+            156.359,
+            160.342,
+            160.935,
+            156.997,
+            161.668,
+            161.157,
+            157.752,
+            154.432
+          ],
+          "minimumMiBPerSecond": 154.432,
+          "p50MiBPerSecond": 157.752,
+          "p95MiBPerSecond": 161.668,
+          "maximumMiBPerSecond": 161.668
+        },
+        "putModel": {
+          "samplesMiBPerSecond": [
+            160.118,
+            151.574,
+            151.712,
+            148.755,
+            151.212,
+            151.696,
+            147.723,
+            149.309,
+            145.163,
+            148.771
+          ],
+          "minimumMiBPerSecond": 145.163,
+          "p50MiBPerSecond": 149.309,
+          "p95MiBPerSecond": 160.118,
+          "maximumMiBPerSecond": 160.118
+        },
+        "openModel": {
+          "samplesMiBPerSecond": [
+            172.673,
+            172.326,
+            171.505,
+            169.521,
+            165.649,
+            170.191,
+            165.93,
+            171.198,
+            171.087,
+            170.716
+          ],
+          "minimumMiBPerSecond": 165.649,
+          "p50MiBPerSecond": 170.716,
+          "p95MiBPerSecond": 172.673,
+          "maximumMiBPerSecond": 172.673
+        },
+        "usagePreview": {
+          "samplesMs": [
+            318.069,
+            314.712,
+            321.897,
+            319.516,
+            316.74,
+            316.095,
+            313.628,
+            315.86,
+            314.918,
+            314.59
+          ],
+          "minimumMs": 313.628,
+          "p50Ms": 315.86,
+          "p95Ms": 321.897,
+          "maximumMs": 321.897
+        },
+        "cleanup": {
+          "samplesMs": [
+            3598.155,
+            3793.232,
+            3693.781,
+            3664.617,
+            3607.584,
+            3602.82,
+            3636.043,
+            3638.324,
+            3665.962,
+            3608.941
+          ],
+          "minimumMs": 3598.155,
+          "p50Ms": 3636.043,
+          "p95Ms": 3793.232,
+          "maximumMs": 3793.232
+        }
+      },
+      "recordSha256": "3e874bcb2db6de284ddad4474616e2fd738bc7e78597fea057788bb42c679b76"
+    },
+    {
+      "context": "standalone measurement-only run 3",
+      "stateCommit": "6e9c7238317695b381d543fb365bbb8bacfff4c6",
+      "source": {
+        "dirty": false,
+        "stateCommit": "6e9c7238317695b381d543fb365bbb8bacfff4c6",
+        "measurementToolPath": "tools/storage_maintenance_performance_check.py",
+        "measurementToolSha256": "516f0f9a15f1381d31e6f47c790329289c22eaee6a97bffe20f9fe4b53b8205d",
+        "implementationPath": "services/core-api/src/research_observatory_core/object_store.py",
+        "implementationSha256": "9311e5c779dcd63bf810b276512fb5b7e2c843a97ecdfada86c3f9e25d0dcd58"
+      },
+      "measurements": {
+        "putPdf": {
+          "samplesMiBPerSecond": [
+            38.87,
+            39.519,
+            37.229,
+            36.6,
+            38.134,
+            35.536,
+            36.192,
+            37.535,
+            36.111,
+            33.419
+          ],
+          "minimumMiBPerSecond": 33.419,
+          "p50MiBPerSecond": 36.6,
+          "p95MiBPerSecond": 39.519,
+          "maximumMiBPerSecond": 39.519
+        },
+        "openPdf": {
+          "samplesMiBPerSecond": [
+            97.834,
+            103.681,
+            103.604,
+            97.624,
+            101.937,
+            105.25,
+            105.15,
+            94.928,
+            101.963,
+            90.671
+          ],
+          "minimumMiBPerSecond": 90.671,
+          "p50MiBPerSecond": 101.937,
+          "p95MiBPerSecond": 105.25,
+          "maximumMiBPerSecond": 105.25
+        },
+        "putReport": {
+          "samplesMiBPerSecond": [
+            86.22,
+            80.396,
+            82.867,
+            80.206,
+            87.463,
+            90.42,
+            81.627,
+            79.734,
+            90.44,
+            84.874
+          ],
+          "minimumMiBPerSecond": 79.734,
+          "p50MiBPerSecond": 82.867,
+          "p95MiBPerSecond": 90.44,
+          "maximumMiBPerSecond": 90.44
+        },
+        "openReport": {
+          "samplesMiBPerSecond": [
+            143.763,
+            142.228,
+            151.248,
+            155.13,
+            160.83,
+            158.183,
+            154.357,
+            157.632,
+            155.988,
+            158.594
+          ],
+          "minimumMiBPerSecond": 142.228,
+          "p50MiBPerSecond": 155.13,
+          "p95MiBPerSecond": 160.83,
+          "maximumMiBPerSecond": 160.83
+        },
+        "putModel": {
+          "samplesMiBPerSecond": [
+            145.366,
+            139.265,
+            119.908,
+            152.039,
+            149.861,
+            153.686,
+            150.837,
+            142.41,
+            151.688,
+            113.34
+          ],
+          "minimumMiBPerSecond": 113.34,
+          "p50MiBPerSecond": 145.366,
+          "p95MiBPerSecond": 153.686,
+          "maximumMiBPerSecond": 153.686
+        },
+        "openModel": {
+          "samplesMiBPerSecond": [
+            169.826,
+            169.723,
+            171.589,
+            173.475,
+            170.664,
+            170.398,
+            169.007,
+            169.672,
+            169.481,
+            170.364
+          ],
+          "minimumMiBPerSecond": 169.007,
+          "p50MiBPerSecond": 169.826,
+          "p95MiBPerSecond": 173.475,
+          "maximumMiBPerSecond": 173.475
+        },
+        "usagePreview": {
+          "samplesMs": [
+            315.659,
+            317.569,
+            316.657,
+            314.53,
+            316.236,
+            317.373,
+            320.522,
+            319.759,
+            319.313,
+            317.795
+          ],
+          "minimumMs": 314.53,
+          "p50Ms": 317.373,
+          "p95Ms": 320.522,
+          "maximumMs": 320.522
+        },
+        "cleanup": {
+          "samplesMs": [
+            3604.657,
+            3607.968,
+            3567.046,
+            3605.499,
+            3596.973,
+            3603.053,
+            3603.329,
+            3591.558,
+            3735.684,
+            3666.822
+          ],
+          "minimumMs": 3567.046,
+          "p50Ms": 3603.329,
+          "p95Ms": 3735.684,
+          "maximumMs": 3735.684
+        }
+      },
+      "recordSha256": "88edbc5c1203459d9da3246c52bace77f12d44c62026fac90de35495eb4d3b52"
+    }
+  ],
+  "measurements": {
+    "usagePreview": {
+      "kind": "maximum-latency",
+      "absoluteBudgetMs": 2000.0,
+      "baselineP95Ms": 321.897
+    },
+    "cleanup": {
+      "kind": "maximum-latency",
+      "absoluteBudgetMs": 5000.0,
+      "baselineP95Ms": 3793.232
+    },
+    "putPdf": {
+      "kind": "minimum-throughput",
+      "absoluteBudgetMiBPerSecond": 5.0,
+      "baselineP50MiBPerSecond": 36.6
+    },
+    "openPdf": {
+      "kind": "minimum-throughput",
+      "absoluteBudgetMiBPerSecond": 5.0,
+      "baselineP50MiBPerSecond": 101.937
+    },
+    "putReport": {
+      "kind": "minimum-throughput",
+      "absoluteBudgetMiBPerSecond": 5.0,
+      "baselineP50MiBPerSecond": 82.867
+    },
+    "openReport": {
+      "kind": "minimum-throughput",
+      "absoluteBudgetMiBPerSecond": 5.0,
+      "baselineP50MiBPerSecond": 155.13
+    },
+    "putModel": {
+      "kind": "minimum-throughput",
+      "absoluteBudgetMiBPerSecond": 5.0,
+      "baselineP50MiBPerSecond": 145.366
+    },
+    "openModel": {
+      "kind": "minimum-throughput",
+      "absoluteBudgetMiBPerSecond": 5.0,
+      "baselineP50MiBPerSecond": 169.826
+    }
+  }
+}
