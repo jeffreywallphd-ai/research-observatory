@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import io
 import os
+import sqlite3
 import sys
 import tempfile
 import threading
@@ -10,6 +11,7 @@ import unittest
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import BinaryIO, cast
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
 SERVICE_SRC = REPO / "services" / "core-api" / "src"
@@ -31,7 +33,11 @@ from research_observatory_core.ports.repositories import (  # noqa: E402
     AtomicRepositoryEvent,
 )
 from research_observatory_core.repositories import create_sqlite_unit_of_work_factory  # noqa: E402
-from research_observatory_core.storage import initialize_database, open_canonical_database  # noqa: E402
+from research_observatory_core.storage import (  # noqa: E402
+    CanonicalConnection,
+    initialize_database,
+    open_canonical_database,
+)
 
 PROJECT_ID = "123e4567-e89b-42d3-a456-426614174000"
 SECOND_PROJECT_ID = "123e4567-e89b-42d3-a456-426614174001"
@@ -207,6 +213,13 @@ class LocalObjectStoreTests(unittest.TestCase):
         self.assertEqual("quarantined", metadata.storage_state)
         self.assertIsNone(metadata.verified_at)
 
+    def test_missing_object_bytes_are_quarantined_before_open(self) -> None:
+        stored = self.store.put(io.BytesIO(b"must remain available"), put_command())
+        self.object_files()[0].unlink()
+        with self.assertRaises(ObjectCorrupt):
+            self.store.open(stored.object_sha256, purpose="document-analysis")
+        self.assertEqual("quarantined", self.store.metadata(stored.object_sha256).storage_state)
+
     def test_rights_and_reference_boundaries_deny_open_or_delete(self) -> None:
         denied = self.store.put(
             io.BytesIO(b"restricted"),
@@ -214,6 +227,12 @@ class LocalObjectStoreTests(unittest.TestCase):
         )
         with self.assertRaises(ObjectAccessDenied):
             self.store.open(denied.object_sha256, purpose="document-analysis")
+        unknown = self.store.put(
+            io.BytesIO(b"rights unknown"),
+            put_command(rights_status="unknown"),
+        )
+        with self.assertRaises(ObjectAccessDenied):
+            self.store.open(unknown.object_sha256, purpose="document-analysis")
 
         content = b"referenced document"
         referenced = self.store.put(io.BytesIO(content), put_command())
@@ -234,6 +253,7 @@ class LocalObjectStoreTests(unittest.TestCase):
     def test_unreferenced_delete_is_durable_and_restart_cleans_abandoned_staging(self) -> None:
         stored = self.store.put(io.BytesIO(b"disposable derivative"), put_command())
         self.store.delete(stored.object_sha256)
+        self.store.delete(stored.object_sha256)
         with self.assertRaises(ObjectNotFound):
             self.store.open(stored.object_sha256, purpose="document-analysis")
         self.assertEqual("deleted", self.store.metadata(stored.object_sha256).storage_state)
@@ -244,6 +264,31 @@ class LocalObjectStoreTests(unittest.TestCase):
         abandoned.write_bytes(b"not published")
         create_local_object_store(self.project, PROJECT_ID)
         self.assertFalse(abandoned.exists())
+
+    def test_delete_database_failure_rolls_file_and_metadata_back(self) -> None:
+        content = b"transactionally preserved"
+        stored = self.store.put(io.BytesIO(content), put_command())
+        original_execute = CanonicalConnection.execute
+
+        def fail_delete_update(
+            connection: CanonicalConnection,
+            sql: str,
+            parameters: object = (),
+        ):
+            if "SET storage_state='deleted'" in sql:
+                raise sqlite3.OperationalError("injected delete metadata failure")
+            return original_execute(connection, sql, parameters)
+
+        with (
+            patch.object(CanonicalConnection, "execute", fail_delete_update),
+            self.assertRaises(ObjectStoreProblem) as raised,
+        ):
+            self.store.delete(stored.object_sha256)
+        self.assertIsNone(raised.exception.__cause__)
+        self.assertIsNone(raised.exception.__context__)
+        self.assertEqual("available", self.store.metadata(stored.object_sha256).storage_state)
+        with self.store.open(stored.object_sha256, purpose="document-analysis") as stream:
+            self.assertEqual(content, stream.read())
 
     @unittest.skipUnless(hasattr(os, "link"), "hardlink support is unavailable")
     def test_hardlink_alias_is_treated_as_corruption_without_outside_mutation(self) -> None:
@@ -258,6 +303,21 @@ class LocalObjectStoreTests(unittest.TestCase):
 
         self.assertEqual(before, outside.read_bytes())
         self.assertEqual("quarantined", self.store.metadata(stored.object_sha256).storage_state)
+
+    @unittest.skipUnless(hasattr(os, "link"), "hardlink support is unavailable")
+    def test_hardlinked_abandoned_staging_fails_closed_without_outside_mutation(self) -> None:
+        staging = self.project / ".tmp" / "object-store"
+        hostile = staging / "hostile.partial"
+        outside = self.project.parent / "outside-staging.bin"
+        outside.write_bytes(b"outside staging authority")
+        os.link(outside, hostile)
+        before = outside.read_bytes()
+
+        with self.assertRaises(ObjectStoreProblem):
+            create_local_object_store(self.project, PROJECT_ID)
+
+        self.assertEqual(before, outside.read_bytes())
+        self.assertTrue(hostile.exists())
 
 
 if __name__ == "__main__":
