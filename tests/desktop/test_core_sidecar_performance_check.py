@@ -253,6 +253,28 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
             self.assertFalse(persisted["ok"])
             self.assertIn("baseline rejected", persisted["errors"][0])
 
+    def test_proposal_retains_measurements_but_cannot_qualify(self) -> None:
+        measured = {
+            "schemaVersion": "1.0",
+            "documentType": "core-sidecar-performance-report",
+            "profile": "windows-x64",
+            "hardware": sample_baseline()["hardware"],
+            "provenance": {"measurementStateCommit": "a" * 40},
+            "fixture": sample_baseline()["fixture"],
+            "methodology": benchmark.expected_methodology(),
+            "rawMeasurements": sample_baseline()["rawMeasurements"],
+        }
+        with tempfile.TemporaryDirectory(dir=ROOT / "artifacts" / "tmp") as temporary:
+            destination = Path(temporary) / "proposal.json"
+            with mock.patch.object(benchmark, "measured_report", return_value=measured) as measurement:
+                report, code = benchmark.run(ROOT, destination, proposal=True)
+        measurement.assert_called_once_with(ROOT, benchmark.REPETITIONS, None)
+        self.assertEqual(0, code)
+        self.assertFalse(report["ok"])
+        self.assertTrue(report["proposalGenerated"])
+        self.assertEqual("PROPOSAL", report["qualificationStatus"])
+        self.assertEqual(measured["rawMeasurements"], report["rawMeasurements"])
+
 
 if __name__ == "__main__":
     unittest.main()
