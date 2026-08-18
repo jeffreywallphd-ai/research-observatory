@@ -106,6 +106,26 @@ _EXTENSIONS = {
 _SQLITE_DIALECT = sqlite_dialect(paramstyle="named")
 
 
+def _transaction_failure(message: str = "canonical repository transaction failed") -> RepositoryTransactionFailed:
+    """Create a bounded failure after the concrete adapter exception is out of scope."""
+
+    failure = RepositoryTransactionFailed(message)
+    failure.__cause__ = None
+    failure.__context__ = None
+    failure.__suppress_context__ = True
+    return failure
+
+
+def _repository_failure(message: str = "canonical repository operation failed") -> RepositoryProblem:
+    """Create a bounded operation failure without retaining adapter details."""
+
+    failure = RepositoryProblem(message)
+    failure.__cause__ = None
+    failure.__context__ = None
+    failure.__suppress_context__ = True
+    return failure
+
+
 def _execute(connection: CanonicalConnection, statement: ClauseElement):
     compiled = statement.compile(dialect=_SQLITE_DIALECT, compile_kwargs={"render_postcompile": True})
     return connection.execute(str(compiled), compiled.params)
@@ -163,7 +183,9 @@ class _UnitOfWorkRegistry:
             if state.connection.in_transaction:
                 with suppress(sqlite3.Error):
                     state.connection.execute("ROLLBACK")
-            raise RepositoryTransactionFailed() from None
+        else:
+            return
+        raise _transaction_failure()
 
     def close(self, token: str | None) -> None:
         if token is None:
@@ -310,10 +332,11 @@ class _SqliteAggregateRepository:
             row = _execute(state.connection, statement).fetchone()
         except sqlite3.Error:
             self._mark_failed()
-            raise RepositoryTransactionFailed() from None
-        if row is None:
-            raise RepositoryNotFound("aggregate was not found")
-        return _projection(row)
+        else:
+            if row is None:
+                raise RepositoryNotFound("aggregate was not found")
+            return _projection(row)
+        raise _transaction_failure()
 
     def append(
         self,
@@ -445,8 +468,9 @@ class _SqliteAggregateRepository:
             )
         except KeyError, sqlite3.Error, ValueError:
             self._mark_failed()
-            raise RepositoryProblem() from None
-        return projection
+        else:
+            return projection
+        raise _repository_failure()
 
     def _replay(self, idempotency_key: str, fingerprint: str) -> AggregateRevision | None:
         state = self._state()
@@ -457,17 +481,18 @@ class _SqliteAggregateRepository:
             row = _execute(state.connection, statement).fetchone()
         except sqlite3.Error:
             self._mark_failed()
-            raise RepositoryTransactionFailed() from None
-        if row is None:
-            return None
-        if str(row[0]) != fingerprint:
-            self._mark_failed()
-            raise RepositoryConflict("idempotency key was used for a different command")
-        replay = self._by_revision_id(str(row[1]))
-        if replay is None:
-            self._mark_failed()
-            raise RepositoryTransactionFailed("idempotency record is incomplete")
-        return replay
+        else:
+            if row is None:
+                return None
+            if str(row[0]) != fingerprint:
+                self._mark_failed()
+                raise RepositoryConflict("idempotency key was used for a different command")
+            replay = self._by_revision_id(str(row[1]))
+            if replay is None:
+                self._mark_failed()
+                raise RepositoryTransactionFailed("idempotency record is incomplete")
+            return replay
+        raise _transaction_failure()
 
     def _by_revision_id(self, revision_id: str) -> AggregateRevision | None:
         state = self._state()
@@ -501,8 +526,9 @@ class _SqliteAggregateRepository:
             row = _execute(state.connection, statement).fetchone()
         except sqlite3.Error:
             self._mark_failed()
-            raise RepositoryTransactionFailed() from None
-        return None if row is None else _projection(row)
+        else:
+            return None if row is None else _projection(row)
+        raise _transaction_failure()
 
     def _current(self, aggregate_id: str) -> AggregateRevision | None:
         try:
@@ -543,12 +569,14 @@ class _SqliteUnitOfWork:
             connection.execute("BEGIN IMMEDIATE")
             self.__token = _UNIT_OF_WORKS.register(connection, configuration.project_id)
             return self
-        except BaseException as error:
+        except OSError, sqlite3.Error, StorageProblem:
             if connection is not None:
                 connection.close()
-            if isinstance(error, (OSError, sqlite3.Error, StorageProblem)):
-                raise RepositoryTransactionFailed("canonical transaction could not start") from None
+        except BaseException:
+            if connection is not None:
+                connection.close()
             raise
+        raise _transaction_failure("canonical transaction could not start")
 
     def commit(self) -> None:
         if self.__token is None:
