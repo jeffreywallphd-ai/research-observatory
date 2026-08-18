@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T02",
+  "commit": "cf3fc55cc6eb62a710567db9e14d943c37dfedf8",
+  "baseCommit": "f26f5485e4290894fb3e1e288d8df140a8bfb98f",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S02.T02.json",
+    "sha256": "b2d2db635851e352345520f6b9490d319322ce3f91f230e7556009d0581a5a01",
+    "reason": "Independent review found close-to-lock gaps for the SQLite backup and recovery manifest plus an overbroad intermediate-failure claim. This record preserves the original evidence and binds continuous held-file authority, exact compatible-content and hardlink attacks, and nine named material-step rollback failpoints."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S02.T02.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0002_schema_history.py",
+    "tests/data/test_sqlite_migrations.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.service.test_project_lifecycle tests.service.test_core_api tests.contracts.test_foundation_contracts tests.foundation.test_build_manifest",
+      "exitCode": 0,
+      "result": "All 76 risk-selected storage, migration, lifecycle, Core API, contract, and build-manifest tests pass. Ten dedicated migration tests include the exact compatible-content injection before the working-file write lock, backup and manifest hardlink creation handoffs, and rollback/retry after each of nine named material revision steps."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy pass for all 90 governed Python files; architecture passes for 13 areas, 12 modules, 5 stable interfaces, and 3 deployment profiles; all 14 ADR registry entries validate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six focused packaging tests pass with one Windows-token-dependent symlink test skipped. A real PyInstaller 6.21.0 build contains the governed migration runtime and its Pythonless configuration check succeeds."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-package --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "The exact clean Windows x64 package passes inventory and frozen-process validation: 661 files, 38,280,190 bytes, entrypoint SHA-256 207f46a6d5b6affe849f608cad20980ec21c031b2127d5751b74c227e8e7cff1. Package-report SHA-256: 951eb309bfe7587946bd1b26be48af48cc1a297944c7734f51b871814b597729."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_core_sidecar_performance_check",
+      "exitCode": 0,
+      "result": "All eight strict performance-authority and failure-publication tests pass. The final package was also presented to the qualification gate, which truthfully retained NONQUALIFYING report SHA-256 6428a92c14e6c685bfd819ab631cd396d8c597a26dd656efd61b9b545c3de363 because the 661-file fixture differs from the approved CAP-01 package."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T02-review-fix-build-manifest.json",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+gcf3fc55 passes. Build-manifest SHA-256: 545707c2d5370180f8b0ac1172b05b561bc6885e0ae82a0b770326bba5de4441."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base f26f5485e4290894fb3e1e288d8df140a8bfb98f --head cf3fc55cc6eb62a710567db9e14d943c37dfedf8; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The incremental UI gate reports no UI/reference changes; the authoritative backlog and generated views validate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Backup creation uses a continuously held exclusive working-file descriptor. After SQLite backup and WAL truncation, raw H1, complete logical target/source digests, descriptor write locking, stable identity/link/nonredirect validation, and raw H2 equality all succeed before bytes are copied into the final held recovery file.",
+        "The final backup and schema-valid recovery manifest retain exclusive held descriptors from creation through exact hash/identity/link validation, final pre-COMMIT verification, migration commit, and nonthrowing cleanup.",
+        "A compatible attacker-only setting inserted at the precise SQLite-writer-to-lock handoff is detected and denied without modifying the source. Hardlink aliases introduced at both final backup and manifest creation handoffs are detected and denied before migration.",
+        "Nine named material failpoints cover trigger removal, predecessor rename, successor creation, copy, predecessor drop, history creation, immutable-trigger creation, history insertion, and user-version advance. Every injected failure rolls back to exact v1 schema/data and a later retry succeeds."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Ten focused migration tests plus the affected storage/lifecycle/API matrix exercise the reviewer attacks, stable identity/link validation, immutable recovery artifacts, source nonmutation, rollback, retry, and existing migration authority boundaries.",
+        "The exact frozen 661-file package includes the corrected runner and revision and passes the Pythonless configuration contract.",
+        "The original evidence overclaim is narrowed to the nine explicit material migration steps actually exercised by deterministic rollback tests."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "This remediation changes only the migration runner, governed revision failpoint instrumentation, and direct adversarial tests, plus immutable evidence/planning transitions.",
+        "No schema/profile fingerprint, dependency, UI/reference, project lifecycle, repository layer, or security policy changed; the prior package and dependency conclusions remain applicable.",
+        "The package-fixture performance mismatch remains explicitly NONQUALIFYING and is deferred to the S02 integration checkpoint after T03 completes the package-changing slice; no baseline or threshold was altered."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This remediation is confined to destructive migration recovery authority. Checks target the two exact close-to-lock attacks, continuous file identity/link authority, all nine material transaction steps, affected storage/lifecycle/API contracts, clean build provenance, and the real frozen package.",
+    "deferred": "No broad data or e2e-local profile is justified for the three-file remediation. The accumulated database/repository/backup/recovery, performance, package, security, and full affected-profile union remain due at S02 integration and W1 exit.",
+    "performanceNote": "The strict authority again rejects the changed 661-file package fixture and atomically publishes the same bounded NONQUALIFYING report SHA-256 6428a92c14e6c685bfd819ab631cd396d8c597a26dd656efd61b9b545c3de363. Recalibration remains governed integration work after T03; no qualification is claimed.",
+    "securityNote": "Dependencies and security policy are byte-unchanged from the original evidence. Its exact scan and disclosed eight pre-existing dev-only TypeScript compiler blockers remain applicable; no security pass is inferred."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Replay the compatible-content insertion and both hardlink handoffs, confirm uninterrupted held authority through commit/return, and verify rollback/retry at all nine named material steps. Focused remediation review only; do not run broad profiles."
+  }
+}
