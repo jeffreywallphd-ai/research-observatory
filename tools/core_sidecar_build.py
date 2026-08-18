@@ -117,6 +117,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "yaml",
         ],
         "hiddenModules": [
+            "_cffi_backend",
             "research_observatory_core.migrations.runner",
             "research_observatory_core.object_store",
             "research_observatory_core.repositories",

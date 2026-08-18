@@ -85,6 +85,13 @@ identity-based pagination, explicit cancellation, and bounded monotonic SSE
 replay. No operation-create route or scholarly workflow is implemented here;
 CAP-03 supplies durable operation ownership behind this contract.
 
+The default Core composition also wires the mandatory project pre-open object-
+envelope coordinator. Supported legacy projects advance through the journaled
+copy-on-write upgrade while the session lock is held. If the project master key
+is not yet available through the injected key-provider port, open returns the
+explicit recoverable key-unavailable problem and retains the verified source;
+it never bypasses the coordinator into generic database validation.
+
 At slice and release qualification, benchmark the real packaged process with:
 
 ```powershell

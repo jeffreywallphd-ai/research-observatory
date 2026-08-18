@@ -30,8 +30,11 @@
     "plaintextTemporaryStorage",
     "plaintextFixtureMode",
     "priorEnvelopeUpgrade",
+    "upgradeComposition",
     "upgradePhases",
     "upgradeRollback",
+    "upgradeInterruptionCoverage",
+    "upgradeCancellation",
     "malformedEnvelopeFailure",
     "wrappedKeyAuthenticationFailure",
     "keyUnavailableBehavior",
@@ -74,6 +77,7 @@
     "plaintextTemporaryStorage": {"const": "forbidden"},
     "plaintextFixtureMode": {"const": "explicit-test-only"},
     "priorEnvelopeUpgrade": {"const": "pre-open-durable-journaled-verified-copy-on-write"},
+    "upgradeComposition": {"const": "mandatory-core-pre-open-coordinator"},
     "upgradePhases": {
       "const": [
         "legacy-detected",
@@ -85,6 +89,10 @@
       ]
     },
     "upgradeRollback": {"const": "retain-plaintext-outside-temp-until-production-open-verifies"},
+    "upgradeInterruptionCoverage": {
+      "const": "pre-and-post-journal-fsync-rename-verification-metadata-commit-cleanup"
+    },
+    "upgradeCancellation": {"const": "journaled-safe-boundary-preserve-and-resume"},
     "malformedEnvelopeFailure": {"const": "corrupt-quarantine"},
     "wrappedKeyAuthenticationFailure": {"const": "key-unavailable-preserve"},
     "keyUnavailableBehavior": {"const": "bounded-failure-preserve-for-recovery"},

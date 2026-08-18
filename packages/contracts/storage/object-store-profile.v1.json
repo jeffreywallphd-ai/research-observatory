@@ -33,6 +33,7 @@
   "plaintextTemporaryStorage": "forbidden",
   "plaintextFixtureMode": "explicit-test-only",
   "priorEnvelopeUpgrade": "pre-open-durable-journaled-verified-copy-on-write",
+  "upgradeComposition": "mandatory-core-pre-open-coordinator",
   "upgradePhases": [
     "legacy-detected",
     "replacement-writing",
@@ -42,6 +43,8 @@
     "complete"
   ],
   "upgradeRollback": "retain-plaintext-outside-temp-until-production-open-verifies",
+  "upgradeInterruptionCoverage": "pre-and-post-journal-fsync-rename-verification-metadata-commit-cleanup",
+  "upgradeCancellation": "journaled-safe-boundary-preserve-and-resume",
   "malformedEnvelopeFailure": "corrupt-quarantine",
   "wrappedKeyAuthenticationFailure": "key-unavailable-preserve",
   "keyUnavailableBehavior": "bounded-failure-preserve-for-recovery",

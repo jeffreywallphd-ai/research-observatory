@@ -12,6 +12,7 @@ import sqlite3
 import stat
 import struct
 import threading
+from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -698,6 +699,7 @@ class _StoreState:
     project_id: str
     key_provider: ObjectMasterKeyProvider | None
     allow_plaintext_fixture: bool
+    cancellation_requested: Callable[[str], bool] | None
     lock: threading.RLock
 
 
@@ -886,6 +888,7 @@ def _stream_to_staging(
     protection_profile: str,
     key_provider: ObjectMasterKeyProvider | None,
     allow_plaintext_fixture: bool,
+    upgrade_boundary: Callable[[str], None] | None = None,
 ) -> tuple[Path, str, int, _EnvelopeMetadata]:
     encrypted = protection_profile == _ENCRYPTED_PROFILE
     plaintext_fixture = protection_profile == _PLAINTEXT_FIXTURE and allow_plaintext_fixture
@@ -952,7 +955,11 @@ def _stream_to_staging(
                     raise ValueError("object exceeds the supported length")
                 digest.update(block)
                 _write_all(descriptor, block)
+        if upgrade_boundary is not None:
+            upgrade_boundary("before-replacement-fsync")
         os.fsync(descriptor)
+        if upgrade_boundary is not None:
+            upgrade_boundary("after-replacement-fsync")
         if not _file_matches(destination, descriptor, identity):
             raise OSError("staging identity changed")
         object_sha256 = digest.hexdigest()
@@ -988,8 +995,12 @@ def _stream_to_staging(
         if descriptor >= 0:
             os.close(descriptor)
         if not succeeded:
+            if upgrade_boundary is not None:
+                upgrade_boundary("before-partial-cleanup")
             with suppress(OSError):
                 destination.unlink()
+            if upgrade_boundary is not None:
+                upgrade_boundary("after-partial-cleanup")
 
 
 def _publish(staging: Path, destination: Path) -> bool:
@@ -1066,6 +1077,28 @@ class _UpgradeRecord:
 
 def _upgrade_step_completed(_step: str) -> None:
     """Private deterministic failpoint seam for restart/recovery proof."""
+
+
+class _UpgradeCancelled(ObjectStoreProblem):
+    """A caller requested cancellation at a journaled recovery boundary."""
+
+
+def _upgrade_boundary(boundary: str) -> None:
+    _upgrade_step_completed(boundary)
+
+
+def _check_upgrade_cancellation(state: _StoreState, phase: str) -> None:
+    requested = state.cancellation_requested
+    if requested is None:
+        return
+    try:
+        cancelled = requested(phase)
+    except Exception:
+        raise _bounded(ObjectStoreProblem, "object upgrade cancellation check failed") from None
+    if not isinstance(cancelled, bool):
+        raise _bounded(ObjectStoreProblem, "object upgrade cancellation check failed")
+    if cancelled:
+        raise _bounded(_UpgradeCancelled, "object upgrade was cancelled")
 
 
 def _optional_identity(device: Any, inode: Any) -> tuple[int, int] | None:
@@ -1263,7 +1296,9 @@ def _set_upgrade_phase(
         )
         if updated.rowcount != 1:
             raise _bounded(ObjectStoreProblem, "object upgrade state changed")
+        _upgrade_boundary(f"before-journal-{phase}-commit")
         connection.execute("COMMIT")
+        _upgrade_boundary(f"after-journal-{phase}-commit")
     except BaseException:
         if connection.in_transaction:
             with suppress(sqlite3.Error, StorageProblem):
@@ -1322,7 +1357,9 @@ def _commit_upgrade_metadata(
         )
         if object_updated.rowcount != 1 or journal_updated.rowcount != 1:
             raise _bounded(ObjectStoreProblem, "object upgrade metadata changed")
+        _upgrade_boundary("before-metadata-and-journal-commit")
         connection.execute("COMMIT")
+        _upgrade_boundary("after-metadata-and-journal-commit")
     except BaseException:
         if connection.in_transaction:
             with suppress(sqlite3.Error, StorageProblem):
@@ -1360,22 +1397,28 @@ def _complete_metadata_upgrade(
         current = _metadata(connection, state.project_id, metadata.object_sha256)
         if current is None or current.envelope_version != _ENCRYPTED_ENVELOPE:
             raise _bounded(ObjectStoreProblem, "object upgrade metadata is incomplete")
+        _upgrade_boundary("before-production-reader-verification")
         reader = _verified_stored_reader(state, connection, destination, current)
         reader.close()
+        _upgrade_boundary("after-production-reader-verification")
     finally:
         connection.close()
     if replacement.exists() or _redirect(replacement):
         raise _bounded(ObjectStoreProblem, "object upgrade replacement conflicts")
     if rollback.exists():
+        _upgrade_boundary("before-rollback-cleanup-verification")
         _verify_legacy_source(
             rollback,
             digest=metadata.object_sha256,
             byte_length=metadata.byte_length,
             expected_identity=record.rollback_identity or record.source_identity,
         )
+        _upgrade_boundary("after-rollback-cleanup-verification")
+        _upgrade_boundary("before-rollback-cleanup")
         rollback.unlink()
         if os.name != "nt":
             _sync_directory(rollback.parent)
+        _upgrade_boundary("after-rollback-cleanup")
     elif record.phase == "metadata-committed" and record.rollback_identity is not None:
         # Cleanup may have completed immediately before interruption.
         pass
@@ -1392,6 +1435,7 @@ def _complete_metadata_upgrade(
 def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> None:
     while True:
         record, metadata = _load_upgrade(state, digest)
+        _check_upgrade_cancellation(state, record.phase)
         destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
         replacement, rollback = _upgrade_paths(destination)
         with _stable_directories([state.root, state.state, state.objects, state.temporary, staging, *buckets]):
@@ -1403,18 +1447,22 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
                     current = _metadata(connection, state.project_id, digest)
                     if current is None:
                         raise _bounded(ObjectStoreProblem, "completed object upgrade metadata is unavailable")
+                    _upgrade_boundary("before-completed-reader-verification")
                     reader = _verified_stored_reader(state, connection, destination, current)
                     reader.close()
+                    _upgrade_boundary("after-completed-reader-verification")
                 finally:
                     connection.close()
                 return
 
             if record.phase == "legacy-detected":
+                _upgrade_boundary("before-legacy-source-verification")
                 source_identity = _verify_legacy_source(
                     destination,
                     digest=digest,
                     byte_length=metadata.byte_length,
                 )
+                _upgrade_boundary("after-legacy-source-verification")
                 if replacement.exists() or rollback.exists() or _redirect(replacement) or _redirect(rollback):
                     raise _bounded(ObjectStoreProblem, "legacy object upgrade files conflict")
                 _set_upgrade_phase(
@@ -1430,21 +1478,25 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
             if record.phase == "replacement-writing":
                 if record.source_identity is None:
                     raise _bounded(ObjectStoreProblem, "legacy object identity is unavailable")
+                _upgrade_boundary("before-writing-source-verification")
                 _verify_legacy_source(
                     destination,
                     digest=digest,
                     byte_length=metadata.byte_length,
                     expected_identity=record.source_identity,
                 )
+                _upgrade_boundary("after-writing-source-verification")
                 if rollback.exists() or _redirect(rollback):
                     raise _bounded(ObjectStoreProblem, "object upgrade rollback conflicts")
                 if replacement.exists():
                     if _redirect(replacement):
                         raise _bounded(ObjectStoreProblem, "object upgrade replacement conflicts")
                     _exclusive_identity(replacement)
+                    _upgrade_boundary("before-stale-replacement-cleanup")
                     replacement.unlink()
                     if os.name != "nt":
                         _sync_directory(replacement.parent)
+                    _upgrade_boundary("after-stale-replacement-cleanup")
                 _upgrade_step_completed("replacement-writing")
                 source = _open_read_locked(destination)
                 staged: Path | None = None
@@ -1456,6 +1508,7 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
                         protection_profile=_ENCRYPTED_PROFILE,
                         key_provider=state.key_provider,
                         allow_plaintext_fixture=False,
+                        upgrade_boundary=_upgrade_boundary,
                     )
                 finally:
                     source.close()
@@ -1464,8 +1517,12 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
                         with suppress(OSError):
                             staged.unlink()
                     raise _bounded(ObjectCorrupt, "legacy object source is corrupt")
+                _upgrade_boundary("before-staged-to-replacement-rename")
                 _move_no_replace(staged, replacement)
+                _upgrade_boundary("after-staged-to-replacement-rename")
+                _upgrade_boundary("before-replacement-verification")
                 replacement_identity = _verify_upgrade_replacement(state, replacement, metadata, envelope)
+                _upgrade_boundary("after-replacement-verification")
                 _set_upgrade_phase(
                     state,
                     digest,
@@ -1481,12 +1538,15 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
             if record.phase == "replacement-verified":
                 if record.source_identity is None or record.replacement_identity is None or record.envelope is None:
                     raise _bounded(ObjectStoreProblem, "verified object replacement state is incomplete")
+                _upgrade_boundary("before-pre-swap-source-verification")
                 _verify_legacy_source(
                     destination,
                     digest=digest,
                     byte_length=metadata.byte_length,
                     expected_identity=record.source_identity,
                 )
+                _upgrade_boundary("after-pre-swap-source-verification")
+                _upgrade_boundary("before-pre-swap-replacement-verification")
                 _verify_upgrade_replacement(
                     state,
                     replacement,
@@ -1494,6 +1554,7 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
                     record.envelope,
                     expected_identity=record.replacement_identity,
                 )
+                _upgrade_boundary("after-pre-swap-replacement-verification")
                 if rollback.exists() or _redirect(rollback):
                     raise _bounded(ObjectStoreProblem, "object upgrade rollback conflicts")
                 _set_upgrade_phase(
@@ -1518,7 +1579,9 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
                 if canonical_is_source:
                     if rollback.exists() or _redirect(rollback):
                         raise _bounded(ObjectStoreProblem, "object upgrade rollback conflicts")
+                    _upgrade_boundary("before-original-to-rollback-rename")
                     _move_no_replace(destination, rollback)
+                    _upgrade_boundary("after-original-to-rollback-rename")
                     rollback_is_source = True
                     canonical_is_source = False
                     _upgrade_step_completed("original-moved-to-rollback")
@@ -1527,18 +1590,23 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
                 if not destination.exists():
                     if not replacement_is_expected:
                         raise _bounded(ObjectCorrupt, "object upgrade replacement authority is unavailable")
+                    _upgrade_boundary("before-replacement-to-canonical-rename")
                     _move_no_replace(replacement, destination)
+                    _upgrade_boundary("after-replacement-to-canonical-rename")
                     canonical_is_replacement = True
                     replacement_is_expected = False
                     _upgrade_step_completed("replacement-moved-to-canonical")
                 if not canonical_is_replacement or replacement_is_expected:
                     raise _bounded(ObjectCorrupt, "object upgrade canonical identity is invalid")
+                _upgrade_boundary("before-rollback-authority-verification")
                 rollback_identity = _verify_legacy_source(
                     rollback,
                     digest=digest,
                     byte_length=metadata.byte_length,
                     expected_identity=record.source_identity,
                 )
+                _upgrade_boundary("after-rollback-authority-verification")
+                _upgrade_boundary("before-canonical-replacement-verification")
                 _verify_upgrade_replacement(
                     state,
                     destination,
@@ -1546,6 +1614,7 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
                     record.envelope,
                     expected_identity=record.replacement_identity,
                 )
+                _upgrade_boundary("after-canonical-replacement-verification")
                 _commit_upgrade_metadata(state, metadata, record, rollback_identity)
                 _upgrade_step_completed("metadata-committed")
                 continue
@@ -1577,6 +1646,9 @@ def _reconcile_envelope_upgrades(directory: Path, state: _StoreState) -> None:
     for digest in rows:
         try:
             _reconcile_one_upgrade(state, directory, digest)
+        except _UpgradeCancelled:
+            _record_upgrade_failure(state, digest, "cancelled")
+            raise _bounded(ObjectStoreProblem, "object upgrade was cancelled") from None
         except ObjectKeyUnavailable:
             _record_upgrade_failure(state, digest, "key-unavailable")
             raise
@@ -2051,22 +2123,14 @@ class _LocalObjectStore:
                 raise failure
 
 
-def create_local_object_store(
+def _prepare_store_state(
     project_root: Path,
     project_id: str,
     *,
-    key_provider: ObjectMasterKeyProvider | None = None,
-    allow_plaintext_fixture: bool = False,
-) -> ObjectStore:
-    """Create the project-local adapter behind the dependency-neutral port."""
-
-    if not isinstance(allow_plaintext_fixture, bool):
-        raise _bounded(ObjectStoreProblem, "plaintext fixture policy is invalid")
-    if key_provider is None and not allow_plaintext_fixture:
-        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
-    if key_provider is not None and not isinstance(key_provider, ObjectMasterKeyProvider):
-        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
-
+    key_provider: ObjectMasterKeyProvider | None,
+    allow_plaintext_fixture: bool,
+    cancellation_requested: Callable[[str], bool] | None,
+) -> _StoreState:
     path_failure: ObjectStoreProblem | None = None
     try:
         root, state_directory, objects, temporary = _canonical_root(Path(project_root))
@@ -2100,7 +2164,7 @@ def create_local_object_store(
             connection.close()
     if authority_failure is not None:
         raise authority_failure
-    store_state = _StoreState(
+    return _StoreState(
         root=root,
         state=state_directory,
         objects=objects,
@@ -2109,12 +2173,24 @@ def create_local_object_store(
         project_id=project_id,
         key_provider=key_provider,
         allow_plaintext_fixture=allow_plaintext_fixture,
+        cancellation_requested=cancellation_requested,
         lock=threading.RLock(),
     )
+
+
+def _reconcile_store_state(store_state: _StoreState) -> None:
     staging_failure: ObjectStoreProblem | None = None
     try:
-        staging = _staging_directory(temporary)
-        with _stable_directories([root, state_directory, objects, temporary, staging]):
+        staging = _staging_directory(store_state.temporary)
+        with _stable_directories(
+            [
+                store_state.root,
+                store_state.state,
+                store_state.objects,
+                store_state.temporary,
+                staging,
+            ]
+        ):
             _reconcile_envelope_upgrades(staging, store_state)
             _reconcile_staging(staging, store_state)
     except ObjectStoreProblem as problem:
@@ -2123,7 +2199,55 @@ def create_local_object_store(
         staging_failure = _bounded(ObjectStoreProblem, "object staging reconciliation failed")
     if staging_failure is not None:
         raise staging_failure
+
+
+def upgrade_local_object_envelopes(
+    project_root: Path,
+    project_id: str,
+    *,
+    key_provider: ObjectMasterKeyProvider | None = None,
+    cancellation_requested: Callable[[str], bool] | None = None,
+) -> None:
+    """Finish supported prior-envelope upgrades before ordinary project open."""
+
+    if key_provider is not None and not isinstance(key_provider, ObjectMasterKeyProvider):
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    if cancellation_requested is not None and not callable(cancellation_requested):
+        raise _bounded(ObjectStoreProblem, "object upgrade cancellation boundary is invalid")
+    state = _prepare_store_state(
+        project_root,
+        project_id,
+        key_provider=key_provider,
+        allow_plaintext_fixture=False,
+        cancellation_requested=cancellation_requested,
+    )
+    _reconcile_store_state(state)
+
+
+def create_local_object_store(
+    project_root: Path,
+    project_id: str,
+    *,
+    key_provider: ObjectMasterKeyProvider | None = None,
+    allow_plaintext_fixture: bool = False,
+) -> ObjectStore:
+    """Create the project-local adapter behind the dependency-neutral port."""
+
+    if not isinstance(allow_plaintext_fixture, bool):
+        raise _bounded(ObjectStoreProblem, "plaintext fixture policy is invalid")
+    if key_provider is None and not allow_plaintext_fixture:
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    if key_provider is not None and not isinstance(key_provider, ObjectMasterKeyProvider):
+        raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    store_state = _prepare_store_state(
+        project_root,
+        project_id,
+        key_provider=key_provider,
+        allow_plaintext_fixture=allow_plaintext_fixture,
+        cancellation_requested=None,
+    )
+    _reconcile_store_state(store_state)
     return _LocalObjectStore(store_state)
 
 
-__all__ = ["create_local_object_store"]
+__all__ = ["create_local_object_store", "upgrade_local_object_envelopes"]

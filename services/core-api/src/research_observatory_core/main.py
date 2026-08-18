@@ -9,8 +9,10 @@ import secrets
 import socket
 import sys
 import threading
+from functools import partial
 
 import uvicorn
+from fastapi import FastAPI
 from pydantic import ValidationError
 
 from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
@@ -18,10 +20,32 @@ from .app import create_app
 from .authentication import STARTUP_RECORD_BYTES, parse_startup_authentication
 from .config import CoreSettings
 from .migrations.runner import migration_framework_projection
+from .object_store import upgrade_local_object_envelopes
+from .ports.object_store_keys import ObjectMasterKeyProvider
+from .projects import ProjectLifecycleService
 
 EXIT_CONFIGURATION_ERROR = 2
 SUPERVISION_PROTOCOL_VERSION = "1.0"
 STARTING_DIAGNOSTIC_CODE = "RO-CORE-STARTING"
+
+
+def create_runtime_app(
+    *,
+    settings: CoreSettings,
+    capability_digest: bytes | None = None,
+    expected_authority: str | None = None,
+    object_key_provider: ObjectMasterKeyProvider | None = None,
+) -> FastAPI:
+    """Compose the executable Core with mandatory pre-open object upgrades."""
+
+    return create_app(
+        settings=settings,
+        capability_digest=capability_digest,
+        expected_authority=expected_authority,
+        projects=ProjectLifecycleService(
+            object_upgrade=partial(upgrade_local_object_envelopes, key_provider=object_key_provider)
+        ),
+    )
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -98,7 +122,7 @@ def run_supervised(settings: CoreSettings) -> int:
         assigned_host, assigned_port = listener.getsockname()
         authority = f"{assigned_host}:{assigned_port}"
         configuration = uvicorn.Config(
-            create_app(
+            create_runtime_app(
                 settings=settings,
                 capability_digest=capability_digest,
                 expected_authority=authority,
@@ -162,7 +186,7 @@ def main(argv: list[str] | None = None) -> int:
     if arguments.supervised:
         return run_supervised(settings)
     uvicorn.run(
-        create_app(settings=settings),
+        create_runtime_app(settings=settings),
         host=settings.bind_host,
         port=settings.bind_port,
         log_level=settings.log_level.casefold(),

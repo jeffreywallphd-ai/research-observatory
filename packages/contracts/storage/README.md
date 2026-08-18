@@ -43,5 +43,8 @@ SHA-256 identity, project-only deduplication, opaque HMAC-derived physical
 identity, complete-file publication before metadata, immutable document
 references, rights-aware verified streams, corruption quarantine, conservative
 wrapped-key failure classification, and the journaled prior-envelope upgrade phases.
-It also states that the unencrypted fixture adapter is explicitly test-only. It
-carries no operating-system path.
+The mandatory Core pre-open coordinator and pre/post journal, fsync, rename,
+verification, metadata-commit, cleanup, and cancellation recovery boundary are
+portable obligations rather than optional composition details. The profile also
+states that the unencrypted fixture adapter is explicitly test-only. It carries
+no operating-system path.

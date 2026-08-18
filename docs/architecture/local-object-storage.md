@@ -77,6 +77,15 @@ phase; it never guesses from filenames alone. Missing keys, corrupt sources,
 interruption, rename failure, and SQLite failure leave either the original canonical
 file or its verified rollback authority intact and keep ordinary access closed.
 
+The normal Core composition always supplies this pre-open coordinator; it is not
+an optional lifecycle behavior. Until CAP-02.S04 supplies the release credential-
+store adapter, a legacy project whose master key is unavailable returns the explicit
+recoverable key-unavailable state with its verified plaintext authority retained.
+Deterministic hooks bracket every journal commit, replacement fsync, guarded rename,
+source/replacement/production verification, metadata commit, partial/rollback cleanup,
+and cancellation acknowledgement. Cancellation is accepted only at a journaled safe
+phase and restart finishes or restores that exact state.
+
 `plaintext-fixture-v1` remains available only when the adapter is constructed with
 the explicit test-fixture flag. Constructing an ordinary store without a key
 provider fails closed. CAP-02.S03.T03 still owns the broader reference graph,
@@ -91,8 +100,9 @@ governed by ADR-0015.
 - streaming, restart, duplicate, project-scope, and opaque-name fixtures;
 - interrupted source and expected-hash mismatch leave no visible object or row;
 - corruption and hardlink aliases are denied before a byte reaches a caller;
-- v2 and committed-v3 upgrade, every journal/swap/commit/cleanup restart boundary,
-  missing-key, corrupt-source, and project-open lock fixtures;
+- v2 and committed-v3 upgrade through default Core composition, pre/post journal,
+  fsync, rename, verification, metadata-commit, partial/rollback cleanup, cancellation,
+  missing-key, corrupt-source, and project-open lock restart fixtures;
 - magic, header, frame, final-tag, trailing-content, wrapped-key, wrap-nonce, and
   key-version adversarial classification fixtures;
 - explicit plaintext fixture gating and no plaintext bytes in encrypted staging or object files;

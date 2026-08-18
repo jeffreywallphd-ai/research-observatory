@@ -40,9 +40,18 @@ class ObjectStoreContractTests(unittest.TestCase):
             "pre-open-durable-journaled-verified-copy-on-write",
             self.profile["priorEnvelopeUpgrade"],
         )
+        self.assertEqual("mandatory-core-pre-open-coordinator", self.profile["upgradeComposition"])
         self.assertEqual(
             "retain-plaintext-outside-temp-until-production-open-verifies",
             self.profile["upgradeRollback"],
+        )
+        self.assertEqual(
+            "pre-and-post-journal-fsync-rename-verification-metadata-commit-cleanup",
+            self.profile["upgradeInterruptionCoverage"],
+        )
+        self.assertEqual(
+            "journaled-safe-boundary-preserve-and-resume",
+            self.profile["upgradeCancellation"],
         )
         self.assertEqual("corrupt-quarantine", self.profile["malformedEnvelopeFailure"])
         self.assertEqual("key-unavailable-preserve", self.profile["wrappedKeyAuthenticationFailure"])
