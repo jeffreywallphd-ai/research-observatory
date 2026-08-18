@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: aed6844b87408bb6223c0ce236ca4f2669e7d5d28c4b6ccf85f945a601f10058
+source_sha256: 845d03ac83f89194dca17e6c62c896e9f60ca91a051a3ee8a1ee758e893d9151
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 280 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 38 |
 | `DEFERRED` | 36 |
 
@@ -117,4 +117,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S03.T01` Implement content-addressed object storage abstraction | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S03.T01` Implement content-addressed object storage abstraction | `REVIEW` | codex | `codex/w1-windows-local-runtime` |

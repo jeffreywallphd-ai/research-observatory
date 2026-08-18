@@ -3891,21 +3891,29 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T02:27:48+00:00'
-      updated_at: '2026-08-18T03:05:31+00:00'
+      updated_at: '2026-08-18T03:19:36+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Focused object-store, contract, architecture, quality, clean build, and real frozen-package evidence
+      implementation_notes: 'Focused object-store, contract, architecture, quality, clean build, and real frozen-package evidence
         attached; full data/e2e/security/performance qualification remains at slice/Wave review.
+
+        Focused remediation closes all six independent findings; 45 affected tests, governed quality, architecture/ADR, clean
+        build, and real frozen package pass.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S03.T01.submission.json
         sha256: ec0f5594acf7547e89d20472f0a35fed49526b8880f61bd1788e814addec0794
         commit: e5ff3c8f54dd2e8a2bbc37e398d73ecddac45bf8
         recorded_at: '2026-08-18T02:54:50+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S03.T01.review-fix.json
+        sha256: b31531f54cb028d4353b5bdbd50a1420059e2faef2f330d84ab50af1d9a4b7cf
+        commit: 747391f58b55e0205b43ae80887fd0e7136e68bf
+        recorded_at: '2026-08-18T03:19:25+00:00'
       review:
         reviewer: agent:curie
         result: changes-requested
@@ -3917,7 +3925,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-18T03:05:31+00:00'
         expires_at: '2026-08-18T11:05:31+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
