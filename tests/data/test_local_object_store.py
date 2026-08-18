@@ -250,6 +250,13 @@ class LocalObjectStoreTests(unittest.TestCase):
             unit.commit()
 
         self.assertEqual(2, self.store.metadata(referenced.object_sha256).reference_count)
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            self.assertEqual(2, connection.execute("SELECT count(*) FROM documents").fetchone()[0])
+            self.assertEqual(2, connection.execute("SELECT count(*) FROM provenance_events").fetchone()[0])
+            self.assertEqual(2, connection.execute("SELECT count(*) FROM outbox_events").fetchone()[0])
+        finally:
+            connection.close()
         with self.assertRaises(ObjectReferenced):
             self.store.delete(referenced.object_sha256)
         with self.store.open(referenced.object_sha256, purpose="document-analysis") as stream:

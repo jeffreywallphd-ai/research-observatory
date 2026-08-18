@@ -29,6 +29,12 @@ hardlinked, length-mismatched, or digest-mismatched content is unavailable and t
 metadata advances to `quarantined`. Delete is denied while any immutable document
 revision references the object.
 
+An unreferenced byte put does not invent a scholarly provenance claim. The
+canonical document-repository transaction that links an object to an immutable
+revision also appends its provenance and outbox facts; that linkage is the first
+auditable reference authority. T03 later adds audited garbage-collection and
+cache decisions.
+
 ## Deliberate staged boundary
 
 `plaintext-fixture-v1` is an intermediate T01 adapter profile, not release-qualified
