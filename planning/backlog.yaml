@@ -3964,12 +3964,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T03:31:31+00:00'
-      updated_at: '2026-08-18T13:17:13+00:00'
-      completed_at: null
+      updated_at: '2026-08-18T13:18:03+00:00'
+      completed_at: '2026-08-18T13:18:03+00:00'
       blocker: null
       implementation_notes: 'Implemented authenticated encrypted object envelopes, versioned wrapped keys, schema-v3 recovery,
         explicit key-loss and fixture boundaries, supply-chain classification, performance remediation, and Windows package
@@ -3989,16 +3989,14 @@ capabilities:
         commit: 5898fc634bcd0e6cf33915b81ea62670947f83e2
         recorded_at: '2026-08-18T13:16:21+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: 'Reopened: Repository owner approved the amended W1 packet at c5bbd97c0cdc665eecb973f5862478ef7be97752; ADR-0016
-          is accepted and the Wave readiness gate passes.'
+        reviewer: t02_security_review
+        result: approved
+        reviewed_at: '2026-08-18T13:18:03+00:00'
+        notes: APPROVED exact commit 5898fc634bcd0e6cf33915b81ea62670947f83e2 after replay of P1/P2, 40 durability boundaries,
+          cancellation/commit-ack recovery, default executable composition, and frozen PyNaCl/CFFI/v4 packaging; final ADR-only
+          delta replay also passed.
       base_sha: ba98e5c07f6c492ddf59432df4963e4be61e7631
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-18T11:38:44+00:00'
-        expires_at: '2026-08-18T19:38:44+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
@@ -4030,11 +4028,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-18T13:18:03+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
