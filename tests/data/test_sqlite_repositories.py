@@ -139,12 +139,14 @@ class SqliteRepositoryTests(unittest.TestCase):
         second_id = "01890f6e-6a40-7cc5-98b7-000000000202"
         late_failure = replace(event(2, key="second-key"), outbox_id=first_event.outbox_id)
         with self.factory() as unit:
-            with self.assertRaises(RepositoryProblem):
+            with self.assertRaises(RepositoryProblem) as adapter_failure:
                 unit.aggregates.append(
                     draft(2, aggregate_id=second_id),
                     late_failure,
                     expected_revision=None,
                 )
+            self.assertIsNone(adapter_failure.exception.__cause__)
+            self.assertIsNone(adapter_failure.exception.__context__)
             with self.assertRaises(RepositoryTransactionFailed):
                 unit.commit()
 
@@ -214,6 +216,7 @@ class SqliteRepositoryTests(unittest.TestCase):
             pass
         self.assertNotIn(str(self.database), str(incompatible.exception))
         self.assertIsNone(incompatible.exception.__cause__)
+        self.assertIsNone(incompatible.exception.__context__)
 
         first = self.factory()
         entered = first.__enter__()
@@ -223,6 +226,7 @@ class SqliteRepositoryTests(unittest.TestCase):
                 pass
             self.assertGreaterEqual(time.monotonic() - started, 4.5)
             self.assertIsNone(busy.exception.__cause__)
+            self.assertIsNone(busy.exception.__context__)
             self.assertNotIn("locked", str(busy.exception).casefold())
         finally:
             entered.rollback()

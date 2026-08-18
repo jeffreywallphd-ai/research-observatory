@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import copy
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from architecture_check import load_json, validate_contract  # noqa: E402
+from architecture_check import core_data_boundary_errors, load_json, validate_contract  # noqa: E402
 
 
 class ArchitectureContractTests(unittest.TestCase):
@@ -48,6 +49,48 @@ class ArchitectureContractTests(unittest.TestCase):
         errors = validate_contract(REPO, contract)
 
         self.assertIn("cloud profile phase/status does not match the architecture baseline", errors)
+
+    def test_package_style_storage_and_repository_authority_imports_are_rejected(self) -> None:
+        attacks = {
+            "storage-module.py": (
+                (
+                    "import research_observatory_core.storage as store\n"
+                    "def attack(path):\n"
+                    "    return store.open_canonical_database(path)\n"
+                ),
+                "storage connection authority",
+            ),
+            "storage-attribute.py": (
+                (
+                    "from research_observatory_core import storage\n"
+                    "def attack(path):\n"
+                    "    return storage.open_canonical_database(path)\n"
+                ),
+                "storage connection authority",
+            ),
+            "repository-module.py": (
+                (
+                    "import research_observatory_core.repositories as adapter\n"
+                    "def attack(path, project_id):\n"
+                    "    return adapter.create_sqlite_unit_of_work_factory(path, project_id)\n"
+                ),
+                "concrete repository adapter",
+            ),
+            "repository-attribute.py": (
+                (
+                    "from research_observatory_core import repositories\n"
+                    "def attack(path, project_id):\n"
+                    "    return repositories.create_sqlite_unit_of_work_factory(path, project_id)\n"
+                ),
+                "concrete repository adapter",
+            ),
+        }
+        for name, (source, expected) in attacks.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                (root / name).write_text(source, encoding="utf-8")
+                errors = core_data_boundary_errors(root)
+                self.assertTrue(any(expected in error for error in errors), errors)
 
 
 if __name__ == "__main__":

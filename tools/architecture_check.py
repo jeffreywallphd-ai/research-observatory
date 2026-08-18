@@ -26,6 +26,15 @@ _DATABASE_CALLS = {"connect", "cursor", "execute", "executemany", "executescript
 _CONNECTION_AUTHORITIES = {"CanonicalConnection", "open_canonical_database"}
 
 
+def _is_storage_module(module: str) -> bool:
+    return module == "storage" or module.endswith(".storage")
+
+
+def _is_concrete_repository_module(module: str) -> bool:
+    parts = module.split(".")
+    return bool(parts) and parts[-1] == "repositories" and (len(parts) < 2 or parts[-2] != "ports")
+
+
 def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -43,20 +52,42 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
-                imported = {alias.name.split(".")[0] for alias in node.names}
-                if (is_port or not is_adapter) and imported & _DATABASE_MODULES:
-                    errors.append(f"{relative}:{node.lineno}: database dependency outside adapter")
+                for alias in node.names:
+                    top_level = alias.name.split(".")[0]
+                    if (is_port or not is_adapter) and top_level in _DATABASE_MODULES:
+                        errors.append(f"{relative}:{node.lineno}: database dependency outside adapter")
+                    if not is_adapter and _is_storage_module(alias.name):
+                        errors.append(f"{relative}:{node.lineno}: imports storage connection authority")
+                    if not is_adapter and path.name != "main.py" and _is_concrete_repository_module(alias.name):
+                        errors.append(f"{relative}:{node.lineno}: imports concrete repository adapter")
             elif isinstance(node, ast.ImportFrom):
-                module = (node.module or "").split(".")[0]
+                full_module = node.module or ""
+                module = full_module.split(".")[0]
                 imported = {alias.name for alias in node.names}
                 if (is_port or not is_adapter) and module in _DATABASE_MODULES:
                     errors.append(f"{relative}:{node.lineno}: database dependency outside adapter")
-                if is_port and (node.module or "").split(".")[-1] in {"repositories", "storage"}:
+                if is_port and full_module.split(".")[-1] in {"repositories", "storage"}:
                     errors.append(f"{relative}:{node.lineno}: port depends on concrete data adapter")
-                if not is_adapter and (node.module or "").split(".")[-1] == "storage":
+                if not is_adapter and _is_storage_module(full_module):
                     for authority in sorted(imported & _CONNECTION_AUTHORITIES):
                         errors.append(f"{relative}:{node.lineno}: imports {authority} connection authority")
-                if not is_adapter and path.name != "main.py" and (node.module or "").split(".")[-1] == "repositories":
+                if (
+                    not is_adapter
+                    and "storage" in imported
+                    and (not full_module or full_module.endswith("research_observatory_core"))
+                ):
+                    errors.append(f"{relative}:{node.lineno}: imports storage connection authority")
+                if (
+                    not is_adapter
+                    and path.name != "main.py"
+                    and (
+                        _is_concrete_repository_module(full_module)
+                        or (
+                            "repositories" in imported
+                            and (not full_module or full_module.endswith("research_observatory_core"))
+                        )
+                    )
+                ):
                     errors.append(f"{relative}:{node.lineno}: business module imports concrete repository adapter")
             elif (
                 not is_adapter
