@@ -388,13 +388,14 @@ def _exclusive_descriptor(path: Path) -> int:
     create_file.restype = wintypes.HANDLE
     generic_read = 0x80000000
     generic_write = 0x40000000
+    write_dac = 0x00040000
     create_new = 1
     file_attribute_normal = 0x00000080
     file_flag_open_reparse_point = 0x00200000
     invalid_handle = wintypes.HANDLE(-1).value
     handle = create_file(
         str(path),
-        generic_read | generic_write,
+        generic_read | generic_write | write_dac,
         0,
         None,
         create_new,
@@ -453,6 +454,153 @@ def _lock_descriptor_writes(descriptor: int) -> None:
         ctypes.byref(overlapped),
     ):
         raise ctypes.WinError(ctypes.get_last_error())
+
+
+def _deny_future_file_writes(authority: _HeldFileAuthority) -> None:
+    """Persist a Windows deny-write ACE without releasing held file identity."""
+
+    authority.validate()
+    if os.name != "nt":
+        return
+
+    import ctypes
+    import msvcrt
+    from ctypes import wintypes
+
+    class SidAndAttributes(ctypes.Structure):
+        _fields_ = (("sid", ctypes.c_void_p), ("attributes", wintypes.DWORD))
+
+    class TokenUser(ctypes.Structure):
+        _fields_ = (("user", SidAndAttributes),)
+
+    class Trustee(ctypes.Structure):
+        _fields_ = (
+            ("multiple_trustee", ctypes.c_void_p),
+            ("multiple_trustee_operation", wintypes.DWORD),
+            ("trustee_form", wintypes.DWORD),
+            ("trustee_type", wintypes.DWORD),
+            ("name", wintypes.LPWSTR),
+        )
+
+    class ExplicitAccess(ctypes.Structure):
+        _fields_ = (
+            ("permissions", wintypes.DWORD),
+            ("access_mode", wintypes.DWORD),
+            ("inheritance", wintypes.DWORD),
+            ("trustee", Trustee),
+        )
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    advapi32 = ctypes.WinDLL("advapi32", use_last_error=True)
+    open_process_token = advapi32.OpenProcessToken
+    open_process_token.argtypes = (wintypes.HANDLE, wintypes.DWORD, ctypes.POINTER(wintypes.HANDLE))
+    open_process_token.restype = wintypes.BOOL
+    get_token_information = advapi32.GetTokenInformation
+    get_token_information.argtypes = (
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.POINTER(wintypes.DWORD),
+    )
+    get_token_information.restype = wintypes.BOOL
+    get_security_info = advapi32.GetSecurityInfo
+    get_security_info.argtypes = (
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_void_p),
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_void_p),
+    )
+    get_security_info.restype = wintypes.DWORD
+    set_entries_in_acl = advapi32.SetEntriesInAclW
+    set_entries_in_acl.argtypes = (
+        wintypes.ULONG,
+        ctypes.POINTER(ExplicitAccess),
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_void_p),
+    )
+    set_entries_in_acl.restype = wintypes.DWORD
+    set_security_info = advapi32.SetSecurityInfo
+    set_security_info.argtypes = (
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+    )
+    set_security_info.restype = wintypes.DWORD
+    local_free = kernel32.LocalFree
+    local_free.argtypes = (ctypes.c_void_p,)
+    local_free.restype = ctypes.c_void_p
+    close_handle = kernel32.CloseHandle
+    close_handle.argtypes = (wintypes.HANDLE,)
+    close_handle.restype = wintypes.BOOL
+
+    token = wintypes.HANDLE()
+    security_descriptor = ctypes.c_void_p()
+    updated_acl = ctypes.c_void_p()
+    try:
+        if not open_process_token(kernel32.GetCurrentProcess(), 0x0008, ctypes.byref(token)):
+            raise ctypes.WinError(ctypes.get_last_error())
+        required = wintypes.DWORD()
+        get_token_information(token, 1, None, 0, ctypes.byref(required))
+        if not required.value:
+            raise ctypes.WinError(ctypes.get_last_error())
+        token_buffer = ctypes.create_string_buffer(required.value)
+        if not get_token_information(token, 1, token_buffer, required, ctypes.byref(required)):
+            raise ctypes.WinError(ctypes.get_last_error())
+        current_sid = ctypes.cast(token_buffer, ctypes.POINTER(TokenUser)).contents.user.sid
+
+        existing_acl = ctypes.c_void_p()
+        status = get_security_info(
+            msvcrt.get_osfhandle(authority.descriptor),
+            1,
+            0x00000004,
+            None,
+            None,
+            ctypes.byref(existing_acl),
+            None,
+            ctypes.byref(security_descriptor),
+        )
+        if status:
+            raise OSError(status, "GetSecurityInfo failed")
+        write_rights = 0x0002 | 0x0004 | 0x0010 | 0x0100 | 0x00010000
+        entry = ExplicitAccess(
+            write_rights,
+            3,
+            0,
+            Trustee(None, 0, 0, 1, ctypes.cast(current_sid, wintypes.LPWSTR)),
+        )
+        status = set_entries_in_acl(1, ctypes.byref(entry), existing_acl, ctypes.byref(updated_acl))
+        if status:
+            raise OSError(status, "SetEntriesInAclW failed")
+        status = set_security_info(
+            msvcrt.get_osfhandle(authority.descriptor),
+            1,
+            0x00000004,
+            None,
+            None,
+            updated_acl,
+            None,
+        )
+        if status:
+            raise OSError(status, "SetSecurityInfo failed")
+        authority.validate()
+    except (OSError, ValueError) as error:
+        raise MigrationProblem("migration-backup-protection-failed") from error
+    finally:
+        if updated_acl.value:
+            local_free(updated_acl)
+        if security_descriptor.value:
+            local_free(security_descriptor)
+        if token.value:
+            close_handle(token)
 
 
 def _create_exclusive_file(path: Path, payload: bytes) -> _HeldFileAuthority:
@@ -621,6 +769,12 @@ def _create_verified_backup(
                 if manifest_authority.read_bytes() != encoded:
                     raise MigrationProblem("migration-backup-manifest-invalid")
                 manifest_sha256 = hashlib.sha256(encoded).hexdigest()
+                # Persist deny-write/delete ACEs while each exclusive creation
+                # handle is still open. The post-ACL identity/link validation
+                # catches aliases created before protection; afterward Windows
+                # denies new hardlinks and content changes even after return.
+                _deny_future_file_writes(backup_authority)
+                _deny_future_file_writes(manifest_authority)
                 verified = _VerifiedBackup(
                     directory=attempt,
                     database=backup,
