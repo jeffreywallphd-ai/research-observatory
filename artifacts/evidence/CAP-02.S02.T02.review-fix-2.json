@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T02",
+  "commit": "f94fba6d216806052148eedf9bf94b89202a133b",
+  "baseCommit": "cf3fc55cc6eb62a710567db9e14d943c37dfedf8",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S02.T02.review-fix.json",
+    "sha256": "c645fdb4beb663c8bb8b406209e27e0b7678aa827f1445fd4512a9d6130652c9",
+    "reason": "The first remediation closed creation handoffs and material-step rollback, but Windows still permitted new hardlinks after the final link-count check. This record binds persistent deny-write/delete ACLs installed through each continuously held file handle and exact late-window/post-return regressions."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S02.T02.review-fix.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "tests/data/test_sqlite_migrations.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.service.test_project_lifecycle tests.service.test_core_api tests.contracts.test_foundation_contracts tests.foundation.test_build_manifest",
+      "exitCode": 0,
+      "result": "All 77 risk-selected tests pass. Eleven dedicated migration tests include denial after the final successful backup validation, after COMMIT before handle close, and after return; both recovery files remain readable and byte-stable while new hardlinks and content writes are denied."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy pass for all 90 governed Python files; architecture passes for 13 areas, 12 modules, 5 stable interfaces, and 3 deployment profiles; all 14 ADR registry entries validate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six focused packaging tests pass with one Windows-token-dependent symlink test skipped; the actual migration runtime remains present and Pythonless-loadable."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-package --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "The exact clean Windows x64 package passes: 661 files, 38,283,053 bytes, entrypoint SHA-256 1962a4073cbb6d619d70ef53ce5b404c71edb01e0653472b5d5613113b93a544. Package-report SHA-256: 76f217c7ea6c81bcab3e6206333f6171971837c429ae3f96a6836fbbb2dbb8cf."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_core_sidecar_performance_check",
+      "exitCode": 0,
+      "result": "All eight strict performance-authority and failure-publication tests pass. The changed 661-file fixture remains truthfully NONQUALIFYING at report SHA-256 6428a92c14e6c685bfd819ab631cd396d8c597a26dd656efd61b9b545c3de363 pending the governed S02 integration recalibration."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T02-review-fix-2-build-manifest.json",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+gf94fba6 passes. Build-manifest SHA-256: 84a6d33ebb9428139e7effc553a70d0a4bea3355eeac6f5af82185868b92f420."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base cf3fc55cc6eb62a710567db9e14d943c37dfedf8 --head f94fba6d216806052148eedf9bf94b89202a133b; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "The incremental UI gate reports no UI/reference changes; the backlog and generated views validate."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Each recovery artifact is created with GENERIC_READ, GENERIC_WRITE, and WRITE_DAC through one nonsharing Windows handle. Through that same held handle, Core merges an explicit deny ACE for the current user covering write data, append, extended attributes, file attributes, and delete.",
+        "Identity, nonredirect, and single-link validation occurs before and after ACL publication. An alias introduced before protection is therefore detected; after protection, Windows denies new links and writes continuously through COMMIT, handle release, and later use.",
+        "The exact final-validation window and post-COMMIT/pre-close window both deny links for backup and manifest. After return, both files deny links and writes while preserving exact readable bytes.",
+        "The prior continuous working-file handoff, final-file creation handoffs, and nine material-step rollback/retry controls remain passing."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The late-window regression wraps the real final verifier and the real post-COMMIT cleanup without bypassing either, matching the independent reproduction point.",
+        "All 77 affected tests, quality/architecture/ADR checks, and real frozen packaging pass at the exact commit.",
+        "The recovery artifacts remain content-readable for restoration while mutation and aliasing are denied."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "This incremental remediation changes only the migration runner and its direct Windows regression, plus immutable evidence/planning transitions.",
+        "No schema, dependency, public API, UI/reference, security policy, or baseline changed. The prior exact migration and rollback evidence remains applicable.",
+        "The package-fixture performance mismatch remains explicitly NONQUALIFYING and deferred to S02 integration after T03; no qualification is inferred."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The only incremental risk is Windows recovery-artifact ACL correctness. Verification directly covers ACL publication through held identity, final-validation and post-COMMIT timing, post-return write/link denial, readable-byte retention, affected migration/storage/API behavior, frozen packaging, and clean provenance.",
+    "deferred": "No broad profile is justified for this two-file Windows confinement correction. Full data/e2e-local, recovery lifecycle, package/security/performance recalibration, and cross-slice qualification remain at S02 integration and W1 exit.",
+    "performanceNote": "The strict authority correctly retains NONQUALIFYING report SHA-256 6428a92c14e6c685bfd819ab631cd396d8c597a26dd656efd61b9b545c3de363 for the changed package fixture. No baseline, threshold, or methodology changed."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Replay new-link denial after final verification, after COMMIT before close, and after return; verify bytes remain readable/stable and the ACL is applied through the exact held identity. Retain the already approved prior regressions; focused review only."
+  }
+}
