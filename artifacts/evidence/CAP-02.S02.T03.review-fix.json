@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T03",
+  "commit": "0a5d559d5887ca0f37b54f0bce5efe0996b1c784",
+  "baseCommit": "83d6b230ade28a876efada0d68e1eb378ffe19c8",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S02.T03.json",
+    "sha256": "dbb2f49d7e60adb773f8cddb7b5e5d388141068b8d0ceda0f8ce3f1858217a04",
+    "reason": "The original repository adapter passed its focused checks but co-located dependency-neutral ports with the SQLite implementation, used an incomplete SQL boundary guard, leaked concrete entry failures, and treated idempotency as uniqueness rather than exact command replay. This record binds the focused remediation and the changed ADR authority."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S02.T03.json",
+    "docs/adr/ADR-0014-use-a-strict-versioned-sqlite-wal-profile-for-local-canonical-state.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/README.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/ports/__init__.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/projects.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/data/README.md",
+    "tests/data/test_sqlite_repositories.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/architecture_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.data.test_sqlite_repositories tests.service.test_project_lifecycle tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 61 risk-selected data and Core lifecycle tests pass. Ten direct repository tests include exact replay plus changed payload, expected revision, schedule, and outbox identity conflicts; dependency-neutral import; indirect SQL denial; bounded incompatible/busy entry with retry; all six aggregate kinds; detached projections; and complete late-failure rollback."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S02.T03-review-fix-quality.json; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 6a177be5774f6b252978ee617a1a6a815a92f9bd --head 0a5d559d5887ca0f37b54f0bce5efe0996b1c784",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy pass for 94 governed Python files. Architecture passes for 13 areas, 12 modules, five stable interfaces, and three deployment profiles. The required diff-aware ADR gate passes for all 20 base-to-candidate paths against updated ADR-0014. Quality-report SHA-256: 1427409d88a04429db6f24549eb2cf2eb145903816e4acae100e71b60c24f829."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package; .venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-package --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "All six focused packaging tests pass with one Windows-token-dependent symlink test skipped. The exact frozen package includes the private repository adapter and its dependency-neutral port: 661 files, 38,300,868 bytes; entrypoint SHA-256 d8fc4894098544f62044980bca5cdde4b66ba4fb7f911f8acae97b2b70d6457c; package-report SHA-256 bca7d126cfe101d503ef4079b7ce62e6beb985cc0795881be376ab53f32c69fe."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T03-review-fix-build-manifest.json",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+g0a5d559 is bound to the exact implementation with dirty=false. Build-manifest SHA-256: 17336a19e41d55d0fdf37c4212ed72f1c3c1247d2ac4e57c2b156fb53f61caab."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_architecture_check tests.foundation.test_adr_check; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "All nine focused architecture/ADR tests pass, backlog state and generated views validate, and the candidate worktree is clean."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "AggregateRepository, UnitOfWork, UnitOfWorkFactory, frozen domain values, and bounded errors now live in the dependency-neutral Core ports package. Importing only the ports loads neither sqlite3 nor SQLAlchemy; returned ports retain opaque tokens and export no concrete adapter.",
+        "The private SQLite/SQLAlchemy adapter remains the only ordinary repository statement owner. The AST gate rejects database dependencies, connection-authority imports, and literal or indirect connect/cursor/execute calls in business modules; the exact QUERY-variable attack is denied.",
+        "Opening an incompatible project authority or waiting on a real competing BEGIN IMMEDIATE produces only RO-CORE-REPOSITORY-TRANSACTION-FAILED with no path, lock text, concrete exception cause, or raw adapter error. Releasing the writer permits an immediate successful retry.",
+        "Revision, kind extension, provenance, and pending outbox rows remain one explicit transaction; uncommitted contexts and late outbox/FK failure leave no partial aggregate facts."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The full canonical command fingerprint binds project, draft values, expected revision, assigned revision, event/provenance identity, availability schedule, outbox identity, actor, trace, and idempotency key.",
+        "An exact idempotency key and fingerprint returns the original frozen projection without inserting duplicate identities, revisions, subtype rows, provenance, or outbox facts. Changed payload, precondition, schedule, or outbox identity returns the bounded conflict outcome.",
+        "Deterministic fixed-ID/time helpers continue to exercise record, document, workflow, evidence, ontology, and decision revisions, optimistic conflict, not-found, restart, explicit/no-commit rollback, late failure, and frozen projections."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0014 and storage architecture/contract documentation now govern the port/adapter split, dynamic SQL denial, full idempotency fingerprint, bounded transaction entry, and focused verification. The exact diff-aware ADR gate passes.",
+        "Project validation no longer exposes canonical connection authority to the lifecycle business module. Quality and frozen-package inventories include the new port files and their direct regression coverage.",
+        "No schema DDL/profile fingerprint, migration, dependency lock, UI/reference, public HTTP contract, rights policy, or security exception changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This remediation changes a shared data adapter, architecture enforcement, bounded failure translation, and command idempotency. Checks directly cover the four independent findings and their adjacent transaction, lifecycle, quality, ADR, architecture, package, and build boundaries.",
+    "deferred": "The complete data/e2e-local profiles, migration recovery matrix, cross-task integration, security scan, and project-lifecycle performance recalibration run at CAP-02.S02 slice review. Full repository and deployment qualification runs once at W1 exit; no task criterion justifies a broad profile replay."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "note": "Replay only the four prior findings: exact diff-aware ADR enforcement, dependency-neutral port/private-adapter and indirect-SQL boundaries, bounded incompatible/busy entry with retry, and exact idempotent replay versus changed payload/precondition/schedule/outbox identity. Confirm the exact 17-file original-candidate-to-remediation scope and focused evidence; no broad profile."
+  }
+}
