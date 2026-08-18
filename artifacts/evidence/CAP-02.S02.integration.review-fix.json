@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-02.S02",
+  "stateCommit": "33ef759e5851c90f39fd1d2babbd6c8a6ab2fcf1",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S02.integration.json",
+    "sha256": "198ec7d5a5a7c285a11f7221be201b8271816958802b37d35804ce90bd2ce692",
+    "reason": "Independent slice review found that the newly introduced Core performance gate compared rounded statistics, did not invalidate stale PASS evidence before measurement, and did not hold commit-bound inputs through final PASS publication. This record binds the raw-precision, tombstone-first, locked-input remediation and its independently reproducible tests."
+  },
+  "outcome": "Canonical project state uses the approved strict SQLite profile, backup-first migrations, sealed repository boundaries, and a Core package whose performance PASS can be published only from exact raw measurements under continuously held commit/package authority.",
+  "remediationChanges": {
+    "baseCommit": "3aca1a728d0ceecdd931633128fb569aed3a702b",
+    "candidateCommit": "33ef759e5851c90f39fd1d2babbd6c8a6ab2fcf1",
+    "changedFiles": [
+      "tests/desktop/test_core_sidecar_performance_check.py",
+      "tools/core_sidecar_performance_check.py",
+      "verification/baselines/core-sidecar-performance.json",
+      "verification/baselines/core-sidecar-performance.sha256"
+    ]
+  },
+  "remediationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.desktop.test_core_sidecar_performance_check",
+      "exitCode": 0,
+      "result": "All 12 focused benchmark-authority tests pass. Exact regression cases deny raw readiness 1220.6294 ms against the true 1220.6292 ms limit, retain an IN_PROGRESS NONQUALIFYING tombstone on interruption, reject late governed-input mutation before replacement, and retain the tombstone when PASS and fallback publication both fail."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\core_sidecar_performance_check.py --repo . --report artifacts/tmp/CAP-02.S02-core-performance-remediation-proposal.json --proposal",
+      "exitCode": 0,
+      "result": "Proposal mode remained structurally nonqualifying and retained every unrounded sample at immutable tool commit 9697487eafe804c92380d5607fd1ec932014b0aa. Proposal SHA-256: 5bb5118aff18bf467b901e790cbbd9b40aeb78778983e41e8704cbe7772e1537. The reviewed baseline SHA-256 is 599ca300100627ae517ebd60cfdca2a4b3045dec9f7e2d2c6e22aa76b17471f8."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\core_sidecar_performance_check.py --repo . --report artifacts/tmp/CAP-02.S02-core-performance-remediation-final.json",
+      "exitCode": 0,
+      "result": "The normal gate passed at exact clean state 33ef759e5851c90f39fd1d2babbd6c8a6ab2fcf1. Readiness p50 was 1023.4150000032969 ms, shutdown p95 294.2670999909751 ms, and idle memory p95 86867968 bytes; all raw values pass absolute and exact 20-percent limits. The exact 661-file / 38,301,316-byte package, report, embedded manifest, evidence, contract, schema, baseline/hash and tool remained locked and revalidated immediately before atomic PASS replacement. Report SHA-256: 139078d6dd0073d8e5d9a960e125e23c3315cf53b5a5bf176021e6e6ea0a65ab."
+    },
+    {
+      "command": ".venv\\Scripts\\ruff.exe check tools/core_sidecar_performance_check.py tests/desktop/test_core_sidecar_performance_check.py; .venv\\Scripts\\ruff.exe format --check tools/core_sidecar_performance_check.py tests/desktop/test_core_sidecar_performance_check.py; .venv\\Scripts\\mypy.exe tools/core_sidecar_performance_check.py tests/desktop/test_core_sidecar_performance_check.py",
+      "exitCode": 0,
+      "result": "The focused remediation is formatted, lint-clean, and type-clean. The full governed quality check also passed all 94 Python files; report SHA-256: 524a8d6779db53c631e8671e340a166a58bcfeca049d2f567d012ae8e64d3af7."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02-build-remediation.json; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "The exact remediation state emits clean build identity 0.1.0+g33ef759 with no dirty paths; build-manifest SHA-256: fe34810e28a84b2c0c0130cdd949dbbf3bbca976f7fc32457e24533d991e6cca. Backlog, Wave campaign, generated views, and patch hygiene pass."
+    }
+  ],
+  "retainedEvidence": {
+    "fullDataProfile": {
+      "sha256": "f9a5f3cb31d28ab9032563d0d4c1f655afba99bef6ffad591d08d203eeeefd31",
+      "result": "PASS: 19 commands, 166 foundation tests, 42 data tests, and 13 contract tests at the approved-task state."
+    },
+    "focusedIntegrationUnion": "55/55 PASS before review. The remediation changes only the performance qualification tool, its direct tests, and reviewed baseline bytes; SQLite runtime, schema, migrations, repositories, frozen package bytes, security policy, product UI, and UI-reference bytes are unchanged.",
+    "securityReportSha256": "5372690bcc09de7314aff1fc04c223654e2e991d92c686bc1d68e979c1bc257d",
+    "packageReportSha256": "34f6eeef071cc127708b81401721ee94bd33388fa80b906a058d70e1803239dc",
+    "originalQualitySha256": "9c9656f32e343601543d2fc06c214789ae36c5915def21a330fd8a42b0cbce51"
+  },
+  "failureBoundary": [
+    "Qualification compares retained raw nearest-rank statistics to unrounded absolute and relative limits; rounding is presentation-only.",
+    "A qualifying run replaces any previous result with a NONQUALIFYING IN_PROGRESS tombstone before reading the baseline or measuring the package.",
+    "Tracked tool, baseline/hash, package evidence, build contract and artifact schema must equal the exact state-commit blobs; package report/manifest/inventory and every artifact file remain held through measurement and final publication.",
+    "The final publisher verifies directory, temporary bytes/identity and every captured input immediately before a handle-relative atomic replace. That replace is the last rejecting operation; cleanup cannot turn a returned PASS into a failed run.",
+    "Interruption or persistent final/fallback publication failure leaves the already-published tombstone, never a stale or current PASS."
+  ],
+  "reviewReadiness": {
+    "priorSliceFindingRemediated": true,
+    "functionalEvidenceStillApplicable": true,
+    "fullProfileRerunReason": "Not rerun: the full data profile and 55-test affected union had already passed and the four-file remediation changes only benchmark qualification/evidence authority. The exact benchmark lifecycle, all direct regression tests, full Python quality, and clean build identity were rerun.",
+    "unresolvedFindings": []
+  }
+}
