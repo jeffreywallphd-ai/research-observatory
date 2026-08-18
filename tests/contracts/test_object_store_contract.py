@@ -55,6 +55,26 @@ class ObjectStoreContractTests(unittest.TestCase):
         )
         self.assertEqual("corrupt-quarantine", self.profile["malformedEnvelopeFailure"])
         self.assertEqual("key-unavailable-preserve", self.profile["wrappedKeyAuthenticationFailure"])
+        self.assertEqual(
+            "deployment-supplied-project-and-shared-cache-soft-hard-thresholds",
+            self.profile["quotaPolicy"],
+        )
+        self.assertEqual(
+            "deny-new-object-writes-preserve-reads-and-cleanup",
+            self.profile["lowDiskBehavior"],
+        )
+        self.assertEqual(
+            "unreferenced-derived-rebuildable-only",
+            self.profile["automaticCanonicalReclamation"],
+        )
+        self.assertEqual(
+            "preview-lease-revalidate-reference-reader-and-file-identity",
+            self.profile["garbageCollection"],
+        )
+        self.assertEqual(
+            "optional-explicit-root-layout-deferred-to-cap-02-s05",
+            self.profile["sharedCacheAuthority"],
+        )
         self.assertEqual("authenticated-encrypted-object-adapter", self.profile["releaseQualification"])
 
         changed = copy.deepcopy(self.profile)

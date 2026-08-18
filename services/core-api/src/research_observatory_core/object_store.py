@@ -8,6 +8,7 @@ import io
 import os
 import re
 import secrets
+import shutil
 import sqlite3
 import stat
 import struct
@@ -23,6 +24,7 @@ from nacl import bindings as sodium
 from nacl.exceptions import CryptoError
 
 from .ports.object_store import (
+    CleanupCategory,
     ObjectAccessDenied,
     ObjectBusy,
     ObjectConflict,
@@ -32,16 +34,25 @@ from .ports.object_store import (
     ObjectNotFound,
     ObjectPutCommand,
     ObjectReferenced,
+    ObjectStoragePressure,
     ObjectStore,
     ObjectStoreProblem,
     RetentionClass,
     RightsStatus,
+    StorageCategory,
+    StorageCleanupPreview,
+    StorageCleanupRequest,
+    StorageCleanupResult,
+    StoragePolicy,
+    StoragePressure,
     StorageState,
+    StorageUsage,
+    StorageUsageCategory,
     StoredObject,
     VerifiedObjectStream,
 )
 from .ports.object_store_keys import ObjectMasterKey, ObjectMasterKeyProvider
-from .projects import ProjectLifecycleProblem, _stable_directories
+from .projects import ProjectLifecycleProblem, _atomic_audit_append, _stable_directories
 from .storage import (
     MAX_SAFE_INTEGER,
     CanonicalConnection,
@@ -56,6 +67,8 @@ _DIGEST = re.compile(r"^[0-9a-f]{64}$")
 _IDENTIFIER = re.compile(r"^[a-z][a-z0-9._-]{0,119}$")
 _KEY_VERSION = re.compile(r"^[a-z][a-z0-9.-]{0,119}$")
 _MEDIA_TYPE = re.compile(r"^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$")
+_TRACE_ID = re.compile(r"^[0-9a-f]{32}$")
+_UTC_MILLISECONDS = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
 _RIGHTS: frozenset[str] = frozenset(("allowed", "denied", "unknown", "not-applicable"))
 _RETENTION: frozenset[str] = frozenset(("project-lifetime", "derived-rebuildable", "export-retained"))
 _READABLE_RIGHTS: frozenset[str] = frozenset(("allowed", "not-applicable"))
@@ -66,6 +79,40 @@ _ENVELOPE_MAGIC = b"ROO1"
 _FRAME_LENGTH = struct.Struct(">I")
 _STREAM_AAD_PREFIX = b"research-observatory-object-stream-v1\0"
 _WRAP_AAD_PREFIX = b"research-observatory-object-key-v1\0"
+_CLEANUP_CATEGORIES: tuple[CleanupCategory, ...] = (
+    "derived-objects",
+    "orphaned-objects",
+    "indexes",
+    "project-cache",
+    "models",
+    "shared-cache",
+)
+_STORAGE_CATEGORIES: tuple[StorageCategory, ...] = (
+    "canonical-metadata",
+    "durable-objects",
+    "derived-objects",
+    "orphaned-objects",
+    "indexes",
+    "project-cache",
+    "models",
+    "configuration",
+    "exports",
+    "operational",
+    "shared-cache",
+)
+_CATEGORY_CONSEQUENCE = {
+    "canonical-metadata": "retained",
+    "durable-objects": "retained",
+    "derived-objects": "recomputed",
+    "orphaned-objects": "metadata-repair",
+    "indexes": "recomputed",
+    "project-cache": "recomputed",
+    "models": "redownloaded",
+    "configuration": "retained",
+    "exports": "retained",
+    "operational": "retained",
+    "shared-cache": "redownloaded",
+}
 
 
 def _bounded(exception: type[ObjectStoreProblem], message: str) -> ObjectStoreProblem:
@@ -247,6 +294,10 @@ def _object_path(
 
 def _staging_directory(temporary: Path) -> Path:
     return _canonical_directory(temporary / "object-store", create=True)
+
+
+def _cleanup_staging_directory(temporary: Path) -> Path:
+    return _canonical_directory(temporary / "storage-cleanup", create=True)
 
 
 def _file_matches(path: Path, descriptor: int, identity: tuple[int, int]) -> bool:
@@ -700,7 +751,43 @@ class _StoreState:
     key_provider: ObjectMasterKeyProvider | None
     allow_plaintext_fixture: bool
     cancellation_requested: Callable[[str], bool] | None
+    storage_policy: StoragePolicy
+    shared_cache: Path | None
+    cleanup_plan: _CleanupPlan | None
     lock: threading.RLock
+
+
+@dataclass(frozen=True, slots=True)
+class _FileCandidate:
+    category: CleanupCategory
+    path: Path
+    authority_root: Path
+    identity: tuple[int, int]
+    byte_count: int
+    modified_ns: int
+    object_sha256: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class _FileFact:
+    path: Path
+    identity: tuple[int, int]
+    byte_count: int
+    modified_ns: int
+    exclusive: bool
+
+
+@dataclass(frozen=True, slots=True)
+class _CleanupPlan:
+    token: str
+    request: StorageCleanupRequest
+    candidates: tuple[_FileCandidate, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class _Inventory:
+    usage: StorageUsage
+    candidates: tuple[_FileCandidate, ...]
 
 
 class _StoreRegistry:
@@ -728,6 +815,300 @@ class _StoreRegistry:
 
 
 _STORES = _StoreRegistry()
+
+
+def _validate_limit(value: int | None, name: str) -> int | None:
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= MAX_SAFE_INTEGER:
+        raise _bounded(ObjectStoreProblem, f"{name} is invalid")
+    return value
+
+
+def _validate_storage_policy(policy: StoragePolicy | None) -> StoragePolicy:
+    if policy is None:
+        return StoragePolicy()
+    if not isinstance(policy, StoragePolicy):
+        raise _bounded(ObjectStoreProblem, "storage policy is invalid")
+    project_soft = _validate_limit(policy.project_soft_limit_bytes, "project soft storage limit")
+    project_hard = _validate_limit(policy.project_hard_limit_bytes, "project hard storage limit")
+    shared_soft = _validate_limit(policy.shared_cache_soft_limit_bytes, "shared-cache soft storage limit")
+    shared_hard = _validate_limit(policy.shared_cache_hard_limit_bytes, "shared-cache hard storage limit")
+    minimum_free = _validate_limit(policy.minimum_free_bytes, "minimum free storage reserve")
+    if minimum_free is None:
+        raise _bounded(ObjectStoreProblem, "minimum free storage reserve is invalid")
+    if project_soft is not None and project_hard is not None and project_soft > project_hard:
+        raise _bounded(ObjectStoreProblem, "project storage thresholds are invalid")
+    if shared_soft is not None and shared_hard is not None and shared_soft > shared_hard:
+        raise _bounded(ObjectStoreProblem, "shared-cache storage thresholds are invalid")
+    return StoragePolicy(
+        project_soft_limit_bytes=project_soft,
+        project_hard_limit_bytes=project_hard,
+        shared_cache_soft_limit_bytes=shared_soft,
+        shared_cache_hard_limit_bytes=shared_hard,
+        minimum_free_bytes=minimum_free,
+    )
+
+
+def _validate_cleanup_request(request: StorageCleanupRequest) -> StorageCleanupRequest:
+    if not isinstance(request, StorageCleanupRequest):
+        raise _bounded(ObjectStoreProblem, "storage cleanup request is invalid")
+    if (
+        not isinstance(request.categories, tuple)
+        or not request.categories
+        or len(request.categories) != len(set(request.categories))
+        or any(category not in _CLEANUP_CATEGORIES for category in request.categories)
+    ):
+        raise _bounded(ObjectStoreProblem, "storage cleanup categories are invalid")
+    if not isinstance(request.requested_at, str) or _UTC_MILLISECONDS.fullmatch(request.requested_at) is None:
+        raise _bounded(ObjectStoreProblem, "storage cleanup time is invalid")
+    try:
+        datetime.fromisoformat(request.requested_at[:-1] + "+00:00")
+    except ValueError:
+        raise _bounded(ObjectStoreProblem, "storage cleanup time is invalid") from None
+    if not isinstance(request.trace_id, str) or _TRACE_ID.fullmatch(request.trace_id) is None:
+        raise _bounded(ObjectStoreProblem, "storage cleanup trace is invalid")
+    if not isinstance(request.actor_id, str) or _IDENTIFIER.fullmatch(request.actor_id) is None:
+        raise _bounded(ObjectStoreProblem, "storage cleanup actor is invalid")
+    return request
+
+
+def _directory_chain(root: Path, parent: Path) -> tuple[Path, ...]:
+    chain: list[Path] = []
+    current = parent
+    while True:
+        chain.append(current)
+        if current == root:
+            break
+        if root not in current.parents:
+            raise OSError("storage path escaped its authority")
+        current = current.parent
+    return tuple(reversed(chain))
+
+
+def _scan_regular_files(root: Path) -> tuple[_FileFact, ...]:
+    if not root.exists():
+        return ()
+    authority = _canonical_directory(root)
+    pending = [authority]
+    facts: list[_FileFact] = []
+    while pending:
+        directory = pending.pop()
+        with os.scandir(directory) as entries:
+            for entry in entries:
+                path = Path(entry.path)
+                status = path.stat(follow_symlinks=False)
+                if stat.S_ISDIR(status.st_mode):
+                    if _redirect(path) or path.resolve(strict=True) != path:
+                        raise OSError("storage inventory contains a redirected directory")
+                    pending.append(path)
+                elif stat.S_ISREG(status.st_mode):
+                    facts.append(
+                        _FileFact(
+                            path=path,
+                            identity=(status.st_dev, status.st_ino),
+                            byte_count=int(status.st_size),
+                            modified_ns=int(status.st_mtime_ns),
+                            exclusive=status.st_nlink == 1 and not _redirect(path),
+                        )
+                    )
+                else:
+                    raise OSError("storage inventory contains an unsupported entry")
+    return tuple(sorted(facts, key=lambda item: os.path.normcase(str(item.path))))
+
+
+def _object_relative_path(project_id: str, object_sha256: str) -> Path:
+    opaque = _opaque_name(project_id, object_sha256)
+    return Path(opaque[:2]) / opaque[2:4] / f"{opaque}.blob"
+
+
+def _pressure(
+    byte_count: int,
+    soft_limit: int | None,
+    hard_limit: int | None,
+    *,
+    free_bytes: int | None = None,
+    minimum_free_bytes: int = 0,
+) -> StoragePressure:
+    if free_bytes is not None and free_bytes < minimum_free_bytes:
+        return "low-disk"
+    if hard_limit is not None and byte_count >= hard_limit:
+        return "hard-limit"
+    if soft_limit is not None and byte_count >= soft_limit:
+        return "soft-limit"
+    return "normal"
+
+
+def _inventory(state: _StoreState) -> _Inventory:
+    counts: dict[StorageCategory, list[int]] = {category: [0, 0, 0, 0] for category in _STORAGE_CATEGORIES}
+    candidates: list[_FileCandidate] = []
+
+    def record(
+        category: StorageCategory,
+        fact: _FileFact,
+        *,
+        reclaimable: bool = False,
+        object_sha256: str | None = None,
+        authority_root: Path | None = None,
+    ) -> None:
+        values = counts[category]
+        values[0] += fact.byte_count
+        values[1] += 1
+        if reclaimable and category in _CLEANUP_CATEGORIES:
+            values[2] += fact.byte_count
+            values[3] += 1
+            candidates.append(
+                _FileCandidate(
+                    category=category,
+                    path=fact.path,
+                    authority_root=authority_root or state.root,
+                    identity=fact.identity,
+                    byte_count=fact.byte_count,
+                    modified_ns=fact.modified_ns,
+                    object_sha256=object_sha256,
+                )
+            )
+
+    connection: CanonicalConnection | None = None
+    try:
+        connection = open_canonical_database(state.database, expected_project_id=state.project_id)
+        connection.execute("BEGIN")
+        rows = tuple(
+            connection.execute(
+                """
+                SELECT object.object_sha256, object.byte_length, object.media_type,
+                       object.rights_status, object.protection_profile, object.retention_class,
+                       object.storage_state, object.created_at, object.verified_at,
+                       (SELECT count(*) FROM documents AS document
+                         WHERE document.project_id = object.project_id
+                           AND document.object_sha256 = object.object_sha256) AS reference_count,
+                       object.envelope_version, object.key_version, object.ciphertext_byte_length
+                  FROM object_records AS object
+                 WHERE object.project_id = ?
+                """,
+                (state.project_id,),
+            ).fetchall()
+        )
+        metadata_by_path = {
+            os.path.normcase(str(_object_relative_path(state.project_id, str(row[0])))): _row_metadata(row)
+            for row in rows
+        }
+        for fact in _scan_regular_files(state.objects):
+            relative = fact.path.relative_to(state.objects)
+            metadata = metadata_by_path.get(os.path.normcase(str(relative)))
+            if metadata is None or metadata.storage_state == "deleted":
+                record(
+                    "orphaned-objects",
+                    fact,
+                    reclaimable=fact.exclusive,
+                    authority_root=state.objects,
+                )
+                continue
+            category: StorageCategory = (
+                "derived-objects" if metadata.retention_class == "derived-rebuildable" else "durable-objects"
+            )
+            record(
+                category,
+                fact,
+                reclaimable=(
+                    category == "derived-objects"
+                    and metadata.storage_state == "available"
+                    and metadata.reference_count == 0
+                    and fact.exclusive
+                    and not _READERS.in_use(state.project_id, metadata.object_sha256)
+                ),
+                object_sha256=metadata.object_sha256,
+                authority_root=state.objects,
+            )
+        connection.execute("ROLLBACK")
+    except OSError, sqlite3.Error, StorageProblem:
+        if connection is not None and connection.in_transaction:
+            with suppress(sqlite3.Error, StorageProblem):
+                connection.execute("ROLLBACK")
+        raise _bounded(ObjectStoreProblem, "storage inventory is unavailable") from None
+    finally:
+        if connection is not None:
+            connection.close()
+
+    category_directories: tuple[tuple[str, StorageCategory], ...] = (
+        ("state", "canonical-metadata"),
+        ("indexes", "indexes"),
+        ("cache", "project-cache"),
+        ("models", "models"),
+        ("config", "configuration"),
+        ("exports", "exports"),
+        ("logs", "operational"),
+        (".locks", "operational"),
+        (".tmp", "operational"),
+    )
+    try:
+        for relative_name, category in category_directories:
+            directory = state.root / relative_name
+            for fact in _scan_regular_files(directory):
+                reclaimable = category in ("indexes", "project-cache", "models") and fact.exclusive
+                record(category, fact, reclaimable=reclaimable, authority_root=directory)
+        for child in state.root.iterdir():
+            if child.is_file() and child.name not in {"state", "objects"}:
+                status = child.stat(follow_symlinks=False)
+                record(
+                    "canonical-metadata",
+                    _FileFact(
+                        path=child,
+                        identity=(status.st_dev, status.st_ino),
+                        byte_count=int(status.st_size),
+                        modified_ns=int(status.st_mtime_ns),
+                        exclusive=status.st_nlink == 1 and not _redirect(child),
+                    ),
+                )
+        if state.shared_cache is not None:
+            for fact in _scan_regular_files(state.shared_cache):
+                record(
+                    "shared-cache",
+                    fact,
+                    reclaimable=fact.exclusive,
+                    authority_root=state.shared_cache,
+                )
+        disk = shutil.disk_usage(state.root)
+    except OSError:
+        raise _bounded(ObjectStoreProblem, "storage inventory is unavailable") from None
+
+    categories = tuple(
+        StorageUsageCategory(
+            category=category,
+            byte_count=counts[category][0],
+            item_count=counts[category][1],
+            reclaimable_byte_count=counts[category][2],
+            reclaimable_item_count=counts[category][3],
+            cleanup_consequence=cast(Any, _CATEGORY_CONSEQUENCE[category]),
+        )
+        for category in _STORAGE_CATEGORIES
+    )
+    project_bytes = sum(entry.byte_count for entry in categories if entry.category != "shared-cache")
+    shared_bytes = counts["shared-cache"][0]
+    policy = state.storage_policy
+    usage = StorageUsage(
+        project_byte_count=project_bytes,
+        shared_cache_byte_count=shared_bytes,
+        free_byte_count=int(disk.free),
+        project_soft_limit_bytes=policy.project_soft_limit_bytes,
+        project_hard_limit_bytes=policy.project_hard_limit_bytes,
+        shared_cache_soft_limit_bytes=policy.shared_cache_soft_limit_bytes,
+        shared_cache_hard_limit_bytes=policy.shared_cache_hard_limit_bytes,
+        project_pressure=_pressure(
+            project_bytes,
+            policy.project_soft_limit_bytes,
+            policy.project_hard_limit_bytes,
+            free_bytes=int(disk.free),
+            minimum_free_bytes=policy.minimum_free_bytes,
+        ),
+        shared_cache_pressure=_pressure(
+            shared_bytes,
+            policy.shared_cache_soft_limit_bytes,
+            policy.shared_cache_hard_limit_bytes,
+        ),
+        categories=categories,
+    )
+    return _Inventory(usage=usage, candidates=tuple(candidates))
 
 
 def _row_metadata(row: Any) -> StoredObject:
@@ -889,6 +1270,7 @@ def _stream_to_staging(
     key_provider: ObjectMasterKeyProvider | None,
     allow_plaintext_fixture: bool,
     upgrade_boundary: Callable[[str], None] | None = None,
+    admission_check: Callable[[int], None] | None = None,
 ) -> tuple[Path, str, int, _EnvelopeMetadata]:
     encrypted = protection_profile == _ENCRYPTED_PROFILE
     plaintext_fixture = protection_profile == _PLAINTEXT_FIXTURE and allow_plaintext_fixture
@@ -914,6 +1296,8 @@ def _stream_to_staging(
             or _redirect(destination)
         ):
             raise OSError("staging identity is invalid")
+        if admission_check is not None:
+            admission_check(0)
         digest = hashlib.sha256()
         length = 0
         if encrypted:
@@ -921,6 +1305,8 @@ def _stream_to_staging(
                 raise ObjectKeyUnavailable("object encryption key is unavailable")
             stream_state = sodium.crypto_secretstream_xchacha20poly1305_state()
             header = sodium.crypto_secretstream_xchacha20poly1305_init_push(stream_state, data_key)
+            if admission_check is not None:
+                admission_check(len(_ENVELOPE_MAGIC) + len(header))
             _write_all(descriptor, _ENVELOPE_MAGIC)
             _write_all(descriptor, header)
             frame_index = 0
@@ -942,6 +1328,8 @@ def _stream_to_staging(
                         else sodium.crypto_secretstream_xchacha20poly1305_TAG_MESSAGE
                     ),
                 )
+                if admission_check is not None:
+                    admission_check(int(os.fstat(descriptor).st_size) + _FRAME_LENGTH.size + len(ciphertext))
                 _write_all(descriptor, _FRAME_LENGTH.pack(len(ciphertext)))
                 _write_all(descriptor, ciphertext)
                 if final:
@@ -954,6 +1342,8 @@ def _stream_to_staging(
                 if length > MAX_SAFE_INTEGER:
                     raise ValueError("object exceeds the supported length")
                 digest.update(block)
+                if admission_check is not None:
+                    admission_check(int(os.fstat(descriptor).st_size) + len(block))
                 _write_all(descriptor, block)
         if upgrade_boundary is not None:
             upgrade_boundary("before-replacement-fsync")
@@ -1758,6 +2148,104 @@ def _reconcile_staging(
             raise failure
 
 
+def _reconcile_cleanup_staging(directory: Path) -> None:
+    try:
+        for candidate in tuple(directory.iterdir()):
+            status = candidate.stat(follow_symlinks=False)
+            if not (
+                candidate.name.endswith(".partial")
+                and stat.S_ISREG(status.st_mode)
+                and status.st_nlink == 1
+                and not _redirect(candidate)
+            ):
+                raise OSError("unexpected cleanup staging entry")
+            candidate.unlink()
+    except OSError:
+        raise _bounded(ObjectStoreProblem, "storage cleanup staging cannot be reconciled") from None
+
+
+def _cleanup_step_completed(_step: str) -> None:
+    """Private deterministic failpoint seam for partial-GC restart proof."""
+
+
+def _storage_audit(
+    state: _StoreState,
+    event: str,
+    request: StorageCleanupRequest,
+    *,
+    preview_token: str,
+    byte_count: int,
+    item_count: int,
+    skipped_item_count: int = 0,
+) -> None:
+    try:
+        logs = _canonical_directory(state.root / "logs", create=True)
+        with _stable_directories([state.root, logs]):
+            _atomic_audit_append(
+                logs / "storage-maintenance.jsonl",
+                {
+                    "actorId": request.actor_id,
+                    "byteCount": byte_count,
+                    "categories": list(request.categories),
+                    "event": event,
+                    "itemCount": item_count,
+                    "occurredAt": _now(),
+                    "previewId": hashlib.sha256(preview_token.encode("ascii")).hexdigest()[:24],
+                    "projectId": state.project_id,
+                    "schemaVersion": "1.0",
+                    "skippedItemCount": skipped_item_count,
+                    "traceId": request.trace_id,
+                },
+            )
+    except OSError, ProjectLifecycleProblem:
+        raise _bounded(ObjectStoreProblem, "storage maintenance audit could not be written") from None
+
+
+def _candidate_matches(candidate: _FileCandidate) -> bool:
+    try:
+        status = candidate.path.stat(follow_symlinks=False)
+        return (
+            stat.S_ISREG(status.st_mode)
+            and status.st_nlink == 1
+            and not _redirect(candidate.path)
+            and (status.st_dev, status.st_ino) == candidate.identity
+            and int(status.st_size) == candidate.byte_count
+            and int(status.st_mtime_ns) == candidate.modified_ns
+        )
+    except OSError:
+        return False
+
+
+def _remove_rebuildable_candidate(state: _StoreState, candidate: _FileCandidate) -> bool:
+    if not _candidate_matches(candidate):
+        return False
+    try:
+        chain = _directory_chain(candidate.authority_root, candidate.path.parent)
+        with _stable_directories(list(chain)):
+            if not _candidate_matches(candidate):
+                return False
+            if candidate.category == "shared-cache":
+                candidate.path.unlink()
+                return True
+            staging = _cleanup_staging_directory(state.temporary)
+            with _stable_directories([state.root, state.temporary, staging]):
+                moved = staging / f"{secrets.token_hex(24)}.partial"
+                _move_no_replace(candidate.path, moved)
+                moved_status = moved.stat(follow_symlinks=False)
+                if (
+                    (moved_status.st_dev, moved_status.st_ino) != candidate.identity
+                    or moved_status.st_nlink != 1
+                    or int(moved_status.st_size) != candidate.byte_count
+                    or int(moved_status.st_mtime_ns) != candidate.modified_ns
+                    or _redirect(moved)
+                ):
+                    raise OSError("cleanup candidate identity changed")
+                moved.unlink()
+                return True
+    except OSError:
+        return False
+
+
 class _LocalObjectStore:
     __slots__ = ("__token",)
 
@@ -1766,6 +2254,88 @@ class _LocalObjectStore:
 
     def _state(self) -> _StoreState:
         return _STORES.state(self.__token)
+
+    def usage(self) -> StorageUsage:
+        state = self._state()
+        with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
+            return _inventory(state).usage
+
+    def preview_cleanup(self, request: StorageCleanupRequest) -> StorageCleanupPreview:
+        request = _validate_cleanup_request(request)
+        state = self._state()
+        with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
+            inventory = _inventory(state)
+            selected = frozenset(request.categories)
+            token = secrets.token_hex(32)
+            candidates = tuple(candidate for candidate in inventory.candidates if candidate.category in selected)
+            state.cleanup_plan = _CleanupPlan(token=token, request=request, candidates=candidates)
+            categories = tuple(entry for entry in inventory.usage.categories if entry.category in selected)
+            return StorageCleanupPreview(
+                preview_token=token,
+                categories=categories,
+                reclaimable_byte_count=sum(entry.reclaimable_byte_count for entry in categories),
+                reclaimable_item_count=sum(entry.reclaimable_item_count for entry in categories),
+            )
+
+    def cleanup(self, preview_token: str) -> StorageCleanupResult:
+        if not isinstance(preview_token, str) or re.fullmatch(r"[0-9a-f]{64}", preview_token) is None:
+            raise _bounded(ObjectConflict, "storage cleanup preview is no longer current")
+        state = self._state()
+        with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
+            plan = state.cleanup_plan
+            if plan is None or not hmac.compare_digest(plan.token, preview_token):
+                raise _bounded(ObjectConflict, "storage cleanup preview is no longer current")
+            state.cleanup_plan = None
+            planned_bytes = sum(candidate.byte_count for candidate in plan.candidates)
+            _storage_audit(
+                state,
+                "storage.cleanup.started",
+                plan.request,
+                preview_token=preview_token,
+                byte_count=planned_bytes,
+                item_count=len(plan.candidates),
+            )
+            reclaimed_bytes = 0
+            reclaimed_items = 0
+            skipped_items = 0
+            try:
+                for candidate in plan.candidates:
+                    _cleanup_step_completed("before-candidate")
+                    reclaimed = False
+                    if candidate.object_sha256 is not None:
+                        try:
+                            self.delete(candidate.object_sha256)
+                            reclaimed = True
+                        except ObjectReferenced, ObjectBusy, ObjectNotFound, ObjectCorrupt:
+                            reclaimed = False
+                    else:
+                        reclaimed = _remove_rebuildable_candidate(state, candidate)
+                    if reclaimed:
+                        reclaimed_bytes += candidate.byte_count
+                        reclaimed_items += 1
+                    else:
+                        skipped_items += 1
+                    _cleanup_step_completed("after-candidate")
+            except ObjectStoreProblem:
+                raise
+            except Exception:
+                raise _bounded(ObjectStoreProblem, "storage cleanup was interrupted and can be retried") from None
+            _storage_audit(
+                state,
+                "storage.cleanup.completed",
+                plan.request,
+                preview_token=preview_token,
+                byte_count=reclaimed_bytes,
+                item_count=reclaimed_items,
+                skipped_item_count=skipped_items,
+            )
+            usage_after = _inventory(state).usage
+            return StorageCleanupResult(
+                reclaimed_byte_count=reclaimed_bytes,
+                reclaimed_item_count=reclaimed_items,
+                skipped_item_count=skipped_items,
+                usage_after=usage_after,
+            )
 
     def metadata(self, object_sha256: str) -> StoredObject:
         digest = _validate_sha256(object_sha256)
@@ -1802,6 +2372,21 @@ class _LocalObjectStore:
         remove_after_close = False
         quarantine_after_close = False
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
+            baseline_bytes = _inventory(state).usage.project_byte_count
+            last_staged_bytes = 0
+
+            def admit(prospective_staged_bytes: int) -> None:
+                nonlocal last_staged_bytes
+                policy = state.storage_policy
+                projected = baseline_bytes + prospective_staged_bytes
+                if policy.project_hard_limit_bytes is not None and projected > policy.project_hard_limit_bytes:
+                    raise _bounded(ObjectStoragePressure, "project storage hard limit would be exceeded")
+                disk = shutil.disk_usage(state.root)
+                additional = max(0, prospective_staged_bytes - last_staged_bytes)
+                if int(disk.free) - additional < policy.minimum_free_bytes:
+                    raise _bounded(ObjectStoragePressure, "local disk reserve is unavailable")
+                last_staged_bytes = prospective_staged_bytes
+
             staging_directory = _staging_directory(state.temporary)
             with _stable_directories([state.root, state.state, state.objects, state.temporary, staging_directory]):
                 staging_failure: ObjectStoreProblem | None = None
@@ -1817,6 +2402,7 @@ class _LocalObjectStore:
                         protection_profile=command.protection_profile,
                         key_provider=state.key_provider,
                         allow_plaintext_fixture=state.allow_plaintext_fixture,
+                        admission_check=admit,
                     )
                 except ObjectStoreProblem as problem:
                     staging_failure = _bounded(type(problem), str(problem))
@@ -2130,7 +2716,10 @@ def _prepare_store_state(
     key_provider: ObjectMasterKeyProvider | None,
     allow_plaintext_fixture: bool,
     cancellation_requested: Callable[[str], bool] | None,
+    storage_policy: StoragePolicy | None,
+    shared_cache_root: Path | None,
 ) -> _StoreState:
+    policy = _validate_storage_policy(storage_policy)
     path_failure: ObjectStoreProblem | None = None
     try:
         root, state_directory, objects, temporary = _canonical_root(Path(project_root))
@@ -2139,6 +2728,17 @@ def _prepare_store_state(
         root = state_directory = objects = temporary = Path()
     if path_failure is not None:
         raise path_failure
+    shared_cache: Path | None = None
+    if shared_cache_root is not None:
+        raw_shared = Path(shared_cache_root)
+        try:
+            if not raw_shared.is_absolute():
+                raise OSError("shared-cache authority is relative")
+            shared_cache = _canonical_directory(raw_shared)
+            if shared_cache == root or shared_cache.is_relative_to(root) or root.is_relative_to(shared_cache):
+                raise OSError("shared-cache authority overlaps project authority")
+        except OSError:
+            raise _bounded(ObjectStoreProblem, "shared-cache authority is invalid") from None
     database = state_directory / "project.sqlite3"
     migration_failure: ObjectStoreProblem | None = None
     try:
@@ -2174,6 +2774,9 @@ def _prepare_store_state(
         key_provider=key_provider,
         allow_plaintext_fixture=allow_plaintext_fixture,
         cancellation_requested=cancellation_requested,
+        storage_policy=policy,
+        shared_cache=shared_cache,
+        cleanup_plan=None,
         lock=threading.RLock(),
     )
 
@@ -2193,6 +2796,9 @@ def _reconcile_store_state(store_state: _StoreState) -> None:
         ):
             _reconcile_envelope_upgrades(staging, store_state)
             _reconcile_staging(staging, store_state)
+            cleanup_staging = _cleanup_staging_directory(store_state.temporary)
+            with _stable_directories([store_state.root, store_state.temporary, cleanup_staging]):
+                _reconcile_cleanup_staging(cleanup_staging)
     except ObjectStoreProblem as problem:
         staging_failure = _bounded(type(problem), "object staging reconciliation failed")
     except OSError, ProjectLifecycleProblem:
@@ -2220,6 +2826,8 @@ def upgrade_local_object_envelopes(
         key_provider=key_provider,
         allow_plaintext_fixture=False,
         cancellation_requested=cancellation_requested,
+        storage_policy=None,
+        shared_cache_root=None,
     )
     _reconcile_store_state(state)
 
@@ -2230,6 +2838,8 @@ def create_local_object_store(
     *,
     key_provider: ObjectMasterKeyProvider | None = None,
     allow_plaintext_fixture: bool = False,
+    storage_policy: StoragePolicy | None = None,
+    shared_cache_root: Path | None = None,
 ) -> ObjectStore:
     """Create the project-local adapter behind the dependency-neutral port."""
 
@@ -2245,6 +2855,8 @@ def create_local_object_store(
         key_provider=key_provider,
         allow_plaintext_fixture=allow_plaintext_fixture,
         cancellation_requested=None,
+        storage_policy=storage_policy,
+        shared_cache_root=shared_cache_root,
     )
     _reconcile_store_state(store_state)
     return _LocalObjectStore(store_state)

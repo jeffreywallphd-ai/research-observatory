@@ -38,6 +38,16 @@
     "malformedEnvelopeFailure",
     "wrappedKeyAuthenticationFailure",
     "keyUnavailableBehavior",
+    "accountingCategories",
+    "quotaPolicy",
+    "lowDiskBehavior",
+    "automaticCanonicalReclamation",
+    "garbageCollection",
+    "cacheEviction",
+    "orphanCleanup",
+    "cleanupAudit",
+    "cleanupRestart",
+    "sharedCacheAuthority",
     "releaseQualification"
   ],
   "properties": {
@@ -96,6 +106,30 @@
     "malformedEnvelopeFailure": {"const": "corrupt-quarantine"},
     "wrappedKeyAuthenticationFailure": {"const": "key-unavailable-preserve"},
     "keyUnavailableBehavior": {"const": "bounded-failure-preserve-for-recovery"},
+    "accountingCategories": {
+      "const": [
+        "canonical-metadata",
+        "durable-objects",
+        "derived-objects",
+        "orphaned-objects",
+        "indexes",
+        "project-cache",
+        "models",
+        "configuration",
+        "exports",
+        "operational",
+        "shared-cache"
+      ]
+    },
+    "quotaPolicy": {"const": "deployment-supplied-project-and-shared-cache-soft-hard-thresholds"},
+    "lowDiskBehavior": {"const": "deny-new-object-writes-preserve-reads-and-cleanup"},
+    "automaticCanonicalReclamation": {"const": "unreferenced-derived-rebuildable-only"},
+    "garbageCollection": {"const": "preview-lease-revalidate-reference-reader-and-file-identity"},
+    "cacheEviction": {"const": "exclusive-regular-rebuildable-files-only"},
+    "orphanCleanup": {"const": "opaque-inventory-without-metadata-exclusive-file-only"},
+    "cleanupAudit": {"const": "content-free-intent-and-completion-project-audit"},
+    "cleanupRestart": {"const": "item-atomic-rescan-and-resume"},
+    "sharedCacheAuthority": {"const": "optional-explicit-root-layout-deferred-to-cap-02-s05"},
     "releaseQualification": {"const": "authenticated-encrypted-object-adapter"}
   }
 }

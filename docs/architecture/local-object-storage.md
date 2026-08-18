@@ -91,6 +91,39 @@ the explicit test-fixture flag. Constructing an ordinary store without a key
 provider fails closed. CAP-02.S03.T03 still owns the broader reference graph,
 leases, quotas, garbage collection, and cache eviction.
 
+## T03 accounting, quota, and reclamation boundary
+
+The object-store port exposes categorized physical byte/item accounting for
+canonical metadata, durable and derived objects, opaque filesystem orphans,
+indexes, project caches, models, configuration, exports, operational state, and
+an optional explicitly configured shared cache. Deployments may supply project
+and shared-cache soft/hard byte limits. A local free-space reserve is always
+checked before and during streaming publication. Soft pressure is observable;
+hard project pressure or low disk rejects new writes with
+`RO-CORE-OBJECT-STORAGE-PRESSURE` while verified reads and cleanup remain
+available.
+
+Cleanup is a preview-then-execute operation. The preview reports only categories,
+counts, bytes, and whether recovery means recomputation, redownload, or metadata
+repair; it exposes neither content identities nor filesystem paths. Its random
+one-time token is a bounded maintenance lease. Execution rechecks every immutable
+document reference, active verified reader, path authority, stable file identity,
+size, regular-file type, and single-link status. Only unreferenced
+`derived-rebuildable` canonical objects are automatic mark/sweep candidates;
+`project-lifetime` and `export-retained` objects are never automatic cleanup
+targets. Unexpected opaque object files without metadata are orphan candidates
+only when their exclusive local identity is safe to remove.
+
+Project caches, indexes, and models move through same-volume cleanup staging
+before deletion. Restart removes only exclusive operation-staging files and a
+fresh preview resumes remaining work. Each canonical object deletion retains the
+existing metadata/reference transaction and reader lease barrier. Shared-cache
+files require a separately supplied non-overlapping authority and are never
+affected by project deletion; CAP-02.S05 still owns their eventual lab layout.
+Content-free started/completed audit records preserve actor, trace, selected
+categories, aggregate counts, and the opaque preview identity without recording
+object digests, content, or paths.
+
 The exact portable policy is
 [`object-store-profile.v1.json`](../../packages/contracts/storage/object-store-profile.v1.json),
 governed by ADR-0015.
@@ -111,5 +144,8 @@ governed by ADR-0015.
 - crash recovery distinguishes pre-commit delete restoration from post-commit
   delete cleanup;
 - immutable document references drive counts and prevent deletion;
+- categorized project/shared-cache accounting, soft/hard pressure, and low-disk read continuity;
+- preview-only inspection, one-time cleanup leases, reference/reader rechecks, partial-GC restart, and
+  hardlink/changed-identity refusal;
 - port-only import remains dependency-neutral and concrete adapter imports are
   rejected outside the composition/data boundary.
