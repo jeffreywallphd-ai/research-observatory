@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: cf3a8d10638b94c1e929b92a4aa3b7ba682f62a2319758a1627a19683b109400
+source_sha256: 8aaa7b7daf5626a3487cdbf27d4f0a460cc764b00485a7dfd2b4b40c6e5cce63
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 281 |
 | `READY` | 1 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 37 |
 | `DEFERRED` | 36 |
 
@@ -117,4 +117,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S02.T03` Build typed repositories and transaction boundaries | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S02.T03` Build typed repositories and transaction boundaries | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
