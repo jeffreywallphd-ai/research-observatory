@@ -3802,11 +3802,11 @@ capabilities:
       - data
       verification_commands:
       - python tools/verify.py --profile data
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T00:38:49+00:00'
-      updated_at: '2026-08-18T01:17:21+00:00'
+      updated_at: '2026-08-18T01:21:25+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Implementation 83d6b23; focused evidence dbb2f49d; ready for independent repository/UoW review.
@@ -3826,16 +3826,15 @@ capabilities:
       review:
         reviewer: agent:curie
         result: changes-requested
-        reviewed_at: '2026-08-18T01:03:55+00:00'
-        notes: 'P1: diff-aware ADR gate fails; dependency-free ports are co-located with SQLite adapter and the no-SQL guard
-          misses indirect execute; UoW entry leaks StorageProblem/sqlite busy errors; idempotency key lacks full command/precondition
-          replay fingerprint.'
+        reviewed_at: '2026-08-18T01:21:25+00:00'
+        notes: 'P1: package-style/aliased storage and repositories imports bypass the no-SQL boundary; bounded adapter errors
+          retain raw StorageProblem/sqlite failures in __context__.'
       base_sha: 6a177be5774f6b252978ee617a1a6a815a92f9bd
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-18T01:03:55+00:00'
-        expires_at: '2026-08-18T09:03:55+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-18T01:21:25+00:00'
+        expires_at: '2026-08-18T09:21:25+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
