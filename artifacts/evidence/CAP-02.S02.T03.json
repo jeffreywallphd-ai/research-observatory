@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S02.T03",
+  "commit": "83d6b230ade28a876efada0d68e1eb378ffe19c8",
+  "baseCommit": "6a177be5774f6b252978ee617a1a6a815a92f9bd",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/README.md",
+    "planning/backlog.yaml",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "tests/data/README.md",
+    "tests/data/test_sqlite_repositories.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.data.test_sqlite_repositories tests.service.test_project_lifecycle tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "All 58 risk-selected data and Core lifecycle tests pass. Seven direct repository tests cover all six aggregate kinds, detached projections, explicit commit/rollback, optimistic conflict, not-found, chronology/identity preservation, late outbox failure, document-FK failure, restart, and the no-SQL/no-database-handle business boundary."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S02.T03-quality.json; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+      "exitCode": 0,
+      "result": "Formatting, Ruff, and mypy pass for 92 governed Python files; architecture passes for 13 areas, 12 modules, five stable interfaces, and three deployment profiles; all 14 ADR records validate. Quality report SHA-256: 925403b73dca5bef16ca576b5dd8ec6a8f9c02f7913c3b628b1a9ba1b0c32e97."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.packaging.test_core_sidecar_package; .venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-package --report artifacts/tmp/core-sidecar-package.json",
+      "exitCode": 0,
+      "result": "All six focused packaging tests pass with one Windows-token-dependent symlink test skipped. The exact frozen package includes the typed repository hidden module and verifies 661 files / 38,297,700 bytes; entrypoint SHA-256 is 36f194cdccbbeb494c0b6a8d1c30bf6db324846ddeef68708f37b88b3a7e6073 and package-report SHA-256 is d55b8a6693ef232c9c99a21ad25b6a937b4cf1ea7b773bf5b30dfff0ac6156b8."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-02.S02.T03-build-manifest.json",
+      "exitCode": 0,
+      "result": "Clean build identity 0.1.0+g83d6b23 is bound with dirty=false. Build-manifest SHA-256: a2f78be1c0b6c4f6d6ad3179e1900f53d328a30c20c5be7deba40c6d3880b5ae."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "The task state, exact generated Wave/capability views, and patch hygiene validate. No UI/reference path, schema DDL, migration, dependency lock, or public Core API changed."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "AggregateRepository, UnitOfWork, and UnitOfWorkFactory are typed ports. Returned factory, unit-of-work, and repository objects retain only opaque 64-hex tokens; database paths, CanonicalConnection, sqlite3, SQLAlchemy rows, and ORM entities do not cross the business boundary.",
+        "An AST boundary regression denies SQLite/SQLAlchemy imports and ad hoc SQL in every production Core module outside storage, repositories, and the migration adapter.",
+        "BEGIN IMMEDIATE serializes the optimistic read/write decision. Revision, kind extension, provenance fact, and pending outbox record are committed together; leaving without commit or failing at a late outbox/FK constraint rolls every inserted row back.",
+        "Focused tests distinguish bounded RO-CORE-REPOSITORY-NOT-FOUND and RO-CORE-REPOSITORY-CONFLICT outcomes and reject stale revisions, changed aggregate kind/creation identity, and regressed modification time."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The deterministic fixed-ID/time helpers exercise record, document, workflow, evidence, ontology, and decision adapters, two committed revisions after reopen, no-commit rollback, late failure rollback, conflict, not-found, and frozen projection behavior.",
+        "The affected schema, migration, project lifecycle, Core API, quality, architecture, ADR, packaging-contract, real frozen-package, build-identity, task, and generated-view checks pass at the exact implementation commit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Storage architecture and portable-contract documentation now define the typed port, explicit commit, atomic outbox/provenance, detached projection, and bounded failure behavior without changing the v2 DDL/profile fingerprint.",
+        "The quality and frozen-sidecar inventories contain the new repository implementation and direct regression tests. The implementation changes no migration, dependency, UI/reference, rights, security, or business-feature behavior outside this approved repository seam."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This medium-risk task introduces a shared data adapter and transaction boundary. The selected checks cover the exact repository semantics plus its credible schema, migration, lifecycle, type, architecture, build, and packaging impacts. A real package build is included because the repository module is intentionally frozen as a hidden module.",
+    "deferred": "The complete data/e2e-local profiles, migration recovery matrix, cross-task integration, security scan, and project-lifecycle performance recalibration run at CAP-02.S02 slice review; full repository/deployment qualification runs once at W1 exit. No task criterion requires a broad profile replay."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Review the exact repository/UoW ports, opaque authority, SQLAlchemy statement confinement, optimistic conflict/not-found behavior, transaction rollback, all-kind mapping, event/outbox digest binding, package inclusion, and exact 13-file base-to-candidate scope. Use focused checks only."
+  }
+}
