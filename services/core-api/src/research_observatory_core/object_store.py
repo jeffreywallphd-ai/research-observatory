@@ -716,6 +716,7 @@ class _LocalObjectStore:
         destination: Path | None = None
         connection: CanonicalConnection | None = None
         reader: io.FileIO | None = None
+        identity: tuple[int, int] | None = None
         remove_after_close = False
         quarantine_after_close = False
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
@@ -819,10 +820,22 @@ class _LocalObjectStore:
                             connection.execute("ROLLBACK")
                     publication_state, reconciled = _publication_state(state, digest, length, command)
                     if publication_state == "committed" and reconciled is not None:
-                        return reconciled
+                        if (
+                            reader is not None
+                            and destination is not None
+                            and identity is not None
+                            and _file_matches(destination, reader.fileno(), identity)
+                        ):
+                            return reconciled
+                        quarantine_after_close = True
+                        publication_failure = _bounded(
+                            ObjectCorrupt,
+                            "object identity changed during metadata reconciliation",
+                        )
                     if created_file and destination is not None and publication_state == "absent":
                         remove_after_close = True
-                    publication_failure = _bounded(ObjectStoreProblem, "object publication failed")
+                    if publication_failure is None:
+                        publication_failure = _bounded(ObjectStoreProblem, "object publication failed")
                 finally:
                     if reader is not None:
                         reader.close()

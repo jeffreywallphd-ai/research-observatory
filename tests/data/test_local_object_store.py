@@ -482,6 +482,29 @@ class LocalObjectStoreTests(unittest.TestCase):
             hardlinked_digest = hashlib.sha256(b"late-hardlink-publication").hexdigest()
             self.assertEqual("quarantined", self.store.metadata(hardlinked_digest).storage_state)
 
+            combined_alias = self.project.parent / "late-acknowledgement-link.bin"
+            combined_content = b"late-hardlink-with-lost-commit-ack"
+            combined = False
+
+            def link_then_lose_commit_ack(connection: CanonicalConnection, sql: str, parameters: object = ()):
+                nonlocal combined
+                result = original_execute(connection, sql, parameters)
+                if sql.strip() == "COMMIT" and not combined:
+                    combined = True
+                    target = next(path for path in self.object_files() if path.read_bytes() == combined_content)
+                    os.link(target, combined_alias)
+                    raise sqlite3.OperationalError("injected lost acknowledgement after late hardlink")
+                return result
+
+            with (
+                patch.object(CanonicalConnection, "execute", link_then_lose_commit_ack),
+                self.assertRaises(ObjectCorrupt),
+            ):
+                self.store.put(io.BytesIO(combined_content), put_command())
+            combined_digest = hashlib.sha256(combined_content).hexdigest()
+            self.assertEqual("quarantined", self.store.metadata(combined_digest).storage_state)
+            self.assertEqual(2, combined_alias.stat().st_nlink)
+
     def test_open_serializes_rights_transition_and_delete_is_retryable_while_stream_active(self) -> None:
         content = b"rights-and-reader-serialization"
         stored = self.store.put(io.BytesIO(content), put_command())
