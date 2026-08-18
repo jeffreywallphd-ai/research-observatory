@@ -3962,11 +3962,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T03:31:31+00:00'
-      updated_at: '2026-08-18T05:56:34+00:00'
+      updated_at: '2026-08-18T11:12:30+00:00'
       completed_at: null
       blocker: null
       implementation_notes: Implemented authenticated encrypted object envelopes, versioned wrapped keys, schema-v3 recovery,
@@ -3979,16 +3979,21 @@ capabilities:
         commit: 4d55d5ed0345a6265d296f6d7d9a774804c6b2d6
         recorded_at: '2026-08-18T05:55:34+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: /root/t02_security_review
+        result: changes-requested
+        reviewed_at: '2026-08-18T11:12:30+00:00'
+        notes: 'P1: v2 plaintext objects are relabeled as plaintext fixtures by schema v3, remain unencrypted, are denied
+          by production open, and conflict on encrypted re-put; implement verified copy-on-write re-encryption with rollback,
+          restart, retry, missing-key, corrupt-source, and partial-upgrade tests. P2: evidence overclaims header and wrapped-key
+          tamper coverage and quarantine classification; add committed envelope-metadata adversarial tests and align evidence,
+          contracts, and documentation with the selected classification. Reviewed implementation 4d55d5ed0345a6265d296f6d7d9a774804c6b2d6;
+          25 focused checks passed.'
       base_sha: ba98e5c07f6c492ddf59432df4963e4be61e7631
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-18T03:31:31+00:00'
-        expires_at: '2026-08-18T11:31:31+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-18T11:12:30+00:00'
+        expires_at: '2026-08-18T19:12:30+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
