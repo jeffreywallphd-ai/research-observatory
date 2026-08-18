@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S03.T02",
+  "commit": "5898fc634bcd0e6cf33915b81ea62670947f83e2",
+  "baseCommit": "4d55d5ed0345a6265d296f6d7d9a774804c6b2d6",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S03.T02.json",
+    "reason": "The independent security review rejected the first-pass evidence because it omitted a production upgrade path for committed plaintext objects and overclaimed tamper coverage. This follow-up preserves that historical submission while binding the approved v4 copy-on-write remediation, exact adversarial coverage, executable composition, and final qualification to a new immutable commit."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S03.T02.json",
+    "docs/adr/ADR-0016-upgrade-local-object-envelopes-through-a-durable-verified-copy-on-write-state-machine.md",
+    "docs/adr/index.json",
+    "docs/architecture/local-object-storage.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/object-store-profile.schema.json",
+    "packages/contracts/storage/object-store-profile.v1.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/capability-plans/CAP-02.md",
+    "planning/review-site/CAP-01/CAP-01.S01.html",
+    "planning/review-site/CAP-01/CAP-01.S02.html",
+    "planning/review-site/CAP-01/CAP-01.S03.html",
+    "planning/review-site/CAP-01/CAP-01.S04.html",
+    "planning/review-site/CAP-02/CAP-02.S01.html",
+    "planning/review-site/CAP-02/CAP-02.S02.html",
+    "planning/review-site/CAP-02/CAP-02.S03.html",
+    "planning/review-site/CAP-02/CAP-02.S04.html",
+    "planning/review-site/CAP-02/index.html",
+    "planning/review-site/CAP-03/CAP-03.S01.html",
+    "planning/review-site/CAP-03/CAP-03.S02.html",
+    "planning/review-site/CAP-03/CAP-03.S03.html",
+    "planning/review-site/CAP-03/CAP-03.S04.html",
+    "planning/review-site/CAP-03/CAP-03.S05.html",
+    "planning/review-site/CAP-03/CAP-03.S06.html",
+    "planning/review-site/CAP-07/CAP-07.S01.html",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/review-site/waves/W5.html",
+    "planning/slice-plans/CAP-01/CAP-01.S01-tauri-and-react-application-shell.md",
+    "planning/slice-plans/CAP-01/CAP-01.S02-desktop-design-system-and-accessibility-foundation.md",
+    "planning/slice-plans/CAP-01/CAP-01.S03-packaged-python-fastapi-sidecar.md",
+    "planning/slice-plans/CAP-01/CAP-01.S04-authenticated-desktop-service-contract.md",
+    "planning/slice-plans/CAP-02/CAP-02.S01-local-project-lifecycle-and-directory-contract.md",
+    "planning/slice-plans/CAP-02/CAP-02.S02-sqlite-schema-migrations-and-repository-layer.md",
+    "planning/slice-plans/CAP-02/CAP-02.S03-encrypted-local-object-and-cache-storage.md",
+    "planning/slice-plans/CAP-02/CAP-02.S04-local-secrets-profiles-and-privacy-controls.md",
+    "planning/slice-plans/CAP-03/CAP-03.S01-canonical-identifiers-and-domain-contracts.md",
+    "planning/slice-plans/CAP-03/CAP-03.S02-research-intent-contract-and-mode-governance.md",
+    "planning/slice-plans/CAP-03/CAP-03.S03-append-only-provenance-and-audit-ledger.md",
+    "planning/slice-plans/CAP-03/CAP-03.S04-portable-workflow-model-and-local-worker-fabric.md",
+    "planning/slice-plans/CAP-03/CAP-03.S05-dependency-graph-staleness-and-controlled-recalculation.md",
+    "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
+    "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0004_object_envelope_upgrades.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/projects.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/contracts/test_object_store_contract.py",
+    "tests/data/test_object_envelope_upgrades.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile security-local --report artifacts/tmp/CAP-02.S03.T02-security-local-remediation.json",
+      "exitCode": 0,
+      "result": "The complete security-local profile passed at exact commit 5898fc634bcd0e6cf33915b81ea62670947f83e2 in 915.88 seconds: every repository/architecture/UI/ADR/CI/quality gate, all 166 foundation tests, canonical backlog validation, a live 599-package scan with 151 normalized findings and zero blocking findings, and all 21 security tests. Report SHA-256: 4c83483bc2486a918d29106efd40a985e818a82f8172af6c4275ae47b303044b."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/data -p \"test_*.py\"; .venv\\Scripts\\python.exe -m unittest discover -s tests/contracts -p \"test_*.py\"; .venv\\Scripts\\python.exe -m unittest tests.service.test_project_lifecycle tests.service.test_core_api",
+      "exitCode": 0,
+      "result": "The exact final commit passed 78 data tests, 15 portable-contract tests, and 32 project-lifecycle/Core API tests. This includes v1/v2/v3-to-v4 history, default executable composition, encrypted upgrade success, explicit missing-key recovery, 40 pre/post durability failpoints, partial cleanup, cancellation before and after the metadata commit acknowledgement, tamper classification, restart, and repository boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/project_lifecycle_performance_check.py --repo . --report artifacts/tmp/CAP-02.S03.T02-project-lifecycle-performance.json",
+      "exitCode": 0,
+      "result": "The release-authoritative Windows x64 performance gate passed at exact final commit with no discarded samples: fresh-service p95 20.152 ms against the 20.184 ms regression limit and warm-reopen p95 18.375 ms against the 23.681 ms limit. Report SHA-256: be1451d8a49ebd9ef8e4f1f95b06e45bf562e5727083772a9528bfaf5328bed3."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/core-sidecar-t02-5898fc6",
+      "exitCode": 0,
+      "result": "A fresh PyInstaller 6.21.0/Python 3.14.6 Windows x64 onedir package passed its Pythonless configuration check at exact final commit. Its exact 665-file, 39,070,052-byte inventory includes PyNaCl, the required native _cffi_backend, and migration v0004. Canonical package report SHA-256: 95527c68058d190a6c46b031eb787a240124c09b4675fd119ade4146d6d3eada."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.data.test_object_envelope_upgrades tests.contracts.test_object_store_contract tests.packaging.test_core_sidecar_package; .venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_adr_check; git diff --check 36654a6..5898fc6",
+      "exitCode": 0,
+      "result": "The independent remediation reviewer replayed both rejected P1/P2 findings, the incremental package boundary, and the final governance-only delta. Sixteen security/migration/contract/package tests passed with one expected Windows symlink-capability skip; all five ADR governance tests passed; patch hygiene passed; and the reviewer issued APPROVED for exact commit 5898fc634bcd0e6cf33915b81ea62670947f83e2."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Ordinary protected objects still use the versioned XChaCha20-Poly1305 secretstream envelope, a random per-object 256-bit data key, and a data key wrapped under the versioned project master-key port. Authenticated ciphertext and bounded key metadata are persisted; plaintext is neither staged nor logged.",
+        "Schema v4 preserves the committed v3 migration record, distinguishes true legacy rows from explicit test fixtures, and journals a verified same-volume copy-on-write upgrade before ordinary project open. The verified plaintext source or rollback remains authoritative until encrypted metadata and the production reader both verify, after which no plaintext canonical, partial, replacement, or rollback file remains.",
+        "The executable normal and supervised Core composition always injects the pre-open coordinator. A missing or wrong retained key returns the explicit recoverable key-unavailable state, retains the verified source, and releases the session lock; malformed envelopes remain corruption/quarantine."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The v2/default-composition fixtures prove provider-backed encrypted v4 completion and provider-absent explicit recovery. Forty named pre/post journal, fsync, rename, source/replacement/production verification, metadata-commit, rollback-cleanup, and completed-reader interruptions each restart to one verified encrypted object.",
+        "Separate adversarial cases cover both encrypted partial-cleanup boundaries, cancellation in replacement-writing and after the metadata COMMIT acknowledgement, insufficient disk, rename and SQLite failures, missing/wrong key, corrupt source, and precise magic/header/frame/final/trailing versus wrapped-key/wrap-nonce/key-version classification.",
+        "The exact final 78-test data suite, 15-test contract suite, 32-test service union, full 166-test foundation suite, 21-test security suite, performance gate, frozen package, and independent security remediation review all pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Strict portable SQLite and object-store profiles now bind schema v4, the exact v1/v2/v3 migration chains and fingerprints, mandatory Core pre-open composition, six durable upgrade phases, conservative key-unavailable classification, rollback retention, pre/post interruption coverage, and journaled cancellation recovery.",
+        "ADR-0016 and the approved W1 packet record the selected migration/recovery decision. Architecture docs, migration runner/version, executable composition, package contract, native crypto inclusion, quality scope, and governed foundation ADR expectation are updated together while the committed v3 migration remains unchanged.",
+        "The prior evidence remains immutable and is explicitly superseded because its claimed tamper coverage and backward-compatibility conclusion were false. CAP-02.S04 retains ownership of the Windows credential-store provider; until then, legacy projects without the required key fail explicitly and recoverably rather than bypassing or corrupting state."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This remediation changes a security-sensitive authenticated-storage migration, SQLite history, same-volume destructive I/O, executable composition, cancellation/restart recovery, strict portable contracts, and frozen native crypto packaging. The affected data/contract/service union, release-authoritative performance gate, complete security-local profile, real Windows package, and independent adversarial review were therefore selected. One full data-profile attempt at 569a27a passed its benchmark/build/UI/ADR/CI/quality/packaging-smoke gates but exposed a stale foundation test that hard-coded ADR-0001 through ADR-0015. That failure was not concealed: commit 5898fc6 added only the ADR-0016 expectation/link, the focused five-test fixture passed, and the complete security-local run then replayed and passed all 166 foundation tests on the exact final commit. The exact final data, contract, and service suites and performance command replayed every remaining data-profile stage affected by this task.",
+    "deferred": "Task evidence intentionally does not claim CAP-02.S03.T03 quotas, leases, garbage collection, or cache eviction, nor CAP-02.S04's production Windows credential-store provider. Slice review must integrate T01-T03 storage behavior and W1 qualification must still run cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows checks."
+  },
+  "reviewerDisposition": {
+    "status": "approved",
+    "requiredGate": "security-review",
+    "reviewer": "t02_security_review",
+    "reviewedCommit": "5898fc634bcd0e6cf33915b81ea62670947f83e2",
+    "note": "Independent bounded remediation review replayed the original no-upgrade-path and tamper/evidence findings plus default composition, exact interruption/cancellation recovery, CFFI/PyNaCl packaging, and the final governance-only delta. No actionable finding remains."
+  }
+}
