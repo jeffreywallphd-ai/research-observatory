@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0",
   "documentType": "core-sidecar-performance-baseline",
-  "baselineSourceCommit": "c79cbfd44f08897b44a53311d62e39ea4c5d9485",
+  "baselineSourceCommit": "9697487eafe804c92380d5607fd1ec932014b0aa",
   "profile": "windows-x64",
   "provenance": {
-    "measurementToolCommit": "c79cbfd44f08897b44a53311d62e39ea4c5d9485",
+    "measurementToolCommit": "9697487eafe804c92380d5607fd1ec932014b0aa",
     "measurementToolPath": "tools/core_sidecar_performance_check.py",
-    "measurementToolSha256": "e5e37584b33925f1862f204fb91019013f3d88e13ac16bb410829cc6bb3e1560",
+    "measurementToolSha256": "9b8e918770362782c4cac5801023f8bc33ab484b720fb9ea74312a6b39111148",
     "packageEvidencePath": "artifacts/evidence/CAP-02.S02.T03.review-fix-2.json",
     "packageEvidenceSha256": "89da43c32339f6360710a03d86f13b83cb2ce4fdd3e61084947485d8bda7c6f4",
     "packageReportSha256": "34f6eeef071cc127708b81401721ee94bd33388fa80b906a058d70e1803239dc",
@@ -37,38 +37,54 @@
   },
   "rawMeasurements": {
     "readinessMs": {
-      "samples": [1016.331, 1020.222, 1024.855, 1026.294, 1017.191, 1016.125, 1012.844],
-      "minimum": 1012.844,
-      "p50": 1017.191,
-      "p95": 1026.294,
-      "maximum": 1026.294
+      "samples": [
+        1031.0703000286594,
+        1038.7265000026673,
+        1014.6100999554619,
+        1033.2970999879763,
+        1009.6828000387177,
+        1013.6786000221036,
+        989.1466999542899
+      ],
+      "minimum": 989.1466999542899,
+      "p50": 1014.6100999554619,
+      "p95": 1038.7265000026673,
+      "maximum": 1038.7265000026673
     },
     "shutdownMs": {
-      "samples": [204.983, 205.154, 278.691, 245.568, 213.045, 204.853, 220.565],
-      "minimum": 204.853,
-      "p50": 213.045,
-      "p95": 278.691,
-      "maximum": 278.691
+      "samples": [
+        292.22980001941323,
+        254.52640000730753,
+        212.50369999324903,
+        287.15280001051724,
+        193.25569999637082,
+        291.71590000623837,
+        241.76589999115095
+      ],
+      "minimum": 193.25569999637082,
+      "p50": 254.52640000730753,
+      "p95": 292.22980001941323,
+      "maximum": 292.22980001941323
     },
     "idleWorkingSetBytes": {
-      "samples": [86769664.0, 86650880.0, 86659072.0, 86654976.0, 86679552.0, 86712320.0, 86749184.0],
-      "minimum": 86650880.0,
+      "samples": [86827008.0, 86474752.0, 86540288.0, 86904832.0, 86679552.0, 86777856.0, 86556672.0],
+      "minimum": 86474752.0,
       "p50": 86679552.0,
-      "p95": 86769664.0,
-      "maximum": 86769664.0
+      "p95": 86904832.0,
+      "maximum": 86904832.0
     }
   },
   "measurements": {
     "readinessMs": {
-      "baselineP50": 1017.191,
+      "baselineP50": 1014.6100999554619,
       "absoluteBudget": 3000.0
     },
     "shutdownMs": {
-      "baselineP95": 278.691,
+      "baselineP95": 292.22980001941323,
       "absoluteBudget": 5000.0
     },
     "idleWorkingSetBytes": {
-      "baselineP95": 86769664.0,
+      "baselineP95": 86904832.0,
       "absoluteBudget": 268435456
     }
   }

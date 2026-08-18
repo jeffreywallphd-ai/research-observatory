@@ -69,7 +69,7 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
         baseline, digest = benchmark.load_baseline(ROOT)
         expected = (ROOT / benchmark.BASELINE_HASH_PATH).read_text(encoding="ascii").strip()
         self.assertEqual(expected, digest)
-        self.assertEqual("c79cbfd44f08897b44a53311d62e39ea4c5d9485", baseline["baselineSourceCommit"])
+        self.assertEqual("9697487eafe804c92380d5607fd1ec932014b0aa", baseline["baselineSourceCommit"])
 
     def test_strict_baseline_binds_raw_samples_hardware_tool_and_package(self) -> None:
         baseline = sample_baseline()
