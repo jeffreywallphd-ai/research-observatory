@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6afe4f2e2130b935723c326e7f8144babc1205a1d4c821836633066b953b89c3
+source_sha256: e06e4e39d91005b518f7f38568efd11b13ac3fb370716872d3ad65e0dcc0d70e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1719,7 +1719,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Canonical local state is transactional, versioned, testable, and insulated from UI or model code.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `CHANGES_REQUESTED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
