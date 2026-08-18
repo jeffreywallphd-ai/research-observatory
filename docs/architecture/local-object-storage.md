@@ -16,18 +16,24 @@ deliberately absent.
 
 Put streams into an exclusive project `.tmp/object-store` file, hashes while
 writing, fsyncs, verifies stable single-link identity and complete content, then
-uses create-if-absent publication before committing metadata. A crash before the
-metadata commit can leave at most an unreferenced complete file; it is not visible
-through the port. Partial staging files are reconciled on restart. Duplicate puts
-with identical immutable metadata return the existing projection; metadata reuse
-with a different meaning conflicts.
+uses create-if-absent publication while retaining the verified file handle through
+the definitive metadata commit. Commit-acknowledgement ambiguity is reconciled
+against the canonical row before any newly published file can be removed. Partial
+put staging is removed on restart. Delete recovery staging is instead named by the
+project-scoped opaque object identity: restart restores exact bytes when metadata
+did not commit the delete and removes the recovery copy only when metadata is
+already `deleted`.
 
-Open first verifies the entire held file, exact length, digest, single-link
-identity, and readable rights state. Only then does it return a controlled stream
-over that same read-only handle. It never returns a path. Missing, redirected,
-hardlinked, length-mismatched, or digest-mismatched content is unavailable and the
-metadata advances to `quarantined`. Delete is denied while any immutable document
-revision references the object.
+Open reserves the canonical metadata transaction, verifies current readable rights
+and `available` state, then verifies the entire held file, exact length, digest,
+and single-link identity. The reserved transaction and same read-only file handle
+remain owned by the controlled stream until close, so a rights/state transition or
+delete cannot overtake plaintext use. A concurrent delete receives bounded busy
+retry semantics rather than corrupting metadata. Missing, redirected, hardlinked,
+length-mismatched, or digest-mismatched content is unavailable and advances to
+`quarantined`. Repository transactions may link a document only to a currently
+`available` object, while delete is denied when any immutable document revision
+already references it.
 
 An unreferenced byte put does not invent a scholarly provenance claim. The
 canonical document-repository transaction that links an object to an immutable
@@ -53,7 +59,10 @@ governed by ADR-0015.
 - streaming, restart, duplicate, project-scope, and opaque-name fixtures;
 - interrupted source and expected-hash mismatch leave no visible object or row;
 - corruption and hardlink aliases are denied before a byte reaches a caller;
-- denied/unknown rights states cannot be opened;
+- denied/unknown rights states and concurrent rights transitions cannot overtake
+  an authorized held stream;
+- crash recovery distinguishes pre-commit delete restoration from post-commit
+  delete cleanup;
 - immutable document references drive counts and prevent deletion;
 - port-only import remains dependency-neutral and concrete adapter imports are
   rejected outside the composition/data boundary.

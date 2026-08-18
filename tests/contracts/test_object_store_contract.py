@@ -24,6 +24,15 @@ class ObjectStoreContractTests(unittest.TestCase):
         self.assertEqual([], list(self.validator.iter_errors(self.profile)))
         self.assertEqual("project-only", self.profile["deduplicationScope"])
         self.assertEqual("verified-controlled-stream-no-path", self.profile["openMode"])
+        self.assertEqual(
+            "restore-unless-delete-metadata-committed",
+            self.profile["deleteCrashRecovery"],
+        )
+        self.assertEqual("bounded-busy-retry", self.profile["activeReaderDelete"])
+        self.assertEqual(
+            "document-link-requires-available-object",
+            self.profile["referenceAvailability"],
+        )
         self.assertEqual("CAP-02.S03.T02", self.profile["encryptionBoundary"])
         self.assertIn("not-release-qualified", self.profile["releaseQualification"])
 

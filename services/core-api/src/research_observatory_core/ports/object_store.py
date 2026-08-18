@@ -43,6 +43,10 @@ class ObjectAccessDenied(ObjectStoreProblem):
     code = "RO-CORE-OBJECT-ACCESS-DENIED"
 
 
+class ObjectBusy(ObjectStoreProblem):
+    code = "RO-CORE-OBJECT-BUSY"
+
+
 @dataclass(frozen=True, slots=True)
 class ObjectPutCommand:
     """Caller-owned metadata for one immutable plaintext content identity."""
@@ -97,6 +101,7 @@ class ObjectStore(Protocol):
 
 __all__ = [
     "ObjectAccessDenied",
+    "ObjectBusy",
     "ObjectConflict",
     "ObjectCorrupt",
     "ObjectIntegrityMismatch",

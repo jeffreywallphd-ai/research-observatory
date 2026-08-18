@@ -93,6 +93,13 @@ _DOCUMENTS = Table(
     Column("project_id", String),
     Column("object_sha256", String),
 )
+_OBJECTS = Table(
+    "object_records",
+    _METADATA,
+    Column("object_sha256", String),
+    Column("project_id", String),
+    Column("storage_state", String),
+)
 _EXTENSIONS = {
     kind: Table(table, _METADATA, Column("revision_id", String))
     for kind, table in (
@@ -395,6 +402,17 @@ class _SqliteAggregateRepository:
                 self._mark_failed()
                 raise RepositoryConflict("aggregate identity contract changed")
         try:
+            if projection.aggregate_kind == "document" and projection.object_sha256 is not None:
+                object_row = _execute(
+                    state.connection,
+                    select(_OBJECTS.c.storage_state).where(
+                        (_OBJECTS.c.project_id == projection.project_id)
+                        & (_OBJECTS.c.object_sha256 == projection.object_sha256)
+                    ),
+                ).fetchone()
+                if object_row is None or str(object_row[0]) != "available":
+                    self._mark_failed()
+                    raise RepositoryConflict("document object is unavailable")
             if current is None:
                 _execute(
                     state.connection,

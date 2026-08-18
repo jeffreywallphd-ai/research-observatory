@@ -926,7 +926,7 @@ def _configure_connection(connection: sqlite3.Connection, *, initialize: bool) -
         connection.set_authorizer(_canonical_authorizer)
 
 
-def _connect_held(database: Path) -> _GuardedConnection:
+def _connect_held(database: Path, *, check_same_thread: bool = True) -> _GuardedConnection:
     parent_before = database.parent.stat(follow_symlinks=False)
     before = database.stat(follow_symlinks=False)
     descriptor: int | None = None
@@ -950,6 +950,7 @@ def _connect_held(database: Path) -> _GuardedConnection:
             autocommit=True,
             timeout=BUSY_TIMEOUT_MILLISECONDS / 1_000,
             factory=_GuardedConnection,
+            check_same_thread=check_same_thread,
         )
         connection.row_factory = sqlite3.Row
         after = database.stat(follow_symlinks=False)
@@ -1004,13 +1005,16 @@ def _schema_profile_errors(
     return errors
 
 
-def open_canonical_database(path: Path, *, expected_project_id: str | None = None) -> CanonicalConnection:
-    """Open an existing canonical database with every connection control applied."""
-
+def _open_canonical_database(
+    path: Path,
+    *,
+    expected_project_id: str | None,
+    check_same_thread: bool,
+) -> CanonicalConnection:
     database = _canonical_database_path(Path(path), must_exist=True)
     if expected_project_id is not None:
         expected_project_id, _ = _project_identity(expected_project_id)
-    connection = _connect_held(database)
+    connection = _connect_held(database, check_same_thread=check_same_thread)
     try:
         _configure_connection(connection, initialize=False)
         errors = _schema_profile_errors(connection, expected_project_id)
@@ -1022,6 +1026,30 @@ def open_canonical_database(path: Path, *, expected_project_id: str | None = Non
         if isinstance(error, StorageProblem):
             raise
         raise StorageProblem("canonical database profile could not be verified") from error
+
+
+def open_canonical_database(path: Path, *, expected_project_id: str | None = None) -> CanonicalConnection:
+    """Open an existing canonical database with every connection control applied."""
+
+    return _open_canonical_database(
+        path,
+        expected_project_id=expected_project_id,
+        check_same_thread=True,
+    )
+
+
+def _open_thread_transferable_canonical_database(
+    path: Path,
+    *,
+    expected_project_id: str,
+) -> CanonicalConnection:
+    """Open a guarded connection whose authority may be closed by its stream consumer."""
+
+    return _open_canonical_database(
+        path,
+        expected_project_id=expected_project_id,
+        check_same_thread=False,
+    )
 
 
 def validate_canonical_database(path: Path, *, expected_project_id: str | None = None) -> None:
