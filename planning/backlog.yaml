@@ -3964,16 +3964,19 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T03:31:31+00:00'
-      updated_at: '2026-08-18T13:16:21+00:00'
+      updated_at: '2026-08-18T13:17:13+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Implemented authenticated encrypted object envelopes, versioned wrapped keys, schema-v3 recovery,
+      implementation_notes: 'Implemented authenticated encrypted object envelopes, versioned wrapped keys, schema-v3 recovery,
         explicit key-loss and fixture boundaries, supply-chain classification, performance remediation, and Windows package
         inclusion; full data/security-local profiles plus exact-final affected tests pass.
+
+        Exact remediation commit 5898fc634bcd0e6cf33915b81ea62670947f83e2 independently APPROVED; superseding commit-bound
+        evidence attached.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S03.T02.json
