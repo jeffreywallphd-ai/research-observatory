@@ -3606,7 +3606,7 @@ capabilities:
     depends_on:
     - CAP-02.S01.T01
     - CAP-03.S01.T01
-    status: REVIEW
+    status: IN_PROGRESS
     tasks:
     - id: CAP-02.S02.T01
       capability_id: CAP-02
@@ -3845,14 +3845,15 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: CHANGES_REQUESTED
+      reviewer: agent:curie
+      reviewed_at: '2026-08-18T02:10:33+00:00'
       evidence:
       - artifacts/evidence/CAP-02.S02.integration.json
-      notes: All three tasks are DONE and independently approved; full data profile, focused migration/repository/performance/security
-        integration, exact frozen package qualification, zero-blocker reviewed security scan, downstream port handoff, clean
-        build, and commit-bound integration evidence are ready for independent slice review.
+      notes: Performance qualification must compare raw thresholds and publish only through a commit-bound, input-locked tombstone-to-PASS
+        boundary; exact 1220.6294ms precision, post-measure mutation, interruption, and persistent publication-failure regressions
+        are required. All SQLite functional, recovery, package, security, UI-reference, evidence-chain, and downstream handoff
+        controls otherwise passed.
   - id: CAP-02.S03
     title: Encrypted local object and cache storage
     outcome: Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights
