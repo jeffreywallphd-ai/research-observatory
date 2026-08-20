@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 416462bc49212ddddf87a81d629780910d8328c17e71c8a02d5fe541a0d009d3
+source_sha256: f779ab986ec64808bdf7bdb512f04b0cacdb81e2935c8204a9aaf7eae3da7099
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1937,7 +1937,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Credentials and policy-sensitive configuration are isolated from ordinary project content.
 
-**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1945,13 +1945,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T01 - Integrate Windows credential storage for secrets
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S03.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / cap02_s04_t01_security_review (`changes-requested`)
 
 **Objective:** OS-protected storage adapter for provider keys, connector tokens, signing trust, and encryption key material.
 
