@@ -30,7 +30,9 @@ _SAFE_FIELDS = frozenset(
 _SENSITIVE_FRAGMENTS = ("authorization", "content", "cookie", "credential", "document", "secret", "text", "token")
 _TRACE_ID = re.compile(r"^[a-f0-9]{32}$")
 _CAPABILITY = re.compile(r"^CAP-[0-9]{2}(?:\.S[0-9]{2})?$")
-_IDENTIFIER = re.compile(r"^[a-z0-9](?:[a-z0-9.-]{0,118}[a-z0-9])?$")
+_SECRET_PURPOSES = frozenset(
+    {"connector-authentication", "object-encryption", "provider-authentication", "signing-verification"}
+)
 
 
 def _safe_value(key: str, value: Any) -> str | int | bool | None:
@@ -45,7 +47,7 @@ def _safe_value(key: str, value: Any) -> str | int | bool | None:
     if key == "outcome":
         return value if value == "authorized" else "[REDACTED]"
     if key == "purpose":
-        return value if isinstance(value, str) and _IDENTIFIER.fullmatch(value) and ".." not in value else "[REDACTED]"
+        return value if value in _SECRET_PURPOSES else "[REDACTED]"
     if any(fragment in key.casefold() for fragment in _SENSITIVE_FRAGMENTS):
         return "[REDACTED]"
     if key in {"attempt", "pid"} and isinstance(value, int) and not isinstance(value, bool) and value >= 0:

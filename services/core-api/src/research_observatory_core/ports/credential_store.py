@@ -49,6 +49,13 @@ class SecretKind(StrEnum):
     ENCRYPTION_KEY_MATERIAL = "encryption-key-material"
 
 
+class SecretPurpose(StrEnum):
+    PROVIDER_AUTHENTICATION = "provider-authentication"
+    CONNECTOR_AUTHENTICATION = "connector-authentication"
+    SIGNING_VERIFICATION = "signing-verification"
+    OBJECT_ENCRYPTION = "object-encryption"
+
+
 def _require_identifier(value: object, field: str) -> str:
     if not isinstance(value, str) or _IDENTIFIER.fullmatch(value) is None or ".." in value or "--" in value:
         raise ValueError(f"{field} is invalid")
@@ -73,13 +80,14 @@ class SecretReference:
 @dataclass(frozen=True, slots=True)
 class SecretAccessContext:
     calling_capability: str
-    purpose: str
+    purpose: SecretPurpose
     audit_context: str
 
     def __post_init__(self) -> None:
         if not isinstance(self.calling_capability, str) or _CAPABILITY.fullmatch(self.calling_capability) is None:
             raise ValueError("calling capability is invalid")
-        _require_identifier(self.purpose, "secret access purpose")
+        if not isinstance(self.purpose, SecretPurpose):
+            raise ValueError("secret access purpose is invalid")
         if not isinstance(self.audit_context, str) or _AUDIT_CONTEXT.fullmatch(self.audit_context) is None:
             raise ValueError("secret audit context is invalid")
 
@@ -104,7 +112,7 @@ class SecretAuditEvent:
     reference_token: str
     audit_context: str
     calling_capability: str
-    purpose: str
+    purpose: SecretPurpose
 
     def __post_init__(self) -> None:
         if self.operation not in ("put", "lease") or self.outcome != "authorized":
@@ -117,7 +125,8 @@ class SecretAuditEvent:
             raise ValueError("secret audit context is invalid")
         if not isinstance(self.calling_capability, str) or _CAPABILITY.fullmatch(self.calling_capability) is None:
             raise ValueError("secret audit capability is invalid")
-        _require_identifier(self.purpose, "secret audit purpose")
+        if not isinstance(self.purpose, SecretPurpose):
+            raise ValueError("secret audit purpose is invalid")
 
 
 class SecretLease:
@@ -185,6 +194,7 @@ __all__ = [
     "SecretKind",
     "SecretLease",
     "SecretNotFound",
+    "SecretPurpose",
     "SecretRecord",
     "SecretReference",
     "SecretUnavailable",

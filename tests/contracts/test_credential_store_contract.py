@@ -41,6 +41,15 @@ class CredentialStoreContractTests(unittest.TestCase):
             self.profile["secretKinds"],
         )
         self.assertEqual(
+            [
+                "provider-authentication",
+                "connector-authentication",
+                "signing-verification",
+                "object-encryption",
+            ],
+            self.profile["purposeCodes"],
+        )
+        self.assertEqual(
             ["sqlite", "project-package", "project-export", "support-bundle", "process-arguments"],
             self.profile["forbiddenSecretDestinations"],
         )
@@ -52,6 +61,7 @@ class CredentialStoreContractTests(unittest.TestCase):
             ("physicalIdentity", "provider-and-secret-name"),
             ("secretDelivery", "plain-bytes-dto"),
             ("auditProjection", "reason-only"),
+            ("purposeCodes", ["free-form"]),
         ):
             with self.subTest(field=field):
                 changed = copy.deepcopy(self.profile)

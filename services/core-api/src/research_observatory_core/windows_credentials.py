@@ -34,6 +34,7 @@ from .ports.credential_store import (
     SecretKind,
     SecretLease,
     SecretNotFound,
+    SecretPurpose,
     SecretRecord,
     SecretReference,
     SecretUnavailable,
@@ -265,7 +266,7 @@ def _default_audit(event: SecretAuditEvent) -> None:
             "callingCapability": event.calling_capability,
             "operation": event.operation,
             "outcome": event.outcome,
-            "purpose": event.purpose,
+            "purpose": event.purpose.value,
             "reasonCode": event.reason_code,
             "referenceToken": event.reference_token,
         },
@@ -635,7 +636,7 @@ class WindowsObjectMasterKeyProvider(ObjectMasterKeyProvider):
     def _context() -> SecretAccessContext:
         return SecretAccessContext(
             calling_capability="CAP-02.S03",
-            purpose="object-encryption",
+            purpose=SecretPurpose.OBJECT_ENCRYPTION,
             audit_context=secrets.token_hex(16),
         )
 

@@ -9,6 +9,11 @@ operation, outcome, reason, audit context, and an opaque keyed reference. It
 deliberately contains no operating-system path, provider SDK type,
 credential value, database handle, or implementation-specific error.
 
+Purpose is not free-form. The profile closes it to provider authentication,
+connector authentication, signing verification, and object encryption so a
+caller cannot place a scope identifier or value into diagnostics by relabeling it
+as purpose.
+
 Provider keys, connector tokens, signing trust, and encryption key material are
 scoped by profile, kind, subject, and name. Those identifiers are encrypted in
 the record and keyed-hashed for physical identity. Secret material is forbidden
