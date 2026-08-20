@@ -117,9 +117,9 @@ only when their exclusive local identity is safe to remove.
 Project caches, indexes, and models move through same-volume cleanup staging
 before deletion. On release-authoritative Windows, the adapter opens the exact
 previewed file with read/delete authority while denying write/delete sharing,
-revalidates the held handle against the visible path, and renames or deletes
-through that handle. A path-generation swap after revalidation therefore cannot
-authorize deletion of replacement bytes. Bounded cleanup-partial names carry a
+revalidates the held descriptor's complete preview identity once, and keeps that
+handle through rename and deletion. A path-generation swap after revalidation
+therefore cannot authorize deletion of replacement bytes. Bounded cleanup-partial names carry a
 full SHA-256 commitment to the expected device, inode, size, and modification
 time; restart recomputes the commitment while reacquiring that exact identity and
 fails closed without removing a mismatch. A fresh
