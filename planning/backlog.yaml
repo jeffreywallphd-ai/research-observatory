@@ -4028,12 +4028,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T13:19:06+00:00'
-      updated_at: '2026-08-20T19:39:35+00:00'
-      completed_at: null
+      updated_at: '2026-08-20T19:43:52+00:00'
+      completed_at: '2026-08-20T19:43:52+00:00'
       blocker: null
       implementation_notes: Submitted exact implementation commit 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0 with superseding
         evidence after generation-exchange remediation and qualifying Windows storage gate.
@@ -4049,15 +4049,14 @@ capabilities:
         commit: 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0
         recorded_at: '2026-08-20T19:38:47+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+        reviewer: t03_remediation_review
+        result: approved
+        reviewed_at: '2026-08-20T19:43:52+00:00'
+        notes: 'APPROVED exact 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0: no P0-P2 findings; 52-test union and live Windows
+          held-handle generation-survival experiment passed; genuine/forged restart partials and evidence hashes verified.
+          Cleanup margin is narrow, so replay the registered gate at slice and Wave qualification.'
       base_sha: a72640e1311d5c29523ca0579b4f5bbb8819eb7b
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-20T19:16:02+00:00'
-        expires_at: '2026-08-21T19:16:02+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:

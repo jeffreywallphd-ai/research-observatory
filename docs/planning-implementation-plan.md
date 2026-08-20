@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4de3cd0ea0a99c1c611bbbbcc41506b51be23775c41a8120666367ce752a0f86
+source_sha256: 61733824e4147493b3df09b96118aac3df623dc0a81f6de84c738e88791ff458
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1899,15 +1899,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S03.T02.json` at `4d55d5ed0345a6265d296f6d7d9a774804c6b2d6`
 - `artifacts/evidence/CAP-02.S03.T02.review-fix.json` at `5898fc634bcd0e6cf33915b81ea62670947f83e2`
 
-#### - [ ] CAP-02.S03.T03 - Implement storage accounting, quotas, garbage collection, and cache eviction
+#### - [x] CAP-02.S03.T03 - Implement storage accounting, quotas, garbage collection, and cache eviction
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S03.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / t03_remediation_review (`approved`)
 
 **Objective:** Per-project and shared-cache usage metrics, soft/hard thresholds, orphan detection, preview, and safe cleanup.
 
