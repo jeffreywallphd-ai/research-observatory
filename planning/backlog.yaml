@@ -4130,11 +4130,11 @@ capabilities:
       - security-local
       verification_commands:
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-20T21:20:44+00:00'
-      updated_at: '2026-08-20T22:14:30+00:00'
+      updated_at: '2026-08-20T22:17:44+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Implementation ce437a2 with final submission evidence 8d032da; security-local, DPAPI adversarial,
@@ -4158,17 +4158,17 @@ capabilities:
       review:
         reviewer: cap02_s04_t01_security_review
         result: changes-requested
-        reviewed_at: '2026-08-20T22:08:21+00:00'
-        notes: 'P1 bounded-recovery: _ensure_root filesystem failures escape CredentialStoreProblem; translate root/records
-          authority failures and test lease/put preservation. P1 audit projection: default sink drops approved operation/outcome/context/reference
-          and capability/purpose attribution; retain bounded content-safe fields and test actual production sink. No P0; replay
-          only finding IDs plus incremental risk.'
+        reviewed_at: '2026-08-20T22:17:44+00:00'
+        notes: 'Prior F1/F2 mechanically closed. New changed-surface P1 F3: free-form purpose is logged verbatim and can duplicate
+          a plaintext secret-scope identifier/value. Close with governed SecretPurpose vocabulary at port/logger plus negative
+          default-sink regression and contract/ADR update. Second remediation round; escalate rather than permit further review
+          churn.'
       base_sha: 41f657adbcf3b742656812fd685af7f7e40f54b2
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-20T22:08:21+00:00'
-        expires_at: '2026-08-21T06:08:21+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-20T22:17:44+00:00'
+        expires_at: '2026-08-21T06:17:44+00:00'
+      verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
