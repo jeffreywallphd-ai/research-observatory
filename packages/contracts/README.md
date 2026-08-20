@@ -45,3 +45,10 @@ content identity, opaque physical identity, complete-file publication,
 metadata/reference authority, verified controlled streams, rights states, and
 the explicit T01-to-T02 encryption handoff. The contract exposes no filesystem
 path or database handle.
+
+`security/` defines the portable `windows-dpapi-profile-vault-v1` policy record
+for local secrets. It fixes current-user rather than machine DPAPI scope, an
+application-authenticated opaque record envelope, compare-and-swap updates,
+callback-scoped delivery, redacted audit projection, and the exact destinations
+that can never contain secret material. OS paths and DPAPI types remain private
+adapter state.

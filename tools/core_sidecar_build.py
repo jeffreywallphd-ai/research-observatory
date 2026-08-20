@@ -120,7 +120,9 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "_cffi_backend",
             "research_observatory_core.migrations.runner",
             "research_observatory_core.object_store",
+            "research_observatory_core.ports.credential_store",
             "research_observatory_core.repositories",
+            "research_observatory_core.windows_credentials",
         ],
     }:
         raise SidecarBuildError("sidecar builder must be the approved PyInstaller 6.21.0 onedir/no-UPX profile")

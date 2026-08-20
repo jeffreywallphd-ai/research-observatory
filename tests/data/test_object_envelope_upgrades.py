@@ -34,6 +34,7 @@ from research_observatory_core.ports.object_store import (  # noqa: E402
 )
 from research_observatory_core.ports.object_store_keys import ObjectMasterKey  # noqa: E402
 from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService  # noqa: E402
+from research_observatory_core.windows_credentials import create_windows_object_key_provider  # noqa: E402
 
 PROJECT_ID = "01890f6e-6a40-4cc5-98b7-7f3f36b60210"
 CREATED_AT = "2026-08-18T12:00:00.000Z"
@@ -232,9 +233,11 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
             self.assertEqual(plaintext, stream.read())
         lifecycle.shutdown()
 
+    @unittest.skipUnless(os.name == "nt", "Windows profile-vault composition")
     def test_default_core_composition_runs_upgrade_or_returns_explicit_key_recovery(self) -> None:
         parent = Path(self.temporary.name).resolve(strict=True) / "default-composition"
         parent.mkdir(mode=0o700)
+        profile_vault = Path(self.temporary.name).resolve(strict=True) / "profile-vault"
         bootstrap = ProjectLifecycleService()
 
         encrypted_project = bootstrap.create(
@@ -253,12 +256,16 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
             plaintext,
             project_id=encrypted_id,
         )
-        application = create_runtime_app(settings=CoreSettings(), object_key_provider=self.provider)
+        application = create_runtime_app(settings=CoreSettings(), profile_vault_root=profile_vault)
         with TestClient(application):
             opened = application.state.runtime.projects.open(root=str(encrypted_root), trace_id="d" * 32)
             self.assertEqual("read-write", opened.access_mode.value)
         self.assertNotEqual(plaintext, encrypted_physical.read_bytes())
-        store = create_local_object_store(encrypted_root, encrypted_id, key_provider=self.provider)
+        store = create_local_object_store(
+            encrypted_root,
+            encrypted_id,
+            key_provider=create_windows_object_key_provider(profile_vault),
+        )
         with store.open(digest, purpose="document-analysis") as stream:
             self.assertEqual(plaintext, stream.read())
 
@@ -279,7 +286,7 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
             unavailable_plaintext,
             project_id=unavailable_id,
         )
-        application = create_runtime_app(settings=CoreSettings())
+        application = create_runtime_app(settings=CoreSettings(), object_key_provider=None)
         with TestClient(application), self.assertRaises(ProjectLifecycleProblem) as raised:
             application.state.runtime.projects.open(root=str(unavailable_root), trace_id="f" * 32)
         self.assertEqual("RO-CORE-PROJECT-UPGRADE-KEY-UNAVAILABLE", raised.exception.code)

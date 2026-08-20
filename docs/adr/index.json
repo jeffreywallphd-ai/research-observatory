@@ -156,6 +156,15 @@
       "linkedTasks": [
         "CAP-02.S03.T02"
       ]
+    },
+    {
+      "id": "ADR-0017",
+      "path": "docs/adr/ADR-0017-use-a-user-scoped-windows-dpapi-profile-vault.md",
+      "title": "Use a user-scoped Windows DPAPI profile vault for local secrets",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-02.S04.T01"
+      ]
     }
   ]
 }
