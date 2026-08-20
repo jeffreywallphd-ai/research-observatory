@@ -44,6 +44,7 @@
       "The original W1 approval and already-approved CAP-02 amendment are represented as an immutable base plus legacy W1.A01 with identical effective authority.",
       "Backward-compatible ECR and amendment validation, approval-record, materialization, activation, status, and review-page controls exist and fail closed.",
       "Only W1.A02.T01 and W1.A02.T02 can be materialized from this approved packet.",
+      "While W1 is interrupted, status, next, and next-capability produce a decision-complete stopped-amendment handoff with ECR links, current authority, legal alternatives, and exact resume condition, and never advertise Wave start or repeated approval.",
       "The bootstrap receives focused tests and independent control/security approval before task materialization or W1 resumption."
     ],
     "prohibitedOutcomes": [
@@ -93,15 +94,17 @@
     }
   ],
   "acceptanceCriteria": [
-    "Pending and unapproved amendments cannot be materialized, activated, claimed, included by taskctl next, resumed, or used to approve G1.",
+    "Pending and unapproved amendments cannot be materialized, activated, claimed, included as executable work by taskctl next, resumed, or used to approve G1.",
     "Duplicate approval, wrong packet commit/hash, dirty state, changed base authority, missing human identity, stale writer, forked chain, and self-review fail closed.",
     "W1 base plus migrated W1.A01 exactly reproduces the current effective W1 authorization.",
     "Backlogs with no amendment collection remain valid unchanged and older tools fail closed when an active amendment is present.",
-    "Independent amendment review and a W1 control/security checkpoint are required before ordinary W1 execution resumes."
+    "Status, next, next-capability, and generated W1 views report a decision-complete paused-amendment handoff with ECR links and no Wave start or repeated-approval instruction.",
+    "Ordinary W1 execution cannot resume until T01 and T02 are DONE and independently approved and a W1 control/security checkpoint records amendment adoption, unless an explicit append-only defer or withdraw disposition ends the interruption with a safe resume condition."
   ],
   "verificationObligations": [
     "Schema validation and exact listed-file SHA-256 verification for this inert packet.",
     "Focused fail-closed tests for Wave reapproval, append-only approval concurrency, migration parity, materialization, activation, claim, resume, review history, and generated pages.",
+    "Focused stopped-state tests for status, next, next-capability, and the W1 review page prove ECR links, authority and alternatives are present while Wave start and repeated-approval instructions are absent.",
     "Affected foundation/schema/workflow/view/quality checks at task level, independent control/security review at bootstrap and amendment exit, and complete Wave-exit qualification later.",
     "Performance measurement is run once at its declared gate and is never retried to green; this amendment does not change benchmark methods or thresholds."
   ],
@@ -120,7 +123,7 @@
   "files": [
     {
       "path": "planning/enabler-change-requests/ECR-0001.md",
-      "sha256": "c3cc3be0ff2c4cbfaa6630099034b9daf5005e47fec16e8ce6dbed5d082c3dd0",
+      "sha256": "4c25a159bd015eb5a8af2ade5bc40f2302fd50c85c564048202c29ee38b72e17",
       "role": "canonical-proposal"
     },
     {
@@ -130,7 +133,7 @@
     },
     {
       "path": "planning/enabler-change-requests/ECR-0001-review.html",
-      "sha256": "66c08072a0377385914ea92e44944aeaa6afc2ef1496510a23c994d7b8d16439",
+      "sha256": "ef76f95c46e63dd0c23cdd033ef39f49f757155dac167ae01c4c93cca1b200fd",
       "role": "human-review"
     }
   ]

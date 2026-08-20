@@ -26,6 +26,8 @@
   <section class="danger">
     <h2>Why W1 is paused</h2>
     <p>The current Wave approval command can replace an APPROVED record, and the current task review projection can hide earlier changes-requested dispositions. Both occurred in real W1 history. Do not run <code>planctl wave approve W1</code>.</p>
+    <p>The bootstrap must replace the current misleading paused-state output with a decision-complete ECR handoff. It may activate only the amendment campaign; ordinary W1 remains paused through amendment adoption.</p>
+    <p><a href="../review-site/waves/W1.html">Open the current W1 page</a></p>
   </section>
   <section>
     <h2>Authority chain</h2>
@@ -54,6 +56,7 @@
       <li>An independent control/security reviewer reports no blocking issue.</li>
       <li>The human approval names ECR-0001, W1.A02, the exact 40-character commit, B00, T01, and T02.</li>
       <li>Approval is appended in a new immutable record; the existing W1 approval is not edited and <code>wave approve</code> is not called.</li>
+      <li>Ordinary W1 resumes only after T01 and T02 are DONE and independently approved and the control/security checkpoint records adoption, or after an explicit append-only defer/withdraw disposition.</li>
     </ul>
   </section>
   <section>
