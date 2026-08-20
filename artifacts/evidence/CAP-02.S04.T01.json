@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S04.T01",
+  "commit": "ce437a2fc7bd4df792abe5bd0832c1776f5b3eb3",
+  "baseCommit": "41f657adbcf3b742656812fd685af7f7e40f54b2",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/adr/ADR-0017-use-a-user-scoped-windows-dpapi-profile-vault.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/local-credential-storage.md",
+    "docs/architecture/local-object-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/security/README.md",
+    "packages/contracts/security/credential-store-profile.schema.json",
+    "packages/contracts/security/credential-store-profile.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-02/CAP-02.S04.html",
+    "planning/review-site/CAP-02/index.html",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/README.md",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/ports/credential_store.py",
+    "services/core-api/src/research_observatory_core/windows_credentials.py",
+    "tests/contracts/test_credential_store_contract.py",
+    "tests/data/test_object_envelope_upgrades.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/security/test_windows_credentials.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --profile security-local --repo . --report artifacts/tmp/CAP-02.S04.T01-security-local.json",
+      "exitCode": 0,
+      "result": "The complete security-local profile passed at exact clean commit ce437a2fc7bd4df792abe5bd0832c1776f5b3eb3 in 987.87 seconds. It passed repository/runtime/architecture/agent-protocol/backlog/fixture/benchmark/build-manifest/UI/ADR/CI/quality/packaging checks, all 166 foundation tests including clean-room bootstrap, backlog validation, the live supply-chain scan for 599 packages and 151 normalized findings with zero blocking, and all 27 security tests. Report SHA-256: 1fede36d77a7c5f15f3caa0fc24884739612416a47f0ae5fdb1b31cf95372e0c."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_windows_credentials tests.contracts.test_credential_store_contract tests.data.test_object_envelope_upgrades",
+      "exitCode": 0,
+      "result": "The exact commit passed the focused 16-test credential, portable-contract, and encrypted-envelope upgrade union in 11.081 seconds. It covers real current-user DPAPI, opaque storage and buffer zeroing, audit denial, compare-and-swap, two-process key convergence, authenticated corruption, simulated OS-unprotect failure with ciphertext retention and recovery, project/export/support-bundle/argument leakage scans, production composition, v2 plaintext upgrade, every journal boundary, cancellation, restart, tamper classification, and source preservation. One redirected-directory case was skipped because this Windows token cannot create directory symlinks; the adapter still denies reparse-point roots and the portable profile requires fail-closed redirected-authority handling."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "The exact commit passed all six frozen-sidecar package tests in 21.000 seconds, with one expected file-symlink privilege skip. PyInstaller 6.21.0 built the release-authoritative Windows x64 onedir artifact, the packaged executable ran its check without system Python, and the archive inventory proved the credential-store port, Windows DPAPI adapter, PyNaCl backend, object store, repository, and governed migration runner were included."
+    },
+    {
+      "command": "git diff --check; git status --short",
+      "exitCode": 0,
+      "result": "Patch hygiene passed and the codex implementation candidate was clean before evidence creation. The full profile independently confirmed a clean build identity of 0.1.0+gce437a2, valid generated views, and a valid 20-capability, 117-slice, 356-task, 12-gate backlog."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The dependency-neutral CredentialStore port exposes closed provider-key, connector-token, signing-trust, and encryption-key-material kinds; strict scoped references; compare-and-swap records; bounded recoverable failure classes; and a short-lived mutable lease that clears its buffer on close.",
+        "The Windows adapter protects one random profile-vault root with current-user DPAPI using CRYPTPROTECT_UI_FORBIDDEN and never machine scope. Per-secret filenames are opaque HMAC tokens, and scoped metadata plus material are authenticated with XChaCha20-Poly1305 before any plaintext is returned.",
+        "Production Core composition now lazily creates or retrieves its stable object-encryption key through that vault. Real restart tests scan every project file including SQLite, project export output, the support-bundle contract, record filenames/bytes, log projections, and the exact CLI option set to prove that the key, secret identifiers, and secret material do not cross those boundaries or process arguments.",
+        "Corrupt authenticated records and unavailable DPAPI authority produce bounded recoverable errors while retaining the only ciphertext authority. Audit publication fails closed before a secret is returned or written, and two independent processes converge on one create-or-compare-and-swap object key under the cross-process vault lock."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Six credential-adapter tests exercise real DPAPI create/read/restart, lease zeroing, opaque records, authenticated corruption, DPAPI unprotect failure and recovery, compare-and-swap conflicts, audit denial, concurrent process creation, production object encryption, leakage scans, and redirected authority handling where the platform token permits creation.",
+        "Two strict portable contract tests reject weaker user/machine scope, unauthenticated records, plaintext identifiers, missing audit/CAS/recovery obligations, and schema expansion. Eight envelope-upgrade tests prove the production provider supports encrypted v4 completion and preserves the verified legacy source across key, journal, fsync, rename, metadata, cancellation, and restart failures.",
+        "The complete security-local profile additionally passed all 27 security tests and the live dependency/license/vulnerability policy scan with zero blocking findings at the exact implementation commit."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0017 records the accepted Windows current-user DPAPI profile-vault decision, threat boundary, alternatives, authenticated envelope, opaque addressing, audit denial, cross-process CAS, recovery duties, platform consequences, and verification obligations. The ADR registry and architecture checks pass.",
+        "The strict security contract schema/profile and documentation bind current-user scope, no plaintext persistence or process arguments, closed secret kinds and purposes, opaque locators, XChaCha20-Poly1305 records, CAS, content-free auditing, recoverable unavailable/corrupt outcomes, and zeroed bounded leases. No SQLite migration is appropriate because the accepted design explicitly forbids secret storage or vault locators in project databases.",
+        "The Core service and local-storage architecture documents explain production composition and the S03 handoff. Frozen build authority, package tests, build-input inventory, quality scope, and ADR tests include the new contract and modules. No UI reference, remote service, cloud deployment, connector implementation, key rotation workflow, or unrelated capability behavior was introduced.",
+        "The task claim and generated planning views are the only planning-state delta from the task base; W1 remains bound to the pre-Wave approval commit and CAP-02.S03.T02 is the completed dependency."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk task introduces OS-backed secret protection, authenticated local credential records, a public dependency-neutral port, production object-key composition, cross-process create/CAS coordination, safe audit behavior, and frozen-package dependencies. The complete security-local profile, real DPAPI adversarial tests, encrypted legacy-upgrade union, strict portable contract, real frozen-sidecar build, live supply-chain scan, architecture/ADR/build-manifest checks, and leakage scans were therefore selected at the exact candidate commit.",
+    "deferred": "Credential rotation, user-facing backup/recovery consent, provider/connector configuration, privacy profiles, SQLCipher database encryption, and macOS/Linux native credential adapters belong to later approved CAP-02.S04 tasks or W6 platform qualification. Independent task review must deeply assess the changed secrets, DPAPI, filesystem, audit, concurrency, composition, contract, and packaging surfaces. Slice review must integrate T01 with the later privacy/recovery/database-encryption tasks. The complete cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows matrix remains due once at W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "security-review",
+    "note": "Independently review exact candidate ce437a2fc7bd4df792abe5bd0832c1776f5b3eb3 and this evidence as one frozen packet. Return one consolidated severity-ranked ledger; every actionable finding must include a reproducer, violated acceptance criterion or accepted ADR duty, and minimum closure. Prioritize current-user versus machine DPAPI scope, plaintext lifetime and leakage, record/root integrity, path/reparse/hardlink races, cross-process create/CAS, audit fail-closed behavior, corruption and OS-authority recovery, production composition, portable-contract truth, and frozen packaging. Distinguish later approved S04 recovery/rotation/privacy/SQLCipher duties from T01 blockers, and do not approve from narrative evidence alone."
+  }
+}
