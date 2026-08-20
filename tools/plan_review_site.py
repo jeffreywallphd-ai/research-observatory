@@ -380,6 +380,25 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
         lifecycle_status = ((amendment or {}).get("lifecycle") or {}).get("status")
         bootstrap_status = ((amendment or {}).get("bootstrap") or {}).get("status")
         campaign_status = ((amendment or {}).get("campaign") or {}).get("status")
+        bootstrap_id = str((packet.get("bootstrapUnit") or {}).get("id") or "")
+        scope_addenda: list[dict[str, Any]] = []
+        for addendum_path in sorted(approval_dir.glob(f"{bootstrap_id}.addendum-*.json")):
+            addendum = json.loads(addendum_path.read_text(encoding="utf-8"))
+            if (
+                addendum.get("status") != "APPROVED"
+                or addendum.get("amendmentId") != packet.get("proposedAmendmentId")
+                or addendum.get("bootstrapUnit") != bootstrap_id
+            ):
+                raise ValueError(f"{change_id} bootstrap scope-addendum identity/status mismatch")
+            scope_addenda.append(
+                {
+                    "path": addendum_path.relative_to(repo).as_posix(),
+                    "sha256": sha256(addendum_path),
+                    "approved_by": addendum.get("approvedBy"),
+                    "approved_at": addendum.get("approvedAt"),
+                    "authorized_additional_paths": addendum.get("authorizedAdditionalPaths") or [],
+                }
+            )
         records.append(
             {
                 "change_request_id": change_id,
@@ -401,7 +420,8 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
                 "approved_at": (approval or {}).get("approvedAt"),
                 "authority": packet.get("authority") or {},
                 "effective_base": (approval or {}).get("effectiveBase") or {},
-                "bootstrap_unit": packet.get("bootstrapUnit", {}).get("id"),
+                "bootstrap_unit": bootstrap_id,
+                "scope_addenda": scope_addenda,
                 "authorized_task_ids": packet.get("authorizedTaskIds") or [],
                 "task_inventory": packet.get("taskInventory") or [],
                 "acceptance_criteria": packet.get("acceptanceCriteria") or [],
@@ -647,6 +667,17 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         )
         criteria = "".join(f"<li>{esc(item)}</li>" for item in record["acceptance_criteria"])
         rollback = "".join(f"<li>{esc(item)}</li>" for item in record["rollback"])
+        addendum_rows = "".join(
+            f"<tr><th>Bootstrap scope addendum</th><td><code>{esc(addendum['path'])}</code></td>"
+            f"<td><code>{esc(addendum['sha256'])}</code></td></tr>"
+            for addendum in record["scope_addenda"]
+        )
+        addendum_scope = "".join(
+            f"<li><code>{esc(path)}</code> — mechanically generated output approved by "
+            f"{esc(addendum['approved_by'])} at <code>{esc(addendum['approved_at'])}</code></li>"
+            for addendum in record["scope_addenda"]
+            for path in addendum["authorized_additional_paths"]
+        )
         detail_main = f"""
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">{esc(record["amendment_id"])} · {esc(record["target_wave"])}</span><h1>{esc(record["change_request_id"])} — {esc(proposal_meta.get("title"))}</h1></div>{status_badge(record["approval_status"])}</div>
@@ -664,7 +695,12 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
   <tr><th>Packet</th><td><code>{esc(record["packet_path"])}</code></td><td><code>{esc(record["packet_sha256"])}</code></td></tr>
   <tr><th>Human review</th><td><code>{esc(record["review_path"])}</code></td><td><code>{esc(record["review_sha256"])}</code></td></tr>
   <tr><th>Approval</th><td><code>{esc(record["approval_path"] or "pending")}</code></td><td><code>{esc(record["approval_sha256"] or "pending")}</code></td></tr>
+  {addendum_rows}
   </tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap scope addenda</h2>
+  <ul class="gate-criteria">{addendum_scope or "<li>None</li>"}</ul>
 </section>
 <section class="review-toolbar">
   <h2>Ordered Wave authority chain</h2>
@@ -723,6 +759,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     "bootstrap_status",
                     "campaign_status",
                     "authorized_task_ids",
+                    "scope_addenda",
                     "page",
                 )
             }

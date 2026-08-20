@@ -42,6 +42,10 @@ class PlanReviewAmendmentTests(unittest.TestCase):
             "9ed06e76ea09f069cf58fa0f55bfb130797b791b328e4bb24b69ce12dc3ac1aa",
             entry["packet_sha256"],
         )
+        self.assertEqual(
+            ["docs/planning-implementation-plan.md"],
+            entry["scope_addenda"][0]["authorized_additional_paths"],
+        )
 
         register = (self.site / "enablers/index.html").read_text(encoding="utf-8")
         detail = (self.site / "enablers/ECR-0001.html").read_text(encoding="utf-8")
@@ -49,6 +53,8 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         for marker in (
             "Proposal, approval, materialization, and campaign state",
             "Hash-bound source records",
+            "Append-only bootstrap scope addenda",
+            "docs/planning-implementation-plan.md",
             "W1 base approval",
             "W1.A01",
             "W1.A02",

@@ -1801,6 +1801,17 @@
         "W1.A02.T01",
         "W1.A02.T02"
       ],
+      "scope_addenda": [
+        {
+          "path": "planning/wave-amendment-approvals/W1.A02.B00.addendum-01.json",
+          "sha256": "c00c7574cf6def6db76754531d351cc0eb13853076f4d714074a611238a1a19d",
+          "approved_by": "repository-owner",
+          "approved_at": "2026-08-20T23:25:45.0185838Z",
+          "authorized_additional_paths": [
+            "docs/planning-implementation-plan.md"
+          ]
+        }
+      ],
       "page": "enablers/ECR-0001.html"
     }
   ]
