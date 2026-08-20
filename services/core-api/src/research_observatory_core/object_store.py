@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import hmac
 import io
@@ -69,9 +70,7 @@ _KEY_VERSION = re.compile(r"^[a-z][a-z0-9.-]{0,119}$")
 _MEDIA_TYPE = re.compile(r"^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$")
 _TRACE_ID = re.compile(r"^[0-9a-f]{32}$")
 _UTC_MILLISECONDS = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
-_CLEANUP_PARTIAL = re.compile(
-    r"^cleanup-[0-9a-f]{48}-(?P<device>\d+)-(?P<inode>\d+)-(?P<size>\d+)-(?P<modified>\d+)\.partial$"
-)
+_CLEANUP_PARTIAL = re.compile(r"^cleanup-[0-9a-f]{24}-(?P<identity>[A-Za-z0-9_-]{43})\.partial$")
 _RIGHTS: frozenset[str] = frozenset(("allowed", "denied", "unknown", "not-applicable"))
 _RETENTION: frozenset[str] = frozenset(("project-lifetime", "derived-rebuildable", "export-retained"))
 _READABLE_RIGHTS: frozenset[str] = frozenset(("allowed", "not-applicable"))
@@ -2301,14 +2300,17 @@ def _reconcile_cleanup_staging(directory: Path) -> None:
             match = _CLEANUP_PARTIAL.fullmatch(path.name)
             if match is None:
                 raise OSError("unexpected cleanup staging entry")
+            status = path.stat(follow_symlinks=False)
             candidate = _FileCandidate(
                 category="project-cache",
                 path=path,
                 authority_root=directory,
-                identity=(int(match.group("device")), int(match.group("inode"))),
-                byte_count=int(match.group("size")),
-                modified_ns=int(match.group("modified")),
+                identity=(status.st_dev, status.st_ino),
+                byte_count=int(status.st_size),
+                modified_ns=int(status.st_mtime_ns),
             )
+            if not hmac.compare_digest(_cleanup_candidate_commitment(candidate), match.group("identity")):
+                raise OSError("cleanup staging identity commitment changed")
             with _held_cleanup_candidate(candidate) as (_, delete_held):
                 delete_held()
     except OSError, ValueError:
@@ -2368,10 +2370,14 @@ def _candidate_matches(candidate: _FileCandidate) -> bool:
 
 
 def _cleanup_partial_path(directory: Path, candidate: _FileCandidate) -> Path:
-    device, inode = candidate.identity
-    return directory / (
-        f"cleanup-{secrets.token_hex(24)}-{device}-{inode}-{candidate.byte_count}-{candidate.modified_ns}.partial"
-    )
+    return directory / f"cleanup-{secrets.token_hex(12)}-{_cleanup_candidate_commitment(candidate)}.partial"
+
+
+def _cleanup_candidate_commitment(candidate: _FileCandidate) -> str:
+    identity = ":".join(
+        str(value) for value in (*candidate.identity, candidate.byte_count, candidate.modified_ns)
+    ).encode("ascii")
+    return base64.urlsafe_b64encode(hashlib.sha256(identity).digest()).rstrip(b"=").decode("ascii")
 
 
 def _remove_rebuildable_candidate(state: _StoreState, candidate: _FileCandidate) -> bool:

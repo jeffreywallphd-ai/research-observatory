@@ -119,9 +119,10 @@ before deletion. On release-authoritative Windows, the adapter opens the exact
 previewed file with read/delete authority while denying write/delete sharing,
 revalidates the held handle against the visible path, and renames or deletes
 through that handle. A path-generation swap after revalidation therefore cannot
-authorize deletion of replacement bytes. Cleanup-partial names commit the
-expected device, inode, size, and modification time; restart reacquires that exact
-identity before deletion and fails closed without removing a mismatch. A fresh
+authorize deletion of replacement bytes. Bounded cleanup-partial names carry a
+full SHA-256 commitment to the expected device, inode, size, and modification
+time; restart recomputes the commitment while reacquiring that exact identity and
+fails closed without removing a mismatch. A fresh
 preview resumes remaining work. Each canonical object deletion retains the
 existing metadata/reference transaction and reader lease barrier. Shared-cache
 files require a separately supplied non-overlapping authority and are never
