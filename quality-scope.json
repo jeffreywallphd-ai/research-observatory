@@ -62,6 +62,7 @@
     "services/core-api/src/research_observatory_core/migrations/versions/v0002_schema_history.py",
     "services/core-api/src/research_observatory_core/migrations/versions/v0003_object_envelopes.py",
     "services/core-api/src/research_observatory_core/migrations/versions/v0004_object_envelope_upgrades.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0005_object_creation_source.py",
     "services/core-api/src/research_observatory_core/models.py",
     "services/core-api/src/research_observatory_core/modules.py",
     "services/core-api/src/research_observatory_core/object_store.py",
