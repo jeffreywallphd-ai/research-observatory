@@ -36,8 +36,9 @@ bytes, so a researcher can restore a known-good backup or recovery artifact.
 ## Access and disclosure boundary
 
 Every request declares the calling capability, purpose, and audit context. The
-audit projection contains only the operation/outcome, a bounded reason, and an
-opaque keyed reference token. A failing audit authority denies access before
+audit projection retains that bounded capability/purpose attribution plus the
+operation/outcome, bounded reason, audit context, and opaque keyed reference
+token. A failing audit authority denies access before
 plaintext is returned. A successful lease exposes a read-only view of one
 mutable buffer and zeroes that buffer when the lease closes.
 

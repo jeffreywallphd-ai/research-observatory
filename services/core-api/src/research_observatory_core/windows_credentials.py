@@ -260,7 +260,15 @@ def _default_audit(event: SecretAuditEvent) -> None:
     emit_log_record(
         "security.credential-access",
         level="INFO",
-        fields={"reasonCode": event.reason_code},
+        fields={
+            "auditContext": event.audit_context,
+            "callingCapability": event.calling_capability,
+            "operation": event.operation,
+            "outcome": event.outcome,
+            "purpose": event.purpose,
+            "reasonCode": event.reason_code,
+            "referenceToken": event.reference_token,
+        },
     )
 
 
@@ -337,17 +345,31 @@ class WindowsCredentialStore(CredentialStore):
         self._lock = _vault_lock(candidate)
 
     def _ensure_root(self) -> tuple[Path, Path]:
-        self._root.mkdir(parents=True, mode=0o700, exist_ok=True)
-        absolute = Path(os.path.abspath(self._root))
-        resolved = self._root.resolve(strict=True)
+        try:
+            self._root.mkdir(parents=True, mode=0o700, exist_ok=True)
+            absolute = Path(os.path.abspath(self._root))
+            resolved = self._root.resolve(strict=True)
+        except FileExistsError, NotADirectoryError, RuntimeError:
+            raise SecretAccessDenied("credential vault authority is invalid") from None
+        except OSError:
+            raise SecretUnavailable("credential vault authority is unavailable") from None
         if os.path.normcase(str(absolute)) != os.path.normcase(str(resolved)) or _redirected(self._root):
             raise SecretAccessDenied("credential vault authority is invalid")
-        status = self._root.stat()
+        try:
+            status = self._root.stat()
+        except OSError:
+            raise SecretUnavailable("credential vault authority is unavailable") from None
         if not stat.S_ISDIR(status.st_mode):
             raise SecretAccessDenied("credential vault authority is invalid")
         records = self._root / _RECORDS_DIRECTORY
-        records.mkdir(mode=0o700, exist_ok=True)
-        if _redirected(records) or not stat.S_ISDIR(records.stat().st_mode):
+        try:
+            records.mkdir(mode=0o700, exist_ok=True)
+            records_status = records.stat()
+        except FileExistsError, NotADirectoryError:
+            raise SecretAccessDenied("credential record authority is invalid") from None
+        except OSError:
+            raise SecretUnavailable("credential record authority is unavailable") from None
+        if _redirected(records) or not stat.S_ISDIR(records_status.st_mode):
             raise SecretAccessDenied("credential vault authority is invalid")
         return self._root / _ROOT_FILE, records
 
@@ -440,6 +462,8 @@ class WindowsCredentialStore(CredentialStore):
             reason_code=f"secret-{operation}-authorized",
             reference_token=_reference_token(root_key, reference_bytes),
             audit_context=context.audit_context,
+            calling_capability=context.calling_capability,
+            purpose=context.purpose,
         )
         try:
             self._audit(event)

@@ -33,6 +33,10 @@ class CredentialStoreContractTests(unittest.TestCase):
         self.assertEqual("callback-lease-zeroed-on-close", self.profile["secretDelivery"])
         self.assertEqual("cross-process-lock-create-or-compare-and-swap", self.profile["writeConcurrency"])
         self.assertEqual(
+            "capability-purpose-operation-outcome-reason-context-opaque-reference-only",
+            self.profile["auditProjection"],
+        )
+        self.assertEqual(
             ["provider-key", "connector-token", "signing-trust", "encryption-key-material"],
             self.profile["secretKinds"],
         )
@@ -47,6 +51,7 @@ class CredentialStoreContractTests(unittest.TestCase):
             ("recordAuthentication", "dpapi-only"),
             ("physicalIdentity", "provider-and-secret-name"),
             ("secretDelivery", "plain-bytes-dto"),
+            ("auditProjection", "reason-only"),
         ):
             with self.subTest(field=field):
                 changed = copy.deepcopy(self.profile)
