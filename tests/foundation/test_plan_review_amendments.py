@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Any, ClassVar
 from unittest.mock import patch
 
+import yaml
+
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
@@ -35,9 +37,18 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         entry = next(
             item for item in self.manifest["enabler_change_requests"] if item["change_request_id"] == "ECR-0001"
         )
+        backlog = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
+        amendment = next(
+            (item for item in backlog.get("wave_amendments", []) if item.get("id") == "W1.A02"),
+            None,
+        )
+        expected_lifecycle = ((amendment or {}).get("lifecycle") or {}).get("status") or "NOT_MATERIALIZED"
+        expected_bootstrap = ((amendment or {}).get("bootstrap") or {}).get("status") or "NOT_SUBMITTED"
+        expected_campaign = ((amendment or {}).get("campaign") or {}).get("status") or "NONE"
         self.assertEqual("APPROVED", entry["approval_status"])
-        self.assertEqual("NOT_MATERIALIZED", entry["lifecycle_status"])
-        self.assertEqual("NONE", entry["campaign_status"])
+        self.assertEqual(expected_lifecycle, entry["lifecycle_status"])
+        self.assertEqual(expected_bootstrap, entry["bootstrap_status"])
+        self.assertEqual(expected_campaign, entry["campaign_status"])
         self.assertEqual(
             "9ed06e76ea09f069cf58fa0f55bfb130797b791b328e4bb24b69ce12dc3ac1aa",
             entry["packet_sha256"],
