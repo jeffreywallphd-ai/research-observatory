@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S04.T01",
+  "commit": "ff752baf288dbb0749684b9821ce3a031d877d6e",
+  "baseCommit": "8d032da3afe77862a441785de6d0be615176128c",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S04.T01.submission.json",
+    "reason": "The independent security review rejected the initial submission with two P1 findings: vault-root and records-authority filesystem failures could escape the credential problem hierarchy, and the production default audit sink discarded the approved bounded audit projection. This follow-up preserves the prior evidence while binding only those two closures and their incremental logging, contract, documentation, packaging, and recovery risk."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S04.T01.submission.json",
+    "docs/adr/ADR-0017-use-a-user-scoped-windows-dpapi-profile-vault.md",
+    "docs/architecture/local-credential-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/security/README.md",
+    "packages/contracts/security/credential-store-profile.schema.json",
+    "packages/contracts/security/credential-store-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/logging.py",
+    "services/core-api/src/research_observatory_core/ports/credential_store.py",
+    "services/core-api/src/research_observatory_core/windows_credentials.py",
+    "tests/contracts/test_credential_store_contract.py",
+    "tests/security/test_windows_credentials.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_windows_credentials tests.security.test_security_check tests.contracts.test_credential_store_contract tests.data.test_object_envelope_upgrades tests.service.test_core_api tests.foundation.test_adr_check tests.foundation.test_build_manifest",
+      "exitCode": 0,
+      "result": "The exact remediation commit passed the 77-test affected security, logging, contract, envelope-upgrade, Core API, ADR, and build-manifest union in 25.417 seconds, with one expected directory-symlink privilege skip. The two direct regressions exercise root-as-file, records-as-file, and simulated unavailable authority for both put and lease with byte-for-byte preservation, plus the actual default production sink's exact bounded fields and absence of secret values and plaintext identifiers."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six frozen Windows sidecar tests passed in 31.519 seconds, with one expected governed-file symlink privilege skip. PyInstaller 6.21.0 packaged and ran the changed credential port, Windows adapter, and logging module without system Python."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . --report artifacts/tmp/CAP-02.S04.T01-remediation-quality.json; .venv\\Scripts\\python.exe tools\\architecture_check.py --repo .; .venv\\Scripts\\python.exe tools\\packaging_smoke_check.py --repo .; git diff --check; git status --short",
+      "exitCode": 0,
+      "result": "All 111 governed source files pass format, lint, and configured typing; the 13-area architecture contract and locked-input packaging smoke pass; patch hygiene passes; and the exact remediation commit is clean. Quality report SHA-256: f650d8a8624110465291ecc248313c777b5c8a268f701fe8e08bdb7b70cab3b3."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Vault-root creation/resolution/stat failures and records-directory creation/stat failures are now translated to stable SecretAccessDenied or SecretUnavailable outcomes. Root-as-file, records-as-file, and simulated unavailable-authority tests invoke both put and lease and prove every existing authority/protected byte remains unchanged.",
+        "The prior authenticated DPAPI/XChaCha20-Poly1305 record behavior, cross-process CAS, object-key restart, leakage scans, audit denial, and ciphertext-retained corruption recovery remain covered by the exact affected union and immutable initial full security-local report."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The new authority regression deterministically covers both material filesystem-invalid conditions and a PermissionError boundary for both public operations, checking bounded exception types and byte preservation.",
+        "The new production-audit regression uses the default sink, not an injected collector. It requires the exact event, level, timestamp, operation, outcome, reason, audit context, opaque reference token, calling capability, and purpose projection for put and lease while scanning the serialized diagnostics for the secret, subject, and name."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "SecretAuditEvent and the default Core logging authority now retain the calling capability and declared purpose alongside the ADR-approved operation/outcome/reason/context/opaque-reference fields. Each newly allowed log field has a closed validator; arbitrary token, content, credential, and secret fields remain redacted.",
+        "ADR-0017, the architecture guide, security contract README, strict profile/schema, and contract tests now state the same attributed content-safe audit projection. No secret scope identifier or value was added to diagnostics, contracts, databases, exports, support bundles, process arguments, or paths.",
+        "No unrelated S04 rotation/recovery/privacy/SQLCipher work, UI reference, migration, provider connector, cloud behavior, or platform adapter was introduced."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The two P1 closures affect credential filesystem error classification, ciphertext preservation, a public audit-event contract, global structured-log field validation, portable contract truth, and packaged runtime code. The exact 77-test affected union, default-sink and put/lease regression cases, strict contract, ADR/build checks, all governed quality checks, architecture/package smoke, and real frozen sidecar were selected. The immutable initial security-local profile and live supply-chain pass remain valid for unchanged dependencies and broader surfaces.",
+    "deferred": "The complete 987.87-second security-local profile was not repeated because the remediation changed no dependency, security scanner policy, global benchmark, task control, UI, or unrelated foundation behavior; its original exact report remains immutable. Remediation review must replay finding F1 bounded root/records/unavailable authority for put and lease and finding F2 the actual default audit projection plus incremental logging redaction/contract/package risk. Slice and W1 exit reviews retain their previously declared integration/full-matrix duties."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "security-review",
+    "note": "Bounded remediation review of exact commit ff752ba. Replay only F1 (root-as-file, records-as-file, and unavailable authority for both put and lease with protected bytes retained) and F2 (actual default sink retains capability/purpose/operation/outcome/reason/context/opaque reference while secret values and plaintext scope identifiers remain absent), plus the incremental structured-logging validator, portable-contract, ADR, and frozen-package risk. Confirm the two prior P1s are closed; do not restart the complete initial audit or broaden unchanged surfaces absent a material safety defect."
+  }
+}

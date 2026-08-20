@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: f779ab986ec64808bdf7bdb512f04b0cacdb81e2935c8204a9aaf7eae3da7099
+source_sha256: 6a943305e8f723c240374a5d1c34e95c6e1e97daa299ddc5f9f4baa4b2a8ced7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
