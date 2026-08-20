@@ -4028,12 +4028,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T13:19:06+00:00'
-      updated_at: '2026-08-20T21:08:41+00:00'
-      completed_at: null
+      updated_at: '2026-08-20T21:10:10+00:00'
+      completed_at: '2026-08-20T21:10:10+00:00'
       blocker: null
       implementation_notes: 'Submitted exact implementation commit 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0 with superseding
         evidence after generation-exchange remediation and qualifying Windows storage gate.
@@ -4066,16 +4066,14 @@ capabilities:
         recorded_at: '2026-08-20T21:07:53+00:00'
       review:
         reviewer: independent-agent-t03-slice-remediation
-        result: changes-requested
-        reviewed_at: '2026-08-20T21:06:34+00:00'
-        notes: 'P2 documentation mismatch: packages/contracts/storage/README.md still states supported fixtures v1-v3, but
-          governed v5 migration supports v1-v4 sources. Executable findings replayed clean; independent first/only performance
-          run passed narrowly at cleanup p95 4550.0581 ms vs 4551.878 ms ceiling and remains a W1-exit replay risk.'
+        result: approved
+        reviewed_at: '2026-08-20T21:10:10+00:00'
+        notes: 'Focused remediation APPROVED exact e2eda29: README source-fixture range now v1-v4 and matches runner/recovery/architecture;
+          no executable or machine-contract delta; strict contracts, 107-file quality, generated views, backlog, and diff
+          hygiene pass. Prior independent executable review and first-only performance pass retained; marginal performance
+          remains a W1-exit replay risk.'
       base_sha: a72640e1311d5c29523ca0579b4f5bbb8819eb7b
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-20T21:06:34+00:00'
-        expires_at: '2026-08-21T05:06:34+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
