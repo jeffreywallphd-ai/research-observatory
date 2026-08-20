@@ -72,6 +72,19 @@ approval.
 Approve that entire packet once at one immutable commit. Approval of one Wave
 never authorizes a later Wave.
 
+An `APPROVED` Wave is immutable and must never be approved again or edited in
+place. Consequential new evidence discovered during execution uses the
+append-only enabler change-request lane. Pause the Wave at a quiescent boundary,
+freeze and independently review an ECR packet, obtain explicit human approval
+in a new immutable amendment record, then execute only the packet's authorized
+bootstrap/tasks through `taskctl amendment`. The original approval remains the
+base; ordered `WN.ANN` records form the authority chain. Ordinary Wave claim,
+resume, submission, review, and exit-gate approval remain denied until the
+interrupting amendment is adopted through an independent exit review and a
+control/security checkpoint, or receives an explicit append-only deferred or
+withdrawn safe-resume disposition. Never use `planctl wave approve` to amend an
+already approved Wave.
+
 "One run" means one durable Wave campaign, not one operating-system process.
 Resume it after an ordinary tool, app, or session interruption. Claim and finish
 only the next dependency-eligible Wave task, integrate and independently review
@@ -130,6 +143,9 @@ python tools/planctl.py --repo . wave review WN
 python tools/planctl.py --repo . wave validate WN
 python tools/planctl.py --repo . wave ready WN --require-approved
 python tools/planctl.py --repo . wave approve WN --by <reviewer> --commit <git-sha>
+python tools/planctl.py --repo . ecr review ECR-NNNN
+python tools/planctl.py --repo . ecr validate ECR-NNNN --require-approved
+python tools/taskctl.py --file planning/backlog.yaml amendment status WN.ANN
 python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 ```
 

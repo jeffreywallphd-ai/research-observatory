@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2b02c22a1281e022b3bdc4cfea5f124d39bd95628e84b837c02f862aaa5c7f33
+source_sha256: 1d31b2ae3ac26beeaffe6fc8b96cb63960255b6a89780bc98863728afc3c501f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,10 +27,19 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
+| Enabler tasks | 0 |
 | Waves | 12 |
+| Wave approval bases | 0 |
+| Wave amendments | 0 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
+
+## Ordered Wave authority
+
+| Wave | Authority | Packet / ECR | Approval record | Lifecycle |
+|---|---|---|---|---|
+| - | - | - | - | - |
 
 ## Waves
 
@@ -257,7 +266,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W1 - Windows local runtime and durable core
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
 
 **Capability contributions:** `CAP-01`, `CAP-02`, `CAP-03`, `CAP-07`
 
@@ -364,6 +373,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Ordered slices:** `CAP-13.S01`, `CAP-13.S02`, `CAP-13.S03`, `CAP-13.S04`, `CAP-13.S05`, `CAP-13.S06`
 
 **Goal:** Add tenant provisioning, regional isolation, metering, cloud operations, and commercial governance.
+
+
+# Enabler change requests and Wave amendments
+
+No Wave amendment has been materialized in the authoritative ledger.
+
+Hash-bound proposals and approvals remain visible in the generated planning review site's enabler register.
 
 
 # Capability contributions, slices, and tasks

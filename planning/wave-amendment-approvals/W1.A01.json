@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-approval",
+  "amendmentId": "W1.A01",
+  "changeRequestId": null,
+  "targetWave": "W1",
+  "status": "APPROVED",
+  "approvalSource": "MIGRATED_HISTORY",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-18T11:35:36.198538+00:00",
+  "decision": "Migrated already-approved CAP-02-D04, amended CAP-02.S03, and ADR-0016 authority without changing effective W1 authorization.",
+  "packet": {
+    "commit": "c5bbd97c0cdc665eecb973f5862478ef7be97752"
+  },
+  "effectiveBase": {
+    "originalPacketCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+    "originalApprovalRecordCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701"
+  },
+  "migration": {
+    "historicalRecordCommit": "a223a6fcd5730d4ed6d0081673e6192c6977e25c",
+    "decisionIdsAdded": [
+      "CAP-02-D04"
+    ],
+    "capabilityIdsAdded": [],
+    "sliceIdsAdded": [],
+    "effectiveApproval": {
+      "status": "APPROVED",
+      "approved_by": "repository-owner",
+      "approved_at": "2026-08-18T11:35:36.198538+00:00",
+      "approved_commit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+      "capability_ids": [
+        "CAP-01",
+        "CAP-02",
+        "CAP-03",
+        "CAP-07"
+      ],
+      "decision_ids": [
+        "CAP-01-D01",
+        "CAP-01-D02",
+        "CAP-02-D01",
+        "CAP-02-D02",
+        "CAP-02-D03",
+        "CAP-02-D04",
+        "CAP-03-D01",
+        "CAP-03-D02",
+        "CAP-03-D03",
+        "CAP-03-D04",
+        "CAP-07-D01",
+        "CAP-07-D06",
+        "CAP-07-D07",
+        "CAP-07-D08"
+      ],
+      "slice_ids": [
+        "CAP-01.S01",
+        "CAP-01.S02",
+        "CAP-01.S03",
+        "CAP-01.S04",
+        "CAP-02.S01",
+        "CAP-02.S02",
+        "CAP-02.S03",
+        "CAP-02.S04",
+        "CAP-03.S01",
+        "CAP-03.S02",
+        "CAP-03.S03",
+        "CAP-03.S04",
+        "CAP-03.S05",
+        "CAP-03.S06",
+        "CAP-07.S01"
+      ],
+      "notes": "Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016, in Codex on 2026-08-18."
+    }
+  },
+  "authorizedTaskIds": []
+}

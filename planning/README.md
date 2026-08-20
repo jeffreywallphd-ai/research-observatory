@@ -72,6 +72,25 @@ One pre-Wave approval binds the complete Wave packet. The campaign remains the
 same across ordinary process or session interruptions and across capability
 boundaries. Later-Wave plans remain reviewable but do not expand the active Wave.
 
+### Controlled enabler change requests
+
+Never replace or repeat an `APPROVED` Wave approval. If consequential new
+evidence requires a bounded control/enabler change, pause the Wave with no
+ordinary task in `IN_PROGRESS` or `REVIEW`, create a hash-bound ECR packet, obtain
+independent packet review and explicit human approval, and record that approval
+in `wave-amendment-approvals/`. The original Wave approval plus ordered
+append-only amendments is the authority chain; the legacy effective projection
+remains readable but is not mutation authority.
+
+The one-time bootstrap is non-executable until independently approved. Only then
+may `taskctl amendment materialize` create the exact approved task IDs and change
+the paused campaign to `amendment-hold`; this marker also makes older taskctl
+schema/tool pairs fail closed. Activation leases only the amendment. Ordinary
+Wave work and its exit gate stay denied until every amendment task is `DONE` and
+independently approved, the amendment exit review is `APPROVED`, and adoption
+records a Wave control/security checkpoint. Adoption restores scope `wave` but
+leaves the campaign `PAUSED` for an explicit normal resume.
+
 ### Release-gate stop review
 
 When the global program position is a pending release gate, `taskctl next` must
@@ -120,6 +139,9 @@ python tools/planctl.py --repo . wave validate WN
 python tools/planctl.py --repo . apply-feedback CAP-XX <feedback.json>
 python tools/planctl.py --repo . wave approve WN --by "<reviewer>" --commit <git-sha>
 python tools/planctl.py --repo . wave ready WN --require-approved
+python tools/planctl.py --repo . ecr review ECR-NNNN
+python tools/planctl.py --repo . ecr validate ECR-NNNN --require-approved
+python tools/taskctl.py --file planning/backlog.yaml amendment status WN.ANN
 python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 ```
 

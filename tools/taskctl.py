@@ -42,8 +42,10 @@ PLATFORMS = {
     "ALL",
 }
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
-CAMPAIGN_SCOPES = {"wave", "capability-wave"}  # capability-wave is retained only for historical ledgers.
+CAMPAIGN_SCOPES = {"wave", "amendment-hold", "capability-wave"}  # capability-wave is historical only.
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
+CONTROL_TOOL_REVISION = 2
+AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
 LEGACY_UNVERIFIED_POLICY = "pre-exact-evidence-hosted-ci-residual-v1"
 LEGACY_UNVERIFIED_REFERENCES: dict[str, dict[str, Any]] = {
     "artifacts/evidence/CAP-00.S03.T02.json": {
@@ -97,6 +99,11 @@ def serializable_backlog(data: dict[str, Any]) -> dict[str, Any]:
     for capability in document.get("capabilities", []):
         for slice_ in capability.get("slices", []):
             slice_.pop("_position", None)
+    for amendment in document.get("wave_amendments", []):
+        for task in amendment.get("tasks", []):
+            task.pop("_amendment_id", None)
+            task.pop("_position", None)
+            task.pop("_target_wave", None)
     return document
 
 
@@ -111,6 +118,36 @@ def identity_snapshot(data: dict[str, Any]) -> tuple[tuple[str, tuple[tuple[str,
         )
         for capability in data.get("capabilities", [])
     )
+
+
+def amendment_identity_snapshot(data: dict[str, Any]) -> tuple[tuple[str, tuple[str, ...]], ...]:
+    return tuple(
+        (str(amendment["id"]), tuple(str(task["id"]) for task in amendment.get("tasks", [])))
+        for amendment in data.get("wave_amendments", [])
+    )
+
+
+def approved_wave_snapshot(data: dict[str, Any]) -> tuple[tuple[str, str], ...]:
+    return tuple(
+        (
+            str(wave["id"]),
+            hashlib.sha256(
+                json.dumps(wave.get("approval") or {}, sort_keys=True, separators=(",", ":")).encode("utf-8")
+            ).hexdigest(),
+        )
+        for wave in data.get("waves", [])
+        if (wave.get("approval") or {}).get("status") == "APPROVED"
+    )
+
+
+def amendment_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
+    return {
+        str(amendment["id"]): tuple(
+            json.dumps(event, sort_keys=True, separators=(",", ":"))
+            for event in (amendment.get("lifecycle") or {}).get("history", [])
+        )
+        for amendment in data.get("wave_amendments", [])
+    }
 
 
 @contextmanager
@@ -260,6 +297,20 @@ def index_backlog(
                 if tid in tasks:
                     raise SystemExit(f"Duplicate task ID: {tid}")
                 tasks[tid] = task
+    seen_amendment_ids: set[str] = set()
+    for amendment in data.get("wave_amendments", []):
+        amendment_id = str(amendment["id"])
+        if amendment_id in seen_amendment_ids:
+            raise SystemExit(f"Duplicate Wave amendment ID: {amendment_id}")
+        seen_amendment_ids.add(amendment_id)
+        for position, task in enumerate(amendment.get("tasks", [])):
+            task_id = str(task["id"])
+            if task_id in tasks:
+                raise SystemExit(f"Duplicate task ID: {task_id}")
+            task["_amendment_id"] = amendment_id
+            task["_position"] = position
+            task["_target_wave"] = amendment.get("target_wave")
+            tasks[task_id] = task
     seen_wave_ids: set[str] = set()
     for wave in data.get("waves", []):
         if wave["id"] in seen_wave_ids:
@@ -279,6 +330,9 @@ def save_validated(
     *,
     expected_sha256: str | None = None,
     expected_identity: tuple[tuple[str, tuple[tuple[str, tuple[str, ...]], ...]], ...] | None = None,
+    expected_amendment_identity: tuple[tuple[str, tuple[str, ...]], ...] | None = None,
+    expected_approved_waves: tuple[tuple[str, str], ...] | None = None,
+    expected_amendment_history: dict[str, tuple[str, ...]] | None = None,
     schema_path: Path | None = None,
     repo: Path | None = None,
 ) -> None:
@@ -287,6 +341,16 @@ def save_validated(
         raise SystemExit(
             "Stable backlog IDs or their hierarchy changed during a taskctl transition; no update was written"
         )
+    if expected_amendment_identity is not None and amendment_identity_snapshot(document) != expected_amendment_identity:
+        raise SystemExit("Wave amendment IDs or task inventory changed outside the materialization transition")
+    if expected_approved_waves is not None and approved_wave_snapshot(document) != expected_approved_waves:
+        raise SystemExit("An immutable APPROVED Wave approval changed during a taskctl transition")
+    if expected_amendment_history is not None:
+        current_history = amendment_history_snapshot(document)
+        for amendment_id, prior in expected_amendment_history.items():
+            current = current_history.get(amendment_id)
+            if current is None or current[: len(prior)] != prior:
+                raise SystemExit(f"Append-only lifecycle history changed for {amendment_id}")
     schema_errors = backlog_schema_errors(document, schema_path=schema_path)
     if schema_errors:
         raise SystemExit("Refusing to save invalid backlog schema:\n- " + "\n- ".join(schema_errors))
@@ -303,12 +367,90 @@ def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
         data,
         expected_sha256=getattr(args, "source_sha256", None),
         expected_identity=getattr(args, "source_identity", None),
+        expected_amendment_identity=getattr(args, "source_amendment_identity", None),
+        expected_approved_waves=getattr(args, "source_approved_waves", None),
+        expected_amendment_history=getattr(args, "source_amendment_history", None),
         repo=getattr(args, "repo_root", None),
     )
 
 
 def wave_map(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {wave["id"]: wave for wave in data.get("waves", [])}
+
+
+def wave_approval_base_map(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    return {str(item["wave_id"]): item for item in data.get("wave_approval_bases", [])}
+
+
+def wave_amendment_map(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    return {str(item["id"]): item for item in data.get("wave_amendments", [])}
+
+
+def active_amendment_campaigns(data: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        amendment
+        for amendment in data.get("wave_amendments", [])
+        if (amendment.get("campaign") or {}).get("status") == "ACTIVE"
+    ]
+
+
+def blocking_wave_amendments(data: dict[str, Any], wave_id: str) -> list[dict[str, Any]]:
+    return [
+        amendment
+        for amendment in data.get("wave_amendments", [])
+        if amendment.get("target_wave") == wave_id
+        and amendment.get("kind") == "gate-integrity-safety-defect"
+        and (amendment.get("lifecycle") or {}).get("status") not in AMENDMENT_TERMINAL_STATES
+    ]
+
+
+def approved_unbootstrapped_amendment(backlog_path: str, data: dict[str, Any], wave_id: str) -> dict[str, Any] | None:
+    """Project an approved interrupt before B00 can represent it in the backlog."""
+    if data.get("wave_amendments"):
+        return None
+    repo = Path(backlog_path).resolve().parent.parent
+    approval_dir = repo / "planning" / "wave-amendment-approvals"
+    for path in sorted(approval_dir.glob("W*.A*.json")):
+        try:
+            record = json.loads(path.read_text(encoding="utf-8"))
+        except OSError, json.JSONDecodeError:
+            continue
+        if (
+            record.get("status") == "APPROVED"
+            and record.get("targetWave") == wave_id
+            and record.get("changeRequestId")
+            and record.get("bootstrapUnit")
+        ):
+            effective = record.get("effectiveBase") or {}
+            relative = path.relative_to(repo).as_posix()
+            return {
+                "id": record.get("amendmentId"),
+                "change_request_id": record.get("changeRequestId"),
+                "target_wave": wave_id,
+                "kind": "gate-integrity-safety-defect",
+                "approval_reference": {
+                    "path": relative,
+                    "introduction_commit": approval_introduction_commit(repo, relative),
+                },
+                "lifecycle": {"status": "APPROVED", "history": []},
+                "bootstrap": {"id": record.get("bootstrapUnit"), "status": "PENDING"},
+                "campaign": None,
+                "tasks": [],
+                "_base_packet": effective.get("originalPacketCommit"),
+                "_legacy_amendment": effective.get("legacyAmendmentId"),
+                "_legacy_packet": effective.get("legacyAmendmentPacketCommit"),
+            }
+    return None
+
+
+def amendment_for_task(data: dict[str, Any], task: dict[str, Any]) -> dict[str, Any] | None:
+    amendment_id = task.get("_amendment_id") or task.get("amendment_id")
+    return wave_amendment_map(data).get(str(amendment_id)) if amendment_id else None
+
+
+def task_wave(task: dict[str, Any]) -> str | None:
+    value = task.get("wave", task.get("_target_wave"))
+    return str(value) if value is not None else None
 
 
 def active_wave_campaigns(data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -319,9 +461,22 @@ def wave_complete(
     wave_id: str,
     slices: dict[str, dict[str, Any]],
     tasks: dict[str, dict[str, Any]],
+    data: dict[str, Any] | None = None,
 ) -> bool:
     wave_slices = [slice_ for slice_ in slices.values() if slice_.get("wave") == wave_id]
-    wave_tasks = [task for task in tasks.values() if task.get("wave") == wave_id]
+    amendments = wave_amendment_map(data or {})
+    wave_tasks = [
+        task
+        for task in tasks.values()
+        if task_wave(task) == wave_id
+        and not (
+            amendment_for_task(data or {}, task) is not None
+            and (
+                amendments.get(str(task.get("_amendment_id") or task.get("amendment_id")), {}).get("lifecycle") or {}
+            ).get("status")
+            in {"DEFERRED", "WITHDRAWN"}
+        )
+    ]
     return (
         bool(wave_slices)
         and bool(wave_tasks)
@@ -369,7 +524,7 @@ def global_program_position(
 
     for wave_id in ordered_wave_ids(data):
         incomplete_tasks = sorted(
-            task["id"] for task in tasks.values() if task.get("wave") == wave_id and task.get("status") != "DONE"
+            task["id"] for task in tasks.values() if task_wave(task) == wave_id and task.get("status") != "DONE"
         )
         incomplete_slices = sorted(
             slice_["id"]
@@ -389,6 +544,18 @@ def global_program_position(
                 "current_wave": activation_gate.get("after_wave"),
                 "blocked_wave": wave_id,
                 "next_gate": activation_gate,
+                "incomplete_tasks": incomplete_tasks,
+                "incomplete_slices": incomplete_slices,
+                "wave_completion": wave_completion,
+            }
+        amendments = blocking_wave_amendments(data, wave_id)
+        if amendments:
+            return {
+                "state": "AMENDMENT_INTERRUPTED",
+                "current_wave": wave_id,
+                "blocked_wave": wave_id,
+                "next_gate": gate_after_wave(data, wave_id),
+                "amendment": amendments[0],
                 "incomplete_tasks": incomplete_tasks,
                 "incomplete_slices": incomplete_slices,
                 "wave_completion": wave_completion,
@@ -442,6 +609,8 @@ def dependency_graph_errors(tasks: dict[str, dict[str, Any]]) -> list[str]:
     errors: list[str] = []
     for tid, task in tasks.items():
         for dep in task.get("dependencies", []):
+            if dep.endswith(".B00") and dep == f"{task.get('_amendment_id') or task.get('amendment_id')}.B00":
+                continue
             if dep not in tasks:
                 errors.append(f"{tid}: missing dependency {dep}")
 
@@ -452,6 +621,8 @@ def dependency_graph_errors(tasks: dict[str, dict[str, Any]]) -> list[str]:
         state[task_id] = 1
         stack.append(task_id)
         for dependency in tasks[task_id].get("dependencies", []):
+            if dependency.endswith(".B00"):
+                continue
             if dependency not in tasks:
                 continue
             if state.get(dependency, 0) == 0:
@@ -489,7 +660,11 @@ def previous_slices_approved(capability: dict[str, Any], slice_: dict[str, Any])
 
 
 def task_dependencies_done(task: dict[str, Any], tasks: dict[str, dict[str, Any]]) -> bool:
-    return all(tasks.get(dep, {}).get("status") == "DONE" for dep in task.get("dependencies", []))
+    return all(
+        (dep.endswith(".B00") and dep == f"{task.get('_amendment_id') or task.get('amendment_id')}.B00")
+        or tasks.get(dep, {}).get("status") == "DONE"
+        for dep in task.get("dependencies", [])
+    )
 
 
 def slice_dependencies_done(slice_: dict[str, Any], tasks: dict[str, dict[str, Any]]) -> bool:
@@ -504,6 +679,15 @@ def task_can_be_ready(
     gates: dict[str, dict[str, Any]],
     task: dict[str, Any],
 ) -> bool:
+    amendment = amendment_for_task(data, task)
+    if amendment is not None:
+        bootstrap = amendment.get("bootstrap") or {}
+        campaign = amendment.get("campaign") or {}
+        return (
+            bootstrap.get("status") == "APPROVED"
+            and campaign.get("status") == "ACTIVE"
+            and task_dependencies_done(task, tasks)
+        )
     capability = capabilities[task["capability_id"]]
     slice_ = slices[task["slice_id"]]
     return (
@@ -572,7 +756,9 @@ def capability_sort_key(capability: dict[str, Any], wave_id: str) -> tuple[int, 
 
 
 def task_sort_key(task: dict[str, Any]) -> tuple[int, int, str]:
-    return int(task["wave"][1:]), int(task["priority"][1:]), task["id"]
+    wave_id = task_wave(task) or "W99"
+    priority = str(task.get("priority", "P0"))
+    return int(wave_id[1:]), int(priority[1:]), task["id"]
 
 
 def eligible_capabilities(
@@ -672,7 +858,7 @@ def ready_tasks_in_wave(
         [
             task
             for task in tasks.values()
-            if task.get("wave") == wave.get("id")
+            if task_wave(task) == wave.get("id")
             and task.get("status") == "READY"
             and profile_matches(task, profile)
             and platform_matches(task, platform)
@@ -775,6 +961,14 @@ def require_task_campaign_lease(
     actor: str,
     data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    if data is not None:
+        amendment = amendment_for_task(data, task)
+        if amendment is not None:
+            campaign = amendment.get("campaign") or {}
+            if campaign.get("status") != "ACTIVE" or campaign.get("scope") != "wave-amendment":
+                raise SystemExit(f"Wave amendment {amendment['id']} campaign is not ACTIVE")
+            require_active_lease(amendment, actor, f"Wave amendment {amendment['id']}")
+            return amendment
     if data is not None:
         active_waves = active_wave_campaigns(data)
         if active_waves:
@@ -927,6 +1121,180 @@ def discover_repository(backlog_path: str) -> Path:
         detail = (completed.stderr or completed.stdout).strip()
         raise SystemExit(f"Cannot resolve Git repository for exact-commit evidence: {detail or 'git failed'}")
     return Path(completed.stdout.strip()).resolve()
+
+
+def canonical_json_sha256(value: Any) -> str:
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+def git_commit_exists(repo: Path, commit: str) -> bool:
+    result = subprocess.run(
+        ["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo, capture_output=True, text=True, check=False
+    )
+    return result.returncode == 0
+
+
+def git_is_ancestor(repo: Path, ancestor: str, descendant: str = "HEAD") -> bool:
+    result = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", ancestor, descendant],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.returncode == 0
+
+
+def git_blob(repo: Path, commit: str, path: str) -> bytes | None:
+    result = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=repo, capture_output=True, check=False)
+    return result.stdout if result.returncode == 0 else None
+
+
+def historical_wave_approval(repo: Path, record_commit: str, wave_id: str) -> dict[str, Any] | None:
+    payload = git_blob(repo, record_commit, "planning/backlog.yaml")
+    if payload is None:
+        return None
+    try:
+        document = yaml.safe_load(payload.decode("utf-8"))
+    except UnicodeError, yaml.YAMLError:
+        return None
+    wave = next((item for item in document.get("waves", []) if item.get("id") == wave_id), None)
+    return copy.deepcopy((wave or {}).get("approval"))
+
+
+def approval_introduction_commit(repo: Path, relative_path: str) -> str | None:
+    result = subprocess.run(
+        ["git", "log", "--format=%H", "--diff-filter=A", "--", relative_path],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    commits = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+    return commits[-1] if result.returncode == 0 and len(commits) == 1 else None
+
+
+def load_json_schema(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def amendment_approval_errors(repo: Path, reference: dict[str, Any], amendment: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    relative = str(reference.get("path") or "")
+    pure = PurePosixPath(relative)
+    if pure.is_absolute() or ".." in pure.parts or not relative.startswith("planning/wave-amendment-approvals/"):
+        return [f"{amendment.get('id')}: unsafe amendment approval path"]
+    path = repo.joinpath(*pure.parts)
+    try:
+        payload = path.read_bytes()
+        record = json.loads(payload)
+        schema = load_json_schema(repo / "planning/wave-amendment-approvals/wave-amendment-approval.schema.json")
+        Draft202012Validator(schema, format_checker=FormatChecker()).validate(record)
+    except (OSError, json.JSONDecodeError, SchemaError, ValidationError) as exc:
+        return [f"{amendment.get('id')}: invalid approval record: {exc}"]
+    if hashlib.sha256(payload).hexdigest() != reference.get("sha256"):
+        errors.append(f"{amendment.get('id')}: amendment approval hash mismatch")
+    introduced = approval_introduction_commit(repo, relative)
+    if introduced != reference.get("introduction_commit"):
+        errors.append(f"{amendment.get('id')}: amendment approval introduction commit mismatch")
+    if introduced:
+        committed = git_blob(repo, introduced, relative)
+        if committed != payload:
+            errors.append(f"{amendment.get('id')}: immutable amendment approval was rewritten")
+        if not git_is_ancestor(repo, introduced):
+            errors.append(f"{amendment.get('id')}: amendment approval is not on current history")
+    if record.get("amendmentId") != amendment.get("id"):
+        errors.append(f"{amendment.get('id')}: approval record amendment identity mismatch")
+    if record.get("targetWave") != amendment.get("target_wave"):
+        errors.append(f"{amendment.get('id')}: approval record target Wave mismatch")
+    if record.get("changeRequestId") != amendment.get("change_request_id"):
+        errors.append(f"{amendment.get('id')}: approval record ECR identity mismatch")
+    return errors
+
+
+def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
+    errors: list[str] = []
+    control = data.get("control_plane")
+    bases = data.get("wave_approval_bases", [])
+    amendments = data.get("wave_amendments", [])
+    if control is None and not bases and not amendments:
+        return errors
+    if not isinstance(control, dict) or control.get("revision") != CONTROL_TOOL_REVISION:
+        errors.append("control plane revision is missing or unsupported")
+    elif int(control.get("minimum_tool_revision", 0)) > CONTROL_TOOL_REVISION:
+        errors.append("this taskctl revision is too old for the active control plane")
+    base_ids = [str(item.get("wave_id")) for item in bases]
+    if len(base_ids) != len(set(base_ids)):
+        errors.append("duplicate Wave approval base identity")
+    amendment_ids = [str(item.get("id")) for item in amendments]
+    if len(amendment_ids) != len(set(amendment_ids)):
+        errors.append("duplicate Wave amendment identity")
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for amendment in amendments:
+        grouped.setdefault(str(amendment.get("target_wave")), []).append(amendment)
+    for wave_id, ordered in grouped.items():
+        expected_ids = [f"{wave_id}.A{index:02d}" for index in range(1, len(ordered) + 1)]
+        actual_ids = [str(item.get("id")) for item in ordered]
+        if actual_ids != expected_ids:
+            errors.append(f"{wave_id}: Wave amendment chain is gapped, reordered, or forked")
+    if repo is None:
+        return errors
+    waves = wave_map(data)
+    base_map = wave_approval_base_map(data)
+    for wave_id, base in base_map.items():
+        approval = base.get("approval") or {}
+        if canonical_json_sha256(approval) != base.get("canonical_sha256"):
+            errors.append(f"{wave_id}: base approval canonical hash mismatch")
+        historical = historical_wave_approval(repo, str(base.get("record_commit")), wave_id)
+        if historical != approval:
+            errors.append(f"{wave_id}: base approval does not match its historical record commit")
+        if approval.get("approved_commit") != base.get("packet_commit"):
+            errors.append(f"{wave_id}: base approval packet commit mismatch")
+        for commit in (base.get("packet_commit"), base.get("record_commit")):
+            if not isinstance(commit, str) or not git_commit_exists(repo, commit) or not git_is_ancestor(repo, commit):
+                errors.append(f"{wave_id}: base authority commit is missing or not ancestral: {commit}")
+    for amendment in amendments:
+        errors.extend(amendment_approval_errors(repo, amendment.get("approval_reference") or {}, amendment))
+        record_path = repo.joinpath(*PurePosixPath(amendment["approval_reference"]["path"]).parts)
+        try:
+            record = json.loads(record_path.read_text(encoding="utf-8"))
+        except OSError, json.JSONDecodeError:
+            continue
+        packet_commit = (record.get("packet") or {}).get("commit")
+        if not isinstance(packet_commit, str) or not git_commit_exists(repo, packet_commit):
+            errors.append(f"{amendment['id']}: packet commit is invalid")
+        elif not git_is_ancestor(repo, packet_commit, amendment["approval_reference"]["introduction_commit"]):
+            errors.append(f"{amendment['id']}: approval does not descend from its packet")
+        if amendment.get("id") == "W1.A01":
+            effective = (record.get("migration") or {}).get("effectiveApproval")
+            if effective != (waves.get("W1") or {}).get("approval"):
+                errors.append("W1.A01: migrated effective approval does not equal the current W1 projection")
+            historical = historical_wave_approval(
+                repo, str((record.get("migration") or {}).get("historicalRecordCommit")), "W1"
+            )
+            if historical != effective:
+                errors.append("W1.A01: migrated approval does not match a223a6f history")
+        if amendment.get("id") == "W1.A02":
+            packet = record.get("packet") or {}
+            packet_path = repo.joinpath(*PurePosixPath(str(packet.get("path") or "")).parts)
+            try:
+                packet_payload = packet_path.read_bytes()
+                packet_document = json.loads(packet_payload)
+            except OSError, json.JSONDecodeError:
+                errors.append("W1.A02: approved packet is unreadable")
+                continue
+            if hashlib.sha256(packet_payload).hexdigest() != packet.get("sha256"):
+                errors.append("W1.A02: approved packet hash mismatch")
+            committed_packet = git_blob(repo, str(packet.get("commit")), str(packet.get("path")))
+            if committed_packet != packet_payload:
+                errors.append("W1.A02: approved packet differs from its immutable Git blob")
+            task_ids = [str(item.get("id")) for item in packet_document.get("taskInventory", [])]
+            if task_ids != record.get("authorizedTaskIds"):
+                errors.append("W1.A02: approved task inventory mismatch")
+    active_id = (control or {}).get("active_amendment")
+    if active_id is not None and active_id not in amendment_ids:
+        errors.append("control plane active amendment does not exist")
+    return errors
 
 
 def changed_file_errors(task: dict[str, Any], manifest: dict[str, Any], repo: Path) -> list[str]:
@@ -1156,10 +1524,12 @@ def validate(
     repo: Path | None = None,
 ) -> list[str]:
     errors = [*dependency_graph_errors(tasks), *slice_dependency_errors(slices, tasks)]
+    errors.extend(wave_authority_errors(data, repo))
     if repo is not None:
         errors.extend(evidence_reference_errors(tasks, repo))
     waves = wave_map(data)
     active_waves = active_wave_campaigns(data)
+    active_amendments = active_amendment_campaigns(data)
     if len(active_waves) > 1:
         errors.append("More than one ACTIVE Wave campaign exists; default automation permits one Wave")
     active = active_capabilities(capabilities)
@@ -1167,6 +1537,10 @@ def validate(
         errors.append("More than one ACTIVE legacy capability-wave campaign exists")
     if active_waves and active:
         errors.append("A Wave campaign and legacy capability-wave campaign cannot be ACTIVE together")
+    if len(active_amendments) > 1:
+        errors.append("More than one ACTIVE Wave amendment campaign exists")
+    if active_amendments and (active_waves or active):
+        errors.append("A Wave amendment campaign cannot run beside an ACTIVE ordinary campaign")
     for wave_id, wave in waves.items():
         approval = wave.get("approval") or {}
         expected_capability_ids = sorted(
@@ -1395,6 +1769,88 @@ def validate(
                     errors.append(f"{tid}: CANCELLED without rationale")
                 if status == "CANCELLED" and task.get("lease") is not None:
                     errors.append(f"{tid}: CANCELLED task must release its lease")
+    for amendment in data.get("wave_amendments", []):
+        amendment_id = str(amendment.get("id"))
+        target_wave = str(amendment.get("target_wave"))
+        lifecycle = amendment.get("lifecycle") or {}
+        history = lifecycle.get("history") or []
+        if history and lifecycle.get("status") != history[-1].get("status"):
+            errors.append(f"{amendment_id}: lifecycle status is not the last append-only event")
+        if [event.get("id") for event in history] != [f"E{index:02d}" for index in range(1, len(history) + 1)]:
+            errors.append(f"{amendment_id}: lifecycle event IDs are not sequential")
+        bootstrap = amendment.get("bootstrap") or {}
+        campaign = amendment.get("campaign") or {}
+        task_list = amendment.get("tasks", [])
+        if amendment.get("kind") == "gate-integrity-safety-defect" and bootstrap.get("id") != f"{amendment_id}.B00":
+            errors.append(f"{amendment_id}: interrupting amendment lacks its exact bootstrap identity")
+        if campaign:
+            if campaign.get("status") in {"ACTIVE", "REVIEW"} and (
+                campaign.get("scope") != "wave-amendment"
+                or not campaign.get("owner")
+                or not campaign.get("branch")
+                or not campaign.get("base_sha")
+                or not campaign.get("worktree")
+            ):
+                errors.append(f"{amendment_id}: active amendment campaign lacks identity, target, or lease")
+            if campaign.get("status") == "ACTIVE" and not campaign.get("lease"):
+                errors.append(f"{amendment_id}: ACTIVE amendment campaign lacks a lease")
+            if campaign.get("owner") and campaign.get("owner") != campaign.get("owner", "").strip():
+                errors.append(f"{amendment_id}: amendment owner identity is not normalized")
+            if (
+                repo is not None
+                and campaign.get("status") in {"ACTIVE", "REVIEW"}
+                and campaign.get("worktree")
+                and Path(campaign["worktree"]).resolve() != repo
+            ):
+                errors.append(f"{amendment_id}: amendment worktree does not match the repository")
+            lease = campaign.get("lease")
+            if lease and lease.get("claimed_by") != campaign.get("owner"):
+                errors.append(f"{amendment_id}: amendment lease owner mismatch")
+        if lifecycle.get("status") in {"MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW"}:
+            wave_campaign = (waves.get(target_wave) or {}).get("campaign") or {}
+            if wave_campaign.get("status") != "PAUSED" or wave_campaign.get("scope") != "amendment-hold":
+                errors.append(f"{amendment_id}: materialized interrupt requires a paused amendment-hold Wave")
+        for position, task in enumerate(task_list):
+            task_id = str(task.get("id"))
+            if task_id != f"{amendment_id}.T{position + 1:02d}":
+                errors.append(f"{task_id}: amendment task identity/order mismatch")
+            if task.get("amendment_id") != amendment_id:
+                errors.append(f"{task_id}: amendment_id mismatch")
+            if task.get("packet_task_sha256") != task.get("packet_task_sha256", "").lower():
+                errors.append(f"{task_id}: packet task hash is not normalized")
+            status = task.get("status")
+            if status not in VALID_STATUSES:
+                errors.append(f"{task_id}: invalid amendment task status {status}")
+            if status == "READY" and not task_can_be_ready(data, capabilities, slices, tasks, gates, task):
+                errors.append(f"{task_id}: READY while amendment dependencies or campaign are incomplete")
+            if status in {"IN_PROGRESS", "REVIEW"} and (
+                not task.get("owner")
+                or not task.get("branch")
+                or not task.get("base_sha")
+                or not task.get("worktree")
+                or not task.get("lease")
+            ):
+                errors.append(f"{task_id}: active amendment task lacks owner, Git identity, worktree, or lease")
+            review = task.get("review") or {}
+            if review.get("reviewer") and review.get("reviewer") == task.get("owner"):
+                errors.append(f"{task_id}: amendment task reviewer is not independent")
+            if status == "DONE" and (
+                not task.get("evidence")
+                or review.get("result") != "approved"
+                or not review.get("reviewer")
+                or not review.get("reviewed_at")
+            ):
+                errors.append(f"{task_id}: DONE without evidence and independent approval")
+            if status == "DONE" and task.get("lease") is not None:
+                errors.append(f"{task_id}: DONE amendment task must release its lease")
+        completion = amendment.get("completion") or {}
+        if completion.get("status") == "APPROVED" and (
+            any(task.get("status") != "DONE" for task in task_list)
+            or not completion.get("reviewer")
+            or not completion.get("reviewed_at")
+            or not completion.get("evidence")
+        ):
+            errors.append(f"{amendment_id}: approved completion lacks DONE tasks, reviewer, time, or evidence")
     ordered_gates = [gate for gate in data.get("release_gates", []) if isinstance(gate, dict)]
     for wave_id, wave in waves.items():
         exit_gates = [gate for gate in ordered_gates if gate.get("after_wave") == wave_id]
@@ -1419,7 +1875,7 @@ def validate(
             incomplete = sorted(
                 task["id"]
                 for task in tasks.values()
-                if task.get("wave") == gate.get("after_wave") and task["status"] != "DONE"
+                if task_wave(task) == gate.get("after_wave") and task["status"] != "DONE"
             )
             if incomplete:
                 errors.append(f"{gid}: APPROVED while preceding-wave task {incomplete[0]} is incomplete")
@@ -1461,6 +1917,17 @@ def command_validate(args: argparse.Namespace, data, capabilities, slices, tasks
 def command_status(args, data, capabilities, slices, tasks, gates) -> None:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     program = global_program_position(data, slices, tasks, gates)
+    bootstrap_interrupt = approved_unbootstrapped_amendment(args.file, data, str(program.get("current_wave")))
+    if bootstrap_interrupt is not None:
+        print(
+            wave_amendment_stop_handoff(
+                args, data, {**program, "state": "AMENDMENT_INTERRUPTED", "amendment": bootstrap_interrupt}
+            )
+        )
+        return
+    if program.get("state") == "AMENDMENT_INTERRUPTED":
+        print(wave_amendment_stop_handoff(args, data, program))
+        return
     print("Program state:", program["state"])
     print("Current global wave:", program.get("current_wave") or "complete")
     print("Next global gate:", gate_transition_label(program.get("next_gate")))
@@ -1489,6 +1956,17 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
     """Compatibility view: Wave is now the start/lease unit, not capability."""
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     program = global_program_position(data, slices, tasks, gates)
+    bootstrap_interrupt = approved_unbootstrapped_amendment(args.file, data, str(program.get("current_wave")))
+    if bootstrap_interrupt is not None:
+        print(
+            wave_amendment_stop_handoff(
+                args, data, {**program, "state": "AMENDMENT_INTERRUPTED", "amendment": bootstrap_interrupt}
+            )
+        )
+        return
+    if program.get("state") == "AMENDMENT_INTERRUPTED":
+        print(wave_amendment_stop_handoff(args, data, program))
+        return
     active = active_wave_campaigns(data)
     if active:
         wave = active[0]
@@ -1520,7 +1998,7 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
             {
                 capability_display(capabilities[task["capability_id"]])
                 for task in tasks.values()
-                if task.get("wave") == wave_id and task.get("capability_id") in capabilities
+                if task_wave(task) == wave_id and task.get("capability_id") in capabilities
             }
         )
         slice_ids = sorted(slice_["id"] for slice_ in slices.values() if slice_.get("wave") == wave_id)
@@ -1542,7 +2020,7 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
         )
         return
     if not any(
-        task.get("wave") == wave_id
+        task_wave(task) == wave_id
         and task.get("status") == "READY"
         and profile_matches(task, args.profile)
         and platform_matches(task, args.platform)
@@ -1573,6 +2051,104 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
     print_yaml(view)
 
 
+def wave_amendment_stop_handoff(
+    args: argparse.Namespace,
+    data: dict[str, Any],
+    program: dict[str, Any],
+) -> str:
+    amendment = program.get("amendment")
+    if not isinstance(amendment, dict):
+        wave_id = str(program.get("current_wave"))
+        blockers = blocking_wave_amendments(data, wave_id)
+        if not blockers:
+            raise SystemExit("Wave amendment handoff requested without an interrupting amendment")
+        amendment = blockers[0]
+    amendment_id = str(amendment["id"])
+    ecr_id = str(amendment.get("change_request_id") or "historical-amendment")
+    wave_id = str(amendment.get("target_wave"))
+    repo = Path(args.file).resolve().parent.parent
+    detail_relative = f"planning/review-site/enablers/{ecr_id}.html"
+    detail_uri = (repo / detail_relative).resolve().as_uri()
+    proposal_relative = f"planning/enabler-change-requests/{ecr_id}.md"
+    proposal_uri = (repo / proposal_relative).resolve().as_uri()
+    approval_relative = str((amendment.get("approval_reference") or {}).get("path") or "")
+    approval_uri = (repo / approval_relative).resolve().as_uri() if approval_relative else "unrecorded"
+    wave_relative = f"planning/review-site/waves/{wave_id}.html"
+    wave_uri = (repo / wave_relative).resolve().as_uri()
+    lifecycle = (amendment.get("lifecycle") or {}).get("status", "UNKNOWN")
+    bootstrap = (amendment.get("bootstrap") or {}).get("status", "NOT-RECORDED")
+    campaign = (amendment.get("campaign") or {}).get("status", "NOT-ACTIVE")
+    task_states = (
+        ", ".join(f"{task.get('id')}={task.get('status')}" for task in amendment.get("tasks", [])) or "not materialized"
+    )
+    base = wave_approval_base_map(data).get(wave_id, {})
+    ordered = [item for item in data.get("wave_amendments", []) if item.get("target_wave") == wave_id]
+    authority = ", ".join(
+        f"{item.get('id')}={((item.get('approval_reference') or {}).get('introduction_commit') or 'unrecorded')}"
+        for item in ordered
+    )
+    base_packet = base.get("packet_commit") or amendment.get("_base_packet") or "unrecorded"
+    if not authority and amendment.get("_legacy_amendment"):
+        authority = (
+            f"{amendment.get('_legacy_amendment')}={amendment.get('_legacy_packet')}; "
+            f"{amendment_id}={((amendment.get('approval_reference') or {}).get('introduction_commit') or 'unrecorded')}"
+        )
+    if bootstrap == "PENDING":
+        next_command = (
+            f"python tools/taskctl.py amendment bootstrap-submit {amendment_id} --agent <agent> "
+            "--approval-commit 6e9c440102a5c463bb35d81f4dbdc3453d9ce029 --implementation-commit <HEAD> "
+            "--evidence <B00-criterion-manifest>"
+        )
+    elif bootstrap == "REVIEW":
+        next_command = (
+            f"python tools/taskctl.py amendment bootstrap-review {amendment_id} --reviewer <independent-reviewer> "
+            "--result approved --note <review-disposition>"
+        )
+    elif bootstrap == "APPROVED" and lifecycle == "APPROVED":
+        next_command = f"python tools/taskctl.py amendment materialize {amendment_id} --agent <agent>"
+    elif lifecycle == "MATERIALIZED":
+        next_command = (
+            f"python tools/taskctl.py amendment activate {amendment_id} --agent <agent> --branch <codex-branch> "
+            "--base-sha <HEAD> --worktree <absolute-repository-path> --profile LOC --platform windows-x64"
+        )
+    elif campaign == "ACTIVE":
+        ready = next((task.get("id") for task in amendment.get("tasks", []) if task.get("status") == "READY"), None)
+        next_command = (
+            f"python tools/taskctl.py claim {ready} --agent <agent> --branch <codex-branch> --base-sha <HEAD> "
+            "--worktree <absolute-repository-path> --profile LOC --platform windows-x64"
+            if ready
+            else f"complete the current {amendment_id} task or amendment review before another claim"
+        )
+    elif lifecycle == "REVIEW":
+        next_command = (
+            f"python tools/taskctl.py amendment review {amendment_id} --reviewer <independent-reviewer> "
+            "--result approved --note <review-disposition>"
+        )
+    else:
+        next_command = f"continue the governed {amendment_id} lifecycle; ordinary {wave_id} execution remains held"
+    return (
+        f"STOPPED AT WAVE AMENDMENT {amendment_id} ({ecr_id})\n"
+        f"State: lifecycle={lifecycle}; bootstrap={bootstrap}; amendment-campaign={campaign}; tasks={task_states}.\n"
+        f"Authority: base={base_packet}; ordered amendments: {authority or 'unrecorded'}.\n"
+        "Ordinary Wave resumption is NOT LEGAL while this interrupting amendment remains unfinished.\n"
+        "Review materials:\n"
+        f"  - Amendment detail: {detail_uri} ({detail_relative})\n"
+        f"  - Canonical proposal: {proposal_uri} ({proposal_relative})\n"
+        f"  - Immutable approval: {approval_uri} ({approval_relative or 'unrecorded'})\n"
+        f"  - Wave packet: {wave_uri} ({wave_relative})\n"
+        "Decision alternatives:\n"
+        "  A (recommended): complete the bounded bootstrap/tasks, independent reviews, and adoption checkpoint.\n"
+        "  B: record an explicit append-only defer disposition with a reviewed safe-resume condition.\n"
+        "  C: record an explicit append-only withdrawal with rationale and a reviewed safe-resume condition.\n"
+        f"Resume condition: {amendment_id}.B00 approved, every authorized task DONE with independent approval, "
+        f"amendment exit independently APPROVED, and a {wave_id} control/security adoption checkpoint recorded; "
+        "then `python tools/taskctl.py wave resume "
+        f"{wave_id} --agent <agent> --branch <codex-branch> --base-sha <HEAD> --worktree "
+        "<absolute-repository-path> --profile LOC --platform windows-x64`.\n"
+        f"Exact next command: {next_command}"
+    )
+
+
 def global_gate_stop_handoff(
     args: argparse.Namespace,
     data: dict[str, Any],
@@ -1594,13 +2170,13 @@ def global_gate_stop_handoff(
 
     preceding_wave = str(gate.get("after_wave"))
     incomplete = sorted(
-        task["id"] for task in tasks.values() if task.get("wave") == preceding_wave and task.get("status") != "DONE"
+        task["id"] for task in tasks.values() if task_wave(task) == preceding_wave and task.get("status") != "DONE"
     )
     prerequisite_capabilities = sorted(
         {
             task["capability_id"]
             for task in tasks.values()
-            if task.get("wave") == preceding_wave and task.get("capability_id") in capabilities
+            if task_wave(task) == preceding_wave and task.get("capability_id") in capabilities
         }
     )
     ordered_waves = [str(item.get("id")) for item in data.get("waves", []) if isinstance(item, dict)]
@@ -1663,6 +2239,19 @@ def global_gate_stop_handoff(
 
 def command_next(args, data, capabilities, slices, tasks, gates) -> None:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
+    amendments = active_amendment_campaigns(data)
+    if amendments:
+        amendment = amendments[0]
+        candidates = sorted(
+            (task for task in amendment.get("tasks", []) if task.get("status") == "READY"),
+            key=task_sort_key,
+        )
+        if candidates:
+            print_yaml(candidates[0])
+            return
+        program = global_program_position(data, slices, tasks, gates)
+        print(wave_amendment_stop_handoff(args, data, program))
+        return
     active = active_wave_campaigns(data)
     if not active:
         command_next_capability(args, data, capabilities, slices, tasks, gates)
@@ -1671,7 +2260,7 @@ def command_next(args, data, capabilities, slices, tasks, gates) -> None:
     wave_id = str(wave["id"])
     candidates = ready_tasks_in_wave(data, wave, capabilities, slices, tasks, gates, args.profile, args.platform)
     if not candidates:
-        if wave_complete(wave_id, slices, tasks):
+        if wave_complete(wave_id, slices, tasks, data):
             print(
                 f"WAVE IMPLEMENTATION COMPLETE: {wave_id}. Run the complete affected/full Wave-exit matrix, attach "
                 f"criterion-linked Wave evidence, then submit with `python tools/taskctl.py wave submit {wave_id} "
@@ -1681,7 +2270,7 @@ def command_next(args, data, capabilities, slices, tasks, gates) -> None:
         waiting = sorted(
             task["id"]
             for task in tasks.values()
-            if task.get("wave") == wave_id and task.get("status") in {"IN_PROGRESS", "REVIEW", "BLOCKED"}
+            if task_wave(task) == wave_id and task.get("status") in {"IN_PROGRESS", "REVIEW", "BLOCKED"}
         )
         print(
             f"No READY task in active Wave campaign {wave_id}. Complete the current task/slice review or resolve the "
@@ -1724,6 +2313,553 @@ def require_wave_planning_ready(args: argparse.Namespace, wave_id: str) -> None:
     )
 
 
+def append_amendment_event(amendment: dict[str, Any], status: str, actor: str, rationale: str) -> None:
+    history = amendment.setdefault("lifecycle", {}).setdefault("history", [])
+    event = {
+        "id": f"E{len(history) + 1:02d}",
+        "status": status,
+        "actor": normalized_identity(actor, "Amendment actor"),
+        "at": utc_now(),
+        "rationale": rationale.strip() or f"Transitioned to {status}",
+    }
+    history.append(event)
+    amendment["lifecycle"]["status"] = status
+
+
+def load_amendment_authority(repo: Path, amendment_id: str) -> tuple[dict[str, Any], dict[str, Any], bytes]:
+    approval_path = repo / "planning" / "wave-amendment-approvals" / f"{amendment_id}.json"
+    try:
+        approval_payload = approval_path.read_bytes()
+        approval = json.loads(approval_payload)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Cannot load immutable approval for {amendment_id}: {exc}") from exc
+    if approval.get("status") != "APPROVED" or approval.get("amendmentId") != amendment_id:
+        raise SystemExit(f"{amendment_id} does not have an exact APPROVED amendment record")
+    packet_info = approval.get("packet") or {}
+    packet_path = repo.joinpath(*PurePosixPath(str(packet_info.get("path") or "")).parts)
+    try:
+        packet_payload = packet_path.read_bytes()
+        packet = json.loads(packet_payload)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Cannot load approved packet for {amendment_id}: {exc}") from exc
+    if hashlib.sha256(packet_payload).hexdigest() != packet_info.get("sha256"):
+        raise SystemExit(f"{amendment_id} packet hash does not match its immutable approval")
+    if git_blob(repo, str(packet_info.get("commit")), str(packet_info.get("path"))) != packet_payload:
+        raise SystemExit(f"{amendment_id} packet bytes differ from the approved Git blob")
+    if packet.get("proposedAmendmentId") != amendment_id:
+        raise SystemExit(f"{amendment_id} packet identity mismatch")
+    if [item.get("id") for item in packet.get("taskInventory", [])] != approval.get("authorizedTaskIds"):
+        raise SystemExit(f"{amendment_id} task inventory differs from the approved packet")
+    return approval, packet, approval_payload
+
+
+def require_clean_repository(repo: Path, *, allowed_untracked: set[str] | None = None) -> None:
+    tracked = subprocess.run(["git", "diff", "--quiet", "HEAD", "--"], cwd=repo, check=False)
+    if tracked.returncode != 0:
+        raise SystemExit("Tracked worktree changes exist; the amendment transition requires an exact clean commit")
+    untracked = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if untracked.returncode != 0:
+        raise SystemExit("Cannot inspect untracked files before amendment transition")
+    unexpected = sorted(set(untracked.stdout.splitlines()) - (allowed_untracked or set()))
+    if unexpected:
+        raise SystemExit(f"Untracked source exists outside the authorized transition: {unexpected[0]}")
+
+
+def amendment_path_authorized(path: str, patterns: list[str]) -> bool:
+    for pattern in patterns:
+        if pattern.endswith("/**"):
+            prefix = pattern[:-3].rstrip("/")
+            if path == prefix or path.startswith(prefix + "/"):
+                return True
+        elif path == pattern:
+            return True
+    return False
+
+
+def command_amendment_status(args, data, capabilities, slices, tasks, gates) -> None:
+    amendments = wave_amendment_map(data)
+    if args.amendment:
+        print_yaml(get(amendments, args.amendment, "Wave amendment"))
+        return
+    for amendment in data.get("wave_amendments", []):
+        print(
+            f"{amendment['id']}\t{amendment.get('change_request_id') or 'historical'}\t"
+            f"{(amendment.get('lifecycle') or {}).get('status')}\t{amendment.get('target_wave')}"
+        )
+
+
+def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, gates) -> None:
+    if data.get("control_plane") or data.get("wave_approval_bases") or data.get("wave_amendments"):
+        raise SystemExit("The amendment control plane is already bootstrapped; duplicate bootstrap is denied")
+    repo = discover_repository(args.file)
+    approval, packet, _approval_payload = load_amendment_authority(repo, args.amendment)
+    approval_commit = str(args.approval_commit)
+    implementation_commit = str(args.implementation_commit)
+    introduction = approval_introduction_commit(repo, f"planning/wave-amendment-approvals/{args.amendment}.json")
+    if approval_commit != introduction:
+        raise SystemExit("Approval commit must equal the immutable approval-record introduction commit")
+    if implementation_commit == approval_commit or not git_is_ancestor(repo, approval_commit, implementation_commit):
+        raise SystemExit("Bootstrap implementation must strictly descend from the human approval commit")
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
+    if head.returncode != 0 or head.stdout.strip() != implementation_commit:
+        raise SystemExit("Bootstrap implementation commit must equal current HEAD")
+    evidence_path = Path(args.evidence).resolve()
+    try:
+        evidence_relative = evidence_path.relative_to(repo).as_posix()
+    except ValueError as exc:
+        raise SystemExit("Bootstrap evidence must be inside the repository") from exc
+    if not evidence_relative.startswith("artifacts/evidence/"):
+        raise SystemExit("Bootstrap evidence must be under artifacts/evidence")
+    try:
+        evidence_payload = evidence_path.read_bytes()
+        manifest = parse_evidence_payload(evidence_payload, evidence_path.suffix)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Invalid bootstrap evidence: {exc}") from exc
+    bootstrap_unit = packet.get("bootstrapUnit") or {}
+    agent = normalized_identity(args.agent, "Bootstrap implementer")
+    virtual_task = {
+        "id": bootstrap_unit.get("id"),
+        "branch": manifest.get("branch"),
+        "base_sha": approval_commit,
+        "worktree": repo.as_posix(),
+        "acceptance_criteria": bootstrap_unit.get("requiredOutcomes", []),
+    }
+    evidence_errors = exact_commit_errors(
+        virtual_task,
+        manifest,
+        repo,
+        evidence_path=evidence_path,
+        expected_base_commit=approval_commit,
+    )
+    if manifest.get("commit") != implementation_commit:
+        evidence_errors.append("bootstrap evidence commit must equal the implementation commit")
+    actual = subprocess.run(
+        ["git", "diff", "--name-only", approval_commit, implementation_commit, "--"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    changed_files = [line for line in actual.stdout.splitlines() if line]
+    patterns = [str(item) for item in bootstrap_unit.get("authorizedPaths", [])]
+    outside = [path for path in changed_files if not amendment_path_authorized(path, patterns)]
+    if actual.returncode != 0:
+        evidence_errors.append("cannot resolve bootstrap changed-file scope")
+    if outside:
+        evidence_errors.append(f"bootstrap changed path is outside approved scope: {outside[0]}")
+    if evidence_errors:
+        raise SystemExit("Invalid bootstrap evidence:\n- " + "\n- ".join(evidence_errors))
+    base_packet = str((approval.get("effectiveBase") or {}).get("originalPacketCommit"))
+    base_record = str((approval.get("effectiveBase") or {}).get("originalApprovalRecordCommit"))
+    base_approval = historical_wave_approval(repo, base_record, str(approval.get("targetWave")))
+    if not isinstance(base_approval, dict) or base_approval.get("approved_commit") != base_packet:
+        raise SystemExit("Original W1 approval cannot be reproduced from immutable history")
+    legacy_path = "planning/wave-amendment-approvals/W1.A01.json"
+    current_path = f"planning/wave-amendment-approvals/{args.amendment}.json"
+    legacy_payload = (repo / legacy_path).read_bytes()
+    current_payload = (repo / current_path).read_bytes()
+    legacy_record = json.loads(legacy_payload)
+    if (legacy_record.get("migration") or {}).get("effectiveApproval") != (
+        wave_map(data).get(str(approval.get("targetWave")), {}).get("approval")
+    ):
+        raise SystemExit("Legacy W1.A01 does not reproduce the current effective Wave approval")
+    now = utc_now()
+    data["control_plane"] = {
+        "revision": CONTROL_TOOL_REVISION,
+        "minimum_tool_revision": CONTROL_TOOL_REVISION,
+        "active_amendment": None,
+    }
+    data["wave_approval_bases"] = [
+        {
+            "wave_id": approval["targetWave"],
+            "packet_commit": base_packet,
+            "record_commit": base_record,
+            "approval": base_approval,
+            "canonical_sha256": canonical_json_sha256(base_approval),
+        }
+    ]
+    data["wave_amendments"] = [
+        {
+            "id": "W1.A01",
+            "change_request_id": None,
+            "target_wave": approval["targetWave"],
+            "kind": "migrated-replanning",
+            "approval_reference": {
+                "path": legacy_path,
+                "sha256": hashlib.sha256(legacy_payload).hexdigest(),
+                "introduction_commit": approval_introduction_commit(repo, legacy_path),
+            },
+            "lifecycle": {
+                "status": "ADOPTED",
+                "history": [
+                    {
+                        "id": "E01",
+                        "status": "ADOPTED",
+                        "actor": "repository-owner",
+                        "at": now,
+                        "rationale": "Migrated immutable historical W1 amendment authority.",
+                    }
+                ],
+            },
+            "bootstrap": None,
+            "campaign": None,
+            "tasks": [],
+            "completion": {
+                "status": "APPROVED",
+                "reviewer": "repository-owner",
+                "reviewed_at": now,
+                "evidence": [legacy_path],
+                "notes": "Historical authority migration only.",
+            },
+        },
+        {
+            "id": args.amendment,
+            "change_request_id": approval.get("changeRequestId"),
+            "target_wave": approval["targetWave"],
+            "kind": packet.get("classification"),
+            "approval_reference": {
+                "path": current_path,
+                "sha256": hashlib.sha256(current_payload).hexdigest(),
+                "introduction_commit": introduction,
+            },
+            "lifecycle": {
+                "status": "APPROVED",
+                "history": [
+                    {
+                        "id": "E01",
+                        "status": "APPROVED",
+                        "actor": approval["approvedBy"],
+                        "at": approval["approvedAt"],
+                        "rationale": approval["decision"],
+                    }
+                ],
+            },
+            "bootstrap": {
+                "id": bootstrap_unit["id"],
+                "status": "REVIEW",
+                "implementer": agent,
+                "implementation_commit": implementation_commit,
+                "evidence": [
+                    {
+                        "type": "criterion-manifest",
+                        "path": evidence_relative,
+                        "sha256": evidence_sha256(evidence_payload),
+                        "commit": implementation_commit,
+                        "recorded_at": now,
+                    }
+                ],
+                "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+            },
+            "campaign": None,
+            "tasks": [],
+            "completion": {"status": "PENDING", "reviewer": None, "reviewed_at": None, "evidence": [], "notes": None},
+        },
+    ]
+    save_validated(
+        args.file,
+        data,
+        expected_sha256=getattr(args, "source_sha256", None),
+        expected_identity=getattr(args, "source_identity", None),
+        expected_approved_waves=getattr(args, "source_approved_waves", None),
+        repo=repo,
+    )
+    print(f"Submitted {bootstrap_unit['id']} for independent review")
+
+
+def command_amendment_bootstrap_review(args, data, capabilities, slices, tasks, gates) -> None:
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    bootstrap = amendment.get("bootstrap") or {}
+    if bootstrap.get("status") not in {"REVIEW", "CHANGES_REQUESTED", "BLOCKED"}:
+        raise SystemExit("Bootstrap is not awaiting independent review")
+    reviewer = normalized_identity(args.reviewer, "Bootstrap reviewer")
+    if reviewer == bootstrap.get("implementer"):
+        raise SystemExit("Bootstrap reviewer must be independent from the implementer")
+    result_status = {
+        "approved": "APPROVED",
+        "changes-requested": "CHANGES_REQUESTED",
+        "blocked": "BLOCKED",
+    }[args.result]
+    bootstrap["status"] = result_status
+    bootstrap["review"] = {
+        "reviewer": reviewer,
+        "result": args.result,
+        "reviewed_at": utc_now(),
+        "notes": args.note,
+    }
+    persist(args, data)
+    print(f"Bootstrap review for {args.amendment}: {result_status}")
+
+
+def materialized_amendment_task(amendment_id: str, packet_task: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": packet_task["id"],
+        "amendment_id": amendment_id,
+        "title": packet_task["title"],
+        "objective": packet_task["objective"],
+        "dependencies": list(packet_task.get("dependencies", [])),
+        "acceptance_criteria": list(packet_task.get("acceptanceCriteria", [])),
+        "verification_commands": list(packet_task.get("verification", [])),
+        "packet_task_sha256": canonical_json_sha256(packet_task),
+        "status": "NOT_STARTED",
+        "owner": None,
+        "branch": None,
+        "base_sha": None,
+        "worktree": None,
+        "lease": None,
+        "started_at": None,
+        "updated_at": None,
+        "completed_at": None,
+        "blocker": None,
+        "implementation_notes": "",
+        "evidence": [],
+        "verification_state": None,
+        "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+    }
+
+
+def command_amendment_materialize(args, data, capabilities, slices, tasks, gates) -> None:
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    if (amendment.get("bootstrap") or {}).get("status") != "APPROVED":
+        raise SystemExit("Independent bootstrap approval is required before task materialization")
+    if amendment.get("tasks") or (amendment.get("lifecycle") or {}).get("status") != "APPROVED":
+        raise SystemExit("Amendment tasks have already been materialized or the lifecycle is not APPROVED")
+    actor = normalized_identity(args.agent, "Materialization actor")
+    repo = discover_repository(args.file)
+    require_clean_repository(repo)
+    _approval, packet, _payload = load_amendment_authority(repo, args.amendment)
+    packet_tasks = packet.get("taskInventory", [])
+    authorized = _approval.get("authorizedTaskIds", [])
+    if [task.get("id") for task in packet_tasks] != authorized:
+        raise SystemExit("Only the exact approved task inventory may be materialized")
+    amendment["tasks"] = [materialized_amendment_task(args.amendment, task) for task in packet_tasks]
+    target_wave = get(wave_map(data), str(amendment["target_wave"]), "wave")
+    wave_campaign = target_wave.get("campaign") or {}
+    if wave_campaign.get("status") != "PAUSED":
+        raise SystemExit("Target Wave must be PAUSED before amendment materialization")
+    if any(
+        task.get("status") in {"IN_PROGRESS", "REVIEW"} and amendment_for_task(data, task) is None
+        for task in tasks.values()
+    ):
+        raise SystemExit("Ordinary task work must be quiescent before amendment materialization")
+    wave_campaign["scope"] = "amendment-hold"
+    append_amendment_event(amendment, "MATERIALIZED", actor, "Materialized the exact human-approved task inventory.")
+    save_validated(
+        args.file,
+        data,
+        expected_sha256=getattr(args, "source_sha256", None),
+        expected_identity=getattr(args, "source_identity", None),
+        expected_approved_waves=getattr(args, "source_approved_waves", None),
+        expected_amendment_history=getattr(args, "source_amendment_history", None),
+        repo=repo,
+    )
+    print(f"Materialized {', '.join(authorized)} from {args.amendment}")
+
+
+def command_amendment_activate(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    require_execution_target(args.profile, args.platform)
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    lifecycle = (amendment.get("lifecycle") or {}).get("status")
+    if lifecycle not in {"MATERIALIZED", "PAUSED"}:
+        raise SystemExit("Only a MATERIALIZED or PAUSED amendment may be activated")
+    if active_amendment_campaigns(data) or active_wave_campaigns(data) or active_capabilities(capabilities):
+        raise SystemExit("Another amendment, Wave, or legacy capability campaign is ACTIVE")
+    wave = get(wave_map(data), str(amendment["target_wave"]), "wave")
+    wave_campaign = wave.get("campaign") or {}
+    if wave_campaign.get("status") != "PAUSED" or wave_campaign.get("scope") != "amendment-hold":
+        raise SystemExit("Target Wave is not at the validated amendment-hold boundary")
+    agent, branch, base_sha, worktree = git_execution_identity(
+        args.file, agent=args.agent, branch=args.branch, base_sha=args.base_sha, worktree=args.worktree
+    )
+    if wave_campaign.get("owner") != agent or wave_campaign.get("branch") != branch:
+        raise SystemExit("Amendment activation must retain the paused Wave owner and codex branch")
+    repo = discover_repository(args.file)
+    require_clean_repository(repo)
+    _approval, packet, _payload = load_amendment_authority(repo, args.amendment)
+    expected = {item["id"]: canonical_json_sha256(item) for item in packet.get("taskInventory", [])}
+    actual = {item["id"]: item.get("packet_task_sha256") for item in amendment.get("tasks", [])}
+    if actual != expected:
+        raise SystemExit("Materialized task inventory or packet hashes differ from the approved packet")
+    if any(
+        task.get("status") in {"IN_PROGRESS", "REVIEW"} and amendment_for_task(data, task) is None
+        for task in tasks.values()
+    ):
+        raise SystemExit("Ordinary task work is not quiescent")
+    now = utc_now()
+    amendment["campaign"] = {
+        "status": "ACTIVE",
+        "scope": "wave-amendment",
+        "owner": agent,
+        "branch": branch,
+        "worktree": worktree,
+        "base_sha": base_sha,
+        "profile": args.profile,
+        "platform": args.platform,
+        "started_at": ((amendment.get("campaign") or {}).get("started_at") or now),
+        "updated_at": now,
+        "pause_reason": None,
+        "lease": new_lease(agent, args.lease_hours),
+    }
+    data["control_plane"]["active_amendment"] = args.amendment
+    append_amendment_event(amendment, "ACTIVE", agent, "Activated the bounded amendment campaign.")
+    _data, _caps, _slices, refreshed_tasks, _gates = index_backlog(data)
+    refresh_derived_states(data, _caps, _slices, refreshed_tasks, _gates)
+    persist(args, data)
+    print(f"Activated Wave amendment {args.amendment}")
+
+
+def command_amendment_pause(args, data, capabilities, slices, tasks, gates) -> None:
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    campaign = amendment.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE":
+        raise SystemExit("Only an ACTIVE amendment may be paused")
+    require_active_lease(amendment, args.agent, f"Wave amendment {args.amendment}")
+    if any(task.get("status") in {"IN_PROGRESS", "REVIEW"} for task in amendment.get("tasks", [])):
+        raise SystemExit("Resolve or block the active amendment task before pausing")
+    campaign.update(status="PAUSED", updated_at=utc_now(), pause_reason=args.reason, lease=None)
+    data["control_plane"]["active_amendment"] = None
+    append_amendment_event(amendment, "PAUSED", args.agent, args.reason)
+    persist(args, data)
+
+
+def command_amendment_submit(args, data, capabilities, slices, tasks, gates) -> None:
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    campaign = amendment.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE":
+        raise SystemExit("Amendment campaign must be ACTIVE")
+    require_active_lease(amendment, args.agent, f"Wave amendment {args.amendment}")
+    if not amendment.get("tasks") or any(task.get("status") != "DONE" for task in amendment["tasks"]):
+        raise SystemExit("Every authorized amendment task must be DONE before exit submission")
+    if not args.evidence:
+        raise SystemExit("Amendment exit evidence is required")
+    campaign.update(status="REVIEW", updated_at=utc_now(), lease=None)
+    amendment["completion"].update(status="REVIEW", evidence=args.evidence, notes=args.note)
+    data["control_plane"]["active_amendment"] = None
+    append_amendment_event(amendment, "REVIEW", args.agent, args.note or "Submitted amendment exit for review.")
+    persist(args, data)
+
+
+def command_amendment_review(args, data, capabilities, slices, tasks, gates) -> None:
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    campaign = amendment.get("campaign") or {}
+    completion = amendment.get("completion") or {}
+    if campaign.get("status") != "REVIEW" or completion.get("status") != "REVIEW":
+        raise SystemExit("Amendment must be submitted for exit REVIEW")
+    reviewer = normalized_identity(args.reviewer, "Amendment reviewer")
+    if reviewer == campaign.get("owner"):
+        raise SystemExit("Amendment reviewer must be independent from the campaign owner")
+    now = utc_now()
+    if args.result == "approved":
+        campaign.update(status="COMPLETE", updated_at=now, lease=None)
+        completion.update(status="APPROVED", reviewer=reviewer, reviewed_at=now, notes=args.note)
+    else:
+        state = "CHANGES_REQUESTED" if args.result == "changes-requested" else "BLOCKED"
+        campaign.update(status="PAUSED", updated_at=now, pause_reason=args.note or state, lease=None)
+        completion.update(status=state, reviewer=reviewer, reviewed_at=now, notes=args.note)
+        append_amendment_event(
+            amendment, "PAUSED" if state == "CHANGES_REQUESTED" else "BLOCKED", reviewer, args.note or state
+        )
+    persist(args, data)
+
+
+def command_amendment_adopt(args, data, capabilities, slices, tasks, gates) -> None:
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    completion = amendment.get("completion") or {}
+    campaign = amendment.get("campaign") or {}
+    if completion.get("status") != "APPROVED" or campaign.get("status") != "COMPLETE":
+        raise SystemExit("Independent approved amendment-exit review is required before adoption")
+    if not amendment.get("tasks") or any(task.get("status") != "DONE" for task in amendment["tasks"]):
+        raise SystemExit("Every amendment task must be DONE and independently approved before adoption")
+    if not args.evidence:
+        raise SystemExit("Control/security adoption checkpoint evidence is required")
+    actor = normalized_identity(args.agent, "Adoption actor")
+    wave = get(wave_map(data), str(amendment["target_wave"]), "wave")
+    wave_campaign = wave.get("campaign") or {}
+    if wave_campaign.get("status") != "PAUSED" or wave_campaign.get("scope") != "amendment-hold":
+        raise SystemExit("Target Wave is not at the amendment-hold adoption boundary")
+    checkpoints = wave.setdefault("checkpoints", [])
+    checkpoint_id = f"{wave['id']}.CP{len(checkpoints) + 1:02d}"
+    checkpoints.append(
+        {
+            "id": checkpoint_id,
+            "kind": "security",
+            "recorded_by": actor,
+            "recorded_at": utc_now(),
+            "evidence": args.evidence,
+            "notes": args.note or f"Adopted {args.amendment} control-plane amendment.",
+        }
+    )
+    wave_campaign["scope"] = "wave"
+    data["control_plane"]["active_amendment"] = None
+    append_amendment_event(amendment, "ADOPTED", actor, args.note or f"Adopted via {checkpoint_id}.")
+    persist(args, data)
+    print(f"Adopted {args.amendment}; {wave['id']} remains PAUSED until an explicit Wave resume")
+
+
+def command_amendment_dispose(args, data, capabilities, slices, tasks, gates) -> None:
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    lifecycle = (amendment.get("lifecycle") or {}).get("status")
+    if lifecycle in AMENDMENT_TERMINAL_STATES:
+        raise SystemExit("A terminal amendment disposition cannot be repeated")
+    campaign = amendment.get("campaign") or {}
+    if campaign.get("status") in {"ACTIVE", "REVIEW"}:
+        raise SystemExit("Pause the amendment and resolve active/review work before disposition")
+    if any(task.get("status") in {"IN_PROGRESS", "REVIEW"} for task in amendment.get("tasks", [])):
+        raise SystemExit("Active or review amendment tasks must be resolved before disposition")
+    reviewer = normalized_identity(args.reviewer, "Amendment disposition reviewer")
+    implementer = (amendment.get("bootstrap") or {}).get("implementer")
+    if reviewer in {implementer, campaign.get("owner")}:
+        raise SystemExit("Amendment disposition reviewer must be independent from implementation ownership")
+    safe_resume = args.safe_resume_condition.strip()
+    if not safe_resume:
+        raise SystemExit("An explicit safe-resume condition is required")
+    if not args.evidence:
+        raise SystemExit("Disposition evidence is required")
+    terminal = "DEFERRED" if args.result == "deferred" else "WITHDRAWN"
+    for task in amendment.get("tasks", []):
+        if task.get("status") not in {"DONE", "CANCELLED"}:
+            task.update(status="DEFERRED", lease=None, updated_at=utc_now())
+    amendment["completion"].update(
+        status="PAUSED",
+        reviewer=reviewer,
+        reviewed_at=utc_now(),
+        evidence=args.evidence,
+        notes=f"{args.note}\nSafe-resume condition: {safe_resume}".strip(),
+    )
+    wave = get(wave_map(data), str(amendment["target_wave"]), "wave")
+    wave_campaign = wave.get("campaign") or {}
+    if wave_campaign.get("status") != "PAUSED":
+        raise SystemExit("Target Wave must remain PAUSED during amendment disposition")
+    wave_campaign["scope"] = "wave"
+    checkpoints = wave.setdefault("checkpoints", [])
+    checkpoint_id = f"{wave['id']}.CP{len(checkpoints) + 1:02d}"
+    checkpoints.append(
+        {
+            "id": checkpoint_id,
+            "kind": "security",
+            "recorded_by": reviewer,
+            "recorded_at": utc_now(),
+            "evidence": args.evidence,
+            "notes": f"{terminal} {args.amendment}; safe-resume condition: {safe_resume}",
+        }
+    )
+    data["control_plane"]["active_amendment"] = None
+    append_amendment_event(
+        amendment,
+        terminal,
+        reviewer,
+        f"{args.note or terminal}; safe-resume condition: {safe_resume}",
+    )
+    persist(args, data)
+    print(f"Recorded append-only {terminal} disposition for {args.amendment}; {wave['id']} remains PAUSED")
+
+
 def command_wave_status(args, data, capabilities, slices, tasks, gates) -> None:
     waves = wave_map(data)
     selected = [get(waves, args.wave, "wave")] if args.wave else list(waves.values())
@@ -1737,7 +2873,7 @@ def command_wave_status(args, data, capabilities, slices, tasks, gates) -> None:
             "campaign": wave.get("campaign"),
             "checkpoints": wave.get("checkpoints", []),
             "completion": wave.get("completion"),
-            "task_states": dict(Counter(task["status"] for task in tasks.values() if task.get("wave") == wave_id)),
+            "task_states": dict(Counter(task["status"] for task in tasks.values() if task_wave(task) == wave_id)),
             "slice_completion": dict(
                 Counter(
                     slice_.get("completion", {}).get("status")
@@ -1746,6 +2882,15 @@ def command_wave_status(args, data, capabilities, slices, tasks, gates) -> None:
                 )
             ),
         }
+        if wave_id in wave_approval_base_map(data):
+            view["approvalAuthority"] = {
+                "base": wave_approval_base_map(data)[wave_id],
+                "amendments": [
+                    amendment
+                    for amendment in data.get("wave_amendments", [])
+                    if amendment.get("target_wave") == wave_id
+                ],
+            }
         print_yaml(view)
 
 
@@ -1753,6 +2898,11 @@ def command_wave_start(args, data, capabilities, slices, tasks, gates) -> None:
     require_positive_lease_hours(args.lease_hours)
     require_execution_target(args.profile, args.platform)
     wave = get(wave_map(data), args.wave, "wave")
+    pending_bootstrap = approved_unbootstrapped_amendment(args.file, data, str(wave["id"]))
+    if pending_bootstrap is not None:
+        raise SystemExit(f"Wave {wave['id']} is interrupted by approved amendment {pending_bootstrap['id']}")
+    if blocking_wave_amendments(data, str(wave["id"])):
+        raise SystemExit(f"Wave {wave['id']} is interrupted by an unfinished approved amendment")
     program = global_program_position(data, slices, tasks, gates)
     if program.get("state") != "ACTIVE_WAVE" or program.get("current_wave") != wave["id"]:
         raise SystemExit(
@@ -1838,6 +2988,13 @@ def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
     require_positive_lease_hours(args.lease_hours)
     require_execution_target(args.profile, args.platform)
     wave = get(wave_map(data), args.wave, "wave")
+    pending_bootstrap = approved_unbootstrapped_amendment(args.file, data, str(wave["id"]))
+    if pending_bootstrap is not None:
+        raise SystemExit(
+            f"Wave {wave['id']} cannot resume until approved amendment {pending_bootstrap['id']} is adopted"
+        )
+    if blocking_wave_amendments(data, str(wave["id"])):
+        raise SystemExit(f"Wave {wave['id']} cannot resume until its interrupting amendment is adopted or disposed")
     campaign = wave.get("campaign") or {}
     if campaign.get("status") != "PAUSED":
         raise SystemExit("Only a PAUSED Wave may be resumed")
@@ -1902,11 +3059,13 @@ def command_wave_checkpoint(args, data, capabilities, slices, tasks, gates) -> N
 
 def command_wave_submit(args, data, capabilities, slices, tasks, gates) -> None:
     wave = get(wave_map(data), args.wave, "wave")
+    if blocking_wave_amendments(data, str(wave["id"])):
+        raise SystemExit(f"Wave {wave['id']} cannot submit while an interrupting amendment is unfinished")
     campaign = wave.get("campaign") or {}
     if campaign.get("status") != "ACTIVE":
         raise SystemExit("Wave campaign must be ACTIVE")
     require_active_lease(wave, args.agent, f"Wave {wave['id']}")
-    if not wave_complete(str(wave["id"]), slices, tasks):
+    if not wave_complete(str(wave["id"]), slices, tasks, data):
         raise SystemExit("Every Wave task must be DONE and every slice independently APPROVED before Wave submission")
     if not args.evidence:
         raise SystemExit("Full Wave-exit qualification evidence is required")
@@ -1917,6 +3076,8 @@ def command_wave_submit(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_wave_review(args, data, capabilities, slices, tasks, gates) -> None:
     wave = get(wave_map(data), args.wave, "wave")
+    if blocking_wave_amendments(data, str(wave["id"])):
+        raise SystemExit(f"Wave {wave['id']} cannot complete review while an interrupting amendment is unfinished")
     campaign = wave.get("campaign") or {}
     completion = wave.get("completion") or {}
     if campaign.get("status") != "REVIEW" or completion.get("status") != "REVIEW":
@@ -2349,7 +3510,36 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
     if task["status"] != "READY":
         raise SystemExit(f"Task is {task['status']}, not READY")
     if not profile_matches(task, args.profile) or not platform_matches(task, args.platform):
-        raise SystemExit("Task is not eligible for the requested profile/platform")
+        amendment = amendment_for_task(data, task)
+        if amendment is None:
+            raise SystemExit("Task is not eligible for the requested profile/platform")
+    amendment = amendment_for_task(data, task)
+    if amendment is not None:
+        campaign = amendment.get("campaign") or {}
+        if campaign.get("status") != "ACTIVE" or campaign.get("scope") != "wave-amendment":
+            raise SystemExit(f"Wave amendment {amendment['id']} campaign is not ACTIVE")
+        require_active_lease(amendment, agent, f"Wave amendment {amendment['id']}")
+        if args.profile != campaign.get("profile") or args.platform != campaign.get("platform"):
+            raise SystemExit("Task claim profile/platform must match the active amendment campaign")
+        now = utc_now()
+        task.update(
+            status="IN_PROGRESS",
+            owner=agent,
+            branch=branch,
+            base_sha=base_sha,
+            worktree=worktree,
+            started_at=task.get("started_at") or now,
+            updated_at=now,
+            blocker=None,
+            verification_state=None,
+            lease=new_lease(agent, args.lease_hours),
+        )
+        persist(args, data)
+        print(f"Claimed {task['id']} within Wave amendment {amendment['id']}")
+        return
+    blockers = blocking_wave_amendments(data, str(task.get("wave")))
+    if blockers:
+        raise SystemExit(f"Ordinary task claim denied while {blockers[0]['id']} interrupts {task.get('wave')}")
     active_waves = active_wave_campaigns(data)
     if active_waves:
         holder = active_waves[0]
@@ -2542,12 +3732,35 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
     if task["status"] not in {"BLOCKED", "REVIEW", "DONE"}:
         raise SystemExit(f"Task cannot be reopened from {task['status']}")
     holder = require_task_campaign_lease(task, capabilities, agent, data)
+    amendment = amendment_for_task(data, task)
+    if amendment is not None:
+        if not task_can_be_ready(data, capabilities, slices, tasks, gates, task):
+            raise SystemExit("Amendment task cannot be reopened while its dependency is incomplete")
+        if any(
+            gate.get("status") == "APPROVED" and gate.get("after_wave") == task_wave(task) for gate in gates.values()
+        ):
+            raise SystemExit("Task cannot be reopened after its Wave release gate is APPROVED")
+        lease = task.get("lease")
+        if lease_is_active(task) and lease and lease.get("claimed_by") != agent:
+            raise SystemExit(f"Task {task['id']} has an active lease owned by {lease.get('claimed_by')}")
+        task.update(
+            status="IN_PROGRESS",
+            owner=agent,
+            updated_at=utc_now(),
+            completed_at=None,
+            verification_state=None,
+            blocker=None,
+            review={"reviewer": None, "result": None, "reviewed_at": None, "notes": f"Reopened: {args.reason}"},
+            lease=new_lease(agent, args.lease_hours),
+        )
+        persist(args, data)
+        return
     capability = capabilities[task["capability_id"]]
     active_wave_id = holder.get("id") if holder in active_wave_campaigns(data) else campaign_wave(capability)
     wave_remediation = (
         holder in active_wave_campaigns(data)
         and (holder.get("completion") or {}).get("status") in {"IN_PROGRESS", "CHANGES_REQUESTED", "BLOCKED"}
-        and wave_complete(str(active_wave_id), slices, tasks)
+        and wave_complete(str(active_wave_id), slices, tasks, data)
     )
     if not wave_remediation and current_slice(capability, str(active_wave_id)) is not slices[task["slice_id"]]:
         raise SystemExit("Only a task in the active Wave campaign's current capability slice may be reopened")
@@ -2578,6 +3791,8 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_cancel(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
+    if amendment_for_task(data, task) is not None:
+        raise SystemExit("Approved amendment tasks cannot be cancelled; use an append-only amendment disposition")
     if task["status"] in {"DONE", "CANCELLED"}:
         raise SystemExit(f"{task['status']} tasks cannot transition to CANCELLED")
     actor = normalized_identity(args.actor, "Cancellation actor")
@@ -2617,6 +3832,11 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
     approver = normalized_identity(args.approver, "Release-gate approver")
     if not args.evidence:
         raise SystemExit("At least one evidence reference is required")
+    pending_bootstrap = approved_unbootstrapped_amendment(args.file, data, str(gate.get("after_wave")))
+    if pending_bootstrap is not None:
+        raise SystemExit(
+            f"Release gate {gate['id']} cannot approve while approved amendment {pending_bootstrap['id']} is unfinished"
+        )
     ordered_gates = [candidate for candidate in data.get("release_gates", []) if isinstance(candidate, dict)]
     gate_index = next(index for index, candidate in enumerate(ordered_gates) if candidate.get("id") == gate["id"])
     prior_pending = [
@@ -2626,8 +3846,13 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
         raise SystemExit(
             f"Release gate {gate['id']} cannot approve before upstream gate {prior_pending[0]} is APPROVED"
         )
+    blockers = blocking_wave_amendments(data, str(gate.get("after_wave")))
+    if blockers:
+        raise SystemExit(
+            f"Release gate {gate['id']} cannot approve while interrupting amendment {blockers[0]['id']} is unfinished"
+        )
     incomplete = sorted(
-        task["id"] for task in tasks.values() if task.get("wave") == gate.get("after_wave") and task["status"] != "DONE"
+        task["id"] for task in tasks.values() if task_wave(task) == gate.get("after_wave") and task["status"] != "DONE"
     )
     if incomplete:
         raise SystemExit(
@@ -2658,7 +3883,7 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
     }
     for wid in gate.get("unlocks_waves", []):
         for task in tasks.values():
-            if task["wave"] == wid and task["status"] == "DEFERRED":
+            if task_wave(task) == wid and task["status"] == "DEFERRED":
                 task["status"] = "NOT_STARTED"
                 task["updated_at"] = utc_now()
         for slice_ in slices.values():
@@ -2682,6 +3907,59 @@ def build_parser() -> argparse.ArgumentParser:
     nc.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
     sh = sub.add_parser("show")
     sh.add_argument("task")
+    amendment = sub.add_parser("amendment")
+    ams = amendment.add_subparsers(dest="amendment_command", required=True)
+    amstat = ams.add_parser("status")
+    amstat.add_argument("amendment", nargs="?")
+    ambs = ams.add_parser("bootstrap-submit")
+    ambs.add_argument("amendment")
+    ambs.add_argument("--agent", required=True)
+    ambs.add_argument("--approval-commit", required=True)
+    ambs.add_argument("--implementation-commit", required=True)
+    ambs.add_argument("--evidence", required=True)
+    ambr = ams.add_parser("bootstrap-review")
+    ambr.add_argument("amendment")
+    ambr.add_argument("--reviewer", required=True)
+    ambr.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
+    ambr.add_argument("--note", default="")
+    ammat = ams.add_parser("materialize")
+    ammat.add_argument("amendment")
+    ammat.add_argument("--agent", required=True)
+    amact = ams.add_parser("activate")
+    amact.add_argument("amendment")
+    amact.add_argument("--agent", required=True)
+    amact.add_argument("--branch", required=True)
+    amact.add_argument("--base-sha", required=True)
+    amact.add_argument("--worktree", required=True)
+    amact.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    amact.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    amact.add_argument("--lease-hours", type=int, default=24)
+    ampause = ams.add_parser("pause")
+    ampause.add_argument("amendment")
+    ampause.add_argument("--agent", required=True)
+    ampause.add_argument("--reason", required=True)
+    amsubmit = ams.add_parser("submit")
+    amsubmit.add_argument("amendment")
+    amsubmit.add_argument("--agent", required=True)
+    amsubmit.add_argument("--evidence", action="append", required=True)
+    amsubmit.add_argument("--note", default="")
+    amreview = ams.add_parser("review")
+    amreview.add_argument("amendment")
+    amreview.add_argument("--reviewer", required=True)
+    amreview.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
+    amreview.add_argument("--note", default="")
+    amadopt = ams.add_parser("adopt")
+    amadopt.add_argument("amendment")
+    amadopt.add_argument("--agent", required=True)
+    amadopt.add_argument("--evidence", action="append", required=True)
+    amadopt.add_argument("--note", default="")
+    amdispose = ams.add_parser("dispose")
+    amdispose.add_argument("amendment")
+    amdispose.add_argument("--reviewer", required=True)
+    amdispose.add_argument("--result", choices=["deferred", "withdrawn"], required=True)
+    amdispose.add_argument("--safe-resume-condition", required=True)
+    amdispose.add_argument("--evidence", action="append", required=True)
+    amdispose.add_argument("--note", default="")
     wave = sub.add_parser("wave")
     ws = wave.add_subparsers(dest="wave_command", required=True)
     wstat = ws.add_parser("status")
@@ -2875,6 +4153,9 @@ def main() -> None:
         raise SystemExit(f"Cannot load backlog {args.file}: {exc}") from exc
     data, capabilities, slices, tasks, gates = load(args.file)
     args.source_identity = identity_snapshot(data)
+    args.source_amendment_identity = amendment_identity_snapshot(data)
+    args.source_approved_waves = approved_wave_snapshot(data)
+    args.source_amendment_history = amendment_history_snapshot(data)
     args.repo_root = discover_repository(args.file)
     if args.command == "validate":
         command_validate(args, data, capabilities, slices, tasks, gates)
@@ -2886,9 +4167,30 @@ def main() -> None:
         command_next_capability(args, data, capabilities, slices, tasks, gates)
     elif args.command == "show":
         task = dict(get(tasks, args.task, "task"))
-        task["displayCapability"] = capability_display(capabilities[task["capability_id"]])
-        task["displaySlice"] = slice_display(slices[task["slice_id"]])
+        if amendment_for_task(data, task) is None:
+            task["displayCapability"] = capability_display(capabilities[task["capability_id"]])
+            task["displaySlice"] = slice_display(slices[task["slice_id"]])
         print_yaml(task)
+    elif args.command == "amendment" and args.amendment_command == "status":
+        command_amendment_status(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "bootstrap-submit":
+        command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "bootstrap-review":
+        command_amendment_bootstrap_review(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "materialize":
+        command_amendment_materialize(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "activate":
+        command_amendment_activate(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "pause":
+        command_amendment_pause(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "submit":
+        command_amendment_submit(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "review":
+        command_amendment_review(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "adopt":
+        command_amendment_adopt(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "dispose":
+        command_amendment_dispose(args, data, capabilities, slices, tasks, gates)
     elif args.command == "wave" and args.wave_command == "status":
         command_wave_status(args, data, capabilities, slices, tasks, gates)
     elif args.command == "wave" and args.wave_command == "start":

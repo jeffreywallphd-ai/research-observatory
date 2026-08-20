@@ -51,8 +51,8 @@
   <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
   <div class="feedback-message" data-feedback-message role="status"></div>
   <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review CAP-01
-python tools/planctl.py --repo . wave approve W1 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
 python tools/planctl.py --repo . wave approve W5 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+# W1 approval is immutable; later changes use an append-only Wave amendment.
 # Only for overrides or notes:
 python tools/planctl.py --repo . apply-feedback CAP-01 &lt;downloaded-json&gt;
 python tools/planctl.py --repo . approve CAP-01 --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;

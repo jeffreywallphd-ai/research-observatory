@@ -72,6 +72,22 @@ Historical capability and slice approvals remain evidence. When a later Wave
 packet reuses an already approved capability decision, the Wave approval binds
 the exact current decision bytes without erasing the earlier approval.
 
+### Append-only amendment authority
+
+An approved Wave cannot be reapproved or edited in place. A material control or
+enabler defect discovered during execution interrupts the Wave at a quiescent
+boundary and uses a hash-bound ECR plus ordered `WN.ANN` amendment record. The
+base approval and all earlier amendments remain immutable. Human approval of the
+ECR authorizes only its named bootstrap and task inventory; task materialization
+requires independent bootstrap review, and ordinary Wave execution stays held.
+
+Adoption requires all amendment tasks to be independently approved, an
+independent amendment-exit disposition, and a Wave control/security checkpoint.
+Explicit deferral or withdrawal is also append-only and must state a reviewed
+safe-resume condition. Missing, forked, reordered, rewritten, stale, or
+self-reviewed authority fails closed. A repeated `planctl wave approve` command
+is never an amendment mechanism.
+
 ## Review and verification cadence
 
 - **Task:** narrow deterministic checks chosen by credible failure likelihood,

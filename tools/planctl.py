@@ -11,13 +11,18 @@ import shutil
 import subprocess
 import sys
 from datetime import UTC, datetime
-from pathlib import Path
+from itertools import pairwise
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
+from jsonschema import Draft202012Validator, FormatChecker
+from jsonschema.exceptions import SchemaError
 
 OTHER_SENTINEL = "__OTHER__"
 OTHER_PREFIX = "Other: "
+ECR_ID_PATTERN = re.compile(r"^ECR-[0-9]{4}$")
+AMENDMENT_ID_PATTERN = re.compile(r"^W(?:[0-9]|1[01])\.A[0-9]{2}$")
 
 
 def slug(value: str) -> str:
@@ -106,6 +111,35 @@ def print_wave_review_link(root: Path, wave_id: str) -> None:
         print(f"Repository-relative page: {page.relative_to(root).as_posix()}")
     else:
         print(f"Pre-Wave approval page has not been generated: {page}")
+
+
+def ecr_packet_path(root: Path, change_request_id: str) -> Path:
+    if ECR_ID_PATTERN.fullmatch(change_request_id) is None:
+        raise ValueError(f"Invalid enabler change request identity {change_request_id!r}")
+    return root / "planning" / "enabler-change-requests" / f"{change_request_id}.packet.json"
+
+
+def ecr_review_page(root: Path, change_request_id: str) -> Path:
+    generated = root / "planning" / "review-site" / "enablers" / f"{change_request_id}.html"
+    if generated.exists():
+        return generated
+    return root / "planning" / "enabler-change-requests" / f"{change_request_id}-review.html"
+
+
+def print_ecr_review_links(root: Path, change_request_id: str) -> None:
+    page = ecr_review_page(root, change_request_id)
+    packet = ecr_packet_path(root, change_request_id)
+    proposal = packet.with_name(f"{change_request_id}.md")
+    for label, path in (
+        ("Enabler review page", page),
+        ("Canonical proposal", proposal),
+        ("Hash-bound packet", packet),
+    ):
+        if path.exists():
+            print(f"{label}: {path.as_uri()}")
+            print(f"Repository-relative {label.lower()}: {path.relative_to(root).as_posix()}")
+        else:
+            print(f"{label} has not been generated: {path}")
 
 
 def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
@@ -571,7 +605,436 @@ def prepare_wave(root: Path, wave_id: str) -> list[Path]:
     return created
 
 
+def _json_document(path: Path) -> tuple[dict[str, Any], bytes]:
+    payload = path.read_bytes()
+    document = json.loads(payload)
+    if not isinstance(document, dict):
+        raise ValueError(f"{path}: expected a JSON object")
+    return document, payload
+
+
+def _json_object(value: Any) -> dict[str, Any]:
+    return value if isinstance(value, dict) else {}
+
+
+def _schema_errors(document: dict[str, Any], schema_path: Path, label: str) -> list[str]:
+    try:
+        schema, _ = _json_document(schema_path)
+        Draft202012Validator.check_schema(schema)
+    except (OSError, ValueError, json.JSONDecodeError, SchemaError) as exc:
+        return [f"{label}: schema is unavailable or invalid: {exc}"]
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    errors = sorted(validator.iter_errors(document), key=lambda item: list(item.absolute_path))
+    return [
+        f"{label}: schema error at {'/'.join(map(str, error.absolute_path)) or '<root>'}: {error.message}"
+        for error in errors
+    ]
+
+
+def _safe_ecr_file(root: Path, relative: object) -> Path | None:
+    if not isinstance(relative, str) or "\\" in relative:
+        return None
+    pure = PurePosixPath(relative)
+    if pure.is_absolute() or ".." in pure.parts or not relative.startswith("planning/enabler-change-requests/"):
+        return None
+    path = root.joinpath(*pure.parts).resolve()
+    expected = (root / "planning" / "enabler-change-requests").resolve()
+    try:
+        path.relative_to(expected)
+    except ValueError:
+        return None
+    return path
+
+
+def _git_blob(root: Path, commit: str, relative: str) -> bytes | None:
+    completed = subprocess.run(["git", "show", f"{commit}:{relative}"], cwd=root, capture_output=True, check=False)
+    return completed.stdout if completed.returncode == 0 else None
+
+
+def _git_commit_exists(root: Path, commit: str) -> bool:
+    completed = subprocess.run(
+        ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return completed.returncode == 0
+
+
+def _git_is_ancestor(root: Path, ancestor: str, descendant: str = "HEAD") -> bool:
+    completed = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", ancestor, descendant],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return completed.returncode == 0
+
+
+def _approval_introduction_commit(root: Path, relative: str) -> str | None:
+    completed = subprocess.run(
+        ["git", "log", "--format=%H", "--diff-filter=A", "--", relative],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    commits = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+    return commits[0] if completed.returncode == 0 and len(commits) == 1 else None
+
+
+def _historical_wave_approval(root: Path, commit: str, wave_id: str) -> dict[str, Any] | None:
+    payload = _git_blob(root, commit, "planning/backlog.yaml")
+    if payload is None:
+        return None
+    try:
+        document = yaml.safe_load(payload.decode("utf-8"))
+    except UnicodeError, yaml.YAMLError:
+        return None
+    if not isinstance(document, dict):
+        return None
+    wave = next((item for item in document.get("waves", []) if item.get("id") == wave_id), None)
+    return (wave or {}).get("approval")
+
+
+def _packet_file_errors(root: Path, packet: dict[str, Any], packet_commit: str | None = None) -> list[str]:
+    errors: list[str] = []
+    seen: set[str] = set()
+    for item in packet.get("files", []):
+        relative = item.get("path") if isinstance(item, dict) else None
+        if not isinstance(relative, str) or relative in seen:
+            errors.append("ECR packet file inventory contains a duplicate or invalid path")
+            continue
+        seen.add(relative)
+        path = _safe_ecr_file(root, relative)
+        if path is None:
+            errors.append(f"ECR packet file path is unsafe: {relative!r}")
+            continue
+        try:
+            payload = path.read_bytes()
+        except OSError as exc:
+            errors.append(f"ECR packet file is unreadable: {relative}: {exc}")
+            continue
+        if hashlib.sha256(payload).hexdigest() != item.get("sha256"):
+            errors.append(f"ECR packet file hash mismatch: {relative}")
+        if packet_commit and _git_blob(root, packet_commit, relative) != payload:
+            errors.append(f"ECR packet file differs from {packet_commit}: {relative}")
+    roles = [item.get("role") for item in packet.get("files", []) if isinstance(item, dict)]
+    for required in ("canonical-proposal", "proposal-schema", "human-review"):
+        if roles.count(required) != 1:
+            errors.append(f"ECR packet must contain exactly one {required} file")
+    return errors
+
+
+def _approval_record_errors(
+    root: Path,
+    packet: dict[str, Any],
+    record: dict[str, Any],
+    payload: bytes,
+    *,
+    approval_relative: str,
+    require_committed_history: bool,
+) -> list[str]:
+    errors = _schema_errors(
+        record,
+        root / "planning" / "wave-amendment-approvals" / "wave-amendment-approval.schema.json",
+        "Wave amendment approval",
+    )
+    amendment_id = packet.get("proposedAmendmentId")
+    packet_relative = f"planning/enabler-change-requests/{packet.get('changeRequestId')}.packet.json"
+    proposal: dict[str, Any] = next(
+        (
+            candidate
+            for item in packet.get("files", [])
+            if (candidate := _json_object(item)).get("role") == "canonical-proposal"
+        ),
+        {},
+    )
+    packet_reference = _json_object(record.get("packet"))
+    effective = _json_object(record.get("effectiveBase"))
+    authority = _json_object(packet.get("authority"))
+    review = _json_object(record.get("independentPacketReview"))
+    bootstrap = _json_object(packet.get("bootstrapUnit"))
+    expected = (
+        ("amendmentId", record.get("amendmentId"), amendment_id),
+        ("changeRequestId", record.get("changeRequestId"), packet.get("changeRequestId")),
+        ("targetWave", record.get("targetWave"), packet.get("targetWave")),
+        ("bootstrapUnit", record.get("bootstrapUnit"), bootstrap.get("id")),
+        ("packet.path", packet_reference.get("path"), packet_relative),
+        ("packet.proposalPath", packet_reference.get("proposalPath"), proposal.get("path")),
+        ("packet.proposalSha256", packet_reference.get("proposalSha256"), proposal.get("sha256")),
+        (
+            "effectiveBase.originalPacketCommit",
+            effective.get("originalPacketCommit"),
+            authority.get("originalWavePacketCommit"),
+        ),
+        (
+            "effectiveBase.originalApprovalRecordCommit",
+            effective.get("originalApprovalRecordCommit"),
+            authority.get("originalApprovalRecordCommit"),
+        ),
+        ("effectiveBase.legacyAmendmentId", effective.get("legacyAmendmentId"), authority.get("legacyAmendmentId")),
+        (
+            "effectiveBase.legacyAmendmentPacketCommit",
+            effective.get("legacyAmendmentPacketCommit"),
+            authority.get("legacyAmendmentPacketCommit"),
+        ),
+        (
+            "effectiveBase.legacyAmendmentRecordCommit",
+            effective.get("legacyAmendmentRecordCommit"),
+            authority.get("legacyAmendmentRecordCommit"),
+        ),
+        (
+            "effectiveBase.effectivePacketCommit",
+            effective.get("effectivePacketCommit"),
+            authority.get("effectiveBasePacketCommit"),
+        ),
+    )
+    for field, actual, wanted in expected:
+        if actual != wanted:
+            errors.append(f"Wave amendment approval {field} does not match the ECR packet")
+    if record.get("authorizedTaskIds") != packet.get("authorizedTaskIds"):
+        errors.append("Wave amendment approval task inventory does not match the ECR packet")
+    if not isinstance(record.get("approvedBy"), str) or not record["approvedBy"].strip():
+        errors.append("Wave amendment approval requires a non-empty human approver identity")
+    if review.get("result") != "APPROVED" or review.get("candidateCommit") != packet_reference.get("commit"):
+        errors.append("Wave amendment approval requires an APPROVED independent review of the exact packet commit")
+    if review.get("reviewer") == record.get("approvedBy"):
+        errors.append("Wave amendment packet reviewer must be independent from the human approver")
+    packet_commit = packet_reference.get("commit")
+    if not isinstance(packet_commit, str) or re.fullmatch(r"[0-9a-f]{40}", packet_commit) is None:
+        errors.append("Wave amendment approval packet commit must be a full lowercase Git SHA")
+    else:
+        packet_path = ecr_packet_path(root, str(packet.get("changeRequestId")))
+        try:
+            packet_payload = packet_path.read_bytes()
+        except OSError:
+            packet_payload = b""
+        if hashlib.sha256(packet_payload).hexdigest() != packet_reference.get("sha256"):
+            errors.append("Wave amendment approval packet hash does not match the current packet")
+        if not _git_commit_exists(root, packet_commit):
+            errors.append("Wave amendment approval packet commit does not exist")
+        elif _git_blob(root, packet_commit, packet_relative) != packet_payload:
+            errors.append("Wave amendment approval packet differs from its immutable Git blob")
+        errors.extend(_packet_file_errors(root, packet, packet_commit))
+    if require_committed_history:
+        introduced = _approval_introduction_commit(root, approval_relative)
+        if introduced is None:
+            errors.append("Wave amendment approval must have exactly one Git introduction commit")
+        else:
+            if _git_blob(root, introduced, approval_relative) != payload:
+                errors.append("Wave amendment approval was changed after its introduction commit")
+            if not _git_is_ancestor(root, introduced):
+                errors.append("Wave amendment approval introduction is not on current history")
+            if isinstance(packet_commit, str) and not _git_is_ancestor(root, packet_commit, introduced):
+                errors.append("Wave amendment approval introduction does not descend from its packet commit")
+    return errors
+
+
+def _authority_history_errors(root: Path, packet: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    authority = _json_object(packet.get("authority"))
+    wave_id = str(packet.get("targetWave"))
+    original = _historical_wave_approval(root, str(authority.get("originalApprovalRecordCommit")), wave_id)
+    if original is None or original.get("approved_commit") != authority.get("originalWavePacketCommit"):
+        errors.append("ECR original Wave authority does not match its historical approval record")
+    legacy_id = authority.get("legacyAmendmentId")
+    if not isinstance(legacy_id, str) or AMENDMENT_ID_PATTERN.fullmatch(legacy_id) is None:
+        errors.append("ECR legacy amendment identity is invalid")
+        return errors
+    legacy_path = root / "planning" / "wave-amendment-approvals" / f"{legacy_id}.json"
+    try:
+        legacy, _ = _json_document(legacy_path)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        errors.append(f"ECR legacy amendment record is unavailable: {exc}")
+        return errors
+    errors.extend(
+        _schema_errors(
+            legacy,
+            root / "planning" / "wave-amendment-approvals" / "wave-amendment-approval.schema.json",
+            "Legacy Wave amendment approval",
+        )
+    )
+    migration = _json_object(legacy.get("migration"))
+    legacy_packet = _json_object(legacy.get("packet"))
+    legacy_base = _json_object(legacy.get("effectiveBase"))
+    checks = (
+        (legacy.get("amendmentId"), legacy_id, "legacy amendment identity"),
+        (legacy.get("targetWave"), wave_id, "legacy target Wave"),
+        (legacy_packet.get("commit"), authority.get("legacyAmendmentPacketCommit"), "legacy packet commit"),
+        (
+            migration.get("historicalRecordCommit"),
+            authority.get("legacyAmendmentRecordCommit"),
+            "legacy approval record commit",
+        ),
+        (
+            legacy_base.get("originalPacketCommit"),
+            authority.get("originalWavePacketCommit"),
+            "legacy original packet commit",
+        ),
+        (
+            legacy_base.get("originalApprovalRecordCommit"),
+            authority.get("originalApprovalRecordCommit"),
+            "legacy original approval record commit",
+        ),
+    )
+    for actual, wanted, label in checks:
+        if actual != wanted:
+            errors.append(f"ECR {label} does not match the approved authority chain")
+    migrated = migration.get("effectiveApproval")
+    historical = _historical_wave_approval(root, str(authority.get("legacyAmendmentRecordCommit")), wave_id)
+    try:
+        backlog, _ = load_backlog(root)
+        current_wave = next((item for item in backlog.get("waves", []) if item.get("id") == wave_id), None)
+        current = (current_wave or {}).get("approval")
+    except OSError, yaml.YAMLError:
+        current = None
+    if migrated != historical:
+        errors.append("ECR migrated legacy approval does not match its historical record")
+    if migrated != current:
+        errors.append("ECR migrated legacy approval does not reproduce the current Wave authorization")
+    ordered_commits = (
+        authority.get("originalWavePacketCommit"),
+        authority.get("originalApprovalRecordCommit"),
+        authority.get("legacyAmendmentPacketCommit"),
+        authority.get("legacyAmendmentRecordCommit"),
+    )
+    for commit in ordered_commits:
+        if not isinstance(commit, str) or not _git_commit_exists(root, commit) or not _git_is_ancestor(root, commit):
+            errors.append(f"ECR authority commit is missing or not on current history: {commit}")
+    for ancestor, descendant in pairwise(ordered_commits):
+        if (
+            isinstance(ancestor, str)
+            and isinstance(descendant, str)
+            and not _git_is_ancestor(root, ancestor, descendant)
+        ):
+            errors.append(f"ECR authority chain is forked: {ancestor} is not an ancestor of {descendant}")
+    return errors
+
+
+def ecr_validation_errors(root: Path, change_request_id: str, *, require_approved: bool) -> list[str]:
+    packet_path = ecr_packet_path(root, change_request_id)
+    try:
+        packet, packet_payload = _json_document(packet_path)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        return [f"ECR packet is unavailable or invalid: {exc}"]
+    errors = _schema_errors(
+        packet,
+        root / "planning" / "enabler-change-requests" / "enabler-change-request.schema.json",
+        "ECR packet",
+    )
+    if packet.get("changeRequestId") != change_request_id:
+        errors.append("ECR packet identity does not match the requested change request")
+    errors.extend(_packet_file_errors(root, packet))
+    errors.extend(_authority_history_errors(root, packet))
+    amendment_id = packet.get("proposedAmendmentId")
+    approval_relative = f"planning/wave-amendment-approvals/{amendment_id}.json"
+    approval_path = root.joinpath(*PurePosixPath(approval_relative).parts)
+    if not approval_path.exists():
+        if require_approved:
+            errors.append(f"ECR has no immutable approval record: {approval_relative}")
+        return errors
+    try:
+        record, approval_payload = _json_document(approval_path)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        errors.append(f"Wave amendment approval is unavailable or invalid: {exc}")
+        return errors
+    errors.extend(
+        _approval_record_errors(
+            root,
+            packet,
+            record,
+            approval_payload,
+            approval_relative=approval_relative,
+            require_committed_history=require_approved,
+        )
+    )
+    if require_approved:
+        packet_reference = _json_object(record.get("packet"))
+        if hashlib.sha256(packet_payload).hexdigest() != packet_reference.get("sha256"):
+            errors.append("Approved ECR packet SHA-256 does not match the current packet")
+    return errors
+
+
+def validate_ecr(root: Path, change_request_id: str, *, require_approved: bool) -> int:
+    errors = ecr_validation_errors(root, change_request_id, require_approved=require_approved)
+    for error in errors:
+        print(f"ERROR: {error}", file=sys.stderr)
+    if not errors:
+        state = "approved and history-bound" if require_approved else "structurally and historically valid"
+        print(f"{change_request_id} is {state}.")
+    return 1 if errors else 0
+
+
+def approve_ecr(
+    root: Path,
+    change_request_id: str,
+    *,
+    record_path: Path,
+    approver: str,
+    commit: str,
+) -> Path:
+    packet_path = ecr_packet_path(root, change_request_id)
+    packet, _ = _json_document(packet_path)
+    amendment_id = packet.get("proposedAmendmentId")
+    if not isinstance(amendment_id, str) or AMENDMENT_ID_PATTERN.fullmatch(amendment_id) is None:
+        raise ValueError("ECR packet has an invalid proposed amendment identity")
+    destination = root / "planning" / "wave-amendment-approvals" / f"{amendment_id}.json"
+    if destination.exists():
+        raise ValueError(f"{amendment_id} already has an immutable approval record; duplicate approval is forbidden")
+    if not approver.strip():
+        raise ValueError("ECR approval requires a non-empty human approver identity")
+    if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        raise ValueError("ECR approval commit must be a full lowercase Git SHA")
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=False
+    ).stdout.strip()
+    if head != commit:
+        raise ValueError("ECR approval commit must equal the current immutable Git HEAD")
+    status = subprocess.run(["git", "status", "--porcelain"], cwd=root, capture_output=True, text=True, check=False)
+    if status.returncode != 0 or status.stdout.strip():
+        raise ValueError("ECR approval requires a clean worktree so the reviewed packet is exactly commit-bound")
+    preliminary = ecr_validation_errors(root, change_request_id, require_approved=False)
+    if preliminary:
+        raise ValueError("ECR packet validation failed: " + "; ".join(preliminary))
+    record, payload = _json_document(record_path)
+    if record.get("approvedBy") != approver:
+        raise ValueError("Approval record approvedBy must equal --by")
+    if (record.get("packet") or {}).get("commit") != commit:
+        raise ValueError("Approval record packet commit must equal --commit")
+    relative = destination.relative_to(root).as_posix()
+    record_errors = _approval_record_errors(
+        root,
+        packet,
+        record,
+        payload,
+        approval_relative=relative,
+        require_committed_history=False,
+    )
+    if record_errors:
+        raise ValueError("ECR approval record validation failed: " + "; ".join(record_errors))
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with destination.open("xb") as handle:
+            handle.write(payload)
+    except FileExistsError as exc:
+        raise ValueError(f"{amendment_id} approval appeared concurrently; no file was overwritten") from exc
+    return destination
+
+
 def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str = "") -> int:
+    data, _ = load_backlog(root)
+    wave = next((item for item in data.get("waves", []) if item.get("id") == wave_id), None)
+    if wave is None:
+        raise ValueError(f"Unknown Wave {wave_id}")
+    approval = wave.get("approval") or {}
+    if approval.get("status") == "APPROVED":
+        raise ValueError(
+            f"{wave_id} is already approved at {approval.get('approved_commit')}; "
+            "use the append-only ECR/Wave-amendment workflow"
+        )
     if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
         raise ValueError("Wave approval commit must be a full lowercase Git SHA")
     head = subprocess.run(
@@ -583,10 +1046,6 @@ def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str
     if status.returncode != 0 or status.stdout.strip():
         raise ValueError("Wave approval requires a clean worktree so the reviewed packet is exactly commit-bound")
 
-    data, _ = load_backlog(root)
-    wave = next((item for item in data.get("waves", []) if item.get("id") == wave_id), None)
-    if wave is None:
-        raise ValueError(f"Unknown Wave {wave_id}")
     contributing = wave_capabilities(data, wave_id)
     capability_ids = [str(capability["id"]) for capability in contributing]
     decision_ids: list[str] = []
@@ -699,6 +1158,19 @@ def main() -> int:
     wave_approve.add_argument("--commit", required=True)
     wave_approve.add_argument("--note", default="")
 
+    ecr_parser = sub.add_parser("ecr")
+    ecr_sub = ecr_parser.add_subparsers(dest="ecr_command", required=True)
+    for name in ("review", "validate"):
+        command = ecr_sub.add_parser(name)
+        command.add_argument("change_request")
+        if name == "validate":
+            command.add_argument("--require-approved", action="store_true")
+    ecr_approve = ecr_sub.add_parser("approve")
+    ecr_approve.add_argument("change_request")
+    ecr_approve.add_argument("--record", required=True)
+    ecr_approve.add_argument("--by", required=True)
+    ecr_approve.add_argument("--commit", required=True)
+
     for name in ("prepare", "validate", "ready", "decisions", "review", "adopt-recommendations"):
         command = sub.add_parser(name)
         command.add_argument("capability")
@@ -764,6 +1236,38 @@ def main() -> int:
             print(f"ERROR: {exc}", file=sys.stderr)
             generate_review(root)
             print_wave_review_link(root, args.wave)
+            return 1
+
+    if args.command == "ecr":
+        try:
+            if args.ecr_command == "review":
+                result = validate_ecr(root, args.change_request, require_approved=False)
+                print_ecr_review_links(root, args.change_request)
+                return result
+            if args.ecr_command == "validate":
+                result = validate_ecr(
+                    root,
+                    args.change_request,
+                    require_approved=args.require_approved,
+                )
+                print_ecr_review_links(root, args.change_request)
+                return result
+            destination = approve_ecr(
+                root,
+                args.change_request,
+                record_path=Path(args.record).resolve(),
+                approver=args.by,
+                commit=args.commit,
+            )
+            print(f"Appended immutable approval record: {destination.relative_to(root).as_posix()}")
+            print(
+                "Commit this new record; approval history validation remains pending until that introduction commit exists."
+            )
+            print_ecr_review_links(root, args.change_request)
+            return 0
+        except (OSError, ValueError, json.JSONDecodeError, SchemaError, yaml.YAMLError) as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            print_ecr_review_links(root, args.change_request)
             return 1
 
     requested_capability = args.capability

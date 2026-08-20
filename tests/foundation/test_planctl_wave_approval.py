@@ -189,6 +189,42 @@ class PlanctlWaveApprovalTests(unittest.TestCase):
             ):
                 approve_wave(root, "W1", "human:reviewer", commit)
 
+    def test_repeated_wave_approval_fails_before_git_and_preserves_every_byte(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            planning = root / "planning"
+            planning.mkdir()
+            backlog_path = planning / "backlog.yaml"
+            capability_path = planning / "capability-plans" / "CAP-02.md"
+            slice_path = planning / "slice-plans" / "CAP-02" / "CAP-02.S01-slice.md"
+            approval = {
+                "status": "APPROVED",
+                "approved_by": "human:original",
+                "approved_at": "2026-08-01T00:00:00+00:00",
+                "approved_commit": "1" * 40,
+                "capability_ids": ["CAP-02"],
+                "decision_ids": ["CAP-02-D01"],
+                "slice_ids": ["CAP-02.S01"],
+                "notes": None,
+            }
+            backlog = {
+                "waves": [{"id": "W1", "approval": approval}],
+                "capabilities": [{"id": "CAP-02", "slices": [{"id": "CAP-02.S01", "wave": "W1", "title": "Slice"}]}],
+            }
+            backlog_path.write_text(yaml.safe_dump(backlog, sort_keys=False), encoding="utf-8")
+            write_plan(capability_path, {"capability_id": "CAP-02"}, "# Capability\n")
+            write_plan(slice_path, {"slice_id": "CAP-02.S01", "wave": "W1"}, "# Slice\n")
+            before = {path: path.read_bytes() for path in (backlog_path, capability_path, slice_path)}
+
+            with (
+                patch("planctl.subprocess.run") as run,
+                self.assertRaisesRegex(ValueError, "already approved.*append-only ECR/Wave-amendment"),
+            ):
+                approve_wave(root, "W1", "human:second", "2" * 40)
+
+            run.assert_not_called()
+            self.assertEqual(before, {path: path.read_bytes() for path in before})
+
     def test_capability_decisions_are_approved_once_and_slice_plans_progress_by_wave(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

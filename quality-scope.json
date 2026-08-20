@@ -88,6 +88,8 @@
     "tests/foundation/test_ci_check.py",
     "tests/foundation/test_fixture_corpus_check.py",
     "tests/foundation/test_packaging_smoke_check.py",
+    "tests/foundation/test_plan_review_amendments.py",
+    "tests/foundation/test_planctl_amendments.py",
     "tests/foundation/test_planctl_wave_approval.py",
     "tests/foundation/test_quality_check.py",
     "tests/foundation/test_repository_structure.py",

@@ -124,6 +124,61 @@ def main() -> int:
         meta = frontmatter(path)
         slice_plans[meta["slice_id"]] = path
 
+    ecr_packets = {
+        path.name.removesuffix(".packet.json"): path
+        for path in (repo / "planning/enabler-change-requests").glob("ECR-*.packet.json")
+    }
+    manifest_ecrs: dict[str, dict[str, Any]] = {}
+    for entry in manifest.get("enabler_change_requests", []):
+        change_id = str(entry.get("change_request_id"))
+        if change_id in manifest_ecrs:
+            errors.append(f"Duplicate enabler change request in manifest: {change_id}")
+        manifest_ecrs[change_id] = entry
+    if set(manifest_ecrs) != set(ecr_packets):
+        errors.append(
+            f"Manifest ECR set differs from packets: manifest={sorted(manifest_ecrs)} packets={sorted(ecr_packets)}"
+        )
+    for change_id, packet_path in ecr_packets.items():
+        entry = manifest_ecrs.get(change_id)
+        if entry is None:
+            continue
+        packet = json.loads(packet_path.read_text(encoding="utf-8"))
+        expected_packet_path = packet_path.relative_to(repo).as_posix()
+        if entry.get("packet_path") != expected_packet_path or entry.get("packet_sha256") != sha256(packet_path):
+            errors.append(f"{change_id}: packet path/hash differs from generated site manifest")
+        declared = {str(item.get("role")): item for item in packet.get("files", [])}
+        for role, path_key, hash_key in (
+            ("canonical-proposal", "proposal_path", "proposal_sha256"),
+            ("human-review", "review_path", "review_sha256"),
+        ):
+            source_record = declared.get(role) or {}
+            source_path = repo / str(source_record.get("path") or "")
+            if not source_path.exists():
+                errors.append(f"{change_id}: missing declared {role} source {source_path}")
+            elif (
+                entry.get(path_key) != source_record.get("path")
+                or entry.get(hash_key) != source_record.get("sha256")
+                or sha256(source_path) != source_record.get("sha256")
+            ):
+                errors.append(f"{change_id}: {role} path/hash differs from packet or source bytes")
+        approval_path_value = entry.get("approval_path")
+        if approval_path_value:
+            approval_path = repo / str(approval_path_value)
+            if not approval_path.exists() or entry.get("approval_sha256") != sha256(approval_path):
+                errors.append(f"{change_id}: approval path/hash differs from source bytes")
+            else:
+                approval = json.loads(approval_path.read_text(encoding="utf-8"))
+                approved_packet = approval.get("packet") or {}
+                if approved_packet.get("path") != expected_packet_path or approved_packet.get("sha256") != sha256(
+                    packet_path
+                ):
+                    errors.append(f"{change_id}: approval does not bind current packet bytes")
+                if entry.get("approval_status") != approval.get("status"):
+                    errors.append(f"{change_id}: approval status differs from source record")
+        page = site / str(entry.get("page"))
+        if not page.exists():
+            errors.append(f"{change_id}: missing enabler detail page {page}")
+
     manifest_caps = {entry["capability_id"]: entry for entry in manifest.get("capabilities", [])}
     if set(manifest_caps) != set(cap_plans):
         errors.append(
@@ -213,12 +268,28 @@ def main() -> int:
             errors.append(f"{wave_id}: pre-Wave approval status differs from authoritative backlog")
         if entry.get("completion_status") != (backlog_waves[wave_id].get("completion") or {}).get("status"):
             errors.append(f"{wave_id}: Wave completion status differs from authoritative backlog")
+        expected_interruptions = [
+            change_id
+            for change_id, ecr in manifest_ecrs.items()
+            if ecr.get("target_wave") == wave_id
+            and ecr.get("approval_status") == "APPROVED"
+            and ecr.get("lifecycle_status") not in {"ADOPTED", "DEFERRED", "WITHDRAWN"}
+            and (
+                ecr.get("lifecycle_status") != "NOT_MATERIALIZED"
+                or (
+                    ((backlog_waves[wave_id].get("campaign") or {}).get("status") == "PAUSED")
+                    and ecr.get("classification") == "gate-integrity-safety-defect"
+                )
+            )
+        ]
+        if entry.get("interrupting_change_request_ids", []) != expected_interruptions:
+            errors.append(f"{wave_id}: interrupting ECR inventory differs from source authority")
     duplicate_assignments = sorted(slice_id for slice_id, count in Counter(assigned_slice_ids).items() if count != 1)
     if set(assigned_slice_ids) != set(backlog_slices) or duplicate_assignments:
         errors.append(f"Every backlog slice must appear in exactly one wave page; duplicates={duplicate_assignments}")
 
     html_pages = sorted(site.rglob("*.html"))
-    expected_html = 1 + len(backlog_waves) + len(cap_plans) + len(slice_plans)
+    expected_html = 2 + len(ecr_packets) + len(backlog_waves) + len(cap_plans) + len(slice_plans)
     if len(html_pages) != expected_html:
         errors.append(f"Expected {expected_html} HTML pages, found {len(html_pages)}")
 
@@ -267,6 +338,42 @@ def main() -> int:
                 errors.append(f"{rel}: missing Wave review/testing cadence")
             if "Wave exit / successor activation" not in content:
                 errors.append(f"{rel}: missing wave gate-decision breakdown")
+            approval_status = (backlog_waves.get(wave_id, {}).get("approval") or {}).get("status")
+            approval_command = f"wave approve {wave_id}"
+            if approval_status == "APPROVED":
+                if "Immutable authority" not in content:
+                    errors.append(f"{rel}: approved Wave must show immutable authority guidance")
+                if approval_command in text:
+                    errors.append(f"{rel}: approved Wave advertises repeated approval")
+            elif approval_command not in text:
+                errors.append(f"{rel}: pending Wave is missing its approval instruction")
+            if (manifest_waves.get(wave_id) or {}).get("interrupting_change_request_ids"):
+                for marker in (
+                    "ordinary execution is interrupted",
+                    "Legal alternatives",
+                    "Exact ordinary resume condition",
+                ):
+                    if marker not in content:
+                        errors.append(f"{rel}: interrupted Wave is missing stopped-amendment marker {marker}")
+                if f"wave start {wave_id}" in text or f"wave approve {wave_id}" in text:
+                    errors.append(f"{rel}: interrupted Wave advertises start or repeated approval")
+        elif page.parent.name == "enablers":
+            content = " ".join(parsed.text_parts)
+            if page.name == "index.html":
+                if "Enabler change request register" not in content:
+                    errors.append(f"{rel}: missing ECR register heading")
+            else:
+                change_id = page.stem
+                if change_id not in ecr_packets:
+                    errors.append(f"{rel}: enabler page has no matching packet")
+                for marker in (
+                    "Proposal, approval, materialization, and campaign state",
+                    "Hash-bound source records",
+                    "Ordered Wave authority chain",
+                    "Safe resume boundary",
+                ):
+                    if marker not in content:
+                        errors.append(f"{rel}: missing ECR detail marker {marker}")
         elif page.name == "index.html" and page.parent.name in cap_plans:
             cid = page.parent.name
             meta = frontmatter(cap_plans[cid])
@@ -297,7 +404,12 @@ def main() -> int:
             if "Recommended implementation selections" not in content:
                 warnings.append(f"{rel}: slice decision summary heading not found")
 
-    for required in [site / "assets/review.css", site / "assets/review.js", site / "README.md"]:
+    for required in [
+        site / "assets/review.css",
+        site / "assets/review.js",
+        site / "enablers/index.html",
+        site / "README.md",
+    ]:
         if not required.exists():
             errors.append(f"Missing required review-site artifact: {required}")
 

@@ -17,8 +17,13 @@ from unittest.mock import patch
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
+import taskctl as taskctl_module  # noqa: E402
 from taskctl import (  # noqa: E402
+    amendment_history_snapshot,
+    amendment_identity_snapshot,
+    approved_wave_snapshot,
     build_parser,
+    command_amendment_dispose,
     command_block,
     command_cancel,
     command_capability_resume,
@@ -34,6 +39,7 @@ from taskctl import (  # noqa: E402
     command_slice_review,
     command_submit,
     command_wave_checkpoint,
+    command_wave_resume,
     command_wave_review,
     command_wave_start,
     command_wave_submit,
@@ -160,6 +166,145 @@ class TaskctlWorkflowTests(unittest.TestCase):
         }
         values.update(overrides)
         return Namespace(**values)
+
+    def interrupted_workflow(
+        self,
+        *,
+        lifecycle_status: str = "MATERIALIZED",
+        amendment_campaign_status: str | None = None,
+    ) -> tuple[dict, dict, dict, dict, dict]:
+        data, capabilities, slices, tasks, gates = self.workflow()
+        wave = data["waves"][0]
+        wave["id"] = "W1"
+        wave["campaign"] = {
+            "status": "PAUSED",
+            "scope": "amendment-hold",
+            "owner": "alice",
+            "branch": "codex/test",
+            "worktree": str(REPO),
+            "base_sha": "a" * 40,
+            "profile": "LOC",
+            "platform": "windows-x64",
+            "started_at": "2026-08-20T00:00:00+00:00",
+            "updated_at": "2026-08-20T00:00:00+00:00",
+            "pause_reason": "Approved interrupting amendment",
+            "pause_category": "human-decision",
+            "lease": None,
+        }
+        capability = capabilities["CAP-00"]
+        capability["campaign"].update(status="PAUSED", wave="W1", lease=None)
+        slice_ = slices["CAP-00.S01"]
+        slice_["wave"] = "W1"
+        ordinary_task = tasks["CAP-00.S01.T01"]
+        ordinary_task["wave"] = "W1"
+        campaign = None
+        if amendment_campaign_status is not None:
+            campaign = {
+                "status": amendment_campaign_status,
+                "scope": "wave-amendment",
+                "owner": "alice",
+                "branch": "codex/test",
+                "worktree": str(REPO),
+                "base_sha": "a" * 40,
+                "profile": "LOC",
+                "platform": "windows-x64",
+                "started_at": "2026-08-20T00:00:00+00:00",
+                "updated_at": "2026-08-20T00:00:00+00:00",
+                "pause_reason": None,
+                "lease": new_lease("alice", 8) if amendment_campaign_status == "ACTIVE" else None,
+            }
+        event_statuses = ["APPROVED"]
+        if lifecycle_status != "APPROVED":
+            event_statuses.append(lifecycle_status)
+        amendment_tasks = []
+        for position, (task_id, dependency) in enumerate(
+            [
+                ("W1.A02.T01", "W1.A02.B00"),
+                ("W1.A02.T02", "W1.A02.T01"),
+            ]
+        ):
+            amendment_task = {
+                "id": task_id,
+                "amendment_id": "W1.A02",
+                "title": f"Approved enabler task {position + 1}",
+                "objective": "Exercise the bounded amendment workflow.",
+                "dependencies": [dependency],
+                "acceptance_criteria": ["The approved boundary remains enforced."],
+                "verification_commands": ["python -m unittest"],
+                "packet_task_sha256": f"{position + 1}" * 64,
+                "status": "NOT_STARTED",
+                "owner": None,
+                "branch": None,
+                "base_sha": None,
+                "worktree": None,
+                "lease": None,
+                "started_at": None,
+                "updated_at": None,
+                "completed_at": None,
+                "blocker": None,
+                "implementation_notes": "",
+                "evidence": [],
+                "verification_state": None,
+                "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+                "_amendment_id": "W1.A02",
+                "_position": position,
+                "_target_wave": "W1",
+            }
+            amendment_tasks.append(amendment_task)
+            tasks[task_id] = amendment_task
+        amendment: dict[str, Any] = {
+            "id": "W1.A02",
+            "change_request_id": "ECR-0001",
+            "target_wave": "W1",
+            "kind": "gate-integrity-safety-defect",
+            "approval_reference": {
+                "path": "planning/wave-amendment-approvals/W1.A02.json",
+                "sha256": "a" * 64,
+                "introduction_commit": "a" * 40,
+            },
+            "lifecycle": {
+                "status": lifecycle_status,
+                "history": [
+                    {
+                        "id": f"E{position:02d}",
+                        "status": status,
+                        "actor": "agent:bootstrap",
+                        "at": "2026-08-20T00:00:00+00:00",
+                        "rationale": f"Amendment entered {status}.",
+                    }
+                    for position, status in enumerate(event_statuses, start=1)
+                ],
+            },
+            "bootstrap": {
+                "id": "W1.A02.B00",
+                "status": "APPROVED",
+                "implementer": "agent:bootstrap",
+                "implementation_commit": "b" * 40,
+                "evidence": [],
+                "review": {
+                    "reviewer": "agent:reviewer",
+                    "result": "approved",
+                    "reviewed_at": "2026-08-20T00:00:00+00:00",
+                    "notes": None,
+                },
+            },
+            "campaign": campaign,
+            "tasks": amendment_tasks,
+            "completion": {
+                "status": "PENDING",
+                "reviewer": None,
+                "reviewed_at": None,
+                "evidence": [],
+                "notes": None,
+            },
+        }
+        data["control_plane"] = {
+            "revision": 2,
+            "minimum_tool_revision": 2,
+            "active_amendment": "W1.A02" if amendment_campaign_status == "ACTIVE" else None,
+        }
+        data["wave_amendments"] = [amendment]
+        return data, capabilities, slices, tasks, gates
 
     def test_next_at_pending_release_gate_prints_decision_complete_handoff(self) -> None:
         data, capabilities, slices, tasks, gates = self.workflow()
@@ -1022,6 +1167,467 @@ class TaskctlWorkflowTests(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "Refusing to save invalid backlog schema"):
                 save_validated(str(destination), clean)
             self.assertEqual("sentinel: true\n", destination.read_text(encoding="utf-8"))
+
+    def test_validated_save_protects_approved_wave_amendment_inventory_and_append_only_history(self) -> None:
+        data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
+        approval_snapshot = approved_wave_snapshot(data)
+        approved_wave = next(wave for wave in data["waves"] if (wave.get("approval") or {}).get("status") == "APPROVED")
+        approved_wave["approval"]["notes"] = "retroactive rewrite"
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "backlog.yaml"
+            destination.write_text("sentinel: true\n", encoding="utf-8")
+            with self.assertRaisesRegex(SystemExit, "immutable APPROVED Wave approval changed"):
+                save_validated(str(destination), data, expected_approved_waves=approval_snapshot)
+            self.assertEqual("sentinel: true\n", destination.read_text(encoding="utf-8"))
+
+        interrupted, *_ = self.interrupted_workflow()
+        inventory_snapshot = amendment_identity_snapshot(interrupted)
+        interrupted["wave_amendments"][0]["tasks"].append({"id": "W1.A02.T99"})
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "backlog.yaml"
+            destination.write_text("sentinel: true\n", encoding="utf-8")
+            with self.assertRaisesRegex(SystemExit, "task inventory changed outside the materialization transition"):
+                save_validated(
+                    str(destination),
+                    interrupted,
+                    expected_amendment_identity=inventory_snapshot,
+                )
+            self.assertEqual("sentinel: true\n", destination.read_text(encoding="utf-8"))
+
+        interrupted, *_ = self.interrupted_workflow()
+        history_snapshot = amendment_history_snapshot(interrupted)
+        interrupted["wave_amendments"][0]["lifecycle"]["history"][0]["rationale"] = "rewritten history"
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "backlog.yaml"
+            destination.write_text("sentinel: true\n", encoding="utf-8")
+            with self.assertRaisesRegex(SystemExit, "Append-only lifecycle history changed for W1.A02"):
+                save_validated(
+                    str(destination),
+                    interrupted,
+                    expected_amendment_history=history_snapshot,
+                )
+            self.assertEqual("sentinel: true\n", destination.read_text(encoding="utf-8"))
+
+    def test_interrupted_wave_commands_print_a_decision_complete_amendment_handoff(self) -> None:
+        args = Namespace(
+            profile="LOC",
+            platform="windows-x64",
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        commands = [taskctl_module.command_status, command_next, taskctl_module.command_next_capability]
+        for command in commands:
+            with self.subTest(command=command.__name__):
+                context = self.interrupted_workflow()
+                output = io.StringIO()
+                with redirect_stdout(output):
+                    command(args, *context)
+                rendered = output.getvalue()
+                self.assertIn("STOPPED AT WAVE AMENDMENT W1.A02", rendered)
+                self.assertIn("ECR-0001", rendered)
+                self.assertIn("planning/review-site/enablers/ECR-0001.html", rendered)
+                self.assertIn("planning/wave-amendment-approvals/W1.A02.json", rendered)
+                self.assertIn("Decision alternatives", rendered)
+                self.assertIn("Resume condition", rendered)
+                self.assertNotIn("wave start W1", rendered)
+                self.assertNotIn("wave approve W1", rendered)
+
+    def test_interrupting_amendment_denies_ordinary_claim_resume_and_exit_gate(self) -> None:
+        data, capabilities, slices, tasks, gates = self.interrupted_workflow()
+        with (
+            self.assertRaisesRegex(SystemExit, "Ordinary task claim denied while W1.A02 interrupts W1"),
+            patch(
+                "taskctl.git_execution_identity",
+                return_value=("alice", "codex/test", "a" * 40, str(REPO)),
+            ),
+            patch("taskctl.persist"),
+        ):
+            command_claim(self.claim_args(), data, capabilities, slices, tasks, gates)
+
+        data, capabilities, slices, tasks, gates = self.interrupted_workflow()
+        resume_args = Namespace(
+            wave="W1",
+            agent="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        with self.assertRaisesRegex(
+            SystemExit,
+            "cannot resume until its interrupting amendment is adopted or disposed",
+        ):
+            command_wave_resume(resume_args, data, capabilities, slices, tasks, gates)
+
+        data, capabilities, slices, tasks, gates = self.interrupted_workflow()
+        ordinary = tasks["CAP-00.S01.T01"]
+        ordinary.update(
+            status="DONE",
+            evidence=[{"type": "criterion-manifest"}],
+            review={
+                "reviewer": "agent:reviewer",
+                "result": "approved",
+                "reviewed_at": "2026-08-20T00:00:00+00:00",
+                "notes": None,
+            },
+        )
+        slices["CAP-00.S01"]["completion"].update(
+            status="APPROVED",
+            reviewer="agent:reviewer",
+            reviewed_at="2026-08-20T00:00:00+00:00",
+            evidence=["slice-review.json"],
+        )
+        data["waves"][0]["completion"].update(
+            status="APPROVED",
+            reviewer="agent:wave-reviewer",
+            reviewed_at="2026-08-20T00:00:00+00:00",
+            evidence=["wave-review.json"],
+        )
+        gate = {
+            "id": "G1",
+            "name": "W1 exit",
+            "after_wave": "W1",
+            "criteria": ["The interrupting amendment is adopted."],
+            "status": "PENDING",
+            "unlocks_waves": [],
+            "approval": {"approved_by": None, "approved_at": None, "evidence": [], "notes": None},
+        }
+        data["release_gates"] = [gate]
+        gates["G1"] = gate
+        with self.assertRaisesRegex(SystemExit, "W1.A02 is unfinished"), patch("taskctl.persist"):
+            command_gate_approve(
+                Namespace(
+                    gate="G1",
+                    approver="agent:owner",
+                    evidence=["gate-evidence.json"],
+                    note="",
+                    file="unused",
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+    def test_amendment_semantics_require_exact_bootstrap_history_and_exclusive_campaign(self) -> None:
+        data, capabilities, slices, tasks, gates = self.interrupted_workflow(
+            lifecycle_status="ACTIVE", amendment_campaign_status="ACTIVE"
+        )
+        amendment = data["wave_amendments"][0]
+        amendment["bootstrap"]["id"] = "W1.A02.B99"
+        amendment["lifecycle"]["history"][0]["id"] = "E02"
+        capabilities["CAP-00"]["campaign"].update(
+            status="ACTIVE",
+            lease=new_lease("alice", 8),
+        )
+
+        errors = validate(data, capabilities, slices, tasks, gates)
+
+        self.assertIn("W1.A02: interrupting amendment lacks its exact bootstrap identity", errors)
+        self.assertIn("W1.A02: lifecycle event IDs are not sequential", errors)
+        self.assertIn("A Wave amendment campaign cannot run beside an ACTIVE ordinary campaign", errors)
+
+    def test_amendment_materialization_and_activation_use_the_exact_safe_inventory(self) -> None:
+        data, capabilities, slices, tasks, gates = self.interrupted_workflow(lifecycle_status="APPROVED")
+        amendment = data["wave_amendments"][0]
+        amendment["tasks"] = []
+        tasks.pop("W1.A02.T01")
+        tasks.pop("W1.A02.T02")
+        data["waves"][0]["campaign"]["scope"] = "wave"
+        packet_tasks = [
+            {
+                "id": "W1.A02.T01",
+                "title": "First approved enabler task",
+                "objective": "Exercise exact materialization.",
+                "dependencies": ["W1.A02.B00"],
+                "acceptanceCriteria": ["Only approved work is executable."],
+                "verification": ["python -m unittest first"],
+            },
+            {
+                "id": "W1.A02.T02",
+                "title": "Second approved enabler task",
+                "objective": "Exercise ordered activation.",
+                "dependencies": ["W1.A02.T01"],
+                "acceptanceCriteria": ["Dependency order is preserved."],
+                "verification": ["python -m unittest second"],
+            },
+        ]
+        packet = {"taskInventory": packet_tasks}
+        approval = {"authorizedTaskIds": ["W1.A02.T01", "W1.A02.T02"]}
+        with (
+            patch("taskctl.discover_repository", return_value=REPO),
+            patch("taskctl.require_clean_repository"),
+            patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+            patch("taskctl.save_validated") as save,
+        ):
+            taskctl_module.command_amendment_materialize(
+                Namespace(amendment="W1.A02", agent="alice", file="unused"),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        self.assertEqual(["W1.A02.T01", "W1.A02.T02"], [task["id"] for task in amendment["tasks"]])
+        self.assertEqual(
+            [taskctl_module.canonical_json_sha256(item) for item in packet_tasks],
+            [task["packet_task_sha256"] for task in amendment["tasks"]],
+        )
+        self.assertEqual("MATERIALIZED", amendment["lifecycle"]["status"])
+        self.assertEqual("amendment-hold", data["waves"][0]["campaign"]["scope"])
+        self.assertNotIn("expected_amendment_identity", save.call_args.kwargs)
+
+        activate_args = Namespace(
+            amendment="W1.A02",
+            agent="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+            file="unused",
+        )
+        with (
+            patch(
+                "taskctl.git_execution_identity",
+                return_value=("alice", "codex/test", "a" * 40, str(REPO)),
+            ),
+            patch("taskctl.discover_repository", return_value=REPO),
+            patch("taskctl.require_clean_repository"),
+            patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+            patch("taskctl.persist"),
+        ):
+            taskctl_module.command_amendment_activate(
+                activate_args,
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        self.assertEqual("ACTIVE", amendment["lifecycle"]["status"])
+        self.assertEqual("ACTIVE", amendment["campaign"]["status"])
+        self.assertEqual("W1.A02", data["control_plane"]["active_amendment"])
+        self.assertEqual("READY", amendment["tasks"][0]["status"])
+        self.assertEqual("NOT_STARTED", amendment["tasks"][1]["status"])
+
+    def test_amendment_adoption_records_security_checkpoint_and_keeps_wave_paused(self) -> None:
+        data, capabilities, slices, tasks, gates = self.interrupted_workflow(lifecycle_status="REVIEW")
+        amendment = data["wave_amendments"][0]
+        amendment["campaign"] = {
+            "status": "COMPLETE",
+            "scope": "wave-amendment",
+            "owner": "alice",
+            "branch": "codex/test",
+            "worktree": str(REPO),
+            "base_sha": "a" * 40,
+            "profile": "LOC",
+            "platform": "windows-x64",
+            "started_at": "2026-08-20T00:00:00+00:00",
+            "updated_at": "2026-08-20T00:00:00+00:00",
+            "pause_reason": None,
+            "lease": None,
+        }
+        amendment["completion"].update(
+            status="APPROVED",
+            reviewer="agent:exit-reviewer",
+            reviewed_at="2026-08-20T00:00:00+00:00",
+            evidence=["exit-review.json"],
+        )
+        for task in amendment["tasks"]:
+            task.update(
+                status="DONE",
+                completed_at="2026-08-20T00:00:00+00:00",
+                evidence=[{"type": "criterion-manifest"}],
+                verification_state="passed",
+                review={
+                    "reviewer": "agent:task-reviewer",
+                    "result": "approved",
+                    "reviewed_at": "2026-08-20T00:00:00+00:00",
+                    "notes": None,
+                },
+            )
+        data["control_plane"]["active_amendment"] = None
+
+        with patch("taskctl.persist"):
+            taskctl_module.command_amendment_adopt(
+                Namespace(
+                    amendment="W1.A02",
+                    agent="alice",
+                    evidence=["control-security-checkpoint.json"],
+                    note="Control repair adopted.",
+                    file="unused",
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        wave = data["waves"][0]
+        self.assertEqual("PAUSED", wave["campaign"]["status"])
+        self.assertEqual("wave", wave["campaign"]["scope"])
+        self.assertEqual("security", wave["checkpoints"][-1]["kind"])
+        self.assertEqual(["control-security-checkpoint.json"], wave["checkpoints"][-1]["evidence"])
+        self.assertEqual("ADOPTED", amendment["lifecycle"]["status"])
+        self.assertIsNone(data["control_plane"]["active_amendment"])
+
+    def test_amendment_disposition_is_append_only_independent_and_keeps_wave_paused(self) -> None:
+        data, capabilities, slices, tasks, gates = self.interrupted_workflow(
+            lifecycle_status="PAUSED", amendment_campaign_status="PAUSED"
+        )
+        amendment = data["wave_amendments"][0]
+        with patch("taskctl.persist"):
+            command_amendment_dispose(
+                Namespace(
+                    amendment="W1.A02",
+                    reviewer="independent-reviewer",
+                    result="deferred",
+                    safe_resume_condition="The original Wave controls remain sufficient.",
+                    evidence=["control-disposition.json"],
+                    note="Deferred without executing the task delta.",
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+        self.assertEqual("DEFERRED", amendment["lifecycle"]["status"])
+        self.assertEqual("DEFERRED", amendment["tasks"][0]["status"])
+        self.assertEqual("wave", data["waves"][0]["campaign"]["scope"])
+        self.assertEqual("security", data["waves"][0]["checkpoints"][-1]["kind"])
+        self.assertIsNone(data["control_plane"]["active_amendment"])
+        with self.assertRaisesRegex(SystemExit, "terminal amendment disposition"):
+            command_amendment_dispose(
+                Namespace(
+                    amendment="W1.A02",
+                    reviewer="another-reviewer",
+                    result="withdrawn",
+                    safe_resume_condition="Still safe.",
+                    evidence=["second.json"],
+                    note="duplicate",
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+    def test_parser_exposes_only_the_approved_amendment_lifecycle_commands(self) -> None:
+        parser = build_parser()
+        commands = [
+            ["amendment", "status", "W1.A02"],
+            [
+                "amendment",
+                "bootstrap-submit",
+                "W1.A02",
+                "--agent",
+                "alice",
+                "--approval-commit",
+                "a" * 40,
+                "--implementation-commit",
+                "b" * 40,
+                "--evidence",
+                "bootstrap-evidence.json",
+            ],
+            [
+                "amendment",
+                "bootstrap-review",
+                "W1.A02",
+                "--reviewer",
+                "reviewer",
+                "--result",
+                "approved",
+                "--note",
+                "reviewed",
+            ],
+            ["amendment", "materialize", "W1.A02", "--agent", "alice"],
+            [
+                "amendment",
+                "activate",
+                "W1.A02",
+                "--agent",
+                "alice",
+                "--branch",
+                "codex/test",
+                "--base-sha",
+                "a" * 40,
+                "--worktree",
+                str(REPO),
+                "--profile",
+                "LOC",
+                "--platform",
+                "windows-x64",
+                "--lease-hours",
+                "8",
+            ],
+            ["amendment", "pause", "W1.A02", "--agent", "alice", "--reason", "bounded stop"],
+            [
+                "amendment",
+                "submit",
+                "W1.A02",
+                "--agent",
+                "alice",
+                "--evidence",
+                "exit.json",
+                "--note",
+                "ready",
+            ],
+            [
+                "amendment",
+                "review",
+                "W1.A02",
+                "--reviewer",
+                "reviewer",
+                "--result",
+                "approved",
+                "--note",
+                "approved",
+            ],
+            [
+                "amendment",
+                "adopt",
+                "W1.A02",
+                "--agent",
+                "alice",
+                "--evidence",
+                "checkpoint.json",
+                "--note",
+                "adopted",
+            ],
+            [
+                "amendment",
+                "dispose",
+                "W1.A02",
+                "--reviewer",
+                "reviewer",
+                "--result",
+                "deferred",
+                "--safe-resume-condition",
+                "The base Wave remains safe.",
+                "--evidence",
+                "disposition.json",
+                "--note",
+                "deferred",
+            ],
+        ]
+        for command in commands:
+            with self.subTest(command=command[1]):
+                parsed = parser.parse_args(command)
+                self.assertEqual("amendment", parsed.command)
+                self.assertEqual(command[1], parsed.amendment_command)
+
+        with self.assertRaises(SystemExit), redirect_stderr(io.StringIO()):
+            parser.parse_args(["amendment", "activate", "W1.A02", "--override-safe-boundary"])
 
     def test_parser_has_no_campaign_override_bypass(self) -> None:
         parser = build_parser()

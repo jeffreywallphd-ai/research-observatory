@@ -116,6 +116,42 @@ def hierarchy(data: dict[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str
     return capabilities, slices, tasks
 
 
+def enabler_tasks(data: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        task
+        for amendment in data.get("wave_amendments", [])
+        if isinstance(amendment, dict)
+        for task in amendment.get("tasks", [])
+        if isinstance(task, dict)
+    ]
+
+
+def wave_authority_rows(data: dict[str, Any]) -> list[tuple[str, str, str, str, str]]:
+    rows: list[tuple[str, str, str, str, str]] = []
+    for base in data.get("wave_approval_bases", []):
+        rows.append(
+            (
+                inline(base.get("wave_id")),
+                "BASE",
+                inline(base.get("packet_commit")),
+                inline(base.get("record_commit")),
+                "APPROVED",
+            )
+        )
+    for amendment in data.get("wave_amendments", []):
+        reference = amendment.get("approval_reference") or {}
+        rows.append(
+            (
+                inline(amendment.get("target_wave")),
+                inline(amendment.get("id")),
+                inline(amendment.get("change_request_id")),
+                inline(reference.get("path")),
+                inline((amendment.get("lifecycle") or {}).get("status")),
+            )
+        )
+    return rows
+
+
 def status_table(lines: list[str], title: str, statuses: Counter[str], order: list[str] | None = None) -> None:
     lines.extend([f"### {title}", "", "| Status | Count |", "|---|---:|"])
     keys = [key for key in (order or []) if key in statuses]
@@ -126,6 +162,8 @@ def status_table(lines: list[str], title: str, statuses: Counter[str], order: li
 
 def render_summary(data: dict[str, Any], digest: str) -> str:
     capabilities, slices, tasks = hierarchy(data)
+    amendments = data.get("wave_amendments", [])
+    amendment_tasks = enabler_tasks(data)
     waves = data.get("waves", [])
     gates = data.get("release_gates", [])
     task_order = list(data.get("status_definitions", {}))
@@ -149,7 +187,10 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
         f"| Capabilities | {len(capabilities)} |",
         f"| Slices | {len(slices)} |",
         f"| Tasks | {len(tasks)} |",
+        f"| Enabler tasks | {len(amendment_tasks)} |",
         f"| Waves | {len(waves)} |",
+        f"| Wave approval bases | {len(data.get('wave_approval_bases', []))} |",
+        f"| Wave amendments | {len(amendments)} |",
         f"| Release gates | {len(gates)} |",
         "",
         "## Status distributions",
@@ -171,6 +212,46 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
         Counter(inline(slice_.get("completion", {}).get("status")) for slice_ in slices),
     )
     status_table(lines, "Task state", Counter(inline(task.get("status")) for task in tasks), task_order)
+    status_table(
+        lines,
+        "Wave amendment lifecycle",
+        Counter(inline((amendment.get("lifecycle") or {}).get("status")) for amendment in amendments),
+    )
+    status_table(
+        lines,
+        "Enabler task state",
+        Counter(inline(task.get("status")) for task in amendment_tasks),
+        task_order,
+    )
+
+    lines.extend(
+        [
+            "## Wave authority and append-only amendments",
+            "",
+            "Proposal approval, materialization lifecycle, and campaign state remain distinct. "
+            "A Wave approval is immutable; later authority is an ordered amendment record.",
+            "",
+            "| Wave | Authority | Packet / ECR | Approval record | Lifecycle | Bootstrap | Campaign | Enabler tasks |",
+            "|---|---|---|---|---|---|---|---:|",
+        ]
+    )
+    amendments_by_id = {str(item.get("id")): item for item in amendments}
+    for wave_id, authority_id, packet_or_ecr, record, lifecycle in wave_authority_rows(data):
+        amendment = amendments_by_id.get(authority_id)
+        if amendment is None:
+            lines.append(
+                f"| `{wave_id}` | `{authority_id}` | `{packet_or_ecr}` | `{record}` | `{lifecycle}` | - | - | 0 |"
+            )
+            continue
+        bootstrap = amendment.get("bootstrap") or {}
+        campaign = amendment.get("campaign") or {}
+        lines.append(
+            f"| `{wave_id}` | `{authority_id}` | `{packet_or_ecr}` | `{record}` | `{lifecycle}` | "
+            f"`{inline(bootstrap.get('status', 'NONE'))}` | `{inline(campaign.get('status', 'NONE'))}` | "
+            f"{len(amendment.get('tasks', []))} |"
+        )
+    if not wave_authority_rows(data):
+        lines.append("| - | - | - | - | - | - | - | 0 |")
 
     lines.extend(
         [
@@ -227,7 +308,9 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
             f"{joined(gate.get('unlocks_waves'), code=True)} | `{inline(gate.get('status'))}` |"
         )
 
-    active_tasks = [task for task in tasks if task.get("status") in {"IN_PROGRESS", "REVIEW", "BLOCKED"}]
+    active_tasks = [
+        task for task in tasks + amendment_tasks if task.get("status") in {"IN_PROGRESS", "REVIEW", "BLOCKED"}
+    ]
     lines.extend(["", "## Active work", ""])
     if not active_tasks:
         lines.append("No task is currently active.")
@@ -244,6 +327,8 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
 
 def render_plan(data: dict[str, Any], digest: str) -> str:
     capabilities, slices, tasks = hierarchy(data)
+    amendments = data.get("wave_amendments", [])
+    amendment_tasks = enabler_tasks(data)
     waves = data.get("waves", [])
     plan = data.get("plan", {})
     lines = [
@@ -276,16 +361,36 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
         f"| Capabilities | {len(capabilities)} |",
         f"| Slices | {len(slices)} |",
         f"| Tasks | {len(tasks)} |",
+        f"| Enabler tasks | {len(amendment_tasks)} |",
         f"| Waves | {len(data.get('waves', []))} |",
+        f"| Wave approval bases | {len(data.get('wave_approval_bases', []))} |",
+        f"| Wave amendments | {len(amendments)} |",
         f"| Release gates | {len(data.get('release_gates', []))} |",
         "",
         "See `planning/status-summary.md` for the generated status distributions and capability progress table.",
         "",
-        "## Waves",
+        "## Ordered Wave authority",
         "",
-        "| Wave | Track | Goal | Activation |",
-        "|---|---|---|---|",
+        "| Wave | Authority | Packet / ECR | Approval record | Lifecycle |",
+        "|---|---|---|---|---|",
     ]
+    authority_rows = wave_authority_rows(data)
+    if authority_rows:
+        lines.extend(
+            f"| `{wave_id}` | `{authority_id}` | `{packet_or_ecr}` | `{record}` | `{lifecycle}` |"
+            for wave_id, authority_id, packet_or_ecr, record, lifecycle in authority_rows
+        )
+    else:
+        lines.append("| - | - | - | - | - |")
+    lines.extend(
+        [
+            "",
+            "## Waves",
+            "",
+            "| Wave | Track | Goal | Activation |",
+            "|---|---|---|---|",
+        ]
+    )
     for wave in data.get("waves", []):
         activation = f"`{wave['activation_gate']}`" if wave.get("activation_gate") else "Initial"
         lines.append(
@@ -340,6 +445,78 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
                 "",
             ]
         )
+
+    lines.extend(["", "# Enabler change requests and Wave amendments", ""])
+    if not amendments:
+        lines.extend(
+            [
+                "No Wave amendment has been materialized in the authoritative ledger.",
+                "",
+                "Hash-bound proposals and approvals remain visible in the generated planning review site's "
+                "enabler register.",
+                "",
+            ]
+        )
+    for amendment in amendments:
+        lifecycle = amendment.get("lifecycle") or {}
+        bootstrap = amendment.get("bootstrap") or {}
+        campaign = amendment.get("campaign") or {}
+        completion = amendment.get("completion") or {}
+        reference = amendment.get("approval_reference") or {}
+        lines.extend(
+            [
+                f"## {inline(amendment.get('id'))} - {inline(amendment.get('change_request_id'))}",
+                "",
+                f"**Target Wave / class:** `{inline(amendment.get('target_wave'))}` / "
+                f"`{inline(amendment.get('kind'))}`",
+                "",
+                f"**Approval record:** `{inline(reference.get('path'))}` (`{inline(reference.get('sha256'))}`)",
+                "",
+                f"**Lifecycle / bootstrap / campaign / completion:** `{inline(lifecycle.get('status'))}` / "
+                f"`{inline(bootstrap.get('status', 'NONE'))}` / `{inline(campaign.get('status', 'NONE'))}` / "
+                f"`{inline(completion.get('status'))}`",
+                "",
+                "**Append-only lifecycle history:**",
+                "",
+            ]
+        )
+        if lifecycle.get("history"):
+            lines.extend(
+                f"- `{inline(event.get('id'))}` `{inline(event.get('status'))}` at "
+                f"`{inline(event.get('at'))}` by {inline(event.get('actor'))}: {inline(event.get('rationale'))}"
+                for event in lifecycle["history"]
+            )
+        else:
+            lines.append("- None")
+        lines.extend(["", "**Bounded tasks:**", ""])
+        for task in amendment.get("tasks", []):
+            checked = "x" if task.get("status") == "DONE" else " "
+            review = task.get("review") or {}
+            lines.extend(
+                [
+                    f"### - [{checked}] {task['id']} - {inline(task.get('title'))}",
+                    "",
+                    f"**Status / owner / review:** `{inline(task.get('status'))}` / {inline(task.get('owner'))} / "
+                    f"{inline(review.get('reviewer'))} (`{inline(review.get('result'))}`)",
+                    "",
+                    f"**Dependencies:** {joined(task.get('dependencies'), code=True)}",
+                    "",
+                    f"**Objective:** {inline(task.get('objective'))}",
+                    "",
+                    "**Acceptance criteria:**",
+                    "",
+                ]
+            )
+            bullets(lines, task.get("acceptance_criteria"))
+            lines.extend(["", "**Verification:**", ""])
+            bullets(lines, task.get("verification_commands"))
+            if task.get("evidence"):
+                lines.extend(["", "**Evidence:**", ""])
+                lines.extend(
+                    f"- `{reference.get('path')}` at `{inline(reference.get('commit'))}`"
+                    for reference in task["evidence"]
+                )
+            lines.append("")
 
     lines.extend(["", "# Capability contributions, slices, and tasks", ""])
     for capability in capabilities:

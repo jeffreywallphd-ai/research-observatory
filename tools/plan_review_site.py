@@ -24,8 +24,8 @@ except ImportError:  # pragma: no cover - generated site still works with plain 
     mistune = None
 
 
-SITE_SCHEMA_VERSION = "1.1"
-REVIEW_INTERFACE_RELEASE = "1.3.8"
+SITE_SCHEMA_VERSION = "1.2"
+REVIEW_INTERFACE_RELEASE = "1.3.9"
 FEEDBACK_SCHEMA_VERSION = "1.1"
 OTHER_SENTINEL = "__OTHER__"
 
@@ -301,8 +301,136 @@ def wave_decision_rows(decisions: list[dict[str, Any]], *, context: str) -> str:
     )
 
 
+def repository_file(repo: Path, relative: str, *, label: str) -> Path:
+    """Resolve a declared review source without allowing a path escape."""
+
+    candidate = (repo / relative).resolve(strict=True)
+    try:
+        candidate.relative_to(repo.resolve(strict=True))
+    except ValueError as exc:
+        raise ValueError(f"{label} escapes repository: {relative}") from exc
+    if not candidate.is_file():
+        raise ValueError(f"{label} is not a file: {relative}")
+    return candidate
+
+
+def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[dict[str, Any]]:
+    """Load hash-bound ECR sources without flattening proposal and execution state."""
+
+    approval_by_change: dict[str, tuple[Path, dict[str, Any]]] = {}
+    approval_dir = repo / "planning/wave-amendment-approvals"
+    for approval_source_path in sorted(approval_dir.glob("W*.A*.json")) if approval_dir.exists() else []:
+        approval_source = json.loads(approval_source_path.read_text(encoding="utf-8"))
+        change_id = approval_source.get("changeRequestId")
+        if not isinstance(change_id, str) or not change_id:
+            continue
+        if change_id in approval_by_change:
+            raise ValueError(f"Duplicate Wave-amendment approval records for {change_id}")
+        approval_by_change[change_id] = (approval_source_path, approval_source)
+
+    amendment_by_change = {
+        str(amendment["change_request_id"]): amendment
+        for amendment in backlog.get("wave_amendments", [])
+        if isinstance(amendment, dict) and amendment.get("change_request_id")
+    }
+    records: list[dict[str, Any]] = []
+    packet_dir = repo / "planning/enabler-change-requests"
+    for packet_path in sorted(packet_dir.glob("ECR-*.packet.json")) if packet_dir.exists() else []:
+        packet = json.loads(packet_path.read_text(encoding="utf-8"))
+        change_id = str(packet.get("changeRequestId") or "")
+        if not change_id or packet_path.name != f"{change_id}.packet.json":
+            raise ValueError(f"ECR packet identity/path mismatch: {packet_path}")
+        declared_files: dict[str, dict[str, Any]] = {}
+        for item in packet.get("files", []):
+            relative = str(item.get("path") or "")
+            source = repository_file(repo, relative, label=f"{change_id} declared source")
+            actual = sha256(source)
+            expected = str(item.get("sha256") or "").lower()
+            if actual != expected:
+                raise ValueError(f"{change_id} declared source hash mismatch: {relative}")
+            declared_files[str(item.get("role") or relative)] = {
+                "path": relative,
+                "sha256": actual,
+            }
+
+        proposal = declared_files.get("canonical-proposal")
+        review = declared_files.get("human-review")
+        if proposal is None or review is None:
+            raise ValueError(f"{change_id} must declare canonical-proposal and human-review files")
+
+        packet_relative = packet_path.relative_to(repo).as_posix()
+        packet_hash = sha256(packet_path)
+        approval_tuple = approval_by_change.get(change_id)
+        approval_path: Path | None = None
+        approval: dict[str, Any] | None = None
+        approval_hash: str | None = None
+        if approval_tuple:
+            approval_path, approval = approval_tuple
+            approval_hash = sha256(approval_path)
+            approved_packet = approval.get("packet") or {}
+            if approved_packet.get("path") != packet_relative or approved_packet.get("sha256") != packet_hash:
+                raise ValueError(f"{change_id} approval does not bind the current packet bytes")
+            if (
+                approved_packet.get("proposalPath") != proposal["path"]
+                or approved_packet.get("proposalSha256") != proposal["sha256"]
+            ):
+                raise ValueError(f"{change_id} approval does not bind the current proposal bytes")
+
+        amendment = amendment_by_change.get(change_id)
+        lifecycle_status = ((amendment or {}).get("lifecycle") or {}).get("status")
+        bootstrap_status = ((amendment or {}).get("bootstrap") or {}).get("status")
+        campaign_status = ((amendment or {}).get("campaign") or {}).get("status")
+        records.append(
+            {
+                "change_request_id": change_id,
+                "amendment_id": packet.get("proposedAmendmentId"),
+                "target_wave": packet.get("targetWave"),
+                "classification": packet.get("classification"),
+                "proposal_status": packet.get("status"),
+                "proposal_execution_state": packet.get("executionState"),
+                "packet_path": packet_relative,
+                "packet_sha256": packet_hash,
+                "proposal_path": proposal["path"],
+                "proposal_sha256": proposal["sha256"],
+                "review_path": review["path"],
+                "review_sha256": review["sha256"],
+                "approval_path": approval_path.relative_to(repo).as_posix() if approval_path else None,
+                "approval_sha256": approval_hash,
+                "approval_status": (approval or {}).get("status", "PENDING"),
+                "approved_by": (approval or {}).get("approvedBy"),
+                "approved_at": (approval or {}).get("approvedAt"),
+                "authority": packet.get("authority") or {},
+                "effective_base": (approval or {}).get("effectiveBase") or {},
+                "bootstrap_unit": packet.get("bootstrapUnit", {}).get("id"),
+                "authorized_task_ids": packet.get("authorizedTaskIds") or [],
+                "task_inventory": packet.get("taskInventory") or [],
+                "acceptance_criteria": packet.get("acceptanceCriteria") or [],
+                "rollback": packet.get("rollback") or [],
+                "lifecycle_status": lifecycle_status or "NOT_MATERIALIZED",
+                "bootstrap_status": bootstrap_status or "NOT_SUBMITTED",
+                "campaign_status": campaign_status or "NONE",
+                "amendment": amendment,
+                "packet": packet,
+                "page": f"enablers/{change_id}.html",
+            }
+        )
+    return records
+
+
+def enabler_interrupts_wave(record: dict[str, Any], wave: dict[str, Any]) -> bool:
+    if record.get("target_wave") != wave.get("id") or record.get("approval_status") != "APPROVED":
+        return False
+    if record.get("lifecycle_status") in {"ADOPTED", "DEFERRED", "WITHDRAWN"}:
+        return False
+    if record.get("lifecycle_status") != "NOT_MATERIALIZED":
+        return True
+    campaign = wave.get("campaign") or {}
+    return campaign.get("status") == "PAUSED" and record.get("classification") == "gate-integrity-safety-defect"
+
+
 def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | None = None) -> dict[str, Any]:
     backlog = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+    enabler_records = load_enabler_change_requests(repo, backlog)
     cap_plan_dir = repo / "planning/capability-plans"
     slice_plan_dir = repo / "planning/slice-plans"
     all_cap_paths = sorted(cap_plan_dir.glob("CAP-*.md"))
@@ -365,6 +493,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         "feedback_schema_version": FEEDBACK_SCHEMA_VERSION,
         "waves": [],
         "capabilities": [],
+        "enabler_change_requests": [],
     }
 
     wave_cards = []
@@ -413,6 +542,8 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
   <p>Review and approve one complete Wave packet, then execute its capability contributions and ordered slices as one durable campaign. Descriptive aliases are the default presentation; canonical numeric IDs remain immutable evidence keys.</p>
 </section>
 <section class="callout callout-info"><h2>How to use this site</h2><ol><li>Select the Wave being activated.</li><li>Review every contributing capability decision and ordered slice plan from the Wave page.</li><li>Use the linked capability pages when you need full rationale or an override.</li><li>Approve the complete Wave packet at one immutable commit; later Waves remain unapproved.</li></ol></section>
+<section class="section-heading"><span class="eyebrow">Controlled change lane</span><h2>Enabler change requests</h2><p>Inspect proposal, immutable approval, materialization, campaign, and adoption states without flattening their history.</p></section>
+<section class="capability-grid"><a class="capability-card" href="enablers/index.html"><div class="capability-card-top"><span class="eyebrow">ECR register</span>{status_badge("active" if enabler_records else "empty")}</div><h2>Workflow-control amendments</h2><p>{len(enabler_records)} hash-bound request{"s" if len(enabler_records) != 1 else ""}; generated links expose the exact authority chain and current execution boundary.</p><span class="text-link">Open enabler register</span></a></section>
 <section class="section-heading"><span class="eyebrow">Primary execution axis</span><h2>Waves, campaigns, and exit gates</h2><p>Each Wave is approved and executed end to end, with independent slice reviews, integration checkpoints, and one explicit exit decision.</p></section>
 <section class="capability-grid">{"".join(wave_cards)}</section>
 <section class="section-heading"><span class="eyebrow">Product outcomes</span><h2>Capabilities</h2><p>Capabilities may contribute ordered slices to more than one wave.</p></section>
@@ -437,6 +568,165 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         ),
     )
     (output / "index.html").write_text(landing, encoding="utf-8")
+
+    enabler_dir = output / "enablers"
+    enabler_dir.mkdir(parents=True, exist_ok=True)
+    enabler_cards: list[str] = []
+    for record in enabler_records:
+        enabler_cards.append(
+            f"""
+<a class="capability-card" href="{esc(record["change_request_id"])}.html">
+  <div class="capability-card-top"><span class="eyebrow">{esc(record["amendment_id"])} · {esc(record["target_wave"])}</span>{status_badge(record["approval_status"])}</div>
+  <h2>{esc(record["change_request_id"])}</h2>
+  <p>{esc(record["classification"])}</p>
+  <dl><div><dt>Proposal</dt><dd>{esc(record["proposal_status"])}</dd></div><div><dt>Materialization</dt><dd>{esc(record["lifecycle_status"])}</dd></div><div><dt>Campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
+  <span class="text-link">Inspect exact authority and execution boundary</span>
+</a>"""
+        )
+    enabler_index_main = f"""
+<section class="hero compact">
+  <span class="eyebrow">Append-only control history</span>
+  <h1>Enabler change request register</h1>
+  <p>Proposal, human approval, materialization, campaign, and adoption are separate states. An approval record authorizes only its exact hash-bound scope; it does not imply materialization or ordinary Wave resumption.</p>
+</section>
+<section class="capability-grid">{"".join(enabler_cards) if enabler_cards else "<p>No enabler change request packets are present.</p>"}</section>
+"""
+    enabler_index = shell(
+        title="Enabler change request register",
+        page_type="enabler-register",
+        depth=1,
+        body=layout(
+            breadcrumbs='<a href="../index.html">Planning review</a><span>/</span><span aria-current="page">Enabler change requests</span>',
+            sidebar=planning_nav(
+                capabilities=capabilities,
+                waves=waves,
+                active_capability=None,
+                active_wave=None,
+                capability_prefix="../",
+                wave_prefix="../waves/",
+                default_tab="waves",
+            ),
+            main=enabler_index_main,
+        ),
+    )
+    (enabler_dir / "index.html").write_text(enabler_index, encoding="utf-8")
+
+    for record in enabler_records:
+        proposal_meta, proposal_body = read_frontmatter(repo / record["proposal_path"])
+        authority = record["authority"]
+        effective_base = record["effective_base"]
+        authority_rows = [
+            (
+                "W1 base approval",
+                effective_base.get("originalPacketCommit") or authority.get("originalWavePacketCommit"),
+                effective_base.get("originalApprovalRecordCommit") or authority.get("originalApprovalRecordCommit"),
+                "Original complete Wave packet",
+            ),
+            (
+                authority.get("legacyAmendmentId") or "Legacy amendment",
+                effective_base.get("legacyAmendmentPacketCommit") or authority.get("legacyAmendmentPacketCommit"),
+                effective_base.get("legacyAmendmentRecordCommit") or authority.get("legacyAmendmentRecordCommit"),
+                "Previously approved delta; preserved as migrated history",
+            ),
+            (
+                record["amendment_id"],
+                record["packet_sha256"],
+                record["approval_sha256"],
+                "Approved bootstrap/task scope; adoption remains separate",
+            ),
+        ]
+        rendered_authority = "".join(
+            f"<tr><th>{esc(label)}</th><td><code>{esc(packet or 'missing')}</code></td>"
+            f"<td><code>{esc(approval or 'missing')}</code></td><td>{esc(meaning)}</td></tr>"
+            for label, packet, approval, meaning in authority_rows
+        )
+        task_rows = "".join(
+            f"<li><span><strong>{esc(task.get('id'))} — {esc(task.get('title'))}</strong>"
+            f"<small>{esc(task.get('objective'))}</small></span>{status_badge('authorized')}</li>"
+            for task in record["task_inventory"]
+        )
+        criteria = "".join(f"<li>{esc(item)}</li>" for item in record["acceptance_criteria"])
+        rollback = "".join(f"<li>{esc(item)}</li>" for item in record["rollback"])
+        detail_main = f"""
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">{esc(record["amendment_id"])} · {esc(record["target_wave"])}</span><h1>{esc(record["change_request_id"])} — {esc(proposal_meta.get("title"))}</h1></div>{status_badge(record["approval_status"])}</div>
+  <p>{esc(record["classification"])}. This page preserves the distinction between authorized scope and executable state.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposal, approval, materialization, and campaign state</h2>
+  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>{esc(record["proposal_status"])} / {esc(record["proposal_execution_state"])}</dd></div><div><dt>Human approval</dt><dd>{esc(record["approval_status"])}</dd></div><div><dt>Materialization lifecycle</dt><dd>{esc(record["lifecycle_status"])}</dd></div><div><dt>Amendment campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
+  <p>Approved by <strong>{esc(record["approved_by"] or "Pending")}</strong> at <code>{esc(record["approved_at"] or "pending")}</code>. Approval is not task materialization, amendment activation, adoption, Wave resumption, or release-gate approval.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Hash-bound source records</h2>
+  <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
+  <tr><th>Proposal</th><td><code>{esc(record["proposal_path"])}</code></td><td><code>{esc(record["proposal_sha256"])}</code></td></tr>
+  <tr><th>Packet</th><td><code>{esc(record["packet_path"])}</code></td><td><code>{esc(record["packet_sha256"])}</code></td></tr>
+  <tr><th>Human review</th><td><code>{esc(record["review_path"])}</code></td><td><code>{esc(record["review_sha256"])}</code></td></tr>
+  <tr><th>Approval</th><td><code>{esc(record["approval_path"] or "pending")}</code></td><td><code>{esc(record["approval_sha256"] or "pending")}</code></td></tr>
+  </tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Ordered Wave authority chain</h2>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody>{rendered_authority}</tbody></table>
+  <p>Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. {esc(record["amendment_id"])} authorizes only bootstrap unit <code>{esc(record["bootstrap_unit"])}</code> and the exact bounded task inventory below until adoption.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Authorized bounded inventory</h2><ul class="wave-slice-list">{task_rows}</ul>
+  <h3>Exit criteria</h3><ul class="gate-criteria">{criteria}</ul>
+</section>
+<section class="callout callout-warning">
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>Continue the approved amendment through independently approved bootstrap, materialization, both DONE and independently approved tasks, amendment-exit control/security review, and the W1 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
+</section>
+<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria">{rollback}</ul></details>
+<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article">{render_markdown(strip_first_h1(proposal_body))}</article></details>
+"""
+        detail_page = shell(
+            title=f"{record['change_request_id']} {proposal_meta.get('title')}",
+            page_type="enabler-detail",
+            depth=1,
+            body=layout(
+                breadcrumbs=f'<a href="../index.html">Planning review</a><span>/</span><a href="index.html">Enabler change requests</a><span>/</span><span aria-current="page">{esc(record["change_request_id"])}</span>',
+                sidebar=planning_nav(
+                    capabilities=capabilities,
+                    waves=waves,
+                    active_capability=None,
+                    active_wave=str(record["target_wave"]),
+                    capability_prefix="../",
+                    wave_prefix="../waves/",
+                    default_tab="waves",
+                ),
+                main=detail_main,
+            ),
+        )
+        (enabler_dir / f"{record['change_request_id']}.html").write_text(detail_page, encoding="utf-8")
+        manifest["enabler_change_requests"].append(
+            {
+                key: record[key]
+                for key in (
+                    "change_request_id",
+                    "amendment_id",
+                    "target_wave",
+                    "classification",
+                    "proposal_status",
+                    "proposal_execution_state",
+                    "packet_path",
+                    "packet_sha256",
+                    "proposal_path",
+                    "proposal_sha256",
+                    "review_path",
+                    "review_sha256",
+                    "approval_path",
+                    "approval_sha256",
+                    "approval_status",
+                    "lifecycle_status",
+                    "bootstrap_status",
+                    "campaign_status",
+                    "authorized_task_ids",
+                    "page",
+                )
+            }
+        )
 
     wave_dir = output / "waves"
     wave_dir.mkdir(parents=True, exist_ok=True)
@@ -561,24 +851,66 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             ],
             wave_completion,
         )
-        readiness = (
-            "Ready for one commit-bound pre-Wave approval"
-            if wave_plan_count == wave_slice_count
-            and wave_decision_count == wave_accepted_decision_count
-            and wave_unclassified_decision_count == 0
-            else "Review incomplete—classify every contributing decision, resolve binding decisions, and approve every Wave slice plan"
-        )
+        wave_enablers = [record for record in enabler_records if record.get("target_wave") == wave_id]
+        interrupting_enablers = [record for record in wave_enablers if enabler_interrupts_wave(record, wave)]
+        interruption_html = ""
+        if interrupting_enablers:
+            interruption_items_parts: list[str] = []
+            for record in interrupting_enablers:
+                authority = record["authority"]
+                effective_base = record["effective_base"]
+                base_packet = effective_base.get("originalPacketCommit") or authority.get("originalWavePacketCommit")
+                legacy_id = effective_base.get("legacyAmendmentId") or authority.get("legacyAmendmentId")
+                legacy_packet = effective_base.get("legacyAmendmentPacketCommit") or authority.get(
+                    "legacyAmendmentPacketCommit"
+                )
+                interruption_items_parts.append(
+                    f'<li><a href="../{esc(record["page"])}"><strong>{esc(record["change_request_id"])} / {esc(record["amendment_id"])}</strong></a> — '
+                    f"approval {esc(record['approval_status'])}; materialization {esc(record['lifecycle_status'])}; "
+                    f"bootstrap {esc(record['bootstrap_status'])}; campaign {esc(record['campaign_status'])}"
+                    f"<small>Current ordinary authority: base <code>{esc(base_packet)}</code> + {esc(legacy_id)} "
+                    f"<code>{esc(legacy_packet)}</code>. Approved interrupting scope: {esc(record['amendment_id'])} packet "
+                    f"<code>{esc(record['packet_sha256'])}</code> and approval <code>{esc(record['approval_sha256'])}</code>; not ordinary authority until adopted.</small></li>"
+                )
+            interruption_items = "".join(interruption_items_parts)
+            interruption_html = f"""
+<section class="callout callout-warning" id="wave-amendment-interruption">
+  <div><span class="eyebrow">Stopped at approved Wave amendment</span><h2>{esc(wave_id)} ordinary execution is interrupted</h2>
+  <p>The immutable pre-Wave approval remains authoritative and must not be repeated. Ordinary task claims, Wave restart or resume, and {esc(gate.get("id"))} progression remain unavailable while this interrupting amendment is unfinished.</p>
+  <ul>{interruption_items}</ul>
+  <p><strong>Recommendation:</strong> continue the approved bounded amendment through bootstrap review, task materialization and independent completion, amendment-exit review, and the {esc(wave_id)} control/security adoption checkpoint. Legal alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition. Editing or reapproving the Wave in place is prohibited.</p>
+  <p><strong>Exact ordinary resume condition:</strong> every authorized amendment task is DONE and independently approved, the amendment exit is APPROVED, and the {esc(wave_id)} adoption checkpoint is recorded.</p></div>
+</section>"""
+        if wave_approval.get("status") == "APPROVED":
+            readiness = "The complete pre-Wave packet is already approved and immutable"
+            approval_action = (
+                "<h3>Immutable authority</h3><p>Do not repeat this approval. Any later scope change must use the "
+                "append-only enabler change request and Wave-amendment lane.</p>"
+            )
+        else:
+            readiness = (
+                "Ready for one commit-bound pre-Wave approval"
+                if wave_plan_count == wave_slice_count
+                and wave_decision_count == wave_accepted_decision_count
+                and wave_unclassified_decision_count == 0
+                else "Review incomplete—classify every contributing decision, resolve binding decisions, and approve every Wave slice plan"
+            )
+            approval_action = (
+                f"<h3>Approval command after review</h3><pre><code>python tools/planctl.py --repo . wave approve {esc(wave_id)} "
+                '--by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;</code></pre>'
+            )
         gate_main = f"""
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">{esc(wave.get("track"))} · durable Wave campaign</span><h1>{esc(wave_id)} — {esc(wave.get("title"))}</h1></div>{status_stack(wave_approval.get("status"), wave_execution_status)}</div>
   <p>{esc(wave.get("goal"))}</p>
   <dl class="summary-grid"><div><dt>Capability contributions</dt><dd>{len(capability_ids)}</dd></div><div><dt>Slice plans present</dt><dd>{wave_plan_count}/{wave_slice_count}</dd></div><div><dt>Binding decisions resolved</dt><dd>{wave_accepted_decision_count}/{wave_decision_count}</dd></div><div><dt>Delivery</dt><dd>{wave_done_count}/{wave_task_count} tasks</dd></div></dl>
 </section>
+{interruption_html}
 <section class="review-toolbar">
   <div class="hero-top"><div><span class="eyebrow">One approval before execution</span><h2>Complete pre-Wave approval packet</h2></div>{status_badge(wave_approval.get("status"))}</div>
   <p>{esc(readiness)}. Approval covers exactly the decisions labeled <strong>Binding in this Wave</strong>, every {esc(wave_id)} slice plan, the cross-capability dependency order, risk register, verification obligations, and the exit-gate criteria at immutable commit <code>{esc(wave_approval.get("approved_commit") or "pending")}</code>. Inherited and future decisions are context only and are not authorized here.</p>
   <dl class="summary-grid"><div><dt>Status</dt><dd>{esc(wave_approval.get("status"))}</dd></div><div><dt>Approved by</dt><dd>{esc(wave_approval.get("approved_by") or "Pending")}</dd></div><div><dt>Approved at</dt><dd>{esc(wave_approval.get("approved_at") or "Pending")}</dd></div><div><dt>Campaign state</dt><dd>{esc((wave.get("campaign") or {}).get("status", "Not started"))}</dd></div></dl>
-  <h3>Approval command after review</h3><pre><code>python tools/planctl.py --repo . wave approve {esc(wave_id)} --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;</code></pre>
+  {approval_action}
 </section>
 <section class="callout callout-info"><h2>Review and verification cadence while the Wave runs</h2><ol><li><strong>Task:</strong> risk-selected checks plus a focused independent scope/evidence disposition; expand only for high-risk boundaries.</li><li><strong>Slice:</strong> independent risk-focused end-to-end and adversarial deep review.</li><li><strong>Integration checkpoint:</strong> accumulated affected-profile checks when a shared interface, migration, security boundary, or coherent risk cluster closes.</li><li><strong>Wave exit:</strong> the complete affected/full suite, packaging, security, accessibility, performance, restart, recovery, and independent Wave review.</li></ol></section>
 <section class="section-heading"><span class="eyebrow">Wave contents</span><h2>Capability contributions and ordered slices</h2><p>Each card is the portion of a capability delivered and independently reviewed within {esc(wave_id)}.</p></section>
@@ -630,6 +962,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 "approval_status": wave_approval.get("status"),
                 "completion_status": wave_completion.get("status"),
                 "unlocks_waves": gate.get("unlocks_waves", []),
+                "interrupting_change_request_ids": [record["change_request_id"] for record in interrupting_enablers],
             }
         )
 
@@ -679,11 +1012,19 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             [task for slice_ in backlog_capability.get("slices", []) for task in slice_.get("tasks", [])],
             backlog_capability.get("completion"),
         )
-        wave_commands = "\n".join(
+        wave_status_by_id = {str(item["id"]): (item.get("approval") or {}).get("status", "PENDING") for item in waves}
+        pending_wave_commands = [
             f"python tools/planctl.py --repo . wave approve {esc(wave)} "
             '--by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;'
             for wave in wave_ids
-        )
+            if wave_status_by_id.get(wave) != "APPROVED"
+        ]
+        approved_wave_notes = [
+            f"# {esc(wave)} approval is immutable; later changes use an append-only Wave amendment."
+            for wave in wave_ids
+            if wave_status_by_id.get(wave) == "APPROVED"
+        ]
+        wave_commands = "\n".join(pending_wave_commands + approved_wave_notes)
         capability_main = f"""
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">{esc(cid)} · immutable evidence key</span><h1>{esc(cap_alias)}</h1><p>{esc(meta.get("title"))}</p></div>{status_stack(meta.get("status"), capability_execution_status)}</div>
@@ -814,7 +1155,7 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
     total_slices = sum(len(item.get("slices", [])) for item in manifest["capabilities"])
     readme = f"""# Static planning review site
 
-Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["waves"])} Wave packet/gate pages, {len(manifest["capabilities"])} capability pages, and {total_slices} individual slice pages. A Wave page is the pre-execution approval surface: it aggregates every contributing capability decision, ordered slice plan, review cadence, and exit-gate decision. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys.
+Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["waves"])} Wave packet/gate pages, {len(manifest["capabilities"])} capability pages, {total_slices} individual slice pages, and {len(manifest["enabler_change_requests"])} hash-bound enabler change request pages plus their register. A Wave page is the pre-execution approval surface: it aggregates every contributing capability decision, ordered slice plan, review cadence, exit-gate decision, and any interrupting append-only amendment. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys.
 
 Canonical commands:
 

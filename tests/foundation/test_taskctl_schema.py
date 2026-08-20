@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import sys
 import tempfile
 import unittest
@@ -12,7 +13,7 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from taskctl import load, validate  # noqa: E402
+from taskctl import backlog_schema_errors, load, validate  # noqa: E402
 
 LoadedBacklog = tuple[
     dict[str, Any],
@@ -180,6 +181,125 @@ class BacklogSchemaTests(unittest.TestCase):
         errors = validate(*loaded)
 
         self.assertIn(f"{task['id']}: DONE without evidence and complete approved review", errors)
+
+    def test_control_plane_requires_the_supported_minimum_tool_revision(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        data["control_plane"] = {
+            "revision": 2,
+            "minimum_tool_revision": 1,
+            "active_amendment": None,
+        }
+
+        with self.assertRaisesRegex(SystemExit, r"control_plane\.minimum_tool_revision: 1 is less than"):
+            self.load_copy(data)
+
+    def test_amendment_hold_is_a_current_schema_marker_that_legacy_tools_reject(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        wave = next(item for item in data["waves"] if item["id"] == "W1")
+        self.assertEqual("PAUSED", wave["campaign"]["status"])
+        wave["campaign"]["scope"] = "amendment-hold"
+
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+
+        legacy_schema = json.loads(self.schema.read_text(encoding="utf-8"))
+        legacy_schema["properties"]["waves"]["items"]["properties"]["campaign"]["properties"]["scope"] = {
+            "const": "wave"
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            legacy_path = Path(temporary) / "legacy-backlog.schema.json"
+            legacy_path.write_text(json.dumps(legacy_schema), encoding="utf-8")
+            errors = backlog_schema_errors(data, schema_path=legacy_path)
+
+        self.assertTrue(
+            any("$.waves[1].campaign.scope" in error and "'wave' was expected" in error for error in errors),
+            errors,
+        )
+
+    def test_materialized_amendment_task_requires_a_packet_bound_hash(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        data["control_plane"] = {
+            "revision": 2,
+            "minimum_tool_revision": 2,
+            "active_amendment": None,
+        }
+        data["wave_amendments"] = [
+            {
+                "id": "W1.A02",
+                "change_request_id": "ECR-0001",
+                "target_wave": "W1",
+                "kind": "gate-integrity-safety-defect",
+                "approval_reference": {
+                    "path": "planning/wave-amendment-approvals/W1.A02.json",
+                    "sha256": "a" * 64,
+                    "introduction_commit": "a" * 40,
+                },
+                "lifecycle": {
+                    "status": "MATERIALIZED",
+                    "history": [
+                        {
+                            "id": "E01",
+                            "status": "MATERIALIZED",
+                            "actor": "agent:bootstrap",
+                            "at": "2026-08-20T00:00:00+00:00",
+                            "rationale": "Approved inventory materialized.",
+                        }
+                    ],
+                },
+                "bootstrap": {
+                    "id": "W1.A02.B00",
+                    "status": "APPROVED",
+                    "implementer": "agent:bootstrap",
+                    "implementation_commit": "b" * 40,
+                    "evidence": [],
+                    "review": {
+                        "reviewer": "agent:reviewer",
+                        "result": "approved",
+                        "reviewed_at": "2026-08-20T00:00:00+00:00",
+                        "notes": None,
+                    },
+                },
+                "campaign": None,
+                "tasks": [
+                    {
+                        "id": "W1.A02.T01",
+                        "amendment_id": "W1.A02",
+                        "title": "First approved enabler task",
+                        "objective": "Exercise packet binding.",
+                        "dependencies": ["W1.A02.B00"],
+                        "acceptance_criteria": ["The task remains bound to its packet."],
+                        "verification_commands": ["python -m unittest"],
+                        # packet_task_sha256 is intentionally absent.
+                        "status": "NOT_STARTED",
+                        "owner": None,
+                        "branch": None,
+                        "base_sha": None,
+                        "worktree": None,
+                        "lease": None,
+                        "started_at": None,
+                        "updated_at": None,
+                        "completed_at": None,
+                        "blocker": None,
+                        "implementation_notes": "",
+                        "evidence": [],
+                        "verification_state": None,
+                        "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+                    }
+                ],
+                "completion": {
+                    "status": "PENDING",
+                    "reviewer": None,
+                    "reviewed_at": None,
+                    "evidence": [],
+                    "notes": None,
+                },
+            }
+        ]
+
+        with self.assertRaisesRegex(
+            SystemExit,
+            r"wave_amendments\[0\]\.tasks\[0\]: 'packet_task_sha256' is a required property",
+        ):
+            self.load_copy(data)
 
 
 if __name__ == "__main__":
