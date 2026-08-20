@@ -13,8 +13,8 @@ import sqlite3
 import stat
 import struct
 import threading
-from collections.abc import Callable
-from contextlib import suppress
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager, suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -69,6 +69,9 @@ _KEY_VERSION = re.compile(r"^[a-z][a-z0-9.-]{0,119}$")
 _MEDIA_TYPE = re.compile(r"^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$")
 _TRACE_ID = re.compile(r"^[0-9a-f]{32}$")
 _UTC_MILLISECONDS = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
+_CLEANUP_PARTIAL = re.compile(
+    r"^cleanup-[0-9a-f]{48}-(?P<device>\d+)-(?P<inode>\d+)-(?P<size>\d+)-(?P<modified>\d+)\.partial$"
+)
 _RIGHTS: frozenset[str] = frozenset(("allowed", "denied", "unknown", "not-applicable"))
 _RETENTION: frozenset[str] = frozenset(("project-lifetime", "derived-rebuildable", "export-retained"))
 _READABLE_RIGHTS: frozenset[str] = frozenset(("allowed", "not-applicable"))
@@ -313,8 +316,152 @@ def _file_matches(path: Path, descriptor: int, identity: tuple[int, int]) -> boo
             and (visible.st_dev, visible.st_ino) == identity
             and not _redirect(path)
         )
+    except OSError, ProjectLifecycleProblem:
+        return False
+
+
+def _held_candidate_matches(candidate: _FileCandidate, descriptor: int, visible_path: Path) -> bool:
+    try:
+        opened = os.fstat(descriptor)
+        visible = visible_path.stat(follow_symlinks=False)
+        return (
+            stat.S_ISREG(opened.st_mode)
+            and stat.S_ISREG(visible.st_mode)
+            and opened.st_nlink == 1
+            and visible.st_nlink == 1
+            and (opened.st_dev, opened.st_ino) == candidate.identity
+            and (visible.st_dev, visible.st_ino) == candidate.identity
+            and int(opened.st_size) == candidate.byte_count
+            and int(visible.st_size) == candidate.byte_count
+            and int(opened.st_mtime_ns) == candidate.modified_ns
+            and int(visible.st_mtime_ns) == candidate.modified_ns
+            and not _redirect(visible_path)
+        )
     except OSError:
         return False
+
+
+@contextmanager
+def _held_cleanup_candidate(
+    candidate: _FileCandidate,
+) -> Iterator[tuple[Callable[[Path], None], Callable[[], None]]]:
+    """Bind destructive cleanup to the verified Windows file handle."""
+
+    if os.name != "nt":
+        reader = _open_read_locked(candidate.path)
+        try:
+            if not _held_candidate_matches(candidate, reader.fileno(), candidate.path):
+                raise OSError("cleanup candidate identity changed")
+
+            def unsupported_rename(_destination: Path) -> None:
+                raise OSError("identity-bound cleanup is unavailable on this platform")
+
+            def unsupported_delete() -> None:
+                raise OSError("identity-bound cleanup is unavailable on this platform")
+
+            yield unsupported_rename, unsupported_delete
+        finally:
+            reader.close()
+        return
+
+    import ctypes
+    import msvcrt
+    from ctypes import wintypes
+
+    class FileRenameInfo(ctypes.Structure):
+        _fields_ = (
+            ("ReplaceIfExists", wintypes.BOOLEAN),
+            ("RootDirectory", wintypes.HANDLE),
+            ("FileNameLength", wintypes.DWORD),
+            ("FileName", wintypes.WCHAR * 1),
+        )
+
+    class FileDispositionInfo(ctypes.Structure):
+        _fields_ = (("DeleteFile", wintypes.BOOLEAN),)
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    create_file = kernel32.CreateFileW
+    create_file.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create_file.restype = wintypes.HANDLE
+    set_file_information = kernel32.SetFileInformationByHandle
+    set_file_information.argtypes = (wintypes.HANDLE, ctypes.c_int, wintypes.LPVOID, wintypes.DWORD)
+    set_file_information.restype = wintypes.BOOL
+    close_handle = kernel32.CloseHandle
+    close_handle.argtypes = (wintypes.HANDLE,)
+    close_handle.restype = wintypes.BOOL
+    generic_read = 0x80000000
+    delete_access = 0x00010000
+    file_share_read = 0x00000001
+    open_existing = 3
+    file_rename_info = 3
+    file_disposition_info = 4
+    file_flag_open_reparse_point = 0x00200000
+    invalid_handle = wintypes.HANDLE(-1).value
+    handle = create_file(
+        str(candidate.path),
+        generic_read | delete_access,
+        file_share_read,
+        None,
+        open_existing,
+        file_flag_open_reparse_point,
+        None,
+    )
+    if handle == invalid_handle:
+        raise ctypes.WinError(ctypes.get_last_error())
+    try:
+        descriptor = msvcrt.open_osfhandle(int(handle), os.O_RDONLY | getattr(os, "O_BINARY", 0))
+    except BaseException:
+        close_handle(handle)
+        raise
+    reader = os.fdopen(descriptor, "rb", buffering=0)
+    current = candidate.path
+
+    def require_held_match() -> None:
+        if not _held_candidate_matches(candidate, reader.fileno(), current):
+            raise OSError("cleanup candidate identity changed")
+
+    def rename_held(destination: Path) -> None:
+        nonlocal current
+        require_held_match()
+        encoded = str(destination).encode("utf-16-le")
+        size = FileRenameInfo.FileName.offset + len(encoded) + ctypes.sizeof(wintypes.WCHAR)
+        buffer = ctypes.create_string_buffer(size)
+        info = ctypes.cast(buffer, ctypes.POINTER(FileRenameInfo)).contents
+        info.ReplaceIfExists = False
+        info.RootDirectory = None
+        info.FileNameLength = len(encoded)
+        ctypes.memmove(ctypes.addressof(buffer) + FileRenameInfo.FileName.offset, encoded, len(encoded))
+        native_handle = wintypes.HANDLE(msvcrt.get_osfhandle(reader.fileno()))
+        if not set_file_information(native_handle, file_rename_info, buffer, size):
+            raise ctypes.WinError(ctypes.get_last_error())
+        current = destination
+        require_held_match()
+
+    def delete_held() -> None:
+        require_held_match()
+        info = FileDispositionInfo(True)
+        native_handle = wintypes.HANDLE(msvcrt.get_osfhandle(reader.fileno()))
+        if not set_file_information(
+            native_handle,
+            file_disposition_info,
+            ctypes.byref(info),
+            ctypes.sizeof(info),
+        ):
+            raise ctypes.WinError(ctypes.get_last_error())
+
+    try:
+        require_held_match()
+        yield rename_held, delete_held
+    finally:
+        reader.close()
 
 
 def _open_read_locked(path: Path) -> io.FileIO:
@@ -2150,17 +2297,21 @@ def _reconcile_staging(
 
 def _reconcile_cleanup_staging(directory: Path) -> None:
     try:
-        for candidate in tuple(directory.iterdir()):
-            status = candidate.stat(follow_symlinks=False)
-            if not (
-                candidate.name.endswith(".partial")
-                and stat.S_ISREG(status.st_mode)
-                and status.st_nlink == 1
-                and not _redirect(candidate)
-            ):
+        for path in tuple(directory.iterdir()):
+            match = _CLEANUP_PARTIAL.fullmatch(path.name)
+            if match is None:
                 raise OSError("unexpected cleanup staging entry")
-            candidate.unlink()
-    except OSError:
+            candidate = _FileCandidate(
+                category="project-cache",
+                path=path,
+                authority_root=directory,
+                identity=(int(match.group("device")), int(match.group("inode"))),
+                byte_count=int(match.group("size")),
+                modified_ns=int(match.group("modified")),
+            )
+            with _held_cleanup_candidate(candidate) as (_, delete_held):
+                delete_held()
+    except OSError, ValueError:
         raise _bounded(ObjectStoreProblem, "storage cleanup staging cannot be reconciled") from None
 
 
@@ -2216,6 +2367,13 @@ def _candidate_matches(candidate: _FileCandidate) -> bool:
         return False
 
 
+def _cleanup_partial_path(directory: Path, candidate: _FileCandidate) -> Path:
+    device, inode = candidate.identity
+    return directory / (
+        f"cleanup-{secrets.token_hex(24)}-{device}-{inode}-{candidate.byte_count}-{candidate.modified_ns}.partial"
+    )
+
+
 def _remove_rebuildable_candidate(state: _StoreState, candidate: _FileCandidate) -> bool:
     if not _candidate_matches(candidate):
         return False
@@ -2224,25 +2382,17 @@ def _remove_rebuildable_candidate(state: _StoreState, candidate: _FileCandidate)
         with _stable_directories(list(chain)):
             if not _candidate_matches(candidate):
                 return False
-            if candidate.category == "shared-cache":
-                candidate.path.unlink()
-                return True
-            staging = _cleanup_staging_directory(state.temporary)
-            with _stable_directories([state.root, state.temporary, staging]):
-                moved = staging / f"{secrets.token_hex(24)}.partial"
-                _move_no_replace(candidate.path, moved)
-                moved_status = moved.stat(follow_symlinks=False)
-                if (
-                    (moved_status.st_dev, moved_status.st_ino) != candidate.identity
-                    or moved_status.st_nlink != 1
-                    or int(moved_status.st_size) != candidate.byte_count
-                    or int(moved_status.st_mtime_ns) != candidate.modified_ns
-                    or _redirect(moved)
-                ):
-                    raise OSError("cleanup candidate identity changed")
-                moved.unlink()
-                return True
-    except OSError:
+            with _held_cleanup_candidate(candidate) as (rename_held, delete_held):
+                if candidate.category == "shared-cache":
+                    delete_held()
+                    return True
+                staging = _cleanup_staging_directory(state.temporary)
+                with _stable_directories([state.root, state.temporary, staging]):
+                    rename_held(_cleanup_partial_path(staging, candidate))
+                    _cleanup_step_completed("after-rebuildable-move")
+                    delete_held()
+                    return True
+    except OSError, ProjectLifecycleProblem:
         return False
 
 

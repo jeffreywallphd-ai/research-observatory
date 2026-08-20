@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S03.T03",
+  "commit": "1975e481e57f7899074b00f65341354a4eaf0a0d",
+  "baseCommit": "a72640e1311d5c29523ca0579b4f5bbb8819eb7b",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/architecture/local-object-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/object-store-profile.schema.json",
+    "packages/contracts/storage/object-store-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/object_store.py",
+    "tests/contracts/test_object_store_contract.py",
+    "tests/data/test_storage_maintenance.py",
+    "tests/data/test_storage_maintenance_performance_check.py",
+    "tools/storage_maintenance_performance_check.py",
+    "verification-profiles.json",
+    "verification/baselines/storage-maintenance-performance.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile data --repo . --report artifacts/tmp/CAP-02.S03.T03-data-final.json",
+      "exitCode": 0,
+      "result": "The complete data profile passed at exact task commit 1975e481e57f7899074b00f65341354a4eaf0a0d in 1186.01 seconds: repository/runtime/architecture/governance/build/UI/ADR/CI/quality/packaging checks, all 166 foundation tests, both commit-bound Windows performance gates, all 92 data tests, and all 15 contract tests. Project open qualified at fresh p95 19.045 ms and warm p95 13.929 ms. The registered storage gate qualified accounting/preview p95 316.583 ms, 2,100-item cleanup p95 3736.117 ms, encrypted put p50 37.078/86.682/151.568 MiB/s, and authenticated open p50 102.015/155.730/171.215 MiB/s for the PDF/report/model fixtures. Report SHA-256: f5225b4c4c721dabc936b988b5b808bf876e399a57ccb4087cd013f03449d7aa. Nested storage report SHA-256: 9c1b48a88ebec2b4fe7d785322badf27827cd771ea671a3788dc6b0a86893f77."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/storage_maintenance_performance_check.py --repo . --report artifacts/tmp/CAP-02.S03.T03-storage-performance.json",
+      "exitCode": 0,
+      "result": "A separate clean exact-commit Windows x64 qualification retained all ten samples for every measurement and passed every absolute and 20%-regression gate. It binds source commit 1975e481e57f7899074b00f65341354a4eaf0a0d, implementation SHA-256 9311e5c779dcd63bf810b276512fb5b7e2c843a97ecdfada86c3f9e25d0dcd58, tool SHA-256 a8e06b7e6b4629c770b36493c94ccd5a5eda61aa4b44359c7bfd879a2aedd285, and reviewed baseline SHA-256 a79cd4f1697ab9e69572f380e182935b8ebd27adf6b30529b067ff835b6d3f98. Report SHA-256: d684b4dbdb5f6c44bee9af3893a29e09a595ff2db6e76e1725cd918df79c808c."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.data.test_storage_maintenance tests.data.test_storage_maintenance_performance_check tests.contracts.test_object_store_contract",
+      "exitCode": 0,
+      "result": "The exact final commit passes the focused 16-test storage union: seven functional/adversarial maintenance cases, seven performance-authority and baseline anti-laundering cases, and two strict portable object-store contract cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "The exact final task commit is clean on codex/w1-windows-local-runtime. All 20 capabilities, 117 slices, 356 tasks, and 12 release gates validate; generated backlog views have no drift; and patch hygiene passes."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The dependency-neutral ObjectStore port now exposes categorized usage, soft/hard/low-disk pressure, preview, and one-time cleanup execution. Accounting separates canonical metadata, durable/derived objects, orphans, indexes, caches, models, configuration, exports, operational state, and an explicit non-overlapping shared-cache authority.",
+        "Preview returns only categories, aggregate counts/bytes, and recompute/redownload/repair recovery meaning—never paths or content identities. Cleanup consumes a random one-time bounded token and rechecks immutable document references, active readers, canonical path authority, stable file identity, size, mtime, regular-file type, and single-link status before each destructive step.",
+        "Only unreferenced derived-rebuildable canonical objects are automatic mark/sweep candidates. Project-lifetime/export-retained objects, newly referenced objects, held readers, hardlinks, changed same-size cache files, redirected paths, and overlapping shared-cache roots are retained. Audit publication failure denies deletion.",
+        "Project hard quota and the local free-space reserve reject new streaming writes with RO-CORE-OBJECT-STORAGE-PRESSURE while verified reads, preview, and cleanup remain available. Partial cleanup uses same-volume staging and restart removes only exclusive operation partials before a fresh preview resumes remaining candidates."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Seven direct maintenance tests cover categorized usage/preview/audit and reference safety; post-preview reference, reader, and same-size cache mutation races; hard quota and low-disk read continuity; interrupted cleanup restart/resume; shared-cache overlap denial; hardlink nonreclamation; and audit-failure byte preservation.",
+        "Seven performance-authority tests cover exact baseline/calibration retention, source/sample/latency/throughput threshold laundering, nearest-rank full-sample distributions, unrounded false-green boundaries, explicit nonqualifying calibration reports, all-gate qualification, and stale-report demotion on failure.",
+        "The exact complete profile passes 92 data tests and 15 contract tests in addition to the foundation suite and two production performance gates."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The strict portable object-store profile and schema now bind accounting categories, project/shared soft and hard limits, low-disk admission and read continuity, preview/lease behavior, reference and reader rechecks, GC/cache/orphan policies, restart cleanup, shared-cache authority, and content-free audit records. The contract test requires that exact profile.",
+        "The architecture guide documents the implemented authority, recovery behavior, security rechecks, CAP-02.S05 shared-cache handoff, and the commit-bound Windows benchmark methodology and budgets. No schema migration is required because usage, references, preview candidates, and recovery state are derived from the current canonical database plus filesystem authority rather than a drift-prone durable counter.",
+        "The data profile now includes a versioned three-run Windows baseline and encrypted PDF/report/model throughput plus 2,100-item accounting/GC-pause gate. It complements the existing project-open latency gate and records hardware/OS, fixture/method version, retained samples, absolute budgets, 20% regression thresholds, source hashes, commit, and baseline hash.",
+        "No user-interface or approved-reference bytes changed. Shared-cache physical layout remains an explicit later CAP-02.S05 handoff, and no hosted or unrelated capability implementation was introduced."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This medium-risk task owns destructive local I/O, concurrent reference/reader safety, quota admission during streaming writes, filesystem identity and hardlink defenses, restart cleanup, content-redacted auditing, a protected cross-process port/portable contract, and shared verification infrastructure. The focused adversarial union and complete data profile were therefore selected, and the changed verification contract justified replaying the full foundation/data/contract matrix plus both Windows performance gates at the exact final commit.",
+    "deferred": "The task-listed e2e-local profile currently has no active tests/e2e/test_*.py command; its only active coverage is the exact same complete foundation profile already passed through data, so replaying that 10-minute foundation union would add no distinct task evidence. Slice review must independently exercise T01-T03 across publication/open, encryption/upgrade, reference/reader/quota/cleanup/restart and malicious-filesystem boundaries and run the accumulated affected security-local integration surface. Cross-capability happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows qualification remain due at the W1 integration checkpoint and exit review."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Independently review exact commit 1975e481e57f7899074b00f65341354a4eaf0a0d. Prioritize destructive-I/O safety, one-time preview authorization, reference/reader races, filesystem alias/identity/hardlink attacks, audit fail-closed behavior, low-disk write admission with read/cleanup continuity, partial-cleanup restart, strict portable-contract truth, and benchmark/baseline anti-laundering. Replay risk-selected tests and investigate failures; do not approve from narrative evidence alone."
+  }
+}
