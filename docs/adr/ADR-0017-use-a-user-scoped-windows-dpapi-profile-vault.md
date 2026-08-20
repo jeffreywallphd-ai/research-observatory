@@ -81,9 +81,10 @@ Corrupt or unavailable protection fails with a bounded recoverable classificatio
 and retains ciphertext.
 
 Access requires a calling capability, declared purpose, and audit context. Audit
-records contain only operation, outcome, bounded reason, audit context, and an
-opaque keyed reference token. Material is delivered through a short-lived mutable
-lease and cleared on close. The existing object-key port necessarily copies one
+records retain those bounded capability and purpose values plus operation,
+outcome, bounded reason, audit context, and an opaque keyed reference token. They
+never retain plaintext scope identifiers or values. Material is delivered through
+a short-lived mutable lease and cleared on close. The existing object-key port necessarily copies one
 32-byte key into its cryptographic operation; it does not expose vault paths or
 general credential DTOs.
 

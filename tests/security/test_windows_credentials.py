@@ -7,7 +7,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stderr
 from pathlib import Path
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
 SERVICE_SRC = REPO / "services" / "core-api" / "src"
@@ -146,6 +148,101 @@ class WindowsCredentialStoreTests(unittest.TestCase):
                 context(),
             )
         self.assertEqual(1, len(tuple(self.vault.rglob("*.sealed"))))
+
+    def test_default_audit_retains_only_the_bounded_attributed_projection(self) -> None:
+        secret = b"audit-projection-secret-that-must-not-leak"
+        captured = io.StringIO()
+        store = WindowsCredentialStore(self.vault)
+        with redirect_stderr(captured):
+            store.put(reference(), secret, context())
+            with store.lease(reference(), context()) as lease:
+                self.assertEqual(secret, lease.use(bytes))
+
+        records = [json.loads(line) for line in captured.getvalue().splitlines()]
+        self.assertEqual(2, len(records))
+        self.assertEqual(["put", "lease"], [record["operation"] for record in records])
+        for record in records:
+            self.assertEqual(
+                {
+                    "auditContext",
+                    "callingCapability",
+                    "event",
+                    "level",
+                    "operation",
+                    "outcome",
+                    "purpose",
+                    "reasonCode",
+                    "referenceToken",
+                    "timestamp",
+                },
+                set(record),
+            )
+            self.assertEqual("security.credential-access", record["event"])
+            self.assertEqual("authorized", record["outcome"])
+            self.assertEqual("CAP-12.S01", record["callingCapability"])
+            self.assertEqual("provider-authentication", record["purpose"])
+            self.assertEqual("a" * 32, record["auditContext"])
+            self.assertRegex(record["referenceToken"], "^[0-9a-f]{32}$")
+            projection = json.dumps(record, sort_keys=True)
+            self.assertNotIn(secret.decode("ascii"), projection)
+            self.assertNotIn("provider-example", projection)
+            self.assertNotIn("primary-api-key", projection)
+
+    def test_invalid_and_unavailable_vault_authorities_are_bounded_for_put_and_lease(self) -> None:
+        for operation in ("put", "lease"):
+            with self.subTest(authority="root-file", operation=operation):
+                vault = self.root / f"root-file-{operation}"
+                payload = b"existing-root-authority"
+                vault.write_bytes(payload)
+                store = WindowsCredentialStore(vault, audit_sink=self.events.append)
+                with self.assertRaises(SecretAccessDenied):
+                    if operation == "put":
+                        store.put(reference(), b"must-not-be-stored", context())
+                    else:
+                        store.lease(reference(), context())
+                self.assertEqual(payload, vault.read_bytes())
+
+            with self.subTest(authority="records-file", operation=operation):
+                vault = self.root / f"records-file-{operation}"
+                vault.mkdir()
+                records = vault / "records"
+                payload = b"existing-record-authority"
+                records.write_bytes(payload)
+                store = WindowsCredentialStore(vault, audit_sink=self.events.append)
+                with self.assertRaises(SecretAccessDenied):
+                    if operation == "put":
+                        store.put(reference(), b"must-not-be-stored", context())
+                    else:
+                        store.lease(reference(), context())
+                self.assertEqual(payload, records.read_bytes())
+
+        store = WindowsCredentialStore(self.vault, audit_sink=self.events.append)
+        store.put(reference(), b"ciphertext-must-remain", context())
+        before = {path.relative_to(self.vault): path.read_bytes() for path in self.vault.rglob("*") if path.is_file()}
+        for operation in ("put", "lease"):
+            with (
+                self.subTest(authority="unavailable", operation=operation),
+                patch(
+                    "research_observatory_core.windows_credentials.Path.mkdir",
+                    side_effect=PermissionError("simulated unavailable authority"),
+                ),
+                self.assertRaises(SecretUnavailable),
+            ):
+                if operation == "put":
+                    store.put(
+                        SecretReference(
+                            "local-default",
+                            SecretKind.CONNECTOR_TOKEN,
+                            "connector-unavailable",
+                            "oauth",
+                        ),
+                        b"must-not-be-stored",
+                        context(),
+                    )
+                else:
+                    store.lease(reference(), context())
+        after = {path.relative_to(self.vault): path.read_bytes() for path in self.vault.rglob("*") if path.is_file()}
+        self.assertEqual(before, after)
 
     def test_concurrent_processes_converge_on_one_object_key_record(self) -> None:
         code = (

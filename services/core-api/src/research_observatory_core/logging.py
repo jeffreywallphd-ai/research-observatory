@@ -11,13 +11,42 @@ from typing import Any, Literal
 
 _EVENT = re.compile(r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
 _FIELD = re.compile(r"^[A-Za-z][A-Za-z0-9]*$")
-_SAFE_FIELDS = frozenset({"attempt", "moduleId", "pid", "reasonCode", "state", "traceId"})
+_SAFE_FIELDS = frozenset(
+    {
+        "attempt",
+        "auditContext",
+        "callingCapability",
+        "moduleId",
+        "operation",
+        "outcome",
+        "pid",
+        "purpose",
+        "reasonCode",
+        "referenceToken",
+        "state",
+        "traceId",
+    }
+)
 _SENSITIVE_FRAGMENTS = ("authorization", "content", "cookie", "credential", "document", "secret", "text", "token")
 _TRACE_ID = re.compile(r"^[a-f0-9]{32}$")
+_CAPABILITY = re.compile(r"^CAP-[0-9]{2}(?:\.S[0-9]{2})?$")
+_IDENTIFIER = re.compile(r"^[a-z0-9](?:[a-z0-9.-]{0,118}[a-z0-9])?$")
 
 
 def _safe_value(key: str, value: Any) -> str | int | bool | None:
-    if key not in _SAFE_FIELDS or any(fragment in key.casefold() for fragment in _SENSITIVE_FRAGMENTS):
+    if key not in _SAFE_FIELDS:
+        return "[REDACTED]"
+    if key in {"auditContext", "referenceToken"}:
+        return value if isinstance(value, str) and _TRACE_ID.fullmatch(value) else "[REDACTED]"
+    if key == "callingCapability":
+        return value if isinstance(value, str) and _CAPABILITY.fullmatch(value) else "[REDACTED]"
+    if key == "operation":
+        return value if value in {"put", "lease"} else "[REDACTED]"
+    if key == "outcome":
+        return value if value == "authorized" else "[REDACTED]"
+    if key == "purpose":
+        return value if isinstance(value, str) and _IDENTIFIER.fullmatch(value) and ".." not in value else "[REDACTED]"
+    if any(fragment in key.casefold() for fragment in _SENSITIVE_FRAGMENTS):
         return "[REDACTED]"
     if key in {"attempt", "pid"} and isinstance(value, int) and not isinstance(value, bool) and value >= 0:
         return value

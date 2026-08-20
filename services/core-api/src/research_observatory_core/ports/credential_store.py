@@ -103,6 +103,8 @@ class SecretAuditEvent:
     reason_code: str
     reference_token: str
     audit_context: str
+    calling_capability: str
+    purpose: str
 
     def __post_init__(self) -> None:
         if self.operation not in ("put", "lease") or self.outcome != "authorized":
@@ -113,6 +115,9 @@ class SecretAuditEvent:
             raise ValueError("secret audit reference is invalid")
         if not isinstance(self.audit_context, str) or _AUDIT_CONTEXT.fullmatch(self.audit_context) is None:
             raise ValueError("secret audit context is invalid")
+        if not isinstance(self.calling_capability, str) or _CAPABILITY.fullmatch(self.calling_capability) is None:
+            raise ValueError("secret audit capability is invalid")
+        _require_identifier(self.purpose, "secret audit purpose")
 
 
 class SecretLease:
