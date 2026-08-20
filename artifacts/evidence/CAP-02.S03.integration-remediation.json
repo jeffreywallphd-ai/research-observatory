@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-integration-evidence",
+  "sliceId": "CAP-02.S03",
+  "stateCommit": "e2eda29c017c5c1441811bb2e4ea3a046bede6be",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S03.integration.json",
+    "reason": "The first independent slice review requested remediation for stale-preview generation safety, the registered cleanup-performance regression, missing fail-closed egress policy enforcement, and missing bounded technical creation-source metadata. This manifest binds those remediations and the focused documentation correction to the exact reviewed descendant commit."
+  },
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-02/CAP-02.S03-encrypted-local-object-and-cache-storage.md",
+    "approvalCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "approvedBy": "repository-owner"
+  },
+  "outcome": "The Windows local Core stores project-scoped content through a strict streaming object port, authenticated-encrypts protected bytes under opaque paths, upgrades supported plaintext history before ordinary open, enforces rights and declared-purpose access before path resolution or decryption, records a bounded technical creation source, and exposes categorized accounting, quota pressure, one-time cleanup preview, exact-generation garbage collection, and restart-safe cache eviction without returning unauthenticated or unauthorized content.",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-02.S03.T01",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-02.S03.T01.submission.json", "sha256": "ec0f5594acf7547e89d20472f0a35fed49526b8880f61bd1788e814addec0794"},
+        {"path": "artifacts/evidence/CAP-02.S03.T01.review-fix.json", "sha256": "b31531f54cb028d4353b5bdbd50a1420059e2faef2f330d84ab50af1d9a4b7cf"},
+        {"path": "artifacts/evidence/CAP-02.S03.T01.review-fix-2.json", "sha256": "482ec75df2fda82fe24d806aa625c58b9e9a480906e04dce2fbf45ecd960eabd"}
+      ]
+    },
+    {
+      "taskId": "CAP-02.S03.T02",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-02.S03.T02.json", "sha256": "3b9c3042c02811564323bbb7e19a0ea4be3b2a19fbdc371a301db7e3ce5239d9"},
+        {"path": "artifacts/evidence/CAP-02.S03.T02.review-fix.json", "sha256": "4ca8a569b3a56b868e751aa84cc5efb26a1fd99c6e04fa0e561a7552d2cfb4f7"}
+      ]
+    },
+    {
+      "taskId": "CAP-02.S03.T03",
+      "status": "DONE",
+      "review": "approved",
+      "evidence": [
+        {"path": "artifacts/evidence/CAP-02.S03.T03.json", "sha256": "24ab1d6937d20ad6c9b3555e3fa88e64301764642e6a065235c5af4fbde04c5d"},
+        {"path": "artifacts/evidence/CAP-02.S03.T03.review-fix.json", "sha256": "acded9136c87f9559af07282652e6cd0068970c1efe35cea48f54681d0f1cd97"},
+        {"path": "artifacts/evidence/CAP-02.S03.T03.slice-review-remediation.json", "sha256": "e481c6061f40c5eb94f70ddba953ec0335d377ffc7bc01a7e6418a28e5c2b31d"},
+        {"path": "artifacts/evidence/CAP-02.S03.T03.doc-remediation.json", "sha256": "25542f4bf0e5807eceb3d6461c3e5a12dfdde79315580760c77edb6c4eabf7b1"}
+      ]
+    }
+  ],
+  "integrationChecks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --profile data --repo . --report artifacts/tmp/CAP-02.S03-slice-data.json",
+      "exitCode": 0,
+      "result": "The complete data profile passed at the pre-review integrated commit 733da39031c3b55e85d374d68928db912383bcd4 in 1207.86 seconds: repository/runtime/architecture/campaign/UI/ADR/CI/quality/packaging-smoke checks, all 166 foundation tests, backlog validation, both registered Windows performance gates, all 96 data tests, and all 15 portable-contract tests. Aggregate report SHA-256: 610bae6be7e0f56a1b6d4b01140c7c859331e3196948fa519c49e7fc961b86e6. This run is carried forward only for unchanged breadth; all remediated executable boundaries received exact-descendant checks below."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -q tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.data.test_sqlite_repositories tests.data.test_local_object_store tests.data.test_encrypted_object_store tests.data.test_object_envelope_upgrades tests.data.test_storage_maintenance tests.contracts.test_object_store_contract",
+      "exitCode": 0,
+      "result": "The exact final executable commit d0cebec8ab89bc42f972a6083cc80e7dda843601 passed the 83-test affected schema, migration, repository, local/encrypted object-store, envelope-upgrade, maintenance, and strict portable-contract union in 30.807 seconds; the independent reviewer replayed the same union in 30.321 seconds. The later e2eda29 descendant changes no executable or machine contract."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/storage_maintenance_performance_check.py --repo . --report artifacts/tmp/CAP-02.S03-remediation-storage-performance.json",
+      "exitCode": 0,
+      "result": "The first retained developer remediation run qualified at implementation commit 2cbba7facdc2396f94acb9c0d43002d24523c026. Cleanup p95 was 4075.469 ms against the 4551.878 ms regression and 5000 ms absolute ceilings; usage/preview p95 was 326.934 ms and every encrypted PDF/report/model gate passed. Report SHA-256: 2af4bc4ae12e745aa9ac9ef3be78597fe0c2a4d31396f229bbd4f5d4ef0807fe."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/storage_maintenance_performance_check.py --repo . --report artifacts/tmp/CAP-02.S03-independent-remediation-storage-performance.json",
+      "exitCode": 0,
+      "result": "The independent reviewer's first and only ten-sample remediation run passed. Cleanup p95 was 4550.0581 ms against the 4551.878 ms regression ceiling and 5000 ms absolute ceiling, leaving only 1.8199 ms regression headroom; usage p95 was 327.071 ms and every put/open throughput gate passed. Report SHA-256: 261dd00998f64929c23b4802f9472c4a6ef3833bb310b28c05dc0f43c4d645ef. The earlier retained pre-remediation independent run failed at 4613.2195 ms and was not rerun to green; the later pass follows the accepted handle-binding performance correction and remains a mandatory W1-exit replay risk."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/packaging_smoke_check.py --repo .; .venv\\Scripts\\python.exe -m unittest discover -s tests/foundation -p test_*.py; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/security_check.py --repo . --report artifacts/tmp/CAP-02.S03-remediation-security-local.json; .venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py",
+      "exitCode": 0,
+      "result": "At exact final executable commit d0cebec, all 107 governed Python files passed formatting, lint, and typing; packaging smoke passed; all 166 foundation tests passed in 647.193 seconds; the backlog validated; the supply-chain scan passed 599 packages and 151 findings with zero blocking; and all 21 security tests passed. Security report SHA-256: 7250de848024d2c8a5e9336bbab862600aac728474c4676d8e0563df60b642c6."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "Six real frozen-sidecar package tests passed with one expected Windows symlink-token skip. The Pythonless package built and ran, included PyNaCl, _cffi_backend, and the governed v0005 migration, and enforced its inventory contract."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_object_store_contract; .venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S03-doc-remediation-quality.json; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check",
+      "exitCode": 0,
+      "result": "After the focused documentation correction, both strict contracts, the 107-file governed quality check, generated-view consistency, backlog validation, and patch hygiene passed. The independent reviewer confirmed exact e2eda29 changes no executable or portable machine contract."
+    }
+  ],
+  "integratedBehavior": [
+    "Put hashes plaintext while streaming, writes authenticated envelopes under project-keyed opaque paths, fsyncs and verifies before guarded publication, commits strict metadata including a closed technical creation-source category, and reconciles lost acknowledgements without publishing partial or conflicting content.",
+    "Open enforces project authority, rights, metadata/envelope integrity, key availability, and a dependency-neutral declared-purpose access policy before path resolution or decryption. Known local reads are allowed by default; controlled egress and malformed or unknown purposes fail closed unless an injected policy returns an exact bounded allow decision.",
+    "Supported prior plaintext profiles pass through the default executable pre-open v4 copy-on-write coordinator. Every journal/fsync/rename/verification/metadata/cancellation boundary restarts to one verified authority, retaining the source until encrypted production open succeeds.",
+    "Governed migration v0005 advances verified v1-v4 history to the current schema, truthfully backfills legacy-unreported creation source, preserves historical fingerprints, and produces fresh/migrated fingerprint parity.",
+    "Usage and preview distinguish durable metadata/objects, rebuildable derivatives, orphans, indexes, project/shared caches, models, configuration, exports, and operational state. Hard quota or free-space pressure denies new writes while verified reads and cleanup remain available.",
+    "Cleanup consumes one random preview, transactionally rechecks canonical references and readers, binds canonical and rebuildable deletion to the exact previewed Windows file generation through a held handle, and skips a same-digest object republished after preview. Restart deletes only a partial whose full identity matches its filename commitment; replacement generations, hardlinks, redirects, and forged partials are preserved or fail closed."
+  ],
+  "failureAndRecoveryCoverage": [
+    "interrupted/hash-mismatched puts, duplicate metadata conflicts including creation source, lost SQLite COMMIT acknowledgement, delete rollback/restore, missing/corrupt/hardlinked bytes, redirected directories, active readers, post-preview references, and same-digest republish after preview",
+    "rights denial, unknown/malformed/controlled egress denial before path resolution, injected exact policy allow, policy exception denial, ciphertext magic/header/frame/final/trailing tamper, wrapped-key/key-version failure classification, missing and rotated keys, encrypted staging interruption, empty-object authentication, and no persisted plaintext",
+    "v1/v2/v3/v4-to-v5 migration, fresh/migrated fingerprint parity, forty pre/post durability failpoints, disk/rename/SQLite failure, insufficient space, cancellation before and after metadata commit acknowledgement, partial cleanup, and default-composition missing-key recovery",
+    "quota and low-disk admission, audit publication failure, project/shared-cache authority overlap, same-size generation exchange, hardlinks, interrupted cache move, identity-committed restart, and forged partial preservation"
+  ],
+  "profileSelection": {
+    "data": "The complete profile passed at the pre-review integrated state. The remediation then received the exact 83-test affected union, real package suite, complete foundation/security qualification, and registered storage benchmark because it changed destructive Windows I/O, schema/migration, the public object contract, policy enforcement, and benchmark implementation.",
+    "security-local": "The exact remediated executable state passed the live 599-package supply-chain scan, complete 21-test security suite, and 166 foundation tests.",
+    "e2e-local": "No active tests/e2e/test_*.py files exist; only tests/e2e/README.md is present. Representative local lifecycle, Core, package, denial, migration, restart, recovery, and destructive-I/O behavior was exercised through affected service/data/contract/package suites. The absent system-level E2E suite remains explicit rather than being represented as passed.",
+    "waveExit": "All W1 profiles, cross-capability Windows behavior, accessibility, installer/signing, and the narrow storage-performance margin remain due in the complete W1-exit matrix."
+  },
+  "downstreamHandoff": [
+    {
+      "consumer": "CAP-02.S04",
+      "contract": "research_observatory_core.ports.object_store_keys.ObjectMasterKeyProvider, the v4 explicit key-unavailable recovery state, and research_observatory_core.ports.object_store.ObjectAccessPolicy",
+      "ready": true,
+      "notes": "S04 may supply Windows credential-backed project master keys, rotation, and settings/consent-backed egress decisions without changing the encrypted object port, bypassing the pre-open coordinator, or importing adapter state into the dependency-neutral policy contract."
+    },
+    {
+      "consumer": "CAP-02.S05 and later document/model capabilities",
+      "contract": "packages/contracts/storage/object-store-profile.v1.json and controlled ObjectStore streams",
+      "ready": true,
+      "notes": "Consumers receive portable immutable metadata including technical creation source and controlled streams; they do not import filesystem paths, SQLite connections, encryption internals, or cleanup authorities."
+    }
+  ],
+  "reviewReadiness": {
+    "allTasksDone": true,
+    "allTaskEvidenceCommitBound": true,
+    "allTaskReviewsApproved": true,
+    "affectedRemediationChecksPassed": true,
+    "unresolvedFindings": [],
+    "residualLimitations": [
+      "The production Windows credential-store provider, rotation UX, and settings/consent policy adapter are owned by CAP-02.S04; until supplied, legacy objects without a required key fail explicitly and controlled egress is denied by default.",
+      "Shared-cache physical lab layout and snapshot/restore are owned by CAP-02.S05; this slice exposes only a separate non-overlapping authority and portable handoff.",
+      "The independent cleanup p95 passed with only 1.8199 ms of regression-threshold headroom after an earlier retained failure. It must be replayed without retries or threshold relaxation during W1-exit qualification.",
+      "The repository has not activated a system-level tests/e2e suite; complete cross-capability happy, failure, denial, cancellation, restart, recovery, accessibility, packaging, and Windows qualification remains due at W1 exit."
+    ]
+  }
+}
