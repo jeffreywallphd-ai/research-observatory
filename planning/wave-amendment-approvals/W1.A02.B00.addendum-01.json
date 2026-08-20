@@ -1,0 +1,21 @@
+{
+  "$schema": "./bootstrap-scope-addendum.schema.json",
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-scope-addendum",
+  "amendmentId": "W1.A02",
+  "bootstrapUnit": "W1.A02.B00",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-20T23:25:45.0185838Z",
+  "decision": "Approved in Codex as a narrow append-only B00 scope addendum after the fail-closed bootstrap submission identified the generated planning view as the sole path outside the original authorized list.",
+  "baseApprovalCommit": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029",
+  "candidateAtDecision": "a20685b90532c60e0286e5e05f68b46c613e935d",
+  "authorizedAdditionalPaths": [
+    "docs/planning-implementation-plan.md"
+  ],
+  "constraints": [
+    "Authorization applies only to the mechanically generated output of tools/backlog_views.py.",
+    "No product code, task inventory, verification threshold, release gate, or other B00 path is added.",
+    "The final B00 candidate must descend from candidateAtDecision and receive the already-required independent control/security review."
+  ]
+}

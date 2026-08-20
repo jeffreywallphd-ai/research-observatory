@@ -141,6 +141,19 @@
       },
       "additionalProperties": false
     },
+    "scopeAddendumReference": {
+      "type": "object",
+      "required": ["path", "sha256", "introduction_commit"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^planning/wave-amendment-approvals/W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B[0-9]{2}\\.addendum-[0-9]{2}\\.json$"
+        },
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      },
+      "additionalProperties": false
+    },
     "appendOnlyEvent": {
       "type": "object",
       "required": ["id", "status", "actor", "at", "rationale"],
@@ -165,7 +178,12 @@
             "implementer": {"type": ["string", "null"]},
             "implementation_commit": {"$ref": "#/$defs/nullableCommit"},
             "evidence": {"$ref": "#/$defs/taskEvidence"},
-            "review": {"$ref": "#/$defs/review"}
+            "review": {"$ref": "#/$defs/review"},
+            "scope_addenda": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/scopeAddendumReference"},
+              "uniqueItems": true
+            }
           },
           "additionalProperties": false
         }

@@ -22,6 +22,7 @@ from taskctl import (  # noqa: E402
     amendment_history_snapshot,
     amendment_identity_snapshot,
     approved_wave_snapshot,
+    bootstrap_scope_addendum_errors,
     build_parser,
     command_amendment_dispose,
     command_block,
@@ -1500,6 +1501,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 tasks,
                 gates,
             )
+
         self.assertEqual("DEFERRED", amendment["lifecycle"]["status"])
         self.assertEqual("DEFERRED", amendment["tasks"][0]["status"])
         self.assertEqual("wave", data["waves"][0]["campaign"]["scope"])
@@ -1521,6 +1523,39 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 tasks,
                 gates,
             )
+
+    def test_bootstrap_scope_addendum_is_hash_bound_and_history_bound(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            approval_dir = repo / "planning/wave-amendment-approvals"
+            approval_dir.mkdir(parents=True)
+            schema_source = REPO / "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json"
+            record_source = REPO / "planning/wave-amendment-approvals/W1.A02.B00.addendum-01.json"
+            schema_path = approval_dir / schema_source.name
+            record_path = approval_dir / record_source.name
+            schema_path.write_bytes(schema_source.read_bytes())
+            payload = record_source.read_bytes()
+            record_path.write_bytes(payload)
+            reference = {
+                "path": "planning/wave-amendment-approvals/W1.A02.B00.addendum-01.json",
+                "sha256": hashlib.sha256(payload).hexdigest(),
+                "introduction_commit": "c" * 40,
+            }
+            with (
+                patch("taskctl.approval_introduction_commit", return_value="c" * 40),
+                patch("taskctl.git_blob", return_value=payload),
+                patch("taskctl.git_commit_exists", return_value=True),
+                patch("taskctl.git_is_ancestor", return_value=True),
+            ):
+                self.assertEqual(
+                    [],
+                    bootstrap_scope_addendum_errors(repo, reference, "W1.A02", "W1.A02.B00"),
+                )
+                reference["sha256"] = "0" * 64
+                self.assertIn(
+                    "W1.A02.B00: bootstrap scope-addendum hash mismatch",
+                    bootstrap_scope_addendum_errors(repo, reference, "W1.A02", "W1.A02.B00"),
+                )
 
     def test_parser_exposes_only_the_approved_amendment_lifecycle_commands(self) -> None:
         parser = build_parser()

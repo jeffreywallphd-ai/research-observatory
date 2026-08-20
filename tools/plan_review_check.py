@@ -175,6 +175,27 @@ def main() -> int:
                     errors.append(f"{change_id}: approval does not bind current packet bytes")
                 if entry.get("approval_status") != approval.get("status"):
                     errors.append(f"{change_id}: approval status differs from source record")
+        bootstrap_id = str((packet.get("bootstrapUnit") or {}).get("id") or "")
+        expected_addenda = {
+            path.relative_to(repo).as_posix(): path
+            for path in (repo / "planning/wave-amendment-approvals").glob(f"{bootstrap_id}.addendum-*.json")
+        }
+        manifest_addenda = {
+            str(item.get("path")): item for item in entry.get("scope_addenda", []) if isinstance(item, dict)
+        }
+        if set(expected_addenda) != set(manifest_addenda):
+            errors.append(f"{change_id}: bootstrap scope-addendum set differs from source records")
+        for relative, addendum_path in expected_addenda.items():
+            addendum = json.loads(addendum_path.read_text(encoding="utf-8"))
+            manifest_addendum = manifest_addenda.get(relative) or {}
+            if manifest_addendum.get("sha256") != sha256(addendum_path):
+                errors.append(f"{change_id}: bootstrap scope-addendum hash differs from source bytes")
+            if (
+                addendum.get("status") != "APPROVED"
+                or addendum.get("amendmentId") != packet.get("proposedAmendmentId")
+                or addendum.get("bootstrapUnit") != bootstrap_id
+            ):
+                errors.append(f"{change_id}: bootstrap scope-addendum identity/status mismatch")
         page = site / str(entry.get("page"))
         if not page.exists():
             errors.append(f"{change_id}: missing enabler detail page {page}")

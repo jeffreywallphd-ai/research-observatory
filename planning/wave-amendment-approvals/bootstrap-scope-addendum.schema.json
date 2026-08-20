@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/wave-amendment-bootstrap-scope-addendum-1.0.json",
+  "title": "Wave amendment bootstrap scope addendum",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "amendmentId",
+    "bootstrapUnit",
+    "status",
+    "approvedBy",
+    "approvedAt",
+    "decision",
+    "baseApprovalCommit",
+    "candidateAtDecision",
+    "authorizedAdditionalPaths",
+    "constraints"
+  ],
+  "properties": {
+    "$schema": {"const": "./bootstrap-scope-addendum.schema.json"},
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "wave-amendment-bootstrap-scope-addendum"},
+    "amendmentId": {"const": "W1.A02"},
+    "bootstrapUnit": {"const": "W1.A02.B00"},
+    "status": {"const": "APPROVED"},
+    "approvedBy": {"type": "string", "minLength": 1},
+    "approvedAt": {"type": "string", "format": "date-time"},
+    "decision": {"type": "string", "minLength": 1},
+    "baseApprovalCommit": {"const": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029"},
+    "candidateAtDecision": {"const": "a20685b90532c60e0286e5e05f68b46c613e935d"},
+    "authorizedAdditionalPaths": {
+      "type": "array",
+      "prefixItems": [{"const": "docs/planning-implementation-plan.md"}],
+      "minItems": 1,
+      "maxItems": 1
+    },
+    "constraints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "additionalProperties": false
+}

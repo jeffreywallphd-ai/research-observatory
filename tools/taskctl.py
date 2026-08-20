@@ -1212,6 +1212,74 @@ def amendment_approval_errors(repo: Path, reference: dict[str, Any], amendment: 
     return errors
 
 
+def bootstrap_scope_addendum_errors(
+    repo: Path,
+    reference: dict[str, Any],
+    amendment_id: str,
+    bootstrap_id: str,
+) -> list[str]:
+    errors: list[str] = []
+    relative = str(reference.get("path") or "")
+    pure = PurePosixPath(relative)
+    expected_prefix = f"planning/wave-amendment-approvals/{bootstrap_id}.addendum-"
+    if pure.is_absolute() or ".." in pure.parts or not relative.startswith(expected_prefix):
+        return [f"{bootstrap_id}: unsafe bootstrap scope-addendum path"]
+    path = repo.joinpath(*pure.parts)
+    try:
+        payload = path.read_bytes()
+        record = json.loads(payload)
+        schema = load_json_schema(repo / "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json")
+        Draft202012Validator(schema, format_checker=FormatChecker()).validate(record)
+    except (OSError, json.JSONDecodeError, SchemaError, ValidationError) as exc:
+        return [f"{bootstrap_id}: invalid bootstrap scope addendum: {exc}"]
+    if hashlib.sha256(payload).hexdigest() != reference.get("sha256"):
+        errors.append(f"{bootstrap_id}: bootstrap scope-addendum hash mismatch")
+    introduced = approval_introduction_commit(repo, relative)
+    if introduced != reference.get("introduction_commit"):
+        errors.append(f"{bootstrap_id}: bootstrap scope-addendum introduction commit mismatch")
+    if introduced:
+        if git_blob(repo, introduced, relative) != payload:
+            errors.append(f"{bootstrap_id}: immutable bootstrap scope addendum was rewritten")
+        if not git_is_ancestor(repo, introduced):
+            errors.append(f"{bootstrap_id}: bootstrap scope addendum is not on current history")
+    if record.get("amendmentId") != amendment_id or record.get("bootstrapUnit") != bootstrap_id:
+        errors.append(f"{bootstrap_id}: bootstrap scope-addendum identity mismatch")
+    candidate = record.get("candidateAtDecision")
+    if not isinstance(candidate, str) or not git_commit_exists(repo, candidate):
+        errors.append(f"{bootstrap_id}: bootstrap scope-addendum candidate is invalid")
+    elif introduced and not git_is_ancestor(repo, candidate, introduced):
+        errors.append(f"{bootstrap_id}: scope addendum does not descend from the reviewed candidate")
+    return errors
+
+
+def load_bootstrap_scope_addenda(
+    repo: Path,
+    amendment_id: str,
+    bootstrap_id: str,
+) -> tuple[list[str], list[dict[str, str]]]:
+    approval_dir = repo / "planning" / "wave-amendment-approvals"
+    additional_paths: list[str] = []
+    references: list[dict[str, str]] = []
+    for path in sorted(approval_dir.glob(f"{bootstrap_id}.addendum-*.json")):
+        relative = path.relative_to(repo).as_posix()
+        payload = path.read_bytes()
+        introduced = approval_introduction_commit(repo, relative)
+        reference = {
+            "path": relative,
+            "sha256": hashlib.sha256(payload).hexdigest(),
+            "introduction_commit": introduced or "",
+        }
+        errors = bootstrap_scope_addendum_errors(repo, reference, amendment_id, bootstrap_id)
+        if errors:
+            raise SystemExit("Invalid bootstrap scope addendum:\n- " + "\n- ".join(errors))
+        record = json.loads(payload)
+        additional_paths.extend(str(item) for item in record.get("authorizedAdditionalPaths", []))
+        references.append(reference)
+    if len(additional_paths) != len(set(additional_paths)):
+        raise SystemExit("Bootstrap scope addenda contain duplicate authorized paths")
+    return additional_paths, references
+
+
 def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     errors: list[str] = []
     control = data.get("control_plane")
@@ -1255,6 +1323,16 @@ def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
                 errors.append(f"{wave_id}: base authority commit is missing or not ancestral: {commit}")
     for amendment in amendments:
         errors.extend(amendment_approval_errors(repo, amendment.get("approval_reference") or {}, amendment))
+        bootstrap = amendment.get("bootstrap") or {}
+        for reference in bootstrap.get("scope_addenda", []):
+            errors.extend(
+                bootstrap_scope_addendum_errors(
+                    repo,
+                    reference,
+                    str(amendment.get("id")),
+                    str(bootstrap.get("id")),
+                )
+            )
         record_path = repo.joinpath(*PurePosixPath(amendment["approval_reference"]["path"]).parts)
         try:
             record = json.loads(record_path.read_text(encoding="utf-8"))
@@ -2422,6 +2500,11 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
     except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
         raise SystemExit(f"Invalid bootstrap evidence: {exc}") from exc
     bootstrap_unit = packet.get("bootstrapUnit") or {}
+    additional_paths, scope_addenda = load_bootstrap_scope_addenda(
+        repo,
+        args.amendment,
+        str(bootstrap_unit.get("id")),
+    )
     agent = normalized_identity(args.agent, "Bootstrap implementer")
     virtual_task = {
         "id": bootstrap_unit.get("id"),
@@ -2447,7 +2530,7 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
         check=False,
     )
     changed_files = [line for line in actual.stdout.splitlines() if line]
-    patterns = [str(item) for item in bootstrap_unit.get("authorizedPaths", [])]
+    patterns = [str(item) for item in bootstrap_unit.get("authorizedPaths", [])] + additional_paths
     outside = [path for path in changed_files if not amendment_path_authorized(path, patterns)]
     if actual.returncode != 0:
         evidence_errors.append("cannot resolve bootstrap changed-file scope")
@@ -2545,6 +2628,7 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
                 "status": "REVIEW",
                 "implementer": agent,
                 "implementation_commit": implementation_commit,
+                "scope_addenda": scope_addenda,
                 "evidence": [
                     {
                         "type": "criterion-manifest",

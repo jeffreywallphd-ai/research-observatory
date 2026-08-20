@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from jsonschema import Draft202012Validator, FormatChecker
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
@@ -45,6 +46,20 @@ class BacklogSchemaTests(unittest.TestCase):
         )
 
         self.assertEqual([], validate(data, capabilities, slices, tasks, gates))
+
+    def test_bootstrap_scope_addendum_is_exactly_one_generated_path(self) -> None:
+        schema = json.loads(
+            (REPO / "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        record = json.loads(
+            (REPO / "planning/wave-amendment-approvals/W1.A02.B00.addendum-01.json").read_text(encoding="utf-8")
+        )
+        validator = Draft202012Validator(schema, format_checker=FormatChecker())
+        self.assertEqual([], list(validator.iter_errors(record)))
+        record["authorizedAdditionalPaths"].append("product/runtime.py")
+        self.assertTrue(list(validator.iter_errors(record)))
 
     def test_duplicate_task_id_has_precise_diagnostic(self) -> None:
         data = copy.deepcopy(self.canonical)
