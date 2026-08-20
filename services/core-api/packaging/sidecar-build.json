@@ -24,7 +24,9 @@
       "_cffi_backend",
       "research_observatory_core.migrations.runner",
       "research_observatory_core.object_store",
-      "research_observatory_core.repositories"
+      "research_observatory_core.ports.credential_store",
+      "research_observatory_core.repositories",
+      "research_observatory_core.windows_credentials"
     ]
   },
   "entrypoint": "research-observatory-core-x86_64-pc-windows-msvc.exe",

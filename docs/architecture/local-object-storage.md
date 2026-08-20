@@ -87,9 +87,11 @@ interruption, rename failure, and SQLite failure leave either the original canon
 file or its verified rollback authority intact and keep ordinary access closed.
 
 The normal Core composition always supplies this pre-open coordinator; it is not
-an optional lifecycle behavior. Until CAP-02.S04 supplies the release credential-
-store adapter, a legacy project whose master key is unavailable returns the explicit
-recoverable key-unavailable state with its verified plaintext authority retained.
+an optional lifecycle behavior. CAP-02.S04.T01 binds the key-provider port to the
+Windows current-user DPAPI profile vault and creates or retrieves the stable
+object-encryption key. Tests may explicitly inject an unavailable provider to
+prove a legacy project returns the recoverable key-unavailable state with its
+verified plaintext authority retained.
 Deterministic hooks bracket every journal commit, replacement fsync, guarded rename,
 source/replacement/production verification, metadata commit, partial/rollback cleanup,
 and cancellation acknowledgement. Cancellation is accepted only at a journaled safe

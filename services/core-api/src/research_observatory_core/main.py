@@ -10,6 +10,7 @@ import socket
 import sys
 import threading
 from functools import partial
+from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
@@ -23,10 +24,12 @@ from .migrations.runner import migration_framework_projection
 from .object_store import upgrade_local_object_envelopes
 from .ports.object_store_keys import ObjectMasterKeyProvider
 from .projects import ProjectLifecycleService
+from .windows_credentials import create_windows_object_key_provider
 
 EXIT_CONFIGURATION_ERROR = 2
 SUPERVISION_PROTOCOL_VERSION = "1.0"
 STARTING_DIAGNOSTIC_CODE = "RO-CORE-STARTING"
+_DEFAULT_OBJECT_KEY_PROVIDER = object()
 
 
 def create_runtime_app(
@@ -34,16 +37,26 @@ def create_runtime_app(
     settings: CoreSettings,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
-    object_key_provider: ObjectMasterKeyProvider | None = None,
+    object_key_provider: ObjectMasterKeyProvider | None | object = _DEFAULT_OBJECT_KEY_PROVIDER,
+    profile_vault_root: Path | None = None,
 ) -> FastAPI:
-    """Compose the executable Core with mandatory pre-open object upgrades."""
+    """Compose Core with the Windows profile vault and mandatory pre-open upgrades."""
+
+    if object_key_provider is _DEFAULT_OBJECT_KEY_PROVIDER:
+        resolved_provider = create_windows_object_key_provider(profile_vault_root) if os.name == "nt" else None
+    else:
+        if profile_vault_root is not None:
+            raise ValueError("an injected object-key provider cannot also select a profile vault root")
+        if object_key_provider is not None and not isinstance(object_key_provider, ObjectMasterKeyProvider):
+            raise ValueError("object-key provider is invalid")
+        resolved_provider = object_key_provider
 
     return create_app(
         settings=settings,
         capability_digest=capability_digest,
         expected_authority=expected_authority,
         projects=ProjectLifecycleService(
-            object_upgrade=partial(upgrade_local_object_envelopes, key_provider=object_key_provider)
+            object_upgrade=partial(upgrade_local_object_envelopes, key_provider=resolved_provider)
         ),
     )
 

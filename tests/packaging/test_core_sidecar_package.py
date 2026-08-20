@@ -51,7 +51,9 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "_cffi_backend",
                     "research_observatory_core.migrations.runner",
                     "research_observatory_core.object_store",
+                    "research_observatory_core.ports.credential_store",
                     "research_observatory_core.repositories",
+                    "research_observatory_core.windows_credentials",
                 ],
             },
         )
@@ -174,9 +176,11 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "research_observatory_core.migrations.versions.v0004_object_envelope_upgrades",
                 "research_observatory_core.migrations.versions.v0005_object_creation_source",
                 "research_observatory_core.object_store",
+                "research_observatory_core.ports.credential_store",
                 "research_observatory_core.ports.object_store",
                 "research_observatory_core.ports.repositories",
                 "research_observatory_core.repositories",
+                "research_observatory_core.windows_credentials",
                 "sqlalchemy.engine",
             ):
                 self.assertIn(f"'{required_module}'", archive.stdout)

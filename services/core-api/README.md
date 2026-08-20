@@ -86,11 +86,14 @@ replay. No operation-create route or scholarly workflow is implemented here;
 CAP-03 supplies durable operation ownership behind this contract.
 
 The default Core composition also wires the mandatory project pre-open object-
-envelope coordinator. Supported legacy projects advance through the journaled
-copy-on-write upgrade while the session lock is held. If the project master key
-is not yet available through the injected key-provider port, open returns the
-explicit recoverable key-unavailable problem and retains the verified source;
-it never bypasses the coordinator into generic database validation.
+envelope coordinator and the Windows current-user DPAPI profile vault. Supported
+legacy projects advance through the journaled copy-on-write upgrade while the
+session lock is held, creating or retrieving the stable object-encryption key
+through the credential-store port. An explicitly unavailable injected provider
+returns the recoverable key-unavailable problem and retains the verified source;
+it never bypasses the coordinator into generic database validation. Vault paths,
+secret identifiers, and values never enter runtime configuration or the public
+API.
 
 At slice and release qualification, benchmark the real packaged process with:
 
@@ -117,6 +120,7 @@ HEAD in the report. `--measure-only` is deliberately nonqualifying, and every
 failed invocation replaces a prior report with an explicit `ok: false` result so
 stale PASS evidence cannot survive.
 The frozen sidecar explicitly includes the governed Alembic migration runner and
-its pinned SQLAlchemy runtime, immutable v2/v3 revisions, and v4 object-upgrade
-journal revision so backup-first schema and pre-open envelope recovery remain
-available without a system Python installation.
+its pinned SQLAlchemy runtime, immutable v2 through v5 revisions, the object-
+upgrade journal, and the credential-store port and Windows adapter so backup-
+first schema recovery, pre-open envelope recovery, and production key retrieval
+remain available without a system Python installation.

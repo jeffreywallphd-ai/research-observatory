@@ -107,3 +107,7 @@ and integrity boundary is documented in
 The project-scoped content identity, opaque physical object name, atomic
 publication, verified-stream, rights, and staged-encryption boundary is documented
 in [`local-object-storage.md`](local-object-storage.md) and governed by ADR-0015.
+The Windows current-user DPAPI profile vault, opaque authenticated secret
+records, redacted access audit, and explicit recovery boundary are documented in
+[`local-credential-storage.md`](local-credential-storage.md) and governed by
+ADR-0017.
