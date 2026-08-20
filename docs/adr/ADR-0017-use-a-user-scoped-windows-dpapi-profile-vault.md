@@ -80,7 +80,9 @@ New records are create-only; replacement requires the observed version.
 Corrupt or unavailable protection fails with a bounded recoverable classification
 and retains ciphertext.
 
-Access requires a calling capability, declared purpose, and audit context. Audit
+Access requires a calling capability, one closed versioned purpose code
+(`provider-authentication`, `connector-authentication`, `signing-verification`,
+or `object-encryption`), and an audit context. Audit
 records retain those bounded capability and purpose values plus operation,
 outcome, bounded reason, audit context, and an opaque keyed reference token. They
 never retain plaintext scope identifiers or values. Material is delivered through

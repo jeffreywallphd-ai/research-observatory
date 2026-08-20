@@ -15,6 +15,7 @@ REPO = Path(__file__).resolve().parents[2]
 SERVICE_SRC = REPO / "services" / "core-api" / "src"
 sys.path.insert(0, str(SERVICE_SRC))
 
+from research_observatory_core.logging import build_log_record  # noqa: E402
 from research_observatory_core.main import _parser  # noqa: E402
 from research_observatory_core.object_store import create_local_object_store  # noqa: E402
 from research_observatory_core.ports.credential_store import (  # noqa: E402
@@ -23,6 +24,7 @@ from research_observatory_core.ports.credential_store import (  # noqa: E402
     SecretConflict,
     SecretCorrupt,
     SecretKind,
+    SecretPurpose,
     SecretReference,
     SecretUnavailable,
 )
@@ -49,7 +51,7 @@ def reference() -> SecretReference:
 def context() -> SecretAccessContext:
     return SecretAccessContext(
         calling_capability="CAP-12.S01",
-        purpose="provider-authentication",
+        purpose=SecretPurpose.PROVIDER_AUTHENTICATION,
         audit_context="a" * 32,
     )
 
@@ -187,6 +189,26 @@ class WindowsCredentialStoreTests(unittest.TestCase):
             self.assertNotIn(secret.decode("ascii"), projection)
             self.assertNotIn("provider-example", projection)
             self.assertNotIn("primary-api-key", projection)
+
+        for unsafe_purpose in (
+            "local-default",
+            "provider-example",
+            "primary-api-key",
+            "canonical-looking-secret",
+        ):
+            with self.subTest(unsafe_purpose=unsafe_purpose):
+                with self.assertRaises(ValueError):
+                    SecretAccessContext(
+                        calling_capability="CAP-12.S01",
+                        purpose=unsafe_purpose,  # type: ignore[arg-type]
+                        audit_context="b" * 32,
+                    )
+                structured_record = build_log_record(
+                    "security.credential-access",
+                    level="INFO",
+                    fields={"purpose": unsafe_purpose},
+                )
+                self.assertEqual("[REDACTED]", structured_record["purpose"])
 
     def test_invalid_and_unavailable_vault_authorities_are_bounded_for_put_and_lease(self) -> None:
         for operation in ("put", "lease"):

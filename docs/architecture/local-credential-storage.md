@@ -35,7 +35,10 @@ bytes, so a researcher can restore a known-good backup or recovery artifact.
 
 ## Access and disclosure boundary
 
-Every request declares the calling capability, purpose, and audit context. The
+Every request declares the calling capability, one closed contract purpose
+(`provider-authentication`, `connector-authentication`, `signing-verification`,
+or `object-encryption`), and an audit context. Arbitrary canonical identifiers
+cannot be promoted into an audit purpose. The
 audit projection retains that bounded capability/purpose attribution plus the
 operation/outcome, bounded reason, audit context, and opaque keyed reference
 token. A failing audit authority denies access before
