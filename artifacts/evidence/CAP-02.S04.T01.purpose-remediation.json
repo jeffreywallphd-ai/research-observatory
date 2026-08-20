@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S04.T01",
+  "commit": "3fedbd7dd0783b2a47000781dbc0f73843c53170",
+  "baseCommit": "ff752baf288dbb0749684b9821ce3a031d877d6e",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S04.T01.review-remediation.json",
+    "reason": "The bounded remediation re-review confirmed prior F1 and F2 mechanically closed but found changed-surface F3: the newly emitted purpose field still accepted arbitrary canonical identifiers and could reproduce a plaintext secret-scope identifier in diagnostics. This second-round follow-up preserves all earlier evidence and closes the root cause with one closed versioned purpose vocabulary enforced independently at the port and structured logger."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S04.T01.review-remediation.json",
+    "docs/adr/ADR-0017-use-a-user-scoped-windows-dpapi-profile-vault.md",
+    "docs/architecture/local-credential-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/security/README.md",
+    "packages/contracts/security/credential-store-profile.schema.json",
+    "packages/contracts/security/credential-store-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/logging.py",
+    "services/core-api/src/research_observatory_core/ports/credential_store.py",
+    "services/core-api/src/research_observatory_core/windows_credentials.py",
+    "tests/contracts/test_credential_store_contract.py",
+    "tests/security/test_windows_credentials.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_windows_credentials tests.contracts.test_credential_store_contract",
+      "exitCode": 0,
+      "result": "The exact final remediation commit passed all ten credential and strict portable-contract tests in 1.377 seconds, with one expected directory-symlink privilege skip. The production default-sink test now proves scope-like and secret-like strings cannot construct SecretAccessContext and are independently redacted by the structured logger, while each of the four governed purpose codes remains attributable."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "All six frozen Windows sidecar tests passed in 20.976 seconds, with one expected governed-file symlink privilege skip. The packaged runtime imports and runs the closed SecretPurpose port and Windows adapter without system Python."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo . --report artifacts/tmp/CAP-02.S04.T01-purpose-remediation-quality.json; git diff --check; git status --short",
+      "exitCode": 0,
+      "result": "All 111 governed source files pass format, lint, and configured typing; patch hygiene passes; and the exact remediation commit is clean. Quality report SHA-256: 0f09c0908a67b299545311efb5b2516bc14f304e8b0cfac5b44c302916e0ab16. Before freezing the identical source bytes, the 62-test incremental credential/contract/Core/envelope/ADR/build union and architecture/package-smoke checks also passed."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "SecretAccessContext and SecretAuditEvent now require the closed SecretPurpose enum: provider-authentication, connector-authentication, signing-verification, or object-encryption. A profile, subject, name, arbitrary canonical identifier, or canonical-looking secret cannot be reclassified as purpose.",
+        "The structured logger separately accepts only those four governed strings for its purpose field and redacts every other value. The default production audit therefore remains attributable without creating a plaintext identifier/value injection channel. Prior bounded filesystem recovery, ciphertext retention, DPAPI, CAS, restart, and leakage guarantees remain unchanged."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The default-sink regression submits local-default, provider-example, primary-api-key, and canonical-looking-secret as hostile purposes. Port construction raises ValueError and the lower-level structured logger emits [REDACTED] for each, while the valid provider-authentication put/lease records retain the exact approved projection.",
+        "The strict portable profile test requires the exact ordered four-code vocabulary and rejects replacement with free-form. Exact credential, contract, package, quality, and prior incremental integration checks pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The portable profile/schema now version the exact purposeCodes set. ADR-0017, architecture, and contract README state that arbitrary canonical identifiers cannot be promoted to audit purposes; implementation, diagnostics, and documentation agree.",
+        "No other audit fields, secret kinds, storage behavior, dependency, migration, UI, provider integration, later S04 duty, or unrelated capability surface changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This second-round root-cause remediation changes only the credential purpose type, logger allowlist, portable purpose vocabulary, matching documentation, and negative leakage tests. Exact credential/contract tests, frozen packaging, all governed quality checks, and the pre-freeze 62-test incremental integration union were selected. Prior F1/F2 evidence and the immutable full security-local report remain applicable to unchanged surfaces.",
+    "deferred": "Do not repeat the complete audit or full security-local profile. Final review must replay F3 using scope-like and secret-like purposes at both SecretAccessContext and build_log_record, confirm all runtime call sites use SecretPurpose, and verify the profile/ADR vocabulary matches. Under the second-remediation escalation rule, any further request must identify a material safety defect on this incremental surface or be routed to governed follow-up rather than extending the cycle."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "security-review",
+    "note": "Final bounded review of exact commit 3fedbd7dd0783b2a47000781dbc0f73843c53170. Replay F3 only: arbitrary, scope-like, and secret-like purpose values must fail at the credential port and redact at the logger; only the four versioned purpose codes may reach the default audit sink. Confirm runtime call sites, portable profile/schema, ADR/docs, and frozen package agree. Prior F1/F2 are already mechanically closed. Under round-two escalation, return APPROVED if F3 is closed; report only a reproducible material safety defect on changed surfaces as a blocker."
+  }
+}

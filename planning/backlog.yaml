@@ -4134,7 +4134,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-20T21:20:44+00:00'
-      updated_at: '2026-08-20T22:17:44+00:00'
+      updated_at: '2026-08-20T22:21:12+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Implementation ce437a2 with final submission evidence 8d032da; security-local, DPAPI adversarial,
@@ -4155,6 +4155,11 @@ capabilities:
         sha256: 536fe0d20f081e4eb1c00ebe3132af6c6a56721b7b89b924f958dd9e32d9244a
         commit: ff752baf288dbb0749684b9821ce3a031d877d6e
         recorded_at: '2026-08-20T22:14:02+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S04.T01.purpose-remediation.json
+        sha256: 208f07ec0debc0f2cd67920b1c9106f7f63ef983f9627fdcf88bcf934a625408
+        commit: 3fedbd7dd0783b2a47000781dbc0f73843c53170
+        recorded_at: '2026-08-20T22:21:12+00:00'
       review:
         reviewer: cap02_s04_t01_security_review
         result: changes-requested
@@ -4168,7 +4173,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-20T22:17:44+00:00'
         expires_at: '2026-08-21T06:17:44+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64

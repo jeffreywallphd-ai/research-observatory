@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 32cda6ce9d28797f0b390d72acca46b249735bdc99b198264722898e91780ce6
+source_sha256: b59e1866f08843cd8cedaa8985054a843b7d987e47ec74e074e15c2672377a07
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1973,6 +1973,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-02.S04.T01.submission.json` at `8d032da3afe77862a441785de6d0be615176128c`
 - `artifacts/evidence/CAP-02.S04.T01.review-remediation.json` at `ff752baf288dbb0749684b9821ce3a031d877d6e`
+- `artifacts/evidence/CAP-02.S04.T01.purpose-remediation.json` at `3fedbd7dd0783b2a47000781dbc0f73843c53170`
 
 #### - [ ] CAP-02.S04.T02 - Implement local user profile and application-lock behavior
 
