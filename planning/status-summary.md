@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5ee0b77e65c063e9dbbd5acf5e36278224b850e84eab55758d724feb9206a45e
+source_sha256: 70980c7ae13c9081c68bfc13b72a529355cf53a63bc2b6678f8d00e5b34868fb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -51,7 +51,8 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 278 |
 | `READY` | 1 |
-| `DONE` | 41 |
+| `IN_PROGRESS` | 1 |
+| `DONE` | 40 |
 | `DEFERRED` | 36 |
 
 ## Wave progress
@@ -59,7 +60,7 @@ manual_edit: prohibited
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 6/15 | 22/48 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 6/15 | 21/48 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -77,7 +78,7 @@ manual_edit: prohibited
 |---|---|---|---:|---:|---|
 | CAP-delivery-foundation (`CAP-00`) — Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
 | CAP-windows-desktop-runtime (`CAP-01`) — Windows-first desktop shell and supervised local runtime | `PAUSED` | `PAUSED` | 4/5 | 12/15 | - |
-| CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 2/5 | 9/16 | - |
+| CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 2/5 | 8/16 | `CAP-02.S03.T03` |
 | CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 1/20 | - |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -115,4 +116,6 @@ manual_edit: prohibited
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `CAP-02.S03.T03` Implement storage accounting, quotas, garbage collection, and cache eviction | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
