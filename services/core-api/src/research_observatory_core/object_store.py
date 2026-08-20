@@ -319,22 +319,15 @@ def _file_matches(path: Path, descriptor: int, identity: tuple[int, int]) -> boo
         return False
 
 
-def _held_candidate_matches(candidate: _FileCandidate, descriptor: int, visible_path: Path) -> bool:
+def _held_candidate_matches(candidate: _FileCandidate, descriptor: int) -> bool:
     try:
         opened = os.fstat(descriptor)
-        visible = visible_path.stat(follow_symlinks=False)
         return (
             stat.S_ISREG(opened.st_mode)
-            and stat.S_ISREG(visible.st_mode)
             and opened.st_nlink == 1
-            and visible.st_nlink == 1
             and (opened.st_dev, opened.st_ino) == candidate.identity
-            and (visible.st_dev, visible.st_ino) == candidate.identity
             and int(opened.st_size) == candidate.byte_count
-            and int(visible.st_size) == candidate.byte_count
             and int(opened.st_mtime_ns) == candidate.modified_ns
-            and int(visible.st_mtime_ns) == candidate.modified_ns
-            and not _redirect(visible_path)
         )
     except OSError:
         return False
@@ -349,7 +342,7 @@ def _held_cleanup_candidate(
     if os.name != "nt":
         reader = _open_read_locked(candidate.path)
         try:
-            if not _held_candidate_matches(candidate, reader.fileno(), candidate.path):
+            if not _held_candidate_matches(candidate, reader.fileno()):
                 raise OSError("cleanup candidate identity changed")
 
             def unsupported_rename(_destination: Path) -> None:
@@ -421,15 +414,12 @@ def _held_cleanup_candidate(
         close_handle(handle)
         raise
     reader = os.fdopen(descriptor, "rb", buffering=0)
-    current = candidate.path
 
     def require_held_match() -> None:
-        if not _held_candidate_matches(candidate, reader.fileno(), current):
+        if not _held_candidate_matches(candidate, reader.fileno()):
             raise OSError("cleanup candidate identity changed")
 
     def rename_held(destination: Path) -> None:
-        nonlocal current
-        require_held_match()
         encoded = str(destination).encode("utf-16-le")
         size = FileRenameInfo.FileName.offset + len(encoded) + ctypes.sizeof(wintypes.WCHAR)
         buffer = ctypes.create_string_buffer(size)
@@ -441,11 +431,8 @@ def _held_cleanup_candidate(
         native_handle = wintypes.HANDLE(msvcrt.get_osfhandle(reader.fileno()))
         if not set_file_information(native_handle, file_rename_info, buffer, size):
             raise ctypes.WinError(ctypes.get_last_error())
-        current = destination
-        require_held_match()
 
     def delete_held() -> None:
-        require_held_match()
         info = FileDispositionInfo(True)
         native_handle = wintypes.HANDLE(msvcrt.get_osfhandle(reader.fileno()))
         if not set_file_information(
@@ -2354,21 +2341,6 @@ def _storage_audit(
         raise _bounded(ObjectStoreProblem, "storage maintenance audit could not be written") from None
 
 
-def _candidate_matches(candidate: _FileCandidate) -> bool:
-    try:
-        status = candidate.path.stat(follow_symlinks=False)
-        return (
-            stat.S_ISREG(status.st_mode)
-            and status.st_nlink == 1
-            and not _redirect(candidate.path)
-            and (status.st_dev, status.st_ino) == candidate.identity
-            and int(status.st_size) == candidate.byte_count
-            and int(status.st_mtime_ns) == candidate.modified_ns
-        )
-    except OSError:
-        return False
-
-
 def _cleanup_partial_path(directory: Path, candidate: _FileCandidate) -> Path:
     return directory / f"cleanup-{secrets.token_hex(12)}-{_cleanup_candidate_commitment(candidate)}.partial"
 
@@ -2381,23 +2353,18 @@ def _cleanup_candidate_commitment(candidate: _FileCandidate) -> str:
 
 
 def _remove_rebuildable_candidate(state: _StoreState, candidate: _FileCandidate) -> bool:
-    if not _candidate_matches(candidate):
-        return False
     try:
         chain = _directory_chain(candidate.authority_root, candidate.path.parent)
-        with _stable_directories(list(chain)):
-            if not _candidate_matches(candidate):
-                return False
-            with _held_cleanup_candidate(candidate) as (rename_held, delete_held):
-                if candidate.category == "shared-cache":
-                    delete_held()
-                    return True
-                staging = _cleanup_staging_directory(state.temporary)
-                with _stable_directories([state.root, state.temporary, staging]):
-                    rename_held(_cleanup_partial_path(staging, candidate))
-                    _cleanup_step_completed("after-rebuildable-move")
-                    delete_held()
-                    return True
+        with _stable_directories(list(chain)), _held_cleanup_candidate(candidate) as (rename_held, delete_held):
+            if candidate.category == "shared-cache":
+                delete_held()
+                return True
+            staging = _cleanup_staging_directory(state.temporary)
+            with _stable_directories([state.root, state.temporary, staging]):
+                rename_held(_cleanup_partial_path(staging, candidate))
+                _cleanup_step_completed("after-rebuildable-move")
+                delete_held()
+                return True
     except OSError, ProjectLifecycleProblem:
         return False
 

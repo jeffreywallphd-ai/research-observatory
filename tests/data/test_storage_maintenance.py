@@ -6,6 +6,7 @@ import os
 import sys
 import tempfile
 import unittest
+from contextlib import contextmanager
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -238,20 +239,17 @@ class StorageMaintenanceTests(unittest.TestCase):
         saved = self.project / "cache" / "previewed-generation.saved"
         cache.write_bytes(b"previewed-generation")
         preview = store.preview_cleanup(cleanup_request("project-cache"))
-        original_matches = object_store_module._candidate_matches
-        match_count = 0
+        original_held_candidate = object_store_module._held_cleanup_candidate
 
-        def replace_after_last_path_check(candidate: Any) -> bool:
-            nonlocal match_count
-            matched = original_matches(candidate)
+        @contextmanager
+        def replace_before_handle_open(candidate: Any):
             if getattr(candidate, "path", None) == cache:
-                match_count += 1
-                if matched and match_count == 2:
-                    cache.rename(saved)
-                    cache.write_bytes(b"post-preview-generation")
-            return matched
+                cache.rename(saved)
+                cache.write_bytes(b"post-preview-generation")
+            with original_held_candidate(candidate) as operations:
+                yield operations
 
-        with patch.object(object_store_module, "_candidate_matches", side_effect=replace_after_last_path_check):
+        with patch.object(object_store_module, "_held_cleanup_candidate", replace_before_handle_open):
             result = store.cleanup(preview.preview_token)
 
         self.assertEqual(0, result.reclaimed_item_count)
