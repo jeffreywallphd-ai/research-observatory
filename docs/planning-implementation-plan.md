@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1d31b2ae3ac26beeaffe6fc8b96cb63960255b6a89780bc98863728afc3c501f
+source_sha256: 290373a722c8f68d40c533a10636e48c27c0d20ba85eb32db407209c6e0cf252
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -29,8 +29,8 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Tasks | 356 |
 | Enabler tasks | 0 |
 | Waves | 12 |
-| Wave approval bases | 0 |
-| Wave amendments | 0 |
+| Wave approval bases | 1 |
+| Wave amendments | 2 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -39,7 +39,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 | Wave | Authority | Packet / ECR | Approval record | Lifecycle |
 |---|---|---|---|---|
-| - | - | - | - | - |
+| `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
+| `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
+| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `APPROVED` |
 
 ## Waves
 
@@ -377,9 +379,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 # Enabler change requests and Wave amendments
 
-No Wave amendment has been materialized in the authoritative ledger.
+## W1.A01 - -
 
-Hash-bound proposals and approvals remain visible in the generated planning review site's enabler register.
+**Target Wave / class:** `W1` / `migrated-replanning`
+
+**Approval record:** `planning/wave-amendment-approvals/W1.A01.json` (`2eaa44d91f4dae202c85f2c2984430445df149da08a3e8df2f5236af2a139bde`)
+
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `NONE` / `NONE` / `APPROVED`
+
+**Append-only lifecycle history:**
+
+- `E01` `ADOPTED` at `2026-08-20T23:38:52+00:00` by repository-owner: Migrated immutable historical W1 amendment authority.
+
+**Bounded tasks:**
+
+## W1.A02 - ECR-0001
+
+**Target Wave / class:** `W1` / `gate-integrity-safety-defect`
+
+**Approval record:** `planning/wave-amendment-approvals/W1.A02.json` (`63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-08-20T22:45:05.0259522Z` by repository-owner: Approved in Codex in direct response to the exact-commit ECR-0001/W1.A02 approval request; proceed within the hashed B00, T01, and T02 scope only.
+
+**Bounded tasks:**
 
 
 # Capability contributions, slices, and tasks
