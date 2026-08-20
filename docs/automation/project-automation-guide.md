@@ -51,6 +51,26 @@ campaign remains active across capability boundaries until every ordered slice
 is independently approved, integration checkpoints are complete, the full Wave
 matrix passes, and independent Wave review approves qualification.
 
+### 2.2 Controlled enabler amendment lane
+
+Do not rewrite or repeat an approved Wave packet. For consequential control or
+workflow evidence, pause the Wave at a safe boundary and use an immutable ECR:
+
+```bash
+python tools/planctl.py --repo . ecr review ECR-NNNN
+python tools/planctl.py --repo . ecr validate ECR-NNNN --require-approved
+python tools/taskctl.py --file planning/backlog.yaml amendment status WN.ANN
+```
+
+The approved ECR is inert until its bounded bootstrap is implemented, evidenced,
+and independently approved. Materialization must reproduce the packet's exact
+task IDs and hashes. Activation creates a separate amendment lease while the
+ordinary Wave remains paused. `status`, `next`, and `next-capability` must show a
+decision-complete amendment stop; they must not advertise Wave start or repeated
+Wave approval. Adoption requires independently approved tasks and exit review
+plus a control/security checkpoint, and leaves the Wave paused for explicit
+resume. Older tools must fail closed once executable amendment state exists.
+
 ## 3. Permitted pause conditions
 
 Pause only for:

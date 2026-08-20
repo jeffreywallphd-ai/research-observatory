@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/wave-amendment-approval.v1.json",
+  "title": "Research Observatory immutable Wave amendment approval",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "amendmentId",
+    "changeRequestId",
+    "targetWave",
+    "status",
+    "approvedBy",
+    "approvedAt",
+    "decision",
+    "packet",
+    "effectiveBase",
+    "authorizedTaskIds"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "wave-amendment-approval"},
+    "amendmentId": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
+    "changeRequestId": {
+      "anyOf": [
+        {"type": "string", "pattern": "^ECR-[0-9]{4}$"},
+        {"type": "null"}
+      ]
+    },
+    "targetWave": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
+    "status": {"const": "APPROVED"},
+    "approvedBy": {"type": "string", "minLength": 1},
+    "approvedAt": {"type": "string", "format": "date-time"},
+    "decision": {"type": "string", "minLength": 1},
+    "packet": {"type": "object"},
+    "effectiveBase": {"type": "object"},
+    "authorizedTaskIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2}$"}
+    },
+    "approvalSource": {"enum": ["MIGRATED_HISTORY"]},
+    "migration": {"type": "object"},
+    "bootstrapUnit": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B[0-9]{2}$"},
+    "independentPacketReview": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"changeRequestId": {"type": "null"}}},
+      "then": {"required": ["approvalSource", "migration"]},
+      "else": {"required": ["bootstrapUnit", "independentPacketReview"]}
+    }
+  ],
+  "additionalProperties": false
+}

@@ -11,6 +11,9 @@
   and exit/activation gate decision.
 - `planning/review-site/CAP-XX/index.html` - decision register and approval surface.
 - `planning/review-site/CAP-XX/CAP-XX.SYY.html` - individual slice plan.
+- `planning/review-site/enablers/index.html` - ECR/amendment register.
+- `planning/review-site/enablers/ECR-NNNN.html` - proposal, immutable approval,
+  base/amendment authority, execution state, alternatives, and resume condition.
 
 The left navigation is a two-tab planning switcher on every page:
 
@@ -100,7 +103,9 @@ python tools/planctl.py --repo . wave approve WN --by "<reviewer>" --commit <git
 Approval applies once to every decision-complete capability contribution and
 every ordered slice plan in `WN` at the same immutable commit. A subset cannot
 start execution. Future-Wave plans remain outside the approval. Historical
-approvals remain immutable evidence.
+approvals remain immutable evidence. The approval command is shown only for a
+genuinely pending, uninterrupted Wave. An approved Wave cannot be reapproved;
+its generated page shows immutable authority and links any interrupting ECR.
 
 ## Generation and validation
 

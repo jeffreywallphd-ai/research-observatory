@@ -1,9 +1,9 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "document_type": "planning-review-site-manifest",
   "baseline": "1.3",
   "supplemental_release": "1.3.4",
-  "review_interface_release": "1.3.8",
+  "review_interface_release": "1.3.9",
   "generated_at": "2026-08-14T00:19:49.349097+00:00",
   "entry_point": "index.html",
   "feedback_schema_version": "1.1",
@@ -33,7 +33,8 @@
       "completion_status": "APPROVED",
       "unlocks_waves": [
         "W1"
-      ]
+      ],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W1",
@@ -87,6 +88,9 @@
       "completion_status": "PAUSED",
       "unlocks_waves": [
         "W2"
+      ],
+      "interrupting_change_request_ids": [
+        "ECR-0001"
       ]
     },
     {
@@ -120,7 +124,8 @@
       "completion_status": "PENDING",
       "unlocks_waves": [
         "W3"
-      ]
+      ],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W3",
@@ -176,7 +181,8 @@
       "completion_status": "PENDING",
       "unlocks_waves": [
         "W4"
-      ]
+      ],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W4",
@@ -207,7 +213,8 @@
       "completion_status": "PENDING",
       "unlocks_waves": [
         "W5"
-      ]
+      ],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W5",
@@ -241,7 +248,8 @@
       "completion_status": "PENDING",
       "unlocks_waves": [
         "W6"
-      ]
+      ],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W6",
@@ -268,7 +276,8 @@
       "completion_status": "PENDING",
       "unlocks_waves": [
         "W7"
-      ]
+      ],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W7",
@@ -304,7 +313,8 @@
       "completion_status": "PENDING",
       "unlocks_waves": [
         "W8"
-      ]
+      ],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W8",
@@ -346,7 +356,8 @@
       "unlocks_waves": [
         "W9",
         "W10"
-      ]
+      ],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W9",
@@ -368,7 +379,8 @@
       "gate_status": "PENDING",
       "approval_status": "PENDING",
       "completion_status": "PENDING",
-      "unlocks_waves": []
+      "unlocks_waves": [],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W10",
@@ -395,7 +407,8 @@
       "completion_status": "PENDING",
       "unlocks_waves": [
         "W11"
-      ]
+      ],
+      "interrupting_change_request_ids": []
     },
     {
       "wave_id": "W11",
@@ -420,7 +433,8 @@
       "gate_status": "PENDING",
       "approval_status": "PENDING",
       "completion_status": "PENDING",
-      "unlocks_waves": []
+      "unlocks_waves": [],
+      "interrupting_change_request_ids": []
     }
   ],
   "capabilities": [
@@ -1761,6 +1775,33 @@
           "task_count": 3
         }
       ]
+    }
+  ],
+  "enabler_change_requests": [
+    {
+      "change_request_id": "ECR-0001",
+      "amendment_id": "W1.A02",
+      "target_wave": "W1",
+      "classification": "gate-integrity-safety-defect",
+      "proposal_status": "pending-approval",
+      "proposal_execution_state": "non-executable",
+      "packet_path": "planning/enabler-change-requests/ECR-0001.packet.json",
+      "packet_sha256": "9ed06e76ea09f069cf58fa0f55bfb130797b791b328e4bb24b69ce12dc3ac1aa",
+      "proposal_path": "planning/enabler-change-requests/ECR-0001.md",
+      "proposal_sha256": "4c25a159bd015eb5a8af2ade5bc40f2302fd50c85c564048202c29ee38b72e17",
+      "review_path": "planning/enabler-change-requests/ECR-0001-review.html",
+      "review_sha256": "ef76f95c46e63dd0c23cdd033ef39f49f757155dac167ae01c4c93cca1b200fd",
+      "approval_path": "planning/wave-amendment-approvals/W1.A02.json",
+      "approval_sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
+      "approval_status": "APPROVED",
+      "lifecycle_status": "NOT_MATERIALIZED",
+      "bootstrap_status": "NOT_SUBMITTED",
+      "campaign_status": "NONE",
+      "authorized_task_ids": [
+        "W1.A02.T01",
+        "W1.A02.T02"
+      ],
+      "page": "enablers/ECR-0001.html"
     }
   ]
 }

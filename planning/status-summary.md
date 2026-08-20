@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 2b02c22a1281e022b3bdc4cfea5f124d39bd95628e84b837c02f862aaa5c7f33
+source_sha256: 1d31b2ae3ac26beeaffe6fc8b96cb63960255b6a89780bc98863728afc3c501f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -17,7 +17,10 @@ manual_edit: prohibited
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
+| Enabler tasks | 0 |
 | Waves | 12 |
+| Wave approval bases | 0 |
+| Wave amendments | 0 |
 | Release gates | 12 |
 
 ## Status distributions
@@ -34,8 +37,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ACTIVE` | 1 |
 | `NONE` | 11 |
+| `PAUSED` | 1 |
 
 ### Slice completion
 
@@ -53,12 +56,29 @@ manual_edit: prohibited
 | `DONE` | 42 |
 | `DEFERRED` | 36 |
 
+### Wave amendment lifecycle
+
+| Status | Count |
+|---|---:|
+
+### Enabler task state
+
+| Status | Count |
+|---|---:|
+
+## Wave authority and append-only amendments
+
+Proposal approval, materialization lifecycle, and campaign state remain distinct. A Wave approval is immutable; later authority is an ordered amendment record.
+
+| Wave | Authority | Packet / ECR | Approval record | Lifecycle | Bootstrap | Campaign | Enabler tasks |
+|---|---|---|---|---|---|---|---:|
+| - | - | - | - | - | - | - | 0 |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 7/15 | 23/48 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 7/15 | 23/48 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |

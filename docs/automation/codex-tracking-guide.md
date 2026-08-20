@@ -36,6 +36,13 @@ After any successful ledger mutation, regenerate the comprehensive plan and
 status summary. Both files are wholly generated; `foundation` fails if they are
 missing, stale, or hand-edited.
 
+If `status` reports `STOPPED AT WAVE AMENDMENT`, do not start, resume, or claim
+ordinary Wave work. Follow the exact `taskctl amendment` command in the handoff.
+The ECR proposal, immutable approval record, base/amendment authority chain,
+legal alternatives, and resume condition must remain visible. An approved Wave
+is never reapproved; only the append-only amendment lane may authorize the
+bounded task inventory.
+
 The normal task transition is:
 
 ```bash
