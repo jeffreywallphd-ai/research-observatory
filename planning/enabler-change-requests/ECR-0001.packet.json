@@ -1,0 +1,137 @@
+{
+  "$schema": "./enabler-change-request.schema.json",
+  "schemaVersion": "1.0-proposal",
+  "documentType": "enabler-change-request-packet",
+  "changeRequestId": "ECR-0001",
+  "proposedAmendmentId": "W1.A02",
+  "targetWave": "W1",
+  "status": "pending-approval",
+  "executionState": "non-executable",
+  "classification": "gate-integrity-safety-defect",
+  "authority": {
+    "originalWavePacketCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+    "originalApprovalRecordCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701",
+    "legacyAmendmentId": "W1.A01",
+    "legacyAmendmentPacketCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "legacyAmendmentRecordCommit": "a223a6fcd5730d4ed6d0081673e6192c6977e25c",
+    "effectiveBasePacketCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752"
+  },
+  "activationBoundary": {
+    "waveStatus": "PAUSED",
+    "ordinaryTaskStatesDenied": ["IN_PROGRESS", "REVIEW"],
+    "reviewCandidateMutationDenied": true,
+    "otherEnablerCampaignDenied": true
+  },
+  "bootstrapUnit": {
+    "id": "W1.A02.B00",
+    "kind": "one-time-self-hosting-control-repair",
+    "exceptionReason": "The current task controller cannot represent or claim the append-only amendment mechanism needed to repair its own Wave-approval and review-history controls.",
+    "authorizedPaths": [
+      "AGENTS.md",
+      "planning/**",
+      "docs/governance/**",
+      "docs/automation/**",
+      "tools/planctl.py",
+      "tools/taskctl.py",
+      "tools/backlog_views.py",
+      "tools/plan_review_site.py",
+      "tools/plan_review_check.py",
+      "tests/foundation/**",
+      "quality-scope.json"
+    ],
+    "requiredOutcomes": [
+      "Repeated approval of an APPROVED Wave fails without changing any byte.",
+      "The original W1 approval and already-approved CAP-02 amendment are represented as an immutable base plus legacy W1.A01 with identical effective authority.",
+      "Backward-compatible ECR and amendment validation, approval-record, materialization, activation, status, and review-page controls exist and fail closed.",
+      "Only W1.A02.T01 and W1.A02.T02 can be materialized from this approved packet.",
+      "The bootstrap receives focused tests and independent control/security approval before task materialization or W1 resumption."
+    ],
+    "prohibitedOutcomes": [
+      "No product code or researcher-facing experience change.",
+      "No change to evidence criteria, verification thresholds, canonical full profiles, release gates, or completed task outcomes.",
+      "No rewrite or deletion of a prior approval, review, evidence record, or Git object.",
+      "No ordinary W1 task claim while the Wave is paused for this amendment."
+    ]
+  },
+  "authorizedTaskIds": ["W1.A02.T01", "W1.A02.T02"],
+  "taskInventory": [
+    {
+      "id": "W1.A02.T01",
+      "title": "Immutable review packets and bounded remediation",
+      "objective": "Preserve complete review truth while reducing repeated review administration through frozen packets, append-only attempts/findings, atomic submission, and bounded replay.",
+      "dependencies": ["W1.A02.B00"],
+      "acceptanceCriteria": [
+        "Every submission freezes candidate/evidence/criteria/changed-path/check-selection identity and one review round returns one consolidated severity-ranked finding ledger.",
+        "Review attempts and findings are append-only; final approval requires explicit closure of all blocking findings and cannot erase prior changes-requested dispositions.",
+        "Remediation replays open finding IDs plus incremental changed-path risk, with root-cause escalation after round two.",
+        "Evidence attachment plus submission is one compare-and-swap operation, while legacy task review readers remain truthful and backward-compatible.",
+        "Generated views show immutable packets, review rounds, findings, closures, and current projection without flattening history."
+      ],
+      "verification": [
+        "Deny stale writers, altered packet/evidence hashes, self-review, duplicate attempts, approval with open blocking findings, unchanged-surface laundering, and dependency bypass.",
+        "Prove existing task histories validate without fabricated attempts and legacy latest-review projection remains supported.",
+        "Run focused taskctl schema/workflow/view tests, affected quality checks, and independent control review."
+      ]
+    },
+    {
+      "id": "W1.A02.T02",
+      "title": "Affected verification selection and privacy-safe review telemetry",
+      "objective": "Make risk-selected verification deterministic and inspectable while measuring review delay without collecting research content or weakening canonical profiles.",
+      "dependencies": ["W1.A02.T01"],
+      "acceptanceCriteria": [
+        "Affected selection records changed paths, selected commands, deferred commands, rationale, and the later gate that owns deferred coverage.",
+        "Unknown or safety-sensitive changes conservatively select broader coverage; canonical profiles and thresholds remain immutable.",
+        "Telemetry is limited to control IDs, timestamps, durations, outcomes, finding counts/severity, command IDs, and remediation linkage.",
+        "No prompt, source content, research data, secret, user-data path, free-form finding body, or chain-of-thought is collected, and no historical data is fabricated.",
+        "Wave exit still runs the complete affected/full repository and deployment-profile matrix."
+      ],
+      "verification": [
+        "Prove deterministic selection, conservative fallback, canonical profile immutability, and deferred-gate ownership.",
+        "Probe telemetry payloads for forbidden content and verify no backfill is invented.",
+        "Run focused verify/taskctl/view tests, affected quality checks, and independent control/privacy review."
+      ]
+    }
+  ],
+  "acceptanceCriteria": [
+    "Pending and unapproved amendments cannot be materialized, activated, claimed, included by taskctl next, resumed, or used to approve G1.",
+    "Duplicate approval, wrong packet commit/hash, dirty state, changed base authority, missing human identity, stale writer, forked chain, and self-review fail closed.",
+    "W1 base plus migrated W1.A01 exactly reproduces the current effective W1 authorization.",
+    "Backlogs with no amendment collection remain valid unchanged and older tools fail closed when an active amendment is present.",
+    "Independent amendment review and a W1 control/security checkpoint are required before ordinary W1 execution resumes."
+  ],
+  "verificationObligations": [
+    "Schema validation and exact listed-file SHA-256 verification for this inert packet.",
+    "Focused fail-closed tests for Wave reapproval, append-only approval concurrency, migration parity, materialization, activation, claim, resume, review history, and generated pages.",
+    "Affected foundation/schema/workflow/view/quality checks at task level, independent control/security review at bootstrap and amendment exit, and complete Wave-exit qualification later.",
+    "Performance measurement is run once at its declared gate and is never retried to green; this amendment does not change benchmark methods or thresholds."
+  ],
+  "rollback": [
+    "Before activation, withdraw or defer the amendment without executable state while retaining immutable proposal and disposition history.",
+    "After bootstrap but before materialization, disable activation and retain approval/migration records.",
+    "After activation, pause the amendment, retain evidence, and restore the last validated executable projection through reviewed remediation; never erase historical authority or review records.",
+    "If legacy migration cannot reproduce current effective W1 authority, leave W1 paused and materialize no task."
+  ],
+  "nonGoals": [
+    "No product feature, architecture, researcher workflow, UI reference, release gate, or external system change.",
+    "No weakening or deletion of independent review, task/slice acceptance criteria, security review, or full Wave-exit qualification.",
+    "No benchmark baseline, methodology, threshold, rerun policy, or canonical verification profile change beyond adding non-destructive selection metadata.",
+    "No parallel mutation of the campaign worktree and no general-purpose emergency override flag."
+  ],
+  "files": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0001.md",
+      "sha256": "c3cc3be0ff2c4cbfaa6630099034b9daf5005e47fec16e8ce6dbed5d082c3dd0",
+      "role": "canonical-proposal"
+    },
+    {
+      "path": "planning/enabler-change-requests/enabler-change-request.schema.json",
+      "sha256": "955526a51966ab988032c280550fe27473afcf81a37f7cf022548d71048d4f0f",
+      "role": "proposal-schema"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0001-review.html",
+      "sha256": "66c08072a0377385914ea92e44944aeaa6afc2ef1496510a23c994d7b8d16439",
+      "role": "human-review"
+    }
+  ]
+}

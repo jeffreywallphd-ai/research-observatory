@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECR-0001 review — Research Observatory</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 76rem; margin: 0 auto; padding: 2rem; line-height: 1.55; }
+    header, section { border: 1px solid #7b8493; border-radius: .75rem; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .pending { border-left: .5rem solid #c57b00; }
+    .danger { border-left: .5rem solid #b53a3a; }
+    .good { border-left: .5rem solid #2b7b56; }
+    code { overflow-wrap: anywhere; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #7b8493; padding: .55rem; text-align: left; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <header class="pending">
+    <p><strong>Pending approval · non-executable</strong></p>
+    <h1>ECR-0001 / proposed W1.A02</h1>
+    <p>Append-only Wave amendments and truthful bounded review automation.</p>
+    <p><a href="ECR-0001.md">Open the complete canonical proposal</a> · <a href="ECR-0001.packet.json">Open the machine packet</a></p>
+  </header>
+  <section class="danger">
+    <h2>Why W1 is paused</h2>
+    <p>The current Wave approval command can replace an APPROVED record, and the current task review projection can hide earlier changes-requested dispositions. Both occurred in real W1 history. Do not run <code>planctl wave approve W1</code>.</p>
+  </section>
+  <section>
+    <h2>Authority chain</h2>
+    <table>
+      <thead><tr><th>Authority</th><th>Reviewed packet</th><th>Record</th></tr></thead>
+      <tbody>
+        <tr><td>W1 base</td><td><code>594e63be501711d67d17a4aef176bb9b6a8748be</code></td><td><code>901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701</code></td></tr>
+        <tr><td>Legacy W1.A01</td><td><code>c5bbd97c0cdc665eecb973f5862478ef7be97752</code></td><td><code>a223a6fcd5730d4ed6d0081673e6192c6977e25c</code></td></tr>
+        <tr><td>Proposed W1.A02</td><td>Exact commit shown after packet commit</td><td>Append-only after explicit human approval</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section>
+    <h2>Authorized scope</h2>
+    <ol>
+      <li><code>W1.A02.B00</code>: one-time self-hosting control repair, independently reviewed.</li>
+      <li><code>W1.A02.T01</code>: immutable review packets, append-only findings/attempts, atomic submit, bounded remediation.</li>
+      <li><code>W1.A02.T02</code>: deterministic affected-check selection and privacy-safe timing telemetry.</li>
+    </ol>
+    <p>No product code, evidence criteria, benchmark threshold, canonical full profile, experience contract, release gate, or prior Git object may change under this authorization.</p>
+  </section>
+  <section class="good">
+    <h2>Approval criteria</h2>
+    <ul>
+      <li>The packet JSON validates and every listed file hash matches.</li>
+      <li>An independent control/security reviewer reports no blocking issue.</li>
+      <li>The human approval names ECR-0001, W1.A02, the exact 40-character commit, B00, T01, and T02.</li>
+      <li>Approval is appended in a new immutable record; the existing W1 approval is not edited and <code>wave approve</code> is not called.</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Decision</h2>
+    <p><strong>Recommended:</strong> approve the bounded W1.A02 repair now. Alternatives are to defer it to W2 under continued administrative holds, or withdraw it and resume W1 with the known controls unchanged.</p>
+    <p>Exact approval wording is in section 9 of the canonical proposal.</p>
+  </section>
+</body>
+</html>
