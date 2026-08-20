@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8502358845aecaa6a1d62cdab901fbc8f824090aba90f74490216ef082f300da
+source_sha256: 2b02c22a1281e022b3bdc4cfea5f124d39bd95628e84b837c02f862aaa5c7f33
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1943,15 +1943,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Dependencies:** `CAP-02.S03.T02`
 
-#### - [ ] CAP-02.S04.T01 - Integrate Windows credential storage for secrets
+#### - [x] CAP-02.S04.T01 - Integrate Windows credential storage for secrets
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S03.T02`
 
-**Owner / review:** codex / cap02_s04_t01_security_review (`changes-requested`)
+**Owner / review:** codex / cap02_s04_t01_security_review (`approved`)
 
 **Objective:** OS-protected storage adapter for provider keys, connector tokens, signing trust, and encryption key material.
 
@@ -1977,7 +1977,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T02 - Implement local user profile and application-lock behavior
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -2031,7 +2031,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T04 - Select and implement the protected local project-database profile
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
