@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-control-review",
+  "reviewId": "W1.A02.B00.R01",
+  "taskId": "W1.A02.B00",
+  "reviewer": "b00-independent-reviewer",
+  "implementationCommit": "2493dee313a2df8929dbd2eed31d9e0e672fc368",
+  "submittedStateCommit": "305e7444d632800c16cd9e0a7c41ae7b5f8abf93",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "B00-R01",
+      "severity": "HIGH",
+      "title": "Frozen bootstrap candidate, evidence, and independent-review projection are not durably enforced",
+      "reproduction": "A nonexistent bootstrap implementation commit, zeroed evidence hash, APPROVED bootstrap status, and null review validate with no semantic errors. The review transition does not revalidate the packet, and no governed descendant-candidate resubmission exists.",
+      "requiredRemediation": "Use one bootstrap-packet validator from semantic validation, review, materialize, and activate; enforce review/status coherence; and add append-only descendant-candidate resubmission that preserves prior dispositions."
+    },
+    {
+      "id": "B00-R02",
+      "severity": "HIGH",
+      "title": "Materialized amendment task definitions can drift from the immutable ECR packet",
+      "reproduction": "After materialization and activation, changing T01 objective and acceptance criteria while retaining its stored packet hash produces no semantic validation error.",
+      "requiredRemediation": "At every authority validation, compare task order and immutable fields with the approved packet and deny post-activation drift in validate, claim, evidence, review, and adoption paths."
+    },
+    {
+      "id": "B00-R03",
+      "severity": "HIGH",
+      "title": "Lifecycle, campaign, Wave hold, and active-amendment state lack cross-field invariants",
+      "reproduction": "An ACTIVE amendment campaign combined with lifecycle APPROVED, ordinary Wave scope, and a null active_amendment marker validates with no errors; the pre-B00 schema also accepts the resulting ledger.",
+      "requiredRemediation": "Enforce a finite-state consistency table, exact active marker/campaign correspondence, approved bootstrap and exact tasks for executable states, Wave amendment-hold requirements, terminal restoration, and pre-B00-schema denial tests."
+    }
+  ],
+  "verification": {
+    "focusedTests": "67 passed in 50.855 seconds",
+    "quality": "113 governed files passed",
+    "backlog": "20 capabilities, 117 slices, 356 tasks, 12 gates passed",
+    "planningSite": "145 HTML pages passed",
+    "evidenceTruth": "The 45-file diff, ancestry, evidence hash, addendum hash, and stated checks were independently confirmed."
+  }
+}
