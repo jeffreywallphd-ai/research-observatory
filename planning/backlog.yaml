@@ -4028,18 +4028,21 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T13:19:06+00:00'
-      updated_at: '2026-08-20T21:07:53+00:00'
+      updated_at: '2026-08-20T21:08:41+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Submitted exact implementation commit 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0 with superseding
         evidence after generation-exchange remediation and qualifying Windows storage gate.
 
         Superseding slice-review remediation at d0cebec: four prior findings fixed; exact 83-test union, package, security/foundation,
-        v5 migration, and first retained Windows performance gate pass. Evidence artifacts/evidence/CAP-02.S03.T03.slice-review-remediation.json.'
+        v5 migration, and first retained Windows performance gate pass. Evidence artifacts/evidence/CAP-02.S03.T03.slice-review-remediation.json.
+
+        Focused P2 doc remediation at e2eda29: storage contract README now matches governed v1-v4 source support into v5;
+        strict contracts, quality, backlog/views, and patch hygiene pass. Evidence artifacts/evidence/CAP-02.S03.T03.doc-remediation.json.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S03.T03.json
