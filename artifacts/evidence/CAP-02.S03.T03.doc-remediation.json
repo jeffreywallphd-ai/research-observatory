@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S03.T03",
+  "commit": "e2eda29c017c5c1441811bb2e4ea3a046bede6be",
+  "baseCommit": "d0cebec8ab89bc42f972a6083cc80e7dda843601",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S03.T03.slice-review-remediation.json",
+    "reason": "The independent remediation reviewer found one P2 documentation mismatch after all executable and performance checks passed. This manifest binds the exact contract-document correction while retaining the prior implementation evidence."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S03.T03.slice-review-remediation.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/README.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_object_store_contract",
+      "exitCode": 0,
+      "result": "Both strict portable object-store contract tests passed after the documentation correction."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-02.S03-doc-remediation-quality.json",
+      "exitCode": 0,
+      "result": "Formatting, lint, and configured typing passed for all 107 governed Python files; no executable file changed in this follow-up."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; git diff --check",
+      "exitCode": 0,
+      "result": "Generated views have no drift, the 20-capability/117-slice/356-task/12-gate backlog validates, and patch hygiene passes."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The cleanup implementation and exact passing evidence at d0cebec are unchanged by this documentation-only remediation."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The prior 83-test union and both retained performance runs remain bound to the unchanged executable hashes; the strict contract test was replayed after this correction."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "packages/contracts/storage/README.md now truthfully states that the backup-first migration authority validates exact source fixtures from version 1 through version 4 before advancing them to current v5, matching the runner, recovery schema, and architecture guide."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The independent finding is a single acceptance-bound contract-document version mismatch. The strict object-store contract, full governed quality check, backlog/view validation, and patch hygiene were replayed. Executable, migration, security, packaging, and performance paths did not change and retain the independently verified evidence from d0cebec.",
+    "deferred": "Focused independent remediation review should confirm the exact phrase and that the commit changes no executable or portable machine contract. The marginal independent cleanup performance pass remains a required slice/W1-exit replay risk but is unaffected by this documentation correction."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Focused remediation review of exact commit e2eda29c017c5c1441811bb2e4ea3a046bede6be: confirm packages/contracts/storage/README.md now states supported source fixtures v1-v4 and that the delta adds no executable or machine-contract change."
+  }
+}
