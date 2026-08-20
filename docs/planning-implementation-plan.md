@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6854107eb76fdbcb56f2578c6d7fe36a9eb77d604823134ff6c5821ec07c0215
+source_sha256: bd51a085cb44e4fd779b7255f07e5675a79c8959e3e64cce33420eb065cd92ce
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1901,13 +1901,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S03.T03 - Implement storage accounting, quotas, garbage collection, and cache eviction
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-02.S03.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / independent-agent-t03-slice-remediation (`changes-requested`)
 
 **Objective:** Per-project and shared-cache usage metrics, soft/hard thresholds, orphan detection, preview, and safe cleanup.
 
