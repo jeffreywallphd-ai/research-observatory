@@ -296,9 +296,16 @@ class StorageMaintenanceTests(unittest.TestCase):
         status = authority.stat(follow_symlinks=False)
         staging = self.project / ".tmp" / "storage-cleanup"
         staging.mkdir(exist_ok=True)
-        partial = staging / (
-            f"cleanup-{'a' * 48}-{status.st_dev}-{status.st_ino}-{status.st_size}-{status.st_mtime_ns}.partial"
+        authority_candidate = object_store_module._FileCandidate(
+            category="project-cache",
+            path=authority,
+            authority_root=self.project / "cache",
+            identity=(status.st_dev, status.st_ino),
+            byte_count=status.st_size,
+            modified_ns=status.st_mtime_ns,
         )
+        commitment = object_store_module._cleanup_candidate_commitment(authority_candidate)
+        partial = staging / f"cleanup-{'a' * 24}-{commitment}.partial"
         post_preview = b"replacement-bytes"
         self.assertEqual(len(payload), len(post_preview))
         partial.write_bytes(post_preview)
@@ -308,6 +315,22 @@ class StorageMaintenanceTests(unittest.TestCase):
 
         self.assertEqual(post_preview, partial.read_bytes())
         self.assertEqual(payload, authority.read_bytes())
+
+    def test_cleanup_partial_name_is_bounded_and_commits_the_full_identity(self) -> None:
+        candidate = object_store_module._FileCandidate(
+            category="project-cache",
+            path=self.project / "cache" / "bounded.cache",
+            authority_root=self.project / "cache",
+            identity=(2**64 - 1, 2**64 - 1),
+            byte_count=2**53 - 1,
+            modified_ns=2**63 - 1,
+        )
+
+        partial = object_store_module._cleanup_partial_path(self.project / ".tmp", candidate)
+
+        self.assertEqual(84, len(partial.name))
+        self.assertIn(object_store_module._cleanup_candidate_commitment(candidate), partial.name)
+        self.assertIsNotNone(object_store_module._CLEANUP_PARTIAL.fullmatch(partial.name))
 
     def test_hard_quota_and_low_disk_degrade_writes_without_blocking_reads(self) -> None:
         initial = self.create_store(StoragePolicy(minimum_free_bytes=0))
