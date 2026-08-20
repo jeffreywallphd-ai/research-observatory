@@ -15,7 +15,7 @@ import stat
 import struct
 import threading
 from collections.abc import Callable, Iterator
-from contextlib import contextmanager, suppress
+from contextlib import contextmanager, nullcontext, suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -26,10 +26,16 @@ from nacl.exceptions import CryptoError
 
 from .ports.object_store import (
     CleanupCategory,
+    ObjectAccessClass,
+    ObjectAccessDecision,
     ObjectAccessDenied,
+    ObjectAccessPolicy,
+    ObjectAccessPurpose,
+    ObjectAccessRequest,
     ObjectBusy,
     ObjectConflict,
     ObjectCorrupt,
+    ObjectCreationSource,
     ObjectIntegrityMismatch,
     ObjectKeyUnavailable,
     ObjectNotFound,
@@ -71,9 +77,15 @@ _MEDIA_TYPE = re.compile(r"^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$")
 _TRACE_ID = re.compile(r"^[0-9a-f]{32}$")
 _UTC_MILLISECONDS = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
 _CLEANUP_PARTIAL = re.compile(r"^cleanup-[0-9a-f]{24}-(?P<identity>[A-Za-z0-9_-]{43})\.partial$")
+_WINDOWS_CLEANUP_API: dict[str, Any] | None = None
 _RIGHTS: frozenset[str] = frozenset(("allowed", "denied", "unknown", "not-applicable"))
 _RETENTION: frozenset[str] = frozenset(("project-lifetime", "derived-rebuildable", "export-retained"))
 _READABLE_RIGHTS: frozenset[str] = frozenset(("allowed", "not-applicable"))
+_CREATION_SOURCES: frozenset[str] = frozenset(
+    ("local-import", "connector-acquisition", "local-derivation", "test-fixture")
+)
+_LOCAL_ACCESS_PURPOSES: frozenset[str] = frozenset(("document-analysis", "test-verification", "storage-performance"))
+_EGRESS_ACCESS_PURPOSES: frozenset[str] = frozenset(("project-backup", "project-export", "provider-egress"))
 _PLAINTEXT_FIXTURE = "plaintext-fixture-v1"
 _ENCRYPTED_ENVELOPE = "secretstream-xchacha20poly1305-v1"
 _ENCRYPTED_PROFILE = "project-encrypted-v1"
@@ -186,6 +198,8 @@ def _validate_command(command: ObjectPutCommand) -> ObjectPutCommand:
         raise _bounded(ObjectStoreProblem, "object protection profile is invalid")
     if command.retention_class not in _RETENTION:
         raise _bounded(ObjectStoreProblem, "object retention class is invalid")
+    if command.creation_source not in _CREATION_SOURCES:
+        raise _bounded(ObjectStoreProblem, "object creation source is invalid")
     if command.expected_sha256 is not None:
         _validate_sha256(command.expected_sha256)
     # The canonical SQLite boundary performs exact UTC calendar validation.
@@ -194,9 +208,66 @@ def _validate_command(command: ObjectPutCommand) -> ObjectPutCommand:
     return command
 
 
-def _validate_purpose(purpose: str) -> None:
+def _access_request(
+    project_id: str,
+    metadata: StoredObject,
+    *,
+    purpose: str,
+    access_class: ObjectAccessClass,
+    destination_id: str | None,
+) -> ObjectAccessRequest:
     if not isinstance(purpose, str) or _IDENTIFIER.fullmatch(purpose) is None:
-        raise _bounded(ObjectStoreProblem, "object access purpose is invalid")
+        raise _bounded(ObjectAccessDenied, "object access purpose is not authorized")
+    expected_class: ObjectAccessClass
+    if purpose in _LOCAL_ACCESS_PURPOSES:
+        expected_class = "local-read"
+    elif purpose in _EGRESS_ACCESS_PURPOSES:
+        expected_class = "controlled-egress"
+    else:
+        raise _bounded(ObjectAccessDenied, "object access purpose is not authorized")
+    if access_class != expected_class:
+        raise _bounded(ObjectAccessDenied, "object access class is not authorized")
+    if expected_class == "local-read":
+        if destination_id is not None:
+            raise _bounded(ObjectAccessDenied, "local object access cannot declare an egress destination")
+    elif (
+        not isinstance(destination_id, str)
+        or _IDENTIFIER.fullmatch(destination_id) is None
+        or len(destination_id) > 120
+    ):
+        raise _bounded(ObjectAccessDenied, "object egress destination is not authorized")
+    return ObjectAccessRequest(
+        project_id=project_id,
+        object_metadata=metadata,
+        purpose=cast(ObjectAccessPurpose, purpose),
+        access_class=expected_class,
+        destination_id=destination_id,
+    )
+
+
+class _LocalOnlyObjectAccessPolicy:
+    """Permit known local reads and fail closed for all controlled egress."""
+
+    def authorize(self, request: ObjectAccessRequest) -> ObjectAccessDecision:
+        if request.access_class == "local-read":
+            return ObjectAccessDecision("allow", "local-read")
+        return ObjectAccessDecision("deny", "controlled-egress-policy-unavailable")
+
+
+def _authorize_access(state: _StoreState, request: ObjectAccessRequest) -> None:
+    try:
+        decision = state.access_policy.authorize(request)
+    except Exception:
+        raise _bounded(ObjectAccessDenied, "object access policy is unavailable") from None
+    if (
+        not isinstance(decision, ObjectAccessDecision)
+        or decision.outcome not in ("allow", "deny", "require-confirmation")
+        or not isinstance(decision.reason_code, str)
+        or _IDENTIFIER.fullmatch(decision.reason_code) is None
+    ):
+        raise _bounded(ObjectAccessDenied, "object access policy returned an invalid decision")
+    if decision.outcome != "allow":
+        raise _bounded(ObjectAccessDenied, "object access is not authorized")
 
 
 def _validate_key_version(value: str) -> str:
@@ -333,28 +404,12 @@ def _held_candidate_matches(candidate: _FileCandidate, descriptor: int) -> bool:
         return False
 
 
-@contextmanager
-def _held_cleanup_candidate(
-    candidate: _FileCandidate,
-) -> Iterator[tuple[Callable[[Path], None], Callable[[], None]]]:
-    """Bind destructive cleanup to the verified Windows file handle."""
+def _windows_cleanup_api() -> dict[str, Any]:
+    """Load immutable Windows cleanup bindings once per process."""
 
-    if os.name != "nt":
-        reader = _open_read_locked(candidate.path)
-        try:
-            if not _held_candidate_matches(candidate, reader.fileno()):
-                raise OSError("cleanup candidate identity changed")
-
-            def unsupported_rename(_destination: Path) -> None:
-                raise OSError("identity-bound cleanup is unavailable on this platform")
-
-            def unsupported_delete() -> None:
-                raise OSError("identity-bound cleanup is unavailable on this platform")
-
-            yield unsupported_rename, unsupported_delete
-        finally:
-            reader.close()
-        return
+    global _WINDOWS_CLEANUP_API
+    if _WINDOWS_CLEANUP_API is not None:
+        return _WINDOWS_CLEANUP_API
 
     import ctypes
     import msvcrt
@@ -389,6 +444,51 @@ def _held_cleanup_candidate(
     close_handle = kernel32.CloseHandle
     close_handle.argtypes = (wintypes.HANDLE,)
     close_handle.restype = wintypes.BOOL
+    _WINDOWS_CLEANUP_API = {
+        "ctypes": ctypes,
+        "msvcrt": msvcrt,
+        "wintypes": wintypes,
+        "FileRenameInfo": FileRenameInfo,
+        "FileDispositionInfo": FileDispositionInfo,
+        "create_file": create_file,
+        "set_file_information": set_file_information,
+        "close_handle": close_handle,
+    }
+    return _WINDOWS_CLEANUP_API
+
+
+@contextmanager
+def _held_cleanup_candidate(
+    candidate: _FileCandidate,
+) -> Iterator[tuple[Callable[[Path], None], Callable[[], None], io.FileIO]]:
+    """Bind destructive cleanup to the verified Windows file handle."""
+
+    if os.name != "nt":
+        reader = _open_read_locked(candidate.path)
+        try:
+            if not _held_candidate_matches(candidate, reader.fileno()):
+                raise OSError("cleanup candidate identity changed")
+
+            def unsupported_rename(_destination: Path) -> None:
+                raise OSError("identity-bound cleanup is unavailable on this platform")
+
+            def unsupported_delete() -> None:
+                raise OSError("identity-bound cleanup is unavailable on this platform")
+
+            yield unsupported_rename, unsupported_delete, reader
+        finally:
+            reader.close()
+        return
+
+    api = _windows_cleanup_api()
+    ctypes = api["ctypes"]
+    msvcrt = api["msvcrt"]
+    wintypes = api["wintypes"]
+    FileRenameInfo = api["FileRenameInfo"]
+    FileDispositionInfo = api["FileDispositionInfo"]
+    create_file = api["create_file"]
+    set_file_information = api["set_file_information"]
+    close_handle = api["close_handle"]
     generic_read = 0x80000000
     delete_access = 0x00010000
     file_share_read = 0x00000001
@@ -445,7 +545,7 @@ def _held_cleanup_candidate(
 
     try:
         require_held_match()
-        yield rename_held, delete_held
+        yield rename_held, delete_held, reader
     finally:
         reader.close()
 
@@ -882,6 +982,7 @@ class _StoreState:
     database: Path
     project_id: str
     key_provider: ObjectMasterKeyProvider | None
+    access_policy: ObjectAccessPolicy
     allow_plaintext_fixture: bool
     cancellation_requested: Callable[[str], bool] | None
     storage_policy: StoragePolicy
@@ -1115,7 +1216,8 @@ def _inventory(state: _StoreState) -> _Inventory:
                        (SELECT count(*) FROM documents AS document
                          WHERE document.project_id = object.project_id
                            AND document.object_sha256 = object.object_sha256) AS reference_count,
-                       object.envelope_version, object.key_version, object.ciphertext_byte_length
+                       object.envelope_version, object.key_version, object.ciphertext_byte_length,
+                       object.creation_source
                   FROM object_records AS object
                  WHERE object.project_id = ?
                 """,
@@ -1252,6 +1354,7 @@ def _row_metadata(row: Any) -> StoredObject:
         rights_status=cast(RightsStatus, str(row[3])),
         protection_profile=str(row[4]),
         retention_class=cast(RetentionClass, str(row[5])),
+        creation_source=cast(ObjectCreationSource, str(row[13])),
         storage_state=cast(StorageState, str(row[6])),
         created_at=str(row[7]),
         verified_at=None if row[8] is None else str(row[8]),
@@ -1269,7 +1372,8 @@ _METADATA_SQL = """
            (SELECT count(*) FROM documents AS document
              WHERE document.project_id = object.project_id
                AND document.object_sha256 = object.object_sha256) AS reference_count,
-           object.envelope_version, object.key_version, object.ciphertext_byte_length
+           object.envelope_version, object.key_version, object.ciphertext_byte_length,
+           object.creation_source
     FROM object_records AS object
     WHERE object.project_id = ? AND object.object_sha256 = ?
 """
@@ -1330,6 +1434,54 @@ def _verified_stored_reader(
     )
 
 
+def _verify_stored_held_reader(
+    state: _StoreState,
+    connection: CanonicalConnection,
+    reader: io.FileIO,
+    metadata: StoredObject,
+) -> None:
+    """Verify content through an already identity-bound cleanup handle."""
+
+    reader.seek(0)
+    if metadata.envelope_version == _PLAINTEXT_FIXTURE:
+        if metadata.protection_profile != _PLAINTEXT_FIXTURE or not state.allow_plaintext_fixture:
+            raise _bounded(ObjectAccessDenied, "plaintext object fixtures are disabled")
+        digest = hashlib.sha256()
+        length = 0
+        while block := reader.read(_CHUNK_BYTES):
+            digest.update(block)
+            length += len(block)
+        if digest.hexdigest() != metadata.object_sha256 or length != metadata.byte_length:
+            raise OSError("object integrity differs")
+        reader.seek(0)
+        return
+    if metadata.envelope_version != _ENCRYPTED_ENVELOPE or metadata.protection_profile != _ENCRYPTED_PROFILE:
+        raise _bounded(ObjectCorrupt, "object encryption profile is invalid")
+    if os.fstat(reader.fileno()).st_size != metadata.ciphertext_byte_length:
+        raise OSError("encrypted object identity differs")
+    wrapped_key, wrap_nonce = _encryption_material(
+        connection,
+        state.project_id,
+        metadata.object_sha256,
+    )
+    data_key = _unwrap_data_key(
+        state.key_provider,
+        project_id=state.project_id,
+        object_sha256=metadata.object_sha256,
+        key_version=metadata.key_version,
+        wrapped_key=wrapped_key,
+        wrap_nonce=wrap_nonce,
+    )
+    _verify_encrypted_payload(
+        reader,
+        data_key,
+        project_id=state.project_id,
+        expected_sha256=metadata.object_sha256,
+        expected_length=metadata.byte_length,
+    )
+    reader.seek(0)
+
+
 def _publication_state(
     state: _StoreState,
     digest: str,
@@ -1353,6 +1505,7 @@ def _publication_state(
         command.rights_status,
         command.protection_profile,
         command.retention_class,
+        command.creation_source,
         "available",
     )
     actual = (
@@ -1361,6 +1514,7 @@ def _publication_state(
         result.rights_status,
         result.protection_profile,
         result.retention_class,
+        result.creation_source,
         result.storage_state,
     )
     return ("committed", result) if actual == expected else ("retained", result)
@@ -2298,7 +2452,7 @@ def _reconcile_cleanup_staging(directory: Path) -> None:
             )
             if not hmac.compare_digest(_cleanup_candidate_commitment(candidate), match.group("identity")):
                 raise OSError("cleanup staging identity commitment changed")
-            with _held_cleanup_candidate(candidate) as (_, delete_held):
+            with _held_cleanup_candidate(candidate) as (_, delete_held, _):
                 delete_held()
     except OSError, ValueError:
         raise _bounded(ObjectStoreProblem, "storage cleanup staging cannot be reconciled") from None
@@ -2355,7 +2509,14 @@ def _cleanup_candidate_commitment(candidate: _FileCandidate) -> str:
 def _remove_rebuildable_candidate(state: _StoreState, candidate: _FileCandidate) -> bool:
     try:
         chain = _directory_chain(candidate.authority_root, candidate.path.parent)
-        with _stable_directories(list(chain)), _held_cleanup_candidate(candidate) as (rename_held, delete_held):
+        with (
+            _stable_directories(list(chain)),
+            _held_cleanup_candidate(candidate) as (
+                rename_held,
+                delete_held,
+                _,
+            ),
+        ):
             if candidate.category == "shared-cache":
                 delete_held()
                 return True
@@ -2427,8 +2588,10 @@ class _LocalObjectStore:
                     reclaimed = False
                     if candidate.object_sha256 is not None:
                         try:
-                            self.delete(candidate.object_sha256)
-                            reclaimed = True
+                            reclaimed = self._delete(
+                                candidate.object_sha256,
+                                expected_candidate=candidate,
+                            )
                         except ObjectReferenced, ObjectBusy, ObjectNotFound, ObjectCorrupt:
                             reclaimed = False
                     else:
@@ -2560,9 +2723,10 @@ class _LocalObjectStore:
                                 """
                                 INSERT INTO object_records (
                                     object_sha256, project_id, byte_length, media_type, rights_status,
-                                    protection_profile, retention_class, storage_state, created_at, verified_at,
+                                    protection_profile, retention_class, creation_source,
+                                    storage_state, created_at, verified_at,
                                     envelope_version, key_version, wrapped_key, wrap_nonce, ciphertext_byte_length
-                                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'available', ?, ?, ?, ?, ?, ?, ?)
+                                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'available', ?, ?, ?, ?, ?, ?, ?)
                                 """,
                                 (
                                     digest,
@@ -2572,6 +2736,7 @@ class _LocalObjectStore:
                                     command.rights_status,
                                     command.protection_profile,
                                     command.retention_class,
+                                    command.creation_source,
                                     command.created_at,
                                     verified_at,
                                     envelope.envelope_version,
@@ -2588,6 +2753,7 @@ class _LocalObjectStore:
                                 existing.rights_status,
                                 existing.protection_profile,
                                 existing.retention_class,
+                                existing.creation_source,
                             )
                             requested = (
                                 length,
@@ -2595,6 +2761,7 @@ class _LocalObjectStore:
                                 command.rights_status,
                                 command.protection_profile,
                                 command.retention_class,
+                                command.creation_source,
                             )
                             if immutable != requested:
                                 raise ObjectConflict("object metadata conflicts with its content identity")
@@ -2687,9 +2854,15 @@ class _LocalObjectStore:
                 if publication_failure is not None:
                     raise publication_failure
 
-    def open(self, object_sha256: str, *, purpose: str) -> VerifiedObjectStream:
+    def open(
+        self,
+        object_sha256: str,
+        *,
+        purpose: str,
+        access_class: ObjectAccessClass = "local-read",
+        destination_id: str | None = None,
+    ) -> VerifiedObjectStream:
         digest = _validate_sha256(object_sha256)
-        _validate_purpose(purpose)
         state = self._state()
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
             connection: CanonicalConnection | None = None
@@ -2712,6 +2885,14 @@ class _LocalObjectStore:
                     raise ObjectNotFound("object is unavailable")
                 if metadata.rights_status not in _READABLE_RIGHTS:
                     raise ObjectAccessDenied("object access is not authorized")
+                request = _access_request(
+                    state.project_id,
+                    metadata,
+                    purpose=purpose,
+                    access_class=access_class,
+                    destination_id=destination_id,
+                )
+                _authorize_access(state, request)
                 destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
                 with _stable_directories([state.root, state.objects, *buckets]):
                     reader = _verified_stored_reader(state, connection, destination, metadata)
@@ -2750,12 +2931,16 @@ class _LocalObjectStore:
             raise _bounded(ObjectStoreProblem, "object verification failed")
 
     def delete(self, object_sha256: str) -> None:
+        self._delete(object_sha256, expected_candidate=None)
+
+    def _delete(self, object_sha256: str, *, expected_candidate: _FileCandidate | None) -> bool:
         digest = _validate_sha256(object_sha256)
         state = self._state()
         connection: CanonicalConnection | None = None
         moved: Path | None = None
         destination: Path | None = None
         failure: ObjectStoreProblem | None = None
+        candidate_acquired = expected_candidate is None
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
             if _READERS.in_use(state.project_id, digest):
                 raise _bounded(ObjectBusy, "object is in active use; retry after the reader closes")
@@ -2770,13 +2955,38 @@ class _LocalObjectStore:
                     raise ObjectReferenced("referenced object cannot be deleted")
                 if metadata.storage_state == "deleted":
                     connection.execute("ROLLBACK")
-                    return
+                    return False
                 destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
-                with _stable_directories([state.root, state.state, state.objects, state.temporary, staging, *buckets]):
-                    reader = _verified_stored_reader(state, connection, destination, metadata)
-                    reader.close()
+                if expected_candidate is not None and (
+                    expected_candidate.category != "derived-objects"
+                    or expected_candidate.object_sha256 != digest
+                    or expected_candidate.path != destination
+                    or expected_candidate.authority_root != state.objects
+                    or metadata.retention_class != "derived-rebuildable"
+                    or metadata.storage_state != "available"
+                ):
+                    connection.execute("ROLLBACK")
+                    return False
+                candidate_context = (
+                    nullcontext((None, None, None))
+                    if expected_candidate is None
+                    else _held_cleanup_candidate(expected_candidate)
+                )
+                with (
+                    _stable_directories([state.root, state.state, state.objects, state.temporary, staging, *buckets]),
+                    candidate_context as (rename_held, delete_held, held_reader),
+                ):
+                    candidate_acquired = True
+                    if held_reader is None:
+                        reader = _verified_stored_reader(state, connection, destination, metadata)
+                        reader.close()
+                    else:
+                        _verify_stored_held_reader(state, connection, held_reader, metadata)
                     moved = staging / f"delete-{_opaque_name(state.project_id, digest)}.partial"
-                    _move_no_replace(destination, moved)
+                    if rename_held is None:
+                        _move_no_replace(destination, moved)
+                    else:
+                        rename_held(moved)
                     connection.execute(
                         """
                         UPDATE object_records SET storage_state='deleted', verified_at=NULL
@@ -2788,9 +2998,14 @@ class _LocalObjectStore:
                     # Metadata no longer exposes the object after COMMIT. A cleanup
                     # failure can safely leave only an operation-scoped staging file,
                     # which the next adapter construction reconciles.
-                    with suppress(OSError):
-                        moved.unlink()
+                    if delete_held is None:
+                        with suppress(OSError):
+                            moved.unlink()
+                    else:
+                        with suppress(OSError):
+                            delete_held()
                     moved = None
+                    return True
             except ObjectStoreProblem:
                 if connection is not None and connection.in_transaction:
                     with suppress(sqlite3.Error, StorageProblem):
@@ -2803,6 +3018,8 @@ class _LocalObjectStore:
                 if moved is not None and destination is not None:
                     with suppress(OSError):
                         _move_no_replace(moved, destination)
+                if expected_candidate is not None and not candidate_acquired:
+                    return False
                 _mark_quarantined(state, digest)
                 failure = _bounded(ObjectCorrupt, "object delete verification failed")
             except sqlite3.Error as error:
@@ -2830,6 +3047,7 @@ class _LocalObjectStore:
                     connection.close()
             if failure is not None:
                 raise failure
+        return False
 
 
 def _prepare_store_state(
@@ -2837,6 +3055,7 @@ def _prepare_store_state(
     project_id: str,
     *,
     key_provider: ObjectMasterKeyProvider | None,
+    access_policy: ObjectAccessPolicy | None,
     allow_plaintext_fixture: bool,
     cancellation_requested: Callable[[str], bool] | None,
     storage_policy: StoragePolicy | None,
@@ -2895,6 +3114,7 @@ def _prepare_store_state(
         database=database,
         project_id=project_id,
         key_provider=key_provider,
+        access_policy=access_policy or _LocalOnlyObjectAccessPolicy(),
         allow_plaintext_fixture=allow_plaintext_fixture,
         cancellation_requested=cancellation_requested,
         storage_policy=policy,
@@ -2947,6 +3167,7 @@ def upgrade_local_object_envelopes(
         project_root,
         project_id,
         key_provider=key_provider,
+        access_policy=None,
         allow_plaintext_fixture=False,
         cancellation_requested=cancellation_requested,
         storage_policy=None,
@@ -2960,6 +3181,7 @@ def create_local_object_store(
     project_id: str,
     *,
     key_provider: ObjectMasterKeyProvider | None = None,
+    access_policy: ObjectAccessPolicy | None = None,
     allow_plaintext_fixture: bool = False,
     storage_policy: StoragePolicy | None = None,
     shared_cache_root: Path | None = None,
@@ -2972,10 +3194,13 @@ def create_local_object_store(
         raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
     if key_provider is not None and not isinstance(key_provider, ObjectMasterKeyProvider):
         raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
+    if access_policy is not None and not isinstance(access_policy, ObjectAccessPolicy):
+        raise _bounded(ObjectStoreProblem, "object access policy is invalid")
     store_state = _prepare_store_state(
         project_root,
         project_id,
         key_provider=key_provider,
+        access_policy=access_policy,
         allow_plaintext_fixture=allow_plaintext_fixture,
         cancellation_requested=None,
         storage_policy=storage_policy,

@@ -23,12 +23,26 @@ class ObjectStoreContractTests(unittest.TestCase):
     def test_exact_profile_is_strict_and_declares_the_encrypted_storage_boundary(self) -> None:
         self.assertEqual([], list(self.validator.iter_errors(self.profile)))
         self.assertEqual("project-only", self.profile["deduplicationScope"])
+        self.assertEqual(
+            "bounded-technical-publication-route-not-scholarly-provenance",
+            self.profile["creationSourceMetadata"],
+        )
+        self.assertEqual("legacy-unreported", self.profile["legacyCreationSource"])
         self.assertEqual("verified-controlled-stream-no-path", self.profile["openMode"])
         self.assertEqual(
             "restore-unless-delete-metadata-committed",
             self.profile["deleteCrashRecovery"],
         )
         self.assertEqual("bounded-busy-retry", self.profile["activeReaderDelete"])
+        self.assertEqual(
+            "allow-known-local-read-deny-controlled-egress",
+            self.profile["defaultAccessPolicy"],
+        )
+        self.assertEqual("exact-allow-only", self.profile["policyDecisionHandling"])
+        self.assertEqual(
+            "cap-02-s04-injected-object-access-policy",
+            self.profile["controlledEgressPolicyHandoff"],
+        )
         self.assertEqual(
             "document-link-requires-available-object",
             self.profile["referenceAvailability"],

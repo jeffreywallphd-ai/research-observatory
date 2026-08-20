@@ -25,7 +25,12 @@ did not commit the delete and removes the recovery copy only when metadata is
 already `deleted`.
 
 Open reserves the canonical metadata transaction, verifies current readable rights
-and `available` state, then verifies the entire held file, exact length, digest,
+and `available` state, then evaluates the declared purpose through the detached
+object-access-policy port before resolving any object path or decrypting content.
+The default policy allows only known local reads and denies controlled egress.
+CAP-02.S04 supplies the settings-backed allow/deny/require-confirmation policy;
+only an exact allow can expose a stream, while confirmation remains a higher-level
+workflow. The adapter then verifies the entire held file, exact length, digest,
 and single-link identity. The reserved transaction and same read-only file handle
 remain owned by the controlled stream until close, so a rights/state transition or
 delete cannot overtake plaintext use. A concurrent delete receives bounded busy
@@ -35,6 +40,10 @@ length-mismatched, or digest-mismatched content is unavailable and advances to
 `available` object, while delete is denied when any immutable document revision
 already references it.
 
+Every object records its first bounded technical publication route: local import,
+connector acquisition, local derivation, or test fixture. Schema v5 marks older
+rows `legacy-unreported` rather than inventing history. This field is not a
+citation, source observation, actor assertion, or scholarly provenance event.
 An unreferenced byte put does not invent a scholarly provenance claim. The
 canonical document-repository transaction that links an object to an immutable
 revision also appends its provenance and outbox facts; that linkage is the first

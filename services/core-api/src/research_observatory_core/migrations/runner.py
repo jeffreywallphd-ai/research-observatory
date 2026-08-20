@@ -26,6 +26,7 @@ from research_observatory_core.migrations.versions import (
     v0002_schema_history,
     v0003_object_envelopes,
     v0004_object_envelope_upgrades,
+    v0005_object_creation_source,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -81,11 +82,13 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.OLDEST_DATABASE_SCHEMA_VERSION,
             storage.PREVIOUS_DATABASE_SCHEMA_VERSION,
             storage.OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION,
+            storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
             v0003_object_envelopes.revision,
             v0004_object_envelope_upgrades.revision,
+            v0005_object_creation_source.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -194,6 +197,10 @@ _SUPPORTED_PROFILES = {
         storage.OBJECT_ENVELOPE_PROFILE_SHA256,
         storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
     ),
+    storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION: (
+        storage.OBJECT_ENVELOPE_UPGRADE_PROFILE_SHA256,
+        storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+    ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
         storage.EXPECTED_SCHEMA_SHA256,
@@ -287,7 +294,7 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
     if schema_version == storage.OLDEST_DATABASE_SCHEMA_VERSION:
         return not rows
     if not rows:
-        return True  # Fresh initialization at v2/v3/v4 has no applied migration.
+        return True  # Fresh initialization at v2/v3/v4/v5 has no applied migration.
     expected_rows: list[tuple[object, ...]] = []
     cursor = 0
     if schema_version >= 2 and rows[cursor][0] == v0002_schema_history.revision:
@@ -322,13 +329,34 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
         and expected_rows[-1][0] == v0002_schema_history.revision
     ):
         return False
-    if schema_version == storage.DATABASE_SCHEMA_VERSION:
+    if (
+        schema_version >= storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION
+        and cursor < len(rows)
+        and rows[cursor][0] == v0004_object_envelope_upgrades.revision
+    ):
         expected_rows.append(
             (
                 v0004_object_envelope_upgrades.revision,
                 3,
                 4,
                 storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+                storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+            )
+        )
+        cursor += 1
+    if (
+        schema_version >= storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION
+        and expected_rows
+        and expected_rows[-1][0] == v0003_object_envelopes.revision
+    ):
+        return False
+    if schema_version == storage.DATABASE_SCHEMA_VERSION:
+        expected_rows.append(
+            (
+                v0005_object_creation_source.revision,
+                4,
+                5,
+                storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
                 storage.EXPECTED_SCHEMA_SHA256,
             )
         )
@@ -369,9 +397,16 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0003_object_envelopes.TARGET_PROFILE_SHA256 == storage.OBJECT_ENVELOPE_PROFILE_SHA256
         and v0004_object_envelope_upgrades.down_revision == v0003_object_envelopes.revision
         and v0004_object_envelope_upgrades.source_schema_version == storage.OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION
-        and v0004_object_envelope_upgrades.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0004_object_envelope_upgrades.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0004_object_envelope_upgrades.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0004_object_envelope_upgrades.target_schema_version
+        == storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION
+        and v0004_object_envelope_upgrades.TARGET_SCHEMA_SHA256 == storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256
+        and v0004_object_envelope_upgrades.TARGET_PROFILE_SHA256 == storage.OBJECT_ENVELOPE_UPGRADE_PROFILE_SHA256
+        and v0005_object_creation_source.down_revision == v0004_object_envelope_upgrades.revision
+        and v0005_object_creation_source.source_schema_version
+        == storage.OBJECT_ENVELOPE_UPGRADE_DATABASE_SCHEMA_VERSION
+        and v0005_object_creation_source.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0005_object_creation_source.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0005_object_creation_source.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -380,11 +415,18 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0002_schema_history.revision,
             v0003_object_envelopes.revision,
             v0004_object_envelope_upgrades.revision,
+            v0005_object_creation_source.revision,
         )
     if source_version == v0003_object_envelopes.source_schema_version:
-        return (v0003_object_envelopes.revision, v0004_object_envelope_upgrades.revision)
+        return (
+            v0003_object_envelopes.revision,
+            v0004_object_envelope_upgrades.revision,
+            v0005_object_creation_source.revision,
+        )
     if source_version == v0004_object_envelope_upgrades.source_schema_version:
-        return (v0004_object_envelope_upgrades.revision,)
+        return (v0004_object_envelope_upgrades.revision, v0005_object_creation_source.revision)
+    if source_version == v0005_object_creation_source.source_schema_version:
+        return (v0005_object_creation_source.revision,)
     raise MigrationProblem("migration-source-version-unsupported")
 
 
@@ -1065,13 +1107,27 @@ def _run_migrations(
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
             },
         )
-    v0004_object_envelope_upgrades.apply(
+    if source_schema_version <= storage.OBJECT_ENVELOPE_DATABASE_SCHEMA_VERSION:
+        v0004_object_envelope_upgrades.apply(
+            operations,
+            {
+                "migration_id": v0004_object_envelope_upgrades.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+                "target_schema_sha256": storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
+                "targetProfileSha256": storage.OBJECT_ENVELOPE_UPGRADE_PROFILE_SHA256,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+            },
+        )
+    v0005_object_creation_source.apply(
         operations,
         {
-            "migration_id": v0004_object_envelope_upgrades.revision,
+            "migration_id": v0005_object_creation_source.revision,
             "applied_at": applied_at,
             "backup_manifest_sha256": backup_manifest_sha256,
-            "source_schema_sha256": storage.OBJECT_ENVELOPE_SCHEMA_SHA256,
+            "source_schema_sha256": storage.OBJECT_ENVELOPE_UPGRADE_SCHEMA_SHA256,
             "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
             "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
             "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,

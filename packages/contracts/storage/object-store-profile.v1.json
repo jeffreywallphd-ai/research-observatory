@@ -7,6 +7,15 @@
   "physicalIdentity": "hmac-sha256-project-identity",
   "objectBytesLocation": "project-objects-class",
   "metadataAuthority": "sqlite-object-records",
+  "creationSourceMetadata": "bounded-technical-publication-route-not-scholarly-provenance",
+  "creationSources": [
+    "local-import",
+    "connector-acquisition",
+    "local-derivation",
+    "test-fixture",
+    "legacy-unreported"
+  ],
+  "legacyCreationSource": "legacy-unreported",
   "referenceAuthority": ["immutable-document-revisions"],
   "atomicPublication": [
     "exclusive-project-staging",
@@ -25,6 +34,13 @@
   "storageStates": ["pending", "available", "quarantined", "deleted"],
   "retentionClasses": ["project-lifetime", "derived-rebuildable", "export-retained"],
   "readableRightsStates": ["allowed", "not-applicable"],
+  "accessPurposes": {
+    "local-read": ["document-analysis", "test-verification", "storage-performance"],
+    "controlled-egress": ["project-backup", "project-export", "provider-egress"]
+  },
+  "defaultAccessPolicy": "allow-known-local-read-deny-controlled-egress",
+  "policyDecisionHandling": "exact-allow-only",
+  "controlledEgressPolicyHandoff": "cap-02-s04-injected-object-access-policy",
   "openMode": "verified-controlled-stream-no-path",
   "corruptionBehavior": "deny-before-first-byte-and-quarantine",
   "encryptionBoundary": "secretstream-xchacha20poly1305-v1",

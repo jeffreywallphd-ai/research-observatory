@@ -251,6 +251,7 @@ def create_maintenance_fixture(parent: Path, index: int) -> ObjectStore:
                 rights_status="not-applicable",
                 protection_profile="plaintext-fixture-v1",
                 retention_class="derived-rebuildable",
+                creation_source="test-fixture",
                 created_at=CREATED_AT,
             ),
         )
@@ -272,6 +273,7 @@ def measure_streaming(parent: Path) -> dict[str, list[float]]:
         rights_status="not-applicable",
         protection_profile="project-encrypted-v1",
         retention_class="project-lifetime",
+        creation_source="test-fixture",
         created_at=CREATED_AT,
     )
     for fixture, size in STREAM_FIXTURES.items():

@@ -59,6 +59,7 @@ def command() -> ObjectPutCommand:
         rights_status="allowed",
         protection_profile="project-encrypted-v1",
         retention_class="project-lifetime",
+        creation_source="test-fixture",
         created_at=CREATED_AT,
     )
 
@@ -164,7 +165,7 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
 
         store = create_local_object_store(self.root, PROJECT_ID, key_provider=self.provider)
 
-        self.assertEqual(4, storage.DATABASE_SCHEMA_VERSION)
+        self.assertEqual(5, storage.DATABASE_SCHEMA_VERSION)
         self.assertNotEqual(plaintext, physical.read_bytes())
         self.assertNotIn(plaintext, physical.read_bytes())
         self.assertEqual((), tuple(self.root.rglob("*.upgrade-rollback")))
@@ -286,7 +287,7 @@ class ObjectEnvelopeUpgradeTests(unittest.TestCase):
         self.assertFalse((unavailable_root / ".locks" / "session.lock").exists())
         connection = sqlite3.connect(unavailable_database)
         try:
-            self.assertEqual(4, int(connection.execute("PRAGMA user_version").fetchone()[0]))
+            self.assertEqual(5, int(connection.execute("PRAGMA user_version").fetchone()[0]))
             self.assertEqual(
                 ("replacement-writing", "key-unavailable"),
                 tuple(connection.execute("SELECT phase, failure_code FROM object_envelope_upgrades").fetchone()),
