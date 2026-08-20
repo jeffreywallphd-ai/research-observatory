@@ -115,8 +115,14 @@ targets. Unexpected opaque object files without metadata are orphan candidates
 only when their exclusive local identity is safe to remove.
 
 Project caches, indexes, and models move through same-volume cleanup staging
-before deletion. Restart removes only exclusive operation-staging files and a
-fresh preview resumes remaining work. Each canonical object deletion retains the
+before deletion. On release-authoritative Windows, the adapter opens the exact
+previewed file with read/delete authority while denying write/delete sharing,
+revalidates the held handle against the visible path, and renames or deletes
+through that handle. A path-generation swap after revalidation therefore cannot
+authorize deletion of replacement bytes. Cleanup-partial names commit the
+expected device, inode, size, and modification time; restart reacquires that exact
+identity before deletion and fails closed without removing a mismatch. A fresh
+preview resumes remaining work. Each canonical object deletion retains the
 existing metadata/reference transaction and reader lease barrier. Shared-cache
 files require a separately supplied non-overlapping authority and are never
 affected by project deletion; CAP-02.S05 still owns their eventual lab layout.

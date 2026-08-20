@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
@@ -230,6 +231,83 @@ class StorageMaintenanceTests(unittest.TestCase):
         self.assertEqual(b"changed-content", cache.read_bytes())
         with self.assertRaises(ObjectConflict):
             store.cleanup(preview.preview_token)
+
+    def test_cleanup_move_is_bound_to_the_previewed_file_identity(self) -> None:
+        store = self.create_store(StoragePolicy(minimum_free_bytes=0))
+        cache = self.project / "cache" / "race.cache"
+        saved = self.project / "cache" / "previewed-generation.saved"
+        cache.write_bytes(b"previewed-generation")
+        preview = store.preview_cleanup(cleanup_request("project-cache"))
+        original_matches = object_store_module._candidate_matches
+        match_count = 0
+
+        def replace_after_last_path_check(candidate: Any) -> bool:
+            nonlocal match_count
+            matched = original_matches(candidate)
+            if getattr(candidate, "path", None) == cache:
+                match_count += 1
+                if matched and match_count == 2:
+                    cache.rename(saved)
+                    cache.write_bytes(b"post-preview-generation")
+            return matched
+
+        with patch.object(object_store_module, "_candidate_matches", side_effect=replace_after_last_path_check):
+            result = store.cleanup(preview.preview_token)
+
+        self.assertEqual(0, result.reclaimed_item_count)
+        self.assertEqual(1, result.skipped_item_count)
+        self.assertEqual(b"post-preview-generation", cache.read_bytes())
+        self.assertEqual(b"previewed-generation", saved.read_bytes())
+        self.assertEqual([], list((self.project / ".tmp" / "storage-cleanup").iterdir()))
+        self.create_store(StoragePolicy(minimum_free_bytes=0))
+        self.assertEqual(b"post-preview-generation", cache.read_bytes())
+
+    def test_restart_deletes_only_identity_committed_cleanup_partials(self) -> None:
+        store = self.create_store(StoragePolicy(minimum_free_bytes=0))
+        cache = self.project / "cache" / "interrupted.cache"
+        cache.write_bytes(b"interrupted-generation")
+        preview = store.preview_cleanup(cleanup_request("project-cache"))
+
+        def interrupt_after_move(step: str) -> None:
+            if step == "after-rebuildable-move":
+                raise RuntimeError("injected post-move interruption")
+
+        with (
+            patch.object(object_store_module, "_cleanup_step_completed", side_effect=interrupt_after_move),
+            self.assertRaises(ObjectStoreProblem),
+        ):
+            store.cleanup(preview.preview_token)
+
+        staging = self.project / ".tmp" / "storage-cleanup"
+        partials = list(staging.iterdir())
+        self.assertEqual(1, len(partials))
+        self.assertEqual(b"interrupted-generation", partials[0].read_bytes())
+        self.assertFalse(cache.exists())
+
+        self.create_store(StoragePolicy(minimum_free_bytes=0))
+
+        self.assertEqual([], list(staging.iterdir()))
+
+    def test_restart_preserves_cleanup_partial_when_filename_identity_does_not_match(self) -> None:
+        self.create_store(StoragePolicy(minimum_free_bytes=0))
+        authority = self.project / "cache" / "preview-authority.cache"
+        payload = b"preview-authority"
+        authority.write_bytes(payload)
+        status = authority.stat(follow_symlinks=False)
+        staging = self.project / ".tmp" / "storage-cleanup"
+        staging.mkdir(exist_ok=True)
+        partial = staging / (
+            f"cleanup-{'a' * 48}-{status.st_dev}-{status.st_ino}-{status.st_size}-{status.st_mtime_ns}.partial"
+        )
+        post_preview = b"replacement-bytes"
+        self.assertEqual(len(payload), len(post_preview))
+        partial.write_bytes(post_preview)
+
+        with self.assertRaises(ObjectStoreProblem):
+            self.create_store(StoragePolicy(minimum_free_bytes=0))
+
+        self.assertEqual(post_preview, partial.read_bytes())
+        self.assertEqual(payload, authority.read_bytes())
 
     def test_hard_quota_and_low_disk_degrade_writes_without_blocking_reads(self) -> None:
         initial = self.create_store(StoragePolicy(minimum_free_bytes=0))

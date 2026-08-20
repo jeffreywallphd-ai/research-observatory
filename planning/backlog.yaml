@@ -137,13 +137,13 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-18T11:38:28+00:00'
+    updated_at: '2026-08-20T19:15:46+00:00'
     pause_reason: null
     pause_category: null
     lease:
       claimed_by: codex
-      claimed_at: '2026-08-18T11:38:28+00:00'
-      expires_at: '2026-08-19T11:38:28+00:00'
+      claimed_at: '2026-08-20T19:15:46+00:00'
+      expires_at: '2026-08-21T19:15:46+00:00'
   checkpoints: []
   completion:
     status: IN_PROGRESS
@@ -4032,11 +4032,16 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T13:19:06+00:00'
-      updated_at: '2026-08-18T13:19:06+00:00'
+      updated_at: '2026-08-20T19:16:02+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S03.T03.json
+        sha256: 24ab1d6937d20ad6c9b3555e3fa88e64301764642e6a065235c5af4fbde04c5d
+        commit: 1975e481e57f7899074b00f65341354a4eaf0a0d
+        recorded_at: '2026-08-18T14:52:00+00:00'
       review:
         reviewer: null
         result: null
@@ -4045,9 +4050,9 @@ capabilities:
       base_sha: a72640e1311d5c29523ca0579b4f5bbb8819eb7b
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-18T13:19:06+00:00'
-        expires_at: '2026-08-18T21:19:06+00:00'
-      verification_state: null
+        claimed_at: '2026-08-20T19:16:02+00:00'
+        expires_at: '2026-08-21T19:16:02+00:00'
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
