@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 7ba119ecf39cbdea74cce58905a16af524759682021eed193d3a5ee5302526f8
+source_sha256: 4de3cd0ea0a99c1c611bbbbcc41506b51be23775c41a8120666367ce752a0f86
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 278 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 40 |
 | `DEFERRED` | 36 |
 
@@ -117,4 +117,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S03.T03` Implement storage accounting, quotas, garbage collection, and cache eviction | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S03.T03` Implement storage accounting, quotas, garbage collection, and cache eviction | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
