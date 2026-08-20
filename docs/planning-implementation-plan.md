@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 87fce5c3b6b858967d11a961ad8a8d0453369f9bc39a7e9a4374299bca1f69c2
+source_sha256: 7ba119ecf39cbdea74cce58905a16af524759682021eed193d3a5ee5302526f8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1929,6 +1929,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-02.S03.T03.json` at `1975e481e57f7899074b00f65341354a4eaf0a0d`
+- `artifacts/evidence/CAP-02.S03.T03.review-fix.json` at `8c18b51b588921f5e719a2cd6d6212f0d43ea8b0`
 
 ### SLICE-local-secrets-profiles-and-privacy-controls (`CAP-02.S04`) - Local secrets, profiles, and privacy controls
 
