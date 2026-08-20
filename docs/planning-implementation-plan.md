@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b59e1866f08843cd8cedaa8985054a843b7d987e47ec74e074e15c2672377a07
+source_sha256: 8502358845aecaa6a1d62cdab901fbc8f824090aba90f74490216ef082f300da
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1945,7 +1945,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T01 - Integrate Windows credential storage for secrets
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
