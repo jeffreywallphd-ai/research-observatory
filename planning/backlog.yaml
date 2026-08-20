@@ -4130,16 +4130,20 @@ capabilities:
       - security-local
       verification_commands:
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-20T21:20:44+00:00'
-      updated_at: '2026-08-20T22:14:02+00:00'
+      updated_at: '2026-08-20T22:14:30+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: Implementation ce437a2 with final submission evidence 8d032da; security-local, DPAPI adversarial,
+      implementation_notes: 'Implementation ce437a2 with final submission evidence 8d032da; security-local, DPAPI adversarial,
         envelope-upgrade, portable-contract, and frozen-package checks pass. Request one consolidated security review ledger
         against the frozen packet.
+
+        Bounded remediation ff752ba closes review F1 filesystem failure classification/preservation and F2 complete content-safe
+        audit projection. Attached superseding evidence; request same-reviewer replay of findings plus incremental logging/contract/package
+        risk only.'
       evidence:
       - type: criterion-manifest
         path: artifacts/evidence/CAP-02.S04.T01.submission.json
