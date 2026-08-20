@@ -214,12 +214,24 @@ class SqliteSchemaTests(unittest.TestCase):
                 INSERT INTO object_records (
                     object_sha256, project_id, byte_length, media_type, rights_status,
                     protection_profile, retention_class, storage_state, created_at, verified_at,
-                    ciphertext_byte_length
+                    ciphertext_byte_length, creation_source
                 ) VALUES (?, ?, 4096, 'application/pdf', 'allowed', 'plaintext-fixture-v1',
-                          'project-lifetime', 'available', ?, ?, 4096)
+                          'project-lifetime', 'available', ?, ?, 4096, 'local-import')
                 """,
                 (OBJECT_SHA256, PROJECT_ID, CREATED_AT, CREATED_AT),
             )
+            self.assertEqual(
+                "local-import",
+                connection.execute(
+                    "SELECT creation_source FROM object_records WHERE object_sha256=?",
+                    (OBJECT_SHA256,),
+                ).fetchone()[0],
+            )
+            with self.assertRaises(sqlite3.IntegrityError):
+                connection.execute(
+                    "UPDATE object_records SET creation_source='remote-unknown' WHERE object_sha256=?",
+                    (OBJECT_SHA256,),
+                )
             connection.execute(
                 """
                 INSERT INTO aggregate_identities (

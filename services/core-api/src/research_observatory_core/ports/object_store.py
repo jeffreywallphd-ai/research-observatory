@@ -6,6 +6,23 @@ from dataclasses import dataclass
 from typing import BinaryIO, Literal, Protocol, runtime_checkable
 
 RightsStatus = Literal["allowed", "denied", "unknown", "not-applicable"]
+ObjectCreationSource = Literal[
+    "local-import",
+    "connector-acquisition",
+    "local-derivation",
+    "test-fixture",
+    "legacy-unreported",
+]
+ObjectAccessPurpose = Literal[
+    "document-analysis",
+    "test-verification",
+    "storage-performance",
+    "project-backup",
+    "project-export",
+    "provider-egress",
+]
+ObjectAccessClass = Literal["local-read", "controlled-egress"]
+ObjectAccessOutcome = Literal["allow", "deny", "require-confirmation"]
 RetentionClass = Literal["project-lifetime", "derived-rebuildable", "export-retained"]
 StorageState = Literal["pending", "available", "quarantined", "deleted"]
 CleanupCategory = Literal[
@@ -88,6 +105,7 @@ class ObjectPutCommand:
     rights_status: RightsStatus
     protection_profile: str
     retention_class: RetentionClass
+    creation_source: ObjectCreationSource
     created_at: str
     expected_sha256: str | None = None
 
@@ -102,6 +120,7 @@ class StoredObject:
     rights_status: RightsStatus
     protection_profile: str
     retention_class: RetentionClass
+    creation_source: ObjectCreationSource
     storage_state: StorageState
     created_at: str
     verified_at: str | None
@@ -109,6 +128,30 @@ class StoredObject:
     envelope_version: str
     key_version: str | None
     ciphertext_byte_length: int
+
+
+@dataclass(frozen=True, slots=True)
+class ObjectAccessRequest:
+    """Detached policy input; it contains no bytes or filesystem capability."""
+
+    project_id: str
+    object_metadata: StoredObject
+    purpose: ObjectAccessPurpose
+    access_class: ObjectAccessClass
+    destination_id: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class ObjectAccessDecision:
+    """Bounded policy result. Only an exact ``allow`` may expose a stream."""
+
+    outcome: ObjectAccessOutcome
+    reason_code: str
+
+
+@runtime_checkable
+class ObjectAccessPolicy(Protocol):
+    def authorize(self, request: ObjectAccessRequest) -> ObjectAccessDecision: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -189,7 +232,14 @@ class VerifiedObjectStream(Protocol):
 class ObjectStore(Protocol):
     def put(self, source: BinaryIO, command: ObjectPutCommand) -> StoredObject: ...
 
-    def open(self, object_sha256: str, *, purpose: str) -> VerifiedObjectStream: ...
+    def open(
+        self,
+        object_sha256: str,
+        *,
+        purpose: str,
+        access_class: ObjectAccessClass = "local-read",
+        destination_id: str | None = None,
+    ) -> VerifiedObjectStream: ...
 
     def metadata(self, object_sha256: str) -> StoredObject: ...
 
@@ -204,10 +254,17 @@ class ObjectStore(Protocol):
 
 __all__ = [
     "CleanupCategory",
+    "ObjectAccessClass",
+    "ObjectAccessDecision",
     "ObjectAccessDenied",
+    "ObjectAccessOutcome",
+    "ObjectAccessPolicy",
+    "ObjectAccessPurpose",
+    "ObjectAccessRequest",
     "ObjectBusy",
     "ObjectConflict",
     "ObjectCorrupt",
+    "ObjectCreationSource",
     "ObjectIntegrityMismatch",
     "ObjectKeyUnavailable",
     "ObjectNotFound",

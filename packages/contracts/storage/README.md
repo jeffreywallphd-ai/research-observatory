@@ -1,7 +1,7 @@
 # Local storage contracts
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
-version-4 canonical local database. It fixes the database identity, version, scalar storage domain,
+version-5 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -23,6 +23,10 @@ objects as upgrade work rather than release-compatible fixtures. Key-dependent
 copy-on-write work runs after the schema transaction and before ordinary project
 access, retaining a verified rollback outside `.tmp` until the encrypted production
 reader succeeds.
+Version 5 adds only bounded technical object creation-source metadata. Existing
+rows become `legacy-unreported`; that value reports missing technical history and
+does not invent a citation, research observation, actor claim, or scholarly
+provenance event.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and
@@ -41,13 +45,21 @@ schema fingerprint.
 project-scoped object adapter introduced by CAP-02.S03. It binds plaintext
 SHA-256 identity, project-only deduplication, opaque HMAC-derived physical
 identity, complete-file publication before metadata, immutable document
-references, rights-aware verified streams, corruption quarantine, conservative
+references, bounded technical creation source, rights-aware verified streams,
+corruption quarantine, conservative
 wrapped-key failure classification, and the journaled prior-envelope upgrade phases.
 The mandatory Core pre-open coordinator and pre/post journal, fsync, rename,
 verification, metadata-commit, cleanup, and cancellation recovery boundary are
 portable obligations rather than optional composition details. The profile also
 states that the unencrypted fixture adapter is explicitly test-only. It carries
 no operating-system path.
+
+Known local-read purposes are allowed by the default object access policy.
+Unknown purposes and controlled egress fail closed before path resolution or
+decryption. CAP-02.S04 may inject the dependency-neutral policy port to return an
+exact allow decision after applying project privacy, consent, and destination
+rules; deny, require-confirmation, exceptions, and malformed decisions expose no
+stream.
 
 The same profile fixes T03's categorized physical accounting and maintenance
 boundary. Deployment configuration supplies optional project and shared-cache

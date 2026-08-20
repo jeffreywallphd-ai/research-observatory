@@ -45,6 +45,7 @@ def put_command(*, retention_class: str = "project-lifetime") -> ObjectPutComman
         rights_status="allowed",
         protection_profile="plaintext-fixture-v1",
         retention_class=retention_class,  # type: ignore[arg-type]
+        creation_source="test-fixture",
         created_at=CREATED_AT,
     )
 
@@ -232,6 +233,35 @@ class StorageMaintenanceTests(unittest.TestCase):
         self.assertEqual(b"changed-content", cache.read_bytes())
         with self.assertRaises(ObjectConflict):
             store.cleanup(preview.preview_token)
+
+    def test_stale_cleanup_preview_never_deletes_a_republished_derived_generation(self) -> None:
+        store = self.create_store(StoragePolicy(minimum_free_bytes=0))
+        payload = b"republished derived generation"
+        original = store.put(
+            io.BytesIO(payload),
+            put_command(retention_class="derived-rebuildable"),
+        )
+        preview = store.preview_cleanup(cleanup_request("derived-objects"))
+        plan = store._state().cleanup_plan
+        self.assertIsNotNone(plan)
+        assert plan is not None
+        candidate = next(item for item in plan.candidates if item.object_sha256 == original.object_sha256)
+
+        store.delete(original.object_sha256)
+        republished = store.put(
+            io.BytesIO(payload),
+            put_command(retention_class="derived-rebuildable"),
+        )
+        current = candidate.path.stat(follow_symlinks=False)
+        self.assertNotEqual(candidate.identity, (current.st_dev, current.st_ino))
+
+        result = store.cleanup(preview.preview_token)
+
+        self.assertEqual(0, result.reclaimed_item_count)
+        self.assertEqual(1, result.skipped_item_count)
+        self.assertEqual(republished, store.metadata(republished.object_sha256))
+        with store.open(republished.object_sha256, purpose="test-verification") as stream:
+            self.assertEqual(payload, stream.read())
 
     def test_cleanup_move_is_bound_to_the_previewed_file_identity(self) -> None:
         store = self.create_store(StoragePolicy(minimum_free_bytes=0))

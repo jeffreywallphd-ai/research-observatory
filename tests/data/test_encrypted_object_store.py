@@ -60,6 +60,7 @@ def command(*, profile: str = "project-encrypted-v1") -> ObjectPutCommand:
         rights_status="allowed",
         protection_profile=profile,
         retention_class="project-lifetime",
+        creation_source="test-fixture",
         created_at=CREATED_AT,
     )
 

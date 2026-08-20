@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 4,
+  "databaseSchemaVersion": 5,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6",
+  "schemaFingerprintSha256": "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -16,6 +16,13 @@
   "timestampStorage": "utc-rfc3339-millisecond-text",
   "canonicalColumnTypes": ["INTEGER", "REAL", "TEXT"],
   "derivedBinaryStorage": "digest-reference-only",
+  "objectCreationSources": [
+    "local-import",
+    "connector-acquisition",
+    "local-derivation",
+    "test-fixture",
+    "legacy-unreported"
+  ],
   "immutableRowTables": [
     "schema_metadata",
     "schema_migrations",

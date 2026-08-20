@@ -13,6 +13,9 @@
     "physicalIdentity",
     "objectBytesLocation",
     "metadataAuthority",
+    "creationSourceMetadata",
+    "creationSources",
+    "legacyCreationSource",
     "referenceAuthority",
     "atomicPublication",
     "deleteCrashRecovery",
@@ -22,6 +25,10 @@
     "storageStates",
     "retentionClasses",
     "readableRightsStates",
+    "accessPurposes",
+    "defaultAccessPolicy",
+    "policyDecisionHandling",
+    "controlledEgressPolicyHandoff",
     "openMode",
     "corruptionBehavior",
     "encryptionBoundary",
@@ -59,6 +66,19 @@
     "physicalIdentity": {"const": "hmac-sha256-project-identity"},
     "objectBytesLocation": {"const": "project-objects-class"},
     "metadataAuthority": {"const": "sqlite-object-records"},
+    "creationSourceMetadata": {
+      "const": "bounded-technical-publication-route-not-scholarly-provenance"
+    },
+    "creationSources": {
+      "const": [
+        "local-import",
+        "connector-acquisition",
+        "local-derivation",
+        "test-fixture",
+        "legacy-unreported"
+      ]
+    },
+    "legacyCreationSource": {"const": "legacy-unreported"},
     "referenceAuthority": {"const": ["immutable-document-revisions"]},
     "atomicPublication": {
       "const": [
@@ -79,6 +99,17 @@
     "storageStates": {"const": ["pending", "available", "quarantined", "deleted"]},
     "retentionClasses": {"const": ["project-lifetime", "derived-rebuildable", "export-retained"]},
     "readableRightsStates": {"const": ["allowed", "not-applicable"]},
+    "accessPurposes": {
+      "const": {
+        "local-read": ["document-analysis", "test-verification", "storage-performance"],
+        "controlled-egress": ["project-backup", "project-export", "provider-egress"]
+      }
+    },
+    "defaultAccessPolicy": {"const": "allow-known-local-read-deny-controlled-egress"},
+    "policyDecisionHandling": {"const": "exact-allow-only"},
+    "controlledEgressPolicyHandoff": {
+      "const": "cap-02-s04-injected-object-access-policy"
+    },
     "openMode": {"const": "verified-controlled-stream-no-path"},
     "corruptionBehavior": {"const": "deny-before-first-byte-and-quarantine"},
     "encryptionBoundary": {"const": "secretstream-xchacha20poly1305-v1"},

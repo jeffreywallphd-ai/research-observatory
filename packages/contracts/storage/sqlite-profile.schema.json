@@ -16,6 +16,7 @@
     "timestampStorage",
     "canonicalColumnTypes",
     "derivedBinaryStorage",
+    "objectCreationSources",
     "immutableRowTables",
     "mutableStateTables",
     "connectionProfile",
@@ -27,9 +28,9 @@
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "research-observatory-sqlite-profile"},
     "profileId": {"const": "sqlite-wal-v1"},
-    "databaseSchemaVersion": {"const": 4},
+    "databaseSchemaVersion": {"const": 5},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"},
+    "schemaFingerprintSha256": {"const": "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {
@@ -43,6 +44,15 @@
     "timestampStorage": {"const": "utc-rfc3339-millisecond-text"},
     "canonicalColumnTypes": {"const": ["INTEGER", "REAL", "TEXT"]},
     "derivedBinaryStorage": {"const": "digest-reference-only"},
+    "objectCreationSources": {
+      "const": [
+        "local-import",
+        "connector-acquisition",
+        "local-derivation",
+        "test-fixture",
+        "legacy-unreported"
+      ]
+    },
     "immutableRowTables": {
       "const": [
         "schema_metadata",

@@ -34,24 +34,39 @@
       "type": "string",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
     },
-    "sourceSchemaVersion": {"enum": [1, 2, 3]},
-    "targetSchemaVersion": {"const": 4},
+    "sourceSchemaVersion": {"enum": [1, 2, 3, 4]},
+    "targetSchemaVersion": {"const": 5},
     "migrationIds": {
       "oneOf": [
-        {"const": ["0002_schema_history", "0003_object_envelopes", "0004_object_envelope_upgrades"]},
-        {"const": ["0003_object_envelopes", "0004_object_envelope_upgrades"]},
-        {"const": ["0004_object_envelope_upgrades"]}
+        {
+          "const": [
+            "0002_schema_history",
+            "0003_object_envelopes",
+            "0004_object_envelope_upgrades",
+            "0005_object_creation_source"
+          ]
+        },
+        {
+          "const": [
+            "0003_object_envelopes",
+            "0004_object_envelope_upgrades",
+            "0005_object_creation_source"
+          ]
+        },
+        {"const": ["0004_object_envelope_upgrades", "0005_object_creation_source"]},
+        {"const": ["0005_object_creation_source"]}
       ]
     },
     "sourceSchemaSha256": {
       "enum": [
         "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9",
         "afd48fbe857de4172215e9cb61a0f6137e73edec685dcc116bedbb66eb519dda",
-        "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356"
+        "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356",
+        "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"
       ]
     },
     "targetSchemaSha256": {
-      "const": "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"
+      "const": "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd"
     },
     "checkpoint": {
       "type": "object",
@@ -70,7 +85,7 @@
       "properties": {
         "relativePath": {
           "type": "string",
-          "pattern": "^state/migration-backups/v[123]-to-v4-[0-9a-f]{32}/project\\.sqlite3$"
+          "pattern": "^state/migration-backups/v[1234]-to-v5-[0-9a-f]{32}/project\\.sqlite3$"
         },
         "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "sizeBytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
@@ -84,7 +99,12 @@
       "then": {
         "properties": {
           "migrationIds": {
-            "const": ["0002_schema_history", "0003_object_envelopes", "0004_object_envelope_upgrades"]
+            "const": [
+              "0002_schema_history",
+              "0003_object_envelopes",
+              "0004_object_envelope_upgrades",
+              "0005_object_creation_source"
+            ]
           },
           "sourceSchemaSha256": {
             "const": "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
@@ -96,7 +116,13 @@
       "if": {"properties": {"sourceSchemaVersion": {"const": 2}}},
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0003_object_envelopes", "0004_object_envelope_upgrades"]},
+          "migrationIds": {
+            "const": [
+              "0003_object_envelopes",
+              "0004_object_envelope_upgrades",
+              "0005_object_creation_source"
+            ]
+          },
           "sourceSchemaSha256": {
             "const": "afd48fbe857de4172215e9cb61a0f6137e73edec685dcc116bedbb66eb519dda"
           }
@@ -107,9 +133,20 @@
       "if": {"properties": {"sourceSchemaVersion": {"const": 3}}},
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0004_object_envelope_upgrades"]},
+          "migrationIds": {"const": ["0004_object_envelope_upgrades", "0005_object_creation_source"]},
           "sourceSchemaSha256": {
             "const": "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356"
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"sourceSchemaVersion": {"const": 4}}},
+      "then": {
+        "properties": {
+          "migrationIds": {"const": ["0005_object_creation_source"]},
+          "sourceSchemaSha256": {
+            "const": "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"
           }
         }
       }

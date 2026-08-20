@@ -20,7 +20,9 @@ sys.path.insert(0, str(SERVICE_SRC))
 from research_observatory_core import object_store as object_store_module  # noqa: E402
 from research_observatory_core.object_store import create_local_object_store  # noqa: E402
 from research_observatory_core.ports.object_store import (  # noqa: E402
+    ObjectAccessDecision,
     ObjectAccessDenied,
+    ObjectAccessRequest,
     ObjectBusy,
     ObjectConflict,
     ObjectCorrupt,
@@ -58,12 +60,28 @@ class FailingStream(io.RawIOBase):
         raise OSError("injected source interruption")
 
 
+class RecordingAccessPolicy:
+    def __init__(self, outcome: str = "allow") -> None:
+        self.outcome = outcome
+        self.requests: list[ObjectAccessRequest] = []
+
+    def authorize(self, request: ObjectAccessRequest) -> ObjectAccessDecision:
+        self.requests.append(request)
+        return ObjectAccessDecision(self.outcome, "test-policy")  # type: ignore[arg-type]
+
+
+class FailingAccessPolicy:
+    def authorize(self, request: ObjectAccessRequest) -> ObjectAccessDecision:
+        raise RuntimeError(f"policy unavailable for {request.purpose}")
+
+
 def put_command(**overrides: object) -> ObjectPutCommand:
     values: dict[str, object] = {
         "media_type": "application/pdf",
         "rights_status": "allowed",
         "protection_profile": "plaintext-fixture-v1",
         "retention_class": "project-lifetime",
+        "creation_source": "test-fixture",
         "created_at": CREATED_AT,
     }
     values.update(overrides)
@@ -126,6 +144,7 @@ class LocalObjectStoreTests(unittest.TestCase):
         self.assertEqual(expected, first.object_sha256)
         self.assertEqual(len(content), first.byte_length)
         self.assertEqual(0, first.reference_count)
+        self.assertEqual("test-fixture", first.creation_source)
         files = self.object_files()
         self.assertEqual(1, len(files))
         relative = files[0].relative_to(self.project / "objects")
@@ -197,11 +216,18 @@ class LocalObjectStoreTests(unittest.TestCase):
         self.assertEqual((), tuple((self.project / ".tmp").rglob("*.partial")))
 
     def test_hostile_non_string_command_fields_are_bounded(self) -> None:
-        for field in ("media_type", "protection_profile"):
+        for field in ("media_type", "protection_profile", "creation_source"):
             with self.subTest(field=field), self.assertRaises(ObjectStoreProblem) as raised:
                 self.store.put(io.BytesIO(b"hostile metadata"), put_command(**{field: 123}))
             self.assertIsNone(raised.exception.__cause__)
             self.assertIsNone(raised.exception.__context__)
+
+        for creation_source in ("legacy-unreported", "not-a-source"):
+            with self.subTest(creation_source=creation_source), self.assertRaises(ObjectStoreProblem):
+                self.store.put(
+                    io.BytesIO(f"invalid-{creation_source}".encode()),
+                    put_command(creation_source=creation_source),
+                )
 
     def test_duplicate_metadata_conflict_preserves_original_bytes_and_projection(self) -> None:
         content = b"stable identity and meaning"
@@ -210,6 +236,11 @@ class LocalObjectStoreTests(unittest.TestCase):
             self.store.put(
                 io.BytesIO(content),
                 put_command(media_type="text/plain"),
+            )
+        with self.assertRaises(ObjectConflict):
+            self.store.put(
+                io.BytesIO(content),
+                put_command(creation_source="local-import"),
             )
         self.assertEqual(original, self.store.metadata(original.object_sha256))
         with self.store.open(original.object_sha256, purpose="document-analysis") as stream:
@@ -271,6 +302,70 @@ class LocalObjectStoreTests(unittest.TestCase):
             self.store.delete(referenced.object_sha256)
         with self.store.open(referenced.object_sha256, purpose="document-analysis") as stream:
             self.assertEqual(content, stream.read())
+
+    def test_access_policy_denies_unknown_and_controlled_egress_before_exposing_a_reader(self) -> None:
+        content = b"policy protected object"
+        stored = self.store.put(io.BytesIO(content), put_command())
+        original_object_path = object_store_module._object_path
+
+        def forbidden_path(*args: object, **kwargs: object) -> object:
+            raise AssertionError("denied access resolved the object path")
+
+        with patch.object(object_store_module, "_object_path", forbidden_path):
+            for call in (
+                {"purpose": "remote-egress"},
+                {"purpose": "project-export"},
+                {"purpose": "project-export", "access_class": "controlled-egress"},
+                {
+                    "purpose": "project-export",
+                    "access_class": "controlled-egress",
+                    "destination_id": "export.local",
+                },
+            ):
+                with self.subTest(call=call), self.assertRaises(ObjectAccessDenied):
+                    self.store.open(stored.object_sha256, **call)  # type: ignore[arg-type]
+
+        self.assertIs(object_store_module._object_path, original_object_path)
+        with self.store.open(stored.object_sha256, purpose="document-analysis") as stream:
+            self.assertEqual(content, stream.read())
+
+    def test_injected_access_policy_allows_only_an_exact_bounded_decision(self) -> None:
+        content = b"explicit controlled egress"
+        stored = self.store.put(io.BytesIO(content), put_command())
+        allowed = RecordingAccessPolicy()
+        policy_store = create_local_object_store(
+            self.project,
+            PROJECT_ID,
+            allow_plaintext_fixture=True,
+            access_policy=allowed,
+        )
+        with policy_store.open(
+            stored.object_sha256,
+            purpose="provider-egress",
+            access_class="controlled-egress",
+            destination_id="provider.local-model",
+        ) as stream:
+            self.assertEqual(content, stream.read())
+        self.assertEqual(1, len(allowed.requests))
+        request = allowed.requests[0]
+        self.assertEqual(PROJECT_ID, request.project_id)
+        self.assertEqual(stored, request.object_metadata)
+        self.assertEqual("provider.local-model", request.destination_id)
+
+        for policy in (RecordingAccessPolicy("require-confirmation"), FailingAccessPolicy()):
+            denied_store = create_local_object_store(
+                self.project,
+                PROJECT_ID,
+                allow_plaintext_fixture=True,
+                access_policy=policy,
+            )
+            with self.subTest(policy=type(policy).__name__), self.assertRaises(ObjectAccessDenied):
+                denied_store.open(
+                    stored.object_sha256,
+                    purpose="provider-egress",
+                    access_class="controlled-egress",
+                    destination_id="provider.local-model",
+                )
 
     def test_document_linkage_requires_currently_available_object_state(self) -> None:
         factory = create_sqlite_unit_of_work_factory(self.database, PROJECT_ID)
