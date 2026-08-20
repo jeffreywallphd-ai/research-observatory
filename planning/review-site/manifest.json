@@ -1795,7 +1795,7 @@
       "approval_sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "CHANGES_REQUESTED",
       "campaign_status": "NONE",
       "authorized_task_ids": [
         "W1.A02.T01",

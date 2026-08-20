@@ -22228,7 +22228,7 @@ wave_amendments:
         the hashed B00, T01, and T02 scope only.
   bootstrap:
     id: W1.A02.B00
-    status: REVIEW
+    status: CHANGES_REQUESTED
     implementer: codex
     implementation_commit: 2493dee313a2df8929dbd2eed31d9e0e672fc368
     scope_addenda:
@@ -22242,10 +22242,12 @@ wave_amendments:
       commit: 2493dee313a2df8929dbd2eed31d9e0e672fc368
       recorded_at: '2026-08-20T23:38:52+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: b00-independent-reviewer
+      result: changes-requested
+      reviewed_at: '2026-08-20T23:49:47+00:00'
+      notes: 'B00-R01 HIGH: frozen candidate/evidence/review projection is not durably enforced and no append-only resubmission
+        exists. B00-R02 HIGH: materialized amendment task definitions can drift from the immutable ECR packet. B00-R03 HIGH:
+        lifecycle, campaign, Wave hold, and active_amendment cross-field invariants are incomplete.'
   campaign: null
   tasks: []
   completion:
