@@ -4028,11 +4028,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: REVIEW
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T13:19:06+00:00'
-      updated_at: '2026-08-20T20:57:15+00:00'
+      updated_at: '2026-08-20T21:06:34+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Submitted exact implementation commit 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0 with superseding
@@ -4057,18 +4057,18 @@ capabilities:
         commit: d0cebec8ab89bc42f972a6083cc80e7dda843601
         recorded_at: '2026-08-20T20:56:20+00:00'
       review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: 'Reopened: CAP-02.S03 slice review remediation: bind derived-object cleanup to preview generation; stabilize
-          cleanup performance; add fail-closed purpose-policy handoff; add bounded creation-source metadata and compatibility
-          migration across the integrated object contract.'
+        reviewer: independent-agent-t03-slice-remediation
+        result: changes-requested
+        reviewed_at: '2026-08-20T21:06:34+00:00'
+        notes: 'P2 documentation mismatch: packages/contracts/storage/README.md still states supported fixtures v1-v3, but
+          governed v5 migration supports v1-v4 sources. Executable findings replayed clean; independent first/only performance
+          run passed narrowly at cleanup p95 4550.0581 ms vs 4551.878 ms ceiling and remains a W1-exit replay risk.'
       base_sha: a72640e1311d5c29523ca0579b4f5bbb8819eb7b
       lease:
         claimed_by: codex
-        claimed_at: '2026-08-20T20:19:25+00:00'
-        expires_at: '2026-08-21T20:19:25+00:00'
-      verification_state: passed
+        claimed_at: '2026-08-20T21:06:34+00:00'
+        expires_at: '2026-08-21T05:06:34+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
