@@ -3867,7 +3867,7 @@ capabilities:
     - LAB
     depends_on:
     - CAP-02.S02.T01
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-02.S03.T01
       capability_id: CAP-02
@@ -4082,15 +4082,17 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: cap02_s03_slice_review
-      reviewed_at: '2026-08-20T20:17:51+00:00'
+      status: APPROVED
+      reviewer: independent-agent-cap02-s03-rereview
+      reviewed_at: '2026-08-20T21:19:01+00:00'
       evidence:
       - artifacts/evidence/CAP-02.S03.integration-remediation.json
-      notes: 'Superseding independent-review remediation at exact reviewed state e2eda29: all four prior findings fixed; task
-        remediation review approved; exact affected, migration, contract, packaging, foundation, security, and retained Windows
-        performance checks pass. Independent cleanup p95 passes with 1.8199 ms regression headroom and remains an explicit
-        W1-exit replay risk.'
+      notes: 'APPROVED delivery candidate 7e588021 (current descendant 5da1c40 changes generated review HTML only): no P0-P3
+        findings. Ten adversarial tests pass; exact-generation cleanup retains same-digest republish; original 4613.2195 ms
+        failure preserved and first-only remediation pass is 4550.0581/4551.878 ms; declared-purpose egress fails closed before
+        path/decryption; bounded creation source and v1-v4-to-v5 migration/contracts/docs/package verified. Backlog, views,
+        planning site, ancestry, evidence hashes, and diff hygiene pass. Replay performance once without retry or threshold
+        relaxation at W1 exit.'
   - id: CAP-02.S04
     title: Local secrets, profiles, and privacy controls
     outcome: Credentials and policy-sensitive configuration are isolated from ordinary project content.
@@ -4102,7 +4104,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-02.S03.T02
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-02.S04.T01
       capability_id: CAP-02
@@ -4128,11 +4130,11 @@ capabilities:
       - security-local
       verification_commands:
       - python tools/verify.py --profile security-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-20T21:19:01+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

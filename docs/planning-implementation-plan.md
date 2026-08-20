@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4076941a0f830c443b79b9a96caf700697ee9f6e7ffb25f8d221a603078fc73e
+source_sha256: b78177eccc56e986ecd4ae77fbabc3feee920a30ab2a639d4490fc2b6a7d07d6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1829,7 +1829,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights metadata.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -1937,7 +1937,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Credentials and policy-sensitive configuration are isolated from ordinary project content.
 
-**Wave / priority / status / review:** `W1` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -1945,7 +1945,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T01 - Integrate Windows credential storage for secrets
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
