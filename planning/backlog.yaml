@@ -4130,12 +4130,12 @@ capabilities:
       - security-local
       verification_commands:
       - python tools/verify.py --profile security-local
-      status: REVIEW
+      status: DONE
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-20T21:20:44+00:00'
-      updated_at: '2026-08-20T22:21:41+00:00'
-      completed_at: null
+      updated_at: '2026-08-20T22:23:23+00:00'
+      completed_at: '2026-08-20T22:23:23+00:00'
       blocker: null
       implementation_notes: 'Implementation ce437a2 with final submission evidence 8d032da; security-local, DPAPI adversarial,
         envelope-upgrade, portable-contract, and frozen-package checks pass. Request one consolidated security review ledger
@@ -4165,17 +4165,13 @@ capabilities:
         recorded_at: '2026-08-20T22:21:12+00:00'
       review:
         reviewer: cap02_s04_t01_security_review
-        result: changes-requested
-        reviewed_at: '2026-08-20T22:17:44+00:00'
-        notes: 'Prior F1/F2 mechanically closed. New changed-surface P1 F3: free-form purpose is logged verbatim and can duplicate
-          a plaintext secret-scope identifier/value. Close with governed SecretPurpose vocabulary at port/logger plus negative
-          default-sink regression and contract/ADR update. Second remediation round; escalate rather than permit further review
-          churn.'
+        result: approved
+        reviewed_at: '2026-08-20T22:23:23+00:00'
+        notes: APPROVED exact implementation 3fedbd7dd0783b2a47000781dbc0f73843c53170; evidence 57c47fc SHA-256 208f07ec0debc0f2cd67920b1c9106f7f63ef983f9627fdcf88bcf934a625408;
+          clean descendant cd872d1. F1 bounded authority recovery, F2 attributed default audit, and F3 closed purpose vocabulary
+          verified. No actionable P0-P3.
       base_sha: 41f657adbcf3b742656812fd685af7f7e40f54b2
-      lease:
-        claimed_by: codex
-        claimed_at: '2026-08-20T22:17:44+00:00'
-        expires_at: '2026-08-21T06:17:44+00:00'
+      lease: null
       verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
@@ -4208,11 +4204,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile security-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-20T22:23:23+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4313,13 +4309,13 @@ capabilities:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile security-local
       - python tools/verify.py --profile e2e-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       base_sha: null
       lease: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-08-20T22:23:23+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
