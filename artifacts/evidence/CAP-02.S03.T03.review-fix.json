@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S03.T03",
+  "commit": "8c18b51b588921f5e719a2cd6d6212f0d43ea8b0",
+  "baseCommit": "1975e481e57f7899074b00f65341354a4eaf0a0d",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S03.T03.json",
+    "reason": "The independent destructive-I/O review rejected the first submission because a path generation could be exchanged after preview revalidation and before the staged move, causing replacement bytes to enter cleanup staging and be deleted on restart. This follow-up preserves the historical evidence while binding the exact-handle remediation, identity-committed restart format, performance correction, and final checks to a new immutable commit."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S03.T03.json",
+    "docs/architecture/local-object-storage.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "tests/data/test_storage_maintenance.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -q tests.data.test_storage_maintenance tests.data.test_local_object_store tests.data.test_encrypted_object_store tests.data.test_object_envelope_upgrades tests.data.test_storage_maintenance_performance_check tests.contracts.test_object_store_contract",
+      "exitCode": 0,
+      "result": "The exact final commit passed the 52-test affected union in 18.501 seconds. Eleven direct storage-maintenance tests include the deterministic post-preview generation exchange, identity-committed restart deletion and mismatch preservation, bounded full-identity commitment names, audit denial, reference/reader and same-size mutation races, interrupted cleanup, shared authority, hardlinks, quota, and low-disk continuity. The union also replays local and encrypted object storage, v2-v4 envelope upgrade/restart, benchmark anti-laundering, and strict portable contracts."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/storage_maintenance_performance_check.py --repo . --report artifacts/tmp/CAP-02.S03.T03-storage-performance-remediation-final.json",
+      "exitCode": 0,
+      "result": "The release-authoritative Windows x64 gate qualified at exact commit 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0 with every one of ten samples retained. Usage/preview p95 was 327.699 ms; 2,100-item cleanup p95 was 4498.402 ms against the 4551.878 ms regression and 5000 ms absolute ceilings; encrypted PDF/report/model put p50 was 37.405/88.329/150.365 MiB/s and authenticated open p50 was 103.449/155.772/167.829 MiB/s. Report SHA-256: 943906291c0108c271bdeef67fac008cc3b0e737ecc32426114d9b1e29dd1e8b."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/architecture_check.py --repo .; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check 1975e481e57f7899074b00f65341354a4eaf0a0d..8c18b51b588921f5e719a2cd6d6212f0d43ea8b0",
+      "exitCode": 0,
+      "result": "All 106 governed Python files pass format, lint, and configured typing; the 13-area architecture contract passes; all 20 capabilities, 117 slices, 356 tasks, and 12 release gates validate; generated backlog views have no drift; and the exact remediation delta passes patch hygiene. The codex branch was clean after qualification."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The one-time preview still authorizes only the captured device, inode, size, modification time, regular-file type, and single-link generation. On Windows the adapter opens that exact path with OPEN_REPARSE_POINT and read/delete authority while denying write/delete sharing, validates the held descriptor against the preview, and performs rename and deletion through the same handle. A replacement path generation is therefore skipped and retained rather than moved or deleted.",
+        "Project cache/index/model files retain same-volume cleanup staging. Each bounded partial name carries a 96-bit operation token and a full SHA-256 commitment to the preview identity. Restart stats the partial, recomputes the commitment, reacquires that exact identity through a held handle, and fails closed while preserving any mismatch.",
+        "The prior categorized accounting, reference/reader rechecks for canonical derived objects, hard quota and free-space admission, shared-cache authority isolation, content-free audit, and read/preview/cleanup continuity remain covered by the exact affected union."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "A deterministic adversarial seam exchanges the authorized cache generation immediately before the exact-handle open. Cleanup reports one skip, retains both the previewed bytes at their moved-by-attacker name and the replacement bytes at the authorized path, creates no partial, and restart preserves the replacement.",
+        "Restart tests prove that a genuine post-move interruption leaves one identity-committed partial that is deleted on restart, while a crafted partial whose current identity differs from its filename commitment is preserved and prevents store startup from silently continuing.",
+        "The exact 52-test union and the registered ten-sample Windows performance gate pass at the final commit. The gate itself also exercises all 2,000 cache files plus 100 derived objects and requires 2,100 reclaimed items with zero skips."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The architecture guide now documents exact-handle destructive authority and SHA-256-committed partial recovery. No portable schema, database migration, public port, UI reference, or shared-cache layout was changed by this remediation.",
+        "The implementation remains bounded to release-authoritative Windows x64 behavior. Non-Windows destructive cleanup fails closed pending W6 platform qualification rather than silently falling back to a path-racy operation.",
+        "The prior evidence remains immutable and is explicitly superseded rather than edited or treated as approved. Lease and generated planning-state changes reflect the resumed authorized W1 campaign only."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This remediation changes destructive local I/O, a preview-to-delete concurrency boundary, restart cleanup, Windows handle semantics, and the implementation measured by a commit-bound performance gate. The exact storage/encryption/migration/contract union, direct adversarial generation-exchange and restart cases, quality/architecture/governance checks, and full registered Windows storage benchmark were therefore selected. The first exact-handle benchmark attempt exposed a too-long identity-rich partial name: all 2,000 cache candidates were skipped. After compacting it to a full digest commitment, the next complete run reclaimed every item but honestly failed at 5215.349 ms p95. Redundant path rechecks were removed only after showing that OPEN_REPARSE_POINT plus descriptor identity and denied write/delete sharing preserve the same authorization; the final unchanged ten-sample methodology then qualified at 4498.402 ms p95.",
+    "deferred": "The complete data profile passed at the original implementation commit and is preserved in the superseded evidence. Replaying its duplicate foundation/build/UI stages is not justified for this bounded remediation because the exact final affected data/contract union and registered performance gate cover every changed executable path. Independent task review must replay the reported generation-exchange finding and incremental restart/performance boundary. Slice review must integrate T01-T03 across encryption, publication/open, upgrade, quota, reference/reader, cleanup, malicious-filesystem, restart, and recovery surfaces; the full affected/full matrix remains due once at W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Independently review exact commit 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0 as a bounded remediation of the prior generation-exchange finding. Replay the exchange before handle open, genuine and forged partial restart cases, exact Windows handle sharing/identity semantics, one-time preview behavior, and the final performance gate. Confirm that the optimized descriptor-only authorization cannot delete a different generation; do not approve from narrative evidence alone."
+  }
+}

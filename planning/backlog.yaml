@@ -4032,7 +4032,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T13:19:06+00:00'
-      updated_at: '2026-08-20T19:16:02+00:00'
+      updated_at: '2026-08-20T19:38:47+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4042,6 +4042,11 @@ capabilities:
         sha256: 24ab1d6937d20ad6c9b3555e3fa88e64301764642e6a065235c5af4fbde04c5d
         commit: 1975e481e57f7899074b00f65341354a4eaf0a0d
         recorded_at: '2026-08-18T14:52:00+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S03.T03.review-fix.json
+        sha256: acded9136c87f9559af07282652e6cd0068970c1efe35cea48f54681d0f1cd97
+        commit: 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0
+        recorded_at: '2026-08-20T19:38:47+00:00'
       review:
         reviewer: null
         result: null
