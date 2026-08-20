@@ -4032,7 +4032,7 @@ capabilities:
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T13:19:06+00:00'
-      updated_at: '2026-08-20T21:06:34+00:00'
+      updated_at: '2026-08-20T21:07:53+00:00'
       completed_at: null
       blocker: null
       implementation_notes: 'Submitted exact implementation commit 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0 with superseding
@@ -4056,6 +4056,11 @@ capabilities:
         sha256: e481c6061f40c5eb94f70ddba953ec0335d377ffc7bc01a7e6418a28e5c2b31d
         commit: d0cebec8ab89bc42f972a6083cc80e7dda843601
         recorded_at: '2026-08-20T20:56:20+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S03.T03.doc-remediation.json
+        sha256: 25542f4bf0e5807eceb3d6461c3e5a12dfdde79315580760c77edb6c4eabf7b1
+        commit: e2eda29c017c5c1441811bb2e4ea3a046bede6be
+        recorded_at: '2026-08-20T21:07:53+00:00'
       review:
         reviewer: independent-agent-t03-slice-remediation
         result: changes-requested
@@ -4068,7 +4073,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-20T21:06:34+00:00'
         expires_at: '2026-08-21T05:06:34+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
