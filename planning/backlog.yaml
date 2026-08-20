@@ -3867,7 +3867,7 @@ capabilities:
     - LAB
     depends_on:
     - CAP-02.S02.T01
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-02.S03.T01
       capability_id: CAP-02
@@ -4082,15 +4082,15 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: CHANGES_REQUESTED
+      status: REVIEW
       reviewer: cap02_s03_slice_review
       reviewed_at: '2026-08-20T20:17:51+00:00'
       evidence:
-      - artifacts/evidence/CAP-02.S03.integration.json
-      notes: 'CHANGES_REQUESTED exact state 733da39031c3b55e85d374d68928db912383bcd4: P1 stale derived-object preview deletes
-        a republished inode; P1 independent cleanup p95 4613.2195 ms exceeds 4551.878 ms regression ceiling; P1 open purpose
-        lacks fail-closed egress policy seam; P2 required bounded creation-source metadata is absent. Other task evidence,
-        52-test union, 38-test service/package union, 21 security tests, hashes, and missing-e2e disclosure verified.'
+      - artifacts/evidence/CAP-02.S03.integration-remediation.json
+      notes: 'Superseding independent-review remediation at exact reviewed state e2eda29: all four prior findings fixed; task
+        remediation review approved; exact affected, migration, contract, packaging, foundation, security, and retained Windows
+        performance checks pass. Independent cleanup p95 passes with 1.8199 ms regression headroom and remains an explicit
+        W1-exit replay risk.'
   - id: CAP-02.S04
     title: Local secrets, profiles, and privacy controls
     outcome: Credentials and policy-sensitive configuration are isolated from ordinary project content.
