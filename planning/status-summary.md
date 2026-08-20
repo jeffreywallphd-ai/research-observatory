@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: b59e1866f08843cd8cedaa8985054a843b7d987e47ec74e074e15c2672377a07
+source_sha256: 8502358845aecaa6a1d62cdab901fbc8f824090aba90f74490216ef082f300da
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 277 |
 | `READY` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 41 |
 | `DEFERRED` | 36 |
 
@@ -117,4 +117,4 @@ manual_edit: prohibited
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S04.T01` Integrate Windows credential storage for secrets | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S04.T01` Integrate Windows credential storage for secrets | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
