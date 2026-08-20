@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S03.T03",
+  "commit": "d0cebec8ab89bc42f972a6083cc80e7dda843601",
+  "baseCommit": "8c18b51b588921f5e719a2cd6d6212f0d43ea8b0",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S03.T03.review-fix.json",
+    "reason": "The independent CAP-02.S03 slice review rejected the prior integrated state for a stale derived-object preview race, unstable cleanup performance, missing declared-purpose egress enforcement, and missing technical object creation-source metadata. This manifest preserves prior evidence and binds all four remediations to the exact final descendant commit."
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S03.T03.review-fix.json",
+    "artifacts/evidence/CAP-02.S03.integration.json",
+    "docs/architecture/local-object-storage.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/object-store-profile.schema.json",
+    "packages/contracts/storage/object-store-profile.v1.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0005_object_creation_source.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/object_store.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/contracts/test_object_store_contract.py",
+    "tests/data/test_encrypted_object_store.py",
+    "tests/data/test_local_object_store.py",
+    "tests/data/test_object_envelope_upgrades.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/data/test_sqlite_schema.py",
+    "tests/data/test_storage_maintenance.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/storage_maintenance_performance_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -q tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.data.test_sqlite_repositories tests.data.test_local_object_store tests.data.test_encrypted_object_store tests.data.test_object_envelope_upgrades tests.data.test_storage_maintenance tests.contracts.test_object_store_contract",
+      "exitCode": 0,
+      "result": "The exact final commit d0cebec8ab89bc42f972a6083cc80e7dda843601 passed the 83-test affected migration, schema, repository, local/encrypted object-store, envelope-upgrade, maintenance, and strict portable-contract union in 30.807 seconds."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/storage_maintenance_performance_check.py --repo . --report artifacts/tmp/CAP-02.S03-remediation-storage-performance.json",
+      "exitCode": 0,
+      "result": "The first retained ten-sample remediation run qualified at exact implementation commit 2cbba7facdc2396f94acb9c0d43002d24523c026. Cleanup p95 was 4075.469 ms against the 4551.878 ms regression and 5000 ms absolute ceilings; usage/preview p95 was 326.934 ms; every encrypted PDF/report/model put/open gate passed. The final commit differs only by the governed-file inventory entry. Report SHA-256: 2af4bc4ae12e745aa9ac9ef3be78597fe0c2a4d31396f229bbd4f5d4ef0807fe."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "result": "Six real sidecar packaging tests passed at implementation commit 2cbba7f with one expected Windows symlink-token skip. The frozen Pythonless package built and ran, included PyNaCl/_cffi_backend and the v0005 migration module, and enforced its inventory contract."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe tools/packaging_smoke_check.py --repo .; .venv\\Scripts\\python.exe -m unittest discover -s tests/foundation -p test_*.py; .venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/security_check.py --repo . --report artifacts/tmp/CAP-02.S03-remediation-security-local.json; .venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py",
+      "exitCode": 0,
+      "result": "At exact final commit d0cebec, all 107 governed Python files passed formatting, lint, and typing; packaging smoke passed; all 166 foundation tests passed in 647.193 seconds; the 20-capability/117-slice/356-task/12-gate backlog validated; the supply-chain scan passed 599 packages and 151 findings with zero blocking; and all 21 security tests passed. Security report SHA-256: 7250de848024d2c8a5e9336bbab862600aac728474c4676d8e0563df60b642c6."
+    },
+    {
+      "command": "git diff --check; .venv\\Scripts\\python.exe -m ruff check <affected Python paths>; .venv\\Scripts\\python.exe -m ruff format --check <affected Python paths>",
+      "exitCode": 0,
+      "result": "Patch hygiene passed, and all 14 directly affected Python files passed targeted Ruff formatting and lint checks before the final inventory-only commit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Canonical derived-object cleanup now passes the previewed file candidate into an internal delete operation, rechecks retention/reference/reader state inside the metadata transaction, acquires the exact preview generation through a held Windows handle, verifies content through that same handle, and performs rename and deletion through it. A deleted-and-republished same-digest generation is skipped and retained.",
+        "The prior reference, active-reader, hardlink, path-authority, one-time preview, audit, quota, low-disk, and restart barriers remain covered. The deterministic republish test proves zero reclaimed, one skipped, retained metadata, and readable replacement bytes.",
+        "Immutable Windows cleanup API bindings are cached once per process without weakening per-candidate identity validation. The first ten-sample registered run passed with roughly 476 ms of regression-threshold headroom."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact 83-test affected union covers fresh and migrated v5 schemas, rollback failpoints, repositories, plaintext/encrypted publication, prior-envelope upgrade and restart, rights and egress denial, injected access-policy decisions, stale cleanup previews, audit/quota/low-disk behavior, and strict contracts.",
+        "Direct access-policy tests prove unknown remote-egress, wrong access class, missing destination, default controlled-egress denial, require-confirmation, and policy exceptions expose no reader. An injected exact allow permits only the declared controlled-egress request and records its detached metadata and destination.",
+        "The real frozen package, 166 foundation tests, 21 security tests, supply-chain scan, and ten-sample Windows performance authority all passed the remediated surface."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ObjectPutCommand and StoredObject now carry a closed technical creation-source category. New puts must explicitly use local-import, connector-acquisition, local-derivation, or test-fixture; legacy-unreported is reserved for truthful migration backfill and is not represented as scholarly provenance.",
+        "Governed migration 0005 advances exact v4 to v5 after a verified backup, preserves v1-v4 fingerprints and history, backfills legacy-unreported, and produces the same exact schema fingerprint as fresh v5 initialization. Recovery schemas, SQLite/object-store profiles, docs, tests, quality inventory, and frozen-package inventory were updated.",
+        "The dependency-neutral ObjectAccessPolicy seam classifies known local reads and controlled egress. The default allows only known local reads and denies controlled egress before path resolution or decryption; only an exact bounded allow decision can expose a stream. CAP-02.S04 can inject the settings/consent-backed policy without importing private adapter state."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The slice-review remediation spans destructive Windows I/O, a preview-generation race, schema migration/history, a public dependency-neutral object-store contract, privacy/egress enforcement, packaging, and the benchmark implementation. The selected checks therefore cover the exact affected 83-test data union, v1-v4 migration and rollback, strict contracts, real frozen packaging, all foundation/security tests, the supply-chain scan, and the full registered ten-sample Windows storage gate. The first full security-profile attempt honestly stopped after 276.48 seconds at foundation:quality because v0005 was absent from quality-scope.json; all earlier commands passed. That omission was corrected in the sole follow-up commit d0cebec, after which the quality check and every remaining profile command passed at exact final head.",
+    "deferred": "The complete data profile already passed for the integrated pre-review slice state. Replaying duplicate UI/build/foundation stages was not selected after this remediation because the new executable surface is covered by the exact 83-test union, real package suite, complete foundation/security qualification, and registered storage benchmark. The independent task remediation review must replay all four prior findings and incremental migration/policy/performance boundaries. A successful bounded task review must be followed by a fresh independent CAP-02.S03 slice disposition before S04 can become READY; the complete affected/full matrix remains due once at W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Review exact final commit d0cebec8ab89bc42f972a6083cc80e7dda843601. Replay the stale derived-object preview/republish race, the first retained performance gate, default and injected egress-policy decisions before path/decryption, v4-to-v5 legacy-unreported migration and fresh/migrated fingerprint parity, prior migration-history preservation, and the quality/package inventory correction. Do not approve from narrative evidence alone."
+  }
+}
