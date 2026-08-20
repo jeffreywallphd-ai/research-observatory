@@ -128,7 +128,7 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -137,16 +137,14 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-20T19:15:46+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-20T19:15:46+00:00'
-      expires_at: '2026-08-21T19:15:46+00:00'
+    updated_at: '2026-08-20T22:28:59+00:00'
+    pause_reason: Prepare and obtain exact-commit approval for append-only W1 workflow-control amendment; unsafe Wave reapproval
+      command administratively held
+    pause_category: human-decision
+    lease: null
   checkpoints: []
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []

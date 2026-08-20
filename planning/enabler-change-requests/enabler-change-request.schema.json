@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/enabler-change-request.packet.v1.json",
+  "title": "Research Observatory inert enabler change request packet",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "changeRequestId",
+    "proposedAmendmentId",
+    "targetWave",
+    "status",
+    "executionState",
+    "classification",
+    "authority",
+    "activationBoundary",
+    "bootstrapUnit",
+    "authorizedTaskIds",
+    "taskInventory",
+    "acceptanceCriteria",
+    "verificationObligations",
+    "rollback",
+    "nonGoals",
+    "files"
+  ],
+  "properties": {
+    "$schema": {"type": "string", "minLength": 1},
+    "schemaVersion": {"const": "1.0-proposal"},
+    "documentType": {"const": "enabler-change-request-packet"},
+    "changeRequestId": {"pattern": "^ECR-[0-9]{4}$"},
+    "proposedAmendmentId": {"pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
+    "targetWave": {"pattern": "^W(?:[0-9]|1[01])$"},
+    "status": {"const": "pending-approval"},
+    "executionState": {"const": "non-executable"},
+    "classification": {
+      "enum": [
+        "operational-clarification",
+        "control-plane-improvement",
+        "gate-integrity-safety-defect"
+      ]
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "originalWavePacketCommit",
+        "originalApprovalRecordCommit",
+        "legacyAmendmentId",
+        "legacyAmendmentPacketCommit",
+        "legacyAmendmentRecordCommit",
+        "effectiveBasePacketCommit"
+      ],
+      "properties": {
+        "originalWavePacketCommit": {"$ref": "#/$defs/commit"},
+        "originalApprovalRecordCommit": {"$ref": "#/$defs/commit"},
+        "legacyAmendmentId": {"pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
+        "legacyAmendmentPacketCommit": {"$ref": "#/$defs/commit"},
+        "legacyAmendmentRecordCommit": {"$ref": "#/$defs/commit"},
+        "effectiveBasePacketCommit": {"$ref": "#/$defs/commit"}
+      },
+      "additionalProperties": false
+    },
+    "activationBoundary": {
+      "type": "object",
+      "required": ["waveStatus", "ordinaryTaskStatesDenied", "reviewCandidateMutationDenied", "otherEnablerCampaignDenied"],
+      "properties": {
+        "waveStatus": {"const": "PAUSED"},
+        "ordinaryTaskStatesDenied": {
+          "type": "array",
+          "const": ["IN_PROGRESS", "REVIEW"]
+        },
+        "reviewCandidateMutationDenied": {"const": true},
+        "otherEnablerCampaignDenied": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "bootstrapUnit": {
+      "type": "object",
+      "required": ["id", "kind", "exceptionReason", "authorizedPaths", "requiredOutcomes", "prohibitedOutcomes"],
+      "properties": {
+        "id": {"pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B[0-9]{2}$"},
+        "kind": {"const": "one-time-self-hosting-control-repair"},
+        "exceptionReason": {"type": "string", "minLength": 1},
+        "authorizedPaths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "requiredOutcomes": {"$ref": "#/$defs/nonEmptyStrings"},
+        "prohibitedOutcomes": {"$ref": "#/$defs/nonEmptyStrings"}
+      },
+      "additionalProperties": false
+    },
+    "authorizedTaskIds": {
+      "type": "array",
+      "const": ["W1.A02.T01", "W1.A02.T02"]
+    },
+    "taskInventory": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "objective", "dependencies", "acceptanceCriteria", "verification"],
+        "properties": {
+          "id": {"pattern": "^W1\\.A02\\.T0[12]$"},
+          "title": {"type": "string", "minLength": 1},
+          "objective": {"type": "string", "minLength": 1},
+          "dependencies": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "acceptanceCriteria": {"$ref": "#/$defs/nonEmptyStrings"},
+          "verification": {"$ref": "#/$defs/nonEmptyStrings"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "acceptanceCriteria": {"$ref": "#/$defs/nonEmptyStrings"},
+    "verificationObligations": {"$ref": "#/$defs/nonEmptyStrings"},
+    "rollback": {"$ref": "#/$defs/nonEmptyStrings"},
+    "nonGoals": {"$ref": "#/$defs/nonEmptyStrings"},
+    "files": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256", "role"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"$ref": "#/$defs/sha256"},
+          "role": {"enum": ["canonical-proposal", "proposal-schema", "human-review"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nonEmptyStrings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "additionalProperties": false
+}
