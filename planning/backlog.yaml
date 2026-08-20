@@ -22132,3 +22132,125 @@ verification_profiles:
     denial paths.
   server: University-hosted services, identity, collaboration, licensed sources, research-production workflow, and operations.
   cloud: Tenant, residency, metering, security, research-production workload, and SaaS operations.
+control_plane:
+  revision: 2
+  minimum_tool_revision: 2
+  active_amendment: null
+wave_approval_bases:
+- wave_id: W1
+  packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
+  record_commit: 901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701
+  approval:
+    status: APPROVED
+    approved_by: repository-owner
+    approved_at: '2026-08-14T01:32:27.653823+00:00'
+    approved_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
+    capability_ids:
+    - CAP-01
+    - CAP-02
+    - CAP-03
+    - CAP-07
+    decision_ids:
+    - CAP-01-D01
+    - CAP-01-D02
+    - CAP-02-D01
+    - CAP-02-D02
+    - CAP-02-D03
+    - CAP-03-D01
+    - CAP-03-D02
+    - CAP-03-D03
+    - CAP-03-D04
+    - CAP-07-D01
+    - CAP-07-D06
+    - CAP-07-D07
+    - CAP-07-D08
+    slice_ids:
+    - CAP-01.S01
+    - CAP-01.S02
+    - CAP-01.S03
+    - CAP-01.S04
+    - CAP-02.S01
+    - CAP-02.S02
+    - CAP-02.S03
+    - CAP-02.S04
+    - CAP-03.S01
+    - CAP-03.S02
+    - CAP-03.S03
+    - CAP-03.S04
+    - CAP-03.S05
+    - CAP-03.S06
+    - CAP-07.S01
+    notes: User explicitly approved the complete W1 packet in the Codex session on 2026-08-13.
+  canonical_sha256: 693a32f0406d26d455fe7c95d19fb9dd6564ac307ff3ce6e5b483a99d9b97b99
+wave_amendments:
+- id: W1.A01
+  change_request_id: null
+  target_wave: W1
+  kind: migrated-replanning
+  approval_reference:
+    path: planning/wave-amendment-approvals/W1.A01.json
+    sha256: 2eaa44d91f4dae202c85f2c2984430445df149da08a3e8df2f5236af2a139bde
+    introduction_commit: a20685b90532c60e0286e5e05f68b46c613e935d
+  lifecycle:
+    status: ADOPTED
+    history:
+    - id: E01
+      status: ADOPTED
+      actor: repository-owner
+      at: '2026-08-20T23:38:52+00:00'
+      rationale: Migrated immutable historical W1 amendment authority.
+  bootstrap: null
+  campaign: null
+  tasks: []
+  completion:
+    status: APPROVED
+    reviewer: repository-owner
+    reviewed_at: '2026-08-20T23:38:52+00:00'
+    evidence:
+    - planning/wave-amendment-approvals/W1.A01.json
+    notes: Historical authority migration only.
+- id: W1.A02
+  change_request_id: ECR-0001
+  target_wave: W1
+  kind: gate-integrity-safety-defect
+  approval_reference:
+    path: planning/wave-amendment-approvals/W1.A02.json
+    sha256: 63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376
+    introduction_commit: 6e9c440102a5c463bb35d81f4dbdc3453d9ce029
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: repository-owner
+      at: '2026-08-20T22:45:05.0259522Z'
+      rationale: Approved in Codex in direct response to the exact-commit ECR-0001/W1.A02 approval request; proceed within
+        the hashed B00, T01, and T02 scope only.
+  bootstrap:
+    id: W1.A02.B00
+    status: REVIEW
+    implementer: codex
+    implementation_commit: 2493dee313a2df8929dbd2eed31d9e0e672fc368
+    scope_addenda:
+    - path: planning/wave-amendment-approvals/W1.A02.B00.addendum-01.json
+      sha256: c00c7574cf6def6db76754531d351cc0eb13853076f4d714074a611238a1a19d
+      introduction_commit: 502908c16d9751af56c720df0cdabd74c235721a
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W1.A02.B00.json
+      sha256: 74c93ae166d7e7a3ff41a194c38d207f8593abe7aefd108a879444f5aadb2370
+      commit: 2493dee313a2df8929dbd2eed31d9e0e672fc368
+      recorded_at: '2026-08-20T23:38:52+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null

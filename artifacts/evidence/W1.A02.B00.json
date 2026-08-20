@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A02.B00",
+  "commit": "2493dee313a2df8929dbd2eed31d9e0e672fc368",
+  "baseCommit": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "AGENTS.md",
+    "docs/automation/codex-tracking-guide.md",
+    "docs/automation/planning-review-site.md",
+    "docs/automation/project-automation-guide.md",
+    "docs/governance/delivery-control-model.md",
+    "docs/planning-implementation-plan.md",
+    "planning/README.md",
+    "planning/backlog.schema.json",
+    "planning/review-site/CAP-01/index.html",
+    "planning/review-site/CAP-02/index.html",
+    "planning/review-site/CAP-03/index.html",
+    "planning/review-site/CAP-07/index.html",
+    "planning/review-site/README.md",
+    "planning/review-site/enablers/ECR-0001.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W0.html",
+    "planning/review-site/waves/W1.html",
+    "planning/review-site/waves/W10.html",
+    "planning/review-site/waves/W11.html",
+    "planning/review-site/waves/W2.html",
+    "planning/review-site/waves/W3.html",
+    "planning/review-site/waves/W4.html",
+    "planning/review-site/waves/W5.html",
+    "planning/review-site/waves/W6.html",
+    "planning/review-site/waves/W7.html",
+    "planning/review-site/waves/W8.html",
+    "planning/review-site/waves/W9.html",
+    "planning/status-summary.md",
+    "planning/wave-amendment-approvals/W1.A01.json",
+    "planning/wave-amendment-approvals/W1.A02.B00.addendum-01.json",
+    "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json",
+    "planning/wave-amendment-approvals/wave-amendment-approval.schema.json",
+    "quality-scope.json",
+    "tests/foundation/test_plan_review_amendments.py",
+    "tests/foundation/test_planctl_amendments.py",
+    "tests/foundation/test_planctl_wave_approval.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/backlog_views.py",
+    "tools/plan_review_check.py",
+    "tools/plan_review_site.py",
+    "tools/planctl.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_planctl_wave_approval tests.foundation.test_planctl_amendments tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views",
+      "exitCode": 0,
+      "result": "All 67 focused schema, workflow, immutable-approval, scope-addendum, ECR, review-site, and generated-view tests passed at the exact implementation commit in 50.188 seconds."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 113 governed Python files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo . --report artifacts/tmp/B00-plan-review-site-validation.json",
+      "exitCode": 0,
+      "result": "The 20-capability, 117-slice, 356-task, 12-gate backlog validated; generated backlog views were current; and the planning review site passed with 19 capabilities, 111 slices, and 145 HTML pages."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved",
+      "exitCode": 0,
+      "result": "ECR-0001 and W1.A02 validated against the immutable packet, human approval, independent packet review, original W1 authority, and migrated W1.A01 history."
+    },
+    {
+      "command": "git diff --check && git status --short --branch",
+      "exitCode": 0,
+      "result": "Patch hygiene passed and the codex implementation candidate was clean before this evidence manifest was created."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "planctl rejects a repeated approval of an APPROVED Wave before Git inspection, plan mutation, or generated-view writes; byte-stability tests cover both ordinary and malformed-plan inputs.",
+        "The new ECR approval command uses exclusive creation and immutable introduction-history validation, so it cannot overwrite an existing approval record."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The original W1 approval is reconstructed from packet 594e63be501711d67d17a4aef176bb9b6a8748be and record commit 901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701.",
+        "The migrated W1.A01 record binds packet c5bbd97c0cdc665eecb973f5862478ef7be97752 and historical record a223a6fcd5730d4ed6d0081673e6192c6977e25c; validation proves base plus W1.A01 equals the existing W1 effective approval without rewriting it."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The backlog schema and taskctl implement optional backward-compatible base/amendment collections, immutable approval references, append-only lifecycle histories, compare-and-swap snapshots, bootstrap review, exact materialization, safe activation, task routing, exit review, adoption, and independent defer/withdraw disposition.",
+        "The repository-owner-approved B00 scope addendum authorizes exactly docs/planning-implementation-plan.md as mechanically generated output; its schema, content hash, introduction commit, candidate ancestry, and immutable Git blob are validated before bootstrap submission and on every subsequent authority validation.",
+        "The amendment-hold campaign marker is accepted only by the current schema and is rejected by the pre-B00 schema fixture, causing older tool/schema pairs to fail closed once executable amendment state exists."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Materialization reads taskInventory only from the immutable approved ECR packet, compares it with authorizedTaskIds, records canonical per-task hashes, and creates exactly W1.A02.T01 and W1.A02.T02.",
+        "Focused tests deny materialization before independent B00 approval, duplicate materialization, altered inventories, stale writers, unsafe activation boundaries, dependency bypass, ordinary task claims, Wave resume, and G1 approval."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Before and after materialization, taskctl status, next, and next-capability render the same stopped-amendment handoff with ECR/proposal/approval/Wave links, base plus ordered authority, legal alternatives, recommendation, and exact resume condition.",
+        "Generated W1 and enabler pages preserve proposal, approval, bootstrap, materialization, campaign, and adoption as separate states; W1 suppresses start/reapproval instructions while pending W2 retains ordinary pre-Wave approval guidance.",
+        "The generated-state regression test derives lifecycle, bootstrap, and campaign expectations from the authoritative backlog, so the same truth check remains valid across bootstrap submission and later controlled transitions."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "B00 received 67 focused control tests, the 113-file static quality gate, exact ECR authority validation, and generated-view/backlog validation.",
+        "This manifest freezes exact commit 2493dee313a2df8929dbd2eed31d9e0e672fc368 for independent control/security review before the bootstrap can be approved or either amendment task can be materialized."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "B00 changes the approval, task-state, release-gate, generated-review, schema, and evidence control plane. Focused fail-closed schema/workflow/ECR/view tests, full governed Python static quality, exact Git authority validation, and generated planning/backlog checks were selected. Product, storage, packaging, and performance suites were not selected because no product/runtime code, dependency, benchmark, or release threshold changed.",
+    "deferred": "T01 owns immutable review attempts/findings, atomic submission, and bounded remediation on top of this bootstrap. T02 owns deterministic affected-check selection and privacy-safe telemetry. Complete product/deployment profiles remain due once at W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-security-review",
+    "note": "Review exact candidate 2493dee313a2df8929dbd2eed31d9e0e672fc368 and this manifest as one frozen packet. Verify immutable W1/base/A01/A02 authority, the append-only B00 scope addendum and its one-path limit, repeated-approval denial, old-tool fail-closed behavior, bootstrap self-hosting limits, exact task materialization, activation quiescence, ordinary claim/resume/G1 denial, append-only adoption/disposition, and truthful generated stopped-state views. Return one consolidated severity-ranked finding ledger."
+  }
+}
