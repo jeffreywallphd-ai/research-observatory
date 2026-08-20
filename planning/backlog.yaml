@@ -4028,12 +4028,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile e2e-local
-      status: DONE
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-18T13:19:06+00:00'
-      updated_at: '2026-08-20T19:43:52+00:00'
-      completed_at: '2026-08-20T19:43:52+00:00'
+      updated_at: '2026-08-20T20:19:25+00:00'
+      completed_at: null
       blocker: null
       implementation_notes: Submitted exact implementation commit 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0 with superseding
         evidence after generation-exchange remediation and qualifying Windows storage gate.
@@ -4049,18 +4049,22 @@ capabilities:
         commit: 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0
         recorded_at: '2026-08-20T19:38:47+00:00'
       review:
-        reviewer: t03_remediation_review
-        result: approved
-        reviewed_at: '2026-08-20T19:43:52+00:00'
-        notes: 'APPROVED exact 8c18b51b588921f5e719a2cd6d6212f0d43ea8b0: no P0-P2 findings; 52-test union and live Windows
-          held-handle generation-survival experiment passed; genuine/forged restart partials and evidence hashes verified.
-          Cleanup margin is narrow, so replay the registered gate at slice and Wave qualification.'
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: 'Reopened: CAP-02.S03 slice review remediation: bind derived-object cleanup to preview generation; stabilize
+          cleanup performance; add fail-closed purpose-policy handoff; add bounded creation-source metadata and compatibility
+          migration across the integrated object contract.'
       base_sha: a72640e1311d5c29523ca0579b4f5bbb8819eb7b
-      lease: null
-      verification_state: passed
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-20T20:19:25+00:00'
+        expires_at: '2026-08-21T20:19:25+00:00'
+      verification_state: null
       worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
+      cancellation: null
     platform_targets:
     - windows-x64
     completion:
