@@ -4130,11 +4130,11 @@ capabilities:
       - security-local
       verification_commands:
       - python tools/verify.py --profile security-local
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-08-20T21:19:01+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      started_at: '2026-08-20T21:20:44+00:00'
+      updated_at: '2026-08-20T21:20:44+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -4144,10 +4144,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 41f657adbcf3b742656812fd685af7f7e40f54b2
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-20T21:20:44+00:00'
+        expires_at: '2026-08-21T05:20:44+00:00'
       verification_state: null
-      worktree: null
+      worktree: C:/ai-projects/research-observatory
       platform_targets:
       - windows-x64
     - id: CAP-02.S04.T02

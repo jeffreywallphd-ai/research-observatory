@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b78177eccc56e986ecd4ae77fbabc3feee920a30ab2a639d4490fc2b6a7d07d6
+source_sha256: 3968dde1d44b5ba75918360d929832da6795a93b535ac0328390342324bccc14
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1945,13 +1945,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T01 - Integrate Windows credential storage for secrets
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S03.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** OS-protected storage adapter for provider keys, connector tokens, signing trust, and encryption key material.
 
