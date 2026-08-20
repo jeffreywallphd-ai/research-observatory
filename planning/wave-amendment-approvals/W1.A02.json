@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-approval",
+  "amendmentId": "W1.A02",
+  "changeRequestId": "ECR-0001",
+  "targetWave": "W1",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-20T22:45:05.0259522Z",
+  "decision": "Approved in Codex in direct response to the exact-commit ECR-0001/W1.A02 approval request; proceed within the hashed B00, T01, and T02 scope only.",
+  "packet": {
+    "commit": "57d73bcf314ea6aab38b8056ead118d6ef270921",
+    "path": "planning/enabler-change-requests/ECR-0001.packet.json",
+    "sha256": "9ed06e76ea09f069cf58fa0f55bfb130797b791b328e4bb24b69ce12dc3ac1aa",
+    "proposalPath": "planning/enabler-change-requests/ECR-0001.md",
+    "proposalSha256": "4c25a159bd015eb5a8af2ade5bc40f2302fd50c85c564048202c29ee38b72e17"
+  },
+  "effectiveBase": {
+    "originalPacketCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+    "originalApprovalRecordCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701",
+    "legacyAmendmentId": "W1.A01",
+    "legacyAmendmentPacketCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "legacyAmendmentRecordCommit": "a223a6fcd5730d4ed6d0081673e6192c6977e25c",
+    "effectivePacketCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752"
+  },
+  "bootstrapUnit": "W1.A02.B00",
+  "authorizedTaskIds": [
+    "W1.A02.T01",
+    "W1.A02.T02"
+  ],
+  "independentPacketReview": {
+    "reviewer": "ecr_packet_review",
+    "candidateCommit": "57d73bcf314ea6aab38b8056ead118d6ef270921",
+    "result": "APPROVED",
+    "findingIdsClosed": [
+      "ECR-R01",
+      "ECR-R02"
+    ]
+  }
+}
