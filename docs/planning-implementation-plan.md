@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e113af8519ab690c5f4f411620dc8f21e1dfa89337a5ee67fab5dda92f6f4b75
+source_sha256: 5ee0b77e65c063e9dbbd5acf5e36278224b850e84eab55758d724feb9206a45e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1829,7 +1829,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Outcome:** Documents, page images, snapshots, models, and exports use content-addressed storage with integrity and rights metadata.
 
-**Wave / priority / status / review:** `W1` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `CHANGES_REQUESTED`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
