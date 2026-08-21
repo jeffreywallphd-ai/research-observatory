@@ -22135,7 +22135,7 @@ verification_profiles:
 control_plane:
   revision: 3
   minimum_tool_revision: 3
-  active_amendment: W1.A02
+  active_amendment: null
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
@@ -22218,7 +22218,7 @@ wave_amendments:
     sha256: 63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376
     introduction_commit: 6e9c440102a5c463bb35d81f4dbdc3453d9ce029
   lifecycle:
-    status: ACTIVE
+    status: REVIEW
     history:
     - id: E01
       status: APPROVED
@@ -22236,6 +22236,12 @@ wave_amendments:
       actor: codex
       at: '2026-08-21T00:43:02+00:00'
       rationale: Activated the bounded amendment campaign.
+    - id: E04
+      status: REVIEW
+      actor: codex
+      at: '2026-08-21T03:00:48+00:00'
+      rationale: Both authorized tasks are DONE and independently approved; submit W1.A02 for bounded amendment exit review
+        while W1 remains paused.
   bootstrap:
     id: W1.A02.B00
     status: APPROVED
@@ -22294,7 +22300,7 @@ wave_amendments:
           B00-R05 MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen
           state 84107b8.'
   campaign:
-    status: ACTIVE
+    status: REVIEW
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -22303,12 +22309,9 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-21T00:43:02+00:00'
-    updated_at: '2026-08-21T00:43:02+00:00'
+    updated_at: '2026-08-21T03:00:48+00:00'
     pause_reason: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-21T00:43:02+00:00'
-      expires_at: '2026-08-22T00:43:02+00:00'
+    lease: null
   tasks:
   - id: W1.A02.T01
     amendment_id: W1.A02
@@ -23027,8 +23030,10 @@ wave_amendments:
             - W1.A02.T02-R01-F04
       current_submission: null
   completion:
-    status: PENDING
+    status: REVIEW
     reviewer: null
     reviewed_at: null
-    evidence: []
-    notes: null
+    evidence:
+    - artifacts/evidence/W1.A02.exit.json
+    notes: Both authorized tasks are DONE and independently approved; submit W1.A02 for bounded amendment exit review while
+      W1 remains paused.
