@@ -1,0 +1,88 @@
+{
+  "documentType": "wave-amendment-exit-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A02",
+  "changeRequestId": "ECR-0001",
+  "targetWave": "W1",
+  "candidateCommit": "546eb572526acd2996ee2c5fb74f29135d295760",
+  "branch": "codex/w1-windows-local-runtime",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "scope": {
+    "authorizedTasks": [
+      {
+        "taskId": "W1.A02.T01",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "finalEvidence": "artifacts/evidence/W1.A02.T01.remediation-01.json",
+        "reviewLedger": "artifacts/evidence/W1.A02.T01.review-R02.json"
+      },
+      {
+        "taskId": "W1.A02.T02",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "finalEvidence": "artifacts/evidence/W1.A02.T02.remediation-01.json",
+        "reviewLedger": "artifacts/evidence/W1.A02.T02.review-R02.json"
+      }
+    ],
+    "unauthorizedClaims": [
+      "W1 product qualification",
+      "W1 exit-gate approval",
+      "ordinary W1 campaign resumption",
+      "remote integration"
+    ]
+  },
+  "authority": {
+    "approvalRecord": "planning/wave-amendment-approvals/W1.A02.json",
+    "approvalIntroductionCommit": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029",
+    "canonicalProposal": "planning/enabler-change-requests/ECR-0001.md",
+    "packet": "planning/enabler-change-requests/ECR-0001.packet.json"
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "result": "passed",
+      "summary": "20 capabilities, 117 slices, 358 tasks, 12 release gates"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
+      "result": "passed",
+      "summary": "W1.A02.T02 R01 and R02 projected from the strict privacy-safe allowlist; R02 closes all four R01 findings"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+      "result": "passed",
+      "summary": "19 capabilities, 111 slices, 145 HTML pages"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "result": "passed",
+      "summary": "generated backlog views are current"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved",
+      "result": "passed",
+      "summary": "ECR-0001 is approved and history-bound"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "summary": "no whitespace errors"
+    }
+  ],
+  "retainedDeferredWork": {
+    "owner": "W1-exit",
+    "items": [
+      "complete W1 product and deployment qualification matrix",
+      "desktop:performance",
+      "data:project-lifecycle-performance",
+      "data:storage-maintenance-performance"
+    ]
+  },
+  "stoppedState": {
+    "wave": "W1",
+    "campaignStatus": "PAUSED",
+    "campaignScope": "wave-amendment",
+    "pauseReason": "amendment-hold",
+    "requiredNextTransition": "independent amendment exit review"
+  }
+}
