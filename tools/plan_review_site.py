@@ -184,7 +184,7 @@ def task_review_history_html(task: dict[str, Any]) -> str:
             f"""
 <article class="review-toolbar" data-review-round="{esc(task_id)}:{esc(attempt_id)}">
   <h3>Review round {esc(attempt_id)}</h3>
-  {_submission_packet_html(task_id, packet, current=False)}
+{_submission_packet_html(task_id, packet, current=False)}
   <dl class="summary-grid"><div><dt>Disposition</dt><dd>{esc(attempt_review.get("result"))}</dd></div><div><dt>Reviewer</dt><dd>{esc(attempt_review.get("reviewer"))}</dd></div><div><dt>Reviewed at</dt><dd><code>{esc(attempt_review.get("reviewed_at"))}</code></dd></div><div data-review-ledger="{esc(task_id)}:{esc(attempt_id)}" data-ledger-sha256="{esc(ledger.get("sha256"))}"><dt>Immutable ledger</dt><dd><code>{esc(ledger.get("path"))}</code><br><code>{esc(ledger.get("sha256"))}</code></dd></div></dl>
   <p><strong>Review notes:</strong> {esc(attempt_review.get("notes") or "None")}</p>
   <h4>Findings opened in this round</h4><ul class="gate-criteria">{finding_rows or "<li>None</li>"}</ul>
@@ -196,8 +196,8 @@ def task_review_history_html(task: dict[str, Any]) -> str:
     return f"""
 <section data-task-review-id="{esc(task_id)}" data-review-mode="append-only">
   <div class="section-heading"><span class="eyebrow">Immutable task review history</span><h3>{esc(task_id)} — {esc(task.get("title"))}</h3><p>Completed rounds remain append-only. The latest legacy review object below is a labeled current projection, not a replacement for this history.</p></div>
-  {"".join(rendered_attempts) or "<p>No completed review round is recorded.</p>"}
-  {current_html}
+{"".join(rendered_attempts) or "<p>No completed review round is recorded.</p>"}
+{current_html}
   <section class="review-toolbar" data-current-review-projection="{esc(task_id)}" data-current-review-result="{esc(review.get("result") or "not-reviewed")}" data-current-reviewer="{esc(review.get("reviewer") or "none")}" data-current-reviewed-at="{esc(review.get("reviewed_at") or "none")}"><h4>Current latest-review projection</h4><dl class="summary-grid"><div><dt>Task status</dt><dd>{esc(task.get("status"))}</dd></div><div><dt>Latest result</dt><dd>{esc(review.get("result") or "not reviewed")}</dd></div><div><dt>Reviewer</dt><dd>{esc(review.get("reviewer") or "none")}</dd></div><div><dt>Reviewed at</dt><dd><code>{esc(review.get("reviewed_at") or "none")}</code></dd></div></dl><p><strong>Latest notes:</strong> {esc(review.get("notes") or "None")}</p><p><strong>Currently open findings:</strong> {_review_values(sorted(open_findings))}</p></section>
 </section>"""
 

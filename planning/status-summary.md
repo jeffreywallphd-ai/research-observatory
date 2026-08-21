@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5fb70fa3ad171fe7183645ed62337fce5a27a7e8257a9f149399de33f271bede
+source_sha256: fa59e5d9ac4f8159dd4aa116a013fdbe3f50087fe2893e8b784716f09af696b6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -128,6 +128,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-02.S03.T03` | `legacy latest-review-only` | 0 | `-` | approved / independent-agent-t03-slice-remediation | - |
 | `CAP-02.S04.T01` | `legacy latest-review-only` | 0 | `-` | approved / cap02_s04_t01_security_review | - |
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `W1.A02.T01` | `append-only v1` | 1 | `-` | changes-requested / b00-independent-reviewer | `W1.A02.T01-R01-F01`, `W1.A02.T01-R01-F02` |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
