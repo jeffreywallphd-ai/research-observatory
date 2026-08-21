@@ -108,6 +108,18 @@ while a blocking finding remains open. After two adverse rounds, the next
 submission must add root-cause escalation. Pre-control tasks remain valid with a
 truthful latest-review projection and no fabricated append-only history.
 
+New controlled submissions also freeze a non-empty set of canonical verification
+command IDs. Historical packets may lack that optional field, but no later
+submission may silently omit it. A completed post-control round appends one
+strict privacy-safe timing event derived from the immutable submission and
+review. The projection contains only control IDs, timestamps and duration,
+outcome, finding counts by severity and blocking status, canonical command IDs,
+and remediation linkage. Narrative fields, identities, Git/evidence identities,
+paths, raw commands or output, prompts, source or research content, secrets,
+user-data paths, and chain-of-thought are outside the telemetry contract. Legacy
+rounds are never backfilled, pending rounds receive no invented duration, and a
+stored event that differs from its exact derived projection fails validation.
+
 ## Review and verification cadence
 
 - **Task:** narrow deterministic checks chosen by credible failure likelihood,

@@ -62,6 +62,7 @@ AMENDMENT_TASK_IMMUTABLE_FIELDS = (
     "packet_task_sha256",
 )
 REVIEW_SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+VERIFICATION_COMMAND_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9._:-]*$")
 LEGACY_UNVERIFIED_POLICY = "pre-exact-evidence-hosted-ci-residual-v1"
 LEGACY_UNVERIFIED_REFERENCES: dict[str, dict[str, Any]] = {
     "artifacts/evidence/CAP-00.S03.T02.json": {
@@ -1182,6 +1183,39 @@ def normalized_deferred_checks(selection: dict[str, Any]) -> list[str]:
     return []
 
 
+def selected_command_ids(selection: dict[str, Any], *, require_nonempty: bool = False) -> list[str]:
+    value = selection.get("selectedCommandIds", [])
+    if not isinstance(value, list) or not all(
+        isinstance(item, str) and VERIFICATION_COMMAND_ID_PATTERN.fullmatch(item) for item in value
+    ):
+        raise ValueError("verificationSelection.selectedCommandIds must contain privacy-safe command IDs")
+    if len(value) != len(set(value)):
+        raise ValueError("verificationSelection.selectedCommandIds must be unique")
+    if require_nonempty and not value:
+        raise ValueError("Atomic submission requires non-empty verificationSelection.selectedCommandIds")
+    return list(value)
+
+
+def canonical_verification_command_ids(repo: Path) -> set[str]:
+    contract_path = repo / "verification-profiles.json"
+    try:
+        contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"cannot load canonical verification command inventory: {exc}") from exc
+    commands = contract.get("commands")
+    if not isinstance(commands, dict) or not all(
+        isinstance(command_id, str) and VERIFICATION_COMMAND_ID_PATTERN.fullmatch(command_id) for command_id in commands
+    ):
+        raise ValueError("canonical verification command inventory is invalid")
+    return set(commands)
+
+
+def require_canonical_selected_command_ids(command_ids: list[str], repo: Path) -> None:
+    unknown = sorted(set(command_ids) - canonical_verification_command_ids(repo))
+    if unknown:
+        raise ValueError(f"unknown canonical verification command IDs: {', '.join(unknown)}")
+
+
 def task_submission_packet_sha256(packet: dict[str, Any]) -> str:
     payload = copy.deepcopy(packet)
     payload.pop("packet_sha256", None)
@@ -1248,6 +1282,23 @@ def task_submission_packet_errors(
     if not isinstance(selection, dict):
         errors.append(f"{task_id}: controlled submission lacks structured verificationSelection")
         selection = {}
+    try:
+        manifest_command_ids = selected_command_ids(selection)
+    except ValueError as exc:
+        errors.append(f"{task_id}: {exc}")
+        manifest_command_ids = []
+    packet_command_ids = packet.get("selected_command_ids", [])
+    if packet_command_ids != manifest_command_ids:
+        errors.append(f"{task_id}: frozen command-ID selection differs from its evidence manifest")
+    try:
+        require_canonical_selected_command_ids(manifest_command_ids, repo)
+    except ValueError as exc:
+        errors.append(f"{task_id}: {exc}")
+    if packet_command_ids != manifest_command_ids and isinstance(packet_command_ids, list):
+        try:
+            require_canonical_selected_command_ids(packet_command_ids, repo)
+        except ValueError as exc:
+            errors.append(f"{task_id}: {exc}")
     if packet.get("candidate_commit") != manifest.get("commit"):
         errors.append(f"{task_id}: submission candidate differs from its evidence manifest")
     if packet.get("base_commit") != manifest.get("baseCommit"):
@@ -1281,6 +1332,97 @@ def task_submission_packet_errors(
                 f"{task_id}: remediation after round two requires expanded risk analysis naming every open finding"
             )
     return errors
+
+
+def build_task_review_telemetry_event(task: dict[str, Any], attempt: dict[str, Any]) -> dict[str, Any]:
+    submission = attempt.get("submission") or {}
+    review = attempt.get("review") or {}
+    submitted_at = submission.get("submitted_at")
+    reviewed_at = review.get("reviewed_at")
+    if not isinstance(submitted_at, str) or not isinstance(reviewed_at, str):
+        raise ValueError("review telemetry requires submitted and reviewed timestamps")
+    try:
+        duration = (parse_time(reviewed_at) - parse_time(submitted_at)).total_seconds()
+    except (TypeError, ValueError) as exc:
+        raise ValueError("review telemetry timestamps are invalid") from exc
+    if duration < 0:
+        raise ValueError("review telemetry duration cannot be negative")
+    duration_seconds = int(duration)
+    outcome = review.get("result")
+    if outcome not in {"approved", "changes-requested", "blocked"}:
+        raise ValueError("review telemetry outcome is invalid")
+    counts = {severity: 0 for severity in REVIEW_SEVERITY_ORDER}
+    blocking = 0
+    findings = attempt.get("findings") or []
+    for finding in findings:
+        severity = finding.get("severity")
+        if severity not in counts:
+            raise ValueError("review telemetry finding severity is invalid")
+        counts[str(severity)] += 1
+        if finding.get("blocking") is True:
+            blocking += 1
+    command_ids = submission.get("selected_command_ids", [])
+    if not isinstance(command_ids, list) or not all(isinstance(item, str) for item in command_ids):
+        raise ValueError("review telemetry command IDs are invalid")
+    amendment_id = task.get("_amendment_id") or task.get("amendment_id")
+    return {
+        "task_id": str(task.get("id")),
+        "amendment_id": str(amendment_id) if amendment_id is not None else None,
+        "attempt_id": str(submission.get("id")),
+        "submitted_at": submitted_at,
+        "reviewed_at": reviewed_at,
+        "duration_seconds": duration_seconds,
+        "outcome": outcome,
+        "finding_counts": {
+            **counts,
+            "blocking": blocking,
+            "total": len(findings),
+        },
+        "command_ids": list(command_ids),
+        "remediation": {
+            "prior_attempt_id": submission.get("prior_attempt_id"),
+            "replayed_finding_ids": sorted(str(item) for item in submission.get("open_finding_ids", [])),
+            "closed_finding_ids": sorted(str(closure.get("finding_id")) for closure in attempt.get("closures", [])),
+        },
+    }
+
+
+def task_review_telemetry_errors(
+    task: dict[str, Any],
+    attempt: dict[str, Any],
+    repo: Path | None,
+) -> list[str]:
+    event = attempt.get("telemetry")
+    if event is None:
+        return []
+    task_id = str(task.get("id"))
+    errors: list[str] = []
+    try:
+        expected = build_task_review_telemetry_event(task, attempt)
+    except ValueError as exc:
+        return [f"{task_id}: {exc}"]
+    if event != expected:
+        errors.append(f"{task_id}: stored review telemetry differs from its exact privacy-safe projection")
+    command_ids = expected["command_ids"]
+    try:
+        if not all(VERIFICATION_COMMAND_ID_PATTERN.fullmatch(item) for item in command_ids):
+            raise ValueError("review telemetry contains a non-privacy-safe command ID")
+        if len(command_ids) != len(set(command_ids)):
+            raise ValueError("review telemetry command IDs are not unique")
+        if repo is not None:
+            require_canonical_selected_command_ids(command_ids, repo)
+    except ValueError as exc:
+        errors.append(f"{task_id}: {exc}")
+    return errors
+
+
+def task_review_telemetry_events(tasks: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    return [
+        copy.deepcopy(attempt["telemetry"])
+        for task_id in sorted(tasks)
+        for attempt in (tasks[task_id].get("review_control") or {}).get("attempts", [])
+        if isinstance(attempt.get("telemetry"), dict)
+    ]
 
 
 def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[str]:
@@ -1365,6 +1507,7 @@ def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[
                         or ledger_document.get("closures") != (attempt.get("closures") or [])
                     ):
                         errors.append(f"{task_id}: stored review round differs from its immutable ledger")
+        errors.extend(task_review_telemetry_errors(task, attempt, repo))
         prior_id = expected_id
         prior_submission = packet
     current = control.get("current_submission")
@@ -4469,6 +4612,7 @@ def build_task_submission_packet(
     manifest: dict[str, Any],
     reference: dict[str, Any],
     agent: str,
+    repo: Path,
 ) -> dict[str, Any]:
     selection = manifest.get("verificationSelection")
     if not isinstance(selection, dict) or not str(selection.get("riskAnalysis") or "").strip():
@@ -4477,6 +4621,11 @@ def build_task_submission_packet(
     selected_checks = [str(item.get("command")) for item in checks if isinstance(item, dict) and item.get("command")]
     if not selected_checks or len(selected_checks) != len(set(selected_checks)):
         raise SystemExit("Atomic submission requires unique selected check commands")
+    try:
+        command_ids = selected_command_ids(selection, require_nonempty=True)
+        require_canonical_selected_command_ids(command_ids, repo)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     control = task.get("review_control") or {"version": 1, "attempts": [], "current_submission": None}
     if control.get("current_submission") is not None:
         raise SystemExit("Task already has a frozen submission awaiting review")
@@ -4514,6 +4663,8 @@ def build_task_submission_packet(
         "open_finding_ids": sorted(open_findings),
         "root_cause_analysis": root_cause if isinstance(root_cause, str) and root_cause.strip() else None,
     }
+    if command_ids:
+        packet["selected_command_ids"] = command_ids
     packet["packet_sha256"] = task_submission_packet_sha256(packet)
     return packet
 
@@ -4549,7 +4700,7 @@ def command_submit(args, data, capabilities, slices, tasks, gates) -> None:
     if getattr(args, "from_file", None):
         repo = discover_repository(args.file)
         reference, manifest = prepare_task_evidence(task, repo, args.from_file)
-        packet = build_task_submission_packet(task, manifest, reference, str(args.agent))
+        packet = build_task_submission_packet(task, manifest, reference, str(args.agent), repo)
         task.setdefault("evidence", []).append(reference)
         task["verification_state"] = "passed"
         task["review_control"] = task.get("review_control") or {
@@ -4636,22 +4787,38 @@ def prepare_task_review_attempt(
     payload_hash = evidence_sha256(payload)
     if any(item.get("path") == relative or item.get("sha256") == payload_hash for item in prior_ledgers):
         raise SystemExit("Task review ledger path/hash is already recorded")
-    review = {
+    review: dict[str, Any] = {
         "reviewer": reviewer,
         "result": result,
         "reviewed_at": utc_now(),
         "notes": ledger_note,
     }
-    return (
-        {
-            "submission": copy.deepcopy(submission),
-            "review": review,
-            "ledger": {"path": relative, "sha256": payload_hash},
-            "findings": copy.deepcopy(findings),
-            "closures": copy.deepcopy(closures),
-        },
-        review,
-    )
+    attempt: dict[str, Any] = {
+        "submission": copy.deepcopy(submission),
+        "review": review,
+        "ledger": {"path": relative, "sha256": payload_hash},
+        "findings": copy.deepcopy(findings),
+        "closures": copy.deepcopy(closures),
+    }
+    attempt["telemetry"] = build_task_review_telemetry_event(task, attempt)
+    try:
+        require_canonical_selected_command_ids(attempt["telemetry"]["command_ids"], repo)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    return attempt, review
+
+
+def command_review_telemetry(args, data, capabilities, slices, tasks, gates) -> None:
+    del data, capabilities, slices, gates
+    errors = [
+        error
+        for task in tasks.values()
+        for attempt in (task.get("review_control") or {}).get("attempts", [])
+        for error in task_review_telemetry_errors(task, attempt, getattr(args, "repo_root", None))
+    ]
+    if errors:
+        raise SystemExit("Invalid review telemetry:\n- " + "\n- ".join(errors))
+    print(json.dumps(task_review_telemetry_events(tasks), indent=2, sort_keys=True))
 
 
 def command_review(args, data, capabilities, slices, tasks, gates) -> None:
@@ -4903,6 +5070,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="command", required=True)
     sub.add_parser("validate")
     sub.add_parser("status")
+    sub.add_parser("review-telemetry")
     n = sub.add_parser("next")
     n.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
     n.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
@@ -5173,6 +5341,8 @@ def main() -> None:
         command_validate(args, data, capabilities, slices, tasks, gates)
     elif args.command == "status":
         command_status(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "review-telemetry":
+        command_review_telemetry(args, data, capabilities, slices, tasks, gates)
     elif args.command == "next":
         command_next(args, data, capabilities, slices, tasks, gates)
     elif args.command == "next-capability":
