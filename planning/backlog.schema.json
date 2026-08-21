@@ -168,11 +168,12 @@
     },
     "bootstrapReviewAttempt": {
       "type": "object",
-      "required": ["id", "implementer", "implementation_commit", "evidence", "review"],
+      "required": ["id", "implementer", "implementation_commit", "submission_branch", "evidence", "review"],
       "properties": {
         "id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
         "implementer": {"type": "string", "minLength": 1},
         "implementation_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "submission_branch": {"type": "string", "pattern": "^codex/.+$"},
         "evidence": {"$ref": "#/$defs/taskEvidence"},
         "review": {"$ref": "#/$defs/review"}
       },
@@ -183,12 +184,13 @@
         {"type": "null"},
         {
           "type": "object",
-          "required": ["id", "status", "implementer", "implementation_commit", "evidence", "review"],
+          "required": ["id", "status", "implementer", "implementation_commit", "submission_branch", "evidence", "review"],
           "properties": {
             "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B[0-9]{2}$"},
             "status": {"enum": ["PENDING", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED"]},
             "implementer": {"type": ["string", "null"]},
             "implementation_commit": {"$ref": "#/$defs/nullableCommit"},
+            "submission_branch": {"type": ["string", "null"], "pattern": "^codex/.+$"},
             "evidence": {"$ref": "#/$defs/taskEvidence"},
             "review": {"$ref": "#/$defs/review"},
             "attempts": {
