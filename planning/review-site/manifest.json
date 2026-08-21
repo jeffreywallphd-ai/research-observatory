@@ -1795,7 +1795,7 @@
       "approval_sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "CHANGES_REQUESTED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -1832,12 +1832,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "b00-independent-reviewer",
+            "result": "changes-requested",
+            "reviewed_at": "2026-08-21T00:21:35+00:00",
+            "notes": "B00-R04 HIGH: historical bootstrap evidence validation is incorrectly coupled to the live checkout branch. B00-R05 MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen state 84107b8."
           },
-          "current_status": "REVIEW"
+          "current_status": "CHANGES_REQUESTED"
         }
       ],
       "authorized_task_ids": [

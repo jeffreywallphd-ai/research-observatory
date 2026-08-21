@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-control-review",
+  "reviewId": "W1.A02.B00.R02",
+  "taskId": "W1.A02.B00",
+  "reviewer": "b00-independent-reviewer",
+  "implementationCommit": "badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c",
+  "submittedStateCommit": "84107b880b480f9d925fb505a4d52aca3cfcd4ab",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "B00-R04",
+      "severity": "HIGH",
+      "title": "Historical bootstrap validation depends on the live checkout branch",
+      "reproduction": "At frozen state 84107b8, simulating git branch --show-current as main makes backlog validation report that both preserved bootstrap evidence projections do not match the current codex branch.",
+      "requiredRemediation": "Freeze the submission branch in each bootstrap projection, validate evidence against the stored branch, and check the live branch only at submission and review entry points. Prove adopted history validates from main while wrong-branch submission fails closed."
+    },
+    {
+      "id": "B00-R05",
+      "severity": "MEDIUM",
+      "title": "The mandatory focused control suite depends on mutable canonical backlog state",
+      "reproduction": "At frozen state 84107b8, the 53-test taskctl schema and workflow suite has one failure and one error because two R01 tests load the current REVIEW projection instead of immutable initial-review and resubmission fixtures.",
+      "requiredRemediation": "Build immutable initial-review and resubmission fixtures inside the affected tests and run the full 53-test control suite both at the implementation candidate and after the resubmission-state commit."
+    }
+  ],
+  "closedFindings": [
+    "B00-R01",
+    "B00-R02",
+    "B00-R03"
+  ],
+  "verification": {
+    "priorFindingReplay": "B00-R01, B00-R02, and B00-R03 closed under adversarial replay.",
+    "candidateChecks": "53 control tests, 21 planning tests, and quality across 113 governed Python files passed at badf4c0.",
+    "frozenStateChecks": "The mandatory 53-test control suite failed at 84107b8 with one failure and one error.",
+    "authorityAndViews": "Authority, review-site, backlog-view, quality, evidence hash, ancestry, append-only history, and exact 13-file scope checks passed."
+  }
+}
