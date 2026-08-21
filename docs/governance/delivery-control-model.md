@@ -110,7 +110,9 @@ truthful latest-review projection and no fabricated append-only history.
 
 New controlled submissions also freeze a non-empty set of canonical verification
 command IDs. Historical packets may lack that optional field, but no later
-submission may silently omit it. A completed post-control round appends one
+submission may silently omit it. That non-empty set marks prospective control;
+a completed marked round without telemetry is invalid and cannot be silently
+omitted from the read-only projection. A completed post-control round appends one
 strict privacy-safe timing event derived from the immutable submission and
 review. The projection contains only control IDs, timestamps and duration,
 outcome, finding counts by severity and blocking status, canonical command IDs,

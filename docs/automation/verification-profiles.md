@@ -36,8 +36,17 @@ canonical command order and partitions every active command in the requested
 profiles exactly once into `selectedCommandIds` or `deferredCommandIds`. Any unknown
 path, or any path classified as safety-sensitive verification, evidence,
 security, migration, dependency, or threshold control, selects the complete
-requested active inventory. A known rule that maps outside the requested
-profiles fails closed and names the missing command coverage.
+requested active inventory except for governed gate-bound performance commands.
+A matched rule that maps outside the requested profiles fails closed before any
+unknown or safety fallback and names the missing command coverage; fallback can
+never suppress a mapped security, migration, dependency, or threshold command.
+
+The W1 policy authorizes only `W1-exit` as an affected-selection deferred owner;
+generic names and later gates such as `G2` are rejected by both the API and CLI.
+`desktop:performance`, `data:project-lifecycle-performance`, and
+`data:storage-maintenance-performance` are gate-bound and therefore always
+remain in `deferredCommandIds` during affected selection, including unknown and
+safety fallback. They are retained for one serial execution at W1 exit.
 
 Affected reports use schema `1.1` and include the exact base/head commits,
 changed paths, requested profiles, selected and deferred command IDs, matched
@@ -55,7 +64,8 @@ The W1 exit matrix is a governed, deduplicated union of `ai`, `data`, `desktop`,
 `e2e-local`, `foundation`, `graph`, `security-local`, and `service`. It executes
 each active canonical command ID once and cannot be narrowed with `--profile` or
 combined with affected mode. Disabled `server` and `cloud` profiles remain
-release-gated and are not enabled by this union.
+release-gated and are not enabled by this union. All three governed performance
+commands remain selected exactly once in the active W1 union.
 
 ```powershell
 python tools/verify.py --wave-exit W1 --selection-only --report artifacts/tmp/W1-wave-exit-selection.json

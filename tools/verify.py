@@ -20,8 +20,10 @@ Clock = Callable[[], float]
 FULL_COMMIT = re.compile(r"^[0-9a-f]{40}$")
 CONTROLLED_GATE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
 POLICY_KEYS = {
+    "affectedDeferredOwners",
     "schemaVersion",
     "documentType",
+    "gateBoundCommandIds",
     "rules",
     "unknownPathFallback",
     "waveExitProfiles",
@@ -195,6 +197,25 @@ def validate_selection_policy(policy: dict[str, Any], contract: dict[str, Any]) 
         r"[a-z0-9][a-z0-9-]*", str(fallback.get("rationaleCode") or "")
     ):
         errors.append("unknownPathFallback is invalid")
+    deferred_owners = policy.get("affectedDeferredOwners")
+    if deferred_owners != ["W1-exit"]:
+        errors.append("affectedDeferredOwners must authorize exactly W1-exit")
+    elif not all(CONTROLLED_GATE.fullmatch(owner) for owner in deferred_owners):
+        errors.append("affectedDeferredOwners contains an invalid gate identifier")
+    expected_gate_bound = [
+        "desktop:performance",
+        "data:project-lifecycle-performance",
+        "data:storage-maintenance-performance",
+    ]
+    gate_bound = policy.get("gateBoundCommandIds")
+    if not isinstance(gate_bound, dict) or set(gate_bound) != {"W1-exit"}:
+        errors.append("gateBoundCommandIds must define exactly W1-exit")
+    elif gate_bound.get("W1-exit") != expected_gate_bound:
+        errors.append(f"W1-exit gate-bound command IDs must be exactly {expected_gate_bound}")
+    else:
+        for command_id in gate_bound["W1-exit"]:
+            if command_id not in contract.get("commands", {}):
+                errors.append(f"W1-exit references unknown gate-bound command {command_id!r}")
     wave_profiles = policy.get("waveExitProfiles")
     if not isinstance(wave_profiles, dict) or set(wave_profiles) != {"W1"}:
         errors.append("waveExitProfiles must define exactly W1")
@@ -340,9 +361,12 @@ def changed_paths_from_git(repo: Path, base: str, head: str = "HEAD") -> tuple[s
     return base_commit, head_commit, normalize_changed_paths(changed.stdout.split("\0")[:-1])
 
 
-def _controlled_gate(value: str) -> str:
+def _controlled_gate(value: str, policy: dict[str, Any]) -> str:
     if not CONTROLLED_GATE.fullmatch(value):
         raise ValueError("deferred gate must be a controlled non-empty identifier such as W1-exit")
+    authorized = policy.get("affectedDeferredOwners") or []
+    if value not in authorized:
+        raise ValueError(f"deferred gate {value!r} is not authorized by the affected-selection policy; choose W1-exit")
     return value
 
 
@@ -358,7 +382,7 @@ def select_affected_commands(
     if not profiles:
         raise ValueError("affected selection requires at least one requested profile")
     paths = normalize_changed_paths(changed_paths)
-    gate = _controlled_gate(deferred_gate)
+    gate = _controlled_gate(deferred_gate, policy)
     active, declared, skipped = _profile_inventory(repo, contract, profiles)
     active_set = set(active)
     mapped_commands: set[str] = set()
@@ -382,24 +406,37 @@ def select_affected_commands(
         if fallback_code not in rationale_codes:
             rationale_codes.append(fallback_code)
     fallback = "safety-sensitive" if safety_sensitive else "unknown-path" if unknown_paths else "none"
-    if fallback != "none":
-        selected = list(active)
-        deferred: list[str] = []
-        rationale = (
-            "Safety-sensitive changed paths require the complete requested active profile inventory."
-            if safety_sensitive
-            else "At least one changed path is unknown, so the complete requested active profile inventory is selected."
+    outside_declared = _canonical_command_order(contract, mapped_commands - declared)
+    if outside_declared:
+        raise ValueError(
+            "affected paths map to commands outside the requested profiles; add the owning profile(s): "
+            + ", ".join(outside_declared)
         )
-    else:
-        outside_declared = _canonical_command_order(contract, mapped_commands - declared)
-        if outside_declared:
-            raise ValueError(
-                "affected paths map to commands outside the requested profiles; add the owning profile(s): "
-                + ", ".join(outside_declared)
+    gate_bound = _canonical_command_order(
+        contract,
+        active_set & set((policy.get("gateBoundCommandIds") or {}).get(gate, [])),
+    )
+    gate_bound_set = set(gate_bound)
+    if fallback != "none":
+        selected = _canonical_command_order(contract, active_set - gate_bound_set)
+        deferred = gate_bound
+        if safety_sensitive:
+            rationale = (
+                "Safety-sensitive changed paths require the complete requested active profile inventory, except "
+                f"gate-bound performance commands retained for {gate}."
             )
-        selected = _canonical_command_order(contract, active_set & mapped_commands)
+        else:
+            rationale = (
+                "At least one changed path is unknown, so the complete requested active profile inventory is selected, "
+                f"except gate-bound performance commands retained for {gate}."
+            )
+    else:
+        selected = _canonical_command_order(contract, (active_set & mapped_commands) - gate_bound_set)
         deferred = _canonical_command_order(contract, active_set - set(selected))
-        rationale = f"Matched affected-selection rules; unselected active commands are owned by {gate}."
+        rationale = (
+            f"Matched affected-selection rules; unselected active commands, including governed performance commands, "
+            f"are owned by {gate}."
+        )
     if set(selected) & set(deferred) or set(selected) | set(deferred) != active_set:
         raise ValueError("affected selection did not partition the requested active command inventory")
     report = {
@@ -414,6 +451,7 @@ def select_affected_commands(
         "unknownPaths": unknown_paths,
         "rationale": rationale,
         "deferredOwner": gate,
+        "gateBoundDeferredCommandIds": gate_bound,
         "canonicalInventorySha256": canonical_inventory_sha256(contract),
         "inactiveOptionalCommands": [item["command"] for item in skipped],
     }
@@ -433,6 +471,11 @@ def resolve_wave_exit_selection(
     if set(normalized) != set(profiles):
         raise ValueError(f"{wave} Wave-exit profile union is invalid")
     active, _declared, skipped = _profile_inventory(repo, contract, profiles)
+    wave_exit_gate = f"{wave}-exit"
+    gate_bound = _canonical_command_order(
+        contract,
+        set(active) & set((policy.get("gateBoundCommandIds") or {}).get(wave_exit_gate, [])),
+    )
     return (
         {
             "policyVersion": policy["schemaVersion"],
@@ -445,6 +488,7 @@ def resolve_wave_exit_selection(
             "fallback": "none",
             "rationale": f"{wave} Wave exit executes the complete governed active profile union once.",
             "deferredOwner": None,
+            "gateBoundSelectedCommandIds": gate_bound,
             "canonicalInventorySha256": canonical_inventory_sha256(contract),
             "inactiveOptionalCommands": [item["command"] for item in skipped],
         },

@@ -1,6 +1,16 @@
 {
   "schemaVersion": "1.0",
   "documentType": "affected-verification-selection-policy",
+  "affectedDeferredOwners": [
+    "W1-exit"
+  ],
+  "gateBoundCommandIds": {
+    "W1-exit": [
+      "desktop:performance",
+      "data:project-lifecycle-performance",
+      "data:storage-maintenance-performance"
+    ]
+  },
   "rules": [
     {
       "id": "verification-control",

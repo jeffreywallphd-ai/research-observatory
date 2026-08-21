@@ -1883,9 +1883,61 @@ class TaskctlWorkflowTests(unittest.TestCase):
             for canary in forbidden:
                 self.assertNotIn(canary, outputs[0])
 
-            historical = copy.deepcopy(task)
-            historical["review_control"]["attempts"][0].pop("telemetry")
-            self.assertEqual([], taskctl_module.task_review_telemetry_events({historical["id"]: historical}))
+            missing = copy.deepcopy(task)
+            missing_attempt = missing["review_control"]["attempts"][0]
+            missing_attempt.pop("telemetry")
+            errors = taskctl_module.task_review_telemetry_errors(missing, missing_attempt, repo)
+            self.assertTrue(any("lacks required privacy-safe telemetry" in error for error in errors), errors)
+            control_errors = taskctl_module.task_review_control_errors(missing, repo)
+            self.assertTrue(
+                any("lacks required privacy-safe telemetry" in error for error in control_errors),
+                control_errors,
+            )
+            with self.assertRaisesRegex(ValueError, "lacks required privacy-safe telemetry"):
+                taskctl_module.task_review_telemetry_events({missing["id"]: missing})
+            with self.assertRaisesRegex(SystemExit, "lacks required privacy-safe telemetry"):
+                taskctl_module.command_review_telemetry(
+                    Namespace(repo_root=repo),
+                    context[0],
+                    context[1],
+                    context[2],
+                    {missing["id"]: missing},
+                    context[4],
+                )
+
+            historical_t01: dict[str, Any] = {
+                "id": "W1.A02.T01",
+                "review_control": {
+                    "version": 1,
+                    "attempts": [
+                        {
+                            "submission": {
+                                "id": "R01",
+                                "submitted_at": "2026-08-21T01:10:21+00:00",
+                                "selected_checks": ["raw historical command, not a telemetry ID"],
+                            },
+                            "review": {
+                                "result": "changes-requested",
+                                "reviewed_at": "2026-08-21T01:21:15+00:00",
+                            },
+                            "findings": [
+                                {"id": "W1.A02.T01-R01-F01", "severity": "medium", "blocking": True},
+                                {"id": "W1.A02.T01-R01-F02", "severity": "low", "blocking": True},
+                            ],
+                            "closures": [],
+                        }
+                    ],
+                    "current_submission": None,
+                },
+            }
+            historical_attempt = historical_t01["review_control"]["attempts"][0]
+            self.assertEqual([], taskctl_module.task_review_telemetry_errors(historical_t01, historical_attempt, repo))
+            self.assertEqual(
+                [],
+                taskctl_module.task_review_telemetry_events({historical_t01["id"]: historical_t01}),
+            )
+            historical_attempt["submission"]["selected_command_ids"] = []
+            self.assertEqual([], taskctl_module.task_review_telemetry_errors(historical_t01, historical_attempt, repo))
 
             count_tamper = copy.deepcopy(task)
             count_tamper["review_control"]["attempts"][0]["telemetry"]["finding_counts"]["total"] = 99

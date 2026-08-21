@@ -12,6 +12,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
+GATE_BOUND_PERFORMANCE = [
+    "desktop:performance",
+    "data:project-lifecycle-performance",
+    "data:storage-maintenance-performance",
+]
 sys.path.insert(0, str(REPO / "tools"))
 
 from verify import (  # noqa: E402
@@ -220,15 +225,26 @@ class VerificationRunnerTests(unittest.TestCase):
                 self.assertEqual([], selection["deferredCommandIds"])
 
     def test_mapped_command_outside_requested_profiles_fails_closed(self) -> None:
-        with self.assertRaisesRegex(ValueError, "outside the requested profiles"):
-            select_affected_commands(
-                REPO,
-                self.contract,
-                self.policy,
-                ["foundation"],
-                ["tests/data/test_storage.py"],
-                "W1-exit",
-            )
+        cases = (
+            ("ordinary mapped path", ["foundation"], "tests/data/test_storage.py"),
+            ("security boundary", ["foundation"], "tools/security_check.py"),
+            (
+                "migration boundary",
+                ["data"],
+                "services/core-api/src/research_observatory_core/migrations/v9999.py",
+            ),
+            ("threshold boundary", ["desktop"], "verification/baselines/desktop-performance.json"),
+        )
+        for label, profiles, path in cases:
+            with self.subTest(case=label), self.assertRaisesRegex(ValueError, "outside the requested profiles"):
+                select_affected_commands(
+                    REPO,
+                    self.contract,
+                    self.policy,
+                    profiles,
+                    [path],
+                    "W1-exit",
+                )
 
     def test_domain_rules_are_bounded_and_multi_profile_order_is_deterministic(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -283,6 +299,49 @@ class VerificationRunnerTests(unittest.TestCase):
                 ["docs/README.md"],
                 "Wave exit with spaces",
             )
+        for unauthorized in ("G2", "slice-review"):
+            with self.subTest(gate=unauthorized), self.assertRaisesRegex(ValueError, "not authorized"):
+                select_affected_commands(
+                    REPO,
+                    self.contract,
+                    self.policy,
+                    ["foundation"],
+                    ["docs/README.md"],
+                    unauthorized,
+                )
+
+    def test_gate_bound_performance_is_always_deferred_in_affected_mode(self) -> None:
+        for path, expected_fallback in (
+            ("tools/verify.py", "safety-sensitive"),
+            ("unknown/new-surface.xyz", "unknown-path"),
+        ):
+            with self.subTest(path=path):
+                selection, _ = select_affected_commands(
+                    REPO,
+                    self.contract,
+                    self.policy,
+                    ["data", "desktop"],
+                    [path],
+                    "W1-exit",
+                )
+                self.assertEqual(expected_fallback, selection["fallback"])
+                self.assertEqual(GATE_BOUND_PERFORMANCE, selection["gateBoundDeferredCommandIds"])
+                for command_id in GATE_BOUND_PERFORMANCE:
+                    self.assertNotIn(command_id, selection["selectedCommandIds"])
+                    self.assertIn(command_id, selection["deferredCommandIds"])
+
+        targeted, _ = select_affected_commands(
+            REPO,
+            self.contract,
+            self.policy,
+            ["data"],
+            ["tests/data/test_storage.py"],
+            "W1-exit",
+        )
+        self.assertEqual(GATE_BOUND_PERFORMANCE[1:], targeted["gateBoundDeferredCommandIds"])
+        for command_id in GATE_BOUND_PERFORMANCE[1:]:
+            self.assertNotIn(command_id, targeted["selectedCommandIds"])
+            self.assertIn(command_id, targeted["deferredCommandIds"])
 
     def test_inactive_optional_commands_are_skipped_not_deferred(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -352,6 +411,12 @@ class VerificationRunnerTests(unittest.TestCase):
                 report["selection"]["changedPaths"],
             )
 
+            invalid_argv = ["G2" if value == "W1-exit" else value for value in argv]
+            error_output = io.StringIO()
+            with patch.object(sys, "argv", invalid_argv), redirect_stdout(io.StringIO()), redirect_stderr(error_output):
+                self.assertEqual(2, verify_main())
+            self.assertIn("not authorized", error_output.getvalue())
+
         with (
             patch.object(sys, "argv", ["verify.py", "--changed-path", "tools/verify.py"]),
             redirect_stderr(io.StringIO()),
@@ -368,6 +433,9 @@ class VerificationRunnerTests(unittest.TestCase):
         )
         self.assertEqual(len(selection["selectedCommandIds"]), len(set(selection["selectedCommandIds"])))
         self.assertEqual([], selection["deferredCommandIds"])
+        self.assertEqual(GATE_BOUND_PERFORMANCE, selection["gateBoundSelectedCommandIds"])
+        for command_id in GATE_BOUND_PERFORMANCE:
+            self.assertEqual(1, selection["selectedCommandIds"].count(command_id))
         self.assertNotIn("server", selection["requestedProfiles"])
         self.assertNotIn("cloud", selection["requestedProfiles"])
 
@@ -404,6 +472,14 @@ class VerificationRunnerTests(unittest.TestCase):
         errors = validate_selection_policy(policy, self.contract)
 
         self.assertTrue(any("unknown command" in error for error in errors), errors)
+
+        policy = copy.deepcopy(self.policy)
+        policy["affectedDeferredOwners"].append("G2")
+        self.assertTrue(any("exactly W1-exit" in error for error in validate_selection_policy(policy, self.contract)))
+
+        policy = copy.deepcopy(self.policy)
+        policy["gateBoundCommandIds"]["W1-exit"].pop()
+        self.assertTrue(any("gate-bound" in error for error in validate_selection_policy(policy, self.contract)))
 
 
 if __name__ == "__main__":

@@ -87,7 +87,9 @@ Every new controlled atomic submission must declare a non-empty
 `verification-profiles.json`; raw commands remain in the evidence record and are
 never substituted for privacy-safe IDs. Historical packets created before this
 control may omit the optional frozen `selected_command_ids` field and are not
-rewritten or backfilled.
+rewritten or backfilled. A non-empty frozen field is the prospective-control
+marker: every completed marked attempt must contain its exact telemetry event,
+and validation plus `review-telemetry` fail closed if that event is missing.
 
 Each newly completed controlled review stores one prospective timing event. The
 event is recomputed from its immutable round and is restricted to task,
