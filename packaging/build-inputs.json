@@ -37,7 +37,10 @@
     "planning/backlog.schema.json",
     "planning/capability-plans/capability-plan.schema.json",
     "planning/decision-feedback.schema.json",
+    "planning/enabler-change-requests/enabler-change-request.schema.json",
     "planning/slice-plans/slice-plan.schema.json",
+    "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json",
+    "planning/wave-amendment-approvals/wave-amendment-approval.schema.json",
     "tests/fixtures/scholarly-corpus/manifest.schema.json",
     "verification/desktop-ui-baseline.schema.json",
     "verification/desktop-ui.schema.json"
