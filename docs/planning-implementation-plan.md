@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5371d1a26f1ca4ab6f493606299ed02910229a1e0f05a8b5bb75093ef8ad3a44
+source_sha256: 9460c5474f7151a67373a9c2086158fdef7c66d31e20a9d670c232426b79f5c6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -512,7 +512,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A02.T02 - Affected verification selection and privacy-safe review telemetry
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / b00-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A02.T01`
 
@@ -538,9 +538,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A02.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `32b42ba7bd1c486475a5b6a9f46ca63361090cdd8eb047db2b520570aeef434a`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `32b42ba7bd1c486475a5b6a9f46ca63361090cdd8eb047db2b520570aeef434a`
 
 - Candidate / base / branch: `5b5edd26519dff12aaaeef0c14ad40c8519ab355` / `2222f4fc66d53b0f017349760a00b5fe54d4978f` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-21T02:29:05+00:00`
@@ -554,11 +556,30 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / b00-independent-reviewer / `2026-08-21T02:37:59+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W1.A02.T02.review-R01.json` / `f98f414bb3dbeeb9852442adc8c67219b1515fc199900090da5c6d42da8f864c`
 
-**Currently open findings:** -
+**Review notes:** CHANGES_REQUESTED at frozen state e69e81dbcba4afd87fcb77438586a27ed8d15a35. Evidence SHA-256 df020615af8f0b6ef35b4a54cac5c442b7277ce05bc634b318462f6b9c254ea4, exact 16-file scope, Git-derived T02 selection, retained pre-fix build failure, final 224-test foundation report, empty historical/pending telemetry projection, immutable canonical profile/baseline boundary, 33-command W1-exit resolution, and the three-line packaging schema correction are truthful. Focused independent replay passed 18 verify-runner tests, 2 T02 task-control tests, the affected schema/build-manifest tests, 113-file quality, backlog/view/review-site/ECR validation, and whitespace checks. Four acceptance-bound defects remain; the 1093-second foundation profile and Wave-exit matrix were not rerun.
+
+**Findings opened:**
+
+- `W1.A02.T02-R01-F01` `high` blocking=`True` criterion=`2` — Safety fallback suppresses commands owned by an omitted requested profile; reproduce: Call select_affected_commands(REPO, contract, policy, ["foundation"], ["tools/security_check.py"], "W1-exit"). The security-migration-dependency-or-threshold rule maps security-local:supply-chain and security-local:unit and is safety-sensitive, but the result succeeds with fallback=safety-sensitive and selects only the 16 foundation commands. The outside-requested-profile denial runs only in the non-fallback branch, contradicting the documented fail-closed behavior and allowing security coverage to be omitted by narrowing --profile.; remediate: Validate every matched rule's mapped commands against the requested profile inventory before applying fallback, or conservatively add the owning profiles through governed policy. A safety-sensitive selection must never silently discard mapped security, migration, dependency, or threshold coverage. Add narrowed-profile adversarial tests for security, migration, and threshold paths.
+- `W1.A02.T02-R01-F02` `high` blocking=`True` criterion=`3` — Prospective telemetry can be deleted and silently treated as legacy history; reproduce: Create or copy a completed post-control attempt whose submission contains a non-empty canonical selected_command_ids list, remove attempt.telemetry, and call task_review_telemetry_errors plus task_review_telemetry_events. task_review_telemetry_errors returns [] because a missing event exits early, while the projection returns no event. The shipped prospective telemetry test performs this deletion and labels the result historical, so schema and semantic validation cannot distinguish legitimate pre-control history from deletion of required prospective telemetry.; remediate: Require telemetry whenever a completed attempt's submission carries the post-control selected_command_ids marker, while continuing to permit genuinely historical packets that omit that field. Reject deletion through both schema/semantic validation and review-telemetry. Add a prospective-event deletion regression while retaining the real T01 no-backfill fixture.
+- `W1.A02.T02-R01-F03` `medium` blocking=`True` criterion=`1` — Deferred coverage ownership is an unchecked arbitrary identifier; reproduce: Call select_affected_commands(REPO, contract, policy, ["foundation"], ["docs/README.md"], "G2"). The selection succeeds and assigns twelve deferred W1 foundation commands to G2. _controlled_gate validates only identifier syntax, not that the owner is the approved W1 Wave-exit qualification boundary, so a caller can move deferred coverage to an unrelated future gate.; remediate: Bind deferred owners to governed policy and require W1 affected selections to use W1-exit. Reject G2, generic later labels, and other syntactically valid but unauthorized owners. Add direct API and CLI denial tests; future Wave owners can be added through the governed policy.
+- `W1.A02.T02-R01-F04` `medium` blocking=`True` criterion=`5` — Affected mode schedules gate-bound performance commands before Wave exit; reproduce: Call select_affected_commands(REPO, contract, policy, ["desktop"], ["apps/desktop/src/example.ts"], "W1-exit"). desktop:performance is returned in selectedCommandIds, so affected mode without --selection-only executes it during an ordinary task and the governed W1-exit union executes it again. Data rules similarly select the two data performance commands. This conflicts with the approved ECR obligation that performance measurement run once, serially, at its declared gate.; remediate: Represent the gate-bound performance command IDs in governed selection policy and keep them deferred to W1-exit in affected mode, including safety/unknown fallback. Preserve their inclusion exactly once in Wave-exit mode. Add desktop, data, and fallback regressions proving task selection defers them and W1 exit retains them.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-21T02:37:59+00:00`
+
+**Latest notes:** CHANGES_REQUESTED at frozen state e69e81dbcba4afd87fcb77438586a27ed8d15a35. Evidence SHA-256 df020615af8f0b6ef35b4a54cac5c442b7277ce05bc634b318462f6b9c254ea4, exact 16-file scope, Git-derived T02 selection, retained pre-fix build failure, final 224-test foundation report, empty historical/pending telemetry projection, immutable canonical profile/baseline boundary, 33-command W1-exit resolution, and the three-line packaging schema correction are truthful. Focused independent replay passed 18 verify-runner tests, 2 T02 task-control tests, the affected schema/build-manifest tests, 113-file quality, backlog/view/review-site/ECR validation, and whitespace checks. Four acceptance-bound defects remain; the 1093-second foundation profile and Wave-exit matrix were not rerun.
+
+**Currently open findings:** `W1.A02.T02-R01-F01`, `W1.A02.T02-R01-F02`, `W1.A02.T02-R01-F03`, `W1.A02.T02-R01-F04`
 
 
 # Capability contributions, slices, and tasks

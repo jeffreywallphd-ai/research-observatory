@@ -22665,17 +22665,17 @@ wave_amendments:
     - Probe telemetry payloads for forbidden content and verify no backfill is invented.
     - Run focused verify/taskctl/view tests, affected quality checks, and independent control/privacy review.
     packet_task_sha256: 56a091f6bd83572a360975e382fafb4ba59dfb9bf73df254bc8f7c6e7c000db1
-    status: REVIEW
+    status: IN_PROGRESS
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 2222f4fc66d53b0f017349760a00b5fe54d4978f
     worktree: C:/workspace/research-observatory
     lease:
       claimed_by: codex
-      claimed_at: '2026-08-21T01:39:07+00:00'
-      expires_at: '2026-08-21T09:39:07+00:00'
+      claimed_at: '2026-08-21T02:37:59+00:00'
+      expires_at: '2026-08-21T10:37:59+00:00'
     started_at: '2026-08-21T01:39:07+00:00'
-    updated_at: '2026-08-21T02:29:05+00:00'
+    updated_at: '2026-08-21T02:37:59+00:00'
     completed_at: null
     blocker: null
     implementation_notes: Frozen R01 affected-selection and privacy-safe telemetry candidate for independent control/privacy
@@ -22686,94 +22686,197 @@ wave_amendments:
       sha256: df020615af8f0b6ef35b4a54cac5c442b7277ce05bc634b318462f6b9c254ea4
       commit: 5b5edd26519dff12aaaeef0c14ad40c8519ab355
       recorded_at: '2026-08-21T02:29:05+00:00'
-    verification_state: passed
-    review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+    verification_state: null
+    review: &id087
+      reviewer: b00-independent-reviewer
+      result: changes-requested
+      reviewed_at: '2026-08-21T02:37:59+00:00'
+      notes: CHANGES_REQUESTED at frozen state e69e81dbcba4afd87fcb77438586a27ed8d15a35. Evidence SHA-256 df020615af8f0b6ef35b4a54cac5c442b7277ce05bc634b318462f6b9c254ea4,
+        exact 16-file scope, Git-derived T02 selection, retained pre-fix build failure, final 224-test foundation report,
+        empty historical/pending telemetry projection, immutable canonical profile/baseline boundary, 33-command W1-exit resolution,
+        and the three-line packaging schema correction are truthful. Focused independent replay passed 18 verify-runner tests,
+        2 T02 task-control tests, the affected schema/build-manifest tests, 113-file quality, backlog/view/review-site/ECR
+        validation, and whitespace checks. Four acceptance-bound defects remain; the 1093-second foundation profile and Wave-exit
+        matrix were not rerun.
     review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex
-        submitted_at: '2026-08-21T02:29:05+00:00'
-        candidate_commit: 5b5edd26519dff12aaaeef0c14ad40c8519ab355
-        base_commit: 2222f4fc66d53b0f017349760a00b5fe54d4978f
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W1.A02.T02.json
-          sha256: df020615af8f0b6ef35b4a54cac5c442b7277ce05bc634b318462f6b9c254ea4
-          commit: 5b5edd26519dff12aaaeef0c14ad40c8519ab355
-          recorded_at: '2026-08-21T02:29:05+00:00'
-        acceptance_criteria_sha256: f365420cf13322c0090317ef90d96e68ca7dc5fb9046b155ccad4ac8b0a4ee68
-        changed_paths:
-        - docs/automation/codex-tracking-guide.md
-        - docs/automation/verification-profiles.md
-        - docs/governance/delivery-control-model.md
-        - docs/planning-implementation-plan.md
-        - packaging/build-inputs.json
-        - planning/backlog.schema.json
-        - planning/backlog.yaml
-        - planning/review-site/enablers/ECR-0001.html
-        - planning/review-site/manifest.json
-        - planning/status-summary.md
-        - tests/foundation/test_taskctl_schema.py
-        - tests/foundation/test_taskctl_workflow.py
-        - tests/foundation/test_verify_runner.py
-        - tools/taskctl.py
-        - tools/verify.py
-        - verification/affected-selection.json
-        selected_checks:
-        - .venv\Scripts\python.exe tools\verify.py --repo . --profile foundation --affected-base 2222f4fc66d53b0f017349760a00b5fe54d4978f
-          --affected-head 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --deferred-gate W1-exit --report artifacts\tmp\W1.A02.T02-affected-foundation-final.json
-        - .venv\Scripts\python.exe tools\verify.py --repo . --wave-exit W1 --selection-only --report artifacts\tmp\W1.A02.T02-wave-exit-selection.json
-        - .venv\Scripts\python.exe tools\plan_review_check.py --repo .
-        - .venv\Scripts\python.exe tools\backlog_views.py --repo . --check
-        - .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved
-        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
-        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry
-        - git diff --exit-code 2222f4fc66d53b0f017349760a00b5fe54d4978f..5b5edd26519dff12aaaeef0c14ad40c8519ab355 -- verification-profiles.json
-          verification/baselines
-        - git diff --check
-        deferred_checks:
-        - 'The complete W1 product and deployment union remains owned by W1-exit: ai, data, desktop, e2e-local, foundation,
-          graph, security-local, and service, including security, packaging, accessibility, migration, restart, recovery,
-          and the declared one-run performance gates. This task executed the safety-selected foundation inventory only and
-          did not substitute it for Wave qualification.'
-        selection_rationale: T02 changes shared verification selection, evidence submission, review telemetry, their strict
-          schema, and associated governance documentation. The credible risks are caller-controlled path laundering, incomplete
-          or nondeterministic command partitions, unsafe fallback weakening, mutation of canonical profiles or thresholds,
-          arbitrary command IDs, privacy leakage through reused evidence/review objects, fabricated historical durations,
-          telemetry tamper, and replacement of the complete Wave-exit matrix by a task subset. Exact Git-derived selector
-          tests, recursive privacy canaries, schema/semantic tamper tests, the full active foundation profile, live empty
-          historical telemetry projection, immutable-profile diff, and governed W1-exit resolution cover those risks. The
-          first affected run retained a build-manifest failure caused by three B00 schemas missing from packaging/build-inputs.json;
-          the strict-descendant correction inventories only those schemas, and the complete final-candidate run passes.
-        selection_sha256: 74ad412d2abdeb6984c7870d3cac058a63df6ec041e32d7657fbb37c86fb5b38
-        prior_attempt_id: null
-        open_finding_ids: []
-        root_cause_analysis: null
-        selected_command_ids:
-        - foundation:repository-structure
-        - foundation:runtime
-        - foundation:architecture
-        - foundation:agent-protocol
-        - foundation:backlog-views
-        - foundation:fixture-corpus
-        - foundation:benchmark-registry
-        - foundation:build-manifest
-        - foundation:ui-reference
-        - foundation:ui-change
-        - foundation:adr
-        - foundation:ci
-        - foundation:quality
-        - foundation:packaging-smoke
-        - foundation:unit
-        - foundation:backlog
-        packet_sha256: 32b42ba7bd1c486475a5b6a9f46ca63361090cdd8eb047db2b520570aeef434a
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-08-21T02:29:05+00:00'
+          candidate_commit: 5b5edd26519dff12aaaeef0c14ad40c8519ab355
+          base_commit: 2222f4fc66d53b0f017349760a00b5fe54d4978f
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W1.A02.T02.json
+            sha256: df020615af8f0b6ef35b4a54cac5c442b7277ce05bc634b318462f6b9c254ea4
+            commit: 5b5edd26519dff12aaaeef0c14ad40c8519ab355
+            recorded_at: '2026-08-21T02:29:05+00:00'
+          acceptance_criteria_sha256: f365420cf13322c0090317ef90d96e68ca7dc5fb9046b155ccad4ac8b0a4ee68
+          changed_paths:
+          - docs/automation/codex-tracking-guide.md
+          - docs/automation/verification-profiles.md
+          - docs/governance/delivery-control-model.md
+          - docs/planning-implementation-plan.md
+          - packaging/build-inputs.json
+          - planning/backlog.schema.json
+          - planning/backlog.yaml
+          - planning/review-site/enablers/ECR-0001.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - tests/foundation/test_taskctl_schema.py
+          - tests/foundation/test_taskctl_workflow.py
+          - tests/foundation/test_verify_runner.py
+          - tools/taskctl.py
+          - tools/verify.py
+          - verification/affected-selection.json
+          selected_checks:
+          - .venv\Scripts\python.exe tools\verify.py --repo . --profile foundation --affected-base 2222f4fc66d53b0f017349760a00b5fe54d4978f
+            --affected-head 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --deferred-gate W1-exit --report artifacts\tmp\W1.A02.T02-affected-foundation-final.json
+          - .venv\Scripts\python.exe tools\verify.py --repo . --wave-exit W1 --selection-only --report artifacts\tmp\W1.A02.T02-wave-exit-selection.json
+          - .venv\Scripts\python.exe tools\plan_review_check.py --repo .
+          - .venv\Scripts\python.exe tools\backlog_views.py --repo . --check
+          - .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved
+          - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
+          - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry
+          - git diff --exit-code 2222f4fc66d53b0f017349760a00b5fe54d4978f..5b5edd26519dff12aaaeef0c14ad40c8519ab355 -- verification-profiles.json
+            verification/baselines
+          - git diff --check
+          deferred_checks:
+          - 'The complete W1 product and deployment union remains owned by W1-exit: ai, data, desktop, e2e-local, foundation,
+            graph, security-local, and service, including security, packaging, accessibility, migration, restart, recovery,
+            and the declared one-run performance gates. This task executed the safety-selected foundation inventory only and
+            did not substitute it for Wave qualification.'
+          selection_rationale: T02 changes shared verification selection, evidence submission, review telemetry, their strict
+            schema, and associated governance documentation. The credible risks are caller-controlled path laundering, incomplete
+            or nondeterministic command partitions, unsafe fallback weakening, mutation of canonical profiles or thresholds,
+            arbitrary command IDs, privacy leakage through reused evidence/review objects, fabricated historical durations,
+            telemetry tamper, and replacement of the complete Wave-exit matrix by a task subset. Exact Git-derived selector
+            tests, recursive privacy canaries, schema/semantic tamper tests, the full active foundation profile, live empty
+            historical telemetry projection, immutable-profile diff, and governed W1-exit resolution cover those risks. The
+            first affected run retained a build-manifest failure caused by three B00 schemas missing from packaging/build-inputs.json;
+            the strict-descendant correction inventories only those schemas, and the complete final-candidate run passes.
+          selection_sha256: 74ad412d2abdeb6984c7870d3cac058a63df6ec041e32d7657fbb37c86fb5b38
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:runtime
+          - foundation:architecture
+          - foundation:agent-protocol
+          - foundation:backlog-views
+          - foundation:fixture-corpus
+          - foundation:benchmark-registry
+          - foundation:build-manifest
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:adr
+          - foundation:ci
+          - foundation:quality
+          - foundation:packaging-smoke
+          - foundation:unit
+          - foundation:backlog
+          packet_sha256: 32b42ba7bd1c486475a5b6a9f46ca63361090cdd8eb047db2b520570aeef434a
+        review: *id087
+        ledger:
+          path: artifacts/evidence/W1.A02.T02.review-R01.json
+          sha256: f98f414bb3dbeeb9852442adc8c67219b1515fc199900090da5c6d42da8f864c
+        findings:
+        - id: W1.A02.T02-R01-F01
+          severity: high
+          blocking: true
+          criterion_index: 2
+          title: Safety fallback suppresses commands owned by an omitted requested profile
+          reproduction: Call select_affected_commands(REPO, contract, policy, ["foundation"], ["tools/security_check.py"],
+            "W1-exit"). The security-migration-dependency-or-threshold rule maps security-local:supply-chain and security-local:unit
+            and is safety-sensitive, but the result succeeds with fallback=safety-sensitive and selects only the 16 foundation
+            commands. The outside-requested-profile denial runs only in the non-fallback branch, contradicting the documented
+            fail-closed behavior and allowing security coverage to be omitted by narrowing --profile.
+          required_remediation: Validate every matched rule's mapped commands against the requested profile inventory before
+            applying fallback, or conservatively add the owning profiles through governed policy. A safety-sensitive selection
+            must never silently discard mapped security, migration, dependency, or threshold coverage. Add narrowed-profile
+            adversarial tests for security, migration, and threshold paths.
+        - id: W1.A02.T02-R01-F02
+          severity: high
+          blocking: true
+          criterion_index: 3
+          title: Prospective telemetry can be deleted and silently treated as legacy history
+          reproduction: Create or copy a completed post-control attempt whose submission contains a non-empty canonical selected_command_ids
+            list, remove attempt.telemetry, and call task_review_telemetry_errors plus task_review_telemetry_events. task_review_telemetry_errors
+            returns [] because a missing event exits early, while the projection returns no event. The shipped prospective
+            telemetry test performs this deletion and labels the result historical, so schema and semantic validation cannot
+            distinguish legitimate pre-control history from deletion of required prospective telemetry.
+          required_remediation: Require telemetry whenever a completed attempt's submission carries the post-control selected_command_ids
+            marker, while continuing to permit genuinely historical packets that omit that field. Reject deletion through
+            both schema/semantic validation and review-telemetry. Add a prospective-event deletion regression while retaining
+            the real T01 no-backfill fixture.
+        - id: W1.A02.T02-R01-F03
+          severity: medium
+          blocking: true
+          criterion_index: 1
+          title: Deferred coverage ownership is an unchecked arbitrary identifier
+          reproduction: Call select_affected_commands(REPO, contract, policy, ["foundation"], ["docs/README.md"], "G2"). The
+            selection succeeds and assigns twelve deferred W1 foundation commands to G2. _controlled_gate validates only identifier
+            syntax, not that the owner is the approved W1 Wave-exit qualification boundary, so a caller can move deferred
+            coverage to an unrelated future gate.
+          required_remediation: Bind deferred owners to governed policy and require W1 affected selections to use W1-exit.
+            Reject G2, generic later labels, and other syntactically valid but unauthorized owners. Add direct API and CLI
+            denial tests; future Wave owners can be added through the governed policy.
+        - id: W1.A02.T02-R01-F04
+          severity: medium
+          blocking: true
+          criterion_index: 5
+          title: Affected mode schedules gate-bound performance commands before Wave exit
+          reproduction: Call select_affected_commands(REPO, contract, policy, ["desktop"], ["apps/desktop/src/example.ts"],
+            "W1-exit"). desktop:performance is returned in selectedCommandIds, so affected mode without --selection-only executes
+            it during an ordinary task and the governed W1-exit union executes it again. Data rules similarly select the two
+            data performance commands. This conflicts with the approved ECR obligation that performance measurement run once,
+            serially, at its declared gate.
+          required_remediation: Represent the gate-bound performance command IDs in governed selection policy and keep them
+            deferred to W1-exit in affected mode, including safety/unknown fallback. Preserve their inclusion exactly once
+            in Wave-exit mode. Add desktop, data, and fallback regressions proving task selection defers them and W1 exit
+            retains them.
+        closures: []
+        telemetry:
+          task_id: W1.A02.T02
+          amendment_id: W1.A02
+          attempt_id: R01
+          submitted_at: '2026-08-21T02:29:05+00:00'
+          reviewed_at: '2026-08-21T02:37:59+00:00'
+          duration_seconds: 534
+          outcome: changes-requested
+          finding_counts:
+            critical: 0
+            high: 2
+            medium: 2
+            low: 0
+            blocking: 4
+            total: 4
+          command_ids:
+          - foundation:repository-structure
+          - foundation:runtime
+          - foundation:architecture
+          - foundation:agent-protocol
+          - foundation:backlog-views
+          - foundation:fixture-corpus
+          - foundation:benchmark-registry
+          - foundation:build-manifest
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:adr
+          - foundation:ci
+          - foundation:quality
+          - foundation:packaging-smoke
+          - foundation:unit
+          - foundation:backlog
+          remediation:
+            prior_attempt_id: null
+            replayed_finding_ids: []
+            closed_finding_ids: []
+      current_submission: null
   completion:
     status: PENDING
     reviewer: null
