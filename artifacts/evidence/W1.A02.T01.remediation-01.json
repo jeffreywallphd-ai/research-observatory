@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A02.T01",
+  "commit": "4f256763401772298bf75c634f2c7b2355882f10",
+  "baseCommit": "a6b9a32d16592793abc11595c8340e20a0f79c0d",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A02.T01.json",
+    "sha256": "ad913da8f868151ed8aab0989db075a47e9e9bb7f34f1769dc8540fd4e811d0a",
+    "commit": "a6b9a32d16592793abc11595c8340e20a0f79c0d"
+  },
+  "changedFiles": [
+    "artifacts/evidence/W1.A02.T01.json",
+    "artifacts/evidence/W1.A02.T01.review-R01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0001.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_plan_review_amendments.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/plan_review_site.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "All 64 task-controller and schema tests passed in 61.913 seconds. The remediation regression drives R01 through R03 and denies older-reference, cumulative-reference, older-base, forged stored-manifest, and reused-risk-rationale substitutions."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views tests.foundation.test_planctl_wave_approval tests.foundation.test_planctl_amendments",
+      "exitCode": 0,
+      "result": "All 25 affected planning, review-history rendering, generated-view, ECR-authority, and immutable-Wave-approval tests passed in 24.534 seconds, including active and null current-submission whitespace assertions."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 113 governed Python files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The canonical ledger validated with 20 capabilities, 117 slices, 358 tasks, 12 release gates, and the complete append-only R01 finding history."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "result": "All 145 review pages passed exact immutable packet, ledger, finding, and projection checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "Generated backlog views matched the authoritative adverse-review state without changes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved",
+      "exitCode": 0,
+      "result": "ECR-0001 remained approved, exact-commit bound, and history bound throughout remediation."
+    },
+    {
+      "command": "git diff HEAD --check",
+      "exitCode": 0,
+      "result": "The complete working diff passed whitespace hygiene after rendering the actual adverse R01 history; Git emitted only advisory CRLF normalization warnings."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The immutable R01 packet and consolidated independent ledger remain exact and append-only; the remediation does not change their hashes or contents.",
+        "The focused controller suite continues to prove candidate, evidence, criteria, changed-path, check-selection, rationale, and consolidated finding identity."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "R01 CHANGES_REQUESTED and both blocking finding records are preserved in review_control.attempts and in the exact hash-bound review ledger.",
+        "Approval remains denied until a later round explicitly closes W1.A02.T01-R01-F01 and W1.A02.T01-R01-F02."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Every controlled remediation now must supersede the immediately preceding completed attempt's exact evidence path, SHA-256, and candidate commit, and baseCommit must equal that attempt's candidate.",
+        "Runtime and permanent semantic checks deny older, cumulative, forked, forged, and older-base substitutions; after round two, riskAnalysis must differ from the prior rationale and explicitly name every open finding ID in addition to rootCauseAnalysis."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The atomic one-CAS submit implementation and stale-writer/replace-failure regressions are unchanged and all pass.",
+        "Immediate-predecessor validation runs before any task mutation, so a rejected remediation cannot partially attach evidence or enter REVIEW."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Optional current-submission and completed-attempt HTML blocks are interpolated without indentation that can create whitespace-only lines.",
+        "Synthetic active-current and completed-history/null-current states assert that every rendered HTML line has no trailing whitespace; the real adverse R01 site, manifest, and Markdown projections regenerate and pass both review checks and diff hygiene."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This R02 remediation is bounded to W1.A02.T01-R01-F01 and W1.A02.T01-R01-F02. The incremental risks are evidence-lineage substitution, failure to enforce an expanded R03 risk boundary, semantic replay accepting forged stored history, optional HTML interpolation creating whitespace, and omission or flattening of the adverse R01 projection. Direct multi-round controller adversarial tests, active/null renderer tests, all governed static checks, live backlog/ECR validation, exact generated-view checks, and full diff hygiene cover those risks.",
+    "deferred": "T02 still owns deterministic affected-check selection and privacy-safe telemetry. Complete product/deployment qualification remains due once at W1 exit; no product, dependency, profile, threshold, or runtime path changed in this remediation."
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-control-remediation-review",
+    "openFindingIds": [
+      "W1.A02.T01-R01-F01",
+      "W1.A02.T01-R01-F02"
+    ],
+    "note": "Replay only W1.A02.T01-R01-F01 and W1.A02.T01-R01-F02 plus the exact a6b9a32d..4f256763 incremental boundary. Confirm immediate-predecessor path/SHA/commit/base enforcement, expanded R03 risk naming, generated active/null current-submission hygiene, preserved R01 history, and the passing selected checks."
+  }
+}

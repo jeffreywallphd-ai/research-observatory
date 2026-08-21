@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fa59e5d9ac4f8159dd4aa116a013fdbe3f50087fe2893e8b784716f09af696b6
+source_sha256: 39a5cb31b993e791784dc8348d4a281260b469be9f7186f3754aabc92c123c24
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -411,7 +411,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A02.T01 - Immutable review packets and bounded remediation
 
-**Status / owner / review:** `IN_PROGRESS` / codex / b00-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex / b00-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A02.B00`
 
@@ -434,6 +434,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/W1.A02.T01.json` at `a6b9a32d16592793abc11595c8340e20a0f79c0d`
+- `artifacts/evidence/W1.A02.T01.remediation-01.json` at `4f256763401772298bf75c634f2c7b2355882f10`
 
 #### Review history — W1.A02.T01
 
@@ -470,7 +471,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd`
+
+- Candidate / base / branch: `4f256763401772298bf75c634f2c7b2355882f10` / `a6b9a32d16592793abc11595c8340e20a0f79c0d` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-21T01:30:59+00:00`
+- Evidence: `artifacts/evidence/W1.A02.T01.remediation-01.json` / `51bcf3cdab50063bd1d4c7ad1eb32f19f97934185e05dfb0f75d9c227d792540` / `4f256763401772298bf75c634f2c7b2355882f10`
+- Acceptance-criteria SHA-256: `e5c5b509f7df1f4393d360bbba8257190b846bd67a5ccbd921d2151970cffed1`
+- Verification-selection SHA-256: `75f5308ae871ff2bb0bddfd9138f0c9005582b547eb495f50dedfa8d4aec1de6`
+- Changed paths: `artifacts/evidence/W1.A02.T01.json`, `artifacts/evidence/W1.A02.T01.review-R01.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0001.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_plan_review_amendments.py`, `tests/foundation/test_taskctl_workflow.py`, `tools/plan_review_site.py`, `tools/taskctl.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views tests.foundation.test_planctl_wave_approval tests.foundation.test_planctl_amendments`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv\Scripts\python.exe tools/plan_review_check.py --repo .`, `.venv\Scripts\python.exe tools/backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved`, `git diff HEAD --check`
+- Deferred checks: `T02 still owns deterministic affected-check selection and privacy-safe telemetry. Complete product/deployment qualification remains due once at W1 exit; no product, dependency, profile, threshold, or runtime path changed in this remediation.`
+- Selection rationale: This R02 remediation is bounded to W1.A02.T01-R01-F01 and W1.A02.T01-R01-F02. The incremental risks are evidence-lineage substitution, failure to enforce an expanded R03 risk boundary, semantic replay accepting forged stored history, optional HTML interpolation creating whitespace, and omission or flattening of the adverse R01 projection. Direct multi-round controller adversarial tests, active/null renderer tests, all governed static checks, live backlog/ECR validation, exact generated-view checks, and full diff hygiene cover those risks.
+- Prior round / replayed open findings: `R01` / `W1.A02.T01-R01-F01`, `W1.A02.T01-R01-F02`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-21T01:21:15+00:00`
 
