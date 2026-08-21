@@ -1,0 +1,31 @@
+{
+  "task_id": "W1.A02.T02",
+  "attempt_id": "R02",
+  "candidate_commit": "aa714b7c16def6add4662e0d1c44d0bc89e7c349",
+  "reviewer": "b00-independent-reviewer",
+  "result": "approved",
+  "notes": "APPROVED at frozen state b3600ffe32c12d8d4d9e6cb457703311a328ea82. Remediation candidate aa714b7c16def6add4662e0d1c44d0bc89e7c349 is a strict descendant of prior candidate 5b5edd26519dff12aaaeef0c14ad40c8519ab355. Evidence artifacts/evidence/W1.A02.T02.remediation-01.json has SHA-256 403e15b269b7e5a42829a90af64ad93f73c78ef898c1016007bf16fc461250c0; its base, candidate, supersedes binding, and exact 15-path scope are truthful. F01 closes because security, migration, threshold, and ordinary cross-profile mappings now fail before safety/unknown fallback when an owning profile is omitted. F02 closes because deleting telemetry from a completed attempt with non-empty selected_command_ids is denied by semantic control validation, the pure projector, and review-telemetry, while the two real T01 attempts omit the marker and still project no fabricated events. F03 closes because governed policy authorizes exactly W1-exit and both API and CLI deny G2 and generic owners. F04 closes because affected foundation selects 16 commands with no performance deferral, desktop selects 24 and defers desktop:performance, data selects 18 and defers both data performance commands, and W1 exit selects all three exactly once in its 33-command union. Immutable R01 ledger SHA-256 f98f414bb3dbeeb9852442adc8c67219b1515fc199900090da5c6d42da8f864c and its exact 534-second, 2-HIGH/2-MEDIUM telemetry event remain preserved. Canonical profiles, argv, activation inputs, baselines, and thresholds are unchanged. Independent replay passed 85/85 focused tests in 64.768 seconds, 113-file quality, canonical backlog validation, telemetry projection, generated views, all 145 review pages, ECR-0001 validation, selection proofs, and Git whitespace checks. No full foundation or Wave-exit execution was rerun because this review remained bounded to the four findings and incremental risk surface.",
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "W1.A02.T02-R01-F01",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/W1.A02.T02.remediation-01.json"
+    },
+    {
+      "finding_id": "W1.A02.T02-R01-F02",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/W1.A02.T02.remediation-01.json"
+    },
+    {
+      "finding_id": "W1.A02.T02-R01-F03",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/W1.A02.T02.remediation-01.json"
+    },
+    {
+      "finding_id": "W1.A02.T02-R01-F04",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/W1.A02.T02.remediation-01.json"
+    }
+  ]
+}

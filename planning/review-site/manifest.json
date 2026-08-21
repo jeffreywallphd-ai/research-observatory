@@ -6777,13 +6777,13 @@
         {
           "task_id": "W1.A02.T02",
           "title": "Affected verification selection and privacy-safe review telemetry",
-          "status": "REVIEW",
+          "status": "DONE",
           "mode": "append-only",
           "latest_review": {
             "reviewer": "b00-independent-reviewer",
-            "result": "changes-requested",
-            "reviewed_at": "2026-08-21T02:37:59+00:00",
-            "notes": "CHANGES_REQUESTED at frozen state e69e81dbcba4afd87fcb77438586a27ed8d15a35. Evidence SHA-256 df020615af8f0b6ef35b4a54cac5c442b7277ce05bc634b318462f6b9c254ea4, exact 16-file scope, Git-derived T02 selection, retained pre-fix build failure, final 224-test foundation report, empty historical/pending telemetry projection, immutable canonical profile/baseline boundary, 33-command W1-exit resolution, and the three-line packaging schema correction are truthful. Focused independent replay passed 18 verify-runner tests, 2 T02 task-control tests, the affected schema/build-manifest tests, 113-file quality, backlog/view/review-site/ECR validation, and whitespace checks. Four acceptance-bound defects remain; the 1093-second foundation profile and Wave-exit matrix were not rerun."
+            "result": "approved",
+            "reviewed_at": "2026-08-21T02:59:03+00:00",
+            "notes": "APPROVED at frozen state b3600ffe32c12d8d4d9e6cb457703311a328ea82. Remediation candidate aa714b7c16def6add4662e0d1c44d0bc89e7c349 is a strict descendant of prior candidate 5b5edd26519dff12aaaeef0c14ad40c8519ab355. Evidence artifacts/evidence/W1.A02.T02.remediation-01.json has SHA-256 403e15b269b7e5a42829a90af64ad93f73c78ef898c1016007bf16fc461250c0; its base, candidate, supersedes binding, and exact 15-path scope are truthful. F01 closes because security, migration, threshold, and ordinary cross-profile mappings now fail before safety/unknown fallback when an owning profile is omitted. F02 closes because deleting telemetry from a completed attempt with non-empty selected_command_ids is denied by semantic control validation, the pure projector, and review-telemetry, while the two real T01 attempts omit the marker and still project no fabricated events. F03 closes because governed policy authorizes exactly W1-exit and both API and CLI deny G2 and generic owners. F04 closes because affected foundation selects 16 commands with no performance deferral, desktop selects 24 and defers desktop:performance, data selects 18 and defers both data performance commands, and W1 exit selects all three exactly once in its 33-command union. Immutable R01 ledger SHA-256 f98f414bb3dbeeb9852442adc8c67219b1515fc199900090da5c6d42da8f864c and its exact 534-second, 2-HIGH/2-MEDIUM telemetry event remain preserved. Canonical profiles, argv, activation inputs, baselines, and thresholds are unchanged. Independent replay passed 85/85 focused tests in 64.768 seconds, 113-file quality, canonical backlog validation, telemetry projection, generated views, all 145 review pages, ECR-0001 validation, selection proofs, and Git whitespace checks. No full foundation or Wave-exit execution was rerun because this review remained bounded to the four findings and incremental risk surface."
           },
           "review_control": {
             "version": 1,
@@ -6950,76 +6950,149 @@
                     "closed_finding_ids": []
                   }
                 }
+              },
+              {
+                "submission": {
+                  "id": "R02",
+                  "submitted_by": "codex",
+                  "submitted_at": "2026-08-21T02:50:29+00:00",
+                  "candidate_commit": "aa714b7c16def6add4662e0d1c44d0bc89e7c349",
+                  "base_commit": "5b5edd26519dff12aaaeef0c14ad40c8519ab355",
+                  "branch": "codex/w1-windows-local-runtime",
+                  "evidence_reference": {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/W1.A02.T02.remediation-01.json",
+                    "sha256": "403e15b269b7e5a42829a90af64ad93f73c78ef898c1016007bf16fc461250c0",
+                    "commit": "aa714b7c16def6add4662e0d1c44d0bc89e7c349",
+                    "recorded_at": "2026-08-21T02:50:29+00:00"
+                  },
+                  "acceptance_criteria_sha256": "f365420cf13322c0090317ef90d96e68ca7dc5fb9046b155ccad4ac8b0a4ee68",
+                  "changed_paths": [
+                    "artifacts/evidence/W1.A02.T02.json",
+                    "artifacts/evidence/W1.A02.T02.review-R01.json",
+                    "docs/automation/codex-tracking-guide.md",
+                    "docs/automation/verification-profiles.md",
+                    "docs/governance/delivery-control-model.md",
+                    "docs/planning-implementation-plan.md",
+                    "planning/backlog.yaml",
+                    "planning/review-site/enablers/ECR-0001.html",
+                    "planning/review-site/manifest.json",
+                    "planning/status-summary.md",
+                    "tests/foundation/test_taskctl_workflow.py",
+                    "tests/foundation/test_verify_runner.py",
+                    "tools/taskctl.py",
+                    "tools/verify.py",
+                    "verification/affected-selection.json"
+                  ],
+                  "selected_checks": [
+                    ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_verify_runner tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+                    ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+                    ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+                    ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
+                    ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile foundation --affected-base 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --affected-head aa714b7c16def6add4662e0d1c44d0bc89e7c349 --deferred-gate W1-exit --selection-only --report artifacts\\tmp\\W1.A02.T02-remediation-foundation-selection.json",
+                    ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --affected-base 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --affected-head aa714b7c16def6add4662e0d1c44d0bc89e7c349 --deferred-gate W1-exit --selection-only --report artifacts\\tmp\\W1.A02.T02-remediation-desktop-selection.json",
+                    ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile data --affected-base 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --affected-head aa714b7c16def6add4662e0d1c44d0bc89e7c349 --deferred-gate W1-exit --selection-only --report artifacts\\tmp\\W1.A02.T02-remediation-data-selection.json",
+                    ".venv\\Scripts\\python.exe tools\\verify.py --repo . --wave-exit W1 --selection-only --report artifacts\\tmp\\W1.A02.T02-remediation-wave-exit-selection.json",
+                    ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+                    ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+                    ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved",
+                    "git diff --exit-code 5b5edd26519dff12aaaeef0c14ad40c8519ab355..aa714b7c16def6add4662e0d1c44d0bc89e7c349 -- verification-profiles.json verification/baselines",
+                    "git diff 5b5edd26519dff12aaaeef0c14ad40c8519ab355..aa714b7c16def6add4662e0d1c44d0bc89e7c349 --check"
+                  ],
+                  "deferred_checks": [
+                    "The prior exact 16-command foundation qualification remains retained from R01; its unaffected repository/runtime/architecture/fixture/build/UI/ADR/CI/packaging commands were not redundantly replayed for this bounded remediation.",
+                    "The complete W1 product and deployment union remains owned by W1-exit, where desktop:performance, data:project-lifecycle-performance, and data:storage-maintenance-performance execute once serially with the full security, packaging, accessibility, migration, restart, and recovery matrix."
+                  ],
+                  "selection_rationale": "This R02 remediation is bounded to W1.A02.T02-R01-F01, W1.A02.T02-R01-F02, W1.A02.T02-R01-F03, and W1.A02.T02-R01-F04. The incremental risks are mapped-command suppression before safety fallback, unauthorized deferred-gate ownership, premature repeated performance measurement, prospective telemetry deletion, historical-packet misclassification, and drift in the canonical profile or W1-exit union. Eighty-five focused selector/controller/schema tests, exact live foundation/desktop/data/W1-exit selection records, the stored R01 telemetry projection, full governed Python quality, authority/view/backlog validation, immutable profile/baseline diff, and patch hygiene cover those risks. The prior exact 1093-second foundation run is retained and is not replayed because remediation review must remain bounded to the findings plus incremental surface; complete product/deployment and serial performance qualification remains due at W1 exit.",
+                  "selection_sha256": "3187335864ffe449363301393376025bad89544bc7f61aee4bc32c21014424d0",
+                  "prior_attempt_id": "R01",
+                  "open_finding_ids": [
+                    "W1.A02.T02-R01-F01",
+                    "W1.A02.T02-R01-F02",
+                    "W1.A02.T02-R01-F03",
+                    "W1.A02.T02-R01-F04"
+                  ],
+                  "root_cause_analysis": null,
+                  "selected_command_ids": [
+                    "foundation:backlog-views",
+                    "foundation:quality",
+                    "foundation:backlog"
+                  ],
+                  "packet_sha256": "c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03"
+                },
+                "review": {
+                  "reviewer": "b00-independent-reviewer",
+                  "result": "approved",
+                  "reviewed_at": "2026-08-21T02:59:03+00:00",
+                  "notes": "APPROVED at frozen state b3600ffe32c12d8d4d9e6cb457703311a328ea82. Remediation candidate aa714b7c16def6add4662e0d1c44d0bc89e7c349 is a strict descendant of prior candidate 5b5edd26519dff12aaaeef0c14ad40c8519ab355. Evidence artifacts/evidence/W1.A02.T02.remediation-01.json has SHA-256 403e15b269b7e5a42829a90af64ad93f73c78ef898c1016007bf16fc461250c0; its base, candidate, supersedes binding, and exact 15-path scope are truthful. F01 closes because security, migration, threshold, and ordinary cross-profile mappings now fail before safety/unknown fallback when an owning profile is omitted. F02 closes because deleting telemetry from a completed attempt with non-empty selected_command_ids is denied by semantic control validation, the pure projector, and review-telemetry, while the two real T01 attempts omit the marker and still project no fabricated events. F03 closes because governed policy authorizes exactly W1-exit and both API and CLI deny G2 and generic owners. F04 closes because affected foundation selects 16 commands with no performance deferral, desktop selects 24 and defers desktop:performance, data selects 18 and defers both data performance commands, and W1 exit selects all three exactly once in its 33-command union. Immutable R01 ledger SHA-256 f98f414bb3dbeeb9852442adc8c67219b1515fc199900090da5c6d42da8f864c and its exact 534-second, 2-HIGH/2-MEDIUM telemetry event remain preserved. Canonical profiles, argv, activation inputs, baselines, and thresholds are unchanged. Independent replay passed 85/85 focused tests in 64.768 seconds, 113-file quality, canonical backlog validation, telemetry projection, generated views, all 145 review pages, ECR-0001 validation, selection proofs, and Git whitespace checks. No full foundation or Wave-exit execution was rerun because this review remained bounded to the four findings and incremental risk surface."
+                },
+                "ledger": {
+                  "path": "artifacts/evidence/W1.A02.T02.review-R02.json",
+                  "sha256": "2700fd6eff428b03a257f22e7acc511d11ef9196e9224dfa188ab9357c2cc117"
+                },
+                "findings": [],
+                "closures": [
+                  {
+                    "finding_id": "W1.A02.T02-R01-F01",
+                    "disposition": "fixed",
+                    "evidence": "artifacts/evidence/W1.A02.T02.remediation-01.json"
+                  },
+                  {
+                    "finding_id": "W1.A02.T02-R01-F02",
+                    "disposition": "fixed",
+                    "evidence": "artifacts/evidence/W1.A02.T02.remediation-01.json"
+                  },
+                  {
+                    "finding_id": "W1.A02.T02-R01-F03",
+                    "disposition": "fixed",
+                    "evidence": "artifacts/evidence/W1.A02.T02.remediation-01.json"
+                  },
+                  {
+                    "finding_id": "W1.A02.T02-R01-F04",
+                    "disposition": "fixed",
+                    "evidence": "artifacts/evidence/W1.A02.T02.remediation-01.json"
+                  }
+                ],
+                "telemetry": {
+                  "task_id": "W1.A02.T02",
+                  "amendment_id": "W1.A02",
+                  "attempt_id": "R02",
+                  "submitted_at": "2026-08-21T02:50:29+00:00",
+                  "reviewed_at": "2026-08-21T02:59:03+00:00",
+                  "duration_seconds": 514,
+                  "outcome": "approved",
+                  "finding_counts": {
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "blocking": 0,
+                    "total": 0
+                  },
+                  "command_ids": [
+                    "foundation:backlog-views",
+                    "foundation:quality",
+                    "foundation:backlog"
+                  ],
+                  "remediation": {
+                    "prior_attempt_id": "R01",
+                    "replayed_finding_ids": [
+                      "W1.A02.T02-R01-F01",
+                      "W1.A02.T02-R01-F02",
+                      "W1.A02.T02-R01-F03",
+                      "W1.A02.T02-R01-F04"
+                    ],
+                    "closed_finding_ids": [
+                      "W1.A02.T02-R01-F01",
+                      "W1.A02.T02-R01-F02",
+                      "W1.A02.T02-R01-F03",
+                      "W1.A02.T02-R01-F04"
+                    ]
+                  }
+                }
               }
             ],
-            "current_submission": {
-              "id": "R02",
-              "submitted_by": "codex",
-              "submitted_at": "2026-08-21T02:50:29+00:00",
-              "candidate_commit": "aa714b7c16def6add4662e0d1c44d0bc89e7c349",
-              "base_commit": "5b5edd26519dff12aaaeef0c14ad40c8519ab355",
-              "branch": "codex/w1-windows-local-runtime",
-              "evidence_reference": {
-                "type": "criterion-manifest",
-                "path": "artifacts/evidence/W1.A02.T02.remediation-01.json",
-                "sha256": "403e15b269b7e5a42829a90af64ad93f73c78ef898c1016007bf16fc461250c0",
-                "commit": "aa714b7c16def6add4662e0d1c44d0bc89e7c349",
-                "recorded_at": "2026-08-21T02:50:29+00:00"
-              },
-              "acceptance_criteria_sha256": "f365420cf13322c0090317ef90d96e68ca7dc5fb9046b155ccad4ac8b0a4ee68",
-              "changed_paths": [
-                "artifacts/evidence/W1.A02.T02.json",
-                "artifacts/evidence/W1.A02.T02.review-R01.json",
-                "docs/automation/codex-tracking-guide.md",
-                "docs/automation/verification-profiles.md",
-                "docs/governance/delivery-control-model.md",
-                "docs/planning-implementation-plan.md",
-                "planning/backlog.yaml",
-                "planning/review-site/enablers/ECR-0001.html",
-                "planning/review-site/manifest.json",
-                "planning/status-summary.md",
-                "tests/foundation/test_taskctl_workflow.py",
-                "tests/foundation/test_verify_runner.py",
-                "tools/taskctl.py",
-                "tools/verify.py",
-                "verification/affected-selection.json"
-              ],
-              "selected_checks": [
-                ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_verify_runner tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
-                ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
-                ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
-                ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
-                ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile foundation --affected-base 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --affected-head aa714b7c16def6add4662e0d1c44d0bc89e7c349 --deferred-gate W1-exit --selection-only --report artifacts\\tmp\\W1.A02.T02-remediation-foundation-selection.json",
-                ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --affected-base 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --affected-head aa714b7c16def6add4662e0d1c44d0bc89e7c349 --deferred-gate W1-exit --selection-only --report artifacts\\tmp\\W1.A02.T02-remediation-desktop-selection.json",
-                ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile data --affected-base 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --affected-head aa714b7c16def6add4662e0d1c44d0bc89e7c349 --deferred-gate W1-exit --selection-only --report artifacts\\tmp\\W1.A02.T02-remediation-data-selection.json",
-                ".venv\\Scripts\\python.exe tools\\verify.py --repo . --wave-exit W1 --selection-only --report artifacts\\tmp\\W1.A02.T02-remediation-wave-exit-selection.json",
-                ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
-                ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
-                ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved",
-                "git diff --exit-code 5b5edd26519dff12aaaeef0c14ad40c8519ab355..aa714b7c16def6add4662e0d1c44d0bc89e7c349 -- verification-profiles.json verification/baselines",
-                "git diff 5b5edd26519dff12aaaeef0c14ad40c8519ab355..aa714b7c16def6add4662e0d1c44d0bc89e7c349 --check"
-              ],
-              "deferred_checks": [
-                "The prior exact 16-command foundation qualification remains retained from R01; its unaffected repository/runtime/architecture/fixture/build/UI/ADR/CI/packaging commands were not redundantly replayed for this bounded remediation.",
-                "The complete W1 product and deployment union remains owned by W1-exit, where desktop:performance, data:project-lifecycle-performance, and data:storage-maintenance-performance execute once serially with the full security, packaging, accessibility, migration, restart, and recovery matrix."
-              ],
-              "selection_rationale": "This R02 remediation is bounded to W1.A02.T02-R01-F01, W1.A02.T02-R01-F02, W1.A02.T02-R01-F03, and W1.A02.T02-R01-F04. The incremental risks are mapped-command suppression before safety fallback, unauthorized deferred-gate ownership, premature repeated performance measurement, prospective telemetry deletion, historical-packet misclassification, and drift in the canonical profile or W1-exit union. Eighty-five focused selector/controller/schema tests, exact live foundation/desktop/data/W1-exit selection records, the stored R01 telemetry projection, full governed Python quality, authority/view/backlog validation, immutable profile/baseline diff, and patch hygiene cover those risks. The prior exact 1093-second foundation run is retained and is not replayed because remediation review must remain bounded to the findings plus incremental surface; complete product/deployment and serial performance qualification remains due at W1 exit.",
-              "selection_sha256": "3187335864ffe449363301393376025bad89544bc7f61aee4bc32c21014424d0",
-              "prior_attempt_id": "R01",
-              "open_finding_ids": [
-                "W1.A02.T02-R01-F01",
-                "W1.A02.T02-R01-F02",
-                "W1.A02.T02-R01-F03",
-                "W1.A02.T02-R01-F04"
-              ],
-              "root_cause_analysis": null,
-              "selected_command_ids": [
-                "foundation:backlog-views",
-                "foundation:quality",
-                "foundation:backlog"
-              ],
-              "packet_sha256": "c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03"
-            }
+            "current_submission": null
           }
         }
       ],

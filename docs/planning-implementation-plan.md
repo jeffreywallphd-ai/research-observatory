@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1f1957fc2083811fb30c4faaa28f65f07bbcea59be2266a6d9fb42a4a8d8e807
+source_sha256: 4e3b612a66d6fc83b0b2b52d12af5539d1eb6f053f07077b7ad86b3027f42018
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -510,9 +510,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W1.A02.T02 - Affected verification selection and privacy-safe review telemetry
+### - [x] W1.A02.T02 - Affected verification selection and privacy-safe review telemetry
 
-**Status / owner / review:** `REVIEW` / codex / b00-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `DONE` / codex / b00-independent-reviewer (`approved`)
 
 **Dependencies:** `W1.A02.T01`
 
@@ -539,7 +539,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A02.T02
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -574,7 +574,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03`
 
 - Candidate / base / branch: `aa714b7c16def6add4662e0d1c44d0bc89e7c349` / `5b5edd26519dff12aaaeef0c14ad40c8519ab355` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-21T02:50:29+00:00`
@@ -588,11 +590,30 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W1.A02.T02-R01-F01`, `W1.A02.T02-R01-F02`, `W1.A02.T02-R01-F03`, `W1.A02.T02-R01-F04`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-21T02:37:59+00:00`
+**Disposition / reviewer / time:** `approved` / b00-independent-reviewer / `2026-08-21T02:59:03+00:00`
 
-**Latest notes:** CHANGES_REQUESTED at frozen state e69e81dbcba4afd87fcb77438586a27ed8d15a35. Evidence SHA-256 df020615af8f0b6ef35b4a54cac5c442b7277ce05bc634b318462f6b9c254ea4, exact 16-file scope, Git-derived T02 selection, retained pre-fix build failure, final 224-test foundation report, empty historical/pending telemetry projection, immutable canonical profile/baseline boundary, 33-command W1-exit resolution, and the three-line packaging schema correction are truthful. Focused independent replay passed 18 verify-runner tests, 2 T02 task-control tests, the affected schema/build-manifest tests, 113-file quality, backlog/view/review-site/ECR validation, and whitespace checks. Four acceptance-bound defects remain; the 1093-second foundation profile and Wave-exit matrix were not rerun.
+**Immutable review ledger:** `artifacts/evidence/W1.A02.T02.review-R02.json` / `2700fd6eff428b03a257f22e7acc511d11ef9196e9224dfa188ab9357c2cc117`
 
-**Currently open findings:** `W1.A02.T02-R01-F01`, `W1.A02.T02-R01-F02`, `W1.A02.T02-R01-F03`, `W1.A02.T02-R01-F04`
+**Review notes:** APPROVED at frozen state b3600ffe32c12d8d4d9e6cb457703311a328ea82. Remediation candidate aa714b7c16def6add4662e0d1c44d0bc89e7c349 is a strict descendant of prior candidate 5b5edd26519dff12aaaeef0c14ad40c8519ab355. Evidence artifacts/evidence/W1.A02.T02.remediation-01.json has SHA-256 403e15b269b7e5a42829a90af64ad93f73c78ef898c1016007bf16fc461250c0; its base, candidate, supersedes binding, and exact 15-path scope are truthful. F01 closes because security, migration, threshold, and ordinary cross-profile mappings now fail before safety/unknown fallback when an owning profile is omitted. F02 closes because deleting telemetry from a completed attempt with non-empty selected_command_ids is denied by semantic control validation, the pure projector, and review-telemetry, while the two real T01 attempts omit the marker and still project no fabricated events. F03 closes because governed policy authorizes exactly W1-exit and both API and CLI deny G2 and generic owners. F04 closes because affected foundation selects 16 commands with no performance deferral, desktop selects 24 and defers desktop:performance, data selects 18 and defers both data performance commands, and W1 exit selects all three exactly once in its 33-command union. Immutable R01 ledger SHA-256 f98f414bb3dbeeb9852442adc8c67219b1515fc199900090da5c6d42da8f864c and its exact 534-second, 2-HIGH/2-MEDIUM telemetry event remain preserved. Canonical profiles, argv, activation inputs, baselines, and thresholds are unchanged. Independent replay passed 85/85 focused tests in 64.768 seconds, 113-file quality, canonical backlog validation, telemetry projection, generated views, all 145 review pages, ECR-0001 validation, selection proofs, and Git whitespace checks. No full foundation or Wave-exit execution was rerun because this review remained bounded to the four findings and incremental risk surface.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W1.A02.T02-R01-F01` `fixed` — artifacts/evidence/W1.A02.T02.remediation-01.json
+- `W1.A02.T02-R01-F02` `fixed` — artifacts/evidence/W1.A02.T02.remediation-01.json
+- `W1.A02.T02-R01-F03` `fixed` — artifacts/evidence/W1.A02.T02.remediation-01.json
+- `W1.A02.T02-R01-F04` `fixed` — artifacts/evidence/W1.A02.T02.remediation-01.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by b00-independent-reviewer at `2026-08-21T02:59:03+00:00`
+
+**Latest notes:** APPROVED at frozen state b3600ffe32c12d8d4d9e6cb457703311a328ea82. Remediation candidate aa714b7c16def6add4662e0d1c44d0bc89e7c349 is a strict descendant of prior candidate 5b5edd26519dff12aaaeef0c14ad40c8519ab355. Evidence artifacts/evidence/W1.A02.T02.remediation-01.json has SHA-256 403e15b269b7e5a42829a90af64ad93f73c78ef898c1016007bf16fc461250c0; its base, candidate, supersedes binding, and exact 15-path scope are truthful. F01 closes because security, migration, threshold, and ordinary cross-profile mappings now fail before safety/unknown fallback when an owning profile is omitted. F02 closes because deleting telemetry from a completed attempt with non-empty selected_command_ids is denied by semantic control validation, the pure projector, and review-telemetry, while the two real T01 attempts omit the marker and still project no fabricated events. F03 closes because governed policy authorizes exactly W1-exit and both API and CLI deny G2 and generic owners. F04 closes because affected foundation selects 16 commands with no performance deferral, desktop selects 24 and defers desktop:performance, data selects 18 and defers both data performance commands, and W1 exit selects all three exactly once in its 33-command union. Immutable R01 ledger SHA-256 f98f414bb3dbeeb9852442adc8c67219b1515fc199900090da5c6d42da8f864c and its exact 534-second, 2-HIGH/2-MEDIUM telemetry event remain preserved. Canonical profiles, argv, activation inputs, baselines, and thresholds are unchanged. Independent replay passed 85/85 focused tests in 64.768 seconds, 113-file quality, canonical backlog validation, telemetry projection, generated views, all 145 review pages, ECR-0001 validation, selection proofs, and Git whitespace checks. No full foundation or Wave-exit execution was rerun because this review remained bounded to the four findings and incremental risk surface.
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks
