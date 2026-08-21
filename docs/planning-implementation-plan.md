@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2c3e36457bdcbdac62336c74e914cc7ad858043c34dc24090a6dddbfe133707c
+source_sha256: 745ea4c6454bedf7d960c72833b2236eea4e35f0880454735c1e84e2d03e20cf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -399,7 +399,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A02.json` (`63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
