@@ -41,21 +41,22 @@
       "items": {"type": "string", "minLength": 1},
       "uniqueItems": true
     },
+    "taskEvidenceReference": {
+      "type": "object",
+      "required": ["type", "path", "sha256", "commit", "recorded_at"],
+      "properties": {
+        "type": {"const": "criterion-manifest"},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "recorded_at": {"$ref": "#/$defs/timestamp"},
+        "legacy_policy": {"const": "pre-exact-evidence-hosted-ci-residual-v1"}
+      },
+      "additionalProperties": false
+    },
     "taskEvidence": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["type", "path", "sha256", "commit", "recorded_at"],
-        "properties": {
-          "type": {"const": "criterion-manifest"},
-          "path": {"type": "string", "minLength": 1},
-          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-          "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-          "recorded_at": {"$ref": "#/$defs/timestamp"},
-          "legacy_policy": {"const": "pre-exact-evidence-hosted-ci-residual-v1"}
-        },
-        "additionalProperties": false
-      }
+      "items": {"$ref": "#/$defs/taskEvidenceReference"}
     },
     "review": {
       "type": "object",
@@ -65,6 +66,103 @@
         "result": {"enum": ["approved", "changes-requested", "blocked", null]},
         "reviewed_at": {"$ref": "#/$defs/nullableTimestamp"},
         "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "reviewFinding": {
+      "type": "object",
+      "required": [
+        "id", "severity", "blocking", "criterion_index", "title", "reproduction", "required_remediation"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+        "severity": {"enum": ["critical", "high", "medium", "low"]},
+        "blocking": {"type": "boolean"},
+        "criterion_index": {"type": "integer", "minimum": 1},
+        "title": {"type": "string", "minLength": 1},
+        "reproduction": {"type": "string", "minLength": 1},
+        "required_remediation": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "reviewFindingClosure": {
+      "type": "object",
+      "required": ["finding_id", "disposition", "evidence"],
+      "properties": {
+        "finding_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+        "disposition": {"enum": ["fixed", "not-reproduced", "superseded", "accepted-risk"]},
+        "evidence": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "taskSubmissionPacket": {
+      "type": "object",
+      "required": [
+        "id", "submitted_by", "submitted_at", "candidate_commit", "base_commit", "branch",
+        "evidence_reference", "acceptance_criteria_sha256", "changed_paths", "selected_checks",
+        "deferred_checks", "selection_rationale", "selection_sha256", "prior_attempt_id",
+        "open_finding_ids", "root_cause_analysis", "packet_sha256"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+        "submitted_by": {"type": "string", "minLength": 1},
+        "submitted_at": {"$ref": "#/$defs/timestamp"},
+        "candidate_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "branch": {"type": "string", "minLength": 1},
+        "evidence_reference": {"$ref": "#/$defs/taskEvidenceReference"},
+        "acceptance_criteria_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "changed_paths": {
+          "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+        },
+        "selected_checks": {
+          "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+        },
+        "deferred_checks": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "selection_rationale": {"type": "string", "minLength": 1},
+        "selection_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "prior_attempt_id": {"type": ["string", "null"], "pattern": "^R[0-9]{2,}$"},
+        "open_finding_ids": {
+          "type": "array", "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+          "uniqueItems": true
+        },
+        "root_cause_analysis": {"type": ["string", "null"]},
+        "packet_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "taskReviewAttempt": {
+      "type": "object",
+      "required": ["submission", "review", "ledger", "findings", "closures"],
+      "properties": {
+        "submission": {"$ref": "#/$defs/taskSubmissionPacket"},
+        "review": {"$ref": "#/$defs/review"},
+        "ledger": {
+          "type": "object",
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {"type": "string", "minLength": 1},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "additionalProperties": false
+        },
+        "findings": {"type": "array", "items": {"$ref": "#/$defs/reviewFinding"}},
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/reviewFindingClosure"}}
+      },
+      "additionalProperties": false
+    },
+    "taskReviewControl": {
+      "type": "object",
+      "required": ["version", "attempts", "current_submission"],
+      "properties": {
+        "version": {"const": 1},
+        "attempts": {"type": "array", "items": {"$ref": "#/$defs/taskReviewAttempt"}},
+        "current_submission": {
+          "anyOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/taskSubmissionPacket"}
+          ]
+        }
       },
       "additionalProperties": false
     },
@@ -260,7 +358,8 @@
         "implementation_notes": {"type": "string"},
         "evidence": {"$ref": "#/$defs/taskEvidence"},
         "verification_state": {"type": ["string", "null"]},
-        "review": {"$ref": "#/$defs/review"}
+        "review": {"$ref": "#/$defs/review"},
+        "review_control": {"$ref": "#/$defs/taskReviewControl"}
       },
       "additionalProperties": false
     },
@@ -405,8 +504,8 @@
       "type": "object",
       "required": ["revision", "minimum_tool_revision", "active_amendment"],
       "properties": {
-        "revision": {"const": 2},
-        "minimum_tool_revision": {"type": "integer", "minimum": 2},
+        "revision": {"const": 3},
+        "minimum_tool_revision": {"type": "integer", "minimum": 3},
         "active_amendment": {
           "anyOf": [
             {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
@@ -1348,6 +1447,9 @@
                       },
                       "review": {
                         "$ref": "#/$defs/review"
+                      },
+                      "review_control": {
+                        "$ref": "#/$defs/taskReviewControl"
                       },
                       "cancellation": {
                         "type": [

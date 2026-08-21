@@ -152,6 +152,131 @@ def wave_authority_rows(data: dict[str, Any]) -> list[tuple[str, str, str, str, 
     return rows
 
 
+def task_open_finding_ids(task: dict[str, Any]) -> list[str]:
+    control = task.get("review_control")
+    if not isinstance(control, dict):
+        return []
+    open_ids: set[str] = set()
+    for attempt in control.get("attempts") or []:
+        for closure in attempt.get("closures") or []:
+            open_ids.discard(str(closure.get("finding_id")))
+        for finding in attempt.get("findings") or []:
+            open_ids.add(str(finding.get("id")))
+    return sorted(open_ids)
+
+
+def _submission_packet_markdown(packet: dict[str, Any], *, label: str) -> list[str]:
+    evidence = packet.get("evidence_reference") or {}
+    return [
+        f"**{label}:** `{inline(packet.get('id'))}` / packet SHA-256 `{inline(packet.get('packet_sha256'))}`",
+        "",
+        f"- Candidate / base / branch: `{inline(packet.get('candidate_commit'))}` / "
+        f"`{inline(packet.get('base_commit'))}` / `{inline(packet.get('branch'))}`",
+        f"- Submitted by / at: {inline(packet.get('submitted_by'))} / `{inline(packet.get('submitted_at'))}`",
+        f"- Evidence: `{inline(evidence.get('path'))}` / `{inline(evidence.get('sha256'))}` / "
+        f"`{inline(evidence.get('commit'))}`",
+        f"- Acceptance-criteria SHA-256: `{inline(packet.get('acceptance_criteria_sha256'))}`",
+        f"- Verification-selection SHA-256: `{inline(packet.get('selection_sha256'))}`",
+        f"- Changed paths: {joined(packet.get('changed_paths'), code=True)}",
+        f"- Selected checks: {joined(packet.get('selected_checks'), code=True)}",
+        f"- Deferred checks: {joined(packet.get('deferred_checks'), code=True)}",
+        f"- Selection rationale: {inline(packet.get('selection_rationale'))}",
+        f"- Prior round / replayed open findings: `{inline(packet.get('prior_attempt_id'))}` / "
+        f"{joined(packet.get('open_finding_ids'), code=True)}",
+        f"- Root-cause escalation: {inline(packet.get('root_cause_analysis'))}",
+        "",
+    ]
+
+
+def task_review_markdown(task: dict[str, Any], *, heading_level: int) -> list[str]:
+    prefix = "#" * heading_level
+    task_id = inline(task.get("id"))
+    review = task.get("review") or {}
+    control = task.get("review_control")
+    lines = [f"{prefix} Review history — {task_id}", ""]
+    if not isinstance(control, dict):
+        lines.extend(
+            [
+                "**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; "
+                "this view does not fabricate historical attempts.",
+                "",
+                f"**Current latest-review projection:** `{inline(review.get('result'))}` by "
+                f"{inline(review.get('reviewer'))} at `{inline(review.get('reviewed_at'))}`",
+                "",
+                f"**Latest notes:** {inline(review.get('notes'))}",
+                "",
+            ]
+        )
+        return lines
+
+    attempts = control.get("attempts") or []
+    lines.extend(
+        [
+            f"**Review mode:** `append-only v{inline(control.get('version'))}` / {len(attempts)} completed round(s)",
+            "",
+        ]
+    )
+    for attempt in attempts:
+        packet = attempt.get("submission") or {}
+        attempt_review = attempt.get("review") or {}
+        ledger = attempt.get("ledger") or {}
+        attempt_id = inline(packet.get("id"))
+        lines.extend([f"{prefix}# Round {attempt_id}", ""])
+        lines.extend(_submission_packet_markdown(packet, label="Immutable submission packet"))
+        lines.extend(
+            [
+                f"**Disposition / reviewer / time:** `{inline(attempt_review.get('result'))}` / "
+                f"{inline(attempt_review.get('reviewer'))} / `{inline(attempt_review.get('reviewed_at'))}`",
+                "",
+                f"**Immutable review ledger:** `{inline(ledger.get('path'))}` / `{inline(ledger.get('sha256'))}`",
+                "",
+                f"**Review notes:** {inline(attempt_review.get('notes'))}",
+                "",
+                "**Findings opened:**",
+                "",
+            ]
+        )
+        findings = attempt.get("findings") or []
+        if findings:
+            lines.extend(
+                f"- `{inline(finding.get('id'))}` `{inline(finding.get('severity'))}` "
+                f"blocking=`{inline(finding.get('blocking'))}` criterion=`{inline(finding.get('criterion_index'))}` — "
+                f"{inline(finding.get('title'))}; reproduce: {inline(finding.get('reproduction'))}; "
+                f"remediate: {inline(finding.get('required_remediation'))}"
+                for finding in findings
+            )
+        else:
+            lines.append("- None")
+        lines.extend(["", "**Prior finding closures:**", ""])
+        closures = attempt.get("closures") or []
+        if closures:
+            lines.extend(
+                f"- `{inline(closure.get('finding_id'))}` `{inline(closure.get('disposition'))}` — "
+                f"{inline(closure.get('evidence'))}"
+                for closure in closures
+            )
+        else:
+            lines.append("- None")
+        lines.append("")
+    current = control.get("current_submission")
+    if isinstance(current, dict):
+        lines.extend(_submission_packet_markdown(current, label="Current immutable submission awaiting review"))
+    else:
+        lines.extend(["**Current immutable submission awaiting review:** None", ""])
+    lines.extend(
+        [
+            f"**Current latest-review projection:** `{inline(review.get('result'))}` by "
+            f"{inline(review.get('reviewer'))} at `{inline(review.get('reviewed_at'))}`",
+            "",
+            f"**Latest notes:** {inline(review.get('notes'))}",
+            "",
+            f"**Currently open findings:** {joined(task_open_finding_ids(task), code=True)}",
+            "",
+        ]
+    )
+    return lines
+
+
 def status_table(lines: list[str], title: str, statuses: Counter[str], order: list[str] | None = None) -> None:
     lines.extend([f"### {title}", "", "| Status | Count |", "|---|---:|"])
     keys = [key for key in (order or []) if key in statuses]
@@ -252,6 +377,43 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
         )
     if not wave_authority_rows(data):
         lines.append("| - | - | - | - | - | - | - | 0 |")
+
+    review_tasks = [
+        task
+        for task in tasks + amendment_tasks
+        if isinstance(task.get("review_control"), dict)
+        or any((task.get("review") or {}).get(key) is not None for key in ("result", "reviewer", "reviewed_at"))
+    ]
+    lines.extend(
+        [
+            "",
+            "## Task review history projections",
+            "",
+            "Append-only rounds remain distinct from the current latest-review projection. Legacy records are labeled "
+            "latest-review-only and receive no synthesized rounds.",
+            "",
+            "| Task | Mode | Completed rounds | Current submission | Latest projection | Open findings |",
+            "|---|---|---:|---|---|---|",
+        ]
+    )
+    for task in review_tasks:
+        control = task.get("review_control")
+        review = task.get("review") or {}
+        if isinstance(control, dict):
+            mode = f"append-only v{inline(control.get('version'))}"
+            round_count = len(control.get("attempts") or [])
+            current = (control.get("current_submission") or {}).get("id") or "-"
+        else:
+            mode = "legacy latest-review-only"
+            round_count = 0
+            current = "-"
+        latest = f"{inline(review.get('result'))} / {inline(review.get('reviewer'))}"
+        lines.append(
+            f"| `{inline(task.get('id'))}` | `{mode}` | {round_count} | `{inline(current)}` | "
+            f"{latest} | {joined(task_open_finding_ids(task), code=True)} |"
+        )
+    if not review_tasks:
+        lines.append("| - | - | 0 | - | - | - |")
 
     lines.extend(
         [
@@ -517,6 +679,7 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
                     for reference in task["evidence"]
                 )
             lines.append("")
+            lines.extend(task_review_markdown(task, heading_level=4))
 
     lines.extend(["", "# Capability contributions, slices, and tasks", ""])
     for capability in capabilities:
@@ -594,6 +757,7 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
                         for reference in task["evidence"]
                     )
                 lines.append("")
+                lines.extend(task_review_markdown(task, heading_level=5))
 
     lines.extend(
         [

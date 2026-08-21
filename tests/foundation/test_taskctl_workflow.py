@@ -450,7 +450,146 @@ class TaskctlWorkflowTests(unittest.TestCase):
         context = load(str(REPO / "planning" / "backlog.yaml"))
         amendment = next(item for item in context[0]["wave_amendments"] if item["id"] == "W1.A02")
         amendment["bootstrap"] = copy.deepcopy(bootstrap)
-        return context
+        amendment["lifecycle"] = {
+            "status": "APPROVED",
+            "history": [copy.deepcopy(amendment["lifecycle"]["history"][0])],
+        }
+        amendment["campaign"] = None
+        amendment["tasks"] = []
+        context[0]["control_plane"]["active_amendment"] = None
+        wave = next(item for item in context[0]["waves"] if item["id"] == "W1")
+        wave["campaign"]["status"] = "PAUSED"
+        wave["campaign"]["scope"] = "wave"
+        return taskctl_module.index_backlog(context[0])
+
+    def controlled_task_repository(
+        self,
+        root: Path,
+    ) -> tuple[tuple[dict, dict, dict, dict, dict], Path, dict[str, Any], str, str]:
+        repo = root / "repo"
+        (repo / "planning").mkdir(parents=True)
+        (repo / "artifacts" / "evidence").mkdir(parents=True)
+        (repo / "planning" / "backlog.yaml").write_text("fixture: true\n", encoding="utf-8")
+        (repo / "implementation.txt").write_text("baseline\n", encoding="utf-8")
+        subprocess.run(["git", "init", "-b", "test-branch"], cwd=repo, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
+        subprocess.run(["git", "config", "user.name", "Taskctl Test"], cwd=repo, check=True)
+        subprocess.run(["git", "add", "."], cwd=repo, check=True)
+        subprocess.run(["git", "commit", "-m", "baseline"], cwd=repo, capture_output=True, check=True)
+        base = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+        ).stdout.strip()
+        (repo / "implementation.txt").write_text("implemented\n", encoding="utf-8")
+        subprocess.run(["git", "add", "implementation.txt"], cwd=repo, check=True)
+        subprocess.run(["git", "commit", "-m", "implementation"], cwd=repo, capture_output=True, check=True)
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+        ).stdout.strip()
+
+        context = self.workflow()
+        data, capabilities, _slices, tasks, _gates = context
+        data["control_plane"] = {"revision": 3, "minimum_tool_revision": 3, "active_amendment": None}
+        task = tasks["CAP-00.S01.T01"]
+        task.update(
+            status="IN_PROGRESS",
+            owner="alice",
+            branch="test-branch",
+            base_sha=base,
+            worktree=repo.as_posix(),
+            lease=new_lease("alice", 8),
+            evidence=[],
+            verification_state=None,
+        )
+        capabilities["CAP-00"]["campaign"].update(
+            branch="test-branch",
+            base_sha=base,
+            worktree=repo.as_posix(),
+        )
+        return context, repo, task, base, head
+
+    def write_controlled_task_evidence(
+        self,
+        repo: Path,
+        task: dict[str, Any],
+        *,
+        name: str,
+        candidate: str,
+        base: str,
+        changed_paths: list[str],
+        open_finding_ids: list[str] | None = None,
+        root_cause_analysis: str | None = None,
+        supersedes: str | None = None,
+    ) -> Path:
+        disposition: dict[str, Any] = {"openFindingIds": list(open_finding_ids or [])}
+        if root_cause_analysis is not None:
+            disposition["rootCauseAnalysis"] = root_cause_analysis
+        manifest: dict[str, Any] = {
+            "taskId": task["id"],
+            "commit": candidate,
+            "baseCommit": base,
+            "branch": "test-branch",
+            "changedFiles": changed_paths,
+            "checks": [{"command": "python -m unittest focused", "exitCode": 0}],
+            "acceptanceCriteria": [
+                {"criterion_index": index, "evidence": [f"criterion {index} verified"]}
+                for index, _criterion in enumerate(task["acceptance_criteria"], start=1)
+            ],
+            "unverifiedItems": [],
+            "verificationSelection": {
+                "riskAnalysis": "The changed controller path requires focused workflow validation.",
+                "deferred": ["complete Wave-exit profile"],
+            },
+            "reviewerDisposition": disposition,
+        }
+        if supersedes is not None:
+            manifest["supersedes"] = {"path": supersedes, "reason": "review remediation"}
+        evidence = repo / "artifacts" / "evidence" / name
+        evidence.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
+        return evidence
+
+    def review_finding(
+        self,
+        finding_id: str,
+        *,
+        severity: str = "high",
+        blocking: bool = True,
+    ) -> dict[str, Any]:
+        return {
+            "id": finding_id,
+            "severity": severity,
+            "blocking": blocking,
+            "criterion_index": 1,
+            "title": f"Finding {finding_id}",
+            "reproduction": "Run the deterministic review-control fixture.",
+            "required_remediation": "Correct the bounded review-control behavior.",
+        }
+
+    def write_task_review_ledger(
+        self,
+        repo: Path,
+        task: dict[str, Any],
+        *,
+        name: str,
+        reviewer: str,
+        result: str,
+        findings: list[dict[str, Any]],
+        closures: list[dict[str, Any]] | None = None,
+        notes: str = "consolidated review",
+    ) -> Path:
+        submission = task["review_control"]["current_submission"]
+        ledger = {
+            "task_id": task["id"],
+            "attempt_id": submission["id"],
+            "candidate_commit": submission["candidate_commit"],
+            "reviewer": reviewer,
+            "result": result,
+            "notes": notes,
+            "findings": findings,
+            "closures": list(closures or []),
+        }
+        path = repo / "artifacts" / "evidence" / name
+        path.write_text(json.dumps(ledger), encoding="utf-8", newline="\n")
+        return path
 
     def test_next_at_pending_release_gate_prints_decision_complete_handoff(self) -> None:
         data, capabilities, slices, tasks, gates = self.workflow()
@@ -825,6 +964,592 @@ class TaskctlWorkflowTests(unittest.TestCase):
             (repo / "implementation.txt").write_text("dirty after verification\n", encoding="utf-8")
             errors = exact_commit_errors(task, manifest, repo, evidence_path=evidence)
             self.assertIn("tracked worktree changes exist outside the exact implementation commit", errors)
+
+    def test_t01_atomic_submit_freezes_one_packet_with_one_persist(self) -> None:
+        parser = build_parser()
+        parsed = parser.parse_args(["submit", "CAP-00.S01.T01", "--agent", "alice", "--from", "manifest.json"])
+        self.assertEqual("manifest.json", parsed.from_file)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            context, repo, task, base, head = self.controlled_task_repository(Path(temporary))
+            evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-01.json",
+                candidate=head,
+                base=base,
+                changed_paths=["implementation.txt"],
+            )
+            args = Namespace(
+                task=task["id"],
+                agent="alice",
+                from_file=str(evidence),
+                note="submit exact packet",
+                file=str(repo / "planning" / "backlog.yaml"),
+            )
+            original_read_bytes = Path.read_bytes
+            evidence_reads = 0
+
+            def count_evidence_read(path: Path) -> bytes:
+                nonlocal evidence_reads
+                if path == evidence:
+                    evidence_reads += 1
+                return original_read_bytes(path)
+
+            with patch("taskctl.persist") as persist, patch.object(Path, "read_bytes", count_evidence_read):
+                command_submit(args, *context)
+
+            self.assertEqual(1, evidence_reads)
+            persist.assert_called_once()
+            self.assertEqual("REVIEW", task["status"])
+            self.assertEqual("passed", task["verification_state"])
+            self.assertEqual(1, len(task["evidence"]))
+            control = task["review_control"]
+            self.assertEqual([], control["attempts"])
+            packet = control["current_submission"]
+            self.assertEqual("R01", packet["id"])
+            self.assertEqual(head, packet["candidate_commit"])
+            self.assertEqual(task["evidence"][0], packet["evidence_reference"])
+            self.assertEqual(["implementation.txt"], packet["changed_paths"])
+            self.assertEqual(["python -m unittest focused"], packet["selected_checks"])
+            self.assertEqual(["complete Wave-exit profile"], packet["deferred_checks"])
+            self.assertEqual(
+                taskctl_module.canonical_json_sha256(task["acceptance_criteria"]),
+                packet["acceptance_criteria_sha256"],
+            )
+            self.assertEqual(taskctl_module.task_submission_packet_sha256(packet), packet["packet_sha256"])
+
+    def test_t01_atomic_submit_failure_never_writes_partial_backlog_state(self) -> None:
+        failures: list[BaseException] = [
+            SystemExit("Backlog changed after taskctl loaded it"),
+            OSError("replace failed"),
+        ]
+        for failure in failures:
+            with self.subTest(failure=type(failure).__name__), tempfile.TemporaryDirectory() as temporary:
+                context, repo, task, base, head = self.controlled_task_repository(Path(temporary))
+                evidence = self.write_controlled_task_evidence(
+                    repo,
+                    task,
+                    name="round-01.json",
+                    candidate=head,
+                    base=base,
+                    changed_paths=["implementation.txt"],
+                )
+                backlog = repo / "planning" / "backlog.yaml"
+                before = backlog.read_bytes()
+                args = Namespace(
+                    task=task["id"],
+                    agent="alice",
+                    from_file=str(evidence),
+                    note="atomic failure",
+                    file=str(backlog),
+                )
+                with self.assertRaises(type(failure)), patch("taskctl.persist", side_effect=failure) as persist:
+                    command_submit(args, *context)
+
+                persist.assert_called_once()
+                self.assertEqual(before, backlog.read_bytes())
+
+    def test_t01_submission_packet_tamper_matrix_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context, repo, task, base, head = self.controlled_task_repository(Path(temporary))
+            evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-01.json",
+                candidate=head,
+                base=base,
+                changed_paths=["implementation.txt"],
+            )
+            with patch("taskctl.persist"):
+                command_submit(
+                    Namespace(
+                        task=task["id"],
+                        agent="alice",
+                        from_file=str(evidence),
+                        note="",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
+            frozen = copy.deepcopy(task)
+            cases: list[tuple[str, Any, str]] = [
+                (
+                    "candidate",
+                    lambda packet: packet.update(candidate_commit="0" * 40),
+                    "submission candidate differs from its evidence reference",
+                ),
+                (
+                    "evidence",
+                    lambda packet: packet["evidence_reference"].update(sha256="0" * 64),
+                    "submission evidence reference is not attached",
+                ),
+                (
+                    "criteria",
+                    lambda packet: packet.update(acceptance_criteria_sha256="0" * 64),
+                    "frozen acceptance criteria hash differs from the task",
+                ),
+                (
+                    "changed-paths",
+                    lambda packet: packet.update(changed_paths=["forged.py"]),
+                    "frozen changed-path identity differs from its evidence manifest",
+                ),
+                (
+                    "selected-checks",
+                    lambda packet: packet.update(selected_checks=["forged check"]),
+                    "frozen selected-check identity differs from its evidence manifest",
+                ),
+                (
+                    "selection-hash",
+                    lambda packet: packet.update(selection_sha256="0" * 64),
+                    "frozen verification-selection hash differs from its evidence manifest",
+                ),
+                (
+                    "packet-hash",
+                    lambda packet: packet.update(packet_sha256="0" * 64),
+                    "immutable task submission packet hash mismatch",
+                ),
+            ]
+            for name, mutate, expected in cases:
+                with self.subTest(case=name):
+                    forged = copy.deepcopy(frozen)
+                    mutate(forged["review_control"]["current_submission"])
+                    errors = taskctl_module.task_review_control_errors(forged, repo)
+                    self.assertTrue(any(expected in error for error in errors), errors)
+
+    def test_t01_review_denies_self_review_unranked_and_duplicate_findings(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context, repo, task, base, head = self.controlled_task_repository(Path(temporary))
+            evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-01.json",
+                candidate=head,
+                base=base,
+                changed_paths=["implementation.txt"],
+            )
+            with patch("taskctl.persist"):
+                command_submit(
+                    Namespace(
+                        task=task["id"],
+                        agent="alice",
+                        from_file=str(evidence),
+                        note="",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
+
+            self_review = self.write_task_review_ledger(
+                repo,
+                task,
+                name="self-review.json",
+                reviewer="alice",
+                result="changes-requested",
+                findings=[self.review_finding("F01")],
+            )
+            with self.assertRaisesRegex(SystemExit, "independent from the task owner"), patch("taskctl.persist"):
+                command_review(
+                    Namespace(
+                        task=task["id"],
+                        reviewer="alice",
+                        result="changes-requested",
+                        from_file=str(self_review),
+                        lease_hours=8,
+                        note="",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
+
+            invalid_ledgers = [
+                (
+                    "unranked.json",
+                    [self.review_finding("F01", severity="low"), self.review_finding("F02", severity="high")],
+                    "descending severity order",
+                ),
+                (
+                    "duplicate.json",
+                    [self.review_finding("F01"), self.review_finding("F01")],
+                    "globally unique",
+                ),
+            ]
+            for name, findings, expected in invalid_ledgers:
+                ledger = self.write_task_review_ledger(
+                    repo,
+                    task,
+                    name=name,
+                    reviewer="independent-reviewer",
+                    result="changes-requested",
+                    findings=findings,
+                )
+                with (
+                    self.subTest(case=name),
+                    self.assertRaisesRegex(SystemExit, expected),
+                    patch("taskctl.persist"),
+                ):
+                    command_review(
+                        Namespace(
+                            task=task["id"],
+                            reviewer="independent-reviewer",
+                            result="changes-requested",
+                            from_file=str(ledger),
+                            lease_hours=8,
+                            note="",
+                            file=str(repo / "planning" / "backlog.yaml"),
+                        ),
+                        *context,
+                    )
+
+    def test_t01_remediation_replays_open_findings_and_closes_blockers_before_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context, repo, task, base, first_head = self.controlled_task_repository(Path(temporary))
+            first_evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-01.json",
+                candidate=first_head,
+                base=base,
+                changed_paths=["implementation.txt"],
+            )
+            with patch("taskctl.persist"):
+                command_submit(
+                    Namespace(
+                        task=task["id"],
+                        agent="alice",
+                        from_file=str(first_evidence),
+                        note="",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
+            first_ledger = self.write_task_review_ledger(
+                repo,
+                task,
+                name="review-01.json",
+                reviewer="independent-reviewer",
+                result="changes-requested",
+                findings=[self.review_finding("F01")],
+            )
+            with patch("taskctl.persist"):
+                command_review(
+                    Namespace(
+                        task=task["id"],
+                        reviewer="independent-reviewer",
+                        result="changes-requested",
+                        from_file=str(first_ledger),
+                        lease_hours=8,
+                        note="consolidated review",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
+
+            (repo / "remediation.txt").write_text("fixed\n", encoding="utf-8")
+            subprocess.run(
+                [
+                    "git",
+                    "add",
+                    "artifacts/evidence/round-01.json",
+                    "artifacts/evidence/review-01.json",
+                    "remediation.txt",
+                ],
+                cwd=repo,
+                check=True,
+            )
+            subprocess.run(["git", "commit", "-m", "remediate review"], cwd=repo, capture_output=True, check=True)
+            second_head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+            changed = [
+                "artifacts/evidence/round-01.json",
+                "artifacts/evidence/review-01.json",
+                "remediation.txt",
+            ]
+            remediation = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-02.json",
+                candidate=second_head,
+                base=base,
+                changed_paths=changed,
+                open_finding_ids=["F01"],
+                supersedes="artifacts/evidence/round-01.json",
+            )
+            submit_args = Namespace(
+                task=task["id"],
+                agent="alice",
+                from_file=str(remediation),
+                note="",
+                file=str(repo / "planning" / "backlog.yaml"),
+            )
+            with self.assertRaisesRegex(SystemExit, "baseCommit must equal"), patch("taskctl.persist"):
+                command_submit(submit_args, *context)
+
+            remediation = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-02.json",
+                candidate=second_head,
+                base=first_head,
+                changed_paths=changed,
+                open_finding_ids=[],
+                supersedes="artifacts/evidence/round-01.json",
+            )
+            submit_args.from_file = str(remediation)
+            with self.assertRaisesRegex(SystemExit, "exact open finding IDs"), patch("taskctl.persist"):
+                command_submit(submit_args, *context)
+
+            remediation = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-02.json",
+                candidate=second_head,
+                base=first_head,
+                changed_paths=changed,
+                open_finding_ids=["F01"],
+                supersedes="artifacts/evidence/round-01.json",
+            )
+            submit_args.from_file = str(remediation)
+            with patch("taskctl.persist"):
+                command_submit(submit_args, *context)
+            self.assertEqual("R02", task["review_control"]["current_submission"]["id"])
+            self.assertEqual(["F01"], task["review_control"]["current_submission"]["open_finding_ids"])
+
+            approval = self.write_task_review_ledger(
+                repo,
+                task,
+                name="review-02.json",
+                reviewer="second-independent-reviewer",
+                result="approved",
+                findings=[],
+            )
+            review_args = Namespace(
+                task=task["id"],
+                reviewer="second-independent-reviewer",
+                result="approved",
+                from_file=str(approval),
+                lease_hours=8,
+                note="consolidated review",
+                file=str(repo / "planning" / "backlog.yaml"),
+            )
+            with self.assertRaisesRegex(SystemExit, "blocking finding remains open"), patch("taskctl.persist"):
+                command_review(review_args, *context)
+
+            approval = self.write_task_review_ledger(
+                repo,
+                task,
+                name="review-02.json",
+                reviewer="second-independent-reviewer",
+                result="approved",
+                findings=[],
+                closures=[
+                    {
+                        "finding_id": "F01",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/round-02.json",
+                    }
+                ],
+            )
+            review_args.from_file = str(approval)
+            with patch("taskctl.persist"):
+                command_review(review_args, *context)
+
+            self.assertEqual("DONE", task["status"])
+            attempts = task["review_control"]["attempts"]
+            self.assertEqual(2, len(attempts))
+            self.assertEqual("changes-requested", attempts[0]["review"]["result"])
+            self.assertEqual("approved", attempts[1]["review"]["result"])
+            self.assertEqual("F01", attempts[1]["closures"][0]["finding_id"])
+            self.assertEqual(attempts[-1]["review"], task["review"])
+
+    def test_t01_third_submission_requires_root_cause_escalation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context, repo, task, base, first_head = self.controlled_task_repository(Path(temporary))
+            first_evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-01.json",
+                candidate=first_head,
+                base=base,
+                changed_paths=["implementation.txt"],
+            )
+            with patch("taskctl.persist"):
+                command_submit(
+                    Namespace(
+                        task=task["id"],
+                        agent="alice",
+                        from_file=str(first_evidence),
+                        note="",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
+            first_packet = copy.deepcopy(task["review_control"]["current_submission"])
+            first_review = {
+                "reviewer": "reviewer-1",
+                "result": "changes-requested",
+                "reviewed_at": "2026-08-21T01:00:00+00:00",
+                "notes": "round one",
+            }
+            second_packet = copy.deepcopy(first_packet)
+            second_packet.update(id="R02", prior_attempt_id="R01")
+            second_packet["packet_sha256"] = taskctl_module.task_submission_packet_sha256(second_packet)
+            second_review = {
+                "reviewer": "reviewer-2",
+                "result": "changes-requested",
+                "reviewed_at": "2026-08-21T02:00:00+00:00",
+                "notes": "round two",
+            }
+            task["review_control"].update(
+                attempts=[
+                    {
+                        "submission": first_packet,
+                        "review": first_review,
+                        "ledger": {"path": "artifacts/evidence/review-01.json", "sha256": "1" * 64},
+                        "findings": [self.review_finding("F01")],
+                        "closures": [],
+                    },
+                    {
+                        "submission": second_packet,
+                        "review": second_review,
+                        "ledger": {"path": "artifacts/evidence/review-02.json", "sha256": "2" * 64},
+                        "findings": [self.review_finding("F02")],
+                        "closures": [
+                            {
+                                "finding_id": "F01",
+                                "disposition": "fixed",
+                                "evidence": "artifacts/evidence/round-02.json",
+                            }
+                        ],
+                    },
+                ],
+                current_submission=None,
+            )
+            task.update(
+                status="IN_PROGRESS", review=second_review, verification_state=None, lease=new_lease("alice", 8)
+            )
+
+            (repo / "root-cause-fix.txt").write_text("systemic fix\n", encoding="utf-8")
+            subprocess.run(
+                ["git", "add", "artifacts/evidence/round-01.json", "root-cause-fix.txt"],
+                cwd=repo,
+                check=True,
+            )
+            subprocess.run(["git", "commit", "-m", "root cause fix"], cwd=repo, capture_output=True, check=True)
+            third_head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+            changed = ["artifacts/evidence/round-01.json", "root-cause-fix.txt"]
+            third_evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-03.json",
+                candidate=third_head,
+                base=first_head,
+                changed_paths=changed,
+                open_finding_ids=["F02"],
+                supersedes="artifacts/evidence/round-01.json",
+            )
+            args = Namespace(
+                task=task["id"],
+                agent="alice",
+                from_file=str(third_evidence),
+                note="",
+                file=str(repo / "planning" / "backlog.yaml"),
+            )
+            with self.assertRaisesRegex(SystemExit, "rootCauseAnalysis"), patch("taskctl.persist"):
+                command_submit(args, *context)
+
+            third_evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-03.json",
+                candidate=third_head,
+                base=first_head,
+                changed_paths=changed,
+                open_finding_ids=["F02"],
+                root_cause_analysis=(
+                    "Two review rounds exposed a shared invariant gap; expand the remediation boundary."
+                ),
+                supersedes="artifacts/evidence/round-01.json",
+            )
+            args.from_file = str(third_evidence)
+            with patch("taskctl.persist"):
+                command_submit(args, *context)
+            packet = task["review_control"]["current_submission"]
+            self.assertEqual("R03", packet["id"])
+            self.assertIn("shared invariant gap", packet["root_cause_analysis"])
+
+    def test_t01_append_only_history_and_legacy_projection_compatibility(self) -> None:
+        context = self.workflow()
+        data, _capabilities, _slices, tasks, _gates = context
+        task = tasks["CAP-00.S01.T01"]
+        task["review_control"] = {
+            "version": 1,
+            "attempts": [
+                {
+                    "submission": {"id": "R01"},
+                    "review": {
+                        "reviewer": "independent-reviewer",
+                        "result": "changes-requested",
+                        "reviewed_at": "2026-08-21T01:00:00+00:00",
+                        "notes": "preserve me",
+                    },
+                    "ledger": {"path": "artifacts/evidence/review-01.json", "sha256": "1" * 64},
+                    "findings": [self.review_finding("F01")],
+                    "closures": [],
+                }
+            ],
+            "current_submission": None,
+        }
+        history = taskctl_module.task_review_history_snapshot(data)
+        task["review_control"]["attempts"][0]["review"]["notes"] = "rewritten"
+        with self.assertRaisesRegex(SystemExit, "Append-only task review history changed"):
+            save_validated("unused", data, expected_task_review_history=history)
+
+        legacy = self.workflow()
+        legacy_task = legacy[3]["CAP-00.S01.T01"]
+        self.assertNotIn("review_control", legacy_task)
+        legacy_task.update(
+            status="REVIEW",
+            owner="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            lease=new_lease("alice", 8),
+            evidence=[{"type": "criterion-manifest"}],
+            verification_state="passed",
+        )
+        with patch("taskctl.persist"):
+            command_review(
+                Namespace(
+                    task=legacy_task["id"],
+                    reviewer="legacy-reviewer",
+                    result="approved",
+                    from_file=None,
+                    lease_hours=8,
+                    note="legacy latest projection",
+                    file="unused",
+                ),
+                *legacy,
+            )
+        self.assertNotIn("review_control", legacy_task)
+        self.assertEqual("approved", legacy_task["review"]["result"])
+
+        controlled = copy.deepcopy(task)
+        controlled["review_control"]["attempts"][0]["review"]["notes"] = "preserve me"
+        controlled["review"] = {
+            "reviewer": "different-reviewer",
+            "result": "approved",
+            "reviewed_at": "2026-08-21T03:00:00+00:00",
+            "notes": "flattened history",
+        }
+        errors = taskctl_module.task_review_control_errors(controlled, repo=None)
+        self.assertIn(
+            f"{controlled['id']}: legacy latest-review projection differs from append-only history",
+            errors,
+        )
 
     def test_release_gate_rejects_incomplete_wave_and_reapproval(self) -> None:
         data, capabilities, slices, tasks, _ = self.workflow()

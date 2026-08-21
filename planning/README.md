@@ -96,6 +96,14 @@ bootstrap-resubmit` to append the prior attempt and freeze the strict-descendant
 candidate. Materialization, activation, claims, evidence, reviews, and adoption
 all revalidate the bootstrap packet and immutable task definitions.
 
+Task evidence attachment and submission are atomic: use `taskctl submit <task>
+--agent <agent> --from <manifest>`. The resulting RNN packet freezes the exact
+candidate, criteria, changed paths, verification selection, and open finding
+IDs. Independent task reviews use `taskctl review ... --from <ledger>` and append
+severity-ranked findings and explicit closures without replacing older rounds.
+Legacy task records remain readable through their latest `review` projection;
+missing historical rounds are never synthesized.
+
 ### Release-gate stop review
 
 When the global program position is a pending release gate, `taskctl next` must

@@ -22133,8 +22133,8 @@ verification_profiles:
   server: University-hosted services, identity, collaboration, licensed sources, research-production workflow, and operations.
   cloud: Tenant, residency, metering, security, research-production workload, and SaaS operations.
 control_plane:
-  revision: 2
-  minimum_tool_revision: 2
+  revision: 3
+  minimum_tool_revision: 3
   active_amendment: W1.A02
 wave_approval_bases:
 - wave_id: W1

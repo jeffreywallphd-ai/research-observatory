@@ -80,6 +80,17 @@ subsequent transition. Each attempt also freezes its submission branch: stored
 evidence is validated against that branch permanently, while the live checkout
 branch is checked only when submitting or recording the independent review.
 
+For ordinary and amendment tasks, use `taskctl submit <task> --agent <agent>
+--from <manifest>` as the atomic evidence-and-submission transition. It freezes
+an immutable RNN packet containing candidate/evidence, acceptance-criteria,
+changed-path, selected/deferred-check, rationale, and open-finding identities.
+The independent reviewer supplies one structured severity-ranked ledger through
+`taskctl review ... --from <ledger>`. Reviewed rounds and explicit finding
+closures are append-only. Remediation must replay the exact open IDs against the
+incremental evidence boundary, and the third submission with open findings must
+record root-cause escalation. Older task histories retain only their truthful
+latest-review projection; automation never invents missing rounds.
+
 ## 3. Permitted pause conditions
 
 Pause only for:

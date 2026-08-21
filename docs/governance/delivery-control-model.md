@@ -99,6 +99,15 @@ approved bootstrap, the paused Wave `amendment-hold`, its campaign state, and
 the single active-amendment marker. Any impossible cross-field combination fails
 validation.
 
+Task review control uses one atomic evidence-plus-submit transition and one
+immutable packet per RNN round. Each packet binds the candidate, evidence,
+criteria, changed paths, verification selection, and exact open-finding replay.
+An independent review appends one consolidated severity-ranked ledger; findings
+may close only through explicit later closure records, and approval is illegal
+while a blocking finding remains open. After two adverse rounds, the next
+submission must add root-cause escalation. Pre-control tasks remain valid with a
+truthful latest-review projection and no fabricated append-only history.
+
 ## Review and verification cadence
 
 - **Task:** narrow deterministic checks chosen by credible failure likelihood,

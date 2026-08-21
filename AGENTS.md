@@ -240,6 +240,17 @@ entire audit. Findings must be severity-ranked, reproducible, acceptance-bound,
 and consolidated; adjacent improvements outside the approved acceptance surface
 become backlog work unless they expose a material safety or correctness defect.
 
+New task submissions use `taskctl submit <task> --agent <agent> --from
+<manifest>` so evidence attachment and the REVIEW transition occur in one
+compare-and-swap write. The command freezes the candidate, evidence, criteria,
+changed paths, check selection, and open-finding replay as an immutable RNN
+packet. Controlled reviews use `taskctl review ... --from <ledger>` with one
+severity-ranked finding ledger. Prior rounds, findings, and closures are
+append-only; approval is denied while a blocking finding is open, and a third
+submission with open findings requires a root-cause analysis. The legacy
+`review` field remains the truthful latest-review projection for older readers;
+do not fabricate history for tasks completed before this control existed.
+
 ## Local main integration
 
 After a bounded work unit is committed and every required test passes, integrate

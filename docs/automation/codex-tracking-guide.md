@@ -50,12 +50,11 @@ python tools/taskctl.py next --profile LOC --platform windows-x64
 python tools/taskctl.py claim CAP-XX.SXX.TXX --agent <agent> --branch <branch> --base-sha <full-sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 python tools/taskctl.py checks CAP-XX.SXX.TXX
 # Commit the implementation and run the declared checks on that exact HEAD.
-python tools/taskctl.py evidence CAP-XX.SXX.TXX --agent <agent> --from artifacts/evidence/CAP-XX.SXX.TXX.json
-python tools/taskctl.py submit CAP-XX.SXX.TXX --agent <agent> --note "<summary>"
-python tools/taskctl.py review CAP-XX.SXX.TXX --reviewer <reviewer> --result approved --note "<disposition>"
+python tools/taskctl.py submit CAP-XX.SXX.TXX --agent <agent> --from artifacts/evidence/CAP-XX.SXX.TXX.json --note "<summary>"
+python tools/taskctl.py review CAP-XX.SXX.TXX --reviewer <reviewer> --result approved --from artifacts/evidence/CAP-XX.SXX.TXX.review-R01.json
 ```
 
-`block`, `renew`, `evidence`, `submit`, Wave pause/renew/checkpoint/submit, and slice
+`block`, `renew`, atomic task `submit`, Wave pause/renew/checkpoint/submit, and slice
 submit verify lease ownership. There is no campaign-override claim flag. Release
 gates cannot be approved twice, out of sequence, or while their preceding wave
 contains an incomplete task or unapproved slice. Every mutation validates the prospective ledger before an
@@ -71,8 +70,12 @@ review their own task; Wave campaign owners cannot review their own slice or Wav
 release gates remain semantically tied to a fully DONE and independently
 integrated preceding wave.
 
-Follow-up evidence must use `supersedes.path`, set `baseCommit` to that prior
-attachment's commit, and declare the complete incremental diff. Completion does
+The atomic task submit freezes the candidate, evidence, criteria, changed paths,
+check selection, and exact open-finding replay in one RNN packet. A task review
+ledger contains ordered structured findings and explicit closures; approval is
+denied while a blocking finding remains open. Follow-up evidence must use
+`supersedes.path`, set `baseCommit` to that prior attachment's commit, and
+declare the complete incremental diff. Completion does
 not excuse non-empty `unverifiedItems`. The only exception is the explicitly
 marked `pre-exact-evidence-hosted-ci-residual-v1` migration for four pinned
 CAP-00.S03 records; their paths, commits, hashes, task IDs, and exact hosted-CI

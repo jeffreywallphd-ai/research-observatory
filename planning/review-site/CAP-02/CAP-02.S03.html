@@ -178,6 +178,26 @@ python tools/verify.py --profile e2e-local
 ```
 
 </pre></article></section>
+<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Task review packets, rounds, and current projections</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks are explicitly labeled latest-review-only and never receive fabricated history.</p></section>
+
+<section class="review-toolbar" data-task-review-id="CAP-02.S03.T01" data-review-mode="latest-review-only">
+  <h3>CAP-02.S03.T01 — Implement content-addressed object storage abstraction</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-02.S03.T01" data-current-review-result="approved" data-current-reviewer="agent:curie" data-current-reviewed-at="2026-08-18T03:29:56+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:curie</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-18T03:29:56+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Final remediation independently closes all six original defects and the combined late-hardlink plus lost-COMMIT-ack reconciliation boundary.</p>
+</section>
+<section class="review-toolbar" data-task-review-id="CAP-02.S03.T02" data-review-mode="latest-review-only">
+  <h3>CAP-02.S03.T02 — Add encryption-at-rest and key-version metadata</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-02.S03.T02" data-current-review-result="approved" data-current-reviewer="t02_security_review" data-current-reviewed-at="2026-08-18T13:18:03+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>t02_security_review</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-18T13:18:03+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> APPROVED exact commit 5898fc634bcd0e6cf33915b81ea62670947f83e2 after replay of P1/P2, 40 durability boundaries, cancellation/commit-ack recovery, default executable composition, and frozen PyNaCl/CFFI/v4 packaging; final ADR-only delta replay also passed.</p>
+</section>
+<section class="review-toolbar" data-task-review-id="CAP-02.S03.T03" data-review-mode="latest-review-only">
+  <h3>CAP-02.S03.T03 — Implement storage accounting, quotas, garbage collection, and cache eviction</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-02.S03.T03" data-current-review-result="approved" data-current-reviewer="independent-agent-t03-slice-remediation" data-current-reviewed-at="2026-08-20T21:10:10+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>independent-agent-t03-slice-remediation</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-20T21:10:10+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Focused remediation APPROVED exact e2eda29: README source-fixture range now v1-v4 and matches runner/recovery/architecture; no executable or machine-contract delta; strict contracts, 107-file quality, generated views, backlog, and diff hygiene pass. Prior independent executable review and first-only performance pass retained; marginal performance remains a W1-exit replay risk.</p>
+</section>
 <details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-02.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-02 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.
 ## 0. Plan control
 | Field | Value |
