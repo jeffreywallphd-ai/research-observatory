@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ab99ff9d5499bf61a53cff5151eee0f827d23282ee72e036f66102b356272683
+source_sha256: 5371d1a26f1ca4ab6f493606299ed02910229a1e0f05a8b5bb75093ef8ad3a44
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -512,7 +512,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A02.T02 - Affected verification selection and privacy-safe review telemetry
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A02.T01`
 
@@ -532,13 +532,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Probe telemetry payloads for forbidden content and verify no backfill is invented.
 - Run focused verify/taskctl/view tests, affected quality checks, and independent control/privacy review.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A02.T02.json` at `5b5edd26519dff12aaaeef0c14ad40c8519ab355`
+
 #### Review history — W1.A02.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `32b42ba7bd1c486475a5b6a9f46ca63361090cdd8eb047db2b520570aeef434a`
+
+- Candidate / base / branch: `5b5edd26519dff12aaaeef0c14ad40c8519ab355` / `2222f4fc66d53b0f017349760a00b5fe54d4978f` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-21T02:29:05+00:00`
+- Evidence: `artifacts/evidence/W1.A02.T02.json` / `df020615af8f0b6ef35b4a54cac5c442b7277ce05bc634b318462f6b9c254ea4` / `5b5edd26519dff12aaaeef0c14ad40c8519ab355`
+- Acceptance-criteria SHA-256: `f365420cf13322c0090317ef90d96e68ca7dc5fb9046b155ccad4ac8b0a4ee68`
+- Verification-selection SHA-256: `74ad412d2abdeb6984c7870d3cac058a63df6ec041e32d7657fbb37c86fb5b38`
+- Changed paths: `docs/automation/codex-tracking-guide.md`, `docs/automation/verification-profiles.md`, `docs/governance/delivery-control-model.md`, `docs/planning-implementation-plan.md`, `packaging/build-inputs.json`, `planning/backlog.schema.json`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0001.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_taskctl_schema.py`, `tests/foundation/test_taskctl_workflow.py`, `tests/foundation/test_verify_runner.py`, `tools/taskctl.py`, `tools/verify.py`, `verification/affected-selection.json`
+- Selected checks: `.venv\Scripts\python.exe tools\verify.py --repo . --profile foundation --affected-base 2222f4fc66d53b0f017349760a00b5fe54d4978f --affected-head 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --deferred-gate W1-exit --report artifacts\tmp\W1.A02.T02-affected-foundation-final.json`, `.venv\Scripts\python.exe tools\verify.py --repo . --wave-exit W1 --selection-only --report artifacts\tmp\W1.A02.T02-wave-exit-selection.json`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .`, `.venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry`, `git diff --exit-code 2222f4fc66d53b0f017349760a00b5fe54d4978f..5b5edd26519dff12aaaeef0c14ad40c8519ab355 -- verification-profiles.json verification/baselines`, `git diff --check`
+- Deferred checks: `The complete W1 product and deployment union remains owned by W1-exit: ai, data, desktop, e2e-local, foundation, graph, security-local, and service, including security, packaging, accessibility, migration, restart, recovery, and the declared one-run performance gates. This task executed the safety-selected foundation inventory only and did not substitute it for Wave qualification.`
+- Selection rationale: T02 changes shared verification selection, evidence submission, review telemetry, their strict schema, and associated governance documentation. The credible risks are caller-controlled path laundering, incomplete or nondeterministic command partitions, unsafe fallback weakening, mutation of canonical profiles or thresholds, arbitrary command IDs, privacy leakage through reused evidence/review objects, fabricated historical durations, telemetry tamper, and replacement of the complete Wave-exit matrix by a task subset. Exact Git-derived selector tests, recursive privacy canaries, schema/semantic tamper tests, the full active foundation profile, live empty historical telemetry projection, immutable-profile diff, and governed W1-exit resolution cover those risks. The first affected run retained a build-manifest failure caused by three B00 schemas missing from packaging/build-inputs.json; the strict-descendant correction inventories only those schemas, and the complete final-candidate run passes.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks

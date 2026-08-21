@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A02.T02",
+  "commit": "5b5edd26519dff12aaaeef0c14ad40c8519ab355",
+  "baseCommit": "2222f4fc66d53b0f017349760a00b5fe54d4978f",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/automation/codex-tracking-guide.md",
+    "docs/automation/verification-profiles.md",
+    "docs/governance/delivery-control-model.md",
+    "docs/planning-implementation-plan.md",
+    "packaging/build-inputs.json",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0001.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tests/foundation/test_verify_runner.py",
+    "tools/taskctl.py",
+    "tools/verify.py",
+    "verification/affected-selection.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile foundation --affected-base 2222f4fc66d53b0f017349760a00b5fe54d4978f --affected-head 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --deferred-gate W1-exit --report artifacts\\tmp\\W1.A02.T02-affected-foundation-final.json",
+      "exitCode": 0,
+      "result": "The exact Git-derived safety-sensitive selection executed all 16 active foundation commands once on the final clean candidate and passed in 1093.384 seconds. The run included 224 foundation tests, 113-file quality, build-manifest/schema inventory, generated views, packaging smoke, UI reference/change, ADR, CI, and canonical backlog validation. Report SHA-256: 07314e42a4fe21b636bda7aa1b5a3a66c3adb5aa2fa04c0436e30b14a9c2ec5b."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --wave-exit W1 --selection-only --report artifacts\\tmp\\W1.A02.T02-wave-exit-selection.json",
+      "exitCode": 0,
+      "result": "The governed W1 exit resolver selected the deduplicated active union of ai, data, desktop, e2e-local, foundation, graph, security-local, and service: 33 active command IDs, no deferred IDs, and three truthful inactive optional commands. Disabled server/cloud profiles remained gated. Report SHA-256: 2799382251883ca6e4373be996bbeb25a6327dcc938e93aa2ddba2b5cce3d2f7."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+      "exitCode": 0,
+      "result": "The planning review site passed for 19 capabilities, 111 slices, and 145 HTML pages."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "Generated backlog views matched the authoritative backlog without changes."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved",
+      "exitCode": 0,
+      "result": "ECR-0001 remained approved, exact-commit bound, and history bound."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The canonical ledger validated with 20 capabilities, 117 slices, 358 tasks, and 12 release gates."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
+      "exitCode": 0,
+      "result": "The live deterministic telemetry projection was exactly [], proving that pre-control T01 rounds and the pending T02 submission were not backfilled or assigned invented durations."
+    },
+    {
+      "command": "git diff --exit-code 2222f4fc66d53b0f017349760a00b5fe54d4978f..5b5edd26519dff12aaaeef0c14ad40c8519ab355 -- verification-profiles.json verification/baselines",
+      "exitCode": 0,
+      "result": "The canonical profile contract and every governed baseline/threshold input are byte-unchanged across the complete task candidate."
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "The final candidate and evidence working tree passed whitespace hygiene."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Affected mode accepts only full Git commit identities, derives the complete base-to-head path set with no caller path-subset option, and rejects empty, absolute, drive-qualified, backslash, traversal, whitespace, and control-character paths.",
+        "The schema-1.1 selection record freezes exact changed paths, requested profiles, selected and deferred command IDs, matched rules, rationale codes and text, fallback, deferred owner W1-exit, inactive optionals, and the canonical inventory hash. Selection report SHA-256: 8f3163c97f694d4337f06f04eed09042f76a0a115ec3d76a28d8cfa18ee7f0c2."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Any unknown path in a mixed set and every safety-sensitive verification, evidence-control, security, migration, dependency, or threshold surface selects the complete requested active profile inventory; a mapped command outside the requested profiles fails closed.",
+        "The final exact candidate has no diff in verification-profiles.json or verification/baselines. Selector tests also deep-compare the in-memory command/profile graph before and after selection, including command arguments and optional activation behavior."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Every new controlled submission freezes non-empty privacy-safe command IDs that must resolve exactly to keys in verification-profiles.json.",
+        "Each prospective completed review stores only task/amendment/attempt IDs, submitted/reviewed timestamps and nonnegative duration, outcome, severity/blocking/total counts, canonical command IDs, and prior/replayed/closed remediation linkage; semantic validation recomputes the event exactly."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Strict schemas and recursive canary tests reject or omit reviewer identity, commit/hash/branch, evidence and user-data paths, rationale/root cause, notes, finding bodies, raw commands/arguments/output, prompts, sources, research data, secrets, and chain-of-thought from telemetry.",
+        "review-telemetry projects only stored events in deterministic task/round order, emits no generated timestamp, excludes pending submissions, and produced [] for the two historical T01 rounds rather than inventing timing data."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Ordinary full-profile mode retains its schema-1.0 behavior. Affected mode is explicit and cannot be combined with Wave-exit mode; W1 Wave exit uses the fixed approved profile union and cannot be narrowed with --profile.",
+        "The W1 exit selection proof resolves 33 active canonical commands with no deferred IDs while leaving inactive optional ai, graph, and e2e-local commands truthful and server/cloud release-gated. Actual complete product/deployment execution remains owned by W1 exit and was not replaced by this task-level foundation run."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "T02 changes shared verification selection, evidence submission, review telemetry, their strict schema, and associated governance documentation. The credible risks are caller-controlled path laundering, incomplete or nondeterministic command partitions, unsafe fallback weakening, mutation of canonical profiles or thresholds, arbitrary command IDs, privacy leakage through reused evidence/review objects, fabricated historical durations, telemetry tamper, and replacement of the complete Wave-exit matrix by a task subset. Exact Git-derived selector tests, recursive privacy canaries, schema/semantic tamper tests, the full active foundation profile, live empty historical telemetry projection, immutable-profile diff, and governed W1-exit resolution cover those risks. The first affected run retained a build-manifest failure caused by three B00 schemas missing from packaging/build-inputs.json; the strict-descendant correction inventories only those schemas, and the complete final-candidate run passes.",
+    "changedPaths": [
+      "docs/automation/codex-tracking-guide.md",
+      "docs/automation/verification-profiles.md",
+      "docs/governance/delivery-control-model.md",
+      "docs/planning-implementation-plan.md",
+      "packaging/build-inputs.json",
+      "planning/backlog.schema.json",
+      "planning/backlog.yaml",
+      "planning/review-site/enablers/ECR-0001.html",
+      "planning/review-site/manifest.json",
+      "planning/status-summary.md",
+      "tests/foundation/test_taskctl_schema.py",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tests/foundation/test_verify_runner.py",
+      "tools/taskctl.py",
+      "tools/verify.py",
+      "verification/affected-selection.json"
+    ],
+    "requestedProfiles": [
+      "foundation"
+    ],
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:runtime",
+      "foundation:architecture",
+      "foundation:agent-protocol",
+      "foundation:backlog-views",
+      "foundation:fixture-corpus",
+      "foundation:benchmark-registry",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:adr",
+      "foundation:ci",
+      "foundation:quality",
+      "foundation:packaging-smoke",
+      "foundation:unit",
+      "foundation:backlog"
+    ],
+    "deferredCommandIds": [],
+    "matchedRuleIds": [
+      "verification-control",
+      "evidence-and-delivery-control",
+      "python-quality",
+      "foundation-governance-and-tests"
+    ],
+    "rationaleCodes": [
+      "verification-control-broad",
+      "evidence-control-broad",
+      "python-static-quality",
+      "foundation-governance",
+      "unknown-path-broad"
+    ],
+    "fallback": "safety-sensitive",
+    "unknownPaths": [
+      "packaging/build-inputs.json"
+    ],
+    "deferredOwner": "W1-exit",
+    "canonicalInventorySha256": "55c7fd6b048b3e95b4d1bd190a432c055eb12a45bb2f130377118366355e1d83",
+    "deferred": [
+      "The complete W1 product and deployment union remains owned by W1-exit: ai, data, desktop, e2e-local, foundation, graph, security-local, and service, including security, packaging, accessibility, migration, restart, recovery, and the declared one-run performance gates. This task executed the safety-selected foundation inventory only and did not substitute it for Wave qualification."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-privacy-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate 5b5edd26519dff12aaaeef0c14ad40c8519ab355 and this frozen R01 manifest. Confirm exact Git-derived paths and complete partition/fallback behavior; canonical profile, argv, activation, baseline, and threshold immutability; strict prospective telemetry allowlist with no backfill; exact finding-count/remediation projection; and preservation of the governed complete W1 exit union. Retain the pre-fix build-manifest failure as diagnostic history and verify the final one-file schema-inventory correction is minimal."
+  }
+}
