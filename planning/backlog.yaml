@@ -22228,7 +22228,7 @@ wave_amendments:
         the hashed B00, T01, and T02 scope only.
   bootstrap:
     id: W1.A02.B00
-    status: REVIEW
+    status: CHANGES_REQUESTED
     implementer: codex
     implementation_commit: badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c
     scope_addenda:
@@ -22242,10 +22242,11 @@ wave_amendments:
       commit: badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c
       recorded_at: '2026-08-21T00:07:19+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: b00-independent-reviewer
+      result: changes-requested
+      reviewed_at: '2026-08-21T00:21:35+00:00'
+      notes: 'B00-R04 HIGH: historical bootstrap evidence validation is incorrectly coupled to the live checkout branch. B00-R05
+        MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen state 84107b8.'
     attempts:
     - id: R01
       implementer: codex
