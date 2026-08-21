@@ -22333,18 +22333,15 @@ wave_amendments:
     - Prove existing task histories validate without fabricated attempts and legacy latest-review projection remains supported.
     - Run focused taskctl schema/workflow/view tests, affected quality checks, and independent control review.
     packet_task_sha256: ad8bca53260fbd8d6f458b128be249d7b5ab2ec066b21a723b989302e3e98b80
-    status: REVIEW
+    status: DONE
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 19b0a519caccfec93158e2efbfb458c9da316c77
     worktree: C:/ai-projects/research-observatory
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-21T01:21:15+00:00'
-      expires_at: '2026-08-21T09:21:15+00:00'
+    lease: null
     started_at: '2026-08-21T00:44:18+00:00'
-    updated_at: '2026-08-21T01:30:59+00:00'
-    completed_at: null
+    updated_at: '2026-08-21T01:37:41+00:00'
+    completed_at: '2026-08-21T01:37:41+00:00'
     blocker: null
     implementation_notes: 'Frozen R01 packet for independent control review
 
@@ -22363,10 +22360,15 @@ wave_amendments:
     verification_state: passed
     review: &id086
       reviewer: b00-independent-reviewer
-      result: changes-requested
-      reviewed_at: '2026-08-21T01:21:15+00:00'
-      notes: Exact scope, evidence identity, atomic/CAS behavior, append-only history, blocker closure, legacy projection,
-        and generated-history checks were reviewed. Two acceptance-bound defects remain.
+      result: approved
+      reviewed_at: '2026-08-21T01:37:41+00:00'
+      notes: 'APPROVED at candidate 4f256763401772298bf75c634f2c7b2355882f10 and frozen submission state d01183e343affa5cf37d1b747643d2e031f1a1eb.
+        Evidence SHA-256 51bcf3cdab50063bd1d4c7ad1eb32f19f97934185e05dfb0f75d9c227d792540 and the exact 11-file incremental
+        scope are truthful. Immediate-predecessor path/SHA/commit/base binding, non-descendant and forged-history denial,
+        R03 expanded-risk naming, immutable R01 ledger/history, and active/null rendering hygiene were independently verified.
+        Replays passed: 64/64 controller/schema tests, 25/25 planning/rendering tests, 113-file quality checks, canonical
+        backlog validation, all 145 review-page checks, generated-view checks, ECR-0001 authority validation, and Git whitespace
+        checks. No unchanged surface was reopened.'
     review_control:
       version: 1
       attempts:
@@ -22540,7 +22542,12 @@ wave_amendments:
           open_finding_ids: []
           root_cause_analysis: null
           packet_sha256: b06540eed030b93b8ff45e0efc26224483eeaf0882360a90ef6563c550fd2c25
-        review: *id086
+        review:
+          reviewer: b00-independent-reviewer
+          result: changes-requested
+          reviewed_at: '2026-08-21T01:21:15+00:00'
+          notes: Exact scope, evidence identity, atomic/CAS behavior, append-only history, blocker closure, legacy projection,
+            and generated-history checks were reviewed. Two acceptance-bound defects remain.
         ledger:
           path: artifacts/evidence/W1.A02.T01.review-R01.json
           sha256: 746a3787866d4da218d4e5ed22cf50d704fbc582cf2d35696fa92bf05439014e
@@ -22571,57 +22578,71 @@ wave_amendments:
             the review site, and add coverage for both an active current submission and completed history with no current
             submission. Require generated pages to contain no trailing whitespace and rerun git diff --cached --check successfully.
         closures: []
-      current_submission:
-        id: R02
-        submitted_by: codex
-        submitted_at: '2026-08-21T01:30:59+00:00'
-        candidate_commit: 4f256763401772298bf75c634f2c7b2355882f10
-        base_commit: a6b9a32d16592793abc11595c8340e20a0f79c0d
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W1.A02.T01.remediation-01.json
-          sha256: 51bcf3cdab50063bd1d4c7ad1eb32f19f97934185e05dfb0f75d9c227d792540
-          commit: 4f256763401772298bf75c634f2c7b2355882f10
-          recorded_at: '2026-08-21T01:30:59+00:00'
-        acceptance_criteria_sha256: e5c5b509f7df1f4393d360bbba8257190b846bd67a5ccbd921d2151970cffed1
-        changed_paths:
-        - artifacts/evidence/W1.A02.T01.json
-        - artifacts/evidence/W1.A02.T01.review-R01.json
-        - docs/planning-implementation-plan.md
-        - planning/backlog.yaml
-        - planning/review-site/enablers/ECR-0001.html
-        - planning/review-site/manifest.json
-        - planning/status-summary.md
-        - tests/foundation/test_plan_review_amendments.py
-        - tests/foundation/test_taskctl_workflow.py
-        - tools/plan_review_site.py
-        - tools/taskctl.py
-        selected_checks:
-        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow
-        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views
-          tests.foundation.test_planctl_wave_approval tests.foundation.test_planctl_amendments
-        - .venv\Scripts\python.exe tools/quality_check.py --repo .
-        - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate
-        - .venv\Scripts\python.exe tools/plan_review_check.py --repo .
-        - .venv\Scripts\python.exe tools/backlog_views.py --repo . --check
-        - .venv\Scripts\python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved
-        - git diff HEAD --check
-        deferred_checks:
-        - T02 still owns deterministic affected-check selection and privacy-safe telemetry. Complete product/deployment qualification
-          remains due once at W1 exit; no product, dependency, profile, threshold, or runtime path changed in this remediation.
-        selection_rationale: This R02 remediation is bounded to W1.A02.T01-R01-F01 and W1.A02.T01-R01-F02. The incremental
-          risks are evidence-lineage substitution, failure to enforce an expanded R03 risk boundary, semantic replay accepting
-          forged stored history, optional HTML interpolation creating whitespace, and omission or flattening of the adverse
-          R01 projection. Direct multi-round controller adversarial tests, active/null renderer tests, all governed static
-          checks, live backlog/ECR validation, exact generated-view checks, and full diff hygiene cover those risks.
-        selection_sha256: 75f5308ae871ff2bb0bddfd9138f0c9005582b547eb495f50dedfa8d4aec1de6
-        prior_attempt_id: R01
-        open_finding_ids:
-        - W1.A02.T01-R01-F01
-        - W1.A02.T01-R01-F02
-        root_cause_analysis: null
-        packet_sha256: 8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd
+      - submission:
+          id: R02
+          submitted_by: codex
+          submitted_at: '2026-08-21T01:30:59+00:00'
+          candidate_commit: 4f256763401772298bf75c634f2c7b2355882f10
+          base_commit: a6b9a32d16592793abc11595c8340e20a0f79c0d
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W1.A02.T01.remediation-01.json
+            sha256: 51bcf3cdab50063bd1d4c7ad1eb32f19f97934185e05dfb0f75d9c227d792540
+            commit: 4f256763401772298bf75c634f2c7b2355882f10
+            recorded_at: '2026-08-21T01:30:59+00:00'
+          acceptance_criteria_sha256: e5c5b509f7df1f4393d360bbba8257190b846bd67a5ccbd921d2151970cffed1
+          changed_paths:
+          - artifacts/evidence/W1.A02.T01.json
+          - artifacts/evidence/W1.A02.T01.review-R01.json
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/enablers/ECR-0001.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - tests/foundation/test_plan_review_amendments.py
+          - tests/foundation/test_taskctl_workflow.py
+          - tools/plan_review_site.py
+          - tools/taskctl.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow
+          - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views
+            tests.foundation.test_planctl_wave_approval tests.foundation.test_planctl_amendments
+          - .venv\Scripts\python.exe tools/quality_check.py --repo .
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate
+          - .venv\Scripts\python.exe tools/plan_review_check.py --repo .
+          - .venv\Scripts\python.exe tools/backlog_views.py --repo . --check
+          - .venv\Scripts\python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved
+          - git diff HEAD --check
+          deferred_checks:
+          - T02 still owns deterministic affected-check selection and privacy-safe telemetry. Complete product/deployment
+            qualification remains due once at W1 exit; no product, dependency, profile, threshold, or runtime path changed
+            in this remediation.
+          selection_rationale: This R02 remediation is bounded to W1.A02.T01-R01-F01 and W1.A02.T01-R01-F02. The incremental
+            risks are evidence-lineage substitution, failure to enforce an expanded R03 risk boundary, semantic replay accepting
+            forged stored history, optional HTML interpolation creating whitespace, and omission or flattening of the adverse
+            R01 projection. Direct multi-round controller adversarial tests, active/null renderer tests, all governed static
+            checks, live backlog/ECR validation, exact generated-view checks, and full diff hygiene cover those risks.
+          selection_sha256: 75f5308ae871ff2bb0bddfd9138f0c9005582b547eb495f50dedfa8d4aec1de6
+          prior_attempt_id: R01
+          open_finding_ids:
+          - W1.A02.T01-R01-F01
+          - W1.A02.T01-R01-F02
+          root_cause_analysis: null
+          packet_sha256: 8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd
+        review: *id086
+        ledger:
+          path: artifacts/evidence/W1.A02.T01.review-R02.json
+          sha256: f8913f680808ba3119935de66d170305a94e61b7818941154cbbc654745e5ac5
+        findings: []
+        closures:
+        - finding_id: W1.A02.T01-R01-F01
+          disposition: fixed
+          evidence: artifacts/evidence/W1.A02.T01.remediation-01.json
+        - finding_id: W1.A02.T01-R01-F02
+          disposition: fixed
+          evidence: artifacts/evidence/W1.A02.T01.remediation-01.json
+      current_submission: null
   - id: W1.A02.T02
     amendment_id: W1.A02
     title: Affected verification selection and privacy-safe review telemetry
@@ -22644,14 +22665,14 @@ wave_amendments:
     - Probe telemetry payloads for forbidden content and verify no backfill is invented.
     - Run focused verify/taskctl/view tests, affected quality checks, and independent control/privacy review.
     packet_task_sha256: 56a091f6bd83572a360975e382fafb4ba59dfb9bf73df254bc8f7c6e7c000db1
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-08-21T01:37:41+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
