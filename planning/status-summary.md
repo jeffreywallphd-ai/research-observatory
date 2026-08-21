@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: e689481dfd296ce2c242bf89e0d86a317763304e9cbf96175f75c9c7e1de5486
+source_sha256: 5fb70fa3ad171fe7183645ed62337fce5a27a7e8257a9f149399de33f271bede
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -79,6 +79,55 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` | - | - | 0 |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` | `NONE` | `NONE` | 0 |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ACTIVE` | `APPROVED` | `ACTIVE` | 2 |
+
+## Task review history projections
+
+Append-only rounds remain distinct from the current latest-review projection. Legacy records are labeled latest-review-only and receive no synthesized rounds.
+
+| Task | Mode | Completed rounds | Current submission | Latest projection | Open findings |
+|---|---|---:|---|---|---|
+| `CAP-00.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S01.T02` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S01.T03` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S02.T01` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S02.T02` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S02.T03` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S03.T01` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S03.T02` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S03.T03` | `legacy latest-review-only` | 0 | `-` | approved / codex-security-review | - |
+| `CAP-00.S04.T01` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S04.T02` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S04.T03` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S05.T01` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S05.T02` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S05.T03` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S06.T01` | `legacy latest-review-only` | 0 | `-` | approved / codex-review | - |
+| `CAP-00.S06.T02` | `legacy latest-review-only` | 0 | `-` | approved / agent:descartes | - |
+| `CAP-00.S06.T03` | `legacy latest-review-only` | 0 | `-` | approved / agent:descartes | - |
+| `CAP-00.S06.T04` | `legacy latest-review-only` | 0 | `-` | approved / agent:descartes | - |
+| `CAP-01.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:descartes | - |
+| `CAP-01.S01.T02` | `legacy latest-review-only` | 0 | `-` | approved / agent:maxwell | - |
+| `CAP-01.S01.T03` | `legacy latest-review-only` | 0 | `-` | approved / agent:maxwell | - |
+| `CAP-01.S02.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:maxwell | - |
+| `CAP-01.S02.T02` | `legacy latest-review-only` | 0 | `-` | approved / agent:maxwell | - |
+| `CAP-01.S02.T03` | `legacy latest-review-only` | 0 | `-` | approved / agent:maxwell | - |
+| `CAP-01.S03.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:maxwell | - |
+| `CAP-01.S03.T02` | `legacy latest-review-only` | 0 | `-` | approved / agent:maxwell | - |
+| `CAP-01.S03.T03` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-01.S04.T01` | `legacy latest-review-only` | 0 | `-` | approved / curie | - |
+| `CAP-01.S04.T02` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-01.S04.T03` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-02.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-02.S01.T02` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-02.S01.T03` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-02.S02.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-02.S02.T02` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-02.S02.T03` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-02.S03.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
+| `CAP-02.S03.T02` | `legacy latest-review-only` | 0 | `-` | approved / t02_security_review | - |
+| `CAP-02.S03.T03` | `legacy latest-review-only` | 0 | `-` | approved / independent-agent-t03-slice-remediation | - |
+| `CAP-02.S04.T01` | `legacy latest-review-only` | 0 | `-` | approved / cap02_s04_t01_security_review | - |
+| `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |

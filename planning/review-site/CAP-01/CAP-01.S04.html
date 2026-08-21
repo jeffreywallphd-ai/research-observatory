@@ -179,6 +179,26 @@ python tools/verify.py --profile security-local
 ```
 
 </pre></article></section>
+<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Task review packets, rounds, and current projections</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks are explicitly labeled latest-review-only and never receive fabricated history.</p></section>
+
+<section class="review-toolbar" data-task-review-id="CAP-01.S04.T01" data-review-mode="latest-review-only">
+  <h3>CAP-01.S04.T01 — Implement loopback authentication and endpoint binding controls</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-01.S04.T01" data-current-review-result="approved" data-current-reviewer="curie" data-current-reviewed-at="2026-08-12T15:09:52+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>curie</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-12T15:09:52+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Independent remediation security review verified raw-token absence across 278 retained objects, clearing of valid and five invalid startup records, digest-only middleware retention, exact canonical frozen artifact identity, all focused auth/performance checks, and full native lifecycle cleanup with no residue.</p>
+</section>
+<section class="review-toolbar" data-task-review-id="CAP-01.S04.T02" data-review-mode="latest-review-only">
+  <h3>CAP-01.S04.T02 — Generate and consume versioned API contracts</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-01.S04.T02" data-current-review-result="approved" data-current-reviewer="agent:curie" data-current-reviewed-at="2026-08-12T16:03:09+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:curie</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-12T16:03:09+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Remediation approved: exact command fingerprints govern idempotent replay; JSON/SSE clients reject unexpected status/media types; native incompatibility reaches the existing functional recovery projection. Exact evidence, package, lifecycle, and clean state verified without full profiles.</p>
+</section>
+<section class="review-toolbar" data-task-review-id="CAP-01.S04.T03" data-review-mode="latest-review-only">
+  <h3>CAP-01.S04.T03 — Build desktop diagnostics and support-bundle collection</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-01.S04.T03" data-current-review-result="approved" data-current-reviewer="agent:curie" data-current-reviewed-at="2026-08-13T20:56:57+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:curie</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-13T20:56:57+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Focused re-review verified exact protected two-file hardening after the planning-only REVIEW/CHANGES_REQUESTED transition; immutable 1cd9dee/quality-scope/evidence/approval attestation and hostile denials; cumulative UI gate; 16 gate tests; pinned packages/contracts 6/6; taskctl/views and clean state.</p>
+</section>
 <details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-01.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-01 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.
 ## 0. Plan control
 | Field | Value |

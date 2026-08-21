@@ -176,6 +176,26 @@ python tools/verify.py --profile e2e-local
 ```
 
 </pre></article></section>
+<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Task review packets, rounds, and current projections</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks are explicitly labeled latest-review-only and never receive fabricated history.</p></section>
+
+<section class="review-toolbar" data-task-review-id="CAP-02.S01.T01" data-review-mode="latest-review-only">
+  <h3>CAP-02.S01.T01 — Define the local project package and directory layout</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-02.S01.T01" data-current-review-result="approved" data-current-reviewer="agent:curie" data-current-reviewed-at="2026-08-14T02:12:59+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:curie</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-14T02:12:59+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Final focused re-review approved: unsafe semantic-version components reject consistently in portable and TypeScript paths; canonical and maximum-safe ascending ranges pass; reversed ranges reject; evidence, exact scope, ancestry, focused tests, ADR, taskctl, views, and cleanliness pass.</p>
+</section>
+<section class="review-toolbar" data-task-review-id="CAP-02.S01.T02" data-review-mode="latest-review-only">
+  <h3>CAP-02.S01.T02 — Implement create, open, close, archive, and delete workflows</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-02.S01.T02" data-current-review-result="approved" data-current-reviewer="agent:curie" data-current-reviewed-at="2026-08-14T11:06:18+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:curie</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-14T11:06:18+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Remediation approved: cumulative UI gate and hostile provenance controls pass; audit hardlinks cannot alter outside bytes; failed open/delete audit restores exact state; held Windows roots deny substitution/device/install paths. Exact evidence/scope and 43 focused tests verified.</p>
+</section>
+<section class="review-toolbar" data-task-review-id="CAP-02.S01.T03" data-review-mode="latest-review-only">
+  <h3>CAP-02.S01.T03 — Add project compatibility and safe-open checks</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-02.S01.T03" data-current-review-result="approved" data-current-reviewer="agent:curie" data-current-reviewed-at="2026-08-14T11:38:34+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:curie</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-14T11:38:34+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Exact recovery mappings, deletion identity, and archived-incompatible mutation suppression independently verified. Focused Core/client/component/compiled-product checks, evidence, scope, ancestry, UI lineage, and cleanliness pass.</p>
+</section>
 <details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-02.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-02 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.
 ## 0. Plan control
 | Field | Value |

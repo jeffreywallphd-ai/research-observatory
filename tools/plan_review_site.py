@@ -107,6 +107,101 @@ def status_stack(decision_status: str | None, execution_status: str) -> str:
     )
 
 
+def task_review_projection(task: dict[str, Any]) -> dict[str, Any]:
+    control = task.get("review_control")
+    return {
+        "task_id": task.get("id"),
+        "title": task.get("title"),
+        "status": task.get("status"),
+        "mode": "append-only" if isinstance(control, dict) else "latest-review-only",
+        "latest_review": task.get("review") or {},
+        "review_control": control if isinstance(control, dict) else None,
+    }
+
+
+def _review_values(values: list[Any] | None) -> str:
+    if not values:
+        return "None"
+    return ", ".join(f"<code>{esc(value)}</code>" for value in values)
+
+
+def _submission_packet_html(task_id: str, packet: dict[str, Any], *, current: bool) -> str:
+    evidence = packet.get("evidence_reference") or {}
+    marker = "data-current-submission" if current else "data-review-attempt"
+    identity = f"{task_id}:{packet.get('id')}"
+    heading = "Current immutable submission awaiting review" if current else "Immutable submission packet"
+    return f"""
+<section class="plan-details" {marker}="{esc(identity)}" data-packet-sha256="{esc(packet.get("packet_sha256"))}">
+  <h4>{esc(heading)} <code>{esc(packet.get("id"))}</code></h4>
+  <dl class="summary-grid"><div><dt>Packet SHA-256</dt><dd><code>{esc(packet.get("packet_sha256"))}</code></dd></div><div><dt>Candidate / base</dt><dd><code>{esc(packet.get("candidate_commit"))}</code> / <code>{esc(packet.get("base_commit"))}</code></dd></div><div><dt>Submitted</dt><dd>{esc(packet.get("submitted_by"))} at <code>{esc(packet.get("submitted_at"))}</code></dd></div><div><dt>Branch</dt><dd><code>{esc(packet.get("branch"))}</code></dd></div></dl>
+  <p><strong>Evidence:</strong> <code>{esc(evidence.get("path"))}</code> · SHA-256 <code>{esc(evidence.get("sha256"))}</code> · commit <code>{esc(evidence.get("commit"))}</code></p>
+  <p><strong>Frozen criteria / selection:</strong> <code>{esc(packet.get("acceptance_criteria_sha256"))}</code> / <code>{esc(packet.get("selection_sha256"))}</code></p>
+  <p><strong>Changed paths:</strong> {_review_values(packet.get("changed_paths"))}</p>
+  <p><strong>Selected checks:</strong> {_review_values(packet.get("selected_checks"))}</p>
+  <p><strong>Deferred checks:</strong> {_review_values(packet.get("deferred_checks"))}</p>
+  <p><strong>Selection rationale:</strong> {esc(packet.get("selection_rationale"))}</p>
+  <p><strong>Prior round / replayed open findings:</strong> <code>{esc(packet.get("prior_attempt_id") or "None")}</code> / {_review_values(packet.get("open_finding_ids"))}</p>
+  <p><strong>Root-cause escalation:</strong> {esc(packet.get("root_cause_analysis") or "Not required")}</p>
+</section>"""
+
+
+def task_review_history_html(task: dict[str, Any]) -> str:
+    task_id = str(task.get("id") or "unknown-task")
+    review = task.get("review") or {}
+    control = task.get("review_control")
+    if not isinstance(control, dict):
+        return f"""
+<section class="review-toolbar" data-task-review-id="{esc(task_id)}" data-review-mode="latest-review-only">
+  <h3>{esc(task_id)} — {esc(task.get("title"))}</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="{esc(task_id)}" data-current-review-result="{esc(review.get("result") or "not-reviewed")}" data-current-reviewer="{esc(review.get("reviewer") or "none")}" data-current-reviewed-at="{esc(review.get("reviewed_at") or "none")}"><div><dt>Task status</dt><dd>{esc(task.get("status"))}</dd></div><div><dt>Latest result</dt><dd>{esc(review.get("result") or "not reviewed")}</dd></div><div><dt>Reviewer</dt><dd>{esc(review.get("reviewer") or "none")}</dd></div><div><dt>Reviewed at</dt><dd><code>{esc(review.get("reviewed_at") or "none")}</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> {esc(review.get("notes") or "None")}</p>
+</section>"""
+
+    attempts = control.get("attempts") or []
+    open_findings: dict[str, dict[str, Any]] = {}
+    rendered_attempts: list[str] = []
+    for attempt in attempts:
+        packet = attempt.get("submission") or {}
+        attempt_id = str(packet.get("id") or "unknown-round")
+        attempt_review = attempt.get("review") or {}
+        ledger = attempt.get("ledger") or {}
+        closures = attempt.get("closures") or []
+        findings = attempt.get("findings") or []
+        for closure in closures:
+            open_findings.pop(str(closure.get("finding_id")), None)
+        for finding in findings:
+            open_findings[str(finding.get("id"))] = finding
+        finding_rows = "".join(
+            f'<li data-review-finding="{esc(task_id)}:{esc(attempt_id)}:{esc(finding.get("id"))}"><strong>{esc(finding.get("id"))} · {esc(finding.get("severity"))} · criterion {esc(finding.get("criterion_index"))}</strong> — {esc(finding.get("title"))}<br><small>Reproduce: {esc(finding.get("reproduction"))}<br>Required remediation: {esc(finding.get("required_remediation"))}<br>Blocking: {esc(finding.get("blocking"))}</small></li>'
+            for finding in findings
+        )
+        closure_rows = "".join(
+            f'<li data-review-closure="{esc(task_id)}:{esc(attempt_id)}:{esc(closure.get("finding_id"))}"><strong>{esc(closure.get("finding_id"))} · {esc(closure.get("disposition"))}</strong> — {esc(closure.get("evidence"))}</li>'
+            for closure in closures
+        )
+        rendered_attempts.append(
+            f"""
+<article class="review-toolbar" data-review-round="{esc(task_id)}:{esc(attempt_id)}">
+  <h3>Review round {esc(attempt_id)}</h3>
+  {_submission_packet_html(task_id, packet, current=False)}
+  <dl class="summary-grid"><div><dt>Disposition</dt><dd>{esc(attempt_review.get("result"))}</dd></div><div><dt>Reviewer</dt><dd>{esc(attempt_review.get("reviewer"))}</dd></div><div><dt>Reviewed at</dt><dd><code>{esc(attempt_review.get("reviewed_at"))}</code></dd></div><div data-review-ledger="{esc(task_id)}:{esc(attempt_id)}" data-ledger-sha256="{esc(ledger.get("sha256"))}"><dt>Immutable ledger</dt><dd><code>{esc(ledger.get("path"))}</code><br><code>{esc(ledger.get("sha256"))}</code></dd></div></dl>
+  <p><strong>Review notes:</strong> {esc(attempt_review.get("notes") or "None")}</p>
+  <h4>Findings opened in this round</h4><ul class="gate-criteria">{finding_rows or "<li>None</li>"}</ul>
+  <h4>Prior findings closed in this round</h4><ul class="gate-criteria">{closure_rows or "<li>None</li>"}</ul>
+</article>"""
+        )
+    current = control.get("current_submission")
+    current_html = _submission_packet_html(task_id, current, current=True) if isinstance(current, dict) else ""
+    return f"""
+<section data-task-review-id="{esc(task_id)}" data-review-mode="append-only">
+  <div class="section-heading"><span class="eyebrow">Immutable task review history</span><h3>{esc(task_id)} — {esc(task.get("title"))}</h3><p>Completed rounds remain append-only. The latest legacy review object below is a labeled current projection, not a replacement for this history.</p></div>
+  {"".join(rendered_attempts) or "<p>No completed review round is recorded.</p>"}
+  {current_html}
+  <section class="review-toolbar" data-current-review-projection="{esc(task_id)}" data-current-review-result="{esc(review.get("result") or "not-reviewed")}" data-current-reviewer="{esc(review.get("reviewer") or "none")}" data-current-reviewed-at="{esc(review.get("reviewed_at") or "none")}"><h4>Current latest-review projection</h4><dl class="summary-grid"><div><dt>Task status</dt><dd>{esc(task.get("status"))}</dd></div><div><dt>Latest result</dt><dd>{esc(review.get("result") or "not reviewed")}</dd></div><div><dt>Reviewer</dt><dd>{esc(review.get("reviewer") or "none")}</dd></div><div><dt>Reviewed at</dt><dd><code>{esc(review.get("reviewed_at") or "none")}</code></dd></div></dl><p><strong>Latest notes:</strong> {esc(review.get("notes") or "None")}</p><p><strong>Currently open findings:</strong> {_review_values(sorted(open_findings))}</p></section>
+</section>"""
+
+
 def relative_assets(depth: int) -> str:
     return "../" * depth + "assets"
 
@@ -438,6 +533,7 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
                 "scope_addenda": scope_addenda,
                 "authorized_task_ids": packet.get("authorizedTaskIds") or [],
                 "task_inventory": packet.get("taskInventory") or [],
+                "task_reviews": [task_review_projection(task) for task in (amendment or {}).get("tasks", [])],
                 "acceptance_criteria": packet.get("acceptanceCriteria") or [],
                 "rollback": packet.get("rollback") or [],
                 "lifecycle_status": lifecycle_status or "NOT_MATERIALIZED",
@@ -679,6 +775,9 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             f"<small>{esc(task.get('objective'))}</small></span>{status_badge('authorized')}</li>"
             for task in record["task_inventory"]
         )
+        task_review_rows = "".join(
+            task_review_history_html(task) for task in (record.get("amendment") or {}).get("tasks", [])
+        )
         criteria = "".join(f"<li>{esc(item)}</li>" for item in record["acceptance_criteria"])
         rollback = "".join(f"<li>{esc(item)}</li>" for item in record["rollback"])
         addendum_rows = "".join(
@@ -735,6 +834,8 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
   <h2>Authorized bounded inventory</h2><ul class="wave-slice-list">{task_rows}</ul>
   <h3>Exit criteria</h3><ul class="gate-criteria">{criteria}</ul>
 </section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The authorized packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+{task_review_rows or "<p>No amendment task has been materialized.</p>"}
 <section class="callout callout-warning">
   <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>Continue the approved amendment through independently approved bootstrap, materialization, both DONE and independently approved tasks, amendment-exit control/security review, and the W1 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
 </section>
@@ -785,6 +886,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     "bootstrap_attempts",
                     "authorized_task_ids",
                     "scope_addenda",
+                    "task_reviews",
                     "page",
                 )
             }
@@ -1053,6 +1155,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     "page_name": page_name,
                     "sha256": sha256(path),
                     "delivery_status": delivery_status(backlog_slice.get("tasks", []), backlog_slice.get("completion")),
+                    "tasks": backlog_slice.get("tasks", []),
                 }
             )
 
@@ -1150,6 +1253,7 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
             section9 = extract_section(sl["body"], 9)
             prev_link = slices[index - 1]["page_name"] if index > 0 else "index.html"
             next_link = slices[index + 1]["page_name"] if index + 1 < len(slices) else "index.html"
+            task_review_rows = "".join(task_review_history_html(task) for task in sl["tasks"])
             slice_main = f"""
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">{esc(sl["slice_id"])} · ordered slice {index + 1} of {len(slices)}</span><h1>{esc(sl["alias"])}</h1><p>{esc(sl["title"])}</p></div>{status_stack(smeta.get("status"), sl["delivery_status"])}</div>
@@ -1162,6 +1266,8 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
 </section>
 <section class="decision-summary"><div class="section-heading"><span class="eyebrow">Slice decisions</span><h2>Recommended implementation selections</h2></div><article class="plan-article compact-article">{render_markdown(section4)}</article></section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Implementation sequence</span><h2>Authoritative task plan</h2></div><article class="plan-article compact-article">{render_markdown(section9)}</article></section>
+<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Task review packets, rounds, and current projections</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks are explicitly labeled latest-review-only and never receive fabricated history.</p></section>
+{task_review_rows or "<p>No authoritative task records are present for this slice.</p>"}
 <details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article">{render_markdown(strip_first_h1(sl["body"]))}</article></details>
 <nav class="page-turn" aria-label="Slice navigation"><a class="button button-quiet" href="{esc(prev_link)}">Previous</a><a class="button button-primary" href="{esc(next_link)}">Next</a></nav>
 """
@@ -1207,6 +1313,7 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
                         "plan_sha256": sl["sha256"],
                         "page": f"{cid}/{sl['page_name']}",
                         "task_count": len(sl["meta"].get("task_ids", [])),
+                        "task_reviews": [task_review_projection(task) for task in sl["tasks"]],
                     }
                     for sl in slices
                 ],

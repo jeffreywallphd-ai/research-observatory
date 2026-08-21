@@ -44,7 +44,7 @@ PLATFORMS = {
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
 CAMPAIGN_SCOPES = {"wave", "amendment-hold", "capability-wave"}  # capability-wave is historical only.
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
-CONTROL_TOOL_REVISION = 2
+CONTROL_TOOL_REVISION = 3
 AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
 BOOTSTRAP_REVIEW_RESULTS = {
     "APPROVED": "approved",
@@ -61,6 +61,7 @@ AMENDMENT_TASK_IMMUTABLE_FIELDS = (
     "verification_commands",
     "packet_task_sha256",
 )
+REVIEW_SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 LEGACY_UNVERIFIED_POLICY = "pre-exact-evidence-hosted-ci-residual-v1"
 LEGACY_UNVERIFIED_REFERENCES: dict[str, dict[str, Any]] = {
     "artifacts/evidence/CAP-00.S03.T02.json": {
@@ -166,6 +167,23 @@ def amendment_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...
         snapshot[f"{amendment_id}:bootstrap"] = tuple(
             json.dumps(attempt, sort_keys=True, separators=(",", ":"))
             for attempt in (amendment.get("bootstrap") or {}).get("attempts", [])
+        )
+    return snapshot
+
+
+def task_review_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
+    snapshot: dict[str, tuple[str, ...]] = {}
+    task_documents = [
+        task
+        for capability in data.get("capabilities", [])
+        for slice_ in capability.get("slices", [])
+        for task in slice_.get("tasks", [])
+    ]
+    task_documents.extend(task for amendment in data.get("wave_amendments", []) for task in amendment.get("tasks", []))
+    for task in task_documents:
+        control = task.get("review_control") or {}
+        snapshot[str(task["id"])] = tuple(
+            json.dumps(attempt, sort_keys=True, separators=(",", ":")) for attempt in control.get("attempts", [])
         )
     return snapshot
 
@@ -353,6 +371,7 @@ def save_validated(
     expected_amendment_identity: tuple[tuple[str, tuple[str, ...]], ...] | None = None,
     expected_approved_waves: tuple[tuple[str, str], ...] | None = None,
     expected_amendment_history: dict[str, tuple[str, ...]] | None = None,
+    expected_task_review_history: dict[str, tuple[str, ...]] | None = None,
     schema_path: Path | None = None,
     repo: Path | None = None,
 ) -> None:
@@ -371,6 +390,12 @@ def save_validated(
             current = current_history.get(amendment_id)
             if current is None or current[: len(prior)] != prior:
                 raise SystemExit(f"Append-only lifecycle history changed for {amendment_id}")
+    if expected_task_review_history is not None:
+        current_history = task_review_history_snapshot(document)
+        for task_id, prior in expected_task_review_history.items():
+            current = current_history.get(task_id)
+            if current is None or current[: len(prior)] != prior:
+                raise SystemExit(f"Append-only task review history changed for {task_id}")
     schema_errors = backlog_schema_errors(document, schema_path=schema_path)
     if schema_errors:
         raise SystemExit("Refusing to save invalid backlog schema:\n- " + "\n- ".join(schema_errors))
@@ -390,6 +415,7 @@ def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
         expected_amendment_identity=getattr(args, "source_amendment_identity", None),
         expected_approved_waves=getattr(args, "source_approved_waves", None),
         expected_amendment_history=getattr(args, "source_amendment_history", None),
+        expected_task_review_history=getattr(args, "source_task_review_history", None),
         repo=getattr(args, "repo_root", None),
     )
 
@@ -1147,6 +1173,207 @@ def canonical_json_sha256(value: Any) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
+def normalized_deferred_checks(selection: dict[str, Any]) -> list[str]:
+    deferred = selection.get("deferred", [])
+    if isinstance(deferred, str):
+        return [deferred] if deferred.strip() else []
+    if isinstance(deferred, list) and all(isinstance(item, str) and item.strip() for item in deferred):
+        return list(dict.fromkeys(deferred))
+    return []
+
+
+def task_submission_packet_sha256(packet: dict[str, Any]) -> str:
+    payload = copy.deepcopy(packet)
+    payload.pop("packet_sha256", None)
+    return canonical_json_sha256(payload)
+
+
+def task_open_findings(attempts: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    open_findings: dict[str, dict[str, Any]] = {}
+    for attempt in attempts:
+        for closure in attempt.get("closures", []):
+            open_findings.pop(str(closure.get("finding_id")), None)
+        for finding in attempt.get("findings", []):
+            open_findings[str(finding.get("id"))] = finding
+    return open_findings
+
+
+def task_submission_packet_errors(
+    task: dict[str, Any],
+    packet: dict[str, Any],
+    *,
+    expected_id: str,
+    expected_prior_id: str | None,
+    expected_open_ids: list[str],
+    repo: Path | None,
+) -> list[str]:
+    task_id = str(task.get("id"))
+    errors: list[str] = []
+    if packet.get("id") != expected_id:
+        errors.append(f"{task_id}: task review submission IDs are not sequential")
+    if packet.get("prior_attempt_id") != expected_prior_id:
+        errors.append(f"{task_id}: submission does not link to the prior review attempt")
+    if sorted(str(item) for item in packet.get("open_finding_ids", [])) != expected_open_ids:
+        errors.append(f"{task_id}: remediation submission does not replay the exact open finding IDs")
+    if packet.get("acceptance_criteria_sha256") != canonical_json_sha256(task.get("acceptance_criteria", [])):
+        errors.append(f"{task_id}: frozen acceptance criteria hash differs from the task")
+    if packet.get("packet_sha256") != task_submission_packet_sha256(packet):
+        errors.append(f"{task_id}: immutable task submission packet hash mismatch")
+    reference = packet.get("evidence_reference") or {}
+    if reference not in task.get("evidence", []):
+        errors.append(f"{task_id}: submission evidence reference is not attached to the task")
+    if reference.get("commit") != packet.get("candidate_commit"):
+        errors.append(f"{task_id}: submission candidate differs from its evidence reference")
+    if packet.get("submitted_by") != task.get("owner"):
+        errors.append(f"{task_id}: submission author differs from the task owner")
+    if repo is None:
+        return errors
+    relative = str(reference.get("path") or "")
+    pure = PurePosixPath(relative)
+    if not relative.startswith("artifacts/evidence/") or pure.is_absolute() or ".." in pure.parts:
+        return [*errors, f"{task_id}: unsafe task submission evidence path"]
+    try:
+        payload = repo.joinpath(*pure.parts).read_bytes()
+        manifest = parse_evidence_payload(payload, pure.suffix)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        return [*errors, f"{task_id}: cannot load task submission evidence: {exc}"]
+    selection = manifest.get("verificationSelection")
+    checks = manifest.get("checks")
+    selected_checks = (
+        [str(item.get("command")) for item in checks if isinstance(item, dict) and item.get("command")]
+        if isinstance(checks, list)
+        else []
+    )
+    if not isinstance(selection, dict):
+        errors.append(f"{task_id}: controlled submission lacks structured verificationSelection")
+        selection = {}
+    if packet.get("candidate_commit") != manifest.get("commit"):
+        errors.append(f"{task_id}: submission candidate differs from its evidence manifest")
+    if packet.get("base_commit") != manifest.get("baseCommit"):
+        errors.append(f"{task_id}: submission base differs from its evidence manifest")
+    if packet.get("branch") != manifest.get("branch"):
+        errors.append(f"{task_id}: submission branch differs from its evidence manifest")
+    if packet.get("changed_paths") != manifest.get("changedFiles"):
+        errors.append(f"{task_id}: frozen changed-path identity differs from its evidence manifest")
+    if packet.get("selected_checks") != selected_checks:
+        errors.append(f"{task_id}: frozen selected-check identity differs from its evidence manifest")
+    if packet.get("deferred_checks") != normalized_deferred_checks(selection):
+        errors.append(f"{task_id}: frozen deferred-check identity differs from its evidence manifest")
+    if packet.get("selection_rationale") != selection.get("riskAnalysis"):
+        errors.append(f"{task_id}: frozen verification rationale differs from its evidence manifest")
+    if packet.get("selection_sha256") != canonical_json_sha256(selection):
+        errors.append(f"{task_id}: frozen verification-selection hash differs from its evidence manifest")
+    return errors
+
+
+def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[str]:
+    control = task.get("review_control")
+    if control is None:
+        return []
+    task_id = str(task.get("id"))
+    errors: list[str] = []
+    attempts = control.get("attempts") or []
+    open_findings: dict[str, dict[str, Any]] = {}
+    seen_finding_ids: set[str] = set()
+    closed_finding_ids: set[str] = set()
+    prior_id: str | None = None
+    for position, attempt in enumerate(attempts, start=1):
+        packet = attempt.get("submission") or {}
+        expected_id = f"R{position:02d}"
+        expected_open = sorted(open_findings)
+        errors.extend(
+            task_submission_packet_errors(
+                task,
+                packet,
+                expected_id=expected_id,
+                expected_prior_id=prior_id,
+                expected_open_ids=expected_open,
+                repo=repo,
+            )
+        )
+        if position >= 3 and expected_open and not str(packet.get("root_cause_analysis") or "").strip():
+            errors.append(f"{task_id}: remediation after round two requires root-cause escalation")
+        findings = attempt.get("findings") or []
+        severities = [REVIEW_SEVERITY_ORDER.get(str(item.get("severity")), 99) for item in findings]
+        if severities != sorted(severities):
+            errors.append(f"{task_id}: review findings are not severity-ranked")
+        for closure in attempt.get("closures") or []:
+            finding_id = str(closure.get("finding_id"))
+            if finding_id not in open_findings or finding_id in closed_finding_ids:
+                errors.append(f"{task_id}: review closure does not name one open prior finding")
+            else:
+                open_findings.pop(finding_id)
+                closed_finding_ids.add(finding_id)
+        for finding in findings:
+            finding_id = str(finding.get("id"))
+            criterion_index = finding.get("criterion_index")
+            if finding_id in seen_finding_ids:
+                errors.append(f"{task_id}: review finding ID {finding_id} is not globally unique")
+            seen_finding_ids.add(finding_id)
+            if type(criterion_index) is not int or not 1 <= criterion_index <= len(task.get("acceptance_criteria", [])):
+                errors.append(f"{task_id}: review finding {finding_id} is outside the acceptance criteria")
+            open_findings[finding_id] = finding
+        review = attempt.get("review") or {}
+        result = review.get("result")
+        blocking_open = [item for item in open_findings.values() if item.get("blocking") is True]
+        if result == "approved" and blocking_open:
+            errors.append(f"{task_id}: approved review retains an open blocking finding")
+        if result in {"changes-requested", "blocked"} and not blocking_open:
+            errors.append(f"{task_id}: adverse review lacks an open blocking finding")
+        ledger = attempt.get("ledger") or {}
+        if repo is not None:
+            relative = str(ledger.get("path") or "")
+            pure = PurePosixPath(relative)
+            if not relative.startswith("artifacts/evidence/") or pure.is_absolute() or ".." in pure.parts:
+                errors.append(f"{task_id}: unsafe task review ledger path")
+            else:
+                try:
+                    payload = repo.joinpath(*pure.parts).read_bytes()
+                    ledger_document = parse_evidence_payload(payload, pure.suffix)
+                except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+                    errors.append(f"{task_id}: cannot load task review ledger: {exc}")
+                else:
+                    if evidence_sha256(payload) != ledger.get("sha256"):
+                        errors.append(f"{task_id}: task review ledger hash mismatch")
+                    if (
+                        ledger_document.get("task_id") != task_id
+                        or ledger_document.get("attempt_id") != expected_id
+                        or ledger_document.get("candidate_commit") != packet.get("candidate_commit")
+                        or ledger_document.get("reviewer") != review.get("reviewer")
+                        or ledger_document.get("result") != result
+                        or ledger_document.get("notes", "") != review.get("notes")
+                        or ledger_document.get("findings") != findings
+                        or ledger_document.get("closures") != (attempt.get("closures") or [])
+                    ):
+                        errors.append(f"{task_id}: stored review round differs from its immutable ledger")
+        prior_id = expected_id
+    current = control.get("current_submission")
+    if current is not None:
+        errors.extend(
+            task_submission_packet_errors(
+                task,
+                current,
+                expected_id=f"R{len(attempts) + 1:02d}",
+                expected_prior_id=prior_id,
+                expected_open_ids=sorted(open_findings),
+                repo=repo,
+            )
+        )
+        if len(attempts) >= 2 and open_findings and not str(current.get("root_cause_analysis") or "").strip():
+            errors.append(f"{task_id}: remediation after round two requires root-cause escalation")
+        if task.get("status") != "REVIEW":
+            errors.append(f"{task_id}: current task submission exists outside REVIEW")
+    elif task.get("status") == "REVIEW":
+        errors.append(f"{task_id}: REVIEW task lacks its current immutable submission")
+    if attempts:
+        latest_review = attempts[-1].get("review") or {}
+        if task.get("review") != latest_review:
+            errors.append(f"{task_id}: legacy latest-review projection differs from append-only history")
+        if task.get("status") == "DONE" and latest_review.get("result") != "approved":
+            errors.append(f"{task_id}: DONE task lacks an approved append-only review round")
+    return errors
+
+
 def git_commit_exists(repo: Path, commit: str) -> bool:
     result = subprocess.run(
         ["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo, capture_output=True, text=True, check=False
@@ -1893,6 +2120,8 @@ def validate(
     errors.extend(wave_authority_errors(data, repo))
     if repo is not None:
         errors.extend(evidence_reference_errors(tasks, repo))
+    for task in tasks.values():
+        errors.extend(task_review_control_errors(task, repo))
     waves = wave_map(data)
     active_waves = active_wave_campaigns(data)
     active_amendments = active_amendment_campaigns(data)
@@ -4140,17 +4369,12 @@ def command_renew(args, data, capabilities, slices, tasks, gates) -> None:
     print(f"Renewed task lease for {task['id']}")
 
 
-def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
-    task = get(tasks, args.task, "task")
-    amendment = amendment_for_task(data, task)
-    if amendment is not None:
-        require_runtime_amendment_integrity(args.file, amendment)
-    if task["status"] != "IN_PROGRESS":
-        raise SystemExit("Evidence may be attached only while IN_PROGRESS")
-    require_task_campaign_lease(task, capabilities, args.agent, data)
-    require_active_lease(task, args.agent, f"Task {task['id']}")
-    repo = discover_repository(args.file)
-    evidence_path = Path(args.from_file).resolve()
+def prepare_task_evidence(
+    task: dict[str, Any],
+    repo: Path,
+    from_file: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    evidence_path = Path(from_file).resolve()
     try:
         relative_evidence_path = evidence_path.relative_to(repo).as_posix()
     except ValueError as exc:
@@ -4194,15 +4418,79 @@ def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
     )
     if errors:
         raise SystemExit("Invalid evidence:\n- " + "\n- ".join(errors))
-    task.setdefault("evidence", []).append(
+    return (
         {
             "type": "criterion-manifest",
             "path": relative_evidence_path,
             "sha256": payload_sha256,
             "commit": manifest["commit"],
             "recorded_at": utc_now(),
-        }
+        },
+        manifest,
     )
+
+
+def build_task_submission_packet(
+    task: dict[str, Any],
+    manifest: dict[str, Any],
+    reference: dict[str, Any],
+    agent: str,
+) -> dict[str, Any]:
+    selection = manifest.get("verificationSelection")
+    if not isinstance(selection, dict) or not str(selection.get("riskAnalysis") or "").strip():
+        raise SystemExit("Atomic submission requires verificationSelection.riskAnalysis")
+    checks = manifest.get("checks") or []
+    selected_checks = [str(item.get("command")) for item in checks if isinstance(item, dict) and item.get("command")]
+    if not selected_checks or len(selected_checks) != len(set(selected_checks)):
+        raise SystemExit("Atomic submission requires unique selected check commands")
+    control = task.get("review_control") or {"version": 1, "attempts": [], "current_submission": None}
+    if control.get("current_submission") is not None:
+        raise SystemExit("Task already has a frozen submission awaiting review")
+    attempts = control.get("attempts") or []
+    open_findings = task_open_findings(attempts)
+    disposition = manifest.get("reviewerDisposition") or {}
+    declared_open = disposition.get("openFindingIds", [])
+    if not isinstance(declared_open, list) or sorted(str(item) for item in declared_open) != sorted(open_findings):
+        raise SystemExit("Remediation evidence must replay the exact open finding IDs")
+    root_cause = disposition.get("rootCauseAnalysis")
+    if len(attempts) >= 2 and open_findings and not (isinstance(root_cause, str) and root_cause.strip()):
+        raise SystemExit("Remediation after round two requires rootCauseAnalysis")
+    packet = {
+        "id": f"R{len(attempts) + 1:02d}",
+        "submitted_by": agent,
+        "submitted_at": utc_now(),
+        "candidate_commit": manifest["commit"],
+        "base_commit": manifest["baseCommit"],
+        "branch": manifest["branch"],
+        "evidence_reference": copy.deepcopy(reference),
+        "acceptance_criteria_sha256": canonical_json_sha256(task.get("acceptance_criteria", [])),
+        "changed_paths": list(manifest.get("changedFiles") or []),
+        "selected_checks": selected_checks,
+        "deferred_checks": normalized_deferred_checks(selection),
+        "selection_rationale": str(selection["riskAnalysis"]),
+        "selection_sha256": canonical_json_sha256(selection),
+        "prior_attempt_id": (attempts[-1].get("submission") or {}).get("id") if attempts else None,
+        "open_finding_ids": sorted(open_findings),
+        "root_cause_analysis": root_cause if isinstance(root_cause, str) and root_cause.strip() else None,
+    }
+    packet["packet_sha256"] = task_submission_packet_sha256(packet)
+    return packet
+
+
+def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
+    task = get(tasks, args.task, "task")
+    amendment = amendment_for_task(data, task)
+    if amendment is not None:
+        require_runtime_amendment_integrity(args.file, amendment)
+    if task["status"] != "IN_PROGRESS":
+        raise SystemExit("Evidence may be attached only while IN_PROGRESS")
+    require_task_campaign_lease(task, capabilities, args.agent, data)
+    require_active_lease(task, args.agent, f"Task {task['id']}")
+    if int((data.get("control_plane") or {}).get("minimum_tool_revision", 0)) >= 3:
+        raise SystemExit("Use taskctl submit --from to attach evidence and enter REVIEW atomically")
+    repo = discover_repository(args.file)
+    reference, _manifest = prepare_task_evidence(task, repo, args.from_file)
+    task.setdefault("evidence", []).append(reference)
     task["verification_state"] = "passed"
     task["updated_at"] = utc_now()
     persist(args, data)
@@ -4210,16 +4498,119 @@ def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_submit(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
+    amendment = amendment_for_task(data, task)
+    if amendment is not None:
+        require_runtime_amendment_integrity(args.file, amendment)
     if task["status"] != "IN_PROGRESS":
         raise SystemExit("Only IN_PROGRESS tasks may be submitted")
     require_task_campaign_lease(task, capabilities, args.agent, data)
     require_active_lease(task, args.agent, f"Task {task['id']}")
-    if task.get("verification_state") != "passed" or not task.get("evidence"):
-        raise SystemExit("Verification must pass and evidence must be attached before REVIEW")
+    if getattr(args, "from_file", None):
+        repo = discover_repository(args.file)
+        reference, manifest = prepare_task_evidence(task, repo, args.from_file)
+        packet = build_task_submission_packet(task, manifest, reference, str(args.agent))
+        task.setdefault("evidence", []).append(reference)
+        task["verification_state"] = "passed"
+        task["review_control"] = task.get("review_control") or {
+            "version": 1,
+            "attempts": [],
+            "current_submission": None,
+        }
+        task["review_control"]["current_submission"] = packet
+    else:
+        if int((data.get("control_plane") or {}).get("minimum_tool_revision", 0)) >= 3:
+            raise SystemExit("Controlled task submission requires --from for atomic evidence attachment")
+        if task.get("verification_state") != "passed" or not task.get("evidence"):
+            raise SystemExit("Verification must pass and evidence must be attached before REVIEW")
     task["status"] = "REVIEW"
     task["updated_at"] = utc_now()
     task["implementation_notes"] = ((task.get("implementation_notes") or "") + "\n" + args.note).strip()
     persist(args, data)
+
+
+def prepare_task_review_attempt(
+    task: dict[str, Any],
+    reviewer: str,
+    result: str,
+    from_file: str,
+    note: str,
+    repo: Path,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    control = task.get("review_control") or {}
+    submission = control.get("current_submission")
+    if not isinstance(submission, dict):
+        raise SystemExit("Controlled review requires one frozen current submission")
+    ledger_path = Path(from_file).resolve()
+    try:
+        relative = ledger_path.relative_to(repo).as_posix()
+    except ValueError as exc:
+        raise SystemExit("Task review ledger must be stored inside the repository") from exc
+    if not relative.startswith("artifacts/evidence/") or "\\" in relative:
+        raise SystemExit("Task review ledger must be stored under artifacts/evidence")
+    try:
+        payload = ledger_path.read_bytes()
+        document = parse_evidence_payload(payload, ledger_path.suffix)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Invalid task review ledger: {exc}") from exc
+    if document.get("task_id") != task.get("id"):
+        raise SystemExit("Task review ledger task_id does not match")
+    if document.get("attempt_id") != submission.get("id"):
+        raise SystemExit("Task review ledger attempt_id does not match the frozen submission")
+    if document.get("candidate_commit") != submission.get("candidate_commit"):
+        raise SystemExit("Task review ledger candidate_commit does not match the frozen submission")
+    if document.get("reviewer") != reviewer or document.get("result") != result:
+        raise SystemExit("Task review ledger reviewer/result does not match the review command")
+    ledger_note = document.get("notes", "")
+    if not isinstance(ledger_note, str) or (note and note != ledger_note):
+        raise SystemExit("Task review ledger notes do not match the review command")
+    findings = document.get("findings")
+    closures = document.get("closures")
+    if not isinstance(findings, list) or not all(isinstance(item, dict) for item in findings):
+        raise SystemExit("Task review ledger findings must be a list of structured findings")
+    if not isinstance(closures, list) or not all(isinstance(item, dict) for item in closures):
+        raise SystemExit("Task review ledger closures must be a list of structured closures")
+    severities = [REVIEW_SEVERITY_ORDER.get(str(item.get("severity")), 99) for item in findings]
+    if 99 in severities or severities != sorted(severities):
+        raise SystemExit("Task review findings must use known severities in descending severity order")
+    existing_attempts = control.get("attempts") or []
+    seen_ids = {str(finding.get("id")) for attempt in existing_attempts for finding in attempt.get("findings", [])}
+    new_ids = [str(finding.get("id")) for finding in findings]
+    if len(new_ids) != len(set(new_ids)) or seen_ids.intersection(new_ids):
+        raise SystemExit("Task review finding IDs must be globally unique")
+    open_before = task_open_findings(existing_attempts)
+    closure_ids = [str(closure.get("finding_id")) for closure in closures]
+    if len(closure_ids) != len(set(closure_ids)) or any(item not in open_before for item in closure_ids):
+        raise SystemExit("Every task review closure must name one unique open prior finding")
+    open_after = dict(open_before)
+    for finding_id in closure_ids:
+        open_after.pop(finding_id)
+    for finding in findings:
+        open_after[str(finding.get("id"))] = finding
+    blocking_after = [finding for finding in open_after.values() if finding.get("blocking") is True]
+    if result == "approved" and blocking_after:
+        raise SystemExit("Task approval is denied while a blocking finding remains open")
+    if result in {"changes-requested", "blocked"} and not blocking_after:
+        raise SystemExit("An adverse task review requires at least one open blocking finding")
+    prior_ledgers = [attempt.get("ledger") or {} for attempt in existing_attempts]
+    payload_hash = evidence_sha256(payload)
+    if any(item.get("path") == relative or item.get("sha256") == payload_hash for item in prior_ledgers):
+        raise SystemExit("Task review ledger path/hash is already recorded")
+    review = {
+        "reviewer": reviewer,
+        "result": result,
+        "reviewed_at": utc_now(),
+        "notes": ledger_note,
+    }
+    return (
+        {
+            "submission": copy.deepcopy(submission),
+            "review": review,
+            "ledger": {"path": relative, "sha256": payload_hash},
+            "findings": copy.deepcopy(findings),
+            "closures": copy.deepcopy(closures),
+        },
+        review,
+    )
 
 
 def command_review(args, data, capabilities, slices, tasks, gates) -> None:
@@ -4233,7 +4624,25 @@ def command_review(args, data, capabilities, slices, tasks, gates) -> None:
     if reviewer == task.get("owner"):
         raise SystemExit("Task reviewer must be independent from the task owner")
     now = utc_now()
-    task["review"] = {"reviewer": reviewer, "result": args.result, "reviewed_at": now, "notes": args.note}
+    control = task.get("review_control")
+    if control is not None:
+        if not getattr(args, "from_file", None):
+            raise SystemExit("Controlled task review requires --from with a consolidated finding ledger")
+        repo = discover_repository(args.file)
+        attempt, review = prepare_task_review_attempt(
+            task,
+            reviewer,
+            args.result,
+            args.from_file,
+            args.note,
+            repo,
+        )
+        control.setdefault("attempts", []).append(attempt)
+        control["current_submission"] = None
+        task["review"] = review
+        now = str(review["reviewed_at"])
+    else:
+        task["review"] = {"reviewer": reviewer, "result": args.result, "reviewed_at": now, "notes": args.note}
     if args.result == "approved":
         task["status"] = "DONE"
         task["completed_at"] = now
@@ -4263,6 +4672,8 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] not in {"BLOCKED", "REVIEW", "DONE"}:
         raise SystemExit(f"Task cannot be reopened from {task['status']}")
+    if task["status"] == "REVIEW" and task.get("review_control") is not None:
+        raise SystemExit("A controlled REVIEW submission must receive an independent disposition before remediation")
     holder = require_task_campaign_lease(task, capabilities, agent, data)
     amendment = amendment_for_task(data, task)
     if amendment is not None:
@@ -4275,6 +4686,16 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
         lease = task.get("lease")
         if lease_is_active(task) and lease and lease.get("claimed_by") != agent:
             raise SystemExit(f"Task {task['id']} has an active lease owned by {lease.get('claimed_by')}")
+        review_projection = (
+            task.get("review")
+            if task.get("review_control") is not None
+            else {
+                "reviewer": None,
+                "result": None,
+                "reviewed_at": None,
+                "notes": f"Reopened: {args.reason}",
+            }
+        )
         task.update(
             status="IN_PROGRESS",
             owner=agent,
@@ -4282,7 +4703,7 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
             completed_at=None,
             verification_state=None,
             blocker=None,
-            review={"reviewer": None, "result": None, "reviewed_at": None, "notes": f"Reopened: {args.reason}"},
+            review=review_projection,
             lease=new_lease(agent, args.lease_hours),
         )
         persist(args, data)
@@ -4303,6 +4724,16 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
     lease = task.get("lease")
     if lease_is_active(task) and lease and lease.get("claimed_by") != agent:
         raise SystemExit(f"Task {task['id']} has an active lease owned by {lease.get('claimed_by')}")
+    review_projection = (
+        task.get("review")
+        if task.get("review_control") is not None
+        else {
+            "reviewer": None,
+            "result": None,
+            "reviewed_at": None,
+            "notes": f"Reopened: {args.reason}",
+        }
+    )
     task.update(
         status="IN_PROGRESS",
         owner=agent,
@@ -4311,7 +4742,7 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
         verification_state=None,
         blocker=None,
         cancellation=None,
-        review={"reviewer": None, "result": None, "reviewed_at": None, "notes": f"Reopened: {args.reason}"},
+        review=review_projection,
         lease=new_lease(agent, args.lease_hours),
     )
     if wave_remediation:
@@ -4652,11 +5083,13 @@ def build_parser() -> argparse.ArgumentParser:
     submit = sub.add_parser("submit")
     submit.add_argument("task")
     submit.add_argument("--agent", required=True)
+    submit.add_argument("--from", dest="from_file")
     submit.add_argument("--note", default="")
     rev = sub.add_parser("review")
     rev.add_argument("task")
     rev.add_argument("--reviewer", required=True)
     rev.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
+    rev.add_argument("--from", dest="from_file")
     rev.add_argument("--lease-hours", type=int, default=8)
     rev.add_argument("--note", default="")
     reopen = sub.add_parser("reopen")
@@ -4693,6 +5126,7 @@ def main() -> None:
     args.source_amendment_identity = amendment_identity_snapshot(data)
     args.source_approved_waves = approved_wave_snapshot(data)
     args.source_amendment_history = amendment_history_snapshot(data)
+    args.source_task_review_history = task_review_history_snapshot(data)
     args.repo_root = discover_repository(args.file)
     if args.command == "validate":
         command_validate(args, data, capabilities, slices, tasks, gates)

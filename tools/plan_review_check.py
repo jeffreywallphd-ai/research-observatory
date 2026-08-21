@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import json
 import sys
 from collections import Counter
@@ -99,6 +100,124 @@ def local_target(page: Path, href: str) -> Path | None:
     return (page.parent / raw_path).resolve()
 
 
+def task_review_projection(task: dict[str, Any]) -> dict[str, Any]:
+    control = task.get("review_control")
+    return {
+        "task_id": task.get("id"),
+        "title": task.get("title"),
+        "status": task.get("status"),
+        "mode": "append-only" if isinstance(control, dict) else "latest-review-only",
+        "latest_review": task.get("review") or {},
+        "review_control": control if isinstance(control, dict) else None,
+    }
+
+
+def task_review_manifest_errors(
+    label: str,
+    manifest_reviews: Any,
+    tasks: list[dict[str, Any]],
+) -> list[str]:
+    expected = [task_review_projection(task) for task in tasks]
+    if manifest_reviews == expected:
+        return []
+    return [f"{label}: task review histories differ from authoritative backlog"]
+
+
+def task_review_render_errors(text: str, projection: dict[str, Any]) -> list[str]:
+    task_id = str(projection.get("task_id"))
+    mode = str(projection.get("mode"))
+    task_attr = html.escape(task_id, quote=True)
+    errors: list[str] = []
+    if text.count(f'data-task-review-id="{task_attr}"') != 1:
+        errors.append(f"{task_id}: rendered task review identity is missing or duplicated")
+    if f'data-review-mode="{html.escape(mode, quote=True)}"' not in text:
+        errors.append(f"{task_id}: rendered review mode differs from authoritative task")
+    latest = projection.get("latest_review") or {}
+    projection_marker = f'data-current-review-projection="{task_attr}"'
+    if projection_marker not in text:
+        errors.append(f"{task_id}: current latest-review projection is missing")
+    for attribute, value in (
+        ("data-current-review-result", latest.get("result") or "not-reviewed"),
+        ("data-current-reviewer", latest.get("reviewer") or "none"),
+        ("data-current-reviewed-at", latest.get("reviewed_at") or "none"),
+    ):
+        if f'{attribute}="{html.escape(str(value), quote=True)}"' not in text:
+            errors.append(f"{task_id}: current latest-review projection differs at {attribute}")
+
+    attempt_prefix = f'data-review-attempt="{task_attr}:'
+    finding_prefix = f'data-review-finding="{task_attr}:'
+    closure_prefix = f'data-review-closure="{task_attr}:'
+    current_prefix = f'data-current-submission="{task_attr}:'
+    control = projection.get("review_control")
+    if not isinstance(control, dict):
+        for label, prefix in (
+            ("attempt", attempt_prefix),
+            ("finding", finding_prefix),
+            ("closure", closure_prefix),
+            ("current submission", current_prefix),
+        ):
+            if prefix in text:
+                errors.append(f"{task_id}: legacy latest-review-only task fabricates a {label}")
+        return errors
+
+    attempts = control.get("attempts") or []
+    expected_findings = sum(len(attempt.get("findings") or []) for attempt in attempts)
+    expected_closures = sum(len(attempt.get("closures") or []) for attempt in attempts)
+    if text.count(attempt_prefix) != len(attempts):
+        errors.append(f"{task_id}: rendered review round count differs from append-only history")
+    if text.count(finding_prefix) != expected_findings:
+        errors.append(f"{task_id}: rendered finding count differs from append-only history")
+    if text.count(closure_prefix) != expected_closures:
+        errors.append(f"{task_id}: rendered closure count differs from append-only history")
+    for attempt in attempts:
+        packet = attempt.get("submission") or {}
+        attempt_id = str(packet.get("id"))
+        packet_hash = str(packet.get("packet_sha256"))
+        ledger = attempt.get("ledger") or {}
+        if (
+            f'data-review-attempt="{task_attr}:{html.escape(attempt_id, quote=True)}"' not in text
+            or f'data-packet-sha256="{html.escape(packet_hash, quote=True)}"' not in text
+        ):
+            errors.append(f"{task_id}: review round {attempt_id} packet identity/hash is missing")
+        if (
+            f'data-review-ledger="{task_attr}:{html.escape(attempt_id, quote=True)}"' not in text
+            or f'data-ledger-sha256="{html.escape(str(ledger.get("sha256")), quote=True)}"' not in text
+        ):
+            errors.append(f"{task_id}: review round {attempt_id} ledger identity/hash is missing")
+        evidence = packet.get("evidence_reference") or {}
+        for label, value in (
+            ("evidence hash", evidence.get("sha256")),
+            ("criteria hash", packet.get("acceptance_criteria_sha256")),
+            ("selection hash", packet.get("selection_sha256")),
+        ):
+            if f">{html.escape(str(value))}<" not in text:
+                errors.append(f"{task_id}: review round {attempt_id} {label} is missing")
+        for finding in attempt.get("findings") or []:
+            marker = (
+                f"{task_attr}:{html.escape(attempt_id, quote=True)}:{html.escape(str(finding.get('id')), quote=True)}"
+            )
+            if f'data-review-finding="{marker}"' not in text:
+                errors.append(f"{task_id}: finding {finding.get('id')} is missing from round {attempt_id}")
+        for closure in attempt.get("closures") or []:
+            closure_id = html.escape(str(closure.get("finding_id")), quote=True)
+            marker = f"{task_attr}:{html.escape(attempt_id, quote=True)}:{closure_id}"
+            if f'data-review-closure="{marker}"' not in text:
+                errors.append(f"{task_id}: closure {closure.get('finding_id')} is missing from round {attempt_id}")
+
+    current = control.get("current_submission")
+    if isinstance(current, dict):
+        marker = f"{task_attr}:{html.escape(str(current.get('id')), quote=True)}"
+        if (
+            text.count(current_prefix) != 1
+            or f'data-current-submission="{marker}"' not in text
+            or f'data-packet-sha256="{html.escape(str(current.get("packet_sha256")), quote=True)}"' not in text
+        ):
+            errors.append(f"{task_id}: current immutable submission identity/hash is missing")
+    elif current_prefix in text:
+        errors.append(f"{task_id}: rendered history invents a current submission")
+    return errors
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", default=".")
@@ -125,6 +244,11 @@ def main() -> int:
         slice_plans[meta["slice_id"]] = path
 
     backlog = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+    backlog_slices = {
+        str(slice_["id"]): slice_
+        for capability in backlog.get("capabilities", [])
+        for slice_ in capability.get("slices", [])
+    }
     amendments_by_change = {
         str(amendment.get("change_request_id")): amendment
         for amendment in backlog.get("wave_amendments", [])
@@ -217,9 +341,16 @@ def main() -> int:
             )
         if entry.get("bootstrap_attempts") != expected_attempts:
             errors.append(f"{change_id}: bootstrap review attempts differ from authoritative backlog history")
+        source_tasks = (amendments_by_change.get(change_id) or {}).get("tasks", [])
+        expected_task_reviews = [task_review_projection(task) for task in source_tasks]
+        errors.extend(task_review_manifest_errors(change_id, entry.get("task_reviews"), source_tasks))
         page = site / str(entry.get("page"))
         if not page.exists():
             errors.append(f"{change_id}: missing enabler detail page {page}")
+        else:
+            page_text = page.read_text(encoding="utf-8")
+            for projection in expected_task_reviews:
+                errors.extend(f"{change_id}: {error}" for error in task_review_render_errors(page_text, projection))
 
     manifest_caps = {entry["capability_id"]: entry for entry in manifest.get("capabilities", [])}
     if set(manifest_caps) != set(cap_plans):
@@ -252,16 +383,18 @@ def main() -> int:
             page = site / slice_entry["page"]
             if not page.exists():
                 errors.append(f"{sid}: missing slice page {page}")
+                continue
+            source_tasks = (backlog_slices.get(str(sid)) or {}).get("tasks", [])
+            expected_task_reviews = [task_review_projection(task) for task in source_tasks]
+            errors.extend(task_review_manifest_errors(str(sid), slice_entry.get("task_reviews"), source_tasks))
+            page_text = page.read_text(encoding="utf-8")
+            for projection in expected_task_reviews:
+                errors.extend(f"{sid}: {error}" for error in task_review_render_errors(page_text, projection))
 
     if set(manifest_slices) != set(slice_plans):
         errors.append(f"Manifest slice set differs from plans: {len(manifest_slices)} vs {len(slice_plans)}")
 
     backlog_waves = {str(wave["id"]): wave for wave in backlog.get("waves", [])}
-    backlog_slices = {
-        str(slice_["id"]): slice_
-        for capability in backlog.get("capabilities", [])
-        for slice_ in capability.get("slices", [])
-    }
     backlog_capabilities = {str(capability["id"]): capability for capability in backlog.get("capabilities", [])}
     manifest_waves = {str(entry["wave_id"]): entry for entry in manifest.get("waves", [])}
     if set(manifest_waves) != set(backlog_waves):
@@ -411,6 +544,7 @@ def main() -> int:
                     "Proposal, approval, materialization, and campaign state",
                     "Hash-bound source records",
                     "Ordered Wave authority chain",
+                    "Materialized task review packets and history",
                     "Safe resume boundary",
                 ):
                     if marker not in content:

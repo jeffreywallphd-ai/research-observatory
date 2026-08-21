@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e689481dfd296ce2c242bf89e0d86a317763304e9cbf96175f75c9c7e1de5486
+source_sha256: 5fb70fa3ad171fe7183645ed62337fce5a27a7e8257a9f149399de33f271bede
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -431,6 +431,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prove existing task histories validate without fabricated attempts and legacy latest-review projection remains supported.
 - Run focused taskctl schema/workflow/view tests, affected quality checks, and independent control review.
 
+#### Review history — W1.A02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 ### - [ ] W1.A02.T02 - Affected verification selection and privacy-safe review telemetry
 
 **Status / owner / review:** `NOT_STARTED` / - / - (`-`)
@@ -452,6 +460,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prove deterministic selection, conservative fallback, canonical profile immutability, and deferred-gate ownership.
 - Probe telemetry payloads for forbidden content and verify no backfill is invented.
 - Run focused verify/taskctl/view tests, affected quality checks, and independent control/privacy review.
+
+#### Review history — W1.A02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 # Capability contributions, slices, and tasks
@@ -512,6 +528,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S01.T01.json` at `59024eea93130c1d867a46782cb353cff4b88ff4`
 
+##### Review history — CAP-00.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T16:00:09+00:00`
+
+**Latest notes:** Reviewed scoped module structure, ownership boundaries, deferred-path denial, generated-binary denial, regression tests, and commit-bound evidence; foundation and repository setup validation pass with no unresolved blocker.
+
 #### - [x] CAP-00.S01.T02 - Pin language runtimes and dependency managers
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `S` / `medium`
@@ -543,6 +567,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S01.T02.json` at `0f60cf5d3c1d893e178b7a286724f9817a444781`
 
+##### Review history — CAP-00.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T16:12:33+00:00`
+
+**Latest notes:** Rigorous audit confirmed exact cross-ecosystem pins, actionable unsupported and missing-tool failures, immutable frozen installs, lockfile consistency, documentation, and commit-bound evidence; no unresolved finding.
+
 #### - [x] CAP-00.S01.T03 - Implement one-command developer bootstrap
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
@@ -573,6 +605,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-00.S01.T03.json` at `ed7d2058e0bfe94426975711763036bc0aed1aa4`
+
+##### Review history — CAP-00.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T16:19:03+00:00`
+
+**Latest notes:** Rigorous audit confirmed the execution-policy-safe Windows entry point, cross-platform orchestrator, exact prerequisite rejection, frozen dependency commands, atomic no-secret config, literal fresh-checkout success, failure-path tests, and corrected evidence hash; no unresolved finding.
 
 ### SLICE-architecture-and-agent-operating-contract (`CAP-00.S02`) - Architecture and agent operating contract
 
@@ -615,6 +655,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S02.T01.json` at `b9f5796e136d4c3cd7480ed011527955ed17ed87`
 
+##### Review history — CAP-00.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T16:24:19+00:00`
+
+**Latest notes:** Rigorous audit confirmed complete repository-area purposes, the default-deny module matrix, explicit prohibited reverse dependencies, protected interface ownership, local/university/cloud authority separation, failure tests, and commit-bound evidence; no unresolved finding.
+
 #### - [x] CAP-00.S02.T02 - Create Codex implementation instructions and task protocol
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `S` / `low`
@@ -646,6 +694,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S02.T02.json` at `b8bc0062900d71757f7ece740281f4d7eee1248c`
 
+##### Review history — CAP-00.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T16:27:30+00:00`
+
+**Latest notes:** Rigorous audit confirmed the protocol is self-contained for an unfamiliar agent; all-slice approval is atomic, partial approval is denied, one run is durably resumable, only active-capability READY work is claimable, scope/check/evidence/review/local-main rules are explicit, pause gates remain fail-closed, and tests prove expected and denial paths.
+
 #### - [x] CAP-00.S02.T03 - Establish architecture decision record workflow
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `S` / `low`
@@ -676,6 +732,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-00.S02.T03.json` at `34942ab30a6afe0f36da7ddb260bb6b9b213441a`
+
+##### Review history — CAP-00.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T16:32:29+00:00`
+
+**Latest notes:** Rigorous audit confirmed stable ADR identifiers and states, complete template/scaffold, index-record-task consistency, sample task-linked ADR, self-protecting path policy, same-change Proposed/Accepted ADR coverage, unindexed/uncovered denial tests, and exact change-set evidence; no unresolved finding.
 
 ### SLICE-verification-ci-and-supply-chain-controls (`CAP-00.S03`) - Verification, CI, and supply-chain controls
 
@@ -719,6 +783,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S03.T01.json` at `69657fc7cb993d2f1757e6e6b208bf4f1cefe977`
 
+##### Review history — CAP-00.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T16:41:33+00:00`
+
+**Latest notes:** Rigorous audit confirmed all fourteen profile definitions, independent execution of twelve enabled profiles, W10/W11 blockers, unknown-profile denial, command/duration/failure reporting, honest activation-controlled domain suites, S06 desktop UI hooks, structured reports, and commit-bound evidence; no unresolved finding.
+
 #### - [x] CAP-00.S03.T02 - Create continuous-integration pipelines and artifact retention
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
@@ -750,6 +822,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S03.T02.json` at `9877766796b94bfa63faf35c767b095191f203ab`
 - `artifacts/evidence/CAP-00.S03.T02.review-fix.json` at `7fe9165caf44aeb59f6e2bb2549dcb23a059afbb`
+
+##### Review history — CAP-00.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T17:03:11+00:00`
+
+**Latest notes:** Approved at 7fe9165: full-SHA/least-privilege CI remains sound; bracket-style secrets access is rejected; governed Python roots are closed; focused and required checks pass. Hosted runner compatibility awaits an authorized remote run.
 
 #### - [x] CAP-00.S03.T03 - Add dependency, license, secret, and vulnerability scanning
 
@@ -783,6 +863,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S03.T03.json` at `7352470d1f9fcd7cacea1bfa604df364a70c1a37`
 - `artifacts/evidence/CAP-00.S03.T03.review-fix.json` at `ce2474676425416a77822cea3e47fab804dc33d3`
+
+##### Review history — CAP-00.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-security-review at `2026-08-08T17:29:49+00:00`
+
+**Latest notes:** Approved at ce24746: all five required bypass fixes are effective; 19 security tests, CI contract, offline binary verification, all platform hashes, foundation/security profiles, and corrected evidence pass. Hosted CI awaits authorized remote execution.
 
 ### SLICE-executable-backlog-and-status-governance (`CAP-00.S04`) - Executable backlog and status governance
 
@@ -826,6 +914,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S04.T01.json` at `7d016c5251a6a9385abe8205857ca18b16feb3ca`
 - `artifacts/evidence/CAP-00.S04.T01.review-fix.json` at `1493a3cd6198286d6521b4c8cbc6230d68fc7f3c`
 
+##### Review history — CAP-00.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T17:51:42+00:00`
+
+**Latest notes:** Approved at 1493a3c after four direct mutation probes, 10/10 focused schema tests, 54 foundation tests, canonical validation, and evidence hash verification; no required findings remain. Optional whitespace normalization is deferred hardening.
+
 #### - [x] CAP-00.S04.T02 - Implement taskctl selection, gate, lease, evidence, and transition commands
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
@@ -859,6 +955,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S04.T02.review-fix.json` at `438edadfc822f75a246ecbed40577f29b4524558`
 - `artifacts/evidence/CAP-00.S04.T02.review-fix-2.json` at `412cce62a2994606d81c4a3dc538205bb3043138`
 
+##### Review history — CAP-00.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T18:41:58+00:00`
+
+**Latest notes:** Approved at 412cce6 after three adversarial passes: exact follow-up base/scope, immutable legacy residual policy, full stored evidence validation, Git identity, transition/gate invariants, independent review, and CAS recovery all withstand mutation tests; 23 focused and 67 foundation tests pass.
+
 #### - [x] CAP-00.S04.T03 - Generate human-readable plan views from YAML
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `S` / `low`
@@ -890,6 +994,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S04.T03.json` at `e1755e15441e685bdea7354f5fcde0d85a2f6ce5`
 - `artifacts/evidence/CAP-00.S04.T03.review-fix.json` at `5d9c1622c93a93b90afb9e2961b058fed983522c`
+
+##### Review history — CAP-00.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T19:01:36+00:00`
+
+**Latest notes:** Approved at 5d9c162: immutable single-read source/digest, canonical byte drift and corrupt-file repair, canonical repository confinement, and actionable I/O recovery withstand independent mutation tests; 6 focused and 73 foundation tests pass.
 
 ### SLICE-test-corpus-benchmark-registry-and-release-metadata (`CAP-00.S05`) - Test corpus, benchmark registry, and release metadata
 
@@ -934,6 +1046,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S05.T01.review-fix.json` at `5cafdf572fe68575f7a35618b56fda0faabb136e`
 - `artifacts/evidence/CAP-00.S05.T01.review-fix-2.json` at `535b1be09a9b3054cc802463dd4b4bac383ec0e2`
 
+##### Review history — CAP-00.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T19:42:36+00:00`
+
+**Latest notes:** Independent review reproduced all inventory, redirect, media, xref, semantic, and feature-outcome attacks; all rejected. 81 foundation tests passed.
+
 #### - [x] CAP-00.S05.T02 - Establish golden-output and benchmark registry conventions
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
@@ -968,6 +1088,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S05.T02.review-fix-2.json` at `dd71a9dcc0c1021140ae101f9c1e73b7bd5bc984`
 - `artifacts/evidence/CAP-00.S05.T02.review-fix-3.json` at `369abb4d638a958309240fdfb4aebe8cc0bf99c5`
 - `artifacts/evidence/CAP-00.S05.T02.review-fix-4.json` at `4a5fc16ee30575f6f34482ff65d4cd6281f79f82`
+
+##### Review history — CAP-00.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T21:05:01+00:00`
+
+**Latest notes:** Independent re-review approved exact commit 4a5fc16: strict approval/path/prompt controls, durable complete-graph history, all merge parents, global approval identity, schema-first malformed snapshot handling, clones/exports, and 101 foundation tests verified.
 
 #### - [x] CAP-00.S05.T03 - Implement version, changelog, and build-manifest generation
 
@@ -1004,6 +1132,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-3.json` at `8534749677355438708f2d3e9e73d167a86e5911`
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-4.json` at `d2b2f10f40abf70c65e1c2ed2da85bc49914a4f8`
 - `artifacts/evidence/CAP-00.S05.T03.review-fix-5.json` at `8b5bc27f13965fbb949257900abc54a192abf720`
+
+##### Review history — CAP-00.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T22:57:49+00:00`
+
+**Latest notes:** Independent exact-commit review approved 8b5bc27: 22 focused tests, 14-command/123-test foundation profile, exact evidence scope, handle-bound replacement, and repeatable clean provenance all pass.
 
 ### SLICE-approved-experience-reference-and-ui-conformance-automation (`CAP-00.S06`) - Approved experience reference and UI conformance automation
 
@@ -1046,6 +1182,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S06.T01.json` at `1acd8aa2ad13edc3c8d6938c2e0219010e8135e4`
 
+##### Review history — CAP-00.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by codex-review at `2026-08-08T23:29:38+00:00`
+
+**Latest notes:** Independent review approved exact 1acd8aa: canonical fresh Windows clone, 32 pages, 14 workflows, 54 governed hashes, 34 offline HTML documents, explicit scope boundaries, frozen validator dependencies, and 14-command/123-test foundation pass.
+
 #### - [x] CAP-00.S06.T02 - Implement UI-reference integrity and approval validation
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
@@ -1079,6 +1223,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S06.T02.review-fix.json` at `1e5954e60d0405631e56a7a45007a770b01ddb28`
 - `artifacts/evidence/CAP-00.S06.T02.review-fix-2.json` at `1ee236ab5ea27a6d84cbf16047f3c858f163bd83`
 
+##### Review history — CAP-00.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:descartes at `2026-08-09T00:32:33+00:00`
+
+**Latest notes:** Approved exact commit 1ee236a after independent closure of coherent SVG image/use, Worker/SharedWorker, incomplete generator, remote CSS/fetch, and administrator-route bypasses; deterministic report, evidence chain, taskctl/views, and 15-command/129-test foundation all pass.
+
 #### - [x] CAP-00.S06.T03 - Implement design-first change gating
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
@@ -1110,6 +1262,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-00.S06.T03.json` at `5ef232e641d6ad4999a6b7c7c31315ad758820cb`
 - `artifacts/evidence/CAP-00.S06.T03.review-fix.json` at `b12a715287bceec8c6f36405409a1db1b119f080`
+
+##### Review history — CAP-00.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:descartes at `2026-08-09T01:36:17+00:00`
+
+**Latest notes:** Independent remediation re-review approved b12a715: all five reproduced bypass classes close; 16 foundation commands/143 tests, 34 focused tests, exact evidence supersession, task range, ADR, taskctl, and views pass. Human CAP campaign authority plus independent agent review satisfies the configured human-and-agent gate without inventing an approver identity.
 
 #### - [x] CAP-00.S06.T04 - Implement UI implementation-conformance verification
 
@@ -1145,6 +1305,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-00.S06.T04.review-fix.json` at `8fd281d2d1ca970394b2cbe23d1a5519f1a77d0f`
 - `artifacts/evidence/CAP-00.S06.T04.review-fix-2.json` at `cf4f521e8e362061afb94245986c7bb6203852b2`
 - `artifacts/evidence/CAP-00.S06.T04.review-fix-3.json` at `c9e0cec2bc295188353db3b7cf34d609c199805b`
+
+##### Review history — CAP-00.S06.T04
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:descartes at `2026-08-09T05:24:09+00:00`
+
+**Latest notes:** Final independent re-review approved c9e0cec/4b72a61: malformed approval and arbitrary package denial, seven-case handoff topology matrix, merge mutation rejection, exact evidence/scope/ancestry, 27 focused tests, and 23-command desktop aggregate with 143 foundation and 15 desktop tests all pass; no required findings remain.
 
 ## CAP-windows-desktop-runtime (`CAP-01`) - Windows-first desktop shell and supervised local runtime
 
@@ -1201,6 +1369,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S01.T01.review-fix-2.json` at `e989c1393e1f3dfd30206105d7cedcfe7f811bd5`
 - `artifacts/evidence/CAP-01.S01.T01.review-fix-3.json` at `4d3380d79ca436557e80e686a43993c9d71ba5e4`
 
+##### Review history — CAP-01.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:descartes at `2026-08-09T09:03:11+00:00`
+
+**Latest notes:** Exact stale-review replay rejected; all three correction envelopes have fresh independent planning-only transitions. Evidence, full desktop profile, live gate, taskctl, and views independently verified.
+
 #### - [x] CAP-01.S01.T02 - Implement the primary application frame and workspace routing
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `low`
@@ -1233,6 +1409,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S01.T02.review-fix.json` at `5422bd749ba68274faf1f2744ebf8dc439aef6ff`
 - `artifacts/evidence/CAP-01.S01.T02.review-fix-2.json` at `e19ecc726ebba7206fb06ce0fa51a228bd830fed`
 
+##### Review history — CAP-01.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:maxwell at `2026-08-09T10:15:23+00:00`
+
+**Latest notes:** Approved at e19ecc7: independent pure and production-bundle replay confirms scheme-prefixed links recover safely, lose stale current-state semantics, and are excluded from keyboard routing; exact evidence and full checks validate.
+
 #### - [x] CAP-01.S01.T03 - Add project switcher, recent projects, and empty-state flows
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
@@ -1262,6 +1446,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-01.S01.T03.json` at `dae49529e536663d01bdb5cf7e3de40fdfaf24a3`
+
+##### Review history — CAP-01.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:maxwell at `2026-08-09T10:40:03+00:00`
+
+**Latest notes:** Approved at dae4952: deterministic/persistent recents, strict recovery, explicit missing-location actions, fail-closed opaque intents, empty state, and read/write failure behavior pass independent production-bundle review with exact evidence.
 
 ### SLICE-desktop-design-system-and-accessibility-foundation (`CAP-01.S02`) - Desktop design system and accessibility foundation
 
@@ -1306,6 +1498,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S02.T01.review-fix.json` at `2ad4146b32ec48080cf5189f65d7e30947310a07`
 - `artifacts/evidence/CAP-01.S02.T01.review-fix-2.json` at `dc45d304489160acc9f2ab5646698e4d656c9b14`
 
+##### Review history — CAP-01.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:maxwell at `2026-08-09T13:54:40+00:00`
+
+**Latest notes:** Independent final review closed all original and nested-inventory findings; exact evidence/provenance, 17 focused tests, 33 desktop tests, nine-command application report, and live UI gate pass.
+
 #### - [x] CAP-01.S02.T02 - Establish keyboard, focus, and screen-reader behavior
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
@@ -1336,6 +1536,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-01.S02.T02.json` at `b7f82e64764855c5c6cd4ee9b5ce107d3cb44a24`
 - `artifacts/evidence/CAP-01.S02.T02.review-fix.json` at `c3306ffc2cfc7bd3988e99b5f43da1a9335c07a0`
+
+##### Review history — CAP-01.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:maxwell at `2026-08-11T17:03:32+00:00`
+
+**Latest notes:** Independent remediation review reproduced modal containment for every registered shortcut, repeated-help restoration and disconnected-target fallback, stable Dark theme aria-pressed parity, exact evidence/scope, zero requests, all focused checks, nine-command aggregate, and the 25-command clean desktop profile.
 
 #### - [x] CAP-01.S02.T03 - Create consistent loading, error, offline, and recovery states
 
@@ -1371,6 +1579,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S02.T03.review-fix-3.json` at `b32e834d6206a9b77d71de5a664d0e5f334450a3`
 - `artifacts/evidence/CAP-01.S02.T03.review-fix-4.json` at `cf9c63e4c603eb18e2d9c919f63dff77eb6b000d`
 - `artifacts/evidence/CAP-01.S02.T03.review-fix-5.json` at `9f94e9433cb455a2c912ab4e14f3f22e92d7d929`
+
+##### Review history — CAP-01.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:maxwell at `2026-08-11T21:08:53+00:00`
+
+**Latest notes:** Independent review confirmed canonical hashing is limited to the two governed UTF-8 benchmark fixtures, normalizes CRLF to LF, rejects bare CR, preserves content-drift detection, changes no baseline/fixture, and passes exact six-file scope, 12 hostile tests, clean performance, UI gate, and carried-forward browser/product checks.
 
 ### SLICE-packaged-python-fastapi-sidecar (`CAP-01.S03`) - Packaged Python/FastAPI sidecar
 
@@ -1413,6 +1629,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S03.T01.json` at `c7f7395699097e4f963938184449b110ee7d8a25`
 - `artifacts/evidence/CAP-01.S03.T01.review-fix.json` at `71f16111874bf006aaae18c5763678a03586c0b4`
 
+##### Review history — CAP-01.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:maxwell at `2026-08-11T22:03:44+00:00`
+
+**Latest notes:** Actual served health/readiness payloads validate the strict schema; invalid state, extra fields, alive=false, and hybrid payloads reject. Exact remediation scope/evidence, 18-command clean profile, lifecycle/config/logging/module/OpenAPI/security and reference-separation controls pass.
+
 #### - [x] CAP-01.S03.T02 - Package the Python service as a Windows sidecar artifact
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
@@ -1445,6 +1669,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S03.T02.json` at `bb7a1b9875fcc0b42e40460b350d7bf4dda11e0e`
 - `artifacts/evidence/CAP-01.S03.T02.review-fix.json` at `1f563fd519e6e284905152440c96fd23d4432e5a`
 - `artifacts/evidence/CAP-01.S03.T02.review-fix-2.json` at `b5c30e665e370465cc61d9c14539317121e506ff`
+
+##### Review history — CAP-01.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:maxwell at `2026-08-12T00:20:03+00:00`
+
+**Latest notes:** Approved focused remediation b5c30e6: exact 0.1.0/3.14.6 remains valid; 99.99.99 and 3.14.999 reject through schema and governed-contract checks; exact scope/evidence, six packaging tests, Pythonless build/run, Ruff and mypy pass; prior full profiles remain applicable.
 
 #### - [x] CAP-01.S03.T03 - Implement sidecar lifecycle supervision in Tauri
 
@@ -1479,6 +1711,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S03.T03.json` at `ba98a62eee68f428eb11fdd5064ed142a9d47d22`
 - `artifacts/evidence/CAP-01.S03.T03.review-fix.json` at `45a80cc559548e100add72ef0d8bd7f947d335fa`
 - `artifacts/evidence/CAP-01.S03.T03.review-fix-2.json` at `a380445b96ffcf0927de7818f53c16a6e32e17bb`
+
+##### Review history — CAP-01.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-12T13:00:02+00:00`
+
+**Latest notes:** Async dispatch, atomic Job containment, stable diagnostics, serialized lifecycle, strict failure classification, descendant cleanup, and delayed-readiness cancellation independently verified.
 
 ### SLICE-authenticated-desktop-service-contract (`CAP-01.S04`) - Authenticated desktop-service contract
 
@@ -1522,6 +1762,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S04.T01.json` at `c2c33b3d027b4e53ca0e9371b642202c1ef9bcbb`
 - `artifacts/evidence/CAP-01.S04.T01.review-fix.json` at `10bef04ded937e7597222b3272d117041be6628e`
 
+##### Review history — CAP-01.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by curie at `2026-08-12T15:09:52+00:00`
+
+**Latest notes:** Independent remediation security review verified raw-token absence across 278 retained objects, clearing of valid and five invalid startup records, digest-only middleware retention, exact canonical frozen artifact identity, all focused auth/performance checks, and full native lifecycle cleanup with no residue.
+
 #### - [x] CAP-01.S04.T02 - Generate and consume versioned API contracts
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
@@ -1553,6 +1801,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-01.S04.T02.json` at `072e1d66c6860ad142922719573ccc69ab0f5054`
 - `artifacts/evidence/CAP-01.S04.T02.review-fix.json` at `9536058d2a19ac1fc523eb668b568e6550219f88`
+
+##### Review history — CAP-01.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-12T16:03:09+00:00`
+
+**Latest notes:** Remediation approved: exact command fingerprints govern idempotent replay; JSON/SSE clients reject unexpected status/media types; native incompatibility reaches the existing functional recovery projection. Exact evidence, package, lifecycle, and clean state verified without full profiles.
 
 #### - [x] CAP-01.S04.T03 - Build desktop diagnostics and support-bundle collection
 
@@ -1594,6 +1850,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-7.json` at `226ad7e72bea05133da673bd2361c5b16ba07da9`
 - `artifacts/evidence/CAP-01.S04.T03.review-fix-8.json` at `871fa17d0e6c802fb48e329d6dd075caa9c37e05`
 
+##### Review history — CAP-01.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-13T20:56:57+00:00`
+
+**Latest notes:** Focused re-review verified exact protected two-file hardening after the planning-only REVIEW/CHANGES_REQUESTED transition; immutable 1cd9dee/quality-scope/evidence/approval attestation and hostile denials; cumulative UI gate; 16 gate tests; pinned packages/contracts 6/6; taskctl/views and clean state.
+
 ### SLICE-windows-installation-and-update-channels (`CAP-01.S05`) - Windows installation and update channels
 
 **Outcome:** The PC/lab application can be installed, upgraded, repaired, and removed predictably by individuals or lab administrators.
@@ -1631,6 +1895,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-01.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-01.S05.T02 - Implement signed update manifests and release channels
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -1658,6 +1930,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-01.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-01.S05.T03 - Support silent lab deployment and policy configuration
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -1684,6 +1964,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-01.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-local-project-storage (`CAP-02`) - Local projects, durable storage, security, and recovery
 
@@ -1739,6 +2027,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S01.T01.review-fix.json` at `23580f1c40c8211062455bfacf07c88cdbb41e1d`
 - `artifacts/evidence/CAP-02.S01.T01.review-fix-2.json` at `28fd5fd6c90ea5c8e51e80e67a102fbe57356c1f`
 
+##### Review history — CAP-02.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-14T02:12:59+00:00`
+
+**Latest notes:** Final focused re-review approved: unsafe semantic-version components reject consistently in portable and TypeScript paths; canonical and maximum-safe ascending ranges pass; reversed ranges reject; evidence, exact scope, ancestry, focused tests, ADR, taskctl, views, and cleanliness pass.
+
 #### - [x] CAP-02.S01.T02 - Implement create, open, close, archive, and delete workflows
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
@@ -1771,6 +2067,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S01.T02.submission.json` at `633aaa396548cfa9be8cbfa9e6a26d2e833244ea`
 - `artifacts/evidence/CAP-02.S01.T02.review-fix.json` at `75272b85dbaff88e473b6c924831163297e4c2cc`
 
+##### Review history — CAP-02.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-14T11:06:18+00:00`
+
+**Latest notes:** Remediation approved: cumulative UI gate and hostile provenance controls pass; audit hardlinks cannot alter outside bytes; failed open/delete audit restores exact state; held Windows roots deny substitution/device/install paths. Exact evidence/scope and 43 focused tests verified.
+
 #### - [x] CAP-02.S01.T03 - Add project compatibility and safe-open checks
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
@@ -1802,6 +2106,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-02.S01.T03.json` at `4fc8e31631f2cb3f4afaf4310d428cd0c190e133`
 - `artifacts/evidence/CAP-02.S01.T03.review-fix.json` at `687934e659577aa68152d377d01b88beeb7301b7`
+
+##### Review history — CAP-02.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-14T11:38:34+00:00`
+
+**Latest notes:** Exact recovery mappings, deletion identity, and archived-incompatible mutation suppression independently verified. Focused Core/client/component/compiled-product checks, evidence, scope, ancestry, UI lineage, and cleanliness pass.
 
 ### SLICE-sqlite-schema-migrations-and-repository-layer (`CAP-02.S02`) - SQLite schema, migrations, and repository layer
 
@@ -1846,6 +2158,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S02.T01.review-fix-2.json` at `5e5541c81c4445bb3df77f32d4f11f8125c9a00b`
 - `artifacts/evidence/CAP-02.S02.T01.review-fix-3.json` at `74212e9cb79afe87ec5c09b3494a5353abc44034`
 
+##### Review history — CAP-02.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-17T23:08:52+00:00`
+
+**Latest notes:** Approved focused third remediation: opaque-token registry removes raw connection/cursor back-references; exact dir/slots/name-mangled and cleanup attacks pass; prior SQL/PRAGMA/immutable/mutable/initialization controls, 40 focused tests, quality, current performance, evidence, and workflow state pass. No broad profile run.
+
 #### - [x] CAP-02.S02.T02 - Implement forward migrations and backup-before-migrate policy
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
@@ -1881,6 +2201,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S02.T02.review-fix-3.json` at `bf3fb1e985effb83366465b1169365d736af6b0b`
 - `artifacts/evidence/CAP-02.S02.T02.review-fix-4.json` at `f66606cf2f2d4f982f461747a847f1bcba699207`
 
+##### Review history — CAP-02.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-18T00:37:15+00:00`
+
+**Latest notes:** Approved focused remediation at f66606c: held/persistent recovery hierarchy, exact file/path denial, staging cleanup, immutable failure record, nine rollback/retries, package/build truth, and explicit NONQUALIFYING performance all verify.
+
 #### - [x] CAP-02.S02.T03 - Build typed repositories and transaction boundaries
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `medium`
@@ -1912,6 +2240,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S02.T03.json` at `83d6b230ade28a876efada0d68e1eb378ffe19c8`
 - `artifacts/evidence/CAP-02.S02.T03.review-fix.json` at `0a5d559d5887ca0f37b54f0bce5efe0996b1c784`
 - `artifacts/evidence/CAP-02.S02.T03.review-fix-2.json` at `7eefe2fdff13932c43c8daed5475573342af5074`
+
+##### Review history — CAP-02.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-18T01:31:40+00:00`
+
+**Latest notes:** Approved focused remediation at 7eefe2f: package-style adapter imports deny; bounded errors retain no cause/context; idempotency, rollback/retry, ADR, package, build, and exact evidence verify.
 
 ### SLICE-encrypted-local-object-and-cache-storage (`CAP-02.S03`) - Encrypted local object and cache storage
 
@@ -1955,6 +2291,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S03.T01.review-fix.json` at `747391f58b55e0205b43ae80887fd0e7136e68bf`
 - `artifacts/evidence/CAP-02.S03.T01.review-fix-2.json` at `971cef3edfe7a1af46c68b0891fa74db04b9a405`
 
+##### Review history — CAP-02.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-18T03:29:56+00:00`
+
+**Latest notes:** Final remediation independently closes all six original defects and the combined late-hardlink plus lost-COMMIT-ack reconciliation boundary.
+
 #### - [x] CAP-02.S03.T02 - Add encryption-at-rest and key-version metadata
 
 **Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
@@ -1986,6 +2330,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-02.S03.T02.json` at `4d55d5ed0345a6265d296f6d7d9a774804c6b2d6`
 - `artifacts/evidence/CAP-02.S03.T02.review-fix.json` at `5898fc634bcd0e6cf33915b81ea62670947f83e2`
+
+##### Review history — CAP-02.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by t02_security_review at `2026-08-18T13:18:03+00:00`
+
+**Latest notes:** APPROVED exact commit 5898fc634bcd0e6cf33915b81ea62670947f83e2 after replay of P1/P2, 40 durability boundaries, cancellation/commit-ack recovery, default executable composition, and frozen PyNaCl/CFFI/v4 packaging; final ADR-only delta replay also passed.
 
 #### - [x] CAP-02.S03.T03 - Implement storage accounting, quotas, garbage collection, and cache eviction
 
@@ -2020,6 +2372,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S03.T03.review-fix.json` at `8c18b51b588921f5e719a2cd6d6212f0d43ea8b0`
 - `artifacts/evidence/CAP-02.S03.T03.slice-review-remediation.json` at `d0cebec8ab89bc42f972a6083cc80e7dda843601`
 - `artifacts/evidence/CAP-02.S03.T03.doc-remediation.json` at `e2eda29c017c5c1441811bb2e4ea3a046bede6be`
+
+##### Review history — CAP-02.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by independent-agent-t03-slice-remediation at `2026-08-20T21:10:10+00:00`
+
+**Latest notes:** Focused remediation APPROVED exact e2eda29: README source-fixture range now v1-v4 and matches runner/recovery/architecture; no executable or machine-contract delta; strict contracts, 107-file quality, generated views, backlog, and diff hygiene pass. Prior independent executable review and first-only performance pass retained; marginal performance remains a W1-exit replay risk.
 
 ### SLICE-local-secrets-profiles-and-privacy-controls (`CAP-02.S04`) - Local secrets, profiles, and privacy controls
 
@@ -2063,6 +2423,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-02.S04.T01.review-remediation.json` at `ff752baf288dbb0749684b9821ce3a031d877d6e`
 - `artifacts/evidence/CAP-02.S04.T01.purpose-remediation.json` at `3fedbd7dd0783b2a47000781dbc0f73843c53170`
 
+##### Review history — CAP-02.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by cap02_s04_t01_security_review at `2026-08-20T22:23:23+00:00`
+
+**Latest notes:** APPROVED exact implementation 3fedbd7dd0783b2a47000781dbc0f73843c53170; evidence 57c47fc SHA-256 208f07ec0debc0f2cd67920b1c9106f7f63ef983f9627fdcf88bcf934a625408; clean descendant cd872d1. F1 bounded authority recovery, F2 attributed default audit, and F3 closed purpose vocabulary verified. No actionable P0-P3.
+
 #### - [ ] CAP-02.S04.T02 - Implement local user profile and application-lock behavior
 
 **Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
@@ -2090,6 +2458,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-02.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -2116,6 +2492,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-02.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-02.S04.T04 - Select and implement the protected local project-database profile
 
@@ -2146,6 +2530,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile security-local
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-02.S04.T04
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-backup-restore-relocation-and-lab-portability (`CAP-02.S05`) - Backup, restore, relocation, and lab portability
 
@@ -2184,6 +2576,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-02.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-02.S05.T02 - Implement verified restore, clone, and relocation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -2212,6 +2612,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-02.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-02.S05.T03 - Create portable lab project and shared-cache conventions
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -2239,6 +2647,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-02.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-research-domain-workflows (`CAP-03`) - Canonical domain, research intent, provenance, and durable workflows
 
@@ -2298,6 +2714,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `artifacts/evidence/CAP-03.S01.T01.review-fix.json` at `787e5014de1d09a5dc0f678b6a26beab9a570298`
 - `artifacts/evidence/CAP-03.S01.T01.review-fix-2.json` at `300a1a42e2697bcfc4ebf443e94b26bb8735abf8`
 
+##### Review history — CAP-03.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `approved` by agent:curie at `2026-08-14T13:47:17+00:00`
+
+**Latest notes:** Second remediation independently closes relative-path, Python immutable-base, and TypeScript prototype-copy findings; all original controls remain passing.
+
 #### - [ ] CAP-03.S01.T02 - Define aggregate state machines and invariants
 
 **Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
@@ -2323,6 +2747,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile service
+
+##### Review history — CAP-03.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-03.S01.T03 - Publish versioning and compatibility policy for domain APIs
 
@@ -2351,6 +2783,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
 - python tools/verify.py --profile service
+
+##### Review history — CAP-03.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-research-intent-contract-and-mode-governance (`CAP-03.S02`) - Research intent contract and mode governance
 
@@ -2388,6 +2828,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 
+##### Review history — CAP-03.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S02.T02 - Implement guided intent creation and revision UI
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -2415,6 +2863,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile service
 
+##### Review history — CAP-03.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S02.T03 - Enforce mode and autonomy policy at service boundaries
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -2441,6 +2897,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-03.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-append-only-provenance-and-audit-ledger (`CAP-03.S03`) - Append-only provenance and audit ledger
 
@@ -2479,6 +2943,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 
+##### Review history — CAP-03.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S03.T02 - Implement atomic provenance recording and lineage queries
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -2505,6 +2977,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile data
 - python tools/verify.py --profile service
+
+##### Review history — CAP-03.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-03.S03.T03 - Create an audit and lineage inspection workspace
 
@@ -2533,6 +3013,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-03.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-portable-workflow-model-and-local-worker-fabric (`CAP-03.S04`) - Portable workflow model and local worker fabric
 
@@ -2570,6 +3058,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 
+##### Review history — CAP-03.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S04.T02 - Implement the local durable queue and worker supervisor
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -2598,6 +3094,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-03.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S04.T03 - Build task center, progress, cancellation, and human-gate UI
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
@@ -2625,6 +3129,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-03.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-dependency-graph-staleness-and-controlled-recalculation (`CAP-03.S05`) - Dependency graph, staleness, and controlled recalculation
 
@@ -2663,6 +3175,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 
+##### Review history — CAP-03.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S05.T02 - Implement stale-state propagation and impact preview
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -2691,6 +3211,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-03.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S05.T03 - Implement selective recomputation and historical retention
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -2717,6 +3245,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-03.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-use-case-profiles-and-adaptive-guided-navigation (`CAP-03.S06`) - Use-case profiles and adaptive guided navigation
 
@@ -2756,6 +3292,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/taskctl.py validate
 
+##### Review history — CAP-03.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S06.T02 - Implement primary-use-case selection at project creation and intent revision
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -2785,6 +3329,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/taskctl.py validate
 
+##### Review history — CAP-03.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S06.T03 - Implement adaptive ordered navigation and workflow context
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -2811,6 +3363,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop
 - python tools/taskctl.py validate
+
+##### Review history — CAP-03.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-03.S06.T04 - Implement workflow progress, checkpoints, handoffs, and recalculation impact
 
@@ -2841,6 +3401,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/taskctl.py validate
 
+##### Review history — CAP-03.S06.T04
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-03.S06.T05 - Verify all approved use-case workflows end to end
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -2869,6 +3437,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 - python tools/taskctl.py validate
+
+##### Review history — CAP-03.S06.T05
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-scholarly-ingestion (`CAP-04`) - Scholarly ingestion, connectors, canonicalization, and corpus governance
 
@@ -2918,6 +3494,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 
+##### Review history — CAP-04.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-04.S01.T02 - Create import preview, mapping, and conflict UI
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -2945,6 +3529,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile service
 
+##### Review history — CAP-04.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-04.S01.T03 - Implement idempotent import commits and import manifests
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -2971,6 +3563,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
+
+##### Review history — CAP-04.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-open-scholarly-source-adapters (`CAP-04.S02`) - Open scholarly source adapters
 
@@ -3008,6 +3608,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 
+##### Review history — CAP-04.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-04.S02.T02 - Implement OpenAlex and Crossref adapters
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
@@ -3035,6 +3643,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile search
 
+##### Review history — CAP-04.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-04.S02.T03 - Implement Unpaywall and Semantic Scholar adapters
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
@@ -3061,6 +3677,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 - python tools/verify.py --profile search
+
+##### Review history — CAP-04.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-canonical-work-version-and-identity-reconciliation (`CAP-04.S03`) - Canonical work, version, and identity reconciliation
 
@@ -3099,6 +3723,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 
+##### Review history — CAP-04.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-04.S03.T02 - Implement probabilistic duplicate candidate generation and review
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -3127,6 +3759,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile data
 
+##### Review history — CAP-04.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-04.S03.T03 - Implement work-version, correction, and retraction relationships
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -3154,6 +3794,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 - python tools/verify.py --profile graph
+
+##### Review history — CAP-04.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-corpus-membership-discovery-path-and-rights-governance (`CAP-04.S04`) - Corpus membership, discovery path, and rights governance
 
@@ -3192,6 +3840,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 
+##### Review history — CAP-04.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-04.S04.T02 - Implement rights, license, entitlement, and permitted-use metadata
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -3218,6 +3874,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-04.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-04.S04.T03 - Build corpus provenance and source-overlap reports
 
@@ -3246,6 +3910,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile service
 - python tools/verify.py --profile search
+
+##### Review history — CAP-04.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-connector-sdk-and-controlled-extensibility (`CAP-04.S05`) - Connector SDK and controlled extensibility
 
@@ -3285,6 +3957,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/taskctl.py validate
 - python tools/verify.py --profile service
 
+##### Review history — CAP-04.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-04.S05.T02 - Implement plugin isolation, configuration, and secret access controls
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
@@ -3311,6 +3991,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile service
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-04.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-04.S05.T03 - Deliver a sample repository connector and conformance suite
 
@@ -3339,6 +4027,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
+
+##### Review history — CAP-04.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-document-inspection (`CAP-05`) - Document acquisition, parsing, source inspection, and page anchors
 
@@ -3389,6 +4085,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-05.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S01.T02 - Implement open-access location selection and download
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -3416,6 +4120,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-05.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S01.T03 - Create acquisition queue, conflict, and entitlement placeholders
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -3442,6 +4154,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile service
+
+##### Review history — CAP-05.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-structured-and-pdf-parsing-pipeline (`CAP-05.S02`) - Structured and PDF parsing pipeline
 
@@ -3479,6 +4199,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile documents
 
+##### Review history — CAP-05.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S02.T02 - Implement native JATS/TEI/XML/HTML parsing
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
@@ -3504,6 +4232,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile documents
+
+##### Review history — CAP-05.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-05.S02.T03 - Integrate the local Docling-based PDF parser with fallback
 
@@ -3531,6 +4267,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-05.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-immutable-document-revisions-and-source-anchors (`CAP-05.S03`) - Immutable document revisions and source anchors
 
@@ -3569,6 +4313,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile data
 
+##### Review history — CAP-05.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S03.T02 - Implement page, bounding-box, and text-span anchors
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -3596,6 +4348,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-05.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S03.T03 - Implement anchor resolution and citation-link APIs
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -3622,6 +4382,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile service
+
+##### Review history — CAP-05.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-source-viewer-and-evidence-inspection-experience (`CAP-05.S04`) - Source viewer and evidence inspection experience
 
@@ -3661,6 +4429,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-05.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S04.T02 - Implement deep links, highlights, and context panels
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
@@ -3689,6 +4465,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-05.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S04.T03 - Enforce rights-aware viewer actions and export
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -3715,6 +4499,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-05.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-references-citation-contexts-tables-and-figures (`CAP-05.S05`) - References, citation contexts, tables, and figures
 
@@ -3753,6 +4545,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile service
 
+##### Review history — CAP-05.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S05.T02 - Extract in-text citation contexts and targets
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `medium`
@@ -3780,6 +4580,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-05.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S05.T03 - Represent tables and figures with captions and page anchors
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
@@ -3806,6 +4614,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile desktop
+
+##### Review history — CAP-05.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-parsing-quality-correction-and-reprocessing (`CAP-05.S06`) - Parsing quality, correction, and reprocessing
 
@@ -3843,6 +4659,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile documents
 
+##### Review history — CAP-05.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-05.S06.T02 - Build manual structural correction and annotation tools
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -3869,6 +4693,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile documents
+
+##### Review history — CAP-05.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-05.S06.T03 - Implement parser upgrade comparison and stale propagation
 
@@ -3897,6 +4729,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-05.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-search-screening (`CAP-06`) - Local search, discovery, corpus diagnostics, and screening
 
@@ -3946,6 +4786,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile search
 
+##### Review history — CAP-06.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S01.T02 - Implement incremental FTS5 indexing and rebuild
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -3973,6 +4821,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile data
 
+##### Review history — CAP-06.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S01.T03 - Implement fielded search, filters, snippets, and ranking explanation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
@@ -3999,6 +4855,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile search
 - python tools/verify.py --profile desktop
+
+##### Review history — CAP-06.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-semantic-representations-and-vector-retrieval (`CAP-06.S02`) - Semantic representations and vector retrieval
 
@@ -4037,6 +4901,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-06.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S02.T02 - Integrate a local scientific embedding baseline
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4065,6 +4937,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-06.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S02.T03 - Implement local vector indexing, filtered similarity search, and rebuild
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4091,6 +4971,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile search
 - python tools/verify.py --profile data
+
+##### Review history — CAP-06.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-hybrid-retrieval-and-reranking (`CAP-06.S03`) - Hybrid retrieval and reranking
 
@@ -4128,6 +5016,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile search
 
+##### Review history — CAP-06.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S03.T02 - Implement optional local or approved reranking
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4154,6 +5050,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile search
 - python tools/verify.py --profile ai
+
+##### Review history — CAP-06.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-06.S03.T03 - Persist complete search-run manifests and replay
 
@@ -4182,6 +5086,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
+
+##### Review history — CAP-06.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-search-studio-and-transparent-expansion (`CAP-06.S04`) - Search Studio and transparent expansion
 
@@ -4220,6 +5132,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile search
 
+##### Review history — CAP-06.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S04.T02 - Implement versioned search-tree branches and query translation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4246,6 +5166,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile search
 - python tools/verify.py --profile desktop
+
+##### Review history — CAP-06.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-06.S04.T03 - Implement citation, bibliographic-coupling, and semantic expansion actions
 
@@ -4274,6 +5202,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile service
+
+##### Review history — CAP-06.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-corpus-canvas-coverage-and-reflexivity-diagnostics (`CAP-06.S05`) - Corpus canvas, coverage, and reflexivity diagnostics
 
@@ -4313,6 +5249,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-06.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S05.T02 - Implement coverage, overlap, missingness, and concentration metrics
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4341,6 +5285,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-06.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S05.T03 - Implement corpus-boundary sensitivity comparisons
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4368,6 +5320,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile service
 - python tools/verify.py --profile graph
+
+##### Review history — CAP-06.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-transparent-screening-and-active-learning-governance (`CAP-06.S06`) - Transparent screening and active-learning governance
 
@@ -4407,6 +5367,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile data
 
+##### Review history — CAP-06.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S06.T02 - Implement active-learning prioritization and model versioning
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4435,6 +5403,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile service
 
+##### Review history — CAP-06.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-06.S06.T03 - Implement random audits, citation-neighbor checks, and stopping diagnostics
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4462,6 +5438,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile evidence
+
+##### Review history — CAP-06.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-model-gateway (`CAP-07`) - Provider-neutral model gateway and governed AI execution
 
@@ -4511,6 +5495,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-07.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-07.S01.T02 - Implement model registry and capability discovery
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -4538,6 +5530,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile service
 
+##### Review history — CAP-07.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-07.S01.T03 - Implement routing, fallback, timeout, and circuit-breaker policy
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4564,6 +5564,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-07.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-local-model-runtime-and-model-management (`CAP-07.S02`) - Local model runtime and model management
 
@@ -4603,6 +5611,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-07.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-07.S02.T02 - Implement model catalog, download/import, integrity, and license consent
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4631,6 +5647,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-07.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-07.S02.T03 - Implement hardware profiles and adaptive resource limits
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -4657,6 +5681,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-07.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-approved-remote-model-providers (`CAP-07.S03`) - Approved remote model providers
 
@@ -4694,6 +5726,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-07.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-07.S03.T02 - Implement egress preview, minimization, and consent
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
@@ -4720,6 +5760,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-07.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-07.S03.T03 - Implement offline/network-disabled enforcement and remote fallback behavior
 
@@ -4748,6 +5796,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile security-local
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-07.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-prompt-schema-and-structured-output-registry (`CAP-07.S04`) - Prompt, schema, and structured-output registry
 
@@ -4785,6 +5841,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-07.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-07.S04.T02 - Implement schema-constrained generation and deterministic validation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4811,6 +5875,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile service
+
+##### Review history — CAP-07.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-07.S04.T03 - Implement prompt/schema regression tests and approval states
 
@@ -4839,6 +5911,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
+
+##### Review history — CAP-07.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-ai-observability-budgets-and-evaluation-operations (`CAP-07.S05`) - AI observability, budgets, and evaluation operations
 
@@ -4877,6 +5957,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile service
 
+##### Review history — CAP-07.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-07.S05.T02 - Implement project budgets, quotas, cache policy, and cancellation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -4905,6 +5993,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-07.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-07.S05.T03 - Create model evaluation dashboard and upgrade workflow
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -4931,6 +6027,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile desktop
+
+##### Review history — CAP-07.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-evidence-verification (`CAP-08`) - Evidence schemas, extraction, verification, and adjudication
 
@@ -4981,6 +6085,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-08.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S01.T02 - Implement extraction-schema authoring and validation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5008,6 +6120,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-08.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S01.T03 - Implement ontology/schema import, export, fork, and version comparison
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -5034,6 +6154,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile service
+
+##### Review history — CAP-08.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-source-grounded-extraction-pipeline (`CAP-08.S02`) - Source-grounded extraction pipeline
 
@@ -5073,6 +6201,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile documents
 
+##### Review history — CAP-08.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S02.T02 - Implement field and relation extraction workflows
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5101,6 +6237,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile service
 
+##### Review history — CAP-08.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S02.T03 - Implement normalization and entity-link candidate generation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5127,6 +6271,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile service
+
+##### Review history — CAP-08.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-evidence-record-status-confidence-and-uncertainty-model (`CAP-08.S03`) - Evidence record, status, confidence, and uncertainty model
 
@@ -5165,6 +6317,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile data
 
+##### Review history — CAP-08.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S03.T02 - Implement observed, extracted, inferred, verified, disputed, adjudicated, and stale states
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5193,6 +6353,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile service
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-08.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S03.T03 - Implement decomposed confidence and missingness
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -5219,6 +6387,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile desktop
+
+##### Review history — CAP-08.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-independent-evidence-verification (`CAP-08.S04`) - Independent evidence verification
 
@@ -5257,6 +6433,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-08.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S04.T02 - Implement entailment, anchor, and schema-fit checks
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5285,6 +6469,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile documents
 
+##### Review history — CAP-08.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S04.T03 - Implement calibrated sampling and human-verification queues
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -5311,6 +6503,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile desktop
+
+##### Review history — CAP-08.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-evidence-matrix-and-source-first-analysis-ui (`CAP-08.S05`) - Evidence matrix and source-first analysis UI
 
@@ -5349,6 +6549,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-08.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S05.T02 - Implement source inspection and alternative-candidate interaction
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5377,6 +6585,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile documents
 
+##### Review history — CAP-08.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S05.T03 - Implement bulk review, correction, and recomputation actions
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5404,6 +6620,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile service
+
+##### Review history — CAP-08.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-coder-comparison-adjudication-and-evidence-export (`CAP-08.S06`) - Coder comparison, adjudication, and evidence export
 
@@ -5442,6 +6666,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-08.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S06.T02 - Implement adjudication workspace and rationale records
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5469,6 +6701,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-08.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-08.S06.T03 - Implement evidence table and audit exports
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -5495,6 +6735,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-08.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-scholarly-graph-synthesis (`CAP-09`) - Scholarly graph, comparison sets, synthesis, and reproducibility
 
@@ -5545,6 +6793,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-09.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S01.T02 - Implement the local graph projection and query adapter
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5572,6 +6828,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile data
 
+##### Review history — CAP-09.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S01.T03 - Implement projection updates, versioning, and consistency checks
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5598,6 +6862,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile service
+
+##### Review history — CAP-09.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-claim-theory-construct-method-and-context-relations (`CAP-09.S02`) - Claim, theory, construct, method, and context relations
 
@@ -5637,6 +6909,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile search
 
+##### Review history — CAP-09.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S02.T02 - Implement claim and argument relation candidate extraction
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5665,6 +6945,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-09.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S02.T03 - Implement relation review, dispute, and adjudication
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5691,6 +6979,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile desktop
+
+##### Review history — CAP-09.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-comparability-sets-and-contradiction-candidates (`CAP-09.S03`) - Comparability sets and contradiction candidates
 
@@ -5729,6 +7025,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-09.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S03.T02 - Implement comparability clustering and pair explanation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5757,6 +7061,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-09.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S03.T03 - Implement support, contradiction, qualification, and boundary candidate detection
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5784,6 +7096,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile novelty
+
+##### Review history — CAP-09.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-graph-theory-construct-and-lineage-workspaces (`CAP-09.S04`) - Graph, theory, construct, and lineage workspaces
 
@@ -5822,6 +7142,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-09.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S04.T02 - Build theory, construct-definition, and operationalization maps
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5850,6 +7178,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-09.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S04.T03 - Build citation, semantic, method, and temporal map presets
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -5877,6 +7213,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile search
+
+##### Review history — CAP-09.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-evidence-grounded-synthesis-and-citation-audit (`CAP-09.S05`) - Evidence-grounded synthesis and citation audit
 
@@ -5916,6 +7260,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-09.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S05.T02 - Implement source-grounded synthesis with claim-level citations
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5944,6 +7296,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-09.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S05.T03 - Implement citation support, completeness, and mismatch audit
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -5971,6 +7331,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile novelty
+
+##### Review history — CAP-09.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-reproducibility-packages-and-scholarly-exports (`CAP-09.S06`) - Reproducibility packages and scholarly exports
 
@@ -6010,6 +7378,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-09.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S06.T02 - Implement PRISMA-compatible flow and review appendices
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -6038,6 +7414,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-09.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-09.S06.T03 - Implement DOCX/Markdown/CSV/JSON-LD/graph export bundle
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6065,6 +7449,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-09.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-novelty-opportunities (`CAP-10`) - Novelty auditing, research opportunities, and plural research modes
 
@@ -6116,6 +7508,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile novelty
 
+##### Review history — CAP-10.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S01.T02 - Implement multi-route nearest-prior retrieval
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6144,6 +7544,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-10.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S01.T03 - Build facet comparison grid and threat review
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6171,6 +7579,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile documents
+
+##### Review history — CAP-10.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-independent-adversarial-novelty-challenge (`CAP-10.S02`) - Independent adversarial novelty challenge
 
@@ -6210,6 +7626,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile search
 
+##### Review history — CAP-10.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S02.T02 - Implement challenger orchestration and threat ranking
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6238,6 +7662,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile service
 
+##### Review history — CAP-10.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S02.T03 - Implement bounded novelty statement and approval gate
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -6264,6 +7696,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile evidence
+
+##### Review history — CAP-10.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-research-opportunity-dossier-and-decision-ledger (`CAP-10.S03`) - Research opportunity dossier and decision ledger
 
@@ -6302,6 +7742,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile service
 
+##### Review history — CAP-10.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S03.T02 - Build dossier assembly, review, and export workspace
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6330,6 +7778,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-10.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S03.T03 - Implement opportunity decision and outcome memory
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -6357,6 +7813,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile data
 - python tools/verify.py --profile graph
+
+##### Review history — CAP-10.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-critical-and-hermeneutic-research-support (`CAP-10.S05`) - Critical and hermeneutic research support
 
@@ -6395,6 +7859,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile novelty
 
+##### Review history — CAP-10.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S05.T02 - Build competing-reading and problematization workspace
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6423,6 +7895,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-10.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S05.T03 - Implement hermeneutic search-read-interpret cycles and memo lineage
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6450,6 +7930,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile search
 - python tools/verify.py --profile graph
+
+##### Review history — CAP-10.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-plural-opportunity-detector-ensemble (`CAP-10.S04`) - Plural opportunity detector ensemble
 
@@ -6489,6 +7977,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile search
 
+##### Review history — CAP-10.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S04.T02 - Implement contradiction, boundary, measurement, and robustness detectors
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
@@ -6517,6 +8013,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-10.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S04.T03 - Implement bridge, structural, temporal, method, data, and theory-integration detectors
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
@@ -6544,6 +8048,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile search
+
+##### Review history — CAP-10.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-opportunity-radar-ranking-and-portfolio-governance (`CAP-10.S06`) - Opportunity radar, ranking, and portfolio governance
 
@@ -6582,6 +8094,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-10.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S06.T02 - Build Pareto radar and candidate comparison workspace
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `medium`
@@ -6608,6 +8128,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile novelty
+
+##### Review history — CAP-10.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-10.S06.T03 - Implement portfolio links, duplication checks, and convergence monitoring
 
@@ -6636,6 +8164,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-10.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-living-monitor-and-impact-aware-research-memory (`CAP-10.S07`) - Living monitor and impact-aware research memory
 
@@ -6674,6 +8210,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile search
 - python tools/verify.py --profile service
 
+##### Review history — CAP-10.S07.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S07.T02 - Implement new-paper triage and impact analysis
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
@@ -6702,6 +8246,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile novelty
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-10.S07.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-10.S07.T03 - Build living-review change report and reassessment workflow
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
@@ -6729,6 +8281,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-10.S07.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-windows-release (`CAP-11`) - Windows PC/lab product hardening, validation, packaging, and release
 
@@ -6779,6 +8339,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-11.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S01.T02 - Build representative local performance and endurance benchmarks
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6807,6 +8375,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
 
+##### Review history — CAP-11.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S01.T03 - Implement adaptive concurrency, throttling, and low-resource modes
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6833,6 +8409,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile service
+
+##### Review history — CAP-11.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-reliability-crash-recovery-upgrade-and-rollback (`CAP-11.S02`) - Reliability, crash recovery, upgrade, and rollback
 
@@ -6871,6 +8455,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile data
 
+##### Review history — CAP-11.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S02.T02 - Implement startup recovery and project health repair
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6899,6 +8491,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile data
 
+##### Review history — CAP-11.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S02.T03 - Validate application/project upgrade and application rollback matrix
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6926,6 +8526,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile data
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-11.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-offline-privacy-and-local-security-acceptance (`CAP-11.S03`) - Offline, privacy, and local security acceptance
 
@@ -6964,6 +8572,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-11.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S03.T02 - Complete local threat model and security test plan
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -6989,6 +8605,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-11.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-11.S03.T03 - Complete privacy, rights, deletion, and disclosure review
 
@@ -7016,6 +8640,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile security-local
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-11.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-accessibility-usability-onboarding-and-help (`CAP-11.S04`) - Accessibility, usability, onboarding, and help
 
@@ -7053,6 +8685,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-11.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S04.T02 - Conduct task-based usability studies on core local workflows
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -7079,6 +8719,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-11.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-11.S04.T03 - Implement onboarding, contextual help, tutorials, and sample project
 
@@ -7107,6 +8755,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-11.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S04.T04 - Validate objective-specific guided workflows with researchers
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -7134,6 +8790,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile desktop
 - python tools/taskctl.py validate
+
+##### Review history — CAP-11.S04.T04
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-lab-deployment-policy-maintenance-and-support (`CAP-11.S05`) - Lab deployment, policy, maintenance, and support
 
@@ -7172,6 +8836,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-11.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S05.T02 - Implement lab-safe model and parser cache seeding
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -7200,6 +8872,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile security-local
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-11.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S05.T03 - Create redacted support, diagnostics, and maintenance runbooks
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -7226,6 +8906,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-11.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-local-release-candidate-and-acceptance-gate (`CAP-11.S06`) - Local release candidate and acceptance gate
 
@@ -7266,6 +8954,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-11.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S06.T02 - Run complete local end-to-end acceptance and regression suite
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
@@ -7294,6 +8990,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-11.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-11.S06.T03 - Approve G5 and publish PC/lab version 1.0 documentation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -7320,6 +9024,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile foundation
 - python tools/taskctl.py validate
+
+##### Review history — CAP-11.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-university-hosting (`CAP-12`) - University-hosted deployment, institutional identity, collaboration, and operations
 
@@ -7370,6 +9082,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile server
 
+##### Review history — CAP-12.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S01.T02 - Implement university connection profiles and secure onboarding
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7398,6 +9118,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile server
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-12.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S01.T03 - Implement bounded local cache and disconnected-read behavior
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7425,6 +9153,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile server
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-12.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-institutional-service-and-data-plane-foundation (`CAP-12.S02`) - Institutional service and data-plane foundation
 
@@ -7462,6 +9198,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 
+##### Review history — CAP-12.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S02.T02 - Implement PostgreSQL, S3-compatible object, and Qdrant adapters
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7489,6 +9233,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile server
 - python tools/verify.py --profile data
 
+##### Review history — CAP-12.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S02.T03 - Implement Temporal-based durable workflow executor
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7515,6 +9267,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 - python tools/verify.py --profile service
+
+##### Review history — CAP-12.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-institutional-identity-authorization-and-project-isolation (`CAP-12.S03`) - Institutional identity, authorization, and project isolation
 
@@ -7552,6 +9312,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 
+##### Review history — CAP-12.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S03.T02 - Implement RBAC/ABAC and policy enforcement points
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7578,6 +9346,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 
+##### Review history — CAP-12.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S03.T03 - Implement project and tenant isolation tests
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7603,6 +9379,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile server
+
+##### Review history — CAP-12.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-team-collaboration-and-scholarly-adjudication (`CAP-12.S04`) - Team collaboration and scholarly adjudication
 
@@ -7641,6 +9425,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile server
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-12.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S04.T02 - Implement collaborative screening, coding, verification, and task assignment
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7669,6 +9461,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-12.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S04.T03 - Implement team adjudication, memos, and unresolved-plurality support
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7696,6 +9496,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile server
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile graph
+
+##### Review history — CAP-12.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-licensed-sources-institutional-rights-retention-and-compute-policy (`CAP-12.S05`) - Licensed sources, institutional rights, retention, and compute policy
 
@@ -7733,6 +9541,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 
+##### Review history — CAP-12.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S05.T02 - Implement institutional data classification, retention, and legal-hold policies
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7758,6 +9574,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile server
+
+##### Review history — CAP-12.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-12.S05.T03 - Implement institutional model/provider and research-compute routing
 
@@ -7785,6 +9609,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 - python tools/verify.py --profile ai
+
+##### Review history — CAP-12.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-institutional-operations-disaster-recovery-and-pilot-acceptance (`CAP-12.S06`) - Institutional operations, disaster recovery, and pilot acceptance
 
@@ -7822,6 +9654,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 
+##### Review history — CAP-12.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S06.T02 - Implement backup, restore, disaster recovery, and upgrade procedures
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7848,6 +9688,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile server
 
+##### Review history — CAP-12.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-12.S06.T03 - Deploy and evaluate a university pilot; approve G7
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P2` / `L` / `high`
@@ -7873,6 +9721,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile server
+
+##### Review history — CAP-12.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-cloud-platform (`CAP-13`) - Managed cloud control plane, tenant data planes, governance, and SaaS operations
 
@@ -7922,6 +9778,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S01.T02 - Implement tenant provisioning and deprovisioning workflows
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -7948,6 +9812,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S01.T03 - Build cloud administration and support control surface
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -7973,6 +9845,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile cloud
+
+##### Review history — CAP-13.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-regional-tenant-data-planes-and-isolation-tiers (`CAP-13.S02`) - Regional tenant data planes and isolation tiers
 
@@ -8010,6 +9890,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S02.T02 - Implement regional data-plane templates and dedicated options
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8036,6 +9924,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S02.T03 - Implement tenant-aware migration, backup, restore, and relocation controls
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8061,6 +9957,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile cloud
+
+##### Review history — CAP-13.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-cloud-identity-entitlement-metering-and-billing (`CAP-13.S03`) - Cloud identity, entitlement, metering, and billing
 
@@ -8098,6 +10002,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S03.T02 - Implement feature entitlements, quotas, and usage metering
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8124,6 +10036,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S03.T03 - Implement billing-provider integration and account lifecycle
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8149,6 +10069,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile cloud
+
+##### Review history — CAP-13.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-elastic-workers-models-search-and-cost-governance (`CAP-13.S04`) - Elastic workers, models, search, and cost governance
 
@@ -8186,6 +10114,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S04.T02 - Implement cloud model-provider and private-endpoint routing
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8212,6 +10148,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S04.T03 - Implement cost allocation, anomaly detection, and protective controls
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8237,6 +10181,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile cloud
+
+##### Review history — CAP-13.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-cloud-security-privacy-residency-and-compliance-operations (`CAP-13.S05`) - Cloud security, privacy, residency, and compliance operations
 
@@ -8274,6 +10226,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S05.T02 - Implement residency, retention, data-subject, and deletion workflows
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8300,6 +10260,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S05.T03 - Implement incident detection, response, audit evidence, and security testing
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8325,6 +10293,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile cloud
+
+##### Review history — CAP-13.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-desktop-cloud-experience-service-reliability-and-launch-gate (`CAP-13.S06`) - Desktop-cloud experience, service reliability, and launch gate
 
@@ -8363,6 +10339,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S06.T02 - Establish SLOs, monitoring, support, maintenance, and disaster recovery
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8389,6 +10373,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile cloud
 
+##### Review history — CAP-13.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-13.S06.T03 - Run limited-availability validation and approve G8
 
 **Status / priority / estimate / risk:** `DEFERRED` / `P3` / `L` / `high`
@@ -8414,6 +10406,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile cloud
+
+##### Review history — CAP-13.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-cross-platform-desktop (`CAP-14`) - Cross-platform desktop qualification and release
 
@@ -8465,6 +10465,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile architecture
 
+##### Review history — CAP-14.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-14.S01.T02 - Establish macOS/Linux build and continuous-integration matrix
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -8492,6 +10500,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile foundation
 
+##### Review history — CAP-14.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-14.S01.T03 - Implement platform capability detection and diagnostics
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -8517,6 +10533,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile desktop-cross-platform
+
+##### Review history — CAP-14.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-apple-silicon-macos-product-qualification (`CAP-14.S02`) - Apple Silicon macOS product qualification
 
@@ -8554,6 +10578,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop-cross-platform
 
+##### Review history — CAP-14.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-14.S02.T02 - Integrate macOS Keychain, signing, notarization, and updates
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -8580,6 +10612,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-14.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-14.S02.T03 - Qualify macOS install, upgrade, offline, backup, accessibility, and recovery
 
@@ -8608,6 +10648,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-14.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-linux-x86-64-and-arm64-product-qualification (`CAP-14.S03`) - Linux x86_64 and ARM64 product qualification
 
@@ -8645,6 +10693,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop-cross-platform
 
+##### Review history — CAP-14.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-14.S03.T02 - Integrate Linux Secret Service, XDG paths, package formats, and updates
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -8671,6 +10727,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-14.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-14.S03.T03 - Qualify Linux install, upgrade, offline, backup, accessibility, and recovery
 
@@ -8699,6 +10763,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-14.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-cross-platform-scientific-and-ai-runtime (`CAP-14.S04`) - Cross-platform scientific and AI runtime
 
@@ -8737,6 +10809,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-14.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-14.S04.T02 - Qualify NVIDIA CUDA execution on Linux including DGX Spark-class ARM64
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -8764,6 +10844,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-14.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-14.S04.T03 - Qualify parser, vector, and local-model portability and fallback
 
@@ -8793,6 +10881,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile search
 - python tools/verify.py --profile ai
+
+##### Review history — CAP-14.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-cross-platform-project-compatibility-and-recovery (`CAP-14.S05`) - Cross-platform project compatibility and recovery
 
@@ -8831,6 +10927,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile data
 
+##### Review history — CAP-14.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-14.S05.T02 - Implement platform-safe path, filename, permission, and migration handling
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -8859,6 +10963,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile data
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-14.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-14.S05.T03 - Run cross-platform transfer, recovery, and semantic-equivalence tests
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -8885,6 +10997,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-14.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-cross-platform-desktop-release-gate (`CAP-14.S06`) - Cross-platform desktop release gate
 
@@ -8923,6 +11043,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop-cross-platform
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-14.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-14.S06.T02 - Run complete cross-platform end-to-end acceptance
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -8951,6 +11079,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-14.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-14.S06.T03 - Approve G6 and publish cross-platform desktop documentation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -8976,6 +11112,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile desktop-cross-platform
+
+##### Review history — CAP-14.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-study-design (`CAP-15`) - Empirical study design and protocol development
 
@@ -9027,6 +11171,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile data
 
+##### Review history — CAP-15.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S01.T02 - Link study-design elements to literature and opportunity evidence
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9055,6 +11207,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-15.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S01.T03 - Implement study-design versioning, comparison, and staleness
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9081,6 +11241,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile data
+
+##### Review history — CAP-15.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-research-logic-and-design-alternatives (`CAP-15.S02`) - Research logic and design alternatives
 
@@ -9119,6 +11287,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-15.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S02.T02 - Compare quantitative, qualitative, mixed, computational, and field design families
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9146,6 +11322,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-15.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S02.T03 - Implement human design selection and rationale adjudication
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9171,6 +11355,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile study-design
+
+##### Review history — CAP-15.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-sampling-measurement-and-data-collection (`CAP-15.S03`) - Sampling, measurement, and data collection
 
@@ -9208,6 +11400,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile study-design
 
+##### Review history — CAP-15.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S03.T02 - Design construct operationalization and measurement plans
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9235,6 +11435,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-15.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S03.T03 - Design data collection, intervention, procedure, and artifact plans
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9260,6 +11468,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile study-design
+
+##### Review history — CAP-15.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-analysis-validity-ethics-and-reproducibility (`CAP-15.S04`) - Analysis, validity, ethics, and reproducibility
 
@@ -9297,6 +11513,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile study-design
 
+##### Review history — CAP-15.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S04.T02 - Model validity threats, boundary conditions, sensitivity, and null-result value
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9324,6 +11548,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-15.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S04.T03 - Create ethics, data-management, preregistration, and reproducibility plans
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -9350,6 +11582,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-15.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-study-design-studio-and-protocol-exports (`CAP-15.S05`) - Study Design Studio and protocol exports
 
@@ -9388,6 +11628,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-15.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S05.T02 - Implement protocol, analysis-plan, and preregistration-ready exports
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9414,6 +11662,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-15.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-15.S05.T03 - Implement study-design completeness, contradiction, and integrity audit
 
@@ -9442,6 +11698,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile evidence
+
+##### Review history — CAP-15.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-study-design-production-acceptance (`CAP-15.S06`) - Study-design production acceptance
 
@@ -9480,6 +11744,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-15.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S06.T02 - Evaluate study-design quality with domain and methods experts
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -9506,6 +11778,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile study-design
 
+##### Review history — CAP-15.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-15.S06.T03 - Approve study-design portion of G7
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -9531,6 +11811,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile study-design
+
+##### Review history — CAP-15.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-manuscript-blueprints (`CAP-16`) - Manuscript blueprint, venue profiles, and article architecture
 
@@ -9582,6 +11870,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile data
 
+##### Review history — CAP-16.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S01.T02 - Implement governed generic and venue-profile registry
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9607,6 +11903,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-16.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-16.S01.T03 - Implement template versioning, compatibility, and staleness
 
@@ -9634,6 +11938,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile data
+
+##### Review history — CAP-16.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-empirical-article-blueprints (`CAP-16.S02`) - Empirical article blueprints
 
@@ -9671,6 +11983,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
+##### Review history — CAP-16.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S02.T02 - Create empirical conference-paper skeletons
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9696,6 +12016,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-16.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-16.S02.T03 - Map study-design and result requirements to empirical sections
 
@@ -9723,6 +12051,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile study-design
+
+##### Review history — CAP-16.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-theory-article-blueprints (`CAP-16.S03`) - Theory article blueprints
 
@@ -9760,6 +12096,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
+##### Review history — CAP-16.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S03.T02 - Model conceptual contribution and argument requirements
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9787,6 +12131,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-16.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S03.T03 - Create theory conference and journal variants
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9812,6 +12164,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-16.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-critical-scholarship-blueprints (`CAP-16.S04`) - Critical scholarship blueprints
 
@@ -9849,6 +12209,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
+##### Review history — CAP-16.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S04.T02 - Model standpoint, reflexivity, evidence, and counter-reading requirements
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9876,6 +12244,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-16.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S04.T03 - Create critical conference and journal variants
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9901,6 +12277,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-16.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-manuscript-blueprint-and-venue-adaptation (`CAP-16.S05`) - Manuscript Blueprint and venue adaptation
 
@@ -9939,6 +12323,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-16.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S05.T02 - Implement verified venue-guideline adaptation
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -9967,6 +12359,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-16.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S05.T03 - Export editable article skeletons and structured manifests
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -9992,6 +12392,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-16.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-manuscript-blueprint-production-acceptance (`CAP-16.S06`) - Manuscript blueprint production acceptance
 
@@ -10030,6 +12438,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-16.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S06.T02 - Conduct author and journal-methodologist usability review
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -10056,6 +12472,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 
+##### Review history — CAP-16.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-16.S06.T03 - Approve manuscript-blueprint portion of G7
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10081,6 +12505,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-16.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-results-integration (`CAP-17`) - Technical report and study-results integration
 
@@ -10133,6 +12565,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-17.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S01.T02 - Implement technical-report rights, confidentiality, and egress controls
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10160,6 +12600,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-17.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S01.T03 - Implement report version, correction, and supersession lineage
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -10186,6 +12634,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile results
 - python tools/verify.py --profile data
+
+##### Review history — CAP-17.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-technical-report-parsing-and-result-extraction (`CAP-17.S02`) - Technical-report parsing and result extraction
 
@@ -10225,6 +12681,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-17.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S02.T02 - Extract quantitative result records with exact evidence anchors
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10253,6 +12717,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-17.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S02.T03 - Extract qualitative, mixed-method, and technical findings
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10280,6 +12752,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile ai
+
+##### Review history — CAP-17.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-study-plan-and-result-reconciliation (`CAP-17.S03`) - Study-plan and result reconciliation
 
@@ -10318,6 +12798,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile study-design
 
+##### Review history — CAP-17.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S03.T02 - Detect missing, inconsistent, duplicated, or unsupported report claims
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10346,6 +12834,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-17.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S03.T03 - Implement human verification and deviation adjudication
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -10372,6 +12868,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile results
 - python tools/verify.py --profile evidence
+
+##### Review history — CAP-17.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-results-evidence-graph-and-dependency-propagation (`CAP-17.S04`) - Results evidence graph and dependency propagation
 
@@ -10410,6 +12914,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-17.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S04.T02 - Represent supported, null, mixed, contradictory, and robustness outcomes
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -10438,6 +12950,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile graph
 
+##### Review history — CAP-17.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S04.T03 - Propagate technical-report changes to manuscripts and reviews
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -10464,6 +12984,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile results
 - python tools/verify.py --profile data
+
+##### Review history — CAP-17.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-technical-reports-results-workspace (`CAP-17.S05`) - Technical Reports & Results workspace
 
@@ -10502,6 +13030,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-17.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S05.T02 - Build result evidence matrix and manuscript-claim mapping
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -10530,6 +13066,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile manuscript
 
+##### Review history — CAP-17.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S05.T03 - Export a verified study-results evidence package
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -10555,6 +13099,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile results
+
+##### Review history — CAP-17.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-results-integration-production-acceptance (`CAP-17.S06`) - Results integration production acceptance
 
@@ -10593,6 +13145,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-17.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S06.T02 - Prove no-result-invention and private-egress controls
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10621,6 +13181,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile security-local
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-17.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-17.S06.T03 - Approve results-integration readiness for G8
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10646,6 +13214,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile results
+
+##### Review history — CAP-17.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-manuscript-drafting (`CAP-18`) - Source-grounded manuscript drafting and publication artifacts
 
@@ -10697,6 +13273,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile data
 
+##### Review history — CAP-18.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S01.T02 - Implement section workflow, readiness, locks, and human gates
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -10722,6 +13306,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-18.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-18.S01.T03 - Implement manuscript dependency and selective-redrafting model
 
@@ -10749,6 +13341,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile data
+
+##### Review history — CAP-18.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-evidence-aware-drafting-engine (`CAP-18.S02`) - Evidence-aware drafting engine
 
@@ -10788,6 +13388,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-18.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S02.T02 - Generate paragraph-level source-grounded draft candidates
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10816,6 +13424,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-18.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S02.T03 - Enforce unsupported-content and result-integrity controls
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10843,6 +13459,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-18.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-empirical-manuscript-drafting (`CAP-18.S03`) - Empirical manuscript drafting
 
@@ -10882,6 +13506,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile study-design
 
+##### Review history — CAP-18.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S03.T02 - Draft empirical results from verified reports, tables, and figures
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10910,6 +13542,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile results
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-18.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S03.T03 - Draft empirical discussion integrated with literature and alternative outcomes
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -10936,6 +13576,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile evidence
+
+##### Review history — CAP-18.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-theory-and-critical-manuscript-drafting (`CAP-18.S04`) - Theory and critical manuscript drafting
 
@@ -10975,6 +13623,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile graph
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-18.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S04.T02 - Draft critical manuscripts from approved problematization architecture
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -11002,6 +13658,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-18.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S04.T03 - Preserve author voice, competing interpretations, and nonconsensus
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -11028,6 +13692,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile ai
+
+##### Review history — CAP-18.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-manuscript-studio-and-publication-exports (`CAP-18.S05`) - Manuscript Studio and publication exports
 
@@ -11066,6 +13738,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-18.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S05.T02 - Implement citation/reference, figure/table, disclosure, and authorship management
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -11093,6 +13773,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-18.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S05.T03 - Export publication artifacts with reproducibility and lineage
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -11118,6 +13806,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-18.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-source-grounded-manuscript-production-acceptance (`CAP-18.S06`) - Source-grounded manuscript production acceptance
 
@@ -11156,6 +13852,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile e2e-local
 
+##### Review history — CAP-18.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S06.T02 - Run citation, plagiarism-risk, result-integrity, and authorship audits
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -11184,6 +13888,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile evidence
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-18.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-18.S06.T03 - Approve manuscript-drafting readiness for G8
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -11209,6 +13921,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile manuscript
+
+##### Review history — CAP-18.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ## CAP-review-revision (`CAP-19`) - Reviewer simulation, editorial synthesis, and revision
 
@@ -11260,6 +13980,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile data
 
+##### Review history — CAP-19.S01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-19.S01.T02 - Create governed reviewer-panel profiles by research type and venue
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -11285,6 +14013,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile reviewer
+
+##### Review history — CAP-19.S01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-19.S01.T03 - Implement independent reviewer-context isolation and reproducible prompts
 
@@ -11313,6 +14049,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-19.S01.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-extended-independent-reviewer-panel (`CAP-19.S02`) - Extended independent reviewer panel
 
@@ -11352,6 +14096,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile novelty
 
+##### Review history — CAP-19.S02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-19.S02.T02 - Implement methods, statistics/analysis, validity, ethics, and reproducibility review
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -11381,6 +14133,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile study-design
 - python tools/verify.py --profile results
 
+##### Review history — CAP-19.S02.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-19.S02.T03 - Implement theory, critical, domain, citation, and evidence-integrity review
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -11408,6 +14168,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile evidence
+
+##### Review history — CAP-19.S02.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-generated-and-uploaded-draft-intake (`CAP-19.S03`) - Generated and uploaded draft intake
 
@@ -11447,6 +14215,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile security-local
 
+##### Review history — CAP-19.S03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-19.S03.T02 - Audit draft against blueprint, venue profile, evidence, and technical reports
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -11475,6 +14251,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile evidence
 
+##### Review history — CAP-19.S03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-19.S03.T03 - Freeze review snapshot and record allowed reviewer context
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
@@ -11502,6 +14286,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile data
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-19.S03.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-reviewer-reports-and-editorial-synthesis (`CAP-19.S04`) - Reviewer reports and editorial synthesis
 
@@ -11540,6 +14332,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-19.S04.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-19.S04.T02 - Implement editorial synthesis preserving reviewer disagreement
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -11566,6 +14366,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile ai
+
+##### Review history — CAP-19.S04.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-19.S04.T03 - Implement reviewer quality, calibration, and overreach audits
 
@@ -11594,6 +14402,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile evidence
+
+##### Review history — CAP-19.S04.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-revision-and-response-workflow (`CAP-19.S05`) - Revision and response workflow
 
@@ -11632,6 +14448,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile manuscript
 
+##### Review history — CAP-19.S05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-19.S05.T02 - Draft and manage response-to-reviewers or rebuttal documents
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -11660,6 +14484,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile ai
 
+##### Review history — CAP-19.S05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-19.S05.T03 - Implement selective revision, diff, resolution, and follow-up round
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -11687,6 +14519,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile manuscript
 - python tools/verify.py --profile e2e-local
+
+##### Review history — CAP-19.S05.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 ### SLICE-reviewer-simulation-and-research-production-acceptance (`CAP-19.S06`) - Reviewer simulation and research-production acceptance
 
@@ -11725,6 +14565,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile desktop
 
+##### Review history — CAP-19.S06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
 #### - [ ] CAP-19.S06.T02 - Evaluate generated and uploaded drafts with expert reviewers
 
 **Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
@@ -11750,6 +14598,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Verification:**
 
 - python tools/verify.py --profile reviewer
+
+##### Review history — CAP-19.S06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 #### - [ ] CAP-19.S06.T03 - Approve G8 end-to-end research-production release
 
@@ -11778,6 +14634,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile reviewer
 - python tools/verify.py --profile e2e-local
 - python tools/verify.py --profile security-local
+
+##### Review history — CAP-19.S06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 # Generation contract
 

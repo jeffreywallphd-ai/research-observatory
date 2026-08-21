@@ -178,6 +178,26 @@ python tools/verify.py --profile e2e-local
 ```
 
 </pre></article></section>
+<section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Task review packets, rounds, and current projections</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks are explicitly labeled latest-review-only and never receive fabricated history.</p></section>
+
+<section class="review-toolbar" data-task-review-id="CAP-01.S03.T01" data-review-mode="latest-review-only">
+  <h3>CAP-01.S03.T01 — Create the modular FastAPI service skeleton</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-01.S03.T01" data-current-review-result="approved" data-current-reviewer="agent:maxwell" data-current-reviewed-at="2026-08-11T22:03:44+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:maxwell</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-11T22:03:44+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Actual served health/readiness payloads validate the strict schema; invalid state, extra fields, alive=false, and hybrid payloads reject. Exact remediation scope/evidence, 18-command clean profile, lifecycle/config/logging/module/OpenAPI/security and reference-separation controls pass.</p>
+</section>
+<section class="review-toolbar" data-task-review-id="CAP-01.S03.T02" data-review-mode="latest-review-only">
+  <h3>CAP-01.S03.T02 — Package the Python service as a Windows sidecar artifact</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-01.S03.T02" data-current-review-result="approved" data-current-reviewer="agent:maxwell" data-current-reviewed-at="2026-08-12T00:20:03+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:maxwell</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-12T00:20:03+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Approved focused remediation b5c30e6: exact 0.1.0/3.14.6 remains valid; 99.99.99 and 3.14.999 reject through schema and governed-contract checks; exact scope/evidence, six packaging tests, Pythonless build/run, Ruff and mypy pass; prior full profiles remain applicable.</p>
+</section>
+<section class="review-toolbar" data-task-review-id="CAP-01.S03.T03" data-review-mode="latest-review-only">
+  <h3>CAP-01.S03.T03 — Implement sidecar lifecycle supervision in Tauri</h3>
+  <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-01.S03.T03" data-current-review-result="approved" data-current-reviewer="agent:curie" data-current-reviewed-at="2026-08-12T13:00:02+00:00"><div><dt>Task status</dt><dd>DONE</dd></div><div><dt>Latest result</dt><dd>approved</dd></div><div><dt>Reviewer</dt><dd>agent:curie</dd></div><div><dt>Reviewed at</dt><dd><code>2026-08-12T13:00:02+00:00</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Async dispatch, atomic Job containment, stable diagnostics, serialized lifecycle, strict failure classification, descendant cleanup, and delayed-readiness cancellation independently verified.</p>
+</section>
 <details class="plan-details" open><summary>Read the complete slice plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-01.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-01 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.
 ## 0. Plan control
 | Field | Value |

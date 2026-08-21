@@ -283,6 +283,97 @@ class BacklogSchemaTests(unittest.TestCase):
 
         self.assertIn("$.waves[1].campaign.scope: 'wave' was expected", errors)
 
+    def test_t01_review_control_schema_is_optional_shared_and_strict(self) -> None:
+        schema = json.loads(self.schema.read_text(encoding="utf-8"))
+        ordinary_task_schema = schema["properties"]["capabilities"]["items"]["properties"]["slices"]["items"][
+            "properties"
+        ]["tasks"]["items"]
+        self.assertEqual("#/$defs/taskReviewControl", ordinary_task_schema["properties"]["review_control"]["$ref"])
+        self.assertEqual(
+            "#/$defs/taskReviewControl",
+            schema["$defs"]["enablerTask"]["properties"]["review_control"]["$ref"],
+        )
+
+        legacy = copy.deepcopy(self.canonical)
+        for capability in legacy["capabilities"]:
+            for slice_ in capability["slices"]:
+                for task in slice_["tasks"]:
+                    task.pop("review_control", None)
+        for amendment in legacy.get("wave_amendments", []):
+            for task in amendment.get("tasks", []):
+                task.pop("review_control", None)
+        self.assertEqual([], backlog_schema_errors(legacy, schema_path=self.schema))
+
+        packet = {
+            "id": "R01",
+            "submitted_by": "agent:implementer",
+            "submitted_at": "2026-08-21T01:00:00+00:00",
+            "candidate_commit": "b" * 40,
+            "base_commit": "a" * 40,
+            "branch": "codex/test",
+            "evidence_reference": {
+                "type": "criterion-manifest",
+                "path": "artifacts/evidence/CAP-00.S01.T01.json",
+                "sha256": "1" * 64,
+                "commit": "b" * 40,
+                "recorded_at": "2026-08-21T01:00:00+00:00",
+            },
+            "acceptance_criteria_sha256": "2" * 64,
+            "changed_paths": ["tools/taskctl.py"],
+            "selected_checks": ["python -m unittest focused"],
+            "deferred_checks": ["complete Wave-exit profile"],
+            "selection_rationale": "The task changes the review-control boundary.",
+            "selection_sha256": "3" * 64,
+            "prior_attempt_id": None,
+            "open_finding_ids": [],
+            "root_cause_analysis": None,
+            "packet_sha256": "4" * 64,
+        }
+        finding = {
+            "id": "F01",
+            "severity": "high",
+            "blocking": True,
+            "criterion_index": 1,
+            "title": "Review control gap",
+            "reproduction": "Run the deterministic fixture.",
+            "required_remediation": "Correct the review-control invariant.",
+        }
+        control: dict[str, Any] = {
+            "version": 1,
+            "attempts": [
+                {
+                    "submission": packet,
+                    "review": {
+                        "reviewer": "agent:reviewer",
+                        "result": "changes-requested",
+                        "reviewed_at": "2026-08-21T02:00:00+00:00",
+                        "notes": "One consolidated finding ledger.",
+                    },
+                    "ledger": {
+                        "path": "artifacts/evidence/CAP-00.S01.T01.review-R01.json",
+                        "sha256": "5" * 64,
+                    },
+                    "findings": [finding],
+                    "closures": [],
+                }
+            ],
+            "current_submission": None,
+        }
+        validator = Draft202012Validator(
+            {"$ref": "#/$defs/taskReviewControl", "$defs": schema["$defs"]},
+            format_checker=FormatChecker(),
+        )
+        self.assertEqual([], list(validator.iter_errors(control)))
+
+        invalid = copy.deepcopy(control)
+        invalid["attempts"][0]["findings"][0]["severity"] = "urgent"
+        self.assertTrue(list(validator.iter_errors(invalid)))
+        invalid = copy.deepcopy(control)
+        invalid["attempts"][0]["closures"] = [
+            {"finding_id": "F01", "disposition": "fixed", "evidence": "evidence.json", "rewrite": True}
+        ]
+        self.assertTrue(list(validator.iter_errors(invalid)))
+
     def test_materialized_amendment_task_requires_a_packet_bound_hash(self) -> None:
         data = copy.deepcopy(self.canonical)
         data["control_plane"] = {
