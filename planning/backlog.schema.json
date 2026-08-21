@@ -118,6 +118,11 @@
         "selected_checks": {
           "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true
         },
+        "selected_command_ids": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]*$"},
+          "uniqueItems": true
+        },
         "deferred_checks": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
         "selection_rationale": {"type": "string", "minLength": 1},
         "selection_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -128,6 +133,64 @@
         },
         "root_cause_analysis": {"type": ["string", "null"]},
         "packet_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "reviewTelemetryFindingCounts": {
+      "type": "object",
+      "required": ["critical", "high", "medium", "low", "blocking", "total"],
+      "properties": {
+        "critical": {"type": "integer", "minimum": 0},
+        "high": {"type": "integer", "minimum": 0},
+        "medium": {"type": "integer", "minimum": 0},
+        "low": {"type": "integer", "minimum": 0},
+        "blocking": {"type": "integer", "minimum": 0},
+        "total": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "reviewTelemetryRemediation": {
+      "type": "object",
+      "required": ["prior_attempt_id", "replayed_finding_ids", "closed_finding_ids"],
+      "properties": {
+        "prior_attempt_id": {"type": ["string", "null"], "pattern": "^R[0-9]{2,}$"},
+        "replayed_finding_ids": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+          "uniqueItems": true
+        },
+        "closed_finding_ids": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "taskReviewTelemetryEvent": {
+      "type": "object",
+      "required": [
+        "task_id", "amendment_id", "attempt_id", "submitted_at", "reviewed_at", "duration_seconds",
+        "outcome", "finding_counts", "command_ids", "remediation"
+      ],
+      "properties": {
+        "task_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+        "amendment_id": {
+          "type": ["string", "null"],
+          "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
+        },
+        "attempt_id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+        "submitted_at": {"$ref": "#/$defs/timestamp"},
+        "reviewed_at": {"$ref": "#/$defs/timestamp"},
+        "duration_seconds": {"type": "integer", "minimum": 0},
+        "outcome": {"enum": ["approved", "changes-requested", "blocked"]},
+        "finding_counts": {"$ref": "#/$defs/reviewTelemetryFindingCounts"},
+        "command_ids": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]*$"},
+          "uniqueItems": true
+        },
+        "remediation": {"$ref": "#/$defs/reviewTelemetryRemediation"}
       },
       "additionalProperties": false
     },
@@ -147,7 +210,8 @@
           "additionalProperties": false
         },
         "findings": {"type": "array", "items": {"$ref": "#/$defs/reviewFinding"}},
-        "closures": {"type": "array", "items": {"$ref": "#/$defs/reviewFindingClosure"}}
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/reviewFindingClosure"}},
+        "telemetry": {"$ref": "#/$defs/taskReviewTelemetryEvent"}
       },
       "additionalProperties": false
     },

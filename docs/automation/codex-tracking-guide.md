@@ -52,6 +52,7 @@ python tools/taskctl.py checks CAP-XX.SXX.TXX
 # Commit the implementation and run the declared checks on that exact HEAD.
 python tools/taskctl.py submit CAP-XX.SXX.TXX --agent <agent> --from artifacts/evidence/CAP-XX.SXX.TXX.json --note "<summary>"
 python tools/taskctl.py review CAP-XX.SXX.TXX --reviewer <reviewer> --result approved --from artifacts/evidence/CAP-XX.SXX.TXX.review-R01.json
+python tools/taskctl.py review-telemetry
 ```
 
 `block`, `renew`, atomic task `submit`, Wave pause/renew/checkpoint/submit, and slice
@@ -80,6 +81,25 @@ not excuse non-empty `unverifiedItems`. The only exception is the explicitly
 marked `pre-exact-evidence-hosted-ci-residual-v1` migration for four pinned
 CAP-00.S03 records; their paths, commits, hashes, task IDs, and exact hosted-CI
 residual text are fixed and the marker is invalid everywhere else.
+
+Every new controlled atomic submission must declare a non-empty
+`verificationSelection.selectedCommandIds` list. IDs must be exact keys from
+`verification-profiles.json`; raw commands remain in the evidence record and are
+never substituted for privacy-safe IDs. Historical packets created before this
+control may omit the optional frozen `selected_command_ids` field and are not
+rewritten or backfilled.
+
+Each newly completed controlled review stores one prospective timing event. The
+event is recomputed from its immutable round and is restricted to task,
+amendment, attempt, and finding-control IDs; submitted/reviewed timestamps and a
+nonnegative duration; outcome; severity, blocking, and total counts; canonical
+command IDs; and remediation linkage. It never contains an actor or reviewer,
+commit, hash, branch, path, rationale, root-cause narrative, review note, finding
+body, evidence text, raw command/arguments/output, prompt, source content,
+research data, secret, user-data path, or chain-of-thought. `review-telemetry`
+prints only stored events in deterministic order, without a generation
+timestamp. Pending submissions and pre-control or legacy review records produce
+no synthetic event or duration.
 
 ## Decision requests
 

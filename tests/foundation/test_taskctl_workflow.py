@@ -470,6 +470,22 @@ class TaskctlWorkflowTests(unittest.TestCase):
         (repo / "planning").mkdir(parents=True)
         (repo / "artifacts" / "evidence").mkdir(parents=True)
         (repo / "planning" / "backlog.yaml").write_text("fixture: true\n", encoding="utf-8")
+        (repo / "verification-profiles.json").write_text(
+            json.dumps(
+                {
+                    "commands": {
+                        "foundation:unit": {
+                            "argv": ["python", "-m", "unittest", "focused"],
+                        },
+                        "foundation:backlog": {
+                            "argv": ["python", "tools/taskctl.py", "validate"],
+                        },
+                    }
+                }
+            ),
+            encoding="utf-8",
+            newline="\n",
+        )
         (repo / "implementation.txt").write_text("baseline\n", encoding="utf-8")
         subprocess.run(["git", "init", "-b", "test-branch"], cwd=repo, capture_output=True, check=True)
         subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
@@ -519,6 +535,8 @@ class TaskctlWorkflowTests(unittest.TestCase):
         open_finding_ids: list[str] | None = None,
         root_cause_analysis: str | None = None,
         risk_analysis: str = "The changed controller path requires focused workflow validation.",
+        check_command: str = "python -m unittest focused",
+        selected_command_ids: list[str] | None = None,
         supersedes: str | None = None,
     ) -> Path:
         disposition: dict[str, Any] = {"openFindingIds": list(open_finding_ids or [])}
@@ -530,7 +548,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             "baseCommit": base,
             "branch": "test-branch",
             "changedFiles": changed_paths,
-            "checks": [{"command": "python -m unittest focused", "exitCode": 0}],
+            "checks": [{"command": check_command, "exitCode": 0}],
             "acceptanceCriteria": [
                 {"criterion_index": index, "evidence": [f"criterion {index} verified"]}
                 for index, _criterion in enumerate(task["acceptance_criteria"], start=1)
@@ -539,6 +557,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
             "verificationSelection": {
                 "riskAnalysis": risk_analysis,
                 "deferred": ["complete Wave-exit profile"],
+                "selectedCommandIds": list(
+                    ["foundation:unit"] if selected_command_ids is None else selected_command_ids
+                ),
             },
             "reviewerDisposition": disposition,
         }
@@ -1370,6 +1391,14 @@ class TaskctlWorkflowTests(unittest.TestCase):
             self.assertEqual("changes-requested", attempts[0]["review"]["result"])
             self.assertEqual("approved", attempts[1]["review"]["result"])
             self.assertEqual("F01", attempts[1]["closures"][0]["finding_id"])
+            self.assertEqual(
+                {
+                    "prior_attempt_id": "R01",
+                    "replayed_finding_ids": ["F01"],
+                    "closed_finding_ids": ["F01"],
+                },
+                attempts[1]["telemetry"]["remediation"],
+            )
             self.assertEqual(attempts[-1]["review"], task["review"])
 
     def test_t01_third_submission_requires_root_cause_escalation(self) -> None:
@@ -1649,6 +1678,271 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 any("does not supersede the immediately preceding submission" in error for error in errors),
                 errors,
             )
+
+    def test_t02_new_submissions_require_canonical_frozen_command_ids(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context, repo, task, base, head = self.controlled_task_repository(Path(temporary))
+            evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="selection.json",
+                candidate=head,
+                base=base,
+                changed_paths=["implementation.txt"],
+                selected_command_ids=[],
+            )
+            args = Namespace(
+                task=task["id"],
+                agent="alice",
+                from_file=str(evidence),
+                note="",
+                file=str(repo / "planning" / "backlog.yaml"),
+            )
+            with self.assertRaisesRegex(SystemExit, "non-empty.*selectedCommandIds"), patch("taskctl.persist"):
+                command_submit(args, *context)
+
+            evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="selection.json",
+                candidate=head,
+                base=base,
+                changed_paths=["implementation.txt"],
+                selected_command_ids=["private/path"],
+            )
+            args.from_file = str(evidence)
+            with self.assertRaisesRegex(SystemExit, "privacy-safe command IDs"), patch("taskctl.persist"):
+                command_submit(args, *context)
+
+            evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="selection.json",
+                candidate=head,
+                base=base,
+                changed_paths=["implementation.txt"],
+                selected_command_ids=["unknown:command"],
+            )
+            args.from_file = str(evidence)
+            with (
+                self.assertRaisesRegex(SystemExit, "unknown canonical verification command IDs"),
+                patch("taskctl.persist"),
+            ):
+                command_submit(args, *context)
+
+            evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="selection.json",
+                candidate=head,
+                base=base,
+                changed_paths=["implementation.txt"],
+                selected_command_ids=["foundation:unit"],
+            )
+            args.from_file = str(evidence)
+            with patch("taskctl.persist"):
+                command_submit(args, *context)
+            packet = task["review_control"]["current_submission"]
+            self.assertEqual(["foundation:unit"], packet["selected_command_ids"])
+
+            forged = copy.deepcopy(task)
+            forged_packet = forged["review_control"]["current_submission"]
+            forged_packet["selected_command_ids"] = ["unknown:command"]
+            forged_packet["packet_sha256"] = taskctl_module.task_submission_packet_sha256(forged_packet)
+            errors = taskctl_module.task_review_control_errors(forged, repo)
+            self.assertTrue(any("command-ID selection differs" in error for error in errors), errors)
+            self.assertTrue(any("unknown canonical verification command IDs" in error for error in errors), errors)
+
+    def test_t02_review_telemetry_is_prospective_deterministic_and_privacy_allowlisted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context, repo, task, base, head = self.controlled_task_repository(Path(temporary))
+            raw_command = "python focused.py --source C:/private/research-secret.txt --token prompt-secret"
+            risk_canary = "prompt/source/research-data/chain-of-thought canary"
+            evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="private-user-data-path.json",
+                candidate=head,
+                base=base,
+                changed_paths=["implementation.txt"],
+                risk_analysis=risk_canary,
+                check_command=raw_command,
+                selected_command_ids=["foundation:unit"],
+            )
+            submit_args = Namespace(
+                task=task["id"],
+                agent="alice",
+                from_file=str(evidence),
+                note="implementation note canary",
+                file=str(repo / "planning" / "backlog.yaml"),
+            )
+            with patch("taskctl.utc_now", return_value="2026-08-21T02:00:00+00:00"), patch("taskctl.persist"):
+                command_submit(submit_args, *context)
+
+            self.assertEqual([], taskctl_module.task_review_telemetry_events(context[3]))
+            with redirect_stdout(io.StringIO()) as pending_output:
+                taskctl_module.command_review_telemetry(
+                    Namespace(repo_root=repo),
+                    *context,
+                )
+            self.assertEqual("[]", pending_output.getvalue().strip())
+
+            critical = self.review_finding("F01", severity="critical")
+            critical.update(
+                title="source content canary",
+                reproduction="research data canary",
+                required_remediation="chain-of-thought canary",
+            )
+            low = self.review_finding("F02", severity="low", blocking=False)
+            low.update(
+                title="private report canary",
+                reproduction="user-data path canary",
+                required_remediation="secret material canary",
+            )
+            ledger = self.write_task_review_ledger(
+                repo,
+                task,
+                name="private-review-path.json",
+                reviewer="reviewer-secret-identity",
+                result="changes-requested",
+                findings=[critical, low],
+                notes="free-form review note canary",
+            )
+            with patch("taskctl.utc_now", return_value="2026-08-21T02:02:03+00:00"), patch("taskctl.persist"):
+                command_review(
+                    Namespace(
+                        task=task["id"],
+                        reviewer="reviewer-secret-identity",
+                        result="changes-requested",
+                        from_file=str(ledger),
+                        lease_hours=8,
+                        note="free-form review note canary",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
+
+            event = task["review_control"]["attempts"][0]["telemetry"]
+            self.assertEqual(
+                {
+                    "task_id",
+                    "amendment_id",
+                    "attempt_id",
+                    "submitted_at",
+                    "reviewed_at",
+                    "duration_seconds",
+                    "outcome",
+                    "finding_counts",
+                    "command_ids",
+                    "remediation",
+                },
+                set(event),
+            )
+            self.assertEqual(
+                {"critical", "high", "medium", "low", "blocking", "total"},
+                set(event["finding_counts"]),
+            )
+            self.assertEqual(
+                {"prior_attempt_id", "replayed_finding_ids", "closed_finding_ids"},
+                set(event["remediation"]),
+            )
+            self.assertEqual(123, event["duration_seconds"])
+            self.assertEqual(
+                {"critical": 1, "high": 0, "medium": 0, "low": 1, "blocking": 1, "total": 2},
+                event["finding_counts"],
+            )
+            self.assertEqual(["foundation:unit"], event["command_ids"])
+            self.assertEqual(
+                {"prior_attempt_id": None, "replayed_finding_ids": [], "closed_finding_ids": []},
+                event["remediation"],
+            )
+
+            outputs: list[str] = []
+            for _ in range(2):
+                with redirect_stdout(io.StringIO()) as stream:
+                    taskctl_module.command_review_telemetry(Namespace(repo_root=repo), *context)
+                outputs.append(stream.getvalue())
+            self.assertEqual(outputs[0], outputs[1])
+            self.assertEqual([event], json.loads(outputs[0]))
+            forbidden = [
+                raw_command,
+                hashlib.sha256(raw_command.encode("utf-8")).hexdigest(),
+                risk_canary,
+                "private-user-data-path.json",
+                "reviewer-secret-identity",
+                "free-form review note canary",
+                "source content canary",
+                "research data canary",
+                "chain-of-thought canary",
+                "private report canary",
+                "user-data path canary",
+                "secret material canary",
+                head,
+                task["review_control"]["attempts"][0]["submission"]["evidence_reference"]["sha256"],
+            ]
+            for canary in forbidden:
+                self.assertNotIn(canary, outputs[0])
+
+            historical = copy.deepcopy(task)
+            historical["review_control"]["attempts"][0].pop("telemetry")
+            self.assertEqual([], taskctl_module.task_review_telemetry_events({historical["id"]: historical}))
+
+            count_tamper = copy.deepcopy(task)
+            count_tamper["review_control"]["attempts"][0]["telemetry"]["finding_counts"]["total"] = 99
+            errors = taskctl_module.task_review_telemetry_errors(
+                count_tamper,
+                count_tamper["review_control"]["attempts"][0],
+                repo,
+            )
+            self.assertTrue(any("differs from its exact" in error for error in errors), errors)
+            with self.assertRaisesRegex(SystemExit, "differs from its exact"):
+                taskctl_module.command_review_telemetry(
+                    Namespace(repo_root=repo),
+                    context[0],
+                    context[1],
+                    context[2],
+                    {count_tamper["id"]: count_tamper},
+                    context[4],
+                )
+
+            dangling = copy.deepcopy(task)
+            dangling["review_control"]["attempts"][0]["telemetry"]["remediation"]["prior_attempt_id"] = "R99"
+            errors = taskctl_module.task_review_telemetry_errors(
+                dangling,
+                dangling["review_control"]["attempts"][0],
+                repo,
+            )
+            self.assertTrue(any("differs from its exact" in error for error in errors), errors)
+
+            reversed_time = copy.deepcopy(task)
+            reversed_attempt = reversed_time["review_control"]["attempts"][0]
+            reversed_attempt["submission"]["submitted_at"] = "2026-08-21T03:00:00+00:00"
+            reversed_attempt["telemetry"]["submitted_at"] = "2026-08-21T03:00:00+00:00"
+            errors = taskctl_module.task_review_telemetry_errors(reversed_time, reversed_attempt, repo)
+            self.assertTrue(any("duration cannot be negative" in error for error in errors), errors)
+
+            invalid_time = copy.deepcopy(task)
+            invalid_attempt = invalid_time["review_control"]["attempts"][0]
+            invalid_attempt["submission"]["submitted_at"] = "not-a-time"
+            invalid_attempt["telemetry"]["submitted_at"] = "not-a-time"
+            errors = taskctl_module.task_review_telemetry_errors(invalid_time, invalid_attempt, repo)
+            self.assertTrue(any("timestamps are invalid" in error for error in errors), errors)
+
+            unknown = copy.deepcopy(task)
+            unknown_attempt = unknown["review_control"]["attempts"][0]
+            unknown_attempt["submission"]["selected_command_ids"] = ["unknown:command"]
+            unknown_attempt["telemetry"]["command_ids"] = ["unknown:command"]
+            errors = taskctl_module.task_review_telemetry_errors(unknown, unknown_attempt, repo)
+            self.assertTrue(any("unknown canonical verification command IDs" in error for error in errors), errors)
+
+            amendment_task = copy.deepcopy(task)
+            amendment_task["id"] = "W1.A02.T02"
+            amendment_task["amendment_id"] = "W1.A02"
+            amendment_event = taskctl_module.build_task_review_telemetry_event(
+                amendment_task,
+                amendment_task["review_control"]["attempts"][0],
+            )
+            self.assertEqual("W1.A02", amendment_event["amendment_id"])
 
     def test_t01_append_only_history_and_legacy_projection_compatibility(self) -> None:
         context = self.workflow()

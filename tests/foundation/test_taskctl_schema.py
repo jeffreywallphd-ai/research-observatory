@@ -364,6 +364,49 @@ class BacklogSchemaTests(unittest.TestCase):
             format_checker=FormatChecker(),
         )
         self.assertEqual([], list(validator.iter_errors(control)))
+        historical_empty_ids = copy.deepcopy(control)
+        historical_empty_ids["attempts"][0]["submission"]["selected_command_ids"] = []
+        self.assertEqual([], list(validator.iter_errors(historical_empty_ids)))
+
+        prospective = copy.deepcopy(control)
+        prospective["attempts"][0]["submission"]["selected_command_ids"] = ["foundation:unit"]
+        prospective["attempts"][0]["telemetry"] = {
+            "task_id": "CAP-00.S01.T01",
+            "amendment_id": None,
+            "attempt_id": "R01",
+            "submitted_at": "2026-08-21T01:00:00+00:00",
+            "reviewed_at": "2026-08-21T02:00:00+00:00",
+            "duration_seconds": 3600,
+            "outcome": "changes-requested",
+            "finding_counts": {
+                "critical": 0,
+                "high": 1,
+                "medium": 0,
+                "low": 0,
+                "blocking": 1,
+                "total": 1,
+            },
+            "command_ids": ["foundation:unit"],
+            "remediation": {
+                "prior_attempt_id": None,
+                "replayed_finding_ids": [],
+                "closed_finding_ids": [],
+            },
+        }
+        self.assertEqual([], list(validator.iter_errors(prospective)))
+
+        invalid = copy.deepcopy(prospective)
+        invalid["attempts"][0]["telemetry"]["reviewer"] = "must-not-be-collected"
+        self.assertTrue(list(validator.iter_errors(invalid)))
+        invalid = copy.deepcopy(prospective)
+        invalid["attempts"][0]["telemetry"]["duration_seconds"] = -1
+        self.assertTrue(list(validator.iter_errors(invalid)))
+        invalid = copy.deepcopy(prospective)
+        invalid["attempts"][0]["telemetry"]["command_ids"] = ["C:/private/research.txt"]
+        self.assertTrue(list(validator.iter_errors(invalid)))
+        invalid = copy.deepcopy(prospective)
+        invalid["attempts"][0]["telemetry"]["finding_counts"]["body"] = "forbidden"
+        self.assertTrue(list(validator.iter_errors(invalid)))
 
         invalid = copy.deepcopy(control)
         invalid["attempts"][0]["findings"][0]["severity"] = "urgent"

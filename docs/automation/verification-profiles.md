@@ -18,6 +18,50 @@ profile at the first failed command; another explicitly requested profile still
 runs and is reported. An unknown profile exits safely with code 2. A recognized
 release-gated profile exits with code 3 and its gate reason.
 
+## Deterministic affected selection
+
+Affected mode derives the complete changed-path set from Git; callers cannot
+submit or narrow a path list. Both revisions must resolve to commits, the base
+must be a full 40-character commit and an ancestor of the optional head, and an
+empty or unsafe path set fails closed. `HEAD` is the default affected head.
+
+```powershell
+python tools/verify.py --profile foundation --affected-base <40-character-base> --deferred-gate W1-exit --selection-only --report artifacts/tmp/affected-selection.json
+python tools/verify.py --profile service --profile data --affected-base <40-character-base> --affected-head <40-character-head> --deferred-gate W1-exit --report artifacts/tmp/affected-verification.json
+```
+
+The separate `verification/affected-selection.json` policy maps canonical
+repository-relative Git paths to existing command IDs. Selection preserves the
+canonical command order and partitions every active command in the requested
+profiles exactly once into `selectedCommandIds` or `deferredCommandIds`. Any unknown
+path, or any path classified as safety-sensitive verification, evidence,
+security, migration, dependency, or threshold control, selects the complete
+requested active inventory. A known rule that maps outside the requested
+profiles fails closed and names the missing command coverage.
+
+Affected reports use schema `1.1` and include the exact base/head commits,
+changed paths, requested profiles, selected and deferred command IDs, matched
+rule IDs, controlled rationale codes and text, fallback classification, deferred
+gate owner, inactive optional commands, and a SHA-256 of the canonical command
+and profile inventory. `--selection-only` writes or prints this proof without
+executing commands. It does not change `verification-profiles.json`, command
+arguments, optional-command activation, baselines, performance methods, or
+thresholds. Ordinary `--profile` execution retains the existing schema `1.0`
+report and behavior.
+
+## Wave-exit union
+
+The W1 exit matrix is a governed, deduplicated union of `ai`, `data`, `desktop`,
+`e2e-local`, `foundation`, `graph`, `security-local`, and `service`. It executes
+each active canonical command ID once and cannot be narrowed with `--profile` or
+combined with affected mode. Disabled `server` and `cloud` profiles remain
+release-gated and are not enabled by this union.
+
+```powershell
+python tools/verify.py --wave-exit W1 --selection-only --report artifacts/tmp/W1-wave-exit-selection.json
+python tools/verify.py --wave-exit W1 --report artifacts/tmp/W1-wave-exit-verification.json
+```
+
 ## Profile ownership
 
 | Profile | Intended checks |

@@ -1,0 +1,250 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "affected-verification-selection-policy",
+  "rules": [
+    {
+      "id": "verification-control",
+      "patterns": [
+        "verification-profiles.json",
+        "verification/affected-selection.json",
+        "tools/verify.py",
+        "tests/foundation/test_verify_runner.py"
+      ],
+      "commands": [
+        "foundation:quality",
+        "foundation:unit"
+      ],
+      "rationaleCode": "verification-control-broad",
+      "safetySensitive": true
+    },
+    {
+      "id": "evidence-and-delivery-control",
+      "patterns": [
+        "planning/backlog.schema.json",
+        "planning/backlog.yaml",
+        "tools/taskctl.py",
+        "tools/planctl.py",
+        "tests/foundation/test_taskctl_schema.py",
+        "tests/foundation/test_taskctl_workflow.py",
+        "tests/foundation/test_planctl_*.py"
+      ],
+      "commands": [
+        "foundation:backlog-views",
+        "foundation:quality",
+        "foundation:unit",
+        "foundation:backlog"
+      ],
+      "rationaleCode": "evidence-control-broad",
+      "safetySensitive": true
+    },
+    {
+      "id": "security-migration-dependency-or-threshold",
+      "patterns": [
+        "tools/security_check.py",
+        "tests/security/**",
+        "services/core-api/src/research_observatory_core/migrations/**",
+        "verification/baselines/**",
+        "**/package-lock.json",
+        "**/requirements*.txt",
+        "**/pyproject.toml"
+      ],
+      "commands": [
+        "foundation:quality",
+        "foundation:unit",
+        "security-local:supply-chain",
+        "security-local:unit"
+      ],
+      "rationaleCode": "safety-boundary-broad",
+      "safetySensitive": true
+    },
+    {
+      "id": "python-quality",
+      "patterns": [
+        "*.py",
+        "**/*.py"
+      ],
+      "commands": [
+        "foundation:quality"
+      ],
+      "rationaleCode": "python-static-quality",
+      "safetySensitive": false
+    },
+    {
+      "id": "foundation-governance-and-tests",
+      "patterns": [
+        "AGENTS.md",
+        "docs/**",
+        "planning/**",
+        "quality-scope.json",
+        "tests/foundation/**",
+        "tools/*.py"
+      ],
+      "commands": [
+        "foundation:repository-structure",
+        "foundation:agent-protocol",
+        "foundation:backlog-views",
+        "foundation:unit"
+      ],
+      "rationaleCode": "foundation-governance",
+      "safetySensitive": false
+    },
+    {
+      "id": "desktop-surface",
+      "patterns": [
+        "apps/desktop/**",
+        "design/ui-reference/**",
+        "tests/desktop/**",
+        "verification/extensions/desktop-ui.json"
+      ],
+      "commands": [
+        "foundation:quality",
+        "desktop:application",
+        "desktop:performance",
+        "desktop:unit",
+        "desktop:ui-reference-integrity",
+        "desktop:ui-token",
+        "desktop:ui-route-page",
+        "desktop:ui-workflow",
+        "desktop:ui-accessibility",
+        "desktop:ui-visual-regression"
+      ],
+      "rationaleCode": "desktop-surface",
+      "safetySensitive": false
+    },
+    {
+      "id": "service-contract-packaging",
+      "patterns": [
+        "packages/contracts/**",
+        "services/core-api/**",
+        "tests/contracts/**",
+        "tests/packaging/**",
+        "tests/service/**"
+      ],
+      "commands": [
+        "foundation:quality",
+        "packaging:unit",
+        "service:unit",
+        "contracts:unit"
+      ],
+      "rationaleCode": "service-contract-packaging",
+      "safetySensitive": false
+    },
+    {
+      "id": "data-storage",
+      "patterns": [
+        "tests/data/**",
+        "tools/project_lifecycle_performance_check.py",
+        "tools/storage_maintenance_performance_check.py"
+      ],
+      "commands": [
+        "foundation:quality",
+        "contracts:unit",
+        "data:unit",
+        "data:project-lifecycle-performance",
+        "data:storage-maintenance-performance"
+      ],
+      "rationaleCode": "data-storage",
+      "safetySensitive": false
+    },
+    {
+      "id": "ai-tests",
+      "patterns": [
+        "tests/ai/**"
+      ],
+      "commands": [
+        "foundation:quality",
+        "ai:unit"
+      ],
+      "rationaleCode": "ai-tests",
+      "safetySensitive": false
+    },
+    {
+      "id": "document-tests",
+      "patterns": [
+        "tests/documents/**"
+      ],
+      "commands": [
+        "foundation:quality",
+        "documents:unit"
+      ],
+      "rationaleCode": "document-tests",
+      "safetySensitive": false
+    },
+    {
+      "id": "local-e2e-tests",
+      "patterns": [
+        "tests/e2e/**"
+      ],
+      "commands": [
+        "foundation:quality",
+        "e2e-local:system"
+      ],
+      "rationaleCode": "local-e2e-tests",
+      "safetySensitive": false
+    },
+    {
+      "id": "evidence-tests",
+      "patterns": [
+        "tests/evidence/**"
+      ],
+      "commands": [
+        "foundation:quality",
+        "evidence:unit"
+      ],
+      "rationaleCode": "evidence-tests",
+      "safetySensitive": false
+    },
+    {
+      "id": "graph-tests",
+      "patterns": [
+        "tests/graph/**"
+      ],
+      "commands": [
+        "foundation:quality",
+        "graph:unit"
+      ],
+      "rationaleCode": "graph-tests",
+      "safetySensitive": false
+    },
+    {
+      "id": "novelty-tests",
+      "patterns": [
+        "tests/novelty/**"
+      ],
+      "commands": [
+        "foundation:quality",
+        "novelty:unit"
+      ],
+      "rationaleCode": "novelty-tests",
+      "safetySensitive": false
+    },
+    {
+      "id": "search-tests",
+      "patterns": [
+        "tests/search/**"
+      ],
+      "commands": [
+        "foundation:quality",
+        "search:unit"
+      ],
+      "rationaleCode": "search-tests",
+      "safetySensitive": false
+    }
+  ],
+  "unknownPathFallback": {
+    "strategy": "full-requested-profiles",
+    "rationaleCode": "unknown-path-broad"
+  },
+  "waveExitProfiles": {
+    "W1": [
+      "ai",
+      "data",
+      "desktop",
+      "e2e-local",
+      "foundation",
+      "graph",
+      "security-local",
+      "service"
+    ]
+  }
+}
