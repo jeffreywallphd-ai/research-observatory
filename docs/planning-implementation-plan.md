@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 39a5cb31b993e791784dc8348d4a281260b469be9f7186f3754aabc92c123c24
+source_sha256: a86c40d61ff021a22d882156a23ca632f6db7551e7f3d6193a8027c2c33258dd
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -409,9 +409,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W1.A02.T01 - Immutable review packets and bounded remediation
+### - [x] W1.A02.T01 - Immutable review packets and bounded remediation
 
-**Status / owner / review:** `REVIEW` / codex / b00-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `DONE` / codex / b00-independent-reviewer (`approved`)
 
 **Dependencies:** `W1.A02.B00`
 
@@ -438,7 +438,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A02.T01
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -471,7 +471,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd`
 
 - Candidate / base / branch: `4f256763401772298bf75c634f2c7b2355882f10` / `a6b9a32d16592793abc11595c8340e20a0f79c0d` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-21T01:30:59+00:00`
@@ -485,15 +487,32 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W1.A02.T01-R01-F01`, `W1.A02.T01-R01-F02`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-21T01:21:15+00:00`
+**Disposition / reviewer / time:** `approved` / b00-independent-reviewer / `2026-08-21T01:37:41+00:00`
 
-**Latest notes:** Exact scope, evidence identity, atomic/CAS behavior, append-only history, blocker closure, legacy projection, and generated-history checks were reviewed. Two acceptance-bound defects remain.
+**Immutable review ledger:** `artifacts/evidence/W1.A02.T01.review-R02.json` / `f8913f680808ba3119935de66d170305a94e61b7818941154cbbc654745e5ac5`
 
-**Currently open findings:** `W1.A02.T01-R01-F01`, `W1.A02.T01-R01-F02`
+**Review notes:** APPROVED at candidate 4f256763401772298bf75c634f2c7b2355882f10 and frozen submission state d01183e343affa5cf37d1b747643d2e031f1a1eb. Evidence SHA-256 51bcf3cdab50063bd1d4c7ad1eb32f19f97934185e05dfb0f75d9c227d792540 and the exact 11-file incremental scope are truthful. Immediate-predecessor path/SHA/commit/base binding, non-descendant and forged-history denial, R03 expanded-risk naming, immutable R01 ledger/history, and active/null rendering hygiene were independently verified. Replays passed: 64/64 controller/schema tests, 25/25 planning/rendering tests, 113-file quality checks, canonical backlog validation, all 145 review-page checks, generated-view checks, ECR-0001 authority validation, and Git whitespace checks. No unchanged surface was reopened.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W1.A02.T01-R01-F01` `fixed` — artifacts/evidence/W1.A02.T01.remediation-01.json
+- `W1.A02.T01-R01-F02` `fixed` — artifacts/evidence/W1.A02.T01.remediation-01.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by b00-independent-reviewer at `2026-08-21T01:37:41+00:00`
+
+**Latest notes:** APPROVED at candidate 4f256763401772298bf75c634f2c7b2355882f10 and frozen submission state d01183e343affa5cf37d1b747643d2e031f1a1eb. Evidence SHA-256 51bcf3cdab50063bd1d4c7ad1eb32f19f97934185e05dfb0f75d9c227d792540 and the exact 11-file incremental scope are truthful. Immediate-predecessor path/SHA/commit/base binding, non-descendant and forged-history denial, R03 expanded-risk naming, immutable R01 ledger/history, and active/null rendering hygiene were independently verified. Replays passed: 64/64 controller/schema tests, 25/25 planning/rendering tests, 113-file quality checks, canonical backlog validation, all 145 review-page checks, generated-view checks, ECR-0001 authority validation, and Git whitespace checks. No unchanged surface was reopened.
+
+**Currently open findings:** -
 
 ### - [ ] W1.A02.T02 - Affected verification selection and privacy-safe review telemetry
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A02.T01`
 
