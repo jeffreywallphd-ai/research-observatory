@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3f84e4815259d14293440a10d42ca96d12cf52e75319e853b739ac8eda8ab4bd
+source_sha256: e689481dfd296ce2c242bf89e0d86a317763304e9cbf96175f75c9c7e1de5486
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,7 +68,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 1 |
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 
 ## Wave authority and append-only amendments
 
@@ -140,4 +140,6 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `W1.A02.T01` Immutable review packets and bounded remediation | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |

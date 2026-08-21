@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3f84e4815259d14293440a10d42ca96d12cf52e75319e853b739ac8eda8ab4bd
+source_sha256: e689481dfd296ce2c242bf89e0d86a317763304e9cbf96175f75c9c7e1de5486
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -411,7 +411,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A02.T01 - Immutable review packets and bounded remediation
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A02.B00`
 

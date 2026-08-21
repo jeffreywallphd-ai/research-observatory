@@ -22333,14 +22333,17 @@ wave_amendments:
     - Prove existing task histories validate without fabricated attempts and legacy latest-review projection remains supported.
     - Run focused taskctl schema/workflow/view tests, affected quality checks, and independent control review.
     packet_task_sha256: ad8bca53260fbd8d6f458b128be249d7b5ab2ec066b21a723b989302e3e98b80
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-08-21T00:43:02+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: 19b0a519caccfec93158e2efbfb458c9da316c77
+    worktree: C:/ai-projects/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-21T00:44:18+00:00'
+      expires_at: '2026-08-21T08:44:18+00:00'
+    started_at: '2026-08-21T00:44:18+00:00'
+    updated_at: '2026-08-21T00:44:18+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
