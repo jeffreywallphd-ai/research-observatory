@@ -6777,7 +6777,7 @@
         {
           "task_id": "W1.A02.T02",
           "title": "Affected verification selection and privacy-safe review telemetry",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

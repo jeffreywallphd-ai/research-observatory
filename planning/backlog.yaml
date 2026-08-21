@@ -22665,14 +22665,17 @@ wave_amendments:
     - Probe telemetry payloads for forbidden content and verify no backfill is invented.
     - Run focused verify/taskctl/view tests, affected quality checks, and independent control/privacy review.
     packet_task_sha256: 56a091f6bd83572a360975e382fafb4ba59dfb9bf73df254bc8f7c6e7c000db1
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-08-21T01:37:41+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: 2222f4fc66d53b0f017349760a00b5fe54d4978f
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-21T01:39:07+00:00'
+      expires_at: '2026-08-21T09:39:07+00:00'
+    started_at: '2026-08-21T01:39:07+00:00'
+    updated_at: '2026-08-21T01:39:07+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
