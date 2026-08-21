@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: wave
+    scope: amendment-hold
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -22218,7 +22218,7 @@ wave_amendments:
     sha256: 63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376
     introduction_commit: 6e9c440102a5c463bb35d81f4dbdc3453d9ce029
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -22226,6 +22226,11 @@ wave_amendments:
       at: '2026-08-20T22:45:05.0259522Z'
       rationale: Approved in Codex in direct response to the exact-commit ECR-0001/W1.A02 approval request; proceed within
         the hashed B00, T01, and T02 scope only.
+    - id: E02
+      status: MATERIALIZED
+      actor: codex
+      at: '2026-08-21T00:42:00+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W1.A02.B00
     status: APPROVED
@@ -22284,7 +22289,88 @@ wave_amendments:
           B00-R05 MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen
           state 84107b8.'
   campaign: null
-  tasks: []
+  tasks:
+  - id: W1.A02.T01
+    amendment_id: W1.A02
+    title: Immutable review packets and bounded remediation
+    objective: Preserve complete review truth while reducing repeated review administration through frozen packets, append-only
+      attempts/findings, atomic submission, and bounded replay.
+    dependencies:
+    - W1.A02.B00
+    acceptance_criteria:
+    - Every submission freezes candidate/evidence/criteria/changed-path/check-selection identity and one review round returns
+      one consolidated severity-ranked finding ledger.
+    - Review attempts and findings are append-only; final approval requires explicit closure of all blocking findings and
+      cannot erase prior changes-requested dispositions.
+    - Remediation replays open finding IDs plus incremental changed-path risk, with root-cause escalation after round two.
+    - Evidence attachment plus submission is one compare-and-swap operation, while legacy task review readers remain truthful
+      and backward-compatible.
+    - Generated views show immutable packets, review rounds, findings, closures, and current projection without flattening
+      history.
+    verification_commands:
+    - Deny stale writers, altered packet/evidence hashes, self-review, duplicate attempts, approval with open blocking findings,
+      unchanged-surface laundering, and dependency bypass.
+    - Prove existing task histories validate without fabricated attempts and legacy latest-review projection remains supported.
+    - Run focused taskctl schema/workflow/view tests, affected quality checks, and independent control review.
+    packet_task_sha256: ad8bca53260fbd8d6f458b128be249d7b5ab2ec066b21a723b989302e3e98b80
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  - id: W1.A02.T02
+    amendment_id: W1.A02
+    title: Affected verification selection and privacy-safe review telemetry
+    objective: Make risk-selected verification deterministic and inspectable while measuring review delay without collecting
+      research content or weakening canonical profiles.
+    dependencies:
+    - W1.A02.T01
+    acceptance_criteria:
+    - Affected selection records changed paths, selected commands, deferred commands, rationale, and the later gate that owns
+      deferred coverage.
+    - Unknown or safety-sensitive changes conservatively select broader coverage; canonical profiles and thresholds remain
+      immutable.
+    - Telemetry is limited to control IDs, timestamps, durations, outcomes, finding counts/severity, command IDs, and remediation
+      linkage.
+    - No prompt, source content, research data, secret, user-data path, free-form finding body, or chain-of-thought is collected,
+      and no historical data is fabricated.
+    - Wave exit still runs the complete affected/full repository and deployment-profile matrix.
+    verification_commands:
+    - Prove deterministic selection, conservative fallback, canonical profile immutability, and deferred-gate ownership.
+    - Probe telemetry payloads for forbidden content and verify no backfill is invented.
+    - Run focused verify/taskctl/view tests, affected quality checks, and independent control/privacy review.
+    packet_task_sha256: 56a091f6bd83572a360975e382fafb4ba59dfb9bf73df254bc8f7c6e7c000db1
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null
