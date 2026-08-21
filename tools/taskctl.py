@@ -46,6 +46,21 @@ CAMPAIGN_SCOPES = {"wave", "amendment-hold", "capability-wave"}  # capability-wa
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
 CONTROL_TOOL_REVISION = 2
 AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
+BOOTSTRAP_REVIEW_RESULTS = {
+    "APPROVED": "approved",
+    "CHANGES_REQUESTED": "changes-requested",
+    "BLOCKED": "blocked",
+}
+AMENDMENT_TASK_IMMUTABLE_FIELDS = (
+    "id",
+    "amendment_id",
+    "title",
+    "objective",
+    "dependencies",
+    "acceptance_criteria",
+    "verification_commands",
+    "packet_task_sha256",
+)
 LEGACY_UNVERIFIED_POLICY = "pre-exact-evidence-hosted-ci-residual-v1"
 LEGACY_UNVERIFIED_REFERENCES: dict[str, dict[str, Any]] = {
     "artifacts/evidence/CAP-00.S03.T02.json": {
@@ -141,13 +156,18 @@ def approved_wave_snapshot(data: dict[str, Any]) -> tuple[tuple[str, str], ...]:
 
 
 def amendment_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
-    return {
-        str(amendment["id"]): tuple(
+    snapshot: dict[str, tuple[str, ...]] = {}
+    for amendment in data.get("wave_amendments", []):
+        amendment_id = str(amendment["id"])
+        snapshot[amendment_id] = tuple(
             json.dumps(event, sort_keys=True, separators=(",", ":"))
             for event in (amendment.get("lifecycle") or {}).get("history", [])
         )
-        for amendment in data.get("wave_amendments", [])
-    }
+        snapshot[f"{amendment_id}:bootstrap"] = tuple(
+            json.dumps(attempt, sort_keys=True, separators=(",", ":"))
+            for attempt in (amendment.get("bootstrap") or {}).get("attempts", [])
+        )
+    return snapshot
 
 
 @contextmanager
@@ -1280,6 +1300,256 @@ def load_bootstrap_scope_addenda(
     return additional_paths, references
 
 
+def bootstrap_review_projection_errors(
+    label: str,
+    status: str,
+    implementer: str | None,
+    review: dict[str, Any],
+) -> list[str]:
+    errors: list[str] = []
+    reviewer = review.get("reviewer")
+    result = review.get("result")
+    reviewed_at = review.get("reviewed_at")
+    if status == "REVIEW":
+        if any(value is not None for value in (reviewer, result, reviewed_at, review.get("notes"))):
+            errors.append(f"{label}: REVIEW bootstrap must have an empty review projection")
+        return errors
+    expected_result = BOOTSTRAP_REVIEW_RESULTS.get(status)
+    if expected_result is None:
+        errors.append(f"{label}: bootstrap status {status} is not review-coherent")
+        return errors
+    if result != expected_result or not reviewer or not reviewed_at:
+        errors.append(f"{label}: {status} bootstrap lacks its complete independent review projection")
+    if reviewer and reviewer == implementer:
+        errors.append(f"{label}: bootstrap reviewer is not independent from the implementer")
+    return errors
+
+
+def bootstrap_authorized_patterns(
+    repo: Path,
+    packet: dict[str, Any],
+    bootstrap: dict[str, Any],
+) -> list[str]:
+    patterns = [str(item) for item in (packet.get("bootstrapUnit") or {}).get("authorizedPaths", [])]
+    for reference in bootstrap.get("scope_addenda", []):
+        relative = str(reference.get("path") or "")
+        path = repo.joinpath(*PurePosixPath(relative).parts)
+        try:
+            record = json.loads(path.read_text(encoding="utf-8"))
+        except OSError, json.JSONDecodeError:
+            continue
+        patterns.extend(str(item) for item in record.get("authorizedAdditionalPaths", []))
+    return patterns
+
+
+def bootstrap_path_is_authorized(path: str, patterns: list[str], bootstrap_id: str) -> bool:
+    return amendment_path_authorized(path, patterns) or path.startswith(f"artifacts/evidence/{bootstrap_id}")
+
+
+def bootstrap_attempt_errors(
+    repo: Path,
+    amendment_id: str,
+    bootstrap_id: str,
+    required_outcomes: list[str],
+    attempt: dict[str, Any],
+    *,
+    expected_base: str | None,
+    lineage_base: str,
+    allowed_patterns: list[str],
+) -> list[str]:
+    errors: list[str] = []
+    candidate = str(attempt.get("implementation_commit") or "")
+    implementer = str(attempt.get("implementer") or "")
+    if not implementer:
+        errors.append(f"{bootstrap_id}: bootstrap attempt lacks an implementer")
+    if not git_commit_exists(repo, candidate):
+        errors.append(f"{bootstrap_id}: bootstrap implementation commit is invalid")
+    else:
+        if candidate == lineage_base or not git_is_ancestor(repo, lineage_base, candidate):
+            errors.append(f"{bootstrap_id}: bootstrap candidate does not strictly descend from its prior candidate")
+        if not git_is_ancestor(repo, candidate):
+            errors.append(f"{bootstrap_id}: bootstrap candidate is not on current history")
+    evidence = attempt.get("evidence") or []
+    if len(evidence) != 1 or not isinstance(evidence[0], dict):
+        return [*errors, f"{bootstrap_id}: bootstrap attempt must bind exactly one evidence manifest"]
+    reference = evidence[0]
+    relative = str(reference.get("path") or "")
+    pure = PurePosixPath(relative)
+    if not relative.startswith("artifacts/evidence/") or pure.is_absolute() or ".." in pure.parts or "\\" in relative:
+        return [*errors, f"{bootstrap_id}: unsafe bootstrap evidence path"]
+    evidence_path = repo.joinpath(*pure.parts)
+    try:
+        payload = evidence_path.read_bytes()
+        manifest = parse_evidence_payload(payload, evidence_path.suffix)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        return [*errors, f"{bootstrap_id}: invalid bootstrap evidence: {exc}"]
+    if evidence_sha256(payload) != reference.get("sha256"):
+        errors.append(f"{bootstrap_id}: bootstrap evidence hash mismatch")
+    if reference.get("commit") != candidate or manifest.get("commit") != candidate:
+        errors.append(f"{bootstrap_id}: bootstrap evidence does not bind the frozen candidate")
+    manifest_base = str(manifest.get("baseCommit") or "")
+    if expected_base is not None and manifest_base != expected_base:
+        errors.append(f"{bootstrap_id}: bootstrap evidence base does not match the frozen review boundary")
+    evidence_base = expected_base or manifest_base
+    if expected_base is None and (
+        not git_commit_exists(repo, manifest_base)
+        or not git_is_ancestor(repo, lineage_base, manifest_base)
+        or not git_is_ancestor(repo, manifest_base, candidate)
+    ):
+        errors.append(f"{bootstrap_id}: remediation evidence base is outside the frozen candidate lineage")
+    virtual_task = {
+        "id": bootstrap_id,
+        "branch": manifest.get("branch"),
+        "base_sha": evidence_base,
+        "worktree": repo.as_posix(),
+        "acceptance_criteria": required_outcomes,
+    }
+    errors.extend(
+        f"{bootstrap_id}: {error}"
+        for error in validate_task_evidence(
+            virtual_task,
+            manifest,
+            expected_commit=candidate,
+            expected_base_commit=evidence_base,
+        )
+    )
+    errors.extend(f"{bootstrap_id}: {error}" for error in changed_file_errors(virtual_task, manifest, repo))
+    current_branch = subprocess.run(
+        ["git", "branch", "--show-current"], cwd=repo, capture_output=True, text=True, check=False
+    )
+    if current_branch.returncode != 0 or current_branch.stdout.strip() != manifest.get("branch"):
+        errors.append(f"{bootstrap_id}: bootstrap evidence branch does not match the current codex branch")
+    scope = subprocess.run(
+        ["git", "diff", "--name-only", lineage_base, candidate, "--"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if scope.returncode != 0:
+        errors.append(f"{bootstrap_id}: cannot resolve bootstrap candidate scope")
+    else:
+        outside = [
+            path
+            for path in scope.stdout.splitlines()
+            if path and not bootstrap_path_is_authorized(path, allowed_patterns, bootstrap_id)
+        ]
+        if outside:
+            errors.append(f"{bootstrap_id}: bootstrap changed path is outside approved scope: {outside[0]}")
+    return errors
+
+
+def bootstrap_packet_errors(
+    repo: Path,
+    amendment: dict[str, Any],
+    approval: dict[str, Any],
+    packet: dict[str, Any],
+) -> list[str]:
+    bootstrap = amendment.get("bootstrap") or {}
+    if not bootstrap:
+        return []
+    amendment_id = str(amendment.get("id"))
+    bootstrap_id = str(bootstrap.get("id") or "")
+    packet_unit = packet.get("bootstrapUnit") or {}
+    errors: list[str] = []
+    if approval.get("status") != "APPROVED" or approval.get("amendmentId") != amendment_id:
+        errors.append(f"{amendment_id}: bootstrap does not descend from an approved amendment record")
+    if bootstrap_id != packet_unit.get("id"):
+        errors.append(f"{amendment_id}: bootstrap identity differs from the approved packet")
+    attempts = bootstrap.get("attempts") or []
+    expected_attempt_ids = [f"R{index:02d}" for index in range(1, len(attempts) + 1)]
+    if [str(item.get("id")) for item in attempts] != expected_attempt_ids:
+        errors.append(f"{bootstrap_id}: bootstrap attempt IDs are not sequential")
+    allowed_patterns = bootstrap_authorized_patterns(repo, packet, bootstrap)
+    approval_commit = str(amendment.get("approval_reference", {}).get("introduction_commit") or "")
+    lineage_base = approval_commit
+    seen_evidence: set[tuple[str, str, str]] = set()
+    for position, attempt in enumerate([*attempts, bootstrap]):
+        attempt_label = str(attempt.get("id") or bootstrap_id)
+        attempt_status = str(attempt.get("status") or "")
+        attempt_review = attempt.get("review") or {}
+        if attempt is not bootstrap:
+            attempt_status = {
+                "changes-requested": "CHANGES_REQUESTED",
+                "blocked": "BLOCKED",
+            }.get(str(attempt_review.get("result")), "")
+        errors.extend(
+            bootstrap_review_projection_errors(
+                attempt_label,
+                attempt_status,
+                str(attempt.get("implementer") or ""),
+                attempt_review,
+            )
+        )
+        candidate = str(attempt.get("implementation_commit") or "")
+        evidence = attempt.get("evidence") or []
+        if evidence and isinstance(evidence[0], dict):
+            identity = (
+                str(evidence[0].get("path") or ""),
+                str(evidence[0].get("sha256") or ""),
+                candidate,
+            )
+            if identity in seen_evidence:
+                errors.append(f"{bootstrap_id}: bootstrap attempt reuses frozen evidence")
+            seen_evidence.add(identity)
+        errors.extend(
+            bootstrap_attempt_errors(
+                repo,
+                amendment_id,
+                bootstrap_id,
+                [str(item) for item in packet_unit.get("requiredOutcomes", [])],
+                attempt,
+                expected_base=approval_commit if position == 0 else None,
+                lineage_base=lineage_base,
+                allowed_patterns=allowed_patterns,
+            )
+        )
+        lineage_base = candidate
+    return errors
+
+
+def immutable_amendment_task_errors(
+    amendment: dict[str, Any],
+    packet: dict[str, Any],
+) -> list[str]:
+    actual_tasks = amendment.get("tasks") or []
+    packet_tasks = packet.get("taskInventory") or []
+    if not actual_tasks:
+        return []
+    errors: list[str] = []
+    if len(actual_tasks) != len(packet_tasks):
+        return [f"{amendment.get('id')}: materialized task count differs from the approved packet"]
+    for position, (actual, packet_task) in enumerate(zip(actual_tasks, packet_tasks, strict=True), start=1):
+        expected = materialized_amendment_task(str(amendment.get("id")), packet_task)
+        for field in AMENDMENT_TASK_IMMUTABLE_FIELDS:
+            if actual.get(field) != expected.get(field):
+                errors.append(
+                    f"{actual.get('id') or position}: immutable amendment task field {field} "
+                    "differs from the approved packet"
+                )
+    return errors
+
+
+def require_amendment_packet_integrity(
+    repo: Path,
+    amendment: dict[str, Any],
+    approval: dict[str, Any],
+    packet: dict[str, Any],
+) -> None:
+    errors = [
+        *bootstrap_packet_errors(repo, amendment, approval, packet),
+        *immutable_amendment_task_errors(amendment, packet),
+    ]
+    if errors:
+        raise SystemExit("Invalid Wave amendment packet state:\n- " + "\n- ".join(errors))
+
+
+def require_runtime_amendment_integrity(backlog_path: str, amendment: dict[str, Any]) -> None:
+    repo = discover_repository(backlog_path)
+    approval, packet, _payload = load_amendment_authority(repo, str(amendment.get("id")))
+    require_amendment_packet_integrity(repo, amendment, approval, packet)
+
+
 def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     errors: list[str] = []
     control = data.get("control_plane")
@@ -1369,6 +1639,8 @@ def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
             task_ids = [str(item.get("id")) for item in packet_document.get("taskInventory", [])]
             if task_ids != record.get("authorizedTaskIds"):
                 errors.append("W1.A02: approved task inventory mismatch")
+            errors.extend(bootstrap_packet_errors(repo, amendment, record, packet_document))
+            errors.extend(immutable_amendment_task_errors(amendment, packet_document))
     active_id = (control or {}).get("active_amendment")
     if active_id is not None and active_id not in amendment_ids:
         errors.append("control plane active amendment does not exist")
@@ -1847,6 +2119,17 @@ def validate(
                     errors.append(f"{tid}: CANCELLED without rationale")
                 if status == "CANCELLED" and task.get("lease") is not None:
                     errors.append(f"{tid}: CANCELLED task must release its lease")
+    control_active = (data.get("control_plane") or {}).get("active_amendment")
+    active_campaign_ids = [
+        str(amendment.get("id"))
+        for amendment in data.get("wave_amendments", [])
+        if ((amendment.get("campaign") or {}).get("status")) == "ACTIVE"
+    ]
+    expected_active = active_campaign_ids[0] if len(active_campaign_ids) == 1 else None
+    if len(active_campaign_ids) > 1:
+        errors.append("more than one Wave amendment campaign is ACTIVE")
+    if control_active != expected_active:
+        errors.append("control plane active_amendment does not exactly match the sole ACTIVE amendment campaign")
     for amendment in data.get("wave_amendments", []):
         amendment_id = str(amendment.get("id"))
         target_wave = str(amendment.get("target_wave"))
@@ -1861,6 +2144,42 @@ def validate(
         task_list = amendment.get("tasks", [])
         if amendment.get("kind") == "gate-integrity-safety-defect" and bootstrap.get("id") != f"{amendment_id}.B00":
             errors.append(f"{amendment_id}: interrupting amendment lacks its exact bootstrap identity")
+        if amendment.get("kind") != "migrated-replanning":
+            bootstrap_status = bootstrap.get("status")
+            campaign_status = campaign.get("status")
+            wave_campaign = (waves.get(target_wave) or {}).get("campaign") or {}
+            executable_states = {"MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "BLOCKED", "ADOPTED"}
+            if lifecycle.get("status") in executable_states and bootstrap_status != "APPROVED":
+                errors.append(f"{amendment_id}: executable lifecycle requires an independently approved bootstrap")
+            if lifecycle.get("status") in executable_states and not task_list:
+                errors.append(f"{amendment_id}: executable lifecycle requires the exact materialized task inventory")
+            expected_campaign_status = {
+                "MATERIALIZED": None,
+                "ACTIVE": "ACTIVE",
+                "PAUSED": "PAUSED",
+                "BLOCKED": "PAUSED",
+            }.get(str(lifecycle.get("status")))
+            if lifecycle.get("status") in {"MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "BLOCKED"}:
+                campaign_matches = (
+                    campaign_status in {"REVIEW", "COMPLETE"}
+                    if lifecycle.get("status") == "REVIEW"
+                    else campaign_status == expected_campaign_status
+                )
+                if not campaign_matches:
+                    errors.append(
+                        f"{amendment_id}: lifecycle {lifecycle.get('status')} is inconsistent with campaign state"
+                    )
+                if wave_campaign.get("status") != "PAUSED" or wave_campaign.get("scope") != "amendment-hold":
+                    errors.append(f"{amendment_id}: executable lifecycle requires the paused amendment-hold Wave")
+            if campaign_status == "COMPLETE" and lifecycle.get("status") not in {"REVIEW", "ADOPTED"}:
+                errors.append(f"{amendment_id}: COMPLETE campaign is inconsistent with lifecycle state")
+            if lifecycle.get("status") == "APPROVED" and (task_list or campaign):
+                errors.append(f"{amendment_id}: unmaterialized APPROVED lifecycle cannot have tasks or a campaign")
+            if lifecycle.get("status") in AMENDMENT_TERMINAL_STATES:
+                if campaign_status in {"ACTIVE", "REVIEW"} or control_active == amendment_id:
+                    errors.append(f"{amendment_id}: terminal lifecycle retains active execution state")
+                if wave_campaign.get("scope") != "wave":
+                    errors.append(f"{amendment_id}: terminal lifecycle did not restore ordinary Wave scope")
         if campaign:
             if campaign.get("status") in {"ACTIVE", "REVIEW"} and (
                 campaign.get("scope") != "wave-amendment"
@@ -1884,7 +2203,7 @@ def validate(
             lease = campaign.get("lease")
             if lease and lease.get("claimed_by") != campaign.get("owner"):
                 errors.append(f"{amendment_id}: amendment lease owner mismatch")
-        if lifecycle.get("status") in {"MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW"}:
+        if lifecycle.get("status") in {"MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "BLOCKED"}:
             wave_campaign = (waves.get(target_wave) or {}).get("campaign") or {}
             if wave_campaign.get("status") != "PAUSED" or wave_campaign.get("scope") != "amendment-hold":
                 errors.append(f"{amendment_id}: materialized interrupt requires a paused amendment-hold Wave")
@@ -2181,6 +2500,11 @@ def wave_amendment_stop_handoff(
         next_command = (
             f"python tools/taskctl.py amendment bootstrap-review {amendment_id} --reviewer <independent-reviewer> "
             "--result approved --note <review-disposition>"
+        )
+    elif bootstrap in {"CHANGES_REQUESTED", "BLOCKED"}:
+        next_command = (
+            f"python tools/taskctl.py amendment bootstrap-resubmit {amendment_id} --agent <agent> "
+            "--implementation-commit <HEAD> --evidence <remediation-criterion-manifest>"
         )
     elif bootstrap == "APPROVED" and lifecycle == "APPROVED":
         next_command = f"python tools/taskctl.py amendment materialize {amendment_id} --agent <agent>"
@@ -2659,11 +2983,15 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
 def command_amendment_bootstrap_review(args, data, capabilities, slices, tasks, gates) -> None:
     amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
     bootstrap = amendment.get("bootstrap") or {}
-    if bootstrap.get("status") not in {"REVIEW", "CHANGES_REQUESTED", "BLOCKED"}:
+    if bootstrap.get("status") != "REVIEW":
         raise SystemExit("Bootstrap is not awaiting independent review")
     reviewer = normalized_identity(args.reviewer, "Bootstrap reviewer")
     if reviewer == bootstrap.get("implementer"):
         raise SystemExit("Bootstrap reviewer must be independent from the implementer")
+    repo = discover_repository(args.file)
+    require_clean_repository(repo)
+    approval, packet, _payload = load_amendment_authority(repo, args.amendment)
+    require_amendment_packet_integrity(repo, amendment, approval, packet)
     result_status = {
         "approved": "APPROVED",
         "changes-requested": "CHANGES_REQUESTED",
@@ -2678,6 +3006,87 @@ def command_amendment_bootstrap_review(args, data, capabilities, slices, tasks, 
     }
     persist(args, data)
     print(f"Bootstrap review for {args.amendment}: {result_status}")
+
+
+def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks, gates) -> None:
+    amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    bootstrap = amendment.get("bootstrap") or {}
+    if bootstrap.get("status") not in {"CHANGES_REQUESTED", "BLOCKED"}:
+        raise SystemExit("Bootstrap resubmission requires a preserved changes-requested or blocked review")
+    repo = discover_repository(args.file)
+    approval, packet, _payload = load_amendment_authority(repo, args.amendment)
+    require_amendment_packet_integrity(repo, amendment, approval, packet)
+    implementation_commit = str(args.implementation_commit)
+    previous_candidate = str(bootstrap.get("implementation_commit") or "")
+    if (
+        implementation_commit == previous_candidate
+        or not git_commit_exists(repo, implementation_commit)
+        or not git_is_ancestor(repo, previous_candidate, implementation_commit)
+    ):
+        raise SystemExit("Bootstrap remediation must freeze a strict descendant of the prior candidate")
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
+    if head.returncode != 0 or head.stdout.strip() != implementation_commit:
+        raise SystemExit("Bootstrap remediation commit must equal current HEAD")
+    evidence_path = Path(args.evidence).resolve()
+    try:
+        evidence_relative = evidence_path.relative_to(repo).as_posix()
+    except ValueError as exc:
+        raise SystemExit("Bootstrap evidence must be inside the repository") from exc
+    if not evidence_relative.startswith("artifacts/evidence/"):
+        raise SystemExit("Bootstrap evidence must be under artifacts/evidence")
+    require_clean_repository(repo, allowed_untracked={evidence_relative})
+    try:
+        evidence_payload = evidence_path.read_bytes()
+        _manifest = parse_evidence_payload(evidence_payload, evidence_path.suffix)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Invalid bootstrap evidence: {exc}") from exc
+    agent = normalized_identity(args.agent, "Bootstrap remediation implementer")
+    evidence_reference = {
+        "type": "criterion-manifest",
+        "path": evidence_relative,
+        "sha256": evidence_sha256(evidence_payload),
+        "commit": implementation_commit,
+        "recorded_at": utc_now(),
+    }
+    candidate = {
+        "status": "REVIEW",
+        "implementer": agent,
+        "implementation_commit": implementation_commit,
+        "evidence": [evidence_reference],
+        "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+    }
+    errors = bootstrap_attempt_errors(
+        repo,
+        args.amendment,
+        str(bootstrap.get("id")),
+        [str(item) for item in (packet.get("bootstrapUnit") or {}).get("requiredOutcomes", [])],
+        candidate,
+        expected_base=None,
+        lineage_base=previous_candidate,
+        allowed_patterns=bootstrap_authorized_patterns(repo, packet, bootstrap),
+    )
+    if errors:
+        raise SystemExit("Invalid bootstrap remediation evidence:\n- " + "\n- ".join(errors))
+    prior_review = copy.deepcopy(bootstrap.get("review") or {})
+    attempt_id = f"R{len(bootstrap.get('attempts') or []) + 1:02d}"
+    bootstrap.setdefault("attempts", []).append(
+        {
+            "id": attempt_id,
+            "implementer": bootstrap.get("implementer"),
+            "implementation_commit": previous_candidate,
+            "evidence": copy.deepcopy(bootstrap.get("evidence") or []),
+            "review": prior_review,
+        }
+    )
+    bootstrap.update(
+        status="REVIEW",
+        implementer=agent,
+        implementation_commit=implementation_commit,
+        evidence=[evidence_reference],
+        review={"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+    )
+    persist(args, data)
+    print(f"Resubmitted {bootstrap.get('id')} as {attempt_id} -> current REVIEW")
 
 
 def materialized_amendment_task(amendment_id: str, packet_task: dict[str, Any]) -> dict[str, Any]:
@@ -2716,9 +3125,10 @@ def command_amendment_materialize(args, data, capabilities, slices, tasks, gates
     actor = normalized_identity(args.agent, "Materialization actor")
     repo = discover_repository(args.file)
     require_clean_repository(repo)
-    _approval, packet, _payload = load_amendment_authority(repo, args.amendment)
+    approval, packet, _payload = load_amendment_authority(repo, args.amendment)
+    require_amendment_packet_integrity(repo, amendment, approval, packet)
     packet_tasks = packet.get("taskInventory", [])
-    authorized = _approval.get("authorizedTaskIds", [])
+    authorized = approval.get("authorizedTaskIds", [])
     if [task.get("id") for task in packet_tasks] != authorized:
         raise SystemExit("Only the exact approved task inventory may be materialized")
     amendment["tasks"] = [materialized_amendment_task(args.amendment, task) for task in packet_tasks]
@@ -2765,7 +3175,8 @@ def command_amendment_activate(args, data, capabilities, slices, tasks, gates) -
         raise SystemExit("Amendment activation must retain the paused Wave owner and codex branch")
     repo = discover_repository(args.file)
     require_clean_repository(repo)
-    _approval, packet, _payload = load_amendment_authority(repo, args.amendment)
+    approval, packet, _payload = load_amendment_authority(repo, args.amendment)
+    require_amendment_packet_integrity(repo, amendment, approval, packet)
     expected = {item["id"]: canonical_json_sha256(item) for item in packet.get("taskInventory", [])}
     actual = {item["id"]: item.get("packet_task_sha256") for item in amendment.get("tasks", [])}
     if actual != expected:
@@ -2814,6 +3225,7 @@ def command_amendment_pause(args, data, capabilities, slices, tasks, gates) -> N
 
 def command_amendment_submit(args, data, capabilities, slices, tasks, gates) -> None:
     amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    require_runtime_amendment_integrity(args.file, amendment)
     campaign = amendment.get("campaign") or {}
     if campaign.get("status") != "ACTIVE":
         raise SystemExit("Amendment campaign must be ACTIVE")
@@ -2831,6 +3243,7 @@ def command_amendment_submit(args, data, capabilities, slices, tasks, gates) -> 
 
 def command_amendment_review(args, data, capabilities, slices, tasks, gates) -> None:
     amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    require_runtime_amendment_integrity(args.file, amendment)
     campaign = amendment.get("campaign") or {}
     completion = amendment.get("completion") or {}
     if campaign.get("status") != "REVIEW" or completion.get("status") != "REVIEW":
@@ -2854,6 +3267,7 @@ def command_amendment_review(args, data, capabilities, slices, tasks, gates) -> 
 
 def command_amendment_adopt(args, data, capabilities, slices, tasks, gates) -> None:
     amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
+    require_runtime_amendment_integrity(args.file, amendment)
     completion = amendment.get("completion") or {}
     campaign = amendment.get("campaign") or {}
     if completion.get("status") != "APPROVED" or campaign.get("status") != "COMPLETE":
@@ -3599,6 +4013,7 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
             raise SystemExit("Task is not eligible for the requested profile/platform")
     amendment = amendment_for_task(data, task)
     if amendment is not None:
+        require_runtime_amendment_integrity(args.file, amendment)
         campaign = amendment.get("campaign") or {}
         if campaign.get("status") != "ACTIVE" or campaign.get("scope") != "wave-amendment":
             raise SystemExit(f"Wave amendment {amendment['id']} campaign is not ACTIVE")
@@ -3700,6 +4115,9 @@ def command_renew(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
+    amendment = amendment_for_task(data, task)
+    if amendment is not None:
+        require_runtime_amendment_integrity(args.file, amendment)
     if task["status"] != "IN_PROGRESS":
         raise SystemExit("Evidence may be attached only while IN_PROGRESS")
     require_task_campaign_lease(task, capabilities, args.agent, data)
@@ -3779,6 +4197,9 @@ def command_submit(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_review(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
+    amendment = amendment_for_task(data, task)
+    if amendment is not None:
+        require_runtime_amendment_integrity(args.file, amendment)
     if task["status"] != "REVIEW":
         raise SystemExit("Only REVIEW tasks may be reviewed")
     reviewer = normalized_identity(args.reviewer, "Reviewer")
@@ -4006,6 +4427,11 @@ def build_parser() -> argparse.ArgumentParser:
     ambr.add_argument("--reviewer", required=True)
     ambr.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
     ambr.add_argument("--note", default="")
+    ambrs = ams.add_parser("bootstrap-resubmit")
+    ambrs.add_argument("amendment")
+    ambrs.add_argument("--agent", required=True)
+    ambrs.add_argument("--implementation-commit", required=True)
+    ambrs.add_argument("--evidence", required=True)
     ammat = ams.add_parser("materialize")
     ammat.add_argument("amendment")
     ammat.add_argument("--agent", required=True)
@@ -4261,6 +4687,8 @@ def main() -> None:
         command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, gates)
     elif args.command == "amendment" and args.amendment_command == "bootstrap-review":
         command_amendment_bootstrap_review(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "amendment" and args.amendment_command == "bootstrap-resubmit":
+        command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks, gates)
     elif args.command == "amendment" and args.amendment_command == "materialize":
         command_amendment_materialize(args, data, capabilities, slices, tasks, gates)
     elif args.command == "amendment" and args.amendment_command == "activate":

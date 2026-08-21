@@ -49,6 +49,11 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         self.assertEqual(expected_lifecycle, entry["lifecycle_status"])
         self.assertEqual(expected_bootstrap, entry["bootstrap_status"])
         self.assertEqual(expected_campaign, entry["campaign_status"])
+        if amendment and amendment.get("bootstrap"):
+            self.assertEqual(
+                f"R{len(entry['bootstrap_attempts']):02d}",
+                entry["bootstrap_attempts"][-1]["id"],
+            )
         self.assertEqual(
             "9ed06e76ea09f069cf58fa0f55bfb130797b791b328e4bb24b69ce12dc3ac1aa",
             entry["packet_sha256"],
@@ -65,6 +70,7 @@ class PlanReviewAmendmentTests(unittest.TestCase):
             "Proposal, approval, materialization, and campaign state",
             "Hash-bound source records",
             "Append-only bootstrap scope addenda",
+            "Append-only bootstrap review attempts",
             "docs/planning-implementation-plan.md",
             "W1 base approval",
             "W1.A01",

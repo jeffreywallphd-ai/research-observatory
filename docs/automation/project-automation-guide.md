@@ -60,6 +60,7 @@ workflow evidence, pause the Wave at a safe boundary and use an immutable ECR:
 python tools/planctl.py --repo . ecr review ECR-NNNN
 python tools/planctl.py --repo . ecr validate ECR-NNNN --require-approved
 python tools/taskctl.py --file planning/backlog.yaml amendment status WN.ANN
+python tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-resubmit WN.ANN --agent <agent> --implementation-commit <head> --evidence <manifest>
 ```
 
 The approved ECR is inert until its bounded bootstrap is implemented, evidenced,
@@ -70,6 +71,12 @@ decision-complete amendment stop; they must not advertise Wave start or repeated
 Wave approval. Adoption requires independently approved tasks and exit review
 plus a control/security checkpoint, and leaves the Wave paused for explicit
 resume. Older tools must fail closed once executable amendment state exists.
+If bootstrap review requests changes, record that disposition before remediation.
+`bootstrap-resubmit` then appends the prior frozen candidate, evidence, and review
+to the attempt history and opens a new review projection only for a strict
+descendant candidate. Validation rechecks every attempt, the exact packet task
+definitions, the Wave hold, campaign state, and active-amendment marker at every
+subsequent transition.
 
 ## 3. Permitted pause conditions
 

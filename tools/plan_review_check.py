@@ -124,6 +124,12 @@ def main() -> int:
         meta = frontmatter(path)
         slice_plans[meta["slice_id"]] = path
 
+    backlog = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+    amendments_by_change = {
+        str(amendment.get("change_request_id")): amendment
+        for amendment in backlog.get("wave_amendments", [])
+        if amendment.get("change_request_id")
+    }
     ecr_packets = {
         path.name.removesuffix(".packet.json"): path
         for path in (repo / "planning/enabler-change-requests").glob("ECR-*.packet.json")
@@ -196,6 +202,21 @@ def main() -> int:
                 or addendum.get("bootstrapUnit") != bootstrap_id
             ):
                 errors.append(f"{change_id}: bootstrap scope-addendum identity/status mismatch")
+        source_bootstrap = (amendments_by_change.get(change_id) or {}).get("bootstrap") or {}
+        expected_attempts = [dict(item) for item in source_bootstrap.get("attempts", [])]
+        if source_bootstrap:
+            expected_attempts.append(
+                {
+                    "id": f"R{len(expected_attempts) + 1:02d}",
+                    "implementer": source_bootstrap.get("implementer"),
+                    "implementation_commit": source_bootstrap.get("implementation_commit"),
+                    "evidence": source_bootstrap.get("evidence") or [],
+                    "review": source_bootstrap.get("review") or {},
+                    "current_status": source_bootstrap.get("status"),
+                }
+            )
+        if entry.get("bootstrap_attempts") != expected_attempts:
+            errors.append(f"{change_id}: bootstrap review attempts differ from authoritative backlog history")
         page = site / str(entry.get("page"))
         if not page.exists():
             errors.append(f"{change_id}: missing enabler detail page {page}")
@@ -235,7 +256,6 @@ def main() -> int:
     if set(manifest_slices) != set(slice_plans):
         errors.append(f"Manifest slice set differs from plans: {len(manifest_slices)} vs {len(slice_plans)}")
 
-    backlog = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
     backlog_waves = {str(wave["id"]): wave for wave in backlog.get("waves", [])}
     backlog_slices = {
         str(slice_["id"]): slice_

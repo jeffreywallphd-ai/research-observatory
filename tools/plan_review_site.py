@@ -378,7 +378,8 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
 
         amendment = amendment_by_change.get(change_id)
         lifecycle_status = ((amendment or {}).get("lifecycle") or {}).get("status")
-        bootstrap_status = ((amendment or {}).get("bootstrap") or {}).get("status")
+        bootstrap = (amendment or {}).get("bootstrap") or {}
+        bootstrap_status = bootstrap.get("status")
         campaign_status = ((amendment or {}).get("campaign") or {}).get("status")
         bootstrap_id = str((packet.get("bootstrapUnit") or {}).get("id") or "")
         scope_addenda: list[dict[str, Any]] = []
@@ -397,6 +398,18 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
                     "approved_by": addendum.get("approvedBy"),
                     "approved_at": addendum.get("approvedAt"),
                     "authorized_additional_paths": addendum.get("authorizedAdditionalPaths") or [],
+                }
+            )
+        bootstrap_attempts = [dict(item) for item in bootstrap.get("attempts", [])]
+        if bootstrap:
+            bootstrap_attempts.append(
+                {
+                    "id": f"R{len(bootstrap_attempts) + 1:02d}",
+                    "implementer": bootstrap.get("implementer"),
+                    "implementation_commit": bootstrap.get("implementation_commit"),
+                    "evidence": bootstrap.get("evidence") or [],
+                    "review": bootstrap.get("review") or {},
+                    "current_status": bootstrap_status,
                 }
             )
         records.append(
@@ -421,6 +434,7 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
                 "authority": packet.get("authority") or {},
                 "effective_base": (approval or {}).get("effectiveBase") or {},
                 "bootstrap_unit": bootstrap_id,
+                "bootstrap_attempts": bootstrap_attempts,
                 "scope_addenda": scope_addenda,
                 "authorized_task_ids": packet.get("authorizedTaskIds") or [],
                 "task_inventory": packet.get("taskInventory") or [],
@@ -678,6 +692,12 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             for addendum in record["scope_addenda"]
             for path in addendum["authorized_additional_paths"]
         )
+        bootstrap_attempt_rows = "".join(
+            f"<tr><th>{esc(attempt['id'])}</th><td><code>{esc(attempt.get('implementation_commit'))}</code></td>"
+            f"<td>{esc((attempt.get('review') or {}).get('result') or attempt.get('current_status') or 'pending')}</td>"
+            f"<td>{esc((attempt.get('review') or {}).get('reviewer') or 'pending')}</td></tr>"
+            for attempt in record["bootstrap_attempts"]
+        )
         detail_main = f"""
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">{esc(record["amendment_id"])} · {esc(record["target_wave"])}</span><h1>{esc(record["change_request_id"])} — {esc(proposal_meta.get("title"))}</h1></div>{status_badge(record["approval_status"])}</div>
@@ -701,6 +721,10 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 <section class="review-toolbar">
   <h2>Append-only bootstrap scope addenda</h2>
   <ul class="gate-criteria">{addendum_scope or "<li>None</li>"}</ul>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap review attempts</h2>
+  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody>{bootstrap_attempt_rows or '<tr><td colspan="4">Not submitted</td></tr>'}</tbody></table>
 </section>
 <section class="review-toolbar">
   <h2>Ordered Wave authority chain</h2>
@@ -758,6 +782,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     "lifecycle_status",
                     "bootstrap_status",
                     "campaign_status",
+                    "bootstrap_attempts",
                     "authorized_task_ids",
                     "scope_addenda",
                     "page",

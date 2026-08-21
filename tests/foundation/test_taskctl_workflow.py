@@ -307,6 +307,72 @@ class TaskctlWorkflowTests(unittest.TestCase):
         data["wave_amendments"] = [amendment]
         return data, capabilities, slices, tasks, gates
 
+    def packet_bound_active_amendment_workflow(
+        self,
+    ) -> tuple[tuple[dict, dict, dict, dict, dict], dict[str, Any]]:
+        data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0001.packet.json").read_text(encoding="utf-8")
+        )
+        amendment["bootstrap"]["status"] = "APPROVED"
+        amendment["bootstrap"]["review"] = {
+            "reviewer": "b00-independent-reviewer",
+            "result": "approved",
+            "reviewed_at": "2026-08-21T00:00:00+00:00",
+            "notes": "Approved for adversarial fixture execution.",
+        }
+        amendment["tasks"] = [
+            taskctl_module.materialized_amendment_task("W1.A02", packet_task) for packet_task in packet["taskInventory"]
+        ]
+        amendment["lifecycle"] = {
+            "status": "ACTIVE",
+            "history": [
+                *amendment["lifecycle"]["history"],
+                {
+                    "id": "E02",
+                    "status": "MATERIALIZED",
+                    "actor": "codex",
+                    "at": "2026-08-21T00:01:00+00:00",
+                    "rationale": "Materialized exact approved tasks for the test fixture.",
+                },
+                {
+                    "id": "E03",
+                    "status": "ACTIVE",
+                    "actor": "codex",
+                    "at": "2026-08-21T00:02:00+00:00",
+                    "rationale": "Activated the bounded amendment fixture.",
+                },
+            ],
+        }
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
+        ).stdout.strip()
+        branch = subprocess.run(
+            ["git", "branch", "--show-current"], cwd=REPO, capture_output=True, text=True, check=True
+        ).stdout.strip()
+        amendment["campaign"] = {
+            "status": "ACTIVE",
+            "scope": "wave-amendment",
+            "owner": "codex",
+            "branch": branch,
+            "worktree": str(REPO),
+            "base_sha": head,
+            "profile": "LOC",
+            "platform": "windows-x64",
+            "started_at": "2026-08-21T00:02:00+00:00",
+            "updated_at": "2026-08-21T00:02:00+00:00",
+            "pause_reason": None,
+            "lease": new_lease("codex", 8),
+        }
+        data["control_plane"]["active_amendment"] = "W1.A02"
+        wave = next(item for item in data["waves"] if item["id"] == "W1")
+        wave["campaign"]["status"] = "PAUSED"
+        wave["campaign"]["scope"] = "amendment-hold"
+        indexed = taskctl_module.index_backlog(data)
+        taskctl_module.refresh_derived_states(*indexed)
+        return indexed, packet
+
     def test_next_at_pending_release_gate_prints_decision_complete_handoff(self) -> None:
         data, capabilities, slices, tasks, gates = self.workflow()
         capability = capabilities["CAP-00"]
@@ -1331,6 +1397,488 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertIn("W1.A02: lifecycle event IDs are not sequential", errors)
         self.assertIn("A Wave amendment campaign cannot run beside an ACTIVE ordinary campaign", errors)
 
+    def test_b00_r01_semantics_freeze_bootstrap_candidate_evidence_and_independent_review(self) -> None:
+        data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        bootstrap = amendment["bootstrap"]
+        bootstrap.update(
+            status="APPROVED",
+            implementation_commit="f" * 40,
+            review={"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+        )
+        bootstrap["evidence"][0]["sha256"] = "0" * 64
+        with patch("taskctl.evidence_reference_errors", return_value=[]):
+            errors = validate(data, capabilities, slices, tasks, gates, repo=REPO)
+        joined = "\n".join(errors)
+        self.assertIn("W1.A02.B00: bootstrap implementation commit is invalid", joined)
+        self.assertIn("W1.A02.B00: bootstrap evidence hash mismatch", joined)
+        self.assertIn("W1.A02.B00: APPROVED bootstrap lacks its complete independent review projection", joined)
+
+        data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        bootstrap = amendment["bootstrap"]
+        approval_commit = amendment["approval_reference"]["introduction_commit"]
+        bootstrap.update(
+            status="APPROVED",
+            implementation_commit=approval_commit,
+            review={
+                "reviewer": bootstrap["implementer"],
+                "result": "approved",
+                "reviewed_at": "2026-08-21T00:00:00+00:00",
+                "notes": "Self-review must not authorize execution.",
+            },
+        )
+        evidence_path = REPO / bootstrap["evidence"][0]["path"]
+        manifest = json.loads(evidence_path.read_text(encoding="utf-8"))
+        manifest["baseCommit"] = "0" * 40
+        manifest["branch"] = "codex/unapproved-branch"
+        manifest["changedFiles"].append("product/outside-approved-bootstrap-scope.py")
+        altered_payload = json.dumps(manifest, sort_keys=True).encode("utf-8")
+        bootstrap["evidence"][0]["sha256"] = evidence_sha256(altered_payload)
+        original_read_bytes = Path.read_bytes
+
+        def altered_manifest_bytes(path: Path) -> bytes:
+            if path.resolve() == evidence_path.resolve():
+                return altered_payload
+            return original_read_bytes(path)
+
+        original_run = subprocess.run
+
+        def altered_scope(command: list[str], *args: Any, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
+            if command[:3] == ["git", "diff", "--name-only"] and command[3:5] == [
+                approval_commit,
+                approval_commit,
+            ]:
+                return subprocess.CompletedProcess(
+                    command,
+                    0,
+                    "product/outside-approved-bootstrap-scope.py\n",
+                    "",
+                )
+            return original_run(command, *args, **kwargs)
+
+        with (
+            patch.object(Path, "read_bytes", altered_manifest_bytes),
+            patch("taskctl.subprocess.run", side_effect=altered_scope),
+            patch("taskctl.evidence_reference_errors", return_value=[]),
+        ):
+            errors = validate(data, capabilities, slices, tasks, gates, repo=REPO)
+        joined = "\n".join(errors)
+        self.assertIn("W1.A02.B00: bootstrap candidate does not strictly descend from its prior candidate", joined)
+        self.assertIn("W1.A02.B00: bootstrap evidence base does not match the frozen review boundary", joined)
+        self.assertIn("W1.A02.B00: bootstrap evidence branch does not match the current codex branch", joined)
+        self.assertIn("W1.A02.B00: bootstrap changed path is outside approved scope", joined)
+        self.assertIn("W1.A02.B00: bootstrap reviewer is not independent from the implementer", joined)
+
+    def test_b00_r01_review_and_materialization_revalidate_the_frozen_bootstrap(self) -> None:
+        data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        amendment["bootstrap"]["status"] = "REVIEW"
+        amendment["bootstrap"]["review"] = {
+            "reviewer": None,
+            "result": None,
+            "reviewed_at": None,
+            "notes": None,
+        }
+        amendment["bootstrap"]["evidence"][0]["sha256"] = "0" * 64
+        approval = json.loads((REPO / "planning/wave-amendment-approvals/W1.A02.json").read_text(encoding="utf-8"))
+        packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0001.packet.json").read_text(encoding="utf-8")
+        )
+        with (
+            self.assertRaisesRegex(SystemExit, "bootstrap evidence hash mismatch"),
+            patch("taskctl.discover_repository", return_value=REPO),
+            patch("taskctl.require_clean_repository"),
+            patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+            patch("taskctl.persist"),
+        ):
+            taskctl_module.command_amendment_bootstrap_review(
+                Namespace(
+                    amendment="W1.A02",
+                    reviewer="new-independent-reviewer",
+                    result="approved",
+                    note="must revalidate",
+                    file=str(REPO / "planning/backlog.yaml"),
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        amendment["bootstrap"]["status"] = "APPROVED"
+        amendment["bootstrap"]["review"] = {
+            "reviewer": None,
+            "result": None,
+            "reviewed_at": None,
+            "notes": None,
+        }
+        approval = json.loads((REPO / "planning/wave-amendment-approvals/W1.A02.json").read_text(encoding="utf-8"))
+        packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0001.packet.json").read_text(encoding="utf-8")
+        )
+        with (
+            self.assertRaisesRegex(
+                SystemExit,
+                "APPROVED bootstrap lacks its complete independent review projection",
+            ),
+            patch("taskctl.discover_repository", return_value=REPO),
+            patch("taskctl.require_clean_repository"),
+            patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+            patch("taskctl.save_validated"),
+        ):
+            taskctl_module.command_amendment_materialize(
+                Namespace(amendment="W1.A02", agent="codex", file=str(REPO / "planning/backlog.yaml")),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+    def test_b00_r01_bootstrap_resubmit_is_append_only_and_strictly_descendant(self) -> None:
+        parser = build_parser()
+        parsed = parser.parse_args(
+            [
+                "amendment",
+                "bootstrap-resubmit",
+                "W1.A02",
+                "--agent",
+                "codex",
+                "--implementation-commit",
+                "d" * 40,
+                "--evidence",
+                "artifacts/evidence/W1.A02.B00.remediation.json",
+            ]
+        )
+        self.assertEqual("bootstrap-resubmit", parsed.amendment_command)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            (repo / "artifacts/evidence").mkdir(parents=True)
+            evidence_path = repo / "artifacts/evidence/W1.A02.B00.remediation.json"
+            evidence_path.write_text(json.dumps({"commit": "d" * 40}), encoding="utf-8")
+            data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+            amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+            bootstrap = amendment["bootstrap"]
+            prior_projection = copy.deepcopy(
+                {key: bootstrap[key] for key in ("implementer", "implementation_commit", "evidence", "review")}
+            )
+            approval = json.loads((REPO / "planning/wave-amendment-approvals/W1.A02.json").read_text(encoding="utf-8"))
+            packet = json.loads(
+                (REPO / "planning/enabler-change-requests/ECR-0001.packet.json").read_text(encoding="utf-8")
+            )
+
+            def git_result(command: list[str], **_kwargs: Any) -> subprocess.CompletedProcess[str]:
+                if command[:3] == ["git", "rev-parse", "HEAD"]:
+                    return subprocess.CompletedProcess(command, 0, "d" * 40 + "\n", "")
+                if command[:3] == ["git", "diff", "--name-only"]:
+                    return subprocess.CompletedProcess(command, 0, "tests/foundation/test_taskctl_workflow.py\n", "")
+                return subprocess.CompletedProcess(command, 0, "", "")
+
+            args = Namespace(
+                amendment="W1.A02",
+                agent="codex",
+                implementation_commit="d" * 40,
+                evidence=str(evidence_path),
+                file=str(repo / "planning/backlog.yaml"),
+            )
+            with (
+                patch("taskctl.discover_repository", return_value=repo),
+                patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+                patch("taskctl.require_clean_repository"),
+                patch("taskctl.git_commit_exists", return_value=True),
+                patch("taskctl.git_is_ancestor", return_value=True),
+                patch("taskctl.require_amendment_packet_integrity"),
+                patch("taskctl.bootstrap_attempt_errors", return_value=[]),
+                patch("taskctl.subprocess.run", side_effect=git_result),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_bootstrap_resubmit(
+                    args,
+                    data,
+                    capabilities,
+                    slices,
+                    tasks,
+                    gates,
+                )
+
+            self.assertEqual("REVIEW", bootstrap["status"])
+            self.assertEqual("d" * 40, bootstrap["implementation_commit"])
+            self.assertEqual(
+                {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+                bootstrap["review"],
+            )
+            self.assertEqual(1, len(bootstrap["attempts"]))
+            self.assertEqual("R01", bootstrap["attempts"][0]["id"])
+            for key, value in prior_projection.items():
+                self.assertEqual(value, bootstrap["attempts"][0][key])
+            self.assertEqual(evidence_sha256(evidence_path.read_bytes()), bootstrap["evidence"][0]["sha256"])
+            self.assertNotEqual(prior_projection["evidence"], bootstrap["evidence"])
+
+            bootstrap.update(
+                status="CHANGES_REQUESTED",
+                implementation_commit=prior_projection["implementation_commit"],
+                evidence=copy.deepcopy(prior_projection["evidence"]),
+                review=copy.deepcopy(prior_projection["review"]),
+                attempts=[],
+            )
+            args.implementation_commit = prior_projection["implementation_commit"]
+            with (
+                self.assertRaisesRegex(SystemExit, "strict descendant of the prior candidate"),
+                patch("taskctl.discover_repository", return_value=repo),
+                patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+                patch("taskctl.require_amendment_packet_integrity"),
+                patch("taskctl.git_is_ancestor", return_value=False),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_bootstrap_resubmit(
+                    args,
+                    data,
+                    capabilities,
+                    slices,
+                    tasks,
+                    gates,
+                )
+
+    def test_b00_r02_validate_denies_any_materialized_task_packet_drift(self) -> None:
+        context, _packet = self.packet_bound_active_amendment_workflow()
+        data, capabilities, slices, tasks, gates = context
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        first, second = amendment["tasks"]
+        first["title"] = "Altered title"
+        first["objective"] = "Altered objective"
+        first["dependencies"] = []
+        first["acceptance_criteria"] = ["Altered criterion"]
+        first["verification_commands"] = ["altered command"]
+        first["packet_task_sha256"] = "0" * 64
+        amendment["tasks"] = [second, first]
+        data, capabilities, slices, tasks, gates = taskctl_module.index_backlog(data)
+
+        with patch("taskctl.evidence_reference_errors", return_value=[]):
+            errors = validate(data, capabilities, slices, tasks, gates, repo=REPO)
+        joined = "\n".join(errors)
+        self.assertIn("W1.A02.T02: amendment task identity/order mismatch", joined)
+        for field in (
+            "title",
+            "objective",
+            "dependencies",
+            "acceptance_criteria",
+            "verification_commands",
+            "packet_task_sha256",
+        ):
+            self.assertIn(f"immutable amendment task field {field} differs from the approved packet", joined)
+
+    def test_b00_r02_command_entry_points_deny_materialized_task_packet_drift(self) -> None:
+        def drifted_context() -> tuple[dict, dict, dict, dict, dict]:
+            context, _packet = self.packet_bound_active_amendment_workflow()
+            context[3]["W1.A02.T01"]["objective"] = "Drifted after activation"
+            return context
+
+        data, capabilities, slices, tasks, gates = drifted_context()
+        task = tasks["W1.A02.T01"]
+        campaign = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")["campaign"]
+        with (
+            self.assertRaisesRegex(
+                SystemExit,
+                "immutable amendment task field objective differs from the approved packet",
+            ),
+            patch(
+                "taskctl.git_execution_identity",
+                return_value=("codex", campaign["branch"], campaign["base_sha"], str(REPO)),
+            ),
+            patch("taskctl.persist"),
+        ):
+            command_claim(
+                self.claim_args(
+                    task=task["id"],
+                    agent="codex",
+                    branch=campaign["branch"],
+                    base_sha=campaign["base_sha"],
+                    worktree=str(REPO),
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        data, capabilities, slices, tasks, gates = drifted_context()
+        task = tasks["W1.A02.T01"]
+        task.update(
+            status="IN_PROGRESS",
+            owner="codex",
+            branch=next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")["campaign"]["branch"],
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            lease=new_lease("codex", 8),
+        )
+        with (
+            self.assertRaisesRegex(
+                SystemExit,
+                "immutable amendment task field objective differs from the approved packet",
+            ),
+            patch("taskctl.persist"),
+        ):
+            command_evidence(
+                Namespace(
+                    task=task["id"],
+                    agent="codex",
+                    from_file=str(REPO / "artifacts/evidence/does-not-exist.json"),
+                    file=str(REPO / "planning/backlog.yaml"),
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        data, capabilities, slices, tasks, gates = drifted_context()
+        task = tasks["W1.A02.T01"]
+        task.update(
+            status="REVIEW",
+            owner="codex",
+            evidence=[{"type": "criterion-manifest"}],
+            verification_state="passed",
+            lease=new_lease("codex", 8),
+        )
+        with (
+            self.assertRaisesRegex(
+                SystemExit,
+                "immutable amendment task field objective differs from the approved packet",
+            ),
+            patch("taskctl.persist"),
+        ):
+            command_review(
+                Namespace(
+                    task=task["id"],
+                    reviewer="independent-reviewer",
+                    result="approved",
+                    lease_hours=8,
+                    note="must deny drift",
+                    file=str(REPO / "planning/backlog.yaml"),
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+        data, capabilities, slices, tasks, gates = drifted_context()
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        amendment["campaign"].update(status="COMPLETE", lease=None)
+        amendment["completion"].update(
+            status="APPROVED",
+            reviewer="exit-reviewer",
+            reviewed_at="2026-08-21T00:00:00+00:00",
+            evidence=["exit.json"],
+        )
+        amendment["lifecycle"]["status"] = "REVIEW"
+        amendment["lifecycle"]["history"][-1]["status"] = "REVIEW"
+        data["control_plane"]["active_amendment"] = None
+        for task in amendment["tasks"]:
+            task.update(
+                status="DONE",
+                lease=None,
+                evidence=[{"type": "criterion-manifest"}],
+                review={
+                    "reviewer": "task-reviewer",
+                    "result": "approved",
+                    "reviewed_at": "2026-08-21T00:00:00+00:00",
+                    "notes": None,
+                },
+            )
+        with (
+            self.assertRaisesRegex(
+                SystemExit,
+                "immutable amendment task field objective differs from the approved packet",
+            ),
+            patch("taskctl.persist"),
+        ):
+            taskctl_module.command_amendment_adopt(
+                Namespace(
+                    amendment="W1.A02",
+                    agent="codex",
+                    evidence=["checkpoint.json"],
+                    note="must deny drift",
+                    file=str(REPO / "planning/backlog.yaml"),
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+    def test_b00_r03_finite_state_table_denies_cross_field_amendment_contradictions(self) -> None:
+        cases: list[tuple[str, tuple[dict, dict, dict, dict, dict], str]] = []
+
+        context = self.interrupted_workflow(lifecycle_status="APPROVED", amendment_campaign_status="ACTIVE")
+        cases.append(
+            (
+                "active-campaign-approved-lifecycle",
+                context,
+                "unmaterialized APPROVED lifecycle cannot have tasks or a campaign",
+            )
+        )
+
+        context = self.interrupted_workflow(lifecycle_status="ACTIVE", amendment_campaign_status="ACTIVE")
+        context[0]["waves"][0]["campaign"]["scope"] = "wave"
+        cases.append(
+            (
+                "ordinary-wave-scope",
+                context,
+                "executable lifecycle requires the paused amendment-hold Wave",
+            )
+        )
+
+        for marker in (None, "W1.A01"):
+            context = self.interrupted_workflow(lifecycle_status="ACTIVE", amendment_campaign_status="ACTIVE")
+            context[0]["control_plane"]["active_amendment"] = marker
+            cases.append(
+                (
+                    f"active-marker-{marker}",
+                    context,
+                    "control plane active_amendment does not exactly match the sole ACTIVE amendment campaign",
+                )
+            )
+
+        context = self.interrupted_workflow(lifecycle_status="MATERIALIZED")
+        context[0]["wave_amendments"][0]["bootstrap"]["status"] = "REVIEW"
+        cases.append(
+            (
+                "executable-unapproved-bootstrap",
+                context,
+                "executable lifecycle requires an independently approved bootstrap",
+            )
+        )
+
+        context = self.interrupted_workflow(lifecycle_status="MATERIALIZED")
+        context[0]["wave_amendments"][0]["tasks"] = []
+        context[3].pop("W1.A02.T01")
+        context[3].pop("W1.A02.T02")
+        cases.append(
+            (
+                "executable-missing-tasks",
+                context,
+                "executable lifecycle requires the exact materialized task inventory",
+            )
+        )
+
+        context = self.interrupted_workflow(lifecycle_status="ADOPTED", amendment_campaign_status="ACTIVE")
+        cases.append(("terminal-active-state", context, "terminal lifecycle retains active execution state"))
+
+        for name, context, expected in cases:
+            with self.subTest(case=name):
+                errors = validate(*context)
+                self.assertIn(expected, "\n".join(errors))
+
     def test_amendment_materialization_and_activation_use_the_exact_safe_inventory(self) -> None:
         data, capabilities, slices, tasks, gates = self.interrupted_workflow(lifecycle_status="APPROVED")
         amendment = data["wave_amendments"][0]
@@ -1362,6 +1910,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             patch("taskctl.discover_repository", return_value=REPO),
             patch("taskctl.require_clean_repository"),
             patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+            patch("taskctl.require_amendment_packet_integrity"),
             patch("taskctl.save_validated") as save,
         ):
             taskctl_module.command_amendment_materialize(
@@ -1401,6 +1950,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             patch("taskctl.discover_repository", return_value=REPO),
             patch("taskctl.require_clean_repository"),
             patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+            patch("taskctl.require_amendment_packet_integrity"),
             patch("taskctl.persist"),
         ):
             taskctl_module.command_amendment_activate(
@@ -1456,7 +2006,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             )
         data["control_plane"]["active_amendment"] = None
 
-        with patch("taskctl.persist"):
+        with patch("taskctl.require_runtime_amendment_integrity"), patch("taskctl.persist"):
             taskctl_module.command_amendment_adopt(
                 Namespace(
                     amendment="W1.A02",
