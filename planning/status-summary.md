@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: fa59e5d9ac4f8159dd4aa116a013fdbe3f50087fe2893e8b784716f09af696b6
+source_sha256: 39a5cb31b993e791784dc8348d4a281260b469be9f7186f3754aabc92c123c24
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,7 +68,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 1 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 
 ## Wave authority and append-only amendments
 
@@ -128,7 +128,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-02.S03.T03` | `legacy latest-review-only` | 0 | `-` | approved / independent-agent-t03-slice-remediation | - |
 | `CAP-02.S04.T01` | `legacy latest-review-only` | 0 | `-` | approved / cap02_s04_t01_security_review | - |
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
-| `W1.A02.T01` | `append-only v1` | 1 | `-` | changes-requested / b00-independent-reviewer | `W1.A02.T01-R01-F01`, `W1.A02.T01-R01-F02` |
+| `W1.A02.T01` | `append-only v1` | 1 | `R02` | changes-requested / b00-independent-reviewer | `W1.A02.T01-R01-F01`, `W1.A02.T01-R01-F02` |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -192,4 +192,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W1.A02.T01` Immutable review packets and bounded remediation | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `W1.A02.T01` Immutable review packets and bounded remediation | `REVIEW` | codex | `codex/w1-windows-local-runtime` |

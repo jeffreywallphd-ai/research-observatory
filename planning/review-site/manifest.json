@@ -6484,7 +6484,7 @@
         {
           "task_id": "W1.A02.T01",
           "title": "Immutable review packets and bounded remediation",
-          "status": "IN_PROGRESS",
+          "status": "REVIEW",
           "mode": "append-only",
           "latest_review": {
             "reviewer": "b00-independent-reviewer",
@@ -6695,7 +6695,57 @@
                 "closures": []
               }
             ],
-            "current_submission": null
+            "current_submission": {
+              "id": "R02",
+              "submitted_by": "codex",
+              "submitted_at": "2026-08-21T01:30:59+00:00",
+              "candidate_commit": "4f256763401772298bf75c634f2c7b2355882f10",
+              "base_commit": "a6b9a32d16592793abc11595c8340e20a0f79c0d",
+              "branch": "codex/w1-windows-local-runtime",
+              "evidence_reference": {
+                "type": "criterion-manifest",
+                "path": "artifacts/evidence/W1.A02.T01.remediation-01.json",
+                "sha256": "51bcf3cdab50063bd1d4c7ad1eb32f19f97934185e05dfb0f75d9c227d792540",
+                "commit": "4f256763401772298bf75c634f2c7b2355882f10",
+                "recorded_at": "2026-08-21T01:30:59+00:00"
+              },
+              "acceptance_criteria_sha256": "e5c5b509f7df1f4393d360bbba8257190b846bd67a5ccbd921d2151970cffed1",
+              "changed_paths": [
+                "artifacts/evidence/W1.A02.T01.json",
+                "artifacts/evidence/W1.A02.T01.review-R01.json",
+                "docs/planning-implementation-plan.md",
+                "planning/backlog.yaml",
+                "planning/review-site/enablers/ECR-0001.html",
+                "planning/review-site/manifest.json",
+                "planning/status-summary.md",
+                "tests/foundation/test_plan_review_amendments.py",
+                "tests/foundation/test_taskctl_workflow.py",
+                "tools/plan_review_site.py",
+                "tools/taskctl.py"
+              ],
+              "selected_checks": [
+                ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+                ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views tests.foundation.test_planctl_wave_approval tests.foundation.test_planctl_amendments",
+                ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+                ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+                ".venv\\Scripts\\python.exe tools/plan_review_check.py --repo .",
+                ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+                ".venv\\Scripts\\python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved",
+                "git diff HEAD --check"
+              ],
+              "deferred_checks": [
+                "T02 still owns deterministic affected-check selection and privacy-safe telemetry. Complete product/deployment qualification remains due once at W1 exit; no product, dependency, profile, threshold, or runtime path changed in this remediation."
+              ],
+              "selection_rationale": "This R02 remediation is bounded to W1.A02.T01-R01-F01 and W1.A02.T01-R01-F02. The incremental risks are evidence-lineage substitution, failure to enforce an expanded R03 risk boundary, semantic replay accepting forged stored history, optional HTML interpolation creating whitespace, and omission or flattening of the adverse R01 projection. Direct multi-round controller adversarial tests, active/null renderer tests, all governed static checks, live backlog/ECR validation, exact generated-view checks, and full diff hygiene cover those risks.",
+              "selection_sha256": "75f5308ae871ff2bb0bddfd9138f0c9005582b547eb495f50dedfa8d4aec1de6",
+              "prior_attempt_id": "R01",
+              "open_finding_ids": [
+                "W1.A02.T01-R01-F01",
+                "W1.A02.T01-R01-F02"
+              ],
+              "root_cause_analysis": null,
+              "packet_sha256": "8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd"
+            }
           }
         },
         {
