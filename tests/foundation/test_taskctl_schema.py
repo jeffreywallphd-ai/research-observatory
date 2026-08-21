@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -229,6 +230,58 @@ class BacklogSchemaTests(unittest.TestCase):
             any("$.waves[1].campaign.scope" in error and "'wave' was expected" in error for error in errors),
             errors,
         )
+
+    def test_exact_pre_b00_schema_rejects_an_active_amendment_ledger(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        wave = next(item for item in data["waves"] if item["id"] == "W1")
+        wave["campaign"]["scope"] = "amendment-hold"
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        amendment["lifecycle"]["status"] = "ACTIVE"
+        amendment["lifecycle"]["history"].append(
+            {
+                "id": "E02",
+                "status": "ACTIVE",
+                "actor": "agent:test",
+                "at": "2026-08-21T00:00:00+00:00",
+                "rationale": "Exercise the old-tool denial marker.",
+            }
+        )
+        amendment["campaign"] = {
+            "status": "ACTIVE",
+            "scope": "wave-amendment",
+            "owner": "agent:test",
+            "branch": "codex/test",
+            "worktree": str(REPO),
+            "base_sha": "a" * 40,
+            "profile": "LOC",
+            "platform": "windows-x64",
+            "started_at": "2026-08-21T00:00:00+00:00",
+            "updated_at": "2026-08-21T00:00:00+00:00",
+            "pause_reason": None,
+            "lease": {
+                "claimed_by": "agent:test",
+                "claimed_at": "2026-08-21T00:00:00+00:00",
+                "expires_at": "2026-08-21T08:00:00+00:00",
+            },
+        }
+        data["control_plane"]["active_amendment"] = "W1.A02"
+        historical = subprocess.run(
+            [
+                "git",
+                "show",
+                "6e9c440102a5c463bb35d81f4dbdc3453d9ce029:planning/backlog.schema.json",
+            ],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+        with tempfile.TemporaryDirectory() as temporary:
+            historical_schema = Path(temporary) / "pre-b00-backlog.schema.json"
+            historical_schema.write_text(historical, encoding="utf-8")
+            errors = backlog_schema_errors(data, schema_path=historical_schema)
+
+        self.assertIn("$.waves[1].campaign.scope: 'wave' was expected", errors)
 
     def test_materialized_amendment_task_requires_a_packet_bound_hash(self) -> None:
         data = copy.deepcopy(self.canonical)

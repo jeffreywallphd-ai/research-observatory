@@ -88,6 +88,14 @@ safe-resume condition. Missing, forked, reordered, rewritten, stale, or
 self-reviewed authority fails closed. A repeated `planctl wave approve` command
 is never an amendment mechanism.
 
+Bootstrap review attempts are append-only. A changes-requested or blocked
+disposition remains bound to its candidate and evidence; remediation uses a
+strict-descendant `bootstrap-resubmit` transition and cannot overwrite that
+attempt. Every executable amendment state must continue to match the approved
+packet's immutable task fields, an independently approved bootstrap, the paused
+Wave `amendment-hold`, its campaign state, and the single active-amendment
+marker. Any impossible cross-field combination fails validation.
+
 ## Review and verification cadence
 
 - **Task:** narrow deterministic checks chosen by credible failure likelihood,

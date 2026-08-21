@@ -90,6 +90,11 @@ Wave work and its exit gate stay denied until every amendment task is `DONE` and
 independently approved, the amendment exit review is `APPROVED`, and adoption
 records a Wave control/security checkpoint. Adoption restores scope `wave` but
 leaves the campaign `PAUSED` for an explicit normal resume.
+Bootstrap `CHANGES_REQUESTED` or `BLOCKED` reviews are never overwritten. Commit
+the bounded remediation and its new evidence, then use `taskctl amendment
+bootstrap-resubmit` to append the prior attempt and freeze the strict-descendant
+candidate. Materialization, activation, claims, evidence, reviews, and adoption
+all revalidate the bootstrap packet and immutable task definitions.
 
 ### Release-gate stop review
 

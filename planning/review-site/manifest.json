@@ -1797,6 +1797,29 @@
       "lifecycle_status": "APPROVED",
       "bootstrap_status": "CHANGES_REQUESTED",
       "campaign_status": "NONE",
+      "bootstrap_attempts": [
+        {
+          "id": "R01",
+          "implementer": "codex",
+          "implementation_commit": "2493dee313a2df8929dbd2eed31d9e0e672fc368",
+          "evidence": [
+            {
+              "type": "criterion-manifest",
+              "path": "artifacts/evidence/W1.A02.B00.json",
+              "sha256": "74c93ae166d7e7a3ff41a194c38d207f8593abe7aefd108a879444f5aadb2370",
+              "commit": "2493dee313a2df8929dbd2eed31d9e0e672fc368",
+              "recorded_at": "2026-08-20T23:38:52+00:00"
+            }
+          ],
+          "review": {
+            "reviewer": "b00-independent-reviewer",
+            "result": "changes-requested",
+            "reviewed_at": "2026-08-20T23:49:47+00:00",
+            "notes": "B00-R01 HIGH: frozen candidate/evidence/review projection is not durably enforced and no append-only resubmission exists. B00-R02 HIGH: materialized amendment task definitions can drift from the immutable ECR packet. B00-R03 HIGH: lifecycle, campaign, Wave hold, and active_amendment cross-field invariants are incomplete."
+          },
+          "current_status": "CHANGES_REQUESTED"
+        }
+      ],
       "authorized_task_ids": [
         "W1.A02.T01",
         "W1.A02.T02"

@@ -84,6 +84,9 @@ interrupting amendment is adopted through an independent exit review and a
 control/security checkpoint, or receives an explicit append-only deferred or
 withdrawn safe-resume disposition. Never use `planctl wave approve` to amend an
 already approved Wave.
+Bootstrap changes-requested/blocked dispositions are append-only. Remediation
+must use `taskctl amendment bootstrap-resubmit` to freeze a strict-descendant
+candidate and new evidence without overwriting the prior attempt.
 
 "One run" means one durable Wave campaign, not one operating-system process.
 Resume it after an ordinary tool, app, or session interruption. Claim and finish
@@ -146,6 +149,7 @@ python tools/planctl.py --repo . wave approve WN --by <reviewer> --commit <git-s
 python tools/planctl.py --repo . ecr review ECR-NNNN
 python tools/planctl.py --repo . ecr validate ECR-NNNN --require-approved
 python tools/taskctl.py --file planning/backlog.yaml amendment status WN.ANN
+python tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-resubmit WN.ANN --agent <agent> --implementation-commit <sha> --evidence <manifest>
 python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 ```
 
