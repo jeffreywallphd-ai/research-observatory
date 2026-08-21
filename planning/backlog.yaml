@@ -22228,26 +22228,41 @@ wave_amendments:
         the hashed B00, T01, and T02 scope only.
   bootstrap:
     id: W1.A02.B00
-    status: CHANGES_REQUESTED
+    status: REVIEW
     implementer: codex
-    implementation_commit: 2493dee313a2df8929dbd2eed31d9e0e672fc368
+    implementation_commit: badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c
     scope_addenda:
     - path: planning/wave-amendment-approvals/W1.A02.B00.addendum-01.json
       sha256: c00c7574cf6def6db76754531d351cc0eb13853076f4d714074a611238a1a19d
       introduction_commit: 502908c16d9751af56c720df0cdabd74c235721a
     evidence:
     - type: criterion-manifest
-      path: artifacts/evidence/W1.A02.B00.json
-      sha256: 74c93ae166d7e7a3ff41a194c38d207f8593abe7aefd108a879444f5aadb2370
-      commit: 2493dee313a2df8929dbd2eed31d9e0e672fc368
-      recorded_at: '2026-08-20T23:38:52+00:00'
+      path: artifacts/evidence/W1.A02.B00.remediation-01.json
+      sha256: b06a2c258b933dab4ad87e2b0f223b3f1a6e2cefb3d4478e59b864edfb4e53ff
+      commit: badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c
+      recorded_at: '2026-08-21T00:07:19+00:00'
     review:
-      reviewer: b00-independent-reviewer
-      result: changes-requested
-      reviewed_at: '2026-08-20T23:49:47+00:00'
-      notes: 'B00-R01 HIGH: frozen candidate/evidence/review projection is not durably enforced and no append-only resubmission
-        exists. B00-R02 HIGH: materialized amendment task definitions can drift from the immutable ECR packet. B00-R03 HIGH:
-        lifecycle, campaign, Wave hold, and active_amendment cross-field invariants are incomplete.'
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+    attempts:
+    - id: R01
+      implementer: codex
+      implementation_commit: 2493dee313a2df8929dbd2eed31d9e0e672fc368
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W1.A02.B00.json
+        sha256: 74c93ae166d7e7a3ff41a194c38d207f8593abe7aefd108a879444f5aadb2370
+        commit: 2493dee313a2df8929dbd2eed31d9e0e672fc368
+        recorded_at: '2026-08-20T23:38:52+00:00'
+      review:
+        reviewer: b00-independent-reviewer
+        result: changes-requested
+        reviewed_at: '2026-08-20T23:49:47+00:00'
+        notes: 'B00-R01 HIGH: frozen candidate/evidence/review projection is not durably enforced and no append-only resubmission
+          exists. B00-R02 HIGH: materialized amendment task definitions can drift from the immutable ECR packet. B00-R03 HIGH:
+          lifecycle, campaign, Wave hold, and active_amendment cross-field invariants are incomplete.'
   campaign: null
   tasks: []
   completion:

@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A02.B00",
+  "commit": "badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c",
+  "baseCommit": "927e813ebd09113b52fd26383770126bcbcdea4f",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A02.B00.json",
+    "sha256": "74c93ae166d7e7a3ff41a194c38d207f8593abe7aefd108a879444f5aadb2370",
+    "commit": "2493dee313a2df8929dbd2eed31d9e0e672fc368"
+  },
+  "changedFiles": [
+    "AGENTS.md",
+    "docs/automation/project-automation-guide.md",
+    "docs/governance/delivery-control-model.md",
+    "planning/README.md",
+    "planning/backlog.schema.json",
+    "planning/review-site/enablers/ECR-0001.html",
+    "planning/review-site/manifest.json",
+    "tests/foundation/test_plan_review_amendments.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/plan_review_check.py",
+    "tools/plan_review_site.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "All 53 task-control and schema tests passed in 44.339 seconds, including the B00-R01/R02/R03 adversarial matrix."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views tests.foundation.test_planctl_amendments tests.foundation.test_planctl_wave_approval",
+      "exitCode": 0,
+      "result": "All 21 affected planning-view, generated-view, ECR-authority, and immutable-Wave-approval tests passed in 23.958 seconds."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 113 governed Python files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The live CHANGES_REQUESTED ledger validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates under the strengthened packet and finite-state invariants."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo . --report artifacts/tmp/B00-remediation-plan-review-site-validation.json; .venv\\Scripts\\python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved",
+      "exitCode": 0,
+      "result": "Generated backlog views, the 145-page planning site, append-only bootstrap-attempt projection, and exact ECR authority all passed."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml next",
+      "exitCode": 0,
+      "result": "The stopped handoff retained W1 and ordinary work denial and named bootstrap-resubmit as the exact next controlled transition."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Repeated Wave approval and ECR approval remain fail-closed; B00 review and every later transition now revalidate the frozen candidate, evidence, authority, scope addenda, branch, ancestry, and review independence.",
+        "B00-R01 adversarial tests deny nonexistent candidates, altered hashes/base/branch/scope, self-review, status/review incoherence, and materialization without a valid approved bootstrap."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The original W1 base and migrated W1.A01 authority checks remain unchanged and exact ECR validation passes.",
+        "The remediation adds no approval rewrite path; bootstrap resubmission is a separate append-only transition."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Bootstrap attempts now preserve prior implementer, candidate, evidence, and independent disposition as sequential RNN records while the current review remains a projection.",
+        "A strict finite-state table binds lifecycle, bootstrap approval, exact tasks, campaign state, Wave amendment-hold scope, and control_plane.active_amendment; impossible combinations fail validation.",
+        "A regression runs the exact pre-B00 schema and proves a valid active amendment ledger is rejected by its amendment-hold marker."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Every authority validation compares task order, IDs, title, objective, dependencies, acceptance criteria, verification commands, and canonical packet hash with the immutable ECR task inventory.",
+        "Validate, claim, evidence, review, materialize, activate, amendment exit, and adoption paths deny task-definition drift; focused tests exercise the post-activation failure paths."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "taskctl next now gives bootstrap-resubmit as the exact legal action from CHANGES_REQUESTED while continuing to deny ordinary W1 work.",
+        "The generated ECR detail and manifest show append-only bootstrap review attempts with frozen candidates, dispositions, and reviewers; the review-site checker compares this projection with the authoritative backlog."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "B00 remediation passed 74 focused tests, the full 113-file static quality gate, backlog/view/site validation, and immutable ECR authority validation.",
+        "This manifest freezes the strict-descendant remediation candidate badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c and preserves the prior changes-requested review for bounded replay of B00-R01, B00-R02, and B00-R03."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "The remediation changes only the amendment control plane, schemas, governed documentation, generated review projection, and focused tests. It exercises all three independent HIGH findings, every affected transition, old-tool denial, authority hashes, generated views, and full governed Python quality. Product/runtime, storage, packaging, performance, and deployment suites remain unaffected and are deferred to their existing slice/checkpoint/W1-exit gates.",
+    "deferred": "T01 still owns the generalized immutable task-review packet/finding ledger beyond this B00 bootstrap-specific repair. T02 still owns deterministic affected selection and privacy-safe telemetry. Complete product/deployment qualification remains due at W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-control-security-remediation-review",
+    "openFindingIds": ["B00-R01", "B00-R02", "B00-R03"],
+    "note": "Replay the three recorded HIGH findings against candidate badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c plus the incremental 927e813..badf4c0 risk boundary. Confirm the prior changes-requested attempt remains append-only after resubmission and return one consolidated disposition."
+  }
+}
