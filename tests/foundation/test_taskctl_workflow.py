@@ -373,6 +373,85 @@ class TaskctlWorkflowTests(unittest.TestCase):
         taskctl_module.refresh_derived_states(*indexed)
         return indexed, packet
 
+    def b00_initial_review_bootstrap_fixture(self) -> dict[str, Any]:
+        return {
+            "id": "W1.A02.B00",
+            "status": "REVIEW",
+            "implementer": "codex",
+            "implementation_commit": "2493dee313a2df8929dbd2eed31d9e0e672fc368",
+            "submission_branch": "codex/w1-windows-local-runtime",
+            "scope_addenda": [
+                {
+                    "path": "planning/wave-amendment-approvals/W1.A02.B00.addendum-01.json",
+                    "sha256": "c00c7574cf6def6db76754531d351cc0eb13853076f4d714074a611238a1a19d",
+                    "introduction_commit": "502908c16d9751af56c720df0cdabd74c235721a",
+                }
+            ],
+            "evidence": [
+                {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/W1.A02.B00.json",
+                    "sha256": "74c93ae166d7e7a3ff41a194c38d207f8593abe7aefd108a879444f5aadb2370",
+                    "commit": "2493dee313a2df8929dbd2eed31d9e0e672fc368",
+                    "recorded_at": "2026-08-20T23:38:52+00:00",
+                }
+            ],
+            "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+        }
+
+    def b00_resubmission_source_bootstrap_fixture(self) -> dict[str, Any]:
+        bootstrap = self.b00_initial_review_bootstrap_fixture()
+        bootstrap.update(
+            status="CHANGES_REQUESTED",
+            review={
+                "reviewer": "b00-independent-reviewer",
+                "result": "changes-requested",
+                "reviewed_at": "2026-08-20T23:49:47+00:00",
+                "notes": "B00-R01, B00-R02, and B00-R03 require bounded remediation.",
+            },
+        )
+        return bootstrap
+
+    def b00_resubmitted_review_bootstrap_fixture(self) -> dict[str, Any]:
+        prior = self.b00_resubmission_source_bootstrap_fixture()
+        return {
+            "id": "W1.A02.B00",
+            "status": "REVIEW",
+            "implementer": "codex",
+            "implementation_commit": "badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c",
+            "submission_branch": "codex/w1-windows-local-runtime",
+            "scope_addenda": copy.deepcopy(prior["scope_addenda"]),
+            "evidence": [
+                {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/W1.A02.B00.remediation-01.json",
+                    "sha256": "b06a2c258b933dab4ad87e2b0f223b3f1a6e2cefb3d4478e59b864edfb4e53ff",
+                    "commit": "badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c",
+                    "recorded_at": "2026-08-21T00:07:19+00:00",
+                }
+            ],
+            "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+            "attempts": [
+                {
+                    "id": "R01",
+                    "implementer": prior["implementer"],
+                    "implementation_commit": prior["implementation_commit"],
+                    "submission_branch": prior["submission_branch"],
+                    "evidence": copy.deepcopy(prior["evidence"]),
+                    "review": copy.deepcopy(prior["review"]),
+                }
+            ],
+        }
+
+    def canonical_workflow_with_b00_bootstrap(
+        self,
+        bootstrap: dict[str, Any],
+    ) -> tuple[dict, dict, dict, dict, dict]:
+        context = load(str(REPO / "planning" / "backlog.yaml"))
+        amendment = next(item for item in context[0]["wave_amendments"] if item["id"] == "W1.A02")
+        amendment["bootstrap"] = copy.deepcopy(bootstrap)
+        return context
+
     def test_next_at_pending_release_gate_prints_decision_complete_handoff(self) -> None:
         data, capabilities, slices, tasks, gates = self.workflow()
         capability = capabilities["CAP-00"]
@@ -1398,7 +1477,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertIn("A Wave amendment campaign cannot run beside an ACTIVE ordinary campaign", errors)
 
     def test_b00_r01_semantics_freeze_bootstrap_candidate_evidence_and_independent_review(self) -> None:
-        data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+        data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
+            self.b00_initial_review_bootstrap_fixture()
+        )
         amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
         bootstrap = amendment["bootstrap"]
         bootstrap.update(
@@ -1414,7 +1495,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertIn("W1.A02.B00: bootstrap evidence hash mismatch", joined)
         self.assertIn("W1.A02.B00: APPROVED bootstrap lacks its complete independent review projection", joined)
 
-        data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+        data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
+            self.b00_initial_review_bootstrap_fixture()
+        )
         amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
         bootstrap = amendment["bootstrap"]
         approval_commit = amendment["approval_reference"]["introduction_commit"]
@@ -1466,12 +1549,14 @@ class TaskctlWorkflowTests(unittest.TestCase):
         joined = "\n".join(errors)
         self.assertIn("W1.A02.B00: bootstrap candidate does not strictly descend from its prior candidate", joined)
         self.assertIn("W1.A02.B00: bootstrap evidence base does not match the frozen review boundary", joined)
-        self.assertIn("W1.A02.B00: bootstrap evidence branch does not match the current codex branch", joined)
+        self.assertIn("W1.A02.B00: branch does not match the claimed task branch", joined)
         self.assertIn("W1.A02.B00: bootstrap changed path is outside approved scope", joined)
         self.assertIn("W1.A02.B00: bootstrap reviewer is not independent from the implementer", joined)
 
     def test_b00_r01_review_and_materialization_revalidate_the_frozen_bootstrap(self) -> None:
-        data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+        data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
+            self.b00_initial_review_bootstrap_fixture()
+        )
         amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
         amendment["bootstrap"]["status"] = "REVIEW"
         amendment["bootstrap"]["review"] = {
@@ -1507,7 +1592,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 gates,
             )
 
-        data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+        data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
+            self.b00_initial_review_bootstrap_fixture()
+        )
         amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
         amendment["bootstrap"]["status"] = "APPROVED"
         amendment["bootstrap"]["review"] = {
@@ -1560,12 +1647,27 @@ class TaskctlWorkflowTests(unittest.TestCase):
             repo = Path(temporary)
             (repo / "artifacts/evidence").mkdir(parents=True)
             evidence_path = repo / "artifacts/evidence/W1.A02.B00.remediation.json"
-            evidence_path.write_text(json.dumps({"commit": "d" * 40}), encoding="utf-8")
-            data, capabilities, slices, tasks, gates = load(str(REPO / "planning" / "backlog.yaml"))
+            evidence_path.write_text(
+                json.dumps(
+                    {
+                        "commit": "d" * 40,
+                        "baseCommit": "2493dee313a2df8929dbd2eed31d9e0e672fc368",
+                        "branch": "codex/w1-windows-local-runtime",
+                        "changedFiles": ["tests/foundation/test_taskctl_workflow.py"],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
+                self.b00_resubmission_source_bootstrap_fixture()
+            )
             amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
             bootstrap = amendment["bootstrap"]
             prior_projection = copy.deepcopy(
-                {key: bootstrap[key] for key in ("implementer", "implementation_commit", "evidence", "review")}
+                {
+                    key: bootstrap[key]
+                    for key in ("implementer", "implementation_commit", "submission_branch", "evidence", "review")
+                }
             )
             approval = json.loads((REPO / "planning/wave-amendment-approvals/W1.A02.json").read_text(encoding="utf-8"))
             packet = json.loads(
@@ -1643,6 +1745,81 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     tasks,
                     gates,
                 )
+
+    def test_b00_r04_historical_bootstrap_validation_does_not_depend_on_live_branch(self) -> None:
+        data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
+            self.b00_resubmitted_review_bootstrap_fixture()
+        )
+        original_run = subprocess.run
+
+        def main_checkout(command: list[str], *args: Any, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
+            if command[:3] == ["git", "branch", "--show-current"]:
+                return subprocess.CompletedProcess(command, 0, "main\n", "")
+            return original_run(command, *args, **kwargs)
+
+        with (
+            patch("taskctl.subprocess.run", side_effect=main_checkout),
+            patch("taskctl.evidence_reference_errors", return_value=[]),
+        ):
+            errors = validate(data, capabilities, slices, tasks, gates, repo=REPO)
+
+        self.assertEqual([], errors)
+
+    def test_b00_r04_bootstrap_review_denies_the_wrong_live_branch(self) -> None:
+        data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
+            self.b00_initial_review_bootstrap_fixture()
+        )
+        approval = json.loads((REPO / "planning/wave-amendment-approvals/W1.A02.json").read_text(encoding="utf-8"))
+        packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0001.packet.json").read_text(encoding="utf-8")
+        )
+        original_run = subprocess.run
+
+        def wrong_live_branch(command: list[str], *args: Any, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
+            if command[:3] == ["git", "branch", "--show-current"]:
+                return subprocess.CompletedProcess(command, 0, "main\n", "")
+            return original_run(command, *args, **kwargs)
+
+        with (
+            self.assertRaisesRegex(
+                SystemExit,
+                "bootstrap submission branch does not match the current codex branch",
+            ),
+            patch("taskctl.discover_repository", return_value=REPO),
+            patch("taskctl.require_clean_repository"),
+            patch("taskctl.load_amendment_authority", return_value=(approval, packet, b"approval")),
+            patch("taskctl.subprocess.run", side_effect=wrong_live_branch),
+            patch("taskctl.persist"),
+        ):
+            taskctl_module.command_amendment_bootstrap_review(
+                Namespace(
+                    amendment="W1.A02",
+                    reviewer="new-independent-reviewer",
+                    result="approved",
+                    note="The live branch must remain part of review entry validation.",
+                    file=str(REPO / "planning/backlog.yaml"),
+                ),
+                data,
+                capabilities,
+                slices,
+                tasks,
+                gates,
+            )
+
+    def test_b00_r04_bootstrap_manifest_must_match_the_frozen_submission_branch(self) -> None:
+        data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
+            self.b00_initial_review_bootstrap_fixture()
+        )
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        amendment["bootstrap"]["submission_branch"] = "codex/forged-submission-branch"
+
+        with patch("taskctl.evidence_reference_errors", return_value=[]):
+            errors = validate(data, capabilities, slices, tasks, gates, repo=REPO)
+
+        self.assertIn(
+            "W1.A02.B00: branch does not match the claimed task branch",
+            errors,
+        )
 
     def test_b00_r02_validate_denies_any_materialized_task_packet_drift(self) -> None:
         context, _packet = self.packet_bound_active_amendment_workflow()

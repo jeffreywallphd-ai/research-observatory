@@ -1356,12 +1356,16 @@ def bootstrap_attempt_errors(
     expected_base: str | None,
     lineage_base: str,
     allowed_patterns: list[str],
+    require_current_branch: bool = False,
 ) -> list[str]:
     errors: list[str] = []
     candidate = str(attempt.get("implementation_commit") or "")
     implementer = str(attempt.get("implementer") or "")
+    submission_branch = str(attempt.get("submission_branch") or "")
     if not implementer:
         errors.append(f"{bootstrap_id}: bootstrap attempt lacks an implementer")
+    if not submission_branch:
+        errors.append(f"{bootstrap_id}: bootstrap attempt lacks its frozen submission branch")
     if not git_commit_exists(repo, candidate):
         errors.append(f"{bootstrap_id}: bootstrap implementation commit is invalid")
     else:
@@ -1399,7 +1403,7 @@ def bootstrap_attempt_errors(
         errors.append(f"{bootstrap_id}: remediation evidence base is outside the frozen candidate lineage")
     virtual_task = {
         "id": bootstrap_id,
-        "branch": manifest.get("branch"),
+        "branch": submission_branch,
         "base_sha": evidence_base,
         "worktree": repo.as_posix(),
         "acceptance_criteria": required_outcomes,
@@ -1414,11 +1418,12 @@ def bootstrap_attempt_errors(
         )
     )
     errors.extend(f"{bootstrap_id}: {error}" for error in changed_file_errors(virtual_task, manifest, repo))
-    current_branch = subprocess.run(
-        ["git", "branch", "--show-current"], cwd=repo, capture_output=True, text=True, check=False
-    )
-    if current_branch.returncode != 0 or current_branch.stdout.strip() != manifest.get("branch"):
-        errors.append(f"{bootstrap_id}: bootstrap evidence branch does not match the current codex branch")
+    if require_current_branch:
+        current_branch = subprocess.run(
+            ["git", "branch", "--show-current"], cwd=repo, capture_output=True, text=True, check=False
+        )
+        if current_branch.returncode != 0 or current_branch.stdout.strip() != submission_branch:
+            errors.append(f"{bootstrap_id}: bootstrap submission branch does not match the current codex branch")
     scope = subprocess.run(
         ["git", "diff", "--name-only", lineage_base, candidate, "--"],
         cwd=repo,
@@ -1444,6 +1449,8 @@ def bootstrap_packet_errors(
     amendment: dict[str, Any],
     approval: dict[str, Any],
     packet: dict[str, Any],
+    *,
+    require_current_branch: bool = False,
 ) -> list[str]:
     bootstrap = amendment.get("bootstrap") or {}
     if not bootstrap:
@@ -1502,6 +1509,7 @@ def bootstrap_packet_errors(
                 expected_base=approval_commit if position == 0 else None,
                 lineage_base=lineage_base,
                 allowed_patterns=allowed_patterns,
+                require_current_branch=require_current_branch and attempt is bootstrap,
             )
         )
         lineage_base = candidate
@@ -1535,9 +1543,17 @@ def require_amendment_packet_integrity(
     amendment: dict[str, Any],
     approval: dict[str, Any],
     packet: dict[str, Any],
+    *,
+    require_current_branch: bool = False,
 ) -> None:
     errors = [
-        *bootstrap_packet_errors(repo, amendment, approval, packet),
+        *bootstrap_packet_errors(
+            repo,
+            amendment,
+            approval,
+            packet,
+            require_current_branch=require_current_branch,
+        ),
         *immutable_amendment_task_errors(amendment, packet),
     ]
     if errors:
@@ -2952,6 +2968,7 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
                 "status": "REVIEW",
                 "implementer": agent,
                 "implementation_commit": implementation_commit,
+                "submission_branch": str(manifest.get("branch") or ""),
                 "scope_addenda": scope_addenda,
                 "evidence": [
                     {
@@ -2991,7 +3008,13 @@ def command_amendment_bootstrap_review(args, data, capabilities, slices, tasks, 
     repo = discover_repository(args.file)
     require_clean_repository(repo)
     approval, packet, _payload = load_amendment_authority(repo, args.amendment)
-    require_amendment_packet_integrity(repo, amendment, approval, packet)
+    require_amendment_packet_integrity(
+        repo,
+        amendment,
+        approval,
+        packet,
+        require_current_branch=True,
+    )
     result_status = {
         "approved": "APPROVED",
         "changes-requested": "CHANGES_REQUESTED",
@@ -3052,6 +3075,7 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
         "status": "REVIEW",
         "implementer": agent,
         "implementation_commit": implementation_commit,
+        "submission_branch": str(_manifest.get("branch") or ""),
         "evidence": [evidence_reference],
         "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
     }
@@ -3064,6 +3088,7 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
         expected_base=None,
         lineage_base=previous_candidate,
         allowed_patterns=bootstrap_authorized_patterns(repo, packet, bootstrap),
+        require_current_branch=True,
     )
     if errors:
         raise SystemExit("Invalid bootstrap remediation evidence:\n- " + "\n- ".join(errors))
@@ -3074,6 +3099,7 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
             "id": attempt_id,
             "implementer": bootstrap.get("implementer"),
             "implementation_commit": previous_candidate,
+            "submission_branch": bootstrap.get("submission_branch"),
             "evidence": copy.deepcopy(bootstrap.get("evidence") or []),
             "review": prior_review,
         }
@@ -3082,6 +3108,7 @@ def command_amendment_bootstrap_resubmit(args, data, capabilities, slices, tasks
         status="REVIEW",
         implementer=agent,
         implementation_commit=implementation_commit,
+        submission_branch=str(_manifest.get("branch") or ""),
         evidence=[evidence_reference],
         review={"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
     )

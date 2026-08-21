@@ -76,7 +76,9 @@ If bootstrap review requests changes, record that disposition before remediation
 to the attempt history and opens a new review projection only for a strict
 descendant candidate. Validation rechecks every attempt, the exact packet task
 definitions, the Wave hold, campaign state, and active-amendment marker at every
-subsequent transition.
+subsequent transition. Each attempt also freezes its submission branch: stored
+evidence is validated against that branch permanently, while the live checkout
+branch is checked only when submitting or recording the independent review.
 
 ## 3. Permitted pause conditions
 

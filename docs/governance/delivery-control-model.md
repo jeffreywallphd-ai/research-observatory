@@ -91,10 +91,13 @@ is never an amendment mechanism.
 Bootstrap review attempts are append-only. A changes-requested or blocked
 disposition remains bound to its candidate and evidence; remediation uses a
 strict-descendant `bootstrap-resubmit` transition and cannot overwrite that
-attempt. Every executable amendment state must continue to match the approved
-packet's immutable task fields, an independently approved bootstrap, the paused
-Wave `amendment-hold`, its campaign state, and the single active-amendment
-marker. Any impossible cross-field combination fails validation.
+attempt. The submission branch is frozen with each attempt so permanent history
+remains valid after integration to `main`; only submission and review entry
+points compare it with the live checkout. Every executable amendment state must
+continue to match the approved packet's immutable task fields, an independently
+approved bootstrap, the paused Wave `amendment-hold`, its campaign state, and
+the single active-amendment marker. Any impossible cross-field combination fails
+validation.
 
 ## Review and verification cadence
 

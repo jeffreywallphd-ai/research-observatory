@@ -1802,6 +1802,7 @@
           "id": "R01",
           "implementer": "codex",
           "implementation_commit": "2493dee313a2df8929dbd2eed31d9e0e672fc368",
+          "submission_branch": "codex/w1-windows-local-runtime",
           "evidence": [
             {
               "type": "criterion-manifest",
