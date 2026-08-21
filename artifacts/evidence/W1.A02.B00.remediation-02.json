@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A02.B00",
+  "commit": "fa42380e19d259cc03b218c7f2b1010088c43f05",
+  "baseCommit": "ad9fc255e6ec3c51b60c4772019f8c72e55780a3",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A02.B00.remediation-01.json",
+    "sha256": "b06a2c258b933dab4ad87e2b0f223b3f1a6e2cefb3d4478e59b864edfb4e53ff",
+    "commit": "badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c"
+  },
+  "changedFiles": [
+    "docs/automation/project-automation-guide.md",
+    "docs/governance/delivery-control-model.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "All 56 task-control and schema tests passed in 52.257 seconds, including immutable state fixtures and B00-R04 branch-history adversarial checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views tests.foundation.test_planctl_wave_approval tests.foundation.test_planctl_amendments",
+      "exitCode": 0,
+      "result": "All 21 affected planning-view, generated-view, ECR-authority, and immutable-Wave-approval tests passed in 23.541 seconds."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .; .venv\\Scripts\\python.exe -m mypy tools/taskctl.py tests/foundation/test_taskctl_schema.py tests/foundation/test_taskctl_workflow.py",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 113 governed Python files and the directly affected control modules."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The canonical CHANGES_REQUESTED ledger validated with 20 capabilities, 117 slices, 356 tasks, and 12 release gates after freezing both submission branches."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "result": "Generated backlog views and all 145 planning review pages passed after regeneration."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Each bootstrap attempt now freezes the submission branch beside its candidate, evidence, implementer, and disposition.",
+        "Permanent semantic and runtime validation compares the evidence manifest with the stored submission branch, while submission and independent-review entry points additionally require the live checkout to match."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The original W1 base, migrated W1.A01, and W1.A02 approval authority remain append-only and unchanged.",
+        "A focused regression proves historical bootstrap authority validates after checkout and fast-forward to main."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The schema requires a codex submission branch on the current bootstrap and every preserved attempt, and canonical R01/R02 history is backfilled from the immutable evidence manifests.",
+        "Wrong live-branch review, missing stored branch, and stored-versus-manifest branch mismatch fail closed without coupling permanent history to the live checkout."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The previously approved exact task materialization and immutable packet-field controls are unchanged and remain covered by the 56-test suite.",
+        "B00-R01, B00-R02, and B00-R03 remain closed under the immutable local fixtures."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Two R01 tests no longer read mutable canonical bootstrap state; exact initial-review, changes-requested source, and resubmitted-review fixtures make the mandatory suite stable before and after state transitions.",
+        "Generated W1 and ECR projections remain decision-complete and all review-site checks pass."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "The strict-descendant remediation passed 56 focused task-control/schema tests, 21 planning tests, the 113-file quality gate, targeted mypy, backlog validation, and generated site/view checks.",
+        "This manifest freezes candidate fa42380e19d259cc03b218c7f2b1010088c43f05 for bounded independent replay of B00-R04 and B00-R05."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This incremental remediation changes only bootstrap branch identity, canonical amendment state, control documentation, generated projections, and focused taskctl tests. The credible risks are historical authority invalidation, wrong-branch submission, evidence-branch substitution, and mutable-state tests; all receive direct deterministic coverage.",
+    "deferred": "General task-review packets remain W1.A02.T01, affected selection and telemetry remain W1.A02.T02, and complete product/deployment qualification remains due at W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "independent-control-security-remediation-review",
+    "openFindingIds": ["B00-R04", "B00-R05"],
+    "note": "Replay B00-R04 and B00-R05 against fa42380e19d259cc03b218c7f2b1010088c43f05 and the incremental ad9fc25..fa42380 boundary. Also run the 56-test control suite after the resubmission-state commit."
+  }
+}

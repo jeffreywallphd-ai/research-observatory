@@ -1795,7 +1795,7 @@
       "approval_sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "CHANGES_REQUESTED",
+      "bootstrap_status": "REVIEW",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -1823,6 +1823,7 @@
           "id": "R02",
           "implementer": "codex",
           "implementation_commit": "badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c",
+          "submission_branch": "codex/w1-windows-local-runtime",
           "evidence": [
             {
               "type": "criterion-manifest",
@@ -1837,8 +1838,28 @@
             "result": "changes-requested",
             "reviewed_at": "2026-08-21T00:21:35+00:00",
             "notes": "B00-R04 HIGH: historical bootstrap evidence validation is incorrectly coupled to the live checkout branch. B00-R05 MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen state 84107b8."
+          }
+        },
+        {
+          "id": "R03",
+          "implementer": "codex",
+          "implementation_commit": "fa42380e19d259cc03b218c7f2b1010088c43f05",
+          "evidence": [
+            {
+              "type": "criterion-manifest",
+              "path": "artifacts/evidence/W1.A02.B00.remediation-02.json",
+              "sha256": "924b5fd084969ddb6c525fbe8bf321e153d1dfee85e347eaf2e110f528b02630",
+              "commit": "fa42380e19d259cc03b218c7f2b1010088c43f05",
+              "recorded_at": "2026-08-21T00:31:36+00:00"
+            }
+          ],
+          "review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
           },
-          "current_status": "CHANGES_REQUESTED"
+          "current_status": "REVIEW"
         }
       ],
       "authorized_task_ids": [

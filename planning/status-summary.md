@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 2342c5caee31836108a6f46d7cb3a0a4d09733a878c8e76c0cb196abc85afd2d
+source_sha256: 2c3e36457bdcbdac62336c74e914cc7ad858043c34dc24090a6dddbfe133707c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -76,7 +76,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 |---|---|---|---|---|---|---|---:|
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` | - | - | 0 |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` | `NONE` | `NONE` | 0 |
-| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `APPROVED` | `CHANGES_REQUESTED` | `NONE` | 0 |
+| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `APPROVED` | `REVIEW` | `NONE` | 0 |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
