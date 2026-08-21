@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: a86c40d61ff021a22d882156a23ca632f6db7551e7f3d6193a8027c2c33258dd
+source_sha256: ab99ff9d5499bf61a53cff5151eee0f827d23282ee72e036f66102b356272683
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -67,7 +67,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 1 |
 
 ## Wave authority and append-only amendments
@@ -190,4 +190,6 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `W1.A02.T02` Affected verification selection and privacy-safe review telemetry | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
