@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9460c5474f7151a67373a9c2086158fdef7c66d31e20a9d670c232426b79f5c6
+source_sha256: 1f1957fc2083811fb30c4faaa28f65f07bbcea59be2266a6d9fb42a4a8d8e807
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -512,7 +512,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A02.T02 - Affected verification selection and privacy-safe review telemetry
 
-**Status / owner / review:** `IN_PROGRESS` / codex / b00-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex / b00-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A02.T01`
 
@@ -535,6 +535,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/W1.A02.T02.json` at `5b5edd26519dff12aaaeef0c14ad40c8519ab355`
+- `artifacts/evidence/W1.A02.T02.remediation-01.json` at `aa714b7c16def6add4662e0d1c44d0bc89e7c349`
 
 #### Review history — W1.A02.T02
 
@@ -573,7 +574,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03`
+
+- Candidate / base / branch: `aa714b7c16def6add4662e0d1c44d0bc89e7c349` / `5b5edd26519dff12aaaeef0c14ad40c8519ab355` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-21T02:50:29+00:00`
+- Evidence: `artifacts/evidence/W1.A02.T02.remediation-01.json` / `403e15b269b7e5a42829a90af64ad93f73c78ef898c1016007bf16fc461250c0` / `aa714b7c16def6add4662e0d1c44d0bc89e7c349`
+- Acceptance-criteria SHA-256: `f365420cf13322c0090317ef90d96e68ca7dc5fb9046b155ccad4ac8b0a4ee68`
+- Verification-selection SHA-256: `3187335864ffe449363301393376025bad89544bc7f61aee4bc32c21014424d0`
+- Changed paths: `artifacts/evidence/W1.A02.T02.json`, `artifacts/evidence/W1.A02.T02.review-R01.json`, `docs/automation/codex-tracking-guide.md`, `docs/automation/verification-profiles.md`, `docs/governance/delivery-control-model.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0001.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_taskctl_workflow.py`, `tests/foundation/test_verify_runner.py`, `tools/taskctl.py`, `tools/verify.py`, `verification/affected-selection.json`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_verify_runner tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow`, `.venv\Scripts\python.exe tools\quality_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry`, `.venv\Scripts\python.exe tools\verify.py --repo . --profile foundation --affected-base 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --affected-head aa714b7c16def6add4662e0d1c44d0bc89e7c349 --deferred-gate W1-exit --selection-only --report artifacts\tmp\W1.A02.T02-remediation-foundation-selection.json`, `.venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --affected-base 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --affected-head aa714b7c16def6add4662e0d1c44d0bc89e7c349 --deferred-gate W1-exit --selection-only --report artifacts\tmp\W1.A02.T02-remediation-desktop-selection.json`, `.venv\Scripts\python.exe tools\verify.py --repo . --profile data --affected-base 5b5edd26519dff12aaaeef0c14ad40c8519ab355 --affected-head aa714b7c16def6add4662e0d1c44d0bc89e7c349 --deferred-gate W1-exit --selection-only --report artifacts\tmp\W1.A02.T02-remediation-data-selection.json`, `.venv\Scripts\python.exe tools\verify.py --repo . --wave-exit W1 --selection-only --report artifacts\tmp\W1.A02.T02-remediation-wave-exit-selection.json`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .`, `.venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved`, `git diff --exit-code 5b5edd26519dff12aaaeef0c14ad40c8519ab355..aa714b7c16def6add4662e0d1c44d0bc89e7c349 -- verification-profiles.json verification/baselines`, `git diff 5b5edd26519dff12aaaeef0c14ad40c8519ab355..aa714b7c16def6add4662e0d1c44d0bc89e7c349 --check`
+- Deferred checks: `The prior exact 16-command foundation qualification remains retained from R01; its unaffected repository/runtime/architecture/fixture/build/UI/ADR/CI/packaging commands were not redundantly replayed for this bounded remediation.`, `The complete W1 product and deployment union remains owned by W1-exit, where desktop:performance, data:project-lifecycle-performance, and data:storage-maintenance-performance execute once serially with the full security, packaging, accessibility, migration, restart, and recovery matrix.`
+- Selection rationale: This R02 remediation is bounded to W1.A02.T02-R01-F01, W1.A02.T02-R01-F02, W1.A02.T02-R01-F03, and W1.A02.T02-R01-F04. The incremental risks are mapped-command suppression before safety fallback, unauthorized deferred-gate ownership, premature repeated performance measurement, prospective telemetry deletion, historical-packet misclassification, and drift in the canonical profile or W1-exit union. Eighty-five focused selector/controller/schema tests, exact live foundation/desktop/data/W1-exit selection records, the stored R01 telemetry projection, full governed Python quality, authority/view/backlog validation, immutable profile/baseline diff, and patch hygiene cover those risks. The prior exact 1093-second foundation run is retained and is not replayed because remediation review must remain bounded to the findings plus incremental surface; complete product/deployment and serial performance qualification remains due at W1 exit.
+- Prior round / replayed open findings: `R01` / `W1.A02.T02-R01-F01`, `W1.A02.T02-R01-F02`, `W1.A02.T02-R01-F03`, `W1.A02.T02-R01-F04`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-21T02:37:59+00:00`
 
