@@ -1393,7 +1393,14 @@ def task_review_telemetry_errors(
     repo: Path | None,
 ) -> list[str]:
     event = attempt.get("telemetry")
+    submission = attempt.get("submission") or {}
+    command_ids = submission.get("selected_command_ids")
     if event is None:
+        if isinstance(command_ids, list) and command_ids:
+            return [
+                f"{task.get('id')}: prospective review attempt {submission.get('id')} "
+                "lacks required privacy-safe telemetry"
+            ]
         return []
     task_id = str(task.get("id"))
     errors: list[str] = []
@@ -1417,12 +1424,19 @@ def task_review_telemetry_errors(
 
 
 def task_review_telemetry_events(tasks: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
-    return [
-        copy.deepcopy(attempt["telemetry"])
-        for task_id in sorted(tasks)
-        for attempt in (tasks[task_id].get("review_control") or {}).get("attempts", [])
-        if isinstance(attempt.get("telemetry"), dict)
-    ]
+    events: list[dict[str, Any]] = []
+    for task_id in sorted(tasks):
+        for attempt in (tasks[task_id].get("review_control") or {}).get("attempts", []):
+            event = attempt.get("telemetry")
+            submission = attempt.get("submission") or {}
+            if event is None and submission.get("selected_command_ids"):
+                raise ValueError(
+                    f"{task_id}: prospective review attempt {submission.get('id')} "
+                    "lacks required privacy-safe telemetry"
+                )
+            if isinstance(event, dict):
+                events.append(copy.deepcopy(event))
+    return events
 
 
 def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[str]:
