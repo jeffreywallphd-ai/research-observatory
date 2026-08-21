@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5fb70fa3ad171fe7183645ed62337fce5a27a7e8257a9f149399de33f271bede
+source_sha256: fa59e5d9ac4f8159dd4aa116a013fdbe3f50087fe2893e8b784716f09af696b6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -411,7 +411,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A02.T01 - Immutable review packets and bounded remediation
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / b00-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A02.B00`
 
@@ -431,13 +431,52 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prove existing task histories validate without fabricated attempts and legacy latest-review projection remains supported.
 - Run focused taskctl schema/workflow/view tests, affected quality checks, and independent control review.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A02.T01.json` at `a6b9a32d16592793abc11595c8340e20a0f79c0d`
+
 #### Review history — W1.A02.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+##### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `b06540eed030b93b8ff45e0efc26224483eeaf0882360a90ef6563c550fd2c25`
+
+- Candidate / base / branch: `a6b9a32d16592793abc11595c8340e20a0f79c0d` / `19b0a519caccfec93158e2efbfb458c9da316c77` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-21T01:10:21+00:00`
+- Evidence: `artifacts/evidence/W1.A02.T01.json` / `ad913da8f868151ed8aab0989db075a47e9e9bb7f34f1769dc8540fd4e811d0a` / `a6b9a32d16592793abc11595c8340e20a0f79c0d`
+- Acceptance-criteria SHA-256: `e5c5b509f7df1f4393d360bbba8257190b846bd67a5ccbd921d2151970cffed1`
+- Verification-selection SHA-256: `fc7daa502adc071cfb9bc61a3a2e3075cbe64c96d2eb24bf40ee0a8d4abac8eb`
+- Changed paths: `AGENTS.md`, `docs/automation/codex-tracking-guide.md`, `docs/automation/project-automation-guide.md`, `docs/governance/delivery-control-model.md`, `docs/planning-implementation-plan.md`, `planning/README.md`, `planning/backlog.schema.json`, `planning/backlog.yaml`, `planning/review-site/CAP-01/CAP-01.S01.html`, `planning/review-site/CAP-01/CAP-01.S02.html`, `planning/review-site/CAP-01/CAP-01.S03.html`, `planning/review-site/CAP-01/CAP-01.S04.html`, `planning/review-site/CAP-01/CAP-01.S05.html`, `planning/review-site/CAP-02/CAP-02.S01.html`, `planning/review-site/CAP-02/CAP-02.S02.html`, `planning/review-site/CAP-02/CAP-02.S03.html`, `planning/review-site/CAP-02/CAP-02.S04.html`, `planning/review-site/CAP-02/CAP-02.S05.html`, `planning/review-site/CAP-03/CAP-03.S01.html`, `planning/review-site/CAP-03/CAP-03.S02.html`, `planning/review-site/CAP-03/CAP-03.S03.html`, `planning/review-site/CAP-03/CAP-03.S04.html`, `planning/review-site/CAP-03/CAP-03.S05.html`, `planning/review-site/CAP-03/CAP-03.S06.html`, `planning/review-site/CAP-04/CAP-04.S01.html`, `planning/review-site/CAP-04/CAP-04.S02.html`, `planning/review-site/CAP-04/CAP-04.S03.html`, `planning/review-site/CAP-04/CAP-04.S04.html`, `planning/review-site/CAP-04/CAP-04.S05.html`, `planning/review-site/CAP-05/CAP-05.S01.html`, `planning/review-site/CAP-05/CAP-05.S02.html`, `planning/review-site/CAP-05/CAP-05.S03.html`, `planning/review-site/CAP-05/CAP-05.S04.html`, `planning/review-site/CAP-05/CAP-05.S05.html`, `planning/review-site/CAP-05/CAP-05.S06.html`, `planning/review-site/CAP-06/CAP-06.S01.html`, `planning/review-site/CAP-06/CAP-06.S02.html`, `planning/review-site/CAP-06/CAP-06.S03.html`, `planning/review-site/CAP-06/CAP-06.S04.html`, `planning/review-site/CAP-06/CAP-06.S05.html`, `planning/review-site/CAP-06/CAP-06.S06.html`, `planning/review-site/CAP-07/CAP-07.S01.html`, `planning/review-site/CAP-07/CAP-07.S02.html`, `planning/review-site/CAP-07/CAP-07.S03.html`, `planning/review-site/CAP-07/CAP-07.S04.html`, `planning/review-site/CAP-07/CAP-07.S05.html`, `planning/review-site/CAP-08/CAP-08.S01.html`, `planning/review-site/CAP-08/CAP-08.S02.html`, `planning/review-site/CAP-08/CAP-08.S03.html`, `planning/review-site/CAP-08/CAP-08.S04.html`, `planning/review-site/CAP-08/CAP-08.S05.html`, `planning/review-site/CAP-08/CAP-08.S06.html`, `planning/review-site/CAP-09/CAP-09.S01.html`, `planning/review-site/CAP-09/CAP-09.S02.html`, `planning/review-site/CAP-09/CAP-09.S03.html`, `planning/review-site/CAP-09/CAP-09.S04.html`, `planning/review-site/CAP-09/CAP-09.S05.html`, `planning/review-site/CAP-09/CAP-09.S06.html`, `planning/review-site/CAP-10/CAP-10.S01.html`, `planning/review-site/CAP-10/CAP-10.S02.html`, `planning/review-site/CAP-10/CAP-10.S03.html`, `planning/review-site/CAP-10/CAP-10.S04.html`, `planning/review-site/CAP-10/CAP-10.S05.html`, `planning/review-site/CAP-10/CAP-10.S06.html`, `planning/review-site/CAP-10/CAP-10.S07.html`, `planning/review-site/CAP-11/CAP-11.S01.html`, `planning/review-site/CAP-11/CAP-11.S02.html`, `planning/review-site/CAP-11/CAP-11.S03.html`, `planning/review-site/CAP-11/CAP-11.S04.html`, `planning/review-site/CAP-11/CAP-11.S05.html`, `planning/review-site/CAP-11/CAP-11.S06.html`, `planning/review-site/CAP-12/CAP-12.S01.html`, `planning/review-site/CAP-12/CAP-12.S02.html`, `planning/review-site/CAP-12/CAP-12.S03.html`, `planning/review-site/CAP-12/CAP-12.S04.html`, `planning/review-site/CAP-12/CAP-12.S05.html`, `planning/review-site/CAP-12/CAP-12.S06.html`, `planning/review-site/CAP-13/CAP-13.S01.html`, `planning/review-site/CAP-13/CAP-13.S02.html`, `planning/review-site/CAP-13/CAP-13.S03.html`, `planning/review-site/CAP-13/CAP-13.S04.html`, `planning/review-site/CAP-13/CAP-13.S05.html`, `planning/review-site/CAP-13/CAP-13.S06.html`, `planning/review-site/CAP-14/CAP-14.S01.html`, `planning/review-site/CAP-14/CAP-14.S02.html`, `planning/review-site/CAP-14/CAP-14.S03.html`, `planning/review-site/CAP-14/CAP-14.S04.html`, `planning/review-site/CAP-14/CAP-14.S05.html`, `planning/review-site/CAP-14/CAP-14.S06.html`, `planning/review-site/CAP-15/CAP-15.S01.html`, `planning/review-site/CAP-15/CAP-15.S02.html`, `planning/review-site/CAP-15/CAP-15.S03.html`, `planning/review-site/CAP-15/CAP-15.S04.html`, `planning/review-site/CAP-15/CAP-15.S05.html`, `planning/review-site/CAP-15/CAP-15.S06.html`, `planning/review-site/CAP-16/CAP-16.S01.html`, `planning/review-site/CAP-16/CAP-16.S02.html`, `planning/review-site/CAP-16/CAP-16.S03.html`, `planning/review-site/CAP-16/CAP-16.S04.html`, `planning/review-site/CAP-16/CAP-16.S05.html`, `planning/review-site/CAP-16/CAP-16.S06.html`, `planning/review-site/CAP-17/CAP-17.S01.html`, `planning/review-site/CAP-17/CAP-17.S02.html`, `planning/review-site/CAP-17/CAP-17.S03.html`, `planning/review-site/CAP-17/CAP-17.S04.html`, `planning/review-site/CAP-17/CAP-17.S05.html`, `planning/review-site/CAP-17/CAP-17.S06.html`, `planning/review-site/CAP-18/CAP-18.S01.html`, `planning/review-site/CAP-18/CAP-18.S02.html`, `planning/review-site/CAP-18/CAP-18.S03.html`, `planning/review-site/CAP-18/CAP-18.S04.html`, `planning/review-site/CAP-18/CAP-18.S05.html`, `planning/review-site/CAP-18/CAP-18.S06.html`, `planning/review-site/CAP-19/CAP-19.S01.html`, `planning/review-site/CAP-19/CAP-19.S02.html`, `planning/review-site/CAP-19/CAP-19.S03.html`, `planning/review-site/CAP-19/CAP-19.S04.html`, `planning/review-site/CAP-19/CAP-19.S05.html`, `planning/review-site/CAP-19/CAP-19.S06.html`, `planning/review-site/enablers/ECR-0001.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_plan_review_amendments.py`, `tests/foundation/test_taskctl_schema.py`, `tests/foundation/test_taskctl_workflow.py`, `tools/backlog_views.py`, `tools/plan_review_check.py`, `tools/plan_review_site.py`, `tools/taskctl.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views tests.foundation.test_planctl_wave_approval tests.foundation.test_planctl_amendments`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv\Scripts\python.exe tools/plan_review_check.py --repo .`, `.venv\Scripts\python.exe tools/backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved`, `git diff --check`
+- Deferred checks: `T02 owns deterministic affected-check selection and privacy-safe review telemetry. The full product and deployment qualification matrix, including packaging, accessibility, security, migration, recovery, and performance replay, remains due once at W1 exit.`
+- Selection rationale: T01 changes the repository's evidence, review, state-transition, schema, and generated-governance control plane. The credible risks are partial writes, stale writers, packet or ledger substitution, lost adverse history, unclosed blockers, self-review, remediation laundering, root-cause bypass, legacy-reader breakage, and flattened generated projections. Direct schema/workflow adversarial tests, review-view tests, all governed Python static checks, live backlog/ECR validation, generated-view checks, and diff hygiene cover those risks. Product runtime, storage, packaging, accessibility, and performance behavior cannot plausibly change because the approved T01 scope contains no product/runtime or dependency code.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `changes-requested` / b00-independent-reviewer / `2026-08-21T01:21:15+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W1.A02.T01.review-R01.json` / `746a3787866d4da218d4e5ed22cf50d704fbc582cf2d35696fa92bf05439014e`
+
+**Review notes:** Exact scope, evidence identity, atomic/CAS behavior, append-only history, blocker closure, legacy projection, and generated-history checks were reviewed. Two acceptance-bound defects remain.
+
+**Findings opened:**
+
+- `W1.A02.T01-R01-F01` `medium` blocking=`True` criterion=`3` — Remediation can bypass the immediately preceding evidence boundary; reproduce: Attach valid R01 and R02 evidence, then prepare R03 with baseCommit and supersedes.path pointing to R01 rather than the latest R02 evidence. prepare_task_evidence accepts the packet (independent reproduction: accepted_old_supersedes=True) even though R02 is the latest attached submission. The shipped R03 test also reuses the same generic riskAnalysis as earlier rounds; only a non-empty rootCauseAnalysis is enforced.; remediate: Require every remediation submission to supersede the immediately preceding completed attempt's exact evidence reference, use that attempt's candidate as baseCommit, and strictly descend from it. Reject older attachment, forked-lineage, and cumulative-boundary substitutions. Either enforce an explicit expanded incremental-risk statement for R03 or narrow the evidence claim to the control actually enforced. Add adversarial regressions for all cases.
+- `W1.A02.T01-R01-F02` `low` blocking=`True` criterion=`5` — Actual controlled-review rendering fails the selected whitespace-hygiene check; reproduce: With the real frozen R01 submission rendered, git diff --cached --check exits 1 at planning/review-site/enablers/ECR-0001.html:81 with trailing whitespace. The whitespace-only line originates from ` {current_html}` in tools/plan_review_site.py. plan_review_check still passes, so the generated-view checks do not detect the defect.; remediate: Render the optional current-submission block without a whitespace-only prefix, regenerate the review site, and add coverage for both an active current submission and completed history with no current submission. Require generated pages to contain no trailing whitespace and rerun git diff --cached --check successfully.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-21T01:21:15+00:00`
+
+**Latest notes:** Exact scope, evidence identity, atomic/CAS behavior, append-only history, blocker closure, legacy projection, and generated-history checks were reviewed. Two acceptance-bound defects remain.
+
+**Currently open findings:** `W1.A02.T01-R01-F01`, `W1.A02.T01-R01-F02`
 
 ### - [ ] W1.A02.T02 - Affected verification selection and privacy-safe review telemetry
 

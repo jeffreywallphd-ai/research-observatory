@@ -1204,6 +1204,7 @@ def task_submission_packet_errors(
     *,
     expected_id: str,
     expected_prior_id: str | None,
+    expected_prior_submission: dict[str, Any] | None,
     expected_open_ids: list[str],
     repo: Path | None,
 ) -> list[str]:
@@ -1263,6 +1264,22 @@ def task_submission_packet_errors(
         errors.append(f"{task_id}: frozen verification rationale differs from its evidence manifest")
     if packet.get("selection_sha256") != canonical_json_sha256(selection):
         errors.append(f"{task_id}: frozen verification-selection hash differs from its evidence manifest")
+    if expected_prior_submission is not None:
+        supersedes = manifest.get("supersedes")
+        prior_reference = expected_prior_submission.get("evidence_reference") or {}
+        if not isinstance(supersedes, dict) or any(
+            supersedes.get(field) != prior_reference.get(field) for field in ("path", "sha256", "commit")
+        ):
+            errors.append(f"{task_id}: remediation evidence does not supersede the immediately preceding submission")
+        if packet.get("base_commit") != expected_prior_submission.get("candidate_commit"):
+            errors.append(f"{task_id}: remediation base is not the immediately preceding candidate")
+    if int(expected_id[1:]) >= 3 and expected_open_ids:
+        rationale = str(selection.get("riskAnalysis") or "")
+        prior_rationale = str((expected_prior_submission or {}).get("selection_rationale") or "")
+        if rationale == prior_rationale or any(finding_id not in rationale for finding_id in expected_open_ids):
+            errors.append(
+                f"{task_id}: remediation after round two requires expanded risk analysis naming every open finding"
+            )
     return errors
 
 
@@ -1277,6 +1294,7 @@ def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[
     seen_finding_ids: set[str] = set()
     closed_finding_ids: set[str] = set()
     prior_id: str | None = None
+    prior_submission: dict[str, Any] | None = None
     for position, attempt in enumerate(attempts, start=1):
         packet = attempt.get("submission") or {}
         expected_id = f"R{position:02d}"
@@ -1287,6 +1305,7 @@ def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[
                 packet,
                 expected_id=expected_id,
                 expected_prior_id=prior_id,
+                expected_prior_submission=prior_submission,
                 expected_open_ids=expected_open,
                 repo=repo,
             )
@@ -1347,6 +1366,7 @@ def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[
                     ):
                         errors.append(f"{task_id}: stored review round differs from its immutable ledger")
         prior_id = expected_id
+        prior_submission = packet
     current = control.get("current_submission")
     if current is not None:
         errors.extend(
@@ -1355,6 +1375,7 @@ def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[
                 current,
                 expected_id=f"R{len(attempts) + 1:02d}",
                 expected_prior_id=prior_id,
+                expected_prior_submission=prior_submission,
                 expected_open_ids=sorted(open_findings),
                 repo=repo,
             )
@@ -4406,9 +4427,22 @@ def prepare_task_evidence(
     )
     if superseded_path and superseded_reference is None:
         raise SystemExit("supersedes.path must name an attached evidence manifest")
-    expected_base_commit = (
-        superseded_reference.get("commit") if superseded_reference is not None else task.get("base_sha")
-    )
+    control = task.get("review_control") or {}
+    attempts = control.get("attempts") or []
+    if attempts:
+        prior_submission = attempts[-1].get("submission") or {}
+        prior_reference = prior_submission.get("evidence_reference") or {}
+        if not isinstance(supersedes, dict) or any(
+            supersedes.get(field) != prior_reference.get(field) for field in ("path", "sha256", "commit")
+        ):
+            raise SystemExit(
+                "Remediation evidence must supersede the immediately preceding submission's exact evidence reference"
+            )
+        expected_base_commit = prior_submission.get("candidate_commit")
+    else:
+        expected_base_commit = (
+            superseded_reference.get("commit") if superseded_reference is not None else task.get("base_sha")
+        )
     errors = exact_commit_errors(
         task,
         manifest,
@@ -4455,6 +4489,13 @@ def build_task_submission_packet(
     root_cause = disposition.get("rootCauseAnalysis")
     if len(attempts) >= 2 and open_findings and not (isinstance(root_cause, str) and root_cause.strip()):
         raise SystemExit("Remediation after round two requires rootCauseAnalysis")
+    if len(attempts) >= 2 and open_findings:
+        prior_submission = attempts[-1].get("submission") or {}
+        risk_analysis = str(selection.get("riskAnalysis") or "")
+        if risk_analysis == str(prior_submission.get("selection_rationale") or "") or any(
+            finding_id not in risk_analysis for finding_id in open_findings
+        ):
+            raise SystemExit("Remediation after round two requires expanded riskAnalysis naming every open finding ID")
     packet = {
         "id": f"R{len(attempts) + 1:02d}",
         "submitted_by": agent,

@@ -258,6 +258,7 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         markdown = "\n".join(task_review_markdown(task, heading_level=4))
 
         self.assertEqual([], task_review_render_errors(rendered, projection))
+        self.assertFalse([line for line in rendered.splitlines() if line.rstrip() != line])
         for marker in (
             "changes-requested",
             "approved",
@@ -350,6 +351,7 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         rendered = task_review_history_html(task)
 
         self.assertEqual([], task_review_render_errors(rendered, projection))
+        self.assertFalse([line for line in rendered.splitlines() if line.rstrip() != line])
         self.assertIn('data-current-submission="W1.A02.T99:R03"', rendered)
         self.assertIn("Current immutable submission awaiting review", rendered)
         self.assertIn("Current latest-review projection", rendered)

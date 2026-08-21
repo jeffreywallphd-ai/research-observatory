@@ -1,0 +1,29 @@
+{
+  "task_id": "W1.A02.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "a6b9a32d16592793abc11595c8340e20a0f79c0d",
+  "reviewer": "b00-independent-reviewer",
+  "result": "changes-requested",
+  "notes": "Exact scope, evidence identity, atomic/CAS behavior, append-only history, blocker closure, legacy projection, and generated-history checks were reviewed. Two acceptance-bound defects remain.",
+  "findings": [
+    {
+      "id": "W1.A02.T01-R01-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Remediation can bypass the immediately preceding evidence boundary",
+      "reproduction": "Attach valid R01 and R02 evidence, then prepare R03 with baseCommit and supersedes.path pointing to R01 rather than the latest R02 evidence. prepare_task_evidence accepts the packet (independent reproduction: accepted_old_supersedes=True) even though R02 is the latest attached submission. The shipped R03 test also reuses the same generic riskAnalysis as earlier rounds; only a non-empty rootCauseAnalysis is enforced.",
+      "required_remediation": "Require every remediation submission to supersede the immediately preceding completed attempt's exact evidence reference, use that attempt's candidate as baseCommit, and strictly descend from it. Reject older attachment, forked-lineage, and cumulative-boundary substitutions. Either enforce an explicit expanded incremental-risk statement for R03 or narrow the evidence claim to the control actually enforced. Add adversarial regressions for all cases."
+    },
+    {
+      "id": "W1.A02.T01-R01-F02",
+      "severity": "low",
+      "blocking": true,
+      "criterion_index": 5,
+      "title": "Actual controlled-review rendering fails the selected whitespace-hygiene check",
+      "reproduction": "With the real frozen R01 submission rendered, git diff --cached --check exits 1 at planning/review-site/enablers/ECR-0001.html:81 with trailing whitespace. The whitespace-only line originates from `  {current_html}` in tools/plan_review_site.py. plan_review_check still passes, so the generated-view checks do not detect the defect.",
+      "required_remediation": "Render the optional current-submission block without a whitespace-only prefix, regenerate the review site, and add coverage for both an active current submission and completed history with no current submission. Require generated pages to contain no trailing whitespace and rerun git diff --cached --check successfully."
+    }
+  ],
+  "closures": []
+}

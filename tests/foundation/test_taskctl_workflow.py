@@ -518,6 +518,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         changed_paths: list[str],
         open_finding_ids: list[str] | None = None,
         root_cause_analysis: str | None = None,
+        risk_analysis: str = "The changed controller path requires focused workflow validation.",
         supersedes: str | None = None,
     ) -> Path:
         disposition: dict[str, Any] = {"openFindingIds": list(open_finding_ids or [])}
@@ -536,13 +537,21 @@ class TaskctlWorkflowTests(unittest.TestCase):
             ],
             "unverifiedItems": [],
             "verificationSelection": {
-                "riskAnalysis": "The changed controller path requires focused workflow validation.",
+                "riskAnalysis": risk_analysis,
                 "deferred": ["complete Wave-exit profile"],
             },
             "reviewerDisposition": disposition,
         }
         if supersedes is not None:
-            manifest["supersedes"] = {"path": supersedes, "reason": "review remediation"}
+            prior_reference = next(
+                reference for reference in task.get("evidence", []) if reference.get("path") == supersedes
+            )
+            manifest["supersedes"] = {
+                "path": supersedes,
+                "sha256": prior_reference["sha256"],
+                "commit": prior_reference["commit"],
+                "reason": "review remediation",
+            }
         evidence = repo / "artifacts" / "evidence" / name
         evidence.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
         return evidence
@@ -1385,54 +1394,108 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     ),
                     *context,
                 )
-            first_packet = copy.deepcopy(task["review_control"]["current_submission"])
-            first_review = {
-                "reviewer": "reviewer-1",
-                "result": "changes-requested",
-                "reviewed_at": "2026-08-21T01:00:00+00:00",
-                "notes": "round one",
-            }
-            second_packet = copy.deepcopy(first_packet)
-            second_packet.update(id="R02", prior_attempt_id="R01")
-            second_packet["packet_sha256"] = taskctl_module.task_submission_packet_sha256(second_packet)
-            second_review = {
-                "reviewer": "reviewer-2",
-                "result": "changes-requested",
-                "reviewed_at": "2026-08-21T02:00:00+00:00",
-                "notes": "round two",
-            }
-            task["review_control"].update(
-                attempts=[
-                    {
-                        "submission": first_packet,
-                        "review": first_review,
-                        "ledger": {"path": "artifacts/evidence/review-01.json", "sha256": "1" * 64},
-                        "findings": [self.review_finding("F01")],
-                        "closures": [],
-                    },
-                    {
-                        "submission": second_packet,
-                        "review": second_review,
-                        "ledger": {"path": "artifacts/evidence/review-02.json", "sha256": "2" * 64},
-                        "findings": [self.review_finding("F02")],
-                        "closures": [
-                            {
-                                "finding_id": "F01",
-                                "disposition": "fixed",
-                                "evidence": "artifacts/evidence/round-02.json",
-                            }
-                        ],
-                    },
+            first_ledger = self.write_task_review_ledger(
+                repo,
+                task,
+                name="review-01.json",
+                reviewer="reviewer-1",
+                result="changes-requested",
+                findings=[self.review_finding("F01")],
+            )
+            with patch("taskctl.persist"):
+                command_review(
+                    Namespace(
+                        task=task["id"],
+                        reviewer="reviewer-1",
+                        result="changes-requested",
+                        from_file=str(first_ledger),
+                        lease_hours=8,
+                        note="consolidated review",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
+
+            (repo / "round-two-fix.txt").write_text("round two fix\n", encoding="utf-8")
+            subprocess.run(
+                [
+                    "git",
+                    "add",
+                    "artifacts/evidence/round-01.json",
+                    "artifacts/evidence/review-01.json",
+                    "round-two-fix.txt",
                 ],
-                current_submission=None,
+                cwd=repo,
+                check=True,
             )
-            task.update(
-                status="IN_PROGRESS", review=second_review, verification_state=None, lease=new_lease("alice", 8)
+            subprocess.run(["git", "commit", "-m", "round two fix"], cwd=repo, capture_output=True, check=True)
+            second_head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+            second_changed = [
+                "artifacts/evidence/round-01.json",
+                "artifacts/evidence/review-01.json",
+                "round-two-fix.txt",
+            ]
+            second_evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-02.json",
+                candidate=second_head,
+                base=first_head,
+                changed_paths=second_changed,
+                open_finding_ids=["F01"],
+                supersedes="artifacts/evidence/round-01.json",
             )
+            with patch("taskctl.persist"):
+                command_submit(
+                    Namespace(
+                        task=task["id"],
+                        agent="alice",
+                        from_file=str(second_evidence),
+                        note="",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
+            second_ledger = self.write_task_review_ledger(
+                repo,
+                task,
+                name="review-02.json",
+                reviewer="reviewer-2",
+                result="changes-requested",
+                findings=[self.review_finding("F02")],
+                closures=[
+                    {
+                        "finding_id": "F01",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/round-02.json",
+                    }
+                ],
+            )
+            with patch("taskctl.persist"):
+                command_review(
+                    Namespace(
+                        task=task["id"],
+                        reviewer="reviewer-2",
+                        result="changes-requested",
+                        from_file=str(second_ledger),
+                        lease_hours=8,
+                        note="consolidated review",
+                        file=str(repo / "planning" / "backlog.yaml"),
+                    ),
+                    *context,
+                )
 
             (repo / "root-cause-fix.txt").write_text("systemic fix\n", encoding="utf-8")
             subprocess.run(
-                ["git", "add", "artifacts/evidence/round-01.json", "root-cause-fix.txt"],
+                [
+                    "git",
+                    "add",
+                    "artifacts/evidence/round-02.json",
+                    "artifacts/evidence/review-02.json",
+                    "root-cause-fix.txt",
+                ],
                 cwd=repo,
                 check=True,
             )
@@ -1440,24 +1503,89 @@ class TaskctlWorkflowTests(unittest.TestCase):
             third_head = subprocess.run(
                 ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
             ).stdout.strip()
-            changed = ["artifacts/evidence/round-01.json", "root-cause-fix.txt"]
-            third_evidence = self.write_controlled_task_evidence(
+            changed = [
+                "artifacts/evidence/round-02.json",
+                "artifacts/evidence/review-02.json",
+                "root-cause-fix.txt",
+            ]
+            cumulative_changed = [*second_changed, *changed]
+            expanded_risk = (
+                "Expanded round-three risk analysis for open finding F02 covers its root cause, incremental paths, "
+                "and the focused plus deferred verification boundary."
+            )
+
+            older_evidence = self.write_controlled_task_evidence(
                 repo,
                 task,
                 name="round-03.json",
                 candidate=third_head,
                 base=first_head,
-                changed_paths=changed,
+                changed_paths=cumulative_changed,
                 open_finding_ids=["F02"],
+                root_cause_analysis="Two review rounds exposed a shared invariant gap.",
+                risk_analysis=expanded_risk,
                 supersedes="artifacts/evidence/round-01.json",
             )
             args = Namespace(
                 task=task["id"],
                 agent="alice",
-                from_file=str(third_evidence),
+                from_file=str(older_evidence),
                 note="",
                 file=str(repo / "planning" / "backlog.yaml"),
             )
+            with (
+                self.assertRaisesRegex(SystemExit, "immediately preceding submission's exact evidence reference"),
+                patch("taskctl.persist"),
+            ):
+                command_submit(args, *context)
+
+            cumulative_evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-03.json",
+                candidate=third_head,
+                base=second_head,
+                changed_paths=changed,
+                open_finding_ids=["F02"],
+                root_cause_analysis="Two review rounds exposed a shared invariant gap.",
+                risk_analysis=expanded_risk,
+                supersedes="artifacts/evidence/round-01.json",
+            )
+            args.from_file = str(cumulative_evidence)
+            with (
+                self.assertRaisesRegex(SystemExit, "immediately preceding submission's exact evidence reference"),
+                patch("taskctl.persist"),
+            ):
+                command_submit(args, *context)
+
+            older_base_evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-03.json",
+                candidate=third_head,
+                base=first_head,
+                changed_paths=cumulative_changed,
+                open_finding_ids=["F02"],
+                root_cause_analysis="Two review rounds exposed a shared invariant gap.",
+                risk_analysis=expanded_risk,
+                supersedes="artifacts/evidence/round-02.json",
+            )
+            args.from_file = str(older_base_evidence)
+            with self.assertRaisesRegex(SystemExit, "baseCommit must equal"), patch("taskctl.persist"):
+                command_submit(args, *context)
+
+            third_evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-03.json",
+                candidate=third_head,
+                base=second_head,
+                changed_paths=changed,
+                open_finding_ids=["F02"],
+                risk_analysis=expanded_risk,
+                supersedes="artifacts/evidence/round-02.json",
+            )
+            args.from_file = str(third_evidence)
             with self.assertRaisesRegex(SystemExit, "rootCauseAnalysis"), patch("taskctl.persist"):
                 command_submit(args, *context)
 
@@ -1466,20 +1594,61 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 task,
                 name="round-03.json",
                 candidate=third_head,
-                base=first_head,
+                base=second_head,
                 changed_paths=changed,
                 open_finding_ids=["F02"],
                 root_cause_analysis=(
                     "Two review rounds exposed a shared invariant gap; expand the remediation boundary."
                 ),
-                supersedes="artifacts/evidence/round-01.json",
+                supersedes="artifacts/evidence/round-02.json",
+            )
+            args.from_file = str(third_evidence)
+            with self.assertRaisesRegex(SystemExit, "riskAnalysis.*open finding"), patch("taskctl.persist"):
+                command_submit(args, *context)
+
+            third_evidence = self.write_controlled_task_evidence(
+                repo,
+                task,
+                name="round-03.json",
+                candidate=third_head,
+                base=second_head,
+                changed_paths=changed,
+                open_finding_ids=["F02"],
+                root_cause_analysis=(
+                    "Two review rounds exposed a shared invariant gap; expand the remediation boundary."
+                ),
+                risk_analysis=expanded_risk,
+                supersedes="artifacts/evidence/round-02.json",
             )
             args.from_file = str(third_evidence)
             with patch("taskctl.persist"):
                 command_submit(args, *context)
             packet = task["review_control"]["current_submission"]
             self.assertEqual("R03", packet["id"])
+            self.assertIn("F02", packet["selection_rationale"])
             self.assertIn("shared invariant gap", packet["root_cause_analysis"])
+
+            forged = copy.deepcopy(task)
+            forged_manifest = json.loads(third_evidence.read_text(encoding="utf-8"))
+            first_reference = forged["review_control"]["attempts"][0]["submission"]["evidence_reference"]
+            forged_manifest["supersedes"] = {
+                "path": first_reference["path"],
+                "sha256": first_reference["sha256"],
+                "commit": first_reference["commit"],
+                "reason": "attempt to rewrite lineage to R01",
+            }
+            third_evidence.write_text(json.dumps(forged_manifest), encoding="utf-8", newline="\n")
+            forged_sha = evidence_sha256(third_evidence.read_bytes())
+            forged_reference = forged["evidence"][-1]
+            forged_reference["sha256"] = forged_sha
+            forged_packet = forged["review_control"]["current_submission"]
+            forged_packet["evidence_reference"]["sha256"] = forged_sha
+            forged_packet["packet_sha256"] = taskctl_module.task_submission_packet_sha256(forged_packet)
+            errors = taskctl_module.task_review_control_errors(forged, repo)
+            self.assertTrue(
+                any("does not supersede the immediately preceding submission" in error for error in errors),
+                errors,
+            )
 
     def test_t01_append_only_history_and_legacy_projection_compatibility(self) -> None:
         context = self.workflow()
