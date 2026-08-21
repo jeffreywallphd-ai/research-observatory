@@ -22228,7 +22228,7 @@ wave_amendments:
         the hashed B00, T01, and T02 scope only.
   bootstrap:
     id: W1.A02.B00
-    status: REVIEW
+    status: APPROVED
     implementer: codex
     implementation_commit: fa42380e19d259cc03b218c7f2b1010088c43f05
     submission_branch: codex/w1-windows-local-runtime
@@ -22243,10 +22243,11 @@ wave_amendments:
       commit: fa42380e19d259cc03b218c7f2b1010088c43f05
       recorded_at: '2026-08-21T00:31:36+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: b00-independent-reviewer
+      result: approved
+      reviewed_at: '2026-08-21T00:40:47+00:00'
+      notes: APPROVED at fa42380/01c08a9. B00-R01 through B00-R05 are closed; 56 frozen-state control tests, 21 planning tests,
+        113-file quality, authority, backlog, and generated-view checks pass.
     attempts:
     - id: R01
       implementer: codex
