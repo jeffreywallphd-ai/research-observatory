@@ -536,7 +536,17 @@ def wave_decision_rows(decisions: list[dict[str, Any]], *, context: str) -> str:
 
 def repository_file(repo: Path, relative: str, *, label: str) -> Path:
     """Resolve a declared review source without allowing a path escape."""
-
+    if not relative or "\\" in relative or ":" in relative or re.search(r"(?:^|/)\.{1,2}(?:/|$)", relative):
+        raise ValueError(f"{label} is not a canonical repository-relative POSIX path: {relative}")
+    parts = Path(relative).parts
+    if Path(relative).is_absolute() or any(part in {"", ".", ".."} for part in parts):
+        raise ValueError(f"{label} contains an absolute or dot-segment path: {relative}")
+    current = repo
+    junction = getattr(os.path, "isjunction", lambda _path: False)
+    for part in parts:
+        current = current / part
+        if (current.exists() or current.is_symlink()) and (current.is_symlink() or junction(current)):
+            raise ValueError(f"{label} traverses a symlink or junction: {relative}")
     candidate = (repo / relative).resolve(strict=True)
     try:
         candidate.relative_to(repo.resolve(strict=True))
@@ -699,9 +709,63 @@ def enabler_interrupts_wave(record: dict[str, Any], wave: dict[str, Any]) -> boo
     return campaign.get("status") == "PAUSED" and record.get("classification") == "gate-integrity-safety-defect"
 
 
+def load_recovery_holds(repo: Path, backlog: dict[str, Any]) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for hold in (backlog.get("control_plane") or {}).get("recovery_holds", []):
+        request_id = str(hold.get("recovery_request_id") or "")
+        packet_reference = hold.get("packet_reference") or {}
+        approval_reference = hold.get("approval_reference") or {}
+        packet_path = repository_file(repo, str(packet_reference.get("path") or ""), label=f"{request_id} packet")
+        approval_path = repository_file(repo, str(approval_reference.get("path") or ""), label=f"{request_id} approval")
+        if sha256(packet_path) != packet_reference.get("sha256") or sha256(approval_path) != approval_reference.get(
+            "sha256"
+        ):
+            raise ValueError(f"{request_id} recovery authority hash mismatch")
+        packet = json.loads(packet_path.read_text(encoding="utf-8"))
+        approval = json.loads(approval_path.read_text(encoding="utf-8"))
+        if (
+            packet.get("recoveryRequestId") != request_id
+            or approval.get("recoveryRequestId") != request_id
+            or (packet.get("controlHold") or {}).get("id") != hold.get("id")
+        ):
+            raise ValueError(f"{request_id} recovery identity mismatch")
+        proposal_relative = str((approval.get("packet") or {}).get("proposalPath") or "")
+        review_relative = str((approval.get("packet") or {}).get("reviewPath") or "")
+        proposal_path = repository_file(repo, proposal_relative, label=f"{request_id} proposal")
+        review_path = repository_file(repo, review_relative, label=f"{request_id} human review")
+        if sha256(proposal_path) != (approval.get("packet") or {}).get("proposalSha256") or sha256(review_path) != (
+            approval.get("packet") or {}
+        ).get("reviewSha256"):
+            raise ValueError(f"{request_id} recovery proposal/review hash mismatch")
+        records.append(
+            {
+                "request_id": request_id,
+                "hold_id": hold.get("id"),
+                "target_wave": hold.get("target_wave"),
+                "hold_status": hold.get("status"),
+                "bootstrap": hold.get("bootstrap") or {},
+                "post_bootstrap": hold.get("post_bootstrap") or {},
+                "release_conditions": hold.get("release_conditions") or [],
+                "packet_path": packet_path.relative_to(repo).as_posix(),
+                "packet_sha256": packet_reference.get("sha256"),
+                "packet_commit": packet_reference.get("commit"),
+                "proposal_path": proposal_relative,
+                "review_path": review_relative,
+                "approval_path": approval_path.relative_to(repo).as_posix(),
+                "approval_sha256": approval_reference.get("sha256"),
+                "approval_commit": approval_reference.get("introduction_commit"),
+                "authority_chain": packet.get("authorityChain") or {},
+                "packet": packet,
+                "approval": approval,
+            }
+        )
+    return records
+
+
 def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | None = None) -> dict[str, Any]:
     backlog = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
     enabler_records = load_enabler_change_requests(repo, backlog)
+    recovery_records = load_recovery_holds(repo, backlog)
     cap_plan_dir = repo / "planning/capability-plans"
     slice_plan_dir = repo / "planning/slice-plans"
     all_cap_paths = sorted(cap_plan_dir.glob("CAP-*.md"))
@@ -765,6 +829,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         "waves": [],
         "capabilities": [],
         "enabler_change_requests": [],
+        "governance_recoveries": [],
     }
 
     wave_cards = []
@@ -814,7 +879,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 </section>
 <section class="callout callout-info"><h2>How to use this site</h2><ol><li>Select the Wave being activated.</li><li>Review every contributing capability decision and ordered slice plan from the Wave page.</li><li>Use the linked capability pages when you need full rationale or an override.</li><li>Approve the complete Wave packet at one immutable commit; later Waves remain unapproved.</li></ol></section>
 <section class="section-heading"><span class="eyebrow">Controlled change lane</span><h2>Enabler change requests</h2><p>Inspect proposal, immutable approval, materialization, campaign, and adoption states without flattening their history.</p></section>
-<section class="capability-grid"><a class="capability-card" href="enablers/index.html"><div class="capability-card-top"><span class="eyebrow">ECR register</span>{status_badge("active" if enabler_records else "empty")}</div><h2>Workflow-control amendments</h2><p>{len(enabler_records)} hash-bound request{"s" if len(enabler_records) != 1 else ""}; generated links expose the exact authority chain and current execution boundary.</p><span class="text-link">Open enabler register</span></a></section>
+<section class="capability-grid"><a class="capability-card" href="enablers/index.html"><div class="capability-card-top"><span class="eyebrow">ECR register</span>{status_badge("active" if enabler_records else "empty")}</div><h2>Workflow-control amendments</h2><p>{len(enabler_records)} hash-bound request{"s" if len(enabler_records) != 1 else ""}; generated links expose the exact authority chain and current execution boundary.</p><span class="text-link">Open enabler register</span></a><a class="capability-card" href="recoveries/index.html"><div class="capability-card-top"><span class="eyebrow">GRR register</span>{status_badge("active" if any(record["hold_status"] == "ACTIVE" for record in recovery_records) else "completed")}</div><h2>Governance recovery holds</h2><p>{len(recovery_records)} immutable recovery request{"s" if len(recovery_records) != 1 else ""}; active holds deny ordinary execution until their exact release conditions are met.</p><span class="text-link">Open recovery register</span></a></section>
 <section class="section-heading"><span class="eyebrow">Primary execution axis</span><h2>Waves, campaigns, and exit gates</h2><p>Each Wave is approved and executed end to end, with independent slice reviews, integration checkpoints, and one explicit exit decision.</p></section>
 <section class="capability-grid">{"".join(wave_cards)}</section>
 <section class="section-heading"><span class="eyebrow">Product outcomes</span><h2>Capabilities</h2><p>Capabilities may contribute ordered slices to more than one wave.</p></section>
@@ -882,11 +947,108 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
     )
     (enabler_dir / "index.html").write_text(enabler_index, encoding="utf-8")
 
+    recovery_dir = output / "recoveries"
+    recovery_dir.mkdir(parents=True, exist_ok=True)
+    recovery_cards = "".join(
+        f'<a class="capability-card" href="{esc(record["request_id"])}.html"><div class="capability-card-top">'
+        f'<span class="eyebrow">{esc(record["hold_id"])} · {esc(record["target_wave"])}</span>'
+        f"{status_badge(record['hold_status'])}</div><h2>{esc(record['request_id'])}</h2>"
+        f"<p>Bootstrap {esc(record['bootstrap'].get('id'))}: {esc(record['bootstrap'].get('status'))}</p>"
+        '<span class="text-link">Inspect immutable recovery authority and release conditions</span></a>'
+        for record in recovery_records
+    )
+    recovery_index = shell(
+        title="Governance recovery request register",
+        page_type="recovery-register",
+        depth=1,
+        body=layout(
+            breadcrumbs='<a href="../index.html">Planning review</a><span>/</span><span aria-current="page">Governance recovery</span>',
+            sidebar=planning_nav(
+                capabilities=capabilities,
+                waves=waves,
+                active_capability=None,
+                active_wave=None,
+                capability_prefix="../",
+                wave_prefix="../waves/",
+                default_tab="waves",
+            ),
+            main=f"""
+<section class="hero compact"><span class="eyebrow">Fail-closed control recovery</span><h1>Governance recovery request register</h1><p>A GRR authorizes only its exact recovery bootstrap. It never approves the later ECR, task execution, Wave resume, or a release gate.</p></section>
+<section class="capability-grid">{recovery_cards or "<p>No governance recovery requests are present.</p>"}</section>""",
+        ),
+    )
+    (recovery_dir / "index.html").write_text(recovery_index, encoding="utf-8")
+
+    for record in recovery_records:
+        bootstrap = record["bootstrap"]
+        post = record["post_bootstrap"]
+        amendments = record["authority_chain"].get("orderedAmendments") or []
+        authority_rows = "".join(
+            f"<li><strong>{esc(item.get('id'))}</strong> — {esc(item.get('status'))}; packet "
+            f"<code>{esc(item.get('packetCommit'))}</code>; approval "
+            f"<code>{esc((item.get('approvalRecord') or {}).get('introductionCommit'))}</code></li>"
+            for item in amendments
+        )
+        release_rows = "".join(f"<li>{esc(item)}</li>" for item in record["release_conditions"])
+        detail = shell(
+            title=f"{record['request_id']} governance recovery",
+            page_type="recovery-detail",
+            depth=1,
+            body=layout(
+                breadcrumbs=(
+                    '<a href="../index.html">Planning review</a><span>/</span>'
+                    '<a href="index.html">Governance recovery</a><span>/</span>'
+                    f'<span aria-current="page">{esc(record["request_id"])}</span>'
+                ),
+                sidebar=planning_nav(
+                    capabilities=capabilities,
+                    waves=waves,
+                    active_capability=None,
+                    active_wave=record["target_wave"],
+                    capability_prefix="../",
+                    wave_prefix="../waves/",
+                    default_tab="waves",
+                ),
+                main=f"""
+<section class="hero compact"><div class="hero-top"><div><span class="eyebrow">{esc(record["hold_id"])}</span><h1>{esc(record["request_id"])} — governance recovery</h1></div>{status_badge(record["hold_status"])}</div><p>Target Wave {esc(record["target_wave"])}; bootstrap <code>{esc(bootstrap.get("id"))}</code> is {esc(bootstrap.get("status"))}.</p></section>
+<section class="callout callout-warning"><h2>Ordinary execution is denied</h2><p>This immutable recovery approval authorizes only the bootstrap. It grants zero authority to {esc(post.get("required_change_request_id"))}/{esc(post.get("required_amendment_id"))}, proposed tasks, ordinary Wave resume, or gate approval.</p><p><strong>Recommendation:</strong> complete independent bootstrap review, then prepare and separately approve the exact ECR/amendment. Safe alternatives are leaving the hold active or recording a governed terminal disposition; direct execution is prohibited.</p></section>
+<section class="review-toolbar"><h2>Hash-bound source records</h2><ul><li><a href="{esc((repo / record["packet_path"]).resolve().as_uri())}">Frozen packet</a> — <code>{esc(record["packet_sha256"])}</code> at <code>{esc(record["packet_commit"])}</code></li><li><a href="{esc((repo / record["proposal_path"]).resolve().as_uri())}">Canonical proposal</a></li><li><a href="{esc((repo / record["review_path"]).resolve().as_uri())}">Human review</a></li><li><a href="{esc((repo / record["approval_path"]).resolve().as_uri())}">Immutable approval</a> — <code>{esc(record["approval_sha256"])}</code> introduced at <code>{esc(record["approval_commit"])}</code></li><li><a href="../waves/{esc(record["target_wave"])}.html">Paused Wave packet</a></li></ul></section>
+<section class="review-toolbar"><h2>Frozen predecessor authority</h2><ul>{authority_rows}</ul></section>
+<section class="review-toolbar"><h2>Exact release conditions</h2><ul>{release_rows}</ul><p>After every condition is proven, release the hold through <code>python tools/recoveryctl.py --repo . release {esc(record["request_id"])} --agent &lt;agent&gt;</code>. The Wave remains PAUSED until an explicit ordinary resume.</p></section>""",
+            ),
+        )
+        (recovery_dir / f"{record['request_id']}.html").write_text(detail, encoding="utf-8")
+        manifest["governance_recoveries"].append(
+            {
+                key: record[key]
+                for key in (
+                    "request_id",
+                    "hold_id",
+                    "target_wave",
+                    "hold_status",
+                    "packet_path",
+                    "packet_sha256",
+                    "packet_commit",
+                    "proposal_path",
+                    "review_path",
+                    "approval_path",
+                    "approval_sha256",
+                    "approval_commit",
+                    "release_conditions",
+                )
+            }
+            | {
+                "bootstrap_id": bootstrap.get("id"),
+                "bootstrap_status": bootstrap.get("status"),
+                "page": f"recoveries/{record['request_id']}.html",
+            }
+        )
+
     for record in enabler_records:
         proposal_meta, proposal_body = read_frontmatter(repo / record["proposal_path"])
         authority = record["authority"]
         effective_base = record["effective_base"]
-        authority_rows = [
+        enabler_authority_rows = [
             (
                 "W1 base approval",
                 effective_base.get("originalPacketCommit") or authority.get("originalWavePacketCommit"),
@@ -909,7 +1071,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         rendered_authority = "".join(
             f"<tr><th>{esc(label)}</th><td><code>{esc(packet or 'missing')}</code></td>"
             f"<td><code>{esc(approval or 'missing')}</code></td><td>{esc(meaning)}</td></tr>"
-            for label, packet, approval, meaning in authority_rows
+            for label, packet, approval, meaning in enabler_authority_rows
         )
         task_rows = "".join(
             f"<li><span><strong>{esc(task.get('id'))} — {esc(task.get('title'))}</strong>"
@@ -1166,6 +1328,23 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         wave_enablers = [record for record in enabler_records if record.get("target_wave") == wave_id]
         interrupting_enablers = [record for record in wave_enablers if enabler_interrupts_wave(record, wave)]
         interruption_html = ""
+        wave_recoveries = [
+            record
+            for record in recovery_records
+            if record.get("target_wave") == wave_id and record.get("hold_status") == "ACTIVE"
+        ]
+        if wave_recoveries:
+            recovery = wave_recoveries[0]
+            bootstrap = recovery["bootstrap"]
+            post = recovery["post_bootstrap"]
+            interruption_html = f"""
+<section class="callout callout-warning" id="governance-recovery-interruption">
+  <div><span class="eyebrow">Stopped at governance recovery hold</span><h2>{esc(wave_id)} ordinary execution is interrupted</h2>
+  <p><a href="../recoveries/{esc(recovery["request_id"])}.html"><strong>{esc(recovery["request_id"])} / {esc(recovery["hold_id"])}</strong></a> is ACTIVE. Bootstrap <code>{esc(bootstrap.get("id"))}</code> is {esc(bootstrap.get("status"))}. Ordinary task claims, Wave start/resume, amendment execution, and {esc(gate.get("id"))} progression fail closed.</p>
+  <p><strong>Authority:</strong> packet <code>{esc(recovery["packet_sha256"])}</code> at <code>{esc(recovery["packet_commit"])}</code>; approval <code>{esc(recovery["approval_sha256"])}</code> introduced at <code>{esc(recovery["approval_commit"])}</code>. This authority is bootstrap-only and does not approve {esc(post.get("required_change_request_id"))}/{esc(post.get("required_amendment_id"))}.</p>
+  <p><strong>Recommendation:</strong> complete independent B00 review, then prepare and separately approve the exact ECR/amendment. The safe alternative is to keep the hold and Wave paused. Direct execution or repeat Wave approval is prohibited.</p>
+  <p><strong>Exact ordinary resume condition:</strong> B00 independently approved; {esc(post.get("required_amendment_id"))} separately approved, completed, independently exit-reviewed, and adopted with a control/security checkpoint; recovery hold released; then explicit ordinary Wave resume.</p></div>
+</section>"""
         if interrupting_enablers:
             interruption_items_parts: list[str] = []
             for record in interrupting_enablers:
@@ -1185,7 +1364,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     f"<code>{esc(record['packet_sha256'])}</code> and approval <code>{esc(record['approval_sha256'])}</code>; not ordinary authority until adopted.</small></li>"
                 )
             interruption_items = "".join(interruption_items_parts)
-            interruption_html = f"""
+            interruption_html += f"""
 <section class="callout callout-warning" id="wave-amendment-interruption">
   <div><span class="eyebrow">Stopped at approved Wave amendment</span><h2>{esc(wave_id)} ordinary execution is interrupted</h2>
   <p>The immutable pre-Wave approval remains authoritative and must not be repeated. Ordinary task claims, Wave restart or resume, and {esc(gate.get("id"))} progression remain unavailable while this interrupting amendment is unfinished.</p>
@@ -1275,6 +1454,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 "completion_status": wave_completion.get("status"),
                 "unlocks_waves": gate.get("unlocks_waves", []),
                 "interrupting_change_request_ids": [record["change_request_id"] for record in interrupting_enablers],
+                "interrupting_recovery_request_ids": [record["request_id"] for record in wave_recoveries],
             }
         )
 
@@ -1472,7 +1652,7 @@ python tools/planctl.py --repo . ready {esc(cid)} --wave &lt;active-wave&gt; --r
     total_slices = sum(len(item.get("slices", [])) for item in manifest["capabilities"])
     readme = f"""# Static planning review site
 
-Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["waves"])} Wave packet/gate pages, {len(manifest["capabilities"])} capability pages, {total_slices} individual slice pages, and {len(manifest["enabler_change_requests"])} hash-bound enabler change request pages plus their register. A Wave page is the pre-execution approval surface: it aggregates every contributing capability decision, ordered slice plan, review cadence, exit-gate decision, and any interrupting append-only amendment. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys.
+Open `index.html` in a browser. Review interface release {REVIEW_INTERFACE_RELEASE}; canonical planning supplement 1.3.4. The site contains {len(manifest["waves"])} Wave packet/gate pages, {len(manifest["capabilities"])} capability pages, {total_slices} individual slice pages, {len(manifest["enabler_change_requests"])} hash-bound enabler change request pages, and {len(manifest["governance_recoveries"])} governance recovery pages plus their registers. A Wave page is the pre-execution approval surface: it aggregates every contributing capability decision, ordered slice plan, review cadence, exit-gate decision, and any interrupting append-only amendment or recovery hold. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys.
 
 Canonical commands:
 

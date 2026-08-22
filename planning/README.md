@@ -107,6 +107,33 @@ revalidates the exact approved review state. Missing, substituted, stale,
 forked, dirty, or unreviewed evidence fails closed. Legacy amendments remain
 readable without invented exit-review history.
 
+#### Governance recovery request fallback
+
+Use a GRR only when evidence demonstrates that the ordinary ECR controller or
+schema cannot represent or safely enforce its own next append-only amendment.
+The GRR packet freezes the complete predecessor authority chain, recovery hold,
+bootstrap-only path/outcome boundary, and the identity of the later ECR that
+must be approved separately. Independent packet review and exact-commit human
+approval precede B00. `recoveryctl` then freezes criterion-linked evidence and
+append-only independent review rounds; adverse review requires a strict
+descendant `bootstrap-resubmit`.
+
+An ACTIVE recovery hold is stronger than ordinary scheduling: every taskctl
+mutation fails closed except the exact later amendment lane after B00 is
+independently APPROVED and that ECR has its own immutable approval. The GRR does
+not approve that amendment. The hold is released only after the amendment is
+ADOPTED with an independently approved exit and bound security checkpoint, and
+release still leaves the Wave PAUSED for explicit ordinary resume.
+
+```bash
+python tools/recoveryctl.py --repo . validate GRR-NNNN --require-approved
+python tools/recoveryctl.py --repo . status GRR-NNNN
+python tools/recoveryctl.py --repo . bootstrap-submit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
+python tools/recoveryctl.py --repo . bootstrap-review GRR-NNNN --reviewer <independent-reviewer> --from <ledger>
+python tools/recoveryctl.py --repo . bootstrap-resubmit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
+python tools/recoveryctl.py --repo . release GRR-NNNN --agent <agent>
+```
+
 Task evidence attachment and submission are atomic: use `taskctl submit <task>
 --agent <agent> --from <manifest>`. The resulting RNN packet freezes the exact
 candidate, criteria, changed paths, verification selection, and open finding

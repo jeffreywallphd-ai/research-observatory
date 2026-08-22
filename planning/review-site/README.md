@@ -1,6 +1,6 @@
 # Static planning review site
 
-Open `index.html` in a browser. Review interface release 1.3.10; canonical planning supplement 1.3.4. The site contains 12 Wave packet/gate pages, 19 capability pages, 111 individual slice pages, and 1 hash-bound enabler change request pages plus their register. A Wave page is the pre-execution approval surface: it aggregates every contributing capability decision, ordered slice plan, review cadence, exit-gate decision, and any interrupting append-only amendment. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys.
+Open `index.html` in a browser. Review interface release 1.3.10; canonical planning supplement 1.3.4. The site contains 12 Wave packet/gate pages, 19 capability pages, 111 individual slice pages, 1 hash-bound enabler change request pages, and 1 governance recovery pages plus their registers. A Wave page is the pre-execution approval surface: it aggregates every contributing capability decision, ordered slice plan, review cadence, exit-gate decision, and any interrupting append-only amendment or recovery hold. Descriptive capability and slice aliases are the default presentation; numeric IDs remain immutable evidence and ordering keys.
 
 Canonical commands:
 

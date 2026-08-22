@@ -43,6 +43,13 @@ legal alternatives, and resume condition must remain visible. An approved Wave
 is never reapproved; only the append-only amendment lane may authorize the
 bounded task inventory.
 
+If `status` reports `STOPPED AT GOVERNANCE RECOVERY`, all ordinary mutations are
+denied. Follow only the exact `recoveryctl` B00 action in the handoff. The linked
+packet, proposal, approval, frozen predecessor chain, legal alternatives, and
+release conditions are mandatory context. B00 approval restores the ability to
+prepare the named ECR; it does not approve that ECR, materialize a task, resume
+the Wave, or approve a gate.
+
 The normal task transition is:
 
 ```bash

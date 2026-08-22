@@ -22582,9 +22582,48 @@ verification_profiles:
   server: University-hosted services, identity, collaboration, licensed sources, research-production workflow, and operations.
   cloud: Tenant, residency, metering, security, research-production workload, and SaaS operations.
 control_plane:
-  revision: 3
-  minimum_tool_revision: 3
+  revision: 4
+  minimum_tool_revision: 4
   active_amendment: null
+  recovery_holds:
+  - id: HOLD-W1-GRR-0001
+    recovery_request_id: GRR-0001
+    target_wave: W1
+    status: ACTIVE
+    approval_reference:
+      path: planning/governance-recovery-approvals/GRR-0001.json
+      sha256: 0576c6c3203815bdf4cbe26245c6421ddc106b5afaa89fa33cdd5d6d5ca77ee1
+      introduction_commit: 12c2ff826a5bcb0fdaca9f623da38094944a5eca
+    packet_reference:
+      path: planning/governance-recovery-requests/GRR-0001.packet.json
+      sha256: aeb9ec8f3e2c86cba5e1455d778f939b4884adde06cbf716f583ee9a34b7bceb
+      commit: fc8fabfcf3f23e1009f0f9895cd9befbf4b85f53
+    bootstrap:
+      id: GRR-0001.B00
+      status: IN_PROGRESS
+      implementer: codex
+      implementation_commit: null
+      submission_branch: null
+      evidence: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      current_submission: null
+      attempts: []
+    post_bootstrap:
+      required_change_request_id: ECR-0002
+      required_amendment_id: W1.A03
+      required_proposed_task_ids:
+      - W1.A03.T01
+      execution_authority: false
+    release_conditions:
+    - GRR-0001.B00 receives an independent APPROVED control/security disposition.
+    - ECR-0002/W1.A03 is separately approved, completed, independently exit-reviewed, and adopted.
+    - W1.A03 adoption records a bound control/security checkpoint before the recovery hold is released.
+    created_at: '2026-08-22T13:19:26+00:00'
+    released_at: null
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be

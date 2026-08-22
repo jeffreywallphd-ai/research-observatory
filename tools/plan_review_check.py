@@ -591,6 +591,44 @@ def main() -> int:
                 )
             )
 
+    recovery_holds = {
+        str(hold.get("recovery_request_id")): hold
+        for hold in (backlog.get("control_plane") or {}).get("recovery_holds", [])
+    }
+    manifest_recoveries = {str(entry.get("request_id")): entry for entry in manifest.get("governance_recoveries", [])}
+    if set(manifest_recoveries) != set(recovery_holds):
+        errors.append(
+            "Manifest governance recovery set differs from backlog holds: "
+            f"manifest={sorted(manifest_recoveries)} holds={sorted(recovery_holds)}"
+        )
+    for request_id, hold in recovery_holds.items():
+        entry = manifest_recoveries.get(request_id)
+        if entry is None:
+            continue
+        packet_reference = hold.get("packet_reference") or {}
+        approval_reference = hold.get("approval_reference") or {}
+        for label, reference, path_key, hash_key in (
+            ("packet", packet_reference, "packet_path", "packet_sha256"),
+            ("approval", approval_reference, "approval_path", "approval_sha256"),
+        ):
+            source = repo / str(reference.get("path") or "")
+            if not source.exists() or sha256(source) != reference.get("sha256"):
+                errors.append(f"{request_id}: recovery {label} source hash mismatch")
+            if entry.get(path_key) != reference.get("path") or entry.get(hash_key) != reference.get("sha256"):
+                errors.append(f"{request_id}: recovery {label} manifest binding mismatch")
+        if (
+            entry.get("hold_id") != hold.get("id")
+            or entry.get("target_wave") != hold.get("target_wave")
+            or entry.get("hold_status") != hold.get("status")
+            or entry.get("bootstrap_id") != (hold.get("bootstrap") or {}).get("id")
+            or entry.get("bootstrap_status") != (hold.get("bootstrap") or {}).get("status")
+            or entry.get("release_conditions") != hold.get("release_conditions")
+        ):
+            errors.append(f"{request_id}: recovery manifest state differs from the authoritative hold")
+        page = site / str(entry.get("page") or "")
+        if not page.exists():
+            errors.append(f"{request_id}: missing governance recovery detail page")
+
     manifest_caps = {entry["capability_id"]: entry for entry in manifest.get("capabilities", [])}
     if set(manifest_caps) != set(cap_plans):
         errors.append(
@@ -697,12 +735,19 @@ def main() -> int:
         ]
         if entry.get("interrupting_change_request_ids", []) != expected_interruptions:
             errors.append(f"{wave_id}: interrupting ECR inventory differs from source authority")
+        expected_recoveries = sorted(
+            request_id
+            for request_id, hold in recovery_holds.items()
+            if hold.get("target_wave") == wave_id and hold.get("status") == "ACTIVE"
+        )
+        if sorted(entry.get("interrupting_recovery_request_ids", [])) != expected_recoveries:
+            errors.append(f"{wave_id}: interrupting recovery inventory differs from source authority")
     duplicate_assignments = sorted(slice_id for slice_id, count in Counter(assigned_slice_ids).items() if count != 1)
     if set(assigned_slice_ids) != set(backlog_slices) or duplicate_assignments:
         errors.append(f"Every backlog slice must appear in exactly one wave page; duplicates={duplicate_assignments}")
 
     html_pages = sorted(site.rglob("*.html"))
-    expected_html = 2 + len(ecr_packets) + len(backlog_waves) + len(cap_plans) + len(slice_plans)
+    expected_html = 3 + len(ecr_packets) + len(recovery_holds) + len(backlog_waves) + len(cap_plans) + len(slice_plans)
     if len(html_pages) != expected_html:
         errors.append(f"Expected {expected_html} HTML pages, found {len(html_pages)}")
 
@@ -770,6 +815,16 @@ def main() -> int:
                         errors.append(f"{rel}: interrupted Wave is missing stopped-amendment marker {marker}")
                 if f"wave start {wave_id}" in text or f"wave approve {wave_id}" in text:
                     errors.append(f"{rel}: interrupted Wave advertises start or repeated approval")
+            if (manifest_waves.get(wave_id) or {}).get("interrupting_recovery_request_ids"):
+                for marker in (
+                    "ordinary execution is interrupted",
+                    "bootstrap-only",
+                    "Exact ordinary resume condition",
+                ):
+                    if marker not in content:
+                        errors.append(f"{rel}: interrupted Wave is missing governance recovery marker {marker}")
+                if f"wave start {wave_id}" in text or f"wave approve {wave_id}" in text:
+                    errors.append(f"{rel}: recovery-interrupted Wave advertises start or repeated approval")
         elif page.parent.name == "enablers":
             content = " ".join(parsed.text_parts)
             if page.name == "index.html":
@@ -788,6 +843,18 @@ def main() -> int:
                 ):
                     if marker not in content:
                         errors.append(f"{rel}: missing ECR detail marker {marker}")
+        elif page.parent.name == "recoveries":
+            content = " ".join(parsed.text_parts)
+            if page.name == "index.html":
+                if "Governance recovery request register" not in content:
+                    errors.append(f"{rel}: missing governance recovery register heading")
+            else:
+                request_id = page.stem
+                if request_id not in recovery_holds:
+                    errors.append(f"{rel}: recovery page has no matching backlog hold")
+                for marker in ("Ordinary execution is denied", "Hash-bound source records", "Exact release conditions"):
+                    if marker not in content:
+                        errors.append(f"{rel}: missing governance recovery detail marker {marker}")
         elif page.name == "index.html" and page.parent.name in cap_plans:
             cid = page.parent.name
             meta = frontmatter(cap_plans[cid])
@@ -822,6 +889,7 @@ def main() -> int:
         site / "assets/review.css",
         site / "assets/review.js",
         site / "enablers/index.html",
+        site / "recoveries/index.html",
         site / "README.md",
     ]:
         if not required.exists():

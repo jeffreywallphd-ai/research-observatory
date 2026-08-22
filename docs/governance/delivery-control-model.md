@@ -109,6 +109,25 @@ the exact approved completion history. Exit and adoption reject missing,
 substituted, stale, forked, dirty, or unreviewed evidence. Historical amendments
 without this prospective control remain readable without synthesized history.
 
+### Governance recovery authority
+
+A Governance Recovery Request is permitted only when the ordinary ECR lane
+cannot represent or enforce its own next safe amendment. It is not a second
+delivery lane. The GRR freezes the Wave base, every ordered adopted amendment,
+the active hold, a bootstrap-only file/outcome boundary, and the exact later
+ECR/amendment identity. Independent control/security packet review and explicit
+exact-commit human approval are mandatory before B00.
+
+The control plane records an ACTIVE recovery hold at a revision that older
+controllers cannot read. Scheduler and every executable taskctl transition fail
+closed. `recoveryctl` alone may submit, independently review, or resubmit the
+named bootstrap, with exact Git ancestry, changed-path, criteria, check, hash,
+and reviewer-independence binding. An adverse disposition remains append-only.
+Approval of B00 only restores the ordinary lane: the repair amendment receives
+its own ECR review and human approval and is appended without replacing any
+predecessor. Hold release requires adopted amendment completion plus a bound
+control/security checkpoint, and never resumes the Wave implicitly.
+
 Task review control uses one atomic evidence-plus-submit transition and one
 immutable packet per RNN round. Each packet binds the candidate, evidence,
 criteria, changed paths, verification selection, and exact open-finding replay.

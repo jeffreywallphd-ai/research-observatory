@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -632,12 +633,28 @@ def _schema_errors(document: dict[str, Any], schema_path: Path, label: str) -> l
 
 
 def _safe_ecr_file(root: Path, relative: object) -> Path | None:
-    if not isinstance(relative, str) or "\\" in relative:
+    if (
+        not isinstance(relative, str)
+        or "\\" in relative
+        or ":" in relative
+        or re.search(r"(?:^|/)\.{1,2}(?:/|$)", relative)
+    ):
         return None
     pure = PurePosixPath(relative)
-    if pure.is_absolute() or ".." in pure.parts or not relative.startswith("planning/enabler-change-requests/"):
+    if (
+        pure.is_absolute()
+        or any(part in {"", ".", ".."} for part in pure.parts)
+        or not relative.startswith("planning/enabler-change-requests/")
+    ):
         return None
-    path = root.joinpath(*pure.parts).resolve()
+    candidate = root.joinpath(*pure.parts)
+    current = root
+    junction = getattr(os.path, "isjunction", lambda _path: False)
+    for part in pure.parts:
+        current = current / part
+        if (current.exists() or current.is_symlink()) and (current.is_symlink() or junction(current)):
+            return None
+    path = candidate.resolve()
     expected = (root / "planning" / "enabler-change-requests").resolve()
     try:
         path.relative_to(expected)
@@ -755,9 +772,10 @@ def _approval_record_errors(
     packet_reference = _json_object(record.get("packet"))
     effective = _json_object(record.get("effectiveBase"))
     authority = _json_object(packet.get("authority"))
+    authority_chain = _json_object(packet.get("authorityChain"))
     review = _json_object(record.get("independentPacketReview"))
     bootstrap = _json_object(packet.get("bootstrapUnit"))
-    expected = (
+    expected_common = (
         ("amendmentId", record.get("amendmentId"), amendment_id),
         ("changeRequestId", record.get("changeRequestId"), packet.get("changeRequestId")),
         ("targetWave", record.get("targetWave"), packet.get("targetWave")),
@@ -765,33 +783,43 @@ def _approval_record_errors(
         ("packet.path", packet_reference.get("path"), packet_relative),
         ("packet.proposalPath", packet_reference.get("proposalPath"), proposal.get("path")),
         ("packet.proposalSha256", packet_reference.get("proposalSha256"), proposal.get("sha256")),
-        (
-            "effectiveBase.originalPacketCommit",
-            effective.get("originalPacketCommit"),
-            authority.get("originalWavePacketCommit"),
-        ),
-        (
-            "effectiveBase.originalApprovalRecordCommit",
-            effective.get("originalApprovalRecordCommit"),
-            authority.get("originalApprovalRecordCommit"),
-        ),
-        ("effectiveBase.legacyAmendmentId", effective.get("legacyAmendmentId"), authority.get("legacyAmendmentId")),
-        (
-            "effectiveBase.legacyAmendmentPacketCommit",
-            effective.get("legacyAmendmentPacketCommit"),
-            authority.get("legacyAmendmentPacketCommit"),
-        ),
-        (
-            "effectiveBase.legacyAmendmentRecordCommit",
-            effective.get("legacyAmendmentRecordCommit"),
-            authority.get("legacyAmendmentRecordCommit"),
-        ),
-        (
-            "effectiveBase.effectivePacketCommit",
-            effective.get("effectivePacketCommit"),
-            authority.get("effectiveBasePacketCommit"),
-        ),
     )
+    expected: tuple[tuple[str, Any, Any], ...]
+    if packet.get("schemaVersion") == "2.0-proposal":
+        expected = (
+            *expected_common,
+            ("effectiveBase", effective, authority_chain),
+        )
+    else:
+        expected = (
+            *expected_common,
+            (
+                "effectiveBase.originalPacketCommit",
+                effective.get("originalPacketCommit"),
+                authority.get("originalWavePacketCommit"),
+            ),
+            (
+                "effectiveBase.originalApprovalRecordCommit",
+                effective.get("originalApprovalRecordCommit"),
+                authority.get("originalApprovalRecordCommit"),
+            ),
+            ("effectiveBase.legacyAmendmentId", effective.get("legacyAmendmentId"), authority.get("legacyAmendmentId")),
+            (
+                "effectiveBase.legacyAmendmentPacketCommit",
+                effective.get("legacyAmendmentPacketCommit"),
+                authority.get("legacyAmendmentPacketCommit"),
+            ),
+            (
+                "effectiveBase.legacyAmendmentRecordCommit",
+                effective.get("legacyAmendmentRecordCommit"),
+                authority.get("legacyAmendmentRecordCommit"),
+            ),
+            (
+                "effectiveBase.effectivePacketCommit",
+                effective.get("effectivePacketCommit"),
+                authority.get("effectiveBasePacketCommit"),
+            ),
+        )
     for field, actual, wanted in expected:
         if actual != wanted:
             errors.append(f"Wave amendment approval {field} does not match the ECR packet")
@@ -834,6 +862,8 @@ def _approval_record_errors(
 
 
 def _authority_history_errors(root: Path, packet: dict[str, Any]) -> list[str]:
+    if packet.get("schemaVersion") == "2.0-proposal":
+        return _authority_chain_v2_errors(root, packet)
     errors: list[str] = []
     authority = _json_object(packet.get("authority"))
     wave_id = str(packet.get("targetWave"))
@@ -914,17 +944,160 @@ def _authority_history_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     return errors
 
 
+def _authority_chain_v2_errors(root: Path, packet: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    chain = _json_object(packet.get("authorityChain"))
+    wave_base = _json_object(chain.get("waveBase"))
+    wave_id = str(packet.get("targetWave") or "")
+    try:
+        backlog, _ = load_backlog(root)
+    except (OSError, yaml.YAMLError) as exc:
+        return [f"ECR authority backlog is unavailable: {exc}"]
+    bases = {str(item.get("wave_id")): item for item in backlog.get("wave_approval_bases", [])}
+    base = _json_object(bases.get(wave_id))
+    if (
+        wave_base.get("waveId") != wave_id
+        or wave_base.get("packetCommit") != base.get("packet_commit")
+        or wave_base.get("approvalRecordCommit") != base.get("record_commit")
+    ):
+        errors.append("ECR v2 Wave base differs from the immutable backlog authority")
+    actual = [item for item in backlog.get("wave_amendments", []) if item.get("target_wave") == wave_id]
+    frozen = chain.get("orderedAmendments")
+    if not isinstance(frozen, list):
+        return [*errors, "ECR v2 ordered amendment authority is missing"]
+    expected_ids = [f"{wave_id}.A{index:02d}" for index in range(1, len(frozen) + 1)]
+    frozen_ids = [str(_json_object(item).get("id")) for item in frozen]
+    if frozen_ids != expected_ids or len(frozen_ids) != len(set(frozen_ids)):
+        errors.append("ECR v2 predecessor chain is gapped, reordered, duplicated, or forked")
+    proposed = str(packet.get("proposedAmendmentId") or "")
+    if len(actual) not in {len(frozen), len(frozen) + 1} or (
+        len(actual) == len(frozen) + 1 and actual[-1].get("id") != proposed
+    ):
+        errors.append("ECR v2 packet does not freeze the complete predecessor chain or its one appended proposal")
+    ordered_commits: list[str] = [
+        str(wave_base.get("packetCommit") or ""),
+        str(wave_base.get("approvalRecordCommit") or ""),
+    ]
+    for packet_item, backlog_item in zip(frozen, actual, strict=False):
+        item = _json_object(packet_item)
+        reference = _json_object(item.get("approvalReference"))
+        backlog_reference = _json_object(backlog_item.get("approval_reference"))
+        expected = (
+            (item.get("id"), backlog_item.get("id"), "identity"),
+            (item.get("changeRequestId"), backlog_item.get("change_request_id"), "change request"),
+            (item.get("status"), (backlog_item.get("lifecycle") or {}).get("status"), "status"),
+            (reference.get("path"), backlog_reference.get("path"), "approval path"),
+            (reference.get("sha256"), backlog_reference.get("sha256"), "approval hash"),
+            (
+                reference.get("introductionCommit"),
+                backlog_reference.get("introduction_commit"),
+                "approval introduction",
+            ),
+        )
+        for current, wanted, label in expected:
+            if current != wanted:
+                errors.append(f"ECR v2 {item.get('id')} {label} differs from predecessor authority")
+        approval_path = root.joinpath(*PurePosixPath(str(reference.get("path") or "")).parts)
+        try:
+            approval_payload = approval_path.read_bytes()
+            approval_record = json.loads(approval_payload)
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            errors.append(f"ECR v2 {item.get('id')} approval record is unavailable: {exc}")
+            approval_record = {}
+            approval_payload = b""
+        if approval_payload and hashlib.sha256(approval_payload).hexdigest() != reference.get("sha256"):
+            errors.append(f"ECR v2 {item.get('id')} approval hash mismatch")
+        if approval_record.get("amendmentId") != item.get("id"):
+            errors.append(f"ECR v2 {item.get('id')} approval identity mismatch")
+        packet_commit = str(item.get("packetCommit") or "")
+        approval_commit = str(reference.get("introductionCommit") or "")
+        state_commit = str(item.get("effectiveStateCommit") or "")
+        ordered_commits.extend((packet_commit, approval_commit, state_commit))
+        historical = (
+            _git_blob(root, state_commit, "planning/backlog.yaml") if _git_commit_exists(root, state_commit) else None
+        )
+        if historical is None:
+            errors.append(f"ECR v2 {item.get('id')} effective-state commit is unavailable")
+        else:
+            try:
+                state = yaml.safe_load(historical.decode("utf-8"))
+                historical_item = next(
+                    candidate for candidate in state.get("wave_amendments", []) if candidate.get("id") == item.get("id")
+                )
+            except UnicodeError, yaml.YAMLError, StopIteration, AttributeError:
+                historical_item = None
+            if (historical_item or {}).get("lifecycle", {}).get("status") != "ADOPTED":
+                errors.append(f"ECR v2 {item.get('id')} effective state is not ADOPTED")
+    if proposed != f"{wave_id}.A{len(frozen) + 1:02d}":
+        errors.append("ECR v2 proposed amendment is not the next consecutive authority identity")
+    existing_ecr_numbers = [
+        int(str(_json_object(item).get("changeRequestId")).removeprefix("ECR-"))
+        for item in frozen
+        if re.fullmatch(r"ECR-[0-9]{4}", str(_json_object(item).get("changeRequestId") or ""))
+    ]
+    next_ecr = max(existing_ecr_numbers, default=0) + 1
+    if packet.get("changeRequestId") != f"ECR-{next_ecr:04d}":
+        errors.append("ECR v2 change-request identity is not consecutive")
+    authorized = [str(item) for item in packet.get("authorizedTaskIds", [])]
+    inventory = [str(_json_object(item).get("id")) for item in packet.get("taskInventory", [])]
+    expected_tasks = [f"{proposed}.T{index:02d}" for index in range(1, len(inventory) + 1)]
+    if authorized != inventory or inventory != expected_tasks:
+        errors.append("ECR v2 task authority/inventory is not exact, ordered, and amendment-bound")
+    bootstrap_id = str(_json_object(packet.get("bootstrapUnit")).get("id") or "")
+    if bootstrap_id != f"{proposed}.B00":
+        errors.append("ECR v2 bootstrap identity is outside the proposed amendment namespace")
+    for task in packet.get("taskInventory", []):
+        dependencies = _json_object(task).get("dependencies") or []
+        if bootstrap_id not in dependencies:
+            errors.append(f"ECR v2 task {_json_object(task).get('id')} does not depend on the approved bootstrap")
+    hold_id = str(_json_object(packet.get("activationBoundary")).get("recoveryHoldId") or "")
+    holds = (backlog.get("control_plane") or {}).get("recovery_holds", [])
+    matching_hold = next((hold for hold in holds if hold.get("id") == hold_id), None)
+    if (
+        matching_hold is None
+        or matching_hold.get("target_wave") != wave_id
+        or (matching_hold.get("bootstrap") or {}).get("status") != "APPROVED"
+        or (matching_hold.get("post_bootstrap") or {}).get("required_amendment_id") != proposed
+        or (matching_hold.get("post_bootstrap") or {}).get("required_change_request_id")
+        != packet.get("changeRequestId")
+        or (matching_hold.get("post_bootstrap") or {}).get("required_proposed_task_ids") != authorized
+    ):
+        errors.append("ECR v2 does not bind the active independently approved recovery hold")
+    for commit in ordered_commits:
+        if (
+            not re.fullmatch(r"[0-9a-f]{40}", commit)
+            or not _git_commit_exists(root, commit)
+            or not _git_is_ancestor(root, commit)
+        ):
+            errors.append(f"ECR v2 authority commit is missing or not on current history: {commit}")
+    for ancestor, descendant in pairwise(ordered_commits):
+        if (
+            _git_commit_exists(root, ancestor)
+            and _git_commit_exists(root, descendant)
+            and not _git_is_ancestor(root, ancestor, descendant)
+        ):
+            errors.append(f"ECR v2 authority chain is forked: {ancestor} is not an ancestor of {descendant}")
+    return errors
+
+
 def ecr_validation_errors(root: Path, change_request_id: str, *, require_approved: bool) -> list[str]:
     packet_path = ecr_packet_path(root, change_request_id)
     try:
         packet, packet_payload = _json_document(packet_path)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         return [f"ECR packet is unavailable or invalid: {exc}"]
-    errors = _schema_errors(
-        packet,
-        root / "planning" / "enabler-change-requests" / "enabler-change-request.schema.json",
-        "ECR packet",
-    )
+    schema_name = {
+        "1.0-proposal": "enabler-change-request.schema.json",
+        "2.0-proposal": "enabler-change-request.v2.schema.json",
+    }.get(str(packet.get("schemaVersion")))
+    if schema_name is None:
+        errors = [f"ECR packet uses an unsupported schema version: {packet.get('schemaVersion')}"]
+    else:
+        errors = _schema_errors(
+            packet,
+            root / "planning" / "enabler-change-requests" / schema_name,
+            "ECR packet",
+        )
     if packet.get("changeRequestId") != change_request_id:
         errors.append("ECR packet identity does not match the requested change request")
     errors.extend(_packet_file_errors(root, packet))
