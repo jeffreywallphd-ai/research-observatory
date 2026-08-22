@@ -361,9 +361,7 @@ class WindowsCredentialStoreTests(unittest.TestCase):
 
 class ApplicationLockSourceBoundaryTests(unittest.TestCase):
     def test_native_lock_uses_non_persisting_same_sid_windows_reauthentication(self) -> None:
-        source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "application_lock.rs").read_text(
-            encoding="utf-8"
-        )
+        source = (REPO / "apps" / "desktop" / "src-tauri" / "src" / "application_lock.rs").read_text(encoding="utf-8")
         for required in (
             "CredUIPromptForCredentialsW",
             "CREDUI_FLAGS_ALWAYS_SHOW_UI",
