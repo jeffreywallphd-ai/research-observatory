@@ -1,0 +1,48 @@
+{
+  "$schema": "../governance-recovery-requests/governance-recovery-supplement-approval.schema.json",
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-approval",
+  "recoveryRequestId": "GRR-0001",
+  "supplementId": "GRR-0001.S01",
+  "targetWave": "W1",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-22T17:17:56.4975526Z",
+  "decision": "The repository owner replied 'Approved, please continue' directly to the exact GRR-0001.S01 approval request for packet commit 2617d29ce56d8c6a77b93ad28c23b16c01ced30b. Authorize only supplemental bootstrap GRR-0001.B01 and its hash-bound governance/controller/test scope under HOLD-W1-GRR-0001; keep W1 paused, W1.A03 unmaterialized, and CAP-02.S04.T03 blocked through independent B01 approval; then retry only the packet-bound W1.A03 materialization transition.",
+  "packet": {
+    "commit": "2617d29ce56d8c6a77b93ad28c23b16c01ced30b",
+    "path": "planning/governance-recovery-requests/GRR-0001.S01.packet.json",
+    "sha256": "c5ebe39b38e8cad33d373ddce040dce59760b8bc9636a6f208c118d867c6344b",
+    "proposalPath": "planning/governance-recovery-requests/GRR-0001.S01.md",
+    "proposalSha256": "ffb35030fce379d4d42c62d3d18270c7fcd963f90f9c198aafb388f3a40a8088",
+    "schemaPath": "planning/governance-recovery-requests/governance-recovery-supplement.schema.json",
+    "schemaSha256": "b72e54db21bf6c0ec0035549f3d7fd6f072ebfbe416a0b35e4b75755135c70cc",
+    "reviewPath": "planning/governance-recovery-requests/GRR-0001.S01-review.html",
+    "reviewSha256": "6abef6a6f9614f4f03147a1b8114032fe3c4d6ca55730762843ff808dba3a01e"
+  },
+  "supplementalBootstrapUnit": "GRR-0001.B01",
+  "independentPacketReview": {
+    "reviewer": "b00-independent-reviewer",
+    "attemptId": "R02",
+    "candidateCommit": "2617d29ce56d8c6a77b93ad28c23b16c01ced30b",
+    "packetSha256": "c5ebe39b38e8cad33d373ddce040dce59760b8bc9636a6f208c118d867c6344b",
+    "result": "APPROVED",
+    "openFindingIds": [],
+    "closedFindingIds": [
+      "GRR-0001.S01-R01-F01",
+      "GRR-0001.S01-R01-F02"
+    ],
+    "priorAdverseLedger": {
+      "path": "planning/governance-recovery-requests/GRR-0001.S01.review-R01.json",
+      "sha256": "cf38301189917f1c5f827179bb50894f21b865985838f3dbe86b2e5142ffcfea"
+    }
+  },
+  "executionAuthority": {
+    "supplementalBootstrapOnly": true,
+    "postBootstrapExecution": false,
+    "amendmentMaterialization": false,
+    "ordinaryWaveResume": false,
+    "taskExecution": false,
+    "releaseGateApproval": false
+  }
+}
