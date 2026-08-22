@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-bootstrap-review",
+  "recoveryRequestId": "GRR-0001",
+  "bootstrapUnit": "GRR-0001.B00",
+  "attemptId": "R04",
+  "candidateCommit": "cb27290367a76fe2681b2a97552453f4f7803c29",
+  "reviewedStateCommit": "1c73c80be67af667a8e6e6d70729af9d3761afd2",
+  "reviewer": "b00-independent-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0001.B00.remediation-03.evidence.json",
+    "sha256": "6d87cfa376460925229e12eb313736d4450a25202ab5cfd7ae5ed8079d6278b5"
+  },
+  "notes": "The candidate is a strict descendant of d4d877966e44327eaa1d0b1219836d1413fcb7e2. Its eight-path evidence scope exactly matches Git and remains within the approved governance boundary. R01-R03 evidence, ledgers, findings, closures, and state history are preserved. No production ECR-0002/W1.A03 authority, product/UI-gate change, ordinary W1 execution, or hold release exists. Root-reported candidate/frozen 109-test runs are consistent with an independent replay of the two new recovery tests, which passed in 99.484 seconds; quality, backlog, GRR, ECR-0001, 147-page review-site, generated-view, and diff checks also pass. R03-F01 is closed. R02-F02 remains open because the candidate-state fixture still creates an approved attempt without an immutable frozen REVIEW state.",
+  "findings": [
+    {
+      "id": "GRR-0001.B00-R04-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 7,
+      "title": "Historical review validation does not bind reviewedStateCommit to the exact frozen REVIEW submission",
+      "reproduction": "At candidate cb27290367a76fe2681b2a97552453f4f7803c29, planning/backlog.yaml records GRR-0001.B00 as CHANGES_REQUESTED with current_submission null and no R04 attempt. The CHANGES_REQUESTED/BLOCKED branch of append_fixture then creates an R04 approved attempt whose candidateCommit and reviewedStateCommit both equal cb27290367a76fe2681b2a97552453f4f7803c29, without first committing an R04 REVIEW submission. recovery_review_history_errors only checks that reviewedStateCommit exists and is ancestral; it never loads planning/backlog.yaml from that commit or verifies the exact R04 current_submission, candidate, evidence, branch, and criteria hash. Consequently recoveryctl.validate_request passes immediately before the real append and the candidate-state 109-test suite passes even though the cited reviewed state contains no R04 submission. The frozen-state path is coherent, but the required candidate-state fixture and general historical exact-commit boundary are not.",
+      "requiredRemediation": "In the shared recovery review-history validator, load planning/backlog.yaml from every ledger reviewedStateCommit and require the matching hold/bootstrap to be REVIEW with the exact current_submission attempt ID, candidate commit, evidence hash, acceptance-criteria hash, submission branch, implementation commit, and evidence projection. Require the reviewed state to descend from its candidate and preserve ordered prior attempts. For CHANGES_REQUESTED/BLOCKED fixture sources, create the strict-descendant evidence, persist and commit a genuine REVIEW submission state, and only then create the approval ledger. Add a denial test for an ancestral reviewedStateCommit that lacks the claimed submission, and rerun the 109-test suite at both candidate and frozen states."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "GRR-0001.B00-R03-F01",
+      "notes": "Closed. taskctl and recoveryctl now share sequential immutable-ledger validation, including attempt/candidate/evidence/reviewer/result bindings, globally unique findings, valid prior-open closures, severity ordering, and denial of approval with open blocking findings. The append entry point invokes this validation before amendment authority loading. The adversarial missing-closure fixture is denied with byte-stable backlog state, while the lawful frozen-REVIEW fixture explicitly closes R02-F02/R03-F01 and passes recoveryctl.validate_request immediately before append."
+    }
+  ]
+}
