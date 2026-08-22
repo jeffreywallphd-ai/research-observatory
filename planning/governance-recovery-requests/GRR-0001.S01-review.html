@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GRR-0001.S01 — Supplemental recovery decision</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #172033; background: #f4f6f8; }
+    body { margin: 0; }
+    main { max-width: 980px; margin: 0 auto; padding: 40px 24px 64px; }
+    section { background: white; border: 1px solid #d9e0e8; border-radius: 14px; padding: 24px; margin: 18px 0; box-shadow: 0 8px 24px rgba(24, 35, 52, .06); }
+    h1, h2 { line-height: 1.2; }
+    h1 { margin-top: 10px; }
+    a { color: #075c9e; }
+    code { background: #eef2f6; border-radius: 5px; padding: 2px 5px; overflow-wrap: anywhere; }
+    pre { background: #172033; color: #f6f8fa; border-radius: 9px; padding: 16px; white-space: pre-wrap; }
+    .status { border-left: 5px solid #a05a00; background: #fff6e6; }
+    .recommended { border-left: 5px solid #177245; background: #eefaf3; }
+    .boundary { border-left: 5px solid #9c2f2f; background: #fff2f2; }
+    dt { font-weight: 700; }
+    dd { margin: 4px 0 14px; }
+    li { margin: 8px 0; }
+  </style>
+</head>
+<body>
+<main>
+  <p><a href="GRR-0001.S01.md">Canonical supplement</a> · <a href="GRR-0001.S01.packet.json">Hash-bound packet</a> · <a href="governance-recovery-supplement.schema.json">Packet schema</a> · <a href="GRR-0001-review.html">Base GRR review</a></p>
+  <h1>GRR-0001.S01 — Consecutive-amendment materialization repair</h1>
+
+  <section class="status">
+    <h2>Non-executable pending decision</h2>
+    <p>The next legal W1.A03 materialization failed atomically at clean commit <code>12c06ed648d1153f6ed60e873224fa0637fea4f7</code>. This supplement changes no executable state and grants no authority until an independent packet review and exact-commit human approval both exist.</p>
+  </section>
+
+  <section>
+    <h2>What failed</h2>
+    <pre>.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml amendment materialize W1.A03 --agent codex
+
+Refusing to save invalid backlog state:
+- W1.A02: terminal lifecycle did not restore ordinary Wave scope</pre>
+    <p>Materialization correctly gives the shared W1 campaign <code>amendment-hold</code> scope for W1.A03. The validator then incorrectly applies that current shared scope to already-adopted W1.A02. Backlog SHA-256 remained <code>2a14a5b45158d035514ed9a5ff4f170dc8a508df941f1b5395a2121a7713ef1e</code>.</p>
+  </section>
+
+  <section class="recommended">
+    <h2>Recommended decision: approve only GRR-0001.B01</h2>
+    <p>Authorize one supplemental bootstrap under the existing active hold. B01 adds a hash-bound post-approval remediation transition, corrects only the consecutive-amendment invariant, adds focused adversarial tests, and must be independently approved before canonical materialization is retried.</p>
+    <p><strong>Required outcome:</strong> an adopted predecessor remains valid only when a strictly later same-Wave executable amendment legitimately owns <code>amendment-hold</code>; without such an owner, terminal amendments still require ordinary <code>wave</code> scope.</p>
+  </section>
+
+  <section class="boundary">
+    <h2>Continuous stop boundary</h2>
+    <dl>
+      <dt>Recovery hold</dt><dd><code>HOLD-W1-GRR-0001 = ACTIVE</code></dd>
+      <dt>Wave</dt><dd><code>W1 = PAUSED / wave</code></dd>
+      <dt>Amendment</dt><dd><code>W1.A03 = APPROVED</code>, B00 approved, zero materialized tasks</dd>
+      <dt>Product task</dt><dd><code>CAP-02.S04.T03 = BLOCKED</code></dd>
+    </dl>
+    <p>No product/UI/reference change, T03 recovery, W1.A03 materialization or activation, amendment task claim, hold release, W1 resume, G1 approval, local-main merge, or remote push is authorized by packet preparation or chat feedback.</p>
+  </section>
+
+  <section>
+    <h2>Alternatives</h2>
+    <ol>
+      <li><strong>Approve B01 (recommended):</strong> smallest path that preserves the current hold and immutable B00 history.</li>
+      <li><strong>Remain paused:</strong> safe, but W1 cannot progress.</li>
+      <li><strong>Design GRR-0002 hold supersession:</strong> broader control-plane change with no safety advantage for this defect.</li>
+      <li><strong>Direct edit or replay:</strong> rejected as a gate bypass.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Approval is not available yet</h2>
+    <p>First commit this packet and its declared files at one clean immutable commit, validate hashes and authority, and obtain an independent control/security packet approval for that exact commit. Only then may the repository owner use the exact statement below.</p>
+    <pre>Approve GRR-0001.S01 at packet commit &lt;40-character SHA&gt;, authorizing only supplemental bootstrap GRR-0001.B01 and its hash-bound governance/controller/test scope under HOLD-W1-GRR-0001. Keep W1 paused, W1.A03 unmaterialized, and CAP-02.S04.T03 blocked through independent B01 approval; then retry only the packet-bound W1.A03 materialization transition.</pre>
+  </section>
+</main>
+</body>
+</html>
