@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0b23518925c76c66f050343514f298fc033d26503e90741238fa0c48616dcc18
+source_sha256: ff99edaf5c402ec3b2531965ab3afda254c720cda1bf0440594d5393c1400025
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -41,7 +41,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 |---|---|---|---|---|
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
-| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `REVIEW` |
+| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
 
 ## Waves
 
@@ -413,7 +413,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A02.json` (`63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -429,6 +429,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E10` `REVIEW` at `2026-08-22T02:17:29+00:00` by codex: R03 remediates W1.A02-EXIT-R01-F01 and W1.A02-EXIT-R02-F01 with payload-type/target/history binding, coherent historical fixtures, and 70 passing controller/schema tests.
 - `E11` `ACTIVE` at `2026-08-22T02:32:18+00:00` by codex: Reactivated the bounded amendment campaign after a failed adoption transition.
 - `E12` `REVIEW` at `2026-08-22T02:35:17+00:00` by codex: R04 remediates the fail-closed adoption transition discovered after R03: validate completed exits against frozen reviewed state and allow only exact approved pre-adoption remediation reactivation.
+- `E13` `ADOPTED` at `2026-08-22T02:41:21+00:00` by codex: Adopt independently approved W1.A02 workflow controls via exact R04 completion and commit-bound checkpoint; keep W1 paused for user handoff.
 
 ### Amendment-exit review and adoption — W1.A02
 
@@ -558,7 +559,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W1.CP01` `security` by codex at `2026-08-22T02:41:21+00:00` — Adopt independently approved W1.A02 workflow controls via exact R04 completion and commit-bound checkpoint; keep W1 paused for user handoff.
+  - amendment `W1.A02` / `artifacts/evidence/W1.A02.adoption-R04.json` / `a43890b792808b848e4dd16bbd0ba8bc59aa2fc71a9fb08d33a0284e5da2a88f` / `996a6479dd7aae3422f73593097134b3b12a75fc`
 
 **Bounded tasks:**
 
