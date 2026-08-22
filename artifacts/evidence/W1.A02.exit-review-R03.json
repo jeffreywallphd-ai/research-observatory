@@ -1,0 +1,25 @@
+{
+  "amendment_id": "W1.A02",
+  "attempt_id": "R03",
+  "reviewed_state_commit": "bd5133e2efa450832cbb1f451f01bfe64746727c",
+  "reviewer": "b00-independent-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "artifacts/evidence/W1.A02.exit.json",
+    "sha256": "d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5"
+  },
+  "notes": "APPROVED at exact clean frozen state bd5133e2efa450832cbb1f451f01bfe64746727c on codex/w1-windows-local-runtime. R03 evidence is Git-bound at f86bbb6e60203246178017cba2a69b41d0957a29 and declares remediation candidate 55bf2850a73dfde9e5ac9c712584b23132364665; R03 strictly descends from R02. R01 and R02 attempt/lifecycle history remains byte-for-byte append-only, with ledger SHA-256 values 758f40080e775d5ba19a78465d0ea7dec422929ff9285d61bb6978a49b1f48e7 and 69c388e19ca03d34cf0faaf28112311d09925eb3505da539e22c4c57ac070a4a. Criteria, selected-check, and packet hashes recompute exactly. Bound adoption validation now enforces reference type against payload documentType, amendment identity, target Wave, candidate/reviewed-completion equality and ancestry, approved exit branch, and exact approved historical attempt. An independent cross-type replay returns the required documentType mismatch; wrong-target regression passes. The historical bootstrap fixture now resets completion coherently and no longer inherits live exit-review state. Exact selected checks pass: 70/70 controller/schema tests, 13/13 amendment review tests, quality across 113 governed Python files, backlog validation for 20 capabilities/117 slices/358 tasks/12 gates, privacy-safe telemetry, all 145 review pages, generated backlog views, approved history-bound ECR-0001 authority, and git diff hygiene. Legacy W1.A01 is unchanged. No W1 qualification, W1/G1 approval, Wave resume, or full Wave-exit suite was performed. The amendment is substantively adoption-ready, but adoption is not yet legally executable at this frozen REVIEW state: this exact approved R03 ledger must first be recorded and committed, then a separate committed adoption-checkpoint evidence document must bind that approved completion before taskctl amendment adoption may run.",
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "W1.A02-EXIT-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Remediation candidate 55bf2850a73dfde9e5ac9c712584b23132364665 and the 70-test frozen-state controller/schema replay prove exact exit/adoption evidence, history, ancestry, branch, documentType, amendment, and target-Wave binding."
+    },
+    {
+      "finding_id": "W1.A02-EXIT-R02-F01",
+      "disposition": "fixed",
+      "evidence": "The coherent historical bootstrap fixture at 55bf2850a73dfde9e5ac9c712584b23132364665 passes in the complete 70-test suite at frozen state bd5133e2efa450832cbb1f451f01bfe64746727c."
+    }
+  ]
+}
