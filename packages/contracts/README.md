@@ -55,3 +55,8 @@ adapter state. It also defines the native-supervisor application-lock profile:
 optional local display identity, bounded idle policy, same-Windows-user
 reauthentication, protected-action invalidation, Core capability clearing, and
 the explicit non-isolation residual threat.
+
+`privacy/` fixes project-scoped offline and telemetry-off defaults, informed
+consent before non-offline preferences, per-task egress preview enforcement,
+non-automatic document retention review, and exact-preview-bound logical cache
+removal with explicit physical-erasure limitations.

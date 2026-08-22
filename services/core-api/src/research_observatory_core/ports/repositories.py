@@ -95,6 +95,33 @@ class AtomicRepositoryEvent:
     idempotency_key: str
 
 
+@dataclass(frozen=True, slots=True)
+class PrivacySetting:
+    """One detached scalar setting in a complete project privacy revision."""
+
+    key: str
+    value: str | int
+
+
+@dataclass(frozen=True, slots=True)
+class PrivacyPolicyRecord:
+    """Complete detached privacy revision returned by a persistence adapter."""
+
+    revision: int
+    settings: tuple[PrivacySetting, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class PrivacyAuditEvent:
+    """Content-free provenance event committed by the privacy adapter."""
+
+    event_id: str
+    event_type: str
+    occurred_at: str
+    trace_id: str
+    record_sha256: str
+
+
 @runtime_checkable
 class AggregateRepository(Protocol):
     def get(self, aggregate_id: str) -> AggregateRevision: ...
@@ -106,6 +133,22 @@ class AggregateRepository(Protocol):
         *,
         expected_revision: int | None,
     ) -> AggregateRevision: ...
+
+
+@runtime_checkable
+class PrivacyPolicyRepository(Protocol):
+    def read(self) -> PrivacyPolicyRecord | None: ...
+
+    def append(
+        self,
+        *,
+        expected_revision: int,
+        revision: int,
+        settings: tuple[PrivacySetting, ...],
+        event: PrivacyAuditEvent,
+    ) -> None: ...
+
+    def append_event(self, event: PrivacyAuditEvent) -> None: ...
 
 
 @runtime_checkable
@@ -135,6 +178,10 @@ __all__ = [
     "AggregateRevisionDraft",
     "AtomicRepositoryEvent",
     "KnowledgeStatus",
+    "PrivacyAuditEvent",
+    "PrivacyPolicyRecord",
+    "PrivacyPolicyRepository",
+    "PrivacySetting",
     "RepositoryConflict",
     "RepositoryNotFound",
     "RepositoryProblem",

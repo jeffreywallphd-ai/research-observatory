@@ -176,6 +176,26 @@ function projectRecoveryAction(value: unknown): value is ProjectRecoveryAction {
   return value === "none" || value === "backup-then-migrate" || value === "backup-then-use-compatible-application";
 }
 
+function privacyNetworkPolicy(value: unknown): value is PrivacyNetworkPolicy {
+  return value === "offline" || value === "metadata-only" || value === "approved-providers";
+}
+
+function remoteModelApproval(value: unknown): value is RemoteModelApproval {
+  return value === "preview-every-task";
+}
+
+function telemetryMode(value: unknown): value is TelemetryMode {
+  return value === "off" || value === "local-diagnostics-only";
+}
+
+function documentRetentionPolicy(value: unknown): value is DocumentRetentionPolicy {
+  return value === "project-lifetime" || value === "review-after-90-days" || value === "review-after-365-days";
+}
+
+function egressEnforcement(value: unknown): value is EgressEnforcement {
+  return value === "deny" || value === "require-task-preview";
+}
+
 function safeReleaseVersion(value: unknown): value is string {
   return typeof value === "string"
     && /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(value)
@@ -264,6 +284,72 @@ export function decodeProjectProjection(value: unknown): ProjectProjection | nul
       return null;
   }
   return candidate as unknown as ProjectProjection;
+}
+
+function decodeDeletionDisclosure(value: unknown): DeletionDisclosure | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "disclosureVersion", "scope", "logicalRemoval", "physicalErasureGuaranteed",
+    "canonicalProjectDataExcluded", "limitations",
+  ])) return null;
+  if (candidate.disclosureVersion !== "secure-deletion-disclosure-v1" || candidate.scope !== "project-cache-only") return null;
+  if (candidate.logicalRemoval !== true || candidate.physicalErasureGuaranteed !== false
+    || candidate.canonicalProjectDataExcluded !== true || !Array.isArray(candidate.limitations)
+    || candidate.limitations.length < 4 || candidate.limitations.length > 8
+    || candidate.limitations.some((item) => !boundedText(item, 1, 240))) return null;
+  return candidate as unknown as DeletionDisclosure;
+}
+
+export function decodePrivacyPolicyProjection(value: unknown): PrivacyPolicyProjection | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "projectId", "revision", "defaultsApplied", "networkPolicy",
+    "remoteModelApproval", "telemetryMode", "logRetentionDays", "documentRetention",
+    "cacheRetentionDays", "egressConsentRecorded", "egressEnforcement", "deletionDisclosure",
+  ])) return null;
+  const disclosure = decodeDeletionDisclosure(candidate.deletionDisclosure);
+  if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)
+    || !integer(candidate.revision, 0, Number.MAX_SAFE_INTEGER)
+    || candidate.defaultsApplied !== (candidate.revision === 0)
+    || !privacyNetworkPolicy(candidate.networkPolicy) || !remoteModelApproval(candidate.remoteModelApproval)
+    || !telemetryMode(candidate.telemetryMode) || !integer(candidate.logRetentionDays, 1, 90)
+    || !documentRetentionPolicy(candidate.documentRetention) || !integer(candidate.cacheRetentionDays, 1, 90)
+    || typeof candidate.egressConsentRecorded !== "boolean" || !egressEnforcement(candidate.egressEnforcement)
+    || disclosure === null) return null;
+  if (candidate.egressConsentRecorded !== (candidate.networkPolicy !== "offline")) return null;
+  if (candidate.egressEnforcement !== (candidate.networkPolicy === "approved-providers" ? "require-task-preview" : "deny")) return null;
+  return { ...candidate, deletionDisclosure: disclosure } as unknown as PrivacyPolicyProjection;
+}
+
+export function decodeCacheClearPreview(value: unknown): CacheClearPreview | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "projectId", "policyRevision", "previewToken", "confirmation", "expiresAt",
+    "itemCount", "byteCount", "deletionDisclosure",
+  ])) return null;
+  const disclosure = decodeDeletionDisclosure(candidate.deletionDisclosure);
+  if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)
+    || !integer(candidate.policyRevision, 0, Number.MAX_SAFE_INTEGER)
+    || typeof candidate.previewToken !== "string" || !/^[0-9a-f]{32}$/.test(candidate.previewToken)
+    || candidate.confirmation !== `clear-cache:${candidate.previewToken}`
+    || typeof candidate.expiresAt !== "string" || !Number.isFinite(Date.parse(candidate.expiresAt))
+    || !integer(candidate.itemCount, 0, 100000) || !integer(candidate.byteCount, 0, Number.MAX_SAFE_INTEGER)
+    || disclosure === null) return null;
+  return { ...candidate, deletionDisclosure: disclosure } as unknown as CacheClearPreview;
+}
+
+export function decodeCacheClearResult(value: unknown): CacheClearResult | null {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, [
+    "schemaVersion", "projectId", "state", "itemCount", "byteCount", "cleanupPending", "deletionDisclosure",
+  ])) return null;
+  const disclosure = decodeDeletionDisclosure(candidate.deletionDisclosure);
+  if (candidate.schemaVersion !== "1.0" || !canonicalProjectId(candidate.projectId)
+    || (candidate.state !== "cleared" && candidate.state !== "cleared-cleanup-pending")
+    || !integer(candidate.itemCount, 0, 100000) || !integer(candidate.byteCount, 0, Number.MAX_SAFE_INTEGER)
+    || typeof candidate.cleanupPending !== "boolean"
+    || candidate.cleanupPending !== (candidate.state === "cleared-cleanup-pending") || disclosure === null) return null;
+  return { ...candidate, deletionDisclosure: disclosure } as unknown as CacheClearResult;
 }
 
 export function decodeOperationPage(value: unknown): OperationPage | null {
@@ -365,6 +451,25 @@ function projectBody(value: ProjectRootRequest): string {
   return JSON.stringify({ root: value.root });
 }
 
+function privacyUpdateBody(command: PrivacyPolicyUpdateRequest): string {
+  if (!projectRoot(command.root) || !integer(command.expectedRevision, 0, Number.MAX_SAFE_INTEGER)
+    || !privacyNetworkPolicy(command.networkPolicy) || !remoteModelApproval(command.remoteModelApproval)
+    || !telemetryMode(command.telemetryMode) || !integer(command.logRetentionDays, 1, 90)
+    || !documentRetentionPolicy(command.documentRetention) || !integer(command.cacheRetentionDays, 1, 90)) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  if ((command.networkPolicy === "offline" && command.egressConsentToken !== null)
+    || (command.networkPolicy !== "offline" && command.egressConsentToken !== "acknowledge-egress-preview-v1")) {
+    throw new Error("RO-CORE-REQUEST-INVALID");
+  }
+  return JSON.stringify({
+    root: command.root, expectedRevision: command.expectedRevision, networkPolicy: command.networkPolicy,
+    remoteModelApproval: command.remoteModelApproval, telemetryMode: command.telemetryMode,
+    logRetentionDays: command.logRetentionDays, documentRetention: command.documentRetention,
+    cacheRetentionDays: command.cacheRetentionDays, egressConsentToken: command.egressConsentToken,
+  });
+}
+
 export function parseOperationEventStream(body: string): readonly OperationProgressEvent[] {
   if (body.length > 1_048_576) throw new Error("RO-CORE-RESPONSE-INVALID");
   if (!body) return [];
@@ -438,6 +543,36 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         body: JSON.stringify({ root: command.root, confirmation: command.confirmation }),
         ifMatch: null, idempotencyKey: null,
       }, decodeProjectProjection);
+    },
+    async privacy(command: ProjectPrivacyRequest): Promise<PrivacyPolicyProjection> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/privacy", body: projectBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodePrivacyPolicyProjection);
+    },
+    async updatePrivacy(command: PrivacyPolicyUpdateRequest): Promise<PrivacyPolicyProjection> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/privacy/update", body: privacyUpdateBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodePrivacyPolicyProjection);
+    },
+    async previewCache(command: CacheClearPreviewRequest): Promise<CacheClearPreview> {
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/privacy/cache/preview", body: projectBody(command),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeCacheClearPreview);
+    },
+    async clearCache(command: CacheClearRequest): Promise<CacheClearResult> {
+      if (!projectRoot(command.root) || typeof command.previewToken !== "string"
+        || !/^[0-9a-f]{32}$/.test(command.previewToken)
+        || command.confirmation !== `clear-cache:${command.previewToken}`) {
+        throw new Error("RO-CORE-REQUEST-INVALID");
+      }
+      return await requestJson(transport, {
+        method: "POST", path: "/projects/privacy/cache/clear",
+        body: JSON.stringify({ root: command.root, previewToken: command.previewToken, confirmation: command.confirmation }),
+        ifMatch: null, idempotencyKey: null,
+      }, decodeCacheClearResult);
     },
     async operations(after: string | null = null, limit = 50): Promise<OperationPage> {
       if (!integer(limit, 1, 100) || (after !== null && !canonicalOperationId(after))) throw new Error("RO-CORE-REQUEST-INVALID");
@@ -519,6 +654,10 @@ def render_typescript(openapi_bytes: bytes) -> bytes:
         "archive_project_projects_archive_post",
         "restore_project_projects_restore_post",
         "delete_project_projects_delete_post",
+        "project_privacy_projects_privacy_post",
+        "update_project_privacy_projects_privacy_update_post",
+        "preview_project_cache_projects_privacy_cache_preview_post",
+        "clear_project_cache_projects_privacy_cache_clear_post",
     }
     if not required.issubset(operation_ids):
         raise ValueError(

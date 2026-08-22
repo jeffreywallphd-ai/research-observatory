@@ -115,3 +115,7 @@ The native-supervisor application lock, local profile, idle policy, protected
 action cancellation, same-user reauthentication, and explicit residual threat
 are documented in [`application-lock.md`](application-lock.md) and governed by
 ADR-0018.
+The project-scoped offline/telemetry defaults, informed egress-consent boundary,
+append-only retention policy, and preview-bound logical cache cleanup are
+documented in [`privacy-controls.md`](privacy-controls.md) and governed by
+ADR-0019.

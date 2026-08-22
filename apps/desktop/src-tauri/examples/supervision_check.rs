@@ -387,6 +387,8 @@ fn main() {
                         "operations.cancel",
                         "operations.events",
                         "operations.read",
+                        "privacy.cache-cleanup",
+                        "privacy.policy",
                         "projects.lifecycle",
                         "runtime.contract",
                         "runtime.status"
