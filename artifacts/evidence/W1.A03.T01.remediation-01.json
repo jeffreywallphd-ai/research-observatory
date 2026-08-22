@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A03.T01",
+  "commit": "0362cfe72c84f167338329490f6799ba9f84a808",
+  "baseCommit": "1127d72f29fbe407f3aaf99dd1f87d1aea60f18e",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/W1.A03.T01.json",
+    "sha256": "54a90061e9854a6cf52df415ec9f058ffb664e42a1193e47b35c7abbb7695e70",
+    "commit": "1127d72f29fbe407f3aaf99dd1f87d1aea60f18e",
+    "reason": "Bounded R02 remediation for W1.A03.T01-R01-F01 and W1.A03.T01-R01-F02."
+  },
+  "changedFiles": [
+    "artifacts/evidence/W1.A03.T01.json",
+    "artifacts/evidence/W1.A03.T01.review-R01.json",
+    "artifacts/evidence/task-recovery/CAP-02.S04.T03.json",
+    "docs/automation/project-automation-guide.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0002.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_task_recovery.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "All 101 exact-recovery, schema, task-controller, and UI-gate tests passed in 165.389 seconds on candidate 0362cfe72c84f167338329490f6799ba9f84a808. The matrix includes real isolated-filesystem lawful recovery and competing-writer CAS tests, generic W1.A03 packet-integrity mutation, full T03 contract mutation, the exact historical manifest, and all retained controller denial paths."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+      "exitCode": 0,
+      "result": "The exact historical base-to-candidate UI range passed with zero errors and retained approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract",
+      "exitCode": 0,
+      "result": "All 9 risk-selected product privacy and contract tests passed in 0.636 seconds across consent, default-local policy, append-only revisions, restart safety, cache confirmation, redirect denial, canonical-data exclusion, strict profiles, and deletion non-overclaim."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 119 governed Python files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The canonical ledger validated with 20 capabilities, 117 slices, 359 tasks, and 12 release gates, including generic immutable packet checks for both packet-backed amendments."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . validate GRR-0001 --require-approved",
+      "exitCode": 0,
+      "result": "ECR-0002/W1.A03 and predecessor ECR-0001/W1.A02 remained approved and history-bound; GRR-0001 remained valid with independently approved bootstrap, ACTIVE hold, and W1.A03 as the next authority."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 148 planning review pages passed and generated backlog views matched the authoritative ledger without changes."
+    },
+    {
+      "command": "git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py",
+      "exitCode": 0,
+      "result": "The exact T03 product, privacy-contract, UI-evidence, approved-reference implementation, and risk-selected test bytes remained unchanged from the historical product candidate."
+    },
+    {
+      "command": "git show --check --stat --oneline 0362cfe72c84f167338329490f6799ba9f84a808",
+      "exitCode": 0,
+      "result": "The strict-descendant remediation candidate passed Git whitespace hygiene and changes only the recovery manifest, controller/schema/guide, and directly affected recovery tests."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The recovery controller still binds only CAP-02.S04.T03, HOLD-W1-GRR-0001, W1.A03, and the exact approved base, foundation, candidate, block, and pause commits.",
+        "W1.A03.T01-R01-F01 is remediated at the authority boundary: every packet-backed amendment now validates its live immutable task inventory against its approved packet and Git blob, and command_recover repeats W1.A03 packet integrity before state checks and immediately before mutation."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "command_recover remains denied until independently approved ADOPTED W1.A03, a matching security checkpoint, RELEASED HOLD-W1-GRR-0001, explicitly resumed ACTIVE W1 scope wave, matching lease/profile/platform/base, and the exact unrecovered BLOCKED T03 state.",
+        "The production CLI remains denied by the currently ACTIVE hold; no amendment, hold, Wave, task, slice, or gate lifecycle state is changed by this remediation."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The canonical recovery manifest now hashes the complete historical T03 task state at both block and pause records, not only mutable execution fields; both records resolve to dfafcb2ff9193ead171756c3e461d10a8f4df805024f9995930193b95d576c80.",
+        "The manifest continues to bind the exact task, branch, authority chain, five commits, UI contract/reference identity, 44 Git-derived paths, two unique executable checks, and zero unverified items."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Git existence, strict ancestry, direct block/pause parents, exact base-to-candidate paths, protected candidate bytes, historical full-state hashes, UI contract bytes, approved reference identity, UI gate, and privacy checks remain independently recomputed.",
+        "The validator additionally compares the live target's immutable identity, objective, deliverables, dependencies, acceptance criteria, verification inventory, experience contract, and remaining static fields with the exact pause record."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The persisted recovery projection retains every field of the original T03 blocked task as a closed-schema original_blocked_state, including its complete static contract, experience reference, blocker, evidence, review, and execution state.",
+        "Semantic validation rederives both the full original state and immutable current contract from Git history, while append-only recovery history prevents later projection replacement."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "W1.A03.T01-R01-F02 is remediated by an isolated-filesystem test that invokes command_recover through real persist, save_validated, exclusive lock, expected-byte hash, temporary file, fsync, and atomic replace; a save_atomic spy confirms one persistence call.",
+        "The written backlog changes only CAP-02.S04.T03 from BLOCKED to IN_PROGRESS, retains the full original block, and leaves ordinary evidence/review plus amendment, Wave, slice, and release-gate projections unchanged."
+      ]
+    },
+    {
+      "criterion_index": 7,
+      "evidence": [
+        "A genuine competing writer changes isolated backlog bytes after recovery preflight but before persistence; the real expected_sha256 guard rejects the stale writer and leaves the competing bytes untouched.",
+        "Real adversarial mutations to W1.A03.T01.title and CAP-02.S04.T03.acceptance_criteria now fail through packet integrity and historical-boundary checks without persistence. All retained wrong task/authority/state/commit/path/hash/reference, dirty, duplicate, and failed-check denials pass."
+      ]
+    },
+    {
+      "criterion_index": 8,
+      "evidence": [
+        "Recovery still stops only at T03 IN_PROGRESS and cannot attach ordinary evidence or approve T03, CAP-02.S04, W1, or G1.",
+        "A new ordinary candidate/evidence submission, independent privacy/task review, slice review, complete W1 qualification, and human G1 approval remain mandatory after lawful recovery."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This R02 remediation is bounded to W1.A03.T01-R01-F01 and W1.A03.T01-R01-F02. The incremental risks are amendment-task contract substitution, target-task static-contract substitution, an incomplete persisted original state, false one-CAS claims, and stale-writer overwrite. The 101-test focused matrix includes real packet and target mutation denials plus real isolated-filesystem persist/CAS execution; exact UI/privacy replay, all governed Python quality, backlog/ECR/GRR authority checks, generated view checks, protected-product diff, and Git hygiene cover the unchanged surrounding risk surface. The persistence fixture simulates already-approved lifecycle states and patches broad semantic validation and expensive recomputation while exercising the real command mutation and complete atomic persistence stack; separate tests exercise the real packet, Git-history, manifest, schema, UI, and privacy validators. No product, dependency, migration, packaging, or approved-reference bytes changed.",
+    "selectedCommandIds": [
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:backlog"
+    ],
+    "deferred": [
+      "Independent bounded R02 task review, amendment exit review, and the commit-bound control/security adoption checkpoint remain the next W1.A03 gates.",
+      "The complete W1 affected/full deployment matrix, including packaging, accessibility, migration, restart, recovery, security, performance, and Windows release paths, remains due once at W1 exit after ordinary T03 completion and all remaining W1 slices."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-remediation-review",
+    "requiredGate": "bounded-independent-control-security-review",
+    "openFindingIds": [
+      "W1.A03.T01-R01-F01",
+      "W1.A03.T01-R01-F02"
+    ],
+    "note": "Replay W1.A03.T01-R01-F01 and W1.A03.T01-R01-F02 against 1127d72f29fbe407f3aaf99dd1f87d1aea60f18e..0362cfe72c84f167338329490f6799ba9f84a808. Confirm generic W1.A03 packet integrity, exact full-state T03 binding, persisted contract revalidation, the real one-write atomic transition, genuine stale-writer byte preservation, unchanged protected product/reference bytes, and no direct evidence, review, slice, Wave, or G1 approval."
+  }
+}

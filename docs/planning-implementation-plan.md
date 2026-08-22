@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5ae6c993f87787966cf23119499164a6b97ea05c65e8b065e41f2bb78ab65868
+source_sha256: dac04bcfc9a4e4463719ade7ee36d0c4a8fbdb24d1a991f567a1bb15ee5497b5
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -803,7 +803,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A03.T01 - Exact T03 candidate-lineage and evidence recovery
 
-**Status / owner / review:** `IN_PROGRESS` / codex / b00-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex / b00-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A03.B00`
 
@@ -830,6 +830,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/W1.A03.T01.json` at `1127d72f29fbe407f3aaf99dd1f87d1aea60f18e`
+- `artifacts/evidence/W1.A03.T01.remediation-01.json` at `0362cfe72c84f167338329490f6799ba9f84a808`
 
 #### Review history — W1.A03.T01
 
@@ -866,7 +867,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `15eaaa895273188e63a333cf5cb2f9a359a2b879764d6a7b5c850ddc6955ac22`
+
+- Candidate / base / branch: `0362cfe72c84f167338329490f6799ba9f84a808` / `1127d72f29fbe407f3aaf99dd1f87d1aea60f18e` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-22T20:04:57+00:00`
+- Evidence: `artifacts/evidence/W1.A03.T01.remediation-01.json` / `6a8dbbfe7501822bbee5aa522e1c9e6c3b23e385f1ee8c18a6588e71ae7d8cfe` / `0362cfe72c84f167338329490f6799ba9f84a808`
+- Acceptance-criteria SHA-256: `fa97c4c3ff3bc80344d9faf06a95f681c23b44c844f2b68d451753df841930d0`
+- Verification-selection SHA-256: `e23424b136e4ff95ff20d1df322d96028dbe2299d2e76dd5f6ae40f2db796e3d`
+- Changed paths: `artifacts/evidence/W1.A03.T01.json`, `artifacts/evidence/W1.A03.T01.review-R01.json`, `artifacts/evidence/task-recovery/CAP-02.S04.T03.json`, `docs/automation/project-automation-guide.md`, `docs/planning-implementation-plan.md`, `planning/backlog.schema.json`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0002.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_task_recovery.py`, `tools/taskctl.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate`, `.venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9`, `.venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract`, `.venv\Scripts\python.exe tools\quality_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\Scripts\python.exe tools\recoveryctl.py --repo . validate GRR-0001 --require-approved`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py`, `git show --check --stat --oneline 0362cfe72c84f167338329490f6799ba9f84a808`
+- Deferred checks: `Independent bounded R02 task review, amendment exit review, and the commit-bound control/security adoption checkpoint remain the next W1.A03 gates.`, `The complete W1 affected/full deployment matrix, including packaging, accessibility, migration, restart, recovery, security, performance, and Windows release paths, remains due once at W1 exit after ordinary T03 completion and all remaining W1 slices.`
+- Selection rationale: This R02 remediation is bounded to W1.A03.T01-R01-F01 and W1.A03.T01-R01-F02. The incremental risks are amendment-task contract substitution, target-task static-contract substitution, an incomplete persisted original state, false one-CAS claims, and stale-writer overwrite. The 101-test focused matrix includes real packet and target mutation denials plus real isolated-filesystem persist/CAS execution; exact UI/privacy replay, all governed Python quality, backlog/ECR/GRR authority checks, generated view checks, protected-product diff, and Git hygiene cover the unchanged surrounding risk surface. The persistence fixture simulates already-approved lifecycle states and patches broad semantic validation and expensive recomputation while exercising the real command mutation and complete atomic persistence stack; separate tests exercise the real packet, Git-history, manifest, schema, UI, and privacy validators. No product, dependency, migration, packaging, or approved-reference bytes changed.
+- Prior round / replayed open findings: `R01` / `W1.A03.T01-R01-F01`, `W1.A03.T01-R01-F02`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-22T19:47:59+00:00`
 
