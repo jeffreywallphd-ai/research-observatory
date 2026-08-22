@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-review",
+  "recoveryRequestId": "GRR-0001",
+  "supplementId": "GRR-0001.S01",
+  "bootstrapUnit": "GRR-0001.B01",
+  "attemptId": "R02",
+  "candidateCommit": "56cedf07906bbb157d374806e73092b943b41103",
+  "reviewedStateCommit": "04c8a12ab20f3618e9904c11fb4deaa127064be8",
+  "reviewer": "b01-independent-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0001.B01.remediation-01.evidence.json",
+    "sha256": "439c21c799d297bcc04da757b8ce004b2635f3c2f91bf7994f1b6123b94e992d"
+  },
+  "notes": "APPROVED after bounded R02 remediation review. The exact strict-descendant candidate, frozen R02 REVIEW state, evidence path/hash/base/candidate/branch and nine-path scope, immutable R01 ledger, and B00 R01-R05 projection are exact. The added isolated-Git fixture calls the real B01 submission and review controllers through R01 CHANGES_REQUESTED, strict-descendant evidence-bound R02 resubmission, explicit prior-finding closure, and APPROVED disposition. It proves byte-stable denial for wrong actor and self-review, stale candidate, wrong evidence and review bindings, unsafe paths, dirty tracked state, stale backlog compare-and-swap, forged reviewed-state binding, invalid or duplicate findings and closures, retained blocking findings, and evidence or ledger hash tamper. The fixture passed independently in 307.895 seconds. Four focused ownership, projection, shared-history, and path-safety tests passed in 79.520 seconds. Backlog, GRR-0001, GRR-0001.S01, ECR-0002, quality, generated views, review-site, and diff-hygiene checks pass. The exact read-only projection remains only W1.A03.T01 with W1 PAUSED, CAP-02.S04.T03 BLOCKED, HOLD-W1-GRR-0001 ACTIVE, no activation or claim, and independent B01 approval as the authorization gate.",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GRR-0001.B01-R01-F01",
+      "notes": "Closed. `test_supplement_submission_review_remediation_and_adversarial_lifecycle` now executes the distinct B01 submission, adverse R01 review, strict-descendant R02 resubmission, closure, approval, and requested hostile lifecycle matrix against an isolated Git repository. The independent frozen-state replay passed, making the remediation evidence's lifecycle-test claims truthful."
+    }
+  ]
+}
