@@ -131,6 +131,7 @@
       "planning/governance-recovery-requests/README.md",
       "planning/governance-recovery-requests/governance-recovery-approval.schema.json",
       "planning/governance-recovery-requests/governance-recovery-evidence.schema.json",
+      "planning/governance-recovery-requests/governance-recovery-request.v2.schema.json",
       "planning/review-site/**",
       "planning/status-summary.md",
       "quality-scope.json",
@@ -144,6 +145,8 @@
     ],
     "requiredOutcomes": [
       "A minimal recovery controller validates generic versioned GRR packets, exact independent review, explicit human approval, bounded bootstrap evidence, append-only remediation, and terminal disposition.",
+      "The recovery controller semantically binds recovery, hold, target-Wave, base-Wave, consecutive unique predecessor amendment, bootstrap, post-bootstrap ECR/amendment, and proposed-task identity prefixes; structural schema validity alone never authorizes execution.",
+      "Every packet, approval, evidence, ledger, and authorized-scope path is canonical repository-relative POSIX, resolves inside its designated repository directory, and is rejected for absolute, backslash, dot-segment, traversal, redirected-parent, symlink, junction, or other escape behavior.",
       "A controller-enforced hold denies all executable Wave/task/amendment/gate and older-reader paths until exact release conditions are satisfied.",
       "ECR validation supports generic subsequent identities and an ordered predecessor authority chain without changing ECR-0001, W1.A01, W1.A02, or their Git objects.",
       "A compare-and-swap append operation can add a subsequent approved amendment but cannot replace, reorder, duplicate, fork, or silently migrate an existing record.",
@@ -162,22 +165,25 @@
   "postBootstrap": {
     "requiredChangeRequestId": "ECR-0002",
     "requiredAmendmentId": "W1.A03",
-    "authorizedTaskIds": ["W1.A03.T01"],
+    "requiredProposedTaskIds": ["W1.A03.T01"],
+    "postBootstrapExecutionAuthority": false,
     "ordinaryWaveResumeAuthorized": false
   },
   "acceptanceCriteria": [
     "The exact W1 base plus ordered W1.A01/W1.A02 authority, hashes, commits, task outcomes, and adoption history remain unchanged.",
     "Generic recovery and ECR schemas accept subsequent well-bound identities and reject mismatched Wave, amendment, bootstrap, task, file, review, and predecessor identities.",
+    "The semantic validator rejects cross-Wave identities, nonconsecutive or duplicate amendment predecessors, mismatched GRR/hold/bootstrap/ECR/task prefixes, and any absolute, backslash, dot-segment, traversal, redirected-parent, symlink, junction, or resolved-path escape.",
     "Unresolved recovery/ECR holds fail closed across scheduler, start, resume, claim, reopen, evidence, submit, review, amendment, gate, generated handoff, and older-reader paths.",
     "Dirty, stale, duplicate, forked, reordered, wrong-hash, missing-review, and self-approved packets fail atomically without ledger or file mutation.",
     "Second and third GRR/ECR/amendment fixtures append successfully without replacing or rewriting predecessor authority.",
     "Bootstrap review and remediation history is append-only and exact-commit bound, and no product or ordinary W1 execution occurs.",
-    "The repaired ordinary lane can freeze ECR-0002/W1.A03 but cannot approve, materialize, activate, adopt, or resume it without its separate required reviews and human approval."
+    "The repaired ordinary lane can freeze ECR-0002/W1.A03 but GRR-0001 grants zero approval, materialization, activation, claim, execution, adoption, or resume authority to that amendment or its proposed tasks."
   ],
   "verificationObligations": [
     "Validate this packet against its exact generic Draft 2020-12 schema and verify every listed file SHA-256.",
     "Verify every authority commit exists on the current branch, every approval/evidence blob matches its recorded hash and introduction commit, and ordered A01/A02 state is unchanged.",
     "Run focused recovery, planctl, taskctl, backlog schema, generated-view, review-page, and quality tests including hostile second/third identity fixtures.",
+    "Probe cross-Wave and duplicate identities plus absolute, backslash, dot-segment, traversal, symlink, junction, and redirected-parent paths and prove atomic denial before any read or write escapes the designated repository directory.",
     "Independently review GRR-0001 at its exact clean packet commit before human approval and independently review B00 before ordinary ECR use.",
     "Defer the UI-gate cumulative pass/adversarial suite, T03 product qualification, complete W1 matrix, local-main integration, and G1 review to their separately authorized gates."
   ],
@@ -199,20 +205,32 @@
     "exactCommitRequired": true,
     "selfApprovalDenied": true
   },
+  "reviewHistory": [
+    {
+      "attemptId": "R01",
+      "candidateCommit": "72d58561e24b5b7734681202718fb29c3bc41aea",
+      "reviewer": "b00-independent-reviewer",
+      "result": "changes-requested",
+      "ledger": {
+        "path": "planning/governance-recovery-requests/GRR-0001.review-R01.json",
+        "sha256": "291342cf35dfcfe286230dc496ce47537e62f02208cb8448f7109116a29b4064"
+      }
+    }
+  ],
   "files": [
     {
       "path": "planning/governance-recovery-requests/GRR-0001.md",
-      "sha256": "e70241c93df155da699c35753e55216f653c5f7579b247c5164ef277c9fa3789",
+      "sha256": "9598f07e8d6118011955cabc9ab517aefff36a551bc1752a631f1313f283caee",
       "role": "canonical-proposal"
     },
     {
       "path": "planning/governance-recovery-requests/governance-recovery-request.schema.json",
-      "sha256": "74190f45315d239e0e8502e1929a778a5cc6a83d498df5b3ddd2acb98dbb0a7f",
+      "sha256": "6ce741e998be9068e720e0bfed9fe32f996f055522cda47e41763804ddd711b6",
       "role": "proposal-schema"
     },
     {
       "path": "planning/governance-recovery-requests/GRR-0001-review.html",
-      "sha256": "32aba666d9f39da39266e188500ef353b13f77f74a297233bfe95784bfd56eb2",
+      "sha256": "de1272fbc21f86f163cdd55e69525a775e82667a92adbcda75df36aa6ed40de3",
       "role": "human-review"
     }
   ]

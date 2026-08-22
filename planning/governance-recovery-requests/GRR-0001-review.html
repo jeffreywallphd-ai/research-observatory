@@ -27,7 +27,7 @@
     <h2>Decision</h2>
     <div class="candidate recommended">
       <h3>1. Approve bounded recovery bootstrap (recommended)</h3>
-      <p>Authorize only GRR-0001.B00 to install a reusable recovery kernel, repair append-only ECR chaining, and enforce the hold. Require an ordinary, separately approved ECR-0002/W1.A03 for the UI-gate correction.</p>
+      <p>Authorize only GRR-0001.B00 to install a reusable recovery kernel, repair append-only ECR chaining, and enforce the hold. Require an ordinary, separately approved ECR-0002/W1.A03 for the UI-gate correction. GRR-0001 grants no A03 task approval or execution authority.</p>
     </div>
     <div class="candidate">
       <h3>2. Defer</h3>
@@ -50,6 +50,10 @@
 
     <h2>Scope boundary</h2>
     <p>GRR-0001.B00 is governance/control-only. It cannot change product code, the UI gate, task outcomes, acceptance criteria, verification thresholds, UI references, W1 approval, release gates, or prior Git objects. It cannot resume W1.</p>
+    <p>The controller must enforce cross-identity and consecutive-predecessor binding and canonical repository-relative POSIX paths with resolved containment and symlink/junction/redirect escape denial.</p>
+
+    <h2>Independent review history</h2>
+    <p>R01 at <code>72d58561e24b5b7734681202718fb29c3bc41aea</code> returned changes requested. The strict-descendant packet removes implied A03 authority and adds the required semantic identity and safe-path boundaries. A fresh exact-commit review is still required.</p>
 
     <h2>Approval readiness</h2>
     <p class="warning">Do not approve until the exact packet commit and independent control/security disposition are shown. A general “proceed” or preparation authorization is not bootstrap approval.</p>
