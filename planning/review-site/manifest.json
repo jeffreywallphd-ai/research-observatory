@@ -7740,7 +7740,7 @@
         "W1.A03 adoption records a bound control/security checkpoint before the recovery hold is released."
       ],
       "bootstrap_id": "GRR-0001.B00",
-      "bootstrap_status": "CHANGES_REQUESTED",
+      "bootstrap_status": "REVIEW",
       "page": "recoveries/GRR-0001.html"
     }
   ]
