@@ -1,0 +1,219 @@
+{
+  "$schema": "./governance-recovery-request.schema.json",
+  "schemaVersion": "1.0-recovery-proposal",
+  "documentType": "governance-recovery-request-packet",
+  "recoveryRequestId": "GRR-0001",
+  "title": "Restore reusable append-only governance recovery and ECR controls",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "control-plane-recovery",
+  "authorityChain": {
+    "waveBase": {
+      "waveId": "W1",
+      "packetCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+      "approvalRecordCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W1.A01",
+        "changeRequestId": null,
+        "status": "ADOPTED",
+        "packetCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+        "approvalRecord": {
+          "path": "planning/wave-amendment-approvals/W1.A01.json",
+          "sha256": "2eaa44d91f4dae202c85f2c2984430445df149da08a3e8df2f5236af2a139bde",
+          "introductionCommit": "a20685b90532c60e0286e5e05f68b46c613e935d"
+        },
+        "effectiveStateCommit": "305e7444d632800c16cd9e0a7c41ae7b5f8abf93",
+        "adoptionEvidence": null
+      },
+      {
+        "id": "W1.A02",
+        "changeRequestId": "ECR-0001",
+        "status": "ADOPTED",
+        "packetCommit": "57d73bcf314ea6aab38b8056ead118d6ef270921",
+        "approvalRecord": {
+          "path": "planning/wave-amendment-approvals/W1.A02.json",
+          "sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
+          "introductionCommit": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029"
+        },
+        "effectiveStateCommit": "24277ae5552930de558290f7c51255a73119ee1a",
+        "adoptionEvidence": {
+          "path": "artifacts/evidence/W1.A02.adoption-R04.json",
+          "sha256": "a43890b792808b848e4dd16bbd0ba8bc59aa2fc71a9fb08d33a0284e5da2a88f",
+          "commit": "996a6479dd7aae3422f73593097134b3b12a75fc"
+        }
+      }
+    ]
+  },
+  "frozenBoundary": {
+    "branch": "codex/w1-windows-local-runtime",
+    "taskId": "CAP-02.S04.T03",
+    "taskStatus": "BLOCKED",
+    "taskCandidateCommit": "59079efccc122a7d56a9f18efc20030851bf32a9",
+    "taskFoundationCommit": "461faf2870786609dea5a8e5214df380843329bb",
+    "taskBlockRecordCommit": "1c1d9ba427a55024687a62ca0c364acaccdbb7e2",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "wavePauseCategory": "human-decision",
+    "wavePauseRecordCommit": "c7d543136fcd75c8f93dc8e669e59d54de433c02",
+    "reviewProjectionCommit": "761dff4af4dfde04547f1c28037002efada90f3c"
+  },
+  "triggerEvidence": [
+    {
+      "id": "GRR-0001-F01",
+      "severity": "critical",
+      "summary": "The adopted ECR lane cannot represent or append a subsequent W1.A03 authority record.",
+      "reproduction": [
+        "Inspect planning/enabler-change-requests/enabler-change-request.schema.json: authorizedTaskIds is constant W1.A02.T01/T02 and taskInventory accepts only W1.A02.T01/T02.",
+        "Inspect taskctl amendment bootstrap-submit: the one-time bootstrap rejects an existing control plane and no command appends a new approved amendment definition.",
+        "A hypothetical ECR-0002/W1.A03 packet fails the canonical ECR schema before packet review or approval can be recorded."
+      ],
+      "requiredRecovery": "Install generic versioned GRR/ECR schemas and an append-only authority operation that preserves and revalidates every predecessor."
+    },
+    {
+      "id": "GRR-0001-F02",
+      "severity": "high",
+      "summary": "The human-decision Wave pause is not fail-closed in executable start/resume scheduling paths.",
+      "reproduction": [
+        "At paused clean state 761dff4, taskctl next advertises a Wave start command instead of a stopped recovery handoff.",
+        "approved_unbootstrapped_amendment returns none and blocking_wave_amendments is empty because ECR-0002 cannot be represented.",
+        "command_wave_resume does not deny the human-decision pause category or the recorded recovery reason."
+      ],
+      "requiredRecovery": "Add a generic immutable hold recognized by every Wave, task, amendment, scheduler, gate, and legacy-reader transition before any recovery or ECR execution."
+    },
+    {
+      "id": "GRR-0001-F03",
+      "severity": "high",
+      "summary": "The cumulative UI gate contradicts its accepted additive pre-UI quality-inventory rule.",
+      "reproduction": [
+        "additive_preimplementation_quality_scope_errors returns an empty error list for exact commit 461faf2870786609dea5a8e5214df380843329bb.",
+        "Validating bfb8797398707bece9e0662c0d995fabaced9979 through 59079efccc122a7d56a9f18efc20030851bf32a9 fails solely because no unrelated late protected hardening commit exists.",
+        "The regression introduced at 53376b7e0c038f013a7bf597d5ed9a7d8633fcf5 exercises the helper but not the cumulative foundation-then-UI range."
+      ],
+      "requiredRecovery": "After the recovery kernel is approved, route the UI-gate correction and exact T03 lineage recovery through separately approved ECR-0002/W1.A03."
+    }
+  ],
+  "controlHold": {
+    "id": "HOLD-W1-GRR-0001",
+    "currentEnforcement": "governance-and-paused-ledger-only",
+    "commandsDenied": [
+      "Wave start or resume",
+      "ordinary Wave task claim, reopen, evidence attachment, submission, or review transition",
+      "unapproved amendment bootstrap, materialization, activation, disposition, or adoption",
+      "release-gate approval or local-main integration represented as approval",
+      "direct UI-gate or product-code change outside a later approved ECR"
+    ],
+    "releaseConditions": [
+      "GRR-0001 is independently reviewed and explicitly approved at one immutable commit.",
+      "GRR-0001.B00 is implemented within its exact path/outcome boundary and independently approved.",
+      "The repaired controller appends and validates ECR-0002/W1.A03 without rewriting W1.A01 or W1.A02.",
+      "W1.A03 is separately approved, completed, independently exit-reviewed, and adopted with a control/security checkpoint.",
+      "An explicit ordinary W1 resume and controlled T03 recovery occur after adoption."
+    ]
+  },
+  "bootstrapUnit": {
+    "id": "GRR-0001.B00",
+    "kind": "one-time-self-hosting-governance-recovery",
+    "exceptionReason": "The adopted ECR validator and controller cannot represent the subsequent amendment required to repair themselves, while their resume boundary is not fail-closed.",
+    "authorizedPaths": [
+      "AGENTS.md",
+      "docs/automation/**",
+      "docs/governance/**",
+      "docs/planning-implementation-plan.md",
+      "planning/README.md",
+      "planning/backlog.schema.json",
+      "planning/backlog.yaml",
+      "planning/enabler-change-requests/README.md",
+      "planning/enabler-change-requests/enabler-change-request.v2.schema.json",
+      "planning/governance-recovery-approvals/**",
+      "planning/governance-recovery-requests/README.md",
+      "planning/governance-recovery-requests/governance-recovery-approval.schema.json",
+      "planning/governance-recovery-requests/governance-recovery-evidence.schema.json",
+      "planning/review-site/**",
+      "planning/status-summary.md",
+      "quality-scope.json",
+      "tests/foundation/**",
+      "tools/backlog_views.py",
+      "tools/plan_review_check.py",
+      "tools/plan_review_site.py",
+      "tools/planctl.py",
+      "tools/recoveryctl.py",
+      "tools/taskctl.py"
+    ],
+    "requiredOutcomes": [
+      "A minimal recovery controller validates generic versioned GRR packets, exact independent review, explicit human approval, bounded bootstrap evidence, append-only remediation, and terminal disposition.",
+      "A controller-enforced hold denies all executable Wave/task/amendment/gate and older-reader paths until exact release conditions are satisfied.",
+      "ECR validation supports generic subsequent identities and an ordered predecessor authority chain without changing ECR-0001, W1.A01, W1.A02, or their Git objects.",
+      "A compare-and-swap append operation can add a subsequent approved amendment but cannot replace, reorder, duplicate, fork, or silently migrate an existing record.",
+      "Status and review pages provide a decision-complete stopped-recovery handoff with packet, authority, alternatives, and exact next approval or resume condition.",
+      "Focused tests prove second and third GRR/ECR/amendment identities, cross-field identity binding, stale and dirty denial, self-review denial, predecessor preservation, older-reader denial, and atomic failure behavior.",
+      "B00 receives an independent control/security disposition before ECR-0002 is prepared or appended."
+    ],
+    "prohibitedOutcomes": [
+      "No product/runtime, UI implementation, UI reference, or tools/ui_change_gate.py change.",
+      "No change to task acceptance criteria, verification thresholds, canonical full profiles, completed evidence/reviews, W1 approval, or release-gate state.",
+      "No rewrite, deletion, or replacement of W1 base authority, W1.A01, W1.A02, their approvals, reviews, adoption evidence, or prior Git objects.",
+      "No ordinary Wave task claim, T03 reopen/submission, W1 resume, G1 approval, local-main integration, or remote push.",
+      "No force, override, bypass, skip-review, or unbounded emergency execution option."
+    ]
+  },
+  "postBootstrap": {
+    "requiredChangeRequestId": "ECR-0002",
+    "requiredAmendmentId": "W1.A03",
+    "authorizedTaskIds": ["W1.A03.T01"],
+    "ordinaryWaveResumeAuthorized": false
+  },
+  "acceptanceCriteria": [
+    "The exact W1 base plus ordered W1.A01/W1.A02 authority, hashes, commits, task outcomes, and adoption history remain unchanged.",
+    "Generic recovery and ECR schemas accept subsequent well-bound identities and reject mismatched Wave, amendment, bootstrap, task, file, review, and predecessor identities.",
+    "Unresolved recovery/ECR holds fail closed across scheduler, start, resume, claim, reopen, evidence, submit, review, amendment, gate, generated handoff, and older-reader paths.",
+    "Dirty, stale, duplicate, forked, reordered, wrong-hash, missing-review, and self-approved packets fail atomically without ledger or file mutation.",
+    "Second and third GRR/ECR/amendment fixtures append successfully without replacing or rewriting predecessor authority.",
+    "Bootstrap review and remediation history is append-only and exact-commit bound, and no product or ordinary W1 execution occurs.",
+    "The repaired ordinary lane can freeze ECR-0002/W1.A03 but cannot approve, materialize, activate, adopt, or resume it without its separate required reviews and human approval."
+  ],
+  "verificationObligations": [
+    "Validate this packet against its exact generic Draft 2020-12 schema and verify every listed file SHA-256.",
+    "Verify every authority commit exists on the current branch, every approval/evidence blob matches its recorded hash and introduction commit, and ordered A01/A02 state is unchanged.",
+    "Run focused recovery, planctl, taskctl, backlog schema, generated-view, review-page, and quality tests including hostile second/third identity fixtures.",
+    "Independently review GRR-0001 at its exact clean packet commit before human approval and independently review B00 before ordinary ECR use.",
+    "Defer the UI-gate cumulative pass/adversarial suite, T03 product qualification, complete W1 matrix, local-main integration, and G1 review to their separately authorized gates."
+  ],
+  "rollback": [
+    "Before exact human approval, reject or defer GRR-0001 while retaining its immutable proposal; W1 and T03 remain paused/blocked.",
+    "During B00, any failed validation or review preserves the hold and requires append-only remediation with a strict-descendant candidate and fresh independent disposition.",
+    "After approved B00 but before ECR-0002 approval, withdraw or defer the ordinary ECR without releasing the hold or resuming W1.",
+    "Never roll back by deleting a GRR, approval, finding, amendment, evidence record, checkpoint, or Git object."
+  ],
+  "nonGoals": [
+    "No alternate product-delivery lane or general-purpose emergency override.",
+    "No UI-gate correction, T03 code change, T03 approval, W1 qualification, G1 approval, local-main merge, or remote push.",
+    "No weakening of independent review, human approval, evidence binding, security/privacy review, or complete Wave-exit qualification.",
+    "No cloud, external service, credential, hardware, deployment, benchmark, or researcher-data change."
+  ],
+  "approvalRequirements": {
+    "independentReview": "control-and-security",
+    "humanApproval": "explicit-repository-owner",
+    "exactCommitRequired": true,
+    "selfApprovalDenied": true
+  },
+  "files": [
+    {
+      "path": "planning/governance-recovery-requests/GRR-0001.md",
+      "sha256": "e70241c93df155da699c35753e55216f653c5f7579b247c5164ef277c9fa3789",
+      "role": "canonical-proposal"
+    },
+    {
+      "path": "planning/governance-recovery-requests/governance-recovery-request.schema.json",
+      "sha256": "74190f45315d239e0e8502e1929a778a5cc6a83d498df5b3ddd2acb98dbb0a7f",
+      "role": "proposal-schema"
+    },
+    {
+      "path": "planning/governance-recovery-requests/GRR-0001-review.html",
+      "sha256": "32aba666d9f39da39266e188500ef353b13f77f74a297233bfe95784bfd56eb2",
+      "role": "human-review"
+    }
+  ]
+}
