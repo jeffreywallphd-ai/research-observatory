@@ -57,7 +57,7 @@ PLATFORMS = {
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
 CAMPAIGN_SCOPES = {"wave", "amendment-hold", "capability-wave"}  # capability-wave is historical only.
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
-CONTROL_TOOL_REVISION = 5
+CONTROL_TOOL_REVISION = 6
 AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
 EXACT_T03_RECOVERY = {
     "task_id": "CAP-02.S04.T03",
@@ -264,6 +264,15 @@ def recovery_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]
                 for attempt in (supplement.get("bootstrap") or {}).get("attempts", [])
             )
     return snapshot
+
+
+def released_recovery_hold_snapshot(data: dict[str, Any]) -> dict[str, str]:
+    """Freeze every terminal recovery hold as one immutable record."""
+    return {
+        str(hold["id"]): json.dumps(hold, sort_keys=True, separators=(",", ":"))
+        for hold in (data.get("control_plane") or {}).get("recovery_holds", [])
+        if hold.get("status") == "RELEASED"
+    }
 
 
 def task_recovery_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
@@ -482,6 +491,7 @@ def save_validated(
     expected_task_review_history: dict[str, tuple[str, ...]] | None = None,
     expected_wave_checkpoint_history: dict[str, tuple[str, ...]] | None = None,
     expected_recovery_history: dict[str, tuple[str, ...]] | None = None,
+    expected_released_recovery_holds: dict[str, str] | None = None,
     expected_task_recovery_history: dict[str, tuple[str, ...]] | None = None,
     expected_frozen_waves: dict[str, str] | None = None,
     expected_frozen_wave_bases: dict[str, str] | None = None,
@@ -522,6 +532,14 @@ def save_validated(
             current = current_history.get(hold_id)
             if current is None or current[: len(prior)] != prior:
                 raise SystemExit(f"Append-only governance recovery history changed for {hold_id}")
+    if expected_released_recovery_holds is not None:
+        current_holds = {
+            str(hold.get("id")): json.dumps(hold, sort_keys=True, separators=(",", ":"))
+            for hold in (document.get("control_plane") or {}).get("recovery_holds", [])
+        }
+        for hold_id, frozen in expected_released_recovery_holds.items():
+            if current_holds.get(hold_id) != frozen:
+                raise SystemExit(f"Terminal governance recovery hold changed for {hold_id}")
     if expected_task_recovery_history is not None:
         current_history = task_recovery_history_snapshot(document)
         for task_id, prior in expected_task_recovery_history.items():
@@ -566,6 +584,7 @@ def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
         expected_task_review_history=getattr(args, "source_task_review_history", None),
         expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
+        expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
         expected_task_recovery_history=getattr(args, "source_task_recovery_history", None),
         repo=getattr(args, "repo_root", None),
     )
@@ -2623,8 +2642,8 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     holds = control.get("recovery_holds", [])
     if control_revision == 4 and any("supplements" in hold for hold in holds):
         errors.append("control revision 4 cannot contain recovery supplements")
-    if control_revision == 5 and any("supplements" not in hold for hold in holds):
-        errors.append("control revision 5 requires an explicit recovery supplement ledger")
+    if control_revision in {5, 6} and any("supplements" not in hold for hold in holds):
+        errors.append(f"control revision {control_revision} requires an explicit recovery supplement ledger")
     hold_ids = [str(item.get("id")) for item in holds]
     request_ids = [str(item.get("recovery_request_id")) for item in holds]
     if len(hold_ids) != len(set(hold_ids)):
@@ -2633,6 +2652,16 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
         errors.append("duplicate governance recovery request identity")
     if len(active_recovery_holds(data)) > 1:
         errors.append("more than one governance recovery hold is ACTIVE")
+    expected_requests = [f"GRR-{index:04d}" for index in range(1, len(holds) + 1)]
+    if request_ids != expected_requests:
+        errors.append("governance recovery requests are gapped, reordered, or nonconsecutive")
+    active_positions = [index for index, hold in enumerate(holds) if hold.get("status") == "ACTIVE"]
+    if active_positions and active_positions != [len(holds) - 1]:
+        errors.append("only the latest consecutive governance recovery hold may be ACTIVE")
+    if any(
+        hold.get("status") != "RELEASED" for hold in holds[: active_positions[0] if active_positions else len(holds)]
+    ):
+        errors.append("every predecessor governance recovery hold must be terminally RELEASED")
     amendments_by_wave: dict[str, list[str]] = {}
     for amendment in data.get("wave_amendments", []):
         amendments_by_wave.setdefault(str(amendment.get("target_wave")), []).append(str(amendment.get("id")))
@@ -2662,7 +2691,8 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
         if post.get("required_change_request_id") != f"ECR-{max(prior_ecr_numbers, default=0) + 1:04d}":
             errors.append(f"{hold_id}: post-bootstrap change-request identity is not consecutive")
         task_ids = [str(item) for item in post.get("required_proposed_task_ids", [])]
-        if not task_ids or any(not item.startswith(f"{required_amendment}.T") for item in task_ids):
+        expected_tasks = [f"{required_amendment}.T{index:02d}" for index in range(1, len(task_ids) + 1)]
+        if not task_ids or task_ids != expected_tasks:
             errors.append(f"{hold_id}: proposed task identities are outside the required amendment namespace")
         if post.get("execution_authority") is not False:
             errors.append(f"{hold_id}: recovery approval must not grant post-bootstrap execution authority")
@@ -2877,7 +2907,7 @@ def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     amendments = data.get("wave_amendments", [])
     if control is None and not bases and not amendments:
         return errors
-    if not isinstance(control, dict) or control.get("revision") not in {4, CONTROL_TOOL_REVISION}:
+    if not isinstance(control, dict) or control.get("revision") not in {4, 5, CONTROL_TOOL_REVISION}:
         errors.append("control plane revision is missing or unsupported")
     elif int(control.get("minimum_tool_revision", 0)) > CONTROL_TOOL_REVISION:
         errors.append("this taskctl revision is too old for the active control plane")
@@ -5160,8 +5190,11 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
         raise SystemExit("A matching active recovery hold with independently approved bootstrap is required")
     hold = holds[0]
     approval, packet, approval_payload = load_amendment_authority(repo, args.amendment)
-    if packet.get("schemaVersion") != "2.0-proposal":
-        raise SystemExit("Subsequent amendment append requires the generic v2 ECR packet")
+    schema_version = str(packet.get("schemaVersion") or "")
+    if schema_version not in {"2.0-proposal", "3.0-proposal"}:
+        raise SystemExit("Subsequent amendment append requires a supported generic ECR packet")
+    if hold.get("recovery_request_id") != "GRR-0001" and schema_version != "3.0-proposal":
+        raise SystemExit("Recovery requests after GRR-0001 require the versioned v3 ECR authority binding")
     post = hold.get("post_bootstrap") or {}
     if (
         approval.get("changeRequestId") != post.get("required_change_request_id")
@@ -5289,6 +5322,7 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
         expected_task_review_history=getattr(args, "source_task_review_history", None),
         expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
+        expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
         expected_frozen_waves=frozen_waves,
         expected_frozen_wave_bases=frozen_wave_bases,
         expected_frozen_amendments=frozen_amendments,
@@ -5479,6 +5513,7 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
         expected_identity=getattr(args, "source_identity", None),
         expected_approved_waves=getattr(args, "source_approved_waves", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
+        expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
         repo=repo,
     )
     print(f"Submitted {bootstrap_unit['id']} for independent review")
@@ -5665,6 +5700,7 @@ def command_amendment_materialize(args, data, capabilities, slices, tasks, gates
         expected_approved_waves=getattr(args, "source_approved_waves", None),
         expected_amendment_history=getattr(args, "source_amendment_history", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
+        expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
         repo=repo,
     )
     print(f"Materialized {', '.join(authorized)} from {args.amendment}")
@@ -7926,6 +7962,7 @@ def main() -> None:
     args.source_task_review_history = task_review_history_snapshot(data)
     args.source_wave_checkpoint_history = wave_checkpoint_history_snapshot(data)
     args.source_recovery_history = recovery_history_snapshot(data)
+    args.source_released_recovery_holds = released_recovery_hold_snapshot(data)
     args.source_task_recovery_history = task_recovery_history_snapshot(data)
     args.repo_root = discover_repository(args.file)
     require_recovery_hold_permission(args, data, tasks, args.repo_root)

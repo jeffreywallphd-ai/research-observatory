@@ -518,7 +518,8 @@ def validate_supplement_boundary(
     bootstrap = amendment.get("bootstrap") or {}
     activation = packet.get("activationBoundary") or {}
     blocked_task = taskctl.index_backlog(data)[3].get(str(activation.get("blockedTaskId") or "")) or {}
-    if (
+    installed = [item for item in hold.get("supplements", []) if item.get("id") == supplement_id]
+    exact_activation = (
         hold.get("id") != (packet.get("baseRecoveryAuthority") or {}).get("holdId")
         or hold.get("status") != activation.get("holdStatus")
         or (hold.get("bootstrap") or {}).get("status") != "APPROVED"
@@ -530,7 +531,21 @@ def validate_supplement_boundary(
         or bootstrap.get("status") != activation.get("bootstrapStatus")
         or len(amendment.get("tasks") or []) != activation.get("materializedTaskCount")
         or blocked_task.get("status") != activation.get("blockedTaskStatus")
-    ):
+    )
+    terminal_history = bool(
+        require_installed
+        and len(installed) == 1
+        and ((installed[0].get("bootstrap") or {}).get("status")) == "APPROVED"
+        and hold.get("id") == (packet.get("baseRecoveryAuthority") or {}).get("holdId")
+        and hold.get("status") == "RELEASED"
+        and (hold.get("bootstrap") or {}).get("status") == "APPROVED"
+        and wave.get("id") == wave_id
+        and (wave.get("campaign") or {}).get("status") == "PAUSED"
+        and amendment.get("id") == activation.get("amendmentId")
+        and (amendment.get("lifecycle") or {}).get("status") == "ADOPTED"
+        and (amendment.get("completion") or {}).get("status") == "APPROVED"
+    )
+    if exact_activation and not terminal_history:
         raise SystemExit("Recovery supplement activation boundary differs from the stopped approved state")
     amendment_approval_path = str(amendment_reference.get("path") or "")
     amendment_approval = amendment.get("approval_reference") or {}
@@ -573,7 +588,6 @@ def validate_supplement_boundary(
     require_commit(repo, ecr_commit, label="Target ECR packet commit")
     if sha256(ecr_payload) != ecr.get("sha256") or taskctl.git_blob(repo, ecr_commit, ecr_relative) != ecr_payload:
         raise SystemExit("Recovery supplement target ECR packet hash/blob mismatch")
-    installed = [item for item in hold.get("supplements", []) if item.get("id") == supplement_id]
     if require_installed and len(installed) != 1:
         raise SystemExit(f"Recovery supplement {supplement_id} is not installed in the active hold")
     if not require_installed and installed:
@@ -749,6 +763,7 @@ def save_backlog(repo: Path, payload: bytes, data: dict[str, Any]) -> None:
         expected_task_review_history=taskctl.task_review_history_snapshot(prior_data),
         expected_wave_checkpoint_history=taskctl.wave_checkpoint_history_snapshot(prior_data),
         expected_recovery_history=taskctl.recovery_history_snapshot(prior_data),
+        expected_released_recovery_holds=taskctl.released_recovery_hold_snapshot(prior_data),
         expected_frozen_waves=taskctl.exact_record_snapshot(
             prior_data,
             "waves",
@@ -762,6 +777,147 @@ def save_backlog(repo: Path, payload: bytes, data: dict[str, Any]) -> None:
         expected_frozen_amendments=taskctl.exact_record_snapshot(prior_data, "wave_amendments"),
         repo=repo,
     )
+
+
+def validate_start_boundary(
+    repo: Path,
+    packet: dict[str, Any],
+    data: dict[str, Any],
+    tasks: dict[str, dict[str, Any]],
+    gates: dict[str, dict[str, Any]],
+) -> None:
+    """Validate the exact stopped state before appending a recovery authority."""
+    request_id = str(packet.get("recoveryRequestId") or "")
+    wave_id = str(packet.get("targetWave") or "")
+    frozen = packet.get("frozenBoundary") or {}
+    wave = taskctl.wave_map(data).get(wave_id) or {}
+    campaign = wave.get("campaign") or {}
+    task = tasks.get(str(frozen.get("taskId") or "")) or {}
+    gate = gates.get(str(frozen.get("releaseGate") or "")) or {}
+    existing_holds = (data.get("control_plane") or {}).get("recovery_holds", [])
+    expected_request = f"GRR-{len(existing_holds) + 1:04d}"
+    if request_id != expected_request:
+        raise SystemExit(f"Recovery request must be the next consecutive identity {expected_request}")
+    if any(hold.get("status") != "RELEASED" for hold in existing_holds):
+        raise SystemExit("Every predecessor recovery hold must be terminally RELEASED")
+    if taskctl.active_recovery_holds(data):
+        raise SystemExit("A governance recovery hold is already ACTIVE")
+    control = data.get("control_plane") or {}
+    if control.get("revision") not in {5, taskctl.CONTROL_TOOL_REVISION} or (
+        control.get("minimum_tool_revision") != control.get("revision")
+    ):
+        raise SystemExit("Recovery bootstrap start requires a supported exact predecessor control revision")
+    if control.get("active_amendment") is not None:
+        raise SystemExit("Recovery bootstrap start requires no active amendment")
+    if campaign.get("status") != "PAUSED" or campaign.get("scope") != "wave" or campaign.get("lease") is not None:
+        raise SystemExit("Recovery bootstrap start requires the exact quiescent paused Wave boundary")
+    if campaign.get("branch") != frozen.get("branch") or git_output(repo, "branch", "--show-current") != frozen.get(
+        "branch"
+    ):
+        raise SystemExit("Recovery bootstrap start branch differs from the frozen Wave boundary")
+    if any(item.get("status") in {"IN_PROGRESS", "REVIEW"} for item in tasks.values()):
+        raise SystemExit("Recovery bootstrap start requires every task to be quiescent")
+    if any(
+        (item.get("lifecycle") or {}).get("status") != "ADOPTED"
+        for item in data.get("wave_amendments", [])
+        if item.get("target_wave") == wave_id
+    ):
+        raise SystemExit("Recovery bootstrap start requires every predecessor amendment to be ADOPTED")
+    if (
+        frozen.get("waveStatus") != campaign.get("status")
+        or frozen.get("waveScope") != campaign.get("scope")
+        or frozen.get("wavePauseCategory") != campaign.get("pause_category")
+        or frozen.get("taskStatus") != task.get("status")
+        or frozen.get("taskRecoveryControl") != task.get("recovery_control")
+        or frozen.get("releaseGateStatus") != gate.get("status")
+    ):
+        raise SystemExit("Recovery packet frozen Wave/task/gate boundary differs from the backlog")
+    released = next(
+        (hold for hold in existing_holds if hold.get("id") == frozen.get("releasedHoldId")),
+        None,
+    )
+    adopted = taskctl.wave_amendment_map(data).get(str(frozen.get("adoptedAmendment") or "")) or {}
+    checkpoints = {str(item.get("id")) for item in wave.get("checkpoints", [])}
+    if (
+        released is None
+        or released.get("status") != frozen.get("releasedHoldStatus")
+        or (adopted.get("lifecycle") or {}).get("status") != "ADOPTED"
+        or frozen.get("securityCheckpoint") not in checkpoints
+    ):
+        raise SystemExit(
+            "Recovery packet frozen predecessor hold/amendment/checkpoint boundary differs from the backlog"
+        )
+    pause_commit = str(frozen.get("pauseRecordCommit") or "")
+    require_commit(repo, pause_commit, label="Recovery pause record")
+    pause_blob = taskctl.git_blob(repo, pause_commit, "planning/backlog.yaml")
+    head_blob = taskctl.git_blob(repo, git_output(repo, "rev-parse", "HEAD"), "planning/backlog.yaml")
+    if pause_blob is None or sha256(pause_blob) != frozen.get("backlogSha256") or head_blob != pause_blob:
+        raise SystemExit("Current backlog differs from the immutable frozen recovery boundary")
+
+
+def command_bootstrap_start(args: argparse.Namespace) -> None:
+    approval, packet, approval_payload, packet_payload = load_recovery_authority(args.repo, args.request)
+    require_clean(args.repo)
+    approval_relative = f"planning/governance-recovery-approvals/{args.request}.json"
+    approval_introduction = taskctl.approval_introduction_commit(args.repo, approval_relative)
+    if not approval_introduction:
+        raise SystemExit("Recovery approval introduction is unavailable")
+    head = git_output(args.repo, "rev-parse", "HEAD")
+    if head == approval_introduction or not taskctl.git_is_ancestor(args.repo, approval_introduction, head):
+        raise SystemExit("Recovery bootstrap controller must strictly descend from the approval introduction")
+    backlog_payload, data, _capabilities, _slices, tasks, gates = backlog_state(args.repo)
+    validate_authority_chain(args.repo, packet, data)
+    validate_start_boundary(args.repo, packet, data, tasks, gates)
+    implementer = taskctl.normalized_identity(args.agent, "Recovery bootstrap implementer")
+    wave = taskctl.wave_map(data).get(str(packet.get("targetWave"))) or {}
+    if implementer != (wave.get("campaign") or {}).get("owner"):
+        raise SystemExit("Recovery bootstrap implementer must own the paused target Wave")
+    control = data.get("control_plane") or {}
+    packet_reference = approval.get("packet") or {}
+    bootstrap = packet.get("bootstrapUnit") or {}
+    post = packet.get("postBootstrap") or {}
+    hold = {
+        "id": (packet.get("controlHold") or {}).get("id"),
+        "recovery_request_id": args.request,
+        "target_wave": packet.get("targetWave"),
+        "status": "ACTIVE",
+        "approval_reference": {
+            "path": approval_relative,
+            "sha256": sha256(approval_payload),
+            "introduction_commit": approval_introduction,
+        },
+        "packet_reference": {
+            "path": packet_reference.get("path"),
+            "sha256": sha256(packet_payload),
+            "commit": packet_reference.get("commit"),
+        },
+        "bootstrap": {
+            "id": bootstrap.get("id"),
+            "status": "IN_PROGRESS",
+            "implementer": implementer,
+            "implementation_commit": None,
+            "submission_branch": None,
+            "evidence": None,
+            "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+            "current_submission": None,
+            "attempts": [],
+        },
+        "supplements": [],
+        "post_bootstrap": {
+            "required_change_request_id": post.get("requiredChangeRequestId"),
+            "required_amendment_id": post.get("requiredAmendmentId"),
+            "required_proposed_task_ids": post.get("requiredProposedTaskIds"),
+            "execution_authority": False,
+        },
+        "release_conditions": list((packet.get("controlHold") or {}).get("releaseConditions", [])),
+        "created_at": taskctl.utc_now(),
+        "released_at": None,
+    }
+    control.setdefault("recovery_holds", []).append(hold)
+    control["revision"] = taskctl.CONTROL_TOOL_REVISION
+    control["minimum_tool_revision"] = taskctl.CONTROL_TOOL_REVISION
+    save_backlog(args.repo, backlog_payload, data)
+    print(f"Installed {hold['id']}/{bootstrap.get('id')}; {packet.get('targetWave')} remains PAUSED")
 
 
 def evidence_relative(repo: Path, value: str, request_id: str, bootstrap_id: str) -> tuple[str, Path]:
@@ -1279,17 +1435,22 @@ def command_supplement_validate(args: argparse.Namespace) -> None:
     target_amendment = ((packet.get("targetAmendmentAuthority") or {}).get("amendmentApproval") or {}).get("id")
     bootstrap_status = (supplement.get("bootstrap") or {}).get("status")
     _payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
-    projection = validate_target_materialization_projection(
-        args.repo,
-        packet,
-        data,
-        allow_unapproved_supplement_gate=bootstrap_status != "APPROVED",
-    )
+    projection = None
+    if hold.get("status") == "ACTIVE":
+        projection = validate_target_materialization_projection(
+            args.repo,
+            packet,
+            data,
+            allow_unapproved_supplement_gate=bootstrap_status != "APPROVED",
+        )
     print(
         f"Valid {args.supplement}: bootstrap={(supplement.get('bootstrap') or {}).get('status')}; "
         f"hold={hold.get('status')}; target={target_amendment}"
     )
-    print("Read-only materialization projection: " + json.dumps(projection, sort_keys=True))
+    if projection is not None:
+        print("Read-only materialization projection: " + json.dumps(projection, sort_keys=True))
+    else:
+        print("Terminal historical authority: materialization projection is no longer executable")
 
 
 def command_supplement_status(args: argparse.Namespace) -> None:
@@ -1701,6 +1862,8 @@ def command_bootstrap_review(args: argparse.Namespace) -> None:
 
 def command_release(args: argparse.Namespace) -> None:
     _approval, packet, hold = validate_request(args.repo, args.request)
+    if hold.get("status") != "ACTIVE":
+        raise SystemExit(f"Recovery hold {hold.get('id')} is already terminally RELEASED")
     if (hold.get("bootstrap") or {}).get("status") != "APPROVED":
         raise SystemExit("Recovery hold release requires independent bootstrap approval")
     amendment_id = str((packet.get("postBootstrap") or {}).get("requiredAmendmentId"))
@@ -1742,6 +1905,9 @@ def build_parser() -> argparse.ArgumentParser:
     validate.add_argument("--require-approved", action="store_true")
     status = sub.add_parser("status")
     status.add_argument("request")
+    start = sub.add_parser("bootstrap-start")
+    start.add_argument("request")
+    start.add_argument("--agent", required=True)
     submit = sub.add_parser("bootstrap-submit")
     submit.add_argument("request")
     submit.add_argument("--agent", required=True)
@@ -1794,6 +1960,8 @@ def main() -> None:
         command_validate(args)
     elif args.command == "status":
         command_status(args)
+    elif args.command == "bootstrap-start":
+        command_bootstrap_start(args)
     elif args.command == "bootstrap-submit":
         freeze_submission(args, remediation=False)
     elif args.command == "bootstrap-resubmit":

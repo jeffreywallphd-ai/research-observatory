@@ -409,10 +409,17 @@ class PlanReviewAmendmentTests(unittest.TestCase):
 
     def test_interrupted_approved_wave_suppresses_repeat_commands_but_future_wave_keeps_approval(self) -> None:
         wave_one = (self.site / "waves/W1.html").read_text(encoding="utf-8")
-        self.assertIn("W1 ordinary execution is interrupted", wave_one)
-        self.assertIn("../recoveries/GRR-0001.html", wave_one)
-        self.assertIn("bootstrap-only", wave_one)
-        self.assertIn("Exact ordinary resume condition", wave_one)
+        backlog = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
+        active = [
+            hold
+            for hold in backlog["control_plane"]["recovery_holds"]
+            if hold.get("status") == "ACTIVE" and hold.get("target_wave") == "W1"
+        ]
+        if active:
+            self.assertIn("W1 ordinary execution is interrupted", wave_one)
+            self.assertIn(f"../recoveries/{active[0]['recovery_request_id']}.html", wave_one)
+            self.assertIn("bootstrap-only", wave_one)
+            self.assertIn("Exact ordinary resume condition", wave_one)
         self.assertNotIn("wave approve W1", wave_one)
         self.assertNotIn("wave start W1", wave_one)
 

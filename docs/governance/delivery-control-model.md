@@ -120,7 +120,9 @@ exact-commit human approval are mandatory before B00.
 
 The control plane records an ACTIVE recovery hold at a revision that older
 controllers cannot read. Scheduler and every executable taskctl transition fail
-closed. `recoveryctl` alone may submit, independently review, or resubmit the
+closed. `recoveryctl bootstrap-start` atomically appends only the next approved
+recovery authority after all predecessor holds are terminally released.
+`recoveryctl` alone may submit, independently review, or resubmit the
 named bootstrap, with exact Git ancestry, changed-path, criteria, check, hash,
 and reviewer-independence binding. An adverse disposition remains append-only.
 Approval of B00 only restores the ordinary lane: the repair amendment receives

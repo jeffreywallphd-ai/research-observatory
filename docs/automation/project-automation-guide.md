@@ -106,6 +106,7 @@ broken lane before GRR approval.
 ```bash
 python tools/recoveryctl.py --repo . validate GRR-NNNN --require-approved
 python tools/recoveryctl.py --repo . status GRR-NNNN
+python tools/recoveryctl.py --repo . bootstrap-start GRR-NNNN --agent <agent>
 python tools/recoveryctl.py --repo . bootstrap-submit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
 python tools/recoveryctl.py --repo . bootstrap-review GRR-NNNN --reviewer <independent-reviewer> --from <finding-ledger>
 ```
@@ -116,7 +117,8 @@ unverified list, and stays within canonical root-confined paths. The controller
 rejects absolute, backslash, dot-segment, traversal, symlink, junction, or
 resolved escapes before access. Changes-requested or blocked B00 review uses
 `bootstrap-resubmit` with a strict descendant and retains the earlier ledger.
-After B00 approval, prepare the named generic v2 ECR; its separate approval is
+After B00 approval, prepare the named ECR using the packet version bound by the
+active recovery hold (v3 for a successor hold); its separate approval is
 still mandatory. `recoveryctl release` is legal only after that amendment is
 adopted with a bound security checkpoint and leaves the Wave paused.
 
