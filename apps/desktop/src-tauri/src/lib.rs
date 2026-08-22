@@ -80,13 +80,13 @@ async fn support_bundle_preview(
         .map_err(|_| "RO-SUPPORT-PATH-UNAVAILABLE")?;
     let supervisor = supervisor.inner().clone();
     let manager = manager.inner().clone();
+    let collection = manager.clone();
     let result = tauri::async_runtime::spawn_blocking(move || {
-        manager.preview(&application_data, &supervisor)
+        collection.prepare_preview(&application_data, &supervisor)
     })
     .await
-    .map_err(|_| "RO-SUPPORT-COLLECTION-FAILED")?;
-    lock.finish_protected_action(ticket)?;
-    result
+    .map_err(|_| "RO-SUPPORT-COLLECTION-FAILED")??;
+    lock.commit_protected_action(ticket, || manager.publish_preview(result))
 }
 
 #[tauri::command]
@@ -102,13 +102,13 @@ async fn support_bundle_export(
         .app_local_data_dir()
         .map_err(|_| "RO-SUPPORT-PATH-UNAVAILABLE")?;
     let manager = manager.inner().clone();
+    let staging = manager.clone();
     let result = tauri::async_runtime::spawn_blocking(move || {
-        manager.export(&application_data, &preview_id)
+        staging.stage_export(&application_data, &preview_id)
     })
     .await
-    .map_err(|_| "RO-SUPPORT-WRITE-FAILED")?;
-    lock.finish_protected_action(ticket)?;
-    result
+    .map_err(|_| "RO-SUPPORT-WRITE-FAILED")??;
+    lock.commit_protected_action(ticket, || manager.publish_export(result))
 }
 
 #[tauri::command]
@@ -144,13 +144,18 @@ fn application_lock_configure(
 async fn application_lock_now(
     app: AppHandle,
     supervisor: State<'_, RuntimeSupervisor>,
+    support: State<'_, SupportBundleManager>,
     lock: State<'_, ApplicationLockManager>,
 ) -> Result<ApplicationLockSnapshot, &'static str> {
     let (snapshot, changed) = lock.lock(ApplicationLockReason::Manual);
+    support.clear_pending();
     if changed {
-        let _ = app.emit("application-lock-changed", &snapshot);
+        emit_lock_snapshot(&app, lock.inner(), &snapshot);
     }
-    dispatch_runtime_stop(supervisor.inner().clone()).await?;
+    let supervisor = supervisor.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || supervisor.stop_for_application_lock())
+        .await
+        .map_err(|_| "RO-CORE-SUPERVISOR-FAILED")?;
     Ok(snapshot)
 }
 
@@ -223,14 +228,15 @@ pub fn run() {
                 .app_local_data_dir()
                 .map_err(|_| std::io::Error::other("application data unavailable"))?;
             let lock = ApplicationLockManager::new(&application_data);
+            let support = SupportBundleManager::default();
             app.manage(supervisor.clone());
             app.manage(lock.clone());
-            app.manage(SupportBundleManager::default());
+            app.manage(support.clone());
             if lock.is_unlocked() {
                 let startup = supervisor.clone();
                 tauri::async_runtime::spawn_blocking(move || startup.start());
             }
-            start_lock_monitor(app.handle().clone(), lock, supervisor);
+            start_lock_monitor(app.handle().clone(), lock, supervisor, support);
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -243,16 +249,32 @@ pub fn run() {
         .expect("Research Observatory desktop runtime failed");
 }
 
-fn start_lock_monitor(app: AppHandle, lock: ApplicationLockManager, supervisor: RuntimeSupervisor) {
+fn start_lock_monitor(
+    app: AppHandle,
+    lock: ApplicationLockManager,
+    supervisor: RuntimeSupervisor,
+    support: SupportBundleManager,
+) {
     std::thread::spawn(move || {
         loop {
             std::thread::sleep(std::time::Duration::from_secs(1));
             if let Some(snapshot) = lock.lock_if_idle() {
-                let _ = app.emit("application-lock-changed", &snapshot);
-                supervisor.stop();
+                support.clear_pending();
+                emit_lock_snapshot(&app, &lock, &snapshot);
+                supervisor.stop_for_application_lock();
             }
         }
     });
+}
+
+fn emit_lock_snapshot(
+    app: &AppHandle,
+    lock: &ApplicationLockManager,
+    snapshot: &ApplicationLockSnapshot,
+) {
+    if app.emit("application-lock-changed", snapshot).is_err() {
+        lock.record_notification_failure();
+    }
 }
 
 fn runtime_config<R: Runtime>(app: &App<R>) -> Result<SupervisorConfig, &'static str> {

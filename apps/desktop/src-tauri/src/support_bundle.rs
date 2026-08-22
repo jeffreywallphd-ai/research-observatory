@@ -112,6 +112,30 @@ struct PendingPreview {
     bytes: Vec<u8>,
 }
 
+impl Drop for PendingPreview {
+    fn drop(&mut self) {
+        self.bytes.fill(0);
+    }
+}
+
+pub struct PreparedSupportBundlePreview {
+    pending: Option<PendingPreview>,
+}
+
+pub struct StagedSupportBundleExport {
+    preview_id: String,
+    output_directory: PathBuf,
+    staging: PathBuf,
+    destination: PathBuf,
+    export: SupportBundleExport,
+}
+
+impl Drop for StagedSupportBundleExport {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.staging);
+    }
+}
+
 #[derive(Clone, Default)]
 pub struct SupportBundleManager {
     pending: Arc<Mutex<Option<PendingPreview>>>,
@@ -123,6 +147,15 @@ impl SupportBundleManager {
         application_data: &Path,
         supervisor: &RuntimeSupervisor,
     ) -> Result<SupportBundlePreview, &'static str> {
+        let prepared = self.prepare_preview(application_data, supervisor)?;
+        self.publish_preview(prepared)
+    }
+
+    pub fn prepare_preview(
+        &self,
+        application_data: &Path,
+        supervisor: &RuntimeSupervisor,
+    ) -> Result<PreparedSupportBundlePreview, &'static str> {
         let intended_output = application_data.join(SUPPORT_DIRECTORY);
         let (output_directory, storage_status) = match verified_support_directory(application_data)
         {
@@ -192,10 +225,18 @@ impl SupportBundleManager {
                 .map_err(|_| "RO-SUPPORT-SERIALIZE-FAILED")?,
             bundle,
         };
-        *self.pending.lock().map_err(|_| "RO-SUPPORT-STATE-FAILED")? = Some(PendingPreview {
-            preview: preview.clone(),
-            bytes,
-        });
+        Ok(PreparedSupportBundlePreview {
+            pending: Some(PendingPreview { preview, bytes }),
+        })
+    }
+
+    pub fn publish_preview(
+        &self,
+        mut prepared: PreparedSupportBundlePreview,
+    ) -> Result<SupportBundlePreview, &'static str> {
+        let pending = prepared.pending.take().ok_or("RO-SUPPORT-STATE-FAILED")?;
+        let preview = pending.preview.clone();
+        *self.pending.lock().map_err(|_| "RO-SUPPORT-STATE-FAILED")? = Some(pending);
         Ok(preview)
     }
 
@@ -204,29 +245,81 @@ impl SupportBundleManager {
         application_data: &Path,
         preview_id: &str,
     ) -> Result<SupportBundleExport, &'static str> {
+        let staged = self.stage_export(application_data, preview_id)?;
+        self.publish_export(staged)
+    }
+
+    pub fn stage_export(
+        &self,
+        application_data: &Path,
+        preview_id: &str,
+    ) -> Result<StagedSupportBundleExport, &'static str> {
         if !canonical_hex(preview_id, 32) {
             return Err("RO-SUPPORT-PREVIEW-INVALID");
         }
-        let mut locked = self.pending.lock().map_err(|_| "RO-SUPPORT-STATE-FAILED")?;
+        let locked = self.pending.lock().map_err(|_| "RO-SUPPORT-STATE-FAILED")?;
         let current = locked.as_ref().ok_or("RO-SUPPORT-PREVIEW-STALE")?;
         if current.preview.preview_id != preview_id {
             return Err("RO-SUPPORT-PREVIEW-STALE");
         }
-        let pending = locked.take().ok_or("RO-SUPPORT-PREVIEW-STALE")?;
+        let bundle_id = current.preview.bundle.bundle_id.clone();
+        let byte_length = current.preview.byte_length;
+        let sha256 = current.preview.sha256.clone();
+        let mut bytes = current.bytes.clone();
         drop(locked);
         let output_directory = verified_support_directory(application_data)?;
-        let filename = format!(
-            "research-observatory-support-{}.json",
-            pending.preview.bundle.bundle_id
-        );
+        let filename = format!("research-observatory-support-{bundle_id}.json");
         let destination = output_directory.join(filename);
-        write_unique_bundle(&output_directory, &destination, &pending.bytes)?;
-        Ok(SupportBundleExport {
-            bundle_id: pending.preview.bundle.bundle_id,
-            path: display_path(&destination)?,
-            byte_length: pending.preview.byte_length,
-            sha256: pending.preview.sha256,
+        let destination_display = display_path(&destination)?;
+        let staging = output_directory.join(format!(
+            ".research-observatory-support-{}.staging",
+            secure_random_hex::<16>()?
+        ));
+        let staged_result = write_staged_bundle(&output_directory, &staging, &bytes);
+        bytes.fill(0);
+        staged_result?;
+        Ok(StagedSupportBundleExport {
+            preview_id: preview_id.to_owned(),
+            output_directory,
+            staging,
+            export: SupportBundleExport {
+                bundle_id,
+                path: destination_display,
+                byte_length,
+                sha256,
+            },
+            destination,
         })
+    }
+
+    pub fn publish_export(
+        &self,
+        staged: StagedSupportBundleExport,
+    ) -> Result<SupportBundleExport, &'static str> {
+        let mut locked = self.pending.lock().map_err(|_| "RO-SUPPORT-STATE-FAILED")?;
+        let current = locked.as_ref().ok_or("RO-SUPPORT-PREVIEW-STALE")?;
+        if current.preview.preview_id != staged.preview_id {
+            return Err("RO-SUPPORT-PREVIEW-STALE");
+        }
+        publish_staged_bundle(
+            &staged.output_directory,
+            &staged.staging,
+            &staged.destination,
+        )?;
+        let export = staged.export.clone();
+        locked.take();
+        Ok(export)
+    }
+
+    pub fn clear_pending(&self) {
+        if let Ok(mut pending) = self.pending.lock() {
+            pending.take();
+        }
+    }
+
+    #[cfg(test)]
+    fn has_pending(&self) -> bool {
+        self.pending.lock().is_ok_and(|pending| pending.is_some())
     }
 }
 
@@ -303,7 +396,7 @@ fn open_directory_guard(path: &Path) -> Result<File, &'static str> {
     File::open(path).map_err(|_| "RO-SUPPORT-PATH-UNAVAILABLE")
 }
 
-fn write_unique_bundle(
+fn write_staged_bundle(
     directory: &Path,
     destination: &Path,
     bytes: &[u8],
@@ -337,6 +430,54 @@ fn write_unique_bundle(
     }
     reject_redirect(directory)?;
     Ok(())
+}
+
+fn publish_staged_bundle(
+    directory: &Path,
+    staging: &Path,
+    destination: &Path,
+) -> Result<(), &'static str> {
+    let _directory_guard = open_directory_guard(directory)?;
+    reject_redirect(directory)?;
+    if staging.parent() != Some(directory) || destination.parent() != Some(directory) {
+        return Err("RO-SUPPORT-PATH-REDIRECTED");
+    }
+    publish_new_file(staging, destination)?;
+    reject_redirect(directory)
+}
+
+#[cfg(windows)]
+fn publish_new_file(staging: &Path, destination: &Path) -> Result<(), &'static str> {
+    use std::os::windows::ffi::OsStrExt;
+    use windows_sys::Win32::Storage::FileSystem::{MOVEFILE_WRITE_THROUGH, MoveFileExW};
+
+    let staging: Vec<u16> = staging.as_os_str().encode_wide().chain(Some(0)).collect();
+    let destination: Vec<u16> = destination
+        .as_os_str()
+        .encode_wide()
+        .chain(Some(0))
+        .collect();
+    if unsafe {
+        MoveFileExW(
+            staging.as_ptr(),
+            destination.as_ptr(),
+            MOVEFILE_WRITE_THROUGH,
+        )
+    } == 0
+    {
+        Err("RO-SUPPORT-WRITE-FAILED")
+    } else {
+        Ok(())
+    }
+}
+
+#[cfg(not(windows))]
+fn publish_new_file(staging: &Path, destination: &Path) -> Result<(), &'static str> {
+    fs::hard_link(staging, destination).map_err(|_| "RO-SUPPORT-WRITE-FAILED")?;
+    fs::remove_file(staging).map_err(|_| {
+        let _ = fs::remove_file(destination);
+        "RO-SUPPORT-WRITE-FAILED"
+    })
 }
 
 fn secure_random_hex<const N: usize>() -> Result<String, &'static str> {
@@ -375,11 +516,23 @@ fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
 #[cfg(test)]
 mod tests {
     use super::{MAX_BUNDLE_BYTES, SupportBundleManager, canonical_hex};
+    use crate::application_lock::{ApplicationLockManager, ApplicationLockReason};
     use crate::supervisor::RuntimeSupervisor;
+    use std::sync::atomic::{AtomicU64, Ordering};
+
+    static TEST_SEQUENCE: AtomicU64 = AtomicU64::new(1);
+
+    fn test_root(name: &str) -> std::path::PathBuf {
+        std::env::temp_dir().join(format!(
+            "{name}-{}-{}",
+            std::process::id(),
+            TEST_SEQUENCE.fetch_add(1, Ordering::Relaxed)
+        ))
+    }
 
     #[test]
     fn preview_is_bounded_redacted_and_export_is_single_use() {
-        let root = std::env::temp_dir().join(format!("ro-support-test-{}", std::process::id()));
+        let root = test_root("ro-support-test");
         let _ = std::fs::remove_dir_all(&root);
         let manager = SupportBundleManager::default();
         let supervisor = RuntimeSupervisor::new(Err("RO-CORE-INTEGRITY-FAILED"));
@@ -419,7 +572,7 @@ mod tests {
 
     #[test]
     fn malformed_preview_identity_is_denied_without_consuming_the_pending_preview() {
-        let root = std::env::temp_dir().join(format!("ro-support-id-test-{}", std::process::id()));
+        let root = test_root("ro-support-id-test");
         let _ = std::fs::remove_dir_all(&root);
         let manager = SupportBundleManager::default();
         let supervisor = RuntimeSupervisor::new(Err("RO-CORE-INTEGRITY-FAILED"));
@@ -439,8 +592,50 @@ mod tests {
     }
 
     #[test]
+    fn lock_prevents_preview_and_export_publication_and_clears_pending_state() {
+        let root = test_root("ro-support-lock-test");
+        let manager = SupportBundleManager::default();
+        let supervisor = RuntimeSupervisor::new(Err("RO-CORE-INTEGRITY-FAILED"));
+        let lock = ApplicationLockManager::new(&root.join("lock-profile"));
+
+        let preview_ticket = lock.begin_protected_action().expect("preview ticket");
+        let prepared = manager
+            .prepare_preview(&root, &supervisor)
+            .expect("prepared preview");
+        lock.lock(ApplicationLockReason::Manual);
+        assert_eq!(
+            lock.commit_protected_action(preview_ticket, || manager.publish_preview(prepared)),
+            Err("RO-APPLICATION-LOCKED")
+        );
+        assert!(!manager.has_pending());
+
+        let unlocked_lock = ApplicationLockManager::new(&root.join("separate-lock-profile"));
+        let preview = manager
+            .preview(&root, &supervisor)
+            .expect("support preview");
+        let export_ticket = unlocked_lock
+            .begin_protected_action()
+            .expect("export ticket");
+        let staged = manager
+            .stage_export(&root, preview.preview_id())
+            .expect("staged export");
+        let destination = staged.destination.clone();
+        let staging = staged.staging.clone();
+        unlocked_lock.lock(ApplicationLockReason::Manual);
+        manager.clear_pending();
+        assert_eq!(
+            unlocked_lock.commit_protected_action(export_ticket, || manager.publish_export(staged)),
+            Err("RO-APPLICATION-LOCKED")
+        );
+        assert!(!destination.exists());
+        assert!(!staging.exists());
+        assert!(!manager.has_pending());
+        std::fs::remove_dir_all(root).expect("remove support fixture");
+    }
+
+    #[test]
     fn preexisting_hardlink_at_the_exact_export_name_is_not_followed() {
-        let root = std::env::temp_dir().join(format!("ro-support-hardlink-{}", std::process::id()));
+        let root = test_root("ro-support-hardlink");
         let _ = std::fs::remove_dir_all(&root);
         let manager = SupportBundleManager::default();
         let supervisor = RuntimeSupervisor::new(Err("RO-CORE-INTEGRITY-FAILED"));
@@ -470,9 +665,8 @@ mod tests {
     fn redirected_support_directory_is_rejected() {
         use std::process::Command;
 
-        let root = std::env::temp_dir().join(format!("ro-support-junction-{}", std::process::id()));
-        let outside =
-            std::env::temp_dir().join(format!("ro-support-outside-{}", std::process::id()));
+        let root = test_root("ro-support-junction");
+        let outside = test_root("ro-support-outside");
         let _ = std::fs::remove_dir_all(&root);
         let _ = std::fs::remove_dir_all(&outside);
         std::fs::create_dir_all(&root).expect("create application data root");
