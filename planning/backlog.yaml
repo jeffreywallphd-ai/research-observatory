@@ -22584,7 +22584,7 @@ verification_profiles:
 control_plane:
   revision: 5
   minimum_tool_revision: 5
-  active_amendment: null
+  active_amendment: W1.A03
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -24073,7 +24073,7 @@ wave_amendments:
     sha256: 340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd
     introduction_commit: 95c007b58619dfd82b5f443eea3d8e71e7efe082
   lifecycle:
-    status: MATERIALIZED
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -24087,6 +24087,11 @@ wave_amendments:
       actor: codex
       at: '2026-08-22T19:06:55+00:00'
       rationale: Materialized the exact human-approved task inventory.
+    - id: E03
+      status: ACTIVE
+      actor: codex
+      at: '2026-08-22T19:08:18+00:00'
+      rationale: Activated the bounded amendment campaign.
   bootstrap:
     id: W1.A03.B00
     status: APPROVED
@@ -24108,7 +24113,22 @@ wave_amendments:
         and evidence 83e7295355f6a3377247b4eb0fca8d852dd670d968856f6212c110f60dd64a36 bind the exact two-file scope. All 18
         focused tests, exact historical T03 gate command, authority, backlog, review-site, generated-view, quality, and diff
         checks pass. No product, reference, policy, predecessor, T03, ordinary W1, or gate state changed.
-  campaign: null
+  campaign:
+    status: ACTIVE
+    scope: wave-amendment
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    worktree: C:/workspace/research-observatory
+    base_sha: 54b5c7deef0f618f930f08dfaa179bb9b4975bba
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-08-22T19:08:18+00:00'
+    updated_at: '2026-08-22T19:08:18+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-22T19:08:18+00:00'
+      expires_at: '2026-08-23T19:08:18+00:00'
   tasks:
   - id: W1.A03.T01
     amendment_id: W1.A03
@@ -24147,14 +24167,14 @@ wave_amendments:
       governed Python quality, and diff hygiene.
     - Obtain independent task review, independent amendment exit review, and a commit-bound control/security adoption checkpoint.
     packet_task_sha256: 6e6c5ffa1266d25dbb888284baa02721f5da760b64685d849820dc995597d9d9
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-08-22T19:08:18+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
