@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-bootstrap-review",
+  "recoveryRequestId": "GRR-0001",
+  "bootstrapUnit": "GRR-0001.B00",
+  "attemptId": "R02",
+  "candidateCommit": "d53f5d3be5e254a7416272442f924b99d910abeb",
+  "reviewedStateCommit": "c16a36424fb97cb95347261ebab248f128b5d931",
+  "reviewer": "b00-independent-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0001.B00.remediation-01.evidence.json",
+    "sha256": "08216e2242fae6ab742d0396d7ff036e9a62f1c8e90d167f56589683cd52bd1f"
+  },
+  "notes": "The remediation is a strict descendant of R01 candidate e2d46d5b7ffe44dcc38437c6da502a34e2e37710. Its 13-path evidence scope exactly matches Git and remains within the approved governance boundary. Immutable R01 evidence, ledger, findings, and CHANGES_REQUESTED history are preserved; current R02 evidence/state binding is exact. Quality, backlog validation, GRR validation, legacy ECR-0001 validation, 147-page review-site validation, generated backlog views, and range diff hygiene pass. The focused suite runs 108 tests at the frozen state: 107 pass and one errors. No production ECR-0002/W1.A03 authority, product/UI-gate change, ordinary W1 execution, or hold release occurred.",
+  "findings": [
+    {
+      "id": "GRR-0001.B00-R02-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterionIndex": 3,
+      "title": "The shared control-artifact validator accepts repeated separators as a noncanonical stored path",
+      "reproduction": "At c16a36424fb97cb95347261ebab248f128b5d931, call taskctl.canonical_control_artifact_path with `planning/governance-recovery-approvals//GRR-0001.B00.remediation-01.evidence.json` and prefix `planning/governance-recovery-approvals`. It succeeds and returns the raw double-slash spelling while resolving to the canonical file. The same behavior applies to `artifacts/evidence//W1.A03.B00.json` when used by the appended-amendment evidence entry. tools/taskctl.py constructs PurePosixPath before checking parts; PurePosixPath collapses the empty segment, so the intended empty-segment rejection is ineffective. Existing R02 tests cover absolute, backslash, dot, dot-dot, symlink, and junction forms but omit repeated separators.",
+      "requiredRemediation": "Reject repeated separators and every other spelling whose raw value differs from its canonical PurePosix form before resolution or access. Add command-entry tests for recovery evidence, review ledgers, and appended-amendment evidence using internal double separators, and prove no noncanonical spelling is stored or read."
+    },
+    {
+      "id": "GRR-0001.B00-R02-F02",
+      "severity": "medium",
+      "blocking": true,
+      "criterionIndex": 7,
+      "title": "The executable append fixture still depends on the transient pre-submission recovery projection",
+      "reproduction": "Run the evidence's exact focused-governance command at frozen state c16a36424fb97cb95347261ebab248f128b5d931. `test_real_second_ecr_and_third_amendment_append_is_semantic_atomic_and_preserving` errors in taskctl.save_validated. append_fixture approves and rewrites the latest completed attempt, R01, but the cloned backlog's live bootstrap projection and current submission are R02. taskctl correctly denies the resulting incoherence with `bootstrap implementation_commit differs from the latest immutable attempt` and `bootstrap evidence differs from the latest immutable attempt`. The other 107 tests pass.",
+      "requiredRemediation": "Make append_fixture construct a coherent approved bootstrap from the exact current submission when the source state is REVIEW, preserving all prior attempts and binding the current candidate/evidence/ledger before attempting the append. Keep the helper valid across CHANGES_REQUESTED, BLOCKED, REVIEW, and APPROVED projections. Rerun all 108 focused tests at the remediation candidate and again at its frozen submission state."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "GRR-0001.B00-R01-F01",
+      "notes": "Closed. recoveryctl now derives CAS expectations from prior_data, and complete canonical Wave/base/amendment snapshots reject lifecycle, task completion, review, amendment completion, checkpoint, and base-record rewrites atomically. Direct replay denied both prior lifecycle and completed_at reproductions with byte-stable backlog state."
+    },
+    {
+      "findingId": "GRR-0001.B00-R01-F02",
+      "notes": "Closed for the R01 reproduced absolute, backslash, dot, dot-dot, symlink, junction, and redirected-parent forms. The newly identified repeated-separator canonicality defect is recorded separately as R02-F01."
+    },
+    {
+      "findingId": "GRR-0001.B00-R01-F03",
+      "notes": "Closed. The suite now invokes real v2 semantic ECR validation and the actual append command in a temporary Git repository, exercises successful ECR-0002/W1.A03 persistence at the candidate state, verifies exact predecessor equality, and covers duplicate, nonconsecutive, wrong-hold, wrong-task, reordered, stale, and forked denial."
+    },
+    {
+      "findingId": "GRR-0001.B00-R01-F04",
+      "notes": "Closed for the original hardcoded IN_PROGRESS assertion. The canonical recovery test now validates coherent lifecycle-specific projections. The distinct state-dependent append-fixture failure at frozen R02 is recorded as R02-F02."
+    }
+  ]
+}
