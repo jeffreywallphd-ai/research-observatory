@@ -1,0 +1,152 @@
+{
+  "$schema": "./governance-recovery-supplement.schema.json",
+  "schemaVersion": "1.0-recovery-supplement-proposal",
+  "documentType": "governance-recovery-supplement-packet",
+  "recoveryRequestId": "GRR-0001",
+  "supplementId": "GRR-0001.S01",
+  "title": "Repair consecutive-amendment materialization under the active recovery hold",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "approved-bootstrap-latent-control-defect",
+  "baseRecoveryAuthority": {
+    "packet": {
+      "commit": "fc8fabfcf3f23e1009f0f9895cd9befbf4b85f53",
+      "path": "planning/governance-recovery-requests/GRR-0001.packet.json",
+      "sha256": "aeb9ec8f3e2c86cba5e1455d778f939b4884adde06cbf716f583ee9a34b7bceb"
+    },
+    "approval": {
+      "introductionCommit": "12c2ff826a5bcb0fdaca9f623da38094944a5eca",
+      "path": "planning/governance-recovery-approvals/GRR-0001.json",
+      "sha256": "0576c6c3203815bdf4cbe26245c6421ddc106b5afaa89fa33cdd5d6d5ca77ee1"
+    },
+    "holdId": "HOLD-W1-GRR-0001",
+    "bootstrapUnit": "GRR-0001.B00",
+    "latestApprovedReview": {
+      "attemptId": "R05",
+      "path": "planning/governance-recovery-approvals/GRR-0001.B00.review-R05.json",
+      "sha256": "6add97afeda6f0974a1d80f5bc781989fcdcd98fe3eeea0f0fdf8d3233589297",
+      "candidateCommit": "42e016bca44d9046e0e27599d679bc69d28d3384",
+      "reviewedStateCommit": "c8288c373fcc65a1f638ec950181c0652afc3681"
+    }
+  },
+  "triggerEvidence": {
+    "discoveryCommit": "12c06ed648d1153f6ed60e873224fa0637fea4f7",
+    "backlogSha256": "2a14a5b45158d035514ed9a5ff4f170dc8a508df941f1b5395a2121a7713ef1e",
+    "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml amendment materialize W1.A03 --agent codex",
+    "diagnostic": "W1.A02: terminal lifecycle did not restore ordinary Wave scope",
+    "atomicNoMutation": true
+  },
+  "activationBoundary": {
+    "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "amendmentId": "W1.A03",
+    "amendmentLifecycle": "APPROVED",
+    "bootstrapStatus": "APPROVED",
+    "materializedTaskCount": 0,
+    "blockedTaskId": "CAP-02.S04.T03",
+    "blockedTaskStatus": "BLOCKED"
+  },
+  "supplementalBootstrap": {
+    "id": "GRR-0001.B01",
+    "kind": "append-only-approved-bootstrap-remediation",
+    "exceptionReason": "The independently approved recovery bootstrap permits the exact later amendment lane, but its terminal-amendment validator compares every adopted predecessor with the current shared Wave scope and therefore atomically rejects lawful materialization of the next amendment. The approved bootstrap cannot be reopened, the next amendment task cannot be claimed before materialization, the active hold cannot be released, and a second active hold is not representable.",
+    "authorizedPaths": [
+      "AGENTS.md",
+      "docs/automation/project-automation-guide.md",
+      "docs/governance/delivery-control-model.md",
+      "docs/planning-implementation-plan.md",
+      "planning/README.md",
+      "planning/backlog.schema.json",
+      "planning/backlog.yaml",
+      "planning/governance-recovery-approvals/GRR-0001.B01*",
+      "planning/governance-recovery-approvals/GRR-0001.S01.json",
+      "planning/governance-recovery-requests/governance-recovery-supplement-*.schema.json",
+      "planning/review-site/**",
+      "planning/status-summary.md",
+      "tests/foundation/**",
+      "tools/backlog_views.py",
+      "tools/plan_review_check.py",
+      "tools/plan_review_site.py",
+      "tools/recoveryctl.py",
+      "tools/taskctl.py"
+    ],
+    "requiredOutcomes": [
+      "A hash-bound supplemental recovery approval and B01 lifecycle extend only the existing active GRR-0001 hold without rewriting GRR-0001.B00 or attempts R01 through R05.",
+      "An adopted predecessor amendment remains valid while a strictly later same-Wave executable amendment legitimately owns the shared amendment-hold scope.",
+      "A terminal amendment still requires ordinary Wave scope when no strictly later executable same-Wave amendment owns the hold.",
+      "Gapped, reordered, cross-Wave, non-adopted-predecessor, multiple-executable-amendment, stale, dirty, forged, wrong-hash, and self-reviewed states fail atomically.",
+      "Exact W1.A03 materialization validates and creates only packet-bound W1.A03.T01 while W1 remains PAUSED, CAP-02.S04.T03 remains BLOCKED, and HOLD-W1-GRR-0001 remains ACTIVE.",
+      "B01 evidence and independent control/security review are append-only, commit-bound, and required before canonical W1.A03 materialization is retried."
+    ],
+    "prohibitedOutcomes": [
+      "No product/runtime, tools/ui_change_gate.py, approved UI reference, UI evidence contract, task acceptance criterion, verification threshold, completed task outcome, Wave approval, release gate, or prior Git object change.",
+      "No W1.A03 materialization, activation, task claim, T03 recovery, hold release, W1 resume, G1 approval, local-main integration, or remote push before B01 is independently approved.",
+      "No weakening of single-active-hold, amendment ordering, predecessor adoption, review independence, canonical path, exact hash, stale-writer, dirty-tree, or atomic-no-write controls.",
+      "No direct backlog edit, old-controller replay, repeated planctl wave approve, emergency override, bypass, or silent predecessor migration."
+    ]
+  },
+  "acceptanceCriteria": [
+    "The supplement validates against its exact Draft 2020-12 schema, every declared file hash matches, and all base authority commits, blobs, hashes, and ordered histories remain exact and ancestral.",
+    "B01 can be represented, submitted, remediated after an adverse review, independently reviewed, and terminally approved under the existing hold without changing B00 attempts or granting ordinary execution authority.",
+    "The taskctl semantic correction distinguishes historical restoration from current ownership of the shared Wave scope and preserves fail-closed denial when no lawful later owner exists.",
+    "Focused tests reproduce the exact W1.A02/W1.A03 failure, pass the lawful consecutive materialization projection, and deny every adverse identity, ordering, state, authority, path, hash, reviewer, stale, dirty, and atomicity case named in this packet.",
+    "A read-only exact W1.A03 materialization replay proves that only W1.A03.T01 and amendment-hold would be created, with W1 paused, T03 blocked, the hold active, and no activation or claim.",
+    "B01 receives an independent commit-bound control/security approval with no open blocking finding before the canonical materialization command is retried."
+  ],
+  "verificationObligations": [
+    "Run focused taskctl workflow and schema tests covering lawful consecutive same-Wave materialization and all declared malformed ownership projections.",
+    "Run focused recoveryctl tests covering supplement authority, B01 state, append-only review/remediation history, independence, hashes, paths, stale and dirty denial, and byte-stable failure.",
+    "Validate canonical backlog, GRR-0001, ECR-0002/W1.A03, generated planning views, review pages, quality scope, and Git diff hygiene at candidate, frozen submission, and reviewed state where applicable.",
+    "Bind evidence to the exact approval-to-candidate Git diff, packet and criteria hashes, selected unique checks, deferred broader W1 coverage, and an empty unexplained verification list.",
+    "Independently review the exact packet before human approval and independently review the implemented B01 before W1.A03 materialization."
+  ],
+  "rollback": [
+    "Before supplement approval, reject or retain the inert packet while the byte-identical stopped state remains authoritative.",
+    "An adverse B01 review remains append-only and requires a strict-descendant remediation submission with explicit finding closure.",
+    "If any base authority, B00 history, hold, W1 pause, W1.A03 boundary, T03 block, or exact materialization projection cannot be preserved, stop without mutation.",
+    "Never delete, replace, rewrite, or synthesize a GRR, supplement, approval, B00/B01 attempt, ECR, amendment, task review, evidence record, checkpoint, or Git object."
+  ],
+  "alternatives": [
+    {
+      "id": "A",
+      "title": "Approve bounded B01 supplement",
+      "disposition": "recommended",
+      "consequence": "Repairs the demonstrated invariant under the existing hold and adds the minimum independently reviewed post-approval bootstrap-remediation path."
+    },
+    {
+      "id": "B",
+      "title": "Keep W1 and recovery paused",
+      "disposition": "safe",
+      "consequence": "Preserves safety with no mutation, but W1.A03 cannot materialize and W1 cannot progress."
+    },
+    {
+      "id": "C",
+      "title": "Design GRR-0002 hold supersession",
+      "disposition": "safe",
+      "consequence": "Requires a broader active-hold transfer and predecessor model without providing additional safety for this bounded defect."
+    },
+    {
+      "id": "D",
+      "title": "Direct controller or backlog edit",
+      "disposition": "rejected",
+      "consequence": "Would bypass the exhausted B00 scope and the unmaterialized T01 claim gate."
+    }
+  ],
+  "files": [
+    {
+      "path": "planning/governance-recovery-requests/governance-recovery-supplement.schema.json",
+      "sha256": "2a2b07b17c2620bd87936db2167c0857f88e9ccc48809dc27ab0041a0b752b6d"
+    },
+    {
+      "path": "planning/governance-recovery-requests/GRR-0001.S01.md",
+      "sha256": "123c8664760fa2d93d502e8518af425a952df140c702acaeafeb51eb491138ae"
+    },
+    {
+      "path": "planning/governance-recovery-requests/GRR-0001.S01-review.html",
+      "sha256": "03fa8cbdc9d10f6f77c0fd30d20978b515edf14a720371c72f6e69308a016d41"
+    }
+  ],
+  "requiredApprovalStatement": "Approve GRR-0001.S01 at packet commit <40-character SHA>, authorizing only supplemental bootstrap GRR-0001.B01 and its hash-bound governance/controller/test scope under HOLD-W1-GRR-0001. Keep W1 paused, W1.A03 unmaterialized, and CAP-02.S04.T03 blocked through independent B01 approval; then retry only the packet-bound W1.A03 materialization transition."
+}
