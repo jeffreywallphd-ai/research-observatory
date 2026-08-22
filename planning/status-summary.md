@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 944d1ed3f0cb01dd57229c4240f57d7248dfe96f0552b636c4bacbcfb2d98066
+source_sha256: d605ec19ef79692b7cecebcdfa9630ae43fcd31555e5dae320ec93082755df45
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -60,8 +60,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ACTIVE` | 1 |
 | `ADOPTED` | 1 |
+| `REVIEW` | 1 |
 
 ### Enabler task state
 
@@ -77,7 +77,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 |---|---|---|---|---|---|---|---:|
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` | - | - | 0 |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` | `NONE` | `NONE` | 0 |
-| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ACTIVE` | `APPROVED` | `ACTIVE` | 2 |
+| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `REVIEW` | `APPROVED` | `REVIEW` | 2 |
 
 ## Amendment-exit review and adoption projections
 
@@ -187,13 +187,21 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 - `W1.A02-EXIT-R01-F01` `fixed` — Remediation candidate 55bf2850a73dfde9e5ac9c712584b23132364665 and the 70-test frozen-state controller/schema replay prove exact exit/adoption evidence, history, ancestry, branch, documentType, amendment, and target-Wave binding.
 - `W1.A02-EXIT-R02-F01` `fixed` — The coherent historical bootstrap fixture at 55bf2850a73dfde9e5ac9c712584b23132364665 passes in the complete 70-test suite; the only subsequent delta is the exact prior ledger addition.
 
-**Current immutable amendment-exit submission awaiting review:** None
+**Current immutable amendment-exit submission awaiting review:** `R04` / packet SHA-256 `daaa3f2f923a1fc574b11e9acbe3e34dde89d5260b47163786e7bba95714908c`
 
-**Latest completion projection:** `APPROVED` by b00-independent-reviewer at `2026-08-22T02:23:40+00:00`
+- Candidate / declared candidate / branch: `917d8afcc594b0b9eb0df5eb095f066eb4372955` / `6f2db45108954e57a50b8f49abca7a37fa98faab` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-22T02:35:17+00:00`
+- Bound exit evidence: amendment `W1.A02` / `artifacts/evidence/W1.A02.exit.json` / `6caf7ce2d52c945a9121438967351d910cb83666dd1d58d35de45882f4a9cc15` / `917d8afcc594b0b9eb0df5eb095f066eb4372955`
+- Acceptance-criteria SHA-256: `3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323`
+- Selected-check SHA-256: `c7c99a81a388a5a199c6b7968c45c4a8a26a79b203f61984e3eb2694ec838216`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments`, `.venv\Scripts\python.exe tools\quality_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .`, `.venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved`, `git diff --check`
+- Prior round / replayed open findings: `R03` / -
+
+**Latest completion projection:** `REVIEW` by - at `-`
 
 **Latest completion evidence:** `artifacts/evidence/W1.A02.exit.json`
 
-**Latest completion notes:** APPROVED at exact clean frozen state 5e270d61986111df566ceef084a60d7cf03ec635 on codex/w1-windows-local-runtime. The sole delta from previously approved state bd5133e2efa450832cbb1f451f01bfe64746727c is addition of the exact prior R03 ledger at artifacts/evidence/W1.A02.exit-review-R03.json, SHA-256 2faf60e09d48b67c304f425685dd07b16b5886af6173d7a040f20920377ad2a8. No backlog/state transition, implementation, submission, evidence, authority, generated-view, or workflow-control bytes changed. The current R03 submission remains semantically valid and binds artifacts/evidence/W1.A02.exit.json at SHA-256 d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5 and commit f86bbb6e60203246178017cba2a69b41d0957a29, declaring remediation candidate 55bf2850a73dfde9e5ac9c712584b23132364665. R01/R02 history and both closures remain valid. The prior bounded results—70/70 controller/schema tests, 13/13 amendment review tests, quality, backlog, telemetry, review-site, generated-view, ECR authority, and diff checks—remain applicable; no unrelated or full W1 work was rerun. No W1/G1 approval or Wave resume is authorized. Adoption remains procedurally unavailable until taskctl records this exact approved review and a separately committed adoption checkpoint binds that approved completion.
+**Latest completion notes:** R04 remediates the fail-closed adoption transition discovered after R03: validate completed exits against frozen reviewed state and allow only exact approved pre-adoption remediation reactivation.
 
 **Bound amendment-adoption checkpoints:**
 

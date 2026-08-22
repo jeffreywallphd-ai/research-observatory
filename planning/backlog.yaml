@@ -22135,7 +22135,7 @@ verification_profiles:
 control_plane:
   revision: 3
   minimum_tool_revision: 3
-  active_amendment: W1.A02
+  active_amendment: null
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
@@ -22218,7 +22218,7 @@ wave_amendments:
     sha256: 63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376
     introduction_commit: 6e9c440102a5c463bb35d81f4dbdc3453d9ce029
   lifecycle:
-    status: ACTIVE
+    status: REVIEW
     history:
     - id: E01
       status: APPROVED
@@ -22289,6 +22289,12 @@ wave_amendments:
       actor: codex
       at: '2026-08-22T02:32:18+00:00'
       rationale: Reactivated the bounded amendment campaign after a failed adoption transition.
+    - id: E12
+      status: REVIEW
+      actor: codex
+      at: '2026-08-22T02:35:17+00:00'
+      rationale: 'R04 remediates the fail-closed adoption transition discovered after R03: validate completed exits against
+        frozen reviewed state and allow only exact approved pre-adoption remediation reactivation.'
   bootstrap:
     id: W1.A02.B00
     status: APPROVED
@@ -22347,7 +22353,7 @@ wave_amendments:
           B00-R05 MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen
           state 84107b8.'
   campaign:
-    status: ACTIVE
+    status: REVIEW
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -22356,12 +22362,9 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-21T00:43:02+00:00'
-    updated_at: '2026-08-22T02:32:18+00:00'
+    updated_at: '2026-08-22T02:35:17+00:00'
     pause_reason: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-22T02:32:18+00:00'
-      expires_at: '2026-08-23T02:32:18+00:00'
+    lease: null
   tasks:
   - id: W1.A02.T01
     amendment_id: W1.A02
@@ -23080,22 +23083,13 @@ wave_amendments:
             - W1.A02.T02-R01-F04
       current_submission: null
   completion:
-    status: APPROVED
-    reviewer: b00-independent-reviewer
-    reviewed_at: '2026-08-22T02:23:40+00:00'
+    status: REVIEW
+    reviewer: null
+    reviewed_at: null
     evidence:
     - artifacts/evidence/W1.A02.exit.json
-    notes: APPROVED at exact clean frozen state 5e270d61986111df566ceef084a60d7cf03ec635 on codex/w1-windows-local-runtime.
-      The sole delta from previously approved state bd5133e2efa450832cbb1f451f01bfe64746727c is addition of the exact prior
-      R03 ledger at artifacts/evidence/W1.A02.exit-review-R03.json, SHA-256 2faf60e09d48b67c304f425685dd07b16b5886af6173d7a040f20920377ad2a8.
-      No backlog/state transition, implementation, submission, evidence, authority, generated-view, or workflow-control bytes
-      changed. The current R03 submission remains semantically valid and binds artifacts/evidence/W1.A02.exit.json at SHA-256
-      d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5 and commit f86bbb6e60203246178017cba2a69b41d0957a29,
-      declaring remediation candidate 55bf2850a73dfde9e5ac9c712584b23132364665. R01/R02 history and both closures remain valid.
-      The prior bounded results—70/70 controller/schema tests, 13/13 amendment review tests, quality, backlog, telemetry,
-      review-site, generated-view, ECR authority, and diff checks—remain applicable; no unrelated or full W1 work was rerun.
-      No W1/G1 approval or Wave resume is authorized. Adoption remains procedurally unavailable until taskctl records this
-      exact approved review and a separately committed adoption checkpoint binds that approved completion.
+    notes: 'R04 remediates the fail-closed adoption transition discovered after R03: validate completed exits against frozen
+      reviewed state and allow only exact approved pre-adoption remediation reactivation.'
     exit_review_control:
       version: 1
       attempts:
@@ -23299,4 +23293,31 @@ wave_amendments:
           disposition: fixed
           evidence: The coherent historical bootstrap fixture at 55bf2850a73dfde9e5ac9c712584b23132364665 passes in the complete
             70-test suite; the only subsequent delta is the exact prior ledger addition.
-      current_submission: null
+      current_submission:
+        id: R04
+        submitted_by: codex
+        submitted_at: '2026-08-22T02:35:17+00:00'
+        candidate_commit: 917d8afcc594b0b9eb0df5eb095f066eb4372955
+        declared_candidate_commit: 6f2db45108954e57a50b8f49abca7a37fa98faab
+        branch: codex/w1-windows-local-runtime
+        evidence_reference:
+          type: amendment-exit-evidence
+          amendment_id: W1.A02
+          path: artifacts/evidence/W1.A02.exit.json
+          sha256: 6caf7ce2d52c945a9121438967351d910cb83666dd1d58d35de45882f4a9cc15
+          commit: 917d8afcc594b0b9eb0df5eb095f066eb4372955
+        acceptance_criteria_sha256: 3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323
+        selected_checks:
+        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow
+        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments
+        - .venv\Scripts\python.exe tools\quality_check.py --repo .
+        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
+        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry
+        - .venv\Scripts\python.exe tools\plan_review_check.py --repo .
+        - .venv\Scripts\python.exe tools\backlog_views.py --repo . --check
+        - .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved
+        - git diff --check
+        selected_checks_sha256: c7c99a81a388a5a199c6b7968c45c4a8a26a79b203f61984e3eb2694ec838216
+        prior_attempt_id: R03
+        open_finding_ids: []
+        packet_sha256: daaa3f2f923a1fc574b11e9acbe3e34dde89d5260b47163786e7bba95714908c
