@@ -174,6 +174,15 @@ export function ApplicationRuntime(): ReactNode {
     }).then((cleanup) => {
       if (disposed) cleanup();
       else unlisten = cleanup;
+    }).catch(() => {
+      if (!disposed) {
+        applyLockSnapshot({
+          ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+          state: "locked",
+          reason: "configuration-invalid",
+        });
+        setUnlockError("Application-lock monitoring is unavailable. Protected work was not opened.");
+      }
     });
     return () => {
       disposed = true;

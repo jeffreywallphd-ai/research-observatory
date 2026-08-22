@@ -852,6 +852,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsTraceLink": False,
         "diagnosticsExactExport": False,
         "projectsWorkflow": False,
+        "applicationLock": False,
         "responsiveCases": 0,
         "criticalViolations": [],
         "requests": [],
@@ -1074,7 +1075,22 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     return {...preview, documentJson, byteLength: bytes.byteLength, sha256};
                   };
                   window.__TAURI_INTERNALS__ = {
+                    transformCallback: () => 1,
                     invoke: async (command, args) => {
+                      if (command === 'application_lock_status') {
+                        return {
+                          schemaVersion: '1.0', state: 'unlocked', profileName: null,
+                          inactivityTimeoutMinutes: 0, configurationState: 'default', reason: null,
+                          reauthentication: 'windows-current-user-credentials-same-sid',
+                          threatDisclosure: 'Application-session protection only; '
+                            + 'this is not Windows-account isolation.',
+                          retryAfterSeconds: 0, auditSequence: 0
+                        };
+                      }
+                      if (command === 'application_lock_activity' || command === 'plugin:event|unlisten') {
+                        return undefined;
+                      }
+                      if (command === 'plugin:event|listen') return 1;
                       if (command === 'core_runtime_start' || command === 'core_runtime_status') {
                         return {state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null};
                       }
@@ -1155,7 +1171,22 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                     deleteConfirmation: `delete:${projectId}`
                   });
                   window.__TAURI_INTERNALS__ = {
+                    transformCallback: () => 1,
                     invoke: async (command, args) => {
+                      if (command === 'application_lock_status') {
+                        return {
+                          schemaVersion: '1.0', state: 'unlocked', profileName: null,
+                          inactivityTimeoutMinutes: 0, configurationState: 'default', reason: null,
+                          reauthentication: 'windows-current-user-credentials-same-sid',
+                          threatDisclosure: 'Application-session protection only; '
+                            + 'this is not Windows-account isolation.',
+                          retryAfterSeconds: 0, auditSequence: 0
+                        };
+                      }
+                      if (command === 'application_lock_activity' || command === 'plugin:event|unlisten') {
+                        return undefined;
+                      }
+                      if (command === 'plugin:event|listen') return 1;
                       if (command === 'core_runtime_start' || command === 'core_runtime_status') {
                         return {state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null};
                       }
@@ -1268,6 +1299,49 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 errors.append(f"desktop projects runtime error: {'; '.join(project_errors)}")
             projects.close()
 
+            locked = browser_context.new_page()
+            locked_errors: list[str] = []
+            locked.on("pageerror", page_error_collector(locked_errors))
+            locked.add_init_script(
+                r"""(() => {
+                  window.__TAURI_INTERNALS__ = {
+                    transformCallback: () => 1,
+                    invoke: async (command) => {
+                      if (command === 'application_lock_status') {
+                        return {
+                          schemaVersion: '1.0', state: 'locked', profileName: null,
+                          inactivityTimeoutMinutes: 15, configurationState: 'valid', reason: 'application-restart',
+                          reauthentication: 'windows-current-user-credentials-same-sid',
+                          threatDisclosure: 'Application-session protection only; '
+                            + 'this is not Windows-account isolation.',
+                          retryAfterSeconds: 0, auditSequence: 4
+                        };
+                      }
+                      if (command === 'plugin:event|listen') return 1;
+                      if (command === 'plugin:event|unlisten') return undefined;
+                      throw new Error('protected command reached while locked');
+                    }
+                  };
+                })()"""
+            )
+            locked.goto("http://tauri.localhost/index.html", wait_until="load")
+            locked.locator("[data-application-locked]").wait_for(state="visible", timeout=5_000)
+            locked_text = locked.locator("body").inner_text()
+            details["applicationLock"] = (
+                locked.locator("h1").count() == 1
+                and locked.locator("h1").inner_text().strip() == "Research Observatory is locked"
+                and locked.get_by_role("button", name="Unlock with Windows", exact=True).count() == 1
+                and "not Windows-account isolation" in locked_text
+                and "No Research Observatory or cloud account is required" in locked_text
+                and locked.locator(
+                    "#shell-command, [data-local-service-boundary], [data-current-project], nav, footer"
+                ).count()
+                == 0
+            )
+            if locked_errors:
+                errors.append(f"desktop locked runtime error: {'; '.join(locked_errors)}")
+            locked.close()
+
             for width, height in ((1280, 720), (720, 450)):
                 responsive = browser_context.new_page()
                 responsive.set_viewport_size({"width": width, "height": height})
@@ -1309,6 +1383,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsTraceLink",
         "diagnosticsExactExport",
         "projectsWorkflow",
+        "applicationLock",
     ):
         if details[field] is not True:
             errors.append(f"desktop product did not verify {field}")

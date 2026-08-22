@@ -23,6 +23,7 @@ affected_paths:
   - tests/foundation/test_adr_check.py
   - tests/security/test_windows_credentials.py
   - tests/security/README.md
+  - tools/desktop_app_check.py
   - artifacts/evidence/ui-change/CAP-02.S04.T02.json
 supersedes: []
 superseded_by: null

@@ -31,6 +31,11 @@
       "scope": "The functional desktop product and approved-reference conformance fixture both built successfully with the pinned Node 24.19.0, React 19, TypeScript 7, and Vite 8 toolchain."
     },
     {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --built-frame-only --report artifacts/tmp/CAP-02.S04.T02-desktop-frame.json",
+      "result": "passed",
+      "scope": "The built product passed browser-level keyboard, focus, theme, responsive, project, diagnostics, and local-service checks. A native-bridge fixture additionally proved the locked page is the only document tree and excludes commands, navigation, project state, diagnostics, and Core surfaces."
+    },
+    {
       "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
       "result": "passed",
       "scope": "Rust formatting and all 18 native desktop library tests passed on Windows, including manual, idle, denied, cancelled, rate-limited, same-user-success, Core-restart-failure, generation-invalidation, redacted-audit, supervisor, and support-bundle boundaries."
