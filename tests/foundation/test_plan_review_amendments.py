@@ -14,15 +14,25 @@ import yaml
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from backlog_views import render_plan, render_summary, task_review_markdown  # noqa: E402
-from plan_review_check import (  # noqa: E402
-    main as check_review_site,
+from backlog_views import (  # noqa: E402
+    amendment_exit_review_markdown,
+    render_plan,
+    render_summary,
+    task_review_markdown,
 )
 from plan_review_check import (  # noqa: E402
+    amendment_exit_manifest_errors,
+    amendment_exit_render_errors,
     task_review_manifest_errors,
     task_review_render_errors,
 )
+from plan_review_check import (  # noqa: E402
+    main as check_review_site,
+)
 from plan_review_site import (  # noqa: E402
+    amendment_adoption_checkpoints,
+    amendment_exit_projection,
+    amendment_exit_review_html,
     build_site,
     load_enabler_change_requests,
     task_review_history_html,
@@ -144,6 +154,156 @@ def controlled_review_task() -> dict[str, Any]:
             "current_submission": None,
         },
     }
+
+
+def controlled_exit_amendment() -> dict[str, Any]:
+    def packet(
+        attempt_id: str,
+        *,
+        candidate: str,
+        packet_hash: str,
+        evidence_hash: str,
+        prior: str | None,
+        open_ids: list[str],
+    ) -> dict[str, Any]:
+        return {
+            "id": attempt_id,
+            "submitted_by": "codex",
+            "submitted_at": "2026-08-21T04:00:00Z",
+            "candidate_commit": candidate,
+            "declared_candidate_commit": candidate,
+            "branch": "codex/w1-windows-local-runtime",
+            "evidence_reference": {
+                "type": "amendment-exit-evidence",
+                "amendment_id": "W1.A02",
+                "path": f"artifacts/evidence/W1.A02.exit-{attempt_id}.json",
+                "sha256": evidence_hash,
+                "commit": candidate,
+            },
+            "acceptance_criteria_sha256": "a" * 64,
+            "selected_checks": ["python -m unittest tests.foundation.test_example"],
+            "selected_checks_sha256": "b" * 64,
+            "prior_attempt_id": prior,
+            "open_finding_ids": open_ids,
+            "packet_sha256": packet_hash,
+        }
+
+    first_packet = packet(
+        "R01",
+        candidate="1" * 40,
+        packet_hash="c" * 64,
+        evidence_hash="d" * 64,
+        prior=None,
+        open_ids=[],
+    )
+    second_packet = packet(
+        "R02",
+        candidate="2" * 40,
+        packet_hash="e" * 64,
+        evidence_hash="f" * 64,
+        prior="R01",
+        open_ids=["EF01"],
+    )
+    approved_review = {
+        "reviewer": "exit-independent-reviewer",
+        "result": "approved",
+        "reviewed_at": "2026-08-21T05:00:00Z",
+        "reviewed_state_commit": "4" * 40,
+        "notes": "EF01 is closed without flattening R01.",
+    }
+    return {
+        "id": "W1.A02",
+        "change_request_id": "ECR-0001",
+        "target_wave": "W1",
+        "completion": {
+            "status": "APPROVED",
+            "reviewer": approved_review["reviewer"],
+            "reviewed_at": approved_review["reviewed_at"],
+            "evidence": ["artifacts/evidence/W1.A02.exit-R02.json"],
+            "notes": approved_review["notes"],
+            "exit_review_control": {
+                "version": 1,
+                "attempts": [
+                    {
+                        "submission": first_packet,
+                        "review": {
+                            "reviewer": "exit-independent-reviewer",
+                            "result": "changes-requested",
+                            "reviewed_at": "2026-08-21T04:30:00Z",
+                            "reviewed_state_commit": "3" * 40,
+                            "notes": "EF01 blocks exit approval.",
+                        },
+                        "ledger": {
+                            "path": "artifacts/evidence/W1.A02.exit-review-R01.json",
+                            "sha256": "1" * 64,
+                        },
+                        "findings": [
+                            {
+                                "id": "EF01",
+                                "severity": "high",
+                                "blocking": True,
+                                "criterion_index": 1,
+                                "title": "Exit history is flattened",
+                                "reproduction": "Generate the amendment detail after remediation.",
+                                "required_remediation": "Retain R01 beside R02.",
+                            }
+                        ],
+                        "closures": [],
+                    },
+                    {
+                        "submission": second_packet,
+                        "review": approved_review,
+                        "ledger": {
+                            "path": "artifacts/evidence/W1.A02.exit-review-R02.json",
+                            "sha256": "2" * 64,
+                        },
+                        "findings": [],
+                        "closures": [
+                            {
+                                "finding_id": "EF01",
+                                "disposition": "fixed",
+                                "evidence": "R02 retains the complete exit-review history.",
+                            }
+                        ],
+                    },
+                ],
+                "current_submission": None,
+            },
+        },
+    }
+
+
+def controlled_adoption_waves() -> list[dict[str, Any]]:
+    return [
+        {
+            "id": "W1",
+            "checkpoints": [
+                {
+                    "id": "W1.CP01",
+                    "kind": "security",
+                    "recorded_by": "codex",
+                    "recorded_at": "2026-08-21T05:30:00Z",
+                    "evidence": [
+                        {
+                            "type": "amendment-adoption-evidence",
+                            "amendment_id": "W1.A02",
+                            "path": "artifacts/evidence/W1.A02.adoption.json",
+                            "sha256": "8" * 64,
+                            "commit": "9" * 40,
+                        },
+                        {
+                            "type": "amendment-adoption-evidence",
+                            "amendment_id": "W1.A03",
+                            "path": "artifacts/evidence/W1.A03.adoption.json",
+                            "sha256": "7" * 64,
+                            "commit": "6" * 40,
+                        },
+                    ],
+                    "notes": "Adopted W1.A02 control-plane changes.",
+                }
+            ],
+        }
+    ]
 
 
 class PlanReviewAmendmentTests(unittest.TestCase):
@@ -360,7 +520,134 @@ class PlanReviewAmendmentTests(unittest.TestCase):
             any("current immutable submission" in error for error in task_review_render_errors(flattened, projection))
         )
 
+    def test_amendment_exit_history_and_bound_adoption_render_without_flattening(self) -> None:
+        amendment = controlled_exit_amendment()
+        waves = controlled_adoption_waves()
+        projection = amendment_exit_projection(amendment)
+        checkpoints = amendment_adoption_checkpoints(amendment, waves)
+        rendered = amendment_exit_review_html(amendment, checkpoints)
+        markdown = "\n".join(amendment_exit_review_markdown(amendment, waves, heading_level=3))
+
+        self.assertEqual([], amendment_exit_render_errors(rendered, projection, checkpoints))
+        self.assertEqual(
+            [],
+            amendment_exit_manifest_errors("synthetic", projection, checkpoints, amendment, waves),
+        )
+        self.assertFalse([line for line in rendered.splitlines() if line.rstrip() != line])
+        for marker in (
+            "EF01",
+            "fixed",
+            "3" * 40,
+            "4" * 40,
+            "d" * 64,
+            "f" * 64,
+            "1" * 64,
+            "2" * 64,
+            "W1.CP01",
+            "8" * 64,
+            "9" * 40,
+            "Latest completion projection",
+        ):
+            self.assertIn(marker, rendered)
+            self.assertIn(marker, markdown)
+        self.assertIn("Amendment-exit review round R01", rendered)
+        self.assertIn("Amendment-exit review round R02", rendered)
+        self.assertIn("Exit round R01", markdown)
+        self.assertIn("Exit round R02", markdown)
+        self.assertNotIn("W1.A03.adoption.json", rendered)
+        self.assertLess(rendered.index("review round R01"), rendered.index("review round R02"))
+        self.assertLess(markdown.index("Exit round R01"), markdown.index("Exit round R02"))
+
+    def test_amendment_exit_checker_rejects_omission_hash_drift_and_flattening(self) -> None:
+        amendment = controlled_exit_amendment()
+        waves = controlled_adoption_waves()
+        projection = amendment_exit_projection(amendment)
+        checkpoints = amendment_adoption_checkpoints(amendment, waves)
+        rendered = amendment_exit_review_html(amendment, checkpoints)
+
+        without_first_round = rendered.replace('data-exit-review-attempt="W1.A02:R01"', "", 1)
+        self.assertTrue(
+            any(
+                "round count" in error or "R01" in error
+                for error in amendment_exit_render_errors(without_first_round, projection, checkpoints)
+            )
+        )
+        altered_exit_hash = rendered.replace("d" * 64, "0" * 64)
+        self.assertTrue(
+            any(
+                "R01" in error and "hash" in error
+                for error in amendment_exit_render_errors(altered_exit_hash, projection, checkpoints)
+            )
+        )
+        without_closure = rendered.replace('data-exit-review-closure="W1.A02:R02:EF01"', "", 1)
+        self.assertTrue(
+            any("closure" in error for error in amendment_exit_render_errors(without_closure, projection, checkpoints))
+        )
+        altered_adoption_hash = rendered.replace("8" * 64, "0" * 64)
+        self.assertTrue(
+            any(
+                "adoption" in error
+                for error in amendment_exit_render_errors(altered_adoption_hash, projection, checkpoints)
+            )
+        )
+
+        flattened = copy.deepcopy(projection)
+        flattened["exit_review_control"]["attempts"] = flattened["exit_review_control"]["attempts"][1:]
+        self.assertTrue(amendment_exit_manifest_errors("synthetic", flattened, checkpoints, amendment, waves))
+        omitted_checkpoints: list[dict[str, Any]] = []
+        self.assertTrue(amendment_exit_manifest_errors("synthetic", projection, omitted_checkpoints, amendment, waves))
+
+    def test_amendment_exit_current_submission_is_distinct_from_completed_history(self) -> None:
+        amendment = controlled_exit_amendment()
+        current = copy.deepcopy(amendment["completion"]["exit_review_control"]["attempts"][-1]["submission"])
+        current.update(
+            id="R03",
+            candidate_commit="5" * 40,
+            declared_candidate_commit="5" * 40,
+            prior_attempt_id="R02",
+            packet_sha256="6" * 64,
+        )
+        current["evidence_reference"].update(
+            path="artifacts/evidence/W1.A02.exit-R03.json",
+            sha256="7" * 64,
+            commit="5" * 40,
+        )
+        amendment["completion"]["status"] = "REVIEW"
+        amendment["completion"]["exit_review_control"]["current_submission"] = current
+        projection = amendment_exit_projection(amendment)
+        rendered = amendment_exit_review_html(amendment, [])
+
+        self.assertEqual([], amendment_exit_render_errors(rendered, projection, []))
+        self.assertIn('data-exit-current-submission="W1.A02:R03"', rendered)
+        self.assertIn("Current immutable exit submission awaiting review", rendered)
+        self.assertIn("Latest completion projection", rendered)
+
+    def test_legacy_amendment_completion_is_labeled_without_invented_exit_history(self) -> None:
+        amendment = {
+            "id": "W1.A01",
+            "target_wave": "W1",
+            "completion": {
+                "status": "APPROVED",
+                "reviewer": "repository-owner",
+                "reviewed_at": "2026-08-20T23:38:52Z",
+                "evidence": ["planning/wave-amendment-approvals/W1.A01.json"],
+                "notes": "Historical authority migration only.",
+            },
+        }
+        projection = amendment_exit_projection(amendment)
+        rendered = amendment_exit_review_html(amendment, [])
+        markdown = "\n".join(amendment_exit_review_markdown(amendment, [], heading_level=3))
+
+        self.assertEqual([], amendment_exit_render_errors(rendered, projection, []))
+        self.assertIn("Legacy latest-completion-only projection", rendered)
+        self.assertIn("legacy latest-completion-only projection", markdown)
+        self.assertIn("Historical authority migration only.", rendered)
+        self.assertNotIn("data-exit-review-attempt", rendered)
+        self.assertNotIn("Exit round R01", markdown)
+
     def test_backlog_views_render_base_amendment_and_bounded_task_separately(self) -> None:
+        exit_amendment = controlled_exit_amendment()
+        adoption_wave = controlled_adoption_waves()[0]
         data = {
             "plan": {"title": "Plan"},
             "status_definitions": {"NOT_STARTED": "not started"},
@@ -371,6 +658,7 @@ class PlanReviewAmendmentTests(unittest.TestCase):
                     "track": "local",
                     "approval": {"status": "APPROVED"},
                     "campaign": {"status": "PAUSED"},
+                    "checkpoints": adoption_wave["checkpoints"],
                     "completion": {"status": "PAUSED"},
                 }
             ],
@@ -404,7 +692,7 @@ class PlanReviewAmendmentTests(unittest.TestCase):
                     },
                     "bootstrap": {"status": "APPROVED"},
                     "campaign": None,
-                    "completion": {"status": "PENDING"},
+                    "completion": exit_amendment["completion"],
                     "tasks": [
                         {
                             "id": "W1.A02.T01",
@@ -428,6 +716,16 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         self.assertIn("# Enabler change requests and Wave amendments", plan)
         self.assertIn("ECR-0001", plan)
         self.assertIn("W1.A02.T01", plan)
+        for marker in (
+            "Exit round R01",
+            "Exit round R02",
+            "EF01",
+            "W1.CP01",
+            "8" * 64,
+        ):
+            self.assertIn(marker, summary)
+            self.assertIn(marker, plan)
+        self.assertIn("Amendment-exit review and adoption projections", summary)
 
 
 if __name__ == "__main__":

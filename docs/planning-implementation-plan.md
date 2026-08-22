@@ -391,6 +391,20 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `E01` `ADOPTED` at `2026-08-20T23:38:52+00:00` by repository-owner: Migrated immutable historical W1 amendment authority.
 
+### Amendment-exit review and adoption — W1.A01
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `APPROVED` by repository-owner at `2026-08-20T23:38:52+00:00`
+
+**Latest completion evidence:** `planning/wave-amendment-approvals/W1.A01.json`
+
+**Latest completion notes:** Historical authority migration only.
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
 **Bounded tasks:**
 
 ## W1.A02 - ECR-0001
@@ -407,6 +421,20 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E02` `MATERIALIZED` at `2026-08-21T00:42:00+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-08-21T00:43:02+00:00` by codex: Activated the bounded amendment campaign.
 - `E04` `REVIEW` at `2026-08-21T03:00:48+00:00` by codex: Both authorized tasks are DONE and independently approved; submit W1.A02 for bounded amendment exit review while W1 remains paused.
+
+### Amendment-exit review and adoption — W1.A02
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W1.A02.exit.json`
+
+**Latest completion notes:** Both authorized tasks are DONE and independently approved; submit W1.A02 for bounded amendment exit review while W1 remains paused.
+
+**Bound amendment-adoption checkpoints:**
+
+- None
 
 **Bounded tasks:**
 

@@ -80,6 +80,22 @@ subsequent transition. Each attempt also freezes its submission branch: stored
 evidence is validated against that branch permanently, while the live checkout
 branch is checked only when submitting or recording the independent review.
 
+Exit and adoption use the same immutable discipline:
+
+```bash
+python tools/taskctl.py --file planning/backlog.yaml amendment submit WN.ANN --agent <agent> --from <committed-exit-evidence>
+python tools/taskctl.py --file planning/backlog.yaml amendment review WN.ANN --reviewer <independent-reviewer> --result <result> --from <review-ledger>
+python tools/taskctl.py --file planning/backlog.yaml amendment adopt WN.ANN --agent <agent> --from <committed-checkpoint-evidence>
+```
+
+The exit packet binds the evidence blob and Git commit, codex branch, approved
+ECR criteria, and selected checks. The review ledger binds the exact submitted
+backlog state and preserves severity-ranked findings and closures across later
+rounds. Adoption accepts only a committed path/SHA/commit checkpoint reference
+whose payload identifies the amendment and exact approved completion history.
+Missing, replaced, stale, forked, dirty, or unreviewed evidence is denied.
+Pre-control amendments stay truthful and receive no fabricated rounds.
+
 For ordinary and amendment tasks, use `taskctl submit <task> --agent <agent>
 --from <manifest>` as the atomic evidence-and-submission transition. It freezes
 an immutable RNN packet containing candidate/evidence, acceptance-criteria,
