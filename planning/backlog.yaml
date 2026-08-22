@@ -22135,7 +22135,7 @@ verification_profiles:
 control_plane:
   revision: 3
   minimum_tool_revision: 3
-  active_amendment: null
+  active_amendment: W1.A02
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
@@ -22218,7 +22218,7 @@ wave_amendments:
     sha256: 63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376
     introduction_commit: 6e9c440102a5c463bb35d81f4dbdc3453d9ce029
   lifecycle:
-    status: REVIEW
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -22284,6 +22284,11 @@ wave_amendments:
       at: '2026-08-22T02:17:29+00:00'
       rationale: R03 remediates W1.A02-EXIT-R01-F01 and W1.A02-EXIT-R02-F01 with payload-type/target/history binding, coherent
         historical fixtures, and 70 passing controller/schema tests.
+    - id: E11
+      status: ACTIVE
+      actor: codex
+      at: '2026-08-22T02:32:18+00:00'
+      rationale: Reactivated the bounded amendment campaign after a failed adoption transition.
   bootstrap:
     id: W1.A02.B00
     status: APPROVED
@@ -22342,18 +22347,21 @@ wave_amendments:
           B00-R05 MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen
           state 84107b8.'
   campaign:
-    status: COMPLETE
+    status: ACTIVE
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/ai-projects/research-observatory
-    base_sha: 55bf2850a73dfde9e5ac9c712584b23132364665
+    base_sha: 6f2db45108954e57a50b8f49abca7a37fa98faab
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-21T00:43:02+00:00'
-    updated_at: '2026-08-22T02:23:40+00:00'
+    updated_at: '2026-08-22T02:32:18+00:00'
     pause_reason: null
-    lease: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-22T02:32:18+00:00'
+      expires_at: '2026-08-23T02:32:18+00:00'
   tasks:
   - id: W1.A02.T01
     amendment_id: W1.A02
