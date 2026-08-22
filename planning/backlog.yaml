@@ -24167,14 +24167,17 @@ wave_amendments:
       governed Python quality, and diff hygiene.
     - Obtain independent task review, independent amendment exit review, and a commit-bound control/security adoption checkpoint.
     packet_task_sha256: 6e6c5ffa1266d25dbb888284baa02721f5da760b64685d849820dc995597d9d9
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-08-22T19:08:18+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: 22afeeb5779ed53bbd6c35fac9515f4a7e8c56d4
+    worktree: C:/workspace/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-22T19:09:55+00:00'
+      expires_at: '2026-08-23T03:09:55+00:00'
+    started_at: '2026-08-22T19:09:55+00:00'
+    updated_at: '2026-08-22T19:09:55+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
