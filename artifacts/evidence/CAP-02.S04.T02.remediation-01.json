@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S04.T02",
+  "commit": "44ee8733a159152a3873eab76c5e54b995824afb",
+  "baseCommit": "a06d7d4cd67e027850d6d240f1507a17e49a4739",
+  "branch": "codex/w1-windows-local-runtime",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S04.T02.submission.json",
+    "sha256": "4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445",
+    "commit": "a06d7d4cd67e027850d6d240f1507a17e49a4739",
+    "reason": "Remediates every blocking finding in independent review R01 without changing the approved task acceptance surface."
+  },
+  "changedFiles": [
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src-tauri/src/support_bundle.rs",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "artifacts/evidence/CAP-02.S04.T02.submission.json",
+    "artifacts/evidence/task-reviews/CAP-02.S04.T02/R01.json",
+    "docs/adr/ADR-0018-lock-the-local-application-at-the-native-supervisor-boundary.md",
+    "docs/architecture/application-lock.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-02/CAP-02.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/security/test_windows_credentials.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-remediation-commit-desktop.json",
+      "exitCode": 0,
+      "result": "Exact candidate 44ee8733a159152a3873eab76c5e54b995824afb passed the complete desktop application verifier: UI component verification, frontend lint/typecheck/48 tests/production build, Rust format/clippy/24 tests/build, and the browser boundary suite. The browser replay proves malformed and failed status paths fail closed, polling closes missed-event gaps, a stale initial status cannot overwrite a newer lock event, explicit unlock alone recovers, and populated project/query/dialog state is removed. Report SHA-256 18868edff17d322d32207cbe51087fdc763f698ae18db63542e178ff8d0a88db."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/security; .venv\\Scripts\\python.exe -m unittest discover -s tests/contracts; .venv\\Scripts\\python.exe -m unittest discover -s tests/desktop",
+      "exitCode": 0,
+      "result": "At the exact clean candidate, all 31 security tests passed with one expected Windows privilege skip, all 19 contract tests passed, and all 51 desktop boundary tests passed. The replay includes exact valid credential flags/current-user prefill/UPN domain mapping, native cancellation and staged-publication source contracts, and existing desktop failure boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; adr_check --base a06d7d4 --head 44ee8733; ui_change_gate --base 8782ee8d --head 44ee8733; build_manifest; quality_check; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "Architecture (13 areas, 12 modules, 5 stable interfaces, 3 profiles), ADR-0018 coverage, approved UI reference 1.3 lineage over the complete task range, clean build identity 0.1.0+g44ee873, 113 governed Python files, the 20-capability/117-slice/358-task backlog, and generated views all passed. Build-manifest SHA-256 5df5ced91a831a60cc7cda2324de41dd4874eba918b02191a7fcba546d7d1eee and quality-report SHA-256 d75f968403803b78748f4a0f1a2ec6f58980b47f35ae5c22ea4b9446ef55853c."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base a06d7d4cd67e027850d6d240f1507a17e49a4739 --affected-head 44ee8733a159152a3873eab76c5e54b995824afb --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-02.S04.T02-remediation-affected-selection.json",
+      "exitCode": 0,
+      "result": "The governed Git-derived remediation selection passed and classified the security-sensitive native, renderer, evidence, and documentation paths. Exact implementation-facing checks were run directly; desktop performance and the complete repository/deployment matrix remain owned by W1 exit. Report SHA-256 9cda6f5906af965cf8489998c450d409069c640054e0b4250f1a05e8bb75344d."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R01-F01 is remediated with the documented CredUIPromptForCredentialsW generic, always-show, non-persisting flag combination; the actual NameSamCompatible current identity is prefilled, UPN uses a NULL LogonUserW domain, down-level/local mapping is preserved, and same-SID enforcement, secret zeroing, and handle RAII remain intact.",
+        "R01-F02 is remediated by releasing the supervisor lifecycle mutex during Core I/O, marking and checking per-process cancellation, immediately terminating Core on lock, and validating the live process before returning. Profile and support-bundle changes are staged and published atomically only while the captured application-lock generation still owns the commit boundary; lock clears pending support previews and staging drops on cancellation.",
+        "R01-F03 is remediated with listener-before-status registration, monotonic audit-sequence reconciliation, one-second native polling, time-bounded listener/status calls, and synthesized configuration-invalid locking for malformed or failed reconciliation. Stale/conflicting native state cannot reopen a fail-closed renderer; only explicit successful unlock can do so."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "R01-F04 is remediated by an RAII native reauthentication reservation acquired under the lock mutex before prompting. Concurrent calls are bounded by one admitted prompt, and cancellation, denial, panic, Core-start failure, and success all release the reservation while retaining exponential backoff.",
+        "Deterministic native tests cover concurrent prompt admission, reservation cleanup, a lock racing profile publication, a lock racing support preview/export publication, and an in-flight Core request cancelled without a response. Frontend and browser tests cover malformed, missed, stale, conflicting, failed, and normal-unlock reconciliation from a populated shell.",
+        "The exact candidate passes warnings-as-errors, all affected native/frontend/browser/security/contracts/desktop tests, and clean governed build/architecture/evidence checks."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0018 and the application-lock architecture now state the validated prompt identity mapping, one-at-a-time reauthentication, immediate Core cancellation, staged side-effect publication, pending-preview invalidation, and fail-closed renderer reconciliation behavior implemented by the candidate.",
+        "No schema migration, package-version change, new account identity, durable credential, cloud dependency, allowlisted post-lock work, or UI-reference change was introduced.",
+        "The prior live dependency scan remains applicable because package versions and the lockfile did not change; the newly activated existing windows-sys API feature is compiled and covered by exact Windows clippy/build/tests plus the security source boundary."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 exposed credential API correctness, lock-time side-effect cancellation, renderer fail-closed reconciliation, and concurrent reauthentication admission. The remediation therefore replays the complete desktop application verifier, native Windows/Rust tests, desktop/security/contracts boundaries, architecture and ADR truth, UI lineage, clean build identity, Python quality, backlog integrity, and Git-derived affected selection. The package lock and package versions are unchanged, so the previously passing live supply-chain result remains applicable; performance and complete cross-profile qualification remain deferred to W1 exit.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-change",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "contracts:unit",
+      "security-local:unit"
+    ],
+    "deferred": "Desktop performance and the complete repository/deployment-profile matrix remain governed by the W1 exit gate. The initial submission's package-version-stable live supply-chain scan is not replayed for this source-only remediation."
+  },
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-02.S04.T02-R01-F01",
+      "CAP-02.S04.T02-R01-F02",
+      "CAP-02.S04.T02-R01-F03",
+      "CAP-02.S04.T02-R01-F04"
+    ],
+    "note": "Independently replay all four R01 findings against exact candidate 44ee8733a159152a3873eab76c5e54b995824afb and return one consolidated severity-ranked R02 ledger. Confirm the immutable evidence hashes and strict-descendant scope; keep W1-exit performance/full qualification distinct from task blockers."
+  }
+}
