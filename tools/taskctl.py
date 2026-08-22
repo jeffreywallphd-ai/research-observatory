@@ -2727,15 +2727,7 @@ def validate(
             else:
                 for reference in adoption_checkpoints[-1].get("evidence", []):
                     if isinstance(reference, dict):
-                        errors.extend(
-                            bound_evidence_reference_errors(
-                                repo,
-                                reference,
-                                expected_type="amendment-adoption-evidence",
-                                expected_amendment=amendment_id,
-                                label=f"{amendment_id}/adoption",
-                            )
-                        )
+                        errors.extend(amendment_adoption_reference_errors(repo, reference, amendment))
     ordered_gates = [gate for gate in data.get("release_gates", []) if isinstance(gate, dict)]
     for wave_id, wave in waves.items():
         exit_gates = [gate for gate in ordered_gates if gate.get("after_wave") == wave_id]
@@ -3318,6 +3310,64 @@ def bound_evidence_reference_errors(
         return [*errors, f"{label}: bound evidence is invalid: {exc}"]
     if manifest.get("amendmentId") != reference.get("amendment_id"):
         errors.append(f"{label}: bound evidence payload amendment identity mismatch")
+    expected_document_type = {
+        "amendment-exit-evidence": "wave-amendment-exit-evidence",
+        "amendment-adoption-evidence": "wave-amendment-adoption-evidence",
+    }.get(expected_type)
+    if expected_document_type is None or manifest.get("documentType") != expected_document_type:
+        errors.append(f"{label}: bound evidence payload documentType does not match its reference type")
+    return errors
+
+
+def amendment_adoption_reference_errors(
+    repo: Path,
+    reference: dict[str, Any],
+    amendment: dict[str, Any],
+) -> list[str]:
+    amendment_id = str(amendment.get("id"))
+    errors = bound_evidence_reference_errors(
+        repo,
+        reference,
+        expected_type="amendment-adoption-evidence",
+        expected_amendment=amendment_id,
+        label=f"{amendment_id}/adoption",
+    )
+    payload = git_blob(repo, str(reference.get("commit") or ""), str(reference.get("path") or ""))
+    if payload is None:
+        return errors
+    try:
+        manifest = parse_evidence_payload(payload, PurePosixPath(str(reference.get("path") or "")).suffix)
+    except UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError:
+        return errors
+    if manifest.get("targetWave") != amendment.get("target_wave"):
+        errors.append(f"{amendment_id}: adoption evidence target Wave mismatch")
+    completion = amendment.get("completion") or {}
+    attempts = (completion.get("exit_review_control") or {}).get("attempts") or []
+    if not attempts:
+        return [*errors, f"{amendment_id}: adoption evidence lacks immutable exit review history"]
+    latest_attempt = attempts[-1]
+    latest_submission = latest_attempt.get("submission") or {}
+    latest_review = latest_attempt.get("review") or {}
+    reviewed_completion = str(manifest.get("reviewedCompletionCommit") or "")
+    reference_commit = str(reference.get("commit") or "")
+    if manifest.get("candidateCommit") != reviewed_completion:
+        errors.append(f"{amendment_id}: adoption evidence candidate differs from reviewed completion")
+    if manifest.get("branch") != latest_submission.get("branch"):
+        errors.append(f"{amendment_id}: adoption evidence branch differs from the approved exit submission")
+    if not git_commit_exists(repo, reviewed_completion) or not git_is_ancestor(
+        repo, reviewed_completion, reference_commit
+    ):
+        errors.append(f"{amendment_id}: adoption evidence reviewed completion is outside checkpoint history")
+    else:
+        historical = historical_amendment_completion(repo, reviewed_completion, amendment_id) or {}
+        historical_attempts = (historical.get("exit_review_control") or {}).get("attempts") or []
+        if (
+            not historical_attempts
+            or historical_attempts[-1] != latest_attempt
+            or (historical_attempts[-1].get("review") or {}).get("result") != "approved"
+            or latest_review.get("result") != "approved"
+        ):
+            errors.append(f"{amendment_id}: adoption evidence does not bind the exact approved exit history")
     return errors
 
 

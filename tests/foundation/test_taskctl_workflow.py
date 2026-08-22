@@ -456,6 +456,13 @@ class TaskctlWorkflowTests(unittest.TestCase):
         }
         amendment["campaign"] = None
         amendment["tasks"] = []
+        amendment["completion"] = {
+            "status": "PENDING",
+            "reviewer": None,
+            "reviewed_at": None,
+            "evidence": [],
+            "notes": None,
+        }
         context[0]["control_plane"]["active_amendment"] = None
         wave = next(item for item in context[0]["waves"] if item["id"] == "W1")
         wave["campaign"]["status"] = "PAUSED"
@@ -3838,6 +3845,21 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 )
             self.assertEqual([], baseline_errors)
 
+            relabeled_exit_reference = copy.deepcopy(submission["evidence_reference"])
+            relabeled_exit_reference["type"] = "amendment-adoption-evidence"
+            with chdir(repo):
+                relabeled_errors = taskctl_module.bound_evidence_reference_errors(
+                    repo,
+                    relabeled_exit_reference,
+                    expected_type="amendment-adoption-evidence",
+                    expected_amendment="W1.A02",
+                    label="W1.A02/adoption",
+                )
+            self.assertTrue(
+                any("documentType does not match" in error for error in relabeled_errors),
+                relabeled_errors,
+            )
+
             mutations = [
                 ("evidence-hash", ("evidence_reference", "sha256"), "0" * 64, "evidence hash differs"),
                 ("evidence-path", ("evidence_reference", "path"), "artifacts/evidence/missing.json", "absent"),
@@ -3997,6 +4019,48 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 patch("taskctl.persist"),
             ):
                 taskctl_module.command_amendment_adopt(adopt_args, *context)
+
+    def test_adoption_reference_validation_rejects_a_substituted_target_wave(self) -> None:
+        approved_attempt = {
+            "submission": {"branch": "codex/amendment-exit"},
+            "review": {"result": "approved"},
+        }
+        amendment = {
+            "id": "W1.A02",
+            "target_wave": "W1",
+            "completion": {"exit_review_control": {"attempts": [approved_attempt]}},
+        }
+        reviewed_completion = "a" * 40
+        checkpoint_commit = "b" * 40
+        payload = json.dumps(
+            {
+                "documentType": "wave-amendment-adoption-evidence",
+                "amendmentId": "W1.A02",
+                "targetWave": "W2",
+                "candidateCommit": reviewed_completion,
+                "branch": "codex/amendment-exit",
+                "reviewedCompletionCommit": reviewed_completion,
+            }
+        ).encode()
+        reference = {
+            "type": "amendment-adoption-evidence",
+            "amendment_id": "W1.A02",
+            "path": "artifacts/evidence/W1.A02.adoption.json",
+            "sha256": taskctl_module.evidence_sha256(payload),
+            "commit": checkpoint_commit,
+        }
+        with (
+            patch("taskctl.bound_evidence_reference_errors", return_value=[]),
+            patch("taskctl.git_blob", return_value=payload),
+            patch("taskctl.git_commit_exists", return_value=True),
+            patch("taskctl.git_is_ancestor", return_value=True),
+            patch(
+                "taskctl.historical_amendment_completion",
+                return_value={"exit_review_control": {"attempts": [approved_attempt]}},
+            ),
+        ):
+            errors = taskctl_module.amendment_adoption_reference_errors(Path("unused"), reference, amendment)
+        self.assertIn("W1.A02: adoption evidence target Wave mismatch", errors)
 
     def test_amendment_materialization_and_activation_use_the_exact_safe_inventory(self) -> None:
         data, capabilities, slices, tasks, gates = self.interrupted_workflow(lifecycle_status="APPROVED")
