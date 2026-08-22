@@ -311,6 +311,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self,
     ) -> tuple[tuple[dict, dict, dict, dict, dict], dict[str, Any]]:
         data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
+        data["wave_amendments"] = [
+            amendment for amendment in data["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02"}
+        ]
         amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
         packet = json.loads(
             (REPO / "planning/enabler-change-requests/ECR-0001.packet.json").read_text(encoding="utf-8")
@@ -448,6 +451,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
         bootstrap: dict[str, Any],
     ) -> tuple[dict, dict, dict, dict, dict]:
         context = load(str(REPO / "planning" / "backlog.yaml"))
+        context[0]["wave_amendments"] = [
+            amendment for amendment in context[0]["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02"}
+        ]
         amendment = next(item for item in context[0]["wave_amendments"] if item["id"] == "W1.A02")
         amendment["bootstrap"] = copy.deepcopy(bootstrap)
         amendment["lifecycle"] = {
@@ -464,6 +470,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             "notes": None,
         }
         context[0]["control_plane"]["active_amendment"] = None
+        context[0]["control_plane"]["recovery_holds"] = []
         wave = next(item for item in context[0]["waves"] if item["id"] == "W1")
         wave["campaign"]["status"] = "PAUSED"
         wave["campaign"]["scope"] = "wave"

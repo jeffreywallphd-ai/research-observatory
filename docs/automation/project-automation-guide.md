@@ -135,6 +135,31 @@ The packet and approval precede `supplement-start`. The latest BNN remains the
 only executable recovery unit; until its independent approval, taskctl denies
 the repair amendment and every ordinary mutation.
 
+An approved amendment may install a task-specific historical-candidate recovery
+only when replaying the product change would destroy truthful evidence lineage.
+The controller is not a general reopen or override. It must name one exact task,
+approved amendment, recovery hold, historical commit chain, evidence contract,
+changed-path set, and executable check inventory in a committed canonical
+manifest. The transition remains unavailable until amendment adoption, its
+bound control/security checkpoint, hold release, and an explicit ordinary Wave
+resume are all independently visible in the backlog.
+
+```bash
+python tools/taskctl.py --file planning/backlog.yaml recover <exact-task> \
+  --agent <wave-owner> --branch <codex-branch> --base-sha <clean-HEAD> \
+  --worktree <canonical-repository-path> --profile <profile> --platform <platform> \
+  --from artifacts/evidence/task-recovery/<exact-task>.json
+```
+
+Recovery recomputes Git existence and ancestry, historical task hashes, the
+base-to-candidate paths, immutable evidence-contract bytes, approved-reference
+identity, and the manifest's fixed checks. Its one compare-and-swap mutation
+preserves the exact original blocked state in an append-only projection and
+moves the task only to `IN_PROGRESS` with a new lease and execution base. It
+cannot attach evidence, enter review, approve the task, approve a slice or Wave,
+or approve a release gate. All normal commit-bound evidence and independent
+reviews still follow.
+
 For ordinary and amendment tasks, use `taskctl submit <task> --agent <agent>
 --from <manifest>` as the atomic evidence-and-submission transition. It freezes
 an immutable RNN packet containing candidate/evidence, acceptance-criteria,
