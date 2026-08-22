@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 559d04b3d7cf07acfaf537826c1bf08d78c19c67df9a35ce847cc667c7a42f9b
+source_sha256: 10efc8d25628cd1a23d8e216a9dfa4cd767fa4a89abcc883eb984d106cbb0e99
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -42,7 +42,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
-| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ACTIVE` |
+| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `REVIEW` |
 
 ## Waves
 
@@ -777,23 +777,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A03.json` (`340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-08-22T16:41:35.4388626Z` by repository-owner: Approved in Codex in direct response to the exact-commit ECR-0002/W1.A03 approval request at ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4; authorize only bootstrap W1.A03.B00 and task W1.A03.T01 as hash-bound in the packet, keep W1 paused and CAP-02.S04.T03 blocked through amendment adoption, GRR-0001 release, and an explicit ordinary W1 resume.
 - `E02` `MATERIALIZED` at `2026-08-22T19:06:55+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-08-22T19:08:18+00:00` by codex: Activated the bounded amendment campaign.
+- `E04` `REVIEW` at `2026-08-22T20:20:19+00:00` by codex: Submit exact completed W1.A03 boundary for independent exit review; W1 remains paused and T03 blocked.
 
 ### Amendment-exit review and adoption — W1.A03
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `5215368cda1222cba94f5ce662ceda2d6833500c77f9097fe650d87221e4172e`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `69eeec6e388969a40d20fcb80939ca137158bc1a` / `f47241972c1e8c0be3d53c822d921dd142b65996` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-22T20:20:19+00:00`
+- Bound exit evidence: amendment `W1.A03` / `artifacts/evidence/W1.A03.exit.json` / `c581e22cca63c5d572eb74f1c12e396480b31c5a2cffa403b44f24d848dc0f9e` / `69eeec6e388969a40d20fcb80939ca137158bc1a`
+- Acceptance-criteria SHA-256: `f635fa4498c417483b2d2ba94efbce76855a652824a0f369d2bcdcd5c2333f6a`
+- Selected-check SHA-256: `0da9b48b577b70ba4f6971602b86345c2741a596c918457a6155387991c33701`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate`, `.venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9`, `.venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract`, `.venv\Scripts\python.exe tools\quality_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry`, `.venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\Scripts\python.exe tools\recoveryctl.py --repo . validate GRR-0001 --require-approved`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py`, `git diff --check`
+- Prior round / replayed open findings: `-` / -
 
-**Latest completion notes:** -
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W1.A03.exit.json`
+
+**Latest completion notes:** Submit exact completed W1.A03 boundary for independent exit review; W1 remains paused and T03 blocked.
 
 **Bound amendment-adoption checkpoints:**
 
