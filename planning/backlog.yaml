@@ -22135,7 +22135,7 @@ verification_profiles:
 control_plane:
   revision: 3
   minimum_tool_revision: 3
-  active_amendment: null
+  active_amendment: W1.A02
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
@@ -22218,7 +22218,7 @@ wave_amendments:
     sha256: 63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376
     introduction_commit: 6e9c440102a5c463bb35d81f4dbdc3453d9ce029
   lifecycle:
-    status: PAUSED
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -22251,6 +22251,11 @@ wave_amendments:
         is not ready because amendment-exit evidence and checkpoint evidence are not exact-commit bound, and the exit record
         conflates the amendment campaign with the paused W1 campaign. No W1 qualification, adoption, G1 approval, ordinary
         resume, remote integration, or full W1 exit-suite claim was made.
+    - id: E06
+      status: ACTIVE
+      actor: codex
+      at: '2026-08-22T01:58:05+00:00'
+      rationale: Activated the bounded amendment campaign.
   bootstrap:
     id: W1.A02.B00
     status: APPROVED
@@ -22309,22 +22314,21 @@ wave_amendments:
           B00-R05 MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen
           state 84107b8.'
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/ai-projects/research-observatory
-    base_sha: 43428e1d525b41ddf092563b3156d33cc5a0a0cc
+    base_sha: c6774e02fbe93a38e2cc7e0a5cb74319595216d3
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-21T00:43:02+00:00'
-    updated_at: '2026-08-22T01:56:53+00:00'
-    pause_reason: CHANGES_REQUESTED at exact frozen state b77d5b1cea5526b391d5acbe3aa220a0ba510ca6. ECR authority, B00/T01/T02
-      histories, evidence hashes, privacy-safe telemetry, backlog, generated views, and 145 review pages pass. Adoption is
-      not ready because amendment-exit evidence and checkpoint evidence are not exact-commit bound, and the exit record conflates
-      the amendment campaign with the paused W1 campaign. No W1 qualification, adoption, G1 approval, ordinary resume, remote
-      integration, or full W1 exit-suite claim was made.
-    lease: null
+    updated_at: '2026-08-22T01:58:05+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-22T01:58:05+00:00'
+      expires_at: '2026-08-23T01:58:05+00:00'
   tasks:
   - id: W1.A02.T01
     amendment_id: W1.A02
