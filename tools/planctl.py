@@ -846,6 +846,11 @@ def _approval_record_errors(
             errors.append("Wave amendment approval packet commit does not exist")
         elif _git_blob(root, packet_commit, packet_relative) != packet_payload:
             errors.append("Wave amendment approval packet differs from its immutable Git blob")
+        if packet.get("schemaVersion") == "2.0-proposal":
+            frozen = _json_object(packet.get("authorityChain")).get("orderedAmendments") or []
+            latest_state = str(_json_object(frozen[-1]).get("effectiveStateCommit") or "") if frozen else ""
+            if latest_state and not _git_is_ancestor(root, latest_state, packet_commit):
+                errors.append("Wave amendment packet does not descend from the latest predecessor effective state")
         errors.extend(_packet_file_errors(root, packet, packet_commit))
     if require_committed_history:
         introduced = _approval_introduction_commit(root, approval_relative)
@@ -978,6 +983,7 @@ def _authority_chain_v2_errors(root: Path, packet: dict[str, Any]) -> list[str]:
         str(wave_base.get("packetCommit") or ""),
         str(wave_base.get("approvalRecordCommit") or ""),
     ]
+    ancestry_pairs: list[tuple[str, str]] = [(ordered_commits[0], ordered_commits[1])]
     for packet_item, backlog_item in zip(frozen, actual, strict=False):
         item = _json_object(packet_item)
         reference = _json_object(item.get("approvalReference"))
@@ -1013,6 +1019,7 @@ def _authority_chain_v2_errors(root: Path, packet: dict[str, Any]) -> list[str]:
         approval_commit = str(reference.get("introductionCommit") or "")
         state_commit = str(item.get("effectiveStateCommit") or "")
         ordered_commits.extend((packet_commit, approval_commit, state_commit))
+        ancestry_pairs.extend(((packet_commit, approval_commit), (approval_commit, state_commit)))
         historical = (
             _git_blob(root, state_commit, "planning/backlog.yaml") if _git_commit_exists(root, state_commit) else None
         )
@@ -1070,7 +1077,7 @@ def _authority_chain_v2_errors(root: Path, packet: dict[str, Any]) -> list[str]:
             or not _git_is_ancestor(root, commit)
         ):
             errors.append(f"ECR v2 authority commit is missing or not on current history: {commit}")
-    for ancestor, descendant in pairwise(ordered_commits):
+    for ancestor, descendant in ancestry_pairs:
         if (
             _git_commit_exists(root, ancestor)
             and _git_commit_exists(root, descendant)

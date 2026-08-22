@@ -224,6 +224,23 @@ def recovery_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]
     }
 
 
+def exact_record_snapshot(
+    data: dict[str, Any],
+    collection: str,
+    *,
+    identities: set[str] | None = None,
+    identity_field: str = "id",
+) -> dict[str, str]:
+    """Canonical full-record snapshot for authority that must not change."""
+    document = serializable_backlog(data)
+    snapshot: dict[str, str] = {}
+    for item in document.get(collection, []):
+        identity = str(item.get(identity_field) or "")
+        if identities is None or identity in identities:
+            snapshot[identity] = json.dumps(item, sort_keys=True, separators=(",", ":"))
+    return snapshot
+
+
 @contextmanager
 def exclusive_backlog_lock(destination: Path) -> Iterator[None]:
     lock_path = destination.with_name(f"{destination.name}.taskctl.lock")
@@ -410,6 +427,9 @@ def save_validated(
     expected_task_review_history: dict[str, tuple[str, ...]] | None = None,
     expected_wave_checkpoint_history: dict[str, tuple[str, ...]] | None = None,
     expected_recovery_history: dict[str, tuple[str, ...]] | None = None,
+    expected_frozen_waves: dict[str, str] | None = None,
+    expected_frozen_wave_bases: dict[str, str] | None = None,
+    expected_frozen_amendments: dict[str, str] | None = None,
     schema_path: Path | None = None,
     repo: Path | None = None,
 ) -> None:
@@ -446,6 +466,22 @@ def save_validated(
             current = current_history.get(hold_id)
             if current is None or current[: len(prior)] != prior:
                 raise SystemExit(f"Append-only governance recovery history changed for {hold_id}")
+    for collection, identity_field, expected_records, label in (
+        ("waves", "id", expected_frozen_waves, "Wave"),
+        ("wave_approval_bases", "wave_id", expected_frozen_wave_bases, "Wave approval base"),
+        ("wave_amendments", "id", expected_frozen_amendments, "Wave amendment"),
+    ):
+        if expected_records is None:
+            continue
+        current_records = exact_record_snapshot(
+            document,
+            collection,
+            identities=set(expected_records),
+            identity_field=identity_field,
+        )
+        for identity, frozen_record in expected_records.items():
+            if current_records.get(identity) != frozen_record:
+                raise SystemExit(f"Frozen {label} record changed for {identity}")
     schema_errors = backlog_schema_errors(document, schema_path=schema_path)
     if schema_errors:
         raise SystemExit("Refusing to save invalid backlog schema:\n- " + "\n- ".join(schema_errors))
@@ -1689,6 +1725,28 @@ def safe_control_path(
     return candidate
 
 
+def canonical_control_artifact_path(
+    repo: Path,
+    value: str,
+    *,
+    prefix: str,
+    label: str,
+    require_exists: bool = True,
+) -> tuple[str, Path]:
+    """Validate the raw CLI/reference spelling before any path normalization."""
+    try:
+        path = safe_control_path(
+            repo,
+            value,
+            prefix=prefix,
+            label=label,
+            require_exists=require_exists,
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    return value, path
+
+
 def historical_wave_approval(repo: Path, record_commit: str, wave_id: str) -> dict[str, Any] | None:
     payload = git_blob(repo, record_commit, "planning/backlog.yaml")
     if payload is None:
@@ -2154,6 +2212,19 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
             errors.append(f"{hold_id}: REVIEW bootstrap lacks its frozen current submission")
         if status != "REVIEW" and current is not None:
             errors.append(f"{hold_id}: non-REVIEW bootstrap retains a mutable current submission")
+        if attempts and status != "REVIEW":
+            latest = attempts[-1]
+            latest_review = latest.get("review") or {}
+            expected_status = {
+                "approved": "APPROVED",
+                "changes-requested": "CHANGES_REQUESTED",
+                "blocked": "BLOCKED",
+            }.get(str(latest_review.get("result") or ""))
+            if status != expected_status:
+                errors.append(f"{hold_id}: bootstrap status differs from the latest immutable review")
+            for field in ("implementation_commit", "submission_branch", "evidence", "review"):
+                if bootstrap.get(field) != latest.get(field):
+                    errors.append(f"{hold_id}: bootstrap {field} differs from the latest immutable attempt")
         if status in {"REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED"} and (
             not bootstrap.get("implementation_commit") or not bootstrap.get("evidence")
         ):
@@ -4129,12 +4200,19 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
     """Append a later approved amendment without replacing any predecessor."""
     repo = discover_repository(args.file)
     existing = list(data.get("wave_amendments", []))
+    frozen_amendments = exact_record_snapshot(data, "wave_amendments")
+    frozen_wave_bases = exact_record_snapshot(
+        data,
+        "wave_approval_bases",
+        identity_field="wave_id",
+    )
     if args.amendment in wave_amendment_map(data):
         raise SystemExit(f"Wave amendment {args.amendment} already exists; duplicate append is denied")
     match = re.fullmatch(r"(W(?:[0-9]|1[01]))\.A([0-9]{2})", str(args.amendment))
     if match is None:
         raise SystemExit("Appended Wave amendment identity is invalid")
     wave_id = match.group(1)
+    frozen_waves = exact_record_snapshot(data, "waves", identities={wave_id})
     ordered = [item for item in existing if item.get("target_wave") == wave_id]
     expected_id = f"{wave_id}.A{len(ordered) + 1:02d}"
     if args.amendment != expected_id:
@@ -4187,13 +4265,12 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
     head, current_branch = git_head_branch(repo)
     if implementation_commit != head:
         raise SystemExit("Amendment bootstrap implementation commit must equal current HEAD")
-    evidence_path = Path(args.evidence).resolve()
-    try:
-        evidence_relative = evidence_path.relative_to(repo).as_posix()
-    except ValueError as exc:
-        raise SystemExit("Bootstrap evidence must be inside the repository") from exc
-    if not evidence_relative.startswith("artifacts/evidence/"):
-        raise SystemExit("Bootstrap evidence must be under artifacts/evidence")
+    evidence_relative, evidence_path = canonical_control_artifact_path(
+        repo,
+        str(args.evidence),
+        prefix="artifacts/evidence",
+        label="Appended amendment bootstrap evidence",
+    )
     require_clean_repository(repo, allowed_untracked={evidence_relative})
     try:
         evidence_payload = evidence_path.read_bytes()
@@ -4206,6 +4283,7 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
         repo, args.amendment, str(bootstrap_unit.get("id"))
     )
     candidate = {
+        "id": str(bootstrap_unit.get("id")),
         "status": "REVIEW",
         "implementer": agent,
         "implementation_commit": implementation_commit,
@@ -4277,6 +4355,9 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
         expected_task_review_history=getattr(args, "source_task_review_history", None),
         expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
+        expected_frozen_waves=frozen_waves,
+        expected_frozen_wave_bases=frozen_wave_bases,
+        expected_frozen_amendments=frozen_amendments,
         repo=repo,
     )
     print(f"Appended and submitted {bootstrap_unit.get('id')} for independent review")
