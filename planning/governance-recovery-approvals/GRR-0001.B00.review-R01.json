@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-bootstrap-review",
+  "recoveryRequestId": "GRR-0001",
+  "bootstrapUnit": "GRR-0001.B00",
+  "attemptId": "R01",
+  "candidateCommit": "e2d46d5b7ffe44dcc38437c6da502a34e2e37710",
+  "reviewedStateCommit": "f940125f8ccfc85f34c7197593bd098d750da8f2",
+  "reviewer": "b00-independent-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0001.B00.evidence.json",
+    "sha256": "88b24d2f655491a120c138a1087195036a0f4543455acaef3fbe7d39a05b6cb5"
+  },
+  "notes": "The exact 29-path candidate scope matches Git, is a strict descendant of approval introduction 12c2ff826a5bcb0fdaca9f623da38094944a5eca, and contains no product, UI-gate, prior approval, ECR-0001 packet, or W1.A02 adoption-evidence changes. The approved GRR packet/approval chain, ACTIVE hold, paused W1 state, legacy ECR validation, generated handoff, backlog validation, quality, 147-page review-site check, backlog views, and range diff hygiene pass. Evidence is only partially truthful: its scope/hash and most command claims are correct, but it overstates real second/third append coverage and its focused suite is not green at the immutable REVIEW state. No product or ordinary W1 execution was performed.",
+  "findings": [
+    {
+      "id": "GRR-0001.B00-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 1,
+      "title": "Recovery writes do not preserve the complete frozen predecessor authority",
+      "reproduction": "At f940125f8ccfc85f34c7197593bd098d750da8f2, clone planning/backlog.yaml in memory and alter W1.A02 lifecycle.history[0].rationale or W1.A02.T01.completed_at. taskctl.validate returns no semantic errors. tools/recoveryctl.py:360-375 then passes identity, approved-Wave, amendment-history, task-review-history, and checkpoint expectations derived from the already-mutated data rather than prior_data; a mocked save confirms expected_amendment_history equals the forged snapshot. Even changing these expectations to prior_data would not protect completed_at because the existing snapshots do not cover the complete predecessor task/outcome record. A recovery review or release write can therefore silently rewrite state that criterion 1 requires to remain exact.",
+      "requiredRemediation": "Derive every CAS expectation from the pre-transition payload and add an exact immutable snapshot/hash of the complete frozen Wave base and predecessor amendment records, including lifecycle, task outcomes, completion/adoption state, reviews, evidence, and checkpoints. The append operation must compare deep-copied predecessor records byte-for-byte or canonically before persisting. Add atomic no-write tests that alter predecessor lifecycle text, task completion data, adoption/completion data, review history, and checkpoints during recovery submit/review/release and amendment append."
+    },
+    {
+      "id": "GRR-0001.B00-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 3,
+      "title": "Recovery evidence and ledger entry paths canonicalize forbidden inputs instead of rejecting them",
+      "reproduction": "At f940125f8ccfc85f34c7197593bd098d750da8f2, call recoveryctl.evidence_relative for the current evidence using (a) its absolute C:\\workspace\\... path, (b) planning\\\\governance-recovery-approvals\\\\GRR-0001.B00.evidence.json, and (c) planning/governance-recovery-approvals/./GRR-0001.B00.evidence.json. All three return the canonical repository-relative path. tools/recoveryctl.py:378-393 resolves and normalizes before safe_repo_path sees the input; freeze_submission and review_ledger repeat this behavior at lines 640-646 and 686-702. tools/taskctl.py:4190 similarly resolves future amendment-bootstrap evidence first. This contradicts the explicit absolute, backslash, dot-segment, and redirected-parent denial boundary.",
+      "requiredRemediation": "Validate the raw CLI/reference string before resolution with one shared canonical repository-path routine: reject absolute paths, drive/colon forms, backslashes, empty/dot/dot-dot segments, traversal, and symlink/junction/redirected parents, then enforce the designated prefix and resolved containment. Apply it to recovery evidence, remediation evidence, review ledgers, and appended-amendment bootstrap evidence. Add command-entry tests for every forbidden form, including an in-repository absolute path and redirected parent, and prove denial occurs before artifact access or backlog mutation."
+    },
+    {
+      "id": "GRR-0001.B00-R01-F03",
+      "severity": "medium",
+      "blocking": true,
+      "criterionIndex": 6,
+      "title": "The claimed second and third append fixtures never exercise the append operation",
+      "reproduction": "tests/foundation/test_recoveryctl.py:56-70 only calls recovery_identity_errors on fabricated GRR identities, while lines 72-136 only run Draft202012Validator against fabricated ECR documents. No focused test invokes planctl's v2 semantic authority validation or taskctl.command_amendment_append_bootstrap_submit for a second or third amendment. Repository search finds no recovery append-bootstrap invocation in the selected suite. Nevertheless the evidence says these fixtures append successfully, that predecessor preservation is tested, and unverifiedItems is empty.",
+      "requiredRemediation": "Add executable temporary-repository fixtures for at least a second and third GRR/ECR/amendment identity. Drive the real semantic ECR validation and taskctl append command through successful CAS persistence, prove every predecessor record remains exact, and test duplicate, stale, forked, reordered, wrong-hold, and wrong-task denial with no write. Update the evidence to report only the coverage actually executed."
+    },
+    {
+      "id": "GRR-0001.B00-R01-F04",
+      "severity": "medium",
+      "blocking": true,
+      "criterionIndex": 7,
+      "title": "The selected focused governance suite fails at the immutable review state",
+      "reproduction": "Run the evidence's exact focused-governance command at frozen state f940125f8ccfc85f34c7197593bd098d750da8f2. It runs 103 tests and fails 1: test_canonical_recovery_authority_and_hold_validate at tests/foundation/test_recoveryctl.py:54 hardcodes bootstrap status IN_PROGRESS, while the lawful atomic submission has transitioned it to REVIEW. The other 102 tests pass. The test therefore validates only the pre-submission candidate projection and cannot remain green through the commit-bound review lifecycle it is meant to govern.",
+      "requiredRemediation": "Make the canonical recovery test validate coherent state-specific invariants across IN_PROGRESS, REVIEW, CHANGES_REQUESTED/BLOCKED, and APPROVED rather than hardcoding one transient projection. Rerun the complete selected suite at the remediation candidate and again at its frozen REVIEW submission state, then record fresh exact evidence."
+    }
+  ],
+  "closures": []
+}
