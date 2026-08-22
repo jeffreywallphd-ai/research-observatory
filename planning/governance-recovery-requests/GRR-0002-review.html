@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GRR-0002 review — Research Observatory</title>
+  <style>
+    :root { color-scheme: light; font-family: Georgia, "Times New Roman", serif; background: #f4f1e8; color: #20231f; }
+    body { margin: 0 auto; max-width: 980px; padding: 2rem 1.25rem 4rem; line-height: 1.55; }
+    h1, h2 { line-height: 1.18; }
+    h1 { border-bottom: 3px solid #315846; padding-bottom: .5rem; }
+    .status, .warning { border-left: 5px solid #8b5e24; background: #fff8e8; padding: .9rem 1rem; }
+    .candidate { border: 1px solid #a8ad9f; background: #fffdf7; padding: 1rem; margin: 1rem 0; }
+    .recommended { border-color: #315846; box-shadow: inset 5px 0 #315846; }
+    code { overflow-wrap: anywhere; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #b9bcae; padding: .55rem; text-align: left; vertical-align: top; }
+    a { color: #214d3b; }
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="GRR-0002.md">Canonical proposal</a> · <a href="GRR-0002.packet.json">Hash-bound packet</a> · <a href="governance-recovery-request.v2.schema.json">Packet schema</a></p>
+    <h1>GRR-0002 — Recovery transition and repeatable ECR decision</h1>
+    <p class="status"><strong>Non-executable:</strong> W1 and CAP-02.S04.T03 remain paused/blocked. This packet grants no B00, W1.A04, T03, Wave-resume, gate, merge, or remote authority until exact-commit independent review and explicit human approval.</p>
+
+    <h2>Decision</h2>
+    <div class="candidate recommended">
+      <h3>1. Approve bounded GRR-0002.B00 (recommended)</h3>
+      <p>Authorize only a second immutable recovery hold and the control/schema/test changes needed to represent a separately approved ECR-0003/W1.A04. Preserve released GRR-0001 and all adopted predecessor authority.</p>
+    </div>
+    <div class="candidate">
+      <h3>2. Defer</h3>
+      <p>Keep W1 paused and T03 blocked indefinitely. This is safe but prevents all dependent W1 work.</p>
+    </div>
+    <div class="candidate">
+      <h3>3. Other</h3>
+      <p>Any alternative must preserve append-only authority, the exact historical T03 lineage, independent review, and fail-closed denial of direct controller or backlog changes.</p>
+    </div>
+
+    <h2>Demonstrated blockers</h2>
+    <table>
+      <thead><tr><th>Finding</th><th>Severity</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td>GRR-0002-F01</td><td>Critical</td><td>Recovery requires the pre-resume campaign base and current post-resume HEAD to be the same SHA; the governed commit sequence makes that impossible.</td></tr>
+        <tr><td>GRR-0002-F02</td><td>High</td><td>The passing tests construct co-satisfiable identities and omit the actual resume-write/commit/recover sequence.</td></tr>
+        <tr><td>GRR-0002-F03</td><td>Critical</td><td>The v2 ECR lane requires the released GRR-0001 hold and its already-consumed W1.A03 identity, so it cannot represent ECR-0003/W1.A04.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Exact stopped boundary</h2>
+    <p>W1 is <code>PAUSED</code> with category <code>infeasible</code> at commit <code>7c67ac9fdd39c4db2322cefd9ab5d603865d0efd</code>. W1.A03 is <code>ADOPTED</code>; GRR-0001 is <code>RELEASED</code>; T03 remains <code>BLOCKED</code> with no recovery, evidence, or review; G1 remains <code>PENDING</code>.</p>
+
+    <h2>Scope boundary</h2>
+    <p>GRR-0002.B00 may repair only the reusable GRR/ECR authority and hold path. It cannot implement the later recovery fix, modify product/reference behavior, recover T03, resume W1, approve G1, merge main, or push.</p>
+    <p>The separately approved W1.A04 task must distinguish the immutable resume record from current-HEAD CAS identity and prove the real pause/resume/commit/recover sequence in isolated Git.</p>
+
+    <h2>Approval readiness</h2>
+    <p class="warning">Approval is unavailable until an independent control/security reviewer approves the exact clean packet commit. A general “continue” does not approve this recovery request.</p>
+    <p>Required statement:</p>
+    <blockquote>Approve GRR-0002 at packet commit <code>&lt;40-character SHA&gt;</code>, authorizing only bootstrap unit GRR-0002.B00 and its hash-bound governance/controller/test scope. Keep W1 paused and CAP-02.S04.T03 blocked. Require independent B00 approval and a separately reviewed and explicitly approved ECR-0003/W1.A04 before any T03 recovery correction, W1 resume, or ordinary task execution.</blockquote>
+  </main>
+</body>
+</html>

@@ -1,0 +1,235 @@
+{
+  "$schema": "./governance-recovery-request.v2.schema.json",
+  "schemaVersion": "2.0-recovery-proposal",
+  "documentType": "governance-recovery-request-packet",
+  "recoveryRequestId": "GRR-0002",
+  "title": "Restore repeatable ECR chaining and the post-resume T03 recovery transition",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "control-plane-recovery",
+  "authorityChain": {
+    "waveBase": {
+      "waveId": "W1",
+      "packetCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+      "approvalRecordCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W1.A01",
+        "changeRequestId": null,
+        "status": "ADOPTED",
+        "packetCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+        "approvalRecord": {
+          "path": "planning/wave-amendment-approvals/W1.A01.json",
+          "sha256": "2eaa44d91f4dae202c85f2c2984430445df149da08a3e8df2f5236af2a139bde",
+          "introductionCommit": "a20685b90532c60e0286e5e05f68b46c613e935d"
+        },
+        "effectiveStateCommit": "305e7444d632800c16cd9e0a7c41ae7b5f8abf93"
+      },
+      {
+        "id": "W1.A02",
+        "changeRequestId": "ECR-0001",
+        "status": "ADOPTED",
+        "packetCommit": "57d73bcf314ea6aab38b8056ead118d6ef270921",
+        "approvalRecord": {
+          "path": "planning/wave-amendment-approvals/W1.A02.json",
+          "sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
+          "introductionCommit": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029"
+        },
+        "effectiveStateCommit": "24277ae5552930de558290f7c51255a73119ee1a"
+      },
+      {
+        "id": "W1.A03",
+        "changeRequestId": "ECR-0002",
+        "status": "ADOPTED",
+        "packetCommit": "ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4",
+        "approvalRecord": {
+          "path": "planning/wave-amendment-approvals/W1.A03.json",
+          "sha256": "340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd",
+          "introductionCommit": "95c007b58619dfd82b5f443eea3d8e71e7efe082"
+        },
+        "effectiveStateCommit": "673c6d30e83a77b922c40fc00f6aec13bedb26a9"
+      }
+    ]
+  },
+  "frozenBoundary": {
+    "branch": "codex/w1-windows-local-runtime",
+    "pauseRecordCommit": "7c67ac9fdd39c4db2322cefd9ab5d603865d0efd",
+    "backlogSha256": "4af88e9ec9556d0a55e0a69b15ce4e30d0b6e608112a1dbd83746d0fde2c1ddb",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "wavePauseCategory": "infeasible",
+    "taskId": "CAP-02.S04.T03",
+    "taskStatus": "BLOCKED",
+    "taskCandidateCommit": "59079efccc122a7d56a9f18efc20030851bf32a9",
+    "taskRecoveryControl": null,
+    "releasedHoldId": "HOLD-W1-GRR-0001",
+    "releasedHoldStatus": "RELEASED",
+    "adoptedAmendment": "W1.A03",
+    "securityCheckpoint": "W1.CP02",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "triggerEvidence": [
+    {
+      "id": "GRR-0002-F01",
+      "severity": "critical",
+      "summary": "The approved post-resume recovery transition requires two different commits to be the same base SHA.",
+      "reproduction": [
+        "Resume W1 from clean commit bf27fddd8e1732feadc698cd77f540ea9e1c7a0e; the controller records that commit as campaign.base_sha and writes the resumed backlog state.",
+        "Commit the validated resume state at 54d03055b1c6d9b702859d5fefbbac1e38de39df so recovery can satisfy the clean-worktree requirement.",
+        "Recover with base 54d03055b1c6d9b702859d5fefbbac1e38de39df; observe Exact T03 recovery base must match the resumed W1 compare-and-swap boundary.",
+        "Recover with base bf27fddd8e1732feadc698cd77f540ea9e1c7a0e; observe Base SHA must equal the current Git HEAD."
+      ],
+      "atomicNoMutation": true,
+      "requiredRecovery": "Separate immutable resume-record identity from the current committed HEAD used for stale-writer compare-and-swap, and test the real resume-write/commit/recover sequence."
+    },
+    {
+      "id": "GRR-0002-F02",
+      "severity": "high",
+      "summary": "The passing recovery tests omit the governed resume persistence and commit sequence.",
+      "reproduction": [
+        "Inspect tests/foundation/test_task_recovery.py: successful fixtures directly assign wave.campaign.base_sha to the same synthetic HEAD returned by the patched git_execution_identity.",
+        "The real-persistence fixture exercises save_atomic and competing-writer denial but does not run wave resume, commit its state, and invoke recovery through the CLI."
+      ],
+      "requiredRecovery": "Add an isolated real-Git integration that invokes the actual resume and recovery controllers across their required commit boundary."
+    },
+    {
+      "id": "GRR-0002-F03",
+      "severity": "critical",
+      "summary": "The current generic ECR lane cannot represent the next repair amendment after the released GRR-0001 hold.",
+      "reproduction": [
+        "Inspect tools/planctl.py _authority_chain_v2_errors: an ECR packet must match a backlog recovery hold whose post_bootstrap fields already name the proposed ECR, amendment, and authorized tasks.",
+        "Inspect taskctl command_amendment_append_bootstrap_submit: a matching ACTIVE recovery hold with approved bootstrap is mandatory.",
+        "The only existing hold is RELEASED and binds ECR-0002/W1.A03/W1.A03.T01, so ECR-0003/W1.A04 cannot validate or append."
+      ],
+      "requiredRecovery": "Install a new sequential hold and versioned reusable ECR authority path without reopening or rewriting GRR-0001."
+    }
+  ],
+  "controlHold": {
+    "id": "HOLD-W1-GRR-0002",
+    "commandsDenied": [
+      "Wave start or resume",
+      "ordinary Wave task claim, recover, reopen, evidence attachment, submission, or review transition",
+      "unapproved amendment bootstrap, materialization, activation, disposition, exit, or adoption",
+      "release-gate approval or local-main integration represented as approval",
+      "direct recovery-controller, ECR-controller, product, reference, or backlog change outside the approved bootstrap/amendment lanes"
+    ],
+    "releaseConditions": [
+      "GRR-0002 is independently reviewed and explicitly approved at one immutable commit.",
+      "GRR-0002.B00 installs and validates the new hold and reusable ECR chain within its exact scope and receives independent approval.",
+      "ECR-0003/W1.A04 is separately packet-reviewed, explicitly approved, completed, independently exit-reviewed, and adopted.",
+      "W1.A04 adoption records a bound control/security checkpoint before HOLD-W1-GRR-0002 is released.",
+      "After release, W1 is explicitly resumed before the corrected exact T03 recovery is invoked."
+    ]
+  },
+  "bootstrapUnit": {
+    "id": "GRR-0002.B00",
+    "kind": "one-time-self-hosting-governance-recovery",
+    "exceptionReason": "The only active-hold-bound ECR schema/controller identity has been consumed and released, so the ordinary lane cannot authorize the next amendment needed to repair the unsatisfiable post-resume recovery transition.",
+    "authorizedPaths": [
+      "AGENTS.md",
+      "docs/automation/**",
+      "docs/governance/**",
+      "docs/planning-implementation-plan.md",
+      "planning/README.md",
+      "planning/backlog.schema.json",
+      "planning/backlog.yaml",
+      "planning/enabler-change-requests/README.md",
+      "planning/enabler-change-requests/enabler-change-request.v3.schema.json",
+      "planning/governance-recovery-approvals/**",
+      "planning/governance-recovery-requests/README.md",
+      "planning/governance-recovery-requests/governance-recovery-*.schema.json",
+      "planning/review-site/**",
+      "planning/status-summary.md",
+      "quality-scope.json",
+      "tests/foundation/**",
+      "tools/backlog_views.py",
+      "tools/plan_review_check.py",
+      "tools/plan_review_site.py",
+      "tools/planctl.py",
+      "tools/recoveryctl.py",
+      "tools/taskctl.py"
+    ],
+    "requiredOutcomes": [
+      "A new immutable GRR-0002 authority and HOLD-W1-GRR-0002 can be installed under the exact paused W1 boundary while the released GRR-0001 record remains byte/history intact.",
+      "Only one hold may be ACTIVE for W1, released predecessor holds remain terminal, and older controller revisions fail closed when the new hold/control revision is present.",
+      "A new versioned ECR format freezes the complete W1 base plus W1.A01/A02/A03 chain and can represent exactly ECR-0003/W1.A04/W1.A04.T01 under the matching new hold.",
+      "Historical ECR-0001, ECR-0002, GRR-0001, W1.A01, W1.A02, and W1.A03 packets, approvals, findings, reviews, checkpoints, and effective states remain valid and unchanged.",
+      "GRR, ECR, amendment, hold, bootstrap, task, Wave, and predecessor identities remain exact, consecutive, hash-bound, canonical-path-safe, and independently reviewed.",
+      "Dirty, stale, duplicate, reordered, cross-Wave, wrong-hold, released-hold reuse, multiple-active-hold, wrong-hash, unsafe-path, self-review, and direct ordinary-execution states fail atomically.",
+      "The stopped-recovery handoff exposes GRR-0002 packet, authority, alternatives, review disposition, exact approval wording, and the separately required ECR-0003 approval.",
+      "B00 receives an independent control/security disposition before ECR-0003 is prepared or appended."
+    ],
+    "prohibitedOutcomes": [
+      "No change to command_recover, CAP-02.S04.T03 product/runtime, approved UI reference, UI evidence contract, privacy policy, task acceptance criteria, verification thresholds, completed task outcomes, W1 approval, or release gates.",
+      "No reopening, reactivation, replacement, deletion, or rewrite of GRR-0001, its hold, B00/B01 attempts, approvals, findings, reviews, release record, or Git objects.",
+      "No ECR-0003 approval, W1.A04 materialization/activation/task claim, T03 recovery, W1 resume, G1 approval, local-main integration, or remote push before the later governed transitions authorize them.",
+      "No force, override, bypass, skip-review, arbitrary hold installation, arbitrary historical-candidate recovery, or manual task completion path."
+    ]
+  },
+  "postBootstrap": {
+    "requiredChangeRequestId": "ECR-0003",
+    "requiredAmendmentId": "W1.A04",
+    "requiredProposedTaskIds": [
+      "W1.A04.T01"
+    ],
+    "postBootstrapExecutionAuthority": false,
+    "ordinaryWaveResumeAuthorized": false
+  },
+  "acceptanceCriteria": [
+    "The exact W1 base and ordered adopted W1.A01/A02/A03 authority, hashes, commits, checkpoints, task outcomes, and adoption histories remain unchanged.",
+    "The exact paused W1/T03/G1 boundary and both byte-stable recovery denials are reproducible and bound to the packet.",
+    "A second GRR and active hold are represented without reopening or rewriting the terminally released GRR-0001 hold.",
+    "A versioned next-ECR lane accepts exact ECR-0003/W1.A04/W1.A04.T01 identity and rejects gaps, duplicates, predecessor drift, wrong/released holds, cross-Wave identity, or hidden extra tasks.",
+    "The bootstrap controller changes only governance/schema/test/documentation paths and cannot implement or invoke the later T03 recovery correction.",
+    "All unsafe path, wrong hash, dirty, stale, self-review, adverse-review, concurrent-writer, and invalid lifecycle attempts fail without ledger mutation.",
+    "Generated status/review surfaces truthfully distinguish GRR-0002 B00 authority from the separately required ECR-0003/W1.A04 approval and ordinary W1 resume.",
+    "B00 review and remediation are append-only and commit-bound, and no product, T03, Wave-exit, gate, merge, or remote action occurs."
+  ],
+  "verificationObligations": [
+    "Validate this packet against the exact generic Draft 2020-12 v2 GRR schema and verify every listed file SHA-256.",
+    "Verify every W1 base/A01/A02/A03 packet, approval, effective-state, checkpoint, hold-release, resume, denial, and pause commit exists on current history and matches the declared immutable blobs.",
+    "Run focused recoveryctl, planctl, taskctl, backlog-schema, generated-view, review-page, and quality tests including a released first hold followed by a second active hold and next-ECR append projection.",
+    "Probe cross-Wave, duplicate, gapped, reordered, wrong/released-hold, unsafe-path, hash-tamper, self-review, stale-writer, and older-controller boundaries and prove atomic denial.",
+    "Independently review GRR-0002 at its exact clean packet commit before human approval and independently review B00 before any ECR-0003 packet is prepared.",
+    "Defer the command_recover correction, real resume/commit/recover regression, T03 privacy/product qualification, full W1 matrix, local-main integration, and G1 review to their separately authorized gates."
+  ],
+  "rollback": [
+    "Before exact human approval, reject or defer GRR-0002 while retaining its immutable proposal; W1 and T03 remain paused/blocked.",
+    "During B00, any failed validation or review retains HOLD-W1-GRR-0002 and requires append-only strict-descendant remediation with a fresh independent disposition.",
+    "After approved B00 but before ECR-0003 approval, withdraw or defer the ordinary ECR without releasing the hold or resuming W1.",
+    "After W1.A04 adoption but before exact T03 recovery, withhold hold release or Wave resume if any authority/checkpoint validation fails.",
+    "Never roll back by deleting, replacing, reopening, or rewriting a GRR, hold, approval, amendment, checkpoint, finding, review, evidence record, task block/recovery history, or Git object."
+  ],
+  "nonGoals": [
+    "No product/UI/privacy/reference change, T03 recovery or approval, W1 qualification, G1 approval, local-main merge, or remote push.",
+    "No general emergency override, arbitrary hold creation, arbitrary amendment append, arbitrary historical-candidate recovery, or force option.",
+    "No weakening of independent review, explicit human approval, exact-commit evidence, privacy/security review, canonical full profiles, or complete Wave-exit qualification.",
+    "No cloud, external service, credential, hardware, deployment, benchmark, researcher-data, or substantial-spend action."
+  ],
+  "approvalRequirements": {
+    "independentReview": "control-and-security",
+    "humanApproval": "explicit-repository-owner",
+    "exactCommitRequired": true,
+    "selfApprovalDenied": true
+  },
+  "files": [
+    {
+      "path": "planning/governance-recovery-requests/GRR-0002.md",
+      "sha256": "16238371727e6c386bb339ad5852ed11e6c05d2056cf9de7cc5fac751d2665b8",
+      "role": "canonical-proposal"
+    },
+    {
+      "path": "planning/governance-recovery-requests/governance-recovery-request.v2.schema.json",
+      "sha256": "7f9dbcd94d6437641baaa35890346bab185c66aea8180a2006d3fdfef82284a2",
+      "role": "proposal-schema"
+    },
+    {
+      "path": "planning/governance-recovery-requests/GRR-0002-review.html",
+      "sha256": "090f6f7d7eb1fad6e31e9f1bb258610b130c5efa00250488027556ede8f0044d",
+      "role": "human-review"
+    }
+  ]
+}
