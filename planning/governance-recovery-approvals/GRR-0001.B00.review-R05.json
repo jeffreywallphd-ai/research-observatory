@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-bootstrap-review",
+  "recoveryRequestId": "GRR-0001",
+  "bootstrapUnit": "GRR-0001.B00",
+  "attemptId": "R05",
+  "candidateCommit": "42e016bca44d9046e0e27599d679bc69d28d3384",
+  "reviewedStateCommit": "c8288c373fcc65a1f638ec950181c0652afc3681",
+  "reviewer": "b00-independent-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0001.B00.remediation-04.evidence.json",
+    "sha256": "d2fe107e767b09b7b22a8e1403b2b94a3988f11e8cbc6b6cdab63af03cff17f7"
+  },
+  "notes": "APPROVED. The candidate is a strict descendant of cb27290367a76fe2681b2a97552453f4f7803c29, its seven-path evidence scope exactly matches Git, and immutable R01-R04 evidence, ledgers, findings, closures, candidates, and reviewed states validate against their exact historical backlog blobs. Historical review validation now requires the matching hold/bootstrap REVIEW projection, exact current submission identity/candidate/evidence/criteria hash, branch, implementation commit, evidence and null-review projections, strict candidate ancestry, and exact ordered prior attempts. The CHANGES_REQUESTED/BLOCKED fixture commits a genuine REVIEW state before approval; a substituted descendant lacking that submission is denied byte-stably; recoveryctl.validate_request passes immediately before the lawful append. R02-F02 and R04-F01 are closed, and R03-F01 remains closed. The immutable-blob lru_cache is safely keyed by repository Path, full commit identity, and path; cached objects are Git-immutable and the bound is finite. Root's exact 109-test suite passed at candidate and frozen state; independent replay of the two affected recovery tests passed in 172.996 seconds. Quality, backlog, GRR, ECR-0001, 147-page review-site, generated-view, and diff checks pass. No production ECR-0002/W1.A03 authority, ordinary W1/product execution, or hold release occurred.",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GRR-0001.B00-R02-F02",
+      "notes": "Closed. The executable fixture now preserves all prior attempts and, from CHANGES_REQUESTED or BLOCKED, creates strict-descendant evidence, writes the exact REVIEW projection and current submission, commits that frozen state, and only then records an approved successor ledger closing every open finding. REVIEW and APPROVED source projections remain coherent, and recoveryctl validates the exact state immediately before append."
+    },
+    {
+      "findingId": "GRR-0001.B00-R04-F01",
+      "notes": "Closed. The shared taskctl/recoveryctl validator loads planning/backlog.yaml from every reviewedStateCommit and binds the exact hold, bootstrap, REVIEW state, current submission, candidate, evidence, criteria hash, branch, implementation/evidence/null-review projections, ordered prior attempts, and strict candidate ancestry. The forged descendant-commit regression is denied before append with byte-stable backlog state."
+    }
+  ]
+}
