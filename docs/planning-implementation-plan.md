@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8b10441e2257263d7ab53791ad7b2e1091e743326ce24cc24cd677cde8abedb0
+source_sha256: 936f2b2eac25ed38c2817ecd970726ed30fd097b0b520a57d2c94a3e720bc57c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -41,7 +41,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 |---|---|---|---|---|
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
-| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ACTIVE` |
+| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `REVIEW` |
 
 ## Waves
 
@@ -413,7 +413,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A02.json` (`63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `CHANGES_REQUESTED`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
@@ -426,6 +426,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E07` `REVIEW` at `2026-08-22T01:59:47+00:00` by codex: R02 remediates W1.A02-EXIT-R01-F01 and F02 with immutable exit/adoption evidence binding and separate exact Wave/amendment campaign state.
 - `E08` `PAUSED` at `2026-08-22T02:09:50+00:00` by b00-independent-reviewer: CHANGES_REQUESTED at exact clean frozen state 8df23af86380abb7359ab5a3349ac0cbc4ee7a3c. R02 evidence is Git-bound at 85ec0972d4a823496f796de922e5ba3619c54e85 and declares implementation ancestor 48017abbeb860f01591bb977c352a7d3739cc232; both strictly descend from R01. R01 history, criteria/check/packet hashes, ECR authority, separate exact Wave/amendment campaign state, generated views, and legacy W1.A01 are truthful. R01-F02 is fixed. R01-F01 remains open because an exit-evidence payload can be relabeled as adoption evidence without documentType/target/history validation. The selected controller/schema replay is 68/69 because one historical-bootstrap fixture retains live exit-review control. Adoption is not ready; no full W1 exit suite was run.
 - `E09` `ACTIVE` at `2026-08-22T02:15:35+00:00` by codex: Activated the bounded amendment campaign.
+- `E10` `REVIEW` at `2026-08-22T02:17:29+00:00` by codex: R03 remediates W1.A02-EXIT-R01-F01 and W1.A02-EXIT-R02-F01 with payload-type/target/history binding, coherent historical fixtures, and 70 passing controller/schema tests.
 
 ### Amendment-exit review and adoption — W1.A02
 
@@ -488,13 +489,21 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `W1.A02-EXIT-R01-F02` `fixed` — artifacts/evidence/W1.A02.exit.json
 
-**Current immutable amendment-exit submission awaiting review:** None
+**Current immutable amendment-exit submission awaiting review:** `R03` / packet SHA-256 `6b27d66c3f1adffdae0f3efb35a038004d381db63f22a33a83be09076cfec2f9`
 
-**Latest completion projection:** `CHANGES_REQUESTED` by b00-independent-reviewer at `2026-08-22T02:09:50+00:00`
+- Candidate / declared candidate / branch: `f86bbb6e60203246178017cba2a69b41d0957a29` / `55bf2850a73dfde9e5ac9c712584b23132364665` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-22T02:17:29+00:00`
+- Bound exit evidence: amendment `W1.A02` / `artifacts/evidence/W1.A02.exit.json` / `d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5` / `f86bbb6e60203246178017cba2a69b41d0957a29`
+- Acceptance-criteria SHA-256: `3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323`
+- Selected-check SHA-256: `c7c99a81a388a5a199c6b7968c45c4a8a26a79b203f61984e3eb2694ec838216`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments`, `.venv\Scripts\python.exe tools\quality_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .`, `.venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved`, `git diff --check`
+- Prior round / replayed open findings: `R02` / `W1.A02-EXIT-R01-F01`, `W1.A02-EXIT-R02-F01`
+
+**Latest completion projection:** `REVIEW` by - at `-`
 
 **Latest completion evidence:** `artifacts/evidence/W1.A02.exit.json`
 
-**Latest completion notes:** CHANGES_REQUESTED at exact clean frozen state 8df23af86380abb7359ab5a3349ac0cbc4ee7a3c. R02 evidence is Git-bound at 85ec0972d4a823496f796de922e5ba3619c54e85 and declares implementation ancestor 48017abbeb860f01591bb977c352a7d3739cc232; both strictly descend from R01. R01 history, criteria/check/packet hashes, ECR authority, separate exact Wave/amendment campaign state, generated views, and legacy W1.A01 are truthful. R01-F02 is fixed. R01-F01 remains open because an exit-evidence payload can be relabeled as adoption evidence without documentType/target/history validation. The selected controller/schema replay is 68/69 because one historical-bootstrap fixture retains live exit-review control. Adoption is not ready; no full W1 exit suite was run.
+**Latest completion notes:** R03 remediates W1.A02-EXIT-R01-F01 and W1.A02-EXIT-R02-F01 with payload-type/target/history binding, coherent historical fixtures, and 70 passing controller/schema tests.
 
 **Bound amendment-adoption checkpoints:**
 

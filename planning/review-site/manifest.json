@@ -6397,9 +6397,9 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A02.json",
       "approval_sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
       "approval_status": "APPROVED",
-      "lifecycle_status": "ACTIVE",
+      "lifecycle_status": "REVIEW",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "ACTIVE",
+      "campaign_status": "REVIEW",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -7100,13 +7100,13 @@
         "amendment_id": "W1.A02",
         "mode": "append-only",
         "latest_completion": {
-          "status": "CHANGES_REQUESTED",
-          "reviewer": "b00-independent-reviewer",
-          "reviewed_at": "2026-08-22T02:09:50+00:00",
+          "status": "REVIEW",
+          "reviewer": null,
+          "reviewed_at": null,
           "evidence": [
             "artifacts/evidence/W1.A02.exit.json"
           ],
-          "notes": "CHANGES_REQUESTED at exact clean frozen state 8df23af86380abb7359ab5a3349ac0cbc4ee7a3c. R02 evidence is Git-bound at 85ec0972d4a823496f796de922e5ba3619c54e85 and declares implementation ancestor 48017abbeb860f01591bb977c352a7d3739cc232; both strictly descend from R01. R01 history, criteria/check/packet hashes, ECR authority, separate exact Wave/amendment campaign state, generated views, and legacy W1.A01 are truthful. R01-F02 is fixed. R01-F01 remains open because an exit-evidence payload can be relabeled as adoption evidence without documentType/target/history validation. The selected controller/schema replay is 68/69 because one historical-bootstrap fixture retains live exit-review control. Adoption is not ready; no full W1 exit suite was run."
+          "notes": "R03 remediates W1.A02-EXIT-R01-F01 and W1.A02-EXIT-R02-F01 with payload-type/target/history binding, coherent historical fixtures, and 70 passing controller/schema tests."
         },
         "exit_review_control": {
           "version": 1,
@@ -7239,7 +7239,40 @@
               ]
             }
           ],
-          "current_submission": null
+          "current_submission": {
+            "id": "R03",
+            "submitted_by": "codex",
+            "submitted_at": "2026-08-22T02:17:29+00:00",
+            "candidate_commit": "f86bbb6e60203246178017cba2a69b41d0957a29",
+            "declared_candidate_commit": "55bf2850a73dfde9e5ac9c712584b23132364665",
+            "branch": "codex/w1-windows-local-runtime",
+            "evidence_reference": {
+              "type": "amendment-exit-evidence",
+              "amendment_id": "W1.A02",
+              "path": "artifacts/evidence/W1.A02.exit.json",
+              "sha256": "d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5",
+              "commit": "f86bbb6e60203246178017cba2a69b41d0957a29"
+            },
+            "acceptance_criteria_sha256": "3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323",
+            "selected_checks": [
+              ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+              ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments",
+              ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+              ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+              ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
+              ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+              ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+              ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved",
+              "git diff --check"
+            ],
+            "selected_checks_sha256": "c7c99a81a388a5a199c6b7968c45c4a8a26a79b203f61984e3eb2694ec838216",
+            "prior_attempt_id": "R02",
+            "open_finding_ids": [
+              "W1.A02-EXIT-R01-F01",
+              "W1.A02-EXIT-R02-F01"
+            ],
+            "packet_sha256": "6b27d66c3f1adffdae0f3efb35a038004d381db63f22a33a83be09076cfec2f9"
+          }
         }
       },
       "adoption_checkpoints": [],
