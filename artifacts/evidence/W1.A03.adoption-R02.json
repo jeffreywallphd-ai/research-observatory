@@ -1,0 +1,27 @@
+{
+  "documentType": "wave-amendment-adoption-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A03",
+  "targetWave": "W1",
+  "candidateCommit": "c2bcf3cb7191dedd145ec1037104bf21454c59c5",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewedCompletionCommit": "c2bcf3cb7191dedd145ec1037104bf21454c59c5",
+  "approvedExitAttempt": "R02",
+  "approvedExitLedger": "artifacts/evidence/W1.A03.exit-review-R02.json",
+  "approvedExitEvidence": {
+    "path": "artifacts/evidence/W1.A03.exit-remediation-01.json",
+    "sha256": "819c25fd427533a509bf2d19a54100b872e4765343aeb65214572dcd9a339fc6"
+  },
+  "supersedesUnconsumedCheckpoint": "artifacts/evidence/W1.A03.adoption.json",
+  "waveDisposition": {
+    "status": "PAUSED",
+    "scopeAfterAdoption": "wave",
+    "ordinaryResumeAuthorized": false,
+    "gateApprovalAuthorized": false
+  },
+  "requiredNextTransitions": [
+    "release HOLD-W1-GRR-0001 through recoveryctl",
+    "explicitly resume W1 through taskctl",
+    "recover only CAP-02.S04.T03 through the exact committed recovery manifest"
+  ]
+}
