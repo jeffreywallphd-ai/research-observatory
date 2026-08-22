@@ -24003,7 +24003,7 @@ wave_amendments:
         blocked through amendment adoption, GRR-0001 release, and an explicit ordinary W1 resume.
   bootstrap:
     id: W1.A03.B00
-    status: REVIEW
+    status: APPROVED
     implementer: codex
     implementation_commit: d0faa070a85055fa2a278e05bedc57c05701aabe
     submission_branch: codex/w1-windows-local-runtime
@@ -24015,10 +24015,13 @@ wave_amendments:
       commit: d0faa070a85055fa2a278e05bedc57c05701aabe
       recorded_at: '2026-08-22T16:46:30+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: b00-independent-reviewer
+      result: approved
+      reviewed_at: '2026-08-22T16:50:44+00:00'
+      notes: APPROVED at exact clean frozen state 6dbe0f6ba6996818f60dc0d27ef4f6e56aa5ff8f. Candidate d0faa070a85055fa2a278e05bedc57c05701aabe
+        and evidence 83e7295355f6a3377247b4eb0fca8d852dd670d968856f6212c110f60dd64a36 bind the exact two-file scope. All 18
+        focused tests, exact historical T03 gate command, authority, backlog, review-site, generated-view, quality, and diff
+        checks pass. No product, reference, policy, predecessor, T03, ordinary W1, or gate state changed.
   campaign: null
   tasks: []
   completion:
