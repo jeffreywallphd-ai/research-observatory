@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S04.T02",
+  "commit": "a06d7d4cd67e027850d6d240f1507a17e49a4739",
+  "baseCommit": "8782ee8d09cfa76582bb89b4befe2cedd8a70bb1",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/src/application_lock.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "apps/desktop/src/app/session.test.ts",
+    "apps/desktop/src/app/session.ts",
+    "artifacts/evidence/CAP-02.S04.T02.json",
+    "artifacts/evidence/ui-change/CAP-02.S04.T02.json",
+    "docs/adr/ADR-0018-lock-the-local-application-at-the-native-supervisor-boundary.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/application-lock.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/security/README.md",
+    "packages/contracts/security/application-lock-profile.schema.json",
+    "packages/contracts/security/application-lock-profile.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-02/CAP-02.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/contracts/test_credential_store_contract.py",
+    "tests/foundation/test_adr_check.py",
+    "tests/security/README.md",
+    "tests/security/test_windows_credentials.py",
+    "tools/desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-desktop-application.json",
+      "exitCode": 0,
+      "result": "Exact implementation parent bd4baaec3b13d55e4f938cc5bfbf9ff6ec150a97 passed the complete desktop application verifier: pinned frontend verification/build, Rust format/clippy/tests/build, existing Projects and Diagnostics behavior, keyboard/focus/responsive behavior, and the locked-only native-bridge browser boundary. Report SHA-256 45e8232ed17db2f8ca3120808a4d3767971d963449ebec4cbb97f5aebfeebfc9; final candidate adds only the immutable criterion manifest."
+    },
+    {
+      "command": "core_sidecar_build.py; unittest discover tests/desktop; tests/packaging; tests/service; tests/contracts; tests/security",
+      "exitCode": 0,
+      "result": "At the exact implementation parent the canonical Windows sidecar rebuilt and all 51 desktop, 6 packaging, 32 service, 19 contract, and 31 security tests passed. One packaging and one security symlink case had the expected Windows-token privilege skip."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\security_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-security-local.json",
+      "exitCode": 0,
+      "result": "The pinned live scan passed 599 packages and 151 normalized findings with zero blockers; report SHA-256 a517760230ba0ed25d062ffabb8ca51146fefeaf4ef746cfbc00d5ba0db58130."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1 --affected-head bd4baaec3b13d55e4f938cc5bfbf9ff6ec150a97 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-02.S04.T02-affected-selection.json",
+      "exitCode": 0,
+      "result": "Governed Git-derived selection passed; implementation-facing selected checks were executed directly and desktop performance remains owned by W1-exit. Report SHA-256 5bd330bb4a8591b3cba0dfdf2a23a988a51b8f15055254082ef1b517fd3546cf."
+    },
+    {
+      "command": "ui-reference/token/route/workflow/accessibility/visual; ui_change_gate; adr_check; build_manifest; quality_check; taskctl validate; backlog_views --check",
+      "exitCode": 0,
+      "result": "Approved reference 1.3, 32 routes, 14 workflows, 64 responsive accessibility cases, 64 Windows visual captures, exact UI lineage, ADR-0018, clean build identity, Python quality, the 20-capability/117-slice/358-task backlog, and generated views all passed."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Native manual/idle/restart/configuration-invalid lock advances a protected generation before Core shutdown; every protected bridge checks before and after work, and lock replaces the renderer tree while clearing project/query/dialog state.",
+        "Unlock uses a non-persisting Windows credential prompt, LogonUserW, and same-SID token comparison; clears transient buffers, closes handles, rate-limits generic denial, remains locked on cancel/failure, starts a fresh Core capability on success, and never reopens a project.",
+        "The locked-only UI and architecture explicitly disclose application-session protection rather than Windows-account isolation and require no Research Observatory or cloud account."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Native, frontend, portable-contract, source-boundary, browser, packaging, service, security, accessibility, and visual tests cover expected lock/unlock plus invalid configuration, idle, cancelled, denied, rate-limited, Core-failure, late-response, profile-leakage, and unavailable-monitor boundaries.",
+        "Complete desktop application verification denies Rust warnings and passes all workspace tests/build; the live dependency/license/vulnerability/secret policy scan has zero blockers."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0018, strict application-lock schema/fixture, LocalAppData architecture, audit projection, build schema inventory, approved-reference evidence, desktop harness, generated planning views, and registry fixtures are updated without a project/SQLite migration or unrelated product scope.",
+        "The contract fixes bounded timeouts, conditional restart, native authority, same-SID authentication, generation/stop/discard behavior, W1 stop-all durable policy, future explicit allowlist, and the non-isolation threat boundary while persisting no account identity or OS path."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Native Windows authentication, Core capability/process lifecycle, protected IPC, local security configuration, and approved renderer state justified the full desktop application verifier, affected desktop/service/contracts/packaging/security suites, live supply-chain scan, strict contract/source tests, UI accessibility/visual conformance, and commit-bound governance gates.",
+    "selectedCommandIds": [
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "foundation:ui-reference",
+      "foundation:ui-change",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:backlog",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "packaging:unit",
+      "service:unit",
+      "contracts:unit",
+      "security-local:supply-chain",
+      "security-local:unit"
+    ],
+    "deferred": "Desktop performance is governed for W1-exit by W1.A02. Complete repository/deployment qualification is retained for a quiescent W1 checkpoint/exit; active-campaign foundation fixtures that assert W1 is PAUSED are not represented as passed. T02-owned ADR registry and copy-fixture issues found during the full-profile attempt were fixed and retested."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "agent-review",
+    "note": "Independently review exact final candidate a06d7d4cd67e027850d6d240f1507a17e49a4739 (tested implementation parent bd4baaec3b13d55e4f938cc5bfbf9ff6ec150a97 plus only immutable evidence). Return one consolidated severity-ranked ledger. Expand review across prompt/SID/buffer/handle correctness, configuration authority, generation/Core races, support export, renderer fail-closed behavior, audit/profile leakage, rate limiting, accessibility, disclosure, and contract/ADR truth; keep W1-exit duties distinct from task blockers."
+  }
+}

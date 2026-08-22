@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 31ab759e36cb80b20572f95dab22ce40b3096c1fdeeeece185f75fa39c4e05e0
+source_sha256: e784f473a3cbf7c0936ed9a1f82f9cba165f0cf858bba10312d53bf4de4b4a1a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 275 |
 | `READY` | 2 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 42 |
 | `DEFERRED` | 36 |
 
@@ -276,6 +276,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-02.S03.T02` | `legacy latest-review-only` | 0 | `-` | approved / t02_security_review | - |
 | `CAP-02.S03.T03` | `legacy latest-review-only` | 0 | `-` | approved / independent-agent-t03-slice-remediation | - |
 | `CAP-02.S04.T01` | `legacy latest-review-only` | 0 | `-` | approved / cap02_s04_t01_security_review | - |
+| `CAP-02.S04.T02` | `append-only v1` | 0 | `R01` | - / - | - |
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -342,4 +343,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S04.T02` Implement local user profile and application-lock behavior | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S04.T02` Implement local user profile and application-lock behavior | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
