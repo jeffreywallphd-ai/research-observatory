@@ -22,6 +22,7 @@ import tempfile
 from collections import Counter
 from collections.abc import Iterator
 from contextlib import contextmanager
+from functools import lru_cache
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -1687,6 +1688,7 @@ def git_is_ancestor(repo: Path, ancestor: str, descendant: str = "HEAD") -> bool
     return result.returncode == 0
 
 
+@lru_cache(maxsize=512)
 def git_blob(repo: Path, commit: str, path: str) -> bytes | None:
     result = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=repo, capture_output=True, check=False)
     return result.stdout if result.returncode == 0 else None
@@ -2168,7 +2170,7 @@ def recovery_review_history_errors(
     blocking_ids: set[str] = set()
     seen_finding_ids: set[str] = set()
     criterion_count = len(packet.get("acceptanceCriteria") or [])
-    for attempt in attempts:
+    for attempt_index, attempt in enumerate(attempts):
         attempt_id = str(attempt.get("id") or "")
         candidate = str(attempt.get("implementation_commit") or "")
         evidence = attempt.get("evidence") or {}
@@ -2213,6 +2215,39 @@ def recovery_review_history_errors(
         reviewed_state = str(ledger.get("reviewedStateCommit") or "")
         if not git_commit_exists(repo, reviewed_state) or not git_is_ancestor(repo, reviewed_state):
             errors.append(f"{bootstrap_id}/{attempt_id}: reviewed state is absent from current history")
+        elif reviewed_state == candidate or not git_is_ancestor(repo, candidate, reviewed_state):
+            errors.append(f"{bootstrap_id}/{attempt_id}: reviewed state does not descend from its candidate")
+        else:
+            historical = historical_backlog_document(repo, reviewed_state)
+            historical_hold = next(
+                (
+                    item
+                    for item in ((historical or {}).get("control_plane") or {}).get("recovery_holds", [])
+                    if item.get("recovery_request_id") == request_id
+                ),
+                None,
+            )
+            historical_bootstrap = (historical_hold or {}).get("bootstrap") or {}
+            expected_submission = {
+                "attempt_id": attempt_id,
+                "candidate_commit": candidate,
+                "evidence_sha256": evidence.get("sha256"),
+                "acceptance_criteria_sha256": canonical_json_sha256(packet.get("acceptanceCriteria", [])),
+            }
+            if (
+                (historical_hold or {}).get("id") != hold.get("id")
+                or historical_bootstrap.get("id") != bootstrap_id
+                or historical_bootstrap.get("status") != "REVIEW"
+                or historical_bootstrap.get("current_submission") != expected_submission
+                or historical_bootstrap.get("implementation_commit") != candidate
+                or historical_bootstrap.get("submission_branch") != attempt.get("submission_branch")
+                or historical_bootstrap.get("evidence") != evidence
+                or historical_bootstrap.get("review")
+                != {"reviewer": None, "result": None, "reviewed_at": None, "notes": None}
+            ):
+                errors.append(f"{bootstrap_id}/{attempt_id}: reviewed state lacks its exact frozen submission")
+            if historical_bootstrap.get("attempts") != attempts[:attempt_index]:
+                errors.append(f"{bootstrap_id}/{attempt_id}: reviewed state does not preserve exact prior attempts")
         if not reviewer or reviewer == attempt.get("implementer") or reviewer != review.get("reviewer"):
             errors.append(f"{bootstrap_id}/{attempt_id}: review independence or reviewer projection is invalid")
         if result not in set(BOOTSTRAP_REVIEW_RESULTS.values()) or result != review.get("result"):
