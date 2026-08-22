@@ -92,6 +92,9 @@ class GovernanceRecoveryTests(unittest.TestCase):
         backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
         hold = (backlog["control_plane"]["recovery_holds"])[0]
         bootstrap = hold["bootstrap"]
+        recovery_packet = json.loads(
+            (repo / "planning/governance-recovery-requests/GRR-0001.packet.json").read_text(encoding="utf-8")
+        )
 
         def open_findings() -> list[str]:
             open_ids: set[str] = set()
@@ -110,6 +113,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
             candidate = submission["candidate_commit"]
             evidence = copy.deepcopy(bootstrap["evidence"])
             submission_branch = bootstrap["submission_branch"]
+            reviewed_state_commit = self.git(repo, "rev-parse", "HEAD")
         elif bootstrap["status"] in {"CHANGES_REQUESTED", "BLOCKED"}:
             latest_candidate = bootstrap["implementation_commit"]
             candidate = self.git(repo, "rev-parse", "HEAD")
@@ -136,11 +140,34 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 "commit": candidate,
                 "recorded_at": "2026-08-22T18:00:00+00:00",
             }
+            bootstrap.update(
+                status="REVIEW",
+                implementation_commit=candidate,
+                submission_branch=submission_branch,
+                evidence=copy.deepcopy(evidence),
+                review={"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+                current_submission={
+                    "attempt_id": attempt_id,
+                    "candidate_commit": candidate,
+                    "evidence_sha256": evidence["sha256"],
+                    "acceptance_criteria_sha256": taskctl.canonical_json_sha256(recovery_packet["acceptanceCriteria"]),
+                },
+            )
+            backlog_path.write_bytes(yaml.safe_dump(backlog, sort_keys=False, width=120).encode())
+            self.git(
+                repo,
+                "add",
+                backlog_path.relative_to(repo).as_posix(),
+                evidence_path.relative_to(repo).as_posix(),
+            )
+            self.git(repo, "commit", "-m", "test: freeze recovery REVIEW state")
+            reviewed_state_commit = self.git(repo, "rev-parse", "HEAD")
         elif bootstrap["status"] == "APPROVED":
             attempt_id = ""
             candidate = ""
             evidence = {}
             submission_branch = ""
+            reviewed_state_commit = ""
         else:
             raise AssertionError(f"Unsupported fixture recovery state: {bootstrap['status']}")
 
@@ -153,7 +180,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 "bootstrapUnit": bootstrap["id"],
                 "attemptId": attempt_id,
                 "candidateCommit": candidate,
-                "reviewedStateCommit": self.git(repo, "rev-parse", "HEAD"),
+                "reviewedStateCommit": reviewed_state_commit,
                 "reviewer": "fixture-independent-reviewer",
                 "result": "approved",
                 "evidence": {
@@ -201,9 +228,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
         review_path = repo / "planning/enabler-change-requests/ECR-0002-review.html"
         proposal_path.write_bytes(b"# Fixture ECR-0002\n")
         review_path.write_bytes(b"<!doctype html><title>Fixture ECR-0002</title>\n")
-        recovery_authority = json.loads(
-            (repo / "planning/governance-recovery-requests/GRR-0001.packet.json").read_text(encoding="utf-8")
-        )["authorityChain"]
+        recovery_authority = recovery_packet["authorityChain"]
         authority = {
             "waveBase": recovery_authority["waveBase"],
             "orderedAmendments": [
@@ -517,6 +542,23 @@ class GovernanceRecoveryTests(unittest.TestCase):
             try:
                 with self.assertRaisesRegex(SystemExit, "open blocking findings"):
                     taskctl.command_amendment_append_bootstrap_submit(args, *missing_closure_state)
+                self.assertEqual(before, Path(args.file).read_bytes())
+            finally:
+                latest_ledger_path.write_bytes(lawful_ledger_payload)
+
+            unfrozen_review_state = loaded()
+            state_bootstrap = unfrozen_review_state[0]["control_plane"]["recovery_holds"][0]["bootstrap"]
+            latest_attempt = state_bootstrap["attempts"][-1]
+            latest_ledger_path = repo / latest_attempt["ledger"]["path"]
+            lawful_ledger_payload = latest_ledger_path.read_bytes()
+            forged_ledger = json.loads(lawful_ledger_payload)
+            forged_ledger["reviewedStateCommit"] = self.git(repo, "rev-parse", "HEAD")
+            forged_ledger_payload = (json.dumps(forged_ledger, indent=2) + "\n").encode()
+            latest_ledger_path.write_bytes(forged_ledger_payload)
+            latest_attempt["ledger"]["sha256"] = hashlib.sha256(forged_ledger_payload).hexdigest()
+            try:
+                with self.assertRaisesRegex(SystemExit, "reviewed state lacks its exact frozen submission"):
+                    taskctl.command_amendment_append_bootstrap_submit(args, *unfrozen_review_state)
                 self.assertEqual(before, Path(args.file).read_bytes())
             finally:
                 latest_ledger_path.write_bytes(lawful_ledger_payload)
