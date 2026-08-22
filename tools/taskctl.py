@@ -3640,15 +3640,10 @@ def validate(
             attempts = control.get("attempts") or []
             if not attempts or (attempts[-1].get("review") or {}).get("result") != "approved":
                 errors.append(f"{amendment_id}: adopted amendment lacks an immutable approved exit review")
-            adoption_checkpoints = [
-                checkpoint
-                for checkpoint in (waves.get(target_wave) or {}).get("checkpoints", [])
-                if checkpoint.get("kind") == "security"
-                and any(
-                    isinstance(reference, dict) and reference.get("type") == "amendment-adoption-evidence"
-                    for reference in checkpoint.get("evidence", [])
-                )
-            ]
+            adoption_checkpoints = amendment_adoption_checkpoints(
+                waves.get(target_wave) or {},
+                amendment_id,
+            )
             if not adoption_checkpoints:
                 errors.append(f"{amendment_id}: adopted amendment lacks a bound security checkpoint")
             else:
@@ -4403,6 +4398,20 @@ def amendment_adoption_reference_errors(
         ):
             errors.append(f"{amendment_id}: adoption evidence does not bind the exact approved exit history")
     return errors
+
+
+def amendment_adoption_checkpoints(wave: dict[str, Any], amendment_id: str) -> list[dict[str, Any]]:
+    return [
+        checkpoint
+        for checkpoint in wave.get("checkpoints", [])
+        if checkpoint.get("kind") == "security"
+        and any(
+            isinstance(reference, dict)
+            and reference.get("type") == "amendment-adoption-evidence"
+            and reference.get("amendment_id") == amendment_id
+            for reference in checkpoint.get("evidence", [])
+        )
+    ]
 
 
 def amendment_exit_packet_sha256(packet: dict[str, Any]) -> str:

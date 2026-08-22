@@ -4416,6 +4416,103 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("ADOPTED", amendment["lifecycle"]["status"])
         self.assertIsNone(data["control_plane"]["active_amendment"])
 
+    def test_adopted_amendments_select_only_their_own_security_checkpoint(self) -> None:
+        wave = {
+            "checkpoints": [
+                {
+                    "id": "W1.CP01",
+                    "kind": "security",
+                    "evidence": [
+                        {
+                            "type": "amendment-adoption-evidence",
+                            "amendment_id": "W1.A02",
+                            "path": "artifacts/evidence/W1.A02.adoption.json",
+                        }
+                    ],
+                },
+                {
+                    "id": "W1.CP02",
+                    "kind": "security",
+                    "evidence": [
+                        {
+                            "type": "amendment-adoption-evidence",
+                            "amendment_id": "W1.A03",
+                            "path": "artifacts/evidence/W1.A03.adoption.json",
+                        }
+                    ],
+                },
+                {
+                    "id": "W1.CP03",
+                    "kind": "risk-cluster",
+                    "evidence": [
+                        {
+                            "type": "amendment-adoption-evidence",
+                            "amendment_id": "W1.A02",
+                            "path": "artifacts/evidence/not-a-security-checkpoint.json",
+                        }
+                    ],
+                },
+            ]
+        }
+
+        self.assertEqual(
+            ["W1.CP01"],
+            [item["id"] for item in taskctl_module.amendment_adoption_checkpoints(wave, "W1.A02")],
+        )
+        self.assertEqual(
+            ["W1.CP02"],
+            [item["id"] for item in taskctl_module.amendment_adoption_checkpoints(wave, "W1.A03")],
+        )
+        self.assertEqual([], taskctl_module.amendment_adoption_checkpoints(wave, "W1.A04"))
+
+    def test_consecutive_adopted_amendments_validate_against_their_own_checkpoints(self) -> None:
+        data = taskctl_module.historical_backlog_document(
+            REPO,
+            "c9ef5be1faf0119562b036c2b5eed882fab08b24",
+        )
+        self.assertIsNotNone(data)
+        assert data is not None
+        amendment = taskctl_module.wave_amendment_map(data)["W1.A03"]
+        amendment["lifecycle"]["status"] = "ADOPTED"
+        amendment["lifecycle"]["history"].append(
+            {
+                "id": f"E{len(amendment['lifecycle']['history']) + 1:02d}",
+                "status": "ADOPTED",
+                "actor": "codex",
+                "at": "2026-08-22T21:00:00+00:00",
+                "rationale": "Projected consecutive-amendment adoption.",
+            }
+        )
+        amendment["campaign"].update(status="COMPLETE", lease=None)
+        data["control_plane"]["active_amendment"] = None
+        wave = taskctl_module.wave_map(data)["W1"]
+        wave["campaign"]["scope"] = "wave"
+        adoption_commit = "fb8bec15e0b02e521955269beabd7eb5a912d756"
+        adoption_path = "artifacts/evidence/W1.A03.adoption.json"
+        adoption_payload = taskctl_module.git_blob(REPO, adoption_commit, adoption_path)
+        self.assertIsNotNone(adoption_payload)
+        assert adoption_payload is not None
+        wave["checkpoints"].append(
+            {
+                "id": f"W1.CP{len(wave['checkpoints']) + 1:02d}",
+                "kind": "security",
+                "recorded_by": "codex",
+                "recorded_at": "2026-08-22T21:00:00+00:00",
+                "evidence": [
+                    {
+                        "type": "amendment-adoption-evidence",
+                        "amendment_id": "W1.A03",
+                        "path": adoption_path,
+                        "sha256": hashlib.sha256(adoption_payload).hexdigest(),
+                        "commit": adoption_commit,
+                    }
+                ],
+                "notes": "Projected W1.A03 adoption checkpoint.",
+            }
+        )
+
+        self.assertEqual([], taskctl_module.validate(*taskctl_module.index_backlog(data), repo=REPO))
+
     def test_amendment_disposition_is_append_only_independent_and_keeps_wave_paused(self) -> None:
         data, capabilities, slices, tasks, gates = self.interrupted_workflow(
             lifecycle_status="PAUSED", amendment_campaign_status="PAUSED"
