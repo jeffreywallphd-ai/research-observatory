@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 
 import {
   CoreApiClientError,
@@ -14,6 +14,7 @@ import { Button, Field, Notification, Panel, StatusBadge, Typography } from "@re
 export interface ProjectsWorkspaceProps {
   readonly announce: (message: string) => void;
   readonly transport?: CoreApiTransport;
+  readonly selectedProject?: ProjectProjection | null;
   readonly onProjectChange?: (project: ProjectProjection) => void;
 }
 
@@ -76,10 +77,11 @@ function safeFailure(error: unknown): { readonly title: string; readonly message
 export function ProjectsWorkspace({
   announce,
   transport = packagedProjectTransport,
+  selectedProject = null,
   onProjectChange,
 }: ProjectsWorkspaceProps): ReactNode {
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
-  const [project, setProject] = useState<ProjectProjection | null>(null);
+  const [project, setProject] = useState<ProjectProjection | null>(selectedProject);
   const [parentDirectory, setParentDirectory] = useState("");
   const [directoryName, setDirectoryName] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -87,6 +89,8 @@ export function ProjectsWorkspace({
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [failure, setFailure] = useState<{ readonly title: string; readonly message: string } | null>(null);
+
+  useEffect(() => setProject(selectedProject), [selectedProject]);
 
   const run = async (label: string, action: () => Promise<ProjectProjection>): Promise<void> => {
     setBusy(label);

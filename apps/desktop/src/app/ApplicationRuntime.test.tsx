@@ -33,8 +33,10 @@ describe("functional desktop application", () => {
     expect(html).toContain("Copy diagnostic reference");
     expect(html).toContain("Only implemented capabilities appear here.");
     expect(html).toContain("Local projects");
+    expect(html).toContain("Project settings");
     expect(html).toContain("Diagnostics &amp; support");
     expect(html).toContain("Open local projects");
+    expect(html).toContain("Open project settings");
     expect(html).toContain("Open diagnostics &amp; support");
     expect(html).not.toContain("prototype-index.html");
     expect(html).not.toContain("data-workflow-select");

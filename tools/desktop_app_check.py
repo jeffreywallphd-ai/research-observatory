@@ -197,7 +197,7 @@ def product_build_errors(repo: Path) -> list[str]:
         "schemaVersion": "1.0",
         "documentType": "desktop-product-build-manifest",
         "buildRole": "tauri-frontend",
-        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T03"],
+        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T03", "CAP-02.S04.T02", "CAP-02.S04.T03"],
         "routes": ["index.html"],
         "referenceUse": "design-contract-only",
     }
@@ -831,7 +831,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         errors.append("desktop production runtime retains an unresolved Node environment expression")
     details: dict[str, Any] = {
         "pages": 0,
-        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T03"],
+        "implementedCapabilities": ["CAP-01", "CAP-02.S01.T03", "CAP-02.S04.T02", "CAP-02.S04.T03"],
         "referenceOnlyPages": 0,
         "commandFocus": False,
         "skipLink": False,
@@ -852,6 +852,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsTraceLink": False,
         "diagnosticsExactExport": False,
         "projectsWorkflow": False,
+        "privacySettingsWorkflow": False,
         "applicationLock": False,
         "applicationLockReconciliation": False,
         "responsiveCases": 0,
@@ -1164,6 +1165,30 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                   let backupRequiredBeforeRepair = false;
                   let recoveryAction = 'none';
                   window.__PROJECT_CALLS__ = [];
+                  window.__PRIVACY_CALLS__ = [];
+                  let privacyRevision = 0;
+                  let networkPolicy = 'offline';
+                  let telemetryMode = 'off';
+                  const disclosure = {
+                    disclosureVersion: 'secure-deletion-disclosure-v1',
+                    scope: 'project-cache-only', logicalRemoval: true,
+                    physicalErasureGuaranteed: false, canonicalProjectDataExcluded: true,
+                    limitations: [
+                      'Filesystem unlink does not prove physical media erasure.',
+                      'SSD wear levelling and device remapping can retain prior blocks.',
+                      'Filesystem journals, snapshots, backups, and hard links can retain copies.',
+                      'Only the rebuildable project cache is cleared; canonical project data is excluded.'
+                    ]
+                  };
+                  const privacyPolicy = () => ({
+                    schemaVersion: '1.0', projectId, revision: privacyRevision,
+                    defaultsApplied: privacyRevision === 0, networkPolicy,
+                    remoteModelApproval: 'preview-every-task', telemetryMode,
+                    logRetentionDays: 14, documentRetention: 'project-lifetime',
+                    cacheRetentionDays: 30, egressConsentRecorded: networkPolicy !== 'offline',
+                    egressEnforcement: networkPolicy === 'approved-providers'
+                      ? 'require-task-preview' : 'deny', deletionDisclosure: disclosure
+                  });
                   const projection = () => ({
                     schemaVersion: '1.0', projectId, displayName: 'Study One', templateId: 'theory-synthesis',
                     lifecycleState: state, root: 'C:/Research/study-one', open, accessMode,
@@ -1194,12 +1219,50 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       if (command === 'core_runtime_stop') return undefined;
                       if (command !== 'core_api_request') throw new Error('unsupported test command');
                       const request = args?.request;
-                      window.__PROJECT_CALLS__.push(request);
+                      if (request?.path?.startsWith('/projects/privacy')) {
+                        window.__PRIVACY_CALLS__.push(request);
+                      } else {
+                        window.__PROJECT_CALLS__.push(request);
+                      }
                       if (request?.method !== 'POST' || request?.ifMatch !== null || request?.idempotencyKey !== null) {
                         throw new Error('invalid project request envelope');
                       }
                       const body = JSON.parse(request.body);
-                      if (request.path === '/projects') {
+                      let responseBody;
+                      if (request.path === '/projects/privacy') {
+                        if (!open || accessMode !== 'read-write' || body.root !== 'C:/Research/study-one') {
+                          throw new Error('privacy policy requested without writable project');
+                        }
+                        responseBody = privacyPolicy();
+                      } else if (request.path === '/projects/privacy/update') {
+                        if (body.root !== 'C:/Research/study-one' || body.expectedRevision !== privacyRevision
+                          || body.remoteModelApproval !== 'preview-every-task'
+                          || body.networkPolicy !== 'approved-providers'
+                          || body.egressConsentToken !== 'acknowledge-egress-preview-v1') {
+                          throw new Error('invalid privacy update');
+                        }
+                        privacyRevision += 1; networkPolicy = body.networkPolicy;
+                        telemetryMode = body.telemetryMode; responseBody = privacyPolicy();
+                      } else if (request.path === '/projects/privacy/cache/preview') {
+                        if (body.root !== 'C:/Research/study-one') throw new Error('invalid cache preview');
+                        const token = 'a'.repeat(32);
+                        responseBody = {
+                          schemaVersion: '1.0', projectId, policyRevision: privacyRevision,
+                          previewToken: token, confirmation: `clear-cache:${token}`,
+                          expiresAt: '2026-08-22T01:15:00Z', itemCount: 2, byteCount: 19,
+                          deletionDisclosure: disclosure
+                        };
+                      } else if (request.path === '/projects/privacy/cache/clear') {
+                        if (body.root !== 'C:/Research/study-one'
+                          || body.previewToken !== 'a'.repeat(32)
+                          || body.confirmation !== `clear-cache:${'a'.repeat(32)}`) {
+                          throw new Error('invalid cache confirmation');
+                        }
+                        responseBody = {
+                          schemaVersion: '1.0', projectId, state: 'cleared', itemCount: 2,
+                          byteCount: 19, cleanupPending: false, deletionDisclosure: disclosure
+                        };
+                      } else if (request.path === '/projects') {
                         if (body.parentDirectory !== 'C:/Research' || body.directoryName !== 'study-one'
                           || body.displayName !== 'Study One' || body.templateId !== 'theory-synthesis') {
                           throw new Error('invalid create body');
@@ -1232,7 +1295,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                       }
                       return {
                         status: 200, contentType: 'application/json', traceId, etag: null,
-                        body: JSON.stringify(projection())
+                        body: JSON.stringify(responseBody ?? projection())
                       };
                     }
                   };
@@ -1248,6 +1311,46 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
             projects.locator("[data-current-project]").wait_for(state="visible", timeout=5_000)
             current = projects.locator("[data-current-project]")
             current.get_by_role("button", name="Open project", exact=True).click()
+            current.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
+            projects.get_by_role("button", name="Project settings", exact=True).click()
+            projects.locator("#privacy-network-policy").wait_for(state="visible", timeout=5_000)
+            privacy_defaults_valid = (
+                projects.locator("#privacy-network-policy").input_value() == "offline"
+                and projects.locator("#usage-telemetry").input_value() == "off"
+                and "Nothing. Offline is enforced" in projects.locator("[data-egress-preview]").inner_text()
+                and "physical media erasure" in projects.locator("main").inner_text().casefold()
+                and "canonical project data is excluded" in projects.locator("main").inner_text().casefold()
+            )
+            projects.locator("#privacy-network-policy").select_option("approved-providers")
+            privacy_save = projects.get_by_role("button", name="Save project settings", exact=True)
+            consent_required = privacy_save.is_disabled()
+            projects.get_by_role("checkbox").check()
+            privacy_save.click()
+            projects.get_by_text("Policy revision 1", exact=True).wait_for(timeout=5_000)
+            projects.get_by_role("button", name="Preview cache cleanup", exact=True).click()
+            projects.locator("[data-cache-clear-preview]").wait_for(state="visible", timeout=5_000)
+            projects.get_by_role("button", name="Confirm clear rebuildable cache", exact=True).click()
+            projects.get_by_text("Cache cleanup result", exact=True).wait_for(timeout=5_000)
+            details["privacySettingsWorkflow"] = (
+                projects.evaluate(
+                    r"""() => {
+                  const calls = window.__PRIVACY_CALLS__;
+                  const update = JSON.parse(calls[1].body);
+                  return JSON.stringify(calls.map((request) => request.path)) === JSON.stringify([
+                    '/projects/privacy', '/projects/privacy/update',
+                    '/projects/privacy/cache/preview', '/projects/privacy/cache/clear'])
+                    && update.egressConsentToken === 'acknowledge-egress-preview-v1'
+                    && update.networkPolicy === 'approved-providers'
+                    && update.telemetryMode === 'off'
+                    && !calls.some((request) => request.body.includes('manuscript-content'))
+                    && document.querySelector('main')?.textContent?.includes('Physical erasure is not guaranteed.');
+                }"""
+                )
+                and privacy_defaults_valid
+                and consent_required
+            )
+            projects.get_by_role("button", name="Local projects", exact=True).click()
+            current = projects.locator("[data-current-project]")
             current.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
             current.get_by_role("button", name="Close project", exact=True).click()
             current.get_by_text("Closed", exact=True).wait_for(timeout=5_000)
@@ -1573,6 +1676,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsTraceLink",
         "diagnosticsExactExport",
         "projectsWorkflow",
+        "privacySettingsWorkflow",
         "applicationLock",
         "applicationLockReconciliation",
     ):

@@ -7,6 +7,7 @@ import type { ProjectProjection } from "@research-observatory/contracts/core-api
 
 import { LocalServiceBoundary } from "./LocalServiceBoundary";
 import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
+import { ProjectSettingsWorkspace } from "./ProjectSettingsWorkspace";
 import { ProjectsWorkspace } from "./ProjectsWorkspace";
 import {
   APPLICATION_LOCK_TIMEOUTS,
@@ -158,7 +159,7 @@ export function ApplicationRuntime(): ReactNode {
   const [query, setQuery] = useState("");
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("Desktop shell ready. No project is open.");
-  const [workspace, setWorkspace] = useState<"projects" | "home" | "diagnostics">("home");
+  const [workspace, setWorkspace] = useState<"projects" | "home" | "settings" | "diagnostics">("home");
   const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
   const [applicationLock, setApplicationLock] = useState<ApplicationLockSnapshot>(() => hasNativeRuntime()
     ? {
@@ -468,6 +469,15 @@ export function ApplicationRuntime(): ReactNode {
       },
     },
     {
+      id: "open-project-settings",
+      label: "Open project settings",
+      description: "Review local privacy, egress, retention, and cache cleanup controls.",
+      run: () => {
+        setWorkspace("settings");
+        announce("Project privacy and retention settings opened.");
+      },
+    },
+    {
       id: "open-diagnostics",
       label: "Open diagnostics & support",
       description: "Review local health and a redacted support bundle before export.",
@@ -527,6 +537,7 @@ export function ApplicationRuntime(): ReactNode {
           <nav>
             <button type="button" aria-current={workspace === "projects" ? "page" : undefined} onClick={() => setWorkspace("projects")}>Local projects</button>
             <button type="button" aria-current={workspace === "home" ? "page" : undefined} onClick={() => setWorkspace("home")}>Project home</button>
+            <button type="button" aria-current={workspace === "settings" ? "page" : undefined} onClick={() => setWorkspace("settings")}>Project settings</button>
             <button type="button" aria-current={workspace === "diagnostics" ? "page" : undefined} onClick={() => setWorkspace("diagnostics")}>Diagnostics &amp; support</button>
           </nav>
           <p>Only implemented capabilities appear here.</p>
@@ -534,7 +545,11 @@ export function ApplicationRuntime(): ReactNode {
 
         <main id="main-content" ref={homeRef} tabIndex={-1}>
           {workspace === "projects" ? (
-            <ProjectsWorkspace announce={announce} onProjectChange={setCurrentProject} />
+            <ProjectsWorkspace
+              announce={announce}
+              selectedProject={currentProject}
+              onProjectChange={setCurrentProject}
+            />
           ) : workspace === "home" ? <><div className="page-header">
             <Typography as="h1" variant="page-title">Desktop foundation</Typography>
             <Typography className="page-subtitle">
@@ -574,7 +589,9 @@ export function ApplicationRuntime(): ReactNode {
             </Panel>
             <LocalServiceBoundary announce={announce} />
           </div>
-          </> : <DiagnosticsWorkspace announce={announce} />}
+          </> : workspace === "settings" ? (
+            <ProjectSettingsWorkspace project={currentProject} announce={announce} />
+          ) : <DiagnosticsWorkspace announce={announce} />}
         </main>
       </div>
 
