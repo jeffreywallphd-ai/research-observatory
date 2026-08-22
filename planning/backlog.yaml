@@ -128,21 +128,22 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
-    base_sha: fd0f22c4f0d4fb4ea14e95f8e1e52ba765d95a60
+    base_sha: bf27fddd8e1732feadc698cd77f540ea9e1c7a0e
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-22T05:33:21+00:00'
-    pause_reason: Paused at blocked CAP-02.S04.T03 after the revised UI gate demonstrated a cumulative additive-inventory
-      control defect; ordinary W1 work remains denied pending a bounded independently reviewed ECR and explicit human amendment
-      approval.
-    pause_category: human-decision
-    lease: null
+    updated_at: '2026-08-22T21:02:22+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-22T21:02:22+00:00'
+      expires_at: '2026-08-23T21:02:22+00:00'
   checkpoints:
   - id: W1.CP01
     kind: security
@@ -169,7 +170,7 @@ waves:
     notes: Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001
       release and explicit ordinary Wave resume.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
