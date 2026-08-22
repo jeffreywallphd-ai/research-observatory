@@ -6,13 +6,10 @@
   "contractPath": "artifacts/evidence/ui-change/CAP-02.S04.T02.json",
   "implementationAgent": "agent:codex",
   "changedFiles": [
-    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app.css",
     "apps/desktop/src/app/ApplicationRuntime.tsx",
-    "apps/desktop/src/app/applicationLock.test.ts",
     "apps/desktop/src/app/applicationLock.ts",
-    "apps/desktop/src/app/session.test.ts",
-    "apps/desktop/src/app/session.ts",
-    "apps/desktop/src/app.css"
+    "apps/desktop/src/app/session.ts"
   ],
   "reference": {
     "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
