@@ -97,6 +97,7 @@
     "tests/foundation/test_recoveryctl.py",
     "tests/foundation/test_repository_structure.py",
     "tests/foundation/test_runtime_check.py",
+    "tests/foundation/test_task_recovery.py",
     "tests/foundation/test_taskctl_schema.py",
     "tests/foundation/test_taskctl_workflow.py",
     "tests/foundation/test_ui_reference_check.py",

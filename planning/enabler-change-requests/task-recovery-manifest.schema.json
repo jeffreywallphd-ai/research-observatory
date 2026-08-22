@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/task-recovery-manifest-1.0.json",
+  "title": "Exact historical task recovery manifest",
+  "type": "object",
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "documentType",
+    "taskId",
+    "branch",
+    "authority",
+    "commits",
+    "historicalTaskSha256",
+    "uiEvidence",
+    "changedPaths",
+    "selectedChecks",
+    "unverifiedItems"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "../../../planning/enabler-change-requests/task-recovery-manifest.schema.json"
+    },
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "exact-historical-task-recovery"},
+    "taskId": {"const": "CAP-02.S04.T03"},
+    "branch": {"const": "codex/w1-windows-local-runtime"},
+    "authority": {
+      "type": "object",
+      "required": [
+        "waveId",
+        "amendmentId",
+        "holdId",
+        "approvalPath",
+        "approvalSha256",
+        "approvalIntroductionCommit",
+        "packetCommit",
+        "packetPath",
+        "packetSha256"
+      ],
+      "properties": {
+        "waveId": {"const": "W1"},
+        "amendmentId": {"const": "W1.A03"},
+        "holdId": {"const": "HOLD-W1-GRR-0001"},
+        "approvalPath": {"const": "planning/wave-amendment-approvals/W1.A03.json"},
+        "approvalSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "approvalIntroductionCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "packetCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "packetPath": {"const": "planning/enabler-change-requests/ECR-0002.packet.json"},
+        "packetSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "commits": {
+      "type": "object",
+      "required": ["base", "foundation", "candidate", "blockRecord", "pauseRecord"],
+      "properties": {
+        "base": {"const": "bfb8797398707bece9e0662c0d995fabaced9979"},
+        "foundation": {"const": "461faf2870786609dea5a8e5214df380843329bb"},
+        "candidate": {"const": "59079efccc122a7d56a9f18efc20030851bf32a9"},
+        "blockRecord": {"const": "1c1d9ba427a55024687a62ca0c364acaccdbb7e2"},
+        "pauseRecord": {"const": "c7d543136fcd75c8f93dc8e669e59d54de433c02"}
+      },
+      "additionalProperties": false
+    },
+    "historicalTaskSha256": {
+      "type": "object",
+      "required": ["blockRecord", "pauseRecord"],
+      "properties": {
+        "blockRecord": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "pauseRecord": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "uiEvidence": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "referenceId",
+        "referenceVersion",
+        "packageSha256",
+        "approvalCommit",
+        "previousReferenceId"
+      ],
+      "properties": {
+        "path": {"const": "artifacts/evidence/ui-change/CAP-02.S04.T03.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "referenceId": {"type": "string", "minLength": 1},
+        "referenceVersion": {"type": "string", "minLength": 1},
+        "packageSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "approvalCommit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "previousReferenceId": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "changedPaths": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"},
+      "uniqueItems": true
+    },
+    "selectedChecks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "command", "exitCode"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]*$"},
+          "command": {"type": "string", "minLength": 1},
+          "exitCode": {"const": 0}
+        },
+        "additionalProperties": false
+      }
+    },
+    "unverifiedItems": {"type": "array", "maxItems": 0}
+  },
+  "additionalProperties": false
+}

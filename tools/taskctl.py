@@ -23,6 +23,7 @@ from collections import Counter
 from collections.abc import Iterator
 from contextlib import contextmanager
 from functools import lru_cache
+from itertools import pairwise
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -58,6 +59,37 @@ CAMPAIGN_SCOPES = {"wave", "amendment-hold", "capability-wave"}  # capability-wa
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
 CONTROL_TOOL_REVISION = 5
 AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
+EXACT_T03_RECOVERY = {
+    "task_id": "CAP-02.S04.T03",
+    "wave_id": "W1",
+    "amendment_id": "W1.A03",
+    "hold_id": "HOLD-W1-GRR-0001",
+    "branch": "codex/w1-windows-local-runtime",
+    "manifest_path": "artifacts/evidence/task-recovery/CAP-02.S04.T03.json",
+    "manifest_schema": "planning/enabler-change-requests/task-recovery-manifest.schema.json",
+    "base": "bfb8797398707bece9e0662c0d995fabaced9979",
+    "foundation": "461faf2870786609dea5a8e5214df380843329bb",
+    "candidate": "59079efccc122a7d56a9f18efc20030851bf32a9",
+    "block_record": "1c1d9ba427a55024687a62ca0c364acaccdbb7e2",
+    "pause_record": "c7d543136fcd75c8f93dc8e669e59d54de433c02",
+}
+TASK_RECOVERY_BOUNDARY_FIELDS = (
+    "status",
+    "owner",
+    "branch",
+    "base_sha",
+    "worktree",
+    "lease",
+    "started_at",
+    "updated_at",
+    "completed_at",
+    "blocker",
+    "implementation_notes",
+    "evidence",
+    "verification_state",
+    "review",
+    "review_control",
+)
 BOOTSTRAP_REVIEW_RESULTS = {
     "APPROVED": "approved",
     "CHANGES_REQUESTED": "changes-requested",
@@ -228,6 +260,19 @@ def recovery_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]
                 json.dumps(attempt, sort_keys=True, separators=(",", ":"))
                 for attempt in (supplement.get("bootstrap") or {}).get("attempts", [])
             )
+    return snapshot
+
+
+def task_recovery_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
+    """Freeze the one-time exact-candidate recovery projection on ordinary tasks."""
+    snapshot: dict[str, tuple[str, ...]] = {}
+    for capability in data.get("capabilities", []):
+        for slice_ in capability.get("slices", []):
+            for task in slice_.get("tasks", []):
+                recovery = task.get("recovery_control")
+                snapshot[str(task["id"])] = (
+                    (json.dumps(recovery, sort_keys=True, separators=(",", ":")),) if recovery is not None else ()
+                )
     return snapshot
 
 
@@ -434,6 +479,7 @@ def save_validated(
     expected_task_review_history: dict[str, tuple[str, ...]] | None = None,
     expected_wave_checkpoint_history: dict[str, tuple[str, ...]] | None = None,
     expected_recovery_history: dict[str, tuple[str, ...]] | None = None,
+    expected_task_recovery_history: dict[str, tuple[str, ...]] | None = None,
     expected_frozen_waves: dict[str, str] | None = None,
     expected_frozen_wave_bases: dict[str, str] | None = None,
     expected_frozen_amendments: dict[str, str] | None = None,
@@ -473,6 +519,12 @@ def save_validated(
             current = current_history.get(hold_id)
             if current is None or current[: len(prior)] != prior:
                 raise SystemExit(f"Append-only governance recovery history changed for {hold_id}")
+    if expected_task_recovery_history is not None:
+        current_history = task_recovery_history_snapshot(document)
+        for task_id, prior in expected_task_recovery_history.items():
+            current = current_history.get(task_id)
+            if current is None or current[: len(prior)] != prior:
+                raise SystemExit(f"Append-only task recovery history changed for {task_id}")
     for collection, identity_field, expected_records, label in (
         ("waves", "id", expected_frozen_waves, "Wave"),
         ("wave_approval_bases", "wave_id", expected_frozen_wave_bases, "Wave approval base"),
@@ -511,6 +563,7 @@ def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
         expected_task_review_history=getattr(args, "source_task_review_history", None),
         expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
+        expected_task_recovery_history=getattr(args, "source_task_recovery_history", None),
         repo=getattr(args, "repo_root", None),
     )
 
@@ -3151,6 +3204,8 @@ def validate(
         errors.extend(evidence_reference_errors(tasks, repo))
     for task in tasks.values():
         errors.extend(task_review_control_errors(task, repo))
+        if repo is not None:
+            errors.extend(task_recovery_projection_errors(data, task, repo))
     waves = wave_map(data)
     active_waves = active_wave_campaigns(data)
     active_amendments = active_amendment_campaigns(data)
@@ -4437,6 +4492,335 @@ def historical_backlog_document(repo: Path, commit: str) -> dict[str, Any] | Non
     except UnicodeError, yaml.YAMLError:
         return None
     return document if isinstance(document, dict) else None
+
+
+def task_recovery_boundary(task: dict[str, Any]) -> dict[str, Any]:
+    return {field: copy.deepcopy(task.get(field)) for field in TASK_RECOVERY_BOUNDARY_FIELDS}
+
+
+def historical_task(repo: Path, commit: str, task_id: str) -> dict[str, Any] | None:
+    document = historical_backlog_document(repo, commit)
+    if document is None:
+        return None
+    try:
+        return copy.deepcopy(index_backlog(document)[3].get(task_id))
+    except KeyError, TypeError, SystemExit:
+        return None
+
+
+def exact_recovery_selected_checks() -> list[dict[str, Any]]:
+    base = EXACT_T03_RECOVERY["base"]
+    candidate = EXACT_T03_RECOVERY["candidate"]
+    return [
+        {
+            "id": "cumulative-ui-gate",
+            "command": (
+                f".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base {base} --head {candidate}"
+            ),
+            "exitCode": 0,
+        },
+        {
+            "id": "privacy-controls-and-contract",
+            "command": (
+                ".venv\\Scripts\\python.exe -m unittest -v "
+                "tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract"
+            ),
+            "exitCode": 0,
+        },
+    ]
+
+
+def git_parent(repo: Path, commit: str) -> str | None:
+    result = subprocess.run(["git", "rev-parse", f"{commit}^"], cwd=repo, capture_output=True, text=True, check=False)
+    parent = result.stdout.strip()
+    return parent if result.returncode == 0 and re.fullmatch(r"[0-9a-f]{40}", parent) else None
+
+
+def git_changed_paths(repo: Path, base: str, candidate: str) -> list[str] | None:
+    result = subprocess.run(
+        ["git", "diff", "--name-only", base, candidate, "--"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return sorted(result.stdout.splitlines()) if result.returncode == 0 else None
+
+
+def exact_recovery_manifest_errors(
+    data: dict[str, Any],
+    task: dict[str, Any],
+    manifest: dict[str, Any],
+    repo: Path,
+    *,
+    require_current_candidate_bytes: bool,
+) -> list[str]:
+    errors: list[str] = []
+    schema_path = repo / EXACT_T03_RECOVERY["manifest_schema"]
+    try:
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+        Draft202012Validator(schema, format_checker=FORMAT_CHECKER).validate(manifest)
+    except (OSError, json.JSONDecodeError, SchemaError, ValidationError) as exc:
+        return [f"invalid exact task-recovery manifest: {exc}"]
+
+    expected_header = {
+        "schemaVersion": "1.0",
+        "documentType": "exact-historical-task-recovery",
+        "taskId": EXACT_T03_RECOVERY["task_id"],
+        "branch": EXACT_T03_RECOVERY["branch"],
+    }
+    for field, expected_header_value in expected_header.items():
+        if manifest.get(field) != expected_header_value:
+            errors.append(f"exact recovery manifest {field} mismatch")
+
+    authority = manifest.get("authority") or {}
+    amendment = wave_amendment_map(data).get(EXACT_T03_RECOVERY["amendment_id"]) or {}
+    approval_reference = amendment.get("approval_reference") or {}
+    expected_authority = {
+        "waveId": EXACT_T03_RECOVERY["wave_id"],
+        "amendmentId": EXACT_T03_RECOVERY["amendment_id"],
+        "holdId": EXACT_T03_RECOVERY["hold_id"],
+        "approvalPath": approval_reference.get("path"),
+        "approvalSha256": approval_reference.get("sha256"),
+        "approvalIntroductionCommit": approval_reference.get("introduction_commit"),
+    }
+    for field, expected_authority_value in expected_authority.items():
+        if authority.get(field) != expected_authority_value:
+            errors.append(f"recovery authority {field} mismatch")
+    try:
+        approval, _packet, approval_payload = load_amendment_authority(repo, EXACT_T03_RECOVERY["amendment_id"])
+    except SystemExit as exc:
+        errors.append(str(exc))
+        approval = {}
+        approval_payload = b""
+    packet_reference = approval.get("packet") or {}
+    for field, expected_packet_value in (
+        ("packetCommit", packet_reference.get("commit")),
+        ("packetPath", packet_reference.get("path")),
+        ("packetSha256", packet_reference.get("sha256")),
+    ):
+        if authority.get(field) != expected_packet_value:
+            errors.append(f"recovery authority {field} mismatch")
+    if approval_payload and hashlib.sha256(approval_payload).hexdigest() != authority.get("approvalSha256"):
+        errors.append("recovery authority approval bytes mismatch")
+    if approval.get("approvedBy") == task.get("owner"):
+        errors.append("recovery authority is self-approved by the task owner")
+
+    commits = manifest.get("commits") or {}
+    expected_commits = {
+        "base": EXACT_T03_RECOVERY["base"],
+        "foundation": EXACT_T03_RECOVERY["foundation"],
+        "candidate": EXACT_T03_RECOVERY["candidate"],
+        "blockRecord": EXACT_T03_RECOVERY["block_record"],
+        "pauseRecord": EXACT_T03_RECOVERY["pause_record"],
+    }
+    if commits != expected_commits:
+        errors.append("exact recovery manifest commit boundary mismatch")
+    ordered: list[str] = [
+        str(commits.get("base") or ""),
+        str(commits.get("foundation") or ""),
+        str(commits.get("candidate") or ""),
+        str(commits.get("blockRecord") or ""),
+        str(commits.get("pauseRecord") or ""),
+    ]
+    if not all(isinstance(commit, str) and git_commit_exists(repo, commit) for commit in ordered):
+        errors.append("one or more exact recovery commits do not exist")
+    else:
+        for ancestor, descendant in pairwise(ordered):
+            if ancestor == descendant or not git_is_ancestor(repo, ancestor, descendant):
+                errors.append("exact recovery commit lineage is not strictly ancestral")
+                break
+        if git_parent(repo, str(commits.get("blockRecord"))) != commits.get("candidate"):
+            errors.append("T03 block record is not the direct child of the exact product candidate")
+        if git_parent(repo, str(commits.get("pauseRecord"))) != commits.get("blockRecord"):
+            errors.append("W1 pause record is not the direct child of the exact T03 block record")
+        if not git_is_ancestor(repo, str(commits.get("pauseRecord"))):
+            errors.append("exact T03 pause record is not on current Git history")
+
+    block_task = historical_task(repo, str(commits.get("blockRecord")), EXACT_T03_RECOVERY["task_id"])
+    pause_task = historical_task(repo, str(commits.get("pauseRecord")), EXACT_T03_RECOVERY["task_id"])
+    task_hashes = manifest.get("historicalTaskSha256") or {}
+    if block_task is None or canonical_json_sha256(task_recovery_boundary(block_task)) != task_hashes.get(
+        "blockRecord"
+    ):
+        errors.append("exact T03 block-record task boundary hash mismatch")
+    if pause_task is None or canonical_json_sha256(task_recovery_boundary(pause_task)) != task_hashes.get(
+        "pauseRecord"
+    ):
+        errors.append("exact T03 pause-record task boundary hash mismatch")
+    if (
+        block_task is not None
+        and pause_task is not None
+        and task_recovery_boundary(block_task) != task_recovery_boundary(pause_task)
+    ):
+        errors.append("T03 task boundary changed between block and Wave pause records")
+
+    declared_paths = manifest.get("changedPaths") or []
+    actual_paths = git_changed_paths(repo, str(commits.get("base")), str(commits.get("candidate")))
+    if declared_paths != sorted(declared_paths) or len(declared_paths) != len(set(declared_paths)):
+        errors.append("exact recovery changedPaths must be sorted and unique")
+    if actual_paths is None or declared_paths != actual_paths:
+        errors.append("exact recovery changedPaths differ from Git")
+
+    ui = manifest.get("uiEvidence") or {}
+    ui_path = str(ui.get("path") or "")
+    try:
+        current_ui_path = safe_control_path(
+            repo,
+            ui_path,
+            prefix="artifacts/evidence/ui-change",
+            label="T03 UI evidence contract",
+        )
+        current_ui_payload = current_ui_path.read_bytes()
+    except (OSError, ValueError) as exc:
+        errors.append(str(exc))
+        current_ui_payload = b""
+    candidate_ui_payload = git_blob(repo, str(commits.get("candidate")), ui_path)
+    if candidate_ui_payload is None or evidence_sha256(candidate_ui_payload) != ui.get("sha256"):
+        errors.append("T03 UI evidence contract hash differs from the exact candidate")
+    if current_ui_payload and current_ui_payload != candidate_ui_payload:
+        errors.append("T03 UI evidence contract bytes changed after the exact candidate")
+    try:
+        ui_contract = json.loads((candidate_ui_payload or b"").decode("utf-8"))
+    except UnicodeError, json.JSONDecodeError:
+        ui_contract = {}
+        errors.append("T03 UI evidence contract is not valid JSON")
+    reference = ui_contract.get("reference") or {}
+    experience = task.get("experience_change") or {}
+    for manifest_field, contract_field, experience_field in (
+        ("referenceId", "referenceId", "reference_id"),
+        ("referenceVersion", "version", "reference_version"),
+        ("packageSha256", "packageSha256", "reference_package_sha256"),
+        ("approvalCommit", "approvalCommit", "reference_approval_commit"),
+        ("previousReferenceId", "previousReferenceId", "previous_reference_id"),
+    ):
+        if ui.get(manifest_field) != reference.get(contract_field) or ui.get(manifest_field) != experience.get(
+            experience_field
+        ):
+            errors.append(f"T03 approved reference {manifest_field} mismatch")
+    if ui_contract.get("taskId") != task.get("id") or experience.get("contract_path") != ui_path:
+        errors.append("T03 UI evidence task/path binding mismatch")
+
+    checks = manifest.get("selectedChecks") or []
+    ids = [item.get("id") for item in checks if isinstance(item, dict)]
+    commands = [item.get("command") for item in checks if isinstance(item, dict)]
+    if len(ids) != len(set(ids)) or len(commands) != len(set(commands)):
+        errors.append("exact recovery selected checks must have unique IDs and commands")
+    if checks != exact_recovery_selected_checks():
+        errors.append("exact recovery selected checks differ from the approved executable inventory")
+    if manifest.get("unverifiedItems") != []:
+        errors.append("exact recovery manifest must contain zero unverified items")
+
+    if require_current_candidate_bytes and actual_paths is not None:
+        protected_candidate_paths = [
+            path
+            for path in actual_paths
+            if path.startswith(("apps/desktop/", "services/core-api/", "packages/contracts/"))
+            or path
+            in {
+                "artifacts/evidence/ui-change/CAP-02.S04.T03.json",
+                "docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md",
+                "docs/architecture/privacy-controls.md",
+                "tests/contracts/test_privacy_policy_contract.py",
+                "tests/security/test_privacy_controls.py",
+            }
+        ]
+        for path in protected_candidate_paths:
+            if git_blob(repo, str(commits.get("candidate")), path) != git_blob(repo, "HEAD", path):
+                errors.append(f"protected T03 candidate bytes changed after implementation: {path}")
+                break
+    return errors
+
+
+def run_exact_recovery_checks(repo: Path) -> list[str]:
+    commands = [
+        [
+            sys.executable,
+            str(repo / "tools" / "ui_change_gate.py"),
+            "--repo",
+            str(repo),
+            "--base",
+            EXACT_T03_RECOVERY["base"],
+            "--head",
+            EXACT_T03_RECOVERY["candidate"],
+        ],
+        [
+            sys.executable,
+            "-m",
+            "unittest",
+            "-v",
+            "tests.security.test_privacy_controls",
+            "tests.contracts.test_privacy_policy_contract",
+        ],
+    ]
+    errors: list[str] = []
+    for index, command in enumerate(commands):
+        result = subprocess.run(command, cwd=repo, capture_output=True, text=True, check=False)
+        if result.returncode != 0:
+            detail = "\n".join(part.strip() for part in (result.stdout, result.stderr) if part and part.strip())
+            errors.append(f"recomputed recovery check {index + 1} failed" + (f": {detail}" if detail else ""))
+    return errors
+
+
+def task_recovery_projection_errors(data: dict[str, Any], task: dict[str, Any], repo: Path) -> list[str]:
+    recovery = task.get("recovery_control")
+    if recovery is None:
+        return []
+    task_id = str(task.get("id") or "")
+    if task_id != EXACT_T03_RECOVERY["task_id"]:
+        return [f"{task_id}: task recovery projection is outside the exact authorized task"]
+    errors: list[str] = []
+    manifest_reference = recovery.get("manifest") or {}
+    relative = str(manifest_reference.get("path") or "")
+    try:
+        path = safe_control_path(
+            repo,
+            relative,
+            prefix="artifacts/evidence/task-recovery",
+            label="Task recovery manifest",
+        )
+        payload = path.read_bytes()
+        manifest = json.loads(payload)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        return [f"{task_id}: invalid task recovery manifest: {exc}"]
+    if evidence_sha256(payload) != manifest_reference.get("sha256"):
+        errors.append(f"{task_id}: task recovery manifest hash mismatch")
+    errors.extend(
+        f"{task_id}: {error}"
+        for error in exact_recovery_manifest_errors(
+            data,
+            task,
+            manifest,
+            repo,
+            require_current_candidate_bytes=False,
+        )
+    )
+    historical = recovery.get("historical") or {}
+    expected_historical = {
+        "base": EXACT_T03_RECOVERY["base"],
+        "foundation": EXACT_T03_RECOVERY["foundation"],
+        "candidate": EXACT_T03_RECOVERY["candidate"],
+        "block_record": EXACT_T03_RECOVERY["block_record"],
+        "pause_record": EXACT_T03_RECOVERY["pause_record"],
+        "block_task_sha256": (manifest.get("historicalTaskSha256") or {}).get("blockRecord"),
+        "pause_task_sha256": (manifest.get("historicalTaskSha256") or {}).get("pauseRecord"),
+    }
+    if historical != expected_historical:
+        errors.append(f"{task_id}: task recovery historical projection mismatch")
+    pause_task = historical_task(repo, EXACT_T03_RECOVERY["pause_record"], task_id)
+    if pause_task is None or recovery.get("original_blocked_state") != task_recovery_boundary(pause_task):
+        errors.append(f"{task_id}: original blocked state is not the exact immutable pause boundary")
+    authority = recovery.get("authority") or {}
+    if (
+        authority.get("amendment_id") != EXACT_T03_RECOVERY["amendment_id"]
+        or authority.get("hold_id") != EXACT_T03_RECOVERY["hold_id"]
+    ):
+        errors.append(f"{task_id}: task recovery authority projection mismatch")
+    new_base = str(recovery.get("new_base_sha") or "")
+    if not git_commit_exists(repo, new_base) or not git_is_ancestor(repo, new_base):
+        errors.append(f"{task_id}: task recovery execution base is not on current Git history")
+    return errors
 
 
 def historical_amendment_completion(repo: Path, commit: str, amendment_id: str) -> dict[str, Any] | None:
@@ -6467,6 +6851,139 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
     print(f"Claimed {task['id']} within {task['capability_id']} / {task['slice_id']}")
 
 
+def command_recover(args, data, capabilities, slices, tasks, gates) -> None:
+    require_positive_lease_hours(args.lease_hours)
+    require_execution_target(args.profile, args.platform)
+    if args.task != EXACT_T03_RECOVERY["task_id"]:
+        raise SystemExit("Exact historical recovery is authorized only for CAP-02.S04.T03")
+    agent, branch, base_sha, worktree = git_execution_identity(
+        args.file,
+        agent=args.agent,
+        branch=args.branch,
+        base_sha=args.base_sha,
+        worktree=args.worktree,
+    )
+    if branch != EXACT_T03_RECOVERY["branch"]:
+        raise SystemExit("Exact T03 recovery requires the approved Codex branch")
+    repo = discover_repository(args.file)
+    require_clean_repository(repo)
+    preflight_errors = validate(data, capabilities, slices, tasks, gates, repo=repo)
+    if preflight_errors:
+        raise SystemExit("Exact T03 recovery preflight failed:\n- " + "\n- ".join(preflight_errors))
+
+    task = get(tasks, args.task, "task")
+    if task.get("status") != "BLOCKED" or task.get("recovery_control") is not None:
+        raise SystemExit("Exact T03 recovery requires the unrecovered BLOCKED task boundary")
+    pause_task = historical_task(repo, EXACT_T03_RECOVERY["pause_record"], args.task)
+    if pause_task is None or task_recovery_boundary(task) != task_recovery_boundary(pause_task):
+        raise SystemExit("Current T03 state differs from the immutable blocked/pause boundary")
+    if not task_dependencies_done(task, tasks):
+        raise SystemExit("Exact T03 recovery requires every ordinary task dependency to remain DONE")
+
+    amendment = wave_amendment_map(data).get(EXACT_T03_RECOVERY["amendment_id"]) or {}
+    if (amendment.get("lifecycle") or {}).get("status") != "ADOPTED" or (amendment.get("completion") or {}).get(
+        "status"
+    ) != "APPROVED":
+        raise SystemExit("Exact T03 recovery requires adopted, independently approved W1.A03")
+    hold = next(
+        (
+            item
+            for item in (data.get("control_plane") or {}).get("recovery_holds", [])
+            if item.get("id") == EXACT_T03_RECOVERY["hold_id"]
+        ),
+        None,
+    )
+    if hold is None or hold.get("status") != "RELEASED":
+        raise SystemExit("Exact T03 recovery requires released HOLD-W1-GRR-0001")
+    wave = wave_map(data).get(EXACT_T03_RECOVERY["wave_id"]) or {}
+    campaign = wave.get("campaign") or {}
+    if campaign.get("status") != "ACTIVE" or campaign.get("scope") != "wave":
+        raise SystemExit("Exact T03 recovery requires explicitly resumed ACTIVE W1 scope wave")
+    require_active_lease(wave, agent, "Wave W1")
+    if campaign.get("branch") != branch or campaign.get("worktree") != worktree:
+        raise SystemExit("Exact T03 recovery branch/worktree must match the resumed W1 campaign")
+    if campaign.get("base_sha") != base_sha:
+        raise SystemExit("Exact T03 recovery base must match the resumed W1 compare-and-swap boundary")
+    if campaign.get("profile") != args.profile or campaign.get("platform") != args.platform:
+        raise SystemExit("Exact T03 recovery profile/platform must match the resumed W1 campaign")
+    checkpoints = [
+        checkpoint
+        for checkpoint in wave.get("checkpoints", [])
+        if checkpoint.get("kind") == "security"
+        and any(
+            isinstance(reference, dict) and reference.get("amendment_id") == EXACT_T03_RECOVERY["amendment_id"]
+            for reference in checkpoint.get("evidence", [])
+        )
+    ]
+    if not checkpoints:
+        raise SystemExit("Exact T03 recovery requires a bound W1.A03 control/security checkpoint")
+
+    relative, manifest_path = canonical_control_artifact_path(
+        repo,
+        args.from_file,
+        prefix="artifacts/evidence/task-recovery",
+        label="Task recovery manifest",
+    )
+    if relative != EXACT_T03_RECOVERY["manifest_path"]:
+        raise SystemExit("Exact T03 recovery requires its one canonical manifest path")
+    payload = manifest_path.read_bytes()
+    if git_blob(repo, base_sha, relative) != payload:
+        raise SystemExit("Task recovery manifest must be committed unchanged at the recovery base")
+    try:
+        manifest = json.loads(payload)
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Invalid task recovery manifest: {exc}") from exc
+    manifest_errors = exact_recovery_manifest_errors(
+        data,
+        task,
+        manifest,
+        repo,
+        require_current_candidate_bytes=True,
+    )
+    if manifest_errors:
+        raise SystemExit("Exact T03 recovery manifest failed:\n- " + "\n- ".join(manifest_errors))
+    check_errors = run_exact_recovery_checks(repo)
+    if check_errors:
+        raise SystemExit("Exact T03 recovery recomputation failed:\n- " + "\n- ".join(check_errors))
+
+    original = task_recovery_boundary(task)
+    task["recovery_control"] = {
+        "version": 1,
+        "id": "CAP-02.S04.T03.RCV01",
+        "manifest": {"path": relative, "sha256": evidence_sha256(payload)},
+        "authority": {
+            "amendment_id": EXACT_T03_RECOVERY["amendment_id"],
+            "hold_id": EXACT_T03_RECOVERY["hold_id"],
+            "checkpoint_id": checkpoints[-1]["id"],
+        },
+        "historical": {
+            "base": EXACT_T03_RECOVERY["base"],
+            "foundation": EXACT_T03_RECOVERY["foundation"],
+            "candidate": EXACT_T03_RECOVERY["candidate"],
+            "block_record": EXACT_T03_RECOVERY["block_record"],
+            "pause_record": EXACT_T03_RECOVERY["pause_record"],
+            "block_task_sha256": manifest["historicalTaskSha256"]["blockRecord"],
+            "pause_task_sha256": manifest["historicalTaskSha256"]["pauseRecord"],
+        },
+        "original_blocked_state": original,
+        "recovered_by": agent,
+        "recovered_at": utc_now(),
+        "new_base_sha": base_sha,
+    }
+    task.update(
+        status="IN_PROGRESS",
+        owner=agent,
+        branch=branch,
+        base_sha=base_sha,
+        worktree=worktree,
+        lease=new_lease(agent, args.lease_hours),
+        updated_at=utc_now(),
+        blocker=None,
+    )
+    persist(args, data)
+    print("Recovered CAP-02.S04.T03 to IN_PROGRESS; ordinary evidence and independent review remain required")
+
+
 def command_block(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
     if task["status"] not in {"IN_PROGRESS", "REVIEW"}:
@@ -7308,6 +7825,16 @@ def build_parser() -> argparse.ArgumentParser:
     claim.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
     claim.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
     claim.add_argument("--lease-hours", type=int, default=8)
+    recover = sub.add_parser("recover")
+    recover.add_argument("task")
+    recover.add_argument("--agent", required=True)
+    recover.add_argument("--branch", required=True)
+    recover.add_argument("--base-sha", required=True)
+    recover.add_argument("--worktree", required=True)
+    recover.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    recover.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    recover.add_argument("--from", dest="from_file", required=True)
+    recover.add_argument("--lease-hours", type=int, default=8)
     block = sub.add_parser("block")
     block.add_argument("task")
     block.add_argument("--agent", required=True)
@@ -7372,6 +7899,7 @@ def main() -> None:
     args.source_task_review_history = task_review_history_snapshot(data)
     args.source_wave_checkpoint_history = wave_checkpoint_history_snapshot(data)
     args.source_recovery_history = recovery_history_snapshot(data)
+    args.source_task_recovery_history = task_recovery_history_snapshot(data)
     args.repo_root = discover_repository(args.file)
     require_recovery_hold_permission(args, data, tasks, args.repo_root)
     if args.command == "validate":
@@ -7452,6 +7980,8 @@ def main() -> None:
         command_slice_review(args, data, capabilities, slices, tasks, gates)
     elif args.command == "claim":
         command_claim(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "recover":
+        command_recover(args, data, capabilities, slices, tasks, gates)
     elif args.command == "block":
         command_block(args, data, capabilities, slices, tasks, gates)
     elif args.command == "renew":
