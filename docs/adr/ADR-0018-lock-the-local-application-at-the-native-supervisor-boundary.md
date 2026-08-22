@@ -13,6 +13,7 @@ affected_paths:
   - apps/desktop/src-tauri/**
   - packages/contracts/security/**
   - packages/contracts/README.md
+  - packaging/build-inputs.json
   - docs/architecture/application-lock.md
   - docs/architecture/README.md
   - docs/planning-implementation-plan.md

@@ -26,6 +26,7 @@
     "packages/contracts/project/project-manifest-semantic-rules.schema.json",
     "packages/contracts/project/project-manifest.schema.json",
     "packages/contracts/project/project-profile.schema.json",
+    "packages/contracts/security/application-lock-profile.schema.json",
     "packages/contracts/security/credential-store-profile.schema.json",
     "packages/contracts/storage/object-store-profile.schema.json",
     "packages/contracts/storage/sqlite-migration-recovery.schema.json",
