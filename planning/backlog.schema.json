@@ -468,6 +468,137 @@
         }
       ]
     },
+    "recoveryEvidenceReference": {
+      "type": "object",
+      "required": ["type", "path", "sha256", "commit", "recorded_at"],
+      "properties": {
+        "type": {"const": "governance-recovery-evidence"},
+        "path": {
+          "type": "string",
+          "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.B[0-9]{2}(?:\\.remediation-[0-9]{2})?\\.evidence\\.json$"
+        },
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "recorded_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false
+    },
+    "recoveryReviewAttempt": {
+      "type": "object",
+      "required": ["id", "implementer", "implementation_commit", "submission_branch", "evidence", "review", "ledger"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+        "implementer": {"type": "string", "minLength": 1},
+        "implementation_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "submission_branch": {"type": "string", "pattern": "^codex/.+$"},
+        "evidence": {"$ref": "#/$defs/recoveryEvidenceReference"},
+        "review": {"$ref": "#/$defs/review"},
+        "ledger": {
+          "type": "object",
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.B[0-9]{2}\\.review-R[0-9]{2,}\\.json$"
+            },
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "recoveryHold": {
+      "type": "object",
+      "required": [
+        "id", "recovery_request_id", "target_wave", "status", "approval_reference", "packet_reference",
+        "bootstrap", "post_bootstrap", "release_conditions", "created_at", "released_at"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^HOLD-W(?:[0-9]|1[01])-GRR-[0-9]{4}$"},
+        "recovery_request_id": {"type": "string", "pattern": "^GRR-[0-9]{4}$"},
+        "target_wave": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
+        "status": {"enum": ["ACTIVE", "RELEASED"]},
+        "approval_reference": {
+          "type": "object",
+          "required": ["path", "sha256", "introduction_commit"],
+          "properties": {
+            "path": {"type": "string", "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.json$"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+          },
+          "additionalProperties": false
+        },
+        "packet_reference": {
+          "type": "object",
+          "required": ["path", "sha256", "commit"],
+          "properties": {
+            "path": {"type": "string", "pattern": "^planning/governance-recovery-requests/GRR-[0-9]{4}\\.packet\\.json$"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+          },
+          "additionalProperties": false
+        },
+        "bootstrap": {
+          "type": "object",
+          "required": [
+            "id", "status", "implementer", "implementation_commit", "submission_branch", "evidence", "review",
+            "current_submission", "attempts"
+          ],
+          "properties": {
+            "id": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.B[0-9]{2}$"},
+            "status": {"enum": ["IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED"]},
+            "implementer": {"type": "string", "minLength": 1},
+            "implementation_commit": {"$ref": "#/$defs/nullableCommit"},
+            "submission_branch": {"type": ["string", "null"], "pattern": "^codex/.+$"},
+            "evidence": {
+              "anyOf": [{"type": "null"}, {"$ref": "#/$defs/recoveryEvidenceReference"}]
+            },
+            "review": {"$ref": "#/$defs/review"},
+            "current_submission": {
+              "anyOf": [
+                {"type": "null"},
+                {
+                  "type": "object",
+                  "required": ["attempt_id", "candidate_commit", "evidence_sha256", "acceptance_criteria_sha256"],
+                  "properties": {
+                    "attempt_id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+                    "candidate_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+                    "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                    "acceptance_criteria_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "attempts": {"type": "array", "items": {"$ref": "#/$defs/recoveryReviewAttempt"}}
+          },
+          "additionalProperties": false
+        },
+        "post_bootstrap": {
+          "type": "object",
+          "required": [
+            "required_change_request_id", "required_amendment_id", "required_proposed_task_ids", "execution_authority"
+          ],
+          "properties": {
+            "required_change_request_id": {"type": "string", "pattern": "^ECR-[0-9]{4}$"},
+            "required_amendment_id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
+            "required_proposed_task_ids": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2}$"}
+            },
+            "execution_authority": {"const": false}
+          },
+          "additionalProperties": false
+        },
+        "release_conditions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "created_at": {"$ref": "#/$defs/timestamp"},
+        "released_at": {"$ref": "#/$defs/nullableTimestamp"}
+      },
+      "additionalProperties": false
+    },
     "amendmentCampaign": {
       "anyOf": [
         {"type": "null"},
@@ -666,16 +797,17 @@
     "definition_of_done": {"type": "array", "items": {"type": "string"}},
     "control_plane": {
       "type": "object",
-      "required": ["revision", "minimum_tool_revision", "active_amendment"],
+      "required": ["revision", "minimum_tool_revision", "active_amendment", "recovery_holds"],
       "properties": {
-        "revision": {"const": 3},
-        "minimum_tool_revision": {"type": "integer", "minimum": 3},
+        "revision": {"const": 4},
+        "minimum_tool_revision": {"type": "integer", "minimum": 4},
         "active_amendment": {
           "anyOf": [
             {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
             {"type": "null"}
           ]
-        }
+        },
+        "recovery_holds": {"type": "array", "items": {"$ref": "#/$defs/recoveryHold"}}
       },
       "additionalProperties": false
     },

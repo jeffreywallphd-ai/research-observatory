@@ -88,6 +88,19 @@ Bootstrap changes-requested/blocked dispositions are append-only. Remediation
 must use `taskctl amendment bootstrap-resubmit` to freeze a strict-descendant
 candidate and new evidence without overwriting the prior attempt.
 
+If a demonstrated defect prevents the ordinary ECR lane from representing or
+enforcing its own next amendment, do not improvise a direct edit or resume. Use
+the Governance Recovery Request (GRR) lane. A GRR is an exceptional,
+bootstrap-only, hash-bound authority: independently review the inert packet,
+obtain explicit exact-commit human approval, install an ACTIVE recovery hold,
+and execute only its named `GRR-NNNN.B00` through `recoveryctl`. The hold denies
+all ordinary Wave/task/amendment/gate mutations and older-reader paths. After
+independent B00 approval, the actual repair still requires a separate ordinary
+ECR/amendment approval. Release the hold only after that amendment is adopted
+with a bound control/security checkpoint; the Wave remains PAUSED until an
+explicit ordinary resume. GRR packets, adverse reviews, evidence, and
+dispositions are append-only and never grant a bypass or emergency override.
+
 "One run" means one durable Wave campaign, not one operating-system process.
 Resume it after an ordinary tool, app, or session interruption. Claim and finish
 only the next dependency-eligible Wave task, integrate and independently review
@@ -150,6 +163,9 @@ python tools/planctl.py --repo . ecr review ECR-NNNN
 python tools/planctl.py --repo . ecr validate ECR-NNNN --require-approved
 python tools/taskctl.py --file planning/backlog.yaml amendment status WN.ANN
 python tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-resubmit WN.ANN --agent <agent> --implementation-commit <sha> --evidence <manifest>
+python tools/recoveryctl.py --repo . validate GRR-NNNN --require-approved
+python tools/recoveryctl.py --repo . status GRR-NNNN
+python tools/recoveryctl.py --repo . bootstrap-resubmit GRR-NNNN --agent <agent> --implementation-commit <sha> --evidence <manifest>
 python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 ```
 

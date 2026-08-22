@@ -35,6 +35,7 @@ These files are mandatory and may not be replaced by external setup guides.
 | Material implementation decision | Capability/slice plan and required ADR | Review site, approval, implementation |
 | Intentional UI/UX change | Governed UI reference | Plans, implementation, conformance evidence |
 | Current behavior correction | Code/tests | Evidence and affected documentation |
+| ECR controller cannot represent/enforce its own next amendment | Inert GRR packet and recovery hold | Bootstrap-only controller repair, then separately approved ordinary ECR |
 
 ## Mismatch protocol
 

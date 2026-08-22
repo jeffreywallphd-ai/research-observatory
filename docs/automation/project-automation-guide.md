@@ -96,6 +96,30 @@ whose payload identifies the amendment and exact approved completion history.
 Missing, replaced, stale, forked, dirty, or unreviewed evidence is denied.
 Pre-control amendments stay truthful and receive no fabricated rounds.
 
+### 2.3 Governance recovery controller
+
+If the installed ECR schema/controller cannot represent the next required
+amendment, stop at a quiescent Wave boundary and use the separately reviewed
+GRR workflow. Do not edit the approved Wave, reuse `wave approve`, or mutate the
+broken lane before GRR approval.
+
+```bash
+python tools/recoveryctl.py --repo . validate GRR-NNNN --require-approved
+python tools/recoveryctl.py --repo . status GRR-NNNN
+python tools/recoveryctl.py --repo . bootstrap-submit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
+python tools/recoveryctl.py --repo . bootstrap-review GRR-NNNN --reviewer <independent-reviewer> --from <finding-ledger>
+```
+
+Evidence maps every approved B00 outcome and criterion, lists the exact
+approval-to-candidate Git diff, records unique passing checks and an empty
+unverified list, and stays within canonical root-confined paths. The controller
+rejects absolute, backslash, dot-segment, traversal, symlink, junction, or
+resolved escapes before access. Changes-requested or blocked B00 review uses
+`bootstrap-resubmit` with a strict descendant and retains the earlier ledger.
+After B00 approval, prepare the named generic v2 ECR; its separate approval is
+still mandatory. `recoveryctl release` is legal only after that amendment is
+adopted with a bound security checkpoint and leaves the Wave paused.
+
 For ordinary and amendment tasks, use `taskctl submit <task> --agent <agent>
 --from <manifest>` as the atomic evidence-and-submission transition. It freezes
 an immutable RNN packet containing candidate/evidence, acceptance-criteria,

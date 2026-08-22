@@ -29,6 +29,17 @@ import yaml
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import SchemaError, ValidationError
 
+FORMAT_CHECKER = FormatChecker()
+
+
+@FORMAT_CHECKER.checks("date-time", raises=(TypeError, ValueError))
+def valid_json_datetime(value: object) -> bool:
+    if not isinstance(value, str):
+        return True
+    parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    return parsed.tzinfo is not None
+
+
 VALID_STATUSES = {"NOT_STARTED", "READY", "IN_PROGRESS", "BLOCKED", "REVIEW", "DONE", "DEFERRED", "CANCELLED"}
 ACTIVE_PROFILES = {"LOC", "LAB", "UNI", "CLD", "ALL"}
 PLATFORMS = {
@@ -44,7 +55,7 @@ PLATFORMS = {
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
 CAMPAIGN_SCOPES = {"wave", "amendment-hold", "capability-wave"}  # capability-wave is historical only.
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
-CONTROL_TOOL_REVISION = 3
+CONTROL_TOOL_REVISION = 4
 AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
 BOOTSTRAP_REVIEW_RESULTS = {
     "APPROVED": "approved",
@@ -202,6 +213,17 @@ def task_review_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, .
     return snapshot
 
 
+def recovery_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
+    """Freeze immutable recovery-review attempts without freezing live projections."""
+    return {
+        str(hold["id"]): tuple(
+            json.dumps(attempt, sort_keys=True, separators=(",", ":"))
+            for attempt in (hold.get("bootstrap") or {}).get("attempts", [])
+        )
+        for hold in (data.get("control_plane") or {}).get("recovery_holds", [])
+    }
+
+
 @contextmanager
 def exclusive_backlog_lock(destination: Path) -> Iterator[None]:
     lock_path = destination.with_name(f"{destination.name}.taskctl.lock")
@@ -282,7 +304,7 @@ def backlog_schema_errors(data: Any, schema_path: Path | None = None) -> list[st
         Draft202012Validator.check_schema(schema)
     except (OSError, json.JSONDecodeError, SchemaError) as exc:
         return [f"Cannot load backlog schema {schema_file}: {exc}"]
-    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    validator = Draft202012Validator(schema, format_checker=FORMAT_CHECKER)
     errors: list[ValidationError] = []
 
     def collect(error: ValidationError) -> None:
@@ -387,6 +409,7 @@ def save_validated(
     expected_amendment_history: dict[str, tuple[str, ...]] | None = None,
     expected_task_review_history: dict[str, tuple[str, ...]] | None = None,
     expected_wave_checkpoint_history: dict[str, tuple[str, ...]] | None = None,
+    expected_recovery_history: dict[str, tuple[str, ...]] | None = None,
     schema_path: Path | None = None,
     repo: Path | None = None,
 ) -> None:
@@ -417,6 +440,12 @@ def save_validated(
             current = current_history.get(wave_id)
             if current is None or current[: len(prior)] != prior:
                 raise SystemExit(f"Append-only Wave checkpoint history changed for {wave_id}")
+    if expected_recovery_history is not None:
+        current_history = recovery_history_snapshot(document)
+        for hold_id, prior in expected_recovery_history.items():
+            current = current_history.get(hold_id)
+            if current is None or current[: len(prior)] != prior:
+                raise SystemExit(f"Append-only governance recovery history changed for {hold_id}")
     schema_errors = backlog_schema_errors(document, schema_path=schema_path)
     if schema_errors:
         raise SystemExit("Refusing to save invalid backlog schema:\n- " + "\n- ".join(schema_errors))
@@ -438,6 +467,7 @@ def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
         expected_amendment_history=getattr(args, "source_amendment_history", None),
         expected_task_review_history=getattr(args, "source_task_review_history", None),
         expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
+        expected_recovery_history=getattr(args, "source_recovery_history", None),
         repo=getattr(args, "repo_root", None),
     )
 
@@ -452,6 +482,11 @@ def wave_approval_base_map(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
 def wave_amendment_map(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {str(item["id"]): item for item in data.get("wave_amendments", [])}
+
+
+def active_recovery_holds(data: dict[str, Any]) -> list[dict[str, Any]]:
+    control = data.get("control_plane") or {}
+    return [hold for hold in control.get("recovery_holds", []) if hold.get("status") == "ACTIVE"]
 
 
 def active_amendment_campaigns(data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -589,6 +624,31 @@ def global_program_position(
     Waves are the primary execution axis. Capability numbering and a capability's
     future slices never advance this position.
     """
+
+    active_holds = active_recovery_holds(data)
+    if active_holds:
+        hold = active_holds[0]
+        return {
+            "state": "RECOVERY_INTERRUPTED",
+            "current_wave": hold.get("target_wave"),
+            "blocked_wave": hold.get("target_wave"),
+            "next_gate": gate_after_wave(data, str(hold.get("target_wave"))),
+            "recovery_hold": hold,
+            "incomplete_tasks": sorted(
+                task["id"]
+                for task in tasks.values()
+                if task_wave(task) == hold.get("target_wave") and task.get("status") != "DONE"
+            ),
+            "incomplete_slices": sorted(
+                slice_["id"]
+                for slice_ in slices.values()
+                if slice_.get("wave") == hold.get("target_wave")
+                and slice_.get("completion", {}).get("status") != "APPROVED"
+            ),
+            "wave_completion": (wave_map(data).get(str(hold.get("target_wave")), {}).get("completion") or {}).get(
+                "status"
+            ),
+        }
 
     for wave_id in ordered_wave_ids(data):
         incomplete_tasks = sorted(
@@ -1596,6 +1656,39 @@ def git_blob(repo: Path, commit: str, path: str) -> bytes | None:
     return result.stdout if result.returncode == 0 else None
 
 
+def safe_control_path(
+    repo: Path,
+    relative: str,
+    *,
+    prefix: str,
+    label: str,
+    require_exists: bool = True,
+) -> Path:
+    if not relative or "\\" in relative or ":" in relative or re.search(r"(?:^|/)\.{1,2}(?:/|$)", relative):
+        raise ValueError(f"{label} is not a canonical repository-relative POSIX path")
+    pure = PurePosixPath(relative)
+    if (
+        pure.is_absolute()
+        or any(part in {"", ".", ".."} for part in pure.parts)
+        or (relative != prefix and not relative.startswith(prefix.rstrip("/") + "/"))
+    ):
+        raise ValueError(f"{label} is outside {prefix} or contains dot segments")
+    current = repo
+    junction = getattr(os.path, "isjunction", lambda _path: False)
+    for part in pure.parts:
+        current = current / part
+        if (current.exists() or current.is_symlink()) and (current.is_symlink() or junction(current)):
+            raise ValueError(f"{label} traverses a symlink or junction")
+    candidate = repo.joinpath(*pure.parts)
+    try:
+        candidate.resolve(strict=False).relative_to(repo.resolve(strict=True))
+    except (OSError, ValueError) as exc:
+        raise ValueError(f"{label} resolves outside the repository") from exc
+    if require_exists and not candidate.is_file():
+        raise ValueError(f"{label} is not an existing regular file")
+    return candidate
+
+
 def historical_wave_approval(repo: Path, record_commit: str, wave_id: str) -> dict[str, Any] | None:
     payload = git_blob(repo, record_commit, "planning/backlog.yaml")
     if payload is None:
@@ -1627,16 +1720,18 @@ def load_json_schema(path: Path) -> dict[str, Any]:
 def amendment_approval_errors(repo: Path, reference: dict[str, Any], amendment: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     relative = str(reference.get("path") or "")
-    pure = PurePosixPath(relative)
-    if pure.is_absolute() or ".." in pure.parts or not relative.startswith("planning/wave-amendment-approvals/"):
-        return [f"{amendment.get('id')}: unsafe amendment approval path"]
-    path = repo.joinpath(*pure.parts)
     try:
+        path = safe_control_path(
+            repo,
+            relative,
+            prefix="planning/wave-amendment-approvals",
+            label="Amendment approval",
+        )
         payload = path.read_bytes()
         record = json.loads(payload)
         schema = load_json_schema(repo / "planning/wave-amendment-approvals/wave-amendment-approval.schema.json")
-        Draft202012Validator(schema, format_checker=FormatChecker()).validate(record)
-    except (OSError, json.JSONDecodeError, SchemaError, ValidationError) as exc:
+        Draft202012Validator(schema, format_checker=FORMAT_CHECKER).validate(record)
+    except (OSError, ValueError, json.JSONDecodeError, SchemaError, ValidationError) as exc:
         return [f"{amendment.get('id')}: invalid approval record: {exc}"]
     if hashlib.sha256(payload).hexdigest() != reference.get("sha256"):
         errors.append(f"{amendment.get('id')}: amendment approval hash mismatch")
@@ -1670,13 +1765,18 @@ def bootstrap_scope_addendum_errors(
     expected_prefix = f"planning/wave-amendment-approvals/{bootstrap_id}.addendum-"
     if pure.is_absolute() or ".." in pure.parts or not relative.startswith(expected_prefix):
         return [f"{bootstrap_id}: unsafe bootstrap scope-addendum path"]
-    path = repo.joinpath(*pure.parts)
     try:
+        path = safe_control_path(
+            repo,
+            relative,
+            prefix="planning/wave-amendment-approvals",
+            label="Bootstrap scope addendum",
+        )
         payload = path.read_bytes()
         record = json.loads(payload)
         schema = load_json_schema(repo / "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json")
-        Draft202012Validator(schema, format_checker=FormatChecker()).validate(record)
-    except (OSError, json.JSONDecodeError, SchemaError, ValidationError) as exc:
+        Draft202012Validator(schema, format_checker=FORMAT_CHECKER).validate(record)
+    except (OSError, ValueError, json.JSONDecodeError, SchemaError, ValidationError) as exc:
         return [f"{bootstrap_id}: invalid bootstrap scope addendum: {exc}"]
     if hashlib.sha256(payload).hexdigest() != reference.get("sha256"):
         errors.append(f"{bootstrap_id}: bootstrap scope-addendum hash mismatch")
@@ -1804,11 +1904,13 @@ def bootstrap_attempt_errors(
         return [*errors, f"{bootstrap_id}: bootstrap attempt must bind exactly one evidence manifest"]
     reference = evidence[0]
     relative = str(reference.get("path") or "")
-    pure = PurePosixPath(relative)
-    if not relative.startswith("artifacts/evidence/") or pure.is_absolute() or ".." in pure.parts or "\\" in relative:
-        return [*errors, f"{bootstrap_id}: unsafe bootstrap evidence path"]
-    evidence_path = repo.joinpath(*pure.parts)
     try:
+        evidence_path = safe_control_path(
+            repo,
+            relative,
+            prefix="artifacts/evidence",
+            label="Bootstrap evidence",
+        )
         payload = evidence_path.read_bytes()
         manifest = parse_evidence_payload(payload, evidence_path.suffix)
     except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
@@ -1992,6 +2094,171 @@ def require_runtime_amendment_integrity(backlog_path: str, amendment: dict[str, 
     require_amendment_packet_integrity(repo, amendment, approval, packet)
 
 
+def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
+    """Validate the append-only recovery interruption projected by recoveryctl."""
+    errors: list[str] = []
+    control = data.get("control_plane") or {}
+    holds = control.get("recovery_holds", [])
+    hold_ids = [str(item.get("id")) for item in holds]
+    request_ids = [str(item.get("recovery_request_id")) for item in holds]
+    if len(hold_ids) != len(set(hold_ids)):
+        errors.append("duplicate governance recovery hold identity")
+    if len(request_ids) != len(set(request_ids)):
+        errors.append("duplicate governance recovery request identity")
+    if len(active_recovery_holds(data)) > 1:
+        errors.append("more than one governance recovery hold is ACTIVE")
+    amendments_by_wave: dict[str, list[str]] = {}
+    for amendment in data.get("wave_amendments", []):
+        amendments_by_wave.setdefault(str(amendment.get("target_wave")), []).append(str(amendment.get("id")))
+    waves = wave_map(data)
+    for hold in holds:
+        hold_id = str(hold.get("id") or "")
+        request_id = str(hold.get("recovery_request_id") or "")
+        wave_id = str(hold.get("target_wave") or "")
+        bootstrap = hold.get("bootstrap") or {}
+        post = hold.get("post_bootstrap") or {}
+        if hold_id != f"HOLD-{wave_id}-{request_id}":
+            errors.append(f"{hold_id}: recovery hold, Wave, and request identities are not bound")
+        if bootstrap.get("id") != f"{request_id}.B00":
+            errors.append(f"{hold_id}: bootstrap identity is outside the recovery request namespace")
+        ordered = amendments_by_wave.get(wave_id, [])
+        required_amendment = str(post.get("required_amendment_id") or "")
+        expected_amendment = f"{wave_id}.A{len(ordered) + 1:02d}"
+        if required_amendment not in ordered and required_amendment != expected_amendment:
+            errors.append(f"{hold_id}: required amendment is not the next consecutive {wave_id} identity")
+        prior_ecr_numbers = [
+            int(str(item.get("change_request_id")).removeprefix("ECR-"))
+            for item in data.get("wave_amendments", [])
+            if item.get("target_wave") == wave_id
+            and re.fullmatch(r"ECR-[0-9]{4}", str(item.get("change_request_id") or ""))
+            and str(item.get("id")) != required_amendment
+        ]
+        if post.get("required_change_request_id") != f"ECR-{max(prior_ecr_numbers, default=0) + 1:04d}":
+            errors.append(f"{hold_id}: post-bootstrap change-request identity is not consecutive")
+        task_ids = [str(item) for item in post.get("required_proposed_task_ids", [])]
+        if not task_ids or any(not item.startswith(f"{required_amendment}.T") for item in task_ids):
+            errors.append(f"{hold_id}: proposed task identities are outside the required amendment namespace")
+        if post.get("execution_authority") is not False:
+            errors.append(f"{hold_id}: recovery approval must not grant post-bootstrap execution authority")
+        attempts = bootstrap.get("attempts") or []
+        expected_attempts = [f"R{index:02d}" for index in range(1, len(attempts) + 1)]
+        if [str(item.get("id")) for item in attempts] != expected_attempts:
+            errors.append(f"{hold_id}: bootstrap review attempts are not append-only and sequential")
+        for attempt in attempts:
+            review = attempt.get("review") or {}
+            if review.get("reviewer") == attempt.get("implementer"):
+                errors.append(f"{hold_id}/{attempt.get('id')}: bootstrap review is not independent")
+        status = str(bootstrap.get("status") or "")
+        current = bootstrap.get("current_submission")
+        if status == "REVIEW" and current is None:
+            errors.append(f"{hold_id}: REVIEW bootstrap lacks its frozen current submission")
+        if status != "REVIEW" and current is not None:
+            errors.append(f"{hold_id}: non-REVIEW bootstrap retains a mutable current submission")
+        if status in {"REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED"} and (
+            not bootstrap.get("implementation_commit") or not bootstrap.get("evidence")
+        ):
+            errors.append(f"{hold_id}: submitted bootstrap lacks commit-bound evidence")
+        if hold.get("status") == "ACTIVE":
+            campaign = (waves.get(wave_id) or {}).get("campaign") or {}
+            if campaign.get("status") != "PAUSED" or campaign.get("scope") not in {"wave", "amendment-hold"}:
+                errors.append(f"{hold_id}: active recovery requires a paused target Wave")
+            if hold.get("released_at") is not None:
+                errors.append(f"{hold_id}: active recovery hold has a release timestamp")
+        elif hold.get("released_at") is None:
+            errors.append(f"{hold_id}: released recovery hold lacks a release timestamp")
+        if repo is None:
+            continue
+        if status == "REVIEW":
+            evidence = bootstrap.get("evidence") or {}
+            relative = str(evidence.get("path") or "")
+            try:
+                path = safe_control_path(
+                    repo,
+                    relative,
+                    prefix="planning/governance-recovery-approvals",
+                    label=f"{hold_id} current evidence",
+                )
+                evidence_payload = path.read_bytes()
+            except (OSError, ValueError) as exc:
+                errors.append(f"{hold_id}: invalid current evidence reference: {exc}")
+            else:
+                current_sha = hashlib.sha256(evidence_payload).hexdigest()
+                if current_sha != evidence.get("sha256") or current_sha != (current or {}).get("evidence_sha256"):
+                    errors.append(f"{hold_id}: current evidence hash does not match the frozen submission")
+                if evidence.get("commit") != (current or {}).get("candidate_commit"):
+                    errors.append(f"{hold_id}: current evidence commit does not match the frozen submission")
+        for attempt in attempts:
+            attempt_id = str(attempt.get("id") or "")
+            for label, reference in (
+                ("evidence", attempt.get("evidence") or {}),
+                ("review ledger", attempt.get("ledger") or {}),
+            ):
+                relative = str(reference.get("path") or "")
+                try:
+                    path = safe_control_path(
+                        repo,
+                        relative,
+                        prefix="planning/governance-recovery-approvals",
+                        label=f"{hold_id}/{attempt_id} {label}",
+                    )
+                    reference_payload = path.read_bytes()
+                except (OSError, ValueError) as exc:
+                    errors.append(f"{hold_id}/{attempt_id}: invalid {label} reference: {exc}")
+                    continue
+                if hashlib.sha256(reference_payload).hexdigest() != reference.get("sha256"):
+                    errors.append(f"{hold_id}/{attempt_id}: {label} reference hash mismatch")
+        references = (
+            ("approval", hold.get("approval_reference") or {}, "introduction_commit"),
+            ("packet", hold.get("packet_reference") or {}, "commit"),
+        )
+        loaded: dict[str, dict[str, Any]] = {}
+        for label, reference, commit_field in references:
+            relative = str(reference.get("path") or "")
+            pure = PurePosixPath(relative)
+            if pure.is_absolute() or ".." in pure.parts or "\\" in relative:
+                errors.append(f"{hold_id}: unsafe {label} reference path")
+                continue
+            path = repo.joinpath(*pure.parts)
+            try:
+                payload = path.read_bytes()
+                loaded[label] = json.loads(payload)
+            except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+                errors.append(f"{hold_id}: cannot load {label} reference: {exc}")
+                continue
+            if hashlib.sha256(payload).hexdigest() != reference.get("sha256"):
+                errors.append(f"{hold_id}: {label} reference hash mismatch")
+            commit = str(reference.get(commit_field) or "")
+            if not git_commit_exists(repo, commit) or not git_is_ancestor(repo, commit):
+                errors.append(f"{hold_id}: {label} authority commit is absent from current history")
+            elif git_blob(repo, commit, relative) != payload:
+                errors.append(f"{hold_id}: {label} reference differs from its bound Git blob")
+        approval = loaded.get("approval") or {}
+        packet = loaded.get("packet") or {}
+        if approval.get("status") != "APPROVED" or approval.get("recoveryRequestId") != request_id:
+            errors.append(f"{hold_id}: recovery approval identity or status mismatch")
+        if approval.get("targetWave") != wave_id or approval.get("bootstrapUnit") != bootstrap.get("id"):
+            errors.append(f"{hold_id}: recovery approval Wave/bootstrap binding mismatch")
+        if (approval.get("executionAuthority") or {}).get("bootstrapOnly") is not True or (
+            approval.get("executionAuthority") or {}
+        ).get("postBootstrapExecution") is not False:
+            errors.append(f"{hold_id}: recovery approval authority is not bootstrap-only")
+        if packet.get("recoveryRequestId") != request_id or packet.get("targetWave") != wave_id:
+            errors.append(f"{hold_id}: recovery packet identity mismatch")
+        if (packet.get("controlHold") or {}).get("id") != hold_id:
+            errors.append(f"{hold_id}: recovery packet hold identity mismatch")
+        if (packet.get("bootstrapUnit") or {}).get("id") != bootstrap.get("id"):
+            errors.append(f"{hold_id}: recovery packet bootstrap identity mismatch")
+        packet_post = packet.get("postBootstrap") or {}
+        if (
+            packet_post.get("requiredChangeRequestId") != post.get("required_change_request_id")
+            or packet_post.get("requiredAmendmentId") != required_amendment
+            or packet_post.get("requiredProposedTaskIds") != task_ids
+            or packet_post.get("postBootstrapExecutionAuthority") is not False
+        ):
+            errors.append(f"{hold_id}: recovery packet post-bootstrap binding mismatch")
+    return errors
+
+
 def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     errors: list[str] = []
     control = data.get("control_plane")
@@ -2045,10 +2312,15 @@ def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
                     str(bootstrap.get("id")),
                 )
             )
-        record_path = repo.joinpath(*PurePosixPath(amendment["approval_reference"]["path"]).parts)
         try:
+            record_path = safe_control_path(
+                repo,
+                str(amendment["approval_reference"]["path"]),
+                prefix="planning/wave-amendment-approvals",
+                label="Wave amendment approval",
+            )
             record = json.loads(record_path.read_text(encoding="utf-8"))
-        except OSError, json.JSONDecodeError:
+        except OSError, ValueError, json.JSONDecodeError:
             continue
         packet_commit = (record.get("packet") or {}).get("commit")
         if not isinstance(packet_commit, str) or not git_commit_exists(repo, packet_commit):
@@ -2317,6 +2589,7 @@ def validate(
 ) -> list[str]:
     errors = [*dependency_graph_errors(tasks), *slice_dependency_errors(slices, tasks)]
     errors.extend(wave_authority_errors(data, repo))
+    errors.extend(recovery_hold_errors(data, repo))
     if repo is not None:
         errors.extend(evidence_reference_errors(tasks, repo))
     for task in tasks.values():
@@ -2794,6 +3067,9 @@ def command_validate(args: argparse.Namespace, data, capabilities, slices, tasks
 def command_status(args, data, capabilities, slices, tasks, gates) -> None:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     program = global_program_position(data, slices, tasks, gates)
+    if program.get("state") == "RECOVERY_INTERRUPTED":
+        print(recovery_stop_handoff(args, data, program))
+        return
     bootstrap_interrupt = approved_unbootstrapped_amendment(args.file, data, str(program.get("current_wave")))
     if bootstrap_interrupt is not None:
         print(
@@ -2833,6 +3109,9 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
     """Compatibility view: Wave is now the start/lease unit, not capability."""
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     program = global_program_position(data, slices, tasks, gates)
+    if program.get("state") == "RECOVERY_INTERRUPTED":
+        print(recovery_stop_handoff(args, data, program))
+        return
     bootstrap_interrupt = approved_unbootstrapped_amendment(args.file, data, str(program.get("current_wave")))
     if bootstrap_interrupt is not None:
         print(
@@ -2926,6 +3205,84 @@ def command_next_capability(args, data, capabilities, slices, tasks, gates) -> N
         f"--worktree <absolute-repository-path> --profile {args.profile} --platform {args.platform}"
     )
     print_yaml(view)
+
+
+def recovery_stop_handoff(args: argparse.Namespace, data: dict[str, Any], program: dict[str, Any]) -> str:
+    hold = program.get("recovery_hold")
+    if not isinstance(hold, dict):
+        holds = active_recovery_holds(data)
+        if not holds:
+            raise SystemExit("Recovery handoff requested without an active hold")
+        hold = holds[0]
+    repo = Path(args.file).resolve().parent.parent
+    request_id = str(hold.get("recovery_request_id"))
+    wave_id = str(hold.get("target_wave"))
+    bootstrap = hold.get("bootstrap") or {}
+    post = hold.get("post_bootstrap") or {}
+    packet_relative = str((hold.get("packet_reference") or {}).get("path") or "")
+    proposal_relative = f"planning/governance-recovery-requests/{request_id}.md"
+    review_relative = f"planning/governance-recovery-requests/{request_id}-review.html"
+    approval_relative = str((hold.get("approval_reference") or {}).get("path") or "")
+    wave_relative = f"planning/review-site/waves/{wave_id}.html"
+
+    def linked(relative: str) -> str:
+        return f"{(repo / relative).resolve().as_uri()} ({relative})" if relative else "unrecorded"
+
+    status = str(bootstrap.get("status") or "UNKNOWN")
+    if status == "IN_PROGRESS":
+        next_step = (
+            f"finish and commit only {bootstrap.get('id')} within the approved path boundary, then run "
+            f"`python tools/recoveryctl.py --repo . bootstrap-submit {request_id} --agent <agent> "
+            "--implementation-commit <HEAD> --evidence <criterion-manifest>`"
+        )
+    elif status == "REVIEW":
+        next_step = (
+            f"independently review frozen {bootstrap.get('id')} and run `python tools/recoveryctl.py --repo . "
+            f"bootstrap-review {request_id} --reviewer <independent-reviewer> --from <finding-ledger>`"
+        )
+    elif status in {"CHANGES_REQUESTED", "BLOCKED"}:
+        next_step = (
+            f"commit a strict-descendant bounded remediation and run `python tools/recoveryctl.py --repo . "
+            f"bootstrap-resubmit {request_id} --agent <agent> --implementation-commit <HEAD> "
+            "--evidence <remediation-manifest>`"
+        )
+    else:
+        next_step = (
+            f"prepare and independently review {post.get('required_change_request_id')}/"
+            f"{post.get('required_amendment_id')}; "
+            "obtain a separate exact-commit human approval before any amendment bootstrap or task execution"
+        )
+    authority = ", ".join(
+        f"{item.get('id')}={((item.get('approval_reference') or {}).get('introduction_commit') or 'unrecorded')}"
+        for item in data.get("wave_amendments", [])
+        if item.get("target_wave") == wave_id
+    )
+    return (
+        f"STOPPED AT GOVERNANCE RECOVERY {request_id} ({hold.get('id')})\n"
+        f"State: hold={hold.get('status')}; bootstrap={bootstrap.get('id')}={status}; target Wave={wave_id}.\n"
+        "Ordinary Wave/task/amendment/gate mutation is NOT LEGAL while this hold remains active. "
+        f"The GRR grants no execution authority to {post.get('required_amendment_id')} or its proposed tasks.\n"
+        f"Authority: base={(wave_approval_base_map(data).get(wave_id) or {}).get('packet_commit')}; "
+        f"ordered amendments: {authority or 'none'}.\n"
+        "Review materials:\n"
+        f"  - Frozen recovery packet: {linked(packet_relative)}\n"
+        f"  - Canonical recovery proposal: {linked(proposal_relative)}\n"
+        f"  - Human review: {linked(review_relative)}\n"
+        f"  - Immutable approval: {linked(approval_relative)}\n"
+        f"  - Paused Wave packet: {linked(wave_relative)}\n"
+        "Decision alternatives:\n"
+        "  A (recommended): complete the bounded bootstrap review, then use a separately approved "
+        "ordinary ECR/amendment.\n"
+        "  B: leave the recovery and Wave paused indefinitely without executing either lane.\n"
+        "  C: record an append-only withdrawn/deferred safe-resume disposition when the controller "
+        "supports it; never bypass the hold.\n"
+        "Release condition: independently approve the recovery bootstrap; separately approve, execute, "
+        "independently exit-review, "
+        f"and adopt {post.get('required_amendment_id')} with a bound control/security checkpoint; "
+        "then explicitly release the "
+        f"hold and resume {wave_id}.\n"
+        f"Exact next action: {next_step}"
+    )
 
 
 def wave_amendment_stop_handoff(
@@ -3121,6 +3478,10 @@ def global_gate_stop_handoff(
 
 def command_next(args, data, capabilities, slices, tasks, gates) -> None:
     refresh_derived_states(data, capabilities, slices, tasks, gates)
+    program = global_program_position(data, slices, tasks, gates)
+    if program.get("state") == "RECOVERY_INTERRUPTED":
+        print(recovery_stop_handoff(args, data, program))
+        return
     amendments = active_amendment_campaigns(data)
     if amendments:
         amendment = amendments[0]
@@ -3209,20 +3570,32 @@ def append_amendment_event(amendment: dict[str, Any], status: str, actor: str, r
 
 
 def load_amendment_authority(repo: Path, amendment_id: str) -> tuple[dict[str, Any], dict[str, Any], bytes]:
-    approval_path = repo / "planning" / "wave-amendment-approvals" / f"{amendment_id}.json"
+    approval_relative = f"planning/wave-amendment-approvals/{amendment_id}.json"
     try:
+        approval_path = safe_control_path(
+            repo,
+            approval_relative,
+            prefix="planning/wave-amendment-approvals",
+            label="Immutable amendment approval",
+        )
         approval_payload = approval_path.read_bytes()
         approval = json.loads(approval_payload)
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
         raise SystemExit(f"Cannot load immutable approval for {amendment_id}: {exc}") from exc
     if approval.get("status") != "APPROVED" or approval.get("amendmentId") != amendment_id:
         raise SystemExit(f"{amendment_id} does not have an exact APPROVED amendment record")
     packet_info = approval.get("packet") or {}
-    packet_path = repo.joinpath(*PurePosixPath(str(packet_info.get("path") or "")).parts)
+    packet_relative = str(packet_info.get("path") or "")
     try:
+        packet_path = safe_control_path(
+            repo,
+            packet_relative,
+            prefix="planning/enabler-change-requests",
+            label="Approved amendment packet",
+        )
         packet_payload = packet_path.read_bytes()
         packet = json.loads(packet_payload)
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
         raise SystemExit(f"Cannot load approved packet for {amendment_id}: {exc}") from exc
     if hashlib.sha256(packet_payload).hexdigest() != packet_info.get("sha256"):
         raise SystemExit(f"{amendment_id} packet hash does not match its immutable approval")
@@ -3266,15 +3639,22 @@ def git_head_branch(repo: Path) -> tuple[str, str]:
 
 
 def safe_evidence_relative(repo: Path, value: str, label: str) -> tuple[str, Path]:
-    path = Path(value).resolve()
+    path = Path(value).resolve(strict=False)
     try:
         relative = path.relative_to(repo).as_posix()
     except ValueError as exc:
         raise SystemExit(f"{label} must be inside the repository") from exc
-    pure = PurePosixPath(relative)
-    if not relative.startswith("artifacts/evidence/") or pure.is_absolute() or ".." in pure.parts:
-        raise SystemExit(f"{label} must be a safe path under artifacts/evidence")
-    return relative, path
+    try:
+        safe = safe_control_path(
+            repo,
+            relative,
+            prefix="artifacts/evidence",
+            label=label,
+            require_exists=False,
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    return relative, safe
 
 
 def bound_evidence_reference_errors(
@@ -3745,9 +4125,167 @@ def command_amendment_status(args, data, capabilities, slices, tasks, gates) -> 
         )
 
 
+def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, tasks, gates) -> None:
+    """Append a later approved amendment without replacing any predecessor."""
+    repo = discover_repository(args.file)
+    existing = list(data.get("wave_amendments", []))
+    if args.amendment in wave_amendment_map(data):
+        raise SystemExit(f"Wave amendment {args.amendment} already exists; duplicate append is denied")
+    match = re.fullmatch(r"(W(?:[0-9]|1[01]))\.A([0-9]{2})", str(args.amendment))
+    if match is None:
+        raise SystemExit("Appended Wave amendment identity is invalid")
+    wave_id = match.group(1)
+    ordered = [item for item in existing if item.get("target_wave") == wave_id]
+    expected_id = f"{wave_id}.A{len(ordered) + 1:02d}"
+    if args.amendment != expected_id:
+        raise SystemExit(f"Only the next consecutive Wave amendment may be appended: {expected_id}")
+    holds = [
+        hold
+        for hold in active_recovery_holds(data)
+        if (hold.get("post_bootstrap") or {}).get("required_amendment_id") == args.amendment
+    ]
+    if len(holds) != 1 or (holds[0].get("bootstrap") or {}).get("status") != "APPROVED":
+        raise SystemExit("A matching active recovery hold with independently approved bootstrap is required")
+    hold = holds[0]
+    approval, packet, approval_payload = load_amendment_authority(repo, args.amendment)
+    if packet.get("schemaVersion") != "2.0-proposal":
+        raise SystemExit("Subsequent amendment append requires the generic v2 ECR packet")
+    post = hold.get("post_bootstrap") or {}
+    if (
+        approval.get("changeRequestId") != post.get("required_change_request_id")
+        or approval.get("targetWave") != wave_id
+        or approval.get("authorizedTaskIds") != post.get("required_proposed_task_ids")
+    ):
+        raise SystemExit("Appended amendment approval differs from the recovery hold boundary")
+    ecr_check = subprocess.run(
+        [
+            sys.executable,
+            str(repo / "tools" / "planctl.py"),
+            "--repo",
+            str(repo),
+            "ecr",
+            "validate",
+            str(approval.get("changeRequestId")),
+            "--require-approved",
+        ],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if ecr_check.returncode != 0:
+        detail = "\n".join(part.strip() for part in (ecr_check.stdout, ecr_check.stderr) if part.strip())
+        raise SystemExit(f"Appended amendment authority validation failed:\n{detail}")
+    approval_relative = f"planning/wave-amendment-approvals/{args.amendment}.json"
+    introduction = approval_introduction_commit(repo, approval_relative)
+    approval_commit = str(args.approval_commit)
+    if approval_commit != introduction:
+        raise SystemExit("Approval commit must equal the immutable approval-record introduction commit")
+    implementation_commit = str(args.implementation_commit)
+    if implementation_commit == approval_commit or not git_is_ancestor(repo, approval_commit, implementation_commit):
+        raise SystemExit("Amendment bootstrap implementation must strictly descend from the approval commit")
+    head, current_branch = git_head_branch(repo)
+    if implementation_commit != head:
+        raise SystemExit("Amendment bootstrap implementation commit must equal current HEAD")
+    evidence_path = Path(args.evidence).resolve()
+    try:
+        evidence_relative = evidence_path.relative_to(repo).as_posix()
+    except ValueError as exc:
+        raise SystemExit("Bootstrap evidence must be inside the repository") from exc
+    if not evidence_relative.startswith("artifacts/evidence/"):
+        raise SystemExit("Bootstrap evidence must be under artifacts/evidence")
+    require_clean_repository(repo, allowed_untracked={evidence_relative})
+    try:
+        evidence_payload = evidence_path.read_bytes()
+        parse_evidence_payload(evidence_payload, evidence_path.suffix)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Invalid bootstrap evidence: {exc}") from exc
+    agent = normalized_identity(args.agent, "Bootstrap implementer")
+    bootstrap_unit = packet.get("bootstrapUnit") or {}
+    scope_addenda, addendum_references = load_bootstrap_scope_addenda(
+        repo, args.amendment, str(bootstrap_unit.get("id"))
+    )
+    candidate = {
+        "status": "REVIEW",
+        "implementer": agent,
+        "implementation_commit": implementation_commit,
+        "submission_branch": current_branch,
+        "scope_addenda": addendum_references,
+        "evidence": [
+            {
+                "type": "criterion-manifest",
+                "path": evidence_relative,
+                "sha256": evidence_sha256(evidence_payload),
+                "commit": implementation_commit,
+                "recorded_at": utc_now(),
+            }
+        ],
+        "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+    }
+    errors = bootstrap_attempt_errors(
+        repo,
+        args.amendment,
+        str(bootstrap_unit.get("id")),
+        [str(item) for item in bootstrap_unit.get("requiredOutcomes", [])],
+        candidate,
+        expected_base=approval_commit,
+        lineage_base=approval_commit,
+        allowed_patterns=[*map(str, bootstrap_unit.get("authorizedPaths", [])), *scope_addenda],
+        require_current_branch=True,
+    )
+    if errors:
+        raise SystemExit("Invalid appended amendment bootstrap evidence:\n- " + "\n- ".join(errors))
+    amendment = {
+        "id": args.amendment,
+        "change_request_id": approval.get("changeRequestId"),
+        "target_wave": wave_id,
+        "kind": packet.get("classification"),
+        "approval_reference": {
+            "path": approval_relative,
+            "sha256": hashlib.sha256(approval_payload).hexdigest(),
+            "introduction_commit": introduction,
+        },
+        "lifecycle": {
+            "status": "APPROVED",
+            "history": [
+                {
+                    "id": "E01",
+                    "status": "APPROVED",
+                    "actor": approval.get("approvedBy"),
+                    "at": approval.get("approvedAt"),
+                    "rationale": approval.get("decision"),
+                }
+            ],
+        },
+        "bootstrap": candidate,
+        "campaign": None,
+        "tasks": [],
+        "completion": {"status": "PENDING", "reviewer": None, "reviewed_at": None, "evidence": [], "notes": None},
+    }
+    before_snapshot = amendment_identity_snapshot(data)
+    data.setdefault("wave_amendments", []).append(amendment)
+    after_snapshot = amendment_identity_snapshot(data)
+    if after_snapshot[:-1] != before_snapshot or after_snapshot[-1] != (args.amendment, ()):
+        raise SystemExit("Append transition would replace or reorder predecessor amendment authority")
+    save_validated(
+        args.file,
+        data,
+        expected_sha256=getattr(args, "source_sha256", None),
+        expected_identity=getattr(args, "source_identity", None),
+        expected_approved_waves=getattr(args, "source_approved_waves", None),
+        expected_amendment_history=getattr(args, "source_amendment_history", None),
+        expected_task_review_history=getattr(args, "source_task_review_history", None),
+        expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
+        expected_recovery_history=getattr(args, "source_recovery_history", None),
+        repo=repo,
+    )
+    print(f"Appended and submitted {bootstrap_unit.get('id')} for independent review")
+
+
 def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, gates) -> None:
     if data.get("control_plane") or data.get("wave_approval_bases") or data.get("wave_amendments"):
-        raise SystemExit("The amendment control plane is already bootstrapped; duplicate bootstrap is denied")
+        command_amendment_append_bootstrap_submit(args, data, capabilities, slices, tasks, gates)
+        return
     repo = discover_repository(args.file)
     approval, packet, _approval_payload = load_amendment_authority(repo, args.amendment)
     approval_commit = str(args.approval_commit)
@@ -3925,6 +4463,7 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
         expected_sha256=getattr(args, "source_sha256", None),
         expected_identity=getattr(args, "source_identity", None),
         expected_approved_waves=getattr(args, "source_approved_waves", None),
+        expected_recovery_history=getattr(args, "source_recovery_history", None),
         repo=repo,
     )
     print(f"Submitted {bootstrap_unit['id']} for independent review")
@@ -4110,6 +4649,7 @@ def command_amendment_materialize(args, data, capabilities, slices, tasks, gates
         expected_identity=getattr(args, "source_identity", None),
         expected_approved_waves=getattr(args, "source_approved_waves", None),
         expected_amendment_history=getattr(args, "source_amendment_history", None),
+        expected_recovery_history=getattr(args, "source_recovery_history", None),
         repo=repo,
     )
     print(f"Materialized {', '.join(authorized)} from {args.amendment}")
@@ -5883,6 +6423,56 @@ def command_gate_approve(args, data, capabilities, slices, tasks, gates) -> None
     persist(args, data)
 
 
+def taskctl_command_is_read_only(args: argparse.Namespace) -> bool:
+    if args.command in {"validate", "status", "review-telemetry", "next", "next-capability", "show", "checks"}:
+        return True
+    nested = {
+        "amendment": "amendment_command",
+        "wave": "wave_command",
+        "capability": "cap_command",
+        "slice": "slice_command",
+        "gate": "gate_command",
+    }
+    field = nested.get(args.command)
+    return field is not None and getattr(args, field, None) == "status"
+
+
+def require_recovery_hold_permission(
+    args: argparse.Namespace,
+    data: dict[str, Any],
+    tasks: dict[str, dict[str, Any]],
+    repo: Path,
+) -> None:
+    holds = active_recovery_holds(data)
+    if not holds or taskctl_command_is_read_only(args):
+        return
+    hold = holds[0]
+    bootstrap = hold.get("bootstrap") or {}
+    post = hold.get("post_bootstrap") or {}
+    required_amendment = str(post.get("required_amendment_id") or "")
+    amendment_command = args.command == "amendment" and getattr(args, "amendment", None) == required_amendment
+    task_id = str(getattr(args, "task", "") or "")
+    amendment_task_command = (
+        args.command in {"claim", "block", "renew", "evidence", "submit", "review", "reopen", "cancel"}
+        and task_id.startswith(f"{required_amendment}.T")
+        and task_id in tasks
+    )
+    if bootstrap.get("status") == "APPROVED" and (amendment_command or amendment_task_command):
+        approval, packet, _payload = load_amendment_authority(repo, required_amendment)
+        if (
+            approval.get("changeRequestId") == post.get("required_change_request_id")
+            and approval.get("targetWave") == hold.get("target_wave")
+            and approval.get("authorizedTaskIds") == post.get("required_proposed_task_ids")
+            and [item.get("id") for item in packet.get("taskInventory", [])] == post.get("required_proposed_task_ids")
+        ):
+            return
+    raise SystemExit(
+        f"Governance recovery hold {hold.get('id')} denies this mutation. Complete independent "
+        f"{bootstrap.get('id')} review and obtain separate exact approval for "
+        f"{post.get('required_change_request_id')}/{required_amendment}; Wave/task/gate bypass is unavailable."
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--file", default="planning/backlog.yaml")
@@ -6159,7 +6749,9 @@ def main() -> None:
     args.source_amendment_history = amendment_history_snapshot(data)
     args.source_task_review_history = task_review_history_snapshot(data)
     args.source_wave_checkpoint_history = wave_checkpoint_history_snapshot(data)
+    args.source_recovery_history = recovery_history_snapshot(data)
     args.repo_root = discover_repository(args.file)
+    require_recovery_hold_permission(args, data, tasks, args.repo_root)
     if args.command == "validate":
         command_validate(args, data, capabilities, slices, tasks, gates)
     elif args.command == "status":
