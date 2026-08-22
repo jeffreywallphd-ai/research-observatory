@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3e07e82312d5c1c415e23b40adb490ea6f1cc424784f0a6c5ccd2cc641f39a6b
+source_sha256: bbcd90f48a093be6293578af6479acb66b7a27ad56e1ab3f46fe9b9131a1ba3e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 274 |
 | `READY` | 2 |
-| `IN_PROGRESS` | 1 |
+| `BLOCKED` | 1 |
 | `DONE` | 43 |
 | `DEFERRED` | 36 |
 
@@ -343,4 +343,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S04.T03` Create privacy, telemetry, retention, and secure-deletion settings | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S04.T03` Create privacy, telemetry, retention, and secure-deletion settings | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |

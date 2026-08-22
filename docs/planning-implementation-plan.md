@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3e07e82312d5c1c415e23b40adb490ea6f1cc424784f0a6c5ccd2cc641f39a6b
+source_sha256: bbcd90f48a093be6293578af6479acb66b7a27ad56e1ab3f46fe9b9131a1ba3e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2844,7 +2844,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
