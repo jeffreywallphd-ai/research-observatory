@@ -49,9 +49,9 @@
 <section class="review-toolbar">
   <h2>Hash-bound source records</h2>
   <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
-  <tr><th>Proposal</th><td><code>planning/enabler-change-requests/ECR-0002.md</code></td><td><code>ff8e346d41935f547a66cd19e773553b7302aae642e0438cc0230f9af54d59e7</code></td></tr>
-  <tr><th>Packet</th><td><code>planning/enabler-change-requests/ECR-0002.packet.json</code></td><td><code>e130ca2a81e51b1698b3990972daf40669c7950bb4c32d15738ac66adddc3f40</code></td></tr>
-  <tr><th>Human review</th><td><code>planning/enabler-change-requests/ECR-0002-review.html</code></td><td><code>7fabc8ddf81e157e853240464c65d99159e84ff9f0b1172950ecff991a8348c3</code></td></tr>
+  <tr><th>Proposal</th><td><code>planning/enabler-change-requests/ECR-0002.md</code></td><td><code>991d54659d310e8a9e99657891bb399c2ac71adfa9323cf68cadb3cc6442a062</code></td></tr>
+  <tr><th>Packet</th><td><code>planning/enabler-change-requests/ECR-0002.packet.json</code></td><td><code>835d0cbac43427a1cfd7406a8693b8af0ebf9321d009778c359165de9f7a3b8b</code></td></tr>
+  <tr><th>Human review</th><td><code>planning/enabler-change-requests/ECR-0002-review.html</code></td><td><code>ba63d825dd56fbc57f79b5ed1aa3aa9c8e2c8a42b044ee4f16e7a095ed86546b</code></td></tr>
   <tr><th>Approval</th><td><code>pending</code></td><td><code>pending</code></td></tr>
 
   </tbody></table>
@@ -66,7 +66,7 @@
 </section>
 <section class="review-toolbar">
   <h2>Ordered Wave authority chain</h2>
-  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody><tr><th>W1 base approval</th><td><code>594e63be501711d67d17a4aef176bb9b6a8748be</code></td><td><code>901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701</code></td><td>Original complete Wave packet</td></tr><tr><th>W1.A01</th><td><code>c5bbd97c0cdc665eecb973f5862478ef7be97752</code></td><td><code>a20685b90532c60e0286e5e05f68b46c613e935d</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A02</th><td><code>57d73bcf314ea6aab38b8056ead118d6ef270921</code></td><td><code>6e9c440102a5c463bb35d81f4dbdc3453d9ce029</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A03</th><td><code>e130ca2a81e51b1698b3990972daf40669c7950bb4c32d15738ac66adddc3f40</code></td><td><code>pending</code></td><td>Pending, non-executable proposal; no bootstrap/task authority</td></tr></tbody></table>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody><tr><th>W1 base approval</th><td><code>594e63be501711d67d17a4aef176bb9b6a8748be</code></td><td><code>901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701</code></td><td>Original complete Wave packet</td></tr><tr><th>W1.A01</th><td><code>c5bbd97c0cdc665eecb973f5862478ef7be97752</code></td><td><code>a20685b90532c60e0286e5e05f68b46c613e935d</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A02</th><td><code>57d73bcf314ea6aab38b8056ead118d6ef270921</code></td><td><code>6e9c440102a5c463bb35d81f4dbdc3453d9ce029</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A03</th><td><code>835d0cbac43427a1cfd7406a8693b8af0ebf9321d009778c359165de9f7a3b8b</code></td><td><code>pending</code></td><td>Pending, non-executable proposal; no bootstrap/task authority</td></tr></tbody></table>
   <p>Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. W1.A03 is pending and non-executable. If separately approved, it would authorize only bootstrap unit <code>W1.A03.B00</code> and the exact bounded task inventory below.</p>
 </section>
 <section class="review-toolbar">
@@ -231,6 +231,8 @@ After adoption, `recoveryctl release GRR-0001` may release the hold. W1 must the
 `R01` reviewed exact packet commit `359c3a5cc688921cb58396068d03435a4de06852` and returned `CHANGES_REQUESTED` with blocking finding `ECR-0002-R01-F01`. The canonical proposal, hashes, authority chain, GRR hold, B00 scope, T01 boundary, rollback, alternatives, and approval wording were sound. The generated v2 approval page, however, read only the legacy authority shape: it rendered the W1 base and predecessor amendments as missing, described pending W1.A03 as approved scope, hard-coded “both” tasks although the packet contains one task, and emitted trailing whitespace.
 
 The strict-descendant packet remediation changes only the enabler review renderer, its focused foundation regression, generated review pages, and these packet records. It makes the generated page consume the exact v2 `authorityChain`, distinguish pending from approved authority, derive task-count wording, and remain diff-clean. It does not execute `W1.A03.B00`, materialize or claim `W1.A03.T01`, change the backlog, release the recovery hold, resume W1, or change product/reference bytes. Human approval remains unavailable until a fresh independent review approves the exact strict-descendant packet commit.
+
+`R02` reviewed exact strict-descendant commit `367ce7bd2b3b0e6f64145fdad2af3d1570001432`, explicitly closed `ECR-0002-R01-F01`, and returned `CHANGES_REQUESTED` with blocking finding `ECR-0002-R02-F01`. The renderer, authority, pending state, one-task wording, tests, and diff hygiene were correct, but the hash-bound static review still pointed the human approver to section 9 after the exact approval wording moved to section 10. The next strict-descendant remediation corrects that pointer and adds a focused assertion that resolves the referenced section and verifies the required approval statement is present. It changes no executable state or product/reference byte.
 
 ## 10. Exact approval and next condition
 
