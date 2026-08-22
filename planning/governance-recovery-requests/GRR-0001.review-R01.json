@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0-recovery-review",
+  "documentType": "governance-recovery-packet-review",
+  "recoveryRequestId": "GRR-0001",
+  "attemptId": "R01",
+  "candidateCommit": "72d58561e24b5b7734681202718fb29c3bc41aea",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "b00-independent-reviewer",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "GRR-0001-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "title": "GRR packet appears to authorize the later A03 task inventory",
+      "requiredRemediation": "Replace authorizedTaskIds with a proposal-only identity, add an explicit false execution-authority field, and state that GRR-0001 grants no A03 approval, materialization, activation, claim, or execution authority."
+    },
+    {
+      "id": "GRR-0001-R01-F02",
+      "severity": "medium",
+      "blocking": true,
+      "title": "Generic recovery contract lacks an explicit semantic and safe-path boundary",
+      "requiredRemediation": "Require cross-identity and consecutive-predecessor semantic validation plus canonical repository-relative POSIX paths, resolved containment, and symlink-escape denial; authorize a distinct versioned request schema for later structural evolution."
+    }
+  ],
+  "verified": [
+    "The exact Draft 2020-12 packet schema and three listed file hashes match.",
+    "All cited authority, approval, adoption, evidence, and frozen-boundary commits exist and are ancestral.",
+    "Current W1.A01 and W1.A02 remain ADOPTED and equal their frozen effective states.",
+    "The packet changes only four inert GRR files and leaves the valid backlog unchanged.",
+    "Trigger findings GRR-0001-F01 through F03 reproduce truthfully."
+  ],
+  "approvalAvailable": false
+}
