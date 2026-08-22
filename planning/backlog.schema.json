@@ -313,6 +313,24 @@
         "original_blocked_state": {
           "type": "object",
           "required": [
+            "id",
+            "capability_id",
+            "slice_id",
+            "title",
+            "objective",
+            "deliverables",
+            "acceptance_criteria",
+            "dependencies",
+            "priority",
+            "wave",
+            "deployment_profiles",
+            "platform_targets",
+            "estimate",
+            "risk",
+            "review_gate",
+            "experience_change",
+            "verification_profiles",
+            "verification_commands",
             "status",
             "owner",
             "branch",
@@ -326,10 +344,45 @@
             "implementation_notes",
             "evidence",
             "verification_state",
-            "review",
-            "review_control"
+            "review"
           ],
           "properties": {
+            "id": {"const": "CAP-02.S04.T03"},
+            "capability_id": {"const": "CAP-02"},
+            "slice_id": {"const": "CAP-02.S04"},
+            "title": {"type": "string", "minLength": 1},
+            "objective": {"type": "string", "minLength": 1},
+            "deliverables": {
+              "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}
+            },
+            "acceptance_criteria": {
+              "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}
+            },
+            "dependencies": {
+              "type": "array", "items": {"type": "string", "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}$"},
+              "uniqueItems": true
+            },
+            "priority": {"enum": ["P0", "P1", "P2", "P3"]},
+            "wave": {"const": "W1"},
+            "deployment_profiles": {
+              "type": "array", "minItems": 1, "items": {"enum": ["LOC", "LAB", "SRV", "CLD", "ALL"]},
+              "uniqueItems": true
+            },
+            "platform_targets": {
+              "type": "array", "minItems": 1,
+              "items": {"enum": ["windows-x64", "macos-arm64", "linux-x64", "linux-arm64", "dgx-spark-arm64"]},
+              "uniqueItems": true
+            },
+            "estimate": {"enum": ["S", "M", "L", "XL"]},
+            "risk": {"enum": ["low", "medium", "high", "critical"]},
+            "review_gate": {"type": "string", "minLength": 1},
+            "experience_change": {"$ref": "#/$defs/experienceChange"},
+            "verification_profiles": {
+              "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+            },
+            "verification_commands": {
+              "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}
+            },
             "status": {"const": "BLOCKED"},
             "owner": {"type": ["string", "null"]},
             "branch": {"type": ["string", "null"]},
@@ -343,13 +396,7 @@
             "implementation_notes": {"type": "string"},
             "evidence": {"$ref": "#/$defs/taskEvidence"},
             "verification_state": {"type": ["string", "null"]},
-            "review": {"$ref": "#/$defs/review"},
-            "review_control": {
-              "anyOf": [
-                {"type": "null"},
-                {"$ref": "#/$defs/taskReviewControl"}
-              ]
-            }
+            "review": {"$ref": "#/$defs/review"}
           },
           "additionalProperties": false
         },

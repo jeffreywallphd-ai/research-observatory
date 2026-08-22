@@ -151,14 +151,17 @@ python tools/taskctl.py --file planning/backlog.yaml recover <exact-task> \
   --from artifacts/evidence/task-recovery/<exact-task>.json
 ```
 
-Recovery recomputes Git existence and ancestry, historical task hashes, the
-base-to-candidate paths, immutable evidence-contract bytes, approved-reference
-identity, and the manifest's fixed checks. Its one compare-and-swap mutation
-preserves the exact original blocked state in an append-only projection and
-moves the task only to `IN_PROGRESS` with a new lease and execution base. It
-cannot attach evidence, enter review, approve the task, approve a slice or Wave,
-or approve a release gate. All normal commit-bound evidence and independent
-reviews still follow.
+Recovery recomputes Git existence and ancestry, full historical task-state
+hashes, the target's immutable task contract, the approved amendment task
+inventory, the base-to-candidate paths, immutable evidence-contract bytes,
+approved-reference identity, and the manifest's fixed checks. It repeats the
+amendment and target-contract checks immediately before its one
+compare-and-swap mutation. That mutation preserves the complete original
+blocked state in an append-only projection and moves the task only to
+`IN_PROGRESS` with a new lease and execution base. A competing backlog write is
+rejected without overwrite. Recovery cannot attach evidence, enter review,
+approve the task, approve a slice or Wave, or approve a release gate. All normal
+commit-bound evidence and independent reviews still follow.
 
 For ordinary and amendment tasks, use `taskctl submit <task> --agent <agent>
 --from <manifest>` as the atomic evidence-and-submission transition. It freezes

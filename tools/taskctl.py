@@ -73,22 +73,25 @@ EXACT_T03_RECOVERY = {
     "block_record": "1c1d9ba427a55024687a62ca0c364acaccdbb7e2",
     "pause_record": "c7d543136fcd75c8f93dc8e669e59d54de433c02",
 }
-TASK_RECOVERY_BOUNDARY_FIELDS = (
-    "status",
-    "owner",
-    "branch",
-    "base_sha",
-    "worktree",
-    "lease",
-    "started_at",
-    "updated_at",
-    "completed_at",
-    "blocker",
-    "implementation_notes",
-    "evidence",
-    "verification_state",
-    "review",
-    "review_control",
+TASK_RECOVERY_CONTRACT_FIELDS = (
+    "id",
+    "capability_id",
+    "slice_id",
+    "title",
+    "objective",
+    "deliverables",
+    "acceptance_criteria",
+    "dependencies",
+    "priority",
+    "wave",
+    "deployment_profiles",
+    "platform_targets",
+    "estimate",
+    "risk",
+    "review_gate",
+    "experience_change",
+    "verification_profiles",
+    "verification_commands",
 )
 BOOTSTRAP_REVIEW_RESULTS = {
     "APPROVED": "approved",
@@ -2946,23 +2949,23 @@ def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
             )
             if historical != effective:
                 errors.append("W1.A01: migrated approval does not match a223a6f history")
-        if amendment.get("id") == "W1.A02":
-            packet = record.get("packet") or {}
+        packet = record.get("packet") or {}
+        if packet.get("path") and packet.get("sha256"):
             packet_path = repo.joinpath(*PurePosixPath(str(packet.get("path") or "")).parts)
             try:
                 packet_payload = packet_path.read_bytes()
                 packet_document = json.loads(packet_payload)
             except OSError, json.JSONDecodeError:
-                errors.append("W1.A02: approved packet is unreadable")
+                errors.append(f"{amendment['id']}: approved packet is unreadable")
                 continue
             if hashlib.sha256(packet_payload).hexdigest() != packet.get("sha256"):
-                errors.append("W1.A02: approved packet hash mismatch")
+                errors.append(f"{amendment['id']}: approved packet hash mismatch")
             committed_packet = git_blob(repo, str(packet.get("commit")), str(packet.get("path")))
             if committed_packet != packet_payload:
-                errors.append("W1.A02: approved packet differs from its immutable Git blob")
+                errors.append(f"{amendment['id']}: approved packet differs from its immutable Git blob")
             task_ids = [str(item.get("id")) for item in packet_document.get("taskInventory", [])]
             if task_ids != record.get("authorizedTaskIds"):
-                errors.append("W1.A02: approved task inventory mismatch")
+                errors.append(f"{amendment['id']}: approved task inventory mismatch")
             errors.extend(bootstrap_packet_errors(repo, amendment, record, packet_document))
             errors.extend(immutable_amendment_task_errors(amendment, packet_document))
     active_id = (control or {}).get("active_amendment")
@@ -4495,7 +4498,15 @@ def historical_backlog_document(repo: Path, commit: str) -> dict[str, Any] | Non
 
 
 def task_recovery_boundary(task: dict[str, Any]) -> dict[str, Any]:
-    return {field: copy.deepcopy(task.get(field)) for field in TASK_RECOVERY_BOUNDARY_FIELDS}
+    return {
+        field: copy.deepcopy(value)
+        for field, value in task.items()
+        if field != "recovery_control" and not field.startswith("_")
+    }
+
+
+def task_recovery_contract(task: dict[str, Any]) -> dict[str, Any]:
+    return {field: copy.deepcopy(task.get(field)) for field in TASK_RECOVERY_CONTRACT_FIELDS}
 
 
 def historical_task(repo: Path, commit: str, task_id: str) -> dict[str, Any] | None:
@@ -4655,6 +4666,8 @@ def exact_recovery_manifest_errors(
         and task_recovery_boundary(block_task) != task_recovery_boundary(pause_task)
     ):
         errors.append("T03 task boundary changed between block and Wave pause records")
+    if pause_task is not None and task_recovery_contract(task) != task_recovery_contract(pause_task):
+        errors.append("current T03 immutable task contract differs from the exact pause record")
 
     declared_paths = manifest.get("changedPaths") or []
     actual_paths = git_changed_paths(repo, str(commits.get("base")), str(commits.get("candidate")))
@@ -6881,6 +6894,8 @@ def command_recover(args, data, capabilities, slices, tasks, gates) -> None:
         raise SystemExit("Exact T03 recovery requires every ordinary task dependency to remain DONE")
 
     amendment = wave_amendment_map(data).get(EXACT_T03_RECOVERY["amendment_id"]) or {}
+    approval, packet, _approval_payload = load_amendment_authority(repo, EXACT_T03_RECOVERY["amendment_id"])
+    require_amendment_packet_integrity(repo, amendment, approval, packet)
     if (amendment.get("lifecycle") or {}).get("status") != "ADOPTED" or (amendment.get("completion") or {}).get(
         "status"
     ) != "APPROVED":
@@ -6946,6 +6961,9 @@ def command_recover(args, data, capabilities, slices, tasks, gates) -> None:
     if check_errors:
         raise SystemExit("Exact T03 recovery recomputation failed:\n- " + "\n- ".join(check_errors))
 
+    require_amendment_packet_integrity(repo, amendment, approval, packet)
+    if task_recovery_contract(task) != task_recovery_contract(pause_task):
+        raise SystemExit("Current T03 immutable task contract changed during recovery preflight")
     original = task_recovery_boundary(task)
     task["recovery_control"] = {
         "version": 1,
