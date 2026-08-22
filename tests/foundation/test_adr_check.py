@@ -14,6 +14,24 @@ from adr_check import validate_change_set, validate_registry  # noqa: E402
 from adr_new import create_adr  # noqa: E402
 
 
+def copy_fixture_ignore(directory: str, names: list[str]) -> set[str]:
+    ignored = set(
+        shutil.ignore_patterns(
+            ".git",
+            ".venv",
+            ".local",
+            "__pycache__",
+            "dist",
+            "node_modules",
+            "product-dist",
+            "target",
+        )(directory, names)
+    )
+    if Path(directory).resolve() == (REPO / "artifacts").resolve():
+        ignored.add("tmp")
+    return ignored
+
+
 class ArchitectureDecisionWorkflowTests(unittest.TestCase):
     def test_repository_adr_registry_and_task_links_are_valid(self) -> None:
         errors, records = validate_registry(REPO)
@@ -38,6 +56,7 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
                 "ADR-0015",
                 "ADR-0016",
                 "ADR-0017",
+                "ADR-0018",
             },
             set(records),
         )
@@ -52,6 +71,7 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
         self.assertIn("CAP-02.S03.T02", records["ADR-0015"]["metadata"]["linked_tasks"])
         self.assertIn("CAP-02.S03.T02", records["ADR-0016"]["metadata"]["linked_tasks"])
         self.assertIn("CAP-02.S04.T01", records["ADR-0017"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-02.S04.T02", records["ADR-0018"]["metadata"]["linked_tasks"])
 
     def test_unindexed_adr_file_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -59,16 +79,7 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
             shutil.copytree(
                 REPO,
                 checkout,
-                ignore=shutil.ignore_patterns(
-                    ".git",
-                    ".venv",
-                    ".local",
-                    "__pycache__",
-                    "dist",
-                    "node_modules",
-                    "product-dist",
-                    "target",
-                ),
+                ignore=copy_fixture_ignore,
             )
             sample = checkout / "docs" / "adr" / "ADR-9999-unindexed.md"
             sample.write_text("---\nid: ADR-9999\n---\n", encoding="utf-8")
