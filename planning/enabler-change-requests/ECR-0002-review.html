@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECR-0002 review — Research Observatory</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 76rem; margin: 0 auto; padding: 2rem; line-height: 1.55; }
+    header, section { border: 1px solid #7b8493; border-radius: .75rem; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .pending { border-left: .5rem solid #c57b00; }
+    .danger { border-left: .5rem solid #b53a3a; }
+    .good { border-left: .5rem solid #2b7b56; }
+    code { overflow-wrap: anywhere; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #7b8493; padding: .55rem; text-align: left; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <header class="pending">
+    <p><strong>Pending approval · non-executable</strong></p>
+    <h1>ECR-0002 / proposed W1.A03</h1>
+    <p>Correct the cumulative UI-gate condition and add an exact, fail-closed T03 candidate-recovery transition.</p>
+    <p><a href="ECR-0002.md">Open the complete canonical proposal</a> · <a href="ECR-0002.packet.json">Open the machine packet</a></p>
+  </header>
+  <section class="danger">
+    <h2>Why W1 remains paused</h2>
+    <p>The exact T03 range <code>bfb8797…59079ef</code> is rejected solely because the gate demands an unrelated post-implementation hardening commit even though its protected quality-inventory change preceded UI implementation and passes the additive validator.</p>
+    <p>GRR-0001 B00 is independently approved, but it grants no W1.A03 authority. W1 remains paused, T03 remains blocked, and no product work may execute under this packet review.</p>
+    <p><a href="../review-site/waves/W1.html">Open the current W1 page</a> · <a href="../review-site/recoveries/GRR-0001.html">Open GRR-0001</a></p>
+  </section>
+  <section>
+    <h2>Exact scope</h2>
+    <table>
+      <thead><tr><th>Unit</th><th>Authorized result</th><th>Explicit limit</th></tr></thead>
+      <tbody>
+        <tr><td><code>W1.A03.B00</code></td><td>Accept valid additive pre-UI inventory followed by UI; retain malformed, same-commit, and post-implementation denials.</td><td>Only <code>tools/ui_change_gate.py</code> and its focused foundation test.</td></tr>
+        <tr><td><code>W1.A03.T01</code></td><td>Add a packet-bound exact-candidate recovery transition preserving T03 base/foundation/candidate/block/pause lineage.</td><td>No product change; the transition is denied until adoption, GRR release, and explicit W1 resume, and it stops at <code>IN_PROGRESS</code>.</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section>
+    <h2>Frozen T03 lineage</h2>
+    <ul>
+      <li>Base: <code>bfb8797398707bece9e0662c0d995fabaced9979</code></li>
+      <li>Foundation/inventory: <code>461faf2870786609dea5a8e5214df380843329bb</code></li>
+      <li>Product/UI candidate: <code>59079efccc122a7d56a9f18efc20030851bf32a9</code></li>
+      <li>Block record: <code>1c1d9ba427a55024687a62ca0c364acaccdbb7e2</code></li>
+      <li>Wave pause: <code>c7d543136fcd75c8f93dc8e669e59d54de433c02</code></li>
+    </ul>
+    <p>The selected design preserves this lineage instead of calling the current governance HEAD a product candidate.</p>
+  </section>
+  <section class="good">
+    <h2>Approval criteria</h2>
+    <ul>
+      <li>The v2 packet validates against the exact W1 base + W1.A01 + W1.A02 chain and approved active recovery hold.</li>
+      <li>Every declared source hash matches the immutable packet commit.</li>
+      <li>An independent control/security reviewer approves this exact packet commit with no blocking finding.</li>
+      <li>Bootstrap tests cover the exact positive cumulative range, malformed inventory, same-commit UI/control, and reviewed post-implementation hardening.</li>
+      <li>T01 tests cover authority/state/hash/path/lineage/stale/dirty/atomic denial and stop the lawful recovery at <code>IN_PROGRESS</code>.</li>
+      <li>No product/reference, completed outcome, canonical profile, Wave approval, gate, or predecessor authority changes.</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Decision</h2>
+    <p><strong>Recommended:</strong> approve the bounded W1.A03 packet after independent packet review. This repairs the false negative and gives T03 a truthful recovery path while retaining every safety gate.</p>
+    <p>Alternatives are to misattribute later governance commits to T03, destructively replay the product change, defer W1, or bypass evidence controls; all are rejected in the canonical proposal.</p>
+    <p>The exact approval wording is in section 9 of the canonical proposal. Approval does not execute the amendment or resume W1.</p>
+  </section>
+</body>
+</html>
