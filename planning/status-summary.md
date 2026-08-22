@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: dac04bcfc9a4e4463719ade7ee36d0c4a8fbdb24d1a991f567a1bb15ee5497b5
+source_sha256: 559d04b3d7cf07acfaf537826c1bf08d78c19c67df9a35ce847cc667c7a42f9b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,8 +68,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `REVIEW` | 1 |
-| `DONE` | 2 |
+| `DONE` | 3 |
 
 ## Wave authority and append-only amendments
 
@@ -297,7 +296,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
-| `W1.A03.T01` | `append-only v1` | 1 | `R02` | changes-requested / b00-independent-reviewer | `W1.A03.T01-R01-F01`, `W1.A03.T01-R01-F02` |
+| `W1.A03.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -362,4 +361,3 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-02.S04.T03` Create privacy, telemetry, retention, and secure-deletion settings | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
-| `W1.A03.T01` Exact T03 candidate-lineage and evidence recovery | `REVIEW` | codex | `codex/w1-windows-local-runtime` |

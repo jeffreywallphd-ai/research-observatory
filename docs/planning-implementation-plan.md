@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dac04bcfc9a4e4463719ade7ee36d0c4a8fbdb24d1a991f567a1bb15ee5497b5
+source_sha256: 559d04b3d7cf07acfaf537826c1bf08d78c19c67df9a35ce847cc667c7a42f9b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -801,9 +801,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W1.A03.T01 - Exact T03 candidate-lineage and evidence recovery
+### - [x] W1.A03.T01 - Exact T03 candidate-lineage and evidence recovery
 
-**Status / owner / review:** `REVIEW` / codex / b00-independent-reviewer (`changes-requested`)
+**Status / owner / review:** `DONE` / codex / b00-independent-reviewer (`approved`)
 
 **Dependencies:** `W1.A03.B00`
 
@@ -834,7 +834,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A03.T01
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -867,7 +867,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `15eaaa895273188e63a333cf5cb2f9a359a2b879764d6a7b5c850ddc6955ac22`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `15eaaa895273188e63a333cf5cb2f9a359a2b879764d6a7b5c850ddc6955ac22`
 
 - Candidate / base / branch: `0362cfe72c84f167338329490f6799ba9f84a808` / `1127d72f29fbe407f3aaf99dd1f87d1aea60f18e` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-22T20:04:57+00:00`
@@ -881,11 +883,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W1.A03.T01-R01-F01`, `W1.A03.T01-R01-F02`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-22T19:47:59+00:00`
+**Disposition / reviewer / time:** `approved` / b00-independent-reviewer / `2026-08-22T20:13:45+00:00`
 
-**Latest notes:** Reviewed exact frozen submission state bc9f3b6ef592a5b06ce679423079c888682a96a0 and evidence artifacts/evidence/W1.A03.T01.json (SHA-256 54a90061e9854a6cf52df415ec9f058ffb664e42a1193e47b35c7abbb7695e70). Exact scope, approved amendment/hold binding, pre-adoption denial, Git-derived recovery evidence, UI/privacy checks, fail-closed denials, and prohibition on unrelated lifecycle authority were inspected. The selected 97-test recovery/schema/workflow/UI suite and affected governance checks pass, but two acceptance-bound evidence-control defects remain.
+**Immutable review ledger:** `artifacts/evidence/W1.A03.T01.review-R02.json` / `cd9e363e474d9d2d957c8fcc9049b631f441553e8a0e8c36a5fb1b98d883ef02`
 
-**Currently open findings:** `W1.A03.T01-R01-F01`, `W1.A03.T01-R01-F02`
+**Review notes:** APPROVED at candidate 0362cfe72c84f167338329490f6799ba9f84a808 and frozen submission state 89be94232e1022d31e4c4c148038ef5744d8c7df. Remediation evidence SHA-256 6a8dbbfe7501822bbee5aa522e1c9e6c3b23e385f1ee8c18a6588e71ae7d8cfe and the exact 12-path cumulative R02 scope are truthful. Bounded replay closed W1.A03.T01-R01-F01: generic W1.A03 packet integrity, complete historical T03 block/pause state hashes, current immutable-contract comparison, pre-mutation revalidation, and persisted original-state projection reject real amendment-task and target-task rewrites. Bounded replay closed W1.A03.T01-R01-F02: the isolated fixture now exercises the real command mutation and persistence stack through one save, expected-byte compare-and-swap, exclusive lock, fsync, and atomic replace; a competing writer reaches the real CAS guard and its bytes remain unchanged. Independently passed 101/101 focused recovery/schema/workflow/UI tests in 167.071 seconds, exact UI and 9/9 privacy replays, canonical backlog and ECR-0002 validation, 119-file quality, 148-page review-site and generated-view checks, protected-product/reference diff, exact scope, and Git hygiene. No unrelated task, slice, Wave, amendment, or release-gate approval is conferred.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W1.A03.T01-R01-F01` `fixed` — artifacts/evidence/W1.A03.T01.remediation-01.json
+- `W1.A03.T01-R01-F02` `fixed` — artifacts/evidence/W1.A03.T01.remediation-01.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by b00-independent-reviewer at `2026-08-22T20:13:45+00:00`
+
+**Latest notes:** APPROVED at candidate 0362cfe72c84f167338329490f6799ba9f84a808 and frozen submission state 89be94232e1022d31e4c4c148038ef5744d8c7df. Remediation evidence SHA-256 6a8dbbfe7501822bbee5aa522e1c9e6c3b23e385f1ee8c18a6588e71ae7d8cfe and the exact 12-path cumulative R02 scope are truthful. Bounded replay closed W1.A03.T01-R01-F01: generic W1.A03 packet integrity, complete historical T03 block/pause state hashes, current immutable-contract comparison, pre-mutation revalidation, and persisted original-state projection reject real amendment-task and target-task rewrites. Bounded replay closed W1.A03.T01-R01-F02: the isolated fixture now exercises the real command mutation and persistence stack through one save, expected-byte compare-and-swap, exclusive lock, fsync, and atomic replace; a competing writer reaches the real CAS guard and its bytes remain unchanged. Independently passed 101/101 focused recovery/schema/workflow/UI tests in 167.071 seconds, exact UI and 9/9 privacy replays, canonical backlog and ECR-0002 validation, 119-file quality, 148-page review-site and generated-view checks, protected-product/reference diff, exact scope, and Git hygiene. No unrelated task, slice, Wave, amendment, or release-gate approval is conferred.
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks
