@@ -1,0 +1,139 @@
+{
+  "documentType": "wave-amendment-exit-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A03",
+  "changeRequestId": "ECR-0002",
+  "targetWave": "W1",
+  "candidateCommit": "c5ea2e7b44897077f7d617431cb8740b7f7dad4f",
+  "branch": "codex/w1-windows-local-runtime",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "scope": {
+    "bootstrap": {
+      "id": "W1.A03.B00",
+      "status": "APPROVED",
+      "implementationCommit": "d0faa070a85055fa2a278e05bedc57c05701aabe",
+      "evidence": "artifacts/evidence/W1.A03.B00.json"
+    },
+    "authorizedTasks": [
+      {
+        "taskId": "W1.A03.T01",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "finalEvidence": "artifacts/evidence/W1.A03.T01.remediation-01.json",
+        "reviewLedger": "artifacts/evidence/W1.A03.T01.review-R02.json",
+        "closedFindingIds": [
+          "W1.A03.T01-R01-F01",
+          "W1.A03.T01-R01-F02"
+        ]
+      }
+    ],
+    "adoptionRemediation": {
+      "priorApprovedExitStateCommit": "89935d7c9c0473bd967810039d6a726a4be2c4fe",
+      "failedAdoptionEvidenceCommit": "fb8bec15e0b02e521955269beabd7eb5a912d756",
+      "reactivationCommit": "c9ef5be1faf0119562b036c2b5eed882fab08b24",
+      "implementationCommit": "c5ea2e7b44897077f7d617431cb8740b7f7dad4f",
+      "failureDisposition": "The first adoption attempt failed closed before persistence because semantic validation incorrectly selected W1.A03 adoption evidence while validating W1.A02. Backlog bytes and all governed lifecycle state remained unchanged.",
+      "remediation": "Associate adoption checkpoints with the amendment_id carried by their bound evidence reference and prove projected consecutive W1.A02/W1.A03 adoption against real historical commits."
+    },
+    "retainedBoundary": {
+      "waveStatus": "PAUSED",
+      "waveScope": "amendment-hold",
+      "holdId": "HOLD-W1-GRR-0001",
+      "holdStatus": "ACTIVE",
+      "taskId": "CAP-02.S04.T03",
+      "taskStatus": "BLOCKED",
+      "recoveryControl": null
+    },
+    "unauthorizedClaims": [
+      "CAP-02.S04.T03 ordinary evidence or approval",
+      "CAP-02.S04 slice approval",
+      "W1 product or deployment qualification",
+      "W1 completion or G1 approval",
+      "ordinary W1 campaign resumption",
+      "remote integration"
+    ]
+  },
+  "authority": {
+    "approvalRecord": "planning/wave-amendment-approvals/W1.A03.json",
+    "approvalIntroductionCommit": "95c007b58619dfd82b5f443eea3d8e71e7efe082",
+    "canonicalProposal": "planning/enabler-change-requests/ECR-0002.md",
+    "packet": "planning/enabler-change-requests/ECR-0002.packet.json",
+    "packetCommit": "ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4",
+    "packetSha256": "835d0cbac43427a1cfd7406a8693b8af0ebf9321d009778c359165de9f7a3b8b"
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate",
+      "result": "passed",
+      "summary": "103 controller, schema, workflow, and UI-gate tests passed in 193.554 seconds at the exact remediation candidate, including per-amendment adoption-checkpoint selection and a projected consecutive W1.A02/W1.A03 adoption against real historical commits"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+      "result": "passed",
+      "summary": "exact historical T03 range passed against approved reference RO-UI-ACADEMIC-MINIMAL-1.3 with zero errors"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract",
+      "result": "passed",
+      "summary": "9 privacy and contract tests passed"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "result": "passed",
+      "summary": "119 governed Python files passed formatting, lint, and mypy"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "result": "passed",
+      "summary": "20 capabilities, 117 slices, 359 tasks, and 12 release gates; W1.A03 remains ACTIVE while the ordinary W1 campaign remains paused"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
+      "result": "passed",
+      "summary": "privacy-safe task review telemetry remains valid and W1.A03.T01 R02 closes both R01 findings"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . validate GRR-0001 --require-approved",
+      "result": "passed",
+      "summary": "ECR-0002 and predecessor ECR-0001 are approved and history-bound; GRR-0001 is valid with its hold ACTIVE and W1.A03 next"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "result": "passed",
+      "summary": "all 148 review pages passed and generated backlog views are current"
+    },
+    {
+      "command": "git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py",
+      "result": "passed",
+      "summary": "historical T03 product, privacy, reference-contract, and product-test bytes are unchanged"
+    },
+    {
+      "command": "git diff --check c9ef5be1faf0119562b036c2b5eed882fab08b24..c5ea2e7b44897077f7d617431cb8740b7f7dad4f",
+      "result": "passed",
+      "summary": "the bounded remediation diff has no whitespace errors"
+    }
+  ],
+  "retainedDeferredWork": {
+    "owner": "W1-exit",
+    "items": [
+      "commit-bound W1.A03 R02 adoption checkpoint after independent exit approval",
+      "GRR-0001 hold release and explicit ordinary W1 resume",
+      "ordinary CAP-02.S04.T03 candidate and commit-bound evidence after lawful recovery",
+      "independent CAP-02.S04.T03 privacy/task review and CAP-02.S04 slice review",
+      "all remaining W1 tasks and slices",
+      "complete W1 product and deployment qualification matrix",
+      "G1 human approval"
+    ]
+  },
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "Paused at blocked CAP-02.S04.T03 after the revised UI gate demonstrated a cumulative additive-inventory control defect; ordinary W1 work remains denied pending a bounded independently reviewed ECR and explicit human amendment approval."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review"
+}
