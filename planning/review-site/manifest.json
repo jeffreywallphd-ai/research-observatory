@@ -85,7 +85,7 @@
       "exit_gate_id": "G1",
       "gate_status": "PENDING",
       "approval_status": "APPROVED",
-      "completion_status": "PAUSED",
+      "completion_status": "IN_PROGRESS",
       "unlocks_waves": [
         "W2"
       ],
