@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -22,7 +25,7 @@ MANIFEST_RELATIVE = "artifacts/evidence/task-recovery/CAP-02.S04.T03.json"
 
 
 class ExactTaskRecoveryTests(unittest.TestCase):
-    def load_context(self):
+    def load_context(self, *, base_sha: str = HEAD):
         data = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
         context = taskctl.index_backlog(data)
         data, _capabilities, _slices, _tasks, _gates = context
@@ -40,7 +43,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
             owner="codex",
             branch="codex/w1-windows-local-runtime",
             worktree=REPO.as_posix(),
-            base_sha=HEAD,
+            base_sha=base_sha,
             profile="LOC",
             platform="windows-x64",
             lease={
@@ -70,13 +73,18 @@ class ExactTaskRecoveryTests(unittest.TestCase):
         return context
 
     @staticmethod
-    def args(task: str = TASK_ID) -> argparse.Namespace:
+    def args(
+        task: str = TASK_ID,
+        *,
+        file: Path | None = None,
+        base_sha: str = HEAD,
+    ) -> argparse.Namespace:
         return argparse.Namespace(
-            file=str(REPO / "planning/backlog.yaml"),
+            file=str(file or (REPO / "planning/backlog.yaml")),
             task=task,
             agent="codex",
             branch="codex/w1-windows-local-runtime",
-            base_sha=HEAD,
+            base_sha=base_sha,
             worktree=str(REPO),
             profile="LOC",
             platform="windows-x64",
@@ -84,9 +92,35 @@ class ExactTaskRecoveryTests(unittest.TestCase):
             lease_hours=8,
         )
 
+    def persisted_args(self, path: Path, data: dict, *, base_sha: str) -> argparse.Namespace:
+        document = taskctl.serializable_backlog(data)
+        path.write_text(
+            yaml.safe_dump(document, sort_keys=False, allow_unicode=True, width=120),
+            encoding="utf-8",
+        )
+        args = self.args(file=path, base_sha=base_sha)
+        args.source_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
+        args.source_identity = taskctl.identity_snapshot(document)
+        args.source_amendment_identity = taskctl.amendment_identity_snapshot(document)
+        args.source_approved_waves = taskctl.approved_wave_snapshot(document)
+        args.source_amendment_history = taskctl.amendment_history_snapshot(document)
+        args.source_task_review_history = taskctl.task_review_history_snapshot(document)
+        args.source_wave_checkpoint_history = taskctl.wave_checkpoint_history_snapshot(document)
+        args.source_recovery_history = taskctl.recovery_history_snapshot(document)
+        args.source_task_recovery_history = taskctl.task_recovery_history_snapshot(document)
+        args.repo_root = REPO
+        return args
+
     def invoke(self, context, **patches):
         data, capabilities, slices, tasks, gates = context
         manifest_payload = (REPO / MANIFEST_RELATIVE).read_bytes()
+        real_git_blob = taskctl.git_blob
+
+        def committed_blob(repo: Path, commit: str, path: str) -> bytes | None:
+            if path == MANIFEST_RELATIVE:
+                return manifest_payload
+            return real_git_blob(repo, commit, path)
+
         paused_task = taskctl.historical_task(REPO, taskctl.EXACT_T03_RECOVERY["pause_record"], TASK_ID)
         self.assertIsNotNone(paused_task)
         defaults = {
@@ -111,7 +145,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
                 "historical_task",
                 return_value=copy.deepcopy(paused_task),
             ),
-            patch.object(taskctl, "git_blob", return_value=manifest_payload),
+            patch.object(taskctl, "git_blob", side_effect=committed_blob),
             patch.object(
                 taskctl,
                 "exact_recovery_manifest_errors",
@@ -189,6 +223,85 @@ class ExactTaskRecoveryTests(unittest.TestCase):
         self.assertEqual([], taskctl.backlog_schema_errors(taskctl.serializable_backlog(context[0])))
         self.assertEqual([], taskctl.task_recovery_projection_errors(context[0], task, REPO))
 
+    def test_recovery_uses_real_atomic_persistence_for_one_task_only(self) -> None:
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
+        ).stdout.strip()
+        context = self.load_context(base_sha=head)
+        before = taskctl.serializable_backlog(context[0])
+        before_tasks = taskctl.index_backlog(copy.deepcopy(before))[3]
+        before_task = copy.deepcopy(before_tasks[TASK_ID])
+
+        with tempfile.TemporaryDirectory() as temp:
+            backlog_path = Path(temp) / "backlog.yaml"
+            args = self.persisted_args(backlog_path, context[0], base_sha=head)
+            real_save_atomic = taskctl.save_atomic
+            with (
+                patch.object(
+                    taskctl,
+                    "git_execution_identity",
+                    return_value=("codex", "codex/w1-windows-local-runtime", head, REPO.as_posix()),
+                ),
+                patch.object(taskctl, "discover_repository", return_value=REPO),
+                patch.object(taskctl, "require_clean_repository"),
+                patch.object(taskctl, "validate", return_value=[]),
+                patch.object(taskctl, "run_exact_recovery_checks", return_value=[]),
+                patch.object(taskctl, "save_atomic", wraps=real_save_atomic) as save_atomic,
+            ):
+                taskctl.command_recover(args, *context)
+
+            save_atomic.assert_called_once()
+            after = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+
+        after_tasks = taskctl.index_backlog(copy.deepcopy(after))[3]
+        changed_task_ids = sorted(task_id for task_id in before_tasks if before_tasks[task_id] != after_tasks[task_id])
+        self.assertEqual([TASK_ID], changed_task_ids)
+        after_task = after_tasks[TASK_ID]
+        self.assertEqual("IN_PROGRESS", after_task["status"])
+        self.assertEqual(before_task, after_task["recovery_control"]["original_blocked_state"])
+        self.assertEqual(before_task["blocker"], after_task["recovery_control"]["original_blocked_state"]["blocker"])
+        self.assertEqual(before_task["evidence"], after_task["evidence"])
+        self.assertEqual(before_task["review"], after_task["review"])
+        self.assertEqual(before["wave_amendments"], after["wave_amendments"])
+        self.assertEqual(before["waves"], after["waves"])
+        self.assertEqual(before["release_gates"], after["release_gates"])
+
+    def test_real_atomic_persistence_rejects_a_competing_writer_without_overwrite(self) -> None:
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
+        ).stdout.strip()
+        context = self.load_context(base_sha=head)
+        with tempfile.TemporaryDirectory() as temp:
+            backlog_path = Path(temp) / "backlog.yaml"
+            args = self.persisted_args(backlog_path, context[0], base_sha=head)
+            competing_bytes: bytes | None = None
+
+            def competing_write(_repo: Path) -> list[str]:
+                nonlocal competing_bytes
+                competing_bytes = backlog_path.read_bytes() + b"\n# competing writer\n"
+                backlog_path.write_bytes(competing_bytes)
+                return []
+
+            real_save_atomic = taskctl.save_atomic
+            with (
+                patch.object(
+                    taskctl,
+                    "git_execution_identity",
+                    return_value=("codex", "codex/w1-windows-local-runtime", head, REPO.as_posix()),
+                ),
+                patch.object(taskctl, "discover_repository", return_value=REPO),
+                patch.object(taskctl, "require_clean_repository"),
+                patch.object(taskctl, "validate", return_value=[]),
+                patch.object(taskctl, "run_exact_recovery_checks", side_effect=competing_write),
+                patch.object(taskctl, "save_atomic", wraps=real_save_atomic) as save_atomic,
+                self.assertRaisesRegex(SystemExit, "Backlog changed after taskctl loaded it"),
+            ):
+                taskctl.command_recover(args, *context)
+
+            save_atomic.assert_called_once()
+            self.assertIsNotNone(competing_bytes)
+            self.assertEqual(competing_bytes, backlog_path.read_bytes())
+
     def test_authority_and_state_denials_are_atomic(self) -> None:
         cases = {
             "unadopted amendment": lambda context: taskctl.wave_amendment_map(context[0])["W1.A03"]["lifecycle"].update(
@@ -234,7 +347,6 @@ class ExactTaskRecoveryTests(unittest.TestCase):
                 self.assertEqual(before, task)
 
         for label, invoke_kwargs in (
-            ("predecessor rewrite", {"validate": ["immutable predecessor changed"]}),
             ("manifest mismatch", {"exact_recovery_manifest_errors": ["hash mismatch"]}),
             ("failed recomputation", {"run_exact_recovery_checks": ["privacy check failed"]}),
         ):
@@ -245,6 +357,43 @@ class ExactTaskRecoveryTests(unittest.TestCase):
                 with self.assertRaises(SystemExit):
                     self.invoke(context, **invoke_kwargs)
                 self.assertEqual(before, task)
+
+    def test_amendment_and_target_contract_rewrites_are_atomic_denials(self) -> None:
+        context = self.load_context()
+        amendment = taskctl.wave_amendment_map(context[0])["W1.A03"]
+        amendment["tasks"][0]["title"] = "FORGED PREDECESSOR TITLE"
+        before = copy.deepcopy(context[3][TASK_ID])
+        with self.assertRaisesRegex(SystemExit, "immutable amendment task field title"):
+            self.invoke(context)
+        self.assertEqual(before, context[3][TASK_ID])
+
+        context = self.load_context()
+        task = context[3][TASK_ID]
+        task["acceptance_criteria"][0] = "FORGED TARGET CRITERION"
+        before = copy.deepcopy(task)
+        with self.assertRaisesRegex(SystemExit, "immutable blocked/pause boundary"):
+            self.invoke(context)
+        self.assertEqual(before, task)
+
+    def test_generic_validation_and_manifest_reject_static_contract_rewrites(self) -> None:
+        context = self.load_context()
+        amendment = taskctl.wave_amendment_map(context[0])["W1.A03"]
+        amendment["tasks"][0]["title"] = "FORGED PREDECESSOR TITLE"
+        errors = taskctl.validate(*context, repo=REPO)
+        self.assertTrue(any("immutable amendment task field title" in error for error in errors), errors)
+
+        data, _capabilities, _slices, tasks, _gates = taskctl.load(str(REPO / "planning/backlog.yaml"))
+        task = tasks[TASK_ID]
+        task["acceptance_criteria"][0] = "FORGED TARGET CRITERION"
+        manifest = json.loads((REPO / MANIFEST_RELATIVE).read_text(encoding="utf-8"))
+        errors = taskctl.exact_recovery_manifest_errors(
+            data,
+            task,
+            manifest,
+            REPO,
+            require_current_candidate_bytes=True,
+        )
+        self.assertIn("current T03 immutable task contract differs from the exact pause record", errors)
 
     def test_manifest_tampering_is_rejected(self) -> None:
         data, _capabilities, _slices, tasks, _gates = taskctl.load(str(REPO / "planning/backlog.yaml"))

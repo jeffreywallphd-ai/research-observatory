@@ -23,8 +23,8 @@
     "pauseRecord": "c7d543136fcd75c8f93dc8e669e59d54de433c02"
   },
   "historicalTaskSha256": {
-    "blockRecord": "bd6588519b43d32e927e94410237245d1c1288beb8b004509a2d0aca64e75842",
-    "pauseRecord": "bd6588519b43d32e927e94410237245d1c1288beb8b004509a2d0aca64e75842"
+    "blockRecord": "dfafcb2ff9193ead171756c3e461d10a8f4df805024f9995930193b95d576c80",
+    "pauseRecord": "dfafcb2ff9193ead171756c3e461d10a8f4df805024f9995930193b95d576c80"
   },
   "uiEvidence": {
     "path": "artifacts/evidence/ui-change/CAP-02.S04.T03.json",
