@@ -1705,10 +1705,11 @@ def safe_control_path(
     pure = PurePosixPath(relative)
     if (
         pure.is_absolute()
+        or relative != pure.as_posix()
         or any(part in {"", ".", ".."} for part in pure.parts)
         or (relative != prefix and not relative.startswith(prefix.rstrip("/") + "/"))
     ):
-        raise ValueError(f"{label} is outside {prefix} or contains dot segments")
+        raise ValueError(f"{label} is outside {prefix} or is not canonically spelled")
     current = repo
     junction = getattr(os.path, "isjunction", lambda _path: False)
     for part in pure.parts:

@@ -90,20 +90,70 @@ class GovernanceRecoveryTests(unittest.TestCase):
         backlog_path = repo / "planning/backlog.yaml"
         backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
         hold = (backlog["control_plane"]["recovery_holds"])[0]
-        ledger_path = repo / hold["bootstrap"]["attempts"][-1]["ledger"]["path"]
-        ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
-        ledger.update(result="approved", findings=[], closures=[], notes="Approved fixture recovery.")
-        ledger_payload = (json.dumps(ledger, indent=2) + "\n").encode()
-        ledger_path.write_bytes(ledger_payload)
-        review = {
-            "reviewer": ledger["reviewer"],
-            "result": "approved",
-            "reviewed_at": "2026-08-22T18:00:00+00:00",
-            "notes": "Approved fixture recovery.",
-        }
-        hold["bootstrap"]["attempts"][-1]["review"] = copy.deepcopy(review)
-        hold["bootstrap"]["attempts"][-1]["ledger"]["sha256"] = hashlib.sha256(ledger_payload).hexdigest()
-        hold["bootstrap"].update(status="APPROVED", review=review, current_submission=None)
+        bootstrap = hold["bootstrap"]
+        if bootstrap["status"] == "REVIEW":
+            submission = bootstrap["current_submission"]
+            attempt_id = submission["attempt_id"]
+            ledger_path = repo / f"planning/governance-recovery-approvals/GRR-0001.B00.review-{attempt_id}.json"
+            ledger = {
+                "schemaVersion": "1.0",
+                "documentType": "governance-recovery-bootstrap-review",
+                "recoveryRequestId": "GRR-0001",
+                "bootstrapUnit": bootstrap["id"],
+                "attemptId": attempt_id,
+                "candidateCommit": submission["candidate_commit"],
+                "reviewedStateCommit": self.git(repo, "rev-parse", "HEAD"),
+                "reviewer": "fixture-independent-reviewer",
+                "result": "approved",
+                "evidence": {
+                    "path": bootstrap["evidence"]["path"],
+                    "sha256": bootstrap["evidence"]["sha256"],
+                },
+                "notes": "Approved fixture recovery from the frozen current submission.",
+                "findings": [],
+                "closures": [],
+            }
+            ledger_payload = (json.dumps(ledger, indent=2) + "\n").encode()
+            ledger_path.write_bytes(ledger_payload)
+            review = {
+                "reviewer": ledger["reviewer"],
+                "result": "approved",
+                "reviewed_at": "2026-08-22T18:00:00+00:00",
+                "notes": ledger["notes"],
+            }
+            bootstrap["attempts"].append(
+                {
+                    "id": attempt_id,
+                    "implementer": bootstrap["implementer"],
+                    "implementation_commit": bootstrap["implementation_commit"],
+                    "submission_branch": bootstrap["submission_branch"],
+                    "evidence": copy.deepcopy(bootstrap["evidence"]),
+                    "review": copy.deepcopy(review),
+                    "ledger": {
+                        "path": ledger_path.relative_to(repo).as_posix(),
+                        "sha256": hashlib.sha256(ledger_payload).hexdigest(),
+                    },
+                }
+            )
+            bootstrap.update(status="APPROVED", review=review, current_submission=None)
+        elif bootstrap["status"] in {"CHANGES_REQUESTED", "BLOCKED"}:
+            latest = bootstrap["attempts"][-1]
+            ledger_path = repo / latest["ledger"]["path"]
+            ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+            ledger.update(result="approved", findings=[], closures=[], notes="Approved fixture recovery.")
+            ledger_payload = (json.dumps(ledger, indent=2) + "\n").encode()
+            ledger_path.write_bytes(ledger_payload)
+            review = {
+                "reviewer": ledger["reviewer"],
+                "result": "approved",
+                "reviewed_at": "2026-08-22T18:00:00+00:00",
+                "notes": "Approved fixture recovery.",
+            }
+            latest["review"] = copy.deepcopy(review)
+            latest["ledger"]["sha256"] = hashlib.sha256(ledger_payload).hexdigest()
+            bootstrap.update(status="APPROVED", review=review, current_submission=None)
+        elif bootstrap["status"] != "APPROVED":
+            raise AssertionError(f"Unsupported fixture recovery state: {bootstrap['status']}")
         proposal_path = repo / "planning/enabler-change-requests/ECR-0002.md"
         review_path = repo / "planning/enabler-change-requests/ECR-0002-review.html"
         proposal_path.write_bytes(b"# Fixture ECR-0002\n")
@@ -408,6 +458,9 @@ class GovernanceRecoveryTests(unittest.TestCase):
             stale = copy.deepcopy(args)
             stale.source_sha256 = "0" * 64
             denial_cases.append(("stale", stale, loaded()))
+            repeated_separator = copy.deepcopy(args)
+            repeated_separator.evidence = "artifacts/evidence//W1.A03.B00.json"
+            denial_cases.append(("repeated-separator", repeated_separator, loaded()))
             for label, denied_args, state in denial_cases:
                 with self.subTest(label=label), self.assertRaises(SystemExit):
                     taskctl.command_amendment_append_bootstrap_submit(denied_args, *state)
@@ -465,6 +518,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
             canonical.replace("/", "\\"),
             canonical.replace("approvals/", "approvals/./"),
             canonical.replace("approvals/", "approvals/../governance-recovery-approvals/"),
+            canonical.replace("approvals/", "approvals//"),
         )
         for value in variants:
             with (
@@ -480,6 +534,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
             str((REPO / review_path).resolve()),
             review_path.replace("/", "\\"),
             review_path.replace("approvals/", "approvals/./"),
+            review_path.replace("approvals/", "approvals//"),
         ):
             args = argparse.Namespace(
                 request="GRR-0001",
@@ -500,6 +555,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
             append_evidence.replace("/", "\\"),
             append_evidence.replace("evidence/", "evidence/./"),
             append_evidence.replace("evidence/", "evidence/../evidence/"),
+            append_evidence.replace("evidence/", "evidence//"),
         ):
             with self.subTest(append_value=value), self.assertRaises(SystemExit):
                 taskctl.canonical_control_artifact_path(
