@@ -417,6 +417,113 @@ class BacklogSchemaTests(unittest.TestCase):
         ]
         self.assertTrue(list(validator.iter_errors(invalid)))
 
+    def test_amendment_exit_review_control_is_optional_append_only_shaped_and_strict(self) -> None:
+        schema = json.loads(self.schema.read_text(encoding="utf-8"))
+        completion_schema = schema["$defs"]["waveAmendment"]["properties"]["completion"]
+        self.assertEqual(
+            "#/$defs/amendmentExitReviewControl",
+            completion_schema["properties"]["exit_review_control"]["$ref"],
+        )
+
+        legacy = copy.deepcopy(self.canonical)
+        for amendment in legacy.get("wave_amendments", []):
+            amendment["completion"].pop("exit_review_control", None)
+        self.assertEqual([], backlog_schema_errors(legacy, schema_path=self.schema))
+
+        packet = {
+            "id": "R01",
+            "submitted_by": "agent:implementer",
+            "submitted_at": "2026-08-21T03:00:00+00:00",
+            "candidate_commit": "b" * 40,
+            "declared_candidate_commit": "a" * 40,
+            "branch": "codex/amendment-exit",
+            "evidence_reference": {
+                "type": "amendment-exit-evidence",
+                "amendment_id": "W1.A02",
+                "path": "artifacts/evidence/W1.A02.exit.json",
+                "sha256": "1" * 64,
+                "commit": "a" * 40,
+            },
+            "acceptance_criteria_sha256": "2" * 64,
+            "selected_checks": ["python tools/taskctl.py validate"],
+            "selected_checks_sha256": "3" * 64,
+            "prior_attempt_id": None,
+            "open_finding_ids": [],
+            "packet_sha256": "4" * 64,
+        }
+        finding = {
+            "id": "W1.A02-EXIT-R01-F01",
+            "severity": "high",
+            "blocking": True,
+            "criterion_index": 1,
+            "title": "Exit evidence is not immutable",
+            "reproduction": "Substitute the exit evidence after review.",
+            "required_remediation": "Bind the exact evidence and candidate.",
+        }
+        control: dict[str, Any] = {
+            "version": 1,
+            "attempts": [
+                {
+                    "submission": packet,
+                    "review": {
+                        "reviewer": "agent:reviewer",
+                        "result": "changes-requested",
+                        "reviewed_at": "2026-08-21T04:00:00+00:00",
+                        "reviewed_state_commit": "b" * 40,
+                        "notes": "One blocking exit finding.",
+                    },
+                    "ledger": {
+                        "path": "artifacts/evidence/W1.A02.exit-review-R01.json",
+                        "sha256": "5" * 64,
+                    },
+                    "findings": [finding],
+                    "closures": [],
+                }
+            ],
+            "current_submission": None,
+        }
+        validator = Draft202012Validator(
+            {"$ref": "#/$defs/amendmentExitReviewControl", "$defs": schema["$defs"]},
+            format_checker=FormatChecker(),
+        )
+        self.assertEqual([], list(validator.iter_errors(control)))
+
+        for path, value in (
+            (("attempts", 0, "submission", "candidate_commit"), "not-a-commit"),
+            (("attempts", 0, "submission", "selected_checks"), []),
+            (("attempts", 0, "review", "reviewed_state_commit"), None),
+            (("attempts", 0, "findings", 0, "severity"), "urgent"),
+        ):
+            with self.subTest(path=path):
+                invalid = copy.deepcopy(control)
+                cursor: Any = invalid
+                for key in path[:-1]:
+                    cursor = cursor[key]
+                cursor[path[-1]] = value
+                self.assertTrue(list(validator.iter_errors(invalid)))
+
+        invalid = copy.deepcopy(control)
+        invalid["attempts"][0]["review"]["implementation_commit"] = "b" * 40
+        self.assertTrue(list(validator.iter_errors(invalid)))
+
+        checkpoint_validator = Draft202012Validator(
+            {"$ref": "#/$defs/checkpointEvidenceReferences", "$defs": schema["$defs"]},
+            format_checker=FormatChecker(),
+        )
+        self.assertEqual([], list(checkpoint_validator.iter_errors(["legacy-checkpoint.json"])))
+        bound_checkpoint = [
+            {
+                "type": "amendment-adoption-evidence",
+                "amendment_id": "W1.A02",
+                "path": "artifacts/evidence/W1.A02.adoption.json",
+                "sha256": "6" * 64,
+                "commit": "c" * 40,
+            }
+        ]
+        self.assertEqual([], list(checkpoint_validator.iter_errors(bound_checkpoint)))
+        bound_checkpoint[0]["raw_review_notes"] = "must remain outside the checkpoint reference"
+        self.assertTrue(list(checkpoint_validator.iter_errors(bound_checkpoint)))
+
     def test_materialized_amendment_task_requires_a_packet_bound_hash(self) -> None:
         data = copy.deepcopy(self.canonical)
         data["control_plane"] = {

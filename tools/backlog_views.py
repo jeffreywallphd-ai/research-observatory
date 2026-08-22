@@ -277,6 +277,154 @@ def task_review_markdown(task: dict[str, Any], *, heading_level: int) -> list[st
     return lines
 
 
+def amendment_adoption_checkpoints(amendment: dict[str, Any], waves: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    wave = next((item for item in waves if item.get("id") == amendment.get("target_wave")), {})
+    projections: list[dict[str, Any]] = []
+    for checkpoint in wave.get("checkpoints") or []:
+        references = [
+            reference
+            for reference in checkpoint.get("evidence") or []
+            if isinstance(reference, dict)
+            and reference.get("type") == "amendment-adoption-evidence"
+            and reference.get("amendment_id") == amendment.get("id")
+        ]
+        if references:
+            projections.append({**checkpoint, "evidence": references})
+    return projections
+
+
+def _amendment_exit_submission_markdown(packet: dict[str, Any], *, label: str) -> list[str]:
+    evidence = packet.get("evidence_reference") or {}
+    return [
+        f"**{label}:** `{inline(packet.get('id'))}` / packet SHA-256 `{inline(packet.get('packet_sha256'))}`",
+        "",
+        f"- Candidate / declared candidate / branch: `{inline(packet.get('candidate_commit'))}` / "
+        f"`{inline(packet.get('declared_candidate_commit'))}` / `{inline(packet.get('branch'))}`",
+        f"- Submitted by / at: {inline(packet.get('submitted_by'))} / `{inline(packet.get('submitted_at'))}`",
+        f"- Bound exit evidence: amendment `{inline(evidence.get('amendment_id'))}` / "
+        f"`{inline(evidence.get('path'))}` / `{inline(evidence.get('sha256'))}` / "
+        f"`{inline(evidence.get('commit'))}`",
+        f"- Acceptance-criteria SHA-256: `{inline(packet.get('acceptance_criteria_sha256'))}`",
+        f"- Selected-check SHA-256: `{inline(packet.get('selected_checks_sha256'))}`",
+        f"- Selected checks: {joined(packet.get('selected_checks'), code=True)}",
+        f"- Prior round / replayed open findings: `{inline(packet.get('prior_attempt_id'))}` / "
+        f"{joined(packet.get('open_finding_ids'), code=True)}",
+        "",
+    ]
+
+
+def amendment_exit_review_markdown(
+    amendment: dict[str, Any], waves: list[dict[str, Any]], *, heading_level: int
+) -> list[str]:
+    prefix = "#" * heading_level
+    amendment_id = inline(amendment.get("id"))
+    completion = amendment.get("completion") or {}
+    control = completion.get("exit_review_control")
+    lines = [f"{prefix} Amendment-exit review and adoption — {amendment_id}", ""]
+    if not isinstance(control, dict):
+        lines.extend(
+            [
+                "**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are "
+                "recorded; this view does not fabricate history.",
+                "",
+            ]
+        )
+    else:
+        attempts = control.get("attempts") or []
+        lines.extend(
+            [
+                f"**Exit-review mode:** `append-only v{inline(control.get('version'))}` / "
+                f"{len(attempts)} completed round(s)",
+                "",
+            ]
+        )
+        for attempt in attempts:
+            packet = attempt.get("submission") or {}
+            review = attempt.get("review") or {}
+            ledger = attempt.get("ledger") or {}
+            attempt_id = inline(packet.get("id"))
+            lines.extend([f"{prefix}# Exit round {attempt_id}", ""])
+            lines.extend(_amendment_exit_submission_markdown(packet, label="Immutable amendment-exit packet"))
+            lines.extend(
+                [
+                    f"**Disposition / reviewer / time:** `{inline(review.get('result'))}` / "
+                    f"{inline(review.get('reviewer'))} / `{inline(review.get('reviewed_at'))}`",
+                    "",
+                    f"**Reviewed state commit:** `{inline(review.get('reviewed_state_commit'))}`",
+                    "",
+                    f"**Immutable exit-review ledger:** `{inline(ledger.get('path'))}` / "
+                    f"`{inline(ledger.get('sha256'))}`",
+                    "",
+                    f"**Review notes:** {inline(review.get('notes'))}",
+                    "",
+                    "**Findings opened:**",
+                    "",
+                ]
+            )
+            findings = attempt.get("findings") or []
+            if findings:
+                lines.extend(
+                    f"- `{inline(finding.get('id'))}` `{inline(finding.get('severity'))}` "
+                    f"blocking=`{inline(finding.get('blocking'))}` "
+                    f"criterion=`{inline(finding.get('criterion_index'))}` "
+                    f"— {inline(finding.get('title'))}; reproduce: {inline(finding.get('reproduction'))}; "
+                    f"remediate: {inline(finding.get('required_remediation'))}"
+                    for finding in findings
+                )
+            else:
+                lines.append("- None")
+            lines.extend(["", "**Prior finding closures:**", ""])
+            closures = attempt.get("closures") or []
+            if closures:
+                lines.extend(
+                    f"- `{inline(closure.get('finding_id'))}` `{inline(closure.get('disposition'))}` — "
+                    f"{inline(closure.get('evidence'))}"
+                    for closure in closures
+                )
+            else:
+                lines.append("- None")
+            lines.append("")
+        current = control.get("current_submission")
+        if isinstance(current, dict):
+            lines.extend(
+                _amendment_exit_submission_markdown(
+                    current,
+                    label="Current immutable amendment-exit submission awaiting review",
+                )
+            )
+        else:
+            lines.extend(["**Current immutable amendment-exit submission awaiting review:** None", ""])
+    lines.extend(
+        [
+            f"**Latest completion projection:** `{inline(completion.get('status'))}` by "
+            f"{inline(completion.get('reviewer'))} at `{inline(completion.get('reviewed_at'))}`",
+            "",
+            f"**Latest completion evidence:** {joined(completion.get('evidence'), code=True)}",
+            "",
+            f"**Latest completion notes:** {inline(completion.get('notes'))}",
+            "",
+            "**Bound amendment-adoption checkpoints:**",
+            "",
+        ]
+    )
+    checkpoints = amendment_adoption_checkpoints(amendment, waves)
+    if not checkpoints:
+        lines.append("- None")
+    for checkpoint in checkpoints:
+        lines.append(
+            f"- `{inline(checkpoint.get('id'))}` `{inline(checkpoint.get('kind'))}` by "
+            f"{inline(checkpoint.get('recorded_by'))} at `{inline(checkpoint.get('recorded_at'))}` — "
+            f"{inline(checkpoint.get('notes'))}"
+        )
+        lines.extend(
+            f"  - amendment `{inline(reference.get('amendment_id'))}` / `{inline(reference.get('path'))}` / "
+            f"`{inline(reference.get('sha256'))}` / `{inline(reference.get('commit'))}`"
+            for reference in checkpoint.get("evidence") or []
+        )
+    lines.append("")
+    return lines
+
+
 def status_table(lines: list[str], title: str, statuses: Counter[str], order: list[str] | None = None) -> None:
     lines.extend([f"### {title}", "", "| Status | Count |", "|---|---:|"])
     keys = [key for key in (order or []) if key in statuses]
@@ -377,6 +525,20 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
         )
     if not wave_authority_rows(data):
         lines.append("| - | - | - | - | - | - | - | 0 |")
+
+    lines.extend(
+        [
+            "",
+            "## Amendment-exit review and adoption projections",
+            "",
+            "Immutable exit rounds, the latest completion projection, and bound adoption checkpoints remain distinct.",
+            "",
+        ]
+    )
+    for amendment in amendments:
+        lines.extend(amendment_exit_review_markdown(amendment, waves, heading_level=3))
+    if not amendments:
+        lines.extend(["No Wave amendment is recorded.", ""])
 
     review_tasks = [
         task
@@ -650,7 +812,9 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
             )
         else:
             lines.append("- None")
-        lines.extend(["", "**Bounded tasks:**", ""])
+        lines.append("")
+        lines.extend(amendment_exit_review_markdown(amendment, waves, heading_level=3))
+        lines.extend(["**Bounded tasks:**", ""])
         for task in amendment.get("tasks", []):
             checked = "x" if task.get("status") == "DONE" else " "
             review = task.get("review") or {}

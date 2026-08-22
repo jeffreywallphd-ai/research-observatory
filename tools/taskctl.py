@@ -169,7 +169,20 @@ def amendment_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...
             json.dumps(attempt, sort_keys=True, separators=(",", ":"))
             for attempt in (amendment.get("bootstrap") or {}).get("attempts", [])
         )
+        snapshot[f"{amendment_id}:exit-review"] = tuple(
+            json.dumps(attempt, sort_keys=True, separators=(",", ":"))
+            for attempt in ((amendment.get("completion") or {}).get("exit_review_control") or {}).get("attempts", [])
+        )
     return snapshot
+
+
+def wave_checkpoint_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
+    return {
+        str(wave["id"]): tuple(
+            json.dumps(checkpoint, sort_keys=True, separators=(",", ":")) for checkpoint in wave.get("checkpoints", [])
+        )
+        for wave in data.get("waves", [])
+    }
 
 
 def task_review_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
@@ -373,6 +386,7 @@ def save_validated(
     expected_approved_waves: tuple[tuple[str, str], ...] | None = None,
     expected_amendment_history: dict[str, tuple[str, ...]] | None = None,
     expected_task_review_history: dict[str, tuple[str, ...]] | None = None,
+    expected_wave_checkpoint_history: dict[str, tuple[str, ...]] | None = None,
     schema_path: Path | None = None,
     repo: Path | None = None,
 ) -> None:
@@ -397,6 +411,12 @@ def save_validated(
             current = current_history.get(task_id)
             if current is None or current[: len(prior)] != prior:
                 raise SystemExit(f"Append-only task review history changed for {task_id}")
+    if expected_wave_checkpoint_history is not None:
+        current_history = wave_checkpoint_history_snapshot(document)
+        for wave_id, prior in expected_wave_checkpoint_history.items():
+            current = current_history.get(wave_id)
+            if current is None or current[: len(prior)] != prior:
+                raise SystemExit(f"Append-only Wave checkpoint history changed for {wave_id}")
     schema_errors = backlog_schema_errors(document, schema_path=schema_path)
     if schema_errors:
         raise SystemExit("Refusing to save invalid backlog schema:\n- " + "\n- ".join(schema_errors))
@@ -417,6 +437,7 @@ def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
         expected_approved_waves=getattr(args, "source_approved_waves", None),
         expected_amendment_history=getattr(args, "source_amendment_history", None),
         expected_task_review_history=getattr(args, "source_task_review_history", None),
+        expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
         repo=getattr(args, "repo_root", None),
     )
 
@@ -2386,6 +2407,17 @@ def validate(
         for checkpoint in wave.get("checkpoints", []):
             if not checkpoint.get("id") or not checkpoint.get("kind") or not checkpoint.get("evidence"):
                 errors.append(f"{wave_id}: every integration checkpoint requires id, kind, and evidence")
+            if repo is not None:
+                for reference in checkpoint.get("evidence", []):
+                    if isinstance(reference, dict):
+                        errors.extend(
+                            bound_evidence_reference_errors(
+                                repo,
+                                reference,
+                                expected_type=str(reference.get("type") or ""),
+                                label=f"{wave_id}/{checkpoint.get('id')}",
+                            )
+                        )
     aliases: dict[str, str] = {}
     for cid, capability in capabilities.items():
         if capability.get("execution_mode") not in {"wave_contribution", "capability_campaign"}:
@@ -2671,6 +2703,39 @@ def validate(
             or not completion.get("evidence")
         ):
             errors.append(f"{amendment_id}: approved completion lacks DONE tasks, reviewer, time, or evidence")
+        errors.extend(amendment_exit_review_control_errors(data, amendment, repo))
+        if (
+            lifecycle.get("status") == "ADOPTED"
+            and repo is not None
+            and completion.get("exit_review_control") is not None
+        ):
+            control = completion.get("exit_review_control") or {}
+            attempts = control.get("attempts") or []
+            if not attempts or (attempts[-1].get("review") or {}).get("result") != "approved":
+                errors.append(f"{amendment_id}: adopted amendment lacks an immutable approved exit review")
+            adoption_checkpoints = [
+                checkpoint
+                for checkpoint in (waves.get(target_wave) or {}).get("checkpoints", [])
+                if checkpoint.get("kind") == "security"
+                and any(
+                    isinstance(reference, dict) and reference.get("type") == "amendment-adoption-evidence"
+                    for reference in checkpoint.get("evidence", [])
+                )
+            ]
+            if not adoption_checkpoints:
+                errors.append(f"{amendment_id}: adopted amendment lacks a bound security checkpoint")
+            else:
+                for reference in adoption_checkpoints[-1].get("evidence", []):
+                    if isinstance(reference, dict):
+                        errors.extend(
+                            bound_evidence_reference_errors(
+                                repo,
+                                reference,
+                                expected_type="amendment-adoption-evidence",
+                                expected_amendment=amendment_id,
+                                label=f"{amendment_id}/adoption",
+                            )
+                        )
     ordered_gates = [gate for gate in data.get("release_gates", []) if isinstance(gate, dict)]
     for wave_id, wave in waves.items():
         exit_gates = [gate for gate in ordered_gates if gate.get("after_wave") == wave_id]
@@ -3196,6 +3261,391 @@ def require_clean_repository(repo: Path, *, allowed_untracked: set[str] | None =
         raise SystemExit(f"Untracked source exists outside the authorized transition: {unexpected[0]}")
 
 
+def git_head_branch(repo: Path) -> tuple[str, str]:
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
+    branch = subprocess.run(["git", "branch", "--show-current"], cwd=repo, capture_output=True, text=True, check=False)
+    if head.returncode != 0 or branch.returncode != 0:
+        raise SystemExit("Cannot resolve the exact Git state for amendment evidence")
+    head_value = head.stdout.strip()
+    branch_value = branch.stdout.strip()
+    if re.fullmatch(r"[0-9a-f]{40}", head_value) is None or not branch_value.startswith("codex/"):
+        raise SystemExit("Amendment evidence requires a full Git commit on a codex branch")
+    return head_value, branch_value
+
+
+def safe_evidence_relative(repo: Path, value: str, label: str) -> tuple[str, Path]:
+    path = Path(value).resolve()
+    try:
+        relative = path.relative_to(repo).as_posix()
+    except ValueError as exc:
+        raise SystemExit(f"{label} must be inside the repository") from exc
+    pure = PurePosixPath(relative)
+    if not relative.startswith("artifacts/evidence/") or pure.is_absolute() or ".." in pure.parts:
+        raise SystemExit(f"{label} must be a safe path under artifacts/evidence")
+    return relative, path
+
+
+def bound_evidence_reference_errors(
+    repo: Path,
+    reference: dict[str, Any],
+    *,
+    expected_type: str,
+    expected_amendment: str | None = None,
+    label: str,
+) -> list[str]:
+    errors: list[str] = []
+    if reference.get("type") != expected_type:
+        errors.append(f"{label}: evidence type is not {expected_type}")
+    if expected_amendment is not None and reference.get("amendment_id") != expected_amendment:
+        errors.append(f"{label}: evidence amendment identity mismatch")
+    relative = str(reference.get("path") or "")
+    pure = PurePosixPath(relative)
+    if not relative.startswith("artifacts/evidence/") or pure.is_absolute() or ".." in pure.parts:
+        return [*errors, f"{label}: unsafe evidence path"]
+    commit = str(reference.get("commit") or "")
+    if not git_commit_exists(repo, commit):
+        return [*errors, f"{label}: evidence commit does not exist"]
+    if not git_is_ancestor(repo, commit):
+        errors.append(f"{label}: evidence commit is not on current history")
+    payload = git_blob(repo, commit, relative)
+    if payload is None:
+        return [*errors, f"{label}: evidence is absent from its bound commit"]
+    if evidence_sha256(payload) != reference.get("sha256"):
+        errors.append(f"{label}: evidence hash differs from its bound Git blob")
+    try:
+        manifest = parse_evidence_payload(payload, PurePosixPath(relative).suffix)
+    except (UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        return [*errors, f"{label}: bound evidence is invalid: {exc}"]
+    if manifest.get("amendmentId") != reference.get("amendment_id"):
+        errors.append(f"{label}: bound evidence payload amendment identity mismatch")
+    return errors
+
+
+def amendment_exit_packet_sha256(packet: dict[str, Any]) -> str:
+    payload = copy.deepcopy(packet)
+    payload.pop("packet_sha256", None)
+    return canonical_json_sha256(payload)
+
+
+def amendment_exit_open_findings(attempts: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    open_findings: dict[str, dict[str, Any]] = {}
+    for attempt in attempts:
+        for closure in attempt.get("closures", []):
+            open_findings.pop(str(closure.get("finding_id")), None)
+        for finding in attempt.get("findings", []):
+            open_findings[str(finding.get("id"))] = finding
+    return open_findings
+
+
+def amendment_exit_manifest_checks(manifest: dict[str, Any]) -> tuple[list[str], list[str]]:
+    errors: list[str] = []
+    checks = manifest.get("checks")
+    if not isinstance(checks, list) or not checks:
+        return [], ["amendment exit evidence requires at least one selected check"]
+    commands: list[str] = []
+    for check in checks:
+        if not isinstance(check, dict) or not isinstance(check.get("command"), str) or not check["command"].strip():
+            errors.append("every amendment exit check requires a non-empty command")
+            continue
+        commands.append(str(check["command"]))
+        if check.get("result") != "passed":
+            errors.append(f"amendment exit check did not pass: {check['command']}")
+    if len(commands) != len(set(commands)):
+        errors.append("amendment exit selected checks must be unique")
+    return commands, errors
+
+
+def amendment_exit_manifest_errors(
+    data: dict[str, Any],
+    amendment: dict[str, Any],
+    packet: dict[str, Any],
+    manifest: dict[str, Any],
+    *,
+    strict_state: bool,
+) -> list[str]:
+    amendment_id = str(amendment.get("id"))
+    errors: list[str] = []
+    if manifest.get("documentType") != "wave-amendment-exit-evidence":
+        errors.append(f"{amendment_id}: invalid amendment exit document type")
+    if manifest.get("amendmentId") != amendment_id:
+        errors.append(f"{amendment_id}: exit evidence amendment identity mismatch")
+    if manifest.get("changeRequestId") != amendment.get("change_request_id"):
+        errors.append(f"{amendment_id}: exit evidence change-request identity mismatch")
+    if manifest.get("targetWave") != amendment.get("target_wave"):
+        errors.append(f"{amendment_id}: exit evidence target Wave mismatch")
+    declared = str(manifest.get("candidateCommit") or "")
+    if re.fullmatch(r"[0-9a-f]{40}", declared) is None:
+        errors.append(f"{amendment_id}: exit evidence lacks a full candidate commit")
+    branch = str(manifest.get("branch") or "")
+    if not branch.startswith("codex/"):
+        errors.append(f"{amendment_id}: exit evidence branch is not a codex branch")
+    _commands, check_errors = amendment_exit_manifest_checks(manifest)
+    errors.extend(f"{amendment_id}: {error}" for error in check_errors)
+    if strict_state:
+        wave = get(wave_map(data), str(amendment.get("target_wave")), "wave")
+        wave_campaign = wave.get("campaign") or {}
+        recorded_wave = manifest.get("waveCampaign")
+        expected_wave = {
+            "status": wave_campaign.get("status"),
+            "scope": wave_campaign.get("scope"),
+            "pauseReason": wave_campaign.get("pause_reason"),
+        }
+        if recorded_wave != expected_wave:
+            errors.append(f"{amendment_id}: exit evidence waveCampaign is not the exact paused Wave state")
+        recorded_amendment = manifest.get("amendmentCampaign")
+        if recorded_amendment != {"status": "ACTIVE", "scope": "wave-amendment", "pauseReason": None}:
+            errors.append(f"{amendment_id}: exit evidence amendmentCampaign is not the exact pre-submit state")
+        if manifest.get("requiredNextTransition") != "independent amendment exit review":
+            errors.append(f"{amendment_id}: exit evidence does not name the required next transition")
+    if canonical_json_sha256(packet.get("acceptanceCriteria", [])) == canonical_json_sha256([]):
+        errors.append(f"{amendment_id}: approved amendment packet has no exit criteria")
+    return errors
+
+
+def historical_amendment_completion(repo: Path, commit: str, amendment_id: str) -> dict[str, Any] | None:
+    payload = git_blob(repo, commit, "planning/backlog.yaml")
+    if payload is None:
+        return None
+    try:
+        document = yaml.safe_load(payload.decode("utf-8"))
+    except UnicodeError, yaml.YAMLError:
+        return None
+    amendment = next(
+        (item for item in document.get("wave_amendments", []) if item.get("id") == amendment_id),
+        None,
+    )
+    return copy.deepcopy((amendment or {}).get("completion"))
+
+
+def amendment_exit_submission_errors(
+    data: dict[str, Any],
+    amendment: dict[str, Any],
+    approved_packet: dict[str, Any],
+    submission: dict[str, Any],
+    *,
+    expected_id: str,
+    expected_prior_id: str | None,
+    expected_prior_submission: dict[str, Any] | None,
+    expected_open_ids: list[str],
+    repo: Path,
+    strict_state: bool,
+) -> list[str]:
+    amendment_id = str(amendment.get("id"))
+    errors: list[str] = []
+    if submission.get("id") != expected_id:
+        errors.append(f"{amendment_id}: amendment exit attempt IDs are not sequential")
+    if submission.get("prior_attempt_id") != expected_prior_id:
+        errors.append(f"{amendment_id}: amendment exit submission does not link its prior attempt")
+    candidate_commit = str(submission.get("candidate_commit") or "")
+    if expected_prior_submission is not None:
+        prior_candidate = str(expected_prior_submission.get("candidate_commit") or "")
+        if candidate_commit == prior_candidate or not git_is_ancestor(repo, prior_candidate, candidate_commit):
+            errors.append(f"{amendment_id}: amendment exit remediation is not a strict descendant")
+    if sorted(str(item) for item in submission.get("open_finding_ids", [])) != expected_open_ids:
+        errors.append(f"{amendment_id}: amendment exit remediation does not replay the exact open findings")
+    criteria_hash = canonical_json_sha256(approved_packet.get("acceptanceCriteria", []))
+    if submission.get("acceptance_criteria_sha256") != criteria_hash:
+        errors.append(f"{amendment_id}: amendment exit criteria hash differs from the approved packet")
+    if submission.get("selected_checks_sha256") != canonical_json_sha256(submission.get("selected_checks", [])):
+        errors.append(f"{amendment_id}: amendment exit selected-check hash mismatch")
+    if submission.get("packet_sha256") != amendment_exit_packet_sha256(submission):
+        errors.append(f"{amendment_id}: amendment exit packet hash mismatch")
+    reference = submission.get("evidence_reference") or {}
+    errors.extend(
+        bound_evidence_reference_errors(
+            repo,
+            reference,
+            expected_type="amendment-exit-evidence",
+            expected_amendment=amendment_id,
+            label=f"{amendment_id}/{expected_id}",
+        )
+    )
+    if reference.get("commit") != submission.get("candidate_commit"):
+        errors.append(f"{amendment_id}: exit candidate differs from the evidence Git binding")
+    payload = git_blob(repo, str(reference.get("commit") or ""), str(reference.get("path") or ""))
+    if payload is None:
+        return errors
+    try:
+        manifest = parse_evidence_payload(payload, PurePosixPath(str(reference.get("path"))).suffix)
+    except (UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        return [*errors, f"{amendment_id}: invalid amendment exit evidence: {exc}"]
+    if submission.get("declared_candidate_commit") != manifest.get("candidateCommit"):
+        errors.append(f"{amendment_id}: declared exit candidate differs from the bound evidence")
+    if submission.get("branch") != manifest.get("branch"):
+        errors.append(f"{amendment_id}: frozen exit branch differs from the bound evidence")
+    selected_checks, check_errors = amendment_exit_manifest_checks(manifest)
+    errors.extend(f"{amendment_id}: {error}" for error in check_errors)
+    if submission.get("selected_checks") != selected_checks:
+        errors.append(f"{amendment_id}: frozen selected checks differ from the bound evidence")
+    errors.extend(amendment_exit_manifest_errors(data, amendment, approved_packet, manifest, strict_state=strict_state))
+    return errors
+
+
+def amendment_exit_ledger_errors(
+    repo: Path,
+    amendment_id: str,
+    attempt: dict[str, Any],
+) -> list[str]:
+    errors: list[str] = []
+    ledger = attempt.get("ledger") or {}
+    relative = str(ledger.get("path") or "")
+    pure = PurePosixPath(relative)
+    if not relative.startswith("artifacts/evidence/") or pure.is_absolute() or ".." in pure.parts:
+        return [f"{amendment_id}: unsafe amendment exit review ledger path"]
+    path = repo.joinpath(*pure.parts)
+    try:
+        payload = path.read_bytes()
+        document = json.loads(payload)
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        return [f"{amendment_id}: cannot load amendment exit review ledger: {exc}"]
+    if evidence_sha256(payload) != ledger.get("sha256"):
+        errors.append(f"{amendment_id}: amendment exit review ledger hash mismatch")
+    submission = attempt.get("submission") or {}
+    review = attempt.get("review") or {}
+    reference = submission.get("evidence_reference") or {}
+    expected = {
+        "amendment_id": amendment_id,
+        "attempt_id": submission.get("id"),
+        "reviewed_state_commit": review.get("reviewed_state_commit"),
+        "reviewer": review.get("reviewer"),
+        "result": review.get("result"),
+    }
+    for field, value in expected.items():
+        if document.get(field) != value:
+            errors.append(f"{amendment_id}: exit review ledger {field} differs from the frozen review")
+    ledger_evidence = document.get("evidence") or {}
+    if any(ledger_evidence.get(field) != reference.get(field) for field in ("path", "sha256")):
+        errors.append(f"{amendment_id}: exit review ledger evidence binding mismatch")
+    if document.get("findings") != attempt.get("findings") or document.get("closures") != attempt.get("closures"):
+        errors.append(f"{amendment_id}: exit review ledger finding or closure history mismatch")
+    return errors
+
+
+def amendment_exit_review_control_errors(
+    data: dict[str, Any],
+    amendment: dict[str, Any],
+    repo: Path | None,
+) -> list[str]:
+    completion = amendment.get("completion") or {}
+    control = completion.get("exit_review_control")
+    if control is None:
+        return []
+    amendment_id = str(amendment.get("id"))
+    errors: list[str] = []
+    attempts = control.get("attempts") or []
+    expected_ids = [f"R{index:02d}" for index in range(1, len(attempts) + 1)]
+    actual_ids = [str((attempt.get("submission") or {}).get("id")) for attempt in attempts]
+    if actual_ids != expected_ids:
+        errors.append(f"{amendment_id}: amendment exit review attempts are not sequential")
+    if repo is None:
+        return errors
+    try:
+        _approval, approved_packet, _payload = load_amendment_authority(repo, amendment_id)
+    except SystemExit as exc:
+        return [*errors, str(exc)]
+    open_findings: dict[str, dict[str, Any]] = {}
+    prior_id: str | None = None
+    prior_submission: dict[str, Any] | None = None
+    seen_findings: set[str] = set()
+    for index, attempt in enumerate(attempts, start=1):
+        submission = attempt.get("submission") or {}
+        expected_open = sorted(open_findings)
+        review = attempt.get("review") or {}
+        strict_state = not (
+            index == 1
+            and review.get("result") == "changes-requested"
+            and submission.get("declared_candidate_commit") != submission.get("candidate_commit")
+        )
+        errors.extend(
+            amendment_exit_submission_errors(
+                data,
+                amendment,
+                approved_packet,
+                submission,
+                expected_id=f"R{index:02d}",
+                expected_prior_id=prior_id,
+                expected_prior_submission=prior_submission,
+                expected_open_ids=expected_open,
+                repo=repo,
+                strict_state=strict_state,
+            )
+        )
+        reviewed_state = str(review.get("reviewed_state_commit") or "")
+        if not git_commit_exists(repo, reviewed_state) or not git_is_ancestor(repo, reviewed_state):
+            errors.append(f"{amendment_id}: reviewed amendment exit state is absent from current history")
+        elif not git_is_ancestor(repo, str(submission.get("candidate_commit") or ""), reviewed_state):
+            errors.append(f"{amendment_id}: reviewed exit state does not descend from its candidate")
+        else:
+            historical = historical_amendment_completion(repo, reviewed_state, amendment_id) or {}
+            historical_current = (historical.get("exit_review_control") or {}).get("current_submission")
+            if historical_current is None:
+                if not (
+                    index == 1
+                    and historical.get("status") == "REVIEW"
+                    and submission.get("evidence_reference", {}).get("path") in historical.get("evidence", [])
+                ):
+                    errors.append(f"{amendment_id}: reviewed exit state lacks its exact frozen submission")
+            elif historical_current != submission:
+                errors.append(f"{amendment_id}: reviewed exit submission differs from its frozen backlog state")
+        findings = attempt.get("findings") or []
+        ordering = [REVIEW_SEVERITY_ORDER.get(str(item.get("severity")), 99) for item in findings]
+        if ordering != sorted(ordering):
+            errors.append(f"{amendment_id}: amendment exit findings are not severity-ranked")
+        for finding in findings:
+            finding_id = str(finding.get("id") or "")
+            if finding_id in seen_findings:
+                errors.append(f"{amendment_id}: duplicate amendment exit finding ID {finding_id}")
+            seen_findings.add(finding_id)
+            criterion_index = finding.get("criterion_index")
+            if type(criterion_index) is not int or not 1 <= criterion_index <= len(
+                approved_packet.get("acceptanceCriteria", [])
+            ):
+                errors.append(f"{amendment_id}: exit finding {finding_id} has an invalid criterion index")
+        closures = attempt.get("closures") or []
+        closure_ids = [str(item.get("finding_id") or "") for item in closures]
+        if len(closure_ids) != len(set(closure_ids)) or not set(closure_ids).issubset(open_findings):
+            errors.append(f"{amendment_id}: amendment exit closures do not target unique open findings")
+        for closure_id in closure_ids:
+            open_findings.pop(closure_id, None)
+        for finding in findings:
+            open_findings[str(finding.get("id"))] = finding
+        if review.get("result") == "approved" and any(item.get("blocking") is True for item in open_findings.values()):
+            errors.append(f"{amendment_id}: amendment exit approval retains open blocking findings")
+        errors.extend(amendment_exit_ledger_errors(repo, amendment_id, attempt))
+        prior_id = f"R{index:02d}"
+        prior_submission = submission
+    current = control.get("current_submission")
+    if current is not None:
+        errors.extend(
+            amendment_exit_submission_errors(
+                data,
+                amendment,
+                approved_packet,
+                current,
+                expected_id=f"R{len(attempts) + 1:02d}",
+                expected_prior_id=prior_id,
+                expected_prior_submission=prior_submission,
+                expected_open_ids=sorted(open_findings),
+                repo=repo,
+                strict_state=True,
+            )
+        )
+        if completion.get("status") != "REVIEW":
+            errors.append(f"{amendment_id}: current exit submission requires REVIEW completion")
+    elif attempts:
+        latest = attempts[-1].get("review") or {}
+        expected_status = {
+            "approved": "APPROVED",
+            "changes-requested": "CHANGES_REQUESTED",
+            "blocked": "BLOCKED",
+        }.get(str(latest.get("result")))
+        if completion.get("status") != expected_status:
+            errors.append(f"{amendment_id}: completion projection differs from the latest immutable exit review")
+        if any(completion.get(field) != latest.get(field) for field in ("reviewer", "reviewed_at", "notes")):
+            errors.append(f"{amendment_id}: latest amendment exit review projection was flattened or altered")
+    return errors
+
+
 def amendment_path_authorized(path: str, patterns: list[str]) -> bool:
     for pattern in patterns:
         if pattern.endswith("/**"):
@@ -3657,6 +4107,171 @@ def command_amendment_pause(args, data, capabilities, slices, tasks, gates) -> N
     persist(args, data)
 
 
+def build_amendment_exit_submission(
+    args: argparse.Namespace,
+    data: dict[str, Any],
+    amendment: dict[str, Any],
+    evidence_value: str,
+    *,
+    migration_state_commit: str | None = None,
+) -> dict[str, Any]:
+    repo = discover_repository(args.file)
+    _approval, approved_packet, _payload = load_amendment_authority(repo, str(amendment["id"]))
+    relative, path = safe_evidence_relative(repo, evidence_value, "Amendment exit evidence")
+    candidate, current_branch = git_head_branch(repo)
+    if migration_state_commit is not None:
+        candidate = migration_state_commit
+    payload = git_blob(repo, candidate, relative)
+    if payload is None:
+        raise SystemExit("Amendment exit evidence must exist in the exact candidate commit")
+    try:
+        manifest = parse_evidence_payload(payload, path.suffix)
+    except (UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Invalid amendment exit evidence: {exc}") from exc
+    branch = str(manifest.get("branch") or "")
+    if migration_state_commit is None:
+        require_clean_repository(repo)
+        declared_candidate = str(manifest.get("candidateCommit") or "")
+        if (
+            branch != current_branch
+            or not git_commit_exists(repo, declared_candidate)
+            or not git_is_ancestor(repo, declared_candidate, candidate)
+        ):
+            raise SystemExit(
+                "Amendment exit evidence must name an implementation candidate on the current codex-branch history"
+            )
+        strict_errors = amendment_exit_manifest_errors(
+            data,
+            amendment,
+            approved_packet,
+            manifest,
+            strict_state=True,
+        )
+        if strict_errors:
+            raise SystemExit("Invalid amendment exit evidence:\n- " + "\n- ".join(strict_errors))
+    else:
+        if not git_is_ancestor(repo, migration_state_commit):
+            raise SystemExit("Historical amendment exit review state is not on current history")
+    selected_checks, check_errors = amendment_exit_manifest_checks(manifest)
+    if check_errors:
+        raise SystemExit("Invalid amendment exit evidence:\n- " + "\n- ".join(check_errors))
+    control = (amendment.get("completion") or {}).get("exit_review_control") or {
+        "version": 1,
+        "attempts": [],
+        "current_submission": None,
+    }
+    attempts = control.get("attempts") or []
+    open_ids = sorted(amendment_exit_open_findings(attempts))
+    submitted_at = utc_now()
+    if migration_state_commit is not None:
+        review_events = [
+            event for event in (amendment.get("lifecycle") or {}).get("history", []) if event.get("status") == "REVIEW"
+        ]
+        if review_events:
+            submitted_at = str(review_events[-1].get("at"))
+    submitted_by = str((amendment.get("campaign") or {}).get("owner") or "codex")
+    if hasattr(args, "agent"):
+        submitted_by = normalized_identity(str(args.agent), "Amendment exit submitter")
+    submission = {
+        "id": f"R{len(attempts) + 1:02d}",
+        "submitted_by": submitted_by,
+        "submitted_at": submitted_at,
+        "candidate_commit": candidate,
+        "declared_candidate_commit": str(manifest.get("candidateCommit")),
+        "branch": branch,
+        "evidence_reference": {
+            "type": "amendment-exit-evidence",
+            "amendment_id": str(amendment["id"]),
+            "path": relative,
+            "sha256": evidence_sha256(payload),
+            "commit": candidate,
+        },
+        "acceptance_criteria_sha256": canonical_json_sha256(approved_packet.get("acceptanceCriteria", [])),
+        "selected_checks": selected_checks,
+        "selected_checks_sha256": canonical_json_sha256(selected_checks),
+        "prior_attempt_id": str((attempts[-1].get("submission") or {}).get("id")) if attempts else None,
+        "open_finding_ids": open_ids,
+    }
+    submission["packet_sha256"] = amendment_exit_packet_sha256(submission)
+    return submission
+
+
+def load_amendment_exit_review_ledger(
+    repo: Path,
+    value: str,
+) -> tuple[str, bytes, dict[str, Any]]:
+    relative, path = safe_evidence_relative(repo, value, "Amendment exit review ledger")
+    try:
+        payload = path.read_bytes()
+        ledger = json.loads(payload)
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Invalid amendment exit review ledger: {exc}") from exc
+    if not isinstance(ledger, dict):
+        raise SystemExit("Amendment exit review ledger root must be an object")
+    return relative, payload, ledger
+
+
+def prepare_amendment_exit_attempt(
+    amendment: dict[str, Any],
+    submission: dict[str, Any],
+    ledger_relative: str,
+    ledger_payload: bytes,
+    ledger: dict[str, Any],
+    *,
+    reviewer: str,
+    result: str,
+) -> dict[str, Any]:
+    amendment_id = str(amendment.get("id"))
+    if ledger.get("amendment_id") != amendment_id or ledger.get("attempt_id") != submission.get("id"):
+        raise SystemExit("Amendment exit review ledger identity does not match the current submission")
+    if ledger.get("reviewer") != reviewer or ledger.get("result") != result:
+        raise SystemExit("Amendment exit review ledger disposition does not match the command")
+    ledger_evidence = ledger.get("evidence") or {}
+    reference = submission.get("evidence_reference") or {}
+    if any(ledger_evidence.get(field) != reference.get(field) for field in ("path", "sha256")):
+        raise SystemExit("Amendment exit review ledger does not bind the submitted evidence")
+    findings = ledger.get("findings")
+    closures = ledger.get("closures")
+    if not isinstance(findings, list) or not isinstance(closures, list):
+        raise SystemExit("Amendment exit review ledger requires finding and closure arrays")
+    finding_ids = [str(item.get("id") or "") for item in findings if isinstance(item, dict)]
+    if len(finding_ids) != len(findings) or len(finding_ids) != len(set(finding_ids)):
+        raise SystemExit("Amendment exit review findings require unique IDs")
+    ordering = [REVIEW_SEVERITY_ORDER.get(str(item.get("severity")), 99) for item in findings]
+    if ordering != sorted(ordering) or any(value == 99 for value in ordering):
+        raise SystemExit("Amendment exit review findings must be severity-ranked")
+    control = (amendment.get("completion") or {}).get("exit_review_control") or {}
+    open_findings = amendment_exit_open_findings(control.get("attempts") or [])
+    closure_ids = [str(item.get("finding_id") or "") for item in closures if isinstance(item, dict)]
+    if len(closure_ids) != len(closures) or len(closure_ids) != len(set(closure_ids)):
+        raise SystemExit("Amendment exit closures require unique finding IDs")
+    if not set(closure_ids).issubset(open_findings):
+        raise SystemExit("Amendment exit closure does not target an open prior finding")
+    for closure_id in closure_ids:
+        open_findings.pop(closure_id, None)
+    for finding in findings:
+        open_findings[str(finding["id"])] = finding
+    if result == "approved" and any(item.get("blocking") is True for item in open_findings.values()):
+        raise SystemExit("Amendment exit approval is denied while blocking findings remain open")
+    reviewed_state = str(ledger.get("reviewed_state_commit") or "")
+    if re.fullmatch(r"[0-9a-f]{40}", reviewed_state) is None:
+        raise SystemExit("Amendment exit review ledger lacks the exact reviewed state commit")
+    review = {
+        "reviewer": reviewer,
+        "result": result,
+        "reviewed_at": utc_now(),
+        "reviewed_state_commit": reviewed_state,
+        "notes": ledger.get("notes"),
+    }
+    return {
+        "submission": submission,
+        "review": review,
+        "ledger": {"path": ledger_relative, "sha256": evidence_sha256(ledger_payload)},
+        "findings": findings,
+        "closures": closures,
+    }
+
+
 def command_amendment_submit(args, data, capabilities, slices, tasks, gates) -> None:
     amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
     require_runtime_amendment_integrity(args.file, amendment)
@@ -3666,10 +4281,27 @@ def command_amendment_submit(args, data, capabilities, slices, tasks, gates) -> 
     require_active_lease(amendment, args.agent, f"Wave amendment {args.amendment}")
     if not amendment.get("tasks") or any(task.get("status") != "DONE" for task in amendment["tasks"]):
         raise SystemExit("Every authorized amendment task must be DONE before exit submission")
-    if not args.evidence:
+    evidence_values = list(args.evidence or [])
+    if args.from_path:
+        evidence_values = [args.from_path]
+    if not evidence_values:
         raise SystemExit("Amendment exit evidence is required")
+    if len(evidence_values) != 1:
+        raise SystemExit("Controlled amendment exit submission binds exactly one evidence file")
+    submission = build_amendment_exit_submission(args, data, amendment, evidence_values[0])
+    completion = amendment["completion"]
+    control = completion.setdefault("exit_review_control", {"version": 1, "attempts": [], "current_submission": None})
+    if control.get("current_submission") is not None:
+        raise SystemExit("An amendment exit submission is already awaiting review")
+    control["current_submission"] = submission
     campaign.update(status="REVIEW", updated_at=utc_now(), lease=None)
-    amendment["completion"].update(status="REVIEW", evidence=args.evidence, notes=args.note)
+    completion.update(
+        status="REVIEW",
+        reviewer=None,
+        reviewed_at=None,
+        evidence=[submission["evidence_reference"]["path"]],
+        notes=args.note,
+    )
     data["control_plane"]["active_amendment"] = None
     append_amendment_event(amendment, "REVIEW", args.agent, args.note or "Submitted amendment exit for review.")
     persist(args, data)
@@ -3685,16 +4317,57 @@ def command_amendment_review(args, data, capabilities, slices, tasks, gates) -> 
     reviewer = normalized_identity(args.reviewer, "Amendment reviewer")
     if reviewer == campaign.get("owner"):
         raise SystemExit("Amendment reviewer must be independent from the campaign owner")
-    now = utc_now()
+    if not args.from_path:
+        raise SystemExit("Controlled amendment exit review requires --from <review-ledger>")
+    repo = discover_repository(args.file)
+    ledger_relative, ledger_payload, ledger = load_amendment_exit_review_ledger(repo, args.from_path)
+    control = completion.get("exit_review_control")
+    if control is None:
+        reviewed_state = str(ledger.get("reviewed_state_commit") or "")
+        evidence_values = list(completion.get("evidence") or [])
+        if len(evidence_values) != 1:
+            raise SystemExit("Legacy amendment exit review must bind exactly one submitted evidence path")
+        submission = build_amendment_exit_submission(
+            args,
+            data,
+            amendment,
+            str(evidence_values[0]),
+            migration_state_commit=reviewed_state,
+        )
+        control = {"version": 1, "attempts": [], "current_submission": submission}
+        completion["exit_review_control"] = control
+    current_submission = control.get("current_submission")
+    if not isinstance(current_submission, dict):
+        raise SystemExit("Amendment exit review lacks a frozen current submission")
+    current_head, _branch = git_head_branch(repo)
+    reviewed_state = str(ledger.get("reviewed_state_commit") or "")
+    if control.get("attempts") and reviewed_state != current_head:
+        raise SystemExit("Remediation review must bind the exact current frozen submission state")
+    if not git_is_ancestor(repo, reviewed_state, current_head):
+        raise SystemExit("Reviewed amendment exit state is not on current history")
+    require_clean_repository(repo, allowed_untracked={ledger_relative})
+    attempt = prepare_amendment_exit_attempt(
+        amendment,
+        current_submission,
+        ledger_relative,
+        ledger_payload,
+        ledger,
+        reviewer=reviewer,
+        result=args.result,
+    )
+    control.setdefault("attempts", []).append(attempt)
+    control["current_submission"] = None
+    now = str((attempt.get("review") or {}).get("reviewed_at"))
+    notes = str(ledger.get("notes") or args.note or "")
     if args.result == "approved":
         campaign.update(status="COMPLETE", updated_at=now, lease=None)
-        completion.update(status="APPROVED", reviewer=reviewer, reviewed_at=now, notes=args.note)
+        completion.update(status="APPROVED", reviewer=reviewer, reviewed_at=now, notes=notes)
     else:
         state = "CHANGES_REQUESTED" if args.result == "changes-requested" else "BLOCKED"
-        campaign.update(status="PAUSED", updated_at=now, pause_reason=args.note or state, lease=None)
-        completion.update(status=state, reviewer=reviewer, reviewed_at=now, notes=args.note)
+        campaign.update(status="PAUSED", updated_at=now, pause_reason=notes or state, lease=None)
+        completion.update(status=state, reviewer=reviewer, reviewed_at=now, notes=notes)
         append_amendment_event(
-            amendment, "PAUSED" if state == "CHANGES_REQUESTED" else "BLOCKED", reviewer, args.note or state
+            amendment, "PAUSED" if state == "CHANGES_REQUESTED" else "BLOCKED", reviewer, notes or state
         )
     persist(args, data)
 
@@ -3708,9 +4381,47 @@ def command_amendment_adopt(args, data, capabilities, slices, tasks, gates) -> N
         raise SystemExit("Independent approved amendment-exit review is required before adoption")
     if not amendment.get("tasks") or any(task.get("status") != "DONE" for task in amendment["tasks"]):
         raise SystemExit("Every amendment task must be DONE and independently approved before adoption")
-    if not args.evidence:
-        raise SystemExit("Control/security adoption checkpoint evidence is required")
+    if not args.from_path:
+        raise SystemExit("Controlled adoption requires --from <checkpoint-evidence>")
     actor = normalized_identity(args.agent, "Adoption actor")
+    repo = discover_repository(args.file)
+    require_clean_repository(repo)
+    current_head, current_branch = git_head_branch(repo)
+    relative, path = safe_evidence_relative(repo, args.from_path, "Adoption checkpoint evidence")
+    payload = git_blob(repo, current_head, relative)
+    if payload is None:
+        raise SystemExit("Adoption checkpoint evidence must exist in current HEAD")
+    try:
+        manifest = parse_evidence_payload(payload, path.suffix)
+    except (UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        raise SystemExit(f"Invalid adoption checkpoint evidence: {exc}") from exc
+    latest_attempts = (completion.get("exit_review_control") or {}).get("attempts") or []
+    if not latest_attempts:
+        raise SystemExit("Adoption requires immutable amendment exit review history")
+    latest_review = latest_attempts[-1].get("review") or {}
+    reviewed_completion_commit = str(manifest.get("reviewedCompletionCommit") or "")
+    historical = historical_amendment_completion(repo, reviewed_completion_commit, str(amendment["id"])) or {}
+    historical_attempts = (historical.get("exit_review_control") or {}).get("attempts") or []
+    if (
+        manifest.get("documentType") != "wave-amendment-adoption-evidence"
+        or manifest.get("amendmentId") != amendment.get("id")
+        or manifest.get("targetWave") != amendment.get("target_wave")
+        or manifest.get("candidateCommit") != reviewed_completion_commit
+        or manifest.get("branch") != current_branch
+        or not git_is_ancestor(repo, reviewed_completion_commit, current_head)
+        or not historical_attempts
+        or historical_attempts[-1] != latest_attempts[-1]
+        or (historical_attempts[-1].get("review") or {}).get("result") != "approved"
+        or latest_review.get("result") != "approved"
+    ):
+        raise SystemExit("Adoption checkpoint does not bind the exact approved amendment exit history")
+    reference = {
+        "type": "amendment-adoption-evidence",
+        "amendment_id": str(amendment["id"]),
+        "path": relative,
+        "sha256": evidence_sha256(payload),
+        "commit": current_head,
+    }
     wave = get(wave_map(data), str(amendment["target_wave"]), "wave")
     wave_campaign = wave.get("campaign") or {}
     if wave_campaign.get("status") != "PAUSED" or wave_campaign.get("scope") != "amendment-hold":
@@ -3723,7 +4434,7 @@ def command_amendment_adopt(args, data, capabilities, slices, tasks, gates) -> N
             "kind": "security",
             "recorded_by": actor,
             "recorded_at": utc_now(),
-            "evidence": args.evidence,
+            "evidence": [reference],
             "notes": args.note or f"Adopted {args.amendment} control-plane amendment.",
         }
     )
@@ -5132,17 +5843,20 @@ def build_parser() -> argparse.ArgumentParser:
     amsubmit = ams.add_parser("submit")
     amsubmit.add_argument("amendment")
     amsubmit.add_argument("--agent", required=True)
-    amsubmit.add_argument("--evidence", action="append", required=True)
+    amsubmit.add_argument("--evidence", action="append")
+    amsubmit.add_argument("--from", dest="from_path")
     amsubmit.add_argument("--note", default="")
     amreview = ams.add_parser("review")
     amreview.add_argument("amendment")
     amreview.add_argument("--reviewer", required=True)
     amreview.add_argument("--result", choices=["approved", "changes-requested", "blocked"], required=True)
+    amreview.add_argument("--from", dest="from_path")
     amreview.add_argument("--note", default="")
     amadopt = ams.add_parser("adopt")
     amadopt.add_argument("amendment")
     amadopt.add_argument("--agent", required=True)
-    amadopt.add_argument("--evidence", action="append", required=True)
+    amadopt.add_argument("--evidence", action="append")
+    amadopt.add_argument("--from", dest="from_path")
     amadopt.add_argument("--note", default="")
     amdispose = ams.add_parser("dispose")
     amdispose.add_argument("amendment")
@@ -5350,6 +6064,7 @@ def main() -> None:
     args.source_approved_waves = approved_wave_snapshot(data)
     args.source_amendment_history = amendment_history_snapshot(data)
     args.source_task_review_history = task_review_history_snapshot(data)
+    args.source_wave_checkpoint_history = wave_checkpoint_history_snapshot(data)
     args.repo_root = discover_repository(args.file)
     if args.command == "validate":
         command_validate(args, data, capabilities, slices, tasks, gates)

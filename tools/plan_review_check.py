@@ -112,6 +112,221 @@ def task_review_projection(task: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def amendment_exit_projection(amendment: dict[str, Any]) -> dict[str, Any]:
+    completion = amendment.get("completion") or {}
+    control = completion.get("exit_review_control")
+    return {
+        "amendment_id": amendment.get("id"),
+        "mode": "append-only" if isinstance(control, dict) else "latest-completion-only",
+        "latest_completion": {
+            key: completion.get(key) for key in ("status", "reviewer", "reviewed_at", "evidence", "notes")
+        },
+        "exit_review_control": control if isinstance(control, dict) else None,
+    }
+
+
+def amendment_adoption_checkpoints(amendment: dict[str, Any], waves: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    target_wave = amendment.get("target_wave")
+    wave = next((item for item in waves if item.get("id") == target_wave), {})
+    projections: list[dict[str, Any]] = []
+    for checkpoint in wave.get("checkpoints") or []:
+        references = [
+            reference
+            for reference in checkpoint.get("evidence") or []
+            if isinstance(reference, dict)
+            and reference.get("type") == "amendment-adoption-evidence"
+            and reference.get("amendment_id") == amendment.get("id")
+        ]
+        if references:
+            projections.append(
+                {
+                    "id": checkpoint.get("id"),
+                    "kind": checkpoint.get("kind"),
+                    "recorded_by": checkpoint.get("recorded_by"),
+                    "recorded_at": checkpoint.get("recorded_at"),
+                    "notes": checkpoint.get("notes"),
+                    "evidence_references": references,
+                }
+            )
+    return projections
+
+
+def amendment_exit_manifest_errors(
+    label: str,
+    manifest_projection: Any,
+    manifest_checkpoints: Any,
+    amendment: dict[str, Any],
+    waves: list[dict[str, Any]],
+) -> list[str]:
+    errors: list[str] = []
+    if manifest_projection != amendment_exit_projection(amendment):
+        errors.append(f"{label}: amendment-exit history/current projection differs from authoritative backlog")
+    if manifest_checkpoints != amendment_adoption_checkpoints(amendment, waves):
+        errors.append(f"{label}: amendment-adoption checkpoint references differ from authoritative backlog")
+    return errors
+
+
+def amendment_exit_render_errors(
+    text: str,
+    projection: dict[str, Any],
+    adoption_checkpoints: list[dict[str, Any]],
+) -> list[str]:
+    amendment_id = str(projection.get("amendment_id"))
+    amendment_attr = html.escape(amendment_id, quote=True)
+    mode = str(projection.get("mode"))
+    errors: list[str] = []
+    if text.count(f'data-amendment-exit-id="{amendment_attr}"') != 1:
+        errors.append(f"{amendment_id}: rendered amendment-exit identity is missing or duplicated")
+    if f'data-exit-review-mode="{html.escape(mode, quote=True)}"' not in text:
+        errors.append(f"{amendment_id}: rendered amendment-exit mode differs from authoritative completion")
+
+    latest = projection.get("latest_completion") or {}
+    if f'data-latest-completion-projection="{amendment_attr}"' not in text:
+        errors.append(f"{amendment_id}: latest completion projection is missing")
+    for attribute, value in (
+        ("data-latest-completion-status", latest.get("status") or "PENDING"),
+        ("data-latest-completion-reviewer", latest.get("reviewer") or "none"),
+        ("data-latest-completion-reviewed-at", latest.get("reviewed_at") or "none"),
+        ("data-latest-completion-notes", latest.get("notes") or "none"),
+    ):
+        if f'{attribute}="{html.escape(str(value), quote=True)}"' not in text:
+            errors.append(f"{amendment_id}: latest completion projection differs at {attribute}")
+    completion_evidence_prefix = f'data-latest-completion-evidence="{amendment_attr}:'
+    latest_evidence = latest.get("evidence") or []
+    if text.count(completion_evidence_prefix) != len(latest_evidence):
+        errors.append(f"{amendment_id}: latest completion evidence count differs from authoritative completion")
+    for index, reference in enumerate(latest_evidence, start=1):
+        marker = f'{completion_evidence_prefix}{index}">{html.escape(str(reference))}</code>'
+        if marker not in text:
+            errors.append(f"{amendment_id}: latest completion evidence reference {index} is missing or altered")
+
+    attempt_prefix = f'data-exit-review-attempt="{amendment_attr}:'
+    finding_prefix = f'data-exit-review-finding="{amendment_attr}:'
+    closure_prefix = f'data-exit-review-closure="{amendment_attr}:'
+    current_prefix = f'data-exit-current-submission="{amendment_attr}:'
+    control = projection.get("exit_review_control")
+    if not isinstance(control, dict):
+        for item_label, prefix in (
+            ("attempt", attempt_prefix),
+            ("finding", finding_prefix),
+            ("closure", closure_prefix),
+            ("current submission", current_prefix),
+        ):
+            if prefix in text:
+                errors.append(f"{amendment_id}: legacy latest-completion-only record fabricates a {item_label}")
+    else:
+        attempts = control.get("attempts") or []
+        expected_findings = sum(len(attempt.get("findings") or []) for attempt in attempts)
+        expected_closures = sum(len(attempt.get("closures") or []) for attempt in attempts)
+        if text.count(attempt_prefix) != len(attempts):
+            errors.append(f"{amendment_id}: rendered amendment-exit round count differs from history")
+        if text.count(finding_prefix) != expected_findings:
+            errors.append(f"{amendment_id}: rendered amendment-exit finding count differs from history")
+        if text.count(closure_prefix) != expected_closures:
+            errors.append(f"{amendment_id}: rendered amendment-exit closure count differs from history")
+        for attempt in attempts:
+            packet = attempt.get("submission") or {}
+            attempt_id = str(packet.get("id"))
+            attempt_attr = html.escape(attempt_id, quote=True)
+            packet_hash = html.escape(str(packet.get("packet_sha256")), quote=True)
+            review = attempt.get("review") or {}
+            ledger = attempt.get("ledger") or {}
+            if (
+                f'data-exit-review-attempt="{amendment_attr}:{attempt_attr}"' not in text
+                or f'data-exit-packet-sha256="{packet_hash}"' not in text
+            ):
+                errors.append(f"{amendment_id}: exit round {attempt_id} packet identity/hash is missing")
+            if (
+                f'data-exit-review-round="{amendment_attr}:{attempt_attr}"' not in text
+                or f'data-reviewed-state-commit="{html.escape(str(review.get("reviewed_state_commit")), quote=True)}"'
+                not in text
+            ):
+                errors.append(f"{amendment_id}: exit round {attempt_id} reviewed-state binding is missing")
+            if (
+                f'data-exit-review-ledger="{amendment_attr}:{attempt_attr}"' not in text
+                or f'data-exit-ledger-sha256="{html.escape(str(ledger.get("sha256")), quote=True)}"' not in text
+            ):
+                errors.append(f"{amendment_id}: exit round {attempt_id} ledger identity/hash is missing")
+            evidence = packet.get("evidence_reference") or {}
+            for attribute, value in (
+                ("data-exit-evidence-amendment", evidence.get("amendment_id")),
+                ("data-exit-evidence-path", evidence.get("path")),
+                ("data-exit-evidence-sha256", evidence.get("sha256")),
+                ("data-exit-evidence-commit", evidence.get("commit")),
+            ):
+                if f'{attribute}="{html.escape(str(value), quote=True)}"' not in text:
+                    errors.append(f"{amendment_id}: exit round {attempt_id} differs at {attribute}")
+            for item_label, value in (
+                ("evidence amendment", evidence.get("amendment_id")),
+                ("evidence path", evidence.get("path")),
+                ("evidence hash", evidence.get("sha256")),
+                ("evidence commit", evidence.get("commit")),
+                ("criteria hash", packet.get("acceptance_criteria_sha256")),
+                ("selected-check hash", packet.get("selected_checks_sha256")),
+            ):
+                if f">{html.escape(str(value))}<" not in text:
+                    errors.append(f"{amendment_id}: exit round {attempt_id} {item_label} is missing")
+            for finding in attempt.get("findings") or []:
+                marker = f"{amendment_attr}:{attempt_attr}:{html.escape(str(finding.get('id')), quote=True)}"
+                if f'data-exit-review-finding="{marker}"' not in text:
+                    errors.append(f"{amendment_id}: exit finding {finding.get('id')} is missing from {attempt_id}")
+            for closure in attempt.get("closures") or []:
+                marker = f"{amendment_attr}:{attempt_attr}:{html.escape(str(closure.get('finding_id')), quote=True)}"
+                if f'data-exit-review-closure="{marker}"' not in text:
+                    errors.append(
+                        f"{amendment_id}: exit closure {closure.get('finding_id')} is missing from {attempt_id}"
+                    )
+        current = control.get("current_submission")
+        if isinstance(current, dict):
+            marker = f"{amendment_attr}:{html.escape(str(current.get('id')), quote=True)}"
+            if (
+                text.count(current_prefix) != 1
+                or f'data-exit-current-submission="{marker}"' not in text
+                or f'data-exit-packet-sha256="{html.escape(str(current.get("packet_sha256")), quote=True)}"' not in text
+            ):
+                errors.append(f"{amendment_id}: current immutable exit submission identity/hash is missing")
+            current_evidence = current.get("evidence_reference") or {}
+            for attribute, value in (
+                ("data-exit-evidence-amendment", current_evidence.get("amendment_id")),
+                ("data-exit-evidence-path", current_evidence.get("path")),
+                ("data-exit-evidence-sha256", current_evidence.get("sha256")),
+                ("data-exit-evidence-commit", current_evidence.get("commit")),
+            ):
+                if f'{attribute}="{html.escape(str(value), quote=True)}"' not in text:
+                    errors.append(f"{amendment_id}: current immutable exit submission differs at {attribute}")
+        elif current_prefix in text:
+            errors.append(f"{amendment_id}: rendered exit history invents a current submission")
+
+    checkpoint_prefix = f'data-adoption-checkpoint="{amendment_attr}:'
+    evidence_prefix = f'data-adoption-evidence="{amendment_attr}:'
+    expected_references = sum(len(item.get("evidence_references") or []) for item in adoption_checkpoints)
+    if text.count(checkpoint_prefix) != len(adoption_checkpoints):
+        errors.append(f"{amendment_id}: adoption checkpoint count differs from authoritative Wave")
+    if text.count(evidence_prefix) != expected_references:
+        errors.append(f"{amendment_id}: adoption evidence-reference count differs from authoritative Wave")
+    for checkpoint in adoption_checkpoints:
+        checkpoint_id = html.escape(str(checkpoint.get("id")), quote=True)
+        if f'data-adoption-checkpoint="{amendment_attr}:{checkpoint_id}"' not in text:
+            errors.append(f"{amendment_id}: adoption checkpoint {checkpoint.get('id')} is missing")
+        for index, reference in enumerate(checkpoint.get("evidence_references") or [], start=1):
+            marker = f"{amendment_attr}:{checkpoint_id}:{index}"
+            if (
+                f'data-adoption-evidence="{marker}"' not in text
+                or f'data-adoption-evidence-amendment="{html.escape(str(reference.get("amendment_id")), quote=True)}"'
+                not in text
+                or f'data-adoption-evidence-sha256="{html.escape(str(reference.get("sha256")), quote=True)}"'
+                not in text
+                or f'data-adoption-evidence-commit="{html.escape(str(reference.get("commit")), quote=True)}"'
+                not in text
+                or f">{html.escape(str(reference.get('path')))}<" not in text
+            ):
+                errors.append(
+                    f"{amendment_id}: adoption checkpoint {checkpoint.get('id')} "
+                    f"reference {index} is missing or altered"
+                )
+    return errors
+
+
 def task_review_manifest_errors(
     label: str,
     manifest_reviews: Any,
@@ -254,6 +469,7 @@ def main() -> int:
         for amendment in backlog.get("wave_amendments", [])
         if amendment.get("change_request_id")
     }
+    waves = backlog.get("waves") or []
     ecr_packets = {
         path.name.removesuffix(".packet.json"): path
         for path in (repo / "planning/enabler-change-requests").glob("ECR-*.packet.json")
@@ -344,6 +560,21 @@ def main() -> int:
         source_tasks = (amendments_by_change.get(change_id) or {}).get("tasks", [])
         expected_task_reviews = [task_review_projection(task) for task in source_tasks]
         errors.extend(task_review_manifest_errors(change_id, entry.get("task_reviews"), source_tasks))
+        source_amendment = amendments_by_change.get(change_id) or {
+            "id": packet.get("proposedAmendmentId"),
+            "completion": {},
+        }
+        expected_exit_review = amendment_exit_projection(source_amendment)
+        expected_adoption_checkpoints = amendment_adoption_checkpoints(source_amendment, waves)
+        errors.extend(
+            amendment_exit_manifest_errors(
+                change_id,
+                entry.get("exit_review"),
+                entry.get("adoption_checkpoints"),
+                source_amendment,
+                waves,
+            )
+        )
         page = site / str(entry.get("page"))
         if not page.exists():
             errors.append(f"{change_id}: missing enabler detail page {page}")
@@ -351,6 +582,14 @@ def main() -> int:
             page_text = page.read_text(encoding="utf-8")
             for projection in expected_task_reviews:
                 errors.extend(f"{change_id}: {error}" for error in task_review_render_errors(page_text, projection))
+            errors.extend(
+                f"{change_id}: {error}"
+                for error in amendment_exit_render_errors(
+                    page_text,
+                    expected_exit_review,
+                    expected_adoption_checkpoints,
+                )
+            )
 
     manifest_caps = {entry["capability_id"]: entry for entry in manifest.get("capabilities", [])}
     if set(manifest_caps) != set(cap_plans):

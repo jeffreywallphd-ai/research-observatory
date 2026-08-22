@@ -9,7 +9,7 @@ import sys
 import tempfile
 import unittest
 from argparse import Namespace
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import chdir, redirect_stderr, redirect_stdout
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -522,6 +522,149 @@ class TaskctlWorkflowTests(unittest.TestCase):
             worktree=repo.as_posix(),
         )
         return context, repo, task, base, head
+
+    def commit_all(self, repo: Path, message: str) -> str:
+        subprocess.run(["git", "add", "."], cwd=repo, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", message], cwd=repo, capture_output=True, check=True)
+        return subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+        ).stdout.strip()
+
+    def amendment_exit_repository(
+        self,
+        root: Path,
+    ) -> tuple[tuple[dict, dict, dict, dict, dict], Path, dict[str, Any], dict[str, Any], str, str]:
+        repo = root / "repo"
+        (repo / "planning").mkdir(parents=True)
+        evidence_dir = repo / "artifacts" / "evidence"
+        evidence_dir.mkdir(parents=True)
+        (repo / "planning" / "backlog.yaml").write_text("{}\n", encoding="utf-8")
+        (repo / "implementation.txt").write_text("bounded amendment implementation\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "init", "-b", "codex/amendment-exit"],
+            cwd=repo,
+            capture_output=True,
+            check=True,
+        )
+        subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
+        subprocess.run(["git", "config", "user.name", "Taskctl Test"], cwd=repo, check=True)
+        implementation_commit = self.commit_all(repo, "implementation")
+
+        context = self.interrupted_workflow(lifecycle_status="REVIEW")
+        data, _capabilities, _slices, _tasks, _gates = context
+        amendment = data["wave_amendments"][0]
+        amendment["campaign"] = {
+            "status": "REVIEW",
+            "scope": "wave-amendment",
+            "owner": "alice",
+            "branch": "codex/amendment-exit",
+            "worktree": repo.as_posix(),
+            "base_sha": implementation_commit,
+            "profile": "LOC",
+            "platform": "windows-x64",
+            "started_at": "2026-08-21T01:00:00+00:00",
+            "updated_at": "2026-08-21T02:00:00+00:00",
+            "pause_reason": None,
+            "lease": None,
+        }
+        for task in amendment["tasks"]:
+            task.update(
+                status="DONE",
+                completed_at="2026-08-21T01:30:00+00:00",
+                evidence=[{"type": "criterion-manifest"}],
+                verification_state="passed",
+                review={
+                    "reviewer": "agent:task-reviewer",
+                    "result": "approved",
+                    "reviewed_at": "2026-08-21T01:45:00+00:00",
+                    "notes": None,
+                },
+            )
+        amendment["completion"].update(
+            status="REVIEW",
+            reviewer=None,
+            reviewed_at=None,
+            evidence=["artifacts/evidence/W1.A02.exit-R01.json"],
+            notes="Legacy exit submission awaiting independent review.",
+        )
+        amendment["lifecycle"]["history"].append(
+            {
+                "id": "E02",
+                "status": "REVIEW",
+                "actor": "alice",
+                "at": "2026-08-21T02:00:00+00:00",
+                "rationale": "Submitted the legacy exit projection for review.",
+            }
+        )
+        data["control_plane"]["active_amendment"] = None
+        wave = data["waves"][0]
+        wave["campaign"].update(
+            status="PAUSED",
+            scope="amendment-hold",
+            pause_reason="Approved interrupting amendment",
+        )
+        exit_manifest = {
+            "documentType": "wave-amendment-exit-evidence",
+            "schemaVersion": "1.0",
+            "amendmentId": "W1.A02",
+            "changeRequestId": "ECR-0001",
+            "targetWave": "W1",
+            "candidateCommit": implementation_commit,
+            "branch": "codex/amendment-exit",
+            "waveCampaign": {
+                "status": "PAUSED",
+                "scope": "amendment-hold",
+                "pauseReason": "Approved interrupting amendment",
+            },
+            "amendmentCampaign": {
+                "status": "REVIEW",
+                "scope": "wave-amendment",
+                "pauseReason": None,
+            },
+            "requiredNextTransition": "independent amendment exit review",
+            "checks": [
+                {
+                    "command": "python tools/taskctl.py validate",
+                    "result": "passed",
+                    "summary": "The bounded controller state validates.",
+                }
+            ],
+        }
+        exit_path = evidence_dir / "W1.A02.exit-R01.json"
+        exit_path.write_text(json.dumps(exit_manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
+        (repo / "planning" / "backlog.yaml").write_text(
+            json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n"
+        )
+        reviewed_state = self.commit_all(repo, "legacy frozen exit review state")
+        approved_packet = {"acceptanceCriteria": [f"Exit criterion {index}" for index in range(1, 7)]}
+        return context, repo, amendment, approved_packet, implementation_commit, reviewed_state
+
+    def write_amendment_exit_ledger(
+        self,
+        repo: Path,
+        submission: dict[str, Any],
+        *,
+        attempt_id: str,
+        reviewed_state_commit: str,
+        result: str,
+        findings: list[dict[str, Any]],
+        closures: list[dict[str, Any]],
+    ) -> Path:
+        path = repo / "artifacts" / "evidence" / f"W1.A02.exit-review-{attempt_id}.json"
+        reference = submission["evidence_reference"]
+        ledger = {
+            "amendment_id": "W1.A02",
+            "attempt_id": attempt_id,
+            "reviewed_state_commit": reviewed_state_commit,
+            "reviewer": "agent:exit-reviewer",
+            "result": result,
+            "evidence": {"path": reference["path"], "sha256": reference["sha256"]},
+            "notes": f"Immutable {attempt_id} exit disposition.",
+            "findings": findings,
+            "closures": closures,
+        }
+        path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8", newline="\n")
+        return path
 
     def write_controlled_task_evidence(
         self,
@@ -3296,6 +3439,565 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 errors = validate(*context)
                 self.assertIn(expected, "\n".join(errors))
 
+    def test_amendment_exit_review_migrates_r01_preserves_it_through_r02_and_binds_adoption(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context, repo, amendment, approved_packet, implementation_commit, reviewed_state = (
+                self.amendment_exit_repository(Path(temporary))
+            )
+            file_path = str(repo / "planning" / "backlog.yaml")
+            authority: tuple[dict[str, Any], dict[str, Any], bytes] = (
+                {},
+                approved_packet,
+                b"approved packet",
+            )
+            review_args = Namespace(
+                amendment="W1.A02",
+                reviewer="agent:exit-reviewer",
+                result="changes-requested",
+                from_path="",
+                note="",
+                file=file_path,
+            )
+            with chdir(repo), patch("taskctl.load_amendment_authority", return_value=authority):
+                legacy_submission = taskctl_module.build_amendment_exit_submission(
+                    review_args,
+                    context[0],
+                    amendment,
+                    amendment["completion"]["evidence"][0],
+                    migration_state_commit=reviewed_state,
+                )
+            finding = {
+                "id": "W1.A02-EXIT-R01-F01",
+                "severity": "high",
+                "blocking": True,
+                "criterion_index": 6,
+                "title": "Exit review is not history-bound",
+                "reproduction": "Substitute the reviewed evidence reference.",
+                "required_remediation": "Freeze review and checkpoint bindings.",
+            }
+            r01_ledger = self.write_amendment_exit_ledger(
+                repo,
+                legacy_submission,
+                attempt_id="R01",
+                reviewed_state_commit=reviewed_state,
+                result="changes-requested",
+                findings=[finding],
+                closures=[],
+            )
+            review_args.from_path = str(r01_ledger)
+            with (
+                chdir(repo),
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_review(review_args, *context)
+
+            control = amendment["completion"]["exit_review_control"]
+            self.assertIsNone(control["current_submission"])
+            self.assertEqual(["R01"], [item["submission"]["id"] for item in control["attempts"]])
+            self.assertEqual(reviewed_state, control["attempts"][0]["submission"]["candidate_commit"])
+            self.assertEqual(
+                implementation_commit,
+                control["attempts"][0]["submission"]["declared_candidate_commit"],
+            )
+            self.assertEqual("changes-requested", control["attempts"][0]["review"]["result"])
+            with patch("taskctl.load_amendment_authority", return_value=authority):
+                self.assertEqual(
+                    [],
+                    taskctl_module.amendment_exit_review_control_errors(context[0], amendment, repo),
+                )
+            frozen_r01 = json.dumps(control["attempts"][0], sort_keys=True)
+
+            amendment["campaign"].update(
+                status="ACTIVE",
+                pause_reason=None,
+                lease=new_lease("alice", 8),
+            )
+            amendment["lifecycle"]["status"] = "ACTIVE"
+            amendment["lifecycle"]["history"].append(
+                {
+                    "id": "E03",
+                    "status": "ACTIVE",
+                    "actor": "alice",
+                    "at": "2026-08-21T03:00:00+00:00",
+                    "rationale": "Perform bounded remediation.",
+                }
+            )
+            context[0]["control_plane"]["active_amendment"] = "W1.A02"
+            exit_r02 = repo / "artifacts" / "evidence" / "W1.A02.exit-R02.json"
+            r02_manifest = {
+                "documentType": "wave-amendment-exit-evidence",
+                "schemaVersion": "1.0",
+                "amendmentId": "W1.A02",
+                "changeRequestId": "ECR-0001",
+                "targetWave": "W1",
+                "candidateCommit": reviewed_state,
+                "branch": "codex/amendment-exit",
+                "waveCampaign": {
+                    "status": "PAUSED",
+                    "scope": "amendment-hold",
+                    "pauseReason": "Approved interrupting amendment",
+                },
+                "amendmentCampaign": {
+                    "status": "ACTIVE",
+                    "scope": "wave-amendment",
+                    "pauseReason": None,
+                },
+                "requiredNextTransition": "independent amendment exit review",
+                "checks": [
+                    {
+                        "command": "python tools/taskctl.py validate",
+                        "result": "passed",
+                        "summary": "The remediated exit state validates.",
+                    },
+                    {
+                        "command": "python -m unittest focused-exit-control",
+                        "result": "passed",
+                        "summary": "Adversarial exit tests pass.",
+                    },
+                ],
+            }
+            exit_r02.write_text(json.dumps(r02_manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
+            (repo / "planning" / "backlog.yaml").write_text(
+                json.dumps(context[0], indent=2) + "\n", encoding="utf-8", newline="\n"
+            )
+            bound_exit_commit = self.commit_all(repo, "bounded R02 exit evidence")
+            submit_args = Namespace(
+                amendment="W1.A02",
+                agent="alice",
+                evidence=None,
+                from_path=str(exit_r02),
+                note="R02 remediates the open exit finding.",
+                file=file_path,
+            )
+            with (
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_submit(submit_args, *context)
+
+            current = control["current_submission"]
+            self.assertEqual("R02", current["id"])
+            self.assertEqual("R01", current["prior_attempt_id"])
+            self.assertEqual([finding["id"]], current["open_finding_ids"])
+            self.assertEqual(bound_exit_commit, current["candidate_commit"])
+            self.assertEqual(reviewed_state, current["declared_candidate_commit"])
+            self.assertEqual(
+                taskctl_module.canonical_json_sha256(approved_packet["acceptanceCriteria"]),
+                current["acceptance_criteria_sha256"],
+            )
+            self.assertEqual(taskctl_module.amendment_exit_packet_sha256(current), current["packet_sha256"])
+            self.assertEqual(
+                [
+                    "python tools/taskctl.py validate",
+                    "python -m unittest focused-exit-control",
+                ],
+                current["selected_checks"],
+            )
+            self.assertEqual(
+                taskctl_module.canonical_json_sha256(current["selected_checks"]),
+                current["selected_checks_sha256"],
+            )
+
+            (repo / "planning" / "backlog.yaml").write_text(
+                json.dumps(context[0], indent=2) + "\n", encoding="utf-8", newline="\n"
+            )
+            r02_reviewed_state = self.commit_all(repo, "freeze R02 submission")
+            closure = {
+                "finding_id": finding["id"],
+                "disposition": "fixed",
+                "evidence": "R02 binds the exact candidate, review ledger, and checkpoint evidence.",
+            }
+            r02_ledger = self.write_amendment_exit_ledger(
+                repo,
+                current,
+                attempt_id="R02",
+                reviewed_state_commit=r02_reviewed_state,
+                result="approved",
+                findings=[],
+                closures=[closure],
+            )
+            approved_review_args = Namespace(
+                amendment="W1.A02",
+                reviewer="agent:exit-reviewer",
+                result="approved",
+                from_path=str(r02_ledger),
+                note="",
+                file=file_path,
+            )
+            stale_ledger = self.write_amendment_exit_ledger(
+                repo,
+                current,
+                attempt_id="R02",
+                reviewed_state_commit=bound_exit_commit,
+                result="approved",
+                findings=[],
+                closures=[closure],
+            )
+            with (
+                self.assertRaisesRegex(SystemExit, "exact current frozen submission state"),
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_review(
+                    Namespace(**{**vars(approved_review_args), "from_path": str(stale_ledger)}),
+                    *context,
+                )
+            self.write_amendment_exit_ledger(
+                repo,
+                current,
+                attempt_id="R02",
+                reviewed_state_commit=r02_reviewed_state,
+                result="approved",
+                findings=[],
+                closures=[closure],
+            )
+            denied_ledger = json.loads(r02_ledger.read_text(encoding="utf-8"))
+            denied_ledger["closures"] = []
+            r02_ledger.write_text(json.dumps(denied_ledger, indent=2) + "\n", encoding="utf-8", newline="\n")
+            with (
+                self.assertRaisesRegex(SystemExit, "blocking findings remain open"),
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_review(approved_review_args, *context)
+            self.write_amendment_exit_ledger(
+                repo,
+                current,
+                attempt_id="R02",
+                reviewed_state_commit=r02_reviewed_state,
+                result="approved",
+                findings=[],
+                closures=[closure],
+            )
+            with (
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_review(approved_review_args, *context)
+
+            self.assertEqual(frozen_r01, json.dumps(control["attempts"][0], sort_keys=True))
+            self.assertEqual(["R01", "R02"], [item["submission"]["id"] for item in control["attempts"]])
+            self.assertEqual([closure], control["attempts"][1]["closures"])
+            self.assertEqual("APPROVED", amendment["completion"]["status"])
+            with chdir(repo), patch("taskctl.load_amendment_authority", return_value=authority):
+                self.assertEqual(
+                    [],
+                    taskctl_module.amendment_exit_review_control_errors(context[0], amendment, repo),
+                )
+
+            (repo / "planning" / "backlog.yaml").write_text(
+                json.dumps(context[0], indent=2) + "\n", encoding="utf-8", newline="\n"
+            )
+            reviewed_completion_commit = self.commit_all(repo, "approved R02 completion")
+            checkpoint_path = repo / "artifacts" / "evidence" / "W1.A02.adoption.json"
+            missing_adopt_args = Namespace(
+                amendment="W1.A02",
+                agent="alice",
+                evidence=None,
+                from_path=str(repo / "artifacts" / "evidence" / "missing-adoption.json"),
+                note="",
+                file=file_path,
+            )
+            with (
+                self.assertRaisesRegex(SystemExit, "must exist in current HEAD"),
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_adopt(missing_adopt_args, *context)
+            checkpoint_manifest = {
+                "documentType": "wave-amendment-adoption-evidence",
+                "amendmentId": "W1.A02",
+                "targetWave": "W1",
+                "candidateCommit": reviewed_completion_commit,
+                "branch": "codex/amendment-exit",
+                "reviewedCompletionCommit": reviewed_completion_commit,
+            }
+            checkpoint_path.write_text(json.dumps(checkpoint_manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
+            checkpoint_commit = self.commit_all(repo, "bind adoption checkpoint")
+
+            def require_exit_integrity(_file: str, _amendment: dict[str, Any]) -> None:
+                errors = taskctl_module.amendment_exit_review_control_errors(context[0], _amendment, repo)
+                if errors:
+                    raise SystemExit("Invalid amendment exit control:\n- " + "\n- ".join(errors))
+
+            adopt_args = Namespace(
+                amendment="W1.A02",
+                agent="alice",
+                evidence=None,
+                from_path=str(checkpoint_path),
+                note="Adopt the independently approved control amendment.",
+                file=file_path,
+            )
+            checkpoint_path.write_text(
+                json.dumps({**checkpoint_manifest, "targetWave": "W2"}, indent=2) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            with (
+                self.assertRaisesRegex(SystemExit, "Tracked worktree changes"),
+                patch("taskctl.require_runtime_amendment_integrity", side_effect=require_exit_integrity),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_adopt(adopt_args, *context)
+            subprocess.run(
+                ["git", "restore", "artifacts/evidence/W1.A02.adoption.json"],
+                cwd=repo,
+                capture_output=True,
+                check=True,
+            )
+            with (
+                patch("taskctl.require_runtime_amendment_integrity", side_effect=require_exit_integrity),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_adopt(adopt_args, *context)
+
+            checkpoint = context[0]["waves"][0]["checkpoints"][-1]
+            self.assertEqual("ADOPTED", amendment["lifecycle"]["status"])
+            self.assertEqual("wave", context[0]["waves"][0]["campaign"]["scope"])
+            self.assertEqual(
+                {
+                    "type": "amendment-adoption-evidence",
+                    "amendment_id": "W1.A02",
+                    "path": "artifacts/evidence/W1.A02.adoption.json",
+                    "sha256": evidence_sha256(checkpoint_path.read_bytes()),
+                    "commit": checkpoint_commit,
+                },
+                checkpoint["evidence"][0],
+            )
+
+            amendment_history = amendment_history_snapshot(context[0])
+            rewritten = copy.deepcopy(context[0])
+            rewritten["wave_amendments"][0]["completion"]["exit_review_control"]["attempts"][0]["review"]["notes"] = (
+                "rewritten"
+            )
+            with self.assertRaisesRegex(SystemExit, "Append-only lifecycle history changed for W1.A02:exit-review"):
+                save_validated(
+                    file_path,
+                    rewritten,
+                    expected_amendment_history=amendment_history,
+                    schema_path=REPO / "planning" / "backlog.schema.json",
+                )
+
+            checkpoint_history = taskctl_module.wave_checkpoint_history_snapshot(context[0])
+            rewritten = copy.deepcopy(context[0])
+            rewritten["waves"][0]["checkpoints"][-1]["evidence"][0]["sha256"] = "0" * 64
+            with self.assertRaisesRegex(SystemExit, "Append-only Wave checkpoint history changed for W1"):
+                save_validated(
+                    file_path,
+                    rewritten,
+                    expected_wave_checkpoint_history=checkpoint_history,
+                    schema_path=REPO / "planning" / "backlog.schema.json",
+                )
+
+    def test_amendment_exit_and_adoption_evidence_fail_closed_on_tamper_and_unreviewed_state(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context, repo, amendment, approved_packet, _implementation_commit, reviewed_state = (
+                self.amendment_exit_repository(Path(temporary))
+            )
+            authority: tuple[dict[str, Any], dict[str, Any], bytes] = (
+                {},
+                approved_packet,
+                b"approved packet",
+            )
+            file_path = str(repo / "planning" / "backlog.yaml")
+            review_args = Namespace(
+                amendment="W1.A02",
+                reviewer="agent:exit-reviewer",
+                result="changes-requested",
+                from_path="",
+                note="",
+                file=file_path,
+            )
+            with chdir(repo), patch("taskctl.load_amendment_authority", return_value=authority):
+                submission = taskctl_module.build_amendment_exit_submission(
+                    review_args,
+                    context[0],
+                    amendment,
+                    amendment["completion"]["evidence"][0],
+                    migration_state_commit=reviewed_state,
+                )
+                baseline_errors = taskctl_module.amendment_exit_submission_errors(
+                    context[0],
+                    amendment,
+                    approved_packet,
+                    submission,
+                    expected_id="R01",
+                    expected_prior_id=None,
+                    expected_prior_submission=None,
+                    expected_open_ids=[],
+                    repo=repo,
+                    strict_state=False,
+                )
+            self.assertEqual([], baseline_errors)
+
+            mutations = [
+                ("evidence-hash", ("evidence_reference", "sha256"), "0" * 64, "evidence hash differs"),
+                ("evidence-path", ("evidence_reference", "path"), "artifacts/evidence/missing.json", "absent"),
+                ("packet-hash", ("packet_sha256",), "0" * 64, "packet hash mismatch"),
+                (
+                    "criteria-hash",
+                    ("acceptance_criteria_sha256",),
+                    "0" * 64,
+                    "criteria hash differs",
+                ),
+                ("branch", ("branch",), "codex/substituted", "frozen exit branch differs"),
+                ("open-ids", ("open_finding_ids",), ["invented"], "exact open findings"),
+            ]
+            for name, path, value, expected in mutations:
+                with self.subTest(name=name), patch("taskctl.load_amendment_authority", return_value=authority):
+                    forged = copy.deepcopy(submission)
+                    cursor: Any = forged
+                    for key in path[:-1]:
+                        cursor = cursor[key]
+                    cursor[path[-1]] = value
+                    errors = taskctl_module.amendment_exit_submission_errors(
+                        context[0],
+                        amendment,
+                        approved_packet,
+                        forged,
+                        expected_id="R01",
+                        expected_prior_id=None,
+                        expected_prior_submission=None,
+                        expected_open_ids=[],
+                        repo=repo,
+                        strict_state=False,
+                    )
+                    self.assertTrue(any(expected in error for error in errors), errors)
+
+            amendment["campaign"].update(
+                status="ACTIVE",
+                branch="codex/amendment-exit",
+                pause_reason=None,
+                lease=new_lease("alice", 8),
+            )
+            amendment["completion"].update(status="CHANGES_REQUESTED")
+            missing_args = Namespace(
+                amendment="W1.A02",
+                agent="alice",
+                evidence=None,
+                from_path=str(repo / "artifacts" / "evidence" / "missing.json"),
+                note="",
+                file=file_path,
+            )
+            with (
+                self.assertRaisesRegex(SystemExit, "must exist in the exact candidate commit"),
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_submit(missing_args, *context)
+
+            (repo / "implementation.txt").write_text("dirty mutation\n", encoding="utf-8")
+            dirty_args = copy.copy(missing_args)
+            dirty_args.from_path = str(repo / "artifacts" / "evidence" / "W1.A02.exit-R01.json")
+            with (
+                self.assertRaisesRegex(SystemExit, "Tracked worktree changes"),
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_submit(dirty_args, *context)
+            subprocess.run(["git", "restore", "implementation.txt"], cwd=repo, capture_output=True, check=True)
+
+            tree = subprocess.run(
+                ["git", "rev-parse", "HEAD^{tree}"],
+                cwd=repo,
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+            fork_commit = subprocess.run(
+                ["git", "commit-tree", tree, "-m", "forked candidate"],
+                cwd=repo,
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+            forked_exit = repo / "artifacts" / "evidence" / "forked-exit.json"
+            forked_exit.write_text(
+                json.dumps(
+                    {
+                        "documentType": "wave-amendment-exit-evidence",
+                        "amendmentId": "W1.A02",
+                        "changeRequestId": "ECR-0001",
+                        "targetWave": "W1",
+                        "candidateCommit": fork_commit,
+                        "branch": "codex/amendment-exit",
+                        "waveCampaign": {
+                            "status": "PAUSED",
+                            "scope": "amendment-hold",
+                            "pauseReason": "Approved interrupting amendment",
+                        },
+                        "amendmentCampaign": {
+                            "status": "ACTIVE",
+                            "scope": "wave-amendment",
+                            "pauseReason": None,
+                        },
+                        "requiredNextTransition": "independent amendment exit review",
+                        "checks": [{"command": "python tools/taskctl.py validate", "result": "passed"}],
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            self.commit_all(repo, "forked candidate evidence probe")
+            forked_args = copy.copy(missing_args)
+            forked_args.from_path = str(forked_exit)
+            with (
+                self.assertRaisesRegex(SystemExit, "current codex-branch history"),
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.load_amendment_authority", return_value=authority),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_submit(forked_args, *context)
+
+            amendment["campaign"].update(status="COMPLETE", lease=None)
+            amendment["completion"].update(
+                status="APPROVED",
+                reviewer="agent:exit-reviewer",
+                reviewed_at="2026-08-21T04:00:00+00:00",
+            )
+            unreviewed_checkpoint = repo / "artifacts" / "evidence" / "unreviewed-checkpoint.json"
+            unreviewed_checkpoint.write_text(
+                json.dumps(
+                    {
+                        "documentType": "wave-amendment-adoption-evidence",
+                        "amendmentId": "W1.A02",
+                        "targetWave": "W1",
+                        "candidateCommit": reviewed_state,
+                        "branch": "codex/amendment-exit",
+                        "reviewedCompletionCommit": reviewed_state,
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            self.commit_all(repo, "unreviewed checkpoint probe")
+            adopt_args = Namespace(
+                amendment="W1.A02",
+                agent="alice",
+                evidence=None,
+                from_path=str(unreviewed_checkpoint),
+                note="",
+                file=file_path,
+            )
+            with (
+                self.assertRaisesRegex(SystemExit, "immutable amendment exit review history"),
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch("taskctl.persist"),
+            ):
+                taskctl_module.command_amendment_adopt(adopt_args, *context)
+
     def test_amendment_materialization_and_activation_use_the_exact_safe_inventory(self) -> None:
         data, capabilities, slices, tasks, gates = self.interrupted_workflow(lifecycle_status="APPROVED")
         amendment = data["wave_amendments"][0]
@@ -3408,6 +4110,18 @@ class TaskctlWorkflowTests(unittest.TestCase):
             reviewed_at="2026-08-20T00:00:00+00:00",
             evidence=["exit-review.json"],
         )
+        approved_attempt = {
+            "submission": {"id": "R01"},
+            "review": {"result": "approved"},
+            "ledger": {},
+            "findings": [],
+            "closures": [],
+        }
+        amendment["completion"]["exit_review_control"] = {
+            "version": 1,
+            "attempts": [approved_attempt],
+            "current_submission": None,
+        }
         for task in amendment["tasks"]:
             task.update(
                 status="DONE",
@@ -3422,13 +4136,50 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 },
             )
         data["control_plane"]["active_amendment"] = None
-
-        with patch("taskctl.require_runtime_amendment_integrity"), patch("taskctl.persist"):
+        reviewed_completion_commit = "b" * 40
+        checkpoint_commit = "c" * 40
+        checkpoint_payload = json.dumps(
+            {
+                "documentType": "wave-amendment-adoption-evidence",
+                "amendmentId": "W1.A02",
+                "targetWave": "W1",
+                "candidateCommit": reviewed_completion_commit,
+                "branch": "codex/test",
+                "reviewedCompletionCommit": reviewed_completion_commit,
+            }
+        ).encode()
+        with (
+            patch("taskctl.require_runtime_amendment_integrity"),
+            patch("taskctl.discover_repository", return_value=REPO),
+            patch("taskctl.require_clean_repository"),
+            patch("taskctl.git_head_branch", return_value=(checkpoint_commit, "codex/test")),
+            patch(
+                "taskctl.safe_evidence_relative",
+                return_value=(
+                    "artifacts/evidence/control-security-checkpoint.json",
+                    REPO / "artifacts/evidence/control-security-checkpoint.json",
+                ),
+            ),
+            patch("taskctl.git_blob", return_value=checkpoint_payload),
+            patch("taskctl.git_is_ancestor", return_value=True),
+            patch(
+                "taskctl.historical_amendment_completion",
+                return_value={
+                    "exit_review_control": {
+                        "version": 1,
+                        "attempts": [copy.deepcopy(approved_attempt)],
+                        "current_submission": None,
+                    }
+                },
+            ),
+            patch("taskctl.persist"),
+        ):
             taskctl_module.command_amendment_adopt(
                 Namespace(
                     amendment="W1.A02",
                     agent="alice",
-                    evidence=["control-security-checkpoint.json"],
+                    evidence=None,
+                    from_path="control-security-checkpoint.json",
                     note="Control repair adopted.",
                     file="unused",
                 ),
@@ -3443,7 +4194,18 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("PAUSED", wave["campaign"]["status"])
         self.assertEqual("wave", wave["campaign"]["scope"])
         self.assertEqual("security", wave["checkpoints"][-1]["kind"])
-        self.assertEqual(["control-security-checkpoint.json"], wave["checkpoints"][-1]["evidence"])
+        self.assertEqual(
+            [
+                {
+                    "type": "amendment-adoption-evidence",
+                    "amendment_id": "W1.A02",
+                    "path": "artifacts/evidence/control-security-checkpoint.json",
+                    "sha256": evidence_sha256(checkpoint_payload),
+                    "commit": checkpoint_commit,
+                }
+            ],
+            wave["checkpoints"][-1]["evidence"],
+        )
         self.assertEqual("ADOPTED", amendment["lifecycle"]["status"])
         self.assertIsNone(data["control_plane"]["active_amendment"])
 
@@ -3579,7 +4341,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 "W1.A02",
                 "--agent",
                 "alice",
-                "--evidence",
+                "--from",
                 "exit.json",
                 "--note",
                 "ready",
@@ -3592,6 +4354,8 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 "reviewer",
                 "--result",
                 "approved",
+                "--from",
+                "exit-review.json",
                 "--note",
                 "approved",
             ],
@@ -3601,7 +4365,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 "W1.A02",
                 "--agent",
                 "alice",
-                "--evidence",
+                "--from",
                 "checkpoint.json",
                 "--note",
                 "adopted",

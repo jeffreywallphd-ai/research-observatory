@@ -79,6 +79,39 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` | `NONE` | `NONE` | 0 |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `REVIEW` | `APPROVED` | `REVIEW` | 2 |
 
+## Amendment-exit review and adoption projections
+
+Immutable exit rounds, the latest completion projection, and bound adoption checkpoints remain distinct.
+
+### Amendment-exit review and adoption — W1.A01
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `APPROVED` by repository-owner at `2026-08-20T23:38:52+00:00`
+
+**Latest completion evidence:** `planning/wave-amendment-approvals/W1.A01.json`
+
+**Latest completion notes:** Historical authority migration only.
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+### Amendment-exit review and adoption — W1.A02
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W1.A02.exit.json`
+
+**Latest completion notes:** Both authorized tasks are DONE and independently approved; submit W1.A02 for bounded amendment exit review while W1 remains paused.
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+
 ## Task review history projections
 
 Append-only rounds remain distinct from the current latest-review projection. Legacy records are labeled latest-review-only and receive no synthesized rounds.

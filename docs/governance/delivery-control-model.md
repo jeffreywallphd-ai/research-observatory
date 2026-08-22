@@ -99,6 +99,16 @@ approved bootstrap, the paused Wave `amendment-hold`, its campaign state, and
 the single active-amendment marker. Any impossible cross-field combination fails
 validation.
 
+Amendment exit submissions bind one committed evidence blob, its SHA and Git
+commit, the codex branch, approved ECR exit-criteria hash, and selected-check
+identity. Exit review rounds are append-only and bind the exact frozen backlog
+state plus one consolidated ledger; blocking findings require explicit closure
+before approval. The adoption checkpoint is a typed amendment-bound
+path/SHA/commit reference and is accepted only when its committed payload names
+the exact approved completion history. Exit and adoption reject missing,
+substituted, stale, forked, dirty, or unreviewed evidence. Historical amendments
+without this prospective control remain readable without synthesized history.
+
 Task review control uses one atomic evidence-plus-submit transition and one
 immutable packet per RNN round. Each packet binds the candidate, evidence,
 criteria, changed paths, verification selection, and exact open-finding replay.

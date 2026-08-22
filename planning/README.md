@@ -96,6 +96,17 @@ bootstrap-resubmit` to append the prior attempt and freeze the strict-descendant
 candidate. Materialization, activation, claims, evidence, reviews, and adoption
 all revalidate the bootstrap packet and immutable task definitions.
 
+Amendment exit is also packetized. Commit the exit evidence, then use
+`taskctl amendment submit WN.ANN --agent <agent> --from <exit-evidence>`.
+The packet binds the codex branch, evidence Git blob, approved ECR exit
+criteria, and selected checks. Independent review uses `taskctl amendment
+review ... --from <review-ledger>`; adverse rounds, findings, and explicit later
+closures remain append-only. Adoption uses a separately committed checkpoint
+record through `taskctl amendment adopt ... --from <checkpoint-evidence>` and
+revalidates the exact approved review state. Missing, substituted, stale,
+forked, dirty, or unreviewed evidence fails closed. Legacy amendments remain
+readable without invented exit-review history.
+
 Task evidence attachment and submission are atomic: use `taskctl submit <task>
 --agent <agent> --from <manifest>`. The resulting RNN packet freezes the exact
 candidate, criteria, changed paths, verification selection, and open finding

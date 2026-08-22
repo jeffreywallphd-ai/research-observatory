@@ -24,8 +24,8 @@ except ImportError:  # pragma: no cover - generated site still works with plain 
     mistune = None
 
 
-SITE_SCHEMA_VERSION = "1.2"
-REVIEW_INTERFACE_RELEASE = "1.3.9"
+SITE_SCHEMA_VERSION = "1.3"
+REVIEW_INTERFACE_RELEASE = "1.3.10"
 FEEDBACK_SCHEMA_VERSION = "1.1"
 OTHER_SENTINEL = "__OTHER__"
 
@@ -119,6 +119,45 @@ def task_review_projection(task: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def amendment_exit_projection(amendment: dict[str, Any]) -> dict[str, Any]:
+    completion = amendment.get("completion") or {}
+    control = completion.get("exit_review_control")
+    return {
+        "amendment_id": amendment.get("id"),
+        "mode": "append-only" if isinstance(control, dict) else "latest-completion-only",
+        "latest_completion": {
+            key: completion.get(key) for key in ("status", "reviewer", "reviewed_at", "evidence", "notes")
+        },
+        "exit_review_control": control if isinstance(control, dict) else None,
+    }
+
+
+def amendment_adoption_checkpoints(amendment: dict[str, Any], waves: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    target_wave = amendment.get("target_wave")
+    wave = next((item for item in waves if item.get("id") == target_wave), {})
+    projections: list[dict[str, Any]] = []
+    for checkpoint in wave.get("checkpoints") or []:
+        references = [
+            reference
+            for reference in checkpoint.get("evidence") or []
+            if isinstance(reference, dict)
+            and reference.get("type") == "amendment-adoption-evidence"
+            and reference.get("amendment_id") == amendment.get("id")
+        ]
+        if references:
+            projections.append(
+                {
+                    "id": checkpoint.get("id"),
+                    "kind": checkpoint.get("kind"),
+                    "recorded_by": checkpoint.get("recorded_by"),
+                    "recorded_at": checkpoint.get("recorded_at"),
+                    "notes": checkpoint.get("notes"),
+                    "evidence_references": references,
+                }
+            )
+    return projections
+
+
 def _review_values(values: list[Any] | None) -> str:
     if not values:
         return "None"
@@ -199,6 +238,105 @@ def task_review_history_html(task: dict[str, Any]) -> str:
 {"".join(rendered_attempts) or "<p>No completed review round is recorded.</p>"}
 {current_html}
   <section class="review-toolbar" data-current-review-projection="{esc(task_id)}" data-current-review-result="{esc(review.get("result") or "not-reviewed")}" data-current-reviewer="{esc(review.get("reviewer") or "none")}" data-current-reviewed-at="{esc(review.get("reviewed_at") or "none")}"><h4>Current latest-review projection</h4><dl class="summary-grid"><div><dt>Task status</dt><dd>{esc(task.get("status"))}</dd></div><div><dt>Latest result</dt><dd>{esc(review.get("result") or "not reviewed")}</dd></div><div><dt>Reviewer</dt><dd>{esc(review.get("reviewer") or "none")}</dd></div><div><dt>Reviewed at</dt><dd><code>{esc(review.get("reviewed_at") or "none")}</code></dd></div></dl><p><strong>Latest notes:</strong> {esc(review.get("notes") or "None")}</p><p><strong>Currently open findings:</strong> {_review_values(sorted(open_findings))}</p></section>
+</section>"""
+
+
+def _amendment_exit_submission_html(amendment_id: str, packet: dict[str, Any], *, current: bool) -> str:
+    evidence = packet.get("evidence_reference") or {}
+    marker = "data-exit-current-submission" if current else "data-exit-review-attempt"
+    identity = f"{amendment_id}:{packet.get('id')}"
+    heading = "Current immutable exit submission awaiting review" if current else "Immutable amendment-exit packet"
+    return f"""
+<section class="plan-details" {marker}="{esc(identity)}" data-exit-packet-sha256="{esc(packet.get("packet_sha256"))}" data-exit-evidence-amendment="{esc(evidence.get("amendment_id"))}" data-exit-evidence-path="{esc(evidence.get("path"))}" data-exit-evidence-sha256="{esc(evidence.get("sha256"))}" data-exit-evidence-commit="{esc(evidence.get("commit"))}">
+  <h4>{esc(heading)} <code>{esc(packet.get("id"))}</code></h4>
+  <dl class="summary-grid"><div><dt>Packet SHA-256</dt><dd><code>{esc(packet.get("packet_sha256"))}</code></dd></div><div><dt>Candidate / declared candidate</dt><dd><code>{esc(packet.get("candidate_commit"))}</code> / <code>{esc(packet.get("declared_candidate_commit"))}</code></dd></div><div><dt>Submitted</dt><dd>{esc(packet.get("submitted_by"))} at <code>{esc(packet.get("submitted_at"))}</code></dd></div><div><dt>Branch</dt><dd><code>{esc(packet.get("branch"))}</code></dd></div></dl>
+  <p><strong>Bound exit evidence:</strong> amendment <code>{esc(evidence.get("amendment_id"))}</code> · <code>{esc(evidence.get("path"))}</code> · SHA-256 <code>{esc(evidence.get("sha256"))}</code> · commit <code>{esc(evidence.get("commit"))}</code></p>
+  <p><strong>Frozen criteria / selected-check hashes:</strong> <code>{esc(packet.get("acceptance_criteria_sha256"))}</code> / <code>{esc(packet.get("selected_checks_sha256"))}</code></p>
+  <p><strong>Selected checks:</strong> {_review_values(packet.get("selected_checks"))}</p>
+  <p><strong>Prior round / replayed open findings:</strong> <code>{esc(packet.get("prior_attempt_id") or "None")}</code> / {_review_values(packet.get("open_finding_ids"))}</p>
+</section>"""
+
+
+def amendment_exit_review_html(amendment: dict[str, Any], adoption_checkpoints: list[dict[str, Any]]) -> str:
+    amendment_id = str(amendment.get("id") or "unknown-amendment")
+    completion = amendment.get("completion") or {}
+    control = completion.get("exit_review_control")
+    completion_attributes = (
+        f'data-latest-completion-status="{esc(completion.get("status") or "PENDING")}" '
+        f'data-latest-completion-reviewer="{esc(completion.get("reviewer") or "none")}" '
+        f'data-latest-completion-reviewed-at="{esc(completion.get("reviewed_at") or "none")}" '
+        f'data-latest-completion-notes="{esc(completion.get("notes") or "none")}"'
+    )
+    completion_evidence_html = "".join(
+        f'<code data-latest-completion-evidence="{esc(amendment_id)}:{index}">{esc(reference)}</code>'
+        for index, reference in enumerate(completion.get("evidence") or [], start=1)
+    )
+    if not isinstance(control, dict):
+        history_html = """
+  <p><strong>Legacy latest-completion-only projection.</strong> No immutable amendment-exit rounds are recorded; this view does not fabricate exit-review history.</p>"""
+        mode = "latest-completion-only"
+    else:
+        mode = "append-only"
+        rendered_attempts: list[str] = []
+        open_findings: dict[str, dict[str, Any]] = {}
+        for attempt in control.get("attempts") or []:
+            packet = attempt.get("submission") or {}
+            attempt_id = str(packet.get("id") or "unknown-round")
+            review = attempt.get("review") or {}
+            ledger = attempt.get("ledger") or {}
+            closures = attempt.get("closures") or []
+            findings = attempt.get("findings") or []
+            for closure in closures:
+                open_findings.pop(str(closure.get("finding_id")), None)
+            for finding in findings:
+                open_findings[str(finding.get("id"))] = finding
+            finding_rows = "".join(
+                f'<li data-exit-review-finding="{esc(amendment_id)}:{esc(attempt_id)}:{esc(finding.get("id"))}"><strong>{esc(finding.get("id"))} · {esc(finding.get("severity"))} · criterion {esc(finding.get("criterion_index"))}</strong> — {esc(finding.get("title"))}<br><small>Reproduce: {esc(finding.get("reproduction"))}<br>Required remediation: {esc(finding.get("required_remediation"))}<br>Blocking: {esc(finding.get("blocking"))}</small></li>'
+                for finding in findings
+            )
+            closure_rows = "".join(
+                f'<li data-exit-review-closure="{esc(amendment_id)}:{esc(attempt_id)}:{esc(closure.get("finding_id"))}"><strong>{esc(closure.get("finding_id"))} · {esc(closure.get("disposition"))}</strong> — {esc(closure.get("evidence"))}</li>'
+                for closure in closures
+            )
+            rendered_attempts.append(
+                f"""
+<article class="review-toolbar" data-exit-review-round="{esc(amendment_id)}:{esc(attempt_id)}" data-reviewed-state-commit="{esc(review.get("reviewed_state_commit"))}">
+  <h3>Amendment-exit review round {esc(attempt_id)}</h3>
+{_amendment_exit_submission_html(amendment_id, packet, current=False)}
+  <dl class="summary-grid"><div><dt>Disposition</dt><dd>{esc(review.get("result"))}</dd></div><div><dt>Reviewer</dt><dd>{esc(review.get("reviewer"))}</dd></div><div><dt>Reviewed state commit</dt><dd><code>{esc(review.get("reviewed_state_commit"))}</code></dd></div><div data-exit-review-ledger="{esc(amendment_id)}:{esc(attempt_id)}" data-exit-ledger-sha256="{esc(ledger.get("sha256"))}"><dt>Immutable ledger</dt><dd><code>{esc(ledger.get("path"))}</code><br><code>{esc(ledger.get("sha256"))}</code></dd></div></dl>
+  <p><strong>Reviewed at / notes:</strong> <code>{esc(review.get("reviewed_at"))}</code> · {esc(review.get("notes") or "None")}</p>
+  <h4>Findings opened in this round</h4><ul class="gate-criteria">{finding_rows or "<li>None</li>"}</ul>
+  <h4>Prior findings closed in this round</h4><ul class="gate-criteria">{closure_rows or "<li>None</li>"}</ul>
+</article>"""
+            )
+        current = control.get("current_submission")
+        current_html = (
+            _amendment_exit_submission_html(amendment_id, current, current=True) if isinstance(current, dict) else ""
+        )
+        history_html = (
+            f'<div class="section-heading"><span class="eyebrow">Immutable amendment-exit history</span>'
+            f"<p>Append-only v{esc(control.get('version'))}; completed rounds are not replaced by the latest completion projection.</p></div>"
+            f"{''.join(rendered_attempts) or '<p>No completed amendment-exit round is recorded.</p>'}"
+            f"{current_html}"
+            f"<p><strong>Currently open exit findings:</strong> {_review_values(sorted(open_findings))}</p>"
+        )
+
+    checkpoint_html: list[str] = []
+    for checkpoint in adoption_checkpoints:
+        references = "".join(
+            f'<li data-adoption-evidence="{esc(amendment_id)}:{esc(checkpoint.get("id"))}:{esc(index)}" data-adoption-evidence-amendment="{esc(reference.get("amendment_id"))}" data-adoption-evidence-sha256="{esc(reference.get("sha256"))}" data-adoption-evidence-commit="{esc(reference.get("commit"))}"><code>{esc(reference.get("path"))}</code> · SHA-256 <code>{esc(reference.get("sha256"))}</code> · commit <code>{esc(reference.get("commit"))}</code></li>'
+            for index, reference in enumerate(checkpoint.get("evidence_references") or [], start=1)
+        )
+        checkpoint_html.append(
+            f'<article class="plan-details" data-adoption-checkpoint="{esc(amendment_id)}:{esc(checkpoint.get("id"))}"><h4>Adoption checkpoint <code>{esc(checkpoint.get("id"))}</code></h4><p>{esc(checkpoint.get("kind"))} · {esc(checkpoint.get("recorded_by"))} at <code>{esc(checkpoint.get("recorded_at"))}</code></p><ul class="gate-criteria">{references}</ul><p><strong>Notes:</strong> {esc(checkpoint.get("notes") or "None")}</p></article>'
+        )
+    return f"""
+<section data-amendment-exit-id="{esc(amendment_id)}" data-exit-review-mode="{esc(mode)}">
+  <div class="section-heading"><span class="eyebrow">Amendment exit and adoption</span><h2>Independent amendment-exit review</h2></div>
+{history_html}
+  <section class="review-toolbar" data-latest-completion-projection="{esc(amendment_id)}" {completion_attributes}><h3>Latest completion projection</h3><dl class="summary-grid"><div><dt>Status</dt><dd>{esc(completion.get("status") or "PENDING")}</dd></div><div><dt>Reviewer</dt><dd>{esc(completion.get("reviewer") or "none")}</dd></div><div><dt>Reviewed at</dt><dd><code>{esc(completion.get("reviewed_at") or "none")}</code></dd></div><div><dt>Evidence</dt><dd>{completion_evidence_html or "None"}</dd></div></dl><p><strong>Latest notes:</strong> {esc(completion.get("notes") or "None")}</p></section>
+  <div class="section-heading"><span class="eyebrow">Bound Wave checkpoint evidence</span><h3>Adoption checkpoints</h3><p>These typed references are retained separately from exit-review evidence and do not rewrite completion history.</p></div>
+{"".join(checkpoint_html) or "<p>No bound amendment-adoption checkpoint is recorded.</p>"}
 </section>"""
 
 
@@ -429,6 +567,7 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
         if isinstance(amendment, dict) and amendment.get("change_request_id")
     }
     records: list[dict[str, Any]] = []
+    waves = backlog.get("waves") or []
     packet_dir = repo / "planning/enabler-change-requests"
     for packet_path in sorted(packet_dir.glob("ECR-*.packet.json")) if packet_dir.exists() else []:
         packet = json.loads(packet_path.read_text(encoding="utf-8"))
@@ -534,6 +673,8 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
                 "authorized_task_ids": packet.get("authorizedTaskIds") or [],
                 "task_inventory": packet.get("taskInventory") or [],
                 "task_reviews": [task_review_projection(task) for task in (amendment or {}).get("tasks", [])],
+                "exit_review": amendment_exit_projection(amendment or {"id": packet.get("proposedAmendmentId")}),
+                "adoption_checkpoints": amendment_adoption_checkpoints(amendment or {}, waves),
                 "acceptance_criteria": packet.get("acceptanceCriteria") or [],
                 "rollback": packet.get("rollback") or [],
                 "lifecycle_status": lifecycle_status or "NOT_MATERIALIZED",
@@ -778,6 +919,10 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         task_review_rows = "".join(
             task_review_history_html(task) for task in (record.get("amendment") or {}).get("tasks", [])
         )
+        exit_review = amendment_exit_review_html(
+            record.get("amendment") or {"id": record["amendment_id"], "completion": {}},
+            record["adoption_checkpoints"],
+        )
         criteria = "".join(f"<li>{esc(item)}</li>" for item in record["acceptance_criteria"])
         rollback = "".join(f"<li>{esc(item)}</li>" for item in record["rollback"])
         addendum_rows = "".join(
@@ -836,6 +981,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 </section>
 <section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The authorized packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
 {task_review_rows or "<p>No amendment task has been materialized.</p>"}
+{exit_review}
 <section class="callout callout-warning">
   <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>Continue the approved amendment through independently approved bootstrap, materialization, both DONE and independently approved tasks, amendment-exit control/security review, and the W1 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
 </section>
@@ -887,6 +1033,8 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                     "authorized_task_ids",
                     "scope_addenda",
                     "task_reviews",
+                    "exit_review",
+                    "adoption_checkpoints",
                     "page",
                 )
             }
