@@ -4,7 +4,7 @@
   "amendmentId": "W1.A02",
   "changeRequestId": "ECR-0001",
   "targetWave": "W1",
-  "candidateCommit": "48017abbeb860f01591bb977c352a7d3739cc232",
+  "candidateCommit": "55bf2850a73dfde9e5ac9c712584b23132364665",
   "branch": "codex/w1-windows-local-runtime",
   "outcome": "ready-for-independent-amendment-exit-review",
   "scope": {
@@ -41,7 +41,7 @@
     {
       "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
       "result": "passed",
-      "summary": "69 controller and schema tests, including amendment-exit tamper, missing, dirty, forked, stale-review, open-blocker, append-only history, and bound-adoption cases"
+      "summary": "70 controller and schema tests, including cross-type and wrong-target adoption substitution denial, amendment-exit tamper, missing, dirty, forked, stale-review, open-blocker, append-only history, coherent historical fixtures, and bound-adoption cases"
     },
     {
       "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments",
