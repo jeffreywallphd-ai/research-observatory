@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 1cc431a53cc075d1beda201cd2db4d98b52c4607a572ba46ad6e45617d2d6a30
+source_sha256: c7d5b5dda18971ceefd712497aeea0debca7bea6a7a5ae5ffc5f41fa762695f2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -61,8 +61,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ADOPTED` | 2 |
-| `REVIEW` | 1 |
+| `ADOPTED` | 3 |
 
 ### Enabler task state
 
@@ -79,7 +78,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` | - | - | 0 |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` | `NONE` | `NONE` | 0 |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
-| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 1 |
+| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 
 ## Amendment-exit review and adoption projections
 
@@ -300,7 +299,8 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W1.CP02` `security` by codex at `2026-08-22T20:58:21+00:00` — Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001 release and explicit ordinary Wave resume.
+  - amendment `W1.A03` / `artifacts/evidence/W1.A03.adoption-R02.json` / `bd8085d6a9996bdf03ed21876740893470a330c4944f3ea6f7d2f61889f1418e` / `e125f983fcc2b5827516a97a811e53b822d2bd9f`
 
 
 ## Task review history projections

@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: amendment-hold
+    scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -156,6 +156,18 @@ waves:
       commit: 996a6479dd7aae3422f73593097134b3b12a75fc
     notes: Adopt independently approved W1.A02 workflow controls via exact R04 completion and commit-bound checkpoint; keep
       W1 paused for user handoff.
+  - id: W1.CP02
+    kind: security
+    recorded_by: codex
+    recorded_at: '2026-08-22T20:58:21+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W1.A03
+      path: artifacts/evidence/W1.A03.adoption-R02.json
+      sha256: bd8085d6a9996bdf03ed21876740893470a330c4944f3ea6f7d2f61889f1418e
+      commit: e125f983fcc2b5827516a97a811e53b822d2bd9f
+    notes: Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001
+      release and explicit ordinary Wave resume.
   completion:
     status: PAUSED
     reviewer: null
@@ -24073,7 +24085,7 @@ wave_amendments:
     sha256: 340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd
     introduction_commit: 95c007b58619dfd82b5f443eea3d8e71e7efe082
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -24108,6 +24120,12 @@ wave_amendments:
       at: '2026-08-22T20:48:57+00:00'
       rationale: R02 remediates the failed adoption transition by binding control/security checkpoints to their own amendment
         identity and proving consecutive W1.A02/W1.A03 validation; W1 remains paused and T03 blocked.
+    - id: E07
+      status: ADOPTED
+      actor: codex
+      at: '2026-08-22T20:58:21+00:00'
+      rationale: Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending
+        GRR-0001 release and explicit ordinary Wave resume.
   bootstrap:
     id: W1.A03.B00
     status: APPROVED
