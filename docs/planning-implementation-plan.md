@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1c2848321e0cc8674d2e742997aa36ebc9461bbd16babf68b5d1f940c3db6962
+source_sha256: 1cc431a53cc075d1beda201cd2db4d98b52c4607a572ba46ad6e45617d2d6a30
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -777,7 +777,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A03.json` (`340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -790,7 +790,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### Amendment-exit review and adoption — W1.A03
 
-**Exit-review mode:** `append-only v1` / 1 completed round(s)
+**Exit-review mode:** `append-only v1` / 2 completed round(s)
 
 #### Exit round R01
 
@@ -820,7 +820,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable amendment-exit submission awaiting review:** `R02` / packet SHA-256 `520ed2baf33d2dcb57d56519557388db0ce1005768d856e0bac869584ead8c6c`
+#### Exit round R02
+
+**Immutable amendment-exit packet:** `R02` / packet SHA-256 `520ed2baf33d2dcb57d56519557388db0ce1005768d856e0bac869584ead8c6c`
 
 - Candidate / declared candidate / branch: `b4e76925e9b72d99c616a2f6d26fce6e923636c2` / `c5ea2e7b44897077f7d617431cb8740b7f7dad4f` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-22T20:48:57+00:00`
@@ -830,11 +832,29 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate`, `.venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9`, `.venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract`, `.venv\Scripts\python.exe tools\quality_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry`, `.venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\Scripts\python.exe tools\recoveryctl.py --repo . validate GRR-0001 --require-approved`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py`, `git diff --check c9ef5be1faf0119562b036c2b5eed882fab08b24..c5ea2e7b44897077f7d617431cb8740b7f7dad4f`
 - Prior round / replayed open findings: `R01` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / b00-independent-reviewer / `2026-08-22T20:56:23+00:00`
+
+**Reviewed state commit:** `f138b3c80729f06fa343d65e2043241097f9fa11`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W1.A03.exit-review-R02.json` / `0797ea731286cac02f583e5bf0d40b9c52ab1b524c776345f877534d4be974d9`
+
+**Review notes:** APPROVED at exact clean frozen R02 state f138b3c80729f06fa343d65e2043241097f9fa11 on codex/w1-windows-local-runtime. Remediation candidate c5ea2e7b44897077f7d617431cb8740b7f7dad4f is a strict descendant of approved R01 history; evidence artifacts/evidence/W1.A03.exit-remediation-01.json is committed at b4e76925e9b72d99c616a2f6d26fce6e923636c2 with SHA-256 819c25fd427533a509bf2d19a54100b872e4765343aeb65214572dcd9a339fc6. The R01 ledger remains byte-identical to its 89935d7c9c0473bd967810039d6a726a4be2c4fe Git blob, and the stored R01 attempt is unchanged from that approved historical state. The first adoption attempt failed before persistence: commits 89935d7c9c0473bd967810039d6a726a4be2c4fe and fb8bec15e0b02e521955269beabd7eb5a912d756 reference the identical planning/backlog.yaml object, and the sole intervening change is the inert R01 adoption-evidence file. Reactivation and R02 submission are append-only. Adopted-amendment validation now selects security checkpoints only when a bound amendment-adoption-evidence reference carries the exact amendment_id, so W1.A02 validates against W1.CP01 rather than a later W1.A03 checkpoint. A projected consecutive W1.A02/W1.A03 adoption using real historical backlog and evidence commits validates successfully. All eight ECR-0002/W1.A03 exit criteria remain satisfied: B00 and T01 approvals/histories are intact; T01 R01 blockers remain closed; generic packet, full T03 contract, one-save persistence, stale-writer, recovery denial, and adoption-boundary protections remain green. Independent replay passed 103/103 focused controller/schema/workflow/UI tests in 194.409 seconds, including both new adoption regressions; the exact UI command, 9/9 privacy tests, backlog and privacy-safe telemetry, ECR-0002/ECR-0001/GRR-0001 authority, 119-file quality, all 148 review pages, generated backlog views, protected-byte diff, exact R02 hashes, and Git hygiene pass. W1 remains PAUSED with scope amendment-hold, HOLD-W1-GRR-0001 remains ACTIVE, CAP-02.S04.T03 remains BLOCKED with no recovery_control, evidence, or review, and G1 remains PENDING. No ordinary task record, product/runtime, approved reference, canonical profile/threshold, predecessor authority, release gate, W1 qualification, local-main, remote, or ordinary-W1 authority changed. Adoption is ready only after this R02 approval is recorded and committed and a new adoption-checkpoint document is committed that binds that exact R02-approved completion; artifacts/evidence/W1.A03.adoption.json binds R01 and must not be reused. Adoption must leave W1 PAUSED. GRR release and explicit ordinary W1 resume remain separate later transitions.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by b00-independent-reviewer at `2026-08-22T20:56:23+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W1.A03.exit-remediation-01.json`
 
-**Latest completion notes:** R02 remediates the failed adoption transition by binding control/security checkpoints to their own amendment identity and proving consecutive W1.A02/W1.A03 validation; W1 remains paused and T03 blocked.
+**Latest completion notes:** APPROVED at exact clean frozen R02 state f138b3c80729f06fa343d65e2043241097f9fa11 on codex/w1-windows-local-runtime. Remediation candidate c5ea2e7b44897077f7d617431cb8740b7f7dad4f is a strict descendant of approved R01 history; evidence artifacts/evidence/W1.A03.exit-remediation-01.json is committed at b4e76925e9b72d99c616a2f6d26fce6e923636c2 with SHA-256 819c25fd427533a509bf2d19a54100b872e4765343aeb65214572dcd9a339fc6. The R01 ledger remains byte-identical to its 89935d7c9c0473bd967810039d6a726a4be2c4fe Git blob, and the stored R01 attempt is unchanged from that approved historical state. The first adoption attempt failed before persistence: commits 89935d7c9c0473bd967810039d6a726a4be2c4fe and fb8bec15e0b02e521955269beabd7eb5a912d756 reference the identical planning/backlog.yaml object, and the sole intervening change is the inert R01 adoption-evidence file. Reactivation and R02 submission are append-only. Adopted-amendment validation now selects security checkpoints only when a bound amendment-adoption-evidence reference carries the exact amendment_id, so W1.A02 validates against W1.CP01 rather than a later W1.A03 checkpoint. A projected consecutive W1.A02/W1.A03 adoption using real historical backlog and evidence commits validates successfully. All eight ECR-0002/W1.A03 exit criteria remain satisfied: B00 and T01 approvals/histories are intact; T01 R01 blockers remain closed; generic packet, full T03 contract, one-save persistence, stale-writer, recovery denial, and adoption-boundary protections remain green. Independent replay passed 103/103 focused controller/schema/workflow/UI tests in 194.409 seconds, including both new adoption regressions; the exact UI command, 9/9 privacy tests, backlog and privacy-safe telemetry, ECR-0002/ECR-0001/GRR-0001 authority, 119-file quality, all 148 review pages, generated backlog views, protected-byte diff, exact R02 hashes, and Git hygiene pass. W1 remains PAUSED with scope amendment-hold, HOLD-W1-GRR-0001 remains ACTIVE, CAP-02.S04.T03 remains BLOCKED with no recovery_control, evidence, or review, and G1 remains PENDING. No ordinary task record, product/runtime, approved reference, canonical profile/threshold, predecessor authority, release gate, W1 qualification, local-main, remote, or ordinary-W1 authority changed. Adoption is ready only after this R02 approval is recorded and committed and a new adoption-checkpoint document is committed that binds that exact R02-approved completion; artifacts/evidence/W1.A03.adoption.json binds R01 and must not be reused. Adoption must leave W1 PAUSED. GRR release and explicit ordinary W1 resume remain separate later transitions.
 
 **Bound amendment-adoption checkpoints:**
 
