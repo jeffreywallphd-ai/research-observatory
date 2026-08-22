@@ -72,6 +72,7 @@
     "services/core-api/src/research_observatory_core/ports/object_store.py",
     "services/core-api/src/research_observatory_core/ports/object_store_keys.py",
     "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/privacy.py",
     "services/core-api/src/research_observatory_core/projects.py",
     "services/core-api/src/research_observatory_core/repositories.py",
     "services/core-api/src/research_observatory_core/storage.py",
@@ -107,6 +108,7 @@
     "tests/contracts/test_foundation_contracts.py",
     "tests/contracts/test_credential_store_contract.py",
     "tests/contracts/test_object_store_contract.py",
+    "tests/contracts/test_privacy_policy_contract.py",
     "tests/contracts/test_domain_contracts.py",
     "tests/contracts/test_support_bundle_contract.py",
     "tests/data/test_project_lifecycle_performance_check.py",
@@ -120,6 +122,7 @@
     "tests/data/test_storage_maintenance.py",
     "tests/security/test_install_trivy.py",
     "tests/security/test_security_check.py",
+    "tests/security/test_privacy_controls.py",
     "tests/security/test_windows_credentials.py",
     "tests/service/test_core_api.py",
     "tests/service/test_project_lifecycle.py"

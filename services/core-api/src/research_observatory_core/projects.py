@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import cache
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeVar
 
 from .logging import emit_log_record
 from .models import (
@@ -64,6 +64,7 @@ _MAX_AUDIT_BYTES = 8 * 1024 * 1024
 _MAX_PROJECT_DOCUMENT_BYTES = 256 * 1024
 _CURRENT_PACKAGE_FORMAT = (1, 0, 0)
 _CURRENT_APPLICATION_VERSION = (0, 1, 0)
+_PROJECT_ACTION_RESULT = TypeVar("_PROJECT_ACTION_RESULT")
 
 
 def _path_identity(path: Path) -> tuple[int, int]:
@@ -701,6 +702,50 @@ class ProjectLifecycleService:
                     continue
                 finally:
                     self._opened.pop(path, None)
+
+    def perform_open_project_action(
+        self,
+        *,
+        root: str,
+        require_write: bool,
+        action: Callable[[Path, str], _PROJECT_ACTION_RESULT],
+    ) -> _PROJECT_ACTION_RESULT:
+        """Run one bounded project action while retaining lifecycle authority.
+
+        Privacy, retention, and later project-scoped modules use this seam instead
+        of reconstructing path, compatibility, or session-lock authority.
+        """
+
+        if not callable(action):
+            raise TypeError("project action must be callable")
+        with self._mutex:
+            path = _canonical_directory(root)
+            with _stable_directories(self._project_guard_paths(path)):
+                self._validate_layout(path)
+                manifest, _profile, compatibility = self._assess_documents(path)
+                access = self._opened.get(path)
+                if access is None:
+                    raise ProjectLifecycleProblem(
+                        status=409,
+                        code="RO-CORE-PROJECT-NOT-OPEN",
+                        title="Project is not open",
+                        detail="Project-scoped settings require an open local project session.",
+                        remediation="Open the compatible project locally and retry.",
+                    )
+                if require_write and (
+                    access is not ProjectAccessMode.READ_WRITE
+                    or compatibility is not ProjectCompatibilityState.COMPATIBLE
+                ):
+                    raise ProjectLifecycleProblem(
+                        status=409,
+                        code="RO-CORE-PROJECT-READ-ONLY",
+                        title="Project is read-only",
+                        detail="Privacy settings and cache cleanup cannot mutate a read-only project.",
+                        remediation="Use a compatible writable project copy and retry.",
+                    )
+                project_id = str(manifest["projectId"])
+                self._validate_database(path, project_id)
+                return action(path, project_id)
 
     def open(self, *, root: str, trace_id: str) -> ProjectProjection:
         with self._mutex:

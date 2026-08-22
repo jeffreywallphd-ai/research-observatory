@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from typing import TypeVar
 
 from fastapi import FastAPI, Header, Path, Query, Request, Response, status
 from fastapi.exceptions import RequestValidationError
@@ -16,6 +17,10 @@ from .authentication import LocalAuthenticationMiddleware
 from .config import CoreSettings
 from .logging import emit_log_record
 from .models import (
+    CacheClearPreview,
+    CacheClearPreviewRequest,
+    CacheClearRequest,
+    CacheClearResult,
     CapabilitiesResponse,
     ConfigurationResponse,
     HealthResponse,
@@ -24,9 +29,12 @@ from .models import (
     OperationPage,
     OperationProgressEvent,
     OperationStatus,
+    PrivacyPolicyProjection,
+    PrivacyPolicyUpdateRequest,
     ProblemDetail,
     ProjectCreateRequest,
     ProjectDeleteRequest,
+    ProjectPrivacyRequest,
     ProjectProjection,
     ProjectRootRequest,
     ReadinessResponse,
@@ -40,8 +48,11 @@ from .operations import (
     OperationRegistry,
     OperationReplayGap,
 )
+from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .transport import CoreProblem, TraceCorrelationMiddleware, problem_detail
+
+_ACTION_RESULT = TypeVar("_ACTION_RESULT")
 
 
 @dataclass(slots=True)
@@ -50,6 +61,7 @@ class RuntimeContext:
     modules: ModuleRegistry
     operations: OperationRegistry
     projects: ProjectLifecycleService
+    privacy: ProjectPrivacyService
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -59,6 +71,7 @@ def create_app(
     modules: ModuleRegistry | None = None,
     operations: OperationRegistry | None = None,
     projects: ProjectLifecycleService | None = None,
+    privacy: ProjectPrivacyService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -68,11 +81,13 @@ def create_app(
         resolved_modules = modules if modules is not None else default_module_registry()
         resolved_operations = operations if operations is not None else OperationRegistry()
         resolved_projects = projects if projects is not None else ProjectLifecycleService()
+        resolved_privacy = privacy if privacy is not None else ProjectPrivacyService.unavailable(resolved_projects)
         context = RuntimeContext(
             settings=resolved_settings,
             modules=resolved_modules,
             operations=resolved_operations,
             projects=resolved_projects,
+            privacy=resolved_privacy,
         )
         app.state.runtime = context
         context.state = RuntimeState.READY
@@ -206,6 +221,27 @@ def create_app(
         except ProjectLifecycleProblem as error:
             raise project_problem(request, error) from error
 
+    def privacy_problem(request: Request, error: PrivacyPolicyProblem) -> CoreProblem:
+        return CoreProblem(
+            problem_detail(
+                status=error.status,
+                code=error.code,
+                title=error.title,
+                detail=error.detail,
+                trace_id=request.state.trace_id,
+                retryable=error.retryable,
+                remediation=error.remediation,
+            )
+        )
+
+    def run_privacy_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
+        try:
+            return action()
+        except ProjectLifecycleProblem as error:
+            raise project_problem(request, error) from error
+        except PrivacyPolicyProblem as error:
+            raise privacy_problem(request, error) from error
+
     @app.get("/healthz", response_model=HealthResponse, tags=["runtime"])
     def health(request: Request) -> HealthResponse:
         context = runtime(request)
@@ -321,6 +357,51 @@ def create_app(
                 confirmation=command.confirmation,
                 trace_id=request.state.trace_id,
             ),
+        )
+
+    @app.post(
+        "/projects/privacy",
+        response_model=PrivacyPolicyProjection,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["privacy"],
+    )
+    def project_privacy(request: Request, command: ProjectPrivacyRequest) -> PrivacyPolicyProjection:
+        return run_privacy_action(request, lambda: runtime(request).privacy.get(command.root))
+
+    @app.post(
+        "/projects/privacy/update",
+        response_model=PrivacyPolicyProjection,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["privacy"],
+    )
+    def update_project_privacy(request: Request, command: PrivacyPolicyUpdateRequest) -> PrivacyPolicyProjection:
+        return run_privacy_action(
+            request,
+            lambda: runtime(request).privacy.update(command, trace_id=request.state.trace_id),
+        )
+
+    @app.post(
+        "/projects/privacy/cache/preview",
+        response_model=CacheClearPreview,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["privacy"],
+    )
+    def preview_project_cache(request: Request, command: CacheClearPreviewRequest) -> CacheClearPreview:
+        return run_privacy_action(
+            request,
+            lambda: runtime(request).privacy.preview_cache(command.root),
+        )
+
+    @app.post(
+        "/projects/privacy/cache/clear",
+        response_model=CacheClearResult,
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}, 500: {"model": ProblemDetail}},
+        tags=["privacy"],
+    )
+    def clear_project_cache(request: Request, command: CacheClearRequest) -> CacheClearResult:
+        return run_privacy_action(
+            request,
+            lambda: runtime(request).privacy.clear_cache(command, trace_id=request.state.trace_id),
         )
 
     @app.get(

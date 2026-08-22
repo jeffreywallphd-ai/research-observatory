@@ -7,6 +7,9 @@ import {
   CORE_API_OPENAPI_SHA256,
   CoreApiClientError,
   createCoreApiClient,
+  decodeCacheClearPreview,
+  decodeCacheClearResult,
+  decodePrivacyPolicyProjection,
   decodeProblemDetail,
   decodeProjectProjection,
   decodeVersionResponse,
@@ -238,5 +241,106 @@ describe("generated Core API client", () => {
     await expect(client.deleteProject({ root: projection.root, confirmation: "delete:wrong" })).rejects.toThrow(
       "RO-CORE-REQUEST-INVALID",
     );
+  });
+
+  it("keeps privacy changes consent-bound and cache deletion disclosure exact", async () => {
+    const disclosure = {
+      disclosureVersion: "secure-deletion-disclosure-v1",
+      scope: "project-cache-only",
+      logicalRemoval: true,
+      physicalErasureGuaranteed: false,
+      canonicalProjectDataExcluded: true,
+      limitations: [
+        "Filesystem unlink does not prove physical media erasure.",
+        "SSD wear levelling can retain prior blocks.",
+        "Journals, snapshots, backups, and hard links can retain copies.",
+        "Only rebuildable project cache is cleared.",
+      ],
+    };
+    const policy = {
+      schemaVersion: "1.0",
+      projectId: "11111111-1111-4111-8111-111111111111",
+      revision: 1,
+      defaultsApplied: false,
+      networkPolicy: "approved-providers" as const,
+      remoteModelApproval: "preview-every-task" as const,
+      telemetryMode: "off" as const,
+      logRetentionDays: 14,
+      documentRetention: "project-lifetime" as const,
+      cacheRetentionDays: 30,
+      egressConsentRecorded: true,
+      egressEnforcement: "require-task-preview" as const,
+      deletionDisclosure: disclosure,
+    };
+    const token = "a".repeat(32);
+    const preview = {
+      schemaVersion: "1.0",
+      projectId: policy.projectId,
+      policyRevision: 1,
+      previewToken: token,
+      confirmation: `clear-cache:${token}`,
+      expiresAt: "2026-08-22T00:05:00Z",
+      itemCount: 2,
+      byteCount: 19,
+      deletionDisclosure: disclosure,
+    };
+    const result = {
+      schemaVersion: "1.0",
+      projectId: policy.projectId,
+      state: "cleared" as const,
+      itemCount: 2,
+      byteCount: 19,
+      cleanupPending: false,
+      deletionDisclosure: disclosure,
+    };
+    expect(decodePrivacyPolicyProjection(policy)).toEqual(policy);
+    expect(decodePrivacyPolicyProjection({ ...policy, egressConsentRecorded: false })).toBeNull();
+    expect(decodePrivacyPolicyProjection({ ...policy, physicalErase: true })).toBeNull();
+    expect(decodeCacheClearPreview(preview)).toEqual(preview);
+    expect(decodeCacheClearPreview({ ...preview, confirmation: `clear-cache:${"b".repeat(32)}` })).toBeNull();
+    expect(decodeCacheClearResult(result)).toEqual(result);
+    expect(decodeCacheClearResult({ ...result, cleanupPending: true })).toBeNull();
+
+    const requests: unknown[] = [];
+    const responses = [policy, policy, preview, result];
+    const client = createCoreApiClient(async (request) => {
+      requests.push(request);
+      return response(200, responses.shift());
+    });
+    await client.privacy({ root: "C:/Research/study-one" });
+    await client.updatePrivacy({
+      root: "C:/Research/study-one",
+      expectedRevision: 0,
+      networkPolicy: "approved-providers",
+      remoteModelApproval: "preview-every-task",
+      telemetryMode: "off",
+      logRetentionDays: 14,
+      documentRetention: "project-lifetime",
+      cacheRetentionDays: 30,
+      egressConsentToken: "acknowledge-egress-preview-v1",
+    });
+    await client.previewCache({ root: "C:/Research/study-one" });
+    await client.clearCache({
+      root: "C:/Research/study-one",
+      previewToken: token,
+      confirmation: `clear-cache:${token}`,
+    });
+    expect(requests.map((request) => (request as { path: string }).path)).toEqual([
+      "/projects/privacy",
+      "/projects/privacy/update",
+      "/projects/privacy/cache/preview",
+      "/projects/privacy/cache/clear",
+    ]);
+    await expect(client.updatePrivacy({
+      root: "C:/Research/study-one",
+      expectedRevision: 1,
+      networkPolicy: "metadata-only",
+      remoteModelApproval: "preview-every-task",
+      telemetryMode: "off",
+      logRetentionDays: 14,
+      documentRetention: "project-lifetime",
+      cacheRetentionDays: 30,
+      egressConsentToken: null,
+    })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
   });
 });

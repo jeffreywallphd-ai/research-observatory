@@ -16,6 +16,7 @@ from sqlalchemy import Column, Integer, MetaData, String, Table, desc, insert, s
 from sqlalchemy.dialects.sqlite import dialect as sqlite_dialect
 from sqlalchemy.sql import ClauseElement
 
+from .domain_contracts import new_uuid_v7
 from .ports.repositories import (
     AggregateKind,
     AggregateRepository,
@@ -23,6 +24,10 @@ from .ports.repositories import (
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
     KnowledgeStatus,
+    PrivacyAuditEvent,
+    PrivacyPolicyRecord,
+    PrivacyPolicyRepository,
+    PrivacySetting,
     RepositoryConflict,
     RepositoryNotFound,
     RepositoryProblem,
@@ -111,6 +116,162 @@ _EXTENSIONS = {
     )
 }
 _SQLITE_DIALECT = sqlite_dialect(paramstyle="named")
+
+
+class _SqlitePrivacyPolicyRepository(PrivacyPolicyRepository):
+    """Canonical SQLite adapter for complete append-only privacy revisions."""
+
+    def __init__(self, database: Path, project_id: str) -> None:
+        if not database.is_absolute() or not project_id:
+            raise ValueError("privacy repository authority is invalid")
+        self._database = database
+        self._project_id = project_id
+
+    def _open(self) -> CanonicalConnection:
+        return open_canonical_database(self._database, expected_project_id=self._project_id)
+
+    def read(self) -> PrivacyPolicyRecord | None:
+        try:
+            connection = self._open()
+            try:
+                maximum = connection.execute(
+                    "SELECT MAX(revision) FROM settings WHERE project_id=? AND setting_key LIKE 'privacy.%'",
+                    (self._project_id,),
+                ).fetchone()[0]
+                if maximum is None:
+                    return None
+                revision = int(maximum)
+                rows = connection.execute(
+                    """
+                    SELECT setting_key, value_type, text_value, integer_value
+                      FROM settings
+                     WHERE project_id=? AND revision=? AND setting_key LIKE 'privacy.%'
+                     ORDER BY setting_key
+                    """,
+                    (self._project_id, revision),
+                ).fetchall()
+            finally:
+                connection.close()
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, IndexError:
+            raise _transaction_failure("privacy policy read failed") from None
+        settings: list[PrivacySetting] = []
+        for key, value_type, text_value, integer_value in rows:
+            if value_type == "text" and isinstance(text_value, str) and integer_value is None:
+                value: str | int = text_value
+            elif value_type == "integer" and isinstance(integer_value, int) and text_value is None:
+                value = integer_value
+            else:
+                raise _transaction_failure("privacy policy scalar is invalid")
+            settings.append(PrivacySetting(key=str(key), value=value))
+        return PrivacyPolicyRecord(revision=revision, settings=tuple(settings))
+
+    def append(
+        self,
+        *,
+        expected_revision: int,
+        revision: int,
+        settings: tuple[PrivacySetting, ...],
+        event: PrivacyAuditEvent,
+    ) -> None:
+        keys = tuple(setting.key for setting in settings)
+        if (
+            expected_revision < 0
+            or revision != expected_revision + 1
+            or not settings
+            or keys != tuple(sorted(set(keys)))
+            or any(not key.startswith("privacy.") for key in keys)
+            or any(
+                not isinstance(setting.value, str)
+                and (not isinstance(setting.value, int) or isinstance(setting.value, bool))
+                for setting in settings
+            )
+        ):
+            raise _transaction_failure("privacy policy append is invalid")
+        try:
+            connection = self._open()
+            try:
+                connection.execute("BEGIN IMMEDIATE")
+                latest = connection.execute(
+                    "SELECT COALESCE(MAX(revision), 0) FROM settings "
+                    "WHERE project_id=? AND setting_key LIKE 'privacy.%'",
+                    (self._project_id,),
+                ).fetchone()[0]
+                if int(latest) != expected_revision:
+                    raise RepositoryConflict("privacy revision changed")
+                for setting in settings:
+                    value = setting.value
+                    connection.execute(
+                        """
+                        INSERT INTO settings (
+                            setting_id, project_id, setting_key, revision, value_type,
+                            text_value, integer_value, real_value, boolean_value,
+                            created_at, modified_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?, ?)
+                        """,
+                        (
+                            new_uuid_v7(),
+                            self._project_id,
+                            setting.key,
+                            revision,
+                            "integer" if isinstance(value, int) else "text",
+                            None if isinstance(value, int) else value,
+                            value if isinstance(value, int) else None,
+                            event.occurred_at,
+                            event.occurred_at,
+                        ),
+                    )
+                self._append_event(connection, event)
+                connection.execute("COMMIT")
+            except BaseException:
+                if connection.in_transaction:
+                    connection.execute("ROLLBACK")
+                raise
+            finally:
+                connection.close()
+        except RepositoryConflict:
+            raise
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError:
+            raise _transaction_failure("privacy policy append failed") from None
+
+    def append_event(self, event: PrivacyAuditEvent) -> None:
+        try:
+            connection = self._open()
+            try:
+                connection.execute("BEGIN IMMEDIATE")
+                self._append_event(connection, event)
+                connection.execute("COMMIT")
+            except BaseException:
+                if connection.in_transaction:
+                    connection.execute("ROLLBACK")
+                raise
+            finally:
+                connection.close()
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError:
+            raise _transaction_failure("privacy audit append failed") from None
+
+    def _append_event(self, connection: CanonicalConnection, event: PrivacyAuditEvent) -> None:
+        connection.execute(
+            """
+            INSERT INTO provenance_events (
+                event_id, project_id, revision_id, event_type, occurred_at,
+                trace_id, actor_type, actor_id, record_sha256
+            ) VALUES (?, ?, NULL, ?, ?, ?, 'human', NULL, ?)
+            """,
+            (
+                event.event_id,
+                self._project_id,
+                event.event_type,
+                event.occurred_at,
+                event.trace_id,
+                event.record_sha256,
+            ),
+        )
+
+
+def sqlite_privacy_policy_repository(path: Path, project_id: str) -> PrivacyPolicyRepository:
+    """Compose one privacy repository from lifecycle-validated project authority."""
+
+    return _SqlitePrivacyPolicyRepository(path / "state" / "project.sqlite3", project_id)
 
 
 def _transaction_failure(message: str = "canonical repository transaction failed") -> RepositoryTransactionFailed:

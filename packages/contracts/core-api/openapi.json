@@ -1,6 +1,168 @@
 {
   "components": {
     "schemas": {
+      "CacheClearPreview": {
+        "additionalProperties": false,
+        "properties": {
+          "byteCount": {
+            "maximum": 9007199254740991.0,
+            "minimum": 0.0,
+            "title": "Bytecount",
+            "type": "integer"
+          },
+          "confirmation": {
+            "pattern": "^clear-cache:[0-9a-f]{32}$",
+            "title": "Confirmation",
+            "type": "string"
+          },
+          "deletionDisclosure": {
+            "$ref": "#/components/schemas/DeletionDisclosure"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "title": "Expiresat",
+            "type": "string"
+          },
+          "itemCount": {
+            "maximum": 100000.0,
+            "minimum": 0.0,
+            "title": "Itemcount",
+            "type": "integer"
+          },
+          "policyRevision": {
+            "maximum": 9007199254740991.0,
+            "minimum": 0.0,
+            "title": "Policyrevision",
+            "type": "integer"
+          },
+          "previewToken": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Previewtoken",
+            "type": "string"
+          },
+          "projectId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Projectid",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "policyRevision",
+          "previewToken",
+          "confirmation",
+          "expiresAt",
+          "itemCount",
+          "byteCount",
+          "deletionDisclosure"
+        ],
+        "title": "CacheClearPreview",
+        "type": "object"
+      },
+      "CacheClearPreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root"
+        ],
+        "title": "CacheClearPreviewRequest",
+        "type": "object"
+      },
+      "CacheClearRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmation": {
+            "pattern": "^clear-cache:[0-9a-f]{32}$",
+            "title": "Confirmation",
+            "type": "string"
+          },
+          "previewToken": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Previewtoken",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewToken",
+          "confirmation"
+        ],
+        "title": "CacheClearRequest",
+        "type": "object"
+      },
+      "CacheClearResult": {
+        "additionalProperties": false,
+        "properties": {
+          "byteCount": {
+            "maximum": 9007199254740991.0,
+            "minimum": 0.0,
+            "title": "Bytecount",
+            "type": "integer"
+          },
+          "cleanupPending": {
+            "title": "Cleanuppending",
+            "type": "boolean"
+          },
+          "deletionDisclosure": {
+            "$ref": "#/components/schemas/DeletionDisclosure"
+          },
+          "itemCount": {
+            "maximum": 100000.0,
+            "minimum": 0.0,
+            "title": "Itemcount",
+            "type": "integer"
+          },
+          "projectId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Projectid",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/CacheClearState"
+          }
+        },
+        "required": [
+          "projectId",
+          "state",
+          "itemCount",
+          "byteCount",
+          "cleanupPending",
+          "deletionDisclosure"
+        ],
+        "title": "CacheClearResult",
+        "type": "object"
+      },
+      "CacheClearState": {
+        "enum": [
+          "cleared",
+          "cleared-cleanup-pending"
+        ],
+        "title": "CacheClearState",
+        "type": "string"
+      },
       "CapabilitiesResponse": {
         "additionalProperties": false,
         "properties": {
@@ -52,6 +214,72 @@
         ],
         "title": "ConfigurationResponse",
         "type": "object"
+      },
+      "DeletionDisclosure": {
+        "additionalProperties": false,
+        "properties": {
+          "canonicalProjectDataExcluded": {
+            "const": true,
+            "title": "Canonicalprojectdataexcluded",
+            "type": "boolean"
+          },
+          "disclosureVersion": {
+            "const": "secure-deletion-disclosure-v1",
+            "title": "Disclosureversion",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "minItems": 4,
+            "title": "Limitations",
+            "type": "array"
+          },
+          "logicalRemoval": {
+            "const": true,
+            "title": "Logicalremoval",
+            "type": "boolean"
+          },
+          "physicalErasureGuaranteed": {
+            "const": false,
+            "title": "Physicalerasureguaranteed",
+            "type": "boolean"
+          },
+          "scope": {
+            "const": "project-cache-only",
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "disclosureVersion",
+          "scope",
+          "logicalRemoval",
+          "physicalErasureGuaranteed",
+          "canonicalProjectDataExcluded",
+          "limitations"
+        ],
+        "title": "DeletionDisclosure",
+        "type": "object"
+      },
+      "DocumentRetentionPolicy": {
+        "enum": [
+          "project-lifetime",
+          "review-after-90-days",
+          "review-after-365-days"
+        ],
+        "title": "DocumentRetentionPolicy",
+        "type": "string"
+      },
+      "EgressEnforcement": {
+        "enum": [
+          "deny",
+          "require-task-preview"
+        ],
+        "title": "EgressEnforcement",
+        "type": "string"
       },
       "HTTPValidationError": {
         "properties": {
@@ -309,6 +537,155 @@
         "title": "OperationStatus",
         "type": "object"
       },
+      "PrivacyNetworkPolicy": {
+        "enum": [
+          "offline",
+          "metadata-only",
+          "approved-providers"
+        ],
+        "title": "PrivacyNetworkPolicy",
+        "type": "string"
+      },
+      "PrivacyPolicyProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "cacheRetentionDays": {
+            "maximum": 90.0,
+            "minimum": 1.0,
+            "title": "Cacheretentiondays",
+            "type": "integer"
+          },
+          "defaultsApplied": {
+            "title": "Defaultsapplied",
+            "type": "boolean"
+          },
+          "deletionDisclosure": {
+            "$ref": "#/components/schemas/DeletionDisclosure"
+          },
+          "documentRetention": {
+            "$ref": "#/components/schemas/DocumentRetentionPolicy"
+          },
+          "egressConsentRecorded": {
+            "title": "Egressconsentrecorded",
+            "type": "boolean"
+          },
+          "egressEnforcement": {
+            "$ref": "#/components/schemas/EgressEnforcement"
+          },
+          "logRetentionDays": {
+            "maximum": 90.0,
+            "minimum": 1.0,
+            "title": "Logretentiondays",
+            "type": "integer"
+          },
+          "networkPolicy": {
+            "$ref": "#/components/schemas/PrivacyNetworkPolicy"
+          },
+          "projectId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Projectid",
+            "type": "string"
+          },
+          "remoteModelApproval": {
+            "$ref": "#/components/schemas/RemoteModelApproval"
+          },
+          "revision": {
+            "maximum": 9007199254740991.0,
+            "minimum": 0.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "telemetryMode": {
+            "$ref": "#/components/schemas/TelemetryMode"
+          }
+        },
+        "required": [
+          "projectId",
+          "revision",
+          "defaultsApplied",
+          "networkPolicy",
+          "remoteModelApproval",
+          "telemetryMode",
+          "logRetentionDays",
+          "documentRetention",
+          "cacheRetentionDays",
+          "egressConsentRecorded",
+          "egressEnforcement",
+          "deletionDisclosure"
+        ],
+        "title": "PrivacyPolicyProjection",
+        "type": "object"
+      },
+      "PrivacyPolicyUpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "cacheRetentionDays": {
+            "maximum": 90.0,
+            "minimum": 1.0,
+            "title": "Cacheretentiondays",
+            "type": "integer"
+          },
+          "documentRetention": {
+            "$ref": "#/components/schemas/DocumentRetentionPolicy"
+          },
+          "egressConsentToken": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Egressconsenttoken"
+          },
+          "expectedRevision": {
+            "maximum": 9007199254740991.0,
+            "minimum": 0.0,
+            "title": "Expectedrevision",
+            "type": "integer"
+          },
+          "logRetentionDays": {
+            "maximum": 90.0,
+            "minimum": 1.0,
+            "title": "Logretentiondays",
+            "type": "integer"
+          },
+          "networkPolicy": {
+            "$ref": "#/components/schemas/PrivacyNetworkPolicy"
+          },
+          "remoteModelApproval": {
+            "$ref": "#/components/schemas/RemoteModelApproval"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "telemetryMode": {
+            "$ref": "#/components/schemas/TelemetryMode"
+          }
+        },
+        "required": [
+          "root",
+          "expectedRevision",
+          "networkPolicy",
+          "remoteModelApproval",
+          "telemetryMode",
+          "logRetentionDays",
+          "documentRetention",
+          "cacheRetentionDays"
+        ],
+        "title": "PrivacyPolicyUpdateRequest",
+        "type": "object"
+      },
       "ProblemDetail": {
         "additionalProperties": false,
         "properties": {
@@ -453,6 +830,22 @@
         ],
         "title": "ProjectLifecycleState",
         "type": "string"
+      },
+      "ProjectPrivacyRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root"
+        ],
+        "title": "ProjectPrivacyRequest",
+        "type": "object"
       },
       "ProjectProjection": {
         "additionalProperties": false,
@@ -605,6 +998,13 @@
         "title": "ReadinessResponse",
         "type": "object"
       },
+      "RemoteModelApproval": {
+        "enum": [
+          "preview-every-task"
+        ],
+        "title": "RemoteModelApproval",
+        "type": "string"
+      },
       "RuntimeState": {
         "enum": [
           "starting",
@@ -613,6 +1013,14 @@
           "unavailable"
         ],
         "title": "RuntimeState",
+        "type": "string"
+      },
+      "TelemetryMode": {
+        "enum": [
+          "off",
+          "local-diagnostics-only"
+        ],
+        "title": "TelemetryMode",
         "type": "string"
       },
       "ValidationError": {
@@ -1025,6 +1433,250 @@
         "summary": "Open Project",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/projects/privacy": {
+      "post": {
+        "operationId": "project_privacy_projects_privacy_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectPrivacyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivacyPolicyProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Project Privacy",
+        "tags": [
+          "privacy"
+        ]
+      }
+    },
+    "/projects/privacy/cache/clear": {
+      "post": {
+        "operationId": "clear_project_cache_projects_privacy_cache_clear_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CacheClearRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CacheClearResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Clear Project Cache",
+        "tags": [
+          "privacy"
+        ]
+      }
+    },
+    "/projects/privacy/cache/preview": {
+      "post": {
+        "operationId": "preview_project_cache_projects_privacy_cache_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CacheClearPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CacheClearPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Preview Project Cache",
+        "tags": [
+          "privacy"
+        ]
+      }
+    },
+    "/projects/privacy/update": {
+      "post": {
+        "operationId": "update_project_privacy_projects_privacy_update_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrivacyPolicyUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivacyPolicyProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update Project Privacy",
+        "tags": [
+          "privacy"
         ]
       }
     },

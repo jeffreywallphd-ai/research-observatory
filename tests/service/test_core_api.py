@@ -172,7 +172,8 @@ class CoreApiTests(unittest.TestCase):
             {"schemaVersion": "1.0", "profile": "local", "bindHost": "loopback", "bindPort": "ephemeral"},
         )
         self.assertEqual(
-            [module["moduleId"] for module in modules.json()["modules"]], ["operations", "projects", "runtime"]
+            [module["moduleId"] for module in modules.json()["modules"]],
+            ["operations", "privacy", "projects", "runtime"],
         )
         self.assertEqual(
             capabilities.json()["capabilities"],
@@ -180,6 +181,8 @@ class CoreApiTests(unittest.TestCase):
                 "operations.cancel",
                 "operations.events",
                 "operations.read",
+                "privacy.cache-cleanup",
+                "privacy.policy",
                 "projects.lifecycle",
                 "runtime.contract",
                 "runtime.status",

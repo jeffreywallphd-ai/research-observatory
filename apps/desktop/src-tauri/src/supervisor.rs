@@ -812,6 +812,85 @@ fn validate_project_api_request(path: &str, body: &str) -> bool {
                             .all(|byte| byte.is_ascii_hexdigit() || byte == b'-')
                 });
     }
+    if matches!(
+        path,
+        "/projects/privacy" | "/projects/privacy/cache/preview"
+    ) {
+        return exact_json_strings(body, &["root"])
+            .and_then(|value| value["root"].as_str().map(canonical_project_root))
+            .unwrap_or(false);
+    }
+    if path == "/projects/privacy/cache/clear" {
+        let Some(value) = exact_json_strings(body, &["root", "previewToken", "confirmation"])
+        else {
+            return false;
+        };
+        let token = value["previewToken"].as_str().unwrap_or_default();
+        return canonical_project_root(value["root"].as_str().unwrap_or_default())
+            && token.len() == 32
+            && token
+                .bytes()
+                .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+            && value["confirmation"].as_str() == Some(format!("clear-cache:{token}").as_str());
+    }
+    if path == "/projects/privacy/update" {
+        let Ok(value) = serde_json::from_str::<serde_json::Value>(body) else {
+            return false;
+        };
+        let Some(object) = value.as_object() else {
+            return false;
+        };
+        let expected = [
+            "root",
+            "expectedRevision",
+            "networkPolicy",
+            "remoteModelApproval",
+            "telemetryMode",
+            "logRetentionDays",
+            "documentRetention",
+            "cacheRetentionDays",
+            "egressConsentToken",
+        ];
+        if body.is_empty()
+            || body.len() > 16_384
+            || object.len() != expected.len()
+            || !expected.iter().all(|key| object.contains_key(*key))
+        {
+            return false;
+        }
+        let Some(root) = object["root"].as_str() else {
+            return false;
+        };
+        let Some(revision) = object["expectedRevision"].as_u64() else {
+            return false;
+        };
+        let Some(log_days) = object["logRetentionDays"].as_u64() else {
+            return false;
+        };
+        let Some(cache_days) = object["cacheRetentionDays"].as_u64() else {
+            return false;
+        };
+        let Some(network) = object["networkPolicy"].as_str() else {
+            return false;
+        };
+        let consent = object["egressConsentToken"].as_str();
+        return canonical_project_root(root)
+            && revision <= 9_007_199_254_740_991
+            && (1..=90).contains(&log_days)
+            && (1..=90).contains(&cache_days)
+            && matches!(network, "offline" | "metadata-only" | "approved-providers")
+            && object["remoteModelApproval"].as_str() == Some("preview-every-task")
+            && matches!(
+                object["telemetryMode"].as_str(),
+                Some("off" | "local-diagnostics-only")
+            )
+            && matches!(
+                object["documentRetention"].as_str(),
+                Some("project-lifetime" | "review-after-90-days" | "review-after-365-days")
+            )
+            && ((network == "offline" && object["egressConsentToken"].is_null())
+                || (network != "offline" && consent == Some("acknowledge-egress-preview-v1")));
+    }
     false
 }
 
@@ -1165,6 +1244,8 @@ fn validate_handshake(
                 "operations.cancel",
                 "operations.events",
                 "operations.read",
+                "privacy.cache-cleanup",
+                "privacy.policy",
                 "projects.lifecycle",
                 "runtime.contract",
                 "runtime.status",
@@ -1374,6 +1455,8 @@ fn readiness_is_compatible(response: &[u8]) -> bool {
                 "operations.cancel",
                 "operations.events",
                 "operations.read",
+                "privacy.cache-cleanup",
+                "privacy.policy",
                 "projects.lifecycle",
                 "runtime.contract",
                 "runtime.status",
@@ -1613,7 +1696,7 @@ mod tests {
                 "{{\"protocolVersion\":\"1.0\",\"buildId\":\"0.1.0\",\"pid\":{},",
                 "\"host\":\"127.0.0.1\",\"port\":49152,",
                 "\"nonce\":\"0123456789abcdef0123456789abcdef\",",
-                "\"capabilities\":[\"operations.cancel\",\"operations.events\",\"operations.read\",\"projects.lifecycle\",\"runtime.contract\",\"runtime.status\"],",
+                "\"capabilities\":[\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"runtime.contract\",\"runtime.status\"],",
                 "\"databaseCompatibility\":{{\"minimum\":\"0.1.0\",",
                 "\"maximumExclusive\":\"0.2.0\"}},",
                 "\"diagnosticCode\":\"RO-CORE-STARTING\"}}\n"
@@ -1693,6 +1776,19 @@ mod tests {
                 "/projects/delete",
                 r#"{"root":"C:/Research/study-one","confirmation":"delete:11111111-1111-4111-8111-111111111111"}"#,
             ),
+            ("/projects/privacy", r#"{"root":"C:/Research/study-one"}"#),
+            (
+                "/projects/privacy/update",
+                r#"{"root":"C:/Research/study-one","expectedRevision":0,"networkPolicy":"approved-providers","remoteModelApproval":"preview-every-task","telemetryMode":"off","logRetentionDays":14,"documentRetention":"project-lifetime","cacheRetentionDays":30,"egressConsentToken":"acknowledge-egress-preview-v1"}"#,
+            ),
+            (
+                "/projects/privacy/cache/preview",
+                r#"{"root":"C:/Research/study-one"}"#,
+            ),
+            (
+                "/projects/privacy/cache/clear",
+                r#"{"root":"C:/Research/study-one","previewToken":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","confirmation":"clear-cache:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}"#,
+            ),
         ] {
             assert!(
                 validate_api_request(&CoreApiRequest {
@@ -1717,6 +1813,18 @@ mod tests {
                 r#"{"root":"C:/Study","confirmation":"delete:wrong"}"#,
             ),
             ("/projects", r#"{"parentDirectory":"C:/Research"}"#),
+            (
+                "/projects/privacy/update",
+                r#"{"root":"C:/Study","expectedRevision":0,"networkPolicy":"approved-providers","remoteModelApproval":"preview-every-task","telemetryMode":"off","logRetentionDays":14,"documentRetention":"project-lifetime","cacheRetentionDays":30,"egressConsentToken":null}"#,
+            ),
+            (
+                "/projects/privacy/update",
+                r#"{"root":"C:/Study","expectedRevision":0,"networkPolicy":"offline","remoteModelApproval":"preview-every-task","telemetryMode":"off","logRetentionDays":0,"documentRetention":"project-lifetime","cacheRetentionDays":30,"egressConsentToken":null}"#,
+            ),
+            (
+                "/projects/privacy/cache/clear",
+                r#"{"root":"C:/Study","previewToken":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","confirmation":"clear-cache:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}"#,
+            ),
             ("/openapi.json", r#"{}"#),
         ] {
             assert!(

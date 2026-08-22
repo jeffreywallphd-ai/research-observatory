@@ -23,7 +23,9 @@ from .config import CoreSettings
 from .migrations.runner import migration_framework_projection
 from .object_store import upgrade_local_object_envelopes
 from .ports.object_store_keys import ObjectMasterKeyProvider
+from .privacy import ProjectPrivacyService
 from .projects import ProjectLifecycleService
+from .repositories import sqlite_privacy_policy_repository
 from .windows_credentials import create_windows_object_key_provider
 
 EXIT_CONFIGURATION_ERROR = 2
@@ -51,13 +53,15 @@ def create_runtime_app(
             raise ValueError("object-key provider is invalid")
         resolved_provider = object_key_provider
 
+    projects = ProjectLifecycleService(
+        object_upgrade=partial(upgrade_local_object_envelopes, key_provider=resolved_provider)
+    )
     return create_app(
         settings=settings,
         capability_digest=capability_digest,
         expected_authority=expected_authority,
-        projects=ProjectLifecycleService(
-            object_upgrade=partial(upgrade_local_object_envelopes, key_provider=resolved_provider)
-        ),
+        projects=projects,
+        privacy=ProjectPrivacyService(projects, sqlite_privacy_policy_repository),
     )
 
 
@@ -87,6 +91,8 @@ def supervision_handshake(*, host: str, port: int) -> dict[str, object]:
             "operations.cancel",
             "operations.events",
             "operations.read",
+            "privacy.cache-cleanup",
+            "privacy.policy",
             "projects.lifecycle",
             "runtime.contract",
             "runtime.status",

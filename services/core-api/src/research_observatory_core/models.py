@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -48,6 +49,37 @@ class ProjectRecoveryAction(StrEnum):
     NONE = "none"
     BACKUP_THEN_MIGRATE = "backup-then-migrate"
     BACKUP_THEN_USE_COMPATIBLE_APPLICATION = "backup-then-use-compatible-application"
+
+
+class PrivacyNetworkPolicy(StrEnum):
+    OFFLINE = "offline"
+    METADATA_ONLY = "metadata-only"
+    APPROVED_PROVIDERS = "approved-providers"
+
+
+class RemoteModelApproval(StrEnum):
+    PREVIEW_EVERY_TASK = "preview-every-task"
+
+
+class TelemetryMode(StrEnum):
+    OFF = "off"
+    LOCAL_DIAGNOSTICS_ONLY = "local-diagnostics-only"
+
+
+class DocumentRetentionPolicy(StrEnum):
+    PROJECT_LIFETIME = "project-lifetime"
+    REVIEW_AFTER_90_DAYS = "review-after-90-days"
+    REVIEW_AFTER_365_DAYS = "review-after-365-days"
+
+
+class EgressEnforcement(StrEnum):
+    DENY = "deny"
+    REQUIRE_TASK_PREVIEW = "require-task-preview"
+
+
+class CacheClearState(StrEnum):
+    CLEARED = "cleared"
+    CLEARED_CLEANUP_PENDING = "cleared-cleanup-pending"
 
 
 class RuntimeProjection(ContractModel):
@@ -179,6 +211,114 @@ class ProjectProjection(ContractModel):
                 or self.recovery_action is not ProjectRecoveryAction.BACKUP_THEN_USE_COMPATIBLE_APPLICATION
             ):
                 raise ValueError("newer-unsupported projects require the backup-then-use-compatible-application action")
+        return self
+
+
+class DeletionDisclosure(ContractModel):
+    disclosure_version: Literal["secure-deletion-disclosure-v1"]
+    scope: Literal["project-cache-only"]
+    logical_removal: Literal[True]
+    physical_erasure_guaranteed: Literal[False]
+    canonical_project_data_excluded: Literal[True]
+    limitations: tuple[str, ...] = Field(min_length=4, max_length=8)
+
+
+class ProjectPrivacyRequest(ProjectRootRequest):
+    pass
+
+
+class PrivacyPolicyUpdateRequest(ProjectRootRequest):
+    expected_revision: int = Field(ge=0, le=9_007_199_254_740_991)
+    network_policy: PrivacyNetworkPolicy
+    remote_model_approval: RemoteModelApproval
+    telemetry_mode: TelemetryMode
+    log_retention_days: int = Field(ge=1, le=90)
+    document_retention: DocumentRetentionPolicy
+    cache_retention_days: int = Field(ge=1, le=90)
+    egress_consent_token: str | None = Field(default=None, max_length=80)
+
+    @model_validator(mode="after")
+    def validate_egress_consent(self) -> PrivacyPolicyUpdateRequest:
+        expected = "acknowledge-egress-preview-v1"
+        if self.network_policy is PrivacyNetworkPolicy.OFFLINE:
+            if self.egress_consent_token is not None:
+                raise ValueError("offline policy cannot record an egress consent token")
+        elif self.egress_consent_token != expected:
+            raise ValueError("non-offline policy requires the exact informed-consent token")
+        return self
+
+
+class PrivacyPolicyProjection(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    project_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    revision: int = Field(ge=0, le=9_007_199_254_740_991)
+    defaults_applied: bool
+    network_policy: PrivacyNetworkPolicy
+    remote_model_approval: RemoteModelApproval
+    telemetry_mode: TelemetryMode
+    log_retention_days: int = Field(ge=1, le=90)
+    document_retention: DocumentRetentionPolicy
+    cache_retention_days: int = Field(ge=1, le=90)
+    egress_consent_recorded: bool
+    egress_enforcement: EgressEnforcement
+    deletion_disclosure: DeletionDisclosure
+
+    @model_validator(mode="after")
+    def validate_policy_state(self) -> PrivacyPolicyProjection:
+        if self.defaults_applied != (self.revision == 0):
+            raise ValueError("privacy defaults state must match revision")
+        if self.egress_consent_recorded != (self.network_policy is not PrivacyNetworkPolicy.OFFLINE):
+            raise ValueError("egress consent state must match network policy")
+        expected = (
+            EgressEnforcement.REQUIRE_TASK_PREVIEW
+            if self.network_policy is PrivacyNetworkPolicy.APPROVED_PROVIDERS
+            else EgressEnforcement.DENY
+        )
+        if self.egress_enforcement is not expected:
+            raise ValueError("egress enforcement must match network policy")
+        return self
+
+
+class CacheClearPreviewRequest(ProjectRootRequest):
+    pass
+
+
+class CacheClearPreview(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    project_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    policy_revision: int = Field(ge=0, le=9_007_199_254_740_991)
+    preview_token: str = Field(pattern=r"^[0-9a-f]{32}$")
+    confirmation: str = Field(pattern=r"^clear-cache:[0-9a-f]{32}$")
+    expires_at: datetime
+    item_count: int = Field(ge=0, le=100_000)
+    byte_count: int = Field(ge=0, le=9_007_199_254_740_991)
+    deletion_disclosure: DeletionDisclosure
+
+
+class CacheClearRequest(ProjectRootRequest):
+    preview_token: str = Field(pattern=r"^[0-9a-f]{32}$")
+    confirmation: str = Field(pattern=r"^clear-cache:[0-9a-f]{32}$")
+
+    @model_validator(mode="after")
+    def validate_confirmation(self) -> CacheClearRequest:
+        if self.confirmation != f"clear-cache:{self.preview_token}":
+            raise ValueError("cache confirmation must match the preview token")
+        return self
+
+
+class CacheClearResult(ContractModel):
+    schema_version: str = CORE_API_SCHEMA_VERSION
+    project_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    state: CacheClearState
+    item_count: int = Field(ge=0, le=100_000)
+    byte_count: int = Field(ge=0, le=9_007_199_254_740_991)
+    cleanup_pending: bool
+    deletion_disclosure: DeletionDisclosure
+
+    @model_validator(mode="after")
+    def validate_cleanup_state(self) -> CacheClearResult:
+        if self.cleanup_pending != (self.state is CacheClearState.CLEARED_CLEANUP_PENDING):
+            raise ValueError("cache cleanup state must match cleanup_pending")
         return self
 
 

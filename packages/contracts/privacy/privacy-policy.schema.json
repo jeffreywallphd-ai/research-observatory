@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/privacy/privacy-policy.schema.json",
+  "title": "Research Observatory project privacy policy profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "defaults",
+    "egress",
+    "telemetry",
+    "retention",
+    "cacheDeletion",
+    "auditEvents"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-project-privacy-policy"},
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["networkPolicy", "remoteModelApproval", "telemetryMode", "logRetentionDays", "documentRetention", "cacheRetentionDays"],
+      "properties": {
+        "networkPolicy": {"const": "offline"},
+        "remoteModelApproval": {"const": "preview-every-task"},
+        "telemetryMode": {"const": "off"},
+        "logRetentionDays": {"const": 14},
+        "documentRetention": {"const": "project-lifetime"},
+        "cacheRetentionDays": {"const": 30}
+      }
+    },
+    "egress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["networkPolicies", "consentToken", "settingChangeSendsData", "objectContentOutcomes"],
+      "properties": {
+        "networkPolicies": {"const": ["offline", "metadata-only", "approved-providers"]},
+        "consentToken": {"const": "acknowledge-egress-preview-v1"},
+        "settingChangeSendsData": {"const": false},
+        "objectContentOutcomes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["offline", "metadata-only", "approved-providers"],
+          "properties": {
+            "offline": {"const": "deny"},
+            "metadata-only": {"const": "deny"},
+            "approved-providers": {"const": "require-confirmation"}
+          }
+        }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modes", "remoteTelemetryImplemented"],
+      "properties": {
+        "modes": {"const": ["off", "local-diagnostics-only"]},
+        "remoteTelemetryImplemented": {"const": false}
+      }
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimumDays", "maximumDays", "documentPolicies", "automaticDocumentDeletion"],
+      "properties": {
+        "minimumDays": {"const": 1},
+        "maximumDays": {"const": 90},
+        "documentPolicies": {"const": ["project-lifetime", "review-after-90-days", "review-after-365-days"]},
+        "automaticDocumentDeletion": {"const": false}
+      }
+    },
+    "cacheDeletion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "previewRequired", "exactConfirmationRequired", "logicalRemoval", "physicalErasureGuaranteed", "canonicalProjectDataExcluded", "limitations"],
+      "properties": {
+        "scope": {"const": "project-cache-only"},
+        "previewRequired": {"const": true},
+        "exactConfirmationRequired": {"const": true},
+        "logicalRemoval": {"const": true},
+        "physicalErasureGuaranteed": {"const": false},
+        "canonicalProjectDataExcluded": {"const": true},
+        "limitations": {"const": ["filesystem-unlink-is-not-physical-erasure-proof", "ssd-wear-levelling-and-device-remapping", "journals-snapshots-backups-and-hard-links", "rebuildable-cache-only"]}
+      }
+    },
+    "auditEvents": {"const": ["privacy.policy.changed", "privacy.cache.cleared"]}
+  }
+}
