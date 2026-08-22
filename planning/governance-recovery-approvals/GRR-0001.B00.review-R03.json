@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-bootstrap-review",
+  "recoveryRequestId": "GRR-0001",
+  "bootstrapUnit": "GRR-0001.B00",
+  "attemptId": "R03",
+  "candidateCommit": "d4d877966e44327eaa1d0b1219836d1413fcb7e2",
+  "reviewedStateCommit": "1fb0275b5ec08c24f1701576a363e42bbf9d7016",
+  "reviewer": "b00-independent-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0001.B00.remediation-02.evidence.json",
+    "sha256": "9463d86fb14d3c3aa1bc78121b70881e702125975b766c1f3df5dea956032058"
+  },
+  "notes": "The candidate is a strict descendant of d53f5d3be5e254a7416272442f924b99d910abeb; its eight-path evidence scope exactly matches Git and contains no product, production ECR-0002/W1.A03 authority, ordinary W1 execution, or hold release. R01/R02 evidence, ledgers, findings, closures, and state history remain append-only and hash-bound. The exact 108-test suite passes at frozen REVIEW in 197.258 seconds, and quality, backlog, GRR authority, legacy ECR-0001, 147-page review-site, generated-view, and range diff checks pass. R02-F01 is closed. R02-F02 is not closed: the fixture now runs in REVIEW but constructs an approval that the authoritative recovery validator rejects, while taskctl accepts it and appends W1.A03 in the fixture.",
+  "findings": [
+    {
+      "id": "GRR-0001.B00-R03-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 4,
+      "title": "taskctl accepts an amendment append from a recovery approval that retains open blocking findings",
+      "reproduction": "At 1fb0275b5ec08c24f1701576a363e42bbf9d7016, tests/foundation/test_recoveryctl.py append_fixture handles REVIEW by appending an R03 ledger with result approved, findings [], and closures [], even though R02-F01 and R02-F02 remain open. A direct call to recoveryctl.validate_request on that generated fixture fails with `GRR-0001.B00/R03 approval retains open blocking findings`. Nevertheless test_real_second_ecr_and_third_amendment_append_is_semantic_atomic_and_preserving calls taskctl.command_amendment_append_bootstrap_submit and succeeds; the frozen 108-test output ends with `Appended and submitted W1.A03.B00 for independent review`. taskctl.recovery_hold_errors verifies ledger paths/hashes and the latest projection but does not validate ledger identity, closure history, or open blocking findings. The passing fixture therefore demonstrates an executable append from an unresolved recovery hold rather than the coherent approved state required by criterion 4.",
+      "requiredRemediation": "Share the authoritative recovery-ledger and open-finding validation with taskctl recovery_hold_errors, including attempt identity, candidate/evidence/reviewer/result binding, sequential append-only closure processing, and denial of APPROVED while any blocking finding remains open. Make append_fixture preserve every prior attempt and create a lawful new attempt that explicitly closes R02-F01/R02-F02; do not rewrite a CHANGES_REQUESTED/BLOCKED attempt in place. Require recoveryctl.validate_request to pass immediately before the fixture invokes the real append command, and add an adversarial byte-stable denial test for an approved projection with missing closures."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "GRR-0001.B00-R02-F01",
+      "notes": "Closed. Both recoveryctl.safe_repo_path and taskctl.safe_control_path now reject any raw spelling that differs from PurePosixPath.as_posix. Direct replay denies internal repeated separators for recovery evidence and appended-amendment evidence, and command-entry tests cover recovery evidence, review ledgers, and amendment evidence."
+    }
+  ]
+}
