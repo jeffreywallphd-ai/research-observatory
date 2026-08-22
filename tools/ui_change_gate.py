@@ -412,12 +412,7 @@ def application_activation_errors(
         )
         if invalid_order:
             errors.append("first-application gate activation must be committed before every UI implementation commit")
-    elif (
-        not late_protected
-        or len(late_protected) + len(activation_positions) != len(protected_positions)
-        or activation_errors
-        or errors
-    ):
+    elif len(late_protected) + len(activation_positions) != len(protected_positions) or activation_errors or errors:
         errors.extend(activation_errors)
         errors.append(
             "UI implementation cannot change its own design-first gate controls without an exact independently "
