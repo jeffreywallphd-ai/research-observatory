@@ -7809,7 +7809,7 @@
         {
           "id": "GRR-0001.S01",
           "bootstrap_id": "GRR-0001.B01",
-          "bootstrap_status": "IN_PROGRESS",
+          "bootstrap_status": "REVIEW",
           "packet_path": "planning/governance-recovery-requests/GRR-0001.S01.packet.json",
           "packet_sha256": "c5ebe39b38e8cad33d373ddce040dce59760b8bc9636a6f208c118d867c6344b",
           "packet_commit": "2617d29ce56d8c6a77b93ad28c23b16c01ced30b",
