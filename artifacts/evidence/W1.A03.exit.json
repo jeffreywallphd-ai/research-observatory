@@ -1,0 +1,129 @@
+{
+  "documentType": "wave-amendment-exit-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A03",
+  "changeRequestId": "ECR-0002",
+  "targetWave": "W1",
+  "candidateCommit": "f47241972c1e8c0be3d53c822d921dd142b65996",
+  "branch": "codex/w1-windows-local-runtime",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "scope": {
+    "bootstrap": {
+      "id": "W1.A03.B00",
+      "status": "APPROVED",
+      "implementationCommit": "d0faa070a85055fa2a278e05bedc57c05701aabe",
+      "evidence": "artifacts/evidence/W1.A03.B00.json"
+    },
+    "authorizedTasks": [
+      {
+        "taskId": "W1.A03.T01",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "finalEvidence": "artifacts/evidence/W1.A03.T01.remediation-01.json",
+        "reviewLedger": "artifacts/evidence/W1.A03.T01.review-R02.json",
+        "closedFindingIds": [
+          "W1.A03.T01-R01-F01",
+          "W1.A03.T01-R01-F02"
+        ]
+      }
+    ],
+    "retainedBoundary": {
+      "waveStatus": "PAUSED",
+      "waveScope": "amendment-hold",
+      "holdId": "HOLD-W1-GRR-0001",
+      "holdStatus": "ACTIVE",
+      "taskId": "CAP-02.S04.T03",
+      "taskStatus": "BLOCKED",
+      "recoveryControl": null
+    },
+    "unauthorizedClaims": [
+      "CAP-02.S04.T03 ordinary evidence or approval",
+      "CAP-02.S04 slice approval",
+      "W1 product or deployment qualification",
+      "W1 completion or G1 approval",
+      "ordinary W1 campaign resumption",
+      "remote integration"
+    ]
+  },
+  "authority": {
+    "approvalRecord": "planning/wave-amendment-approvals/W1.A03.json",
+    "approvalIntroductionCommit": "95c007b58619dfd82b5f443eea3d8e71e7efe082",
+    "canonicalProposal": "planning/enabler-change-requests/ECR-0002.md",
+    "packet": "planning/enabler-change-requests/ECR-0002.packet.json",
+    "packetCommit": "ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4",
+    "packetSha256": "835d0cbac43427a1cfd7406a8693b8af0ebf9321d009778c359165de9f7a3b8b"
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate",
+      "result": "passed",
+      "summary": "101 controller, schema, workflow, and UI-gate tests passed in 166.174 seconds at the exact completed-task candidate, including amendment/target contract tamper, real atomic persistence, competing-writer preservation, and adoption-boundary cases"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+      "result": "passed",
+      "summary": "exact historical T03 range passed against approved reference RO-UI-ACADEMIC-MINIMAL-1.3 with zero errors"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract",
+      "result": "passed",
+      "summary": "9 privacy and contract tests passed in 0.605 seconds"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "result": "passed",
+      "summary": "119 governed Python files passed formatting, lint, and mypy"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "result": "passed",
+      "summary": "20 capabilities, 117 slices, 359 tasks, and 12 release gates; W1.A03.T01 is DONE with immutable R01/R02 review history"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
+      "result": "passed",
+      "summary": "W1.A03.T01 R01 and R02 project from the privacy-safe allowlist and R02 closes both R01 findings"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . validate GRR-0001 --require-approved",
+      "result": "passed",
+      "summary": "ECR-0002 and predecessor ECR-0001 are approved and history-bound; GRR-0001 is valid with its hold ACTIVE and W1.A03 next"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "result": "passed",
+      "summary": "all 148 review pages passed and generated backlog views are current"
+    },
+    {
+      "command": "git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py",
+      "result": "passed",
+      "summary": "historical T03 product, privacy, reference-contract, and product-test bytes are unchanged"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "summary": "no whitespace errors"
+    }
+  ],
+  "retainedDeferredWork": {
+    "owner": "W1-exit",
+    "items": [
+      "ordinary CAP-02.S04.T03 candidate and commit-bound evidence after lawful recovery",
+      "independent CAP-02.S04.T03 privacy/task review and CAP-02.S04 slice review",
+      "all remaining W1 tasks and slices",
+      "complete W1 product and deployment qualification matrix",
+      "G1 human approval"
+    ]
+  },
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "Paused at blocked CAP-02.S04.T03 after the revised UI gate demonstrated a cumulative additive-inventory control defect; ordinary W1 work remains denied pending a bounded independently reviewed ECR and explicit human amendment approval."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review"
+}
