@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 96ed0945616cc760677b9853d4b084552fe8fe6f2839ddab68a3e2c53f6d4153
+source_sha256: 5ae6c993f87787966cf23119499164a6b97ea05c65e8b065e41f2bb78ab65868
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -803,7 +803,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A03.T01 - Exact T03 candidate-lineage and evidence recovery
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / b00-independent-reviewer (`changes-requested`)
 
 **Dependencies:** `W1.A03.B00`
 
@@ -833,9 +833,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A03.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `756eed60f3c76264c3bc35676b74aa0b772b0523230097958a400c96ec059dba`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `756eed60f3c76264c3bc35676b74aa0b772b0523230097958a400c96ec059dba`
 
 - Candidate / base / branch: `1127d72f29fbe407f3aaf99dd1f87d1aea60f18e` / `22afeeb5779ed53bbd6c35fac9515f4a7e8c56d4` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-22T19:36:38+00:00`
@@ -849,11 +851,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / b00-independent-reviewer / `2026-08-22T19:47:59+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W1.A03.T01.review-R01.json` / `d710d43697a6e42a997898c4661fd6293831cfe75a92b94cfc675087bf961362`
 
-**Currently open findings:** -
+**Review notes:** Reviewed exact frozen submission state bc9f3b6ef592a5b06ce679423079c888682a96a0 and evidence artifacts/evidence/W1.A03.T01.json (SHA-256 54a90061e9854a6cf52df415ec9f058ffb664e42a1193e47b35c7abbb7695e70). Exact scope, approved amendment/hold binding, pre-adoption denial, Git-derived recovery evidence, UI/privacy checks, fail-closed denials, and prohibition on unrelated lifecycle authority were inspected. The selected 97-test recovery/schema/workflow/UI suite and affected governance checks pass, but two acceptance-bound evidence-control defects remain.
+
+**Findings opened:**
+
+- `W1.A03.T01-R01-F01` `high` blocking=`True` criterion=`7` — Recovery accepts rewritten amendment and target-task contracts; reproduce: Load the frozen backlog, change W1.A03.T01.title to `FORGED PREDECESSOR TITLE`, and run taskctl.validate plus exact_recovery_manifest_errors for CAP-02.S04.T03; both return no W1.A03 error. Independently, change CAP-02.S04.T03.acceptance_criteria[0] to `FORGED TARGET CRITERION`; the same validators return no T03 error and no manifest error. tools/taskctl.py:76 limits TASK_RECOVERY_BOUNDARY_FIELDS to mutable execution/review fields, command_recover at tools/taskctl.py:6854 does not require W1.A03 packet integrity, and the shipped predecessor-rewrite test supplies a patched validation error instead of exercising this mutation. A rewritten predecessor or target contract can therefore pass the recovery preflight despite criteria 1, 5, and 7 requiring exact approved authority and no task/predecessor rewrite.; remediate: In recovery preflight, validate the complete approved W1.A03 packet/inventory and bind an immutable full CAP-02.S04.T03 task-contract snapshot or equivalent authoritative hash covering identity, title/objective, dependencies, acceptance criteria, verification commands/profiles, experience references, and other static contract fields. Revalidate that binding immediately before mutation and in the persisted recovery projection. Add real adversarial tests that modify amendment-task and target-task contract fields and prove byte-stable denial, then resubmit a strict-descendant candidate with corrected evidence.
+- `W1.A03.T01-R01-F02` `medium` blocking=`True` criterion=`6` — One-CAS transition and stale-writer evidence is not exercised; reproduce: tests/foundation/test_task_recovery.py:87-128 patches git identity, repository cleanliness, semantic validation, historical blobs, manifest validation, recomputation, and persist. The nominal transition test at lines 170-176 consequently proves only that the persist mock was called once. The stale case at lines 217-225 injects a git_execution_identity exception rather than creating a competing backlog write and exercising persist's compare-and-swap guard. No selected test performs the lawful recovery through an actual isolated repository/backlog write and then reproduces a stale-writer conflict. The evidence claim that the 97-test suite proves a one-CAS mutation and stale atomic denial is therefore not truthful enough to satisfy criteria 6 and 7.; remediate: Add an isolated-filesystem lifecycle test that invokes the real recovery command with a committed canonical manifest and real persistence, verifies exactly one BLOCKED-to-IN_PROGRESS task projection changes while the original block remains append-only, and confirms no evidence/review/slice/Wave/G1 state changes. Add a genuine stale-backlog compare-and-swap race or competing-writer fixture that reaches the persistence guard and proves byte-stable failure. Correct the evidence claims to match the exercised behavior and resubmit a strict-descendant candidate.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-22T19:47:59+00:00`
+
+**Latest notes:** Reviewed exact frozen submission state bc9f3b6ef592a5b06ce679423079c888682a96a0 and evidence artifacts/evidence/W1.A03.T01.json (SHA-256 54a90061e9854a6cf52df415ec9f058ffb664e42a1193e47b35c7abbb7695e70). Exact scope, approved amendment/hold binding, pre-adoption denial, Git-derived recovery evidence, UI/privacy checks, fail-closed denials, and prohibition on unrelated lifecycle authority were inspected. The selected 97-test recovery/schema/workflow/UI suite and affected governance checks pass, but two acceptance-bound evidence-control defects remain.
+
+**Currently open findings:** `W1.A03.T01-R01-F01`, `W1.A03.T01-R01-F02`
 
 
 # Capability contributions, slices, and tasks
