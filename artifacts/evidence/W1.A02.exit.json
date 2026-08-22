@@ -4,7 +4,7 @@
   "amendmentId": "W1.A02",
   "changeRequestId": "ECR-0001",
   "targetWave": "W1",
-  "candidateCommit": "546eb572526acd2996ee2c5fb74f29135d295760",
+  "candidateCommit": "48017abbeb860f01591bb977c352a7d3739cc232",
   "branch": "codex/w1-windows-local-runtime",
   "outcome": "ready-for-independent-amendment-exit-review",
   "scope": {
@@ -38,6 +38,21 @@
     "packet": "planning/enabler-change-requests/ECR-0001.packet.json"
   },
   "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "result": "passed",
+      "summary": "69 controller and schema tests, including amendment-exit tamper, missing, dirty, forked, stale-review, open-blocker, append-only history, and bound-adoption cases"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments",
+      "result": "passed",
+      "summary": "13 amendment review-site history, closure, hash-drift, checkpoint-association, and legacy-compatibility tests"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "result": "passed",
+      "summary": "113 governed Python files"
+    },
     {
       "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
       "result": "passed",
@@ -78,11 +93,15 @@
       "data:storage-maintenance-performance"
     ]
   },
-  "stoppedState": {
-    "wave": "W1",
-    "campaignStatus": "PAUSED",
-    "campaignScope": "wave-amendment",
-    "pauseReason": "amendment-hold",
-    "requiredNextTransition": "independent amendment exit review"
-  }
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "Prepare and obtain exact-commit approval for append-only W1 workflow-control amendment; unsafe Wave reapproval command administratively held"
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review"
 }
