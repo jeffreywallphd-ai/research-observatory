@@ -892,13 +892,13 @@
             {
               "task_id": "CAP-02.S04.T02",
               "title": "Implement local user profile and application-lock behavior",
-              "status": "REVIEW",
+              "status": "DONE",
               "mode": "append-only",
               "latest_review": {
                 "reviewer": "b00-independent-reviewer",
-                "result": "changes-requested",
-                "reviewed_at": "2026-08-22T04:14:41+00:00",
-                "notes": "CHANGES_REQUESTED at exact immutable review state df95297314c090433705cac79cdae9ef8e995fdd on codex/w1-windows-local-runtime. Candidate a06d7d4cd67e027850d6d240f1507a17e49a4739 is a descendant of base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1; the frozen 31-path scope and artifacts/evidence/CAP-02.S04.T02.submission.json SHA-256 4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445 match the R01 packet. The three retained report hashes and their PASS results are truthful, and focused independent replay passed 5 application-lock Rust tests, 4 support-bundle Rust tests, 4 ApplicationRuntime tests, 2 Windows credential source-boundary tests, taskctl backlog validation, and base-to-candidate diff hygiene. Those tests do not exercise the four acceptance-bound defects below, so the manifest's prompt, cancellation, fail-closed renderer, rate-limit, and corresponding ADR truth claims are not established. Same-SID comparison, transient-buffer clearing, handle closure, strict profile/schema authority, bounded identity-free audit projection, locked-view disclosure/accessibility, and W1-exit-only performance/full qualification produced no additional task blocker. W1-exit performance and complete qualification remain correctly deferred and were not rerun."
+                "result": "approved",
+                "reviewed_at": "2026-08-22T04:48:56+00:00",
+                "notes": "APPROVED at exact immutable submission state 866ac878cc8ee79e2a6cb8b0ee07b64eb2f8ab71 on codex/w1-windows-local-runtime. Remediation candidate 44ee8733a159152a3873eab76c5e54b995824afb strictly descends from R01 candidate a06d7d4cd67e027850d6d240f1507a17e49a4739. Evidence artifacts/evidence/CAP-02.S04.T02.remediation-01.json has SHA-256 ce3e9716c3bb3b86845908a0ddd016810deda2ca071178e24ee0a9a628a0ef07; its immediate-predecessor supersedes path/SHA/commit, base, candidate, branch, acceptance hash, and exact 19-path incremental scope are truthful. F01 closes because the Windows build now uses the documented generic+always-show+validated+non-persisting credential flags, prefills NameSamCompatible, maps an empty parsed UPN domain to NULL for LogonUserW, preserves down-level/local mapping and same-SID/zeroization/handle controls, and has an exact Windows native mapping test. F02 closes because Core I/O no longer holds the lifecycle mutex, each process carries cancellation, the application-lock path signals cancellation and terminates the process tree immediately, profile/support data is privately staged and published only while holding the matching generation boundary, and every lock clears pending support previews; deterministic profile, support-preview/export, and transport-cancellation replays passed. F03 closes because the renderer begins locked, registers its listener before status reconciliation, orders native snapshots monotonically, rejects same-sequence conflicts and stale unlocks, polls for missed events, time-bounds reconciliation, and synthesizes a locked configuration-invalid tree on malformed/unavailable paths; built-browser replay removed populated project/path/query/profile-dialog content and allowed recovery only through explicit native unlock. F04 closes because one mutex-protected RAII reauthentication reservation admits one prompt and releases on cancellation, denial, Core failure, success, and unwind while retaining bounded backoff; concurrent-admission replay passed. Retained report hashes are truthful: desktop 18868edff17d322d32207cbe51087fdc763f698ae18db63542e178ff8d0a88db, affected selection 9cda6f5906af965cf8489998c450d409069c640054e0b4250f1a05e8bb75344d, build manifest 5df5ced91a831a60cc7cda2324de41dd4874eba918b02191a7fcba546d7d1eee, and quality d75f968403803b78748f4a0f1a2ec6f58980b47f35ae5c22ea4b9446ef55853c. Independent focused replay passed 9 application-lock Rust tests, 5 support-bundle Rust tests, the focused in-flight transport-cancellation test, 10 lock/runtime frontend tests, 2 Windows credential source-boundary tests, the complete built-browser frame including lock reconciliation, canonical backlog validation, and Git scope/whitespace checks. Cargo.lock and package versions are unchanged; the prior live supply-chain result remains applicable. Desktop performance and complete repository/deployment qualification remain correctly owned by W1 exit and were not rerun. No new acceptance-bound findings were found."
               },
               "review_control": {
                 "version": 1,
@@ -1086,84 +1086,165 @@
                         "closed_finding_ids": []
                       }
                     }
+                  },
+                  {
+                    "submission": {
+                      "id": "R02",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-08-22T04:41:32+00:00",
+                      "candidate_commit": "44ee8733a159152a3873eab76c5e54b995824afb",
+                      "base_commit": "a06d7d4cd67e027850d6d240f1507a17e49a4739",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-02.S04.T02.remediation-01.json",
+                        "sha256": "ce3e9716c3bb3b86845908a0ddd016810deda2ca071178e24ee0a9a628a0ef07",
+                        "commit": "44ee8733a159152a3873eab76c5e54b995824afb",
+                        "recorded_at": "2026-08-22T04:41:32+00:00"
+                      },
+                      "acceptance_criteria_sha256": "fc75db33fdcc31be14a8269d50dac1414d9ef9cf4c24ad34f7d68724ce8c84cf",
+                      "changed_paths": [
+                        "apps/desktop/src-tauri/Cargo.toml",
+                        "apps/desktop/src-tauri/src/application_lock.rs",
+                        "apps/desktop/src-tauri/src/lib.rs",
+                        "apps/desktop/src-tauri/src/supervisor.rs",
+                        "apps/desktop/src-tauri/src/support_bundle.rs",
+                        "apps/desktop/src/app/ApplicationRuntime.tsx",
+                        "apps/desktop/src/app/applicationLock.test.ts",
+                        "apps/desktop/src/app/applicationLock.ts",
+                        "artifacts/evidence/CAP-02.S04.T02.submission.json",
+                        "artifacts/evidence/task-reviews/CAP-02.S04.T02/R01.json",
+                        "docs/adr/ADR-0018-lock-the-local-application-at-the-native-supervisor-boundary.md",
+                        "docs/architecture/application-lock.md",
+                        "docs/planning-implementation-plan.md",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-02/CAP-02.S04.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md",
+                        "tests/security/test_windows_credentials.py",
+                        "tools/desktop_app_check.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-remediation-commit-desktop.json",
+                        ".venv\\Scripts\\python.exe -m unittest discover -s tests/security; .venv\\Scripts\\python.exe -m unittest discover -s tests/contracts; .venv\\Scripts\\python.exe -m unittest discover -s tests/desktop",
+                        ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; adr_check --base a06d7d4 --head 44ee8733; ui_change_gate --base 8782ee8d --head 44ee8733; build_manifest; quality_check; taskctl validate; backlog_views --check",
+                        ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base a06d7d4cd67e027850d6d240f1507a17e49a4739 --affected-head 44ee8733a159152a3873eab76c5e54b995824afb --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-02.S04.T02-remediation-affected-selection.json"
+                      ],
+                      "deferred_checks": [
+                        "Desktop performance and the complete repository/deployment-profile matrix remain governed by the W1 exit gate. The initial submission's package-version-stable live supply-chain scan is not replayed for this source-only remediation."
+                      ],
+                      "selection_rationale": "R01 exposed credential API correctness, lock-time side-effect cancellation, renderer fail-closed reconciliation, and concurrent reauthentication admission. The remediation therefore replays the complete desktop application verifier, native Windows/Rust tests, desktop/security/contracts boundaries, architecture and ADR truth, UI lineage, clean build identity, Python quality, backlog integrity, and Git-derived affected selection. The package lock and package versions are unchanged, so the previously passing live supply-chain result remains applicable; performance and complete cross-profile qualification remain deferred to W1 exit.",
+                      "selection_sha256": "ebc2672f762a8b53d96c439d93051651aa303734123fbc3dee62607b9f227f84",
+                      "prior_attempt_id": "R01",
+                      "open_finding_ids": [
+                        "CAP-02.S04.T02-R01-F01",
+                        "CAP-02.S04.T02-R01-F02",
+                        "CAP-02.S04.T02-R01-F03",
+                        "CAP-02.S04.T02-R01-F04"
+                      ],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-change",
+                        "foundation:adr",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "contracts:unit",
+                        "security-local:unit"
+                      ],
+                      "packet_sha256": "64f55019f973fe721637526e3d5c6e342e06f7c62f51e1f43ab4d352a5ab8430"
+                    },
+                    "review": {
+                      "reviewer": "b00-independent-reviewer",
+                      "result": "approved",
+                      "reviewed_at": "2026-08-22T04:48:56+00:00",
+                      "notes": "APPROVED at exact immutable submission state 866ac878cc8ee79e2a6cb8b0ee07b64eb2f8ab71 on codex/w1-windows-local-runtime. Remediation candidate 44ee8733a159152a3873eab76c5e54b995824afb strictly descends from R01 candidate a06d7d4cd67e027850d6d240f1507a17e49a4739. Evidence artifacts/evidence/CAP-02.S04.T02.remediation-01.json has SHA-256 ce3e9716c3bb3b86845908a0ddd016810deda2ca071178e24ee0a9a628a0ef07; its immediate-predecessor supersedes path/SHA/commit, base, candidate, branch, acceptance hash, and exact 19-path incremental scope are truthful. F01 closes because the Windows build now uses the documented generic+always-show+validated+non-persisting credential flags, prefills NameSamCompatible, maps an empty parsed UPN domain to NULL for LogonUserW, preserves down-level/local mapping and same-SID/zeroization/handle controls, and has an exact Windows native mapping test. F02 closes because Core I/O no longer holds the lifecycle mutex, each process carries cancellation, the application-lock path signals cancellation and terminates the process tree immediately, profile/support data is privately staged and published only while holding the matching generation boundary, and every lock clears pending support previews; deterministic profile, support-preview/export, and transport-cancellation replays passed. F03 closes because the renderer begins locked, registers its listener before status reconciliation, orders native snapshots monotonically, rejects same-sequence conflicts and stale unlocks, polls for missed events, time-bounds reconciliation, and synthesizes a locked configuration-invalid tree on malformed/unavailable paths; built-browser replay removed populated project/path/query/profile-dialog content and allowed recovery only through explicit native unlock. F04 closes because one mutex-protected RAII reauthentication reservation admits one prompt and releases on cancellation, denial, Core failure, success, and unwind while retaining bounded backoff; concurrent-admission replay passed. Retained report hashes are truthful: desktop 18868edff17d322d32207cbe51087fdc763f698ae18db63542e178ff8d0a88db, affected selection 9cda6f5906af965cf8489998c450d409069c640054e0b4250f1a05e8bb75344d, build manifest 5df5ced91a831a60cc7cda2324de41dd4874eba918b02191a7fcba546d7d1eee, and quality d75f968403803b78748f4a0f1a2ec6f58980b47f35ae5c22ea4b9446ef55853c. Independent focused replay passed 9 application-lock Rust tests, 5 support-bundle Rust tests, the focused in-flight transport-cancellation test, 10 lock/runtime frontend tests, 2 Windows credential source-boundary tests, the complete built-browser frame including lock reconciliation, canonical backlog validation, and Git scope/whitespace checks. Cargo.lock and package versions are unchanged; the prior live supply-chain result remains applicable. Desktop performance and complete repository/deployment qualification remain correctly owned by W1 exit and were not rerun. No new acceptance-bound findings were found."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/task-reviews/CAP-02.S04.T02/R02.json",
+                      "sha256": "1695547279e474359eba02f77bb10f53a74d146fd492ee8311cdb73aedf0cbcb"
+                    },
+                    "findings": [],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-02.S04.T02-R01-F01",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/CAP-02.S04.T02.remediation-01.json"
+                      },
+                      {
+                        "finding_id": "CAP-02.S04.T02-R01-F02",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/CAP-02.S04.T02.remediation-01.json"
+                      },
+                      {
+                        "finding_id": "CAP-02.S04.T02-R01-F03",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/CAP-02.S04.T02.remediation-01.json"
+                      },
+                      {
+                        "finding_id": "CAP-02.S04.T02-R01-F04",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/CAP-02.S04.T02.remediation-01.json"
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-02.S04.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R02",
+                      "submitted_at": "2026-08-22T04:41:32+00:00",
+                      "reviewed_at": "2026-08-22T04:48:56+00:00",
+                      "duration_seconds": 444,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-change",
+                        "foundation:adr",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "contracts:unit",
+                        "security-local:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R01",
+                        "replayed_finding_ids": [
+                          "CAP-02.S04.T02-R01-F01",
+                          "CAP-02.S04.T02-R01-F02",
+                          "CAP-02.S04.T02-R01-F03",
+                          "CAP-02.S04.T02-R01-F04"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-02.S04.T02-R01-F01",
+                          "CAP-02.S04.T02-R01-F02",
+                          "CAP-02.S04.T02-R01-F03",
+                          "CAP-02.S04.T02-R01-F04"
+                        ]
+                      }
+                    }
                   }
                 ],
-                "current_submission": {
-                  "id": "R02",
-                  "submitted_by": "codex",
-                  "submitted_at": "2026-08-22T04:41:32+00:00",
-                  "candidate_commit": "44ee8733a159152a3873eab76c5e54b995824afb",
-                  "base_commit": "a06d7d4cd67e027850d6d240f1507a17e49a4739",
-                  "branch": "codex/w1-windows-local-runtime",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-02.S04.T02.remediation-01.json",
-                    "sha256": "ce3e9716c3bb3b86845908a0ddd016810deda2ca071178e24ee0a9a628a0ef07",
-                    "commit": "44ee8733a159152a3873eab76c5e54b995824afb",
-                    "recorded_at": "2026-08-22T04:41:32+00:00"
-                  },
-                  "acceptance_criteria_sha256": "fc75db33fdcc31be14a8269d50dac1414d9ef9cf4c24ad34f7d68724ce8c84cf",
-                  "changed_paths": [
-                    "apps/desktop/src-tauri/Cargo.toml",
-                    "apps/desktop/src-tauri/src/application_lock.rs",
-                    "apps/desktop/src-tauri/src/lib.rs",
-                    "apps/desktop/src-tauri/src/supervisor.rs",
-                    "apps/desktop/src-tauri/src/support_bundle.rs",
-                    "apps/desktop/src/app/ApplicationRuntime.tsx",
-                    "apps/desktop/src/app/applicationLock.test.ts",
-                    "apps/desktop/src/app/applicationLock.ts",
-                    "artifacts/evidence/CAP-02.S04.T02.submission.json",
-                    "artifacts/evidence/task-reviews/CAP-02.S04.T02/R01.json",
-                    "docs/adr/ADR-0018-lock-the-local-application-at-the-native-supervisor-boundary.md",
-                    "docs/architecture/application-lock.md",
-                    "docs/planning-implementation-plan.md",
-                    "planning/backlog.yaml",
-                    "planning/review-site/CAP-02/CAP-02.S04.html",
-                    "planning/review-site/manifest.json",
-                    "planning/status-summary.md",
-                    "tests/security/test_windows_credentials.py",
-                    "tools/desktop_app_check.py"
-                  ],
-                  "selected_checks": [
-                    ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-remediation-commit-desktop.json",
-                    ".venv\\Scripts\\python.exe -m unittest discover -s tests/security; .venv\\Scripts\\python.exe -m unittest discover -s tests/contracts; .venv\\Scripts\\python.exe -m unittest discover -s tests/desktop",
-                    ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .; adr_check --base a06d7d4 --head 44ee8733; ui_change_gate --base 8782ee8d --head 44ee8733; build_manifest; quality_check; taskctl validate; backlog_views --check",
-                    ".venv\\Scripts\\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base a06d7d4cd67e027850d6d240f1507a17e49a4739 --affected-head 44ee8733a159152a3873eab76c5e54b995824afb --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-02.S04.T02-remediation-affected-selection.json"
-                  ],
-                  "deferred_checks": [
-                    "Desktop performance and the complete repository/deployment-profile matrix remain governed by the W1 exit gate. The initial submission's package-version-stable live supply-chain scan is not replayed for this source-only remediation."
-                  ],
-                  "selection_rationale": "R01 exposed credential API correctness, lock-time side-effect cancellation, renderer fail-closed reconciliation, and concurrent reauthentication admission. The remediation therefore replays the complete desktop application verifier, native Windows/Rust tests, desktop/security/contracts boundaries, architecture and ADR truth, UI lineage, clean build identity, Python quality, backlog integrity, and Git-derived affected selection. The package lock and package versions are unchanged, so the previously passing live supply-chain result remains applicable; performance and complete cross-profile qualification remain deferred to W1 exit.",
-                  "selection_sha256": "ebc2672f762a8b53d96c439d93051651aa303734123fbc3dee62607b9f227f84",
-                  "prior_attempt_id": "R01",
-                  "open_finding_ids": [
-                    "CAP-02.S04.T02-R01-F01",
-                    "CAP-02.S04.T02-R01-F02",
-                    "CAP-02.S04.T02-R01-F03",
-                    "CAP-02.S04.T02-R01-F04"
-                  ],
-                  "root_cause_analysis": null,
-                  "selected_command_ids": [
-                    "foundation:architecture",
-                    "foundation:backlog-views",
-                    "foundation:build-manifest",
-                    "foundation:ui-change",
-                    "foundation:adr",
-                    "foundation:quality",
-                    "foundation:backlog",
-                    "desktop:application",
-                    "desktop:unit",
-                    "contracts:unit",
-                    "security-local:unit"
-                  ],
-                  "packet_sha256": "64f55019f973fe721637526e3d5c6e342e06f7c62f51e1f43ab4d352a5ab8430"
-                }
+                "current_submission": null
               }
             },
             {
               "task_id": "CAP-02.S04.T03",
               "title": "Create privacy, telemetry, retention, and secure-deletion settings",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,

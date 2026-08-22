@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c3af2952c267a55b65ec17776618d43a1a68a17ed7251980ed485b937d9bf297
+source_sha256: 70db167ed282694b631dcf9f01f7a6200570e48a1d2030f4ff50868ba2329f25
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2732,15 +2732,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Latest notes:** APPROVED exact implementation 3fedbd7dd0783b2a47000781dbc0f73843c53170; evidence 57c47fc SHA-256 208f07ec0debc0f2cd67920b1c9106f7f63ef983f9627fdcf88bcf934a625408; clean descendant cd872d1. F1 bounded authority recovery, F2 attributed default audit, and F3 closed purpose vocabulary verified. No actionable P0-P3.
 
-#### - [ ] CAP-02.S04.T02 - Implement local user profile and application-lock behavior
+#### - [x] CAP-02.S04.T02 - Implement local user profile and application-lock behavior
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S04.T01`
 
-**Owner / review:** codex / b00-independent-reviewer (`changes-requested`)
+**Owner / review:** codex / b00-independent-reviewer (`approved`)
 
 **Objective:** Optional local profile name, inactivity lock, project lock state, and protected reauthentication without requiring a cloud account.
 
@@ -2766,7 +2766,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-02.S04.T02
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -2801,7 +2801,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `64f55019f973fe721637526e3d5c6e342e06f7c62f51e1f43ab4d352a5ab8430`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `64f55019f973fe721637526e3d5c6e342e06f7c62f51e1f43ab4d352a5ab8430`
 
 - Candidate / base / branch: `44ee8733a159152a3873eab76c5e54b995824afb` / `a06d7d4cd67e027850d6d240f1507a17e49a4739` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-22T04:41:32+00:00`
@@ -2815,15 +2817,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `CAP-02.S04.T02-R01-F01`, `CAP-02.S04.T02-R01-F02`, `CAP-02.S04.T02-R01-F03`, `CAP-02.S04.T02-R01-F04`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-22T04:14:41+00:00`
+**Disposition / reviewer / time:** `approved` / b00-independent-reviewer / `2026-08-22T04:48:56+00:00`
 
-**Latest notes:** CHANGES_REQUESTED at exact immutable review state df95297314c090433705cac79cdae9ef8e995fdd on codex/w1-windows-local-runtime. Candidate a06d7d4cd67e027850d6d240f1507a17e49a4739 is a descendant of base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1; the frozen 31-path scope and artifacts/evidence/CAP-02.S04.T02.submission.json SHA-256 4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445 match the R01 packet. The three retained report hashes and their PASS results are truthful, and focused independent replay passed 5 application-lock Rust tests, 4 support-bundle Rust tests, 4 ApplicationRuntime tests, 2 Windows credential source-boundary tests, taskctl backlog validation, and base-to-candidate diff hygiene. Those tests do not exercise the four acceptance-bound defects below, so the manifest's prompt, cancellation, fail-closed renderer, rate-limit, and corresponding ADR truth claims are not established. Same-SID comparison, transient-buffer clearing, handle closure, strict profile/schema authority, bounded identity-free audit projection, locked-view disclosure/accessibility, and W1-exit-only performance/full qualification produced no additional task blocker. W1-exit performance and complete qualification remain correctly deferred and were not rerun.
+**Immutable review ledger:** `artifacts/evidence/task-reviews/CAP-02.S04.T02/R02.json` / `1695547279e474359eba02f77bb10f53a74d146fd492ee8311cdb73aedf0cbcb`
 
-**Currently open findings:** `CAP-02.S04.T02-R01-F01`, `CAP-02.S04.T02-R01-F02`, `CAP-02.S04.T02-R01-F03`, `CAP-02.S04.T02-R01-F04`
+**Review notes:** APPROVED at exact immutable submission state 866ac878cc8ee79e2a6cb8b0ee07b64eb2f8ab71 on codex/w1-windows-local-runtime. Remediation candidate 44ee8733a159152a3873eab76c5e54b995824afb strictly descends from R01 candidate a06d7d4cd67e027850d6d240f1507a17e49a4739. Evidence artifacts/evidence/CAP-02.S04.T02.remediation-01.json has SHA-256 ce3e9716c3bb3b86845908a0ddd016810deda2ca071178e24ee0a9a628a0ef07; its immediate-predecessor supersedes path/SHA/commit, base, candidate, branch, acceptance hash, and exact 19-path incremental scope are truthful. F01 closes because the Windows build now uses the documented generic+always-show+validated+non-persisting credential flags, prefills NameSamCompatible, maps an empty parsed UPN domain to NULL for LogonUserW, preserves down-level/local mapping and same-SID/zeroization/handle controls, and has an exact Windows native mapping test. F02 closes because Core I/O no longer holds the lifecycle mutex, each process carries cancellation, the application-lock path signals cancellation and terminates the process tree immediately, profile/support data is privately staged and published only while holding the matching generation boundary, and every lock clears pending support previews; deterministic profile, support-preview/export, and transport-cancellation replays passed. F03 closes because the renderer begins locked, registers its listener before status reconciliation, orders native snapshots monotonically, rejects same-sequence conflicts and stale unlocks, polls for missed events, time-bounds reconciliation, and synthesizes a locked configuration-invalid tree on malformed/unavailable paths; built-browser replay removed populated project/path/query/profile-dialog content and allowed recovery only through explicit native unlock. F04 closes because one mutex-protected RAII reauthentication reservation admits one prompt and releases on cancellation, denial, Core failure, success, and unwind while retaining bounded backoff; concurrent-admission replay passed. Retained report hashes are truthful: desktop 18868edff17d322d32207cbe51087fdc763f698ae18db63542e178ff8d0a88db, affected selection 9cda6f5906af965cf8489998c450d409069c640054e0b4250f1a05e8bb75344d, build manifest 5df5ced91a831a60cc7cda2324de41dd4874eba918b02191a7fcba546d7d1eee, and quality d75f968403803b78748f4a0f1a2ec6f58980b47f35ae5c22ea4b9446ef55853c. Independent focused replay passed 9 application-lock Rust tests, 5 support-bundle Rust tests, the focused in-flight transport-cancellation test, 10 lock/runtime frontend tests, 2 Windows credential source-boundary tests, the complete built-browser frame including lock reconciliation, canonical backlog validation, and Git scope/whitespace checks. Cargo.lock and package versions are unchanged; the prior live supply-chain result remains applicable. Desktop performance and complete repository/deployment qualification remain correctly owned by W1 exit and were not rerun. No new acceptance-bound findings were found.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-02.S04.T02-R01-F01` `fixed` — artifacts/evidence/CAP-02.S04.T02.remediation-01.json
+- `CAP-02.S04.T02-R01-F02` `fixed` — artifacts/evidence/CAP-02.S04.T02.remediation-01.json
+- `CAP-02.S04.T02-R01-F03` `fixed` — artifacts/evidence/CAP-02.S04.T02.remediation-01.json
+- `CAP-02.S04.T02-R01-F04` `fixed` — artifacts/evidence/CAP-02.S04.T02.remediation-01.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by b00-independent-reviewer at `2026-08-22T04:48:56+00:00`
+
+**Latest notes:** APPROVED at exact immutable submission state 866ac878cc8ee79e2a6cb8b0ee07b64eb2f8ab71 on codex/w1-windows-local-runtime. Remediation candidate 44ee8733a159152a3873eab76c5e54b995824afb strictly descends from R01 candidate a06d7d4cd67e027850d6d240f1507a17e49a4739. Evidence artifacts/evidence/CAP-02.S04.T02.remediation-01.json has SHA-256 ce3e9716c3bb3b86845908a0ddd016810deda2ca071178e24ee0a9a628a0ef07; its immediate-predecessor supersedes path/SHA/commit, base, candidate, branch, acceptance hash, and exact 19-path incremental scope are truthful. F01 closes because the Windows build now uses the documented generic+always-show+validated+non-persisting credential flags, prefills NameSamCompatible, maps an empty parsed UPN domain to NULL for LogonUserW, preserves down-level/local mapping and same-SID/zeroization/handle controls, and has an exact Windows native mapping test. F02 closes because Core I/O no longer holds the lifecycle mutex, each process carries cancellation, the application-lock path signals cancellation and terminates the process tree immediately, profile/support data is privately staged and published only while holding the matching generation boundary, and every lock clears pending support previews; deterministic profile, support-preview/export, and transport-cancellation replays passed. F03 closes because the renderer begins locked, registers its listener before status reconciliation, orders native snapshots monotonically, rejects same-sequence conflicts and stale unlocks, polls for missed events, time-bounds reconciliation, and synthesizes a locked configuration-invalid tree on malformed/unavailable paths; built-browser replay removed populated project/path/query/profile-dialog content and allowed recovery only through explicit native unlock. F04 closes because one mutex-protected RAII reauthentication reservation admits one prompt and releases on cancellation, denial, Core failure, success, and unwind while retaining bounded backoff; concurrent-admission replay passed. Retained report hashes are truthful: desktop 18868edff17d322d32207cbe51087fdc763f698ae18db63542e178ff8d0a88db, affected selection 9cda6f5906af965cf8489998c450d409069c640054e0b4250f1a05e8bb75344d, build manifest 5df5ced91a831a60cc7cda2324de41dd4874eba918b02191a7fcba546d7d1eee, and quality d75f968403803b78748f4a0f1a2ec6f58980b47f35ae5c22ea4b9446ef55853c. Independent focused replay passed 9 application-lock Rust tests, 5 support-bundle Rust tests, the focused in-flight transport-cancellation test, 10 lock/runtime frontend tests, 2 Windows credential source-boundary tests, the complete built-browser frame including lock reconciliation, canonical backlog validation, and Git scope/whitespace checks. Cargo.lock and package versions are unchanged; the prior live supply-chain result remains applicable. Desktop performance and complete repository/deployment qualification remain correctly owned by W1 exit and were not rerun. No new acceptance-bound findings were found.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
