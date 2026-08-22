@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GRR-0001 review — Research Observatory</title>
+  <style>
+    :root { color-scheme: light; font-family: Georgia, "Times New Roman", serif; background: #f4f1e8; color: #20231f; }
+    body { margin: 0 auto; max-width: 980px; padding: 2rem 1.25rem 4rem; line-height: 1.55; }
+    h1, h2 { line-height: 1.18; }
+    h1 { border-bottom: 3px solid #315846; padding-bottom: .5rem; }
+    .status, .warning { border-left: 5px solid #8b5e24; background: #fff8e8; padding: .9rem 1rem; }
+    .candidate { border: 1px solid #a8ad9f; background: #fffdf7; padding: 1rem; margin: 1rem 0; }
+    .recommended { border-color: #315846; box-shadow: inset 5px 0 #315846; }
+    code { overflow-wrap: anywhere; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #b9bcae; padding: .55rem; text-align: left; vertical-align: top; }
+    a { color: #214d3b; }
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="GRR-0001.md">Canonical proposal</a> · <a href="GRR-0001.packet.json">Hash-bound packet</a> · <a href="governance-recovery-request.schema.json">Packet schema</a></p>
+    <h1>GRR-0001 — Governance recovery decision</h1>
+    <p class="status"><strong>Non-executable:</strong> preparation approval is recorded, but bootstrap implementation, W1 resume, T03 reopen, product changes, and G1 approval remain forbidden until exact-commit human approval.</p>
+
+    <h2>Decision</h2>
+    <div class="candidate recommended">
+      <h3>1. Approve bounded recovery bootstrap (recommended)</h3>
+      <p>Authorize only GRR-0001.B00 to install a reusable recovery kernel, repair append-only ECR chaining, and enforce the hold. Require an ordinary, separately approved ECR-0002/W1.A03 for the UI-gate correction.</p>
+    </div>
+    <div class="candidate">
+      <h3>2. Defer</h3>
+      <p>Leave W1 paused and T03 blocked. This is safe but prevents further W1 progress.</p>
+    </div>
+    <div class="candidate">
+      <h3>3. Other</h3>
+      <p>Any alternative must preserve the exact authority chain, independent review, the control hold, and the prohibition on direct Wave resume or UI-gate editing.</p>
+    </div>
+
+    <h2>Blocking evidence</h2>
+    <table>
+      <thead><tr><th>Finding</th><th>Severity</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td>GRR-0001-F01</td><td>Critical</td><td>The adopted ECR schema/controller cannot represent or append W1.A03.</td></tr>
+        <tr><td>GRR-0001-F02</td><td>High</td><td>The human-decision pause is not enforced by executable resume/start paths.</td></tr>
+        <tr><td>GRR-0001-F03</td><td>High</td><td>The cumulative UI gate rejects its own valid additive pre-UI inventory case.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Scope boundary</h2>
+    <p>GRR-0001.B00 is governance/control-only. It cannot change product code, the UI gate, task outcomes, acceptance criteria, verification thresholds, UI references, W1 approval, release gates, or prior Git objects. It cannot resume W1.</p>
+
+    <h2>Approval readiness</h2>
+    <p class="warning">Do not approve until the exact packet commit and independent control/security disposition are shown. A general “proceed” or preparation authorization is not bootstrap approval.</p>
+    <p>Required statement:</p>
+    <blockquote>Approve GRR-0001 at packet commit <code>&lt;40-character SHA&gt;</code>, authorizing only bootstrap unit GRR-0001.B00 and its hash-bound governance/control scope. Keep W1 paused and T03 blocked. Require independent B00 approval and a separate approved ECR-0002/W1.A03 before any UI-gate change, T03 reopen, or W1 resume.</blockquote>
+  </main>
+</body>
+</html>
