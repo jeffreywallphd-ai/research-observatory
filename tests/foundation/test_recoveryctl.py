@@ -377,6 +377,153 @@ class GovernanceRecoveryTests(unittest.TestCase):
         )
         return repo, args, before
 
+    def supplement_lifecycle_fixture(
+        self,
+        temporary: str,
+    ) -> tuple[Path, dict[str, Any], dict[str, Any], dict[str, Any]]:
+        repo = Path(temporary) / "supplement-fixture"
+        bundle = Path(temporary) / "supplement-fixture.bundle"
+        subprocess.run(
+            ["git", "bundle", "create", str(bundle), "HEAD"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        subprocess.run(
+            ["git", "clone", "--quiet", str(bundle), str(repo)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.git(repo, "config", "user.email", "fixture@example.invalid")
+        self.git(repo, "config", "user.name", "Fixture Reviewer")
+        self.git(repo, "config", "commit.gpgsign", "false")
+        self.git(repo, "config", "core.autocrlf", "false")
+        self.git(repo, "checkout", "-b", "codex/supplement-fixture")
+
+        backlog_path = repo / "planning/backlog.yaml"
+        backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+        hold = backlog["control_plane"]["recovery_holds"][0]
+        b00_snapshot = copy.deepcopy(hold["bootstrap"])
+        supplement = hold["supplements"][0]
+        bootstrap = supplement["bootstrap"]
+        bootstrap.update(
+            status="IN_PROGRESS",
+            implementation_commit=None,
+            submission_branch=None,
+            evidence=None,
+            review={"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+            current_submission=None,
+            attempts=[],
+        )
+        approvals = repo / "planning/governance-recovery-approvals"
+        for artifact in approvals.glob("GRR-0001.B01*"):
+            artifact.unlink()
+        backlog_path.write_bytes(yaml.safe_dump(backlog, sort_keys=False, width=120).encode())
+        self.git(repo, "add", "--all")
+        self.git(repo, "commit", "-m", "test: establish initial B01 lifecycle boundary")
+
+        approval, packet, _approval_payload, _packet_payload = recoveryctl.load_supplement_authority(
+            repo,
+            "GRR-0001.S01",
+        )
+        return repo, approval, packet, b00_snapshot
+
+    def write_supplement_evidence(
+        self,
+        repo: Path,
+        packet: dict[str, Any],
+        *,
+        relative: str,
+        base: str,
+        candidate: str,
+        check_id: str,
+    ) -> bytes:
+        changed_paths = self.git(repo, "diff", "--name-only", f"{base}..{candidate}", "--").splitlines()
+        document = {
+            "schemaVersion": "1.0",
+            "documentType": "governance-recovery-supplement-bootstrap-evidence",
+            "recoveryRequestId": "GRR-0001",
+            "supplementId": "GRR-0001.S01",
+            "bootstrapUnit": "GRR-0001.B01",
+            "branch": self.git(repo, "branch", "--show-current"),
+            "baseCommit": base,
+            "candidateCommit": candidate,
+            "changedPaths": changed_paths,
+            "riskAnalysis": "Executable fixture covers the complete supplemental submission and review boundary.",
+            "requiredOutcomes": [
+                {"criterion": criterion, "evidence": ["The executable supplement lifecycle fixture passed."]}
+                for criterion in packet["supplementalBootstrap"]["requiredOutcomes"]
+            ],
+            "acceptanceCriteria": [
+                {"criterion": criterion, "evidence": ["The executable supplement lifecycle fixture passed."]}
+                for criterion in packet["acceptanceCriteria"]
+            ],
+            "checks": [
+                {
+                    "id": check_id,
+                    "command": f"fixture:{check_id}",
+                    "result": "passed",
+                }
+            ],
+            "deferredCoverage": ["Full W1 qualification remains at Wave exit."],
+            "unverifiedItems": [],
+        }
+        payload = (json.dumps(document, indent=2) + "\n").encode()
+        (repo / relative).write_bytes(payload)
+        return payload
+
+    @staticmethod
+    def supplement_finding() -> dict[str, Any]:
+        return {
+            "id": "GRR-0001.B01-R01-F01",
+            "severity": "high",
+            "blocking": True,
+            "criterionIndex": 4,
+            "title": "Fixture lifecycle finding",
+            "reproduction": "Run the executable supplement lifecycle fixture.",
+            "requiredRemediation": "Commit a strict-descendant remediation and close this finding.",
+        }
+
+    def write_supplement_ledger(
+        self,
+        repo: Path,
+        *,
+        result: str,
+        reviewer: str,
+        findings: list[dict[str, Any]],
+        closures: list[dict[str, str]],
+        reviewed_state: str | None = None,
+        evidence_sha256: str | None = None,
+    ) -> tuple[Path, dict[str, Any]]:
+        backlog = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+        bootstrap = backlog["control_plane"]["recovery_holds"][0]["supplements"][0]["bootstrap"]
+        submission = bootstrap["current_submission"]
+        evidence = bootstrap["evidence"]
+        ledger = {
+            "schemaVersion": "1.0",
+            "documentType": "governance-recovery-supplement-bootstrap-review",
+            "recoveryRequestId": "GRR-0001",
+            "supplementId": "GRR-0001.S01",
+            "bootstrapUnit": "GRR-0001.B01",
+            "attemptId": submission["attempt_id"],
+            "candidateCommit": submission["candidate_commit"],
+            "reviewedStateCommit": reviewed_state or self.git(repo, "rev-parse", "HEAD"),
+            "reviewer": reviewer,
+            "result": result,
+            "evidence": {
+                "path": evidence["path"],
+                "sha256": evidence_sha256 or evidence["sha256"],
+            },
+            "notes": f"Fixture disposition: {result}.",
+            "findings": findings,
+            "closures": closures,
+        }
+        path = repo / f"planning/governance-recovery-approvals/GRR-0001.B01.review-{submission['attempt_id']}.json"
+        path.write_bytes((json.dumps(ledger, indent=2) + "\n").encode())
+        return path, ledger
+
     def test_canonical_recovery_authority_and_hold_validate(self) -> None:
         approval, packet, hold = recoveryctl.validate_request(REPO, "GRR-0001")
         self.assertEqual("APPROVED", approval["status"])
@@ -504,6 +651,341 @@ class GovernanceRecoveryTests(unittest.TestCase):
         stale["waves"][1]["campaign"]["scope"] = "amendment-hold"
         with self.assertRaisesRegex(SystemExit, "activation boundary"):
             recoveryctl.validate_supplement_boundary(REPO, packet, stale, require_installed=True)
+
+    def test_supplement_submission_review_remediation_and_adversarial_lifecycle(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo, approval, packet, b00_snapshot = self.supplement_lifecycle_fixture(temporary)
+            backlog_path = repo / "planning/backlog.yaml"
+            candidate_r01 = self.git(repo, "rev-parse", "HEAD")
+            approval_intro = taskctl.approval_introduction_commit(
+                repo,
+                "planning/governance-recovery-approvals/GRR-0001.S01.json",
+            )
+            self.assertIsNotNone(approval_intro)
+            evidence_r01 = "planning/governance-recovery-approvals/GRR-0001.B01.evidence.json"
+            lawful_evidence = self.write_supplement_evidence(
+                repo,
+                packet,
+                relative=evidence_r01,
+                base=str(approval_intro),
+                candidate=candidate_r01,
+                check_id="supplement-r01",
+            )
+            submit_args = argparse.Namespace(
+                repo=repo,
+                supplement="GRR-0001.S01",
+                agent="codex",
+                implementation_commit=candidate_r01,
+                evidence=evidence_r01,
+            )
+            initial_backlog = backlog_path.read_bytes()
+
+            wrong_actor = copy.deepcopy(submit_args)
+            wrong_actor.agent = "other-agent"
+            with self.assertRaisesRegex(SystemExit, "retain the installed identity"):
+                recoveryctl.freeze_supplement_submission(wrong_actor, remediation=False)
+            self.assertEqual(initial_backlog, backlog_path.read_bytes())
+
+            stale_candidate = copy.deepcopy(submit_args)
+            stale_candidate.implementation_commit = "0" * 40
+            with self.assertRaisesRegex(SystemExit, "must equal current HEAD"):
+                recoveryctl.freeze_supplement_submission(stale_candidate, remediation=False)
+            self.assertEqual(initial_backlog, backlog_path.read_bytes())
+
+            unsafe_evidence = copy.deepcopy(submit_args)
+            unsafe_evidence.evidence = (
+                "planning/governance-recovery-approvals/../governance-recovery-approvals/GRR-0001.B01.evidence.json"
+            )
+            with self.assertRaisesRegex(SystemExit, "evidence path must be"):
+                recoveryctl.freeze_supplement_submission(unsafe_evidence, remediation=False)
+            self.assertEqual(initial_backlog, backlog_path.read_bytes())
+
+            evidence_path = repo / evidence_r01
+            forged_evidence = json.loads(lawful_evidence)
+            forged_evidence["candidateCommit"] = "0" * 40
+            evidence_path.write_bytes((json.dumps(forged_evidence, indent=2) + "\n").encode())
+            with self.assertRaisesRegex(SystemExit, "base/candidate binding mismatch"):
+                recoveryctl.freeze_supplement_submission(submit_args, remediation=False)
+            self.assertEqual(initial_backlog, backlog_path.read_bytes())
+            evidence_path.write_bytes(lawful_evidence)
+
+            controller_path = repo / "tools/recoveryctl.py"
+            controller_payload = controller_path.read_bytes()
+            controller_path.write_bytes(controller_payload + b"\n# dirty fixture\n")
+            with self.assertRaisesRegex(SystemExit, "Tracked worktree changes exist"):
+                recoveryctl.freeze_supplement_submission(submit_args, remediation=False)
+            self.assertEqual(initial_backlog, backlog_path.read_bytes())
+            controller_path.write_bytes(controller_payload)
+
+            stale_payload = backlog_path.read_bytes()
+            stale_data = yaml.safe_load(stale_payload)
+            backlog_path.write_bytes(stale_payload + b"\n")
+            with self.assertRaisesRegex(SystemExit, "Backlog changed after taskctl loaded it"):
+                recoveryctl.save_backlog(repo, stale_payload, stale_data)
+            self.assertEqual(stale_payload + b"\n", backlog_path.read_bytes())
+            backlog_path.write_bytes(stale_payload)
+
+            recoveryctl.freeze_supplement_submission(submit_args, remediation=False)
+            frozen_r01 = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            bootstrap_r01 = frozen_r01["control_plane"]["recovery_holds"][0]["supplements"][0]["bootstrap"]
+            self.assertEqual("REVIEW", bootstrap_r01["status"])
+            self.assertEqual("R01", bootstrap_r01["current_submission"]["attempt_id"])
+            self.git(repo, "add", "planning/backlog.yaml", evidence_r01)
+            self.git(repo, "commit", "-m", "test: freeze B01 R01 submission")
+            reviewed_state_r01 = self.git(repo, "rev-parse", "HEAD")
+            review_args = argparse.Namespace(
+                repo=repo,
+                supplement="GRR-0001.S01",
+                reviewer="fixture-independent-reviewer",
+                from_path="planning/governance-recovery-approvals/GRR-0001.B01.review-R01.json",
+            )
+            finding = self.supplement_finding()
+            frozen_backlog = backlog_path.read_bytes()
+
+            self.write_supplement_ledger(
+                repo,
+                result="changes-requested",
+                reviewer="codex",
+                findings=[finding],
+                closures=[],
+            )
+            self_review_args = copy.deepcopy(review_args)
+            self_review_args.reviewer = "codex"
+            with self.assertRaisesRegex(SystemExit, "must be independent"):
+                recoveryctl.command_supplement_review(self_review_args)
+            self.assertEqual(frozen_backlog, backlog_path.read_bytes())
+
+            self.write_supplement_ledger(
+                repo,
+                result="changes-requested",
+                reviewer="fixture-independent-reviewer",
+                findings=[finding],
+                closures=[],
+            )
+            mismatched_actor = copy.deepcopy(review_args)
+            mismatched_actor.reviewer = "different-reviewer"
+            with self.assertRaisesRegex(SystemExit, "actor differs from the ledger"):
+                recoveryctl.command_supplement_review(mismatched_actor)
+            self.assertEqual(frozen_backlog, backlog_path.read_bytes())
+
+            self.write_supplement_ledger(
+                repo,
+                result="changes-requested",
+                reviewer="fixture-independent-reviewer",
+                findings=[finding],
+                closures=[],
+                evidence_sha256="0" * 64,
+            )
+            with self.assertRaisesRegex(SystemExit, "evidence differs from the frozen submission"):
+                recoveryctl.command_supplement_review(review_args)
+            self.assertEqual(frozen_backlog, backlog_path.read_bytes())
+
+            self.write_supplement_ledger(
+                repo,
+                result="changes-requested",
+                reviewer="fixture-independent-reviewer",
+                findings=[finding],
+                closures=[],
+                reviewed_state="0" * 40,
+            )
+            with self.assertRaisesRegex(SystemExit, "differs from the frozen submission"):
+                recoveryctl.command_supplement_review(review_args)
+            self.assertEqual(frozen_backlog, backlog_path.read_bytes())
+
+            self.write_supplement_ledger(
+                repo,
+                result="changes-requested",
+                reviewer="fixture-independent-reviewer",
+                findings=[finding, copy.deepcopy(finding)],
+                closures=[],
+            )
+            with self.assertRaisesRegex(SystemExit, "invalid finding"):
+                recoveryctl.command_supplement_review(review_args)
+            self.assertEqual(frozen_backlog, backlog_path.read_bytes())
+
+            self.write_supplement_ledger(
+                repo,
+                result="approved",
+                reviewer="fixture-independent-reviewer",
+                findings=[finding],
+                closures=[],
+            )
+            with self.assertRaisesRegex(SystemExit, "cannot introduce or retain blocking findings"):
+                recoveryctl.command_supplement_review(review_args)
+            self.assertEqual(frozen_backlog, backlog_path.read_bytes())
+
+            unsafe_review_args = copy.deepcopy(review_args)
+            unsafe_review_args.from_path = (
+                "planning/governance-recovery-approvals/../governance-recovery-approvals/GRR-0001.B01.review-R01.json"
+            )
+            with self.assertRaisesRegex(SystemExit, "ledger path must be"):
+                recoveryctl.command_supplement_review(unsafe_review_args)
+            self.assertEqual(frozen_backlog, backlog_path.read_bytes())
+
+            ledger_r01, _ledger = self.write_supplement_ledger(
+                repo,
+                result="changes-requested",
+                reviewer="fixture-independent-reviewer",
+                findings=[finding],
+                closures=[],
+                reviewed_state=reviewed_state_r01,
+            )
+            recoveryctl.command_supplement_review(review_args)
+            adverse_r01 = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            bootstrap_r01 = adverse_r01["control_plane"]["recovery_holds"][0]["supplements"][0]["bootstrap"]
+            self.assertEqual("CHANGES_REQUESTED", bootstrap_r01["status"])
+            self.assertEqual(["R01"], [item["id"] for item in bootstrap_r01["attempts"]])
+            self.git(repo, "add", "planning/backlog.yaml", ledger_r01.relative_to(repo).as_posix())
+            self.git(repo, "commit", "-m", "test: record B01 R01 changes requested")
+
+            r01_ledger_payload = ledger_r01.read_bytes()
+            adverse_backlog = backlog_path.read_bytes()
+            ledger_r01.write_bytes(r01_ledger_payload + b" ")
+            with self.assertRaises(SystemExit):
+                recoveryctl.validate_supplement(repo, "GRR-0001.S01")
+            self.assertEqual(adverse_backlog, backlog_path.read_bytes())
+            ledger_r01.write_bytes(r01_ledger_payload)
+
+            evidence_r01_payload = evidence_path.read_bytes()
+            evidence_path.write_bytes(evidence_r01_payload + b" ")
+            with self.assertRaises(SystemExit):
+                recoveryctl.validate_supplement(repo, "GRR-0001.S01")
+            self.assertEqual(adverse_backlog, backlog_path.read_bytes())
+            evidence_path.write_bytes(evidence_r01_payload)
+
+            marker = repo / "tests/foundation/supplement-lifecycle-fixture.txt"
+            marker.write_text("strict descendant remediation\n", encoding="utf-8")
+            self.git(repo, "add", marker.relative_to(repo).as_posix())
+            self.git(repo, "commit", "-m", "test: remediate B01 R01 finding")
+            candidate_r02 = self.git(repo, "rev-parse", "HEAD")
+            evidence_r02 = "planning/governance-recovery-approvals/GRR-0001.B01.remediation-01.evidence.json"
+            lawful_remediation_evidence = self.write_supplement_evidence(
+                repo,
+                packet,
+                relative=evidence_r02,
+                base=candidate_r01,
+                candidate=candidate_r02,
+                check_id="supplement-r02",
+            )
+            resubmit_args = argparse.Namespace(
+                repo=repo,
+                supplement="GRR-0001.S01",
+                agent="codex",
+                implementation_commit=candidate_r02,
+                evidence=evidence_r02,
+            )
+
+            old_candidate = copy.deepcopy(resubmit_args)
+            old_candidate.implementation_commit = candidate_r01
+            with self.assertRaisesRegex(SystemExit, "must equal current HEAD"):
+                recoveryctl.freeze_supplement_submission(old_candidate, remediation=True)
+            self.assertEqual(adverse_backlog, backlog_path.read_bytes())
+
+            remediation_path = repo / evidence_r02
+            forged_remediation = json.loads(lawful_remediation_evidence)
+            forged_remediation["baseCommit"] = "0" * 40
+            remediation_path.write_bytes((json.dumps(forged_remediation, indent=2) + "\n").encode())
+            with self.assertRaisesRegex(SystemExit, "base/candidate binding mismatch"):
+                recoveryctl.freeze_supplement_submission(resubmit_args, remediation=True)
+            self.assertEqual(adverse_backlog, backlog_path.read_bytes())
+            remediation_path.write_bytes(lawful_remediation_evidence)
+
+            marker_payload = marker.read_bytes()
+            marker.write_bytes(marker_payload + b"dirty\n")
+            with self.assertRaisesRegex(SystemExit, "Tracked worktree changes exist"):
+                recoveryctl.freeze_supplement_submission(resubmit_args, remediation=True)
+            self.assertEqual(adverse_backlog, backlog_path.read_bytes())
+            marker.write_bytes(marker_payload)
+
+            recoveryctl.freeze_supplement_submission(resubmit_args, remediation=True)
+            frozen_r02 = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            bootstrap_r02 = frozen_r02["control_plane"]["recovery_holds"][0]["supplements"][0]["bootstrap"]
+            self.assertEqual("REVIEW", bootstrap_r02["status"])
+            self.assertEqual("R02", bootstrap_r02["current_submission"]["attempt_id"])
+            self.git(repo, "add", "planning/backlog.yaml", evidence_r02)
+            self.git(repo, "commit", "-m", "test: freeze B01 R02 submission")
+            reviewed_state_r02 = self.git(repo, "rev-parse", "HEAD")
+            review_r02_args = argparse.Namespace(
+                repo=repo,
+                supplement="GRR-0001.S01",
+                reviewer="fixture-independent-reviewer",
+                from_path="planning/governance-recovery-approvals/GRR-0001.B01.review-R02.json",
+            )
+            frozen_r02_backlog = backlog_path.read_bytes()
+
+            self.write_supplement_ledger(
+                repo,
+                result="approved",
+                reviewer="fixture-independent-reviewer",
+                findings=[],
+                closures=[],
+            )
+            with self.assertRaisesRegex(SystemExit, "retain blocking findings"):
+                recoveryctl.command_supplement_review(review_r02_args)
+            self.assertEqual(frozen_r02_backlog, backlog_path.read_bytes())
+
+            closure = {"findingId": finding["id"], "notes": "Closed by executable lifecycle coverage."}
+            self.write_supplement_ledger(
+                repo,
+                result="approved",
+                reviewer="fixture-independent-reviewer",
+                findings=[],
+                closures=[closure, copy.deepcopy(closure)],
+            )
+            with self.assertRaisesRegex(SystemExit, "closures are not append-only"):
+                recoveryctl.command_supplement_review(review_r02_args)
+            self.assertEqual(frozen_r02_backlog, backlog_path.read_bytes())
+
+            unknown_closure = {"findingId": "GRR-0001.B01-R01-UNKNOWN", "notes": "Invalid closure."}
+            self.write_supplement_ledger(
+                repo,
+                result="approved",
+                reviewer="fixture-independent-reviewer",
+                findings=[],
+                closures=[unknown_closure],
+            )
+            with self.assertRaisesRegex(SystemExit, "closures are not append-only"):
+                recoveryctl.command_supplement_review(review_r02_args)
+            self.assertEqual(frozen_r02_backlog, backlog_path.read_bytes())
+
+            ledger_r02, _ledger = self.write_supplement_ledger(
+                repo,
+                result="approved",
+                reviewer="fixture-independent-reviewer",
+                findings=[],
+                closures=[closure],
+                reviewed_state=reviewed_state_r02,
+            )
+            recoveryctl.command_supplement_review(review_r02_args)
+            approved = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            hold = approved["control_plane"]["recovery_holds"][0]
+            bootstrap = hold["supplements"][0]["bootstrap"]
+            self.assertEqual("APPROVED", bootstrap["status"])
+            self.assertEqual(["R01", "R02"], [item["id"] for item in bootstrap["attempts"]])
+            self.assertIsNone(bootstrap["current_submission"])
+            self.assertEqual(b00_snapshot, hold["bootstrap"])
+
+            approved_backlog = backlog_path.read_bytes()
+            ledger_r02_payload = ledger_r02.read_bytes()
+            ledger_r02.write_bytes(ledger_r02_payload + b" ")
+            with self.assertRaises(SystemExit):
+                recoveryctl.validate_supplement(repo, "GRR-0001.S01")
+            self.assertEqual(approved_backlog, backlog_path.read_bytes())
+            ledger_r02.write_bytes(ledger_r02_payload)
+
+            remediation_payload = remediation_path.read_bytes()
+            remediation_path.write_bytes(remediation_payload + b" ")
+            with self.assertRaises(SystemExit):
+                recoveryctl.validate_supplement(repo, "GRR-0001.S01")
+            self.assertEqual(approved_backlog, backlog_path.read_bytes())
+            remediation_path.write_bytes(remediation_payload)
+
+            _approval, _packet, _hold, validated = recoveryctl.validate_supplement(
+                repo,
+                "GRR-0001.S01",
+            )
+            self.assertEqual("APPROVED", validated["bootstrap"]["status"])
+            self.assertEqual("APPROVED", approval["status"])
 
     def test_taskctl_shared_recovery_review_history_denies_projection_tamper(self) -> None:
         _approval, packet, _hold = recoveryctl.validate_request(REPO, "GRR-0001")
