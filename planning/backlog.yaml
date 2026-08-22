@@ -22584,7 +22584,7 @@ verification_profiles:
 control_plane:
   revision: 5
   minimum_tool_revision: 5
-  active_amendment: W1.A03
+  active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -24073,7 +24073,7 @@ wave_amendments:
     sha256: 340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd
     introduction_commit: 95c007b58619dfd82b5f443eea3d8e71e7efe082
   lifecycle:
-    status: ACTIVE
+    status: REVIEW
     history:
     - id: E01
       status: APPROVED
@@ -24092,6 +24092,11 @@ wave_amendments:
       actor: codex
       at: '2026-08-22T19:08:18+00:00'
       rationale: Activated the bounded amendment campaign.
+    - id: E04
+      status: REVIEW
+      actor: codex
+      at: '2026-08-22T20:20:19+00:00'
+      rationale: Submit exact completed W1.A03 boundary for independent exit review; W1 remains paused and T03 blocked.
   bootstrap:
     id: W1.A03.B00
     status: APPROVED
@@ -24114,7 +24119,7 @@ wave_amendments:
         focused tests, exact historical T03 gate command, authority, backlog, review-site, generated-view, quality, and diff
         checks pass. No product, reference, policy, predecessor, T03, ordinary W1, or gate state changed.
   campaign:
-    status: ACTIVE
+    status: REVIEW
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -24123,12 +24128,9 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-22T19:08:18+00:00'
-    updated_at: '2026-08-22T19:08:18+00:00'
+    updated_at: '2026-08-22T20:20:19+00:00'
     pause_reason: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-22T19:08:18+00:00'
-      expires_at: '2026-08-23T19:08:18+00:00'
+    lease: null
   tasks:
   - id: W1.A03.T01
     amendment_id: W1.A03
@@ -24460,8 +24462,48 @@ wave_amendments:
             - W1.A03.T01-R01-F02
       current_submission: null
   completion:
-    status: PENDING
+    status: REVIEW
     reviewer: null
     reviewed_at: null
-    evidence: []
-    notes: null
+    evidence:
+    - artifacts/evidence/W1.A03.exit.json
+    notes: Submit exact completed W1.A03 boundary for independent exit review; W1 remains paused and T03 blocked.
+    exit_review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex
+        submitted_at: '2026-08-22T20:20:19+00:00'
+        candidate_commit: 69eeec6e388969a40d20fcb80939ca137158bc1a
+        declared_candidate_commit: f47241972c1e8c0be3d53c822d921dd142b65996
+        branch: codex/w1-windows-local-runtime
+        evidence_reference:
+          type: amendment-exit-evidence
+          amendment_id: W1.A03
+          path: artifacts/evidence/W1.A03.exit.json
+          sha256: c581e22cca63c5d572eb74f1c12e396480b31c5a2cffa403b44f24d848dc0f9e
+          commit: 69eeec6e388969a40d20fcb80939ca137158bc1a
+        acceptance_criteria_sha256: f635fa4498c417483b2d2ba94efbce76855a652824a0f369d2bcdcd5c2333f6a
+        selected_checks:
+        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema
+          tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate
+        - .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head
+          59079efccc122a7d56a9f18efc20030851bf32a9
+        - .venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract
+        - .venv\Scripts\python.exe tools\quality_check.py --repo .
+        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
+        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry
+        - .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\Scripts\python.exe
+          tools\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\Scripts\python.exe tools\recoveryctl.py
+          --repo . validate GRR-0001 --require-approved
+        - .venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py --repo
+          . --check
+        - git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts
+          artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md
+          docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py
+        - git diff --check
+        selected_checks_sha256: 0da9b48b577b70ba4f6971602b86345c2741a596c918457a6155387991c33701
+        prior_attempt_id: null
+        open_finding_ids: []
+        packet_sha256: 5215368cda1222cba94f5ce662ceda2d6833500c77f9097fe650d87221e4172e
