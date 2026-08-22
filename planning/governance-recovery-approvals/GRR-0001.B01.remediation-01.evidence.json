@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-evidence",
+  "recoveryRequestId": "GRR-0001",
+  "supplementId": "GRR-0001.S01",
+  "bootstrapUnit": "GRR-0001.B01",
+  "branch": "codex/w1-windows-local-runtime",
+  "baseCommit": "4db63866a28d036be89b3af6ab860f9e406fee38",
+  "candidateCommit": "56cedf07906bbb157d374806e73092b943b41103",
+  "changedPaths": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/governance-recovery-approvals/GRR-0001.B01.evidence.json",
+    "planning/governance-recovery-approvals/GRR-0001.B01.review-R01.json",
+    "planning/review-site/manifest.json",
+    "planning/review-site/recoveries/GRR-0001.html",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "tests/foundation/test_recoveryctl.py"
+  ],
+  "riskAnalysis": "R01 found that the initial evidence overstated B01 lifecycle coverage. This strict-descendant remediation preserves the immutable adverse R01 attempt and adds an executable isolated-Git fixture that invokes the real supplement submission and review controllers through R01 changes-requested, strict-descendant evidence-bound R02 resubmission, finding closure, and approval. The same fixture proves byte-stable denial for wrong/self reviewer, wrong actor, stale candidate, wrong evidence and ledger bindings, unsafe paths, dirty tracked state, stale backlog compare-and-swap, forged reviewed state, duplicate or invalid findings/closures, retained blocking findings, and evidence/ledger hash tamper. The complete 104-test focused governance suite, exact authority checks, generated views, quality, and diff hygiene pass at this candidate. Product, UI, packaging, and complete W1 qualification remain deferred to their approved downstream gates.",
+  "requiredOutcomes": [
+    {
+      "criterion": "A hash-bound supplemental recovery approval and B01 lifecycle extend only the existing active GRR-0001 hold without rewriting GRR-0001.B00 or attempts R01 through R05.",
+      "evidence": [
+        "The executable lifecycle fixture snapshots and compares the complete B00 projection after B01 R01/R02 transitions.",
+        "The exact-candidate 104-test focused governance suite passed and canonical GRR-0001 remains valid with the original B00 history."
+      ]
+    },
+    {
+      "criterion": "An adopted predecessor amendment remains valid while a strictly later same-Wave executable amendment legitimately owns the shared amendment-hold scope.",
+      "evidence": [
+        "The focused suite passed the unique latest-owner and adopted-predecessor taskctl tests.",
+        "The canonical read-only W1.A03 projection remains valid with W1.A02 adopted and only W1.A03 owning amendment-hold."
+      ]
+    },
+    {
+      "criterion": "A terminal amendment still requires ordinary Wave scope when no strictly later executable same-Wave amendment owns the hold.",
+      "evidence": [
+        "The exact-candidate taskctl workflow suite passed terminal-restoration and owner-absence denial coverage.",
+        "No production amendment or Wave scope was mutated by this remediation."
+      ]
+    },
+    {
+      "criterion": "Gapped, reordered, cross-Wave, non-adopted-predecessor, multiple-executable-amendment, stale, dirty, forged, wrong-hash, and self-reviewed states fail atomically.",
+      "evidence": [
+        "test_supplement_submission_review_remediation_and_adversarial_lifecycle now invokes the real B01 submission and review paths and asserts byte-stable denial for the declared actor, candidate, evidence, ledger, path, dirty, stale-CAS, frozen-state, finding, closure, and hash attacks.",
+        "The broader focused suite also passed amendment ordering, ownership, path-safety, and immutable-history adversarial coverage."
+      ]
+    },
+    {
+      "criterion": "Exact W1.A03 materialization validates and creates only packet-bound W1.A03.T01 while W1 remains PAUSED, CAP-02.S04.T03 remains BLOCKED, and HOLD-W1-GRR-0001 remains ACTIVE.",
+      "evidence": [
+        "Canonical supplement validation returned only W1.A03.T01, PAUSED/amendment-hold, BLOCKED T03, ACTIVE hold, and no activation or claim.",
+        "The exact projection assertion passed in the recoveryctl module within the 104-test suite."
+      ]
+    },
+    {
+      "criterion": "B01 evidence and independent control/security review are append-only, commit-bound, and required before canonical W1.A03 materialization is retried.",
+      "evidence": [
+        "The real fixture records immutable R01 and R02 reviewed-state commits, requires a strict-descendant candidate, binds evidence and ledgers, and closes the prior blocking finding before approval.",
+        "Canonical R01 remains append-only and W1.A03 materialization is still denied pending independent R02 approval."
+      ]
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion": "The supplement validates against its exact Draft 2020-12 schema, every declared file hash matches, and all base authority commits, blobs, hashes, and ordered histories remain exact and ancestral.",
+      "evidence": [
+        "Canonical GRR-0001.S01 validation, GRR-0001 validation, and ECR-0002 authority validation passed at the exact candidate.",
+        "The 104-test suite passed schema, exact-hash, ancestry, frozen-state, and immutable-history checks."
+      ]
+    },
+    {
+      "criterion": "B01 can be represented, submitted, remediated after an adverse review, independently reviewed, and terminally approved under the existing hold without changing B00 attempts or granting ordinary execution authority.",
+      "evidence": [
+        "The executable fixture calls freeze_supplement_submission and command_supplement_review for R01 and R02, reaches CHANGES_REQUESTED then APPROVED, and proves the B00 projection is unchanged.",
+        "The fixture never materializes W1.A03, activates or claims a task, releases the hold, or resumes W1."
+      ]
+    },
+    {
+      "criterion": "The taskctl semantic correction distinguishes historical restoration from current ownership of the shared Wave scope and preserves fail-closed denial when no lawful later owner exists.",
+      "evidence": [
+        "The exact-candidate taskctl schema/workflow tests passed the consecutive-owner, adopted-predecessor, and malformed-owner cases.",
+        "Canonical taskctl backlog validation passed at control revision 5."
+      ]
+    },
+    {
+      "criterion": "Focused tests reproduce the exact W1.A02/W1.A03 failure, pass the lawful consecutive materialization projection, and deny every adverse identity, ordering, state, authority, path, hash, reviewer, stale, dirty, and atomicity case named in this packet.",
+      "evidence": [
+        "At candidate 56cedf07906bbb157d374806e73092b943b41103, 104 focused governance tests passed in 671.104 seconds, including the new 306-second executable B01 lifecycle/adversarial fixture.",
+        "The fixture directly exercises R01 submission/review, R02 resubmission/approval, and the requested adverse matrix; the initial evidence overstatement identified by GRR-0001.B01-R01-F01 is corrected."
+      ]
+    },
+    {
+      "criterion": "A read-only exact W1.A03 materialization replay proves that only W1.A03.T01 and amendment-hold would be created, with W1 paused, T03 blocked, the hold active, and no activation or claim.",
+      "evidence": [
+        "The exact canonical replay again reported materializedTaskIds=[W1.A03.T01], waveStatus=PAUSED, waveScope=amendment-hold, blockedTaskStatus=BLOCKED, holdStatus=ACTIVE, and activationOrClaimPerformed=false.",
+        "Canonical planning/backlog.yaml remained unchanged by the read-only replay."
+      ]
+    },
+    {
+      "criterion": "B01 receives an independent commit-bound control/security approval with no open blocking finding before the canonical materialization command is retried.",
+      "evidence": [
+        "Immutable R01 records the high blocking coverage-truth finding and this strict-descendant evidence addresses it with executable tests.",
+        "This R02 submission remains subject to independent review and the controller continues to deny W1.A03 materialization until that review approves with the R01 finding explicitly closed."
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "focused-governance-exact-candidate",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_recoveryctl tests.foundation.test_plan_review_amendments (104 tests at 56cedf07906bbb157d374806e73092b943b41103)",
+      "result": "passed"
+    },
+    {
+      "id": "quality",
+      "command": ".venv/Scripts/python.exe tools/quality_check.py --repo .",
+      "result": "passed"
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "passed"
+    },
+    {
+      "id": "recovery",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . validate GRR-0001 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "supplement",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . supplement-validate GRR-0001.S01 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "target-amendment-authority",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0002 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "review-site",
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .",
+      "result": "passed"
+    },
+    {
+      "id": "views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "passed"
+    },
+    {
+      "id": "diff-hygiene",
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "deferredCoverage": [
+    "W1.A03.T01 will run its separately approved task-level recovery-controller and UI-gate verification only after B01 independent approval and lawful materialization.",
+    "CAP-02.S04.T03 implementation recovery, product qualification, and independent privacy/task and slice review remain blocked until amendment adoption, hold release, and explicit W1 resume.",
+    "The complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 matrix remains at Wave exit."
+  ],
+  "unverifiedItems": []
+}
