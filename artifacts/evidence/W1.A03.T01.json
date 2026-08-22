@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A03.T01",
+  "commit": "1127d72f29fbe407f3aaf99dd1f87d1aea60f18e",
+  "baseCommit": "22afeeb5779ed53bbd6c35fac9515f4a7e8c56d4",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/task-recovery/CAP-02.S04.T03.json",
+    "docs/automation/project-automation-guide.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/enabler-change-requests/task-recovery-manifest.schema.json",
+    "planning/review-site/enablers/ECR-0002.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "tests/foundation/test_task_recovery.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "All 97 exact-recovery, task-controller, backlog-schema, and UI-gate tests passed in 129.768 seconds. Coverage includes the sole BLOCKED-to-IN_PROGRESS transition; wrong task, authority, state, commit, path, hash, reference, stale, dirty, duplicate, predecessor, and failed-check denials; append-only projection protection; task review controls; and the exact cumulative T03 range."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+      "exitCode": 0,
+      "result": "The exact historical base-to-candidate UI range passed with zero errors and retained approved reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract",
+      "exitCode": 0,
+      "result": "All 9 risk-selected product privacy and contract tests passed in 0.620 seconds across consent, default-local policy, append-only revisions, restart safety, cache confirmation, redirect denial, canonical-data exclusion, strict profiles, and deletion non-overclaim."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 119 governed Python files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The canonical ledger validated with 20 capabilities, 117 slices, 359 tasks, and 12 release gates while W1.A03.T01 remained the sole in-progress amendment task."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . validate GRR-0001 --require-approved",
+      "exitCode": 0,
+      "result": "ECR-0002/W1.A03 and predecessor ECR-0001/W1.A02 remained approved and history-bound; GRR-0001 remained valid with independently approved bootstrap, ACTIVE hold, and W1.A03 as the next authority."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .; .venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "All 148 planning review pages passed and generated backlog views matched the authoritative ledger without changes."
+    },
+    {
+      "command": "git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py",
+      "exitCode": 0,
+      "result": "The exact T03 product, privacy-contract, UI-evidence, approved-reference implementation, and risk-selected test bytes remained unchanged from the historical product candidate."
+    },
+    {
+      "command": "git show --check --stat --oneline 1127d72f29fbe407f3aaf99dd1f87d1aea60f18e",
+      "exitCode": 0,
+      "result": "The exact implementation commit passed Git whitespace hygiene and contains only the approved controller, schema, manifest, guide, quality-registration, and directly affected test surface."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "EXACT_T03_RECOVERY and the strict manifest schema bind only CAP-02.S04.T03, HOLD-W1-GRR-0001, W1.A03, and the exact base, foundation, candidate, block, and pause commits named by the approved packet.",
+        "The immutable W1.A03 approval path/hash/introduction commit and ECR-0002 packet path/hash/commit are recomputed against current files and Git blobs."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "command_recover requires independently approved ADOPTED W1.A03, a matching security checkpoint, RELEASED HOLD-W1-GRR-0001, explicitly resumed ACTIVE W1 scope wave, matching campaign lease/profile/platform/base, and the exact unrecovered BLOCKED T03 boundary.",
+        "The production CLI invocation remains denied by the currently ACTIVE hold, and the focused suite proves unadopted, unreleased, paused, and wrong-scope states are atomic denials."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The canonical artifacts/evidence/task-recovery/CAP-02.S04.T03.json validates against a Draft 2020-12 schema and binds the exact task, Codex branch, authorities, five commits, historical boundary hashes, UI contract/reference identity, 44 sorted unique Git paths, two unique executable checks, and an empty unverified list.",
+        "The executable validator independently enforces the security-critical header, authority, commit, path, check, and zero-unverified identities even if the JSON schema were later weakened."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The controller recomputes Git commit existence, strict ancestry, direct candidate-to-block and block-to-pause parents, exact base-to-candidate changed paths, historical task hashes, immutable UI-contract bytes, and approved-reference fields.",
+        "Before mutation it verifies current protected product bytes against 59079ef, reruns the corrected exact UI gate, and reruns the nine focused privacy/contract tests."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The recovery_control projection stores the canonical manifest hash, amendment/hold/checkpoint authority, all historical commits and task hashes, and the complete original blocked execution state before assigning the new execution base.",
+        "task_recovery_history_snapshot is enforced by every later compare-and-swap persist, while semantic validation recomputes the projection from immutable pause history and rejects rewrite."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "The sole command mutation adds recovery_control and moves T03 only to IN_PROGRESS with current clean HEAD, a fresh owner lease, updated timestamp, and cleared blocker; the existing evidence, review, completion, slice, Wave, and release-gate projections are untouched.",
+        "The lawful-transition test schema-validates the resulting task, checks the exact original state projection, and proves evidence remains empty with no review or verification approval."
+      ]
+    },
+    {
+      "criterion_index": 7,
+      "evidence": [
+        "Seven focused tests and their tamper matrices deny wrong task/authority/state/commit/path/hash/reference, altered blocker, duplicate recovery/checks, unverified residuals, stale base, dirty tree, predecessor error, and failed recomputation without persisting a mutation.",
+        "The canonical current hold denial occurs before command dispatch, and the command repeats the release/adoption/resume checks so no alternate entry point can bypass them."
+      ]
+    },
+    {
+      "criterion_index": 8,
+      "evidence": [
+        "The controller stops at T03 IN_PROGRESS and explicitly reports that ordinary evidence and independent review remain required; the automation guide documents that it cannot approve T03, a slice, W1, or a release gate.",
+        "The existing ordinary task controller remains responsible for a later exact commit, atomic criterion-evidence submission, independent privacy/task review, CAP-02.S04 review, complete W1 qualification, and human G1 approval."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "W1.A03.T01 changes the evidence/automation control plane for one high-risk historical product candidate. Credible failures are unauthorized or premature recovery, authority or historical-lineage substitution, product/reference drift, stale or dirty compare-and-swap execution, partial backlog mutation, projection rewrite, direct task/higher-gate approval, and false privacy evidence. The 97-test focused controller/schema/UI matrix, exact historical UI replay, nine privacy/contract tests, all governed Python quality, backlog/ECR/GRR authority checks, generated review/view checks, exact protected-product diff, and Git hygiene cover those risks. No product, dependency, migration, packaging, or approved-reference bytes changed.",
+    "selectedCommandIds": [
+      "foundation:backlog-views",
+      "foundation:quality",
+      "foundation:backlog"
+    ],
+    "deferred": [
+      "Independent task review, the amendment exit review, and the commit-bound control/security adoption checkpoint remain the next W1.A03 gates.",
+      "The complete W1 affected/full deployment matrix, including packaging, accessibility, migration, restart, recovery, security, performance, and Windows release paths, remains due once at W1 exit after ordinary T03 completion and all remaining W1 slices."
+    ]
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-security-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate 1127d72f29fbe407f3aaf99dd1f87d1aea60f18e and this R01 manifest. Confirm the one-task exact authority and lineage; pre-adoption/hold/restart denials; immutable product/reference bytes; executable check recomputation; append-only original block projection; one-CAS IN_PROGRESS-only transition; and absence of any direct evidence, review, slice, Wave, or G1 approval."
+  }
+}

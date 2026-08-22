@@ -24167,7 +24167,7 @@ wave_amendments:
       governed Python quality, and diff hygiene.
     - Obtain independent task review, independent amendment exit review, and a commit-bound control/security adoption checkpoint.
     packet_task_sha256: 6e6c5ffa1266d25dbb888284baa02721f5da760b64685d849820dc995597d9d9
-    status: IN_PROGRESS
+    status: REVIEW
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: 22afeeb5779ed53bbd6c35fac9515f4a7e8c56d4
@@ -24177,17 +24177,93 @@ wave_amendments:
       claimed_at: '2026-08-22T19:09:55+00:00'
       expires_at: '2026-08-23T03:09:55+00:00'
     started_at: '2026-08-22T19:09:55+00:00'
-    updated_at: '2026-08-22T19:09:55+00:00'
+    updated_at: '2026-08-22T19:36:38+00:00'
     completed_at: null
     blocker: null
-    implementation_notes: ''
-    evidence: []
-    verification_state: null
+    implementation_notes: Submit exact T03 recovery controller and criterion-bound R01 evidence for independent control/security
+      review.
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W1.A03.T01.json
+      sha256: 54a90061e9854a6cf52df415ec9f058ffb664e42a1193e47b35c7abbb7695e70
+      commit: 1127d72f29fbe407f3aaf99dd1f87d1aea60f18e
+      recorded_at: '2026-08-22T19:36:38+00:00'
+    verification_state: passed
     review:
       reviewer: null
       result: null
       reviewed_at: null
       notes: null
+    review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex
+        submitted_at: '2026-08-22T19:36:38+00:00'
+        candidate_commit: 1127d72f29fbe407f3aaf99dd1f87d1aea60f18e
+        base_commit: 22afeeb5779ed53bbd6c35fac9515f4a7e8c56d4
+        branch: codex/w1-windows-local-runtime
+        evidence_reference:
+          type: criterion-manifest
+          path: artifacts/evidence/W1.A03.T01.json
+          sha256: 54a90061e9854a6cf52df415ec9f058ffb664e42a1193e47b35c7abbb7695e70
+          commit: 1127d72f29fbe407f3aaf99dd1f87d1aea60f18e
+          recorded_at: '2026-08-22T19:36:38+00:00'
+        acceptance_criteria_sha256: fa97c4c3ff3bc80344d9faf06a95f681c23b44c844f2b68d451753df841930d0
+        changed_paths:
+        - artifacts/evidence/task-recovery/CAP-02.S04.T03.json
+        - docs/automation/project-automation-guide.md
+        - docs/planning-implementation-plan.md
+        - planning/backlog.schema.json
+        - planning/backlog.yaml
+        - planning/enabler-change-requests/task-recovery-manifest.schema.json
+        - planning/review-site/enablers/ECR-0002.html
+        - planning/review-site/manifest.json
+        - planning/status-summary.md
+        - quality-scope.json
+        - tests/foundation/test_task_recovery.py
+        - tests/foundation/test_taskctl_workflow.py
+        - tools/taskctl.py
+        selected_checks:
+        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema
+          tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate
+        - .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head
+          59079efccc122a7d56a9f18efc20030851bf32a9
+        - .venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract
+        - .venv\Scripts\python.exe tools\quality_check.py --repo .
+        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
+        - .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\Scripts\python.exe
+          tools\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\Scripts\python.exe tools\recoveryctl.py
+          --repo . validate GRR-0001 --require-approved
+        - .venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py --repo
+          . --check
+        - git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts
+          artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md
+          docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py
+        - git show --check --stat --oneline 1127d72f29fbe407f3aaf99dd1f87d1aea60f18e
+        deferred_checks:
+        - Independent task review, the amendment exit review, and the commit-bound control/security adoption checkpoint remain
+          the next W1.A03 gates.
+        - The complete W1 affected/full deployment matrix, including packaging, accessibility, migration, restart, recovery,
+          security, performance, and Windows release paths, remains due once at W1 exit after ordinary T03 completion and
+          all remaining W1 slices.
+        selection_rationale: W1.A03.T01 changes the evidence/automation control plane for one high-risk historical product
+          candidate. Credible failures are unauthorized or premature recovery, authority or historical-lineage substitution,
+          product/reference drift, stale or dirty compare-and-swap execution, partial backlog mutation, projection rewrite,
+          direct task/higher-gate approval, and false privacy evidence. The 97-test focused controller/schema/UI matrix, exact
+          historical UI replay, nine privacy/contract tests, all governed Python quality, backlog/ECR/GRR authority checks,
+          generated review/view checks, exact protected-product diff, and Git hygiene cover those risks. No product, dependency,
+          migration, packaging, or approved-reference bytes changed.
+        selection_sha256: 12896bb3dc9a03e52498771a56dd8e2fbf21c68c9f57da7b72f9050471491d00
+        prior_attempt_id: null
+        open_finding_ids: []
+        root_cause_analysis: null
+        selected_command_ids:
+        - foundation:backlog-views
+        - foundation:quality
+        - foundation:backlog
+        packet_sha256: 756eed60f3c76264c3bc35676b74aa0b772b0523230097958a400c96ec059dba
   completion:
     status: PENDING
     reviewer: null
