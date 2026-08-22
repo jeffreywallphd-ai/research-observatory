@@ -6397,9 +6397,9 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A02.json",
       "approval_sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
       "approval_status": "APPROVED",
-      "lifecycle_status": "ACTIVE",
+      "lifecycle_status": "REVIEW",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "ACTIVE",
+      "campaign_status": "REVIEW",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -7100,13 +7100,13 @@
         "amendment_id": "W1.A02",
         "mode": "append-only",
         "latest_completion": {
-          "status": "CHANGES_REQUESTED",
-          "reviewer": "b00-independent-reviewer",
-          "reviewed_at": "2026-08-22T01:56:53+00:00",
+          "status": "REVIEW",
+          "reviewer": null,
+          "reviewed_at": null,
           "evidence": [
             "artifacts/evidence/W1.A02.exit.json"
           ],
-          "notes": "CHANGES_REQUESTED at exact frozen state b77d5b1cea5526b391d5acbe3aa220a0ba510ca6. ECR authority, B00/T01/T02 histories, evidence hashes, privacy-safe telemetry, backlog, generated views, and 145 review pages pass. Adoption is not ready because amendment-exit evidence and checkpoint evidence are not exact-commit bound, and the exit record conflates the amendment campaign with the paused W1 campaign. No W1 qualification, adoption, G1 approval, ordinary resume, remote integration, or full W1 exit-suite claim was made."
+          "notes": "R02 remediates W1.A02-EXIT-R01-F01 and F02 with immutable exit/adoption evidence binding and separate exact Wave/amendment campaign state."
         },
         "exit_review_control": {
           "version": 1,
@@ -7174,7 +7174,40 @@
               "closures": []
             }
           ],
-          "current_submission": null
+          "current_submission": {
+            "id": "R02",
+            "submitted_by": "codex",
+            "submitted_at": "2026-08-22T01:59:47+00:00",
+            "candidate_commit": "85ec0972d4a823496f796de922e5ba3619c54e85",
+            "declared_candidate_commit": "48017abbeb860f01591bb977c352a7d3739cc232",
+            "branch": "codex/w1-windows-local-runtime",
+            "evidence_reference": {
+              "type": "amendment-exit-evidence",
+              "amendment_id": "W1.A02",
+              "path": "artifacts/evidence/W1.A02.exit.json",
+              "sha256": "0f195b6c97b3f01247239c23837e4081f45f5b2d862878e2a3a8ae18d196a957",
+              "commit": "85ec0972d4a823496f796de922e5ba3619c54e85"
+            },
+            "acceptance_criteria_sha256": "3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323",
+            "selected_checks": [
+              ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+              ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments",
+              ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+              ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+              ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
+              ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+              ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+              ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved",
+              "git diff --check"
+            ],
+            "selected_checks_sha256": "c7c99a81a388a5a199c6b7968c45c4a8a26a79b203f61984e3eb2694ec838216",
+            "prior_attempt_id": "R01",
+            "open_finding_ids": [
+              "W1.A02-EXIT-R01-F01",
+              "W1.A02-EXIT-R01-F02"
+            ],
+            "packet_sha256": "d43be79f45d95fa3a5ae6565d737e40a8fd0d9207f2bf3588d34171a2add5bef"
+          }
         }
       },
       "adoption_checkpoints": [],
