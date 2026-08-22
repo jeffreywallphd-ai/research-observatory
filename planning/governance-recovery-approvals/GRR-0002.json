@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-approval",
+  "recoveryRequestId": "GRR-0002",
+  "targetWave": "W1",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-22T21:29:16.2319284Z",
+  "approvalStatement": "The repository owner conditionally approved the exact GRR-0002 packet once independent review returned APPROVED. R02 approved unchanged packet commit bc989c8a69e7de5e68f630af887ab4bd07d44a4e with ledger SHA-256 28f4d177504c4835463fd955e5ca71776a7d516a7e63060dba4b5c527daf397e. Authorize only GRR-0002.B00 and its hash-bound governance/controller/test scope; keep W1 paused and CAP-02.S04.T03 blocked; require independent B00 approval and a separately reviewed and approved ECR-0003/W1.A04 before T03 recovery, W1 resume, or ordinary task execution.",
+  "packet": {
+    "commit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e",
+    "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+    "sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
+    "proposalPath": "planning/governance-recovery-requests/GRR-0002.md",
+    "proposalSha256": "63a91b1aeec67124b168cfa76107fd250445f6ffb04ddc5d3b76823dd5a90437",
+    "schemaPath": "planning/governance-recovery-requests/governance-recovery-request.v2.schema.json",
+    "schemaSha256": "7f9dbcd94d6437641baaa35890346bab185c66aea8180a2006d3fdfef82284a2",
+    "reviewPath": "planning/governance-recovery-requests/GRR-0002-review.html",
+    "reviewSha256": "090f6f7d7eb1fad6e31e9f1bb258610b130c5efa00250488027556ede8f0044d"
+  },
+  "authorityChainSha256": "06faeb742da504c3c3701909e668ee40977b3ab512dcd1c1128e09641e4419bf",
+  "bootstrapUnit": "GRR-0002.B00",
+  "independentPacketReview": {
+    "reviewer": "b00-independent-reviewer",
+    "attemptId": "R02",
+    "candidateCommit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e",
+    "result": "APPROVED",
+    "openFindingIds": [],
+    "priorAdverseLedger": {
+      "path": "planning/governance-recovery-requests/GRR-0002.review-R01.json",
+      "sha256": "1290562be0b0b78cda86b2cfd780b00985fe7a7c2efc83292e3a7d8cf724f689"
+    }
+  },
+  "executionAuthority": {
+    "bootstrapOnly": true,
+    "postBootstrapExecution": false,
+    "ordinaryWaveResume": false,
+    "taskExecution": false,
+    "releaseGateApproval": false
+  }
+}

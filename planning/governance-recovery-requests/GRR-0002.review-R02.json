@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0-recovery-review",
+  "documentType": "governance-recovery-packet-review",
+  "recoveryRequestId": "GRR-0002",
+  "attemptId": "R02",
+  "candidateCommit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e",
+  "packetSha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "b00-independent-reviewer",
+  "result": "approved",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GRR-0002-R01-F01",
+      "disposition": "closed",
+      "notes": "frozenBoundary.backlogSha256 is now ccad7c69d014e34e4efeb16e8870fc61b27030a554b68b4fe7e6c73eb175f00d, exactly the SHA-256 of the immutable planning/backlog.yaml Git blob at pause commit 7c67ac9fdd39c4db2322cefd9ab5d603865d0efd. The backlog Git blob remains identical at the R02 candidate."
+    },
+    {
+      "findingId": "GRR-0002-R01-F02",
+      "disposition": "closed",
+      "notes": "The extra proposal EOF blank line is removed, the packet's proposal hash is refreshed to 63a91b1aeec67124b168cfa76107fd250445f6ffb04ddc5d3b76823dd5a90437, and git diff --check passes for both 7c67ac9..bc989c8 and 97abcb8..bc989c8."
+    }
+  ],
+  "verified": [
+    "The exact clean R02 candidate bc989c8a69e7de5e68f630af887ab4bd07d44a4e is the direct strict descendant of reviewed R01 candidate 97abcb857548d98f2e6c97f13fcd0f67d125248d on codex/w1-windows-local-runtime.",
+    "The R02 delta changes only GRR-0002.md, GRR-0002.packet.json, and the newly committed immutable GRR-0002.review-R01.json; the complete 7c67ac9..R02 packet scope is exactly four inert GRR-0002 files with no backlog, product, reference, code, or generated-view mutation.",
+    "The exact packet SHA-256 is 9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22. The Draft 2020-12 v2 schema is valid, the packet has zero schema errors, and every declared file hash matches both current bytes and the candidate Git blob.",
+    "The immutable R01 ledger SHA-256 is 1290562be0b0b78cda86b2cfd780b00985fe7a7c2efc83292e3a7d8cf724f689. The packet reviewHistory binds its canonical path, R01 candidate, reviewer, adverse result, and exact two open finding IDs, and the current candidate contains that exact ledger blob.",
+    "The W1 base plus ordered adopted W1.A01/A02/A03 authority, approval hashes and blobs, effective commits and ancestry remain exact; recovery identity validation and the full authority-chain validation pass.",
+    "The immutable 7c67ac9 stopped state remains unchanged: W1 is PAUSED under wave scope/category infeasible with no lease; T03 is BLOCKED with no recovery control, evidence, verification state, or review; GRR-0001 is RELEASED; W1.CP01/W1.CP02 remain; and G1 is PENDING.",
+    "Trigger evidence GRR-0002-F01 through F03, bootstrap/control-hold scope, post-bootstrap ECR-0003/W1.A04/W1.A04.T01 identity, false execution and ordinary-resume authority, alternatives, rollback, approval requirements, and exact approval wording are unchanged from R01.",
+    "GRR-0002.B00 remains bounded to the governance/controller/test bootstrap needed for one successor hold and versioned ECR lane. It does not authorize product/reference changes, command_recover alteration or invocation, T03 recovery, ordinary W1 execution or resume, G1 approval, merge, or remote action.",
+    "Focused generic recovery identity, cross-Wave denial, and unsafe-path tests pass. Backlog validation reports 20 capabilities, 117 slices, 359 tasks, and 12 gates; Python quality passes for 119 governed files; approved GRR-0001 and ECR-0002 revalidate; the 148-page review-site and generated backlog-view checks pass."
+  ],
+  "approvalAvailable": true
+}
