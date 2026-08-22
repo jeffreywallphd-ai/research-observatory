@@ -22353,7 +22353,7 @@ wave_amendments:
           B00-R05 MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen
           state 84107b8.'
   campaign:
-    status: REVIEW
+    status: COMPLETE
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -22362,7 +22362,7 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-21T00:43:02+00:00'
-    updated_at: '2026-08-22T02:35:17+00:00'
+    updated_at: '2026-08-22T02:39:36+00:00'
     pause_reason: null
     lease: null
   tasks:
@@ -23083,13 +23083,28 @@ wave_amendments:
             - W1.A02.T02-R01-F04
       current_submission: null
   completion:
-    status: REVIEW
-    reviewer: null
-    reviewed_at: null
+    status: APPROVED
+    reviewer: b00-independent-reviewer
+    reviewed_at: '2026-08-22T02:39:36+00:00'
     evidence:
     - artifacts/evidence/W1.A02.exit.json
-    notes: 'R04 remediates the fail-closed adoption transition discovered after R03: validate completed exits against frozen
-      reviewed state and allow only exact approved pre-adoption remediation reactivation.'
+    notes: 'APPROVED at exact clean frozen R04 state 2d9795da2249319a8869618a2731d26e6cc6c29b on codex/w1-windows-local-runtime.
+      R04 evidence is Git-bound at 917d8afcc594b0b9eb0df5eb095f066eb4372955 and declares remediation candidate 6f2db45108954e57a50b8f49abca7a37fa98faab;
+      both strictly descend from approved R03. R01-R03 attempts and lifecycle history are unchanged from the approved R03
+      completion, all prior findings remain closed, R04 correctly inherits no open findings, and criteria/check/packet hashes
+      recompute exactly. Completed exit attempts are now validated against each attempt''s committed reviewed backlog and
+      Wave state rather than post-adoption live scope, while the current submission remains subject to strict live-state validation.
+      Approved-exit reactivation is limited to lifecycle REVIEW, campaign COMPLETE, completion APPROVED, no current submission,
+      a latest approved exit attempt, PAUSED amendment-hold Wave, exact approved authority/task inventory, clean codex execution
+      identity, and no competing campaign; unapproved and inconsistent states remain denied. The adoption path records a commit-bound
+      security checkpoint, changes W1 only from amendment-hold to ordinary wave scope, retains W1 status PAUSED, and validates
+      the resulting ADOPTED state against frozen exit history. Exact selected checks pass: 71/71 controller/schema tests,
+      13/13 amendment review tests, quality across 113 governed Python files, backlog validation for 20 capabilities/117 slices/358
+      tasks/12 gates, privacy-safe telemetry, all 145 review pages, generated backlog views, approved history-bound ECR-0001
+      authority, and git diff hygiene. No full W1 qualification, W1/G1 review, or Wave resume was performed. Adoption is ready
+      only after taskctl records and commits this exact R04 approval, followed by a newly committed adoption-checkpoint document
+      binding that new approved-completion commit. The existing R03 checkpoint document is stale and must not be reused. Adoption
+      will leave W1 PAUSED and will not itself authorize ordinary W1 resume.'
     exit_review_control:
       version: 1
       attempts:
@@ -23293,31 +23308,60 @@ wave_amendments:
           disposition: fixed
           evidence: The coherent historical bootstrap fixture at 55bf2850a73dfde9e5ac9c712584b23132364665 passes in the complete
             70-test suite; the only subsequent delta is the exact prior ledger addition.
-      current_submission:
-        id: R04
-        submitted_by: codex
-        submitted_at: '2026-08-22T02:35:17+00:00'
-        candidate_commit: 917d8afcc594b0b9eb0df5eb095f066eb4372955
-        declared_candidate_commit: 6f2db45108954e57a50b8f49abca7a37fa98faab
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: amendment-exit-evidence
-          amendment_id: W1.A02
-          path: artifacts/evidence/W1.A02.exit.json
-          sha256: 6caf7ce2d52c945a9121438967351d910cb83666dd1d58d35de45882f4a9cc15
-          commit: 917d8afcc594b0b9eb0df5eb095f066eb4372955
-        acceptance_criteria_sha256: 3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323
-        selected_checks:
-        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow
-        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments
-        - .venv\Scripts\python.exe tools\quality_check.py --repo .
-        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
-        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry
-        - .venv\Scripts\python.exe tools\plan_review_check.py --repo .
-        - .venv\Scripts\python.exe tools\backlog_views.py --repo . --check
-        - .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved
-        - git diff --check
-        selected_checks_sha256: c7c99a81a388a5a199c6b7968c45c4a8a26a79b203f61984e3eb2694ec838216
-        prior_attempt_id: R03
-        open_finding_ids: []
-        packet_sha256: daaa3f2f923a1fc574b11e9acbe3e34dde89d5260b47163786e7bba95714908c
+      - submission:
+          id: R04
+          submitted_by: codex
+          submitted_at: '2026-08-22T02:35:17+00:00'
+          candidate_commit: 917d8afcc594b0b9eb0df5eb095f066eb4372955
+          declared_candidate_commit: 6f2db45108954e57a50b8f49abca7a37fa98faab
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: amendment-exit-evidence
+            amendment_id: W1.A02
+            path: artifacts/evidence/W1.A02.exit.json
+            sha256: 6caf7ce2d52c945a9121438967351d910cb83666dd1d58d35de45882f4a9cc15
+            commit: 917d8afcc594b0b9eb0df5eb095f066eb4372955
+          acceptance_criteria_sha256: 3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow
+          - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments
+          - .venv\Scripts\python.exe tools\quality_check.py --repo .
+          - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
+          - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry
+          - .venv\Scripts\python.exe tools\plan_review_check.py --repo .
+          - .venv\Scripts\python.exe tools\backlog_views.py --repo . --check
+          - .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved
+          - git diff --check
+          selected_checks_sha256: c7c99a81a388a5a199c6b7968c45c4a8a26a79b203f61984e3eb2694ec838216
+          prior_attempt_id: R03
+          open_finding_ids: []
+          packet_sha256: daaa3f2f923a1fc574b11e9acbe3e34dde89d5260b47163786e7bba95714908c
+        review:
+          reviewer: b00-independent-reviewer
+          result: approved
+          reviewed_at: '2026-08-22T02:39:36+00:00'
+          reviewed_state_commit: 2d9795da2249319a8869618a2731d26e6cc6c29b
+          notes: 'APPROVED at exact clean frozen R04 state 2d9795da2249319a8869618a2731d26e6cc6c29b on codex/w1-windows-local-runtime.
+            R04 evidence is Git-bound at 917d8afcc594b0b9eb0df5eb095f066eb4372955 and declares remediation candidate 6f2db45108954e57a50b8f49abca7a37fa98faab;
+            both strictly descend from approved R03. R01-R03 attempts and lifecycle history are unchanged from the approved
+            R03 completion, all prior findings remain closed, R04 correctly inherits no open findings, and criteria/check/packet
+            hashes recompute exactly. Completed exit attempts are now validated against each attempt''s committed reviewed
+            backlog and Wave state rather than post-adoption live scope, while the current submission remains subject to strict
+            live-state validation. Approved-exit reactivation is limited to lifecycle REVIEW, campaign COMPLETE, completion
+            APPROVED, no current submission, a latest approved exit attempt, PAUSED amendment-hold Wave, exact approved authority/task
+            inventory, clean codex execution identity, and no competing campaign; unapproved and inconsistent states remain
+            denied. The adoption path records a commit-bound security checkpoint, changes W1 only from amendment-hold to ordinary
+            wave scope, retains W1 status PAUSED, and validates the resulting ADOPTED state against frozen exit history. Exact
+            selected checks pass: 71/71 controller/schema tests, 13/13 amendment review tests, quality across 113 governed
+            Python files, backlog validation for 20 capabilities/117 slices/358 tasks/12 gates, privacy-safe telemetry, all
+            145 review pages, generated backlog views, approved history-bound ECR-0001 authority, and git diff hygiene. No
+            full W1 qualification, W1/G1 review, or Wave resume was performed. Adoption is ready only after taskctl records
+            and commits this exact R04 approval, followed by a newly committed adoption-checkpoint document binding that new
+            approved-completion commit. The existing R03 checkpoint document is stale and must not be reused. Adoption will
+            leave W1 PAUSED and will not itself authorize ordinary W1 resume.'
+        ledger:
+          path: artifacts/evidence/W1.A02.exit-review-R04.json
+          sha256: af763188f88cb3255bf0ef29b521ab2cd4e281b9d7d78a53764df37f76e8ddb3
+        findings: []
+        closures: []
+      current_submission: null

@@ -1,0 +1,14 @@
+{
+  "amendment_id": "W1.A02",
+  "attempt_id": "R04",
+  "reviewed_state_commit": "2d9795da2249319a8869618a2731d26e6cc6c29b",
+  "reviewer": "b00-independent-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "artifacts/evidence/W1.A02.exit.json",
+    "sha256": "6caf7ce2d52c945a9121438967351d910cb83666dd1d58d35de45882f4a9cc15"
+  },
+  "notes": "APPROVED at exact clean frozen R04 state 2d9795da2249319a8869618a2731d26e6cc6c29b on codex/w1-windows-local-runtime. R04 evidence is Git-bound at 917d8afcc594b0b9eb0df5eb095f066eb4372955 and declares remediation candidate 6f2db45108954e57a50b8f49abca7a37fa98faab; both strictly descend from approved R03. R01-R03 attempts and lifecycle history are unchanged from the approved R03 completion, all prior findings remain closed, R04 correctly inherits no open findings, and criteria/check/packet hashes recompute exactly. Completed exit attempts are now validated against each attempt's committed reviewed backlog and Wave state rather than post-adoption live scope, while the current submission remains subject to strict live-state validation. Approved-exit reactivation is limited to lifecycle REVIEW, campaign COMPLETE, completion APPROVED, no current submission, a latest approved exit attempt, PAUSED amendment-hold Wave, exact approved authority/task inventory, clean codex execution identity, and no competing campaign; unapproved and inconsistent states remain denied. The adoption path records a commit-bound security checkpoint, changes W1 only from amendment-hold to ordinary wave scope, retains W1 status PAUSED, and validates the resulting ADOPTED state against frozen exit history. Exact selected checks pass: 71/71 controller/schema tests, 13/13 amendment review tests, quality across 113 governed Python files, backlog validation for 20 capabilities/117 slices/358 tasks/12 gates, privacy-safe telemetry, all 145 review pages, generated backlog views, approved history-bound ECR-0001 authority, and git diff hygiene. No full W1 qualification, W1/G1 review, or Wave resume was performed. Adoption is ready only after taskctl records and commits this exact R04 approval, followed by a newly committed adoption-checkpoint document binding that new approved-completion commit. The existing R03 checkpoint document is stale and must not be reused. Adoption will leave W1 PAUSED and will not itself authorize ordinary W1 resume.",
+  "findings": [],
+  "closures": []
+}
