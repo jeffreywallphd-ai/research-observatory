@@ -397,7 +397,13 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.git(repo, "config", "user.name", "Fixture Implementer")
         self.git(repo, "config", "commit.gpgsign", "false")
         self.git(repo, "config", "core.autocrlf", "false")
-        self.git(repo, "checkout", "-B", "codex/w1-windows-local-runtime")
+        self.git(
+            repo,
+            "checkout",
+            "-B",
+            "codex/w1-windows-local-runtime",
+            "fdf437b78711e409f4c61f2e6e365bf3e8162105",
+        )
         for relative in (
             "tools/taskctl.py",
             "tools/recoveryctl.py",
