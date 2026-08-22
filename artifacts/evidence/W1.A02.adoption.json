@@ -1,0 +1,21 @@
+{
+  "documentType": "wave-amendment-adoption-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A02",
+  "targetWave": "W1",
+  "candidateCommit": "a46d5f0ddf9c34003b2dba3918ceb2fa88234871",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewedCompletionCommit": "a46d5f0ddf9c34003b2dba3918ceb2fa88234871",
+  "approvedExitAttempt": "R03",
+  "approvedExitLedger": "artifacts/evidence/W1.A02.exit-review-R03-rebound.json",
+  "approvedExitEvidence": {
+    "path": "artifacts/evidence/W1.A02.exit.json",
+    "sha256": "d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5"
+  },
+  "waveDisposition": {
+    "status": "PAUSED",
+    "scopeAfterAdoption": "wave",
+    "ordinaryResumeAuthorized": false,
+    "gateApprovalAuthorized": false
+  }
+}
