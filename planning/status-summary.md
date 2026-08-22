@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 8d2e4c5b55a466154a371fbfc3d2126bb2f0211699e3b8387f720e434f4e77e4
+source_sha256: 10fcdf9e024d1f8598a2759df99d926bea71010c1d62762f0bb61640649c6f9b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,7 +52,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 275 |
-| `READY` | 3 |
+| `READY` | 2 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 42 |
 | `DEFERRED` | 36 |
 
@@ -301,7 +302,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---:|---:|---|
 | CAP-delivery-foundation (`CAP-00`) — Delivery foundation and Codex execution system | `COMPLETE` | `APPROVED` | 6/6 | 19/19 | - |
 | CAP-windows-desktop-runtime (`CAP-01`) — Windows-first desktop shell and supervised local runtime | `PAUSED` | `PAUSED` | 4/5 | 12/15 | - |
-| CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 3/5 | 10/16 | - |
+| CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 3/5 | 10/16 | `CAP-02.S04.T02` |
 | CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 0/6 | 1/20 | - |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -339,4 +340,6 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `CAP-02.S04.T02` Implement local user profile and application-lock behavior | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8d2e4c5b55a466154a371fbfc3d2126bb2f0211699e3b8387f720e434f4e77e4
+source_sha256: 10fcdf9e024d1f8598a2759df99d926bea71010c1d62762f0bb61640649c6f9b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2734,13 +2734,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T02 - Implement local user profile and application-lock behavior
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S04.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Optional local profile name, inactivity lock, project lock state, and protected reauthentication without requiring a cloud account.
 
