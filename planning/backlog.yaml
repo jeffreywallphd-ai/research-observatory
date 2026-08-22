@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: amendment-hold
+    scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -142,7 +142,19 @@ waves:
       command administratively held
     pause_category: human-decision
     lease: null
-  checkpoints: []
+  checkpoints:
+  - id: W1.CP01
+    kind: security
+    recorded_by: codex
+    recorded_at: '2026-08-22T02:41:21+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W1.A02
+      path: artifacts/evidence/W1.A02.adoption-R04.json
+      sha256: a43890b792808b848e4dd16bbd0ba8bc59aa2fc71a9fb08d33a0284e5da2a88f
+      commit: 996a6479dd7aae3422f73593097134b3b12a75fc
+    notes: Adopt independently approved W1.A02 workflow controls via exact R04 completion and commit-bound checkpoint; keep
+      W1 paused for user handoff.
   completion:
     status: PAUSED
     reviewer: null
@@ -22218,7 +22230,7 @@ wave_amendments:
     sha256: 63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376
     introduction_commit: 6e9c440102a5c463bb35d81f4dbdc3453d9ce029
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -22295,6 +22307,12 @@ wave_amendments:
       at: '2026-08-22T02:35:17+00:00'
       rationale: 'R04 remediates the fail-closed adoption transition discovered after R03: validate completed exits against
         frozen reviewed state and allow only exact approved pre-adoption remediation reactivation.'
+    - id: E13
+      status: ADOPTED
+      actor: codex
+      at: '2026-08-22T02:41:21+00:00'
+      rationale: Adopt independently approved W1.A02 workflow controls via exact R04 completion and commit-bound checkpoint;
+        keep W1 paused for user handoff.
   bootstrap:
     id: W1.A02.B00
     status: APPROVED
