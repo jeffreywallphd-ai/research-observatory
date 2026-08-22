@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: wave
+    scope: amendment-hold
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
@@ -24073,7 +24073,7 @@ wave_amendments:
     sha256: 340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd
     introduction_commit: 95c007b58619dfd82b5f443eea3d8e71e7efe082
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -24082,6 +24082,11 @@ wave_amendments:
       rationale: Approved in Codex in direct response to the exact-commit ECR-0002/W1.A03 approval request at ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4;
         authorize only bootstrap W1.A03.B00 and task W1.A03.T01 as hash-bound in the packet, keep W1 paused and CAP-02.S04.T03
         blocked through amendment adoption, GRR-0001 release, and an explicit ordinary W1 resume.
+    - id: E02
+      status: MATERIALIZED
+      actor: codex
+      at: '2026-08-22T19:06:55+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W1.A03.B00
     status: APPROVED
@@ -24104,7 +24109,62 @@ wave_amendments:
         focused tests, exact historical T03 gate command, authority, backlog, review-site, generated-view, quality, and diff
         checks pass. No product, reference, policy, predecessor, T03, ordinary W1, or gate state changed.
   campaign: null
-  tasks: []
+  tasks:
+  - id: W1.A03.T01
+    amendment_id: W1.A03
+    title: Exact T03 candidate-lineage and evidence recovery
+    objective: Implement a packet-bound, fail-closed recovery transition that preserves and requalifies CAP-02.S04.T03's exact
+      historical base, foundation, candidate, block, pause, reference, and evidence lineage without treating later governance
+      commits as product implementation.
+    dependencies:
+    - W1.A03.B00
+    acceptance_criteria:
+    - The recovery transition targets only CAP-02.S04.T03 and binds HOLD-W1-GRR-0001, this exact W1.A03 approval, base bfb8797398707bece9e0662c0d995fabaced9979,
+      foundation 461faf2870786609dea5a8e5214df380843329bb, candidate 59079efccc122a7d56a9f18efc20030851bf32a9, block record
+      1c1d9ba427a55024687a62ca0c364acaccdbb7e2, and pause record c7d543136fcd75c8f93dc8e669e59d54de433c02.
+    - The transition remains denied until W1.A03 is ADOPTED with a bound control/security checkpoint, GRR-0001 is RELEASED,
+      W1 is explicitly ACTIVE with scope wave, and T03 retains the exact BLOCKED boundary.
+    - A canonical repository-local recovery manifest binds the exact task, branch, base/foundation/candidate/block/pause commits,
+      UI evidence contract and approved reference identity/package/approval, exact changed paths, unique selected checks,
+      and zero unverified items.
+    - Git existence, strict ancestry, exact base-to-candidate paths, immutable evidence-contract bytes, repaired cumulative
+      UI-gate result, and risk-selected product/privacy checks are independently recomputed rather than trusted from narrative
+      fields.
+    - The original blocked lineage is retained in an append-only hash-bound task recovery projection before any new execution
+      base is established.
+    - The sole lawful transition is compare-and-swap and moves only T03 from BLOCKED to IN_PROGRESS with a new lease; it cannot
+      directly attach ordinary task evidence or enter REVIEW, DONE, slice/Wave approval, or a release gate.
+    - Wrong task, wrong or unadopted authority, active hold, paused Wave, stale writer, dirty worktree, mismatched commit/hash/path/reference,
+      altered historical task/block state, duplicate recovery, and predecessor rewrite all fail without changing backlog bytes.
+    - After recovery, T03 still requires a new ordinary commit, exact commit-bound evidence, independent privacy/task review,
+      slice review, W1 qualification, and G1 approval.
+    verification_commands:
+    - Run focused taskctl workflow and schema tests for every authority, state, lineage, path, hash, stale, dirty, duplicate,
+      and atomic denial plus the sole lawful BLOCKED-to-IN_PROGRESS transition.
+    - Run focused UI-gate tests and the exact bfb8797398707bece9e0662c0d995fabaced9979..59079efccc122a7d56a9f18efc20030851bf32a9
+      cumulative command.
+    - Run taskctl backlog validation, approved GRR-0001 and ECR-0001 authority validation, generated-view/review-page checks,
+      governed Python quality, and diff hygiene.
+    - Obtain independent task review, independent amendment exit review, and a commit-bound control/security adoption checkpoint.
+    packet_task_sha256: 6e6c5ffa1266d25dbb888284baa02721f5da760b64685d849820dc995597d9d9
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null
