@@ -1,20 +1,29 @@
+pub mod application_lock;
 pub mod supervisor;
 pub mod support_bundle;
 
+use application_lock::{
+    ApplicationLockAuditEvent, ApplicationLockManager, ApplicationLockReason,
+    ApplicationLockSnapshot,
+};
 use supervisor::{
     CoreApiRequest, CoreApiResponse, RuntimeDiagnostic, RuntimeSnapshot, RuntimeSupervisor,
     SupervisorConfig,
 };
 use support_bundle::{SupportBundleExport, SupportBundleManager, SupportBundlePreview};
-use tauri::{App, AppHandle, Manager, Runtime, State};
+use tauri::{App, AppHandle, Emitter, Manager, Runtime, State};
 
 pub const PRODUCT_NAME: &str = "Research Observatory";
 
 #[tauri::command]
 async fn core_runtime_start(
     supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
 ) -> Result<RuntimeSnapshot, &'static str> {
-    dispatch_runtime_start(supervisor.inner().clone()).await
+    let ticket = lock.begin_protected_action()?;
+    let result = dispatch_runtime_start(supervisor.inner().clone()).await;
+    lock.finish_protected_action(ticket)?;
+    result
 }
 
 #[tauri::command]
@@ -25,8 +34,12 @@ fn core_runtime_status(supervisor: State<'_, RuntimeSupervisor>) -> RuntimeSnaps
 #[tauri::command]
 async fn core_runtime_retry(
     supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
 ) -> Result<RuntimeSnapshot, &'static str> {
-    dispatch_runtime_start(supervisor.inner().clone()).await
+    let ticket = lock.begin_protected_action()?;
+    let result = dispatch_runtime_start(supervisor.inner().clone()).await;
+    lock.finish_protected_action(ticket)?;
+    result
 }
 
 #[tauri::command]
@@ -44,9 +57,13 @@ fn core_runtime_diagnostics(supervisor: State<'_, RuntimeSupervisor>) -> Vec<Run
 #[tauri::command]
 async fn core_api_request(
     supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
     request: CoreApiRequest,
 ) -> Result<CoreApiResponse, &'static str> {
-    dispatch_core_api_request(supervisor.inner().clone(), request).await
+    let ticket = lock.begin_protected_action()?;
+    let result = dispatch_core_api_request(supervisor.inner().clone(), request).await;
+    lock.finish_protected_action(ticket)?;
+    result
 }
 
 #[tauri::command]
@@ -54,32 +71,105 @@ async fn support_bundle_preview(
     app: AppHandle,
     supervisor: State<'_, RuntimeSupervisor>,
     manager: State<'_, SupportBundleManager>,
+    lock: State<'_, ApplicationLockManager>,
 ) -> Result<SupportBundlePreview, &'static str> {
+    let ticket = lock.begin_protected_action()?;
     let application_data = app
         .path()
         .app_local_data_dir()
         .map_err(|_| "RO-SUPPORT-PATH-UNAVAILABLE")?;
     let supervisor = supervisor.inner().clone();
     let manager = manager.inner().clone();
-    tauri::async_runtime::spawn_blocking(move || manager.preview(&application_data, &supervisor))
-        .await
-        .map_err(|_| "RO-SUPPORT-COLLECTION-FAILED")?
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        manager.preview(&application_data, &supervisor)
+    })
+    .await
+    .map_err(|_| "RO-SUPPORT-COLLECTION-FAILED")?;
+    lock.finish_protected_action(ticket)?;
+    result
 }
 
 #[tauri::command]
 async fn support_bundle_export(
     app: AppHandle,
     manager: State<'_, SupportBundleManager>,
+    lock: State<'_, ApplicationLockManager>,
     preview_id: String,
 ) -> Result<SupportBundleExport, &'static str> {
+    let ticket = lock.begin_protected_action()?;
     let application_data = app
         .path()
         .app_local_data_dir()
         .map_err(|_| "RO-SUPPORT-PATH-UNAVAILABLE")?;
     let manager = manager.inner().clone();
-    tauri::async_runtime::spawn_blocking(move || manager.export(&application_data, &preview_id))
-        .await
-        .map_err(|_| "RO-SUPPORT-WRITE-FAILED")?
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        manager.export(&application_data, &preview_id)
+    })
+    .await
+    .map_err(|_| "RO-SUPPORT-WRITE-FAILED")?;
+    lock.finish_protected_action(ticket)?;
+    result
+}
+
+#[tauri::command]
+fn application_lock_status(lock: State<'_, ApplicationLockManager>) -> ApplicationLockSnapshot {
+    lock.status()
+}
+
+#[tauri::command]
+fn application_lock_activity(lock: State<'_, ApplicationLockManager>) {
+    lock.record_activity();
+}
+
+#[tauri::command]
+fn application_lock_audit(
+    lock: State<'_, ApplicationLockManager>,
+) -> Vec<ApplicationLockAuditEvent> {
+    lock.audit()
+}
+
+#[tauri::command]
+fn application_lock_configure(
+    app: AppHandle,
+    lock: State<'_, ApplicationLockManager>,
+    profile_name: Option<String>,
+    inactivity_timeout_minutes: u8,
+) -> Result<ApplicationLockSnapshot, &'static str> {
+    let snapshot = lock.configure(profile_name, inactivity_timeout_minutes)?;
+    let _ = app.emit("application-lock-changed", &snapshot);
+    Ok(snapshot)
+}
+
+#[tauri::command]
+async fn application_lock_now(
+    app: AppHandle,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+) -> Result<ApplicationLockSnapshot, &'static str> {
+    let (snapshot, changed) = lock.lock(ApplicationLockReason::Manual);
+    if changed {
+        let _ = app.emit("application-lock-changed", &snapshot);
+    }
+    dispatch_runtime_stop(supervisor.inner().clone()).await?;
+    Ok(snapshot)
+}
+
+#[tauri::command]
+async fn application_lock_unlock(
+    app: AppHandle,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+) -> Result<ApplicationLockSnapshot, &'static str> {
+    let supervisor = supervisor.inner().clone();
+    let lock_manager = lock.inner().clone();
+    let result =
+        tauri::async_runtime::spawn_blocking(move || lock_manager.reauthenticate(&supervisor))
+            .await
+            .map_err(|_| "RO-LOCK-AUTH-DENIED")?;
+    if let Ok(snapshot) = &result {
+        let _ = app.emit("application-lock-changed", snapshot);
+    }
+    result
 }
 
 pub async fn dispatch_runtime_start(
@@ -118,14 +208,29 @@ pub fn run() {
             core_runtime_diagnostics,
             core_api_request,
             support_bundle_preview,
-            support_bundle_export
+            support_bundle_export,
+            application_lock_status,
+            application_lock_activity,
+            application_lock_audit,
+            application_lock_configure,
+            application_lock_now,
+            application_lock_unlock
         ])
         .setup(|app| {
             let supervisor = RuntimeSupervisor::new(runtime_config(app));
+            let application_data = app
+                .path()
+                .app_local_data_dir()
+                .map_err(|_| std::io::Error::other("application data unavailable"))?;
+            let lock = ApplicationLockManager::new(&application_data);
             app.manage(supervisor.clone());
+            app.manage(lock.clone());
             app.manage(SupportBundleManager::default());
-            let startup = supervisor.clone();
-            tauri::async_runtime::spawn_blocking(move || startup.start());
+            if lock.is_unlocked() {
+                let startup = supervisor.clone();
+                tauri::async_runtime::spawn_blocking(move || startup.start());
+            }
+            start_lock_monitor(app.handle().clone(), lock, supervisor);
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -136,6 +241,18 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("Research Observatory desktop runtime failed");
+}
+
+fn start_lock_monitor(app: AppHandle, lock: ApplicationLockManager, supervisor: RuntimeSupervisor) {
+    std::thread::spawn(move || {
+        loop {
+            std::thread::sleep(std::time::Duration::from_secs(1));
+            if let Some(snapshot) = lock.lock_if_idle() {
+                let _ = app.emit("application-lock-changed", &snapshot);
+                supervisor.stop();
+            }
+        }
+    });
 }
 
 fn runtime_config<R: Runtime>(app: &App<R>) -> Result<SupervisorConfig, &'static str> {

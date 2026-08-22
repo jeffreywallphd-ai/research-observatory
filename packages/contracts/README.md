@@ -51,4 +51,7 @@ for local secrets. It fixes current-user rather than machine DPAPI scope, an
 application-authenticated opaque record envelope, compare-and-swap updates,
 callback-scoped delivery, redacted audit projection, and the exact destinations
 that can never contain secret material. OS paths and DPAPI types remain private
-adapter state.
+adapter state. It also defines the native-supervisor application-lock profile:
+optional local display identity, bounded idle policy, same-Windows-user
+reauthentication, protected-action invalidation, Core capability clearing, and
+the explicit non-isolation residual threat.

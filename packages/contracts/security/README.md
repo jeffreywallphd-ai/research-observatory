@@ -20,3 +20,12 @@ the record and keyed-hashed for physical identity. Secret material is forbidden
 from SQLite, project packages and exports, support bundles, and process
 arguments. Windows remains an adapter; later platforms must implement the same
 portable port with their native user credential service.
+
+`application-lock-profile.v1.json` fixes the W1 application-lock boundary at
+the desktop native supervisor. A manual, idle, or restart lock invalidates the
+protected-action generation, stops Core, clears its per-launch capability,
+discards renderer research state, and requires a same-SID current Windows user
+credential check before a fresh Core session starts. The optional display name
+and idle interval are application-local configuration outside project packages.
+The contract explicitly does not claim Windows-account isolation, and W1 permits
+no durable job to continue through lock without a future explicit allowlist.

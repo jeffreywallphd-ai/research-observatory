@@ -111,3 +111,7 @@ The Windows current-user DPAPI profile vault, opaque authenticated secret
 records, redacted access audit, and explicit recovery boundary are documented in
 [`local-credential-storage.md`](local-credential-storage.md) and governed by
 ADR-0017.
+The native-supervisor application lock, local profile, idle policy, protected
+action cancellation, same-user reauthentication, and explicit residual threat
+are documented in [`application-lock.md`](application-lock.md) and governed by
+ADR-0018.

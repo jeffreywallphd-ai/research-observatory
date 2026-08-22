@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-02.S04.T02",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-02.S04.T02.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "apps/desktop/src/app/session.test.ts",
+    "apps/desktop/src/app/session.ts",
+    "apps/desktop/src/app.css"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.3",
+    "version": "1.3",
+    "packageSha256": "db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2",
+    "approvalCommit": "7e625150c57f518327d8dcce430371902ecaed10",
+    "approvedBy": "Project-owner direction",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.2"
+  },
+  "focusedEvidence": [
+    {
+      "command": "& .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run lint; & .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run typecheck; & .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run test",
+      "result": "passed",
+      "scope": "Pinned Node 24.19.0 desktop lint and typecheck passed; all 10 desktop test files and 45 tests passed, including strict lock-response decoding, profile-name boundaries, locked-only markup, no sensitive workspace content, and project-session discard transitions."
+    },
+    {
+      "command": "& .local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run build",
+      "result": "passed",
+      "scope": "The functional desktop product and approved-reference conformance fixture both built successfully with the pinned Node 24.19.0, React 19, TypeScript 7, and Vite 8 toolchain."
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check; cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --lib",
+      "result": "passed",
+      "scope": "Rust formatting and all 18 native desktop library tests passed on Windows, including manual, idle, denied, cancelled, rate-limited, same-user-success, Core-restart-failure, generation-invalidation, redacted-audit, supervisor, and support-bundle boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.contracts.test_credential_store_contract.ApplicationLockContractTests tests.security.test_windows_credentials.ApplicationLockSourceBoundaryTests",
+      "result": "passed",
+      "scope": "Four portable schema and security source-boundary tests passed, including unknown-field/weaker-policy denial and the non-persisting Windows prompt, same-SID, transient-buffer, handle-cleanup, protected-command, and native-idle obligations."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . wave validate W1",
+      "result": "passed",
+      "scope": "The approved W1 packet, capability and slice plans, generated review site, and active-task experience lineage remain valid."
+    }
+  ],
+  "implementationScope": "Implement the already approved top-bar local-profile control and application-lock settings action as a functional native-supervisor lock boundary. Preserve Academic Minimal tokens, keyboard/focus/screen-reader behavior, theme parity, local-only operation, and the approved application/project navigation; do not add a new route or change the governed reference."
+}

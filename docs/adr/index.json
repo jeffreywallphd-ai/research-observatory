@@ -165,6 +165,15 @@
       "linkedTasks": [
         "CAP-02.S04.T01"
       ]
+    },
+    {
+      "id": "ADR-0018",
+      "path": "docs/adr/ADR-0018-lock-the-local-application-at-the-native-supervisor-boundary.md",
+      "title": "Lock the local application at the native supervisor boundary",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-02.S04.T02"
+      ]
     }
   ]
 }
