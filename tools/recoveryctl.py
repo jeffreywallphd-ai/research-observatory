@@ -360,38 +360,49 @@ def validate_request(
 def save_backlog(repo: Path, payload: bytes, data: dict[str, Any]) -> None:
     path = repo / "planning" / "backlog.yaml"
     prior_data = yaml.safe_load(payload)
+    target_waves = {
+        str(hold.get("target_wave")) for hold in (prior_data.get("control_plane") or {}).get("recovery_holds", [])
+    }
     taskctl.save_validated(
         str(path),
         data,
         expected_sha256=sha256(payload),
-        expected_identity=taskctl.identity_snapshot(data),
-        expected_amendment_identity=taskctl.amendment_identity_snapshot(data),
-        expected_approved_waves=taskctl.approved_wave_snapshot(data),
-        expected_amendment_history=taskctl.amendment_history_snapshot(data),
-        expected_task_review_history=taskctl.task_review_history_snapshot(data),
-        expected_wave_checkpoint_history=taskctl.wave_checkpoint_history_snapshot(data),
+        expected_identity=taskctl.identity_snapshot(prior_data),
+        expected_amendment_identity=taskctl.amendment_identity_snapshot(prior_data),
+        expected_approved_waves=taskctl.approved_wave_snapshot(prior_data),
+        expected_amendment_history=taskctl.amendment_history_snapshot(prior_data),
+        expected_task_review_history=taskctl.task_review_history_snapshot(prior_data),
+        expected_wave_checkpoint_history=taskctl.wave_checkpoint_history_snapshot(prior_data),
         expected_recovery_history=taskctl.recovery_history_snapshot(prior_data),
+        expected_frozen_waves=taskctl.exact_record_snapshot(
+            prior_data,
+            "waves",
+            identities=target_waves,
+        ),
+        expected_frozen_wave_bases=taskctl.exact_record_snapshot(
+            prior_data,
+            "wave_approval_bases",
+            identity_field="wave_id",
+        ),
+        expected_frozen_amendments=taskctl.exact_record_snapshot(prior_data, "wave_amendments"),
         repo=repo,
     )
 
 
 def evidence_relative(repo: Path, value: str, request_id: str, bootstrap_id: str) -> tuple[str, Path]:
-    raw = Path(value)
-    path = raw if raw.is_absolute() else repo / raw
-    try:
-        relative = path.resolve(strict=False).relative_to(repo.resolve(strict=True)).as_posix()
-    except (OSError, ValueError) as exc:
-        raise SystemExit("Recovery evidence must be inside the repository") from exc
     pattern = (
         rf"planning/governance-recovery-approvals/{re.escape(bootstrap_id)}"
         rf"(?:\.remediation-[0-9]{{2}})?\.evidence\.json"
     )
-    if re.fullmatch(pattern, relative) is None:
+    if re.fullmatch(pattern, value) is None:
         raise SystemExit(
             f"Recovery evidence must use the approved control-artifact path for {request_id}/{bootstrap_id}"
         )
-    return relative, safe_repo_path(
-        repo, relative, label="Recovery evidence", designated_prefix="planning/governance-recovery-approvals"
+    return taskctl.canonical_control_artifact_path(
+        repo,
+        value,
+        prefix="planning/governance-recovery-approvals",
+        label="Recovery evidence",
     )
 
 
@@ -637,13 +648,7 @@ def freeze_submission(args: argparse.Namespace, *, remediation: bool) -> None:
         if remediation
         else f"planning/governance-recovery-approvals/{bootstrap_id}.evidence.json"
     )
-    provided = Path(args.evidence)
-    provided_relative = (
-        provided.resolve(strict=False).relative_to(args.repo.resolve(strict=True)).as_posix()
-        if provided.is_absolute()
-        else provided.as_posix()
-    )
-    if provided_relative != expected_name:
+    if str(args.evidence) != expected_name:
         raise SystemExit(f"Recovery evidence path must be {expected_name}")
     require_clean(args.repo, allowed_untracked={expected_name})
     document, evidence_payload, relative = evidence_document(
@@ -691,16 +696,14 @@ def review_ledger(
     current = bootstrap.get("current_submission") or {}
     attempt_id = str(current.get("attempt_id") or "")
     expected_relative = f"planning/governance-recovery-approvals/{bootstrap.get('id')}.review-{attempt_id}.json"
-    value = Path(args.from_path)
-    relative = (
-        value.resolve(strict=False).relative_to(args.repo.resolve(strict=True)).as_posix()
-        if value.is_absolute()
-        else value.as_posix()
-    )
+    relative = str(args.from_path)
     if relative != expected_relative:
         raise SystemExit(f"Recovery review ledger path must be {expected_relative}")
-    path = safe_repo_path(
-        args.repo, relative, label="Recovery review ledger", designated_prefix="planning/governance-recovery-approvals"
+    _relative, path = taskctl.canonical_control_artifact_path(
+        args.repo,
+        relative,
+        prefix="planning/governance-recovery-approvals",
+        label="Recovery review ledger",
     )
     ledger, payload = load_json(path, "recovery review ledger")
     required = {
