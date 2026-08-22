@@ -738,6 +738,47 @@ def load_recovery_holds(repo: Path, backlog: dict[str, Any]) -> list[dict[str, A
             approval.get("packet") or {}
         ).get("reviewSha256"):
             raise ValueError(f"{request_id} recovery proposal/review hash mismatch")
+        supplements = []
+        for supplement in hold.get("supplements", []):
+            supplement_id = str(supplement.get("id") or "")
+            supplement_packet_reference = supplement.get("packet_reference") or {}
+            supplement_approval_reference = supplement.get("approval_reference") or {}
+            supplement_packet_path = repository_file(
+                repo,
+                str(supplement_packet_reference.get("path") or ""),
+                label=f"{supplement_id} packet",
+            )
+            supplement_approval_path = repository_file(
+                repo,
+                str(supplement_approval_reference.get("path") or ""),
+                label=f"{supplement_id} approval",
+            )
+            if sha256(supplement_packet_path) != supplement_packet_reference.get("sha256") or sha256(
+                supplement_approval_path
+            ) != supplement_approval_reference.get("sha256"):
+                raise ValueError(f"{supplement_id} recovery supplement authority hash mismatch")
+            supplement_packet = json.loads(supplement_packet_path.read_text(encoding="utf-8"))
+            supplement_approval = json.loads(supplement_approval_path.read_text(encoding="utf-8"))
+            if (
+                supplement_packet.get("supplementId") != supplement_id
+                or supplement_approval.get("supplementId") != supplement_id
+                or supplement_packet.get("recoveryRequestId") != request_id
+                or supplement_approval.get("recoveryRequestId") != request_id
+            ):
+                raise ValueError(f"{supplement_id} recovery supplement identity mismatch")
+            supplements.append(
+                {
+                    "id": supplement_id,
+                    "bootstrap_id": (supplement.get("bootstrap") or {}).get("id"),
+                    "bootstrap_status": (supplement.get("bootstrap") or {}).get("status"),
+                    "packet_path": supplement_packet_reference.get("path"),
+                    "packet_sha256": supplement_packet_reference.get("sha256"),
+                    "packet_commit": supplement_packet_reference.get("commit"),
+                    "approval_path": supplement_approval_reference.get("path"),
+                    "approval_sha256": supplement_approval_reference.get("sha256"),
+                    "approval_commit": supplement_approval_reference.get("introduction_commit"),
+                }
+            )
         records.append(
             {
                 "request_id": request_id,
@@ -758,6 +799,7 @@ def load_recovery_holds(repo: Path, backlog: dict[str, Any]) -> list[dict[str, A
                 "authority_chain": packet.get("authorityChain") or {},
                 "packet": packet,
                 "approval": approval,
+                "supplements": supplements,
             }
         )
     return records
@@ -954,7 +996,8 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         f'<a class="capability-card" href="{esc(record["request_id"])}.html"><div class="capability-card-top">'
         f'<span class="eyebrow">{esc(record["hold_id"])} · {esc(record["target_wave"])}</span>'
         f"{status_badge(record['hold_status'])}</div><h2>{esc(record['request_id'])}</h2>"
-        f"<p>Bootstrap {esc(record['bootstrap'].get('id'))}: {esc(record['bootstrap'].get('status'))}</p>"
+        f"<p>Bootstrap {esc(record['bootstrap'].get('id'))}: {esc(record['bootstrap'].get('status'))}; "
+        f"supplements: {len(record['supplements'])}</p>"
         '<span class="text-link">Inspect immutable recovery authority and release conditions</span></a>'
         for record in recovery_records
     )
@@ -991,6 +1034,13 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             for item in amendments
         )
         release_rows = "".join(f"<li>{esc(item)}</li>" for item in record["release_conditions"])
+        supplement_rows = "".join(
+            f"<li><strong>{esc(item['id'])}</strong> / <code>{esc(item['bootstrap_id'])}</code> — "
+            f'{esc(item["bootstrap_status"])}; <a href="{esc((repo / item["packet_path"]).resolve().as_uri())}">packet</a> '
+            f'<code>{esc(item["packet_sha256"])}</code>; <a href="{esc((repo / item["approval_path"]).resolve().as_uri())}">approval</a> '
+            f"<code>{esc(item['approval_sha256'])}</code></li>"
+            for item in record["supplements"]
+        )
         detail = shell(
             title=f"{record['request_id']} governance recovery",
             page_type="recovery-detail",
@@ -1015,6 +1065,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 <section class="callout callout-warning"><h2>Ordinary execution is denied</h2><p>This immutable recovery approval authorizes only the bootstrap. It grants zero authority to {esc(post.get("required_change_request_id"))}/{esc(post.get("required_amendment_id"))}, proposed tasks, ordinary Wave resume, or gate approval.</p><p><strong>Recommendation:</strong> complete independent bootstrap review, then prepare and separately approve the exact ECR/amendment. Safe alternatives are leaving the hold active or recording a governed terminal disposition; direct execution is prohibited.</p></section>
 <section class="review-toolbar"><h2>Hash-bound source records</h2><ul><li><a href="{esc((repo / record["packet_path"]).resolve().as_uri())}">Frozen packet</a> — <code>{esc(record["packet_sha256"])}</code> at <code>{esc(record["packet_commit"])}</code></li><li><a href="{esc((repo / record["proposal_path"]).resolve().as_uri())}">Canonical proposal</a></li><li><a href="{esc((repo / record["review_path"]).resolve().as_uri())}">Human review</a></li><li><a href="{esc((repo / record["approval_path"]).resolve().as_uri())}">Immutable approval</a> — <code>{esc(record["approval_sha256"])}</code> introduced at <code>{esc(record["approval_commit"])}</code></li><li><a href="../waves/{esc(record["target_wave"])}.html">Paused Wave packet</a></li></ul></section>
 <section class="review-toolbar"><h2>Frozen predecessor authority</h2><ul>{authority_rows}</ul></section>
+<section class="review-toolbar"><h2>Append-only recovery supplements</h2><ul>{supplement_rows or "<li>No supplemental bootstrap is installed.</li>"}</ul><p>A supplement authorizes only its sequential BNN bootstrap and never the repair amendment, ordinary task execution, Wave resume, hold release, or a gate.</p></section>
 <section class="review-toolbar"><h2>Exact release conditions</h2><ul>{release_rows}</ul><p>After every condition is proven, release the hold through <code>python tools/recoveryctl.py --repo . release {esc(record["request_id"])} --agent &lt;agent&gt;</code>. The Wave remains PAUSED until an explicit ordinary resume.</p></section>""",
             ),
         )
@@ -1041,6 +1092,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             | {
                 "bootstrap_id": bootstrap.get("id"),
                 "bootstrap_status": bootstrap.get("status"),
+                "supplements": record["supplements"],
                 "page": f"recoveries/{record['request_id']}.html",
             }
         )
@@ -1403,12 +1455,25 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             recovery = wave_recoveries[0]
             bootstrap = recovery["bootstrap"]
             post = recovery["post_bootstrap"]
+            latest_supplement = recovery["supplements"][-1] if recovery["supplements"] else None
+            supplement_status = (
+                f" Latest supplement <code>{esc(latest_supplement['id'])}</code> / "
+                f"<code>{esc(latest_supplement['bootstrap_id'])}</code> is "
+                f"{esc(latest_supplement['bootstrap_status'])}."
+                if latest_supplement
+                else ""
+            )
+            recovery_recommendation = (
+                f"complete independent {esc(latest_supplement['bootstrap_id'])} review, then retry only the exact approved repair amendment"
+                if latest_supplement and latest_supplement["bootstrap_status"] != "APPROVED"
+                else "complete the exact separately approved ECR/amendment"
+            )
             interruption_html = f"""
 <section class="callout callout-warning" id="governance-recovery-interruption">
   <div><span class="eyebrow">Stopped at governance recovery hold</span><h2>{esc(wave_id)} ordinary execution is interrupted</h2>
-  <p><a href="../recoveries/{esc(recovery["request_id"])}.html"><strong>{esc(recovery["request_id"])} / {esc(recovery["hold_id"])}</strong></a> is ACTIVE. Bootstrap <code>{esc(bootstrap.get("id"))}</code> is {esc(bootstrap.get("status"))}. Ordinary task claims, Wave start/resume, amendment execution, and {esc(gate.get("id"))} progression fail closed.</p>
+  <p><a href="../recoveries/{esc(recovery["request_id"])}.html"><strong>{esc(recovery["request_id"])} / {esc(recovery["hold_id"])}</strong></a> is ACTIVE. Bootstrap <code>{esc(bootstrap.get("id"))}</code> is {esc(bootstrap.get("status"))}.{supplement_status} Ordinary task claims, Wave start/resume, amendment execution, and {esc(gate.get("id"))} progression fail closed.</p>
   <p><strong>Authority:</strong> packet <code>{esc(recovery["packet_sha256"])}</code> at <code>{esc(recovery["packet_commit"])}</code>; approval <code>{esc(recovery["approval_sha256"])}</code> introduced at <code>{esc(recovery["approval_commit"])}</code>. This authority is bootstrap-only and does not approve {esc(post.get("required_change_request_id"))}/{esc(post.get("required_amendment_id"))}.</p>
-  <p><strong>Recommendation:</strong> complete independent B00 review, then prepare and separately approve the exact ECR/amendment. The safe alternative is to keep the hold and Wave paused. Direct execution or repeat Wave approval is prohibited.</p>
+  <p><strong>Recommendation:</strong> {recovery_recommendation}. The safe alternative is to keep the hold and Wave paused. Direct execution or repeat Wave approval is prohibited.</p>
   <p><strong>Exact ordinary resume condition:</strong> B00 independently approved; {esc(post.get("required_amendment_id"))} separately approved, completed, independently exit-reviewed, and adopted with a control/security checkpoint; recovery hold released; then explicit ordinary Wave resume.</p></div>
 </section>"""
         if interrupting_enablers:

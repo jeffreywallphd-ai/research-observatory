@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-recovery-supplement-evidence.v1.json",
+  "title": "Governance recovery supplemental bootstrap criterion evidence",
+  "type": "object",
+  "required": [
+    "schemaVersion", "documentType", "recoveryRequestId", "supplementId", "bootstrapUnit", "branch",
+    "baseCommit", "candidateCommit", "changedPaths", "riskAnalysis", "requiredOutcomes", "acceptanceCriteria",
+    "checks", "deferredCoverage", "unverifiedItems"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "governance-recovery-supplement-bootstrap-evidence"},
+    "recoveryRequestId": {"type": "string", "pattern": "^GRR-[0-9]{4}$"},
+    "supplementId": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.S[0-9]{2}$"},
+    "bootstrapUnit": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.B[0-9]{2}$"},
+    "branch": {"type": "string", "pattern": "^codex/[A-Za-z0-9._/-]+$"},
+    "baseCommit": {"$ref": "#/$defs/commit"},
+    "candidateCommit": {"$ref": "#/$defs/commit"},
+    "changedPaths": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"$ref": "#/$defs/path"}
+    },
+    "riskAnalysis": {"type": "string", "minLength": 1},
+    "requiredOutcomes": {
+      "type": "array", "minItems": 1,
+      "items": {"$ref": "#/$defs/criterionEvidence"}
+    },
+    "acceptanceCriteria": {
+      "type": "array", "minItems": 1,
+      "items": {"$ref": "#/$defs/criterionEvidence"}
+    },
+    "checks": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "command", "result"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]*$"},
+          "command": {"type": "string", "minLength": 1},
+          "result": {"const": "passed"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "deferredCoverage": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "unverifiedItems": {"type": "array", "maxItems": 0}
+  },
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {
+      "type": "string", "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9._/-]+$"
+    },
+    "criterionEvidence": {
+      "type": "object",
+      "required": ["criterion", "evidence"],
+      "properties": {
+        "criterion": {"type": "string", "minLength": 1},
+        "evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -3446,6 +3446,73 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 errors = validate(*context)
                 self.assertIn(expected, "\n".join(errors))
 
+    def test_consecutive_amendment_hold_has_one_latest_owner_and_allows_only_adopted_predecessors(self) -> None:
+        data, capabilities, slices, tasks, gates = self.interrupted_workflow(lifecycle_status="ADOPTED")
+        predecessor = data["wave_amendments"][0]
+        predecessor["completion"].update(
+            status="APPROVED",
+            reviewer="independent-reviewer",
+            reviewed_at="2026-08-21T00:00:00+00:00",
+            evidence=["exit.json"],
+        )
+        successor = copy.deepcopy(predecessor)
+        successor["id"] = "W1.A03"
+        successor["change_request_id"] = "ECR-0002"
+        successor["approval_reference"]["path"] = "planning/wave-amendment-approvals/W1.A03.json"
+        successor["bootstrap"]["id"] = "W1.A03.B00"
+        successor["lifecycle"] = {
+            "status": "MATERIALIZED",
+            "history": [
+                {
+                    "id": "E01",
+                    "status": "APPROVED",
+                    "actor": "repository-owner",
+                    "at": "2026-08-21T00:00:00+00:00",
+                    "rationale": "Approved successor.",
+                },
+                {
+                    "id": "E02",
+                    "status": "MATERIALIZED",
+                    "actor": "codex",
+                    "at": "2026-08-21T00:01:00+00:00",
+                    "rationale": "Materialized successor.",
+                },
+            ],
+        }
+        successor["campaign"] = None
+        successor["completion"] = {
+            "status": "PENDING",
+            "reviewer": None,
+            "reviewed_at": None,
+            "evidence": [],
+            "notes": None,
+        }
+        successor_tasks = []
+        for position, source in enumerate(successor["tasks"]):
+            task = copy.deepcopy(source)
+            task["id"] = f"W1.A03.T{position + 1:02d}"
+            task["amendment_id"] = "W1.A03"
+            task["dependencies"] = ["W1.A03.B00" if position == 0 else "W1.A03.T01"]
+            task["_amendment_id"] = "W1.A03"
+            successor_tasks.append(task)
+            tasks[task["id"]] = task
+        successor["tasks"] = successor_tasks
+        data["wave_amendments"].append(successor)
+
+        errors = validate(data, capabilities, slices, tasks, gates)
+        self.assertNotIn("W1.A02: terminal lifecycle did not restore ordinary Wave scope", errors)
+        self.assertNotIn("W1: amendment-hold scope requires exactly one executable amendment owner", errors)
+
+        predecessor["lifecycle"]["status"] = "WITHDRAWN"
+        predecessor["lifecycle"]["history"][-1]["status"] = "WITHDRAWN"
+        errors = validate(data, capabilities, slices, tasks, gates)
+        self.assertIn("W1.A02: predecessor of the amendment-hold owner is not ADOPTED", errors)
+
+        predecessor["lifecycle"]["status"] = "MATERIALIZED"
+        predecessor["lifecycle"]["history"][-1]["status"] = "MATERIALIZED"
+        errors = validate(data, capabilities, slices, tasks, gates)
+        self.assertIn("W1: more than one amendment owns the shared amendment-hold scope", errors)
+
     def test_amendment_exit_review_migrates_r01_preserves_it_through_r02_and_binds_adoption(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             context, repo, amendment, approved_packet, implementation_commit, reviewed_state = (

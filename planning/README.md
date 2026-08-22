@@ -118,6 +118,15 @@ approval precede B00. `recoveryctl` then freezes criterion-linked evidence and
 append-only independent review rounds; adverse review requires a strict
 descendant `bootstrap-resubmit`.
 
+An approved B00 is immutable. If new evidence proves that the approved repair
+amendment still cannot cross its exact materialization boundary, create an
+inert sequential `GRR-NNNN.SNN` packet rather than reopening B00 or installing a
+second hold. After independent packet review and exact-commit human approval,
+`supplement-start` installs only `GRR-NNNN.BNN` under the existing hold and
+raises the control revision. Its evidence, adverse remediation, and independent
+review are append-only. Ordinary task/amendment/Wave/gate mutation remains
+denied until the latest supplemental bootstrap is APPROVED.
+
 An ACTIVE recovery hold is stronger than ordinary scheduling: every taskctl
 mutation fails closed except the exact later amendment lane after B00 is
 independently APPROVED and that ECR has its own immutable approval. The GRR does
@@ -131,6 +140,12 @@ python tools/recoveryctl.py --repo . status GRR-NNNN
 python tools/recoveryctl.py --repo . bootstrap-submit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
 python tools/recoveryctl.py --repo . bootstrap-review GRR-NNNN --reviewer <independent-reviewer> --from <ledger>
 python tools/recoveryctl.py --repo . bootstrap-resubmit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
+python tools/recoveryctl.py --repo . supplement-start GRR-NNNN.SNN --agent <agent>
+python tools/recoveryctl.py --repo . supplement-validate GRR-NNNN.SNN --require-approved
+python tools/recoveryctl.py --repo . supplement-status GRR-NNNN.SNN
+python tools/recoveryctl.py --repo . supplement-submit GRR-NNNN.SNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
+python tools/recoveryctl.py --repo . supplement-review GRR-NNNN.SNN --reviewer <independent-reviewer> --from <ledger>
+python tools/recoveryctl.py --repo . supplement-resubmit GRR-NNNN.SNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
 python tools/recoveryctl.py --repo . release GRR-NNNN --agent <agent>
 ```
 
