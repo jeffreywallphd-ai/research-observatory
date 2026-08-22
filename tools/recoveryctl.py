@@ -79,8 +79,8 @@ def safe_repo_path(
     if not relative or "\\" in relative or ":" in relative or re.search(r"(?:^|/)\.{1,2}(?:/|$)", relative):
         raise SystemExit(f"{label} is not a canonical repository-relative POSIX path: {relative!r}")
     pure = PurePosixPath(relative)
-    if pure.is_absolute() or any(part in {"", ".", ".."} for part in pure.parts):
-        raise SystemExit(f"{label} contains an absolute or dot-segment path: {relative!r}")
+    if pure.is_absolute() or relative != pure.as_posix() or any(part in {"", ".", ".."} for part in pure.parts):
+        raise SystemExit(f"{label} contains an absolute or noncanonical path: {relative!r}")
     if (
         designated_prefix
         and relative != designated_prefix
