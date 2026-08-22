@@ -1244,7 +1244,7 @@
             {
               "task_id": "CAP-02.S04.T03",
               "title": "Create privacy, telemetry, retention, and secure-deletion settings",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
