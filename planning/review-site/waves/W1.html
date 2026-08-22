@@ -50,6 +50,13 @@
   <p><strong>Recommendation:</strong> complete independent B00 review, then prepare and separately approve the exact ECR/amendment. The safe alternative is to keep the hold and Wave paused. Direct execution or repeat Wave approval is prohibited.</p>
   <p><strong>Exact ordinary resume condition:</strong> B00 independently approved; W1.A03 separately approved, completed, independently exit-reviewed, and adopted with a control/security checkpoint; recovery hold released; then explicit ordinary Wave resume.</p></div>
 </section>
+<section class="callout callout-warning" id="wave-amendment-interruption">
+  <div><span class="eyebrow">Stopped at approved Wave amendment</span><h2>W1 ordinary execution is interrupted</h2>
+  <p>The immutable pre-Wave approval remains authoritative and must not be repeated. Ordinary task claims, Wave restart or resume, and G1 progression remain unavailable while this interrupting amendment is unfinished.</p>
+  <ul><li><a href="../enablers/ECR-0002.html"><strong>ECR-0002 / W1.A03</strong></a> — approval APPROVED; materialization NOT_MATERIALIZED; bootstrap NOT_SUBMITTED; campaign NONE<small>Current ordinary authority: base <code></code> +  <code></code>. Approved interrupting scope: W1.A03 packet <code>835d0cbac43427a1cfd7406a8693b8af0ebf9321d009778c359165de9f7a3b8b</code> and approval <code>340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd</code>; not ordinary authority until adopted.</small></li></ul>
+  <p><strong>Recommendation:</strong> continue the approved bounded amendment through bootstrap review, task materialization and independent completion, amendment-exit review, and the W1 control/security adoption checkpoint. Legal alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition. Editing or reapproving the Wave in place is prohibited.</p>
+  <p><strong>Exact ordinary resume condition:</strong> every authorized amendment task is DONE and independently approved, the amendment exit is APPROVED, and the W1 adoption checkpoint is recorded.</p></div>
+</section>
 <section class="review-toolbar">
   <div class="hero-top"><div><span class="eyebrow">One approval before execution</span><h2>Complete pre-Wave approval packet</h2></div><span class="status status-approved">Approved</span></div>
   <p>The complete pre-Wave packet is already approved and immutable. Approval covers exactly the decisions labeled <strong>Binding in this Wave</strong>, every W1 slice plan, the cross-capability dependency order, risk register, verification obligations, and the exit-gate criteria at immutable commit <code>c5bbd97c0cdc665eecb973f5862478ef7be97752</code>. Inherited and future decisions are context only and are not authorized here.</p>
