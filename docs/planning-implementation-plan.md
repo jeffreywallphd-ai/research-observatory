@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e5c2e59f7d893ed4ad0e684f416e7b8c2de98befefc06e0728c005d827352dd7
+source_sha256: 96ed0945616cc760677b9853d4b084552fe8fe6f2839ddab68a3e2c53f6d4153
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -803,7 +803,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A03.T01 - Exact T03 candidate-lineage and evidence recovery
 
-**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
+**Status / owner / review:** `REVIEW` / codex / - (`-`)
 
 **Dependencies:** `W1.A03.B00`
 
@@ -827,13 +827,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Run taskctl backlog validation, approved GRR-0001 and ECR-0001 authority validation, generated-view/review-page checks, governed Python quality, and diff hygiene.
 - Obtain independent task review, independent amendment exit review, and a commit-bound control/security adoption checkpoint.
 
+**Evidence:**
+
+- `artifacts/evidence/W1.A03.T01.json` at `1127d72f29fbe407f3aaf99dd1f87d1aea60f18e`
+
 #### Review history — W1.A03.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `756eed60f3c76264c3bc35676b74aa0b772b0523230097958a400c96ec059dba`
+
+- Candidate / base / branch: `1127d72f29fbe407f3aaf99dd1f87d1aea60f18e` / `22afeeb5779ed53bbd6c35fac9515f4a7e8c56d4` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-22T19:36:38+00:00`
+- Evidence: `artifacts/evidence/W1.A03.T01.json` / `54a90061e9854a6cf52df415ec9f058ffb664e42a1193e47b35c7abbb7695e70` / `1127d72f29fbe407f3aaf99dd1f87d1aea60f18e`
+- Acceptance-criteria SHA-256: `fa97c4c3ff3bc80344d9faf06a95f681c23b44c844f2b68d451753df841930d0`
+- Verification-selection SHA-256: `12896bb3dc9a03e52498771a56dd8e2fbf21c68c9f57da7b72f9050471491d00`
+- Changed paths: `artifacts/evidence/task-recovery/CAP-02.S04.T03.json`, `docs/automation/project-automation-guide.md`, `docs/planning-implementation-plan.md`, `planning/backlog.schema.json`, `planning/backlog.yaml`, `planning/enabler-change-requests/task-recovery-manifest.schema.json`, `planning/review-site/enablers/ECR-0002.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `quality-scope.json`, `tests/foundation/test_task_recovery.py`, `tests/foundation/test_taskctl_workflow.py`, `tools/taskctl.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate`, `.venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9`, `.venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract`, `.venv\Scripts\python.exe tools\quality_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\Scripts\python.exe tools\recoveryctl.py --repo . validate GRR-0001 --require-approved`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py`, `git show --check --stat --oneline 1127d72f29fbe407f3aaf99dd1f87d1aea60f18e`
+- Deferred checks: `Independent task review, the amendment exit review, and the commit-bound control/security adoption checkpoint remain the next W1.A03 gates.`, `The complete W1 affected/full deployment matrix, including packaging, accessibility, migration, restart, recovery, security, performance, and Windows release paths, remains due once at W1 exit after ordinary T03 completion and all remaining W1 slices.`
+- Selection rationale: W1.A03.T01 changes the evidence/automation control plane for one high-risk historical product candidate. Credible failures are unauthorized or premature recovery, authority or historical-lineage substitution, product/reference drift, stale or dirty compare-and-swap execution, partial backlog mutation, projection rewrite, direct task/higher-gate approval, and false privacy evidence. The 97-test focused controller/schema/UI matrix, exact historical UI replay, nine privacy/contract tests, all governed Python quality, backlog/ECR/GRR authority checks, generated review/view checks, exact protected-product diff, and Git hygiene cover those risks. No product, dependency, migration, packaging, or approved-reference bytes changed.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks
