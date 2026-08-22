@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-review",
+  "recoveryRequestId": "GRR-0001",
+  "supplementId": "GRR-0001.S01",
+  "bootstrapUnit": "GRR-0001.B01",
+  "attemptId": "R01",
+  "candidateCommit": "4db63866a28d036be89b3af6ab860f9e406fee38",
+  "reviewedStateCommit": "4378dc813e36c5ccfd3b3bb40ddc70b6a66916e0",
+  "reviewer": "b01-independent-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0001.B01.evidence.json",
+    "sha256": "a1c0f2b7eec8529c78db81cfea4066a2993ed37731767405fa09a53d59f3f0e4"
+  },
+  "notes": "CHANGES_REQUESTED after independent commit-bound review. The exact 23-path candidate range, frozen REVIEW projection, evidence/base/candidate/branch bindings, approved supplement authority, immutable B00 R01-R05 history, revision and ownership semantics, permission gate, and read-only W1.A03 projection were inspected. The 103-test focused governance suite passed at the frozen state, as did backlog, GRR-0001, ECR-0002, generated-view, review-site, and diff-hygiene checks. The projection contains only W1.A03.T01, keeps W1 PAUSED, CAP-02.S04.T03 BLOCKED, and HOLD-W1-GRR-0001 ACTIVE, performs no activation or claim, and names independent B01 approval as the remaining authorization gate. Approval is withheld because the criterion-4 evidence claims tests for the distinct B01 submit, adverse-review, strict-descendant resubmit, approval, and hostile lifecycle paths that do not exist in the repository test inventory.",
+  "findings": [
+    {
+      "id": "GRR-0001.B01-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 4,
+      "title": "B01 lifecycle and hostile-path test evidence is not truthful",
+      "reproduction": "Run `rg -n \"GRR-0001\\.B01|supplement-(submit|resubmit|review)|command_supplement_(submit|resubmit|review)|supplement_review_ledger|freeze_supplement_submission\" tests`. The only B01-specific assertions are in `test_approved_supplement_authority_and_installed_stopped_boundary_validate` and `test_supplement_start_is_sequential_revisioned_and_atomic`; no test invokes `freeze_supplement_submission`, `supplement_review_ledger`, or `command_supplement_review`. Nevertheless `planning/governance-recovery-approvals/GRR-0001.B01.evidence.json` states that focused lifecycle tests passed for submission, adverse review, strict-descendant remediation, approval, reviewer independence, hashes, paths, stale/dirty denial, and byte-stable failure. The 103-test frozen-state replay passes but does not execute those distinct B01 controller paths, so criterion 4 and its verification obligation are unproven.",
+      "requiredRemediation": "Add focused tests that execute the canonical B01 R01 submission and independent review transition, an adverse review followed by strict-descendant evidence-bound resubmission and closure/approval, and byte-stable denials for wrong actor/self-review, non-descendant or stale candidate, wrong evidence/ledger hash or unsafe path, dirty tracked state, stale backlog CAS, forged frozen reviewed state, invalid or duplicate findings/closures, and approval with an open blocking finding. Preserve B00 R01-R05 exactly, refresh the evidence so every claimed test is real and exact, freeze a strict-descendant R02 submission through `supplement-resubmit`, and replay this finding plus the incremental risk boundary."
+    }
+  ],
+  "closures": []
+}
