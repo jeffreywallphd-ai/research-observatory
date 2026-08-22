@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1cc431a53cc075d1beda201cd2db4d98b52c4607a572ba46ad6e45617d2d6a30
+source_sha256: c7d5b5dda18971ceefd712497aeea0debca7bea6a7a5ae5ffc5f41fa762695f2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -42,7 +42,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
-| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `REVIEW` |
+| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ADOPTED` |
 
 ## Waves
 
@@ -777,7 +777,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A03.json` (`340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -787,6 +787,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E04` `REVIEW` at `2026-08-22T20:20:19+00:00` by codex: Submit exact completed W1.A03 boundary for independent exit review; W1 remains paused and T03 blocked.
 - `E05` `ACTIVE` at `2026-08-22T20:30:21+00:00` by codex: Reactivated the bounded amendment campaign after a failed adoption transition.
 - `E06` `REVIEW` at `2026-08-22T20:48:57+00:00` by codex: R02 remediates the failed adoption transition by binding control/security checkpoints to their own amendment identity and proving consecutive W1.A02/W1.A03 validation; W1 remains paused and T03 blocked.
+- `E07` `ADOPTED` at `2026-08-22T20:58:21+00:00` by codex: Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001 release and explicit ordinary Wave resume.
 
 ### Amendment-exit review and adoption — W1.A03
 
@@ -858,7 +859,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W1.CP02` `security` by codex at `2026-08-22T20:58:21+00:00` — Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001 release and explicit ordinary Wave resume.
+  - amendment `W1.A03` / `artifacts/evidence/W1.A03.adoption-R02.json` / `bd8085d6a9996bdf03ed21876740893470a330c4944f3ea6f7d2f61889f1418e` / `e125f983fcc2b5827516a97a811e53b822d2bd9f`
 
 **Bounded tasks:**
 

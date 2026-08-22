@@ -90,9 +90,7 @@
       "unlocks_waves": [
         "W2"
       ],
-      "interrupting_change_request_ids": [
-        "ECR-0002"
-      ],
+      "interrupting_change_request_ids": [],
       "interrupting_recovery_request_ids": [
         "GRR-0001"
       ]
@@ -7737,7 +7735,7 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A03.json",
       "approval_sha256": "340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd",
       "approval_status": "APPROVED",
-      "lifecycle_status": "REVIEW",
+      "lifecycle_status": "ADOPTED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "COMPLETE",
       "bootstrap_attempts": [
@@ -8134,7 +8132,24 @@
           "current_submission": null
         }
       },
-      "adoption_checkpoints": [],
+      "adoption_checkpoints": [
+        {
+          "id": "W1.CP02",
+          "kind": "security",
+          "recorded_by": "codex",
+          "recorded_at": "2026-08-22T20:58:21+00:00",
+          "notes": "Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001 release and explicit ordinary Wave resume.",
+          "evidence_references": [
+            {
+              "type": "amendment-adoption-evidence",
+              "amendment_id": "W1.A03",
+              "path": "artifacts/evidence/W1.A03.adoption-R02.json",
+              "sha256": "bd8085d6a9996bdf03ed21876740893470a330c4944f3ea6f7d2f61889f1418e",
+              "commit": "e125f983fcc2b5827516a97a811e53b822d2bd9f"
+            }
+          ]
+        }
+      ],
       "page": "enablers/ECR-0002.html"
     }
   ],
