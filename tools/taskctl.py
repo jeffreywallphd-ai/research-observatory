@@ -2153,6 +2153,120 @@ def require_runtime_amendment_integrity(backlog_path: str, amendment: dict[str, 
     require_amendment_packet_integrity(repo, amendment, approval, packet)
 
 
+def recovery_review_history_errors(
+    repo: Path,
+    hold: dict[str, Any],
+    packet: dict[str, Any],
+) -> list[str]:
+    """Validate immutable recovery ledgers and their sequential finding state."""
+    errors: list[str] = []
+    request_id = str(hold.get("recovery_request_id") or "")
+    bootstrap = hold.get("bootstrap") or {}
+    bootstrap_id = str(bootstrap.get("id") or "")
+    attempts = bootstrap.get("attempts") or []
+    prior_open: set[str] = set()
+    blocking_ids: set[str] = set()
+    seen_finding_ids: set[str] = set()
+    criterion_count = len(packet.get("acceptanceCriteria") or [])
+    for attempt in attempts:
+        attempt_id = str(attempt.get("id") or "")
+        candidate = str(attempt.get("implementation_commit") or "")
+        evidence = attempt.get("evidence") or {}
+        reference = attempt.get("ledger") or {}
+        expected_path = f"planning/governance-recovery-approvals/{bootstrap_id}.review-{attempt_id}.json"
+        if reference.get("path") != expected_path:
+            errors.append(f"{bootstrap_id}/{attempt_id}: review ledger path is not canonical")
+            continue
+        try:
+            path = safe_control_path(
+                repo,
+                expected_path,
+                prefix="planning/governance-recovery-approvals",
+                label=f"{bootstrap_id}/{attempt_id} review ledger",
+            )
+            payload = path.read_bytes()
+            ledger = json.loads(payload)
+        except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"{bootstrap_id}/{attempt_id}: cannot load review ledger: {exc}")
+            continue
+        if not isinstance(ledger, dict):
+            errors.append(f"{bootstrap_id}/{attempt_id}: review ledger root is not an object")
+            continue
+        if hashlib.sha256(payload).hexdigest() != reference.get("sha256"):
+            errors.append(f"{bootstrap_id}/{attempt_id}: review ledger hash mismatch")
+        review = attempt.get("review") or {}
+        reviewer = str(ledger.get("reviewer") or "").strip()
+        result = str(ledger.get("result") or "")
+        expected_fields = {
+            "schemaVersion": "1.0",
+            "documentType": "governance-recovery-bootstrap-review",
+            "recoveryRequestId": request_id,
+            "bootstrapUnit": bootstrap_id,
+            "attemptId": attempt_id,
+            "candidateCommit": candidate,
+            "reviewer": reviewer,
+            "result": result,
+            "evidence": {"path": evidence.get("path"), "sha256": evidence.get("sha256")},
+        }
+        if any(ledger.get(field) != expected for field, expected in expected_fields.items()):
+            errors.append(f"{bootstrap_id}/{attempt_id}: review ledger differs from the frozen attempt")
+        reviewed_state = str(ledger.get("reviewedStateCommit") or "")
+        if not git_commit_exists(repo, reviewed_state) or not git_is_ancestor(repo, reviewed_state):
+            errors.append(f"{bootstrap_id}/{attempt_id}: reviewed state is absent from current history")
+        if not reviewer or reviewer == attempt.get("implementer") or reviewer != review.get("reviewer"):
+            errors.append(f"{bootstrap_id}/{attempt_id}: review independence or reviewer projection is invalid")
+        if result not in set(BOOTSTRAP_REVIEW_RESULTS.values()) or result != review.get("result"):
+            errors.append(f"{bootstrap_id}/{attempt_id}: review result projection is invalid")
+        if not review.get("reviewed_at"):
+            errors.append(f"{bootstrap_id}/{attempt_id}: review projection lacks its timestamp")
+        findings = ledger.get("findings")
+        closures = ledger.get("closures")
+        if not isinstance(findings, list) or not isinstance(closures, list):
+            errors.append(f"{bootstrap_id}/{attempt_id}: review findings/closures are invalid")
+            continue
+        ordering = [
+            REVIEW_SEVERITY_ORDER.get(str(item.get("severity")), 99) for item in findings if isinstance(item, dict)
+        ]
+        if len(ordering) != len(findings) or ordering != sorted(ordering) or any(value == 99 for value in ordering):
+            errors.append(f"{bootstrap_id}/{attempt_id}: review findings are not valid and severity-ranked")
+        finding_ids: set[str] = set()
+        for finding in findings:
+            if not isinstance(finding, dict):
+                continue
+            finding_id = str(finding.get("id") or "")
+            criterion_index = finding.get("criterionIndex")
+            if (
+                not finding_id
+                or finding_id in finding_ids
+                or finding_id in seen_finding_ids
+                or type(finding.get("blocking")) is not bool
+                or type(criterion_index) is not int
+                or not 1 <= criterion_index <= criterion_count
+                or not str(finding.get("title") or "").strip()
+                or not str(finding.get("reproduction") or "").strip()
+                or not str(finding.get("requiredRemediation") or "").strip()
+            ):
+                errors.append(f"{bootstrap_id}/{attempt_id}: review finding is invalid or duplicated")
+                continue
+            finding_ids.add(finding_id)
+            seen_finding_ids.add(finding_id)
+            if finding.get("blocking") is True:
+                blocking_ids.add(finding_id)
+        closure_ids = [str(item.get("findingId") or "") for item in closures if isinstance(item, dict)]
+        if (
+            len(closure_ids) != len(closures)
+            or len(closure_ids) != len(set(closure_ids))
+            or not set(closure_ids).issubset(prior_open)
+        ):
+            errors.append(f"{bootstrap_id}/{attempt_id}: review closures are not append-only and valid")
+        prior_open = (prior_open - set(closure_ids)) | finding_ids
+        if result == "approved" and findings:
+            errors.append(f"{bootstrap_id}/{attempt_id}: approved review introduces new findings")
+        if result == "approved" and prior_open & blocking_ids:
+            errors.append(f"{bootstrap_id}/{attempt_id}: approval retains open blocking findings")
+    return errors
+
+
 def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     """Validate the append-only recovery interruption projected by recoveryctl."""
     errors: list[str] = []
@@ -2328,6 +2442,7 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
             or packet_post.get("postBootstrapExecutionAuthority") is not False
         ):
             errors.append(f"{hold_id}: recovery packet post-bootstrap binding mismatch")
+        errors.extend(recovery_review_history_errors(repo, hold, packet))
     return errors
 
 
@@ -4200,6 +4315,9 @@ def command_amendment_status(args, data, capabilities, slices, tasks, gates) -> 
 def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, tasks, gates) -> None:
     """Append a later approved amendment without replacing any predecessor."""
     repo = discover_repository(args.file)
+    hold_errors = recovery_hold_errors(data, repo)
+    if hold_errors:
+        raise SystemExit("Invalid governance recovery hold:\n- " + "\n- ".join(hold_errors))
     existing = list(data.get("wave_amendments", []))
     frozen_amendments = exact_record_snapshot(data, "wave_amendments")
     frozen_wave_bases = exact_record_snapshot(

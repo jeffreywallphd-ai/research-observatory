@@ -87,13 +87,64 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.git(repo, "checkout", "-b", "codex/append-fixture")
         shutil.copy2(REPO / "tools/taskctl.py", repo / "tools/taskctl.py")
         shutil.copy2(REPO / "tools/planctl.py", repo / "tools/planctl.py")
+        shutil.copy2(REPO / "tools/recoveryctl.py", repo / "tools/recoveryctl.py")
         backlog_path = repo / "planning/backlog.yaml"
         backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
         hold = (backlog["control_plane"]["recovery_holds"])[0]
         bootstrap = hold["bootstrap"]
+
+        def open_findings() -> list[str]:
+            open_ids: set[str] = set()
+            for prior_attempt in bootstrap["attempts"]:
+                prior_path = repo / prior_attempt["ledger"]["path"]
+                prior_ledger = json.loads(prior_path.read_text(encoding="utf-8"))
+                open_ids.difference_update(
+                    str(item["findingId"]) for item in prior_ledger["closures"] if isinstance(item, dict)
+                )
+                open_ids.update(str(item["id"]) for item in prior_ledger["findings"] if isinstance(item, dict))
+            return sorted(open_ids)
+
         if bootstrap["status"] == "REVIEW":
             submission = bootstrap["current_submission"]
             attempt_id = submission["attempt_id"]
+            candidate = submission["candidate_commit"]
+            evidence = copy.deepcopy(bootstrap["evidence"])
+            submission_branch = bootstrap["submission_branch"]
+        elif bootstrap["status"] in {"CHANGES_REQUESTED", "BLOCKED"}:
+            latest_candidate = bootstrap["implementation_commit"]
+            candidate = self.git(repo, "rev-parse", "HEAD")
+            attempt_id = f"R{len(bootstrap['attempts']) + 1:02d}"
+            submission_branch = self.git(repo, "branch", "--show-current")
+            source_evidence_path = repo / bootstrap["evidence"]["path"]
+            evidence_document = json.loads(source_evidence_path.read_text(encoding="utf-8"))
+            changed_paths = self.git(repo, "diff", "--name-only", f"{latest_candidate}..{candidate}").splitlines()
+            evidence_document.update(
+                branch=submission_branch,
+                baseCommit=latest_candidate,
+                candidateCommit=candidate,
+                changedPaths=changed_paths,
+                riskAnalysis="Fixture remediation preserves prior attempts and closes every open recovery finding.",
+            )
+            evidence_name = f"GRR-0001.B00.remediation-{len(bootstrap['attempts']):02d}.evidence.json"
+            evidence_path = repo / "planning/governance-recovery-approvals" / evidence_name
+            evidence_payload = (json.dumps(evidence_document, indent=2) + "\n").encode()
+            evidence_path.write_bytes(evidence_payload)
+            evidence = {
+                "type": "governance-recovery-evidence",
+                "path": evidence_path.relative_to(repo).as_posix(),
+                "sha256": hashlib.sha256(evidence_payload).hexdigest(),
+                "commit": candidate,
+                "recorded_at": "2026-08-22T18:00:00+00:00",
+            }
+        elif bootstrap["status"] == "APPROVED":
+            attempt_id = ""
+            candidate = ""
+            evidence = {}
+            submission_branch = ""
+        else:
+            raise AssertionError(f"Unsupported fixture recovery state: {bootstrap['status']}")
+
+        if bootstrap["status"] != "APPROVED":
             ledger_path = repo / f"planning/governance-recovery-approvals/GRR-0001.B00.review-{attempt_id}.json"
             ledger = {
                 "schemaVersion": "1.0",
@@ -101,17 +152,20 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 "recoveryRequestId": "GRR-0001",
                 "bootstrapUnit": bootstrap["id"],
                 "attemptId": attempt_id,
-                "candidateCommit": submission["candidate_commit"],
+                "candidateCommit": candidate,
                 "reviewedStateCommit": self.git(repo, "rev-parse", "HEAD"),
                 "reviewer": "fixture-independent-reviewer",
                 "result": "approved",
                 "evidence": {
-                    "path": bootstrap["evidence"]["path"],
-                    "sha256": bootstrap["evidence"]["sha256"],
+                    "path": evidence["path"],
+                    "sha256": evidence["sha256"],
                 },
                 "notes": "Approved fixture recovery from the frozen current submission.",
                 "findings": [],
-                "closures": [],
+                "closures": [
+                    {"findingId": finding_id, "notes": "Closed by the fixture's lawful successor attempt."}
+                    for finding_id in open_findings()
+                ],
             }
             ledger_payload = (json.dumps(ledger, indent=2) + "\n").encode()
             ledger_path.write_bytes(ledger_payload)
@@ -125,9 +179,9 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 {
                     "id": attempt_id,
                     "implementer": bootstrap["implementer"],
-                    "implementation_commit": bootstrap["implementation_commit"],
-                    "submission_branch": bootstrap["submission_branch"],
-                    "evidence": copy.deepcopy(bootstrap["evidence"]),
+                    "implementation_commit": candidate,
+                    "submission_branch": submission_branch,
+                    "evidence": copy.deepcopy(evidence),
                     "review": copy.deepcopy(review),
                     "ledger": {
                         "path": ledger_path.relative_to(repo).as_posix(),
@@ -135,25 +189,14 @@ class GovernanceRecoveryTests(unittest.TestCase):
                     },
                 }
             )
-            bootstrap.update(status="APPROVED", review=review, current_submission=None)
-        elif bootstrap["status"] in {"CHANGES_REQUESTED", "BLOCKED"}:
-            latest = bootstrap["attempts"][-1]
-            ledger_path = repo / latest["ledger"]["path"]
-            ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
-            ledger.update(result="approved", findings=[], closures=[], notes="Approved fixture recovery.")
-            ledger_payload = (json.dumps(ledger, indent=2) + "\n").encode()
-            ledger_path.write_bytes(ledger_payload)
-            review = {
-                "reviewer": ledger["reviewer"],
-                "result": "approved",
-                "reviewed_at": "2026-08-22T18:00:00+00:00",
-                "notes": "Approved fixture recovery.",
-            }
-            latest["review"] = copy.deepcopy(review)
-            latest["ledger"]["sha256"] = hashlib.sha256(ledger_payload).hexdigest()
-            bootstrap.update(status="APPROVED", review=review, current_submission=None)
-        elif bootstrap["status"] != "APPROVED":
-            raise AssertionError(f"Unsupported fixture recovery state: {bootstrap['status']}")
+            bootstrap.update(
+                status="APPROVED",
+                implementation_commit=candidate,
+                submission_branch=submission_branch,
+                evidence=copy.deepcopy(evidence),
+                review=review,
+                current_submission=None,
+            )
         proposal_path = repo / "planning/enabler-change-requests/ECR-0002.md"
         review_path = repo / "planning/enabler-change-requests/ECR-0002-review.html"
         proposal_path.write_bytes(b"# Fixture ECR-0002\n")
@@ -325,6 +368,32 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 expected[hold["bootstrap"]["attempts"][-1]["review"]["result"]],
             )
 
+    def test_taskctl_shared_recovery_review_history_denies_projection_tamper(self) -> None:
+        _approval, packet, _hold = recoveryctl.validate_request(REPO, "GRR-0001")
+        data, _capabilities, _slices, _tasks, _gates = taskctl.load(str(REPO / "planning/backlog.yaml"))
+        canonical = data["control_plane"]["recovery_holds"][0]
+        self.assertEqual([], taskctl.recovery_review_history_errors(REPO, canonical, packet))
+        mutations = {
+            "attempt-identity": lambda hold: hold["bootstrap"]["attempts"][-1].__setitem__("id", "R99"),
+            "candidate-binding": lambda hold: hold["bootstrap"]["attempts"][-1].__setitem__(
+                "implementation_commit", "0" * 40
+            ),
+            "evidence-binding": lambda hold: hold["bootstrap"]["attempts"][-1]["evidence"].__setitem__(
+                "sha256", "0" * 64
+            ),
+            "reviewer-binding": lambda hold: hold["bootstrap"]["attempts"][-1]["review"].__setitem__(
+                "reviewer", "forged-reviewer"
+            ),
+            "result-binding": lambda hold: hold["bootstrap"]["attempts"][-1]["review"].__setitem__(
+                "result", "approved"
+            ),
+        }
+        for label, mutate in mutations.items():
+            tampered = copy.deepcopy(canonical)
+            mutate(tampered)
+            with self.subTest(label=label):
+                self.assertTrue(taskctl.recovery_review_history_errors(REPO, tampered, packet))
+
     def test_second_and_third_recovery_identities_are_generic(self) -> None:
         for request, wave, amendment_count in (("GRR-0002", "W2", 2), ("GRR-0003", "W10", 3)):
             with self.subTest(request=request):
@@ -435,6 +504,23 @@ class GovernanceRecoveryTests(unittest.TestCase):
             def loaded() -> tuple[dict, dict, dict, dict, dict]:
                 return taskctl.load(args.file)
 
+            missing_closure_state = loaded()
+            state_bootstrap = missing_closure_state[0]["control_plane"]["recovery_holds"][0]["bootstrap"]
+            latest_attempt = state_bootstrap["attempts"][-1]
+            latest_ledger_path = repo / latest_attempt["ledger"]["path"]
+            lawful_ledger_payload = latest_ledger_path.read_bytes()
+            forged_ledger = json.loads(lawful_ledger_payload)
+            forged_ledger["closures"] = []
+            forged_ledger_payload = (json.dumps(forged_ledger, indent=2) + "\n").encode()
+            latest_ledger_path.write_bytes(forged_ledger_payload)
+            latest_attempt["ledger"]["sha256"] = hashlib.sha256(forged_ledger_payload).hexdigest()
+            try:
+                with self.assertRaisesRegex(SystemExit, "open blocking findings"):
+                    taskctl.command_amendment_append_bootstrap_submit(args, *missing_closure_state)
+                self.assertEqual(before, Path(args.file).read_bytes())
+            finally:
+                latest_ledger_path.write_bytes(lawful_ledger_payload)
+
             denial_cases: list[tuple[str, argparse.Namespace, tuple[dict, dict, dict, dict, dict]]] = []
             duplicate = copy.deepcopy(args)
             duplicate.amendment = "W1.A02"
@@ -478,6 +564,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
 
             state = loaded()
             predecessor_snapshot = taskctl.exact_record_snapshot(state[0], "wave_amendments")
+            recoveryctl.validate_request(repo, "GRR-0001")
             taskctl.command_amendment_append_bootstrap_submit(args, *state)
             appended = yaml.safe_load(Path(args.file).read_text(encoding="utf-8"))
             self.assertEqual(["W1.A01", "W1.A02", "W1.A03"], [item["id"] for item in appended["wave_amendments"]])

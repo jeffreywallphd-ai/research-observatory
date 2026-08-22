@@ -481,6 +481,9 @@ def validate_bootstrap_history(
     hold: dict[str, Any],
 ) -> None:
     """Revalidate every frozen evidence/ledger pair and its live projection."""
+    ledger_errors = taskctl.recovery_review_history_errors(repo, hold, packet)
+    if ledger_errors:
+        raise SystemExit("Invalid recovery review history:\n- " + "\n- ".join(ledger_errors))
     bootstrap = hold.get("bootstrap") or {}
     bootstrap_id = str(bootstrap.get("id") or "")
     attempts = bootstrap.get("attempts") or []
