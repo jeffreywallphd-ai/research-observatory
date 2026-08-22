@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5fa84182aa2c43627f1d1a8f97bca3da5233be8dded92de4255c7ebe42c33143
+source_sha256: e5c2e59f7d893ed4ad0e684f416e7b8c2de98befefc06e0728c005d827352dd7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -803,7 +803,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A03.T01 - Exact T03 candidate-lineage and evidence recovery
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A03.B00`
 

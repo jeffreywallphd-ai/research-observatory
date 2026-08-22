@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5fa84182aa2c43627f1d1a8f97bca3da5233be8dded92de4255c7ebe42c33143
+source_sha256: e5c2e59f7d893ed4ad0e684f416e7b8c2de98befefc06e0728c005d827352dd7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,7 +68,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 2 |
 
 ## Wave authority and append-only amendments
@@ -361,3 +361,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-02.S04.T03` Create privacy, telemetry, retention, and secure-deletion settings | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
+| `W1.A03.T01` Exact T03 candidate-lineage and evidence recovery | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
