@@ -22596,8 +22596,8 @@ verification_profiles:
   server: University-hosted services, identity, collaboration, licensed sources, research-production workflow, and operations.
   cloud: Tenant, residency, metering, security, research-production workload, and SaaS operations.
 control_plane:
-  revision: 5
-  minimum_tool_revision: 5
+  revision: 6
+  minimum_tool_revision: 6
   active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
@@ -22843,6 +22843,48 @@ control_plane:
             path: planning/governance-recovery-approvals/GRR-0001.B01.review-R02.json
             sha256: 3dd0cceda6983ec1aef1b3715c284869fc9e0aeb4be2e8145d1fe1b46d89f9ff
       created_at: '2026-08-22T17:52:29+00:00'
+  - id: HOLD-W1-GRR-0002
+    recovery_request_id: GRR-0002
+    target_wave: W1
+    status: ACTIVE
+    approval_reference:
+      path: planning/governance-recovery-approvals/GRR-0002.json
+      sha256: 07f2e2da15d74c6a72e97e62a5f3d5a540f39898eb958eff7c92f42b80d6d893
+      introduction_commit: 0b450222ff569db356b84e413941aa2af585a64e
+    packet_reference:
+      path: planning/governance-recovery-requests/GRR-0002.packet.json
+      sha256: 9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22
+      commit: bc989c8a69e7de5e68f630af887ab4bd07d44a4e
+    bootstrap:
+      id: GRR-0002.B00
+      status: IN_PROGRESS
+      implementer: codex
+      implementation_commit: null
+      submission_branch: null
+      evidence: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      current_submission: null
+      attempts: []
+    supplements: []
+    post_bootstrap:
+      required_change_request_id: ECR-0003
+      required_amendment_id: W1.A04
+      required_proposed_task_ids:
+      - W1.A04.T01
+      execution_authority: false
+    release_conditions:
+    - GRR-0002 is independently reviewed and explicitly approved at one immutable commit.
+    - GRR-0002.B00 installs and validates the new hold and reusable ECR chain within its exact scope and receives independent
+      approval.
+    - ECR-0003/W1.A04 is separately packet-reviewed, explicitly approved, completed, independently exit-reviewed, and adopted.
+    - W1.A04 adoption records a bound control/security checkpoint before HOLD-W1-GRR-0002 is released.
+    - After release, W1 is explicitly resumed before the corrected exact T03 recovery is invoked.
+    created_at: '2026-08-22T22:06:24+00:00'
+    released_at: null
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be

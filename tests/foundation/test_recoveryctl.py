@@ -408,7 +408,8 @@ class GovernanceRecoveryTests(unittest.TestCase):
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(REPO / relative, destination)
             self.git(repo, "add", relative)
-        self.git(repo, "commit", "-m", "fixture: install revision 6 controller")
+        if self.git(repo, "status", "--porcelain"):
+            self.git(repo, "commit", "-m", "fixture: install revision 6 controller")
         return repo
 
     def test_second_recovery_hold_start_is_atomic_consecutive_and_preserving(self) -> None:
