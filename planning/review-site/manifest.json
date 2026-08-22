@@ -892,105 +892,203 @@
             {
               "task_id": "CAP-02.S04.T02",
               "title": "Implement local user profile and application-lock behavior",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "b00-independent-reviewer",
+                "result": "changes-requested",
+                "reviewed_at": "2026-08-22T04:14:41+00:00",
+                "notes": "CHANGES_REQUESTED at exact immutable review state df95297314c090433705cac79cdae9ef8e995fdd on codex/w1-windows-local-runtime. Candidate a06d7d4cd67e027850d6d240f1507a17e49a4739 is a descendant of base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1; the frozen 31-path scope and artifacts/evidence/CAP-02.S04.T02.submission.json SHA-256 4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445 match the R01 packet. The three retained report hashes and their PASS results are truthful, and focused independent replay passed 5 application-lock Rust tests, 4 support-bundle Rust tests, 4 ApplicationRuntime tests, 2 Windows credential source-boundary tests, taskctl backlog validation, and base-to-candidate diff hygiene. Those tests do not exercise the four acceptance-bound defects below, so the manifest's prompt, cancellation, fail-closed renderer, rate-limit, and corresponding ADR truth claims are not established. Same-SID comparison, transient-buffer clearing, handle closure, strict profile/schema authority, bounded identity-free audit projection, locked-view disclosure/accessibility, and W1-exit-only performance/full qualification produced no additional task blocker. W1-exit performance and complete qualification remain correctly deferred and were not rerun."
               },
               "review_control": {
                 "version": 1,
-                "attempts": [],
-                "current_submission": {
-                  "id": "R01",
-                  "submitted_by": "codex",
-                  "submitted_at": "2026-08-22T04:04:05+00:00",
-                  "candidate_commit": "a06d7d4cd67e027850d6d240f1507a17e49a4739",
-                  "base_commit": "8782ee8d09cfa76582bb89b4befe2cedd8a70bb1",
-                  "branch": "codex/w1-windows-local-runtime",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-02.S04.T02.submission.json",
-                    "sha256": "4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445",
-                    "commit": "a06d7d4cd67e027850d6d240f1507a17e49a4739",
-                    "recorded_at": "2026-08-22T04:04:05+00:00"
-                  },
-                  "acceptance_criteria_sha256": "fc75db33fdcc31be14a8269d50dac1414d9ef9cf4c24ad34f7d68724ce8c84cf",
-                  "changed_paths": [
-                    "apps/desktop/src-tauri/Cargo.toml",
-                    "apps/desktop/src-tauri/src/application_lock.rs",
-                    "apps/desktop/src-tauri/src/lib.rs",
-                    "apps/desktop/src/app.css",
-                    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
-                    "apps/desktop/src/app/ApplicationRuntime.tsx",
-                    "apps/desktop/src/app/applicationLock.test.ts",
-                    "apps/desktop/src/app/applicationLock.ts",
-                    "apps/desktop/src/app/session.test.ts",
-                    "apps/desktop/src/app/session.ts",
-                    "artifacts/evidence/CAP-02.S04.T02.json",
-                    "artifacts/evidence/ui-change/CAP-02.S04.T02.json",
-                    "docs/adr/ADR-0018-lock-the-local-application-at-the-native-supervisor-boundary.md",
-                    "docs/adr/index.json",
-                    "docs/architecture/README.md",
-                    "docs/architecture/application-lock.md",
-                    "docs/planning-implementation-plan.md",
-                    "packages/contracts/README.md",
-                    "packages/contracts/security/README.md",
-                    "packages/contracts/security/application-lock-profile.schema.json",
-                    "packages/contracts/security/application-lock-profile.v1.json",
-                    "packaging/build-inputs.json",
-                    "planning/backlog.yaml",
-                    "planning/review-site/CAP-02/CAP-02.S04.html",
-                    "planning/review-site/manifest.json",
-                    "planning/status-summary.md",
-                    "tests/contracts/test_credential_store_contract.py",
-                    "tests/foundation/test_adr_check.py",
-                    "tests/security/README.md",
-                    "tests/security/test_windows_credentials.py",
-                    "tools/desktop_app_check.py"
-                  ],
-                  "selected_checks": [
-                    ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-desktop-application.json",
-                    "core_sidecar_build.py; unittest discover tests/desktop; tests/packaging; tests/service; tests/contracts; tests/security",
-                    ".venv\\Scripts\\python.exe tools\\security_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-security-local.json",
-                    ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1 --affected-head bd4baaec3b13d55e4f938cc5bfbf9ff6ec150a97 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-02.S04.T02-affected-selection.json",
-                    "ui-reference/token/route/workflow/accessibility/visual; ui_change_gate; adr_check; build_manifest; quality_check; taskctl validate; backlog_views --check"
-                  ],
-                  "deferred_checks": [
-                    "Desktop performance is governed for W1-exit by W1.A02. Complete repository/deployment qualification is retained for a quiescent W1 checkpoint/exit; active-campaign foundation fixtures that assert W1 is PAUSED are not represented as passed. T02-owned ADR registry and copy-fixture issues found during the full-profile attempt were fixed and retested."
-                  ],
-                  "selection_rationale": "Native Windows authentication, Core capability/process lifecycle, protected IPC, local security configuration, and approved renderer state justified the full desktop application verifier, affected desktop/service/contracts/packaging/security suites, live supply-chain scan, strict contract/source tests, UI accessibility/visual conformance, and commit-bound governance gates.",
-                  "selection_sha256": "b8800badc3233a92bdf683fc893f9c37e3713f57ff6aea0063440b59e5cc42f6",
-                  "prior_attempt_id": null,
-                  "open_finding_ids": [],
-                  "root_cause_analysis": null,
-                  "selected_command_ids": [
-                    "foundation:architecture",
-                    "foundation:backlog-views",
-                    "foundation:build-manifest",
-                    "foundation:ui-reference",
-                    "foundation:ui-change",
-                    "foundation:adr",
-                    "foundation:quality",
-                    "foundation:backlog",
-                    "desktop:application",
-                    "desktop:unit",
-                    "desktop:ui-reference-integrity",
-                    "desktop:ui-token",
-                    "desktop:ui-route-page",
-                    "desktop:ui-workflow",
-                    "desktop:ui-accessibility",
-                    "desktop:ui-visual-regression",
-                    "packaging:unit",
-                    "service:unit",
-                    "contracts:unit",
-                    "security-local:supply-chain",
-                    "security-local:unit"
-                  ],
-                  "packet_sha256": "57e12a3a219a5346fecac47c2b8b00320def2c47d40ddb461dd988d2354af8a6"
-                }
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex",
+                      "submitted_at": "2026-08-22T04:04:05+00:00",
+                      "candidate_commit": "a06d7d4cd67e027850d6d240f1507a17e49a4739",
+                      "base_commit": "8782ee8d09cfa76582bb89b4befe2cedd8a70bb1",
+                      "branch": "codex/w1-windows-local-runtime",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-02.S04.T02.submission.json",
+                        "sha256": "4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445",
+                        "commit": "a06d7d4cd67e027850d6d240f1507a17e49a4739",
+                        "recorded_at": "2026-08-22T04:04:05+00:00"
+                      },
+                      "acceptance_criteria_sha256": "fc75db33fdcc31be14a8269d50dac1414d9ef9cf4c24ad34f7d68724ce8c84cf",
+                      "changed_paths": [
+                        "apps/desktop/src-tauri/Cargo.toml",
+                        "apps/desktop/src-tauri/src/application_lock.rs",
+                        "apps/desktop/src-tauri/src/lib.rs",
+                        "apps/desktop/src/app.css",
+                        "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+                        "apps/desktop/src/app/ApplicationRuntime.tsx",
+                        "apps/desktop/src/app/applicationLock.test.ts",
+                        "apps/desktop/src/app/applicationLock.ts",
+                        "apps/desktop/src/app/session.test.ts",
+                        "apps/desktop/src/app/session.ts",
+                        "artifacts/evidence/CAP-02.S04.T02.json",
+                        "artifacts/evidence/ui-change/CAP-02.S04.T02.json",
+                        "docs/adr/ADR-0018-lock-the-local-application-at-the-native-supervisor-boundary.md",
+                        "docs/adr/index.json",
+                        "docs/architecture/README.md",
+                        "docs/architecture/application-lock.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/README.md",
+                        "packages/contracts/security/README.md",
+                        "packages/contracts/security/application-lock-profile.schema.json",
+                        "packages/contracts/security/application-lock-profile.v1.json",
+                        "packaging/build-inputs.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-02/CAP-02.S04.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md",
+                        "tests/contracts/test_credential_store_contract.py",
+                        "tests/foundation/test_adr_check.py",
+                        "tests/security/README.md",
+                        "tests/security/test_windows_credentials.py",
+                        "tools/desktop_app_check.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe tools\\desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-desktop-application.json",
+                        "core_sidecar_build.py; unittest discover tests/desktop; tests/packaging; tests/service; tests/contracts; tests/security",
+                        ".venv\\Scripts\\python.exe tools\\security_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-security-local.json",
+                        ".venv\\Scripts\\python.exe tools\\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1 --affected-head bd4baaec3b13d55e4f938cc5bfbf9ff6ec150a97 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-02.S04.T02-affected-selection.json",
+                        "ui-reference/token/route/workflow/accessibility/visual; ui_change_gate; adr_check; build_manifest; quality_check; taskctl validate; backlog_views --check"
+                      ],
+                      "deferred_checks": [
+                        "Desktop performance is governed for W1-exit by W1.A02. Complete repository/deployment qualification is retained for a quiescent W1 checkpoint/exit; active-campaign foundation fixtures that assert W1 is PAUSED are not represented as passed. T02-owned ADR registry and copy-fixture issues found during the full-profile attempt were fixed and retested."
+                      ],
+                      "selection_rationale": "Native Windows authentication, Core capability/process lifecycle, protected IPC, local security configuration, and approved renderer state justified the full desktop application verifier, affected desktop/service/contracts/packaging/security suites, live supply-chain scan, strict contract/source tests, UI accessibility/visual conformance, and commit-bound governance gates.",
+                      "selection_sha256": "b8800badc3233a92bdf683fc893f9c37e3713f57ff6aea0063440b59e5cc42f6",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:adr",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "desktop:ui-visual-regression",
+                        "packaging:unit",
+                        "service:unit",
+                        "contracts:unit",
+                        "security-local:supply-chain",
+                        "security-local:unit"
+                      ],
+                      "packet_sha256": "57e12a3a219a5346fecac47c2b8b00320def2c47d40ddb461dd988d2354af8a6"
+                    },
+                    "review": {
+                      "reviewer": "b00-independent-reviewer",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-08-22T04:14:41+00:00",
+                      "notes": "CHANGES_REQUESTED at exact immutable review state df95297314c090433705cac79cdae9ef8e995fdd on codex/w1-windows-local-runtime. Candidate a06d7d4cd67e027850d6d240f1507a17e49a4739 is a descendant of base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1; the frozen 31-path scope and artifacts/evidence/CAP-02.S04.T02.submission.json SHA-256 4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445 match the R01 packet. The three retained report hashes and their PASS results are truthful, and focused independent replay passed 5 application-lock Rust tests, 4 support-bundle Rust tests, 4 ApplicationRuntime tests, 2 Windows credential source-boundary tests, taskctl backlog validation, and base-to-candidate diff hygiene. Those tests do not exercise the four acceptance-bound defects below, so the manifest's prompt, cancellation, fail-closed renderer, rate-limit, and corresponding ADR truth claims are not established. Same-SID comparison, transient-buffer clearing, handle closure, strict profile/schema authority, bounded identity-free audit projection, locked-view disclosure/accessibility, and W1-exit-only performance/full qualification produced no additional task blocker. W1-exit performance and complete qualification remain correctly deferred and were not rerun."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/task-reviews/CAP-02.S04.T02/R01.json",
+                      "sha256": "17b086ee97f4ee96a9b5f09b31208cd45cd36f57402da87ae6f9f3029fc378eb"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-02.S04.T02-R01-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "The shipped Win32 credential prompt uses an invalid flag set and mishandles UPN credentials",
+                        "reproduction": "At apps/desktop/src-tauri/src/application_lock.rs:589-608, CredUIPromptForCredentialsW receives CREDUI_FLAGS_ALWAYS_SHOW_UI without CREDUI_FLAGS_GENERIC_CREDENTIALS. Microsoft's CredUIPromptForCredentialsW contract states that ALWAYS_SHOW_UI is permitted only with GENERIC_CREDENTIALS and documents ERROR_INVALID_FLAGS for invalid configurations (https://learn.microsoft.com/en-us/windows/win32/api/wincred/nf-wincred-creduipromptforcredentialsw). The same call supplies the prose target `Research Observatory local application lock`; COMPLETE_USERNAME can derive a missing domain from that target rather than a real machine/domain. At lines 621-638, a UPN is parsed into the complete UPN plus an empty domain buffer, but that non-null buffer is passed to LogonUserW; CredUIParseUserNameW documents the empty-domain result for UPN, while LogonUserW requires lpszDomain=NULL for UPN (https://learn.microsoft.com/en-us/windows/win32/api/wincred/nf-wincred-creduiparseusernamew and https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-logonuserw). The source-only assertion at tests/security/test_windows_credentials.py:363-377 requires the invalid flag token and never invokes or abstracts the API return, so it passes while the primary lock-unlock path can return generic denial before any credential is validated or reject a valid domain UPN.",
+                        "required_remediation": "Use a Microsoft-documented prompt API and valid always-show/non-persisting flag combination, supply or prefill a real current-user identity/target rather than treating product prose as a domain, and pass NULL domain for UPN while retaining correct down-level/local-account handling. Keep same-SID enforcement, secret zeroing, and handle RAII. Add deterministic native-adapter tests for the exact flag set, local/down-level/UPN argument mapping, API error/cancel/denial, and same/different SID, plus a Windows smoke that proves the real prompt returns a supported status rather than relying on source-token assertions. Update ADR-0018/evidence to match the validated API behavior."
+                      },
+                      {
+                        "id": "CAP-02.S04.T02-R01-F02",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Lock invalidates responses but does not cancel protected side effects",
+                        "reproduction": "Start a protected operation, pause it after begin_protected_action, invoke application_lock_now, then release it. core_api_request at apps/desktop/src-tauri/src/lib.rs:58-66 checks the generation only after dispatch; RuntimeSupervisor::api_request at apps/desktop/src-tauri/src/supervisor.rs:438-458 holds the supervisor mutex across authenticated_api_request, while stop at lines 473-481 needs that same mutex, so Core shutdown waits for a possibly mutating request to complete. support_bundle_export at apps/desktop/src-tauri/src/lib.rs:93-111 similarly performs SupportBundleManager::export before its generation check, and apps/desktop/src-tauri/src/support_bundle.rs:202-229 publishes the final file before returning; the caller receives RO-APPLICATION-LOCKED but the export remains. Existing pending previews are not cleared on lock and can continue after a later unlock. ApplicationLockManager::configure at apps/desktop/src-tauri/src/application_lock.rs:303-324 checks unlocked, replaces the durable profile outside the mutex, and can then observe the concurrent lock and return RO-APPLICATION-LOCKED after the policy change is already persisted. These paths contradict ADR-0018:73-80 and docs/architecture/application-lock.md:14-25, which say stopping Core cancels every W1 protected action and no W1 durable work continues through lock.",
+                        "required_remediation": "Make lock cancellation effective at each side-effect boundary, not only at response delivery. Release the supervisor lifecycle mutex before Core I/O so stop can terminate an in-flight request, and add an operation cancellation/generation mechanism that prevents post-lock Core mutations. Stage support exports and profile writes, recheck the captured generation while locked immediately before atomic publication, and remove staging on cancellation; clear/invalidate every pending support preview on lock. Add deterministic latch/barrier tests that lock during a mutating Core request, support preview/export, and configuration write and prove no final file/profile/Core mutation, no reusable preview, no response, and prompt Core termination. Preserve the W1 stop-all policy or obtain governed authority before documenting any continuation."
+                      },
+                      {
+                        "id": "CAP-02.S04.T02-R01-F03",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Malformed, missed, or stale native lock notifications can leave sensitive renderer content visible",
+                        "reproduction": "Render ApplicationRuntime in an unlocked state with a project/query visible, then deliver an application-lock-changed event with malformed payload. At apps/desktop/src/app/ApplicationRuntime.tsx:166-172 the decoder throws, but the catch only sets unlockError; applicationLock remains unlocked, applyLockSnapshot never clears project/query/dialog/workspace state, and lines 414-419 continue rendering the full application shell. There is also a startup ordering race: lines 152-174 begin the status request before listener registration and apply status/event snapshots unconditionally, so a lock event can be missed before subscription or a stale unlocked status response can overwrite a newer locked event; auditSequence is decoded but not used for ordering. The native monitor ignores emit failure at apps/desktop/src-tauri/src/lib.rs:246-253. ApplicationRuntime.test.tsx only renders ApplicationLockedView directly, and applicationLock.test.ts only proves the decoder throws, so neither test exercises the fail-closed event path or synchronization race. This violates criterion 1 and docs/architecture/application-lock.md:14-20, where the locked screen must become the only rendered application content.",
+                        "required_remediation": "On any malformed lock event or monitor/status failure, immediately apply a synthesized configuration-invalid locked snapshot and clear all sensitive renderer state. Establish the listener before initial reconciliation and order/reconcile snapshots with a monotonic native generation/revision (or an equivalent no-stale-overwrite protocol) so missed, out-of-order, and stale unlocked snapshots cannot reopen the tree. Treat native event-delivery failure as a reconciled fail-closed condition. Add mocked Tauri lifecycle tests from a populated unlocked shell for malformed events, listener-registration races, stale status after a lock event, monitor failure, and normal unlock; assert the locked-only tree contains no project name, path, query, dialog, or workspace content."
+                      },
+                      {
+                        "id": "CAP-02.S04.T02-R01-F04",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 2,
+                        "title": "Concurrent unlock calls bypass the native exponential-backoff gate",
+                        "reproduction": "Invoke application_lock_unlock concurrently twice while locked and retry_at is absent. Each command is independently dispatched with spawn_blocking at apps/desktop/src-tauri/src/lib.rs:158-168. In ApplicationLockManager::reauthenticate at apps/desktop/src-tauri/src/application_lock.rs:339-353, each call acquires the mutex only long enough to observe no retry deadline, releases it, and then enters verify_current_windows_user; no in-progress reservation exists. Both prompts/credential checks are therefore admitted before either denial records retry_at at lines 362-367. Repeating concurrent calls admits a batch per backoff interval, contrary to ADR-0018:82-88 and its required rate-limited transition coverage. The five Rust application-lock tests inject outcomes serially through complete_test_reauthentication and do not cover concurrent admission.",
+                        "required_remediation": "Reserve one native reauthentication attempt atomically under the lock mutex before opening the prompt, reject or coalesce every concurrent attempt, and clear the reservation on all success, cancellation, panic/API-error, denial, and Core-start-failure paths without weakening the existing backoff. Add a deterministic injected-authenticator barrier test proving only one prompt is admitted, concurrent calls receive a generic bounded denial, failed attempts cannot be parallelized around retry_at, and cancellation/core failure leave the application locked."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-02.S04.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-08-22T04:04:05+00:00",
+                      "reviewed_at": "2026-08-22T04:14:41+00:00",
+                      "duration_seconds": 636,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 3,
+                        "medium": 1,
+                        "low": 0,
+                        "blocking": 4,
+                        "total": 4
+                      },
+                      "command_ids": [
+                        "foundation:architecture",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "foundation:ui-reference",
+                        "foundation:ui-change",
+                        "foundation:adr",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "desktop:application",
+                        "desktop:unit",
+                        "desktop:ui-reference-integrity",
+                        "desktop:ui-token",
+                        "desktop:ui-route-page",
+                        "desktop:ui-workflow",
+                        "desktop:ui-accessibility",
+                        "desktop:ui-visual-regression",
+                        "packaging:unit",
+                        "service:unit",
+                        "contracts:unit",
+                        "security-local:supply-chain",
+                        "security-local:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
               }
             },
             {

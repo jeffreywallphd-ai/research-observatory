@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e784f473a3cbf7c0936ed9a1f82f9cba165f0cf858bba10312d53bf4de4b4a1a
+source_sha256: 00593d793377075794a8da90e726c2cb4ac442bacdb9857d0ff2adaec74d69af
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2734,13 +2734,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T02 - Implement local user profile and application-lock behavior
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S04.T01`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / b00-independent-reviewer (`changes-requested`)
 
 **Objective:** Optional local profile name, inactivity lock, project lock state, and protected reauthentication without requiring a cloud account.
 
@@ -2765,9 +2765,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-02.S04.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `57e12a3a219a5346fecac47c2b8b00320def2c47d40ddb461dd988d2354af8a6`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `57e12a3a219a5346fecac47c2b8b00320def2c47d40ddb461dd988d2354af8a6`
 
 - Candidate / base / branch: `a06d7d4cd67e027850d6d240f1507a17e49a4739` / `8782ee8d09cfa76582bb89b4befe2cedd8a70bb1` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-22T04:04:05+00:00`
@@ -2781,11 +2783,30 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / b00-independent-reviewer / `2026-08-22T04:14:41+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/task-reviews/CAP-02.S04.T02/R01.json` / `17b086ee97f4ee96a9b5f09b31208cd45cd36f57402da87ae6f9f3029fc378eb`
 
-**Currently open findings:** -
+**Review notes:** CHANGES_REQUESTED at exact immutable review state df95297314c090433705cac79cdae9ef8e995fdd on codex/w1-windows-local-runtime. Candidate a06d7d4cd67e027850d6d240f1507a17e49a4739 is a descendant of base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1; the frozen 31-path scope and artifacts/evidence/CAP-02.S04.T02.submission.json SHA-256 4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445 match the R01 packet. The three retained report hashes and their PASS results are truthful, and focused independent replay passed 5 application-lock Rust tests, 4 support-bundle Rust tests, 4 ApplicationRuntime tests, 2 Windows credential source-boundary tests, taskctl backlog validation, and base-to-candidate diff hygiene. Those tests do not exercise the four acceptance-bound defects below, so the manifest's prompt, cancellation, fail-closed renderer, rate-limit, and corresponding ADR truth claims are not established. Same-SID comparison, transient-buffer clearing, handle closure, strict profile/schema authority, bounded identity-free audit projection, locked-view disclosure/accessibility, and W1-exit-only performance/full qualification produced no additional task blocker. W1-exit performance and complete qualification remain correctly deferred and were not rerun.
+
+**Findings opened:**
+
+- `CAP-02.S04.T02-R01-F01` `high` blocking=`True` criterion=`1` — The shipped Win32 credential prompt uses an invalid flag set and mishandles UPN credentials; reproduce: At apps/desktop/src-tauri/src/application_lock.rs:589-608, CredUIPromptForCredentialsW receives CREDUI_FLAGS_ALWAYS_SHOW_UI without CREDUI_FLAGS_GENERIC_CREDENTIALS. Microsoft's CredUIPromptForCredentialsW contract states that ALWAYS_SHOW_UI is permitted only with GENERIC_CREDENTIALS and documents ERROR_INVALID_FLAGS for invalid configurations (https://learn.microsoft.com/en-us/windows/win32/api/wincred/nf-wincred-creduipromptforcredentialsw). The same call supplies the prose target `Research Observatory local application lock`; COMPLETE_USERNAME can derive a missing domain from that target rather than a real machine/domain. At lines 621-638, a UPN is parsed into the complete UPN plus an empty domain buffer, but that non-null buffer is passed to LogonUserW; CredUIParseUserNameW documents the empty-domain result for UPN, while LogonUserW requires lpszDomain=NULL for UPN (https://learn.microsoft.com/en-us/windows/win32/api/wincred/nf-wincred-creduiparseusernamew and https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-logonuserw). The source-only assertion at tests/security/test_windows_credentials.py:363-377 requires the invalid flag token and never invokes or abstracts the API return, so it passes while the primary lock-unlock path can return generic denial before any credential is validated or reject a valid domain UPN.; remediate: Use a Microsoft-documented prompt API and valid always-show/non-persisting flag combination, supply or prefill a real current-user identity/target rather than treating product prose as a domain, and pass NULL domain for UPN while retaining correct down-level/local-account handling. Keep same-SID enforcement, secret zeroing, and handle RAII. Add deterministic native-adapter tests for the exact flag set, local/down-level/UPN argument mapping, API error/cancel/denial, and same/different SID, plus a Windows smoke that proves the real prompt returns a supported status rather than relying on source-token assertions. Update ADR-0018/evidence to match the validated API behavior.
+- `CAP-02.S04.T02-R01-F02` `high` blocking=`True` criterion=`1` — Lock invalidates responses but does not cancel protected side effects; reproduce: Start a protected operation, pause it after begin_protected_action, invoke application_lock_now, then release it. core_api_request at apps/desktop/src-tauri/src/lib.rs:58-66 checks the generation only after dispatch; RuntimeSupervisor::api_request at apps/desktop/src-tauri/src/supervisor.rs:438-458 holds the supervisor mutex across authenticated_api_request, while stop at lines 473-481 needs that same mutex, so Core shutdown waits for a possibly mutating request to complete. support_bundle_export at apps/desktop/src-tauri/src/lib.rs:93-111 similarly performs SupportBundleManager::export before its generation check, and apps/desktop/src-tauri/src/support_bundle.rs:202-229 publishes the final file before returning; the caller receives RO-APPLICATION-LOCKED but the export remains. Existing pending previews are not cleared on lock and can continue after a later unlock. ApplicationLockManager::configure at apps/desktop/src-tauri/src/application_lock.rs:303-324 checks unlocked, replaces the durable profile outside the mutex, and can then observe the concurrent lock and return RO-APPLICATION-LOCKED after the policy change is already persisted. These paths contradict ADR-0018:73-80 and docs/architecture/application-lock.md:14-25, which say stopping Core cancels every W1 protected action and no W1 durable work continues through lock.; remediate: Make lock cancellation effective at each side-effect boundary, not only at response delivery. Release the supervisor lifecycle mutex before Core I/O so stop can terminate an in-flight request, and add an operation cancellation/generation mechanism that prevents post-lock Core mutations. Stage support exports and profile writes, recheck the captured generation while locked immediately before atomic publication, and remove staging on cancellation; clear/invalidate every pending support preview on lock. Add deterministic latch/barrier tests that lock during a mutating Core request, support preview/export, and configuration write and prove no final file/profile/Core mutation, no reusable preview, no response, and prompt Core termination. Preserve the W1 stop-all policy or obtain governed authority before documenting any continuation.
+- `CAP-02.S04.T02-R01-F03` `high` blocking=`True` criterion=`1` — Malformed, missed, or stale native lock notifications can leave sensitive renderer content visible; reproduce: Render ApplicationRuntime in an unlocked state with a project/query visible, then deliver an application-lock-changed event with malformed payload. At apps/desktop/src/app/ApplicationRuntime.tsx:166-172 the decoder throws, but the catch only sets unlockError; applicationLock remains unlocked, applyLockSnapshot never clears project/query/dialog/workspace state, and lines 414-419 continue rendering the full application shell. There is also a startup ordering race: lines 152-174 begin the status request before listener registration and apply status/event snapshots unconditionally, so a lock event can be missed before subscription or a stale unlocked status response can overwrite a newer locked event; auditSequence is decoded but not used for ordering. The native monitor ignores emit failure at apps/desktop/src-tauri/src/lib.rs:246-253. ApplicationRuntime.test.tsx only renders ApplicationLockedView directly, and applicationLock.test.ts only proves the decoder throws, so neither test exercises the fail-closed event path or synchronization race. This violates criterion 1 and docs/architecture/application-lock.md:14-20, where the locked screen must become the only rendered application content.; remediate: On any malformed lock event or monitor/status failure, immediately apply a synthesized configuration-invalid locked snapshot and clear all sensitive renderer state. Establish the listener before initial reconciliation and order/reconcile snapshots with a monotonic native generation/revision (or an equivalent no-stale-overwrite protocol) so missed, out-of-order, and stale unlocked snapshots cannot reopen the tree. Treat native event-delivery failure as a reconciled fail-closed condition. Add mocked Tauri lifecycle tests from a populated unlocked shell for malformed events, listener-registration races, stale status after a lock event, monitor failure, and normal unlock; assert the locked-only tree contains no project name, path, query, dialog, or workspace content.
+- `CAP-02.S04.T02-R01-F04` `medium` blocking=`True` criterion=`2` — Concurrent unlock calls bypass the native exponential-backoff gate; reproduce: Invoke application_lock_unlock concurrently twice while locked and retry_at is absent. Each command is independently dispatched with spawn_blocking at apps/desktop/src-tauri/src/lib.rs:158-168. In ApplicationLockManager::reauthenticate at apps/desktop/src-tauri/src/application_lock.rs:339-353, each call acquires the mutex only long enough to observe no retry deadline, releases it, and then enters verify_current_windows_user; no in-progress reservation exists. Both prompts/credential checks are therefore admitted before either denial records retry_at at lines 362-367. Repeating concurrent calls admits a batch per backoff interval, contrary to ADR-0018:82-88 and its required rate-limited transition coverage. The five Rust application-lock tests inject outcomes serially through complete_test_reauthentication and do not cover concurrent admission.; remediate: Reserve one native reauthentication attempt atomically under the lock mutex before opening the prompt, reject or coalesce every concurrent attempt, and clear the reservation on all success, cancellation, panic/API-error, denial, and Core-start-failure paths without weakening the existing backoff. Add a deterministic injected-authenticator barrier test proving only one prompt is admitted, concurrent calls receive a generic bounded denial, failed attempts cannot be parallelized around retry_at, and cancellation/core failure leave the application locked.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-22T04:14:41+00:00`
+
+**Latest notes:** CHANGES_REQUESTED at exact immutable review state df95297314c090433705cac79cdae9ef8e995fdd on codex/w1-windows-local-runtime. Candidate a06d7d4cd67e027850d6d240f1507a17e49a4739 is a descendant of base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1; the frozen 31-path scope and artifacts/evidence/CAP-02.S04.T02.submission.json SHA-256 4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445 match the R01 packet. The three retained report hashes and their PASS results are truthful, and focused independent replay passed 5 application-lock Rust tests, 4 support-bundle Rust tests, 4 ApplicationRuntime tests, 2 Windows credential source-boundary tests, taskctl backlog validation, and base-to-candidate diff hygiene. Those tests do not exercise the four acceptance-bound defects below, so the manifest's prompt, cancellation, fail-closed renderer, rate-limit, and corresponding ADR truth claims are not established. Same-SID comparison, transient-buffer clearing, handle closure, strict profile/schema authority, bounded identity-free audit projection, locked-view disclosure/accessibility, and W1-exit-only performance/full qualification produced no additional task blocker. W1-exit performance and complete qualification remain correctly deferred and were not rerun.
+
+**Currently open findings:** `CAP-02.S04.T02-R01-F01`, `CAP-02.S04.T02-R01-F02`, `CAP-02.S04.T02-R01-F03`, `CAP-02.S04.T02-R01-F04`
 
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
