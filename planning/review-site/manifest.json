@@ -7738,7 +7738,7 @@
       "approval_sha256": "340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -7755,12 +7755,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "b00-independent-reviewer",
+            "result": "approved",
+            "reviewed_at": "2026-08-22T16:50:44+00:00",
+            "notes": "APPROVED at exact clean frozen state 6dbe0f6ba6996818f60dc0d27ef4f6e56aa5ff8f. Candidate d0faa070a85055fa2a278e05bedc57c05701aabe and evidence 83e7295355f6a3377247b4eb0fca8d852dd670d968856f6212c110f60dd64a36 bind the exact two-file scope. All 18 focused tests, exact historical T03 gate command, authority, backlog, review-site, generated-view, quality, and diff checks pass. No product, reference, policy, predecessor, T03, ordinary W1, or gate state changed."
           },
-          "current_status": "REVIEW"
+          "current_status": "APPROVED"
         }
       ],
       "authorized_task_ids": [
