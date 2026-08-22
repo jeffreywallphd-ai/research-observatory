@@ -7737,7 +7737,7 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A03.json",
       "approval_sha256": "340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd",
       "approval_status": "APPROVED",
-      "lifecycle_status": "APPROVED",
+      "lifecycle_status": "MATERIALIZED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
@@ -7767,7 +7767,21 @@
         "W1.A03.T01"
       ],
       "scope_addenda": [],
-      "task_reviews": [],
+      "task_reviews": [
+        {
+          "task_id": "W1.A03.T01",
+          "title": "Exact T03 candidate-lineage and evidence recovery",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        }
+      ],
       "exit_review": {
         "amendment_id": "W1.A03",
         "mode": "latest-completion-only",

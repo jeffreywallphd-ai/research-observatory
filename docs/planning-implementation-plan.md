@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 53135ad046deea814aa80be22969cfb2c5a9fe0249211c4cdd01b0593e31c43a
+source_sha256: 0a6fdb4d02abe133680094083ae5cd02e0e6252a6e6da449eeed7adcfecb78d0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 2 |
+| Enabler tasks | 3 |
 | Waves | 12 |
 | Wave approval bases | 1 |
 | Wave amendments | 3 |
@@ -42,7 +42,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
-| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `APPROVED` |
+| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -777,11 +777,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A03.json` (`340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-08-22T16:41:35.4388626Z` by repository-owner: Approved in Codex in direct response to the exact-commit ECR-0002/W1.A03 approval request at ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4; authorize only bootstrap W1.A03.B00 and task W1.A03.T01 as hash-bound in the packet, keep W1 paused and CAP-02.S04.T03 blocked through amendment adoption, GRR-0001 release, and an explicit ordinary W1 resume.
+- `E02` `MATERIALIZED` at `2026-08-22T19:06:55+00:00` by codex: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W1.A03
 
@@ -798,6 +799,40 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W1.A03.T01 - Exact T03 candidate-lineage and evidence recovery
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W1.A03.B00`
+
+**Objective:** Implement a packet-bound, fail-closed recovery transition that preserves and requalifies CAP-02.S04.T03's exact historical base, foundation, candidate, block, pause, reference, and evidence lineage without treating later governance commits as product implementation.
+
+**Acceptance criteria:**
+
+- The recovery transition targets only CAP-02.S04.T03 and binds HOLD-W1-GRR-0001, this exact W1.A03 approval, base bfb8797398707bece9e0662c0d995fabaced9979, foundation 461faf2870786609dea5a8e5214df380843329bb, candidate 59079efccc122a7d56a9f18efc20030851bf32a9, block record 1c1d9ba427a55024687a62ca0c364acaccdbb7e2, and pause record c7d543136fcd75c8f93dc8e669e59d54de433c02.
+- The transition remains denied until W1.A03 is ADOPTED with a bound control/security checkpoint, GRR-0001 is RELEASED, W1 is explicitly ACTIVE with scope wave, and T03 retains the exact BLOCKED boundary.
+- A canonical repository-local recovery manifest binds the exact task, branch, base/foundation/candidate/block/pause commits, UI evidence contract and approved reference identity/package/approval, exact changed paths, unique selected checks, and zero unverified items.
+- Git existence, strict ancestry, exact base-to-candidate paths, immutable evidence-contract bytes, repaired cumulative UI-gate result, and risk-selected product/privacy checks are independently recomputed rather than trusted from narrative fields.
+- The original blocked lineage is retained in an append-only hash-bound task recovery projection before any new execution base is established.
+- The sole lawful transition is compare-and-swap and moves only T03 from BLOCKED to IN_PROGRESS with a new lease; it cannot directly attach ordinary task evidence or enter REVIEW, DONE, slice/Wave approval, or a release gate.
+- Wrong task, wrong or unadopted authority, active hold, paused Wave, stale writer, dirty worktree, mismatched commit/hash/path/reference, altered historical task/block state, duplicate recovery, and predecessor rewrite all fail without changing backlog bytes.
+- After recovery, T03 still requires a new ordinary commit, exact commit-bound evidence, independent privacy/task review, slice review, W1 qualification, and G1 approval.
+
+**Verification:**
+
+- Run focused taskctl workflow and schema tests for every authority, state, lineage, path, hash, stale, dirty, duplicate, and atomic denial plus the sole lawful BLOCKED-to-IN_PROGRESS transition.
+- Run focused UI-gate tests and the exact bfb8797398707bece9e0662c0d995fabaced9979..59079efccc122a7d56a9f18efc20030851bf32a9 cumulative command.
+- Run taskctl backlog validation, approved GRR-0001 and ECR-0001 authority validation, generated-view/review-page checks, governed Python quality, and diff hygiene.
+- Obtain independent task review, independent amendment exit review, and a commit-bound control/security adoption checkpoint.
+
+#### Review history — W1.A03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 # Capability contributions, slices, and tasks
