@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-bootstrap-evidence",
+  "recoveryRequestId": "GRR-0001",
+  "bootstrapUnit": "GRR-0001.B00",
+  "branch": "codex/w1-windows-local-runtime",
+  "baseCommit": "12c2ff826a5bcb0fdaca9f623da38094944a5eca",
+  "candidateCommit": "e2d46d5b7ffe44dcc38437c6da502a34e2e37710",
+  "changedPaths": [
+    "AGENTS.md",
+    "docs/automation/codex-tracking-guide.md",
+    "docs/automation/project-automation-guide.md",
+    "docs/governance/delivery-control-model.md",
+    "docs/governance/repository-governance.md",
+    "docs/planning-implementation-plan.md",
+    "planning/README.md",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/enabler-change-requests/README.md",
+    "planning/enabler-change-requests/enabler-change-request.v2.schema.json",
+    "planning/governance-recovery-requests/README.md",
+    "planning/governance-recovery-requests/governance-recovery-evidence.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-request.v2.schema.json",
+    "planning/review-site/README.md",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/recoveries/GRR-0001.html",
+    "planning/review-site/recoveries/index.html",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "tests/foundation/test_plan_review_amendments.py",
+    "tests/foundation/test_recoveryctl.py",
+    "tools/plan_review_check.py",
+    "tools/plan_review_site.py",
+    "tools/planctl.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "riskAnalysis": "This is shared governance, evidence, schema, and scheduling control infrastructure. Credible failures include an executable bypass while W1 is paused, authority-chain rewrite or identity collision, path escape, stale or dirty atomicity failure, self-review, evidence or ledger substitution, an older controller accepting revision 4 state, and review-site flattening. The selected checks therefore cover the complete focused taskctl/planctl/backlog/recovery/view surface, hostile path and identity fixtures, governed quality, exact approved ECR compatibility, generated-page integrity, and clean Git diff hygiene. Product, UI-gate, complete W1, packaging, and release qualification remain outside this bootstrap and are deferred to W1.A03, T03, slice, checkpoint, and Wave exit controls.",
+  "requiredOutcomes": [
+    {
+      "criterion": "A minimal recovery controller validates generic versioned GRR packets, exact independent review, explicit human approval, bounded bootstrap evidence, append-only remediation, and terminal disposition.",
+      "evidence": ["tools/recoveryctl.py implements validate, status, bootstrap-submit, bootstrap-resubmit, bootstrap-review, and release transitions.", "tests/foundation/test_recoveryctl.py and the 103-test focused suite passed."]
+    },
+    {
+      "criterion": "The recovery controller semantically binds recovery, hold, target-Wave, base-Wave, consecutive unique predecessor amendment, bootstrap, post-bootstrap ECR/amendment, and proposed-task identity prefixes; structural schema validity alone never authorizes execution.",
+      "evidence": ["tools/recoveryctl.py recovery_identity_errors and validate_authority_chain enforce the cross-field authority identities.", "Second/third and mismatched identity fixtures passed in tests/foundation/test_recoveryctl.py."]
+    },
+    {
+      "criterion": "Every packet, approval, evidence, ledger, and authorized-scope path is canonical repository-relative POSIX, resolves inside its designated repository directory, and is rejected for absolute, backslash, dot-segment, traversal, redirected-parent, symlink, junction, or other escape behavior.",
+      "evidence": ["safe path controls are enforced in tools/recoveryctl.py, tools/taskctl.py, tools/planctl.py, and tools/plan_review_site.py.", "The hostile absolute, backslash, dot-segment, symlink, and simulated junction tests passed."]
+    },
+    {
+      "criterion": "A controller-enforced hold denies all executable Wave/task/amendment/gate and older-reader paths until exact release conditions are satisfied.",
+      "evidence": ["planning/backlog.yaml records HOLD-W1-GRR-0001 and control revision 4; tools/taskctl.py centrally denies mutation while the hold is active.", "Direct Wave resume and revision-3 reader denial tests passed, and taskctl next emits the stopped-recovery handoff."]
+    },
+    {
+      "criterion": "ECR validation supports generic subsequent identities and an ordered predecessor authority chain without changing ECR-0001, W1.A01, W1.A02, or their Git objects.",
+      "evidence": ["planning/enabler-change-requests/enabler-change-request.v2.schema.json and tools/planctl.py support generic consecutive ECR/amendment identities.", "The exact existing ECR-0001 approved validation passed after the change."]
+    },
+    {
+      "criterion": "A compare-and-swap append operation can add a subsequent approved amendment but cannot replace, reorder, duplicate, fork, or silently migrate an existing record.",
+      "evidence": ["tools/taskctl.py implements append-only amendment bootstrap submission with stable identity and history snapshots.", "Recovery and amendment history snapshots are prefix-checked by save_validated; the focused taskctl atomicity and predecessor tests passed."]
+    },
+    {
+      "criterion": "Status and review pages provide a decision-complete stopped-recovery handoff with packet, authority, alternatives, and exact next approval or resume condition.",
+      "evidence": ["tools/taskctl.py renders the decision-complete stopped handoff and tools/plan_review_site.py renders the recovery register/detail and W1 interruption.", "tools/plan_review_check.py passed all 147 generated HTML pages."]
+    },
+    {
+      "criterion": "Focused tests prove second and third GRR/ECR/amendment identities, cross-field identity binding, stale and dirty denial, self-review denial, predecessor preservation, older-reader denial, and atomic failure behavior.",
+      "evidence": ["tests/foundation/test_recoveryctl.py covers generic identities, mismatches, path attacks, dirty denial, reviewer binding, self-review, older-reader denial, and atomic failed release.", "The combined 103-test focused governance suite passed."]
+    },
+    {
+      "criterion": "B00 receives an independent control/security disposition before ECR-0002 is prepared or appended.",
+      "evidence": ["tools/recoveryctl.py freezes an immutable R01 evidence packet and denies self-review; HOLD-W1-GRR-0001 retains zero post-bootstrap execution authority.", "This submission is awaiting the required independent control/security disposition; no ECR-0002 files or W1.A03 records exist in the candidate."]
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion": "The exact W1 base plus ordered W1.A01/W1.A02 authority, hashes, commits, task outcomes, and adoption history remain unchanged.",
+      "evidence": ["Recovery validation binds the immutable base and both ordered predecessor records to their Git commits and file hashes.", "The candidate changes no prior approval, amendment packet, adoption evidence, or Git object."]
+    },
+    {
+      "criterion": "Generic recovery and ECR schemas accept subsequent well-bound identities and reject mismatched Wave, amendment, bootstrap, task, file, review, and predecessor identities.",
+      "evidence": ["The versioned GRR/ECR schemas and semantic validators are governed in quality-scope.json.", "Generic second/third identity and mismatch fixtures passed."]
+    },
+    {
+      "criterion": "The semantic validator rejects cross-Wave identities, nonconsecutive or duplicate amendment predecessors, mismatched GRR/hold/bootstrap/ECR/task prefixes, and any absolute, backslash, dot-segment, traversal, redirected-parent, symlink, junction, or resolved-path escape.",
+      "evidence": ["tools/recoveryctl.py performs cross-field identity, authority-chain, scope, and resolved-path validation.", "The focused hostile identity/path tests passed."]
+    },
+    {
+      "criterion": "Unresolved recovery/ECR holds fail closed across scheduler, start, resume, claim, reopen, evidence, submit, review, amendment, gate, generated handoff, and older-reader paths.",
+      "evidence": ["tools/taskctl.py applies a central recovery mutation guard before command dispatch and validates revision 4 control state.", "Taskctl validation, resume denial, next-handoff, amendment, gate, schema, and review-page tests passed."]
+    },
+    {
+      "criterion": "Dirty, stale, duplicate, forked, reordered, wrong-hash, missing-review, and self-approved packets fail atomically without ledger or file mutation.",
+      "evidence": ["CAS saves, immutable history snapshots, clean-worktree checks, hash-bound files, CLI reviewer binding, and independent-review denial are implemented.", "Focused taskctl atomicity plus recovery dirty, self-review, identity, and failed-release tests passed."]
+    },
+    {
+      "criterion": "Second and third GRR/ECR/amendment fixtures append successfully without replacing or rewriting predecessor authority.",
+      "evidence": ["Generic identity fixtures for GRR-0002/GRR-0003 and W2/W10 ECR/amendment packets validate under the new semantics.", "Append-only history and predecessor preservation are enforced by taskctl snapshots and tested in the focused suite."]
+    },
+    {
+      "criterion": "Bootstrap review and remediation history is append-only and exact-commit bound, and no product or ordinary W1 execution occurs.",
+      "evidence": ["recoveryctl freezes exact commit/evidence/current-submission records and preserves every reviewed attempt as a prefix-checked immutable history.", "The exact candidate diff contains only the 29 approved governance/documentation/test/generated paths."]
+    },
+    {
+      "criterion": "The repaired ordinary lane can freeze ECR-0002/W1.A03 but GRR-0001 grants zero approval, materialization, activation, claim, execution, adoption, or resume authority to that amendment or its proposed tasks.",
+      "evidence": ["The hold projects execution_authority false and the GRR approval is bootstrap-only.", "taskctl permits only the future exact append-bootstrap transition after B00 approval and a separate ECR approval; all other mutations remain denied."]
+    }
+  ],
+  "checks": [
+    {
+      "id": "quality",
+      "command": ".venv/Scripts/python.exe tools/quality_check.py --repo .",
+      "result": "passed"
+    },
+    {
+      "id": "focused-governance",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.foundation.test_taskctl_workflow tests.foundation.test_taskctl_schema tests.foundation.test_planctl_amendments tests.foundation.test_plan_review_amendments tests.foundation.test_recoveryctl tests.foundation.test_backlog_views",
+      "result": "passed"
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "passed"
+    },
+    {
+      "id": "recovery",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . validate GRR-0001 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "legacy-ecr",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "review-site",
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .",
+      "result": "passed"
+    },
+    {
+      "id": "views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "passed"
+    },
+    {
+      "id": "diff-hygiene",
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "deferredCoverage": [
+    "The UI-gate cumulative pass/adversarial suite is deferred to separately approved ECR-0002/W1.A03.",
+    "CAP-02.S04.T03 product qualification and independent task/slice review remain blocked until the recovery hold is lawfully released.",
+    "The complete W1 qualification matrix, local-main integration, and G1 review remain at their ordinary Wave-exit gates."
+  ],
+  "unverifiedItems": []
+}
