@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import re
 import shutil
 import sys
 import tempfile
@@ -395,6 +396,16 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         self.assertIn("completion and independent approval of the one task", detail)
         self.assertNotIn("both DONE", detail)
         self.assertFalse([line for line in detail.splitlines() if line.rstrip() != line])
+
+        static_review = (REPO / "planning/enabler-change-requests/ECR-0002-review.html").read_text(encoding="utf-8")
+        proposal = (REPO / "planning/enabler-change-requests/ECR-0002.md").read_text(encoding="utf-8")
+        pointer = re.search(r"exact approval wording is in section ([0-9]+)", static_review, flags=re.IGNORECASE)
+        self.assertIsNotNone(pointer)
+        assert pointer is not None
+        approval_heading = f"## {pointer.group(1)}. Exact approval and next condition"
+        self.assertIn(approval_heading, proposal)
+        approval_section = proposal.split(approval_heading, 1)[1]
+        self.assertIn("Approve ECR-0002 as W1.A03 at packet commit", approval_section)
 
     def test_interrupted_approved_wave_suppresses_repeat_commands_but_future_wave_keeps_approval(self) -> None:
         wave_one = (self.site / "waves/W1.html").read_text(encoding="utf-8")
