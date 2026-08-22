@@ -22135,7 +22135,7 @@ verification_profiles:
 control_plane:
   revision: 3
   minimum_tool_revision: 3
-  active_amendment: null
+  active_amendment: W1.A02
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
@@ -22218,7 +22218,7 @@ wave_amendments:
     sha256: 63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376
     introduction_commit: 6e9c440102a5c463bb35d81f4dbdc3453d9ce029
   lifecycle:
-    status: PAUSED
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -22273,6 +22273,11 @@ wave_amendments:
         exit-evidence payload can be relabeled as adoption evidence without documentType/target/history validation. The selected
         controller/schema replay is 68/69 because one historical-bootstrap fixture retains live exit-review control. Adoption
         is not ready; no full W1 exit suite was run.
+    - id: E09
+      status: ACTIVE
+      actor: codex
+      at: '2026-08-22T02:15:35+00:00'
+      rationale: Activated the bounded amendment campaign.
   bootstrap:
     id: W1.A02.B00
     status: APPROVED
@@ -22331,24 +22336,21 @@ wave_amendments:
           B00-R05 MEDIUM mandatory: two focused control tests depend on mutable canonical backlog state and fail at frozen
           state 84107b8.'
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
-    base_sha: c6774e02fbe93a38e2cc7e0a5cb74319595216d3
+    base_sha: 55bf2850a73dfde9e5ac9c712584b23132364665
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-21T00:43:02+00:00'
-    updated_at: '2026-08-22T02:09:50+00:00'
-    pause_reason: CHANGES_REQUESTED at exact clean frozen state 8df23af86380abb7359ab5a3349ac0cbc4ee7a3c. R02 evidence is
-      Git-bound at 85ec0972d4a823496f796de922e5ba3619c54e85 and declares implementation ancestor 48017abbeb860f01591bb977c352a7d3739cc232;
-      both strictly descend from R01. R01 history, criteria/check/packet hashes, ECR authority, separate exact Wave/amendment
-      campaign state, generated views, and legacy W1.A01 are truthful. R01-F02 is fixed. R01-F01 remains open because an exit-evidence
-      payload can be relabeled as adoption evidence without documentType/target/history validation. The selected controller/schema
-      replay is 68/69 because one historical-bootstrap fixture retains live exit-review control. Adoption is not ready; no
-      full W1 exit suite was run.
-    lease: null
+    updated_at: '2026-08-22T02:15:35+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-22T02:15:35+00:00'
+      expires_at: '2026-08-23T02:15:35+00:00'
   tasks:
   - id: W1.A02.T01
     amendment_id: W1.A02
