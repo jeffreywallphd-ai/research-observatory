@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1254df4b97638004dd0d90e2b15514e8ea9485b73220cd2bb49599783c46689c
+source_sha256: d041f857ea804d1c7862702311cd68bb3a79beb2c14a42375544cfd56f8e92f4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 2 |
 | Waves | 12 |
 | Wave approval bases | 1 |
-| Wave amendments | 2 |
+| Wave amendments | 3 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -42,6 +42,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
+| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `APPROVED` |
 
 ## Waves
 
@@ -769,6 +770,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** APPROVED at frozen state b3600ffe32c12d8d4d9e6cb457703311a328ea82. Remediation candidate aa714b7c16def6add4662e0d1c44d0bc89e7c349 is a strict descendant of prior candidate 5b5edd26519dff12aaaeef0c14ad40c8519ab355. Evidence artifacts/evidence/W1.A02.T02.remediation-01.json has SHA-256 403e15b269b7e5a42829a90af64ad93f73c78ef898c1016007bf16fc461250c0; its base, candidate, supersedes binding, and exact 15-path scope are truthful. F01 closes because security, migration, threshold, and ordinary cross-profile mappings now fail before safety/unknown fallback when an owning profile is omitted. F02 closes because deleting telemetry from a completed attempt with non-empty selected_command_ids is denied by semantic control validation, the pure projector, and review-telemetry, while the two real T01 attempts omit the marker and still project no fabricated events. F03 closes because governed policy authorizes exactly W1-exit and both API and CLI deny G2 and generic owners. F04 closes because affected foundation selects 16 commands with no performance deferral, desktop selects 24 and defers desktop:performance, data selects 18 and defers both data performance commands, and W1 exit selects all three exactly once in its 33-command union. Immutable R01 ledger SHA-256 f98f414bb3dbeeb9852442adc8c67219b1515fc199900090da5c6d42da8f864c and its exact 534-second, 2-HIGH/2-MEDIUM telemetry event remain preserved. Canonical profiles, argv, activation inputs, baselines, and thresholds are unchanged. Independent replay passed 85/85 focused tests in 64.768 seconds, 113-file quality, canonical backlog validation, telemetry projection, generated views, all 145 review pages, ECR-0001 validation, selection proofs, and Git whitespace checks. No full foundation or Wave-exit execution was rerun because this review remained bounded to the four findings and incremental risk surface.
 
 **Currently open findings:** -
+
+## W1.A03 - ECR-0002
+
+**Target Wave / class:** `W1` / `gate-integrity-safety-defect`
+
+**Approval record:** `planning/wave-amendment-approvals/W1.A03.json` (`340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-08-22T16:41:35.4388626Z` by repository-owner: Approved in Codex in direct response to the exact-commit ECR-0002/W1.A03 approval request at ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4; authorize only bootstrap W1.A03.B00 and task W1.A03.T01 as hash-bound in the packet, keep W1 paused and CAP-02.S04.T03 blocked through amendment adoption, GRR-0001 release, and an explicit ordinary W1 resume.
+
+### Amendment-exit review and adoption — W1.A03
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 # Capability contributions, slices, and tasks
