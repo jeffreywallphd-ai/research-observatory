@@ -22600,28 +22600,26 @@ control_plane:
       commit: fc8fabfcf3f23e1009f0f9895cd9befbf4b85f53
     bootstrap:
       id: GRR-0001.B00
-      status: CHANGES_REQUESTED
+      status: REVIEW
       implementer: codex
-      implementation_commit: cb27290367a76fe2681b2a97552453f4f7803c29
+      implementation_commit: 42e016bca44d9046e0e27599d679bc69d28d3384
       submission_branch: codex/w1-windows-local-runtime
       evidence:
         type: governance-recovery-evidence
-        path: planning/governance-recovery-approvals/GRR-0001.B00.remediation-03.evidence.json
-        sha256: 6d87cfa376460925229e12eb313736d4450a25202ab5cfd7ae5ed8079d6278b5
-        commit: cb27290367a76fe2681b2a97552453f4f7803c29
-        recorded_at: '2026-08-22T15:31:22+00:00'
-      review: &id087
-        reviewer: b00-independent-reviewer
-        result: changes-requested
-        reviewed_at: '2026-08-22T15:40:33+00:00'
-        notes: The candidate is a strict descendant of d4d877966e44327eaa1d0b1219836d1413fcb7e2. Its eight-path evidence scope
-          exactly matches Git and remains within the approved governance boundary. R01-R03 evidence, ledgers, findings, closures,
-          and state history are preserved. No production ECR-0002/W1.A03 authority, product/UI-gate change, ordinary W1 execution,
-          or hold release exists. Root-reported candidate/frozen 109-test runs are consistent with an independent replay of
-          the two new recovery tests, which passed in 99.484 seconds; quality, backlog, GRR, ECR-0001, 147-page review-site,
-          generated-view, and diff checks also pass. R03-F01 is closed. R02-F02 remains open because the candidate-state fixture
-          still creates an approved attempt without an immutable frozen REVIEW state.
-      current_submission: null
+        path: planning/governance-recovery-approvals/GRR-0001.B00.remediation-04.evidence.json
+        sha256: d2fe107e767b09b7b22a8e1403b2b94a3988f11e8cbc6b6cdab63af03cff17f7
+        commit: 42e016bca44d9046e0e27599d679bc69d28d3384
+        recorded_at: '2026-08-22T15:55:45+00:00'
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      current_submission:
+        attempt_id: R05
+        candidate_commit: 42e016bca44d9046e0e27599d679bc69d28d3384
+        evidence_sha256: d2fe107e767b09b7b22a8e1403b2b94a3988f11e8cbc6b6cdab63af03cff17f7
+        acceptance_criteria_sha256: 7b0590d0b6381a2ed2c15945f2d18047f141d65158b79d5eefdcd30dc897ee40
       attempts:
       - id: R01
         implementer: codex
@@ -22703,7 +22701,17 @@ control_plane:
           sha256: 6d87cfa376460925229e12eb313736d4450a25202ab5cfd7ae5ed8079d6278b5
           commit: cb27290367a76fe2681b2a97552453f4f7803c29
           recorded_at: '2026-08-22T15:31:22+00:00'
-        review: *id087
+        review:
+          reviewer: b00-independent-reviewer
+          result: changes-requested
+          reviewed_at: '2026-08-22T15:40:33+00:00'
+          notes: The candidate is a strict descendant of d4d877966e44327eaa1d0b1219836d1413fcb7e2. Its eight-path evidence
+            scope exactly matches Git and remains within the approved governance boundary. R01-R03 evidence, ledgers, findings,
+            closures, and state history are preserved. No production ECR-0002/W1.A03 authority, product/UI-gate change, ordinary
+            W1 execution, or hold release exists. Root-reported candidate/frozen 109-test runs are consistent with an independent
+            replay of the two new recovery tests, which passed in 99.484 seconds; quality, backlog, GRR, ECR-0001, 147-page
+            review-site, generated-view, and diff checks also pass. R03-F01 is closed. R02-F02 remains open because the candidate-state
+            fixture still creates an approved attempt without an immutable frozen REVIEW state.
         ledger:
           path: planning/governance-recovery-approvals/GRR-0001.B00.review-R04.json
           sha256: 70d519345005e31fb41cf1fce27b7482e31fcc2c135613e9da96337fc4d5d87a
@@ -23003,7 +23011,7 @@ wave_amendments:
       commit: 4f256763401772298bf75c634f2c7b2355882f10
       recorded_at: '2026-08-21T01:30:59+00:00'
     verification_state: passed
-    review: &id088
+    review: &id087
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T01:37:41+00:00'
@@ -23275,7 +23283,7 @@ wave_amendments:
           - W1.A02.T01-R01-F02
           root_cause_analysis: null
           packet_sha256: 8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd
-        review: *id088
+        review: *id087
         ledger:
           path: artifacts/evidence/W1.A02.T01.review-R02.json
           sha256: f8913f680808ba3119935de66d170305a94e61b7818941154cbbc654745e5ac5
@@ -23336,7 +23344,7 @@ wave_amendments:
       commit: aa714b7c16def6add4662e0d1c44d0bc89e7c349
       recorded_at: '2026-08-21T02:50:29+00:00'
     verification_state: passed
-    review: &id089
+    review: &id088
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T02:59:03+00:00'
@@ -23621,7 +23629,7 @@ wave_amendments:
           - foundation:quality
           - foundation:backlog
           packet_sha256: c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03
-        review: *id089
+        review: *id088
         ledger:
           path: artifacts/evidence/W1.A02.T02.review-R02.json
           sha256: 2700fd6eff428b03a257f22e7acc511d11ef9196e9224dfa188ab9357c2cc117
