@@ -23983,3 +23983,47 @@ wave_amendments:
         findings: []
         closures: []
       current_submission: null
+- id: W1.A03
+  change_request_id: ECR-0002
+  target_wave: W1
+  kind: gate-integrity-safety-defect
+  approval_reference:
+    path: planning/wave-amendment-approvals/W1.A03.json
+    sha256: 340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd
+    introduction_commit: 95c007b58619dfd82b5f443eea3d8e71e7efe082
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: repository-owner
+      at: '2026-08-22T16:41:35.4388626Z'
+      rationale: Approved in Codex in direct response to the exact-commit ECR-0002/W1.A03 approval request at ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4;
+        authorize only bootstrap W1.A03.B00 and task W1.A03.T01 as hash-bound in the packet, keep W1 paused and CAP-02.S04.T03
+        blocked through amendment adoption, GRR-0001 release, and an explicit ordinary W1 resume.
+  bootstrap:
+    id: W1.A03.B00
+    status: REVIEW
+    implementer: codex
+    implementation_commit: d0faa070a85055fa2a278e05bedc57c05701aabe
+    submission_branch: codex/w1-windows-local-runtime
+    scope_addenda: []
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W1.A03.B00.json
+      sha256: 83e7295355f6a3377247b4eb0fca8d852dd670d968856f6212c110f60dd64a36
+      commit: d0faa070a85055fa2a278e05bedc57c05701aabe
+      recorded_at: '2026-08-22T16:46:30+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null

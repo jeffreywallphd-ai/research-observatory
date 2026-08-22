@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.A03.B00",
+  "commit": "d0faa070a85055fa2a278e05bedc57c05701aabe",
+  "baseCommit": "95c007b58619dfd82b5f443eea3d8e71e7efe082",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_change_gate",
+      "exitCode": 0,
+      "result": "All 18 focused UI-gate tests passed, including the exact cumulative T03 range, malformed additive inventory, same-range control/UI denial, post-implementation hardening provenance, self-approval, reference, and Git-object boundaries."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+      "exitCode": 0,
+      "result": "The exact historical T03 base-to-candidate cumulative range passed with no errors and retained reference RO-UI-ACADEMIC-MINIMAL-1.3/package db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "Ruff formatting, Ruff lint, and mypy passed for all 118 governed Python files."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0002 --require-approved",
+      "exitCode": 0,
+      "result": "ECR-0002/W1.A03 remained approved and history-bound to the independently reviewed packet."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . validate GRR-0001 --require-approved",
+      "exitCode": 0,
+      "result": "GRR-0001 remained approved with bootstrap APPROVED, hold ACTIVE, and next authority W1.A03."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "The unchanged canonical backlog remained valid with 20 capabilities, 117 slices, 358 tasks, and 12 release gates."
+    },
+    {
+      "command": "git show --check --stat --oneline d0faa070a85055fa2a278e05bedc57c05701aabe",
+      "exitCode": 0,
+      "result": "The exact implementation commit is diff-clean and changes only the two B00-authorized files."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The exact bfb8797398707bece9e0662c0d995fabaced9979..59079efccc122a7d56a9f18efc20030851bf32a9 range now returns ok=true with an empty errors array.",
+        "The new focused regression binds that exact historical base and candidate."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The additive pre-implementation inventory test continues to reject inventory removal and an attempted gate-control inventory addition.",
+        "The cumulative branch still extends every activation error and rejects any unclassified protected position."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "test_ui_implementation_cannot_weaken_gate_controls_in_same_range continues to reject UI implementation committed with ui-change-policy.json, architecture-protected-paths.json, or tools/ci_check.py changes."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The post-implementation and later-UI-task tests continue to require the exact independently reviewed hardening envelope and historical attestation.",
+        "Only the unconditional absence-of-late-hardening condition was removed; hardening provenance validation is unchanged."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "All 18 focused tests passed across approved-reference, intentional-design, self-approval, reference-package, contract-task, automatic-base, regular-Git-blob, and policy boundaries.",
+        "No policy, reference, product, evidence-contract, backlog, completed-task, Wave, amendment-predecessor, or release-gate file changed."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "The implementation is frozen at d0faa070a85055fa2a278e05bedc57c05701aabe with exact two-file scope and criterion-linked evidence.",
+        "Independent control/security review remains required before W1.A03.T01 may be materialized."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "B00 changes one cumulative branch condition in the design-first UI gate. Credible failures are acceptance of malformed pre-UI inventory, same-commit control/UI weakening, unreviewed post-implementation hardening, reference or self-approval bypass, and regression of the exact T03 range. The 18-test focused suite and exact historical command directly cover those boundaries; authority, backlog, quality, and diff checks prove the surrounding control state remains intact.",
+    "deferred": "T03 product/privacy requalification and ordinary evidence review remain after W1.A03 adoption, GRR release, explicit W1 resume, and the packet-bound recovery transition. Complete repository/deployment qualification remains due at W1 exit."
+  }
+}
