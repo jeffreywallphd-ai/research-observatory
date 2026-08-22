@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import fnmatch
 import hashlib
 import json
 import os
@@ -105,8 +106,18 @@ def safe_repo_path(
 def validate_scope_pattern(repo: Path, pattern: str) -> None:
     if "**" in pattern and not pattern.endswith("/**"):
         raise SystemExit(f"Authorized scope wildcard must be a terminal /**: {pattern}")
-    lexical = pattern[:-3].rstrip("/") if pattern.endswith("/**") else pattern
-    if "*" in lexical:
+    filename_glob = not pattern.endswith("/**") and pattern.count("*") == 1
+    pure_pattern = PurePosixPath(pattern)
+    if filename_glob and "*" not in pure_pattern.name:
+        raise SystemExit(f"Authorized wildcard must remain within the final filename: {pattern}")
+    lexical = (
+        pattern[:-3].rstrip("/")
+        if pattern.endswith("/**")
+        else pattern.replace("*", "scope-marker")
+        if filename_glob
+        else pattern
+    )
+    if "*" in lexical or ("*" in pattern and not (pattern.endswith("/**") or filename_glob)):
         raise SystemExit(f"Authorized scope contains an unsupported wildcard: {pattern}")
     safe_repo_path(repo, lexical, label="Authorized scope", require_exists=False)
 
@@ -116,6 +127,13 @@ def path_authorized(relative: str, patterns: list[str]) -> bool:
         if pattern.endswith("/**"):
             prefix = pattern[:-3].rstrip("/")
             if relative == prefix or relative.startswith(prefix + "/"):
+                return True
+        elif pattern.count("*") == 1 and "*" in PurePosixPath(pattern).name:
+            pattern_path = PurePosixPath(pattern)
+            relative_path = PurePosixPath(relative)
+            if relative_path.parent == pattern_path.parent and fnmatch.fnmatchcase(
+                relative_path.name, pattern_path.name
+            ):
                 return True
         elif relative == pattern:
             return True
@@ -281,6 +299,180 @@ def load_recovery_authority(repo: Path, request_id: str) -> tuple[dict[str, Any]
     return approval, packet, approval_payload, packet_payload
 
 
+def supplement_paths(repo: Path, supplement_id: str) -> tuple[Path, Path]:
+    match = re.fullmatch(r"(GRR-[0-9]{4})\.S([0-9]{2})", supplement_id)
+    if match is None:
+        raise SystemExit(f"Invalid recovery supplement identity: {supplement_id}")
+    packet = safe_repo_path(
+        repo,
+        f"planning/governance-recovery-requests/{supplement_id}.packet.json",
+        label="Recovery supplement packet",
+        designated_prefix="planning/governance-recovery-requests",
+    )
+    approval = safe_repo_path(
+        repo,
+        f"planning/governance-recovery-approvals/{supplement_id}.json",
+        label="Recovery supplement approval",
+        designated_prefix="planning/governance-recovery-approvals",
+    )
+    return packet, approval
+
+
+def exact_file_reference(
+    repo: Path,
+    reference: dict[str, Any],
+    *,
+    commit: str,
+    label: str,
+) -> bytes:
+    relative = str(reference.get("path") or "")
+    path = safe_repo_path(repo, relative, label=label)
+    payload = path.read_bytes()
+    if reference.get("sha256") != sha256(payload):
+        raise SystemExit(f"{label} hash mismatch: {relative}")
+    if taskctl.git_blob(repo, commit, relative) != payload:
+        raise SystemExit(f"{label} differs from its immutable Git blob: {relative}")
+    return payload
+
+
+def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str, Any], dict[str, Any], bytes, bytes]:
+    packet_path, approval_path = supplement_paths(repo, supplement_id)
+    packet, packet_payload = load_json(packet_path, "recovery supplement packet")
+    approval, approval_payload = load_json(approval_path, "recovery supplement approval")
+    packet_schema = safe_repo_path(
+        repo,
+        "planning/governance-recovery-requests/governance-recovery-supplement.schema.json",
+        label="Recovery supplement packet schema",
+    )
+    approval_schema = safe_repo_path(
+        repo,
+        "planning/governance-recovery-requests/governance-recovery-supplement-approval.schema.json",
+        label="Recovery supplement approval schema",
+    )
+    errors = schema_errors(packet, packet_schema)
+    errors.extend(schema_errors(approval, approval_schema))
+    if errors:
+        raise SystemExit("Governance recovery supplement schema validation failed:\n- " + "\n- ".join(errors))
+    request_id = supplement_id.split(".", 1)[0]
+    bootstrap = packet.get("supplementalBootstrap") or {}
+    if (
+        packet.get("documentType") != "governance-recovery-supplement-packet"
+        or packet.get("recoveryRequestId") != request_id
+        or packet.get("supplementId") != supplement_id
+        or approval.get("recoveryRequestId") != request_id
+        or approval.get("supplementId") != supplement_id
+        or approval.get("status") != "APPROVED"
+        or approval.get("targetWave") != packet.get("targetWave")
+        or approval.get("supplementalBootstrapUnit") != bootstrap.get("id")
+    ):
+        raise SystemExit("Recovery supplement packet/approval identity or status mismatch")
+    packet_relative = f"planning/governance-recovery-requests/{supplement_id}.packet.json"
+    packet_reference = approval.get("packet") or {}
+    if packet_reference.get("path") != packet_relative or packet_reference.get("sha256") != sha256(packet_payload):
+        raise SystemExit("Recovery supplement approval does not bind the exact packet path/hash")
+    packet_commit = str(packet_reference.get("commit") or "")
+    require_commit(repo, packet_commit, label="Recovery supplement packet commit")
+    if taskctl.git_blob(repo, packet_commit, packet_relative) != packet_payload:
+        raise SystemExit("Recovery supplement packet differs from the immutable approved Git blob")
+    approval_relative = f"planning/governance-recovery-approvals/{supplement_id}.json"
+    approval_introduction = taskctl.approval_introduction_commit(repo, approval_relative)
+    if not approval_introduction:
+        raise SystemExit("Recovery supplement approval has no immutable introduction commit")
+    require_commit(repo, approval_introduction, label="Recovery supplement approval introduction")
+    if not taskctl.git_is_ancestor(repo, packet_commit, approval_introduction):
+        raise SystemExit("Recovery supplement approval does not descend from its reviewed packet")
+    if taskctl.git_blob(repo, approval_introduction, approval_relative) != approval_payload:
+        raise SystemExit("Recovery supplement approval differs from its immutable introduction Git blob")
+    review = approval.get("independentPacketReview") or {}
+    if (
+        review.get("result") != "APPROVED"
+        or review.get("candidateCommit") != packet_commit
+        or review.get("packetSha256") != sha256(packet_payload)
+        or review.get("reviewer") == approval.get("approvedBy")
+        or review.get("openFindingIds") != []
+    ):
+        raise SystemExit("Recovery supplement lacks an exact independent packet approval")
+    prior = review.get("priorAdverseLedger") or {}
+    prior_payload = exact_file_reference(
+        repo,
+        prior,
+        commit=packet_commit,
+        label="Recovery supplement prior adverse review",
+    )
+    prior_ledger = json.loads(prior_payload)
+    prior_attempt = str(prior_ledger.get("attemptId") or "")
+    expected_review_attempt = (
+        f"R{int(prior_attempt.removeprefix('R')) + 1:02d}" if re.fullmatch(r"R[0-9]{2,}", prior_attempt) else ""
+    )
+    if (
+        prior_ledger.get("result") not in {"changes-requested", "blocked"}
+        or review.get("attemptId") != expected_review_attempt
+        or sorted(review.get("closedFindingIds") or [])
+        != sorted(str(item.get("id")) for item in prior_ledger.get("findings", []))
+    ):
+        raise SystemExit("Recovery supplement approval does not exactly close the prior adverse packet review")
+    execution = approval.get("executionAuthority") or {}
+    if execution.get("supplementalBootstrapOnly") is not True or any(
+        execution.get(field) is not False
+        for field in (
+            "postBootstrapExecution",
+            "amendmentMaterialization",
+            "ordinaryWaveResume",
+            "taskExecution",
+            "releaseGateApproval",
+        )
+    ):
+        raise SystemExit("Recovery supplement approval is not constrained to its supplemental bootstrap")
+    for pattern in bootstrap.get("authorizedPaths", []):
+        validate_scope_pattern(repo, str(pattern))
+    for reference in packet.get("files", []):
+        exact_file_reference(repo, reference, commit=packet_commit, label="Recovery supplement packet file")
+    named_packet_files = {
+        "proposal": (packet_reference.get("proposalPath"), packet_reference.get("proposalSha256")),
+        "schema": (packet_reference.get("schemaPath"), packet_reference.get("schemaSha256")),
+        "review": (packet_reference.get("reviewPath"), packet_reference.get("reviewSha256")),
+    }
+    packet_files = {str(item.get("path")): str(item.get("sha256")) for item in packet.get("files", [])}
+    for label, (relative, digest) in named_packet_files.items():
+        if packet_files.get(str(relative)) != digest:
+            raise SystemExit(f"Recovery supplement approval {label} binding differs from the packet file ledger")
+    base_approval, base_packet, base_approval_payload, base_packet_payload = load_recovery_authority(repo, request_id)
+    base = packet.get("baseRecoveryAuthority") or {}
+    base_packet_reference = base.get("packet") or {}
+    base_approval_reference = base.get("approval") or {}
+    base_approval_relative = f"planning/governance-recovery-approvals/{request_id}.json"
+    base_intro = taskctl.approval_introduction_commit(repo, base_approval_relative)
+    if (
+        base_packet_reference.get("path") != f"planning/governance-recovery-requests/{request_id}.packet.json"
+        or base_packet_reference.get("sha256") != sha256(base_packet_payload)
+        or base_packet_reference.get("commit") != (base_approval.get("packet") or {}).get("commit")
+        or base_approval_reference.get("path") != base_approval_relative
+        or base_approval_reference.get("sha256") != sha256(base_approval_payload)
+        or base_approval_reference.get("introductionCommit") != base_intro
+        or base.get("holdId") != (base_packet.get("controlHold") or {}).get("id")
+        or base.get("bootstrapUnit") != (base_packet.get("bootstrapUnit") or {}).get("id")
+    ):
+        raise SystemExit("Recovery supplement base authority differs from the approved recovery request")
+    latest = base.get("latestApprovedReview") or {}
+    latest_payload = exact_file_reference(
+        repo,
+        {"path": latest.get("path"), "sha256": latest.get("sha256")},
+        commit=packet_commit,
+        label="Recovery supplement base latest review",
+    )
+    latest_ledger = json.loads(latest_payload)
+    if (
+        latest_ledger.get("attemptId") != latest.get("attemptId")
+        or latest_ledger.get("candidateCommit") != latest.get("candidateCommit")
+        or latest_ledger.get("reviewedStateCommit") != latest.get("reviewedStateCommit")
+        or latest_ledger.get("result") != "approved"
+    ):
+        raise SystemExit("Recovery supplement base latest review binding is stale or adverse")
+    require_commit(repo, str(latest.get("candidateCommit") or ""), label="Recovery base bootstrap candidate")
+    require_commit(repo, str(latest.get("reviewedStateCommit") or ""), label="Recovery base reviewed state")
+    return approval, packet, approval_payload, packet_payload
+
+
 def backlog_state(
     repo: Path,
 ) -> tuple[bytes, dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]]:
@@ -299,6 +491,178 @@ def recovery_hold(data: dict[str, Any], request_id: str) -> dict[str, Any]:
     if len(matches) != 1:
         raise SystemExit(f"Expected exactly one backlog recovery hold for {request_id}, found {len(matches)}")
     return matches[0]
+
+
+def recovery_supplement(hold: dict[str, Any], supplement_id: str) -> dict[str, Any]:
+    matches = [item for item in hold.get("supplements", []) if item.get("id") == supplement_id]
+    if len(matches) != 1:
+        raise SystemExit(f"Expected exactly one backlog recovery supplement for {supplement_id}, found {len(matches)}")
+    return matches[0]
+
+
+def validate_supplement_boundary(
+    repo: Path,
+    packet: dict[str, Any],
+    data: dict[str, Any],
+    *,
+    require_installed: bool,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    request_id = str(packet.get("recoveryRequestId") or "")
+    supplement_id = str(packet.get("supplementId") or "")
+    hold = recovery_hold(data, request_id)
+    wave_id = str(packet.get("targetWave") or "")
+    wave = taskctl.wave_map(data).get(wave_id) or {}
+    amendment_reference = (packet.get("targetAmendmentAuthority") or {}).get("amendmentApproval") or {}
+    amendment_id = str(amendment_reference.get("id") or "")
+    amendment = taskctl.wave_amendment_map(data).get(amendment_id) or {}
+    bootstrap = amendment.get("bootstrap") or {}
+    activation = packet.get("activationBoundary") or {}
+    blocked_task = taskctl.index_backlog(data)[3].get(str(activation.get("blockedTaskId") or "")) or {}
+    if (
+        hold.get("id") != (packet.get("baseRecoveryAuthority") or {}).get("holdId")
+        or hold.get("status") != activation.get("holdStatus")
+        or (hold.get("bootstrap") or {}).get("status") != "APPROVED"
+        or wave.get("id") != wave_id
+        or (wave.get("campaign") or {}).get("status") != activation.get("waveStatus")
+        or (wave.get("campaign") or {}).get("scope") != activation.get("waveScope")
+        or amendment.get("id") != activation.get("amendmentId")
+        or (amendment.get("lifecycle") or {}).get("status") != activation.get("amendmentLifecycle")
+        or bootstrap.get("status") != activation.get("bootstrapStatus")
+        or len(amendment.get("tasks") or []) != activation.get("materializedTaskCount")
+        or blocked_task.get("status") != activation.get("blockedTaskStatus")
+    ):
+        raise SystemExit("Recovery supplement activation boundary differs from the stopped approved state")
+    amendment_approval_path = str(amendment_reference.get("path") or "")
+    amendment_approval = amendment.get("approval_reference") or {}
+    if (
+        amendment_approval_path != amendment_approval.get("path")
+        or amendment_reference.get("sha256") != amendment_approval.get("sha256")
+        or amendment_reference.get("introductionCommit") != amendment_approval.get("introduction_commit")
+    ):
+        raise SystemExit("Recovery supplement target amendment approval differs from the backlog")
+    amendment_approval_file = safe_repo_path(repo, amendment_approval_path, label="Target amendment approval")
+    amendment_approval_payload = amendment_approval_file.read_bytes()
+    if sha256(amendment_approval_payload) != amendment_reference.get("sha256"):
+        raise SystemExit("Recovery supplement target amendment approval hash mismatch")
+    introduction = str(amendment_reference.get("introductionCommit") or "")
+    require_commit(repo, introduction, label="Target amendment approval introduction")
+    if taskctl.git_blob(repo, introduction, amendment_approval_path) != amendment_approval_payload:
+        raise SystemExit("Recovery supplement target amendment approval differs from its introduction blob")
+    target_bootstrap = (packet.get("targetAmendmentAuthority") or {}).get("bootstrap") or {}
+    actual_evidence = (bootstrap.get("evidence") or [{}])[0]
+    if (
+        target_bootstrap.get("id") != bootstrap.get("id")
+        or target_bootstrap.get("candidateCommit") != bootstrap.get("implementation_commit")
+        or target_bootstrap.get("evidence", {}).get("path") != actual_evidence.get("path")
+        or target_bootstrap.get("evidence", {}).get("sha256") != actual_evidence.get("sha256")
+        or target_bootstrap.get("evidence", {}).get("commit") != actual_evidence.get("commit")
+    ):
+        raise SystemExit("Recovery supplement target amendment bootstrap authority differs from the backlog")
+    for field in ("candidateCommit", "reviewedStateCommit", "approvedProjectionCommit"):
+        require_commit(repo, str(target_bootstrap.get(field) or ""), label=f"Target amendment bootstrap {field}")
+    ecr = (packet.get("targetAmendmentAuthority") or {}).get("changeRequestPacket") or {}
+    ecr_relative = str(ecr.get("path") or "")
+    ecr_path = safe_repo_path(
+        repo,
+        ecr_relative,
+        label="Target ECR packet",
+        designated_prefix="planning/enabler-change-requests",
+    )
+    ecr_payload = ecr_path.read_bytes()
+    ecr_commit = str(ecr.get("commit") or "")
+    require_commit(repo, ecr_commit, label="Target ECR packet commit")
+    if sha256(ecr_payload) != ecr.get("sha256") or taskctl.git_blob(repo, ecr_commit, ecr_relative) != ecr_payload:
+        raise SystemExit("Recovery supplement target ECR packet hash/blob mismatch")
+    installed = [item for item in hold.get("supplements", []) if item.get("id") == supplement_id]
+    if require_installed and len(installed) != 1:
+        raise SystemExit(f"Recovery supplement {supplement_id} is not installed in the active hold")
+    if not require_installed and installed:
+        raise SystemExit(f"Recovery supplement {supplement_id} is already installed")
+    if not require_installed:
+        trigger = packet.get("triggerEvidence") or {}
+        backlog_payload = (repo / "planning" / "backlog.yaml").read_bytes()
+        if sha256(backlog_payload) != trigger.get("backlogSha256"):
+            raise SystemExit("Recovery supplement trigger backlog is stale; no transition was written")
+    return hold, amendment
+
+
+def validate_target_materialization_projection(
+    repo: Path,
+    packet: dict[str, Any],
+    data: dict[str, Any],
+) -> dict[str, Any]:
+    """Prove the exact amendment materialization delta without writing canonical state."""
+    target = packet.get("targetAmendmentAuthority") or {}
+    amendment_id = str((target.get("amendmentApproval") or {}).get("id") or "")
+    projected = copy.deepcopy(taskctl.serializable_backlog(data))
+    amendment = taskctl.wave_amendment_map(projected).get(amendment_id) or {}
+    approval, amendment_packet, _payload = taskctl.load_amendment_authority(repo, amendment_id)
+    taskctl.require_amendment_packet_integrity(repo, amendment, approval, amendment_packet)
+    if (amendment.get("lifecycle") or {}).get("status") != "APPROVED" or amendment.get("tasks"):
+        raise SystemExit("Target materialization projection requires the exact unmaterialized approved amendment")
+    authorized = [str(item) for item in approval.get("authorizedTaskIds", [])]
+    packet_tasks = amendment_packet.get("taskInventory") or []
+    if [str(item.get("id")) for item in packet_tasks] != authorized:
+        raise SystemExit("Target materialization projection task inventory differs from its approval")
+    amendment["tasks"] = [taskctl.materialized_amendment_task(amendment_id, item) for item in packet_tasks]
+    taskctl.append_amendment_event(
+        amendment,
+        "MATERIALIZED",
+        "recoveryctl:read-only-projection",
+        "Read-only exact approved task-inventory projection.",
+    )
+    wave_id = str(amendment.get("target_wave") or "")
+    wave = taskctl.wave_map(projected).get(wave_id) or {}
+    campaign = wave.get("campaign") or {}
+    campaign["scope"] = "amendment-hold"
+    indexed = taskctl.index_backlog(projected)
+    errors = taskctl.validate(*indexed, repo=repo)
+    if errors:
+        raise SystemExit("Target materialization projection is invalid:\n- " + "\n- ".join(errors))
+    activation = packet.get("activationBoundary") or {}
+    projected_tasks = indexed[3]
+    blocked = projected_tasks.get(str(activation.get("blockedTaskId") or "")) or {}
+    hold = recovery_hold(projected, str(packet.get("recoveryRequestId") or ""))
+    if (
+        not authorized
+        or campaign.get("status") != "PAUSED"
+        or campaign.get("scope") != "amendment-hold"
+        or blocked.get("status") != "BLOCKED"
+        or hold.get("status") != "ACTIVE"
+        or (amendment.get("lifecycle") or {}).get("status") != "MATERIALIZED"
+        or (amendment.get("campaign") is not None)
+    ):
+        raise SystemExit("Target materialization projection changed state outside the approved stopped boundary")
+    return {
+        "amendment": amendment_id,
+        "materializedTaskIds": authorized,
+        "waveStatus": campaign.get("status"),
+        "waveScope": campaign.get("scope"),
+        "blockedTaskId": activation.get("blockedTaskId"),
+        "blockedTaskStatus": blocked.get("status"),
+        "holdId": hold.get("id"),
+        "holdStatus": hold.get("status"),
+        "activationOrClaimPerformed": False,
+    }
+
+
+def validate_supplement(
+    repo: Path,
+    supplement_id: str,
+    *,
+    require_approved: bool = True,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]]:
+    approval, packet, _approval_payload, _packet_payload = load_supplement_authority(repo, supplement_id)
+    _payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(repo)
+    hold, _amendment = validate_supplement_boundary(repo, packet, data, require_installed=True)
+    errors = taskctl.recovery_hold_errors(data, repo)
+    if errors:
+        raise SystemExit("Invalid supplemental governance recovery hold:\n- " + "\n- ".join(errors))
+    supplement = recovery_supplement(hold, supplement_id)
+    validate_supplement_bootstrap_history(repo, packet, approval, hold, supplement)
+    if require_approved and approval.get("status") != "APPROVED":
+        raise SystemExit(f"{supplement_id} is not approved")
+    return approval, packet, hold, supplement
 
 
 def validate_authority_chain(repo: Path, packet: dict[str, Any], data: dict[str, Any]) -> None:
@@ -474,6 +838,216 @@ def evidence_document(
     return document, payload, relative
 
 
+def supplement_evidence_relative(repo: Path, value: str, bootstrap_id: str) -> tuple[str, Path]:
+    pattern = (
+        rf"planning/governance-recovery-approvals/{re.escape(bootstrap_id)}"
+        rf"(?:\.remediation-[0-9]{{2}})?\.evidence\.json"
+    )
+    if re.fullmatch(pattern, value) is None:
+        raise SystemExit(f"Supplemental recovery evidence must use the canonical {bootstrap_id} path")
+    return taskctl.canonical_control_artifact_path(
+        repo,
+        value,
+        prefix="planning/governance-recovery-approvals",
+        label="Supplemental recovery evidence",
+    )
+
+
+def supplement_evidence_document(
+    repo: Path,
+    supplement_id: str,
+    packet: dict[str, Any],
+    approval: dict[str, Any],
+    evidence_value: str,
+    candidate: str,
+    *,
+    lineage_base: str | None = None,
+    expected_branch: str | None = None,
+    require_current_branch: bool = True,
+) -> tuple[dict[str, Any], bytes, str]:
+    request_id = str(packet.get("recoveryRequestId") or "")
+    bootstrap = packet.get("supplementalBootstrap") or {}
+    bootstrap_id = str(bootstrap.get("id") or "")
+    relative, path = supplement_evidence_relative(repo, evidence_value, bootstrap_id)
+    document, payload = load_json(path, "supplemental recovery bootstrap evidence")
+    schema_path = (
+        repo / "planning" / "governance-recovery-requests" / "governance-recovery-supplement-evidence.schema.json"
+    )
+    errors = schema_errors(document, schema_path)
+    if errors:
+        raise SystemExit("Supplemental recovery evidence schema validation failed:\n- " + "\n- ".join(errors))
+    approval_intro = taskctl.approval_introduction_commit(
+        repo, f"planning/governance-recovery-approvals/{supplement_id}.json"
+    )
+    expected_base = str(approval_intro) if lineage_base is None else str(lineage_base)
+    if (
+        document.get("recoveryRequestId") != request_id
+        or document.get("supplementId") != supplement_id
+        or document.get("bootstrapUnit") != bootstrap_id
+    ):
+        raise SystemExit("Supplemental recovery evidence request/supplement/bootstrap identity mismatch")
+    if document.get("baseCommit") != expected_base or document.get("candidateCommit") != candidate:
+        raise SystemExit("Supplemental recovery evidence base/candidate binding mismatch")
+    declared_branch = str(document.get("branch") or "")
+    if not declared_branch.startswith("codex/"):
+        raise SystemExit("Supplemental recovery evidence must name a codex branch")
+    if expected_branch is not None and declared_branch != expected_branch:
+        raise SystemExit("Supplemental recovery evidence branch differs from the frozen submission branch")
+    if require_current_branch and declared_branch != git_output(repo, "branch", "--show-current"):
+        raise SystemExit("Supplemental recovery evidence must name the current codex branch")
+    require_commit(repo, expected_base, ancestor_of=candidate, label="Supplemental recovery evidence base")
+    require_commit(repo, candidate, label="Supplemental recovery evidence candidate")
+    actual_paths = sorted(
+        line
+        for line in git_output(repo, "diff", "--name-only", f"{expected_base}..{candidate}", "--").splitlines()
+        if line
+    )
+    declared_paths = sorted(str(item) for item in document.get("changedPaths", []))
+    if declared_paths != actual_paths:
+        raise SystemExit("Supplemental recovery evidence changedPaths differs from the exact Git diff")
+    patterns = [str(item) for item in bootstrap.get("authorizedPaths", [])]
+    for changed in actual_paths:
+        safe_repo_path(repo, changed, label="Changed supplemental recovery path", require_exists=False)
+        if not path_authorized(changed, patterns):
+            raise SystemExit(f"Supplemental recovery candidate changed an unauthorized path: {changed}")
+    if [item.get("criterion") for item in document.get("requiredOutcomes", [])] != bootstrap.get("requiredOutcomes"):
+        raise SystemExit("Supplemental recovery evidence does not map every required outcome exactly and in order")
+    if [item.get("criterion") for item in document.get("acceptanceCriteria", [])] != packet.get("acceptanceCriteria"):
+        raise SystemExit("Supplemental recovery evidence does not map every acceptance criterion exactly and in order")
+    if document.get("unverifiedItems") != []:
+        raise SystemExit("Supplemental recovery evidence may not retain unverified items")
+    commands = [str(item.get("command")) for item in document.get("checks", [])]
+    if len(commands) != len(set(commands)) or any(
+        item.get("result") != "passed" for item in document.get("checks", [])
+    ):
+        raise SystemExit("Supplemental recovery evidence checks must be unique and passing")
+    return document, payload, relative
+
+
+def validate_supplement_bootstrap_history(
+    repo: Path,
+    packet: dict[str, Any],
+    approval: dict[str, Any],
+    hold: dict[str, Any],
+    supplement: dict[str, Any],
+) -> None:
+    ledger_errors = taskctl.recovery_review_history_errors(
+        repo,
+        hold,
+        packet,
+        supplement=supplement,
+    )
+    if ledger_errors:
+        raise SystemExit("Invalid supplemental recovery review history:\n- " + "\n- ".join(ledger_errors))
+    bootstrap = supplement.get("bootstrap") or {}
+    bootstrap_id = str(bootstrap.get("id") or "")
+    attempts = bootstrap.get("attempts") or []
+    prior_candidate: str | None = None
+    prior_open: set[str] = set()
+    blocking_ids: set[str] = set()
+    for attempt in attempts:
+        attempt_id = str(attempt.get("id") or "")
+        candidate = str(attempt.get("implementation_commit") or "")
+        evidence = attempt.get("evidence") or {}
+        if evidence.get("commit") != candidate:
+            raise SystemExit(f"{bootstrap_id}/{attempt_id} evidence commit differs from its frozen candidate")
+        _document, evidence_payload, evidence_path = supplement_evidence_document(
+            repo,
+            str(packet.get("supplementId") or ""),
+            packet,
+            approval,
+            str(evidence.get("path") or ""),
+            candidate,
+            lineage_base=prior_candidate,
+            expected_branch=str(attempt.get("submission_branch") or ""),
+            require_current_branch=False,
+        )
+        if evidence.get("path") != evidence_path or evidence.get("sha256") != sha256(evidence_payload):
+            raise SystemExit(f"{bootstrap_id}/{attempt_id} frozen evidence reference differs from its file")
+        expected_ledger = f"planning/governance-recovery-approvals/{bootstrap_id}.review-{attempt_id}.json"
+        ledger_reference = attempt.get("ledger") or {}
+        if ledger_reference.get("path") != expected_ledger:
+            raise SystemExit(f"{bootstrap_id}/{attempt_id} review ledger path is not canonical")
+        ledger_path = safe_repo_path(
+            repo,
+            expected_ledger,
+            label=f"{bootstrap_id}/{attempt_id} review ledger",
+            designated_prefix="planning/governance-recovery-approvals",
+        )
+        ledger, ledger_payload = load_json(ledger_path, "supplemental recovery review ledger")
+        review_schema = (
+            repo / "planning" / "governance-recovery-requests" / "governance-recovery-supplement-review.schema.json"
+        )
+        schema_failures = schema_errors(ledger, review_schema)
+        if schema_failures:
+            raise SystemExit(
+                "Supplemental recovery review schema validation failed:\n- " + "\n- ".join(schema_failures)
+            )
+        if ledger_reference.get("sha256") != sha256(ledger_payload):
+            raise SystemExit(f"{bootstrap_id}/{attempt_id} review ledger hash mismatch")
+        projected_review = attempt.get("review") or {}
+        expected = {
+            "recoveryRequestId": packet.get("recoveryRequestId"),
+            "supplementId": packet.get("supplementId"),
+            "bootstrapUnit": bootstrap_id,
+            "attemptId": attempt_id,
+            "candidateCommit": candidate,
+            "reviewer": projected_review.get("reviewer"),
+            "result": projected_review.get("result"),
+            "evidence": {"path": evidence_path, "sha256": sha256(evidence_payload)},
+        }
+        if any(ledger.get(field) != value for field, value in expected.items()):
+            raise SystemExit(f"{bootstrap_id}/{attempt_id} review ledger differs from the frozen attempt")
+        require_commit(repo, str(ledger.get("reviewedStateCommit") or ""), label=f"{bootstrap_id} reviewed state")
+        if projected_review.get("reviewer") == attempt.get("implementer"):
+            raise SystemExit(f"{bootstrap_id}/{attempt_id} review is not independent")
+        findings = ledger.get("findings") or []
+        closures = ledger.get("closures") or []
+        closure_ids = {str(item.get("findingId") or "") for item in closures if isinstance(item, dict)}
+        finding_ids = {str(item.get("id") or "") for item in findings if isinstance(item, dict)}
+        if len(closure_ids) != len(closures) or not closure_ids.issubset(prior_open):
+            raise SystemExit(f"{bootstrap_id}/{attempt_id} review closures are not append-only")
+        if len(finding_ids) != len(findings) or "" in finding_ids:
+            raise SystemExit(f"{bootstrap_id}/{attempt_id} review findings are invalid or duplicated")
+        prior_open = (prior_open - closure_ids) | finding_ids
+        blocking_ids.update(str(item.get("id")) for item in findings if item.get("blocking") is True)
+        if ledger.get("result") == "approved" and prior_open & blocking_ids:
+            raise SystemExit(f"{bootstrap_id}/{attempt_id} approval retains an open blocking finding")
+        prior_candidate = candidate
+    status = str(bootstrap.get("status") or "")
+    if attempts and status != "REVIEW":
+        last = attempts[-1]
+        if status != REVIEW_RESULTS.get(str((last.get("review") or {}).get("result") or "")):
+            raise SystemExit(f"{bootstrap_id} status differs from the last immutable review")
+        for field in ("implementation_commit", "submission_branch", "evidence", "review"):
+            if bootstrap.get(field) != last.get(field):
+                raise SystemExit(f"{bootstrap_id} {field} projection differs from its last immutable attempt")
+    current = bootstrap.get("current_submission")
+    if status == "REVIEW" and current:
+        candidate = str(current.get("candidate_commit") or "")
+        evidence = bootstrap.get("evidence") or {}
+        lineage = str(attempts[-1].get("implementation_commit")) if attempts else None
+        _document, evidence_payload, evidence_path = supplement_evidence_document(
+            repo,
+            str(packet.get("supplementId") or ""),
+            packet,
+            approval,
+            str(evidence.get("path") or ""),
+            candidate,
+            lineage_base=lineage,
+            expected_branch=str(bootstrap.get("submission_branch") or ""),
+            require_current_branch=True,
+        )
+        if (
+            evidence.get("path") != evidence_path
+            or evidence.get("sha256") != sha256(evidence_payload)
+            or evidence.get("commit") != candidate
+            or current.get("evidence_sha256") != sha256(evidence_payload)
+            or current.get("acceptance_criteria_sha256") != canonical_json_sha256(packet.get("acceptanceCriteria", []))
+        ):
+            raise SystemExit(f"{bootstrap_id} current submission differs from its frozen evidence")
+
+
 def validate_bootstrap_history(
     repo: Path,
     packet: dict[str, Any],
@@ -623,6 +1197,297 @@ def command_status(args: argparse.Namespace) -> None:
             sort_keys=False,
         ).rstrip()
     )
+
+
+def command_supplement_start(args: argparse.Namespace) -> None:
+    approval, packet, _approval_payload, packet_payload = load_supplement_authority(args.repo, args.supplement)
+    require_clean(args.repo)
+    backlog_payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
+    validate_supplement_boundary(args.repo, packet, data, require_installed=False)
+    control = data.get("control_plane") or {}
+    if control.get("revision") != 4 or control.get("minimum_tool_revision") != 4:
+        raise SystemExit("Supplement installation requires the exact predecessor control revision 4")
+    request_id = str(packet.get("recoveryRequestId") or "")
+    hold = recovery_hold(data, request_id)
+    existing = hold.get("supplements", [])
+    expected_id = f"{request_id}.S{len(existing) + 1:02d}"
+    if args.supplement != expected_id:
+        raise SystemExit(f"Recovery supplement must be the next consecutive identity {expected_id}")
+    bootstrap_id = str((packet.get("supplementalBootstrap") or {}).get("id") or "")
+    expected_bootstrap = f"{request_id}.B{len(existing) + 1:02d}"
+    if bootstrap_id != expected_bootstrap:
+        raise SystemExit(f"Supplemental bootstrap must be the next consecutive identity {expected_bootstrap}")
+    implementer = taskctl.normalized_identity(args.agent, "Supplemental recovery implementer")
+    packet_reference = approval.get("packet") or {}
+    approval_relative = f"planning/governance-recovery-approvals/{args.supplement}.json"
+    approval_introduction = taskctl.approval_introduction_commit(args.repo, approval_relative)
+    if not approval_introduction:
+        raise SystemExit("Supplemental recovery approval introduction is unavailable")
+    hold.setdefault("supplements", []).append(
+        {
+            "id": args.supplement,
+            "predecessor_control_revision": 4,
+            "packet_reference": {
+                "path": packet_reference.get("path"),
+                "sha256": sha256(packet_payload),
+                "commit": packet_reference.get("commit"),
+            },
+            "approval_reference": {
+                "path": approval_relative,
+                "sha256": sha256((args.repo / approval_relative).read_bytes()),
+                "introduction_commit": approval_introduction,
+            },
+            "bootstrap": {
+                "id": bootstrap_id,
+                "status": "IN_PROGRESS",
+                "implementer": implementer,
+                "implementation_commit": None,
+                "submission_branch": None,
+                "evidence": None,
+                "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+                "current_submission": None,
+                "attempts": [],
+            },
+            "created_at": taskctl.utc_now(),
+        }
+    )
+    for other_hold in control.get("recovery_holds", []):
+        other_hold.setdefault("supplements", [])
+    control["revision"] = taskctl.CONTROL_TOOL_REVISION
+    control["minimum_tool_revision"] = taskctl.CONTROL_TOOL_REVISION
+    save_backlog(args.repo, backlog_payload, data)
+    print(f"Installed {args.supplement}/{bootstrap_id}; W1 and ordinary execution remain paused")
+
+
+def command_supplement_validate(args: argparse.Namespace) -> None:
+    _approval, packet, hold, supplement = validate_supplement(
+        args.repo,
+        args.supplement,
+        require_approved=args.require_approved,
+    )
+    target_amendment = ((packet.get("targetAmendmentAuthority") or {}).get("amendmentApproval") or {}).get("id")
+    projection = None
+    if ((supplement.get("bootstrap") or {}).get("status")) == "APPROVED":
+        _payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
+        projection = validate_target_materialization_projection(args.repo, packet, data)
+    print(
+        f"Valid {args.supplement}: bootstrap={(supplement.get('bootstrap') or {}).get('status')}; "
+        f"hold={hold.get('status')}; target={target_amendment}"
+    )
+    if projection is not None:
+        print("Read-only materialization projection: " + json.dumps(projection, sort_keys=True))
+
+
+def command_supplement_status(args: argparse.Namespace) -> None:
+    _approval, packet, hold, supplement = validate_supplement(args.repo, args.supplement)
+    bootstrap = supplement.get("bootstrap") or {}
+    print(
+        yaml.safe_dump(
+            {
+                "recoveryRequest": packet.get("recoveryRequestId"),
+                "supplement": args.supplement,
+                "hold": hold.get("id"),
+                "holdStatus": hold.get("status"),
+                "bootstrap": {"id": bootstrap.get("id"), "status": bootstrap.get("status")},
+                "executionAuthority": "supplemental-bootstrap-only; amendment materialization remains denied",
+            },
+            sort_keys=False,
+        ).rstrip()
+    )
+
+
+def freeze_supplement_submission(args: argparse.Namespace, *, remediation: bool) -> None:
+    approval, packet, _hold, supplement = validate_supplement(args.repo, args.supplement)
+    bootstrap = supplement.get("bootstrap") or {}
+    expected_status = {"CHANGES_REQUESTED", "BLOCKED"} if remediation else {"IN_PROGRESS"}
+    if bootstrap.get("status") not in expected_status:
+        raise SystemExit(f"Supplemental bootstrap {bootstrap.get('id')} is not eligible for submission")
+    candidate = str(args.implementation_commit)
+    if candidate != git_output(args.repo, "rev-parse", "HEAD"):
+        raise SystemExit("Supplemental recovery implementation commit must equal current HEAD")
+    agent = taskctl.normalized_identity(args.agent, "Supplemental recovery implementer")
+    if agent != bootstrap.get("implementer"):
+        raise SystemExit("Supplemental recovery implementer must retain the installed identity")
+    prior_candidate = str(bootstrap.get("implementation_commit") or "") if remediation else None
+    if remediation:
+        require_commit(args.repo, str(prior_candidate), ancestor_of=candidate, label="Prior supplemental candidate")
+        if prior_candidate == candidate:
+            raise SystemExit("Supplemental recovery remediation must be a strict descendant")
+    bootstrap_id = str(bootstrap.get("id") or "")
+    expected_evidence = (
+        f"planning/governance-recovery-approvals/{bootstrap_id}.remediation-"
+        f"{len(bootstrap.get('attempts') or []):02d}.evidence.json"
+        if remediation
+        else f"planning/governance-recovery-approvals/{bootstrap_id}.evidence.json"
+    )
+    if str(args.evidence) != expected_evidence:
+        raise SystemExit(f"Supplemental recovery evidence path must be {expected_evidence}")
+    require_clean(args.repo, allowed_untracked={expected_evidence})
+    document, evidence_payload, relative = supplement_evidence_document(
+        args.repo,
+        args.supplement,
+        packet,
+        approval,
+        args.evidence,
+        candidate,
+        lineage_base=prior_candidate,
+    )
+    backlog_payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
+    mutable = recovery_supplement(recovery_hold(data, str(packet.get("recoveryRequestId"))), args.supplement)[
+        "bootstrap"
+    ]
+    attempt_id = f"R{len(mutable.get('attempts') or []) + 1:02d}"
+    reference = {
+        "type": "governance-recovery-supplement-evidence",
+        "path": relative,
+        "sha256": sha256(evidence_payload),
+        "commit": candidate,
+        "recorded_at": taskctl.utc_now(),
+    }
+    mutable.update(
+        status="REVIEW",
+        implementation_commit=candidate,
+        submission_branch=document.get("branch"),
+        evidence=reference,
+        review={"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+        current_submission={
+            "attempt_id": attempt_id,
+            "candidate_commit": candidate,
+            "evidence_sha256": sha256(evidence_payload),
+            "acceptance_criteria_sha256": canonical_json_sha256(packet.get("acceptanceCriteria", [])),
+        },
+    )
+    save_backlog(args.repo, backlog_payload, data)
+    print(f"Submitted {bootstrap_id} {attempt_id} for independent control/security review")
+
+
+def supplement_review_ledger(
+    args: argparse.Namespace,
+    packet: dict[str, Any],
+    bootstrap: dict[str, Any],
+) -> tuple[dict[str, Any], bytes, str]:
+    current = bootstrap.get("current_submission") or {}
+    attempt_id = str(current.get("attempt_id") or "")
+    expected_relative = f"planning/governance-recovery-approvals/{bootstrap.get('id')}.review-{attempt_id}.json"
+    if str(args.from_path) != expected_relative:
+        raise SystemExit(f"Supplemental recovery review ledger path must be {expected_relative}")
+    _relative, path = taskctl.canonical_control_artifact_path(
+        args.repo,
+        expected_relative,
+        prefix="planning/governance-recovery-approvals",
+        label="Supplemental recovery review ledger",
+    )
+    ledger, payload = load_json(path, "supplemental recovery review ledger")
+    review_schema = (
+        args.repo / "planning" / "governance-recovery-requests" / "governance-recovery-supplement-review.schema.json"
+    )
+    failures = schema_errors(ledger, review_schema)
+    if failures:
+        raise SystemExit("Supplemental recovery review schema validation failed:\n- " + "\n- ".join(failures))
+    required = {
+        "recoveryRequestId": packet.get("recoveryRequestId"),
+        "supplementId": packet.get("supplementId"),
+        "bootstrapUnit": bootstrap.get("id"),
+        "attemptId": attempt_id,
+        "candidateCommit": current.get("candidate_commit"),
+        "reviewedStateCommit": git_output(args.repo, "rev-parse", "HEAD"),
+    }
+    if any(ledger.get(field) != value for field, value in required.items()):
+        raise SystemExit("Supplemental recovery review ledger differs from the frozen submission")
+    reviewer = taskctl.normalized_identity(str(ledger.get("reviewer") or ""), "Supplemental recovery reviewer")
+    if reviewer != taskctl.normalized_identity(args.reviewer, "Supplemental recovery reviewer"):
+        raise SystemExit("Supplemental recovery review actor differs from the ledger")
+    if reviewer == bootstrap.get("implementer"):
+        raise SystemExit("Supplemental recovery review must be independent")
+    result = str(ledger.get("result") or "")
+    if result not in REVIEW_RESULTS:
+        raise SystemExit("Supplemental recovery review result is invalid")
+    reference = bootstrap.get("evidence") or {}
+    if ledger.get("evidence") != {"path": reference.get("path"), "sha256": reference.get("sha256")}:
+        raise SystemExit("Supplemental recovery review evidence differs from the frozen submission")
+    findings = ledger.get("findings") or []
+    closures = ledger.get("closures") or []
+    ordering = [SEVERITY_ORDER.get(str(item.get("severity")), 99) for item in findings if isinstance(item, dict)]
+    if len(ordering) != len(findings) or ordering != sorted(ordering):
+        raise SystemExit("Supplemental recovery findings must be valid and severity-ranked")
+    finding_ids: set[str] = set()
+    for finding in findings:
+        finding_id = str(finding.get("id") or "")
+        criterion_index = finding.get("criterionIndex")
+        if (
+            not finding_id
+            or finding_id in finding_ids
+            or type(finding.get("blocking")) is not bool
+            or type(criterion_index) is not int
+            or not 1 <= criterion_index <= len(packet.get("acceptanceCriteria", []))
+            or not str(finding.get("title") or "").strip()
+            or not str(finding.get("reproduction") or "").strip()
+            or not str(finding.get("requiredRemediation") or "").strip()
+        ):
+            raise SystemExit("Supplemental recovery review contains an invalid finding")
+        finding_ids.add(finding_id)
+    prior_open: set[str] = set()
+    prior_blocking: set[str] = set()
+    for attempt in bootstrap.get("attempts", []):
+        prior_ledger, _payload = load_json(args.repo / (attempt.get("ledger") or {}).get("path", ""), "prior review")
+        prior_open.difference_update(str(item.get("findingId")) for item in prior_ledger.get("closures", []))
+        prior_open.update(str(item.get("id")) for item in prior_ledger.get("findings", []))
+        prior_blocking.update(
+            str(item.get("id")) for item in prior_ledger.get("findings", []) if item.get("blocking") is True
+        )
+    closure_ids = [str(item.get("findingId") or "") for item in closures if isinstance(item, dict)]
+    if (
+        len(closure_ids) != len(closures)
+        or len(closure_ids) != len(set(closure_ids))
+        or not set(closure_ids).issubset(prior_open)
+    ):
+        raise SystemExit("Supplemental recovery review closures are not append-only")
+    open_after = (prior_open - set(closure_ids)) | finding_ids
+    blocking = prior_blocking | {str(item.get("id")) for item in findings if item.get("blocking") is True}
+    if result == "approved" and (findings or open_after & blocking):
+        raise SystemExit("Supplemental recovery approval cannot introduce or retain blocking findings")
+    return ledger, payload, expected_relative
+
+
+def command_supplement_review(args: argparse.Namespace) -> None:
+    _approval, packet, _hold, supplement = validate_supplement(args.repo, args.supplement)
+    bootstrap = supplement.get("bootstrap") or {}
+    if bootstrap.get("status") != "REVIEW" or not bootstrap.get("current_submission"):
+        raise SystemExit("Supplemental recovery bootstrap is not awaiting review")
+    expected_relative = (
+        f"planning/governance-recovery-approvals/{bootstrap.get('id')}.review-"
+        f"{bootstrap['current_submission']['attempt_id']}.json"
+    )
+    require_clean(args.repo, allowed_untracked={expected_relative})
+    ledger, ledger_payload, relative = supplement_review_ledger(args, packet, bootstrap)
+    backlog_payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
+    mutable = recovery_supplement(
+        recovery_hold(data, str(packet.get("recoveryRequestId"))),
+        args.supplement,
+    )["bootstrap"]
+    result = str(ledger.get("result"))
+    review = {
+        "reviewer": str(ledger.get("reviewer")),
+        "result": result,
+        "reviewed_at": taskctl.utc_now(),
+        "notes": str(ledger.get("notes") or ""),
+    }
+    mutable.setdefault("attempts", []).append(
+        {
+            "id": mutable["current_submission"]["attempt_id"],
+            "implementer": mutable["implementer"],
+            "implementation_commit": mutable["implementation_commit"],
+            "submission_branch": mutable["submission_branch"],
+            "evidence": copy.deepcopy(mutable["evidence"]),
+            "review": review,
+            "ledger": {"path": relative, "sha256": sha256(ledger_payload)},
+        }
+    )
+    mutable["status"] = REVIEW_RESULTS[result]
+    mutable["review"] = review
+    mutable["current_submission"] = None
+    save_backlog(args.repo, backlog_payload, data)
+    print(f"Supplemental recovery review {mutable['attempts'][-1]['id']}: {mutable['status']}")
 
 
 def freeze_submission(args: argparse.Namespace, *, remediation: bool) -> None:
@@ -877,6 +1742,28 @@ def build_parser() -> argparse.ArgumentParser:
     review.add_argument("request")
     review.add_argument("--reviewer", required=True)
     review.add_argument("--from", dest="from_path", required=True)
+    supplement_start = sub.add_parser("supplement-start")
+    supplement_start.add_argument("supplement")
+    supplement_start.add_argument("--agent", required=True)
+    supplement_validate = sub.add_parser("supplement-validate")
+    supplement_validate.add_argument("supplement")
+    supplement_validate.add_argument("--require-approved", action="store_true")
+    supplement_status = sub.add_parser("supplement-status")
+    supplement_status.add_argument("supplement")
+    supplement_submit = sub.add_parser("supplement-submit")
+    supplement_submit.add_argument("supplement")
+    supplement_submit.add_argument("--agent", required=True)
+    supplement_submit.add_argument("--implementation-commit", required=True)
+    supplement_submit.add_argument("--evidence", required=True)
+    supplement_resubmit = sub.add_parser("supplement-resubmit")
+    supplement_resubmit.add_argument("supplement")
+    supplement_resubmit.add_argument("--agent", required=True)
+    supplement_resubmit.add_argument("--implementation-commit", required=True)
+    supplement_resubmit.add_argument("--evidence", required=True)
+    supplement_review = sub.add_parser("supplement-review")
+    supplement_review.add_argument("supplement")
+    supplement_review.add_argument("--reviewer", required=True)
+    supplement_review.add_argument("--from", dest="from_path", required=True)
     release = sub.add_parser("release")
     release.add_argument("request")
     release.add_argument("--agent", required=True)
@@ -901,6 +1788,18 @@ def main() -> None:
         if taskctl.normalized_identity(args.reviewer, "Recovery bootstrap reviewer") == "":
             raise SystemExit("Recovery bootstrap reviewer is required")
         command_bootstrap_review(args)
+    elif args.command == "supplement-start":
+        command_supplement_start(args)
+    elif args.command == "supplement-validate":
+        command_supplement_validate(args)
+    elif args.command == "supplement-status":
+        command_supplement_status(args)
+    elif args.command == "supplement-submit":
+        freeze_supplement_submission(args, remediation=False)
+    elif args.command == "supplement-resubmit":
+        freeze_supplement_submission(args, remediation=True)
+    elif args.command == "supplement-review":
+        command_supplement_review(args)
     elif args.command == "release":
         taskctl.normalized_identity(args.agent, "Recovery release actor")
         command_release(args)

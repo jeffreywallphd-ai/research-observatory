@@ -101,6 +101,15 @@ with a bound control/security checkpoint; the Wave remains PAUSED until an
 explicit ordinary resume. GRR packets, adverse reviews, evidence, and
 dispositions are append-only and never grant a bypass or emergency override.
 
+If an independently approved B00 later exposes a latent defect that prevents
+the exact separately approved repair amendment from materializing, keep the
+same hold active and use an append-only `GRR-NNNN.SNN` supplement. The
+supplement requires independent packet review and exact-commit human approval,
+authorizes only its sequential `GRR-NNNN.BNN`, raises the minimum control
+revision, and denies the repair amendment until that supplemental bootstrap is
+independently approved. Never reopen B00, create a competing active hold, or
+treat supplement approval as amendment/task/resume authority.
+
 "One run" means one durable Wave campaign, not one operating-system process.
 Resume it after an ordinary tool, app, or session interruption. Claim and finish
 only the next dependency-eligible Wave task, integrate and independently review
@@ -166,6 +175,9 @@ python tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-resubmi
 python tools/recoveryctl.py --repo . validate GRR-NNNN --require-approved
 python tools/recoveryctl.py --repo . status GRR-NNNN
 python tools/recoveryctl.py --repo . bootstrap-resubmit GRR-NNNN --agent <agent> --implementation-commit <sha> --evidence <manifest>
+python tools/recoveryctl.py --repo . supplement-start GRR-NNNN.SNN --agent <agent>
+python tools/recoveryctl.py --repo . supplement-submit GRR-NNNN.SNN --agent <agent> --implementation-commit <sha> --evidence <manifest>
+python tools/recoveryctl.py --repo . supplement-review GRR-NNNN.SNN --reviewer <independent-reviewer> --from <ledger>
 python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 ```
 

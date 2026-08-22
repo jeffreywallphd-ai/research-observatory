@@ -625,6 +625,22 @@ def main() -> int:
             or entry.get("release_conditions") != hold.get("release_conditions")
         ):
             errors.append(f"{request_id}: recovery manifest state differs from the authoritative hold")
+        expected_supplements = [
+            {
+                "id": item.get("id"),
+                "bootstrap_id": (item.get("bootstrap") or {}).get("id"),
+                "bootstrap_status": (item.get("bootstrap") or {}).get("status"),
+                "packet_path": (item.get("packet_reference") or {}).get("path"),
+                "packet_sha256": (item.get("packet_reference") or {}).get("sha256"),
+                "packet_commit": (item.get("packet_reference") or {}).get("commit"),
+                "approval_path": (item.get("approval_reference") or {}).get("path"),
+                "approval_sha256": (item.get("approval_reference") or {}).get("sha256"),
+                "approval_commit": (item.get("approval_reference") or {}).get("introduction_commit"),
+            }
+            for item in hold.get("supplements", [])
+        ]
+        if entry.get("supplements", []) != expected_supplements:
+            errors.append(f"{request_id}: recovery supplement manifest differs from the append-only hold ledger")
         page = site / str(entry.get("page") or "")
         if not page.exists():
             errors.append(f"{request_id}: missing governance recovery detail page")

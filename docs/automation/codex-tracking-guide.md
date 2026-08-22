@@ -50,6 +50,12 @@ release conditions are mandatory context. B00 approval restores the ability to
 prepare the named ECR; it does not approve that ECR, materialize a task, resume
 the Wave, or approve a gate.
 
+If the stopped handoff names an approved `GRR-NNNN.SNN`, follow only its
+`recoveryctl supplement-*` transition. It extends the existing hold and
+authorizes only BNN. Until BNN is independently approved, do not retry the
+repair amendment, claim work, resume the Wave, release the hold, or approve a
+gate.
+
 The normal task transition is:
 
 ```bash

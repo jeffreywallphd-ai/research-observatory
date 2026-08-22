@@ -368,14 +368,14 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         ):
             self.assertIn(marker, detail)
 
-    def test_pending_v2_ecr_renders_exact_authority_and_non_executable_state(self) -> None:
+    def test_approved_v2_ecr_renders_exact_authority_and_bounded_unmaterialized_state(self) -> None:
         entry = next(
             item for item in self.manifest["enabler_change_requests"] if item["change_request_id"] == "ECR-0002"
         )
         detail = (self.site / "enablers/ECR-0002.html").read_text(encoding="utf-8")
         authority_section = detail.split("<h2>Ordered Wave authority chain</h2>", 1)[1].split("</section>", 1)[0]
 
-        self.assertEqual("PENDING", entry["approval_status"])
+        self.assertEqual("APPROVED", entry["approval_status"])
         for marker in (
             "W1 base approval",
             "594e63be501711d67d17a4aef176bb9b6a8748be",
@@ -387,12 +387,12 @@ class PlanReviewAmendmentTests(unittest.TestCase):
             "57d73bcf314ea6aab38b8056ead118d6ef270921",
             "6e9c440102a5c463bb35d81f4dbdc3453d9ce029",
             "W1.A03",
-            "Pending, non-executable proposal; no bootstrap/task authority",
+            "Human-approved bootstrap/task scope; adoption remains separate",
         ):
             self.assertIn(marker, authority_section)
         self.assertNotIn("<code>missing</code>", authority_section)
-        self.assertIn("No human approval is recorded", detail)
-        self.assertIn("Proposed bounded inventory", detail)
+        self.assertIn("Human approval</dt><dd>APPROVED", detail)
+        self.assertIn("Authorized bounded inventory", detail)
         self.assertIn("completion and independent approval of the one task", detail)
         self.assertNotIn("both DONE", detail)
         self.assertFalse([line for line in detail.splitlines() if line.rstrip() != line])

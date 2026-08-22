@@ -128,6 +128,15 @@ its own ECR review and human approval and is appended without replacing any
 predecessor. Hold release requires adopted amendment completion plus a bound
 control/security checkpoint, and never resumes the Wave implicitly.
 
+An approved B00 cannot be reopened. A later demonstrated defect in the exact
+approved repair boundary uses a sequential, hash-bound GRR supplement under the
+same hold. Independent packet review and human approval authorize only the
+supplemental BNN bootstrap. The control revision advances so older readers deny
+the state; the latest BNN must receive an independent append-only approval
+before the already approved repair amendment can proceed. Competing holds,
+rewritten B00 attempts, and supplemental amendment/task/resume authority are
+invalid.
+
 Task review control uses one atomic evidence-plus-submit transition and one
 immutable packet per RNN round. Each packet binds the candidate, evidence,
 criteria, changed paths, verification selection, and exact open-finding replay.

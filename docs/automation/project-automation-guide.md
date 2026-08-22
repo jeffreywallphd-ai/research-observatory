@@ -120,6 +120,21 @@ After B00 approval, prepare the named generic v2 ECR; its separate approval is
 still mandatory. `recoveryctl release` is legal only after that amendment is
 adopted with a bound security checkpoint and leaves the Wave paused.
 
+If approved B00 execution reveals a latent defect that prevents only the exact
+approved repair amendment from materializing, use the existing hold's
+sequential supplemental lane:
+
+```bash
+python tools/recoveryctl.py --repo . supplement-start GRR-NNNN.SNN --agent <agent>
+python tools/recoveryctl.py --repo . supplement-submit GRR-NNNN.SNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
+python tools/recoveryctl.py --repo . supplement-review GRR-NNNN.SNN --reviewer <independent-reviewer> --from <finding-ledger>
+python tools/recoveryctl.py --repo . supplement-resubmit GRR-NNNN.SNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
+```
+
+The packet and approval precede `supplement-start`. The latest BNN remains the
+only executable recovery unit; until its independent approval, taskctl denies
+the repair amendment and every ordinary mutation.
+
 For ordinary and amendment tasks, use `taskctl submit <task> --agent <agent>
 --from <manifest>` as the atomic evidence-and-submission transition. It freezes
 an immutable RNN packet containing candidate/evidence, acceptance-criteria,

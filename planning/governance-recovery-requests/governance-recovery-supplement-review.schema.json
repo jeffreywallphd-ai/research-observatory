@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-recovery-supplement-review.v1.json",
+  "title": "Governance recovery supplemental bootstrap review ledger",
+  "type": "object",
+  "required": [
+    "schemaVersion", "documentType", "recoveryRequestId", "supplementId", "bootstrapUnit", "attemptId",
+    "candidateCommit", "reviewedStateCommit", "reviewer", "result", "evidence", "notes", "findings", "closures"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "governance-recovery-supplement-bootstrap-review"},
+    "recoveryRequestId": {"type": "string", "pattern": "^GRR-[0-9]{4}$"},
+    "supplementId": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.S[0-9]{2}$"},
+    "bootstrapUnit": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.B[0-9]{2}$"},
+    "attemptId": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+    "candidateCommit": {"$ref": "#/$defs/commit"},
+    "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+    "reviewer": {"type": "string", "minLength": 1},
+    "result": {"enum": ["approved", "changes-requested", "blocked"]},
+    "evidence": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "notes": {"type": "string"},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "blocking", "criterionIndex", "title", "reproduction", "requiredRemediation"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["critical", "high", "medium", "low"]},
+          "blocking": {"type": "boolean"},
+          "criterionIndex": {"type": "integer", "minimum": 1},
+          "title": {"type": "string", "minLength": 1},
+          "reproduction": {"type": "string", "minLength": 1},
+          "requiredRemediation": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "closures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["findingId", "notes"],
+        "properties": {
+          "findingId": {"type": "string", "minLength": 1},
+          "notes": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {
+      "type": "string", "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9._/-]+$"
+    }
+  },
+  "additionalProperties": false
+}

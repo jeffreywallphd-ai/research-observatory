@@ -56,7 +56,7 @@ PLATFORMS = {
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
 CAMPAIGN_SCOPES = {"wave", "amendment-hold", "capability-wave"}  # capability-wave is historical only.
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
-CONTROL_TOOL_REVISION = 4
+CONTROL_TOOL_REVISION = 5
 AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
 BOOTSTRAP_REVIEW_RESULTS = {
     "APPROVED": "approved",
@@ -216,13 +216,19 @@ def task_review_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, .
 
 def recovery_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
     """Freeze immutable recovery-review attempts without freezing live projections."""
-    return {
-        str(hold["id"]): tuple(
+    snapshot: dict[str, tuple[str, ...]] = {}
+    for hold in (data.get("control_plane") or {}).get("recovery_holds", []):
+        hold_id = str(hold["id"])
+        snapshot[hold_id] = tuple(
             json.dumps(attempt, sort_keys=True, separators=(",", ":"))
             for attempt in (hold.get("bootstrap") or {}).get("attempts", [])
         )
-        for hold in (data.get("control_plane") or {}).get("recovery_holds", [])
-    }
+        for supplement in hold.get("supplements", []):
+            snapshot[f"{hold_id}/{supplement.get('id')}"] = tuple(
+                json.dumps(attempt, sort_keys=True, separators=(",", ":"))
+                for attempt in (supplement.get("bootstrap") or {}).get("attempts", [])
+            )
+    return snapshot
 
 
 def exact_record_snapshot(
@@ -2159,11 +2165,14 @@ def recovery_review_history_errors(
     repo: Path,
     hold: dict[str, Any],
     packet: dict[str, Any],
+    *,
+    supplement: dict[str, Any] | None = None,
 ) -> list[str]:
     """Validate immutable recovery ledgers and their sequential finding state."""
     errors: list[str] = []
     request_id = str(hold.get("recovery_request_id") or "")
-    bootstrap = hold.get("bootstrap") or {}
+    supplement_id = str((supplement or {}).get("id") or "")
+    bootstrap = (supplement or {}).get("bootstrap") or hold.get("bootstrap") or {}
     bootstrap_id = str(bootstrap.get("id") or "")
     attempts = bootstrap.get("attempts") or []
     prior_open: set[str] = set()
@@ -2201,7 +2210,11 @@ def recovery_review_history_errors(
         result = str(ledger.get("result") or "")
         expected_fields = {
             "schemaVersion": "1.0",
-            "documentType": "governance-recovery-bootstrap-review",
+            "documentType": (
+                "governance-recovery-supplement-bootstrap-review"
+                if supplement is not None
+                else "governance-recovery-bootstrap-review"
+            ),
             "recoveryRequestId": request_id,
             "bootstrapUnit": bootstrap_id,
             "attemptId": attempt_id,
@@ -2210,6 +2223,8 @@ def recovery_review_history_errors(
             "result": result,
             "evidence": {"path": evidence.get("path"), "sha256": evidence.get("sha256")},
         }
+        if supplement is not None:
+            expected_fields["supplementId"] = supplement_id
         if any(ledger.get(field) != expected for field, expected in expected_fields.items()):
             errors.append(f"{bootstrap_id}/{attempt_id}: review ledger differs from the frozen attempt")
         reviewed_state = str(ledger.get("reviewedStateCommit") or "")
@@ -2227,7 +2242,21 @@ def recovery_review_history_errors(
                 ),
                 None,
             )
-            historical_bootstrap = (historical_hold or {}).get("bootstrap") or {}
+            historical_supplement = None
+            if supplement is not None:
+                historical_supplement = next(
+                    (
+                        item
+                        for item in (historical_hold or {}).get("supplements", [])
+                        if item.get("id") == supplement_id
+                    ),
+                    None,
+                )
+            historical_bootstrap = (
+                (historical_supplement or {}).get("bootstrap")
+                if supplement is not None
+                else (historical_hold or {}).get("bootstrap")
+            ) or {}
             expected_submission = {
                 "attempt_id": attempt_id,
                 "candidate_commit": candidate,
@@ -2236,6 +2265,20 @@ def recovery_review_history_errors(
             }
             if (
                 (historical_hold or {}).get("id") != hold.get("id")
+                or (supplement is not None and historical_supplement is None)
+                or (
+                    supplement is not None
+                    and any(
+                        (historical_supplement or {}).get(field) != supplement.get(field)
+                        for field in (
+                            "id",
+                            "predecessor_control_revision",
+                            "packet_reference",
+                            "approval_reference",
+                            "created_at",
+                        )
+                    )
+                )
                 or historical_bootstrap.get("id") != bootstrap_id
                 or historical_bootstrap.get("status") != "REVIEW"
                 or historical_bootstrap.get("current_submission") != expected_submission
@@ -2302,11 +2345,230 @@ def recovery_review_history_errors(
     return errors
 
 
+def recovery_bootstrap_projection_errors(
+    label: str,
+    bootstrap: dict[str, Any],
+) -> list[str]:
+    """Validate the mutable projection shared by base and supplemental recovery bootstraps."""
+    errors: list[str] = []
+    attempts = bootstrap.get("attempts") or []
+    expected_attempts = [f"R{index:02d}" for index in range(1, len(attempts) + 1)]
+    if [str(item.get("id")) for item in attempts] != expected_attempts:
+        errors.append(f"{label}: bootstrap review attempts are not append-only and sequential")
+    for attempt in attempts:
+        review = attempt.get("review") or {}
+        if review.get("reviewer") == attempt.get("implementer"):
+            errors.append(f"{label}/{attempt.get('id')}: bootstrap review is not independent")
+    status = str(bootstrap.get("status") or "")
+    current = bootstrap.get("current_submission")
+    if status == "REVIEW" and current is None:
+        errors.append(f"{label}: REVIEW bootstrap lacks its frozen current submission")
+    if status != "REVIEW" and current is not None:
+        errors.append(f"{label}: non-REVIEW bootstrap retains a mutable current submission")
+    if attempts and status != "REVIEW":
+        latest = attempts[-1]
+        latest_review = latest.get("review") or {}
+        expected_status = {
+            "approved": "APPROVED",
+            "changes-requested": "CHANGES_REQUESTED",
+            "blocked": "BLOCKED",
+        }.get(str(latest_review.get("result") or ""))
+        if status != expected_status:
+            errors.append(f"{label}: bootstrap status differs from the latest immutable review")
+        for field in ("implementation_commit", "submission_branch", "evidence", "review"):
+            if bootstrap.get(field) != latest.get(field):
+                errors.append(f"{label}: bootstrap {field} differs from the latest immutable attempt")
+    if status in {"REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED"} and (
+        not bootstrap.get("implementation_commit") or not bootstrap.get("evidence")
+    ):
+        errors.append(f"{label}: submitted bootstrap lacks commit-bound evidence")
+    return errors
+
+
+def recovery_supplement_authority_errors(
+    data: dict[str, Any],
+    repo: Path,
+    hold: dict[str, Any],
+    supplement: dict[str, Any],
+) -> tuple[list[str], dict[str, Any]]:
+    """Bind a supplemental bootstrap to its immutable packet, approval, base GRR, and target amendment."""
+    errors: list[str] = []
+    supplement_id = str(supplement.get("id") or "")
+    bootstrap = supplement.get("bootstrap") or {}
+    bootstrap_id = str(bootstrap.get("id") or "")
+    references = (
+        ("approval", supplement.get("approval_reference") or {}, "introduction_commit"),
+        ("packet", supplement.get("packet_reference") or {}, "commit"),
+    )
+    loaded: dict[str, dict[str, Any]] = {}
+    payloads: dict[str, bytes] = {}
+    for label, reference, commit_field in references:
+        relative = str(reference.get("path") or "")
+        try:
+            path = safe_control_path(
+                repo,
+                relative,
+                prefix=(
+                    "planning/governance-recovery-approvals"
+                    if label == "approval"
+                    else "planning/governance-recovery-requests"
+                ),
+                label=f"{supplement_id} {label}",
+            )
+            payload = path.read_bytes()
+            document = json.loads(payload)
+        except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"{supplement_id}: cannot load {label} reference: {exc}")
+            continue
+        loaded[label] = document
+        payloads[label] = payload
+        if hashlib.sha256(payload).hexdigest() != reference.get("sha256"):
+            errors.append(f"{supplement_id}: {label} reference hash mismatch")
+        commit = str(reference.get(commit_field) or "")
+        if not git_commit_exists(repo, commit) or not git_is_ancestor(repo, commit):
+            errors.append(f"{supplement_id}: {label} authority commit is absent from current history")
+        elif git_blob(repo, commit, relative) != payload:
+            errors.append(f"{supplement_id}: {label} reference differs from its bound Git blob")
+    approval = loaded.get("approval") or {}
+    packet = loaded.get("packet") or {}
+    approval_packet = approval.get("packet") or {}
+    if (
+        approval.get("documentType") != "governance-recovery-supplement-approval"
+        or approval.get("status") != "APPROVED"
+        or approval.get("recoveryRequestId") != hold.get("recovery_request_id")
+        or approval.get("supplementId") != supplement_id
+        or approval.get("targetWave") != hold.get("target_wave")
+        or approval.get("supplementalBootstrapUnit") != bootstrap_id
+    ):
+        errors.append(f"{supplement_id}: supplemental approval identity, status, Wave, or bootstrap mismatch")
+    if (
+        packet.get("documentType") != "governance-recovery-supplement-packet"
+        or packet.get("recoveryRequestId") != hold.get("recovery_request_id")
+        or packet.get("supplementId") != supplement_id
+        or packet.get("targetWave") != hold.get("target_wave")
+        or (packet.get("supplementalBootstrap") or {}).get("id") != bootstrap_id
+    ):
+        errors.append(f"{supplement_id}: supplemental packet identity, Wave, or bootstrap mismatch")
+    packet_reference = supplement.get("packet_reference") or {}
+    if (
+        approval_packet.get("commit") != packet_reference.get("commit")
+        or approval_packet.get("path") != packet_reference.get("path")
+        or approval_packet.get("sha256") != packet_reference.get("sha256")
+    ):
+        errors.append(f"{supplement_id}: approval does not bind the exact supplemental packet")
+    execution = approval.get("executionAuthority") or {}
+    if execution.get("supplementalBootstrapOnly") is not True or any(
+        execution.get(field) is not False
+        for field in (
+            "postBootstrapExecution",
+            "amendmentMaterialization",
+            "ordinaryWaveResume",
+            "taskExecution",
+            "releaseGateApproval",
+        )
+    ):
+        errors.append(f"{supplement_id}: supplemental approval is not bootstrap-only")
+    review = approval.get("independentPacketReview") or {}
+    if (
+        review.get("result") != "APPROVED"
+        or review.get("candidateCommit") != packet_reference.get("commit")
+        or review.get("packetSha256") != packet_reference.get("sha256")
+        or review.get("reviewer") == approval.get("approvedBy")
+        or review.get("openFindingIds") != []
+    ):
+        errors.append(f"{supplement_id}: supplemental packet review is absent, stale, or not independent")
+    base = packet.get("baseRecoveryAuthority") or {}
+    base_packet = base.get("packet") or {}
+    base_approval = base.get("approval") or {}
+    if (
+        base_packet.get("path") != (hold.get("packet_reference") or {}).get("path")
+        or base_packet.get("sha256") != (hold.get("packet_reference") or {}).get("sha256")
+        or base_packet.get("commit") != (hold.get("packet_reference") or {}).get("commit")
+        or base_approval.get("path") != (hold.get("approval_reference") or {}).get("path")
+        or base_approval.get("sha256") != (hold.get("approval_reference") or {}).get("sha256")
+        or base_approval.get("introductionCommit") != (hold.get("approval_reference") or {}).get("introduction_commit")
+        or base.get("holdId") != hold.get("id")
+        or base.get("bootstrapUnit") != (hold.get("bootstrap") or {}).get("id")
+    ):
+        errors.append(f"{supplement_id}: base recovery authority differs from the active hold")
+    latest = base.get("latestApprovedReview") or {}
+    base_attempts = (hold.get("bootstrap") or {}).get("attempts") or []
+    if not base_attempts:
+        errors.append(f"{supplement_id}: base recovery bootstrap lacks immutable review history")
+    else:
+        base_last = base_attempts[-1]
+        ledger = base_last.get("ledger") or {}
+        try:
+            ledger_path = safe_control_path(
+                repo,
+                str(ledger.get("path") or ""),
+                prefix="planning/governance-recovery-approvals",
+                label=f"{supplement_id} base latest review ledger",
+            )
+            ledger_document = json.loads(ledger_path.read_bytes())
+        except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"{supplement_id}: cannot load base latest review ledger: {exc}")
+            ledger_document = {}
+        if (
+            latest.get("attemptId") != base_last.get("id")
+            or latest.get("path") != ledger.get("path")
+            or latest.get("sha256") != ledger.get("sha256")
+            or latest.get("candidateCommit") != base_last.get("implementation_commit")
+            or latest.get("reviewedStateCommit") != ledger_document.get("reviewedStateCommit")
+            or ledger_document.get("result") != "approved"
+        ):
+            errors.append(f"{supplement_id}: base recovery latest approved review binding mismatch")
+    target = packet.get("targetAmendmentAuthority") or {}
+    target_approval = target.get("amendmentApproval") or {}
+    amendment = wave_amendment_map(data).get(str(target_approval.get("id") or "")) or {}
+    amendment_reference = amendment.get("approval_reference") or {}
+    target_bootstrap = target.get("bootstrap") or {}
+    actual_bootstrap = amendment.get("bootstrap") or {}
+    actual_evidence = (actual_bootstrap.get("evidence") or [{}])[0]
+    if (
+        target_approval.get("path") != amendment_reference.get("path")
+        or target_approval.get("sha256") != amendment_reference.get("sha256")
+        or target_approval.get("introductionCommit") != amendment_reference.get("introduction_commit")
+        or target_bootstrap.get("id") != actual_bootstrap.get("id")
+        or target_bootstrap.get("candidateCommit") != actual_bootstrap.get("implementation_commit")
+        or target_bootstrap.get("evidence", {}).get("path") != actual_evidence.get("path")
+        or target_bootstrap.get("evidence", {}).get("sha256") != actual_evidence.get("sha256")
+        or target_bootstrap.get("evidence", {}).get("commit") != actual_evidence.get("commit")
+        or actual_bootstrap.get("status") != "APPROVED"
+    ):
+        errors.append(f"{supplement_id}: target amendment approval/bootstrap authority mismatch")
+    ecr_reference = target.get("changeRequestPacket") or {}
+    try:
+        ecr_path = safe_control_path(
+            repo,
+            str(ecr_reference.get("path") or ""),
+            prefix="planning/enabler-change-requests",
+            label=f"{supplement_id} target ECR packet",
+        )
+        ecr_payload = ecr_path.read_bytes()
+    except (OSError, ValueError) as exc:
+        errors.append(f"{supplement_id}: target ECR packet is invalid: {exc}")
+    else:
+        if hashlib.sha256(ecr_payload).hexdigest() != ecr_reference.get("sha256"):
+            errors.append(f"{supplement_id}: target ECR packet hash mismatch")
+        commit = str(ecr_reference.get("commit") or "")
+        if not git_commit_exists(repo, commit) or not git_is_ancestor(repo, commit):
+            errors.append(f"{supplement_id}: target ECR packet commit is absent from current history")
+        elif git_blob(repo, commit, str(ecr_reference.get("path") or "")) != ecr_payload:
+            errors.append(f"{supplement_id}: target ECR packet differs from its bound Git blob")
+    return errors, packet
+
+
 def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     """Validate the append-only recovery interruption projected by recoveryctl."""
     errors: list[str] = []
     control = data.get("control_plane") or {}
+    control_revision = int(control.get("revision") or 0)
     holds = control.get("recovery_holds", [])
+    if control_revision == 4 and any("supplements" in hold for hold in holds):
+        errors.append("control revision 4 cannot contain recovery supplements")
+    if control_revision == 5 and any("supplements" not in hold for hold in holds):
+        errors.append("control revision 5 requires an explicit recovery supplement ledger")
     hold_ids = [str(item.get("id")) for item in holds]
     request_ids = [str(item.get("recovery_request_id")) for item in holds]
     if len(hold_ids) != len(set(hold_ids)):
@@ -2379,6 +2641,29 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
             not bootstrap.get("implementation_commit") or not bootstrap.get("evidence")
         ):
             errors.append(f"{hold_id}: submitted bootstrap lacks commit-bound evidence")
+        supplements = hold.get("supplements", [])
+        expected_supplements = [f"{request_id}.S{index:02d}" for index in range(1, len(supplements) + 1)]
+        actual_supplements = [str(item.get("id") or "") for item in supplements]
+        if actual_supplements != expected_supplements or len(actual_supplements) != len(set(actual_supplements)):
+            errors.append(f"{hold_id}: recovery supplements are gapped, reordered, duplicated, or cross-request")
+        nonapproved_supplements = [
+            item for item in supplements if ((item.get("bootstrap") or {}).get("status") != "APPROVED")
+        ]
+        if len(nonapproved_supplements) > 1 or (
+            nonapproved_supplements and nonapproved_supplements[0] is not supplements[-1]
+        ):
+            errors.append(f"{hold_id}: only the latest recovery supplement may remain non-approved")
+        if supplements and status != "APPROVED":
+            errors.append(f"{hold_id}: supplemental recovery requires the base bootstrap to remain APPROVED")
+        for index, supplement in enumerate(supplements, start=1):
+            supplement_id = str(supplement.get("id") or "")
+            supplement_bootstrap = supplement.get("bootstrap") or {}
+            if supplement_bootstrap.get("id") != f"{request_id}.B{index:02d}":
+                errors.append(f"{supplement_id}: supplemental bootstrap identity is not sequential and request-bound")
+            expected_predecessor = 4 if index == 1 else CONTROL_TOOL_REVISION
+            if supplement.get("predecessor_control_revision") != expected_predecessor:
+                errors.append(f"{supplement_id}: predecessor control revision is invalid")
+            errors.extend(recovery_bootstrap_projection_errors(supplement_id, supplement_bootstrap))
         if hold.get("status") == "ACTIVE":
             campaign = (waves.get(wave_id) or {}).get("campaign") or {}
             if campaign.get("status") != "PAUSED" or campaign.get("scope") not in {"wave", "amendment-hold"}:
@@ -2428,6 +2713,42 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
                     continue
                 if hashlib.sha256(reference_payload).hexdigest() != reference.get("sha256"):
                     errors.append(f"{hold_id}/{attempt_id}: {label} reference hash mismatch")
+        for supplement in supplements:
+            supplement_id = str(supplement.get("id") or "")
+            supplement_bootstrap = supplement.get("bootstrap") or {}
+            current_supplement = supplement_bootstrap.get("current_submission") or {}
+            if supplement_bootstrap.get("status") == "REVIEW":
+                evidence = supplement_bootstrap.get("evidence") or {}
+                relative = str(evidence.get("path") or "")
+                try:
+                    path = safe_control_path(
+                        repo,
+                        relative,
+                        prefix="planning/governance-recovery-approvals",
+                        label=f"{supplement_id} current evidence",
+                    )
+                    evidence_payload = path.read_bytes()
+                except (OSError, ValueError) as exc:
+                    errors.append(f"{supplement_id}: invalid current evidence reference: {exc}")
+                else:
+                    current_sha = hashlib.sha256(evidence_payload).hexdigest()
+                    if (
+                        current_sha != evidence.get("sha256")
+                        or current_sha != current_supplement.get("evidence_sha256")
+                        or evidence.get("commit") != current_supplement.get("candidate_commit")
+                    ):
+                        errors.append(f"{supplement_id}: current evidence differs from its frozen submission")
+            supplement_errors, supplement_packet = recovery_supplement_authority_errors(data, repo, hold, supplement)
+            errors.extend(supplement_errors)
+            if supplement_packet:
+                errors.extend(
+                    recovery_review_history_errors(
+                        repo,
+                        hold,
+                        supplement_packet,
+                        supplement=supplement,
+                    )
+                )
         references = (
             ("approval", hold.get("approval_reference") or {}, "introduction_commit"),
             ("packet", hold.get("packet_reference") or {}, "commit"),
@@ -2488,10 +2809,12 @@ def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     amendments = data.get("wave_amendments", [])
     if control is None and not bases and not amendments:
         return errors
-    if not isinstance(control, dict) or control.get("revision") != CONTROL_TOOL_REVISION:
+    if not isinstance(control, dict) or control.get("revision") not in {4, CONTROL_TOOL_REVISION}:
         errors.append("control plane revision is missing or unsupported")
     elif int(control.get("minimum_tool_revision", 0)) > CONTROL_TOOL_REVISION:
         errors.append("this taskctl revision is too old for the active control plane")
+    elif int(control.get("minimum_tool_revision", 0)) != int(control.get("revision", 0)):
+        errors.append("control plane revision and minimum tool revision differ")
     base_ids = [str(item.get("wave_id")) for item in bases]
     if len(base_ids) != len(set(base_ids)):
         errors.append("duplicate Wave approval base identity")
@@ -3080,6 +3403,40 @@ def validate(
         errors.append("more than one Wave amendment campaign is ACTIVE")
     if control_active != expected_active:
         errors.append("control plane active_amendment does not exactly match the sole ACTIVE amendment campaign")
+    ordered_amendments: dict[str, list[dict[str, Any]]] = {}
+    executable_hold_states = {"MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "BLOCKED"}
+    hold_owners: dict[str, list[dict[str, Any]]] = {}
+    for amendment in data.get("wave_amendments", []):
+        target_wave = str(amendment.get("target_wave"))
+        ordered_amendments.setdefault(target_wave, []).append(amendment)
+        if (
+            amendment.get("kind") != "migrated-replanning"
+            and ((amendment.get("lifecycle") or {}).get("status")) in executable_hold_states
+        ):
+            hold_owners.setdefault(target_wave, []).append(amendment)
+    for wave_id, ordered in ordered_amendments.items():
+        wave_campaign = (waves.get(wave_id) or {}).get("campaign") or {}
+        owners = hold_owners.get(wave_id, [])
+        if len(owners) > 1:
+            errors.append(f"{wave_id}: more than one amendment owns the shared amendment-hold scope")
+        if wave_campaign.get("scope") == "amendment-hold":
+            if len(owners) != 1:
+                errors.append(f"{wave_id}: amendment-hold scope requires exactly one executable amendment owner")
+            else:
+                owner = owners[0]
+                owner_position = ordered.index(owner)
+                if owner_position != len(ordered) - 1:
+                    errors.append(f"{wave_id}: amendment-hold owner is not the latest consecutive amendment")
+                for predecessor in ordered[:owner_position]:
+                    if (
+                        predecessor.get("kind") != "migrated-replanning"
+                        and ((predecessor.get("lifecycle") or {}).get("status")) != "ADOPTED"
+                    ):
+                        errors.append(
+                            f"{predecessor.get('id')}: predecessor of the amendment-hold owner is not ADOPTED"
+                        )
+        elif owners:
+            errors.append(f"{wave_id}: executable amendment owner requires the shared amendment-hold scope")
     for amendment in data.get("wave_amendments", []):
         amendment_id = str(amendment.get("id"))
         target_wave = str(amendment.get("target_wave"))
@@ -3128,7 +3485,12 @@ def validate(
             if lifecycle.get("status") in AMENDMENT_TERMINAL_STATES:
                 if campaign_status in {"ACTIVE", "REVIEW"} or control_active == amendment_id:
                     errors.append(f"{amendment_id}: terminal lifecycle retains active execution state")
-                if wave_campaign.get("scope") != "wave":
+                later_owner = False
+                owners = hold_owners.get(target_wave, [])
+                ordered = ordered_amendments.get(target_wave, [])
+                if lifecycle.get("status") == "ADOPTED" and len(owners) == 1 and amendment in ordered:
+                    later_owner = ordered.index(owners[0]) > ordered.index(amendment)
+                if wave_campaign.get("scope") != "wave" and not later_owner:
                     errors.append(f"{amendment_id}: terminal lifecycle did not restore ordinary Wave scope")
         if campaign:
             if campaign.get("status") in {"ACTIVE", "REVIEW"} and (
@@ -6684,6 +7046,19 @@ def require_recovery_hold_permission(
     hold = holds[0]
     bootstrap = hold.get("bootstrap") or {}
     post = hold.get("post_bootstrap") or {}
+    request_id = str(hold.get("recovery_request_id") or "")
+    approved_supplement_files = sorted(
+        (repo / "planning" / "governance-recovery-approvals").glob(f"{request_id}.S[0-9][0-9].json")
+    )
+    supplements = hold.get("supplements", [])
+    if approved_supplement_files and (
+        not supplements or ((supplements[-1].get("bootstrap") or {}).get("status")) != "APPROVED"
+    ):
+        expected = approved_supplement_files[-1].stem
+        raise SystemExit(
+            f"Governance recovery hold {hold.get('id')} denies this mutation until the approved supplemental "
+            f"bootstrap for {expected} is installed, evidenced, and independently approved."
+        )
     required_amendment = str(post.get("required_amendment_id") or "")
     amendment_command = args.command == "amendment" and getattr(args, "amendment", None) == required_amendment
     task_id = str(getattr(args, "task", "") or "")

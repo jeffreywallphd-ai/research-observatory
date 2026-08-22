@@ -508,6 +508,115 @@
       },
       "additionalProperties": false
     },
+    "recoverySupplementEvidenceReference": {
+      "type": "object",
+      "required": ["type", "path", "sha256", "commit", "recorded_at"],
+      "properties": {
+        "type": {"const": "governance-recovery-supplement-evidence"},
+        "path": {
+          "type": "string",
+          "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.B[0-9]{2}(?:\\.remediation-[0-9]{2})?\\.evidence\\.json$"
+        },
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "recorded_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false
+    },
+    "recoverySupplementReviewAttempt": {
+      "type": "object",
+      "required": ["id", "implementer", "implementation_commit", "submission_branch", "evidence", "review", "ledger"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+        "implementer": {"type": "string", "minLength": 1},
+        "implementation_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "submission_branch": {"type": "string", "pattern": "^codex/.+$"},
+        "evidence": {"$ref": "#/$defs/recoverySupplementEvidenceReference"},
+        "review": {"$ref": "#/$defs/review"},
+        "ledger": {
+          "type": "object",
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.B[0-9]{2}\\.review-R[0-9]{2,}\\.json$"
+            },
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "recoverySupplementBootstrap": {
+      "type": "object",
+      "required": [
+        "id", "status", "implementer", "implementation_commit", "submission_branch", "evidence", "review",
+        "current_submission", "attempts"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.B[0-9]{2}$"},
+        "status": {"enum": ["IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED"]},
+        "implementer": {"type": "string", "minLength": 1},
+        "implementation_commit": {"$ref": "#/$defs/nullableCommit"},
+        "submission_branch": {"type": ["string", "null"], "pattern": "^codex/.+$"},
+        "evidence": {
+          "anyOf": [{"type": "null"}, {"$ref": "#/$defs/recoverySupplementEvidenceReference"}]
+        },
+        "review": {"$ref": "#/$defs/review"},
+        "current_submission": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "required": ["attempt_id", "candidate_commit", "evidence_sha256", "acceptance_criteria_sha256"],
+              "properties": {
+                "attempt_id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+                "candidate_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+                "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                "acceptance_criteria_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "attempts": {"type": "array", "items": {"$ref": "#/$defs/recoverySupplementReviewAttempt"}}
+      },
+      "additionalProperties": false
+    },
+    "recoverySupplement": {
+      "type": "object",
+      "required": [
+        "id", "predecessor_control_revision", "packet_reference", "approval_reference", "bootstrap", "created_at"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.S[0-9]{2}$"},
+        "predecessor_control_revision": {"type": "integer", "minimum": 4},
+        "packet_reference": {
+          "type": "object",
+          "required": ["path", "sha256", "commit"],
+          "properties": {
+            "path": {"type": "string", "pattern": "^planning/governance-recovery-requests/GRR-[0-9]{4}\\.S[0-9]{2}\\.packet\\.json$"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+          },
+          "additionalProperties": false
+        },
+        "approval_reference": {
+          "type": "object",
+          "required": ["path", "sha256", "introduction_commit"],
+          "properties": {
+            "path": {"type": "string", "pattern": "^planning/governance-recovery-approvals/GRR-[0-9]{4}\\.S[0-9]{2}\\.json$"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+          },
+          "additionalProperties": false
+        },
+        "bootstrap": {"$ref": "#/$defs/recoverySupplementBootstrap"},
+        "created_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false
+    },
     "recoveryHold": {
       "type": "object",
       "required": [
@@ -574,6 +683,11 @@
             "attempts": {"type": "array", "items": {"$ref": "#/$defs/recoveryReviewAttempt"}}
           },
           "additionalProperties": false
+        },
+        "supplements": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/recoverySupplement"},
+          "uniqueItems": true
         },
         "post_bootstrap": {
           "type": "object",
@@ -799,8 +913,8 @@
       "type": "object",
       "required": ["revision", "minimum_tool_revision", "active_amendment", "recovery_holds"],
       "properties": {
-        "revision": {"const": 4},
-        "minimum_tool_revision": {"type": "integer", "minimum": 4},
+        "revision": {"enum": [4, 5]},
+        "minimum_tool_revision": {"type": "integer", "minimum": 4, "maximum": 5},
         "active_amendment": {
           "anyOf": [
             {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
