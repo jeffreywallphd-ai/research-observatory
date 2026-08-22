@@ -26,6 +26,15 @@ from ui_change_gate import (  # noqa: E402
 
 
 class UiChangeGateTests(unittest.TestCase):
+    def test_cumulative_additive_pre_ui_inventory_then_ui_implementation_passes(self) -> None:
+        result = validate(
+            REPO,
+            "bfb8797398707bece9e0662c0d995fabaced9979",
+            "59079efccc122a7d56a9f18efc20030851bf32a9",
+        )
+
+        self.assertTrue(result["ok"], result["errors"])
+
     def test_pre_ui_quality_inventory_is_only_additive_same_commit_non_ui_python(self) -> None:
         policy = {
             "implementationRoots": ["apps/desktop/src"],
