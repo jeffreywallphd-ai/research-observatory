@@ -1,0 +1,147 @@
+{
+  "$schema": "./enabler-change-request.v2.schema.json",
+  "schemaVersion": "2.0-proposal",
+  "documentType": "enabler-change-request-packet",
+  "changeRequestId": "ECR-0002",
+  "proposedAmendmentId": "W1.A03",
+  "targetWave": "W1",
+  "status": "pending-approval",
+  "executionState": "non-executable",
+  "classification": "gate-integrity-safety-defect",
+  "authorityChain": {
+    "waveBase": {
+      "waveId": "W1",
+      "packetCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+      "approvalRecordCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W1.A01",
+        "changeRequestId": null,
+        "status": "ADOPTED",
+        "packetCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A01.json",
+          "sha256": "2eaa44d91f4dae202c85f2c2984430445df149da08a3e8df2f5236af2a139bde",
+          "introductionCommit": "a20685b90532c60e0286e5e05f68b46c613e935d"
+        },
+        "effectiveStateCommit": "305e7444d632800c16cd9e0a7c41ae7b5f8abf93"
+      },
+      {
+        "id": "W1.A02",
+        "changeRequestId": "ECR-0001",
+        "status": "ADOPTED",
+        "packetCommit": "57d73bcf314ea6aab38b8056ead118d6ef270921",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A02.json",
+          "sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
+          "introductionCommit": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029"
+        },
+        "effectiveStateCommit": "24277ae5552930de558290f7c51255a73119ee1a"
+      }
+    ]
+  },
+  "activationBoundary": {
+    "waveStatus": "PAUSED",
+    "ordinaryTaskStatesDenied": ["IN_PROGRESS", "REVIEW"],
+    "reviewCandidateMutationDenied": true,
+    "otherEnablerCampaignDenied": true,
+    "recoveryHoldId": "HOLD-W1-GRR-0001"
+  },
+  "bootstrapUnit": {
+    "id": "W1.A03.B00",
+    "kind": "append-only-amendment-bootstrap",
+    "exceptionReason": "The cumulative UI gate itself blocks the exact T03 candidate, so the bounded gate correction must be implemented and independently reviewed before W1.A03.T01 can be materialized or claimed.",
+    "authorizedPaths": [
+      "tests/foundation/test_ui_change_gate.py",
+      "tools/ui_change_gate.py"
+    ],
+    "requiredOutcomes": [
+      "The exact cumulative range bfb8797398707bece9e0662c0d995fabaced9979 through 59079efccc122a7d56a9f18efc20030851bf32a9 passes when every protected pre-UI commit satisfies the existing additive quality-inventory validator.",
+      "Malformed additive inventory and mixed or unrecognized protected pre-UI changes remain denied.",
+      "A control and UI implementation in the same commit remains denied.",
+      "Every protected post-implementation change still requires the existing exact independently reviewed hardening envelope and historical attestation.",
+      "Existing approved-reference, intentional-design, self-approval, Git-object, reference-package, policy, and path-safety boundaries remain unchanged.",
+      "Focused positive and adversarial tests plus an independent control/security review pass before task materialization."
+    ],
+    "prohibitedOutcomes": [
+      "No product/runtime, approved UI reference, UI evidence contract, ui-change-policy.json, architecture-protected-paths.json, or researcher-facing behavior change.",
+      "No change to T03 state, evidence, acceptance criteria, verification profiles, completed task outcomes, W1 approval, amendment predecessors, release gates, or Git objects.",
+      "No ordinary W1 task claim, T03 recovery, amendment materialization, hold release, Wave resume, G1 approval, local-main integration, or remote push before the later governed transitions authorize them.",
+      "No bypass, override, skip-review, unconditional allowlist, or weakening of same-commit or post-implementation hardening controls."
+    ]
+  },
+  "authorizedTaskIds": ["W1.A03.T01"],
+  "taskInventory": [
+    {
+      "id": "W1.A03.T01",
+      "title": "Exact T03 candidate-lineage and evidence recovery",
+      "objective": "Implement a packet-bound, fail-closed recovery transition that preserves and requalifies CAP-02.S04.T03's exact historical base, foundation, candidate, block, pause, reference, and evidence lineage without treating later governance commits as product implementation.",
+      "dependencies": ["W1.A03.B00"],
+      "acceptanceCriteria": [
+        "The recovery transition targets only CAP-02.S04.T03 and binds HOLD-W1-GRR-0001, this exact W1.A03 approval, base bfb8797398707bece9e0662c0d995fabaced9979, foundation 461faf2870786609dea5a8e5214df380843329bb, candidate 59079efccc122a7d56a9f18efc20030851bf32a9, block record 1c1d9ba427a55024687a62ca0c364acaccdbb7e2, and pause record c7d543136fcd75c8f93dc8e669e59d54de433c02.",
+        "The transition remains denied until W1.A03 is ADOPTED with a bound control/security checkpoint, GRR-0001 is RELEASED, W1 is explicitly ACTIVE with scope wave, and T03 retains the exact BLOCKED boundary.",
+        "A canonical repository-local recovery manifest binds the exact task, branch, base/foundation/candidate/block/pause commits, UI evidence contract and approved reference identity/package/approval, exact changed paths, unique selected checks, and zero unverified items.",
+        "Git existence, strict ancestry, exact base-to-candidate paths, immutable evidence-contract bytes, repaired cumulative UI-gate result, and risk-selected product/privacy checks are independently recomputed rather than trusted from narrative fields.",
+        "The original blocked lineage is retained in an append-only hash-bound task recovery projection before any new execution base is established.",
+        "The sole lawful transition is compare-and-swap and moves only T03 from BLOCKED to IN_PROGRESS with a new lease; it cannot directly attach ordinary task evidence or enter REVIEW, DONE, slice/Wave approval, or a release gate.",
+        "Wrong task, wrong or unadopted authority, active hold, paused Wave, stale writer, dirty worktree, mismatched commit/hash/path/reference, altered historical task/block state, duplicate recovery, and predecessor rewrite all fail without changing backlog bytes.",
+        "After recovery, T03 still requires a new ordinary commit, exact commit-bound evidence, independent privacy/task review, slice review, W1 qualification, and G1 approval."
+      ],
+      "verification": [
+        "Run focused taskctl workflow and schema tests for every authority, state, lineage, path, hash, stale, dirty, duplicate, and atomic denial plus the sole lawful BLOCKED-to-IN_PROGRESS transition.",
+        "Run focused UI-gate tests and the exact bfb8797398707bece9e0662c0d995fabaced9979..59079efccc122a7d56a9f18efc20030851bf32a9 cumulative command.",
+        "Run taskctl backlog validation, approved GRR-0001 and ECR-0001 authority validation, generated-view/review-page checks, governed Python quality, and diff hygiene.",
+        "Obtain independent task review, independent amendment exit review, and a commit-bound control/security adoption checkpoint."
+      ]
+    }
+  ],
+  "acceptanceCriteria": [
+    "The exact W1 base plus adopted W1.A01 and W1.A02 authority chain remains unchanged, ordered, history-bound, and ancestral to this packet.",
+    "W1.A03.B00 changes only tools/ui_change_gate.py and tests/foundation/test_ui_change_gate.py and receives independent control/security approval before T01 materialization.",
+    "The exact valid pre-UI additive inventory plus UI implementation range passes, while malformed inventory, same-commit UI/control, and unreviewed post-implementation hardening fail.",
+    "W1.A03.T01 implements the exact packet-bound T03 recovery boundary and every denial is atomic and byte-stable.",
+    "The lawful recovery transition is unusable during amendment execution and stops at T03 IN_PROGRESS after adoption, GRR release, and explicit W1 resume; it never approves T03 or any higher gate.",
+    "No product/runtime, approved UI reference, completed task outcome, canonical profile or threshold, predecessor approval/amendment, release gate, or remote state changes.",
+    "Focused controller, schema, UI-gate, authority, review-site, generated-view, quality, and security checks pass with criterion-linked commit-bound evidence.",
+    "B00, T01, and the amendment exit each receive independent review, all blocking findings are explicitly closed, and adoption records a bound W1 control/security checkpoint while W1 remains paused."
+  ],
+  "verificationObligations": [
+    "Validate this packet against the generic v2 Draft 2020-12 schema and verify every declared file hash.",
+    "Verify every W1 base/A01/A02 packet, approval, and effective-state commit and the active independently approved GRR hold on current history.",
+    "Run the exact cumulative T03 UI-gate command and positive/adversarial focused gate tests at B00 candidate and frozen review state.",
+    "Run T01 controller/schema tests that cover the lawful transition plus wrong authority/state/task/lineage/hash/path/reference, stale, dirty, duplicate, and atomic-denial cases.",
+    "Run affected quality, backlog, GRR/ECR authority, generated-view, review-page, and diff checks; defer complete W1 qualification to Wave exit.",
+    "Independently review the packet, B00, T01, and amendment exit; require a separate explicit human approval for this exact packet commit."
+  ],
+  "rollback": [
+    "Before approval, reject, defer, or withdraw the inert packet while W1 stays paused and T03 stays blocked.",
+    "A failed B00 review preserves the hold and requires append-only bootstrap remediation; T01 cannot materialize.",
+    "A failed T01 or amendment-exit review preserves evidence/findings and uses append-only remediation without ordinary W1 execution.",
+    "Before adoption, retain the active recovery hold; after adoption, withhold GRR release or W1 resume if any checkpoint or authority validation fails.",
+    "Any failed exact-candidate recovery attempt must leave T03 and backlog byte-identical; never delete or rewrite prior authority, block, finding, review, evidence, checkpoint, or Git history."
+  ],
+  "nonGoals": [
+    "No product/UI implementation, approved reference change, T03 acceptance change, or automatic T03 completion/approval.",
+    "No general emergency override, arbitrary historical-candidate submission lane, force option, or manual backlog/evidence bypass.",
+    "No weakening of independent review, privacy/security review, canonical full profiles, performance thresholds, W1 qualification, or G1 approval.",
+    "No cloud, external service, credential, hardware, deployment, benchmark, researcher-data, local-main, or remote-push action."
+  ],
+  "files": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0002.md",
+      "sha256": "8e0ac263dc56729c07faee18034eec34c3e36f3536908a7f0da16a214ec4a004",
+      "role": "canonical-proposal"
+    },
+    {
+      "path": "planning/enabler-change-requests/enabler-change-request.v2.schema.json",
+      "sha256": "f8362e5be26b65482c4ddd86a26bda0f373c7815fb10efef1f2bef4bc653c3ce",
+      "role": "proposal-schema"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0002-review.html",
+      "sha256": "b2f9f680146d8d7f4594c93487036a87c93f312390e2060c163d9089114f1839",
+      "role": "human-review"
+    }
+  ]
+}
