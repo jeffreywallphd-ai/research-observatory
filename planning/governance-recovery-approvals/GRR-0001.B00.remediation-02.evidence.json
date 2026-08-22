@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-bootstrap-evidence",
+  "recoveryRequestId": "GRR-0001",
+  "bootstrapUnit": "GRR-0001.B00",
+  "branch": "codex/w1-windows-local-runtime",
+  "baseCommit": "d53f5d3be5e254a7416272442f924b99d910abeb",
+  "candidateCommit": "d4d877966e44327eaa1d0b1219836d1413fcb7e2",
+  "changedPaths": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/governance-recovery-approvals/GRR-0001.B00.remediation-01.evidence.json",
+    "planning/governance-recovery-approvals/GRR-0001.B00.review-R02.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_recoveryctl.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "riskAnalysis": "R02 closed all four R01 findings and identified two residual medium blockers: the shared raw path validator accepted repeated separators, and the real append fixture constructed an incoherent recovery projection when its source was frozen in REVIEW. The remediation rejects every raw spelling that differs from its canonical PurePosix representation before resolution or access, adds double-separator denial at recovery-evidence, recovery-ledger, and appended-amendment command boundaries, and makes the executable Git fixture derive its approved recovery state from CHANGES_REQUESTED, BLOCKED, REVIEW, or APPROVED source projections without rewriting prior attempts. Because the changes affect shared governance controls, the exact 108-test focused suite and all 118 governed-file quality checks were run at candidate d4d877966e44327eaa1d0b1219836d1413fcb7e2, with authority, review-site, generated-view, and diff validators also passing.",
+  "requiredOutcomes": [
+    {
+      "criterion": "A minimal recovery controller validates generic versioned GRR packets, exact independent review, explicit human approval, bounded bootstrap evidence, append-only remediation, and terminal disposition.",
+      "evidence": ["The controller retains the complete governed transition set and immutable attempt history through R01 and R02.", "R03 is a strict-descendant remediation with exact candidate and evidence binding."]
+    },
+    {
+      "criterion": "The recovery controller semantically binds recovery, hold, target-Wave, base-Wave, consecutive unique predecessor amendment, bootstrap, post-bootstrap ECR/amendment, and proposed-task identity prefixes; structural schema validity alone never authorizes execution.",
+      "evidence": ["Semantic identity and authority checks remain mandatory.", "The executable ECR-0002/W1.A03 fixture validates exact authority and denies mismatched boundaries atomically."]
+    },
+    {
+      "criterion": "Every packet, approval, evidence, ledger, and authorized-scope path is canonical repository-relative POSIX, resolves inside its designated repository directory, and is rejected for absolute, backslash, dot-segment, traversal, redirected-parent, symlink, junction, or other escape behavior.",
+      "evidence": ["safe_control_path and recovery safe_repo_path reject raw values that differ from PurePosixPath.as_posix before resolution.", "Command-entry tests deny internal double separators for recovery evidence, recovery review ledgers, and appended-amendment evidence without artifact access or backlog mutation."]
+    },
+    {
+      "criterion": "A controller-enforced hold denies all executable Wave/task/amendment/gate and older-reader paths until exact release conditions are satisfied.",
+      "evidence": ["The ACTIVE revision-4 recovery hold and centralized mutation guard remain unchanged.", "W1 remains PAUSED and CAP-02.S04.T03 remains BLOCKED."]
+    },
+    {
+      "criterion": "ECR validation supports generic subsequent identities and an ordered predecessor authority chain without changing ECR-0001, W1.A01, W1.A02, or their Git objects.",
+      "evidence": ["Existing ECR-0001 validation passes at the exact candidate.", "The temporary ECR-0002 packet validates against exact W1.A01/W1.A02 authority."]
+    },
+    {
+      "criterion": "A compare-and-swap append operation can add a subsequent approved amendment but cannot replace, reorder, duplicate, fork, or silently migrate an existing record.",
+      "evidence": ["The Git-backed fixture constructs a coherent approved recovery projection from REVIEW by appending the frozen current submission and preserving all prior attempts.", "The real append command denies duplicate, stale, reordered, nonconsecutive, wrong-hold, wrong-task, forked, and repeated-separator inputs with byte-stable backlog state, then appends W1.A03 while preserving W1.A01/W1.A02 exactly."]
+    },
+    {
+      "criterion": "Status and review pages provide a decision-complete stopped-recovery handoff with packet, authority, alternatives, and exact next approval or resume condition.",
+      "evidence": ["Append-only R01 and R02 review history is represented by canonical ledgers and derived backlog views.", "The 147-page review-site validator and generated backlog-view check pass."]
+    },
+    {
+      "criterion": "Focused tests prove second and third GRR/ECR/amendment identities, cross-field identity binding, stale and dirty denial, self-review denial, predecessor preservation, older-reader denial, and atomic failure behavior.",
+      "evidence": ["All 108 focused tests pass at exact candidate d4d877966e44327eaa1d0b1219836d1413fcb7e2.", "The state-aware executable append test now passes from the canonical CHANGES_REQUESTED projection and must be replayed after R03 is frozen in REVIEW."]
+    },
+    {
+      "criterion": "B00 receives an independent control/security disposition before ECR-0002 is prepared or appended.",
+      "evidence": ["R01 and R02 CHANGES_REQUESTED dispositions are preserved with severity-ranked findings and closures.", "No production ECR-0002 packet or W1.A03 authority exists; this R03 evidence requests independent review only."]
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion": "The exact W1 base plus ordered W1.A01/W1.A02 authority, hashes, commits, task outcomes, and adoption history remain unchanged.",
+      "evidence": ["The remediation changes only eight governance, evidence, test, and generated-view paths across the prior-candidate range.", "Complete record snapshots and the real append fixture preserve W1.A01/W1.A02 exactly."]
+    },
+    {
+      "criterion": "Generic recovery and ECR schemas accept subsequent well-bound identities and reject mismatched Wave, amendment, bootstrap, task, file, review, and predecessor identities.",
+      "evidence": ["Generic identity and semantic fixtures pass in the 108-test suite.", "The temporary ECR-0002/W1.A03 authority validates before the real append command is exercised."]
+    },
+    {
+      "criterion": "The semantic validator rejects cross-Wave identities, nonconsecutive or duplicate amendment predecessors, mismatched GRR/hold/bootstrap/ECR/task prefixes, and any absolute, backslash, dot-segment, traversal, redirected-parent, symlink, junction, or resolved-path escape.",
+      "evidence": ["Raw-path comparison now rejects repeated separators and trailing or otherwise normalized spellings before path access.", "Recovery evidence, review-ledger, and amendment-evidence entry tests cover the new denial boundary."]
+    },
+    {
+      "criterion": "Unresolved recovery/ECR holds fail closed across scheduler, start, resume, claim, reopen, evidence, submit, review, amendment, gate, generated handoff, and older-reader paths.",
+      "evidence": ["The centralized recovery mutation guard remains active and the canonical backlog validates.", "Focused workflow, schema, recovery, and generated-view checks remain green."]
+    },
+    {
+      "criterion": "Dirty, stale, duplicate, forked, reordered, wrong-hash, missing-review, and self-approved packets fail atomically without ledger or file mutation.",
+      "evidence": ["The real append fixture now includes repeated-separator denial alongside stale, duplicate, reordered, forked, and boundary mismatches.", "Every denied case verifies byte-stable backlog state before the successful append."]
+    },
+    {
+      "criterion": "Second and third GRR/ECR/amendment fixtures append successfully without replacing or rewriting predecessor authority.",
+      "evidence": ["Generic GRR-0002/0003 and ECR/amendment schema fixtures pass.", "The executable ECR-0002/W1.A03 test succeeds from a coherent recovery projection and proves exact predecessor equality."]
+    },
+    {
+      "criterion": "Bootstrap review and remediation history is append-only and exact-commit bound, and no product or ordinary W1 execution occurs.",
+      "evidence": ["R01 and R02 evidence, ledgers, findings, closures, and CHANGES_REQUESTED states remain committed and hash-bound.", "The remediation contains no product path, governed experience-reference change, ordinary task claim, or Wave resume."]
+    },
+    {
+      "criterion": "The repaired ordinary lane can freeze ECR-0002/W1.A03 but GRR-0001 grants zero approval, materialization, activation, claim, execution, adoption, or resume authority to that amendment or its proposed tasks.",
+      "evidence": ["The production recovery hold still records execution_authority false and W1.A03 is absent from the canonical backlog.", "Only the ephemeral test fixture appends W1.A03; a separately frozen and independently reviewed ECR-0002 will still require exact human approval."]
+    }
+  ],
+  "checks": [
+    {
+      "id": "quality",
+      "command": ".venv/Scripts/python.exe tools/quality_check.py --repo .",
+      "result": "passed"
+    },
+    {
+      "id": "focused-governance",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.foundation.test_taskctl_workflow tests.foundation.test_taskctl_schema tests.foundation.test_planctl_amendments tests.foundation.test_plan_review_amendments tests.foundation.test_recoveryctl tests.foundation.test_backlog_views",
+      "result": "passed"
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "passed"
+    },
+    {
+      "id": "recovery",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . validate GRR-0001 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "legacy-ecr",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "review-site",
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .",
+      "result": "passed"
+    },
+    {
+      "id": "views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "passed"
+    },
+    {
+      "id": "diff-hygiene",
+      "command": "git diff d53f5d3be5e254a7416272442f924b99d910abeb..d4d877966e44327eaa1d0b1219836d1413fcb7e2 --check",
+      "result": "passed"
+    }
+  ],
+  "deferredCoverage": [
+    "The UI-gate cumulative pass/adversarial suite remains deferred to separately approved ECR-0002/W1.A03.",
+    "CAP-02.S04.T03 product qualification and independent task/slice review remain blocked until the recovery hold is lawfully released.",
+    "The complete W1 qualification matrix, local-main integration, and G1 review remain at their ordinary Wave-exit gates."
+  ],
+  "unverifiedItems": []
+}
