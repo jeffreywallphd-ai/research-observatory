@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0-recovery-supplement-review",
+  "documentType": "governance-recovery-supplement-packet-review",
+  "recoveryRequestId": "GRR-0001",
+  "supplementId": "GRR-0001.S01",
+  "attemptId": "R01",
+  "candidateCommit": "92de47c422a75a8060ef86b50564fe92f3da2217",
+  "packetSha256": "58b3222464ea0b2d70456d96591c6aee62084a4bff66757745bab6457d5e9059",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "b00-independent-reviewer",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "GRR-0001.S01-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 1,
+      "title": "W1.A03 execution authority is described but not hash-bound",
+      "requiredRemediation": "Add a schema-required targetAmendmentAuthority object binding the exact ECR-0002 packet, W1.A03 approval record, and W1.A03 B00 candidate, evidence, reviewed state, and approved projection; render the same authority in the proposal and review page."
+    },
+    {
+      "id": "GRR-0001.S01-R01-F02",
+      "severity": "medium",
+      "blocking": true,
+      "criterionIndex": 2,
+      "title": "B01 scope cannot reconcile two operational documents that currently prohibit B01",
+      "requiredRemediation": "Add planning/governance-recovery-requests/README.md and docs/automation/codex-tracking-guide.md to the authorized scope and canonical scope description, limited to documenting the approved supplemental-bootstrap route."
+    }
+  ],
+  "verified": [
+    "The diff is exactly four new inert files; no backlog or executable byte changed.",
+    "The Draft 2020-12 schema is valid and the exact packet has zero structural errors.",
+    "All three declared file hashes match.",
+    "GRR-0001 packet, approval, and R05 ledger hashes and ancestry match.",
+    "The trigger backlog hash and sole materialization diagnostic reproduce with no mutation.",
+    "W1 is PAUSED/wave, A01/A02 are ADOPTED, A03/B00 are APPROVED with zero tasks, the GRR hold is ACTIVE, and T03 is BLOCKED.",
+    "Backlog, approved GRR, approved ECR-0002, generated views, 148 review pages, and diff hygiene pass."
+  ],
+  "approvalAvailable": false
+}

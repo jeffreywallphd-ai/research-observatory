@@ -30,6 +30,31 @@
       "reviewedStateCommit": "c8288c373fcc65a1f638ec950181c0652afc3681"
     }
   },
+  "targetAmendmentAuthority": {
+    "changeRequestPacket": {
+      "id": "ECR-0002",
+      "commit": "ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4",
+      "path": "planning/enabler-change-requests/ECR-0002.packet.json",
+      "sha256": "835d0cbac43427a1cfd7406a8693b8af0ebf9321d009778c359165de9f7a3b8b"
+    },
+    "amendmentApproval": {
+      "id": "W1.A03",
+      "introductionCommit": "95c007b58619dfd82b5f443eea3d8e71e7efe082",
+      "path": "planning/wave-amendment-approvals/W1.A03.json",
+      "sha256": "340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd"
+    },
+    "bootstrap": {
+      "id": "W1.A03.B00",
+      "candidateCommit": "d0faa070a85055fa2a278e05bedc57c05701aabe",
+      "evidence": {
+        "path": "artifacts/evidence/W1.A03.B00.json",
+        "sha256": "83e7295355f6a3377247b4eb0fca8d852dd670d968856f6212c110f60dd64a36",
+        "commit": "d0faa070a85055fa2a278e05bedc57c05701aabe"
+      },
+      "reviewedStateCommit": "6dbe0f6ba6996818f60dc0d27ef4f6e56aa5ff8f",
+      "approvedProjectionCommit": "12c06ed648d1153f6ed60e873224fa0637fea4f7"
+    }
+  },
   "triggerEvidence": {
     "discoveryCommit": "12c06ed648d1153f6ed60e873224fa0637fea4f7",
     "backlogSha256": "2a14a5b45158d035514ed9a5ff4f170dc8a508df941f1b5395a2121a7713ef1e",
@@ -54,6 +79,7 @@
     "exceptionReason": "The independently approved recovery bootstrap permits the exact later amendment lane, but its terminal-amendment validator compares every adopted predecessor with the current shared Wave scope and therefore atomically rejects lawful materialization of the next amendment. The approved bootstrap cannot be reopened, the next amendment task cannot be claimed before materialization, the active hold cannot be released, and a second active hold is not representable.",
     "authorizedPaths": [
       "AGENTS.md",
+      "docs/automation/codex-tracking-guide.md",
       "docs/automation/project-automation-guide.md",
       "docs/governance/delivery-control-model.md",
       "docs/planning-implementation-plan.md",
@@ -62,6 +88,7 @@
       "planning/backlog.yaml",
       "planning/governance-recovery-approvals/GRR-0001.B01*",
       "planning/governance-recovery-approvals/GRR-0001.S01.json",
+      "planning/governance-recovery-requests/README.md",
       "planning/governance-recovery-requests/governance-recovery-supplement-*.schema.json",
       "planning/review-site/**",
       "planning/status-summary.md",
@@ -137,15 +164,19 @@
   "files": [
     {
       "path": "planning/governance-recovery-requests/governance-recovery-supplement.schema.json",
-      "sha256": "2a2b07b17c2620bd87936db2167c0857f88e9ccc48809dc27ab0041a0b752b6d"
+      "sha256": "b72e54db21bf6c0ec0035549f3d7fd6f072ebfbe416a0b35e4b75755135c70cc"
     },
     {
       "path": "planning/governance-recovery-requests/GRR-0001.S01.md",
-      "sha256": "123c8664760fa2d93d502e8518af425a952df140c702acaeafeb51eb491138ae"
+      "sha256": "ffb35030fce379d4d42c62d3d18270c7fcd963f90f9c198aafb388f3a40a8088"
     },
     {
       "path": "planning/governance-recovery-requests/GRR-0001.S01-review.html",
-      "sha256": "03fa8cbdc9d10f6f77c0fd30d20978b515edf14a720371c72f6e69308a016d41"
+      "sha256": "6abef6a6f9614f4f03147a1b8114032fe3c4d6ca55730762843ff808dba3a01e"
+    },
+    {
+      "path": "planning/governance-recovery-requests/GRR-0001.S01.review-R01.json",
+      "sha256": "cf38301189917f1c5f827179bb50894f21b865985838f3dbe86b2e5142ffcfea"
     }
   ],
   "requiredApprovalStatement": "Approve GRR-0001.S01 at packet commit <40-character SHA>, authorizing only supplemental bootstrap GRR-0001.B01 and its hash-bound governance/controller/test scope under HOLD-W1-GRR-0001. Keep W1 paused, W1.A03 unmaterialized, and CAP-02.S04.T03 blocked through independent B01 approval; then retry only the packet-bound W1.A03 materialization transition."

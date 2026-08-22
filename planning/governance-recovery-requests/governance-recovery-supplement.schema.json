@@ -15,6 +15,7 @@
     "executionState",
     "classification",
     "baseRecoveryAuthority",
+    "targetAmendmentAuthority",
     "triggerEvidence",
     "activationBoundary",
     "supplementalBootstrap",
@@ -95,6 +96,56 @@
             "sha256": {"$ref": "#/$defs/sha256"},
             "candidateCommit": {"$ref": "#/$defs/commit"},
             "reviewedStateCommit": {"$ref": "#/$defs/commit"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "targetAmendmentAuthority": {
+      "type": "object",
+      "required": ["changeRequestPacket", "amendmentApproval", "bootstrap"],
+      "properties": {
+        "changeRequestPacket": {
+          "type": "object",
+          "required": ["id", "commit", "path", "sha256"],
+          "properties": {
+            "id": {"type": "string", "pattern": "^ECR-[0-9]{4}$"},
+            "commit": {"$ref": "#/$defs/commit"},
+            "path": {"$ref": "#/$defs/canonicalPath"},
+            "sha256": {"$ref": "#/$defs/sha256"}
+          },
+          "additionalProperties": false
+        },
+        "amendmentApproval": {
+          "type": "object",
+          "required": ["id", "introductionCommit", "path", "sha256"],
+          "properties": {
+            "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
+            "introductionCommit": {"$ref": "#/$defs/commit"},
+            "path": {"$ref": "#/$defs/canonicalPath"},
+            "sha256": {"$ref": "#/$defs/sha256"}
+          },
+          "additionalProperties": false
+        },
+        "bootstrap": {
+          "type": "object",
+          "required": ["id", "candidateCommit", "evidence", "reviewedStateCommit", "approvedProjectionCommit"],
+          "properties": {
+            "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B[0-9]{2}$"},
+            "candidateCommit": {"$ref": "#/$defs/commit"},
+            "evidence": {
+              "type": "object",
+              "required": ["path", "sha256", "commit"],
+              "properties": {
+                "path": {"$ref": "#/$defs/canonicalPath"},
+                "sha256": {"$ref": "#/$defs/sha256"},
+                "commit": {"$ref": "#/$defs/commit"}
+              },
+              "additionalProperties": false
+            },
+            "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+            "approvedProjectionCommit": {"$ref": "#/$defs/commit"}
           },
           "additionalProperties": false
         }
