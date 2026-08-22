@@ -137,6 +137,7 @@ release still leaves the Wave PAUSED for explicit ordinary resume.
 ```bash
 python tools/recoveryctl.py --repo . validate GRR-NNNN --require-approved
 python tools/recoveryctl.py --repo . status GRR-NNNN
+python tools/recoveryctl.py --repo . bootstrap-start GRR-NNNN --agent <agent>
 python tools/recoveryctl.py --repo . bootstrap-submit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
 python tools/recoveryctl.py --repo . bootstrap-review GRR-NNNN --reviewer <independent-reviewer> --from <ledger>
 python tools/recoveryctl.py --repo . bootstrap-resubmit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>

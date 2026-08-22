@@ -785,7 +785,7 @@ def _approval_record_errors(
         ("packet.proposalSha256", packet_reference.get("proposalSha256"), proposal.get("sha256")),
     )
     expected: tuple[tuple[str, Any, Any], ...]
-    if packet.get("schemaVersion") == "2.0-proposal":
+    if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal"}:
         expected = (
             *expected_common,
             ("effectiveBase", effective, authority_chain),
@@ -846,7 +846,7 @@ def _approval_record_errors(
             errors.append("Wave amendment approval packet commit does not exist")
         elif _git_blob(root, packet_commit, packet_relative) != packet_payload:
             errors.append("Wave amendment approval packet differs from its immutable Git blob")
-        if packet.get("schemaVersion") == "2.0-proposal":
+        if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal"}:
             frozen = _json_object(packet.get("authorityChain")).get("orderedAmendments") or []
             latest_state = str(_json_object(frozen[-1]).get("effectiveStateCommit") or "") if frozen else ""
             if latest_state and not _git_is_ancestor(root, latest_state, packet_commit):
@@ -867,7 +867,7 @@ def _approval_record_errors(
 
 
 def _authority_history_errors(root: Path, packet: dict[str, Any]) -> list[str]:
-    if packet.get("schemaVersion") == "2.0-proposal":
+    if packet.get("schemaVersion") in {"2.0-proposal", "3.0-proposal"}:
         return _authority_chain_v2_errors(root, packet)
     errors: list[str] = []
     authority = _json_object(packet.get("authority"))
@@ -1060,9 +1060,16 @@ def _authority_chain_v2_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     hold_id = str(_json_object(packet.get("activationBoundary")).get("recoveryHoldId") or "")
     holds = (backlog.get("control_plane") or {}).get("recovery_holds", [])
     matching_hold = next((hold for hold in holds if hold.get("id") == hold_id), None)
+    proposed_is_adopted = bool(
+        len(actual) == len(frozen) + 1 and (actual[-1].get("lifecycle") or {}).get("status") == "ADOPTED"
+    )
     if (
         matching_hold is None
         or matching_hold.get("target_wave") != wave_id
+        or (
+            matching_hold.get("status") != "ACTIVE"
+            and not (matching_hold.get("status") == "RELEASED" and proposed_is_adopted)
+        )
         or (matching_hold.get("bootstrap") or {}).get("status") != "APPROVED"
         or (matching_hold.get("post_bootstrap") or {}).get("required_amendment_id") != proposed
         or (matching_hold.get("post_bootstrap") or {}).get("required_change_request_id")
@@ -1070,6 +1077,48 @@ def _authority_chain_v2_errors(root: Path, packet: dict[str, Any]) -> list[str]:
         or (matching_hold.get("post_bootstrap") or {}).get("required_proposed_task_ids") != authorized
     ):
         errors.append("ECR v2 does not bind the active independently approved recovery hold")
+    if packet.get("schemaVersion") == "3.0-proposal":
+        recovery = _json_object(packet.get("recoveryAuthority"))
+        packet_reference = _json_object(recovery.get("packetReference"))
+        approval_reference = _json_object(recovery.get("approvalReference"))
+        bootstrap_reference = _json_object(recovery.get("bootstrap"))
+        hold_bootstrap = _json_object((matching_hold or {}).get("bootstrap"))
+        attempts = hold_bootstrap.get("attempts") or []
+        latest_attempt = _json_object(attempts[-1]) if attempts else {}
+        ledger_reference = _json_object(latest_attempt.get("ledger"))
+        ledger_path = root.joinpath(*PurePosixPath(str(ledger_reference.get("path") or "")).parts)
+        try:
+            ledger_payload = ledger_path.read_bytes()
+            ledger = json.loads(ledger_payload)
+        except OSError, UnicodeError, json.JSONDecodeError:
+            ledger_payload = b""
+            ledger = {}
+        expected_recovery = (
+            (recovery.get("recoveryRequestId"), (matching_hold or {}).get("recovery_request_id")),
+            (recovery.get("holdId"), hold_id),
+            (recovery.get("holdStatus"), "ACTIVE"),
+            (packet_reference, _json_object((matching_hold or {}).get("packet_reference"))),
+            (approval_reference, _json_object((matching_hold or {}).get("approval_reference"))),
+            (bootstrap_reference.get("id"), hold_bootstrap.get("id")),
+            (bootstrap_reference.get("status"), "APPROVED"),
+            (bootstrap_reference.get("attemptId"), latest_attempt.get("id")),
+            (bootstrap_reference.get("candidateCommit"), latest_attempt.get("implementation_commit")),
+            (bootstrap_reference.get("reviewedStateCommit"), ledger.get("reviewedStateCommit")),
+            (bootstrap_reference.get("reviewLedger"), ledger_reference),
+        )
+        if any(current != wanted for current, wanted in expected_recovery):
+            errors.append("ECR v3 recovery authority differs from the exact active hold and approved bootstrap")
+        if (
+            not ledger_payload
+            or hashlib.sha256(ledger_payload).hexdigest() != ledger_reference.get("sha256")
+            or ledger.get("result") != "approved"
+            or ledger.get("candidateCommit") != latest_attempt.get("implementation_commit")
+            or (latest_attempt.get("review") or {}).get("result") != "approved"
+        ):
+            errors.append("ECR v3 recovery bootstrap review is not exact, immutable, and APPROVED")
+        active_holds = [hold for hold in holds if hold.get("status") == "ACTIVE"]
+        if not proposed_is_adopted and active_holds != [matching_hold]:
+            errors.append("ECR v3 requires its recovery hold to be the sole ACTIVE hold before adoption")
     for commit in ordered_commits:
         if (
             not re.fullmatch(r"[0-9a-f]{40}", commit)
@@ -1096,6 +1145,7 @@ def ecr_validation_errors(root: Path, change_request_id: str, *, require_approve
     schema_name = {
         "1.0-proposal": "enabler-change-request.schema.json",
         "2.0-proposal": "enabler-change-request.v2.schema.json",
+        "3.0-proposal": "enabler-change-request.v3.schema.json",
     }.get(str(packet.get("schemaVersion")))
     if schema_name is None:
         errors = [f"ECR packet uses an unsupported schema version: {packet.get('schemaVersion')}"]

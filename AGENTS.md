@@ -170,6 +170,7 @@ python tools/planctl.py --repo . wave ready WN --require-approved
 python tools/planctl.py --repo . wave approve WN --by <reviewer> --commit <git-sha>
 python tools/planctl.py --repo . ecr review ECR-NNNN
 python tools/planctl.py --repo . ecr validate ECR-NNNN --require-approved
+python tools/recoveryctl.py --repo . bootstrap-start GRR-NNNN --agent <agent>
 python tools/taskctl.py --file planning/backlog.yaml amendment status WN.ANN
 python tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-resubmit WN.ANN --agent <agent> --implementation-commit <sha> --evidence <manifest>
 python tools/recoveryctl.py --repo . validate GRR-NNNN --require-approved

@@ -377,6 +377,98 @@ class GovernanceRecoveryTests(unittest.TestCase):
         )
         return repo, args, before
 
+    def second_hold_fixture(self, temporary: str) -> Path:
+        repo = Path(temporary) / "second-hold-fixture"
+        bundle = Path(temporary) / "second-hold.bundle"
+        subprocess.run(
+            ["git", "bundle", "create", str(bundle), "HEAD"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        subprocess.run(
+            ["git", "clone", "--quiet", str(bundle), str(repo)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.git(repo, "config", "user.email", "fixture@example.invalid")
+        self.git(repo, "config", "user.name", "Fixture Implementer")
+        self.git(repo, "config", "commit.gpgsign", "false")
+        self.git(repo, "config", "core.autocrlf", "false")
+        self.git(repo, "checkout", "-B", "codex/w1-windows-local-runtime")
+        for relative in (
+            "tools/taskctl.py",
+            "tools/recoveryctl.py",
+            "planning/backlog.schema.json",
+            "planning/enabler-change-requests/enabler-change-request.v3.schema.json",
+        ):
+            destination = repo / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(REPO / relative, destination)
+            self.git(repo, "add", relative)
+        self.git(repo, "commit", "-m", "fixture: install revision 6 controller")
+        return repo
+
+    def test_second_recovery_hold_start_is_atomic_consecutive_and_preserving(self) -> None:
+        with tempfile.TemporaryDirectory(dir=REPO) as temporary:
+            repo = self.second_hold_fixture(temporary)
+            backlog_path = repo / "planning/backlog.yaml"
+            before = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            predecessor = json.dumps(
+                before["control_plane"]["recovery_holds"][0],
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            recoveryctl.command_bootstrap_start(argparse.Namespace(repo=repo, request="GRR-0002", agent="codex"))
+            installed = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            control = installed["control_plane"]
+            self.assertEqual(6, control["revision"])
+            self.assertEqual(6, control["minimum_tool_revision"])
+            self.assertEqual(
+                predecessor,
+                json.dumps(control["recovery_holds"][0], sort_keys=True, separators=(",", ":")),
+            )
+            successor = control["recovery_holds"][1]
+            self.assertEqual("HOLD-W1-GRR-0002", successor["id"])
+            self.assertEqual("ACTIVE", successor["status"])
+            self.assertEqual("GRR-0002.B00", successor["bootstrap"]["id"])
+            self.assertEqual("IN_PROGRESS", successor["bootstrap"]["status"])
+            self.assertEqual("ECR-0003", successor["post_bootstrap"]["required_change_request_id"])
+            self.assertEqual("W1.A04", successor["post_bootstrap"]["required_amendment_id"])
+            self.assertEqual(["W1.A04.T01"], successor["post_bootstrap"]["required_proposed_task_ids"])
+            self.assertEqual([], taskctl.validate(*taskctl.load(str(backlog_path)), repo=repo))
+
+            self.git(repo, "add", "planning/backlog.yaml")
+            self.git(repo, "commit", "-m", "fixture: install second recovery hold")
+            frozen = backlog_path.read_bytes()
+            with self.assertRaisesRegex(SystemExit, "next consecutive identity GRR-0003"):
+                recoveryctl.command_bootstrap_start(argparse.Namespace(repo=repo, request="GRR-0002", agent="codex"))
+            self.assertEqual(frozen, backlog_path.read_bytes())
+
+            old_tool = repo / "tools" / "old-taskctl.py"
+            old_tool.write_bytes(
+                subprocess.run(
+                    ["git", "show", "0b450222ff569db356b84e413941aa2af585a64e:tools/taskctl.py"],
+                    cwd=repo,
+                    capture_output=True,
+                    check=True,
+                ).stdout
+            )
+            result = subprocess.run(
+                [sys.executable, str(old_tool), "--file", str(backlog_path), "validate"],
+                cwd=repo,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertNotEqual(0, result.returncode)
+            self.assertRegex(
+                result.stdout + result.stderr,
+                "control plane revision is missing or unsupported|Backlog schema validation failed",
+            )
+
     def supplement_lifecycle_fixture(
         self,
         temporary: str,
@@ -400,11 +492,22 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.git(repo, "config", "user.name", "Fixture Reviewer")
         self.git(repo, "config", "commit.gpgsign", "false")
         self.git(repo, "config", "core.autocrlf", "false")
-        self.git(repo, "checkout", "-b", "codex/supplement-fixture")
+        supplement_approval_intro = taskctl.approval_introduction_commit(
+            REPO,
+            "planning/governance-recovery-approvals/GRR-0001.S01.json",
+        )
+        if not supplement_approval_intro:
+            raise AssertionError("Canonical supplement approval introduction is unavailable")
+        self.git(repo, "checkout", "-B", "codex/supplement-fixture", supplement_approval_intro)
 
         backlog_path = repo / "planning/backlog.yaml"
+        current = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
+        current_supplement = copy.deepcopy(current["control_plane"]["recovery_holds"][0]["supplements"][0])
         backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+        backlog["control_plane"]["revision"] = taskctl.CONTROL_TOOL_REVISION
+        backlog["control_plane"]["minimum_tool_revision"] = taskctl.CONTROL_TOOL_REVISION
         hold = backlog["control_plane"]["recovery_holds"][0]
+        hold["supplements"] = [current_supplement]
         b00_snapshot = copy.deepcopy(hold["bootstrap"])
         supplement = hold["supplements"][0]
         bootstrap = supplement["bootstrap"]
@@ -420,6 +523,14 @@ class GovernanceRecoveryTests(unittest.TestCase):
         approvals = repo / "planning/governance-recovery-approvals"
         for artifact in approvals.glob("GRR-0001.B01*"):
             artifact.unlink()
+        for schema_name in (
+            "governance-recovery-supplement-evidence.schema.json",
+            "governance-recovery-supplement-review.schema.json",
+        ):
+            shutil.copy2(
+                REPO / "planning/governance-recovery-requests" / schema_name,
+                repo / "planning/governance-recovery-requests" / schema_name,
+            )
         backlog_path.write_bytes(yaml.safe_dump(backlog, sort_keys=False, width=120).encode())
         self.git(repo, "add", "--all")
         self.git(repo, "commit", "-m", "test: establish initial B01 lifecycle boundary")
@@ -528,7 +639,8 @@ class GovernanceRecoveryTests(unittest.TestCase):
         approval, packet, hold = recoveryctl.validate_request(REPO, "GRR-0001")
         self.assertEqual("APPROVED", approval["status"])
         self.assertEqual("W1.A03", packet["postBootstrap"]["requiredAmendmentId"])
-        self.assertEqual("ACTIVE", hold["status"])
+        self.assertEqual("RELEASED", hold["status"])
+        self.assertIsNotNone(hold["released_at"])
         status = hold["bootstrap"]["status"]
         self.assertIn(status, {"IN_PROGRESS", "REVIEW", "CHANGES_REQUESTED", "BLOCKED", "APPROVED"})
         if status == "REVIEW":
@@ -553,33 +665,9 @@ class GovernanceRecoveryTests(unittest.TestCase):
         )
         self.assertEqual("APPROVED", approval["status"])
         self.assertEqual("GRR-0001.B01", packet["supplementalBootstrap"]["id"])
-        _payload, data, _capabilities, _slices, _tasks, _gates = recoveryctl.backlog_state(REPO)
-        hold, amendment = recoveryctl.validate_supplement_boundary(
-            REPO,
-            packet,
-            data,
-            require_installed=True,
-        )
-        self.assertEqual("ACTIVE", hold["status"])
-        self.assertEqual("APPROVED", amendment["lifecycle"]["status"])
-        with self.assertRaisesRegex(SystemExit, "unapproved latest recovery supplement"):
-            recoveryctl.validate_target_materialization_projection(REPO, packet, data)
-        projection = recoveryctl.validate_target_materialization_projection(
-            REPO,
-            packet,
-            data,
-            allow_unapproved_supplement_gate=True,
-        )
-        self.assertEqual(["W1.A03.T01"], projection["materializedTaskIds"])
-        self.assertEqual("PAUSED", projection["waveStatus"])
-        self.assertEqual("amendment-hold", projection["waveScope"])
-        self.assertEqual("BLOCKED", projection["blockedTaskStatus"])
-        self.assertEqual("ACTIVE", projection["holdStatus"])
-        self.assertFalse(projection["activationOrClaimPerformed"])
-        self.assertEqual(
-            "latest supplemental bootstrap must be independently APPROVED",
-            projection["authorizationGate"],
-        )
+        _approval, _packet, hold, supplement = recoveryctl.validate_supplement(REPO, "GRR-0001.S01")
+        self.assertEqual("RELEASED", hold["status"])
+        self.assertEqual("APPROVED", supplement["bootstrap"]["status"])
         self.assertTrue(
             recoveryctl.path_authorized(
                 "planning/governance-recovery-approvals/GRR-0001.B01.review-R01.json",
@@ -637,8 +725,8 @@ class GovernanceRecoveryTests(unittest.TestCase):
             recoveryctl.command_supplement_start(args)
 
         installed = captured["data"]
-        self.assertEqual(5, installed["control_plane"]["revision"])
-        self.assertEqual(5, installed["control_plane"]["minimum_tool_revision"])
+        self.assertEqual(taskctl.CONTROL_TOOL_REVISION, installed["control_plane"]["revision"])
+        self.assertEqual(taskctl.CONTROL_TOOL_REVISION, installed["control_plane"]["minimum_tool_revision"])
         supplement = installed["control_plane"]["recovery_holds"][0]["supplements"][0]
         self.assertEqual("GRR-0001.S01", supplement["id"])
         self.assertEqual("GRR-0001.B01", supplement["bootstrap"]["id"])
@@ -648,7 +736,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
 
         _current_payload, current, _capabilities, _slices, _tasks, _gates = recoveryctl.backlog_state(REPO)
         stale = copy.deepcopy(current)
-        stale["waves"][1]["campaign"]["scope"] = "amendment-hold"
+        stale["control_plane"]["recovery_holds"][0]["id"] = "HOLD-W1-GRR-9999"
         with self.assertRaisesRegex(SystemExit, "activation boundary"):
             recoveryctl.validate_supplement_boundary(REPO, packet, stale, require_installed=True)
 
@@ -1115,6 +1203,56 @@ class GovernanceRecoveryTests(unittest.TestCase):
             with self.subTest(amendment=amendment):
                 self.assertEqual([], list(Draft202012Validator(schema).iter_errors(packet)))
 
+    def test_v3_ecr_schema_requires_exact_recovery_authority_binding(self) -> None:
+        schema = json.loads(
+            (REPO / "planning/enabler-change-requests/enabler-change-request.v3.schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        packet = json.loads(
+            (REPO / "planning/enabler-change-requests/ECR-0002.packet.json").read_text(encoding="utf-8")
+        )
+        packet["$schema"] = "./enabler-change-request.v3.schema.json"
+        packet["schemaVersion"] = "3.0-proposal"
+        packet["changeRequestId"] = "ECR-0003"
+        packet["proposedAmendmentId"] = "W1.A04"
+        packet["activationBoundary"]["recoveryHoldId"] = "HOLD-W1-GRR-0002"
+        packet["recoveryAuthority"] = {
+            "recoveryRequestId": "GRR-0002",
+            "holdId": "HOLD-W1-GRR-0002",
+            "holdStatus": "ACTIVE",
+            "packetReference": {
+                "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+                "sha256": "a" * 64,
+                "commit": "b" * 40,
+            },
+            "approvalReference": {
+                "path": "planning/governance-recovery-approvals/GRR-0002.json",
+                "sha256": "c" * 64,
+                "introduction_commit": "d" * 40,
+            },
+            "bootstrap": {
+                "id": "GRR-0002.B00",
+                "status": "APPROVED",
+                "attemptId": "R01",
+                "candidateCommit": "e" * 40,
+                "reviewedStateCommit": "f" * 40,
+                "reviewLedger": {
+                    "path": "planning/governance-recovery-approvals/GRR-0002.B00.review-R01.json",
+                    "sha256": "1" * 64,
+                },
+            },
+        }
+        packet["bootstrapUnit"]["id"] = "W1.A04.B00"
+        packet["authorizedTaskIds"] = ["W1.A04.T01"]
+        packet["taskInventory"][0]["id"] = "W1.A04.T01"
+        packet["taskInventory"][0]["dependencies"] = ["W1.A04.B00"]
+        packet["taskInventory"] = packet["taskInventory"][:1]
+        packet["files"][1]["path"] = "planning/enabler-change-requests/enabler-change-request.v3.schema.json"
+        self.assertEqual([], list(Draft202012Validator(schema).iter_errors(packet)))
+        del packet["recoveryAuthority"]
+        self.assertTrue(list(Draft202012Validator(schema).iter_errors(packet)))
+
     def test_real_second_ecr_and_third_amendment_append_is_semantic_atomic_and_preserving(self) -> None:
         with tempfile.TemporaryDirectory(dir=REPO) as temporary:
             repo, args, before = self.append_fixture(temporary)
@@ -1364,12 +1502,8 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.assertEqual(payload, backlog_path.read_bytes())
 
     def test_taskctl_hold_denies_wave_resume_and_older_revision(self) -> None:
-        result = subprocess.run(
+        parsed = taskctl.build_parser().parse_args(
             [
-                sys.executable,
-                str(REPO / "tools/taskctl.py"),
-                "--file",
-                str(REPO / "planning/backlog.yaml"),
                 "wave",
                 "resume",
                 "W1",
@@ -1381,17 +1515,25 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 "0" * 40,
                 "--worktree",
                 str(REPO),
-            ],
-            capture_output=True,
-            text=True,
-            check=False,
+            ]
         )
-        self.assertNotEqual(0, result.returncode)
-        self.assertIn("Governance recovery hold HOLD-W1-GRR-0001 denies this mutation", result.stderr)
         data = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
+        if not taskctl.active_recovery_holds(data):
+            data = copy.deepcopy(data)
+            data["control_plane"]["recovery_holds"][-1]["status"] = "ACTIVE"
+            data["control_plane"]["recovery_holds"][-1]["released_at"] = None
+        active = taskctl.active_recovery_holds(data)[0]
+        with self.assertRaisesRegex(SystemExit, f"Governance recovery hold {active['id']} denies this mutation"):
+            taskctl.require_recovery_hold_permission(parsed, data, {}, REPO)
         with patch.object(taskctl, "CONTROL_TOOL_REVISION", 3):
             errors = taskctl.wave_authority_errors(data, None)
-        self.assertIn("control plane revision is missing or unsupported", errors)
+        self.assertTrue(
+            {
+                "control plane revision is missing or unsupported",
+                "this taskctl revision is too old for the active control plane",
+            }
+            & set(errors)
+        )
 
     def test_failed_release_is_atomic(self) -> None:
         backlog = REPO / "planning/backlog.yaml"
@@ -1412,7 +1554,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
             check=False,
         )
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("requires adopted W1.A03", result.stderr)
+        self.assertIn("already terminally RELEASED", result.stderr)
         self.assertEqual(before, backlog.read_bytes())
 
     def test_recovery_review_binds_cli_actor_and_denies_self_review(self) -> None:

@@ -198,6 +198,11 @@ class ExactTaskRecoveryTests(unittest.TestCase):
             ]
         )
         data, _capabilities, _slices, tasks, _gates = taskctl.load(str(REPO / "planning/backlog.yaml"))
+        if not taskctl.active_recovery_holds(data):
+            data = copy.deepcopy(data)
+            hold = data["control_plane"]["recovery_holds"][-1]
+            hold["status"] = "ACTIVE"
+            hold["released_at"] = None
         with self.assertRaisesRegex(SystemExit, "Governance recovery hold"):
             taskctl.require_recovery_hold_permission(parsed, data, tasks, REPO)
 
