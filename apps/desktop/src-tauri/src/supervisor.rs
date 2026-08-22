@@ -4,6 +4,7 @@ use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpStream};
 use std::path::{Path, PathBuf};
 use std::process::{Child, ChildStdin, Command, Stdio};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex, Weak, mpsc};
 use std::thread;
 use std::time::{Duration, Instant};
@@ -32,6 +33,10 @@ impl CapabilityToken {
 
     fn append_hex(&self, target: &mut Vec<u8>) {
         append_hex(&self.0, target);
+    }
+
+    fn duplicate_for_request(&self) -> Self {
+        Self(self.0)
     }
 }
 
@@ -185,6 +190,7 @@ struct RunningProcess {
     stdin: ChildStdin,
     containment: ProcessTreeContainment,
     capability_token: CapabilityToken,
+    cancellation: Arc<AtomicBool>,
     port: u16,
 }
 
@@ -437,17 +443,45 @@ impl RuntimeSupervisor {
 
     pub fn api_request(&self, request: &CoreApiRequest) -> Result<CoreApiResponse, &'static str> {
         validate_api_request(request)?;
+        let (port, capability_token, cancellation, attempt) = {
+            let mut inner = self
+                .shared
+                .inner
+                .lock()
+                .expect("runtime supervisor mutex poisoned");
+            inner.refresh();
+            if inner.state != RuntimeState::Ready || inner.stopping || inner.launching {
+                return Err("RO-CORE-API-UNAVAILABLE");
+            }
+            let process = inner.process.as_ref().ok_or("RO-CORE-API-UNAVAILABLE")?;
+            (
+                process.port,
+                process.capability_token.duplicate_for_request(),
+                Arc::clone(&process.cancellation),
+                inner.attempt,
+            )
+        };
+        let response = authenticated_api_request_with_cancellation(
+            port,
+            &capability_token,
+            request,
+            Some(cancellation.as_ref()),
+        );
         let mut inner = self
             .shared
             .inner
             .lock()
             .expect("runtime supervisor mutex poisoned");
         inner.refresh();
-        if inner.state != RuntimeState::Ready || inner.stopping || inner.launching {
-            return Err("RO-CORE-API-UNAVAILABLE");
+        if cancellation.load(Ordering::Acquire)
+            || inner.attempt != attempt
+            || inner.state != RuntimeState::Ready
+            || inner.stopping
+            || inner.launching
+            || inner.process.as_ref().map(|process| process.port) != Some(port)
+        {
+            return Err("RO-CORE-API-CANCELLED");
         }
-        let process = inner.process.as_ref().ok_or("RO-CORE-API-UNAVAILABLE")?;
-        let response = authenticated_api_request(process.port, &process.capability_token, request);
         if let Ok(response) = &response {
             inner.record(
                 "RO-CORE-API-REQUEST-COMPLETE",
@@ -471,6 +505,14 @@ impl RuntimeSupervisor {
     }
 
     pub fn stop(&self) -> RuntimeSnapshot {
+        self.stop_with_policy(false)
+    }
+
+    pub fn stop_for_application_lock(&self) -> RuntimeSnapshot {
+        self.stop_with_policy(true)
+    }
+
+    fn stop_with_policy(&self, immediate: bool) -> RuntimeSnapshot {
         if self.config.is_err() {
             return self.status();
         }
@@ -499,10 +541,17 @@ impl RuntimeSupervisor {
                 .wait(inner)
                 .expect("runtime supervisor mutex poisoned");
         }
+        if let Some(process) = inner.process.as_ref() {
+            process.cancellation.store(true, Ordering::Release);
+        }
         let process = inner.process.take();
         drop(inner);
         if let Some(mut process) = process {
-            stop_running_process(&mut process);
+            if immediate {
+                stop_running_process_immediately(&mut process);
+            } else {
+                stop_running_process(&mut process);
+            }
         }
         let mut inner = self
             .shared
@@ -629,6 +678,7 @@ fn launch(
         stdin,
         containment,
         capability_token,
+        cancellation: Arc::new(AtomicBool::new(false)),
         port,
     })
 }
@@ -863,6 +913,18 @@ fn authenticated_api_request(
     capability_token: &CapabilityToken,
     api_request: &CoreApiRequest,
 ) -> Result<CoreApiResponse, &'static str> {
+    authenticated_api_request_with_cancellation(port, capability_token, api_request, None)
+}
+
+fn authenticated_api_request_with_cancellation(
+    port: u16,
+    capability_token: &CapabilityToken,
+    api_request: &CoreApiRequest,
+    cancellation: Option<&AtomicBool>,
+) -> Result<CoreApiResponse, &'static str> {
+    if cancellation.is_some_and(|flag| flag.load(Ordering::Acquire)) {
+        return Err("RO-CORE-API-CANCELLED");
+    }
     let mut trace_bytes = [0_u8; 16];
     fill_secure_random(&mut trace_bytes).map_err(|_| "RO-CORE-TRACE-RANDOM-FAILED")?;
     let mut trace = Vec::with_capacity(32);
@@ -874,7 +936,7 @@ fn authenticated_api_request(
     let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(1))
         .map_err(|_| "RO-CORE-API-UNAVAILABLE")?;
     stream
-        .set_read_timeout(Some(Duration::from_secs(2)))
+        .set_read_timeout(Some(Duration::from_millis(50)))
         .map_err(|_| "RO-CORE-API-UNAVAILABLE")?;
     stream
         .set_write_timeout(Some(Duration::from_secs(1)))
@@ -920,13 +982,34 @@ fn authenticated_api_request(
     if !written {
         return Err("RO-CORE-API-UNAVAILABLE");
     }
+    if cancellation.is_some_and(|flag| flag.load(Ordering::Acquire)) {
+        return Err("RO-CORE-API-CANCELLED");
+    }
     let mut response = Vec::new();
-    stream
-        .take(1_048_577)
-        .read_to_end(&mut response)
-        .map_err(|_| "RO-CORE-API-RESPONSE-INVALID")?;
-    if response.len() > 1_048_576 {
-        return Err("RO-CORE-API-RESPONSE-INVALID");
+    let deadline = Instant::now() + Duration::from_secs(2);
+    let mut chunk = [0_u8; 8192];
+    loop {
+        if cancellation.is_some_and(|flag| flag.load(Ordering::Acquire)) {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        match stream.read(&mut chunk) {
+            Ok(0) => break,
+            Ok(count) => {
+                if response.len().saturating_add(count) > 1_048_576 {
+                    return Err("RO-CORE-API-RESPONSE-INVALID");
+                }
+                response.extend_from_slice(&chunk[..count]);
+            }
+            Err(error)
+                if matches!(
+                    error.kind(),
+                    std::io::ErrorKind::WouldBlock | std::io::ErrorKind::TimedOut
+                ) && Instant::now() < deadline => {}
+            Err(_) => return Err("RO-CORE-API-RESPONSE-INVALID"),
+        }
+        if Instant::now() >= deadline {
+            return Err("RO-CORE-API-RESPONSE-INVALID");
+        }
     }
     parse_api_response(&response, &trace_id)
 }
@@ -1264,6 +1347,13 @@ fn stop_running_process(process: &mut RunningProcess) {
     }
 }
 
+fn stop_running_process_immediately(process: &mut RunningProcess) {
+    process.cancellation.store(true, Ordering::Release);
+    process.containment.terminate();
+    let _ = process.child.kill();
+    let _ = process.child.wait();
+}
+
 fn readiness_is_compatible(response: &[u8]) -> bool {
     let Some(split) = response.windows(4).position(|window| window == b"\r\n\r\n") else {
         return false;
@@ -1508,10 +1598,14 @@ impl ProcessTreeContainment {
 mod tests {
     use super::{
         CapabilityToken, CoreApiRequest, RuntimeState, RuntimeSupervisor, SupervisorInner,
-        parse_api_response, semantic_version, validate_api_request, validate_handshake,
-        version_response_is_compatible,
+        authenticated_api_request_with_cancellation, parse_api_response, semantic_version,
+        validate_api_request, validate_handshake, version_response_is_compatible,
     };
     use std::collections::VecDeque;
+    use std::io::Read;
+    use std::net::TcpListener;
+    use std::sync::atomic::{AtomicBool, Ordering};
+    use std::sync::{Arc, mpsc};
 
     fn handshake(pid: u32) -> Vec<u8> {
         format!(
@@ -1700,6 +1794,45 @@ mod tests {
                 .body,
             "hello"
         );
+    }
+
+    #[test]
+    fn native_api_transport_cancels_an_inflight_request_without_waiting_for_response() {
+        let listener = TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).expect("listener");
+        let port = listener.local_addr().expect("listener address").port();
+        let (received_tx, received_rx) = mpsc::sync_channel(1);
+        let (release_tx, release_rx) = mpsc::sync_channel(1);
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().expect("accepted request");
+            let mut first = [0_u8; 1];
+            stream.read_exact(&mut first).expect("request byte");
+            received_tx.send(()).expect("request observed");
+            release_rx.recv().expect("release server");
+        });
+        let cancellation = Arc::new(AtomicBool::new(false));
+        let request_cancellation = Arc::clone(&cancellation);
+        let client = std::thread::spawn(move || {
+            authenticated_api_request_with_cancellation(
+                port,
+                &CapabilityToken::generate().expect("capability token"),
+                &CoreApiRequest {
+                    method: "GET".to_owned(),
+                    path: "/runtime/version".to_owned(),
+                    body: None,
+                    if_match: None,
+                    idempotency_key: None,
+                },
+                Some(request_cancellation.as_ref()),
+            )
+        });
+        received_rx.recv().expect("request reached server");
+        cancellation.store(true, Ordering::Release);
+        assert_eq!(
+            client.join().expect("client result"),
+            Err("RO-CORE-API-CANCELLED")
+        );
+        release_tx.send(()).expect("release server");
+        server.join().expect("server stopped");
     }
 
     #[test]

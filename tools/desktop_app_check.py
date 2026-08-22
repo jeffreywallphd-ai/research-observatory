@@ -853,6 +853,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsExactExport": False,
         "projectsWorkflow": False,
         "applicationLock": False,
+        "applicationLockReconciliation": False,
         "responsiveCases": 0,
         "criticalViolations": [],
         "requests": [],
@@ -1342,6 +1343,195 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
                 errors.append(f"desktop locked runtime error: {'; '.join(locked_errors)}")
             locked.close()
 
+            lock_reconciliation = browser_context.new_page()
+            reconciliation_errors: list[str] = []
+            lock_reconciliation.on("pageerror", page_error_collector(reconciliation_errors))
+            lock_reconciliation.add_init_script(
+                r"""(() => {
+                  const callbacks = new Map();
+                  let nextCallback = 1;
+                  let lockListener = null;
+                  let failStatus = false;
+                  let snapshot = {
+                    schemaVersion: '1.0', state: 'unlocked', profileName: 'Private profile',
+                    inactivityTimeoutMinutes: 15, configurationState: 'valid', reason: null,
+                    reauthentication: 'windows-current-user-credentials-same-sid',
+                    threatDisclosure: 'Application-session protection only; '
+                      + 'this is not Windows-account isolation.',
+                    retryAfterSeconds: 0, auditSequence: 1
+                  };
+                  const projection = {
+                    schemaVersion: '1.0', projectId: '11111111-1111-4111-8111-111111111111',
+                    displayName: 'Sensitive Study', templateId: 'theory-synthesis',
+                    lifecycleState: 'active', root: 'C:/Private/sensitive-study', open: true,
+                    accessMode: 'read-write', compatibilityState: 'compatible',
+                    packageFormatVersion: '1.0.0', backupRequiredBeforeRepair: false,
+                    recoveryAction: 'none', revision: 0,
+                    deleteConfirmation: 'delete:11111111-1111-4111-8111-111111111111'
+                  };
+                  window.__LOCK_EMIT__ = (payload) => {
+                    const callback = callbacks.get(lockListener);
+                    if (callback) callback({event: 'application-lock-changed', id: lockListener, payload});
+                  };
+                  window.__LOCK_SET_STATUS__ = (next) => { snapshot = next; };
+                  window.__LOCK_FAIL_STATUS__ = () => { failStatus = true; };
+                  window.__TAURI_INTERNALS__ = {
+                    transformCallback: (callback, once = false) => {
+                      const id = nextCallback++;
+                      callbacks.set(id, (value) => {
+                        if (once) callbacks.delete(id);
+                        return callback(value);
+                      });
+                      return id;
+                    },
+                    unregisterCallback: (id) => callbacks.delete(id),
+                    invoke: async (command, args) => {
+                      if (command === 'plugin:event|listen') {
+                        lockListener = args.handler;
+                        return args.handler;
+                      }
+                      if (command === 'plugin:event|unlisten') {
+                        callbacks.delete(args.id);
+                        return undefined;
+                      }
+                      if (command === 'application_lock_status') {
+                        if (failStatus) throw new Error('monitor unavailable');
+                        return {...snapshot};
+                      }
+                      if (command === 'application_lock_activity') return undefined;
+                      if (command === 'application_lock_unlock') {
+                        failStatus = false;
+                        snapshot = {...snapshot, state: 'unlocked', profileName: 'Private profile',
+                          reason: null, auditSequence: snapshot.auditSequence + 1};
+                        return {...snapshot};
+                      }
+                      if (command === 'core_runtime_start' || command === 'core_runtime_status') {
+                        return {state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null};
+                      }
+                      if (command === 'core_runtime_stop') return undefined;
+                      if (command === 'core_api_request' && args?.request?.path === '/projects') {
+                        return {status: 200, contentType: 'application/json',
+                          traceId: '0123456789abcdef0123456789abcdef', etag: null,
+                          body: JSON.stringify(projection)};
+                      }
+                      throw new Error(`unsupported lock reconciliation command: ${command}`);
+                    }
+                  };
+                })()"""
+            )
+            lock_reconciliation.goto("http://tauri.localhost/index.html", wait_until="load")
+            lock_reconciliation.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
+            lock_reconciliation.get_by_role("button", name="Local projects", exact=True).click()
+            lock_reconciliation.locator("#project-parent-directory").fill("C:/Private")
+            lock_reconciliation.locator("#project-directory-name").fill("sensitive-study")
+            lock_reconciliation.locator("#project-display-name").fill("Sensitive Study")
+            lock_reconciliation.get_by_role("button", name="Create project", exact=True).click()
+            lock_reconciliation.locator("[data-current-project]").wait_for(timeout=5_000)
+            lock_reconciliation.get_by_role("button", name="Project home", exact=True).click()
+            lock_reconciliation.locator("#shell-command").fill("private query")
+            lock_reconciliation.get_by_role("button", name="Private profile", exact=True).click()
+            lock_reconciliation.locator("#local-profile-name").fill("Private profile draft")
+            lock_reconciliation.evaluate("window.__LOCK_EMIT__({malformed: true})")
+            lock_reconciliation.locator("[data-application-locked]").wait_for(timeout=5_000)
+            malformed_text = lock_reconciliation.locator("body").inner_text()
+            malformed_locked = (
+                "Sensitive Study" not in malformed_text
+                and "C:/Private" not in malformed_text
+                and "private query" not in malformed_text
+                and "Private profile draft" not in malformed_text
+                and lock_reconciliation.locator(
+                    "#shell-command, [data-current-project], #local-profile-name, nav, footer"
+                ).count()
+                == 0
+            )
+            lock_reconciliation.get_by_role("button", name="Unlock with Windows", exact=True).click()
+            lock_reconciliation.locator(".application-shell[data-application-ready]").wait_for(timeout=5_000)
+            normal_unlock = (
+                "No project open" in lock_reconciliation.locator("body").inner_text()
+                and lock_reconciliation.locator("#shell-command").input_value() == ""
+                and lock_reconciliation.locator("[data-current-project], #local-profile-name").count() == 0
+            )
+            lock_reconciliation.evaluate(
+                """window.__LOCK_SET_STATUS__({
+                  schemaVersion: '1.0', state: 'locked', profileName: null,
+                  inactivityTimeoutMinutes: 15, configurationState: 'valid', reason: 'inactivity',
+                  reauthentication: 'windows-current-user-credentials-same-sid',
+                  threatDisclosure: 'Application-session protection only; this is not Windows-account isolation.',
+                  retryAfterSeconds: 0, auditSequence: 3
+                })"""
+            )
+            lock_reconciliation.locator("[data-application-locked]").wait_for(timeout=4_000)
+            missed_event_locked = lock_reconciliation.locator("#shell-command, nav, footer").count() == 0
+            lock_reconciliation.get_by_role("button", name="Unlock with Windows", exact=True).click()
+            lock_reconciliation.locator(".application-shell[data-application-ready]").wait_for(timeout=5_000)
+            lock_reconciliation.evaluate("window.__LOCK_FAIL_STATUS__()")
+            lock_reconciliation.locator("[data-application-locked]").wait_for(timeout=4_000)
+            monitor_failure_locked = (
+                "Application-lock status is unavailable" in lock_reconciliation.locator("body").inner_text()
+                and lock_reconciliation.locator("#shell-command, nav, footer").count() == 0
+            )
+            details["applicationLockReconciliation"] = (
+                malformed_locked and normal_unlock and missed_event_locked and monitor_failure_locked
+            )
+            if reconciliation_errors:
+                errors.append(f"desktop lock reconciliation runtime error: {'; '.join(reconciliation_errors)}")
+            lock_reconciliation.close()
+
+            lock_race = browser_context.new_page()
+            race_errors: list[str] = []
+            lock_race.on("pageerror", page_error_collector(race_errors))
+            lock_race.add_init_script(
+                r"""(() => {
+                  const callbacks = new Map();
+                  let nextCallback = 1;
+                  let listener = null;
+                  let resolveStatus;
+                  const staleStatus = new Promise((resolve) => { resolveStatus = resolve; });
+                  const unlocked = {
+                    schemaVersion: '1.0', state: 'unlocked', profileName: null,
+                    inactivityTimeoutMinutes: 15, configurationState: 'valid', reason: null,
+                    reauthentication: 'windows-current-user-credentials-same-sid',
+                    threatDisclosure: 'Application-session protection only; '
+                      + 'this is not Windows-account isolation.',
+                    retryAfterSeconds: 0, auditSequence: 3
+                  };
+                  window.__LOCK_RACE_READY__ = false;
+                  window.__LOCK_RACE__ = () => {
+                    callbacks.get(listener)?.({event: 'application-lock-changed', id: listener,
+                      payload: {...unlocked, state: 'locked', reason: 'manual', auditSequence: 4}});
+                    resolveStatus({...unlocked});
+                  };
+                  window.__TAURI_INTERNALS__ = {
+                    transformCallback: (callback) => {
+                      const id = nextCallback++;
+                      callbacks.set(id, callback);
+                      return id;
+                    },
+                    unregisterCallback: (id) => callbacks.delete(id),
+                    invoke: async (command, args) => {
+                      if (command === 'plugin:event|listen') {
+                        listener = args.handler;
+                        window.__LOCK_RACE_READY__ = true;
+                        return args.handler;
+                      }
+                      if (command === 'plugin:event|unlisten') return undefined;
+                      if (command === 'application_lock_status') return await staleStatus;
+                      throw new Error(`unsupported lock race command: ${command}`);
+                    }
+                  };
+                })()"""
+            )
+            lock_race.goto("http://tauri.localhost/index.html", wait_until="load")
+            lock_race.wait_for_function("window.__LOCK_RACE_READY__ === true", timeout=5_000)
+            lock_race.evaluate("window.__LOCK_RACE__()")
+            lock_race.locator("[data-application-locked]").wait_for(timeout=5_000)
+            lock_race.wait_for_timeout(100)
+            stale_status_denied = lock_race.locator("[data-application-locked]").count() == 1
+            details["applicationLockReconciliation"] = details["applicationLockReconciliation"] and stale_status_denied
+            if race_errors:
+                errors.append(f"desktop lock race runtime error: {'; '.join(race_errors)}")
+            lock_race.close()
+
             for width, height in ((1280, 720), (720, 450)):
                 responsive = browser_context.new_page()
                 responsive.set_viewport_size({"width": width, "height": height})
@@ -1384,6 +1574,7 @@ def runtime_frame_errors(repo: Path) -> tuple[list[str], dict[str, Any]]:
         "diagnosticsExactExport",
         "projectsWorkflow",
         "applicationLock",
+        "applicationLockReconciliation",
     ):
         if details[field] is not True:
             errors.append(f"desktop product did not verify {field}")

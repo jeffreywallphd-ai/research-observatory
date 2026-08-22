@@ -34,6 +34,15 @@ export const DEFAULT_APPLICATION_LOCK_SNAPSHOT: ApplicationLockSnapshot = Object
   auditSequence: 0,
 });
 
+export type ApplicationLockSnapshotSource = "event" | "status" | "explicit-unlock";
+
+export interface ApplicationLockReconciliation {
+  readonly displaySnapshot: ApplicationLockSnapshot;
+  readonly nativeSnapshot: ApplicationLockSnapshot | null;
+  readonly failClosed: boolean;
+  readonly applied: boolean;
+}
+
 const SNAPSHOT_KEYS = [
   "auditSequence",
   "configurationState",
@@ -62,6 +71,77 @@ export function normalizeLocalProfileName(value: string): string | null {
     throw new Error("Profile name must be 80 characters or fewer and contain no control characters.");
   }
   return normalized;
+}
+
+export function failClosedApplicationLockSnapshot(
+  current: ApplicationLockSnapshot,
+): ApplicationLockSnapshot {
+  return {
+    ...current,
+    state: "locked",
+    profileName: null,
+    configurationState: "invalid",
+    reason: "configuration-invalid",
+    retryAfterSeconds: 0,
+  };
+}
+
+function sameNativeRevision(
+  left: ApplicationLockSnapshot,
+  right: ApplicationLockSnapshot,
+): boolean {
+  return left.schemaVersion === right.schemaVersion
+    && left.state === right.state
+    && left.profileName === right.profileName
+    && left.inactivityTimeoutMinutes === right.inactivityTimeoutMinutes
+    && left.configurationState === right.configurationState
+    && left.reason === right.reason
+    && left.reauthentication === right.reauthentication
+    && left.threatDisclosure === right.threatDisclosure
+    && left.auditSequence === right.auditSequence;
+}
+
+export function reconcileApplicationLockSnapshot(
+  displaySnapshot: ApplicationLockSnapshot,
+  previousNativeSnapshot: ApplicationLockSnapshot | null,
+  incoming: ApplicationLockSnapshot,
+  failClosed: boolean,
+  source: ApplicationLockSnapshotSource,
+): ApplicationLockReconciliation {
+  if (previousNativeSnapshot && incoming.auditSequence < previousNativeSnapshot.auditSequence) {
+    return {
+      displaySnapshot,
+      nativeSnapshot: previousNativeSnapshot,
+      failClosed,
+      applied: false,
+    };
+  }
+  if (
+    previousNativeSnapshot
+    && incoming.auditSequence === previousNativeSnapshot.auditSequence
+    && !sameNativeRevision(previousNativeSnapshot, incoming)
+  ) {
+    return {
+      displaySnapshot: failClosedApplicationLockSnapshot(displaySnapshot),
+      nativeSnapshot: previousNativeSnapshot,
+      failClosed: true,
+      applied: true,
+    };
+  }
+  if (failClosed && incoming.state === "unlocked" && source !== "explicit-unlock") {
+    return {
+      displaySnapshot: failClosedApplicationLockSnapshot(displaySnapshot),
+      nativeSnapshot: incoming,
+      failClosed: true,
+      applied: displaySnapshot.state !== "locked",
+    };
+  }
+  return {
+    displaySnapshot: incoming,
+    nativeSnapshot: incoming,
+    failClosed: false,
+    applied: true,
+  };
 }
 
 export function decodeApplicationLockSnapshot(value: unknown): ApplicationLockSnapshot {

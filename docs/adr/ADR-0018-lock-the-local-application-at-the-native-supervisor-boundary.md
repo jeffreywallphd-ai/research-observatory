@@ -71,21 +71,37 @@ outside project homes. The profile name is optional and is not shown while
 locked. Idle lock is opt-in with bounded supported intervals; a native monitor,
 not a renderer timer, enforces the deadline. Manual, idle, and restart lock all
 advance a protection generation before stopping Core. Every protected native
-command checks that generation before and after work so a response completed
-during a concurrent lock is discarded.
+command checks that generation before work. Read-only responses are rechecked
+before delivery; profile and support-bundle writes stage privately and acquire
+the generation mutex immediately before atomic publication. A lock clears every
+pending support preview. Core requests release the supervisor lifecycle mutex
+before network I/O, carry a per-process cancellation flag, and are interrupted
+by immediate process-tree termination rather than graceful shutdown at the lock
+boundary.
+
+The renderer installs its native listener before initial status reconciliation,
+orders snapshots by the native audit sequence, and polls native status to close
+missed-notification gaps. A malformed, conflicting, timed-out, or unavailable
+notification/status path synthesizes a configuration-invalid locked state and
+clears the complete sensitive tree. An unlocked snapshot cannot recover that
+fail-closed state unless it is the result of an explicit unlock attempt.
 
 The current W1 operation seam has no durable worker allowed to continue through
 lock, so stopping Core cancels every protected action. Later durable workflow
 work may add an explicit checkpointed allowlist only through a compatible ADR
 and tests; it must never infer permission from operation type or UI state.
 
-Unlock invokes `CredUIPromptForCredentialsW` with an always-shown,
-non-persisting credential prompt. `LogonUserW` validates the submitted local or
-domain Windows credentials, and the returned token SID must equal the current
-process token SID. Username, domain, and password buffers are cleared; handles
-are closed; failure messages do not reveal whether an account or project
-exists. Failed attempts receive bounded exponential backoff. Cancellation does
-not unlock or restart Core.
+Unlock reserves exactly one native authentication attempt, prefills the prompt
+with the current `NameSamCompatible` Windows identity, and invokes
+`CredUIPromptForCredentialsW` with the documented generic, always-shown,
+validated, non-persisting credential flags. `CredUIParseUserNameW` maps
+down-level/local names to their domain and passes a null domain to `LogonUserW`
+for UPN input as required by the Windows contract. `LogonUserW` validates the
+submitted credentials, and the returned token SID must equal the current process
+token SID. Username, domain, and password buffers are cleared; handles are
+closed; failure messages do not reveal whether an account or project exists.
+Concurrent attempts are rejected, and failed attempts receive bounded
+exponential backoff. Cancellation does not unlock or restart Core.
 
 This control does not create Windows-account isolation. A process already
 running as the same Windows user, a compromised desktop process, or a
@@ -117,7 +133,12 @@ user decision.
 - strict portable profile/configuration fixtures and unknown-field denial;
 - native state-machine tests for manual, idle, restart, failed, cancelled, and
   rate-limited transitions;
-- protected-command generation checks before and after concurrent lock;
+- protected-response rechecks and generation-guarded publication during concurrent lock;
+- staged profile/support publication and pending-preview invalidation during lock;
+- cancellable Core transport without a lifecycle-mutex shutdown inversion;
+- listener-first, monotonic, polled renderer reconciliation and fail-closed
+  malformed/status paths;
+- single-admission authentication plus exact local/down-level/UPN argument mapping;
 - Windows compilation against Credential UI, token, SID, and handle APIs;
 - desktop tests proving locked markup excludes project names, paths, command
   input, and workspaces and retains keyboard/focus/screen-reader semantics;

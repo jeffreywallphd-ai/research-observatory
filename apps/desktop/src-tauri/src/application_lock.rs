@@ -127,6 +127,7 @@ struct ApplicationLockInner {
     last_activity: Instant,
     failed_attempts: u8,
     retry_at: Option<Instant>,
+    reauthentication_in_progress: bool,
     audit_sequence: u64,
     audit: VecDeque<ApplicationLockAuditEvent>,
 }
@@ -227,6 +228,7 @@ impl ApplicationLockManager {
             last_activity: Instant::now(),
             failed_attempts: 0,
             retry_at: None,
+            reauthentication_in_progress: false,
             audit_sequence: 0,
             audit: VecDeque::new(),
         };
@@ -273,6 +275,18 @@ impl ApplicationLockManager {
         Ok(())
     }
 
+    pub fn commit_protected_action<T>(
+        &self,
+        generation: u64,
+        commit: impl FnOnce() -> Result<T, &'static str>,
+    ) -> Result<T, &'static str> {
+        let inner = self.shared.lock().expect("lock mutex poisoned");
+        if inner.state != ApplicationLockState::Unlocked || inner.generation != generation {
+            return Err("RO-APPLICATION-LOCKED");
+        }
+        commit()
+    }
+
     pub fn lock(&self, reason: ApplicationLockReason) -> (ApplicationLockSnapshot, bool) {
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
         let changed = inner.lock(reason);
@@ -284,6 +298,14 @@ impl ApplicationLockManager {
         if inner.state == ApplicationLockState::Unlocked {
             inner.last_activity = Instant::now();
         }
+    }
+
+    pub fn record_notification_failure(&self) {
+        self.shared.lock().expect("lock mutex poisoned").record(
+            "application-lock-notification",
+            "failed",
+            "RO-LOCK-NOTIFICATION-FAILED",
+        );
     }
 
     pub fn lock_if_idle(&self) -> Option<ApplicationLockSnapshot> {
@@ -305,22 +327,28 @@ impl ApplicationLockManager {
         profile_name: Option<String>,
         inactivity_timeout_minutes: u8,
     ) -> Result<ApplicationLockSnapshot, &'static str> {
+        self.configure_with_hook(profile_name, inactivity_timeout_minutes, || {})
+    }
+
+    fn configure_with_hook(
+        &self,
+        profile_name: Option<String>,
+        inactivity_timeout_minutes: u8,
+        before_publish: impl FnOnce(),
+    ) -> Result<ApplicationLockSnapshot, &'static str> {
         let profile_name = profile_name
             .map(|value| value.trim().to_owned())
             .filter(|value| !value.is_empty());
         let profile = ApplicationLockProfile::new(profile_name, inactivity_timeout_minutes);
         profile.validate()?;
-        {
-            let inner = self.shared.lock().expect("lock mutex poisoned");
-            if inner.state != ApplicationLockState::Unlocked {
-                return Err("RO-APPLICATION-LOCKED");
-            }
-        }
-        write_profile(&self.profile_path, &profile)?;
+        let generation = self.begin_protected_action()?;
+        let staged = stage_profile(&self.profile_path, &profile)?;
+        before_publish();
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
-        if inner.state != ApplicationLockState::Unlocked {
+        if inner.state != ApplicationLockState::Unlocked || inner.generation != generation {
             return Err("RO-APPLICATION-LOCKED");
         }
+        staged.publish(&self.profile_path)?;
         inner.profile = profile;
         inner.configuration_state = LockConfigurationState::Valid;
         inner.last_activity = Instant::now();
@@ -336,31 +364,25 @@ impl ApplicationLockManager {
         &self,
         supervisor: &RuntimeSupervisor,
     ) -> Result<ApplicationLockSnapshot, &'static str> {
-        {
-            let mut inner = self.shared.lock().expect("lock mutex poisoned");
-            if inner.state == ApplicationLockState::Unlocked {
-                return Ok(inner.snapshot());
-            }
-            if inner
-                .retry_at
-                .is_some_and(|deadline| deadline > Instant::now())
-            {
-                inner.record("application-unlock", "denied", "RO-LOCK-RATE-LIMITED");
-                return Err("RO-LOCK-RATE-LIMITED");
-            }
-        }
+        self.reauthenticate_with(verify_current_windows_user, || supervisor.start().state)
+    }
 
-        match verify_current_windows_user() {
+    fn reauthenticate_with(
+        &self,
+        authenticate: impl FnOnce() -> ReauthenticationResult,
+        start_core: impl FnOnce() -> RuntimeState,
+    ) -> Result<ApplicationLockSnapshot, &'static str> {
+        let reservation = self.reserve_reauthentication()?;
+        let result = match authenticate() {
             ReauthenticationResult::Cancelled => {
-                self.shared.lock().expect("lock mutex poisoned").record(
-                    "application-unlock",
-                    "cancelled",
-                    "RO-LOCK-AUTH-CANCELLED",
-                );
+                let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                inner.reauthentication_in_progress = false;
+                inner.record("application-unlock", "cancelled", "RO-LOCK-AUTH-CANCELLED");
                 Err("RO-LOCK-AUTH-CANCELLED")
             }
             ReauthenticationResult::Denied => {
                 let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                inner.reauthentication_in_progress = false;
                 inner.failed_attempts = inner.failed_attempts.saturating_add(1);
                 let exponent = inner.failed_attempts.saturating_sub(1).min(5);
                 inner.retry_at = Some(Instant::now() + Duration::from_secs(1_u64 << exponent));
@@ -368,16 +390,14 @@ impl ApplicationLockManager {
                 Err("RO-LOCK-AUTH-DENIED")
             }
             ReauthenticationResult::Verified => {
-                let runtime = supervisor.start();
-                if runtime.state != RuntimeState::Ready {
-                    self.shared.lock().expect("lock mutex poisoned").record(
-                        "application-unlock",
-                        "failed",
-                        "RO-LOCK-CORE-UNAVAILABLE",
-                    );
+                if start_core() != RuntimeState::Ready {
+                    let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                    inner.reauthentication_in_progress = false;
+                    inner.record("application-unlock", "failed", "RO-LOCK-CORE-UNAVAILABLE");
                     return Err("RO-LOCK-CORE-UNAVAILABLE");
                 }
                 let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                inner.reauthentication_in_progress = false;
                 inner.state = ApplicationLockState::Unlocked;
                 inner.reason = None;
                 inner.failed_attempts = 0;
@@ -386,7 +406,25 @@ impl ApplicationLockManager {
                 inner.record("application-unlock", "succeeded", "RO-LOCK-UNLOCKED");
                 Ok(inner.snapshot())
             }
+        };
+        drop(reservation);
+        result
+    }
+
+    fn reserve_reauthentication(&self) -> Result<ReauthenticationReservation, &'static str> {
+        let mut inner = self.shared.lock().expect("lock mutex poisoned");
+        if inner.reauthentication_in_progress
+            || inner
+                .retry_at
+                .is_some_and(|deadline| deadline > Instant::now())
+        {
+            inner.record("application-unlock", "denied", "RO-LOCK-RATE-LIMITED");
+            return Err("RO-LOCK-RATE-LIMITED");
         }
+        inner.reauthentication_in_progress = true;
+        Ok(ReauthenticationReservation {
+            shared: Arc::clone(&self.shared),
+        })
     }
 
     #[cfg(test)]
@@ -395,25 +433,27 @@ impl ApplicationLockManager {
         result: ReauthenticationResult,
         core_ready: bool,
     ) -> Result<ApplicationLockSnapshot, &'static str> {
-        match result {
-            ReauthenticationResult::Cancelled => Err("RO-LOCK-AUTH-CANCELLED"),
-            ReauthenticationResult::Denied => {
-                let mut inner = self.shared.lock().expect("lock mutex poisoned");
-                inner.failed_attempts = inner.failed_attempts.saturating_add(1);
-                inner.retry_at = Some(Instant::now() + Duration::from_secs(1));
-                Err("RO-LOCK-AUTH-DENIED")
-            }
-            ReauthenticationResult::Verified if !core_ready => Err("RO-LOCK-CORE-UNAVAILABLE"),
-            ReauthenticationResult::Verified => {
-                let mut inner = self.shared.lock().expect("lock mutex poisoned");
-                inner.state = ApplicationLockState::Unlocked;
-                inner.reason = None;
-                inner.failed_attempts = 0;
-                inner.retry_at = None;
-                inner.last_activity = Instant::now();
-                inner.record("application-unlock", "succeeded", "RO-LOCK-UNLOCKED");
-                Ok(inner.snapshot())
-            }
+        self.reauthenticate_with(
+            || result,
+            || {
+                if core_ready {
+                    RuntimeState::Ready
+                } else {
+                    RuntimeState::RecoveryRequired
+                }
+            },
+        )
+    }
+}
+
+struct ReauthenticationReservation {
+    shared: Arc<Mutex<ApplicationLockInner>>,
+}
+
+impl Drop for ReauthenticationReservation {
+    fn drop(&mut self) {
+        if let Ok(mut inner) = self.shared.lock() {
+            inner.reauthentication_in_progress = false;
         }
     }
 }
@@ -455,7 +495,26 @@ fn read_profile(path: &Path) -> Result<Option<ApplicationLockProfile>, &'static 
     Ok(Some(profile))
 }
 
-fn write_profile(path: &Path, profile: &ApplicationLockProfile) -> Result<(), &'static str> {
+struct StagedProfile {
+    path: PathBuf,
+}
+
+impl StagedProfile {
+    fn publish(self, destination: &Path) -> Result<(), &'static str> {
+        replace_file(&self.path, destination)
+    }
+}
+
+impl Drop for StagedProfile {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.path);
+    }
+}
+
+fn stage_profile(
+    path: &Path,
+    profile: &ApplicationLockProfile,
+) -> Result<StagedProfile, &'static str> {
     profile.validate()?;
     let parent = path.parent().ok_or("RO-LOCK-CONFIGURATION-INVALID")?;
     fs::create_dir_all(parent).map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")?;
@@ -485,7 +544,9 @@ fn write_profile(path: &Path, profile: &ApplicationLockProfile) -> Result<(), &'
         file.sync_all()
             .map_err(|_| "RO-LOCK-CONFIGURATION-WRITE-FAILED")?;
         drop(file);
-        replace_file(&staging, path)
+        Ok(StagedProfile {
+            path: staging.clone(),
+        })
     })();
     if result.is_err() {
         let _ = fs::remove_file(&staging);
@@ -533,28 +594,95 @@ enum ReauthenticationResult {
 }
 
 #[cfg(windows)]
+const CREDENTIAL_PROMPT_FLAGS: u32 = {
+    use windows_sys::Win32::Security::Credentials::{
+        CREDUI_FLAGS_ALWAYS_SHOW_UI, CREDUI_FLAGS_DO_NOT_PERSIST,
+        CREDUI_FLAGS_EXCLUDE_CERTIFICATES, CREDUI_FLAGS_GENERIC_CREDENTIALS,
+        CREDUI_FLAGS_VALIDATE_USERNAME,
+    };
+    CREDUI_FLAGS_ALWAYS_SHOW_UI
+        | CREDUI_FLAGS_DO_NOT_PERSIST
+        | CREDUI_FLAGS_EXCLUDE_CERTIFICATES
+        | CREDUI_FLAGS_GENERIC_CREDENTIALS
+        | CREDUI_FLAGS_VALIDATE_USERNAME
+};
+
+#[cfg(windows)]
+struct SecretWide(Vec<u16>);
+
+#[cfg(windows)]
+impl Drop for SecretWide {
+    fn drop(&mut self) {
+        for value in &mut self.0 {
+            unsafe { std::ptr::write_volatile(value, 0) };
+        }
+    }
+}
+
+#[cfg(windows)]
+fn current_sam_identity() -> Option<SecretWide> {
+    use windows_sys::Win32::Security::Authentication::Identity::{
+        GetUserNameExW, NameSamCompatible,
+    };
+
+    let mut length = 0_u32;
+    unsafe { GetUserNameExW(NameSamCompatible, std::ptr::null_mut(), &mut length) };
+    if length == 0 || length > 514 {
+        return None;
+    }
+    let mut identity = SecretWide(vec![0_u16; length as usize]);
+    if !unsafe { GetUserNameExW(NameSamCompatible, identity.0.as_mut_ptr(), &mut length) } {
+        return None;
+    }
+    if identity.0.last().copied() != Some(0) {
+        return None;
+    }
+    Some(identity)
+}
+
+#[cfg(windows)]
+fn optional_wide_pointer(value: &SecretWide) -> *const u16 {
+    if value.0.first().copied().unwrap_or(0) == 0 {
+        std::ptr::null()
+    } else {
+        value.0.as_ptr()
+    }
+}
+
+#[cfg(windows)]
+fn parse_logon_identity(username: &SecretWide) -> Option<(SecretWide, SecretWide)> {
+    use windows_sys::Win32::Security::Credentials::CredUIParseUserNameW;
+
+    let mut user = SecretWide(vec![0_u16; 514]);
+    let mut domain = SecretWide(vec![0_u16; 514]);
+    if unsafe {
+        CredUIParseUserNameW(
+            username.0.as_ptr(),
+            user.0.as_mut_ptr(),
+            user.0.len() as u32,
+            domain.0.as_mut_ptr(),
+            domain.0.len() as u32,
+        )
+    } != 0
+    {
+        None
+    } else {
+        Some((user, domain))
+    }
+}
+
+#[cfg(windows)]
 fn verify_current_windows_user() -> ReauthenticationResult {
     use std::ffi::c_void;
     use std::ptr::{null, null_mut};
     use windows_sys::Win32::Foundation::{CloseHandle, ERROR_CANCELLED, HANDLE};
-    use windows_sys::Win32::Security::Credentials::{
-        CREDUI_FLAGS_ALWAYS_SHOW_UI, CREDUI_FLAGS_COMPLETE_USERNAME, CREDUI_FLAGS_DO_NOT_PERSIST,
-        CREDUI_FLAGS_EXCLUDE_CERTIFICATES, CredUIParseUserNameW, CredUIPromptForCredentialsW,
-    };
+    use windows_sys::Win32::Security::Credentials::CredUIPromptForCredentialsW;
     use windows_sys::Win32::Security::{
         EqualSid, GetTokenInformation, LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT,
         LogonUserW, TOKEN_QUERY, TOKEN_USER, TokenUser,
     };
     use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
 
-    struct SecretWide(Vec<u16>);
-    impl Drop for SecretWide {
-        fn drop(&mut self) {
-            for value in &mut self.0 {
-                unsafe { std::ptr::write_volatile(value, 0) };
-            }
-        }
-    }
     struct OwnedHandle(HANDLE);
     impl Drop for OwnedHandle {
         fn drop(&mut self) {
@@ -586,10 +714,13 @@ fn verify_current_windows_user() -> ReauthenticationResult {
         Some(buffer)
     }
 
-    let target: Vec<u16> = "Research Observatory local application lock\0"
+    let target: Vec<u16> = "ResearchObservatory/ApplicationLock\0"
         .encode_utf16()
         .collect();
-    let mut username = SecretWide(vec![0_u16; 514]);
+    let Some(mut username) = current_sam_identity() else {
+        return ReauthenticationResult::Denied;
+    };
+    username.0.resize(514, 0);
     let mut password = SecretWide(vec![0_u16; 256]);
     let status = unsafe {
         CredUIPromptForCredentialsW(
@@ -602,10 +733,7 @@ fn verify_current_windows_user() -> ReauthenticationResult {
             password.0.as_mut_ptr(),
             password.0.len() as u32,
             null_mut(),
-            CREDUI_FLAGS_ALWAYS_SHOW_UI
-                | CREDUI_FLAGS_DO_NOT_PERSIST
-                | CREDUI_FLAGS_EXCLUDE_CERTIFICATES
-                | CREDUI_FLAGS_COMPLETE_USERNAME,
+            CREDENTIAL_PROMPT_FLAGS,
         )
     };
     if status == ERROR_CANCELLED {
@@ -615,26 +743,16 @@ fn verify_current_windows_user() -> ReauthenticationResult {
         return ReauthenticationResult::Denied;
     }
 
-    let mut user = SecretWide(vec![0_u16; 514]);
-    let mut domain = SecretWide(vec![0_u16; 514]);
-    if unsafe {
-        CredUIParseUserNameW(
-            username.0.as_ptr(),
-            user.0.as_mut_ptr(),
-            user.0.len() as u32,
-            domain.0.as_mut_ptr(),
-            domain.0.len() as u32,
-        )
-    } != 0
-    {
+    let Some((user, domain)) = parse_logon_identity(&username) else {
         return ReauthenticationResult::Denied;
-    }
+    };
 
     let mut submitted = OwnedHandle(null_mut());
+    let domain_pointer = optional_wide_pointer(&domain);
     if unsafe {
         LogonUserW(
             user.0.as_ptr(),
-            domain.0.as_ptr(),
+            domain_pointer,
             password.0.as_ptr(),
             LOGON32_LOGON_INTERACTIVE,
             LOGON32_PROVIDER_DEFAULT,
@@ -671,12 +789,16 @@ fn verify_current_windows_user() -> ReauthenticationResult {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
+    use std::sync::mpsc;
+
+    static TEST_SEQUENCE: AtomicU64 = AtomicU64::new(1);
 
     fn manager() -> ApplicationLockManager {
         let root = std::env::temp_dir().join(format!(
             "research-observatory-lock-test-{}-{}",
             std::process::id(),
-            Instant::now().elapsed().as_nanos()
+            TEST_SEQUENCE.fetch_add(1, Ordering::Relaxed)
         ));
         ApplicationLockManager::new(&root)
     }
@@ -747,6 +869,7 @@ mod tests {
             Err("RO-LOCK-AUTH-DENIED")
         );
         assert!(manager.status().retry_after_seconds > 0);
+        manager.shared.lock().expect("lock mutex").retry_at = None;
         assert_eq!(
             manager.complete_test_reauthentication(ReauthenticationResult::Verified, false),
             Err("RO-LOCK-CORE-UNAVAILABLE")
@@ -779,5 +902,136 @@ mod tests {
         assert!(!serialized.contains("profileName"));
         assert!(!serialized.contains("username"));
         assert!(!serialized.contains("project"));
+    }
+
+    #[test]
+    fn concurrent_reauthentication_admits_one_prompt_and_preserves_backoff() {
+        let manager = manager();
+        manager.lock(ApplicationLockReason::Manual);
+        let prompt_count = Arc::new(AtomicUsize::new(0));
+        let (started_tx, started_rx) = mpsc::sync_channel(1);
+        let (release_tx, release_rx) = mpsc::sync_channel(1);
+        let worker_manager = manager.clone();
+        let worker_count = Arc::clone(&prompt_count);
+        let worker = std::thread::spawn(move || {
+            worker_manager.reauthenticate_with(
+                || {
+                    worker_count.fetch_add(1, Ordering::SeqCst);
+                    started_tx.send(()).expect("signal prompt");
+                    release_rx.recv().expect("release prompt");
+                    ReauthenticationResult::Denied
+                },
+                || RuntimeState::Ready,
+            )
+        });
+        started_rx.recv().expect("prompt admitted");
+        let second_count = Arc::clone(&prompt_count);
+        assert_eq!(
+            manager.reauthenticate_with(
+                || {
+                    second_count.fetch_add(1, Ordering::SeqCst);
+                    ReauthenticationResult::Verified
+                },
+                || RuntimeState::Ready,
+            ),
+            Err("RO-LOCK-RATE-LIMITED")
+        );
+        release_tx.send(()).expect("release first prompt");
+        assert_eq!(
+            worker.join().expect("worker result"),
+            Err("RO-LOCK-AUTH-DENIED")
+        );
+        assert_eq!(prompt_count.load(Ordering::SeqCst), 1);
+        assert!(manager.status().retry_after_seconds > 0);
+    }
+
+    #[test]
+    fn cancellation_and_core_failure_release_the_reauthentication_reservation() {
+        let manager = manager();
+        manager.lock(ApplicationLockReason::Manual);
+        assert_eq!(
+            manager
+                .reauthenticate_with(|| ReauthenticationResult::Cancelled, || RuntimeState::Ready,),
+            Err("RO-LOCK-AUTH-CANCELLED")
+        );
+        assert_eq!(
+            manager.reauthenticate_with(
+                || ReauthenticationResult::Verified,
+                || RuntimeState::RecoveryRequired,
+            ),
+            Err("RO-LOCK-CORE-UNAVAILABLE")
+        );
+        assert!(
+            !manager
+                .shared
+                .lock()
+                .expect("lock mutex")
+                .reauthentication_in_progress
+        );
+        assert_eq!(manager.status().state, ApplicationLockState::Locked);
+    }
+
+    #[test]
+    fn concurrent_lock_prevents_profile_publication_and_removes_staging() {
+        let manager = manager();
+        let (staged_tx, staged_rx) = mpsc::sync_channel(1);
+        let (release_tx, release_rx) = mpsc::sync_channel(1);
+        let worker_manager = manager.clone();
+        let worker = std::thread::spawn(move || {
+            worker_manager.configure_with_hook(Some("Local researcher".to_owned()), 15, || {
+                staged_tx.send(()).expect("profile staged");
+                release_rx.recv().expect("release profile");
+            })
+        });
+        staged_rx.recv().expect("profile stage reached");
+        manager.lock(ApplicationLockReason::Manual);
+        release_tx.send(()).expect("release staged profile");
+        assert_eq!(
+            worker.join().expect("profile worker"),
+            Err("RO-APPLICATION-LOCKED")
+        );
+        assert!(!manager.profile_path.exists());
+        let parent = manager.profile_path.parent().expect("profile parent");
+        assert!(
+            fs::read_dir(parent)
+                .expect("security directory")
+                .all(|entry| !entry
+                    .expect("directory entry")
+                    .file_name()
+                    .to_string_lossy()
+                    .contains("staging"))
+        );
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn windows_prompt_flags_and_logon_domain_mapping_are_exact() {
+        use windows_sys::Win32::Security::Credentials::{
+            CREDUI_FLAGS_ALWAYS_SHOW_UI, CREDUI_FLAGS_COMPLETE_USERNAME,
+            CREDUI_FLAGS_DO_NOT_PERSIST, CREDUI_FLAGS_EXCLUDE_CERTIFICATES,
+            CREDUI_FLAGS_GENERIC_CREDENTIALS, CREDUI_FLAGS_VALIDATE_USERNAME,
+        };
+
+        assert_eq!(
+            CREDENTIAL_PROMPT_FLAGS,
+            CREDUI_FLAGS_ALWAYS_SHOW_UI
+                | CREDUI_FLAGS_DO_NOT_PERSIST
+                | CREDUI_FLAGS_EXCLUDE_CERTIFICATES
+                | CREDUI_FLAGS_GENERIC_CREDENTIALS
+                | CREDUI_FLAGS_VALIDATE_USERNAME
+        );
+        assert_eq!(CREDENTIAL_PROMPT_FLAGS & CREDUI_FLAGS_COMPLETE_USERNAME, 0);
+        assert!(current_sam_identity().is_some());
+        let upn = SecretWide("researcher@example.invalid\0".encode_utf16().collect());
+        let (upn_user, upn_domain) = parse_logon_identity(&upn).expect("parse UPN");
+        assert_eq!(
+            String::from_utf16_lossy(&upn_user.0[.."researcher@example.invalid".len()]),
+            "researcher@example.invalid"
+        );
+        assert!(optional_wide_pointer(&upn_domain).is_null());
+        let down_level = SecretWide("DOMAIN\\researcher\0".encode_utf16().collect());
+        let (_, down_level_domain) =
+            parse_logon_identity(&down_level).expect("parse down-level identity");
+        assert!(!optional_wide_pointer(&down_level_domain).is_null());
     }
 }

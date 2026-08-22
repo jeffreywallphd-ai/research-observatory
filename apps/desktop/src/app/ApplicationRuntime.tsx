@@ -12,8 +12,11 @@ import {
   APPLICATION_LOCK_TIMEOUTS,
   decodeApplicationLockSnapshot,
   DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+  failClosedApplicationLockSnapshot,
   normalizeLocalProfileName,
+  reconcileApplicationLockSnapshot,
   type ApplicationLockSnapshot,
+  type ApplicationLockSnapshotSource,
 } from "./applicationLock";
 
 export type ApplicationTheme = "light" | "dark";
@@ -50,6 +53,51 @@ function isShortcut(event: KeyboardEvent, key: string, modifier: "ctrl" | "alt")
 
 function hasNativeRuntime(): boolean {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+}
+
+function invokeApplicationLockStatus(): Promise<unknown> {
+  return new Promise((resolve, reject) => {
+    const timer = globalThis.setTimeout(
+      () => reject(new Error("Application-lock status timed out.")),
+      1_500,
+    );
+    void invoke<unknown>("application_lock_status").then((value) => {
+      globalThis.clearTimeout(timer);
+      resolve(value);
+    }, (error: unknown) => {
+      globalThis.clearTimeout(timer);
+      reject(error instanceof Error ? error : new Error(String(error)));
+    });
+  });
+}
+
+function registerApplicationLockListener(
+  onPayload: (payload: unknown) => void,
+): Promise<UnlistenFn> {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const timer = globalThis.setTimeout(() => {
+      settled = true;
+      reject(new Error("Application-lock listener registration timed out."));
+    }, 1_500);
+    void listen<unknown>("application-lock-changed", (event) => onPayload(event.payload)).then(
+      (cleanup) => {
+        globalThis.clearTimeout(timer);
+        if (settled) void cleanup();
+        else {
+          settled = true;
+          resolve(cleanup);
+        }
+      },
+      (error: unknown) => {
+        globalThis.clearTimeout(timer);
+        if (!settled) {
+          settled = true;
+          reject(error instanceof Error ? error : new Error(String(error)));
+        }
+      },
+    );
+  });
 }
 
 interface ApplicationLockedViewProps {
@@ -133,8 +181,12 @@ export function ApplicationRuntime(): ReactNode {
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
   const profileNameRef = useRef<HTMLInputElement>(null);
+  const applicationLockRef = useRef(applicationLock);
+  const nativeLockSnapshotRef = useRef<ApplicationLockSnapshot | null>(null);
+  const lockFailClosedRef = useRef(false);
 
   const applyLockSnapshot = useCallback((snapshot: ApplicationLockSnapshot) => {
+    applicationLockRef.current = snapshot;
     setApplicationLock(snapshot);
     if (snapshot.state === "locked") {
       setCurrentProject(null);
@@ -145,50 +197,80 @@ export function ApplicationRuntime(): ReactNode {
     }
   }, []);
 
+  const failClosedApplicationLock = useCallback((message: string) => {
+    lockFailClosedRef.current = true;
+    applyLockSnapshot(failClosedApplicationLockSnapshot(applicationLockRef.current));
+    setUnlockError(message);
+  }, [applyLockSnapshot]);
+
+  const applyNativeLockSnapshot = useCallback((
+    snapshot: ApplicationLockSnapshot,
+    source: ApplicationLockSnapshotSource,
+  ) => {
+    const reconciliation = reconcileApplicationLockSnapshot(
+      applicationLockRef.current,
+      nativeLockSnapshotRef.current,
+      snapshot,
+      lockFailClosedRef.current,
+      source,
+    );
+    nativeLockSnapshotRef.current = reconciliation.nativeSnapshot;
+    lockFailClosedRef.current = reconciliation.failClosed;
+    if (reconciliation.applied) applyLockSnapshot(reconciliation.displaySnapshot);
+  }, [applyLockSnapshot]);
+
   useEffect(() => {
     if (!hasNativeRuntime()) return;
     let disposed = false;
     let unlisten: UnlistenFn | null = null;
-    void invoke<unknown>("application_lock_status")
-      .then((value) => {
-        if (!disposed) applyLockSnapshot(decodeApplicationLockSnapshot(value));
-      })
-      .catch(() => {
+    let statusTimer: ReturnType<typeof setInterval> | null = null;
+    let statusPending = false;
+    const reconcileStatus = (): void => {
+      if (disposed || statusPending) return;
+      statusPending = true;
+      void invokeApplicationLockStatus().then((value) => {
         if (!disposed) {
-          applyLockSnapshot({
-            ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
-            state: "locked",
-            reason: "configuration-invalid",
-          });
-          setUnlockError("Application-lock status is unavailable. Protected work was not opened.");
+          try {
+            applyNativeLockSnapshot(decodeApplicationLockSnapshot(value), "status");
+          } catch {
+            failClosedApplicationLock("The application-lock status was invalid. Protected work remains unavailable.");
+          }
         }
+      }).catch(() => {
+        if (!disposed) {
+          failClosedApplicationLock("Application-lock status is unavailable. Protected work was not opened.");
+        }
+      }).finally(() => {
+        statusPending = false;
       });
-    void listen<unknown>("application-lock-changed", (event) => {
-      if (!disposed) {
-        try {
-          applyLockSnapshot(decodeApplicationLockSnapshot(event.payload));
-        } catch {
-          setUnlockError("The application-lock response was invalid. Protected work remains unavailable.");
-        }
+    };
+    void registerApplicationLockListener((payload) => {
+      if (disposed) return;
+      try {
+        applyNativeLockSnapshot(decodeApplicationLockSnapshot(payload), "event");
+      } catch {
+        failClosedApplicationLock("The application-lock response was invalid. Protected work remains unavailable.");
       }
     }).then((cleanup) => {
-      if (disposed) cleanup();
-      else unlisten = cleanup;
-    }).catch(() => {
-      if (!disposed) {
-        applyLockSnapshot({
-          ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
-          state: "locked",
-          reason: "configuration-invalid",
-        });
-        setUnlockError("Application-lock monitoring is unavailable. Protected work was not opened.");
+      if (disposed) {
+        void cleanup();
+        return;
       }
+      unlisten = cleanup;
+      reconcileStatus();
+      statusTimer = globalThis.setInterval(reconcileStatus, 1_000);
+    }).catch(() => {
+      if (disposed) return;
+      failClosedApplicationLock("Application-lock monitoring is unavailable. Protected work was not opened.");
+      reconcileStatus();
+      statusTimer = globalThis.setInterval(reconcileStatus, 1_000);
     });
     return () => {
       disposed = true;
-      unlisten?.();
+      if (statusTimer) globalThis.clearInterval(statusTimer);
+      if (unlisten) void unlisten();
     };
-  }, [applyLockSnapshot]);
+  }, [applyNativeLockSnapshot, failClosedApplicationLock]);
 
   useEffect(() => {
     if (!hasNativeRuntime() || applicationLock.state === "locked") return;
@@ -311,10 +393,10 @@ export function ApplicationRuntime(): ReactNode {
     setUnlockError(null);
     if (hasNativeRuntime()) {
       void invoke<unknown>("application_lock_now")
-        .then((value) => applyLockSnapshot(decodeApplicationLockSnapshot(value)))
-        .catch(() => setUnlockError("The native lock could not confirm Core shutdown. Keep the application closed until diagnostics are available."));
+        .then((value) => applyNativeLockSnapshot(decodeApplicationLockSnapshot(value), "status"))
+        .catch(() => failClosedApplicationLock("The native lock could not confirm Core shutdown. Keep the application closed until diagnostics are available."));
     }
-  }, [applicationLock, applyLockSnapshot]);
+  }, [applicationLock, applyLockSnapshot, applyNativeLockSnapshot, failClosedApplicationLock]);
 
   const unlock = useCallback(() => {
     if (!hasNativeRuntime()) return;
@@ -322,7 +404,7 @@ export function ApplicationRuntime(): ReactNode {
     setUnlockError(null);
     void invoke<unknown>("application_lock_unlock")
       .then((value) => {
-        applyLockSnapshot(decodeApplicationLockSnapshot(value));
+        applyNativeLockSnapshot(decodeApplicationLockSnapshot(value), "explicit-unlock");
         setAnnouncement("Application unlocked. No project is open.");
       })
       .catch((error: unknown) => {
@@ -334,12 +416,12 @@ export function ApplicationRuntime(): ReactNode {
             : code.includes("CORE-UNAVAILABLE")
               ? "Credentials were accepted, but the local service could not start. The application remains locked."
               : "Windows could not verify the current user. The application remains locked.");
-        void invoke<unknown>("application_lock_status")
-          .then((value) => applyLockSnapshot(decodeApplicationLockSnapshot(value)))
-          .catch(() => undefined);
+        void invokeApplicationLockStatus()
+          .then((value) => applyNativeLockSnapshot(decodeApplicationLockSnapshot(value), "status"))
+          .catch(() => failClosedApplicationLock("Application-lock status is unavailable. The application remains locked."));
       })
       .finally(() => setUnlockBusy(false));
-  }, [applyLockSnapshot]);
+  }, [applyNativeLockSnapshot, failClosedApplicationLock]);
 
   const openProfile = useCallback(() => {
     setProfileNameDraft(applicationLock.profileName ?? "");
@@ -366,14 +448,14 @@ export function ApplicationRuntime(): ReactNode {
       profileName,
       inactivityTimeoutMinutes: timeoutDraft,
     }).then((value) => {
-      applyLockSnapshot(decodeApplicationLockSnapshot(value));
+      applyNativeLockSnapshot(decodeApplicationLockSnapshot(value), "status");
       setProfileOpen(false);
       profileTriggerRef.current?.focus();
       setAnnouncement("Local profile and application-lock settings saved.");
     }).catch(() => {
       setProfileError("The local profile could not be saved. Existing protection remains unchanged.");
     }).finally(() => setProfileBusy(false));
-  }, [applyLockSnapshot, profileNameDraft, timeoutDraft]);
+  }, [applyNativeLockSnapshot, profileNameDraft, timeoutDraft]);
 
   const commands = useMemo<readonly CommandDefinition[]>(() => [
     {
