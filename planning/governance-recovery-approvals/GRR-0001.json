@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-approval",
+  "recoveryRequestId": "GRR-0001",
+  "targetWave": "W1",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-22T13:18:38.2272115Z",
+  "approvalStatement": "Approved in direct response to the exact-commit GRR-0001 approval request, authorizing only GRR-0001.B00 at fc8fabfcf3f23e1009f0f9895cd9befbf4b85f53; keep W1 paused and T03 blocked, require independent B00 approval, and require a separate approved ECR-0002/W1.A03 before UI-gate change, T03 reopen, or W1 resume.",
+  "packet": {
+    "commit": "fc8fabfcf3f23e1009f0f9895cd9befbf4b85f53",
+    "path": "planning/governance-recovery-requests/GRR-0001.packet.json",
+    "sha256": "aeb9ec8f3e2c86cba5e1455d778f939b4884adde06cbf716f583ee9a34b7bceb",
+    "proposalPath": "planning/governance-recovery-requests/GRR-0001.md",
+    "proposalSha256": "9598f07e8d6118011955cabc9ab517aefff36a551bc1752a631f1313f283caee",
+    "schemaPath": "planning/governance-recovery-requests/governance-recovery-request.schema.json",
+    "schemaSha256": "6ce741e998be9068e720e0bfed9fe32f996f055522cda47e41763804ddd711b6",
+    "reviewPath": "planning/governance-recovery-requests/GRR-0001-review.html",
+    "reviewSha256": "de1272fbc21f86f163cdd55e69525a775e82667a92adbcda75df36aa6ed40de3"
+  },
+  "authorityChainSha256": "f4ffc7c2adae8c72c87d48171638516507b3ccc5dd3a15b855d44207ef500fef",
+  "bootstrapUnit": "GRR-0001.B00",
+  "independentPacketReview": {
+    "reviewer": "b00-independent-reviewer",
+    "attemptId": "R02",
+    "candidateCommit": "fc8fabfcf3f23e1009f0f9895cd9befbf4b85f53",
+    "result": "APPROVED",
+    "openFindingIds": [],
+    "priorAdverseLedger": {
+      "path": "planning/governance-recovery-requests/GRR-0001.review-R01.json",
+      "sha256": "291342cf35dfcfe286230dc496ce47537e62f02208cb8448f7109116a29b4064"
+    }
+  },
+  "executionAuthority": {
+    "bootstrapOnly": true,
+    "postBootstrapExecution": false,
+    "ordinaryWaveResume": false,
+    "taskExecution": false,
+    "releaseGateApproval": false
+  }
+}

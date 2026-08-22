@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-recovery-approval.v1.json",
+  "title": "Research Observatory governance recovery approval",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "recoveryRequestId",
+    "targetWave",
+    "status",
+    "approvedBy",
+    "approvedAt",
+    "approvalStatement",
+    "packet",
+    "authorityChainSha256",
+    "bootstrapUnit",
+    "independentPacketReview",
+    "executionAuthority"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "governance-recovery-approval"},
+    "recoveryRequestId": {"type": "string", "pattern": "^GRR-[0-9]{4}$"},
+    "targetWave": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
+    "status": {"const": "APPROVED"},
+    "approvedBy": {"type": "string", "minLength": 1},
+    "approvedAt": {"type": "string", "format": "date-time"},
+    "approvalStatement": {"type": "string", "minLength": 1},
+    "packet": {
+      "type": "object",
+      "required": ["commit", "path", "sha256", "proposalPath", "proposalSha256", "schemaPath", "schemaSha256", "reviewPath", "reviewSha256"],
+      "properties": {
+        "commit": {"$ref": "#/$defs/commit"},
+        "path": {"$ref": "#/$defs/repositoryPath"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "proposalPath": {"$ref": "#/$defs/repositoryPath"},
+        "proposalSha256": {"$ref": "#/$defs/sha256"},
+        "schemaPath": {"$ref": "#/$defs/repositoryPath"},
+        "schemaSha256": {"$ref": "#/$defs/sha256"},
+        "reviewPath": {"$ref": "#/$defs/repositoryPath"},
+        "reviewSha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "authorityChainSha256": {"$ref": "#/$defs/sha256"},
+    "bootstrapUnit": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.B[0-9]{2}$"},
+    "independentPacketReview": {
+      "type": "object",
+      "required": ["reviewer", "attemptId", "candidateCommit", "result", "openFindingIds", "priorAdverseLedger"],
+      "properties": {
+        "reviewer": {"type": "string", "minLength": 1},
+        "attemptId": {"type": "string", "pattern": "^R[0-9]{2}$"},
+        "candidateCommit": {"$ref": "#/$defs/commit"},
+        "result": {"const": "APPROVED"},
+        "openFindingIds": {"type": "array", "maxItems": 0},
+        "priorAdverseLedger": {
+          "type": "object",
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {"$ref": "#/$defs/repositoryPath"},
+            "sha256": {"$ref": "#/$defs/sha256"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "executionAuthority": {
+      "type": "object",
+      "required": ["bootstrapOnly", "postBootstrapExecution", "ordinaryWaveResume", "taskExecution", "releaseGateApproval"],
+      "properties": {
+        "bootstrapOnly": {"const": true},
+        "postBootstrapExecution": {"const": false},
+        "ordinaryWaveResume": {"const": false},
+        "taskExecution": {"const": false},
+        "releaseGateApproval": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9._/-]+$"
+    }
+  },
+  "additionalProperties": false
+}
