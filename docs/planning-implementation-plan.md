@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 31ab759e36cb80b20572f95dab22ce40b3096c1fdeeeece185f75fa39c4e05e0
+source_sha256: e784f473a3cbf7c0936ed9a1f82f9cba165f0cf858bba10312d53bf4de4b4a1a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2734,7 +2734,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T02 - Implement local user profile and application-lock behavior
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -2759,13 +2759,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-02.S04.T02.submission.json` at `a06d7d4cd67e027850d6d240f1507a17e49a4739`
+
 ##### Review history — CAP-02.S04.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `57e12a3a219a5346fecac47c2b8b00320def2c47d40ddb461dd988d2354af8a6`
+
+- Candidate / base / branch: `a06d7d4cd67e027850d6d240f1507a17e49a4739` / `8782ee8d09cfa76582bb89b4befe2cedd8a70bb1` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-22T04:04:05+00:00`
+- Evidence: `artifacts/evidence/CAP-02.S04.T02.submission.json` / `4858fd2e93db2a87ebc21b58cd1f3703d451d72696e7d4d8e51d797665854445` / `a06d7d4cd67e027850d6d240f1507a17e49a4739`
+- Acceptance-criteria SHA-256: `fc75db33fdcc31be14a8269d50dac1414d9ef9cf4c24ad34f7d68724ce8c84cf`
+- Verification-selection SHA-256: `b8800badc3233a92bdf683fc893f9c37e3713f57ff6aea0063440b59e5cc42f6`
+- Changed paths: `apps/desktop/src-tauri/Cargo.toml`, `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.test.tsx`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/applicationLock.test.ts`, `apps/desktop/src/app/applicationLock.ts`, `apps/desktop/src/app/session.test.ts`, `apps/desktop/src/app/session.ts`, `artifacts/evidence/CAP-02.S04.T02.json`, `artifacts/evidence/ui-change/CAP-02.S04.T02.json`, `docs/adr/ADR-0018-lock-the-local-application-at-the-native-supervisor-boundary.md`, `docs/adr/index.json`, `docs/architecture/README.md`, `docs/architecture/application-lock.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/security/README.md`, `packages/contracts/security/application-lock-profile.schema.json`, `packages/contracts/security/application-lock-profile.v1.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-02/CAP-02.S04.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/contracts/test_credential_store_contract.py`, `tests/foundation/test_adr_check.py`, `tests/security/README.md`, `tests/security/test_windows_credentials.py`, `tools/desktop_app_check.py`
+- Selected checks: `.venv\Scripts\python.exe tools\desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-desktop-application.json`, `core_sidecar_build.py; unittest discover tests/desktop; tests/packaging; tests/service; tests/contracts; tests/security`, `.venv\Scripts\python.exe tools\security_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-security-local.json`, `.venv\Scripts\python.exe tools\verify.py --repo . --profile desktop --profile security-local --profile service --affected-base 8782ee8d09cfa76582bb89b4befe2cedd8a70bb1 --affected-head bd4baaec3b13d55e4f938cc5bfbf9ff6ec150a97 --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-02.S04.T02-affected-selection.json`, `ui-reference/token/route/workflow/accessibility/visual; ui_change_gate; adr_check; build_manifest; quality_check; taskctl validate; backlog_views --check`
+- Deferred checks: `Desktop performance is governed for W1-exit by W1.A02. Complete repository/deployment qualification is retained for a quiescent W1 checkpoint/exit; active-campaign foundation fixtures that assert W1 is PAUSED are not represented as passed. T02-owned ADR registry and copy-fixture issues found during the full-profile attempt were fixed and retested.`
+- Selection rationale: Native Windows authentication, Core capability/process lifecycle, protected IPC, local security configuration, and approved renderer state justified the full desktop application verifier, affected desktop/service/contracts/packaging/security suites, live supply-chain scan, strict contract/source tests, UI accessibility/visual conformance, and commit-bound governance gates.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
