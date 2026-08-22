@@ -61,6 +61,11 @@
       <li>No product/reference, completed outcome, canonical profile, Wave approval, gate, or predecessor authority changes.</li>
     </ul>
   </section>
+  <section class="pending">
+    <h2>Independent packet-review history</h2>
+    <p><code>R01</code> at commit <code>359c3a5cc688921cb58396068d03435a4de06852</code> returned <strong>changes requested</strong>. The canonical packet was sound, but the generated v2 approval page misrendered the predecessor authority, pending execution state, one-task resume wording, and diff hygiene.</p>
+    <p>The strict-descendant remediation corrects only the enabler renderer, its focused regression, generated pages, and packet records. It grants no W1.A03 authority and executes neither B00 nor T01. A fresh exact-commit independent review is still required.</p>
+  </section>
   <section>
     <h2>Decision</h2>
     <p><strong>Recommended:</strong> approve the bounded W1.A03 packet after independent packet review. This repairs the false negative and gives T03 a truthful recovery path while retaining every safety gate.</p>

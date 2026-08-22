@@ -130,7 +130,7 @@
   "files": [
     {
       "path": "planning/enabler-change-requests/ECR-0002.md",
-      "sha256": "8e0ac263dc56729c07faee18034eec34c3e36f3536908a7f0da16a214ec4a004",
+      "sha256": "ff8e346d41935f547a66cd19e773553b7302aae642e0438cc0230f9af54d59e7",
       "role": "canonical-proposal"
     },
     {
@@ -140,7 +140,7 @@
     },
     {
       "path": "planning/enabler-change-requests/ECR-0002-review.html",
-      "sha256": "b2f9f680146d8d7f4594c93487036a87c93f312390e2060c163d9089114f1839",
+      "sha256": "7fabc8ddf81e157e853240464c65d99159e84ff9f0b1172950ecff991a8348c3",
       "role": "human-review"
     }
   ]

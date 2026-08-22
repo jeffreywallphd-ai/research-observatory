@@ -676,6 +676,7 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
                 "approved_by": (approval or {}).get("approvedBy"),
                 "approved_at": (approval or {}).get("approvedAt"),
                 "authority": packet.get("authority") or {},
+                "authority_chain": packet.get("authorityChain") or {},
                 "effective_base": (approval or {}).get("effectiveBase") or {},
                 "bootstrap_unit": bootstrap_id,
                 "bootstrap_attempts": bootstrap_attempts,
@@ -1047,36 +1048,101 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
     for record in enabler_records:
         proposal_meta, proposal_body = read_frontmatter(repo / record["proposal_path"])
         authority = record["authority"]
+        authority_chain = record["authority_chain"]
         effective_base = record["effective_base"]
-        enabler_authority_rows = [
-            (
-                "W1 base approval",
-                effective_base.get("originalPacketCommit") or authority.get("originalWavePacketCommit"),
-                effective_base.get("originalApprovalRecordCommit") or authority.get("originalApprovalRecordCommit"),
-                "Original complete Wave packet",
-            ),
-            (
-                authority.get("legacyAmendmentId") or "Legacy amendment",
-                effective_base.get("legacyAmendmentPacketCommit") or authority.get("legacyAmendmentPacketCommit"),
-                effective_base.get("legacyAmendmentRecordCommit") or authority.get("legacyAmendmentRecordCommit"),
-                "Previously approved delta; preserved as migrated history",
-            ),
+        current_is_approved = record["approval_status"] == "APPROVED"
+        current_authority_meaning = (
+            "Human-approved bootstrap/task scope; adoption remains separate"
+            if current_is_approved
+            else "Pending, non-executable proposal; no bootstrap/task authority"
+        )
+        if authority_chain:
+            wave_base = authority_chain.get("waveBase") or {}
+            wave_id = wave_base.get("waveId") or record["target_wave"]
+            enabler_authority_rows = [
+                (
+                    f"{wave_id} base approval",
+                    wave_base.get("packetCommit"),
+                    wave_base.get("approvalRecordCommit"),
+                    "Original complete Wave packet",
+                )
+            ]
+            for predecessor in authority_chain.get("orderedAmendments") or []:
+                approval_reference = predecessor.get("approvalReference") or {}
+                enabler_authority_rows.append(
+                    (
+                        predecessor.get("id"),
+                        predecessor.get("packetCommit"),
+                        approval_reference.get("introductionCommit") or approval_reference.get("sha256"),
+                        "Adopted predecessor authority; preserved unchanged",
+                    )
+                )
+        else:
+            enabler_authority_rows = [
+                (
+                    "W1 base approval",
+                    effective_base.get("originalPacketCommit") or authority.get("originalWavePacketCommit"),
+                    effective_base.get("originalApprovalRecordCommit") or authority.get("originalApprovalRecordCommit"),
+                    "Original complete Wave packet",
+                ),
+                (
+                    authority.get("legacyAmendmentId") or "Legacy amendment",
+                    effective_base.get("legacyAmendmentPacketCommit") or authority.get("legacyAmendmentPacketCommit"),
+                    effective_base.get("legacyAmendmentRecordCommit") or authority.get("legacyAmendmentRecordCommit"),
+                    "Previously approved delta; preserved as migrated history",
+                ),
+            ]
+        enabler_authority_rows.append(
             (
                 record["amendment_id"],
                 record["packet_sha256"],
-                record["approval_sha256"],
-                "Approved bootstrap/task scope; adoption remains separate",
-            ),
-        ]
+                record["approval_sha256"] or "pending",
+                current_authority_meaning,
+            )
+        )
         rendered_authority = "".join(
             f"<tr><th>{esc(label)}</th><td><code>{esc(packet or 'missing')}</code></td>"
             f"<td><code>{esc(approval or 'missing')}</code></td><td>{esc(meaning)}</td></tr>"
             for label, packet, approval, meaning in enabler_authority_rows
         )
+        task_badge = "authorized" if current_is_approved else "pending"
         task_rows = "".join(
             f"<li><span><strong>{esc(task.get('id'))} — {esc(task.get('title'))}</strong>"
-            f"<small>{esc(task.get('objective'))}</small></span>{status_badge('authorized')}</li>"
+            f"<small>{esc(task.get('objective'))}</small></span>{status_badge(task_badge)}</li>"
             for task in record["task_inventory"]
+        )
+        task_count = len(record["task_inventory"])
+        task_completion = (
+            "completion and independent approval of the one task"
+            if task_count == 1
+            else f"completion and independent approval of all {task_count} tasks"
+        )
+        approval_summary = (
+            f"Approved by <strong>{esc(record['approved_by'])}</strong> at "
+            f"<code>{esc(record['approved_at'])}</code>. Approval is not task materialization, amendment "
+            "activation, adoption, Wave resumption, or release-gate approval."
+            if current_is_approved
+            else "No human approval is recorded. The proposal is non-executable and grants no bootstrap, task, "
+            "amendment, Wave-resume, or release-gate authority."
+        )
+        authority_summary = (
+            f"Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. "
+            f"{esc(record['amendment_id'])} authorizes only bootstrap unit "
+            f"<code>{esc(record['bootstrap_unit'])}</code> and the exact bounded task inventory below until adoption."
+            if current_is_approved
+            else f"Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. "
+            f"{esc(record['amendment_id'])} is pending and non-executable. If separately approved, it would authorize "
+            f"only bootstrap unit <code>{esc(record['bootstrap_unit'])}</code> and the exact bounded task inventory below."
+        )
+        inventory_heading = "Authorized bounded inventory" if current_is_approved else "Proposed bounded inventory"
+        inventory_projection = "authorized packet inventory" if current_is_approved else "proposed packet inventory"
+        safe_resume = (
+            f"Continue the approved amendment through independently approved bootstrap, materialization, "
+            f"{task_completion}, amendment-exit control/security review, and the W1 adoption checkpoint."
+            if current_is_approved
+            else f"First obtain independent approval of this exact packet and explicit human approval. Only then may "
+            f"the amendment continue through independently approved bootstrap, materialization, {task_completion}, "
+            "amendment-exit control/security review, and the W1 adoption checkpoint."
         )
         task_review_rows = "".join(
             task_review_history_html(task) for task in (record.get("amendment") or {}).get("tasks", [])
@@ -1112,7 +1178,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 <section class="review-toolbar">
   <h2>Proposal, approval, materialization, and campaign state</h2>
   <dl class="summary-grid"><div><dt>Proposal record</dt><dd>{esc(record["proposal_status"])} / {esc(record["proposal_execution_state"])}</dd></div><div><dt>Human approval</dt><dd>{esc(record["approval_status"])}</dd></div><div><dt>Materialization lifecycle</dt><dd>{esc(record["lifecycle_status"])}</dd></div><div><dt>Amendment campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
-  <p>Approved by <strong>{esc(record["approved_by"] or "Pending")}</strong> at <code>{esc(record["approved_at"] or "pending")}</code>. Approval is not task materialization, amendment activation, adoption, Wave resumption, or release-gate approval.</p>
+  <p>{approval_summary}</p>
 </section>
 <section class="review-toolbar">
   <h2>Hash-bound source records</h2>
@@ -1121,7 +1187,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
   <tr><th>Packet</th><td><code>{esc(record["packet_path"])}</code></td><td><code>{esc(record["packet_sha256"])}</code></td></tr>
   <tr><th>Human review</th><td><code>{esc(record["review_path"])}</code></td><td><code>{esc(record["review_sha256"])}</code></td></tr>
   <tr><th>Approval</th><td><code>{esc(record["approval_path"] or "pending")}</code></td><td><code>{esc(record["approval_sha256"] or "pending")}</code></td></tr>
-  {addendum_rows}
+{addendum_rows}
   </tbody></table>
 </section>
 <section class="review-toolbar">
@@ -1135,17 +1201,17 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 <section class="review-toolbar">
   <h2>Ordered Wave authority chain</h2>
   <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody>{rendered_authority}</tbody></table>
-  <p>Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. {esc(record["amendment_id"])} authorizes only bootstrap unit <code>{esc(record["bootstrap_unit"])}</code> and the exact bounded task inventory below until adoption.</p>
+  <p>{authority_summary}</p>
 </section>
 <section class="review-toolbar">
-  <h2>Authorized bounded inventory</h2><ul class="wave-slice-list">{task_rows}</ul>
+  <h2>{inventory_heading}</h2><ul class="wave-slice-list">{task_rows}</ul>
   <h3>Exit criteria</h3><ul class="gate-criteria">{criteria}</ul>
 </section>
-<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The authorized packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The {inventory_projection} above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
 {task_review_rows or "<p>No amendment task has been materialized.</p>"}
 {exit_review}
 <section class="callout callout-warning">
-  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>Continue the approved amendment through independently approved bootstrap, materialization, both DONE and independently approved tasks, amendment-exit control/security review, and the W1 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>{safe_resume} The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
 </section>
 <details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria">{rollback}</ul></details>
 <details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article">{render_markdown(strip_first_h1(proposal_body))}</article></details>
