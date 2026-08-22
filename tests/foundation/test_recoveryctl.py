@@ -400,7 +400,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 expected[hold["bootstrap"]["attempts"][-1]["review"]["result"]],
             )
 
-    def test_approved_supplement_authority_and_stopped_boundary_validate_before_install(self) -> None:
+    def test_approved_supplement_authority_and_installed_stopped_boundary_validate(self) -> None:
         approval, packet, _approval_payload, _packet_payload = recoveryctl.load_supplement_authority(
             REPO, "GRR-0001.S01"
         )
@@ -411,17 +411,12 @@ class GovernanceRecoveryTests(unittest.TestCase):
             REPO,
             packet,
             data,
-            require_installed=False,
+            require_installed=True,
         )
         self.assertEqual("ACTIVE", hold["status"])
         self.assertEqual("APPROVED", amendment["lifecycle"]["status"])
-        projection = recoveryctl.validate_target_materialization_projection(REPO, packet, data)
-        self.assertEqual(["W1.A03.T01"], projection["materializedTaskIds"])
-        self.assertEqual("PAUSED", projection["waveStatus"])
-        self.assertEqual("amendment-hold", projection["waveScope"])
-        self.assertEqual("BLOCKED", projection["blockedTaskStatus"])
-        self.assertEqual("ACTIVE", projection["holdStatus"])
-        self.assertFalse(projection["activationOrClaimPerformed"])
+        with self.assertRaisesRegex(SystemExit, "unapproved latest recovery supplement"):
+            recoveryctl.validate_target_materialization_projection(REPO, packet, data)
         self.assertTrue(
             recoveryctl.path_authorized(
                 "planning/governance-recovery-approvals/GRR-0001.B01.review-R01.json",
@@ -446,6 +441,10 @@ class GovernanceRecoveryTests(unittest.TestCase):
             REPO, "GRR-0001.S01"
         )
         payload, data, capabilities, slices, tasks, gates = recoveryctl.backlog_state(REPO)
+        data = copy.deepcopy(data)
+        data["control_plane"]["revision"] = 4
+        data["control_plane"]["minimum_tool_revision"] = 4
+        data["control_plane"]["recovery_holds"][0].pop("supplements", None)
         captured: dict[str, Any] = {}
 
         def capture(_repo: Path, prior: bytes, candidate: dict[str, Any]) -> None:
@@ -465,6 +464,11 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 "backlog_state",
                 return_value=(payload, data, capabilities, slices, tasks, gates),
             ),
+            patch.object(
+                recoveryctl,
+                "validate_supplement_boundary",
+                return_value=(data["control_plane"]["recovery_holds"][0], data["wave_amendments"][-1]),
+            ),
             patch.object(recoveryctl, "save_backlog", side_effect=capture),
         ):
             recoveryctl.command_supplement_start(args)
@@ -479,10 +483,11 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.assertEqual([], supplement["bootstrap"]["attempts"])
         self.assertEqual([], taskctl.backlog_schema_errors(taskctl.serializable_backlog(installed)))
 
-        stale = copy.deepcopy(data)
+        _current_payload, current, _capabilities, _slices, _tasks, _gates = recoveryctl.backlog_state(REPO)
+        stale = copy.deepcopy(current)
         stale["waves"][1]["campaign"]["scope"] = "amendment-hold"
         with self.assertRaisesRegex(SystemExit, "activation boundary"):
-            recoveryctl.validate_supplement_boundary(REPO, packet, stale, require_installed=False)
+            recoveryctl.validate_supplement_boundary(REPO, packet, stale, require_installed=True)
 
     def test_taskctl_shared_recovery_review_history_denies_projection_tamper(self) -> None:
         _approval, packet, _hold = recoveryctl.validate_request(REPO, "GRR-0001")
@@ -888,7 +893,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
         data = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
         with patch.object(taskctl, "CONTROL_TOOL_REVISION", 3):
             errors = taskctl.wave_authority_errors(data, None)
-        self.assertIn("this taskctl revision is too old for the active control plane", errors)
+        self.assertIn("control plane revision is missing or unsupported", errors)
 
     def test_failed_release_is_atomic(self) -> None:
         backlog = REPO / "planning/backlog.yaml"
