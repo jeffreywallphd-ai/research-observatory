@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0a6fdb4d02abe133680094083ae5cd02e0e6252a6e6da449eeed7adcfecb78d0
+source_sha256: 5fa84182aa2c43627f1d1a8f97bca3da5233be8dded92de4255c7ebe42c33143
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -42,7 +42,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
-| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `MATERIALIZED` |
+| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ACTIVE` |
 
 ## Waves
 
@@ -777,12 +777,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A03.json` (`340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd`)
 
-**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-08-22T16:41:35.4388626Z` by repository-owner: Approved in Codex in direct response to the exact-commit ECR-0002/W1.A03 approval request at ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4; authorize only bootstrap W1.A03.B00 and task W1.A03.T01 as hash-bound in the packet, keep W1 paused and CAP-02.S04.T03 blocked through amendment adoption, GRR-0001 release, and an explicit ordinary W1 resume.
 - `E02` `MATERIALIZED` at `2026-08-22T19:06:55+00:00` by codex: Materialized the exact human-approved task inventory.
+- `E03` `ACTIVE` at `2026-08-22T19:08:18+00:00` by codex: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W1.A03
 
@@ -802,7 +803,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A03.T01 - Exact T03 candidate-lineage and evidence recovery
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W1.A03.B00`
 
