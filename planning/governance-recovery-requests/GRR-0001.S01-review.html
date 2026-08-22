@@ -47,6 +47,15 @@ Refusing to save invalid backlog state:
     <p><strong>Required outcome:</strong> an adopted predecessor remains valid only when a strictly later same-Wave executable amendment legitimately owns <code>amendment-hold</code>; without such an owner, terminal amendments still require ordinary <code>wave</code> scope.</p>
   </section>
 
+  <section>
+    <h2>Exact authority that B01 may resume</h2>
+    <dl>
+      <dt>ECR-0002 packet</dt><dd><code>ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4</code> · SHA-256 <code>835d0cbac43427a1cfd7406a8693b8af0ebf9321d009778c359165de9f7a3b8b</code></dd>
+      <dt>W1.A03 approval</dt><dd>introduced at <code>95c007b58619dfd82b5f443eea3d8e71e7efe082</code> · SHA-256 <code>340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd</code></dd>
+      <dt>W1.A03.B00</dt><dd>candidate <code>d0faa070a85055fa2a278e05bedc57c05701aabe</code> · evidence SHA-256 <code>83e7295355f6a3377247b4eb0fca8d852dd670d968856f6212c110f60dd64a36</code> · reviewed state <code>6dbe0f6ba6996818f60dc0d27ef4f6e56aa5ff8f</code> · approved projection <code>12c06ed648d1153f6ed60e873224fa0637fea4f7</code></dd>
+    </dl>
+  </section>
+
   <section class="boundary">
     <h2>Continuous stop boundary</h2>
     <dl>
@@ -66,6 +75,11 @@ Refusing to save invalid backlog state:
       <li><strong>Design GRR-0002 hold supersession:</strong> broader control-plane change with no safety advantage for this defect.</li>
       <li><strong>Direct edit or replay:</strong> rejected as a gate bypass.</li>
     </ol>
+  </section>
+
+  <section class="status">
+    <h2>R01 packet review: changes requested</h2>
+    <p>Exact commit <code>92de47c422a75a8060ef86b50564fe92f3da2217</code> was not approvable. R01 required the target ECR-0002/W1.A03/B00 authority to be hash-bound and required B01 scope to include the recovery README and Codex tracking guide that currently permit only B00. This strict-descendant packet closes only those two findings and retains the immutable R01 ledger.</p>
   </section>
 
   <section>
