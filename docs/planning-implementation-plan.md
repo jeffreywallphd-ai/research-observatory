@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 00593d793377075794a8da90e726c2cb4ac442bacdb9857d0ff2adaec74d69af
+source_sha256: c3af2952c267a55b65ec17776618d43a1a68a17ed7251980ed485b937d9bf297
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2734,7 +2734,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T02 - Implement local user profile and application-lock behavior
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -2762,6 +2762,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-02.S04.T02.submission.json` at `a06d7d4cd67e027850d6d240f1507a17e49a4739`
+- `artifacts/evidence/CAP-02.S04.T02.remediation-01.json` at `44ee8733a159152a3873eab76c5e54b995824afb`
 
 ##### Review history — CAP-02.S04.T02
 
@@ -2800,7 +2801,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `64f55019f973fe721637526e3d5c6e342e06f7c62f51e1f43ab4d352a5ab8430`
+
+- Candidate / base / branch: `44ee8733a159152a3873eab76c5e54b995824afb` / `a06d7d4cd67e027850d6d240f1507a17e49a4739` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-22T04:41:32+00:00`
+- Evidence: `artifacts/evidence/CAP-02.S04.T02.remediation-01.json` / `ce3e9716c3bb3b86845908a0ddd016810deda2ca071178e24ee0a9a628a0ef07` / `44ee8733a159152a3873eab76c5e54b995824afb`
+- Acceptance-criteria SHA-256: `fc75db33fdcc31be14a8269d50dac1414d9ef9cf4c24ad34f7d68724ce8c84cf`
+- Verification-selection SHA-256: `ebc2672f762a8b53d96c439d93051651aa303734123fbc3dee62607b9f227f84`
+- Changed paths: `apps/desktop/src-tauri/Cargo.toml`, `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src-tauri/src/support_bundle.rs`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/applicationLock.test.ts`, `apps/desktop/src/app/applicationLock.ts`, `artifacts/evidence/CAP-02.S04.T02.submission.json`, `artifacts/evidence/task-reviews/CAP-02.S04.T02/R01.json`, `docs/adr/ADR-0018-lock-the-local-application-at-the-native-supervisor-boundary.md`, `docs/architecture/application-lock.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-02/CAP-02.S04.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/security/test_windows_credentials.py`, `tools/desktop_app_check.py`
+- Selected checks: `.venv\Scripts\python.exe tools\desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T02-remediation-commit-desktop.json`, `.venv\Scripts\python.exe -m unittest discover -s tests/security; .venv\Scripts\python.exe -m unittest discover -s tests/contracts; .venv\Scripts\python.exe -m unittest discover -s tests/desktop`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .; adr_check --base a06d7d4 --head 44ee8733; ui_change_gate --base 8782ee8d --head 44ee8733; build_manifest; quality_check; taskctl validate; backlog_views --check`, `.venv\Scripts\python.exe tools/verify.py --repo . --profile desktop --profile security-local --profile service --affected-base a06d7d4cd67e027850d6d240f1507a17e49a4739 --affected-head 44ee8733a159152a3873eab76c5e54b995824afb --deferred-gate W1-exit --selection-only --report artifacts/tmp/CAP-02.S04.T02-remediation-affected-selection.json`
+- Deferred checks: `Desktop performance and the complete repository/deployment-profile matrix remain governed by the W1 exit gate. The initial submission's package-version-stable live supply-chain scan is not replayed for this source-only remediation.`
+- Selection rationale: R01 exposed credential API correctness, lock-time side-effect cancellation, renderer fail-closed reconciliation, and concurrent reauthentication admission. The remediation therefore replays the complete desktop application verifier, native Windows/Rust tests, desktop/security/contracts boundaries, architecture and ADR truth, UI lineage, clean build identity, Python quality, backlog integrity, and Git-derived affected selection. The package lock and package versions are unchanged, so the previously passing live supply-chain result remains applicable; performance and complete cross-profile qualification remain deferred to W1 exit.
+- Prior round / replayed open findings: `R01` / `CAP-02.S04.T02-R01-F01`, `CAP-02.S04.T02-R01-F02`, `CAP-02.S04.T02-R01-F03`, `CAP-02.S04.T02-R01-F04`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by b00-independent-reviewer at `2026-08-22T04:14:41+00:00`
 
