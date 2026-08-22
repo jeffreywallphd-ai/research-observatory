@@ -1,0 +1,14 @@
+{
+  "amendment_id": "W1.A03",
+  "attempt_id": "R01",
+  "reviewed_state_commit": "51da3a8d0cf46a2c157cea2eb618b298c9f4bd7d",
+  "reviewer": "b00-independent-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "artifacts/evidence/W1.A03.exit.json",
+    "sha256": "c581e22cca63c5d572eb74f1c12e396480b31c5a2cffa403b44f24d848dc0f9e"
+  },
+  "notes": "APPROVED at exact clean frozen exit-submission state 51da3a8d0cf46a2c157cea2eb618b298c9f4bd7d on codex/w1-windows-local-runtime. Exit evidence is Git-bound at 69eeec6e388969a40d20fcb80939ca137158bc1a, SHA-256 c581e22cca63c5d572eb74f1c12e396480b31c5a2cffa403b44f24d848dc0f9e, and truthfully declares completed-task candidate f47241972c1e8c0be3d53c822d921dd142b65996. The exact W1 base plus adopted W1.A01/W1.A02 chain and approved ECR-0002/W1.A03 authority remain ordered, hash-bound, and ancestral. W1.A03.B00 is independently approved at exact two-file scope; W1.A03.T01 is DONE with immutable R01/R02 history, and R02 explicitly closes W1.A03.T01-R01-F01/F02. Generic packet integrity, full historical/current T03 contract binding, real one-save persistence, competing-writer CAS preservation, and fail-closed recovery denials remain intact. W1 remains PAUSED with scope amendment-hold, HOLD-W1-GRR-0001 remains ACTIVE, CAP-02.S04.T03 remains BLOCKED with no recovery_control, no evidence or review, and G1 remains PENDING. Ordinary task records, release gates, protected product/runtime, privacy, approved-reference, canonical profile, and threshold bytes are unchanged. Independent replay passed 101/101 focused controller/schema/workflow/UI tests in 166.550 seconds, the exact cumulative UI command, 9/9 privacy tests, backlog and privacy-safe review-telemetry validation, ECR-0002/ECR-0001/GRR-0001 authority validation, 119-file quality, all 148 review pages, generated backlog views, protected-byte diff, and Git hygiene. The live recovery command is denied byte-stably by the active governance hold. No W1 product qualification, Wave resume, T03 approval, slice approval, W1 completion, G1 approval, local-main integration, or remote action is claimed. Adoption is the only lawful next lifecycle transition after this ledger is recorded and committed; it requires a newly committed checkpoint document bound to that approved-completion state, must record the W1 control/security checkpoint, and must leave W1 PAUSED. GRR release and explicit ordinary W1 resume remain separate later gates.",
+  "findings": [],
+  "closures": []
+}

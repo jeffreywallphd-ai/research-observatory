@@ -24119,7 +24119,7 @@ wave_amendments:
         focused tests, exact historical T03 gate command, authority, backlog, review-site, generated-view, quality, and diff
         checks pass. No product, reference, policy, predecessor, T03, ordinary W1, or gate state changed.
   campaign:
-    status: REVIEW
+    status: COMPLETE
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -24128,7 +24128,7 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-22T19:08:18+00:00'
-    updated_at: '2026-08-22T20:20:19+00:00'
+    updated_at: '2026-08-22T20:27:47+00:00'
     pause_reason: null
     lease: null
   tasks:
@@ -24462,48 +24462,95 @@ wave_amendments:
             - W1.A03.T01-R01-F02
       current_submission: null
   completion:
-    status: REVIEW
-    reviewer: null
-    reviewed_at: null
+    status: APPROVED
+    reviewer: b00-independent-reviewer
+    reviewed_at: '2026-08-22T20:27:47+00:00'
     evidence:
     - artifacts/evidence/W1.A03.exit.json
-    notes: Submit exact completed W1.A03 boundary for independent exit review; W1 remains paused and T03 blocked.
+    notes: APPROVED at exact clean frozen exit-submission state 51da3a8d0cf46a2c157cea2eb618b298c9f4bd7d on codex/w1-windows-local-runtime.
+      Exit evidence is Git-bound at 69eeec6e388969a40d20fcb80939ca137158bc1a, SHA-256 c581e22cca63c5d572eb74f1c12e396480b31c5a2cffa403b44f24d848dc0f9e,
+      and truthfully declares completed-task candidate f47241972c1e8c0be3d53c822d921dd142b65996. The exact W1 base plus adopted
+      W1.A01/W1.A02 chain and approved ECR-0002/W1.A03 authority remain ordered, hash-bound, and ancestral. W1.A03.B00 is
+      independently approved at exact two-file scope; W1.A03.T01 is DONE with immutable R01/R02 history, and R02 explicitly
+      closes W1.A03.T01-R01-F01/F02. Generic packet integrity, full historical/current T03 contract binding, real one-save
+      persistence, competing-writer CAS preservation, and fail-closed recovery denials remain intact. W1 remains PAUSED with
+      scope amendment-hold, HOLD-W1-GRR-0001 remains ACTIVE, CAP-02.S04.T03 remains BLOCKED with no recovery_control, no evidence
+      or review, and G1 remains PENDING. Ordinary task records, release gates, protected product/runtime, privacy, approved-reference,
+      canonical profile, and threshold bytes are unchanged. Independent replay passed 101/101 focused controller/schema/workflow/UI
+      tests in 166.550 seconds, the exact cumulative UI command, 9/9 privacy tests, backlog and privacy-safe review-telemetry
+      validation, ECR-0002/ECR-0001/GRR-0001 authority validation, 119-file quality, all 148 review pages, generated backlog
+      views, protected-byte diff, and Git hygiene. The live recovery command is denied byte-stably by the active governance
+      hold. No W1 product qualification, Wave resume, T03 approval, slice approval, W1 completion, G1 approval, local-main
+      integration, or remote action is claimed. Adoption is the only lawful next lifecycle transition after this ledger is
+      recorded and committed; it requires a newly committed checkpoint document bound to that approved-completion state, must
+      record the W1 control/security checkpoint, and must leave W1 PAUSED. GRR release and explicit ordinary W1 resume remain
+      separate later gates.
     exit_review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex
-        submitted_at: '2026-08-22T20:20:19+00:00'
-        candidate_commit: 69eeec6e388969a40d20fcb80939ca137158bc1a
-        declared_candidate_commit: f47241972c1e8c0be3d53c822d921dd142b65996
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: amendment-exit-evidence
-          amendment_id: W1.A03
-          path: artifacts/evidence/W1.A03.exit.json
-          sha256: c581e22cca63c5d572eb74f1c12e396480b31c5a2cffa403b44f24d848dc0f9e
-          commit: 69eeec6e388969a40d20fcb80939ca137158bc1a
-        acceptance_criteria_sha256: f635fa4498c417483b2d2ba94efbce76855a652824a0f369d2bcdcd5c2333f6a
-        selected_checks:
-        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema
-          tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate
-        - .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head
-          59079efccc122a7d56a9f18efc20030851bf32a9
-        - .venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract
-        - .venv\Scripts\python.exe tools\quality_check.py --repo .
-        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
-        - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry
-        - .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\Scripts\python.exe
-          tools\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\Scripts\python.exe tools\recoveryctl.py
-          --repo . validate GRR-0001 --require-approved
-        - .venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py --repo
-          . --check
-        - git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts
-          artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md
-          docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py
-        - git diff --check
-        selected_checks_sha256: 0da9b48b577b70ba4f6971602b86345c2741a596c918457a6155387991c33701
-        prior_attempt_id: null
-        open_finding_ids: []
-        packet_sha256: 5215368cda1222cba94f5ce662ceda2d6833500c77f9097fe650d87221e4172e
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-08-22T20:20:19+00:00'
+          candidate_commit: 69eeec6e388969a40d20fcb80939ca137158bc1a
+          declared_candidate_commit: f47241972c1e8c0be3d53c822d921dd142b65996
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: amendment-exit-evidence
+            amendment_id: W1.A03
+            path: artifacts/evidence/W1.A03.exit.json
+            sha256: c581e22cca63c5d572eb74f1c12e396480b31c5a2cffa403b44f24d848dc0f9e
+            commit: 69eeec6e388969a40d20fcb80939ca137158bc1a
+          acceptance_criteria_sha256: f635fa4498c417483b2d2ba94efbce76855a652824a0f369d2bcdcd5c2333f6a
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_task_recovery tests.foundation.test_taskctl_schema
+            tests.foundation.test_taskctl_workflow tests.foundation.test_ui_change_gate
+          - .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head
+            59079efccc122a7d56a9f18efc20030851bf32a9
+          - .venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract
+          - .venv\Scripts\python.exe tools\quality_check.py --repo .
+          - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate
+          - .venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry
+          - .venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0002 --require-approved; .venv\Scripts\python.exe
+            tools\planctl.py --repo . ecr validate ECR-0001 --require-approved; .venv\Scripts\python.exe tools\recoveryctl.py
+            --repo . validate GRR-0001 --require-approved
+          - .venv\Scripts\python.exe tools\plan_review_check.py --repo .; .venv\Scripts\python.exe tools\backlog_views.py
+            --repo . --check
+          - git diff --exit-code 59079efccc122a7d56a9f18efc20030851bf32a9 HEAD -- apps/desktop services/core-api packages/contracts
+            artifacts/evidence/ui-change/CAP-02.S04.T03.json docs/adr/ADR-0019-enforce-project-privacy-through-append-only-local-policy.md
+            docs/architecture/privacy-controls.md tests/security/test_privacy_controls.py tests/contracts/test_privacy_policy_contract.py
+          - git diff --check
+          selected_checks_sha256: 0da9b48b577b70ba4f6971602b86345c2741a596c918457a6155387991c33701
+          prior_attempt_id: null
+          open_finding_ids: []
+          packet_sha256: 5215368cda1222cba94f5ce662ceda2d6833500c77f9097fe650d87221e4172e
+        review:
+          reviewer: b00-independent-reviewer
+          result: approved
+          reviewed_at: '2026-08-22T20:27:47+00:00'
+          reviewed_state_commit: 51da3a8d0cf46a2c157cea2eb618b298c9f4bd7d
+          notes: APPROVED at exact clean frozen exit-submission state 51da3a8d0cf46a2c157cea2eb618b298c9f4bd7d on codex/w1-windows-local-runtime.
+            Exit evidence is Git-bound at 69eeec6e388969a40d20fcb80939ca137158bc1a, SHA-256 c581e22cca63c5d572eb74f1c12e396480b31c5a2cffa403b44f24d848dc0f9e,
+            and truthfully declares completed-task candidate f47241972c1e8c0be3d53c822d921dd142b65996. The exact W1 base plus
+            adopted W1.A01/W1.A02 chain and approved ECR-0002/W1.A03 authority remain ordered, hash-bound, and ancestral.
+            W1.A03.B00 is independently approved at exact two-file scope; W1.A03.T01 is DONE with immutable R01/R02 history,
+            and R02 explicitly closes W1.A03.T01-R01-F01/F02. Generic packet integrity, full historical/current T03 contract
+            binding, real one-save persistence, competing-writer CAS preservation, and fail-closed recovery denials remain
+            intact. W1 remains PAUSED with scope amendment-hold, HOLD-W1-GRR-0001 remains ACTIVE, CAP-02.S04.T03 remains BLOCKED
+            with no recovery_control, no evidence or review, and G1 remains PENDING. Ordinary task records, release gates,
+            protected product/runtime, privacy, approved-reference, canonical profile, and threshold bytes are unchanged.
+            Independent replay passed 101/101 focused controller/schema/workflow/UI tests in 166.550 seconds, the exact cumulative
+            UI command, 9/9 privacy tests, backlog and privacy-safe review-telemetry validation, ECR-0002/ECR-0001/GRR-0001
+            authority validation, 119-file quality, all 148 review pages, generated backlog views, protected-byte diff, and
+            Git hygiene. The live recovery command is denied byte-stably by the active governance hold. No W1 product qualification,
+            Wave resume, T03 approval, slice approval, W1 completion, G1 approval, local-main integration, or remote action
+            is claimed. Adoption is the only lawful next lifecycle transition after this ledger is recorded and committed;
+            it requires a newly committed checkpoint document bound to that approved-completion state, must record the W1
+            control/security checkpoint, and must leave W1 PAUSED. GRR release and explicit ordinary W1 resume remain separate
+            later gates.
+        ledger:
+          path: artifacts/evidence/W1.A03.exit-review-R01.json
+          sha256: be53d4ffe2765d02c0a557363bf055b67176a3f00f666b6d6a86c26ca984fc26
+        findings: []
+        closures: []
+      current_submission: null
