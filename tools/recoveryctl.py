@@ -590,6 +590,8 @@ def validate_target_materialization_projection(
     repo: Path,
     packet: dict[str, Any],
     data: dict[str, Any],
+    *,
+    allow_unapproved_supplement_gate: bool = False,
 ) -> dict[str, Any]:
     """Prove the exact amendment materialization delta without writing canonical state."""
     target = packet.get("targetAmendmentAuthority") or {}
@@ -617,12 +619,20 @@ def validate_target_materialization_projection(
     campaign["scope"] = "amendment-hold"
     indexed = taskctl.index_backlog(projected)
     errors = taskctl.validate(*indexed, repo=repo)
+    hold = recovery_hold(projected, str(packet.get("recoveryRequestId") or ""))
+    expected_unapproved_gate = (
+        f"{hold.get('id')}: unapproved latest recovery supplement requires the exact repair amendment "
+        "to remain unmaterialized under ordinary Wave scope"
+    )
+    authorization_gate = None
+    if allow_unapproved_supplement_gate and errors == [expected_unapproved_gate]:
+        authorization_gate = "latest supplemental bootstrap must be independently APPROVED"
+        errors = []
     if errors:
         raise SystemExit("Target materialization projection is invalid:\n- " + "\n- ".join(errors))
     activation = packet.get("activationBoundary") or {}
     projected_tasks = indexed[3]
     blocked = projected_tasks.get(str(activation.get("blockedTaskId") or "")) or {}
-    hold = recovery_hold(projected, str(packet.get("recoveryRequestId") or ""))
     if (
         not authorized
         or campaign.get("status") != "PAUSED"
@@ -643,6 +653,7 @@ def validate_target_materialization_projection(
         "holdId": hold.get("id"),
         "holdStatus": hold.get("status"),
         "activationOrClaimPerformed": False,
+        "authorizationGate": authorization_gate,
     }
 
 
@@ -1266,16 +1277,19 @@ def command_supplement_validate(args: argparse.Namespace) -> None:
         require_approved=args.require_approved,
     )
     target_amendment = ((packet.get("targetAmendmentAuthority") or {}).get("amendmentApproval") or {}).get("id")
-    projection = None
-    if ((supplement.get("bootstrap") or {}).get("status")) == "APPROVED":
-        _payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
-        projection = validate_target_materialization_projection(args.repo, packet, data)
+    bootstrap_status = (supplement.get("bootstrap") or {}).get("status")
+    _payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
+    projection = validate_target_materialization_projection(
+        args.repo,
+        packet,
+        data,
+        allow_unapproved_supplement_gate=bootstrap_status != "APPROVED",
+    )
     print(
         f"Valid {args.supplement}: bootstrap={(supplement.get('bootstrap') or {}).get('status')}; "
         f"hold={hold.get('status')}; target={target_amendment}"
     )
-    if projection is not None:
-        print("Read-only materialization projection: " + json.dumps(projection, sort_keys=True))
+    print("Read-only materialization projection: " + json.dumps(projection, sort_keys=True))
 
 
 def command_supplement_status(args: argparse.Namespace) -> None:

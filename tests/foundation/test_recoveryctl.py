@@ -417,6 +417,22 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.assertEqual("APPROVED", amendment["lifecycle"]["status"])
         with self.assertRaisesRegex(SystemExit, "unapproved latest recovery supplement"):
             recoveryctl.validate_target_materialization_projection(REPO, packet, data)
+        projection = recoveryctl.validate_target_materialization_projection(
+            REPO,
+            packet,
+            data,
+            allow_unapproved_supplement_gate=True,
+        )
+        self.assertEqual(["W1.A03.T01"], projection["materializedTaskIds"])
+        self.assertEqual("PAUSED", projection["waveStatus"])
+        self.assertEqual("amendment-hold", projection["waveScope"])
+        self.assertEqual("BLOCKED", projection["blockedTaskStatus"])
+        self.assertEqual("ACTIVE", projection["holdStatus"])
+        self.assertFalse(projection["activationOrClaimPerformed"])
+        self.assertEqual(
+            "latest supplemental bootstrap must be independently APPROVED",
+            projection["authorizationGate"],
+        )
         self.assertTrue(
             recoveryctl.path_authorized(
                 "planning/governance-recovery-approvals/GRR-0001.B01.review-R01.json",
