@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/security/application-lock-profile.schema.json",
+  "title": "Research Observatory local application-lock profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "profileName",
+    "inactivityTimeoutMinutes",
+    "restartPolicy",
+    "lockAuthority",
+    "reauthentication",
+    "protectedActionPolicy",
+    "durableOperationPolicy",
+    "threatBoundary"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-application-lock-profile"},
+    "profileName": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+    },
+    "inactivityTimeoutMinutes": {"enum": [0, 5, 15, 30, 60]},
+    "restartPolicy": {"const": "lock-when-inactivity-enabled"},
+    "lockAuthority": {"const": "desktop-native-supervisor"},
+    "reauthentication": {"const": "windows-current-user-credentials-same-sid"},
+    "protectedActionPolicy": {"const": "invalidate-generation-stop-core-discard-renderer-state"},
+    "durableOperationPolicy": {"const": "w1-stop-all-future-continuation-requires-explicit-allowlist"},
+    "threatBoundary": {"const": "application-session-protection-not-windows-account-isolation"}
+  }
+}

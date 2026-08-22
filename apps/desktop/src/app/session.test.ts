@@ -13,4 +13,13 @@ describe("project session state", () => {
       "invalid project session transition",
     );
   });
+
+  it("discards every project state through lock and resumes without reopening", () => {
+    expect(transitionProjectSession("ready", "locked")).toBe("locked");
+    expect(transitionProjectSession("read-only", "locked")).toBe("locked");
+    expect(transitionProjectSession("locked", "no-project")).toBe("no-project");
+    expect(() => transitionProjectSession("locked", "ready")).toThrow(
+      "invalid project session transition",
+    );
+  });
 });

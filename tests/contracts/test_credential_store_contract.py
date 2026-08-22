@@ -72,5 +72,48 @@ class CredentialStoreContractTests(unittest.TestCase):
         self.assertTrue(list(self.validator.iter_errors(expanded)))
 
 
+class ApplicationLockContractTests(unittest.TestCase):
+    profile: ClassVar[dict[str, Any]]
+    validator: ClassVar[Any]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        schema = json.loads((CONTRACT_ROOT / "application-lock-profile.schema.json").read_text(encoding="utf-8"))
+        cls.profile = json.loads((CONTRACT_ROOT / "application-lock-profile.v1.json").read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+        cls.validator = Draft202012Validator(schema)
+
+    def test_exact_profile_is_strict_local_and_does_not_claim_account_isolation(self) -> None:
+        self.assertEqual([], list(self.validator.iter_errors(self.profile)))
+        self.assertEqual("desktop-native-supervisor", self.profile["lockAuthority"])
+        self.assertEqual("windows-current-user-credentials-same-sid", self.profile["reauthentication"])
+        self.assertEqual(
+            "invalidate-generation-stop-core-discard-renderer-state",
+            self.profile["protectedActionPolicy"],
+        )
+        self.assertEqual(
+            "application-session-protection-not-windows-account-isolation",
+            self.profile["threatBoundary"],
+        )
+        self.assertNotIn("path", json.dumps(self.profile).lower())
+
+    def test_profile_rejects_unknown_fields_and_weaker_boundaries(self) -> None:
+        for field, value in (
+            ("inactivityTimeoutMinutes", 7),
+            ("restartPolicy", "always-unlocked"),
+            ("reauthentication", "renderer-password"),
+            ("protectedActionPolicy", "hide-window-only"),
+            ("durableOperationPolicy", "continue-all"),
+            ("threatBoundary", "windows-account-isolation"),
+        ):
+            with self.subTest(field=field):
+                changed = copy.deepcopy(self.profile)
+                changed[field] = value
+                self.assertTrue(list(self.validator.iter_errors(changed)))
+        expanded = copy.deepcopy(self.profile)
+        expanded["windowsAccountName"] = "researcher"
+        self.assertTrue(list(self.validator.iter_errors(expanded)))
+
+
 if __name__ == "__main__":
     unittest.main()

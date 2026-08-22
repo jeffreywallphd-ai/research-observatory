@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 
 import { Button, Field, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 import type { ProjectProjection } from "@research-observatory/contracts/core-api";
@@ -6,6 +8,13 @@ import type { ProjectProjection } from "@research-observatory/contracts/core-api
 import { LocalServiceBoundary } from "./LocalServiceBoundary";
 import { DiagnosticsWorkspace } from "./DiagnosticsWorkspace";
 import { ProjectsWorkspace } from "./ProjectsWorkspace";
+import {
+  APPLICATION_LOCK_TIMEOUTS,
+  decodeApplicationLockSnapshot,
+  DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+  normalizeLocalProfileName,
+  type ApplicationLockSnapshot,
+} from "./applicationLock";
 
 export type ApplicationTheme = "light" | "dark";
 
@@ -39,6 +48,56 @@ function isShortcut(event: KeyboardEvent, key: string, modifier: "ctrl" | "alt")
     && !event.metaKey && !(modifier === "ctrl" && event.altKey) && !(modifier === "alt" && event.ctrlKey);
 }
 
+function hasNativeRuntime(): boolean {
+  return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+}
+
+interface ApplicationLockedViewProps {
+  readonly snapshot: ApplicationLockSnapshot;
+  readonly busy: boolean;
+  readonly error: string | null;
+  readonly onUnlock: () => void;
+}
+
+export function ApplicationLockedView({
+  snapshot,
+  busy,
+  error,
+  onUnlock,
+}: ApplicationLockedViewProps): ReactNode {
+  const reason = snapshot.reason === "inactivity"
+    ? "The inactivity interval elapsed."
+    : snapshot.reason === "application-restart"
+      ? "The configured lock was restored when the application started."
+      : snapshot.reason === "configuration-invalid"
+        ? "The local lock configuration could not be validated."
+        : "The application was locked manually.";
+  return (
+    <div className="locked-application" data-application-locked="true">
+      <main className="locked-card" aria-labelledby="locked-title">
+        <span className="brand-mark" aria-hidden="true">RO</span>
+        <Typography id="locked-title" as="h1" variant="page-title">Research Observatory is locked</Typography>
+        <p>{reason}</p>
+        <p>
+          Protected work was stopped and cleared from this view. Unlocking starts a fresh local
+          service session and does not reopen a project.
+        </p>
+        <Panel title="Protection boundary">
+          <p>{snapshot.threatDisclosure}</p>
+          <p>Use the current Windows user credentials. No Research Observatory or cloud account is required.</p>
+        </Panel>
+        {error ? <p className="locked-error" role="alert">{error}</p> : null}
+        {snapshot.retryAfterSeconds > 0 ? (
+          <p role="status">Try again in about {snapshot.retryAfterSeconds} seconds.</p>
+        ) : null}
+        <Button tone="primary" autoFocus disabled={busy} onClick={onUnlock}>
+          {busy ? "Checking Windows credentials…" : "Unlock with Windows"}
+        </Button>
+      </main>
+    </div>
+  );
+}
+
 interface CommandDefinition {
   readonly id: string;
   readonly label: string;
@@ -53,11 +112,91 @@ export function ApplicationRuntime(): ReactNode {
   const [announcement, setAnnouncement] = useState("Desktop shell ready. No project is open.");
   const [workspace, setWorkspace] = useState<"projects" | "home" | "diagnostics">("home");
   const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
+  const [applicationLock, setApplicationLock] = useState<ApplicationLockSnapshot>(() => hasNativeRuntime()
+    ? {
+        ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+        state: "locked",
+        reason: "application-restart",
+      }
+    : DEFAULT_APPLICATION_LOCK_SNAPSHOT);
+  const [unlockBusy, setUnlockBusy] = useState(false);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [profileNameDraft, setProfileNameDraft] = useState("");
+  const [timeoutDraft, setTimeoutDraft] = useState<number>(0);
+  const [profileError, setProfileError] = useState<string | null>(null);
+  const [profileBusy, setProfileBusy] = useState(false);
   const commandRef = useRef<HTMLInputElement>(null);
   const homeRef = useRef<HTMLElement>(null);
   const shortcutTriggerRef = useRef<HTMLButtonElement>(null);
   const shortcutCloseRef = useRef<HTMLButtonElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
+  const profileTriggerRef = useRef<HTMLButtonElement>(null);
+  const profileNameRef = useRef<HTMLInputElement>(null);
+
+  const applyLockSnapshot = useCallback((snapshot: ApplicationLockSnapshot) => {
+    setApplicationLock(snapshot);
+    if (snapshot.state === "locked") {
+      setCurrentProject(null);
+      setQuery("");
+      setWorkspace("home");
+      setShortcutsOpen(false);
+      setProfileOpen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasNativeRuntime()) return;
+    let disposed = false;
+    let unlisten: UnlistenFn | null = null;
+    void invoke<unknown>("application_lock_status")
+      .then((value) => {
+        if (!disposed) applyLockSnapshot(decodeApplicationLockSnapshot(value));
+      })
+      .catch(() => {
+        if (!disposed) {
+          applyLockSnapshot({
+            ...DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+            state: "locked",
+            reason: "configuration-invalid",
+          });
+          setUnlockError("Application-lock status is unavailable. Protected work was not opened.");
+        }
+      });
+    void listen<unknown>("application-lock-changed", (event) => {
+      if (!disposed) {
+        try {
+          applyLockSnapshot(decodeApplicationLockSnapshot(event.payload));
+        } catch {
+          setUnlockError("The application-lock response was invalid. Protected work remains unavailable.");
+        }
+      }
+    }).then((cleanup) => {
+      if (disposed) cleanup();
+      else unlisten = cleanup;
+    });
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, [applyLockSnapshot]);
+
+  useEffect(() => {
+    if (!hasNativeRuntime() || applicationLock.state === "locked") return;
+    let lastForwarded = 0;
+    const activity = (): void => {
+      const now = Date.now();
+      if (now - lastForwarded < 1_000) return;
+      lastForwarded = now;
+      void invoke("application_lock_activity");
+    };
+    document.addEventListener("keydown", activity);
+    document.addEventListener("pointerdown", activity);
+    return () => {
+      document.removeEventListener("keydown", activity);
+      document.removeEventListener("pointerdown", activity);
+    };
+  }, [applicationLock.state]);
 
   const announce = useCallback((message: string) => {
     setAnnouncement("");
@@ -108,13 +247,22 @@ export function ApplicationRuntime(): ReactNode {
 
   useEffect(() => {
     if (shortcutsOpen) shortcutCloseRef.current?.focus();
-  }, [shortcutsOpen]);
+    if (profileOpen) profileNameRef.current?.focus();
+  }, [profileOpen, shortcutsOpen]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
       const commandShortcut = isShortcut(event, "k", "ctrl");
       const helpShortcut = isShortcut(event, "/", "ctrl");
       const homeShortcut = isShortcut(event, "h", "alt");
+      if (profileOpen) {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          setProfileOpen(false);
+          profileTriggerRef.current?.focus();
+        }
+        return;
+      }
       if (shortcutsOpen) {
         if (event.key === "Escape") {
           event.preventDefault();
@@ -140,7 +288,83 @@ export function ApplicationRuntime(): ReactNode {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [closeShortcuts, openShortcuts, shortcutsOpen]);
+  }, [closeShortcuts, openShortcuts, profileOpen, shortcutsOpen]);
+
+  const lockNow = useCallback(() => {
+    const locked: ApplicationLockSnapshot = {
+      ...applicationLock,
+      state: "locked",
+      profileName: null,
+      reason: "manual",
+      auditSequence: applicationLock.auditSequence + 1,
+    };
+    applyLockSnapshot(locked);
+    setUnlockError(null);
+    if (hasNativeRuntime()) {
+      void invoke<unknown>("application_lock_now")
+        .then((value) => applyLockSnapshot(decodeApplicationLockSnapshot(value)))
+        .catch(() => setUnlockError("The native lock could not confirm Core shutdown. Keep the application closed until diagnostics are available."));
+    }
+  }, [applicationLock, applyLockSnapshot]);
+
+  const unlock = useCallback(() => {
+    if (!hasNativeRuntime()) return;
+    setUnlockBusy(true);
+    setUnlockError(null);
+    void invoke<unknown>("application_lock_unlock")
+      .then((value) => {
+        applyLockSnapshot(decodeApplicationLockSnapshot(value));
+        setAnnouncement("Application unlocked. No project is open.");
+      })
+      .catch((error: unknown) => {
+        const code = String(error);
+        setUnlockError(code.includes("CANCELLED")
+          ? "Unlock cancelled. The application remains locked."
+          : code.includes("RATE-LIMITED")
+            ? "Unlock is temporarily limited after a denied attempt."
+            : code.includes("CORE-UNAVAILABLE")
+              ? "Credentials were accepted, but the local service could not start. The application remains locked."
+              : "Windows could not verify the current user. The application remains locked.");
+        void invoke<unknown>("application_lock_status")
+          .then((value) => applyLockSnapshot(decodeApplicationLockSnapshot(value)))
+          .catch(() => undefined);
+      })
+      .finally(() => setUnlockBusy(false));
+  }, [applyLockSnapshot]);
+
+  const openProfile = useCallback(() => {
+    setProfileNameDraft(applicationLock.profileName ?? "");
+    setTimeoutDraft(applicationLock.inactivityTimeoutMinutes);
+    setProfileError(null);
+    setProfileOpen(true);
+  }, [applicationLock]);
+
+  const saveProfile = useCallback(() => {
+    if (!hasNativeRuntime()) {
+      setProfileError("Profile settings require the installed desktop application.");
+      return;
+    }
+    let profileName: string | null;
+    try {
+      profileName = normalizeLocalProfileName(profileNameDraft);
+    } catch (error) {
+      setProfileError(error instanceof Error ? error.message : "Invalid profile name.");
+      return;
+    }
+    setProfileBusy(true);
+    setProfileError(null);
+    void invoke<unknown>("application_lock_configure", {
+      profileName,
+      inactivityTimeoutMinutes: timeoutDraft,
+    }).then((value) => {
+      applyLockSnapshot(decodeApplicationLockSnapshot(value));
+      setProfileOpen(false);
+      profileTriggerRef.current?.focus();
+      setAnnouncement("Local profile and application-lock settings saved.");
+    }).catch(() => {
+      setProfileError("The local profile could not be saved. Existing protection remains unchanged.");
+    }).finally(() => setProfileBusy(false));
+  }, [applyLockSnapshot, profileNameDraft, timeoutDraft]);
 
   const commands = useMemo<readonly CommandDefinition[]>(() => [
     {
@@ -178,6 +402,10 @@ export function ApplicationRuntime(): ReactNode {
   const visibleCommands = commands.filter(({ label, description }) =>
     !normalizedQuery || `${label} ${description}`.toLowerCase().includes(normalizedQuery));
 
+  if (applicationLock.state === "locked") {
+    return <ApplicationLockedView snapshot={applicationLock} busy={unlockBusy} error={unlockError} onUnlock={unlock} />;
+  }
+
   return (
     <div className="application-shell" data-application-ready="true">
       <a className="skip-link" href="#main-content" onClick={() => homeRef.current?.focus()}>Skip to project home</a>
@@ -190,6 +418,10 @@ export function ApplicationRuntime(): ReactNode {
           <span className="project-context" data-project-context>
             {currentProject ? `${currentProject.displayName} · ${currentProject.accessMode === "read-only" ? "Read-only" : currentProject.open ? "Open" : currentProject.lifecycleState}` : "No project open"}
           </span>
+          <Button ref={profileTriggerRef} onClick={openProfile} aria-haspopup="dialog" data-local-profile>
+            {applicationLock.profileName ?? "Local profile"}
+          </Button>
+          <Button onClick={lockNow} data-application-lock>Lock</Button>
           <Button ref={shortcutTriggerRef} onClick={() => openShortcuts(shortcutTriggerRef.current)} aria-haspopup="dialog" data-shortcut-help>
             Shortcuts
           </Button>
@@ -277,6 +509,44 @@ export function ApplicationRuntime(): ReactNode {
               ))}
             </dl>
             <Button ref={shortcutCloseRef} tone="primary" onClick={closeShortcuts}>Close shortcuts</Button>
+          </section>
+        </div>
+      ) : null}
+
+      {profileOpen ? (
+        <div className="dialog-backdrop" role="presentation">
+          <section className="profile-dialog" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+            <Typography id="profile-title" as="h2" variant="section-title">Local profile &amp; application lock</Typography>
+            <p>The optional name stays on this Windows device and is hidden whenever the application is locked.</p>
+            <label htmlFor="local-profile-name">Local profile name (optional)</label>
+            <input
+              ref={profileNameRef}
+              id="local-profile-name"
+              value={profileNameDraft}
+              maxLength={80}
+              autoComplete="off"
+              onChange={(event) => setProfileNameDraft(event.currentTarget.value)}
+            />
+            <label htmlFor="application-lock-timeout">Lock after inactivity</label>
+            <select
+              id="application-lock-timeout"
+              value={timeoutDraft}
+              onChange={(event) => setTimeoutDraft(Number(event.currentTarget.value))}
+            >
+              {APPLICATION_LOCK_TIMEOUTS.map((minutes) => (
+                <option key={minutes} value={minutes}>{minutes === 0 ? "Disabled" : `${minutes} minutes`}</option>
+              ))}
+            </select>
+            <p className="field-help">Manual lock remains available when inactivity lock is disabled.</p>
+            <Panel title="Protection boundary">
+              <p>{applicationLock.threatDisclosure}</p>
+              <p>Unlock uses the current Windows credentials and does not require a cloud account.</p>
+            </Panel>
+            {profileError ? <p role="alert" className="locked-error">{profileError}</p> : null}
+            <div className="dialog-actions">
+              <Button disabled={profileBusy} onClick={() => { setProfileOpen(false); profileTriggerRef.current?.focus(); }}>Cancel</Button>
+              <Button tone="primary" disabled={profileBusy} onClick={saveProfile}>{profileBusy ? "Saving…" : "Save settings"}</Button>
+            </div>
           </section>
         </div>
       ) : null}

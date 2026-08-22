@@ -5,15 +5,17 @@ export type ProjectSessionState =
   | "read-only"
   | "incompatible"
   | "recovery-required"
+  | "locked"
   | "closing";
 
 const TRANSITIONS: Readonly<Record<ProjectSessionState, readonly ProjectSessionState[]>> = {
-  "no-project": ["opening"],
-  opening: ["ready", "read-only", "incompatible", "recovery-required", "no-project"],
-  ready: ["closing", "recovery-required"],
-  "read-only": ["closing", "recovery-required"],
-  incompatible: ["closing"],
-  "recovery-required": ["closing", "opening"],
+  "no-project": ["opening", "locked"],
+  opening: ["ready", "read-only", "incompatible", "recovery-required", "no-project", "locked"],
+  ready: ["closing", "recovery-required", "locked"],
+  "read-only": ["closing", "recovery-required", "locked"],
+  incompatible: ["closing", "locked"],
+  "recovery-required": ["closing", "opening", "locked"],
+  locked: ["no-project"],
   closing: ["no-project", "recovery-required"],
 };
 
