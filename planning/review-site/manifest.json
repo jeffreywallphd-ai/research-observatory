@@ -6399,7 +6399,7 @@
       "approval_status": "APPROVED",
       "lifecycle_status": "REVIEW",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "REVIEW",
+      "campaign_status": "COMPLETE",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -7100,13 +7100,13 @@
         "amendment_id": "W1.A02",
         "mode": "append-only",
         "latest_completion": {
-          "status": "REVIEW",
-          "reviewer": null,
-          "reviewed_at": null,
+          "status": "APPROVED",
+          "reviewer": "b00-independent-reviewer",
+          "reviewed_at": "2026-08-22T02:23:40+00:00",
           "evidence": [
             "artifacts/evidence/W1.A02.exit.json"
           ],
-          "notes": "R03 remediates W1.A02-EXIT-R01-F01 and W1.A02-EXIT-R02-F01 with payload-type/target/history binding, coherent historical fixtures, and 70 passing controller/schema tests."
+          "notes": "APPROVED at exact clean frozen state 5e270d61986111df566ceef084a60d7cf03ec635 on codex/w1-windows-local-runtime. The sole delta from previously approved state bd5133e2efa450832cbb1f451f01bfe64746727c is addition of the exact prior R03 ledger at artifacts/evidence/W1.A02.exit-review-R03.json, SHA-256 2faf60e09d48b67c304f425685dd07b16b5886af6173d7a040f20920377ad2a8. No backlog/state transition, implementation, submission, evidence, authority, generated-view, or workflow-control bytes changed. The current R03 submission remains semantically valid and binds artifacts/evidence/W1.A02.exit.json at SHA-256 d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5 and commit f86bbb6e60203246178017cba2a69b41d0957a29, declaring remediation candidate 55bf2850a73dfde9e5ac9c712584b23132364665. R01/R02 history and both closures remain valid. The prior bounded results—70/70 controller/schema tests, 13/13 amendment review tests, quality, backlog, telemetry, review-site, generated-view, ECR authority, and diff checks—remain applicable; no unrelated or full W1 work was rerun. No W1/G1 approval or Wave resume is authorized. Adoption remains procedurally unavailable until taskctl records this exact approved review and a separately committed adoption checkpoint binds that approved completion."
         },
         "exit_review_control": {
           "version": 1,
@@ -7237,42 +7237,69 @@
                   "evidence": "artifacts/evidence/W1.A02.exit.json"
                 }
               ]
+            },
+            {
+              "submission": {
+                "id": "R03",
+                "submitted_by": "codex",
+                "submitted_at": "2026-08-22T02:17:29+00:00",
+                "candidate_commit": "f86bbb6e60203246178017cba2a69b41d0957a29",
+                "declared_candidate_commit": "55bf2850a73dfde9e5ac9c712584b23132364665",
+                "branch": "codex/w1-windows-local-runtime",
+                "evidence_reference": {
+                  "type": "amendment-exit-evidence",
+                  "amendment_id": "W1.A02",
+                  "path": "artifacts/evidence/W1.A02.exit.json",
+                  "sha256": "d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5",
+                  "commit": "f86bbb6e60203246178017cba2a69b41d0957a29"
+                },
+                "acceptance_criteria_sha256": "3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323",
+                "selected_checks": [
+                  ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+                  ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments",
+                  ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+                  ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+                  ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
+                  ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+                  ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+                  ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved",
+                  "git diff --check"
+                ],
+                "selected_checks_sha256": "c7c99a81a388a5a199c6b7968c45c4a8a26a79b203f61984e3eb2694ec838216",
+                "prior_attempt_id": "R02",
+                "open_finding_ids": [
+                  "W1.A02-EXIT-R01-F01",
+                  "W1.A02-EXIT-R02-F01"
+                ],
+                "packet_sha256": "6b27d66c3f1adffdae0f3efb35a038004d381db63f22a33a83be09076cfec2f9"
+              },
+              "review": {
+                "reviewer": "b00-independent-reviewer",
+                "result": "approved",
+                "reviewed_at": "2026-08-22T02:23:40+00:00",
+                "reviewed_state_commit": "5e270d61986111df566ceef084a60d7cf03ec635",
+                "notes": "APPROVED at exact clean frozen state 5e270d61986111df566ceef084a60d7cf03ec635 on codex/w1-windows-local-runtime. The sole delta from previously approved state bd5133e2efa450832cbb1f451f01bfe64746727c is addition of the exact prior R03 ledger at artifacts/evidence/W1.A02.exit-review-R03.json, SHA-256 2faf60e09d48b67c304f425685dd07b16b5886af6173d7a040f20920377ad2a8. No backlog/state transition, implementation, submission, evidence, authority, generated-view, or workflow-control bytes changed. The current R03 submission remains semantically valid and binds artifacts/evidence/W1.A02.exit.json at SHA-256 d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5 and commit f86bbb6e60203246178017cba2a69b41d0957a29, declaring remediation candidate 55bf2850a73dfde9e5ac9c712584b23132364665. R01/R02 history and both closures remain valid. The prior bounded results—70/70 controller/schema tests, 13/13 amendment review tests, quality, backlog, telemetry, review-site, generated-view, ECR authority, and diff checks—remain applicable; no unrelated or full W1 work was rerun. No W1/G1 approval or Wave resume is authorized. Adoption remains procedurally unavailable until taskctl records this exact approved review and a separately committed adoption checkpoint binds that approved completion."
+              },
+              "ledger": {
+                "path": "artifacts/evidence/W1.A02.exit-review-R03-rebound.json",
+                "sha256": "660238108ed3527a7b58f176579e6181673373f48b24ab97609daada38acd38c"
+              },
+              "findings": [],
+              "closures": [
+                {
+                  "finding_id": "W1.A02-EXIT-R01-F01",
+                  "disposition": "fixed",
+                  "evidence": "Remediation candidate 55bf2850a73dfde9e5ac9c712584b23132364665 and the 70-test frozen-state controller/schema replay prove exact exit/adoption evidence, history, ancestry, branch, documentType, amendment, and target-Wave binding."
+                },
+                {
+                  "finding_id": "W1.A02-EXIT-R02-F01",
+                  "disposition": "fixed",
+                  "evidence": "The coherent historical bootstrap fixture at 55bf2850a73dfde9e5ac9c712584b23132364665 passes in the complete 70-test suite; the only subsequent delta is the exact prior ledger addition."
+                }
+              ]
             }
           ],
-          "current_submission": {
-            "id": "R03",
-            "submitted_by": "codex",
-            "submitted_at": "2026-08-22T02:17:29+00:00",
-            "candidate_commit": "f86bbb6e60203246178017cba2a69b41d0957a29",
-            "declared_candidate_commit": "55bf2850a73dfde9e5ac9c712584b23132364665",
-            "branch": "codex/w1-windows-local-runtime",
-            "evidence_reference": {
-              "type": "amendment-exit-evidence",
-              "amendment_id": "W1.A02",
-              "path": "artifacts/evidence/W1.A02.exit.json",
-              "sha256": "d7ee43166b1f57b596ed78622596ca7eac7ecb9f660a001b91f6ccb31bf3a6b5",
-              "commit": "f86bbb6e60203246178017cba2a69b41d0957a29"
-            },
-            "acceptance_criteria_sha256": "3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323",
-            "selected_checks": [
-              ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
-              ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_plan_review_amendments",
-              ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
-              ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
-              ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
-              ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
-              ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
-              ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved",
-              "git diff --check"
-            ],
-            "selected_checks_sha256": "c7c99a81a388a5a199c6b7968c45c4a8a26a79b203f61984e3eb2694ec838216",
-            "prior_attempt_id": "R02",
-            "open_finding_ids": [
-              "W1.A02-EXIT-R01-F01",
-              "W1.A02-EXIT-R02-F01"
-            ],
-            "packet_sha256": "6b27d66c3f1adffdae0f3efb35a038004d381db63f22a33a83be09076cfec2f9"
-          }
+          "current_submission": null
         }
       },
       "adoption_checkpoints": [],
