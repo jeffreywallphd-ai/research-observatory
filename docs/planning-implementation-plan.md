@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9d32929beac10bc78a9aafc6084a82f51e8e9d9e4a66c1f47c6d1b9e375c9ca4
+source_sha256: f22924d7744070dcbc28d9c157e679c513c0fde89e30315d99d5912ddb06d3b1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -41,7 +41,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 |---|---|---|---|---|
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
-| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `PAUSED` |
+| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ACTIVE` |
 
 ## Waves
 
@@ -413,7 +413,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A02.json` (`63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376`)
 
-**Lifecycle / bootstrap / campaign / completion:** `PAUSED` / `APPROVED` / `PAUSED` / `CHANGES_REQUESTED`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `CHANGES_REQUESTED`
 
 **Append-only lifecycle history:**
 
@@ -422,6 +422,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E03` `ACTIVE` at `2026-08-21T00:43:02+00:00` by codex: Activated the bounded amendment campaign.
 - `E04` `REVIEW` at `2026-08-21T03:00:48+00:00` by codex: Both authorized tasks are DONE and independently approved; submit W1.A02 for bounded amendment exit review while W1 remains paused.
 - `E05` `PAUSED` at `2026-08-22T01:56:53+00:00` by b00-independent-reviewer: CHANGES_REQUESTED at exact frozen state b77d5b1cea5526b391d5acbe3aa220a0ba510ca6. ECR authority, B00/T01/T02 histories, evidence hashes, privacy-safe telemetry, backlog, generated views, and 145 review pages pass. Adoption is not ready because amendment-exit evidence and checkpoint evidence are not exact-commit bound, and the exit record conflates the amendment campaign with the paused W1 campaign. No W1 qualification, adoption, G1 approval, ordinary resume, remote integration, or full W1 exit-suite claim was made.
+- `E06` `ACTIVE` at `2026-08-22T01:58:05+00:00` by codex: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W1.A02
 
