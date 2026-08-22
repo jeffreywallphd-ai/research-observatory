@@ -6397,9 +6397,9 @@
       "approval_path": "planning/wave-amendment-approvals/W1.A02.json",
       "approval_sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
       "approval_status": "APPROVED",
-      "lifecycle_status": "REVIEW",
+      "lifecycle_status": "PAUSED",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "REVIEW",
+      "campaign_status": "PAUSED",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -7098,17 +7098,84 @@
       ],
       "exit_review": {
         "amendment_id": "W1.A02",
-        "mode": "latest-completion-only",
+        "mode": "append-only",
         "latest_completion": {
-          "status": "REVIEW",
-          "reviewer": null,
-          "reviewed_at": null,
+          "status": "CHANGES_REQUESTED",
+          "reviewer": "b00-independent-reviewer",
+          "reviewed_at": "2026-08-22T01:56:53+00:00",
           "evidence": [
             "artifacts/evidence/W1.A02.exit.json"
           ],
-          "notes": "Both authorized tasks are DONE and independently approved; submit W1.A02 for bounded amendment exit review while W1 remains paused."
+          "notes": "CHANGES_REQUESTED at exact frozen state b77d5b1cea5526b391d5acbe3aa220a0ba510ca6. ECR authority, B00/T01/T02 histories, evidence hashes, privacy-safe telemetry, backlog, generated views, and 145 review pages pass. Adoption is not ready because amendment-exit evidence and checkpoint evidence are not exact-commit bound, and the exit record conflates the amendment campaign with the paused W1 campaign. No W1 qualification, adoption, G1 approval, ordinary resume, remote integration, or full W1 exit-suite claim was made."
         },
-        "exit_review_control": null
+        "exit_review_control": {
+          "version": 1,
+          "attempts": [
+            {
+              "submission": {
+                "id": "R01",
+                "submitted_by": "codex",
+                "submitted_at": "2026-08-21T03:00:48+00:00",
+                "candidate_commit": "b77d5b1cea5526b391d5acbe3aa220a0ba510ca6",
+                "declared_candidate_commit": "546eb572526acd2996ee2c5fb74f29135d295760",
+                "branch": "codex/w1-windows-local-runtime",
+                "evidence_reference": {
+                  "type": "amendment-exit-evidence",
+                  "amendment_id": "W1.A02",
+                  "path": "artifacts/evidence/W1.A02.exit.json",
+                  "sha256": "fdfcbd04977e2c786caa36ad429f7713c5832fd6739663a52b0838ae64d48204",
+                  "commit": "b77d5b1cea5526b391d5acbe3aa220a0ba510ca6"
+                },
+                "acceptance_criteria_sha256": "3144c4095e1d75a552137bb96fb35a74faa2f7eaa0c3e4f78eaaaa7ee7d15323",
+                "selected_checks": [
+                  ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+                  ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml review-telemetry",
+                  ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+                  ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+                  ".venv\\Scripts\\python.exe tools\\planctl.py --repo . ecr validate ECR-0001 --require-approved",
+                  "git diff --check"
+                ],
+                "selected_checks_sha256": "fba8ee2f3521746f6bfa8f2ee2fc2478009012967cedb4d280546496fed654fe",
+                "prior_attempt_id": null,
+                "open_finding_ids": [],
+                "packet_sha256": "4e1a290f48f1ad2a5663fa1de657758aebcff7c6429deb79deb9ef419c3cf6df"
+              },
+              "review": {
+                "reviewer": "b00-independent-reviewer",
+                "result": "changes-requested",
+                "reviewed_at": "2026-08-22T01:56:53+00:00",
+                "reviewed_state_commit": "b77d5b1cea5526b391d5acbe3aa220a0ba510ca6",
+                "notes": "CHANGES_REQUESTED at exact frozen state b77d5b1cea5526b391d5acbe3aa220a0ba510ca6. ECR authority, B00/T01/T02 histories, evidence hashes, privacy-safe telemetry, backlog, generated views, and 145 review pages pass. Adoption is not ready because amendment-exit evidence and checkpoint evidence are not exact-commit bound, and the exit record conflates the amendment campaign with the paused W1 campaign. No W1 qualification, adoption, G1 approval, ordinary resume, remote integration, or full W1 exit-suite claim was made."
+              },
+              "ledger": {
+                "path": "artifacts/evidence/W1.A02.exit-review-R01.json",
+                "sha256": "758f40080e775d5ba19a78465d0ea7dec422929ff9285d61bb6978a49b1f48e7"
+              },
+              "findings": [
+                {
+                  "id": "W1.A02-EXIT-R01-F01",
+                  "severity": "high",
+                  "blocking": true,
+                  "criterion_index": 6,
+                  "title": "Amendment-exit approval and adoption are not bound to the reviewed candidate or evidence",
+                  "reproduction": "The frozen completion record stores only the string artifacts/evidence/W1.A02.exit.json, without its SHA-256, candidate commit, branch, or an immutable exit-review ledger. command_amendment_review does not load or validate the exit evidence, and command_amendment_adopt revalidates amendment authority and task inventory but not the independently reviewed exit candidate/evidence. In a read-only in-memory replay, approve the current completion, replace completion.evidence with artifacts/evidence/never-reviewed-or-existing.json, and invoke adoption with artifacts/evidence/never-reviewed-checkpoint.json. Adoption succeeds, records ADOPTED and W1.CP01, and full semantic validation returns zero errors even though neither evidence path exists. An adverse amendment-exit review also lacks a frozen append-only finding/closure ledger, so a later submission can overwrite the completion projection while retaining only free-form lifecycle rationale.",
+                  "required_remediation": "Extend the frozen append-only review control to amendment exit: bind submission to exact candidate/frozen-state commit, branch, evidence path/SHA/commit, criteria and selected checks; store immutable severity-ranked exit-review attempts, findings, and closures; and make review plus adoption revalidate the exact reviewed blob and history. Store the adoption checkpoint as a validated path/SHA/commit reference and deny missing, substituted, stale, forked, dirty, or unreviewed evidence. Add adversarial tests for nonexistent and post-review-substituted exit/checkpoint evidence and preservation of a changes-requested exit round."
+                },
+                {
+                  "id": "W1.A02-EXIT-R01-F02",
+                  "severity": "medium",
+                  "blocking": true,
+                  "criterion_index": 5,
+                  "title": "Exit evidence records an impossible mixed stopped-state tuple",
+                  "reproduction": "artifacts/evidence/W1.A02.exit.json records stoppedState as campaignStatus=PAUSED, campaignScope=wave-amendment, and pauseReason=amendment-hold. No campaign has that tuple. At b77d5b1, the amendment campaign is REVIEW/wave-amendment with pause_reason=null, while the W1 campaign is PAUSED/amendment-hold with the explicit ECR preparation pause reason.",
+                  "required_remediation": "Replace stoppedState with separately named exact waveCampaign and amendmentCampaign objects, preserving the exact required next transition. Regenerate and validate affected views, freeze a new evidence hash and candidate, and resubmit the amendment exit without claiming W1 qualification, adoption, or resumption."
+                }
+              ],
+              "closures": []
+            }
+          ],
+          "current_submission": null
+        }
       },
       "adoption_checkpoints": [],
       "page": "enablers/ECR-0001.html"
