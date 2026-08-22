@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 72afc868ff0b18ef15113771fbeec1b4a754edcfa334887a0f5d1962fcfeb0c9
+source_sha256: 6c959219da71886fbb02f6a213a5b683cac5312306293b38015e34244654cbe0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -41,7 +41,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 |---|---|---|---|---|
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
-| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `REVIEW` |
+| `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `PAUSED` |
 
 ## Waves
 
@@ -413,7 +413,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A02.json` (`63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
+**Lifecycle / bootstrap / campaign / completion:** `PAUSED` / `APPROVED` / `PAUSED` / `CHANGES_REQUESTED`
 
 **Append-only lifecycle history:**
 
@@ -424,10 +424,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E05` `PAUSED` at `2026-08-22T01:56:53+00:00` by b00-independent-reviewer: CHANGES_REQUESTED at exact frozen state b77d5b1cea5526b391d5acbe3aa220a0ba510ca6. ECR authority, B00/T01/T02 histories, evidence hashes, privacy-safe telemetry, backlog, generated views, and 145 review pages pass. Adoption is not ready because amendment-exit evidence and checkpoint evidence are not exact-commit bound, and the exit record conflates the amendment campaign with the paused W1 campaign. No W1 qualification, adoption, G1 approval, ordinary resume, remote integration, or full W1 exit-suite claim was made.
 - `E06` `ACTIVE` at `2026-08-22T01:58:05+00:00` by codex: Activated the bounded amendment campaign.
 - `E07` `REVIEW` at `2026-08-22T01:59:47+00:00` by codex: R02 remediates W1.A02-EXIT-R01-F01 and F02 with immutable exit/adoption evidence binding and separate exact Wave/amendment campaign state.
+- `E08` `PAUSED` at `2026-08-22T02:09:50+00:00` by b00-independent-reviewer: CHANGES_REQUESTED at exact clean frozen state 8df23af86380abb7359ab5a3349ac0cbc4ee7a3c. R02 evidence is Git-bound at 85ec0972d4a823496f796de922e5ba3619c54e85 and declares implementation ancestor 48017abbeb860f01591bb977c352a7d3739cc232; both strictly descend from R01. R01 history, criteria/check/packet hashes, ECR authority, separate exact Wave/amendment campaign state, generated views, and legacy W1.A01 are truthful. R01-F02 is fixed. R01-F01 remains open because an exit-evidence payload can be relabeled as adoption evidence without documentType/target/history validation. The selected controller/schema replay is 68/69 because one historical-bootstrap fixture retains live exit-review control. Adoption is not ready; no full W1 exit suite was run.
 
 ### Amendment-exit review and adoption — W1.A02
 
-**Exit-review mode:** `append-only v1` / 1 completed round(s)
+**Exit-review mode:** `append-only v1` / 2 completed round(s)
 
 #### Exit round R01
 
@@ -458,7 +459,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable amendment-exit submission awaiting review:** `R02` / packet SHA-256 `d43be79f45d95fa3a5ae6565d737e40a8fd0d9207f2bf3588d34171a2add5bef`
+#### Exit round R02
+
+**Immutable amendment-exit packet:** `R02` / packet SHA-256 `d43be79f45d95fa3a5ae6565d737e40a8fd0d9207f2bf3588d34171a2add5bef`
 
 - Candidate / declared candidate / branch: `85ec0972d4a823496f796de922e5ba3619c54e85` / `48017abbeb860f01591bb977c352a7d3739cc232` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-22T01:59:47+00:00`
@@ -468,11 +471,29 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow`, `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_plan_review_amendments`, `.venv\Scripts\python.exe tools\quality_check.py --repo .`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml validate`, `.venv\Scripts\python.exe tools\taskctl.py --file planning\backlog.yaml review-telemetry`, `.venv\Scripts\python.exe tools\plan_review_check.py --repo .`, `.venv\Scripts\python.exe tools\backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools\planctl.py --repo . ecr validate ECR-0001 --require-approved`, `git diff --check`
 - Prior round / replayed open findings: `R01` / `W1.A02-EXIT-R01-F01`, `W1.A02-EXIT-R01-F02`
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / b00-independent-reviewer / `2026-08-22T02:09:50+00:00`
+
+**Reviewed state commit:** `8df23af86380abb7359ab5a3349ac0cbc4ee7a3c`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W1.A02.exit-review-R02.json` / `69c388e19ca03d34cf0faaf28112311d09925eb3505da539e22c4c57ac070a4a`
+
+**Review notes:** CHANGES_REQUESTED at exact clean frozen state 8df23af86380abb7359ab5a3349ac0cbc4ee7a3c. R02 evidence is Git-bound at 85ec0972d4a823496f796de922e5ba3619c54e85 and declares implementation ancestor 48017abbeb860f01591bb977c352a7d3739cc232; both strictly descend from R01. R01 history, criteria/check/packet hashes, ECR authority, separate exact Wave/amendment campaign state, generated views, and legacy W1.A01 are truthful. R01-F02 is fixed. R01-F01 remains open because an exit-evidence payload can be relabeled as adoption evidence without documentType/target/history validation. The selected controller/schema replay is 68/69 because one historical-bootstrap fixture retains live exit-review control. Adoption is not ready; no full W1 exit suite was run.
+
+**Findings opened:**
+
+- `W1.A02-EXIT-R02-F01` `medium` blocking=`True` criterion=`4` — The frozen selected controller suite again depends on mutable canonical amendment state; reproduce: At 8df23af86380abb7359ab5a3349ac0cbc4ee7a3c run `.venv\Scripts\python.exe -m unittest -v tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow`. It runs 69 tests and fails `test_b00_r04_historical_bootstrap_validation_does_not_depend_on_live_branch`: expected [], received `W1.A02: exit evidence waveCampaign is not the exact paused Wave state`. `canonical_workflow_with_b00_bootstrap` rewinds lifecycle, campaign, tasks, and Wave scope from the live backlog but retains the live R02 `completion.exit_review_control`; strict exit-state validation therefore leaks the later canonical submission into the historical fixture.; remediate: Make the historical bootstrap helper construct a coherent immutable pre-materialization completion state, including removal/reset of later exit-review control, or load an immutable historical fixture rather than partially rewriting the live canonical backlog. Preserve the production strict-state check. Also complete prior R01-F01 by revalidating the bound adoption payload's documentType, amendment identity, target Wave, candidate/reviewed-completion ancestry, branch, and exact approved exit history—not merely its reference label/hash. Add cross-type and wrong-target post-adoption substitution regressions, then rerun all controller/schema tests at the remediation candidate and strict-descendant frozen resubmission state with refreshed evidence/check hashes.
+
+**Prior finding closures:**
+
+- `W1.A02-EXIT-R01-F02` `fixed` — artifacts/evidence/W1.A02.exit.json
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `CHANGES_REQUESTED` by b00-independent-reviewer at `2026-08-22T02:09:50+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W1.A02.exit.json`
 
-**Latest completion notes:** R02 remediates W1.A02-EXIT-R01-F01 and F02 with immutable exit/adoption evidence binding and separate exact Wave/amendment campaign state.
+**Latest completion notes:** CHANGES_REQUESTED at exact clean frozen state 8df23af86380abb7359ab5a3349ac0cbc4ee7a3c. R02 evidence is Git-bound at 85ec0972d4a823496f796de922e5ba3619c54e85 and declares implementation ancestor 48017abbeb860f01591bb977c352a7d3739cc232; both strictly descend from R01. R01 history, criteria/check/packet hashes, ECR authority, separate exact Wave/amendment campaign state, generated views, and legacy W1.A01 are truthful. R01-F02 is fixed. R01-F01 remains open because an exit-evidence payload can be relabeled as adoption evidence without documentType/target/history validation. The selected controller/schema replay is 68/69 because one historical-bootstrap fixture retains live exit-review control. Adoption is not ready; no full W1 exit suite was run.
 
 **Bound amendment-adoption checkpoints:**
 
