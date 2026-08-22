@@ -3779,6 +3779,11 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 },
                 checkpoint["evidence"][0],
             )
+            with chdir(repo), patch("taskctl.load_amendment_authority", return_value=authority):
+                self.assertEqual(
+                    [],
+                    taskctl_module.amendment_exit_review_control_errors(context[0], amendment, repo),
+                )
 
             amendment_history = amendment_history_snapshot(context[0])
             rewritten = copy.deepcopy(context[0])
@@ -4150,6 +4155,70 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("W1.A02", data["control_plane"]["active_amendment"])
         self.assertEqual("READY", amendment["tasks"][0]["status"])
         self.assertEqual("NOT_STARTED", amendment["tasks"][1]["status"])
+
+    def test_approved_exit_can_reactivate_only_for_pre_adoption_remediation(self) -> None:
+        context, packet = self.packet_bound_active_amendment_workflow()
+        data, capabilities, slices, tasks, gates = context
+        amendment = next(item for item in data["wave_amendments"] if item["id"] == "W1.A02")
+        amendment["lifecycle"]["status"] = "REVIEW"
+        amendment["campaign"].update(status="COMPLETE", lease=None)
+        amendment["completion"].update(
+            status="APPROVED",
+            reviewer="agent:exit-reviewer",
+            reviewed_at="2026-08-21T04:00:00+00:00",
+            evidence=["artifacts/evidence/W1.A02.exit.json"],
+            exit_review_control={
+                "version": 1,
+                "attempts": [
+                    {
+                        "submission": {"id": "R01"},
+                        "review": {"result": "approved"},
+                        "ledger": {},
+                        "findings": [],
+                        "closures": [],
+                    }
+                ],
+                "current_submission": None,
+            },
+        )
+        for task in amendment["tasks"]:
+            task["status"] = "DONE"
+        data["control_plane"]["active_amendment"] = None
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
+        ).stdout.strip()
+        branch = subprocess.run(
+            ["git", "branch", "--show-current"], cwd=REPO, capture_output=True, text=True, check=True
+        ).stdout.strip()
+        args = Namespace(
+            amendment="W1.A02",
+            agent="codex",
+            branch=branch,
+            base_sha=head,
+            worktree=str(REPO),
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        amendment["completion"]["exit_review_control"]["attempts"][-1]["review"]["result"] = "changes-requested"
+        with self.assertRaisesRegex(SystemExit, "approved-exit amendment awaiting adoption remediation"):
+            taskctl_module.command_amendment_activate(args, data, capabilities, slices, tasks, gates)
+        amendment["completion"]["exit_review_control"]["attempts"][-1]["review"]["result"] = "approved"
+        with (
+            patch("taskctl.git_execution_identity", return_value=("codex", branch, head, str(REPO))),
+            patch("taskctl.discover_repository", return_value=REPO),
+            patch("taskctl.require_clean_repository"),
+            patch("taskctl.load_amendment_authority", return_value=({}, packet, b"packet")),
+            patch("taskctl.require_amendment_packet_integrity"),
+            patch("taskctl.persist"),
+        ):
+            taskctl_module.command_amendment_activate(args, data, capabilities, slices, tasks, gates)
+
+        self.assertEqual("ACTIVE", amendment["lifecycle"]["status"])
+        self.assertEqual("ACTIVE", amendment["campaign"]["status"])
+        self.assertEqual("W1.A02", data["control_plane"]["active_amendment"])
+        self.assertIn("failed adoption transition", amendment["lifecycle"]["history"][-1]["rationale"])
 
     def test_amendment_adoption_records_security_checkpoint_and_keeps_wave_paused(self) -> None:
         data, capabilities, slices, tasks, gates = self.interrupted_workflow(lifecycle_status="REVIEW")

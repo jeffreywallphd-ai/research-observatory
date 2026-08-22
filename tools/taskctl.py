@@ -3452,13 +3452,20 @@ def amendment_exit_manifest_errors(
     return errors
 
 
-def historical_amendment_completion(repo: Path, commit: str, amendment_id: str) -> dict[str, Any] | None:
+def historical_backlog_document(repo: Path, commit: str) -> dict[str, Any] | None:
     payload = git_blob(repo, commit, "planning/backlog.yaml")
     if payload is None:
         return None
     try:
         document = yaml.safe_load(payload.decode("utf-8"))
     except UnicodeError, yaml.YAMLError:
+        return None
+    return document if isinstance(document, dict) else None
+
+
+def historical_amendment_completion(repo: Path, commit: str, amendment_id: str) -> dict[str, Any] | None:
+    document = historical_backlog_document(repo, commit)
+    if document is None:
         return None
     amendment = next(
         (item for item in document.get("wave_amendments", []) if item.get("id") == amendment_id),
@@ -3601,15 +3608,33 @@ def amendment_exit_review_control_errors(
         submission = attempt.get("submission") or {}
         expected_open = sorted(open_findings)
         review = attempt.get("review") or {}
+        reviewed_state = str(review.get("reviewed_state_commit") or "")
         strict_state = not (
             index == 1
             and review.get("result") == "changes-requested"
             and submission.get("declared_candidate_commit") != submission.get("candidate_commit")
         )
+        validation_data = data
+        validation_amendment = amendment
+        historical_document: dict[str, Any] | None = None
+        historical_amendment: dict[str, Any] | None = None
+        if strict_state:
+            historical_document = historical_backlog_document(repo, reviewed_state)
+            if historical_document is not None:
+                historical_amendment = next(
+                    (item for item in historical_document.get("wave_amendments", []) if item.get("id") == amendment_id),
+                    None,
+                )
+            if historical_amendment is None:
+                errors.append(f"{amendment_id}: reviewed exit state lacks historical Wave/amendment state")
+            else:
+                assert historical_document is not None
+                validation_data = historical_document
+                validation_amendment = historical_amendment
         errors.extend(
             amendment_exit_submission_errors(
-                data,
-                amendment,
+                validation_data,
+                validation_amendment,
                 approved_packet,
                 submission,
                 expected_id=f"R{index:02d}",
@@ -3617,16 +3642,17 @@ def amendment_exit_review_control_errors(
                 expected_prior_submission=prior_submission,
                 expected_open_ids=expected_open,
                 repo=repo,
-                strict_state=strict_state,
+                strict_state=strict_state and historical_amendment is not None,
             )
         )
-        reviewed_state = str(review.get("reviewed_state_commit") or "")
         if not git_commit_exists(repo, reviewed_state) or not git_is_ancestor(repo, reviewed_state):
             errors.append(f"{amendment_id}: reviewed amendment exit state is absent from current history")
         elif not git_is_ancestor(repo, str(submission.get("candidate_commit") or ""), reviewed_state):
             errors.append(f"{amendment_id}: reviewed exit state does not descend from its candidate")
         else:
-            historical = historical_amendment_completion(repo, reviewed_state, amendment_id) or {}
+            historical = copy.deepcopy((historical_amendment or {}).get("completion")) or {}
+            if not historical:
+                historical = historical_amendment_completion(repo, reviewed_state, amendment_id) or {}
             historical_current = (historical.get("exit_review_control") or {}).get("current_submission")
             if historical_current is None:
                 if not (
@@ -4094,8 +4120,21 @@ def command_amendment_activate(args, data, capabilities, slices, tasks, gates) -
     require_execution_target(args.profile, args.platform)
     amendment = get(wave_amendment_map(data), args.amendment, "Wave amendment")
     lifecycle = (amendment.get("lifecycle") or {}).get("status")
-    if lifecycle not in {"MATERIALIZED", "PAUSED"}:
-        raise SystemExit("Only a MATERIALIZED or PAUSED amendment may be activated")
+    completion = amendment.get("completion") or {}
+    exit_control = completion.get("exit_review_control") or {}
+    exit_attempts = exit_control.get("attempts") or []
+    approved_exit_remediation = (
+        lifecycle == "REVIEW"
+        and (amendment.get("campaign") or {}).get("status") == "COMPLETE"
+        and completion.get("status") == "APPROVED"
+        and exit_control.get("current_submission") is None
+        and bool(exit_attempts)
+        and (exit_attempts[-1].get("review") or {}).get("result") == "approved"
+    )
+    if lifecycle not in {"MATERIALIZED", "PAUSED"} and not approved_exit_remediation:
+        raise SystemExit(
+            "Only a MATERIALIZED, PAUSED, or approved-exit amendment awaiting adoption remediation may be activated"
+        )
     if active_amendment_campaigns(data) or active_wave_campaigns(data) or active_capabilities(capabilities):
         raise SystemExit("Another amendment, Wave, or legacy capability campaign is ACTIVE")
     wave = get(wave_map(data), str(amendment["target_wave"]), "wave")
@@ -4136,7 +4175,12 @@ def command_amendment_activate(args, data, capabilities, slices, tasks, gates) -
         "lease": new_lease(agent, args.lease_hours),
     }
     data["control_plane"]["active_amendment"] = args.amendment
-    append_amendment_event(amendment, "ACTIVE", agent, "Activated the bounded amendment campaign.")
+    activation_rationale = (
+        "Reactivated the bounded amendment campaign after a failed adoption transition."
+        if approved_exit_remediation
+        else "Activated the bounded amendment campaign."
+    )
+    append_amendment_event(amendment, "ACTIVE", agent, activation_rationale)
     _data, _caps, _slices, refreshed_tasks, _gates = index_backlog(data)
     refresh_derived_states(data, _caps, _slices, refreshed_tasks, _gates)
     persist(args, data)
