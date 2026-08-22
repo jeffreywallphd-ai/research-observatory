@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0-recovery-review",
+  "documentType": "governance-recovery-packet-review",
+  "recoveryRequestId": "GRR-0002",
+  "attemptId": "R01",
+  "candidateCommit": "97abcb857548d98f2e6c97f13fcd0f67d125248d",
+  "packetSha256": "05e0f762ab2c3dcb5ae551c4c36777d2f1c053d8fe6cc897bf6293cec18cf467",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "b00-independent-reviewer",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "GRR-0002-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 2,
+      "title": "Frozen backlog hash is not bound to the immutable pause-commit blob",
+      "reproduction": "Hash the bytes returned by `git show 7c67ac9fdd39c4db2322cefd9ab5d603865d0efd:planning/backlog.yaml`; SHA-256 is ccad7c69d014e34e4efeb16e8870fc61b27030a554b68b4fe7e6c73eb175f00d. GRR-0002.packet.json instead records 4af88e9ec9556d0a55e0a69b15ce4e30d0b6e608112a1dbd83746d0fde2c1ddb, which is the SHA-256 of the CRLF-converted Windows checkout bytes. The 7c67ac9 and 97abcb8 Git blobs are identical LF byte streams, so the declared frozen hash is not portable or commit-bound.",
+      "requiredRemediation": "In a strict-descendant packet revision, bind frozenBoundary.backlogSha256 to the immutable Git blob SHA-256 ccad7c69d014e34e4efeb16e8870fc61b27030a554b68b4fe7e6c73eb175f00d, refresh the packet identity, and preserve this R01 review ledger append-only for bounded R02 replay."
+    },
+    {
+      "id": "GRR-0002-R01-F02",
+      "severity": "medium",
+      "blocking": true,
+      "criterionIndex": 8,
+      "title": "The packet's required Git-hygiene check fails",
+      "reproduction": "Run `git diff --check 7c67ac9fdd39c4db2322cefd9ab5d603865d0efd..97abcb857548d98f2e6c97f13fcd0f67d125248d`; it reports `planning/governance-recovery-requests/GRR-0002.md:121: new blank line at EOF.`",
+      "requiredRemediation": "Remove the extra blank line at the proposal EOF in a strict-descendant packet revision, refresh the proposal hash in the packet and the packet SHA-256, and preserve this R01 review ledger append-only for bounded R02 replay."
+    }
+  ],
+  "verified": [
+    "The reviewed branch and candidate are exact and clean; the candidate's sole parent is pause commit 7c67ac9fdd39c4db2322cefd9ab5d603865d0efd, and its delta is exactly the three new inert GRR-0002 proposal, packet, and human-review files.",
+    "The Draft 2020-12 governance-recovery-request.v2.schema.json is structurally valid, the exact GRR-0002 packet has zero schema errors, and all three file-ledger hashes match both current bytes and candidate Git blobs.",
+    "The immutable W1 base plus ordered adopted W1.A01, W1.A02, and W1.A03 authority identities, approval-record hashes and introduction blobs, packet/effective-state commits, and ancestry through the candidate match the backlog and Git history.",
+    "At immutable commit 7c67ac9, W1 is PAUSED with wave scope, infeasible category, base bf27fddd8e1732feadc698cd77f540ea9e1c7a0e, and no lease; T03 is BLOCKED with no recovery control, evidence, verification state, or review; GRR-0001 is RELEASED; W1.CP01/W1.CP02 remain; and G1 is PENDING. The candidate does not change that Git blob.",
+    "GRR-0002-F01 reproduces byte-stably: recovery at committed resume HEAD 54d03055b1c6d9b702859d5fefbbac1e38de39df fails the campaign-base equality, while recovery with campaign base bf27fddd8e1732feadc698cd77f540ea9e1c7a0e fails current-HEAD identity; no persist call or backlog mutation occurs.",
+    "GRR-0002-F02 is truthful: successful task-recovery fixtures synthesize campaign.base_sha as the patched HEAD and no test invokes the real Wave-resume/write/commit/recover sequence.",
+    "GRR-0002-F03 is truthful: the only hold is terminally RELEASED and bound to ECR-0002/W1.A03/W1.A03.T01; there is no ACTIVE hold, and an attempted W1.A04 append is denied before persistence because no matching independently approved active hold exists.",
+    "GRR-0002.B00 is the repository-governed bootstrap fallback: its scope is sufficient to append one successor hold and versioned ECR lane while preserving GRR-0001, and it excludes product/reference paths and any authority to alter or invoke command_recover. Its post-bootstrap identity is exactly ECR-0003/W1.A04/W1.A04.T01 and both post-bootstrap execution and ordinary Wave-resume authority are false.",
+    "The alternatives, fail-closed rollback, separate-review duties, human approval wording, and static review page consistently preserve the stopped boundary and separate GRR-0002.B00 from ECR-0003/W1.A04, T03 recovery, W1 resume, G1, merge, and remote authority.",
+    "Three focused generic recovery identity/cross-Wave/path-safety tests pass; backlog validation reports 20 capabilities, 117 slices, 359 tasks, and 12 gates; Python quality passes for 119 governed files in the repository .venv; the 148-page planning review check and generated backlog-view check pass."
+  ],
+  "approvalAvailable": false
+}
