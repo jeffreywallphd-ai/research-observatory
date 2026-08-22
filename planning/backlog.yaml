@@ -22584,7 +22584,7 @@ verification_profiles:
 control_plane:
   revision: 5
   minimum_tool_revision: 5
-  active_amendment: null
+  active_amendment: W1.A03
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -24073,7 +24073,7 @@ wave_amendments:
     sha256: 340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd
     introduction_commit: 95c007b58619dfd82b5f443eea3d8e71e7efe082
   lifecycle:
-    status: REVIEW
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -24097,6 +24097,11 @@ wave_amendments:
       actor: codex
       at: '2026-08-22T20:20:19+00:00'
       rationale: Submit exact completed W1.A03 boundary for independent exit review; W1 remains paused and T03 blocked.
+    - id: E05
+      status: ACTIVE
+      actor: codex
+      at: '2026-08-22T20:30:21+00:00'
+      rationale: Reactivated the bounded amendment campaign after a failed adoption transition.
   bootstrap:
     id: W1.A03.B00
     status: APPROVED
@@ -24119,18 +24124,21 @@ wave_amendments:
         focused tests, exact historical T03 gate command, authority, backlog, review-site, generated-view, quality, and diff
         checks pass. No product, reference, policy, predecessor, T03, ordinary W1, or gate state changed.
   campaign:
-    status: COMPLETE
+    status: ACTIVE
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
-    base_sha: 54b5c7deef0f618f930f08dfaa179bb9b4975bba
+    base_sha: fb8bec15e0b02e521955269beabd7eb5a912d756
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-22T19:08:18+00:00'
-    updated_at: '2026-08-22T20:27:47+00:00'
+    updated_at: '2026-08-22T20:30:21+00:00'
     pause_reason: null
-    lease: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-22T20:30:21+00:00'
+      expires_at: '2026-08-23T20:30:21+00:00'
   tasks:
   - id: W1.A03.T01
     amendment_id: W1.A03

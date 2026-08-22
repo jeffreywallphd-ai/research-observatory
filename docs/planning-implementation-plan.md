@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 89a47adde5528bc7ee7f8fe604902ae54a74cd2e89a7ef3ad6310e7957a180b5
+source_sha256: 1e30d0f83ee19b1b5c39a6cde3d1097cad9d921b61710be8da0b836567af1ffb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -42,7 +42,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `BASE` | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | `APPROVED` |
 | `W1` | `W1.A01` | `-` | `planning/wave-amendment-approvals/W1.A01.json` | `ADOPTED` |
 | `W1` | `W1.A02` | `ECR-0001` | `planning/wave-amendment-approvals/W1.A02.json` | `ADOPTED` |
-| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `REVIEW` |
+| `W1` | `W1.A03` | `ECR-0002` | `planning/wave-amendment-approvals/W1.A03.json` | `ACTIVE` |
 
 ## Waves
 
@@ -777,7 +777,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A03.json` (`340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -785,6 +785,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E02` `MATERIALIZED` at `2026-08-22T19:06:55+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-08-22T19:08:18+00:00` by codex: Activated the bounded amendment campaign.
 - `E04` `REVIEW` at `2026-08-22T20:20:19+00:00` by codex: Submit exact completed W1.A03 boundary for independent exit review; W1 remains paused and T03 blocked.
+- `E05` `ACTIVE` at `2026-08-22T20:30:21+00:00` by codex: Reactivated the bounded amendment campaign after a failed adoption transition.
 
 ### Amendment-exit review and adoption — W1.A03
 
