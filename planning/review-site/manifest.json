@@ -91,7 +91,9 @@
         "W2"
       ],
       "interrupting_change_request_ids": [],
-      "interrupting_recovery_request_ids": []
+      "interrupting_recovery_request_ids": [
+        "GRR-0002"
+      ]
     },
     {
       "wave_id": "W2",
@@ -8186,6 +8188,31 @@
         }
       ],
       "page": "recoveries/GRR-0001.html"
+    },
+    {
+      "request_id": "GRR-0002",
+      "hold_id": "HOLD-W1-GRR-0002",
+      "target_wave": "W1",
+      "hold_status": "ACTIVE",
+      "packet_path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+      "packet_sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
+      "packet_commit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e",
+      "proposal_path": "planning/governance-recovery-requests/GRR-0002.md",
+      "review_path": "planning/governance-recovery-requests/GRR-0002-review.html",
+      "approval_path": "planning/governance-recovery-approvals/GRR-0002.json",
+      "approval_sha256": "07f2e2da15d74c6a72e97e62a5f3d5a540f39898eb958eff7c92f42b80d6d893",
+      "approval_commit": "0b450222ff569db356b84e413941aa2af585a64e",
+      "release_conditions": [
+        "GRR-0002 is independently reviewed and explicitly approved at one immutable commit.",
+        "GRR-0002.B00 installs and validates the new hold and reusable ECR chain within its exact scope and receives independent approval.",
+        "ECR-0003/W1.A04 is separately packet-reviewed, explicitly approved, completed, independently exit-reviewed, and adopted.",
+        "W1.A04 adoption records a bound control/security checkpoint before HOLD-W1-GRR-0002 is released.",
+        "After release, W1 is explicitly resumed before the corrected exact T03 recovery is invoked."
+      ],
+      "bootstrap_id": "GRR-0002.B00",
+      "bootstrap_status": "IN_PROGRESS",
+      "supplements": [],
+      "page": "recoveries/GRR-0002.html"
     }
   ]
 }
