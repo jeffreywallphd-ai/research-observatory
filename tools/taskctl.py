@@ -2655,6 +2655,18 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
             errors.append(f"{hold_id}: only the latest recovery supplement may remain non-approved")
         if supplements and status != "APPROVED":
             errors.append(f"{hold_id}: supplemental recovery requires the base bootstrap to remain APPROVED")
+        if nonapproved_supplements:
+            required = wave_amendment_map(data).get(required_amendment) or {}
+            campaign = (waves.get(wave_id) or {}).get("campaign") or {}
+            if (
+                (required.get("lifecycle") or {}).get("status") != "APPROVED"
+                or required.get("tasks")
+                or campaign.get("scope") != "wave"
+            ):
+                errors.append(
+                    f"{hold_id}: unapproved latest recovery supplement requires the exact repair amendment "
+                    "to remain unmaterialized under ordinary Wave scope"
+                )
         for index, supplement in enumerate(supplements, start=1):
             supplement_id = str(supplement.get("id") or "")
             supplement_bootstrap = supplement.get("bootstrap") or {}
