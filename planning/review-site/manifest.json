@@ -8210,7 +8210,7 @@
         "After release, W1 is explicitly resumed before the corrected exact T03 recovery is invoked."
       ],
       "bootstrap_id": "GRR-0002.B00",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "APPROVED",
       "supplements": [],
       "page": "recoveries/GRR-0002.html"
     }
