@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECR-0003 review — Research Observatory</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 76rem; margin: 0 auto; padding: 2rem; line-height: 1.55; }
+    header, section { border: 1px solid #7b8493; border-radius: .75rem; padding: 1rem 1.25rem; margin: 1rem 0; }
+    .pending { border-left: .5rem solid #c57b00; }
+    .danger { border-left: .5rem solid #b53a3a; }
+    .good { border-left: .5rem solid #2b7b56; }
+    code { overflow-wrap: anywhere; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #7b8493; padding: .55rem; text-align: left; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <header class="pending">
+    <p><strong>Pending independent review and human approval · non-executable</strong></p>
+    <h1>ECR-0003 / proposed W1.A04</h1>
+    <p>Repair the committed W1 resume boundary for the exact T03 recovery transition.</p>
+    <p><a href="ECR-0003.md">Open the complete canonical proposal</a> · <a href="ECR-0003.packet.json">Open the machine packet</a></p>
+  </header>
+  <section class="danger">
+    <h2>Why W1 remains paused</h2>
+    <p>The approved recovery controller requires the clean current <code>HEAD</code> and the pre-resume campaign commit to be identical, but committing the required resume mutation necessarily makes them different.</p>
+    <p><code>GRR-0002.B00</code> is independently approved and enables this v3 packet. It grants no W1.A04 execution authority. <code>HOLD-W1-GRR-0002</code> remains active, W1 remains paused, and T03 remains blocked.</p>
+    <p><a href="../review-site/waves/W1.html">Open the current W1 page</a> · <a href="../review-site/recoveries/GRR-0002.html">Open GRR-0002</a></p>
+  </section>
+  <section>
+    <h2>Exact failure</h2>
+    <table>
+      <thead><tr><th>Identity</th><th>Commit</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>Resume input</td><td><code>bf27fddd8e1732feadc698cd77f540ea9e1c7a0e</code></td><td>Immutable authority stored by the resume transition.</td></tr>
+        <tr><td>Committed resume state</td><td><code>54d03055b1c6d9b702859d5fefbbac1e38de39df</code></td><td>Clean current head required for stale-writer compare-and-swap.</td></tr>
+      </tbody>
+    </table>
+    <p>Either value alone fails one of the two current equality checks. The selected design records the first and verifies the second without pretending they are the same commit.</p>
+  </section>
+  <section>
+    <h2>Bounded scope</h2>
+    <table>
+      <thead><tr><th>Unit</th><th>Authorized result</th><th>Explicit limit</th></tr></thead>
+      <tbody>
+        <tr><td><code>W1.A04.B00</code></td><td>Add a structured, append-only resume record that does not store its own future commit.</td><td>Controller/schema and focused tests only; no recovery invocation or T03 mutation.</td></tr>
+        <tr><td><code>W1.A04.T01</code></td><td>Use the resume record as transition authority and clean current <code>HEAD</code> as the CAS boundary; add the real resume/commit/recover regression.</td><td>Preserve all W1.A03 controls and stop the sole lawful live recovery at T03 <code>IN_PROGRESS</code>.</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="good">
+    <h2>Required evidence</h2>
+    <ul>
+      <li>Exact W1 base plus adopted W1.A01/A02/A03 chain and sole active GRR-0002 hold remain hash-bound.</li>
+      <li>The real isolated-Git resume/write/commit/recover sequence succeeds exactly once.</li>
+      <li>Uncommitted, extra, rewritten, unrelated-diff, wrong-head, dirty, stale, duplicate, unsafe, and competing-writer paths are byte-stably denied.</li>
+      <li>Existing T03 lineage, UI-gate, privacy, product, amendment, review, checkpoint, and BLOCKED-to-IN_PROGRESS limits remain intact.</li>
+      <li>B00, T01, and amendment exit each receive independent commit-bound review.</li>
+      <li>No product/reference, completed outcome, Wave approval, release gate, profile, or threshold changes.</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Decision</h2>
+    <p><strong>Recommended:</strong> approve the bounded W1.A04 packet after exact-commit independent review. It preserves both the immutable resume authority and current-head stale-writer boundary without adding a circular post-commit rebind.</p>
+    <p>The alternatives either weaken stale-writer proof, recreate the same dirty-ledger paradox, destructively replay product work, or leave W1 blocked.</p>
+    <p>The exact approval wording is in section 9 of the canonical proposal. Approval does not execute B00 or T01, release the hold, resume W1, or recover T03.</p>
+  </section>
+</body>
+</html>
