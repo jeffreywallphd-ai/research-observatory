@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-bootstrap-evidence",
+  "recoveryRequestId": "GRR-0002",
+  "bootstrapUnit": "GRR-0002.B00",
+  "branch": "codex/w1-windows-local-runtime",
+  "baseCommit": "0b450222ff569db356b84e413941aa2af585a64e",
+  "candidateCommit": "af5c4260413cfa8490ca9540784bcecc12d81fac",
+  "changedPaths": [
+    "AGENTS.md",
+    "docs/automation/project-automation-guide.md",
+    "docs/governance/delivery-control-model.md",
+    "docs/planning-implementation-plan.md",
+    "planning/README.md",
+    "planning/backlog.schema.json",
+    "planning/backlog.yaml",
+    "planning/enabler-change-requests/README.md",
+    "planning/enabler-change-requests/enabler-change-request.v3.schema.json",
+    "planning/review-site/README.md",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/recoveries/GRR-0002.html",
+    "planning/review-site/recoveries/index.html",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "tests/foundation/test_plan_review_amendments.py",
+    "tests/foundation/test_recoveryctl.py",
+    "tests/foundation/test_task_recovery.py",
+    "tools/planctl.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "riskAnalysis": "The principal risks were an arbitrary or duplicate hold installation, mutation of terminal GRR-0001 history, a version-5 reader accepting revision-6 state, an ECR proposal binding a wrong or released hold, review-history flattening, and accidental implementation of the separately governed T03 recovery fix. The implementation adds one clean-commit bootstrap-start compare-and-swap transition, freezes every released hold as a complete immutable record, makes GRR and task identities exact and consecutive, introduces a v3 ECR recoveryAuthority binding, preserves terminal GRR-0001 supplement validation, and leaves command_recover plus all product/reference paths unchanged. The real isolated-Git test installs GRR-0002 after the exact released predecessor and proves duplicate and older-reader denial. The complete affected 129-test matrix passed in 832.639 seconds at candidate af5c4260413cfa8490ca9540784bcecc12d81fac; quality, backlog, both historical ECRs, both GRRs, terminal supplement, generated views, review site, protected-path scope, and diff hygiene also pass.",
+  "requiredOutcomes": [
+    {
+      "criterion": "A new immutable GRR-0002 authority and HOLD-W1-GRR-0002 can be installed under the exact paused W1 boundary while the released GRR-0001 record remains byte/history intact.",
+      "evidence": ["bootstrap-start installed only HOLD-W1-GRR-0002 under the packet's immutable pause blob and exact authority chain.", "The isolated real-Git test compares the complete released GRR-0001 record before and after and reports equality."]
+    },
+    {
+      "criterion": "Only one hold may be ACTIVE for W1, released predecessor holds remain terminal, and older controller revisions fail closed when the new hold/control revision is present.",
+      "evidence": ["Backlog semantic validation requires the sole ACTIVE hold to be the last consecutive record and every predecessor to be RELEASED.", "The isolated fixture proves duplicate start denial and a revision-5 taskctl rejects revision-6 state."]
+    },
+    {
+      "criterion": "A new versioned ECR format freezes the complete W1 base plus W1.A01/A02/A03 chain and can represent exactly ECR-0003/W1.A04/W1.A04.T01 under the matching new hold.",
+      "evidence": ["The Draft 2020-12 v3 schema requires recoveryAuthority, ordered predecessor authority, exact bootstrap identity, and exact ordered task inventory.", "The semantic adapter binds the sole active hold, its packet and approval references, and its latest immutable APPROVED B00 review ledger."]
+    },
+    {
+      "criterion": "Historical ECR-0001, ECR-0002, GRR-0001, W1.A01, W1.A02, and W1.A03 packets, approvals, findings, reviews, checkpoints, and effective states remain valid and unchanged.",
+      "evidence": ["Approved validation passes for ECR-0001, ECR-0002, GRR-0001, and terminal GRR-0001.S01 after the revision-6 transition.", "The authority-to-candidate diff contains no historical packet, approval, finding, review, checkpoint, or adoption-evidence file."]
+    },
+    {
+      "criterion": "GRR, ECR, amendment, hold, bootstrap, task, Wave, and predecessor identities remain exact, consecutive, hash-bound, canonical-path-safe, and independently reviewed.",
+      "evidence": ["Recovery start and backlog validators enforce GRR-0001..N order, hold/request/Wave binding, next ECR/amendment identity, and T01..TN order.", "The 129-test matrix covers hash, ancestry, review independence, path safety, and append-only history."]
+    },
+    {
+      "criterion": "Dirty, stale, duplicate, reordered, cross-Wave, wrong-hold, released-hold reuse, multiple-active-hold, wrong-hash, unsafe-path, self-review, and direct ordinary-execution states fail atomically.",
+      "evidence": ["The affected matrix passes the existing adversarial recovery/ECR/amendment suites plus the new real second-hold denial fixture.", "Every controller write uses clean-worktree, immutable authority, expected-hash, exact-record, and atomic save validation before persistence."]
+    },
+    {
+      "criterion": "The stopped-recovery handoff exposes GRR-0002 packet, authority, alternatives, review disposition, exact approval wording, and the separately required ECR-0003 approval.",
+      "evidence": ["The generated GRR-0002 recovery page, recovery register, W1 page, index, manifest, status summary, and implementation-plan view pass the 149-page validator.", "The page states bootstrap-only authority and keeps ECR-0003/W1.A04 approval and ordinary resume separate."]
+    },
+    {
+      "criterion": "B00 receives an independent control/security disposition before ECR-0003 is prepared or appended.",
+      "evidence": ["The production hold is only IN_PROGRESS at this candidate and no ECR-0003 packet or W1.A04 record exists.", "This manifest freezes B00 for the required independent disposition; post-bootstrap execution authority remains false."]
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion": "The exact W1 base and ordered adopted W1.A01/A02/A03 authority, hashes, commits, checkpoints, task outcomes, and adoption histories remain unchanged.",
+      "evidence": ["bootstrap-start calls validate_authority_chain before writing and save_backlog freezes the complete W1, base, amendments, checkpoints, reviews, and recovery histories.", "The candidate diff changes no W1 authority packet, approval, checkpoint evidence, task outcome, or adoption evidence."]
+    },
+    {
+      "criterion": "The exact paused W1/T03/G1 boundary and both byte-stable recovery denials are reproducible and bound to the packet.",
+      "evidence": ["Start verifies the immutable pause-commit backlog blob SHA-256 and exact current HEAD blob before appending the hold.", "W1 remains PAUSED, T03 remains BLOCKED without recovery_control/evidence/review, G1 remains PENDING, and test_task_recovery remains green."]
+    },
+    {
+      "criterion": "A second GRR and active hold are represented without reopening or rewriting the terminally released GRR-0001 hold.",
+      "evidence": ["Backlog revision 6 contains released HOLD-W1-GRR-0001 followed by active HOLD-W1-GRR-0002.", "Complete released-hold snapshots deny any terminal record mutation in every governed transition."]
+    },
+    {
+      "criterion": "A versioned next-ECR lane accepts exact ECR-0003/W1.A04/W1.A04.T01 identity and rejects gaps, duplicates, predecessor drift, wrong/released holds, cross-Wave identity, or hidden extra tasks.",
+      "evidence": ["The v3 schema fixture accepts exactly the named identities only with recoveryAuthority present.", "planctl and taskctl require v3 for post-GRR-0001 append and recompute hold, review-ledger, predecessor, ECR, amendment, and ordered task bindings."]
+    },
+    {
+      "criterion": "The bootstrap controller changes only governance/schema/test/documentation paths and cannot implement or invoke the later T03 recovery correction.",
+      "evidence": ["All 22 changed paths are within the packet-authorized B00 scope and the protected product/reference diff is empty.", "command_recover is unchanged from approval introduction 0b450222ff569db356b84e413941aa2af585a64e and no recovery invocation occurs."]
+    },
+    {
+      "criterion": "All unsafe path, wrong hash, dirty, stale, self-review, adverse-review, concurrent-writer, and invalid lifecycle attempts fail without ledger mutation.",
+      "evidence": ["The complete recovery, amendment, schema, and workflow suites pass their canonical-path, hash-tamper, dirty/stale, review-independence, adverse-remediation, competing-writer, and lifecycle cases.", "The new bootstrap-start transition reads authority and stopped state before constructing a candidate and persists through expected-SHA atomic save only."]
+    },
+    {
+      "criterion": "Generated status/review surfaces truthfully distinguish GRR-0002 B00 authority from the separately required ECR-0003/W1.A04 approval and ordinary W1 resume.",
+      "evidence": ["Planning review site validation passes for 149 pages and generated backlog views report no changes after regeneration.", "The W1 and GRR-0002 pages show the active hold, B00 IN_PROGRESS, separate ECR-0003 approval, and no Wave resume authority."]
+    },
+    {
+      "criterion": "B00 review and remediation are append-only and commit-bound, and no product, T03, Wave-exit, gate, merge, or remote action occurs.",
+      "evidence": ["recoveryctl submission/review controllers retain immutable attempts, current-submission hashes, independent reviewer identity, and strict-descendant remediation.", "The candidate performs no product change, T03 transition, Wave exit, G1 approval, local-main integration, or remote push."]
+    }
+  ],
+  "checks": [
+    {
+      "id": "affected-control-plane",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_recoveryctl tests.foundation.test_planctl_amendments tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow tests.foundation.test_plan_review_amendments tests.foundation.test_backlog_views tests.foundation.test_task_recovery",
+      "result": "passed"
+    },
+    {
+      "id": "quality",
+      "command": ".venv/Scripts/python.exe tools/quality_check.py",
+      "result": "passed"
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "passed"
+    },
+    {
+      "id": "grr-0001",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . validate GRR-0001 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "grr-0002",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . validate GRR-0002 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "terminal-supplement",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . supplement-validate GRR-0001.S01 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "ecr-0001",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0001 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "ecr-0002",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0002 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "review-site",
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .",
+      "result": "passed"
+    },
+    {
+      "id": "views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "passed"
+    },
+    {
+      "id": "diff-hygiene",
+      "command": "git diff --check 0b450222ff569db356b84e413941aa2af585a64e..af5c4260413cfa8490ca9540784bcecc12d81fac",
+      "result": "passed"
+    },
+    {
+      "id": "protected-scope",
+      "command": "git diff --quiet 0b450222ff569db356b84e413941aa2af585a64e..af5c4260413cfa8490ca9540784bcecc12d81fac -- design apps packages services workers",
+      "result": "passed"
+    }
+  ],
+  "deferredCoverage": [
+    "The command_recover correction and real pause/resume/commit/recover regression remain exclusively in separately reviewed and human-approved ECR-0003/W1.A04.",
+    "CAP-02.S04.T03 privacy/product qualification, ordinary evidence, independent task and slice review, and W1 qualification remain blocked behind the active hold.",
+    "Local-main integration, complete W1 exit qualification, G1 approval, and any remote push remain at their later governed gates."
+  ],
+  "unverifiedItems": []
+}

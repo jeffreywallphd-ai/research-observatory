@@ -22857,17 +22857,26 @@ control_plane:
       commit: bc989c8a69e7de5e68f630af887ab4bd07d44a4e
     bootstrap:
       id: GRR-0002.B00
-      status: IN_PROGRESS
+      status: REVIEW
       implementer: codex
-      implementation_commit: null
-      submission_branch: null
-      evidence: null
+      implementation_commit: af5c4260413cfa8490ca9540784bcecc12d81fac
+      submission_branch: codex/w1-windows-local-runtime
+      evidence:
+        type: governance-recovery-evidence
+        path: planning/governance-recovery-approvals/GRR-0002.B00.evidence.json
+        sha256: 8486550a69fd4fd9429d516a1ab6b9f60fd83d604fc32fe4a11d09f11dbc8091
+        commit: af5c4260413cfa8490ca9540784bcecc12d81fac
+        recorded_at: '2026-08-22T22:27:15+00:00'
       review:
         reviewer: null
         result: null
         reviewed_at: null
         notes: null
-      current_submission: null
+      current_submission:
+        attempt_id: R01
+        candidate_commit: af5c4260413cfa8490ca9540784bcecc12d81fac
+        evidence_sha256: 8486550a69fd4fd9429d516a1ab6b9f60fd83d604fc32fe4a11d09f11dbc8091
+        acceptance_criteria_sha256: 2f6a6ede56181c43814f8de90a032a2b4b9f7f06efe691e0dd27af7c01f31663
       attempts: []
     supplements: []
     post_bootstrap:
