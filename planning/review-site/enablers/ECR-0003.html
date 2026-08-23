@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ECR-0003 Repair the committed W1 resume boundary for exact T03 recovery - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="enabler-detail">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation">
+<div class="planning-nav" data-planning-nav data-default-tab="waves">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="false" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="true" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities" hidden>
+    <nav class='cap-nav' aria-label='Capabilities'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-windows-desktop-runtime</span><small>CAP-01 · Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-local-project-storage</span><small>CAP-02 · Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-research-domain-workflows</span><small>CAP-03 · Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-scholarly-ingestion</span><small>CAP-04 · Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-document-inspection</span><small>CAP-05 · Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-search-screening</span><small>CAP-06 · Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-model-gateway</span><small>CAP-07 · Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-evidence-verification</span><small>CAP-08 · Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-scholarly-graph-synthesis</span><small>CAP-09 · Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-novelty-opportunities</span><small>CAP-10 · Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-windows-release</span><small>CAP-11 · Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-university-hosting</span><small>CAP-12 · University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-cloud-platform</span><small>CAP-13 · Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-cross-platform-desktop</span><small>CAP-14 · Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-study-design</span><small>CAP-15 · Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-manuscript-blueprints</span><small>CAP-16 · Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-results-integration</span><small>CAP-17 · Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-manuscript-drafting</span><small>CAP-18 · Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-review-revision</span><small>CAP-19 · Reviewer simulation, editorial synthesis, and revision</small></a></nav>
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves">
+    <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item active" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
+  </section>
+</div>
+</aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">Enabler change requests</a><span>/</span><span aria-current="page">ECR-0003</span></nav>
+
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">W1.A04 · W1</span><h1>ECR-0003 — Repair the committed W1 resume boundary for exact T03 recovery</h1></div><span class="status status-pending">Pending</span></div>
+  <p>gate-integrity-safety-defect. This page preserves the distinction between authorized scope and executable state.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposal, approval, materialization, and campaign state</h2>
+  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>pending-approval / non-executable</dd></div><div><dt>Human approval</dt><dd>PENDING</dd></div><div><dt>Materialization lifecycle</dt><dd>NOT_MATERIALIZED</dd></div><div><dt>Amendment campaign</dt><dd>NONE</dd></div></dl>
+  <p>No human approval is recorded. The proposal is non-executable and grants no bootstrap, task, amendment, Wave-resume, or release-gate authority.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Hash-bound source records</h2>
+  <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
+  <tr><th>Proposal</th><td><code>planning/enabler-change-requests/ECR-0003.md</code></td><td><code>cb6d7db89ce0d35f07a3d10ff5bc3806d984908c559e5f28ca67aad40865a352</code></td></tr>
+  <tr><th>Packet</th><td><code>planning/enabler-change-requests/ECR-0003.packet.json</code></td><td><code>a5cd01abfa581768eeaef1a8f26e8e6829b6f08b3aadb759864a4c82de7df5ec</code></td></tr>
+  <tr><th>Human review</th><td><code>planning/enabler-change-requests/ECR-0003-review.html</code></td><td><code>86d2899be0aab6f17d62bf9d13e7ac654686cdd5cdd28304238d76f5f938d56a</code></td></tr>
+  <tr><th>Approval</th><td><code>pending</code></td><td><code>pending</code></td></tr>
+
+  </tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap scope addenda</h2>
+  <ul class="gate-criteria"><li>None</li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap review attempts</h2>
+  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody><tr><td colspan="4">Not submitted</td></tr></tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Ordered Wave authority chain</h2>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody><tr><th>W1 base approval</th><td><code>594e63be501711d67d17a4aef176bb9b6a8748be</code></td><td><code>901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701</code></td><td>Original complete Wave packet</td></tr><tr><th>W1.A01</th><td><code>c5bbd97c0cdc665eecb973f5862478ef7be97752</code></td><td><code>a20685b90532c60e0286e5e05f68b46c613e935d</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A02</th><td><code>57d73bcf314ea6aab38b8056ead118d6ef270921</code></td><td><code>6e9c440102a5c463bb35d81f4dbdc3453d9ce029</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A03</th><td><code>ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4</code></td><td><code>95c007b58619dfd82b5f443eea3d8e71e7efe082</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W1.A04</th><td><code>a5cd01abfa581768eeaef1a8f26e8e6829b6f08b3aadb759864a4c82de7df5ec</code></td><td><code>pending</code></td><td>Pending, non-executable proposal; no bootstrap/task authority</td></tr></tbody></table>
+  <p>Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. W1.A04 is pending and non-executable. If separately approved, it would authorize only bootstrap unit <code>W1.A04.B00</code> and the exact bounded task inventory below.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed bounded inventory</h2><ul class="wave-slice-list"><li><span><strong>W1.A04.T01 — Repair committed-resume exact T03 recovery</strong><small>Use the immutable W1 resume record as transition authority and the clean current Git HEAD as the stale-writer compare-and-swap boundary, preserving every W1.A03 T03 recovery control and proving the real resume/write/commit/recover sequence end to end.</small></span><span class="status status-pending">Pending</span></li></ul>
+  <h3>Exit criteria</h3><ul class="gate-criteria"><li>The exact W1 base and adopted W1.A01/A02/A03 authority, hashes, effective states, checkpoints, task outcomes, and review histories remain unchanged.</li><li>The active GRR-0002 hold and independently approved B00 ledger remain exact, sole, hash-bound, and unreleased through W1.A04 adoption.</li><li>B00 adds a fail-closed non-self-referential resume-record contract and receives independent approval before task materialization.</li><li>W1.A04.T01 repairs the real committed-resume boundary while preserving every W1.A03 recovery authorization, recomputation, and denial condition.</li><li>The real resume/write/commit/recover integration succeeds exactly once, and every stale, dirty, hidden-diff, wrong-state, wrong-authority, unsafe, duplicate, or concurrent attempt is byte-stably denied.</li><li>No product/runtime, approved reference, privacy, T03 acceptance, completed-task, predecessor, Wave approval, release-gate, canonical profile, or threshold changes.</li><li>Focused controller/schema/recovery, authority, UI/privacy, generated-view/review-page, quality, scope, and security checks pass with criterion-linked commit-bound evidence.</li><li>B00, T01, and amendment exit receive independent review, all blocking findings are closed, and adoption records a bound W1 control/security checkpoint while W1 remains PAUSED.</li></ul>
+</section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The proposed packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+<p>No amendment task has been materialized.</p>
+
+<section data-amendment-exit-id="W1.A04" data-exit-review-mode="latest-completion-only">
+  <div class="section-heading"><span class="eyebrow">Amendment exit and adoption</span><h2>Independent amendment-exit review</h2></div>
+
+  <p><strong>Legacy latest-completion-only projection.</strong> No immutable amendment-exit rounds are recorded; this view does not fabricate exit-review history.</p>
+  <section class="review-toolbar" data-latest-completion-projection="W1.A04" data-latest-completion-status="PENDING" data-latest-completion-reviewer="none" data-latest-completion-reviewed-at="none" data-latest-completion-notes="none"><h3>Latest completion projection</h3><dl class="summary-grid"><div><dt>Status</dt><dd>PENDING</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div><div><dt>Evidence</dt><dd>None</dd></div></dl><p><strong>Latest notes:</strong> None</p></section>
+  <div class="section-heading"><span class="eyebrow">Bound Wave checkpoint evidence</span><h3>Adoption checkpoints</h3><p>These typed references are retained separately from exit-review evidence and do not rewrite completion history.</p></div>
+<p>No bound amendment-adoption checkpoint is recorded.</p>
+</section>
+<section class="callout callout-warning">
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>First obtain independent approval of this exact packet and explicit human approval. Only then may the amendment continue through independently approved bootstrap, materialization, completion and independent approval of the one task, amendment-exit control/security review, and the W1 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
+</section>
+<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria"><li>Before approval, reject, defer, or withdraw the inert packet while W1 remains paused, T03 blocked, and HOLD-W1-GRR-0002 active.</li><li>A failed B00 review preserves the immutable attempt and requires strict-descendant bootstrap resubmission; no task materializes.</li><li>A failed T01 or amendment-exit review preserves packets, evidence, findings, and closures and uses the append-only remediation lane.</li><li>Before adoption, keep the recovery hold active; after adoption, withhold hold release or W1 resume if any exact authority or checkpoint validation fails.</li><li>Any failed live resume or recovery attempt leaves T03 and backlog byte-identical; never delete or rewrite prior authority, hold, resume, recovery, finding, review, evidence, checkpoint, or Git history.</li></ul></details>
+<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article"><pre class='markdown-fallback'>Status: pending independent packet review and explicit human approval; non-executable.
+
+Proposed authority: `W1.A04`, ordered after adopted `W1.A01`, `W1.A02`, and `W1.A03`.
+
+Classification: `gate-integrity-safety-defect`.
+
+## 1. Decision requested
+
+Approve one bounded Wave amendment with bootstrap `W1.A04.B00` and exactly one task, `W1.A04.T01`.
+
+The bootstrap adds a durable, append-only resume-record contract to the Wave campaign without storing a self-referential future Git commit. The task repairs the exact T03 recovery controller so the immutable resume record identifies the pre-resume authority while the clean current `HEAD` remains the stale-writer compare-and-swap boundary. It also adds the missing real-Git resume/write/commit/recover regression.
+
+The amendment does not change product behavior, the approved UI reference, privacy policy, T03 acceptance criteria, verification thresholds, completed task outcomes, the original W1 approval, predecessor amendments, or any release gate. W1 remains paused and `CAP-02.S04.T03` remains blocked throughout packet approval, bootstrap review, amendment execution, exit review, and adoption. `HOLD-W1-GRR-0002` remains active until W1.A04 is adopted with its control/security checkpoint. Hold release and ordinary W1 resume remain separate later transitions.
+
+## 2. Trigger evidence and exact failure
+
+The approved W1.A03 recovery transition cannot be invoked after its required ordinary resume because it requires two different commits to be the same value:
+
+1. `taskctl wave resume` starts from a clean commit and stores that pre-resume commit as `wave.campaign.base_sha`, then mutates `planning/backlog.yaml`.
+2. The resume state must be committed before `taskctl recover`, because recovery requires a clean worktree.
+3. `git_execution_identity` correctly requires `--base-sha` to equal the now-current committed `HEAD` for stale-writer protection.
+4. `command_recover` also requires that same `--base-sha` to equal the earlier `wave.campaign.base_sha`.
+
+Reproduction on the immutable stopped boundary:
+
+| Boundary | Commit | Result |
+|---|---|---|
+| Resume input | `bf27fddd8e1732feadc698cd77f540ea9e1c7a0e` | Stored as the campaign base when W1 is resumed. |
+| Committed resume state | `54d03055b1c6d9b702859d5fefbbac1e38de39df` | Required clean `HEAD` for the recovery compare-and-swap. |
+| Recover using committed `HEAD` | `54d03055…` | Denied: exact T03 recovery base must match the resumed W1 boundary. |
+| Recover using stored resume input | `bf27fddd…` | Denied: base SHA must equal current Git `HEAD`. |
+
+The passing W1.A03 tests directly assigned both identities to one synthetic commit. The real-persistence fixture exercised atomic save and stale-writer denial but did not invoke the actual resume controller, commit its mutation, and then invoke recovery through the command boundary.
+
+## 3. Frozen authority chain
+
+This packet appends to, and never rewrites, the following exact authority:
+
+| Authority | Packet commit | Approval record | Effective state |
+|---|---|---|---|
+| W1 base | `594e63be501711d67d17a4aef176bb9b6a8748be` | `901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701` | Original approved Wave packet |
+| `W1.A01` | `c5bbd97c0cdc665eecb973f5862478ef7be97752` | `planning/wave-amendment-approvals/W1.A01.json` | `305e7444d632800c16cd9e0a7c41ae7b5f8abf93` |
+| `W1.A02` / ECR-0001 | `57d73bcf314ea6aab38b8056ead118d6ef270921` | `planning/wave-amendment-approvals/W1.A02.json` | `24277ae5552930de558290f7c51255a73119ee1a` |
+| `W1.A03` / ECR-0002 | `ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4` | `planning/wave-amendment-approvals/W1.A03.json` | `673c6d30e83a77b922c40fc00f6aec13bedb26a9` |
+| Proposed `W1.A04` / ECR-0003 | Exact packet commit requested from the human reviewer | Future append-only approval record | None until independently completed and adopted |
+
+The sole active hold is `HOLD-W1-GRR-0002`. Its packet is `bc989c8a69e7de5e68f630af887ab4bd07d44a4e`; its exact approval was introduced at `0b450222ff569db356b84e413941aa2af585a64e`; and `GRR-0002.B00` was independently approved at frozen state `47ef6ed1b291d62e7be3875ed0558f04268e5e80`, with candidate `af5c4260413cfa8490ca9540784bcecc12d81fac`. That recovery authority permits this packet to be prepared and validated. It grants no W1.A04 approval or execution authority.
+
+## 4. Selected design
+
+### 4.1 W1.A04.B00 — durable resume-record bootstrap
+
+The bootstrap adds the minimum generic controller and schema support needed to represent a committed resume boundary without an impossible self-reference.
+
+Authorized implementation paths:
+
+- `planning/backlog.schema.json`;
+- `tools/taskctl.py`;
+- `tests/foundation/test_taskctl_schema.py`; and
+- `tests/foundation/test_taskctl_workflow.py`.
+
+Required behavior:
+
+1. A future `wave resume` appends a structured `resume_record` that binds the clean pre-resume Git commit, the prior PAUSED campaign boundary, branch, canonical worktree, profile, platform, actor, and timestamp.
+2. The record is immutable once written for that resume attempt, is preserved through later task execution, and is validated against the live campaign projection.
+3. The record does not claim to know the Git commit that will later contain itself. The clean current `HEAD` remains external execution identity and is checked at the command boundary.
+4. Existing historical campaigns remain valid without invented records; a newly resumed revision-6 W1 campaign must contain the new record before exact recovery is legal.
+5. Missing, malformed, rewritten, cross-Wave, wrong-branch/worktree/profile/platform, non-ancestral, duplicate, or stale resume records fail closed and do not mutate the backlog.
+6. No task is recovered, claimed, reviewed, completed, or otherwise changed by B00.
+
+B00 may not modify or invoke `command_recover`, alter T03, release the hold, resume W1, or change product/reference files. Its exact implementation and criterion evidence require independent control/security approval before W1.A04.T01 may be materialized.
+
+### 4.2 W1.A04.T01 — committed-resume exact recovery repair
+
+T01 applies the independently approved resume-record contract to the exact W1.A03 T03 recovery transition.
+
+Required behavior:
+
+1. Preserve every existing W1.A03 authority, historical T03 base/foundation/candidate/block/pause/reference/evidence binding, privacy/product recomputation, and BLOCKED-to-IN_PROGRESS limit.
+2. Treat the resume record&#x27;s pre-resume commit as immutable transition authority, not as the current compare-and-swap commit.
+3. Treat the clean current full Git `HEAD` supplied through `git_execution_identity` as the sole stale-writer boundary for the recovery mutation.
+4. Prove that current `HEAD` is the committed result of the exact recorded resume: strict ancestry, expected historical/current backlog projections, and an exact allowlisted state-view diff. No unrelated source, product, reference, evidence, policy, or controller byte may be hidden in the resume commit.
+5. Revalidate the approved W1.A03 packet/task contract, adopted amendment checkpoint, released GRR-0001 hold, active resumed W1 lease, exact blocked T03 boundary, canonical recovery manifest, immutable Git objects, UI gate, and privacy/product checks immediately before one compare-and-swap save.
+6. Add an isolated real-Git integration that invokes the actual resume controller, regenerates the required state views, commits that exact transition, invokes the actual recovery controller, and proves the sole lawful transition changes only T03 to `IN_PROGRESS` with the current committed `HEAD` as its new task base.
+7. Add byte-stable denials for an uncommitted resume, extra commit, squashed or amended resume record, unrelated file in the resume commit, wrong predecessor/current head, wrong branch/worktree/profile/platform/actor, expired lease, altered hold/amendment/checkpoint/task/manifest, duplicate recovery, dirty tree, and competing writer.
+8. Keep the live recovery command denied while W1.A04 is executing under the active hold. Actual T03 recovery occurs only after W1.A04 adoption, hold release, and an explicit ordinary W1 resume.
+
+Authorized task paths are limited to the task controller/schema, their directly affected recovery/workflow/schema tests, the automation guidance needed to document the boundary, and generated planning/status views caused by governed transitions. No product, privacy, approved-reference, UI-evidence, capability-plan, slice-plan, acceptance, threshold, or release-gate byte may change.
+
+## 5. Amendment lifecycle and verification
+
+W1.A04 may be adopted only when:
+
+- B00&#x27;s resume record is structurally exact, append-only, non-self-referential, backward-compatible for immutable historical campaigns, and independently approved;
+- T01 makes the real resume/write/commit/recover sequence succeed exactly once and preserves all W1.A03 denial and recomputation boundaries;
+- every wrong-state, wrong-authority, wrong-Git, dirty, stale, duplicate, hidden-diff, unsafe-path, and concurrent-writer case fails without backlog mutation;
+- controller/schema/recovery tests, a real isolated-Git command integration, backlog/GRR/ECR authority, generated-view/review-page, governed Python quality, privacy/UI recomputation, and diff hygiene pass;
+- no product/runtime, approved reference, T03 acceptance, completed task, predecessor amendment, Wave approval, release gate, canonical verification profile, or threshold changes;
+- W1.A04.T01 receives independent task review;
+- W1.A04 receives independent amendment exit review; and
+- adoption records a commit-bound W1 control/security checkpoint while W1 remains PAUSED.
+
+After adoption, `recoveryctl release GRR-0002` may release the hold. W1 then requires an explicit normal `taskctl wave resume` transition. Only the newly committed resume record may authorize the exact T03 recovery command. T03 still requires a new ordinary implementation/evidence commit, independent privacy/task review, CAP-02.S04 slice review, complete W1 qualification, and G1 approval.
+
+## 6. Rollback and recovery
+
+- Before human approval, reject, defer, or withdraw the inert packet; W1 stays paused, T03 stays blocked, and the hold remains active.
+- A failed B00 review preserves its immutable attempt and uses append-only `bootstrap-resubmit`; no amendment task materializes.
+- A failed T01 review preserves the frozen task packet, findings, and evidence and uses the normal append-only remediation lane.
+- A failed amendment-exit review preserves prior attempts and requires strict-descendant resubmission.
+- Before adoption, keep `HOLD-W1-GRR-0002` active. After adoption, withhold release or W1 resume if the checkpoint or authority chain does not validate.
+- Any failed live resume or recovery attempt must leave T03 and the backlog byte-identical. Never delete or rewrite any Wave, amendment, GRR, hold, approval, checkpoint, finding, review, evidence, resume, recovery, or Git record.
+
+## 7. Alternatives
+
+1. **Append an immutable resume record and separate it from the current CAS head — recommended.** This represents both truths without self-reference and preserves stale-writer safety.
+2. **Remove the campaign-base comparison.** Rejected because a merely clean current `HEAD` would not prove it contains the exact governed resume transition.
+3. **Add a post-commit rebind command.** Rejected because rebinding would dirty the ledger again, recreate the same commit paradox, and add a second transition with no product value.
+4. **Treat the resume input as the current head.** Rejected because it disables the existing clean-current-HEAD stale-writer guard and cannot survive the required resume commit.
+5. **Replay T03 from a new product candidate.** Rejected as destructive churn that obscures the already reviewed implementation lineage.
+6. **Defer W1 or bypass the ledger.** Deferral leaves W1 blocked; bypass would defeat the exact controls restored by GRR-0002.
+
+## 8. Independent packet-review history
+
+No independent ECR-0003 packet disposition exists yet. The first review must bind the complete canonical proposal, v3 packet, static review page, exact W1/A01/A02/A03 authority, active GRR-0002 hold, approved B00 ledger, and stopped W1/T03/G1 boundary at one clean immutable commit.
+
+## 9. Exact approval and next condition
+
+Approval is legally available only after all declared packet files are committed at one clean immutable commit, v3 schema and historical authority validation pass, and an independent control/security packet reviewer records `APPROVED` for that exact commit with no open blocking finding.
+
+Required human statement:
+
+&gt; Approve ECR-0003 as W1.A04 at packet commit `&lt;40-character SHA&gt;`, authorizing only bootstrap W1.A04.B00 and task W1.A04.T01 as hash-bound in the packet. Keep W1 paused and CAP-02.S04.T03 blocked through amendment adoption, HOLD-W1-GRR-0002 release, and an explicit ordinary W1 resume.
+
+That statement authorizes creation of a new immutable `planning/wave-amendment-approvals/W1.A04.json` record. It does not itself append W1.A04 to the backlog, execute B00 or T01, release the hold, resume W1, recover or approve T03, approve its slice, qualify or approve W1, approve G1, merge to main, or push remotely.
+</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>

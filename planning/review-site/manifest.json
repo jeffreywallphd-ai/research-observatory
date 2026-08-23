@@ -8151,6 +8151,46 @@
         }
       ],
       "page": "enablers/ECR-0002.html"
+    },
+    {
+      "change_request_id": "ECR-0003",
+      "amendment_id": "W1.A04",
+      "target_wave": "W1",
+      "classification": "gate-integrity-safety-defect",
+      "proposal_status": "pending-approval",
+      "proposal_execution_state": "non-executable",
+      "packet_path": "planning/enabler-change-requests/ECR-0003.packet.json",
+      "packet_sha256": "a5cd01abfa581768eeaef1a8f26e8e6829b6f08b3aadb759864a4c82de7df5ec",
+      "proposal_path": "planning/enabler-change-requests/ECR-0003.md",
+      "proposal_sha256": "cb6d7db89ce0d35f07a3d10ff5bc3806d984908c559e5f28ca67aad40865a352",
+      "review_path": "planning/enabler-change-requests/ECR-0003-review.html",
+      "review_sha256": "86d2899be0aab6f17d62bf9d13e7ac654686cdd5cdd28304238d76f5f938d56a",
+      "approval_path": null,
+      "approval_sha256": null,
+      "approval_status": "PENDING",
+      "lifecycle_status": "NOT_MATERIALIZED",
+      "bootstrap_status": "NOT_SUBMITTED",
+      "campaign_status": "NONE",
+      "bootstrap_attempts": [],
+      "authorized_task_ids": [
+        "W1.A04.T01"
+      ],
+      "scope_addenda": [],
+      "task_reviews": [],
+      "exit_review": {
+        "amendment_id": "W1.A04",
+        "mode": "latest-completion-only",
+        "latest_completion": {
+          "status": null,
+          "reviewer": null,
+          "reviewed_at": null,
+          "evidence": null,
+          "notes": null
+        },
+        "exit_review_control": null
+      },
+      "adoption_checkpoints": [],
+      "page": "enablers/ECR-0003.html"
     }
   ],
   "governance_recoveries": [
