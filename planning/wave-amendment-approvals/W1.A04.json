@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-approval",
+  "amendmentId": "W1.A04",
+  "changeRequestId": "ECR-0003",
+  "targetWave": "W1",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-24T00:45:22.3039895Z",
+  "decision": "The repository owner approved ECR-0003/W1.A04 in direct response to the exact-commit approval request for 77896d26ddac0569e286fe8481c0676408c716b1. Authorize only bootstrap W1.A04.B00 and task W1.A04.T01 as hash-bound in the packet; keep W1 paused and CAP-02.S04.T03 blocked through amendment adoption, HOLD-W1-GRR-0002 release, and an explicit ordinary W1 resume.",
+  "packet": {
+    "commit": "77896d26ddac0569e286fe8481c0676408c716b1",
+    "path": "planning/enabler-change-requests/ECR-0003.packet.json",
+    "sha256": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+    "proposalPath": "planning/enabler-change-requests/ECR-0003.md",
+    "proposalSha256": "37c5bccc32688e4b6ebfd1603dd6c42381046ea07e51808f90fb71c0af097028"
+  },
+  "effectiveBase": {
+    "waveBase": {
+      "waveId": "W1",
+      "packetCommit": "594e63be501711d67d17a4aef176bb9b6a8748be",
+      "approvalRecordCommit": "901eb5c1351fa32c7173a5f0cebc2fdf9ddb1701"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W1.A01",
+        "changeRequestId": null,
+        "status": "ADOPTED",
+        "packetCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A01.json",
+          "sha256": "2eaa44d91f4dae202c85f2c2984430445df149da08a3e8df2f5236af2a139bde",
+          "introductionCommit": "a20685b90532c60e0286e5e05f68b46c613e935d"
+        },
+        "effectiveStateCommit": "305e7444d632800c16cd9e0a7c41ae7b5f8abf93"
+      },
+      {
+        "id": "W1.A02",
+        "changeRequestId": "ECR-0001",
+        "status": "ADOPTED",
+        "packetCommit": "57d73bcf314ea6aab38b8056ead118d6ef270921",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A02.json",
+          "sha256": "63b14ad5eb8eb9bff6a5dda91f0339eda9a8086a6e1dac4d991133a0bedef376",
+          "introductionCommit": "6e9c440102a5c463bb35d81f4dbdc3453d9ce029"
+        },
+        "effectiveStateCommit": "24277ae5552930de558290f7c51255a73119ee1a"
+      },
+      {
+        "id": "W1.A03",
+        "changeRequestId": "ECR-0002",
+        "status": "ADOPTED",
+        "packetCommit": "ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W1.A03.json",
+          "sha256": "340107c778bbf2c5ad77bc9150272215b87ea714a575fa035c42886c1f21d2bd",
+          "introductionCommit": "95c007b58619dfd82b5f443eea3d8e71e7efe082"
+        },
+        "effectiveStateCommit": "673c6d30e83a77b922c40fc00f6aec13bedb26a9"
+      }
+    ]
+  },
+  "bootstrapUnit": "W1.A04.B00",
+  "authorizedTaskIds": [
+    "W1.A04.T01"
+  ],
+  "independentPacketReview": {
+    "reviewer": "ecr3-packet-reviewer",
+    "candidateCommit": "77896d26ddac0569e286fe8481c0676408c716b1",
+    "result": "APPROVED",
+    "attemptId": "R02",
+    "findingIdsClosed": [
+      "ECR-0003-R01-F01"
+    ]
+  }
+}
