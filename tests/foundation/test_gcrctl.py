@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path
 from typing import Any
@@ -36,6 +37,14 @@ class GcrctlTests(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
         return path
+
+    def taskctl_at_commit(self, commit: str) -> types.ModuleType:
+        payload = taskctl.git_blob(REPO, commit, "tools/taskctl.py")
+        self.assertIsNotNone(payload)
+        module = types.ModuleType(f"taskctl_{commit[:8]}")
+        module.__file__ = str(REPO / "tools/taskctl.py")
+        exec(compile(payload or b"", module.__file__, "exec"), module.__dict__)
+        return module
 
     def fixture(self, temporary: str) -> tuple[Path, str, str, dict]:
         repo = Path(temporary)
@@ -316,7 +325,7 @@ class GcrctlTests(unittest.TestCase):
             adopted_state = json.loads((repo / gcrctl.STATE_PATH).read_text(encoding="utf-8"))
             self.assertEqual(7, adopted_backlog["control_plane"]["revision"])
             self.assertEqual(6, adopted_backlog["control_plane"]["control_generations"][0]["predecessor_revision"])
-            self.assertEqual("ADOPTED", adopted_state["status"])
+            self.assertEqual("ADOPTION_FINALIZATION", adopted_state["status"])
             self.assertEqual(
                 sorted(["planning/backlog.yaml", gcrctl.STATE_PATH]),
                 sorted(self.git(repo, "diff", "--name-only", "HEAD", "--").splitlines()),
@@ -336,14 +345,39 @@ class GcrctlTests(unittest.TestCase):
                 taskctl.governance_control_adoption_finalization_errors(
                     repo,
                     adopted_state["adoption"]["evidence"]["commit"],
-                    (repo / gcrctl.BACKLOG_PATH).read_bytes(),
                     (repo / gcrctl.STATE_PATH).read_bytes(),
+                    adopted_backlog["control_plane"]["control_generations"][0],
                 ),
             )
             self.assertFalse(
                 any(
                     "adoption finalization" in error
                     for error in taskctl.governance_control_generation_errors(adopted_backlog, repo)
+                )
+            )
+            gcrctl.validate_state_history(repo, adopted_state, packet)
+            evolved_backlog = yaml.safe_load((repo / gcrctl.BACKLOG_PATH).read_text(encoding="utf-8"))
+            evolved_backlog["control_plane"]["revision"] = 8
+            evolved_backlog["control_plane"]["minimum_tool_revision"] = 8
+            (repo / gcrctl.BACKLOG_PATH).write_text(
+                yaml.safe_dump(evolved_backlog, sort_keys=False),
+                encoding="utf-8",
+            )
+            self.git(repo, "add", gcrctl.BACKLOG_PATH)
+            self.git(repo, "commit", "-m", "lawful later control evolution")
+            self.assertEqual(
+                [],
+                taskctl.governance_control_adoption_finalization_errors(
+                    repo,
+                    adopted_state["adoption"]["evidence"]["commit"],
+                    (repo / gcrctl.STATE_PATH).read_bytes(),
+                    adopted_backlog["control_plane"]["control_generations"][0],
+                ),
+            )
+            self.assertFalse(
+                any(
+                    "adoption finalization" in error
+                    for error in taskctl.governance_control_generation_errors(evolved_backlog, repo)
                 )
             )
             gcrctl.validate_state_history(repo, adopted_state, packet)
@@ -356,21 +390,26 @@ class GcrctlTests(unittest.TestCase):
             hidden.write_text("hidden\n", encoding="utf-8")
             self.git(repo, "add", gcrctl.BACKLOG_PATH, gcrctl.STATE_PATH, "planning/hidden-final-adoption.txt")
             self.git(repo, "commit", "-m", "adoption finalization with hidden path")
+            adopted_backlog = yaml.safe_load((repo / gcrctl.BACKLOG_PATH).read_text(encoding="utf-8"))
             adopted_state = json.loads((repo / gcrctl.STATE_PATH).read_text(encoding="utf-8"))
             errors = taskctl.governance_control_adoption_finalization_errors(
                 repo,
                 evidence_commit,
-                (repo / gcrctl.BACKLOG_PATH).read_bytes(),
                 (repo / gcrctl.STATE_PATH).read_bytes(),
+                adopted_backlog["control_plane"]["control_generations"][0],
             )
             self.assertEqual(
                 ["GCR-0001 adoption finalization commit is not the exact two-path transition"],
                 errors,
             )
-            adopted_backlog = yaml.safe_load((repo / gcrctl.BACKLOG_PATH).read_text(encoding="utf-8"))
             self.assertIn(
                 "GCR-0001 adoption finalization commit is not the exact two-path transition",
                 taskctl.governance_control_generation_errors(adopted_backlog, repo),
+            )
+            r02_taskctl = self.taskctl_at_commit("22f9b46dd6772d2df615d3324cd1797f585385f8")
+            self.assertIn(
+                "GCR-0001 live adoption state/evidence does not match the adopted generation",
+                r02_taskctl.governance_control_generation_errors(adopted_backlog, repo),
             )
             with self.assertRaisesRegex(SystemExit, "exact two-path transition"):
                 gcrctl.validate_state_history(repo, adopted_state, packet)
@@ -391,8 +430,10 @@ class GcrctlTests(unittest.TestCase):
                 taskctl.governance_control_adoption_finalization_errors(
                     repo,
                     evidence_commit,
-                    (repo / gcrctl.BACKLOG_PATH).read_bytes(),
                     (repo / gcrctl.STATE_PATH).read_bytes(),
+                    yaml.safe_load((repo / gcrctl.BACKLOG_PATH).read_text(encoding="utf-8"))["control_plane"][
+                        "control_generations"
+                    ][0],
                 ),
             )
             with self.assertRaisesRegex(SystemExit, "not the direct child"):
@@ -525,7 +566,7 @@ class GcrctlTests(unittest.TestCase):
                         "    'reviewed_state_commit': reviewed, 'approved_state_commit': approved},",
                         "  'adopted_by': gcrctl.ACTOR, 'adopted_at': '2026-08-24T00:00:00+00:00'",
                         "}]",
-                        "state['status'] = 'ADOPTED'",
+                        "state['status'] = 'ADOPTION_FINALIZATION'",
                         "state['adoption'] = {",
                         "  'adoptedBy': gcrctl.ACTOR, 'adoptedAt': '2026-08-24T00:00:00+00:00',",
                         "  'predecessorRevision': 6, 'successorRevision': 7, 'reviewedStateCommit': approved,",

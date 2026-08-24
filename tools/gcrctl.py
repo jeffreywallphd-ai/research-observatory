@@ -803,19 +803,25 @@ def validate_state_history(repo: Path, state: dict[str, Any], packet: dict[str, 
     elif not prior_attempts:
         raise SystemExit("GCR reviewed state lacks immutable review history")
     elif (
-        state.get("status") != "ADOPTED"
+        state.get("status") not in {"ADOPTED", "ADOPTION_FINALIZATION"}
         and state.get("status") != RESULT_STATUS[str((prior_attempts[-1].get("review") or {}).get("result"))]
     ):
         raise SystemExit("GCR live state differs from the latest immutable review result")
-    if (state.get("status") == "ADOPTED") != (state.get("adoption") is not None):
+    if (state.get("status") == "ADOPTION_FINALIZATION") != (state.get("adoption") is not None):
         raise SystemExit("GCR adoption state and adoption record differ")
     if state.get("status") == "ADOPTED":
+        raise SystemExit("GCR adopted state lacks the required predecessor-reader finalization marker")
+    if state.get("status") == "ADOPTION_FINALIZATION":
         adoption = state.get("adoption") or {}
+        backlog = yaml.safe_load((repo / BACKLOG_PATH).read_text(encoding="utf-8"))
+        generations = (backlog.get("control_plane") or {}).get("control_generations") or []
+        if not generations:
+            raise SystemExit("GCR adoption finalization lacks its immutable generation")
         finalization_errors = taskctl.governance_control_adoption_finalization_errors(
             repo,
             str((adoption.get("evidence") or {}).get("commit") or ""),
-            (repo / BACKLOG_PATH).read_bytes(),
             (repo / STATE_PATH).read_bytes(),
+            generations[0],
         )
         if finalization_errors:
             raise SystemExit("GCR adoption finalization failed:\n- " + "\n- ".join(finalization_errors))
@@ -828,12 +834,12 @@ def command_validate(args: argparse.Namespace) -> None:
         raise SystemExit(f"GCR adoption transaction requires explicit recovery: {present}")
     backlog = yaml.safe_load((args.repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
     revision = int(backlog["control_plane"]["revision"])
-    current_boundary(args.repo, packet, revision=(7 if revision >= 7 else 6))
+    current_boundary(args.repo, packet, revision=revision)
     state, _payload = load_state(args.repo, required=False)
     status = "AUTHORIZED"
     if state is not None:
         validate_state_history(args.repo, state, packet)
-        status = str(state.get("status"))
+        status = "ADOPTED" if state.get("status") == "ADOPTION_FINALIZATION" else str(state.get("status"))
     if args.require_approved and status not in {"APPROVED", "ADOPTED"}:
         raise SystemExit(f"{BOOTSTRAP_ID} is not independently approved")
     print(f"Valid {GCR_ID}: bootstrap={status}; control={revision}")
@@ -844,15 +850,20 @@ def command_status(args: argparse.Namespace) -> None:
     state, _payload = load_state(args.repo, required=False)
     backlog = yaml.safe_load((args.repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
     bootstrap_status = (state or {}).get("status", "AUTHORIZED")
-    if state is not None and bootstrap_status == "ADOPTED":
+    if state is not None and bootstrap_status == "ADOPTION_FINALIZATION":
         adoption = state.get("adoption") or {}
-        if taskctl.governance_control_adoption_finalization_errors(
+        generations = (backlog.get("control_plane") or {}).get("control_generations") or []
+        if not generations or taskctl.governance_control_adoption_finalization_errors(
             args.repo,
             str((adoption.get("evidence") or {}).get("commit") or ""),
-            (args.repo / BACKLOG_PATH).read_bytes(),
             (args.repo / STATE_PATH).read_bytes(),
+            generations[0] if generations else {},
         ):
             bootstrap_status = "ADOPTION_FINALIZATION_PENDING_OR_INVALID"
+        else:
+            bootstrap_status = "ADOPTED"
+    elif bootstrap_status == "ADOPTED":
+        bootstrap_status = "INVALID_LEGACY_ADOPTED_STATE"
     print(
         yaml.safe_dump(
             {
@@ -1086,7 +1097,7 @@ def validate_successor_pair(
         schema_errors
         or semantic_errors
         or hold_sha256(backlog) != (transaction.get("successor") or {}).get("holdSha256")
-        or state.get("status") != "ADOPTED"
+        or state.get("status") != "ADOPTION_FINALIZATION"
         or generation.get("id") != GCR_ID
         or (generation.get("review_reference") or {}).get("reviewed_state_commit")
         != transaction.get("reviewedStateCommit")
@@ -1426,7 +1437,7 @@ def command_adopt(args: argparse.Namespace) -> None:
     semantic_errors = taskctl.validate(*taskctl.index_backlog(candidate), repo=None)
     if schema_errors or semantic_errors:
         raise SystemExit("GCR adoption candidate is invalid:\n- " + "\n- ".join([*schema_errors, *semantic_errors]))
-    state["status"] = "ADOPTED"
+    state["status"] = "ADOPTION_FINALIZATION"
     state["adoption"] = {
         "adoptedBy": ACTOR,
         "adoptedAt": now,
