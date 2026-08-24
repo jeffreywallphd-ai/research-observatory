@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0001",
+  "bootstrapUnit": "GCR-0001.B00",
+  "attemptId": "R06",
+  "candidateCommit": "759d9377f01d1edf377987a47af3bcaa9258ae33",
+  "reviewedStateCommit": "045366fe02a5819546484cc5fdd50a7a0be7aecd",
+  "reviewer": "independent-control-security-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R06.json",
+    "sha256": "43eb505a337a5cb9e69edb77d4748ffc0d84ca0bba60245b47c9470d9e050fd6",
+    "commit": "759d9377f01d1edf377987a47af3bcaa9258ae33"
+  },
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GCR-0001.B00-R05-F01",
+      "disposition": "fixed",
+      "evidence": "Candidate 759d9377f01d1edf377987a47af3bcaa9258ae33 applies one shared v2 workspace guard to supplement start, submit/resubmit, and review. Independent replay proved the exact unchanged, unstaged, untracked, non-authoritative W1.A04 witness is required; missing, changed, staged, redirected, authority-bearing, duplicated, or accompanied witness states and unrelated tracked, staged, or untracked paths are denied. A candidate-bound real-Git Windows replay traversed exact GCR revision-7 adoption and GRR-0002.S01/B01 start, submission, independent approval, and approved validation without mocking cleanliness. The complete 114-test affected suite passed, including the legacy v1 lifecycle and raw-CRLF/canonical-LF transaction, crash, substitution, stale-writer, and recovery boundaries."
+    }
+  ],
+  "notes": "APPROVED at exact frozen REVIEW state 045366fe02a5819546484cc5fdd50a7a0be7aecd on codex/w1-windows-local-runtime. Candidate 759d9377f01d1edf377987a47af3bcaa9258ae33 is the direct parent of the reviewed state, strictly descends from R05 reviewed state 6833d6b7031769847a0006fdc2ba1af84d49dc8e and approval base c34f8398adc54b3703b94daf7482faf9c09cfdfc, and preserves R01-R05 evidence/review history append-only. The R06 evidence SHA-256 is 43eb505a337a5cb9e69edb77d4748ffc0d84ca0bba60245b47c9470d9e050fd6; its twenty-three-path approval-base inventory exactly matches Git, candidate-to-reviewed-state is exactly A R06 evidence plus M canonical state, and the sole live workspace witness remains exact, untracked, unstaged, and non-authoritative. Independent candidate-context replay passed the complete 114-test affected suite in 977.847 seconds; the isolated exact GRR-0002.S01 lifecycle also passed alone in 184.018 seconds, the exact witness-workspace probe passed, and focused abrupt transaction recovery plus stale/competing-writer denials passed two tests in 29.570 seconds. The Windows backlog worktree SHA-256 f3ebfba07cb6ccd779942ea8f988b0ceea6fe16cd18ca8f7a65775915da50139 differs from the normalized Git LF blob SHA-256 f3c3ad0d8fcba23e5444d5974a7acd46e46ece8a0a5dce902d1177b2bc01e023 while both produce canonical content SHA-256 a3dd592b6b6990bcd29d62ffa6250a34e93c9eaeb2d6b263443d54b8afaeb596; inspection and replay confirmed raw compare-and-swap hashes remain authoritative for live transaction state and canonical hashes authenticate only encoding-equivalent immutable Git authority. The same candidate replay denies semantic substitution, stale and competing writers, every abrupt persistence boundary, hidden or substituted finalization, and unauthorized generation evolution. A direct invocation of the candidate-seeding lifecycle fixture from reviewed-state HEAD correctly cannot resubmit R06 over its already-open R06 REVIEW state; the authoritative replay therefore materialized the exact bound candidate and packet-bound raw Windows backlog/witness, as required by the evidence commit. Governed quality over 121 files, backlog, active GRR-0002, adverse GCR, review-site, generated-view, protected-scope, and whitespace checks all passed. GCR-0001 remains REVIEW at live control revision 6 under HOLD-W1-GRR-0002 until this ledger is lawfully applied; this ledger grants no adoption, recovery, supplement, amendment, Wave, merge, or execution authority."
+}
