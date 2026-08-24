@@ -277,6 +277,18 @@ class BacklogSchemaTests(unittest.TestCase):
             & set(errors)
         )
 
+    def test_gcr_adoption_transaction_artifacts_fail_closed_before_generation(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            for relative in taskctl.GCR_ADOPTION_TRANSACTION_PATHS:
+                path = repo / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("prepared\n", encoding="utf-8")
+                errors = taskctl.governance_control_generation_errors(data, repo)
+                self.assertTrue(any("requires explicit gcrctl recovery" in error for error in errors), errors)
+                path.unlink()
+
     def test_amendment_hold_is_a_current_schema_marker_that_legacy_tools_reject(self) -> None:
         data = copy.deepcopy(self.canonical)
         wave = next(item for item in data["waves"] if item["id"] == "W1")
