@@ -55,7 +55,7 @@
     <tr><td>Approval</td><td>After APPROVED R02 and exact human approval, exclusively create <code>GCR-0001.approval.json</code>. Its clean exact-branch introduction commit is the sole execution base.</td></tr>
     <tr><td>Submission</td><td>A strict-descendant candidate on <code>codex/w1-windows-local-runtime</code>; actor, HEAD, ancestry, complete approval-base diff, allowlist, hashes, active hold, and revision 6 are verified by compare-and-swap. Only the canonical current-attempt evidence may be untracked.</td></tr>
     <tr><td>Review</td><td>Canonical RNN evidence, state, and independent severity-ranked review ledgers bind the candidate and reviewed-state commit. Self-review and any open blocking finding deny approval.</td></tr>
-    <tr><td>Remediation</td><td>Preserve every attempt and finding. Require a strict-descendant candidate, fresh evidence, explicit closures, and a new reviewed-state commit.</td></tr>
+    <tr><td>Remediation</td><td>Preserve every attempt and finding. Require a strict-descendant candidate and fresh canonical RNN evidence whose required <code>findingClosures</code> exactly reconcile prior open findings, then create a new reviewed-state commit. No separate closure-input path exists.</td></tr>
     <tr><td>Adoption</td><td>Backlog remains revision 6 through APPROVED B00. A pre-adoption evidence commit's direct child may atomically change only <code>planning/backlog.yaml</code> and the canonical GCR state, append exactly one 6→7 generation record, and activate older-reader denial.</td></tr>
     <tr><td>Next gate</td><td>Revision 7 still cannot prepare or install GRR-0002.S01 without separate packet review and exact human approval.</td></tr>
   </table>
