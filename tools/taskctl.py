@@ -57,7 +57,9 @@ PLATFORMS = {
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
 CAMPAIGN_SCOPES = {"wave", "amendment-hold", "capability-wave"}  # capability-wave is historical only.
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
-CONTROL_TOOL_REVISION = 6
+CONTROL_TOOL_REVISION = 8
+GCR_ADOPTION_REVISION = 7
+RECOVERY_BASE_REVISION = 6
 AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
 EXACT_T03_RECOVERY = {
     "task_id": "CAP-02.S04.T03",
@@ -2625,23 +2627,82 @@ def recovery_supplement_authority_errors(
             errors.append(f"{supplement_id}: base recovery latest approved review binding mismatch")
     target = packet.get("targetAmendmentAuthority") or {}
     target_approval = target.get("amendmentApproval") or {}
-    amendment = wave_amendment_map(data).get(str(target_approval.get("id") or "")) or {}
-    amendment_reference = amendment.get("approval_reference") or {}
     target_bootstrap = target.get("bootstrap") or {}
-    actual_bootstrap = amendment.get("bootstrap") or {}
-    actual_evidence = (actual_bootstrap.get("evidence") or [{}])[0]
-    if (
-        target_approval.get("path") != amendment_reference.get("path")
-        or target_approval.get("sha256") != amendment_reference.get("sha256")
-        or target_approval.get("introductionCommit") != amendment_reference.get("introduction_commit")
-        or target_bootstrap.get("id") != actual_bootstrap.get("id")
-        or target_bootstrap.get("candidateCommit") != actual_bootstrap.get("implementation_commit")
-        or target_bootstrap.get("evidence", {}).get("path") != actual_evidence.get("path")
-        or target_bootstrap.get("evidence", {}).get("sha256") != actual_evidence.get("sha256")
-        or target_bootstrap.get("evidence", {}).get("commit") != actual_evidence.get("commit")
-        or actual_bootstrap.get("status") != "APPROVED"
-    ):
-        errors.append(f"{supplement_id}: target amendment approval/bootstrap authority mismatch")
+    if packet.get("schemaVersion") == "2.0-recovery-supplement-proposal":
+        transition = packet.get("controlTransition") or {}
+        if supplement.get("predecessor_control_revision") != transition.get("predecessorRevision") or supplement.get(
+            "successor_control_revision"
+        ) != transition.get("successorRevision"):
+            errors.append(f"{supplement_id}: installed control transition differs from its packet")
+        amendment_id = str(target_approval.get("id") or "")
+        if amendment_id in wave_amendment_map(data) or target.get("backlogPresence") is not False:
+            errors.append(f"{supplement_id}: pre-append target amendment was fabricated in backlog state")
+        approval_relative = str(target_approval.get("path") or "")
+        try:
+            approval_path = safe_control_path(
+                repo,
+                approval_relative,
+                prefix="planning/wave-amendment-approvals",
+                label=f"{supplement_id} target amendment approval",
+            )
+            approval_payload = approval_path.read_bytes()
+            approval_document = json.loads(approval_payload)
+        except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"{supplement_id}: cannot load target amendment approval: {exc}")
+            approval_document = {}
+            approval_payload = b""
+        introduction = str(target_approval.get("introductionCommit") or "")
+        if (
+            hashlib.sha256(approval_payload).hexdigest() != target_approval.get("sha256")
+            or not git_commit_exists(repo, introduction)
+            or not git_is_ancestor(repo, introduction)
+            or git_blob(repo, introduction, approval_relative) != approval_payload
+            or approval_document.get("status") != "APPROVED"
+            or approval_document.get("amendmentId") != amendment_id
+        ):
+            errors.append(f"{supplement_id}: target amendment approval is stale or invalid")
+        candidate = str(target_bootstrap.get("candidateCommit") or "")
+        evidence = target_bootstrap.get("evidence") or {}
+        evidence_relative = str(evidence.get("path") or "")
+        try:
+            evidence_path = safe_control_path(
+                repo,
+                evidence_relative,
+                prefix="artifacts/evidence",
+                label=f"{supplement_id} target bootstrap evidence",
+            )
+            evidence_payload = evidence_path.read_bytes()
+            evidence_document = json.loads(evidence_payload)
+        except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"{supplement_id}: cannot load target bootstrap evidence: {exc}")
+            evidence_document = {}
+            evidence_payload = b""
+        if (
+            not git_commit_exists(repo, candidate)
+            or not git_is_ancestor(repo, candidate)
+            or evidence.get("commit") != candidate
+            or hashlib.sha256(evidence_payload).hexdigest() != evidence.get("sha256")
+            or evidence_document.get("taskId") != target_bootstrap.get("id")
+            or evidence_document.get("commit") != candidate
+        ):
+            errors.append(f"{supplement_id}: target bootstrap candidate/evidence authority mismatch")
+    else:
+        amendment = wave_amendment_map(data).get(str(target_approval.get("id") or "")) or {}
+        amendment_reference = amendment.get("approval_reference") or {}
+        actual_bootstrap = amendment.get("bootstrap") or {}
+        actual_evidence = (actual_bootstrap.get("evidence") or [{}])[0]
+        if (
+            target_approval.get("path") != amendment_reference.get("path")
+            or target_approval.get("sha256") != amendment_reference.get("sha256")
+            or target_approval.get("introductionCommit") != amendment_reference.get("introduction_commit")
+            or target_bootstrap.get("id") != actual_bootstrap.get("id")
+            or target_bootstrap.get("candidateCommit") != actual_bootstrap.get("implementation_commit")
+            or target_bootstrap.get("evidence", {}).get("path") != actual_evidence.get("path")
+            or target_bootstrap.get("evidence", {}).get("sha256") != actual_evidence.get("sha256")
+            or target_bootstrap.get("evidence", {}).get("commit") != actual_evidence.get("commit")
+            or actual_bootstrap.get("status") != "APPROVED"
+        ):
+            errors.append(f"{supplement_id}: target amendment approval/bootstrap authority mismatch")
     ecr_reference = target.get("changeRequestPacket") or {}
     try:
         ecr_path = safe_control_path(
@@ -2672,7 +2733,7 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     holds = control.get("recovery_holds", [])
     if control_revision == 4 and any("supplements" in hold for hold in holds):
         errors.append("control revision 4 cannot contain recovery supplements")
-    if control_revision in {5, 6} and any("supplements" not in hold for hold in holds):
+    if control_revision >= 5 and any("supplements" not in hold for hold in holds):
         errors.append(f"control revision {control_revision} requires an explicit recovery supplement ledger")
     hold_ids = [str(item.get("id")) for item in holds]
     request_ids = [str(item.get("recovery_request_id")) for item in holds]
@@ -2692,9 +2753,9 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
         hold.get("status") != "RELEASED" for hold in holds[: active_positions[0] if active_positions else len(holds)]
     ):
         errors.append("every predecessor governance recovery hold must be terminally RELEASED")
-    amendments_by_wave: dict[str, list[str]] = {}
+    amendment_records_by_wave: dict[str, list[dict[str, Any]]] = {}
     for amendment in data.get("wave_amendments", []):
-        amendments_by_wave.setdefault(str(amendment.get("target_wave")), []).append(str(amendment.get("id")))
+        amendment_records_by_wave.setdefault(str(amendment.get("target_wave")), []).append(amendment)
     waves = wave_map(data)
     for hold in holds:
         hold_id = str(hold.get("id") or "")
@@ -2706,17 +2767,19 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
             errors.append(f"{hold_id}: recovery hold, Wave, and request identities are not bound")
         if bootstrap.get("id") != f"{request_id}.B00":
             errors.append(f"{hold_id}: bootstrap identity is outside the recovery request namespace")
-        ordered = amendments_by_wave.get(wave_id, [])
+        ordered_records = amendment_records_by_wave.get(wave_id, [])
+        ordered = [str(item.get("id")) for item in ordered_records]
         required_amendment = str(post.get("required_amendment_id") or "")
         expected_amendment = f"{wave_id}.A{len(ordered) + 1:02d}"
         if required_amendment not in ordered and required_amendment != expected_amendment:
             errors.append(f"{hold_id}: required amendment is not the next consecutive {wave_id} identity")
+        prior_records = (
+            ordered_records[: ordered.index(required_amendment)] if required_amendment in ordered else ordered_records
+        )
         prior_ecr_numbers = [
             int(str(item.get("change_request_id")).removeprefix("ECR-"))
-            for item in data.get("wave_amendments", [])
-            if item.get("target_wave") == wave_id
-            and re.fullmatch(r"ECR-[0-9]{4}", str(item.get("change_request_id") or ""))
-            and str(item.get("id")) != required_amendment
+            for item in prior_records
+            if re.fullmatch(r"ECR-[0-9]{4}", str(item.get("change_request_id") or ""))
         ]
         if post.get("required_change_request_id") != f"ECR-{max(prior_ecr_numbers, default=0) + 1:04d}":
             errors.append(f"{hold_id}: post-bootstrap change-request identity is not consecutive")
@@ -2774,7 +2837,14 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
         if nonapproved_supplements:
             required = wave_amendment_map(data).get(required_amendment) or {}
             campaign = (waves.get(wave_id) or {}).get("campaign") or {}
-            if (
+            latest_nonapproved = nonapproved_supplements[0]
+            if latest_nonapproved.get("successor_control_revision") is not None:
+                if required or campaign.get("scope") != "wave":
+                    errors.append(
+                        f"{hold_id}: unapproved v2 recovery supplement requires the repair amendment "
+                        "to remain absent under ordinary Wave scope"
+                    )
+            elif (
                 (required.get("lifecycle") or {}).get("status") != "APPROVED"
                 or required.get("tasks")
                 or campaign.get("scope") != "wave"
@@ -2783,14 +2853,27 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
                     f"{hold_id}: unapproved latest recovery supplement requires the exact repair amendment "
                     "to remain unmaterialized under ordinary Wave scope"
                 )
+        prior_successor: int | None = None
         for index, supplement in enumerate(supplements, start=1):
             supplement_id = str(supplement.get("id") or "")
             supplement_bootstrap = supplement.get("bootstrap") or {}
             if supplement_bootstrap.get("id") != f"{request_id}.B{index:02d}":
                 errors.append(f"{supplement_id}: supplemental bootstrap identity is not sequential and request-bound")
-            expected_predecessor = 4 if index == 1 else CONTROL_TOOL_REVISION
-            if supplement.get("predecessor_control_revision") != expected_predecessor:
-                errors.append(f"{supplement_id}: predecessor control revision is invalid")
+            predecessor = int(supplement.get("predecessor_control_revision") or 0)
+            successor_value = supplement.get("successor_control_revision")
+            if successor_value is None:
+                if index != 1 or predecessor != 4:
+                    errors.append(f"{supplement_id}: legacy supplement transition is invalid")
+                successor = 6
+            else:
+                successor = int(successor_value or 0)
+                if successor <= predecessor:
+                    errors.append(f"{supplement_id}: successor control revision is not greater than predecessor")
+                if prior_successor is not None and predecessor != prior_successor:
+                    errors.append(
+                        f"{supplement_id}: predecessor control revision does not continue the supplement chain"
+                    )
+            prior_successor = successor
             errors.extend(recovery_bootstrap_projection_errors(supplement_id, supplement_bootstrap))
         if hold.get("status") == "ACTIVE":
             campaign = (waves.get(wave_id) or {}).get("campaign") or {}
@@ -2927,6 +3010,112 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
         ):
             errors.append(f"{hold_id}: recovery packet post-bootstrap binding mismatch")
         errors.extend(recovery_review_history_errors(repo, hold, packet))
+    errors.extend(governance_control_generation_errors(data, repo))
+    return errors
+
+
+def governance_control_generation_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
+    """Validate the one-time GCR generation and its exact approved authority."""
+    errors: list[str] = []
+    control = data.get("control_plane") or {}
+    revision = int(control.get("revision") or 0)
+    generations = control.get("control_generations") or []
+    if revision < GCR_ADOPTION_REVISION:
+        if generations:
+            errors.append("control revisions before 7 cannot contain GCR generation records")
+        return errors
+    if len(generations) != 1:
+        return ["control revision 7 or later requires exactly one GCR generation record"]
+    generation = generations[0] or {}
+    if (
+        generation.get("id") != "GCR-0001"
+        or generation.get("bootstrap_id") != "GCR-0001.B00"
+        or generation.get("hold_id") != "HOLD-W1-GRR-0002"
+        or generation.get("predecessor_revision") != 6
+        or generation.get("successor_revision") != GCR_ADOPTION_REVISION
+    ):
+        errors.append("GCR-0001 generation identity or 6-to-7 transition is invalid")
+    if revision == GCR_ADOPTION_REVISION:
+        latest_successor = GCR_ADOPTION_REVISION
+    else:
+        successors = [
+            int(supplement.get("successor_control_revision") or 0)
+            for hold in control.get("recovery_holds", [])
+            for supplement in hold.get("supplements", [])
+            if supplement.get("successor_control_revision") is not None
+        ]
+        latest_successor = max(successors, default=GCR_ADOPTION_REVISION)
+    if latest_successor != revision:
+        errors.append("control revision differs from the latest explicit generation transition")
+    if repo is None:
+        return errors
+    references = (
+        ("approval", generation.get("approval_reference") or {}, "introduction_commit"),
+        ("review", generation.get("review_reference") or {}, "approved_state_commit"),
+    )
+    loaded: dict[str, dict[str, Any]] = {}
+    for label, reference, commit_field in references:
+        relative = str(reference.get("path") or "")
+        try:
+            path = safe_control_path(
+                repo,
+                relative,
+                prefix="planning/governance-control-recovery",
+                label=f"GCR-0001 {label}",
+            )
+            payload = path.read_bytes()
+            loaded[label] = json.loads(payload)
+        except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"GCR-0001 cannot load {label} authority: {exc}")
+            continue
+        if hashlib.sha256(payload).hexdigest() != reference.get("sha256"):
+            errors.append(f"GCR-0001 {label} authority hash mismatch")
+        commit = str(reference.get(commit_field) or "")
+        if not git_commit_exists(repo, commit) or not git_is_ancestor(repo, commit):
+            errors.append(f"GCR-0001 {label} authority commit is absent from current history")
+        elif git_blob(repo, commit, relative) != payload:
+            errors.append(f"GCR-0001 {label} authority differs from its immutable Git blob")
+    approval = loaded.get("approval") or {}
+    review = loaded.get("review") or {}
+    if approval.get("status") != "APPROVED" or approval.get("controlRecoveryId") != "GCR-0001":
+        errors.append("GCR-0001 approval identity or status mismatch")
+    if review.get("result") != "approved" or review.get("controlRecoveryId") != "GCR-0001":
+        errors.append("GCR-0001 bootstrap review identity or status mismatch")
+    if review.get("reviewedStateCommit") != (generation.get("review_reference") or {}).get("reviewed_state_commit"):
+        errors.append("GCR-0001 generation review-state binding mismatch")
+    review_reference = generation.get("review_reference") or {}
+    reviewed_state = str(review_reference.get("reviewed_state_commit") or "")
+    approved_state = str(review_reference.get("approved_state_commit") or "")
+    if (
+        not git_commit_exists(repo, reviewed_state)
+        or not git_is_ancestor(repo, reviewed_state)
+        or reviewed_state == approved_state
+        or not git_is_ancestor(repo, reviewed_state, approved_state)
+    ):
+        errors.append("GCR-0001 approved state does not strictly descend from its reviewed state")
+    state_payload = git_blob(
+        repo,
+        approved_state,
+        "planning/governance-control-recovery/GCR-0001.B00.state.json",
+    )
+    try:
+        approved_state_document = json.loads(state_payload or b"")
+    except UnicodeError, json.JSONDecodeError:
+        approved_state_document = {}
+    approved_attempts = approved_state_document.get("attempts") or []
+    latest_attempt = approved_attempts[-1] if approved_attempts else {}
+    if (
+        approved_state_document.get("controlRecoveryId") != "GCR-0001"
+        or approved_state_document.get("bootstrapUnit") != "GCR-0001.B00"
+        or approved_state_document.get("status") != "APPROVED"
+        or approved_state_document.get("currentSubmission") is not None
+        or approved_state_document.get("adoption") is not None
+        or (latest_attempt.get("review") or {}).get("result") != "approved"
+        or (latest_attempt.get("review") or {}).get("reviewedStateCommit") != reviewed_state
+        or (latest_attempt.get("ledger") or {}).get("path") != review_reference.get("path")
+        or (latest_attempt.get("ledger") or {}).get("sha256") != review_reference.get("sha256")
+    ):
+        errors.append("GCR-0001 approved-state Git blob does not reproduce the approved review")
     return errors
 
 
@@ -2937,7 +3126,7 @@ def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     amendments = data.get("wave_amendments", [])
     if control is None and not bases and not amendments:
         return errors
-    if not isinstance(control, dict) or control.get("revision") not in {4, 5, CONTROL_TOOL_REVISION}:
+    if not isinstance(control, dict) or control.get("revision") not in set(range(4, CONTROL_TOOL_REVISION + 1)):
         errors.append("control plane revision is missing or unsupported")
     elif int(control.get("minimum_tool_revision", 0)) > CONTROL_TOOL_REVISION:
         errors.append("this taskctl revision is too old for the active control plane")
@@ -3278,7 +3467,10 @@ def wave_resume_record_errors(
         record_id = str(record.get("id") or "<unknown>")
         if record.get("wave_id") != wave_id:
             errors.append(f"{record_id}: Wave resume record is cross-Wave")
-        if record.get("control_revision") != CONTROL_TOOL_REVISION or record.get("prior_status") != "PAUSED":
+        if (
+            record.get("control_revision") not in range(RECOVERY_BASE_REVISION, CONTROL_TOOL_REVISION + 1)
+            or record.get("prior_status") != "PAUSED"
+        ):
             errors.append(f"{record_id}: Wave resume record control or prior-state boundary is invalid")
         actor = str(record.get("actor") or "")
         if not actor or actor != actor.strip():
@@ -3300,6 +3492,9 @@ def wave_resume_record_errors(
             errors.append(f"{record_id}: pre-resume commit is missing or non-ancestral")
             continue
         historical = historical_backlog_document(repo, commit)
+        historical_revision = int(((historical or {}).get("control_plane") or {}).get("revision", 0))
+        if historical_revision != record.get("control_revision"):
+            errors.append(f"{record_id}: control revision differs from the bound PAUSED campaign")
         historical_wave = next(
             (item for item in (historical or {}).get("waves", []) if item.get("id") == wave_id),
             None,
@@ -6487,7 +6682,7 @@ def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
         {
             "id": f"{wave['id']}.R{len(resume_records) + 1:02d}",
             "wave_id": wave["id"],
-            "control_revision": CONTROL_TOOL_REVISION,
+            "control_revision": int((data.get("control_plane") or {}).get("revision", 0)),
             "prior_status": "PAUSED",
             "pre_resume_commit": base_sha,
             "prior_campaign_sha256": canonical_json_sha256(prior_campaign),

@@ -45,7 +45,7 @@
       "properties": {
         "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.R[0-9]{2,}$"},
         "wave_id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
-        "control_revision": {"const": 6},
+        "control_revision": {"enum": [6, 7, 8]},
         "prior_status": {"const": "PAUSED"},
         "pre_resume_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
         "prior_campaign_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -767,6 +767,7 @@
       "properties": {
         "id": {"type": "string", "pattern": "^GRR-[0-9]{4}\\.S[0-9]{2}$"},
         "predecessor_control_revision": {"type": "integer", "minimum": 4},
+        "successor_control_revision": {"type": "integer", "minimum": 5, "maximum": 8},
         "packet_reference": {
           "type": "object",
           "required": ["path", "sha256", "commit"],
@@ -789,6 +790,44 @@
         },
         "bootstrap": {"$ref": "#/$defs/recoverySupplementBootstrap"},
         "created_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false
+    },
+    "governanceControlGeneration": {
+      "type": "object",
+      "required": [
+        "id", "bootstrap_id", "hold_id", "predecessor_revision", "successor_revision",
+        "approval_reference", "review_reference", "adopted_by", "adopted_at"
+      ],
+      "properties": {
+        "id": {"const": "GCR-0001"},
+        "bootstrap_id": {"const": "GCR-0001.B00"},
+        "hold_id": {"const": "HOLD-W1-GRR-0002"},
+        "predecessor_revision": {"const": 6},
+        "successor_revision": {"const": 7},
+        "approval_reference": {
+          "type": "object",
+          "required": ["path", "sha256", "introduction_commit"],
+          "properties": {
+            "path": {"const": "planning/governance-control-recovery/GCR-0001.approval.json"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "introduction_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+          },
+          "additionalProperties": false
+        },
+        "review_reference": {
+          "type": "object",
+          "required": ["path", "sha256", "reviewed_state_commit", "approved_state_commit"],
+          "properties": {
+            "path": {"type": "string", "pattern": "^planning/governance-control-recovery/GCR-0001\\.B00\\.review-R[0-9]{2,}\\.json$"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "reviewed_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "approved_state_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+          },
+          "additionalProperties": false
+        },
+        "adopted_by": {"type": "string", "minLength": 1},
+        "adopted_at": {"$ref": "#/$defs/timestamp"}
       },
       "additionalProperties": false
     },
@@ -1088,15 +1127,20 @@
       "type": "object",
       "required": ["revision", "minimum_tool_revision", "active_amendment", "recovery_holds"],
       "properties": {
-        "revision": {"enum": [4, 5, 6]},
-        "minimum_tool_revision": {"type": "integer", "minimum": 4, "maximum": 6},
+        "revision": {"enum": [4, 5, 6, 7, 8]},
+        "minimum_tool_revision": {"type": "integer", "minimum": 4, "maximum": 8},
         "active_amendment": {
           "anyOf": [
             {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
             {"type": "null"}
           ]
         },
-        "recovery_holds": {"type": "array", "items": {"$ref": "#/$defs/recoveryHold"}}
+        "recovery_holds": {"type": "array", "items": {"$ref": "#/$defs/recoveryHold"}},
+        "control_generations": {
+          "type": "array",
+          "maxItems": 1,
+          "items": {"$ref": "#/$defs/governanceControlGeneration"}
+        }
       },
       "additionalProperties": false
     },

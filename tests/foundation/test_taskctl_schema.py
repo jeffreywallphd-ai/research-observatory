@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 import yaml
 from jsonschema import Draft202012Validator, FormatChecker
@@ -15,6 +16,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
+import taskctl  # noqa: E402
 from taskctl import backlog_schema_errors, load, validate  # noqa: E402
 
 LoadedBacklog = tuple[
@@ -236,6 +238,44 @@ class BacklogSchemaTests(unittest.TestCase):
 
         with self.assertRaisesRegex(SystemExit, r"control_plane\.minimum_tool_revision: 1 is less than"):
             self.load_copy(data)
+
+    def test_gcr_generation_is_exact_and_revision_six_reader_fails_closed(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        data["control_plane"]["revision"] = 7
+        data["control_plane"]["minimum_tool_revision"] = 7
+        data["control_plane"]["control_generations"] = [
+            {
+                "id": "GCR-0001",
+                "bootstrap_id": "GCR-0001.B00",
+                "hold_id": "HOLD-W1-GRR-0002",
+                "predecessor_revision": 6,
+                "successor_revision": 7,
+                "approval_reference": {
+                    "path": "planning/governance-control-recovery/GCR-0001.approval.json",
+                    "sha256": "a" * 64,
+                    "introduction_commit": "b" * 40,
+                },
+                "review_reference": {
+                    "path": "planning/governance-control-recovery/GCR-0001.B00.review-R01.json",
+                    "sha256": "c" * 64,
+                    "reviewed_state_commit": "d" * 40,
+                    "approved_state_commit": "e" * 40,
+                },
+                "adopted_by": "codex",
+                "adopted_at": "2026-08-24T02:00:00+00:00",
+            }
+        ]
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+        self.assertEqual([], taskctl.governance_control_generation_errors(data, None))
+        with patch.object(taskctl, "CONTROL_TOOL_REVISION", 6):
+            errors = taskctl.wave_authority_errors(data, None)
+        self.assertTrue(
+            {
+                "control plane revision is missing or unsupported",
+                "this taskctl revision is too old for the active control plane",
+            }
+            & set(errors)
+        )
 
     def test_amendment_hold_is_a_current_schema_marker_that_legacy_tools_reject(self) -> None:
         data = copy.deepcopy(self.canonical)
