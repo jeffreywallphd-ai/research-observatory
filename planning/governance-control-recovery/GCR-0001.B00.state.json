@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0001",
   "bootstrapUnit": "GCR-0001.B00",
-  "status": "CHANGES_REQUESTED",
+  "status": "REVIEW",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0001.approval.json",
     "sha256": "2aece9c5ae5677c07ec860765de40d1e848f478b96e614ccc8f9bdb349329455",
@@ -126,6 +126,23 @@
       ]
     }
   ],
-  "currentSubmission": null,
+  "currentSubmission": {
+    "attemptId": "R03",
+    "submittedBy": "codex",
+    "submittedAt": "2026-08-24T04:19:11+00:00",
+    "candidateCommit": "d94ec5a5fef01fe425b7bc0d784d5915a46ab4db",
+    "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R03.json",
+      "sha256": "cded1c041283234e7084eb2bb987119c9d69f79bcd9994fe70b92bd55e972185",
+      "commit": "d94ec5a5fef01fe425b7bc0d784d5915a46ab4db"
+    },
+    "priorAttemptId": "R02",
+    "openFindingIds": [
+      "GCR-0001.B00-R02-F01"
+    ],
+    "rootCauseAnalysis": "R02 closed the commit-chain and interruption-atomicity findings but identified one high-severity finalization boundary: a hidden path could enter the post-adoption commit and explicit recovery could complete beside unrelated workspace state. R03 therefore derives the finalization commit from immutable evidence ancestry and exact live Git blobs, requires its exact direct-child two-path delta in both current and older readers, exposes only fail-closed pending finalization before that commit, and admits recovery only from an exact staged/tracked/untracked workspace whose canonical bytes match a declared transaction boundary."
+  },
   "adoption": null
 }
