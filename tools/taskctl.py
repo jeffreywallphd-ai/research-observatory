@@ -1856,8 +1856,8 @@ def git_blob(repo: Path, commit: str, path: str) -> bytes | None:
 def governance_control_adoption_finalization_errors(
     repo: Path,
     evidence_commit: str,
-    backlog_payload: bytes,
     state_payload: bytes,
+    expected_generation: dict[str, Any],
 ) -> list[str]:
     """Derive and validate the unique exact GCR adoption-finalization commit."""
     if not git_commit_exists(repo, evidence_commit) or not git_is_ancestor(repo, evidence_commit):
@@ -1868,7 +1868,6 @@ def governance_control_adoption_finalization_errors(
         commit
         for commit in git_commits_changing_path_after(repo, evidence_commit, state_path)
         if git_blob(repo, commit, state_path) == state_payload
-        and git_blob(repo, commit, backlog_path) == backlog_payload
     ]
     if not matches:
         return ["GCR-0001 adoption is pending its exact finalization commit"]
@@ -1880,6 +1879,20 @@ def governance_control_adoption_finalization_errors(
     expected_delta = {backlog_path: "M", state_path: "M"}
     if git_name_status_delta(repo, evidence_commit, finalization_commit) != expected_delta:
         return ["GCR-0001 adoption finalization commit is not the exact two-path transition"]
+    finalization_backlog = git_blob(repo, finalization_commit, backlog_path)
+    try:
+        finalization_document = yaml.safe_load((finalization_backlog or b"").decode("utf-8"))
+    except UnicodeError, yaml.YAMLError:
+        return ["GCR-0001 adoption finalization backlog blob is malformed"]
+    if not isinstance(finalization_document, dict):
+        return ["GCR-0001 adoption finalization backlog blob is malformed"]
+    finalization_control = finalization_document.get("control_plane") or {}
+    if (
+        finalization_control.get("revision") != GCR_ADOPTION_REVISION
+        or finalization_control.get("minimum_tool_revision") != GCR_ADOPTION_REVISION
+        or finalization_control.get("control_generations") != [expected_generation]
+    ):
+        return ["GCR-0001 adoption finalization does not freeze the exact revision-7 generation"]
     return []
 
 
@@ -3241,7 +3254,7 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
         evidence_payload = b""
         evidence_document = {}
     if (
-        live_state.get("status") != "ADOPTED"
+        live_state.get("status") != "ADOPTION_FINALIZATION"
         or adoption.get("predecessorRevision") != 6
         or adoption.get("successorRevision") != GCR_ADOPTION_REVISION
         or adoption.get("reviewedStateCommit") != approved_state
@@ -3254,13 +3267,17 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
     ):
         errors.append("GCR-0001 live adoption state/evidence does not match the adopted generation")
     live_state_path = repo / "planning/governance-control-recovery/GCR-0001.B00.state.json"
-    if live_state.get("status") == "ADOPTED" and live_state_path.is_file() and not live_state_path.is_symlink():
+    if (
+        live_state.get("status") == "ADOPTION_FINALIZATION"
+        and live_state_path.is_file()
+        and not live_state_path.is_symlink()
+    ):
         errors.extend(
             governance_control_adoption_finalization_errors(
                 repo,
                 evidence_commit,
-                (repo / "planning/backlog.yaml").read_bytes(),
                 live_state_path.read_bytes(),
+                generation,
             )
         )
     return errors

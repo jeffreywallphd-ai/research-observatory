@@ -246,7 +246,7 @@
         "documentType": {"const": "governance-control-recovery-bootstrap-state"},
         "controlRecoveryId": {"$ref": "#/$defs/id"},
         "bootstrapUnit": {"$ref": "#/$defs/bootstrapId"},
-        "status": {"enum": ["REVIEW", "CHANGES_REQUESTED", "BLOCKED", "APPROVED", "ADOPTED"]},
+        "status": {"enum": ["REVIEW", "CHANGES_REQUESTED", "BLOCKED", "APPROVED", "ADOPTED", "ADOPTION_FINALIZATION"]},
         "approval": {"$ref": "#/$defs/reference"},
         "triggerWitness": {"$ref": "#/$defs/triggerWitness"},
         "attempts": {"type": "array", "items": {"$ref": "#/$defs/attempt"}},
