@@ -1323,6 +1323,7 @@ def approved_b01_scope_addendum_paths(repo: Path, supplement_id: str, candidate:
     if candidate == B01_SCOPE_BASE_CANDIDATE:
         raise SystemExit("B01 scope-addendum candidate must strictly descend from the installed candidate")
     require_commit(repo, B01_SCOPE_BASE_CANDIDATE, ancestor_of=candidate, label="B01 scope-addendum base")
+    require_commit(repo, B01_SCOPE_APPROVAL_COMMIT, ancestor_of=candidate, label="B01 scope-addendum approval")
 
     packet_delta = taskctl.git_name_status_delta(repo, B01_SCOPE_BASE_CANDIDATE, B01_SCOPE_PACKET_COMMIT)
     review_delta = taskctl.git_name_status_delta(repo, B01_SCOPE_PACKET_COMMIT, B01_SCOPE_REVIEW_COMMIT)
