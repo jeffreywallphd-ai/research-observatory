@@ -62,10 +62,18 @@
     "timestamp": {"type": "string", "format": "date-time"},
     "pair": {
       "type": "object",
-      "required": ["backlogSha256", "stateSha256", "holdSha256"],
+      "required": [
+        "backlogSha256",
+        "stateSha256",
+        "backlogContentSha256",
+        "stateContentSha256",
+        "holdSha256"
+      ],
       "properties": {
         "backlogSha256": {"$ref": "#/$defs/sha256"},
         "stateSha256": {"$ref": "#/$defs/sha256"},
+        "backlogContentSha256": {"$ref": "#/$defs/sha256"},
+        "stateContentSha256": {"$ref": "#/$defs/sha256"},
         "holdSha256": {"$ref": "#/$defs/sha256"}
       },
       "additionalProperties": false

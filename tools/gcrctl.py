@@ -1047,6 +1047,16 @@ def hold_sha256(backlog: dict[str, Any]) -> str:
     return taskctl.canonical_json_sha256(hold)
 
 
+def transaction_content_sha256(label: str, payload: bytes) -> str:
+    try:
+        document = yaml.safe_load(payload) if label == "backlog" else json.loads(payload)
+    except (UnicodeError, yaml.YAMLError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"GCR transaction {label} payload is malformed") from exc
+    if not isinstance(document, dict):
+        raise SystemExit(f"GCR transaction {label} payload is not a document")
+    return taskctl.canonical_json_sha256(document)
+
+
 def transaction_document(
     *,
     reviewed_state: str,
@@ -1079,11 +1089,15 @@ def transaction_document(
         "predecessor": {
             "backlogSha256": sha256(predecessor_backlog),
             "stateSha256": sha256(predecessor_state),
+            "backlogContentSha256": transaction_content_sha256("backlog", predecessor_backlog),
+            "stateContentSha256": transaction_content_sha256("state", predecessor_state),
             "holdSha256": hold_sha,
         },
         "successor": {
             "backlogSha256": sha256(successor_backlog),
             "stateSha256": sha256(successor_state),
+            "backlogContentSha256": transaction_content_sha256("backlog", successor_backlog),
+            "stateContentSha256": transaction_content_sha256("state", successor_state),
             "holdSha256": hold_sha,
         },
         "createdAt": taskctl.utc_now(),
@@ -1109,6 +1123,10 @@ def validate_successor_pair(
     if (
         schema_errors
         or semantic_errors
+        or transaction_content_sha256("backlog", backlog_payload)
+        != (transaction.get("successor") or {}).get("backlogContentSha256")
+        or transaction_content_sha256("state", state_payload)
+        != (transaction.get("successor") or {}).get("stateContentSha256")
         or hold_sha256(backlog) != (transaction.get("successor") or {}).get("holdSha256")
         or state.get("status") != "ADOPTION_FINALIZATION"
         or generation.get("id") != GCR_ID
@@ -1166,11 +1184,11 @@ def validate_transaction_authority(
     )
     predecessor = transaction.get("predecessor") or {}
     if (
-        sha256(predecessor_backlog) != predecessor.get("backlogSha256")
-        or sha256(predecessor_state or b"") != predecessor.get("stateSha256")
+        transaction_content_sha256("backlog", predecessor_backlog) != predecessor.get("backlogContentSha256")
+        or transaction_content_sha256("state", predecessor_state or b"") != predecessor.get("stateContentSha256")
         or hold_sha256(yaml.safe_load(predecessor_backlog)) != predecessor.get("holdSha256")
     ):
-        raise SystemExit("GCR transaction predecessor bytes or hold binding are stale")
+        raise SystemExit("GCR transaction predecessor content or hold binding is stale")
     return predecessor_backlog, predecessor_state or b""
 
 
@@ -1210,6 +1228,8 @@ def complete_adoption_transaction_locked(repo: Path, packet: dict[str, Any]) -> 
                 raise SystemExit(f"GCR transaction retains duplicate {label} successor payload")
             successor_payloads[label] = current[label]
         elif current_hash == old_hashes[label]:
+            if transaction_content_sha256(label, current[label]) != predecessor.get(f"{label}ContentSha256"):
+                raise SystemExit(f"GCR canonical {label} predecessor content is stale or substituted")
             if not next_path.is_file() or next_path.is_symlink():
                 raise SystemExit(f"GCR transaction lacks its durable {label} successor payload")
             payload = next_path.read_bytes()
@@ -1275,10 +1295,14 @@ def cleanup_unpublished_transaction_locked(
         label="GCR unpublished adoption-evidence commit",
     )
     historical_backlog = taskctl.git_blob(repo, evidence_commit, BACKLOG_PATH)
+    historical_state = taskctl.git_blob(repo, approved, STATE_PATH)
+    live_backlog = (repo / BACKLOG_PATH).read_bytes()
     if (
         historical_backlog is None
-        or (repo / BACKLOG_PATH).read_bytes() != historical_backlog
-        or taskctl.git_blob(repo, approved, STATE_PATH) != state_payload
+        or historical_state is None
+        or transaction_content_sha256("backlog", live_backlog)
+        != transaction_content_sha256("backlog", historical_backlog)
+        or transaction_content_sha256("state", state_payload) != transaction_content_sha256("state", historical_state)
     ):
         raise SystemExit("Unpublished GCR transaction artifacts coexist with a changed canonical record")
     cleanup_paths = [BACKLOG_NEXT_PATH, STATE_NEXT_PATH]

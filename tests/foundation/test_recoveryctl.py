@@ -19,6 +19,7 @@ from jsonschema import Draft202012Validator
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
+import gcrctl  # noqa: E402
 import planctl  # noqa: E402
 import recoveryctl  # noqa: E402
 import taskctl  # noqa: E402
@@ -548,6 +549,372 @@ class GovernanceRecoveryTests(unittest.TestCase):
         )
         return repo, approval, packet, b00_snapshot
 
+    def gcr_adopted_clone(self, temporary: str) -> Path:
+        """Create a real-Git revision-7 clone through the actual GCR lifecycle."""
+
+        repo = Path(temporary) / "gcr-adopted-supplement-fixture"
+        bundle = Path(temporary) / "gcr-adopted-supplement-fixture.bundle"
+        subprocess.run(
+            ["git", "bundle", "create", str(bundle), "HEAD"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-c", "core.autocrlf=true", "clone", "--quiet", str(bundle), str(repo)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.git(repo, "config", "user.email", "fixture@example.invalid")
+        self.git(repo, "config", "user.name", "Fixture Reviewer")
+        self.git(repo, "config", "commit.gpgsign", "false")
+        self.git(repo, "config", "core.autocrlf", "true")
+        self.git(repo, "checkout", "-B", gcrctl.BRANCH)
+        shutil.copy2(REPO / "planning/backlog.yaml", repo / "planning/backlog.yaml")
+        witness = repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH
+        witness.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(REPO / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH, witness)
+        fixture_candidate_paths = [
+            "planning/governance-control-recovery/governance-control-recovery-transaction.schema.json",
+            "tests/foundation/test_recoveryctl.py",
+            "tools/gcrctl.py",
+            "tools/recoveryctl.py",
+        ]
+        for relative in fixture_candidate_paths:
+            shutil.copy2(REPO / relative, repo / relative)
+        if self.git(repo, "status", "--short", "--", *fixture_candidate_paths):
+            self.git(repo, "add", "--", *fixture_candidate_paths)
+            self.git(repo, "commit", "-m", "fixture: install current R06 candidate")
+
+        _approval, packet, approval_base = gcrctl.load_authority(repo)
+        candidate = self.git(repo, "rev-parse", "HEAD")
+        attempt_id = "R06"
+        evidence_relative = gcrctl.evidence_path_for(attempt_id)
+        evidence_path = repo / evidence_relative
+        evidence_path.parent.mkdir(parents=True, exist_ok=True)
+        changed_files = self.git(repo, "diff", "--name-only", f"{approval_base}..{candidate}", "--").splitlines()
+        evidence = {
+            "schemaVersion": "1.0-control-recovery-evidence",
+            "documentType": "governance-control-recovery-bootstrap-evidence",
+            "controlRecoveryId": gcrctl.GCR_ID,
+            "bootstrapUnit": gcrctl.BOOTSTRAP_ID,
+            "attemptId": attempt_id,
+            "commit": candidate,
+            "baseCommit": approval_base,
+            "branch": gcrctl.BRANCH,
+            "triggerWitness": gcrctl.trigger_witness(),
+            "changedFiles": changed_files,
+            "checks": [{"id": "fixture-r06", "command": "fixture:r06", "exitCode": 0, "result": "passed"}],
+            "acceptanceCriteria": [
+                {"index": index, "statement": statement, "evidence": ["The real-Git fixture passed."]}
+                for index, statement in enumerate(packet["acceptanceCriteria"], start=1)
+            ],
+            "findingClosures": [
+                {
+                    "findingId": "GCR-0001.B00-R05-F01",
+                    "disposition": "fixed",
+                    "evidence": "The fixture executes the exact witness-aware v2 lifecycle.",
+                }
+            ],
+            "unverifiedItems": [],
+            "verificationSelection": {
+                "riskAnalysis": "The fixture closes the exact R05 workspace finding with a real v2 lifecycle.",
+                "selectedChecks": ["fixture-r06"],
+                "deferredCoverage": ["Independent repository review remains separate."],
+            },
+        }
+        evidence_path.write_bytes((json.dumps(evidence, indent=2) + "\n").encode())
+        gcrctl.freeze_submission(
+            argparse.Namespace(
+                repo=repo,
+                agent=gcrctl.ACTOR,
+                implementation_commit=candidate,
+                evidence=evidence_relative,
+            ),
+            remediation=True,
+        )
+        self.git(repo, "add", evidence_relative, gcrctl.STATE_PATH)
+        self.git(repo, "commit", "-m", "fixture: freeze GCR R06")
+        reviewed_state = self.git(repo, "rev-parse", "HEAD")
+        state = json.loads((repo / gcrctl.STATE_PATH).read_text(encoding="utf-8"))
+        review_relative = gcrctl.review_path_for(attempt_id)
+        review_path = repo / review_relative
+        review = {
+            "schemaVersion": "1.0-control-recovery-review",
+            "documentType": "governance-control-recovery-bootstrap-review",
+            "controlRecoveryId": gcrctl.GCR_ID,
+            "bootstrapUnit": gcrctl.BOOTSTRAP_ID,
+            "attemptId": attempt_id,
+            "candidateCommit": candidate,
+            "reviewedStateCommit": reviewed_state,
+            "reviewer": "fixture-independent-reviewer",
+            "result": "approved",
+            "evidence": state["currentSubmission"]["evidence"],
+            "findings": [],
+            "closures": [
+                {
+                    "findingId": "GCR-0001.B00-R05-F01",
+                    "disposition": "fixed",
+                    "evidence": "The real-Git witness-aware v2 lifecycle passes.",
+                }
+            ],
+            "notes": "Approved only for the isolated lifecycle fixture.",
+        }
+        review_path.write_bytes((json.dumps(review, indent=2) + "\n").encode())
+        gcrctl.command_review(
+            argparse.Namespace(repo=repo, reviewer="fixture-independent-reviewer", ledger=review_relative)
+        )
+        self.git(repo, "add", review_relative, gcrctl.STATE_PATH)
+        self.git(repo, "commit", "-m", "fixture: approve GCR R06")
+        approved_state = self.git(repo, "rev-parse", "HEAD")
+
+        adoption_relative = "artifacts/evidence/governance-control-recovery/GCR-0001.B00.adoption.json"
+        adoption_path = repo / adoption_relative
+        adoption = {
+            "schemaVersion": "1.0-control-recovery-adoption-evidence",
+            "documentType": "governance-control-recovery-adoption-evidence",
+            "controlRecoveryId": gcrctl.GCR_ID,
+            "bootstrapUnit": gcrctl.BOOTSTRAP_ID,
+            "reviewedStateCommit": approved_state,
+            "triggerWitness": gcrctl.trigger_witness(),
+            "predecessorRevision": 6,
+            "successorRevision": 7,
+            "expectedChangedFiles": ["planning/backlog.yaml", gcrctl.STATE_PATH],
+            "checks": [{"id": "fixture-adoption", "command": "fixture:adoption", "exitCode": 0, "result": "passed"}],
+            "unverifiedItems": [],
+        }
+        adoption_path.write_bytes((json.dumps(adoption, indent=2) + "\n").encode())
+        self.git(repo, "add", adoption_relative)
+        self.git(repo, "commit", "-m", "fixture: bind GCR adoption evidence")
+        self.assertEqual(
+            taskctl.git_blob(repo, approved_state, gcrctl.STATE_PATH),
+            (repo / gcrctl.STATE_PATH).read_bytes(),
+            "fixture GCR state worktree bytes differ from the approved-state Git blob",
+        )
+        gcrctl.command_adopt(
+            argparse.Namespace(
+                repo=repo,
+                agent=gcrctl.ACTOR,
+                approved_state_commit=approved_state,
+                evidence=adoption_relative,
+            )
+        )
+        self.git(repo, "add", gcrctl.BACKLOG_PATH, gcrctl.STATE_PATH)
+        self.git(repo, "commit", "-m", "fixture: finalize GCR adoption")
+        self.assertEqual([], taskctl.validate(*taskctl.load(str(repo / "planning/backlog.yaml"))[0:5], repo=repo))
+        return repo
+
+    def install_v2_supplement_authority(self, repo: Path) -> tuple[dict[str, Any], str]:
+        """Freeze and approve an exact GRR-0002.S01 fixture packet in Git."""
+
+        base_approval, base_packet, base_approval_payload, base_packet_payload = recoveryctl.load_recovery_authority(
+            repo, "GRR-0002"
+        )
+        _base_approval, _base_packet, base_hold = recoveryctl.validate_request(repo, "GRR-0002")
+        latest_attempt = base_hold["bootstrap"]["attempts"][-1]
+        latest_ledger_path = str(latest_attempt["ledger"]["path"])
+        latest_ledger_payload = (repo / latest_ledger_path).read_bytes()
+        latest_ledger = json.loads(latest_ledger_payload)
+        base_approval_relative = "planning/governance-recovery-approvals/GRR-0002.json"
+        base_approval_intro = taskctl.approval_introduction_commit(repo, base_approval_relative)
+        self.assertIsNotNone(base_approval_intro)
+
+        proposal_relative = "planning/governance-recovery-requests/GRR-0002.S01.md"
+        review_relative = "planning/governance-recovery-requests/GRR-0002.S01-review.html"
+        schema_relative = "planning/governance-recovery-requests/governance-recovery-supplement.v2.schema.json"
+        (repo / proposal_relative).write_bytes(b"# Fixture GRR-0002.S01\n")
+        (repo / review_relative).write_bytes(b"<!doctype html><title>Fixture GRR-0002.S01</title>\n")
+        witness_payload = (repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH).read_bytes()
+        witness = json.loads(witness_payload)
+        amendment_relative = "planning/wave-amendment-approvals/W1.A04.json"
+        amendment_payload = (repo / amendment_relative).read_bytes()
+        amendment = json.loads(amendment_payload)
+        amendment_intro = taskctl.approval_introduction_commit(repo, amendment_relative)
+        self.assertIsNotNone(amendment_intro)
+        ecr = amendment["packet"]
+        backlog_payload = (repo / "planning/backlog.yaml").read_bytes()
+        discovery_commit = self.git(repo, "rev-parse", "HEAD")
+        packet = {
+            "$schema": "./governance-recovery-supplement.v2.schema.json",
+            "schemaVersion": "2.0-recovery-supplement-proposal",
+            "documentType": "governance-recovery-supplement-packet",
+            "recoveryRequestId": "GRR-0002",
+            "supplementId": "GRR-0002.S01",
+            "title": "Fixture exact witness-aware v2 lifecycle",
+            "targetWave": "W1",
+            "status": "pending-human-approval",
+            "executionState": "non-executable",
+            "classification": "approved-bootstrap-latent-control-defect",
+            "controlTransition": {
+                "predecessorRevision": 7,
+                "successorRevision": 8,
+                "generationNeutral": True,
+                "olderReadersFailClosed": True,
+            },
+            "baseRecoveryAuthority": {
+                "packet": {
+                    "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+                    "sha256": recoveryctl.sha256(base_packet_payload),
+                    "commit": base_approval["packet"]["commit"],
+                },
+                "approval": {
+                    "path": base_approval_relative,
+                    "sha256": recoveryctl.sha256(base_approval_payload),
+                    "introductionCommit": base_approval_intro,
+                },
+                "holdId": base_packet["controlHold"]["id"],
+                "bootstrapUnit": base_packet["bootstrapUnit"]["id"],
+                "latestApprovedReview": {
+                    "attemptId": latest_ledger["attemptId"],
+                    "path": latest_ledger_path,
+                    "sha256": recoveryctl.sha256(latest_ledger_payload),
+                    "candidateCommit": latest_ledger["candidateCommit"],
+                    "reviewedStateCommit": latest_ledger["reviewedStateCommit"],
+                },
+            },
+            "targetAmendmentAuthority": {
+                "changeRequestPacket": {
+                    "id": "ECR-0003",
+                    "path": ecr["path"],
+                    "sha256": ecr["sha256"],
+                    "commit": ecr["commit"],
+                },
+                "amendmentApproval": {
+                    "id": "W1.A04",
+                    "path": amendment_relative,
+                    "sha256": recoveryctl.sha256(amendment_payload),
+                    "introductionCommit": amendment_intro,
+                },
+                "bootstrap": {
+                    "id": "W1.A04.B00",
+                    "candidateCommit": witness["commit"],
+                    "evidence": {
+                        "path": recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH,
+                        "sha256": recoveryctl.sha256(witness_payload),
+                        "commit": witness["commit"],
+                    },
+                },
+                "backlogPresence": False,
+            },
+            "triggerEvidence": {
+                "discoveryCommit": discovery_commit,
+                "backlogSha256": recoveryctl.sha256(backlog_payload),
+                "command": "fixture: supplement-start GRR-0002.S01",
+                "diagnostic": "The revision-7 pre-append lane requires its separately approved v2 supplement.",
+                "atomicNoMutation": True,
+            },
+            "activationBoundary": {
+                "controlRevision": 7,
+                "holdStatus": "ACTIVE",
+                "waveStatus": "PAUSED",
+                "waveScope": "wave",
+                "amendmentId": "W1.A04",
+                "amendmentBacklogStatus": "ABSENT",
+                "blockedTaskId": "CAP-02.S04.T03",
+                "blockedTaskStatus": "BLOCKED",
+            },
+            "supplementalBootstrap": {
+                "id": "GRR-0002.B01",
+                "kind": "append-only-approved-bootstrap-remediation",
+                "exceptionReason": "Exercise the exact witness-aware generation-neutral transition.",
+                "authorizedPaths": [
+                    "planning/backlog.yaml",
+                    "planning/governance-recovery-approvals/GRR-0002.B01*",
+                    "tests/foundation/test_recoveryctl.py",
+                    "tools/recoveryctl.py",
+                ],
+                "requiredOutcomes": ["The exact witness-aware v2 lifecycle reaches independent B01 approval."],
+                "prohibitedOutcomes": ["No amendment materialization or ordinary Wave execution occurs."],
+            },
+            "acceptanceCriteria": [
+                "GRR-0002.S01 traverses start, submission, independent review, and approved validation."
+            ],
+            "verificationObligations": ["Run the isolated real-Git witness-aware v2 lifecycle."],
+            "rollback": ["Any failure leaves the prior canonical backlog byte-identical."],
+            "alternatives": [{"id": "A"}, {"id": "B"}],
+            "files": [
+                {
+                    "path": schema_relative,
+                    "sha256": recoveryctl.sha256((repo / schema_relative).read_bytes()),
+                },
+                {
+                    "path": proposal_relative,
+                    "sha256": recoveryctl.sha256((repo / proposal_relative).read_bytes()),
+                },
+                {
+                    "path": review_relative,
+                    "sha256": recoveryctl.sha256((repo / review_relative).read_bytes()),
+                },
+            ],
+            "requiredApprovalStatement": "Approve only fixture GRR-0002.S01/B01 at its exact packet commit.",
+        }
+        packet_relative = "planning/governance-recovery-requests/GRR-0002.S01.packet.json"
+        packet_path = repo / packet_relative
+        packet_path.write_bytes((json.dumps(packet, indent=2) + "\n").encode())
+        self.assertEqual(
+            [],
+            recoveryctl.schema_errors(packet, repo / schema_relative),
+        )
+        self.git(repo, "add", proposal_relative, review_relative, packet_relative)
+        self.git(repo, "commit", "-m", "fixture: freeze GRR-0002.S01 packet")
+        packet_commit = self.git(repo, "rev-parse", "HEAD")
+        packet_payload = packet_path.read_bytes()
+        approval = {
+            "$schema": "../governance-recovery-requests/governance-recovery-supplement-approval.v2.schema.json",
+            "schemaVersion": "2.0",
+            "documentType": "governance-recovery-supplement-approval",
+            "recoveryRequestId": "GRR-0002",
+            "supplementId": "GRR-0002.S01",
+            "targetWave": "W1",
+            "status": "APPROVED",
+            "approvedBy": "fixture-owner",
+            "approvedAt": "2026-08-24T06:00:00Z",
+            "decision": "Approve only the isolated fixture supplemental bootstrap.",
+            "packet": {
+                "commit": packet_commit,
+                "path": packet_relative,
+                "sha256": recoveryctl.sha256(packet_payload),
+                "proposalPath": proposal_relative,
+                "proposalSha256": recoveryctl.sha256((repo / proposal_relative).read_bytes()),
+                "schemaPath": schema_relative,
+                "schemaSha256": recoveryctl.sha256((repo / schema_relative).read_bytes()),
+                "reviewPath": review_relative,
+                "reviewSha256": recoveryctl.sha256((repo / review_relative).read_bytes()),
+            },
+            "supplementalBootstrapUnit": "GRR-0002.B01",
+            "independentPacketReview": {
+                "reviewer": "fixture-packet-reviewer",
+                "attemptId": "R01",
+                "candidateCommit": packet_commit,
+                "packetSha256": recoveryctl.sha256(packet_payload),
+                "result": "APPROVED",
+                "openFindingIds": [],
+                "closedFindingIds": [],
+                "priorAdverseLedger": None,
+            },
+            "executionAuthority": {
+                "supplementalBootstrapOnly": True,
+                "postBootstrapExecution": False,
+                "amendmentMaterialization": False,
+                "ordinaryWaveResume": False,
+                "taskExecution": False,
+                "releaseGateApproval": False,
+            },
+        }
+        approval_relative = "planning/governance-recovery-approvals/GRR-0002.S01.json"
+        (repo / approval_relative).write_bytes((json.dumps(approval, indent=2) + "\n").encode())
+        self.git(repo, "add", approval_relative)
+        self.git(repo, "commit", "-m", "fixture: approve GRR-0002.S01 packet")
+        approval_intro = self.git(repo, "rev-parse", "HEAD")
+        loaded_approval, loaded_packet, _approval_payload, _packet_payload = recoveryctl.load_supplement_authority(
+            repo, "GRR-0002.S01"
+        )
+        self.assertEqual(approval, loaded_approval)
+        self.assertEqual(packet, loaded_packet)
+        return packet, approval_intro
+
     def write_supplement_evidence(
         self,
         repo: Path,
@@ -778,7 +1145,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 "load_supplement_authority",
                 return_value=(approval, packet, b"approval", json.dumps(packet).encode()),
             ),
-            patch.object(recoveryctl, "require_clean"),
+            patch.object(recoveryctl, "require_supplement_workspace"),
             patch.object(
                 recoveryctl,
                 "backlog_state",
@@ -799,6 +1166,217 @@ class GovernanceRecoveryTests(unittest.TestCase):
         supplement = installed["control_plane"]["recovery_holds"][0]["supplements"][0]
         self.assertEqual(7, supplement["predecessor_control_revision"])
         self.assertEqual(8, supplement["successor_control_revision"])
+
+    def test_v2_supplement_workspace_requires_exact_non_authoritative_witness(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary) / "witness-workspace-fixture"
+            bundle = Path(temporary) / "witness-workspace-fixture.bundle"
+            subprocess.run(
+                ["git", "bundle", "create", str(bundle), "HEAD"],
+                cwd=REPO,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "clone", "--quiet", str(bundle), str(repo)],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            self.git(repo, "config", "user.email", "fixture@example.invalid")
+            self.git(repo, "config", "user.name", "Fixture Reviewer")
+            self.git(repo, "config", "commit.gpgsign", "false")
+            self.git(repo, "config", "core.autocrlf", "false")
+            packet = {"schemaVersion": "2.0-recovery-supplement-proposal"}
+            witness = repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH
+            witness.parent.mkdir(parents=True, exist_ok=True)
+            witness_payload = (REPO / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH).read_bytes()
+            witness.write_bytes(witness_payload)
+
+            recoveryctl.require_supplement_workspace(repo, packet)
+            transition_relative = "planning/governance-recovery-approvals/GRR-0002.B01.evidence.json"
+            transition = repo / transition_relative
+            transition.write_text("{}\n", encoding="utf-8")
+            recoveryctl.require_supplement_workspace(
+                repo,
+                packet,
+                transition_untracked={transition_relative},
+            )
+            transition.unlink()
+            with self.assertRaisesRegex(SystemExit, "untracked-path boundary differs"):
+                recoveryctl.require_supplement_workspace(
+                    repo,
+                    packet,
+                    transition_untracked={transition_relative},
+                )
+
+            duplicate = repo / "artifacts/evidence/W1.A04.B00.copy.json"
+            duplicate.write_bytes(witness_payload)
+            with self.assertRaisesRegex(SystemExit, "untracked-path boundary differs"):
+                recoveryctl.require_supplement_workspace(repo, packet)
+            duplicate.unlink()
+
+            witness.write_bytes(witness_payload + b" ")
+            with self.assertRaisesRegex(SystemExit, "witness hash differs"):
+                recoveryctl.require_supplement_workspace(repo, packet)
+            witness.write_bytes(witness_payload)
+
+            witness.unlink()
+            with self.assertRaisesRegex(SystemExit, "does not name an existing regular file"):
+                recoveryctl.require_supplement_workspace(repo, packet)
+            witness.write_bytes(witness_payload)
+
+            self.git(repo, "add", "-f", recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH)
+            with self.assertRaisesRegex(SystemExit, "witness must remain unstaged"):
+                recoveryctl.require_supplement_workspace(repo, packet)
+            self.git(repo, "reset", "HEAD", "--", recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH)
+
+            staged = repo / "planning/staged-supplement-fixture.txt"
+            staged.write_text("staged\n", encoding="utf-8")
+            self.git(repo, "add", staged.relative_to(repo).as_posix())
+            with self.assertRaisesRegex(SystemExit, "Staged source exists"):
+                recoveryctl.require_supplement_workspace(repo, packet)
+            self.git(repo, "reset", "HEAD", "--", staged.relative_to(repo).as_posix())
+            staged.unlink()
+
+            tracked = repo / "tools/recoveryctl.py"
+            tracked_payload = tracked.read_bytes()
+            tracked.write_bytes(tracked_payload + b"\n# dirty\n")
+            with self.assertRaisesRegex(SystemExit, "Tracked worktree changes exist"):
+                recoveryctl.require_supplement_workspace(repo, packet)
+            tracked.write_bytes(tracked_payload)
+
+            target = repo / "artifacts/evidence/redirected-witness-target.json"
+            witness.unlink()
+            target.write_bytes(witness_payload)
+            try:
+                witness.symlink_to(target)
+            except OSError:
+                witness.write_bytes(witness_payload)
+            else:
+                with self.assertRaisesRegex(SystemExit, "symlink or junction"):
+                    recoveryctl.require_supplement_workspace(repo, packet)
+                witness.unlink()
+                witness.write_bytes(witness_payload)
+            target.unlink()
+
+            state_path = repo / recoveryctl.CONTROL_RECOVERY_STATE_PATH
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            state["triggerWitness"]["executionAuthority"] = True
+            state_path.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+            self.git(repo, "add", recoveryctl.CONTROL_RECOVERY_STATE_PATH)
+            self.git(repo, "commit", "-m", "fixture: make witness authority-bearing")
+            with self.assertRaisesRegex(SystemExit, "non-authoritative state binding"):
+                recoveryctl.require_supplement_workspace(repo, packet)
+
+    def test_grr_0002_s01_v2_real_git_witness_aware_lifecycle(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = self.gcr_adopted_clone(temporary)
+            packet, approval_intro = self.install_v2_supplement_authority(repo)
+            backlog_path = repo / "planning/backlog.yaml"
+            witness_path = repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH
+            witness_payload = witness_path.read_bytes()
+
+            recoveryctl.command_supplement_start(
+                argparse.Namespace(repo=repo, supplement="GRR-0002.S01", agent="codex")
+            )
+            started = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            installed = started["control_plane"]["recovery_holds"][1]["supplements"][0]
+            self.assertEqual(8, started["control_plane"]["revision"])
+            self.assertEqual(7, installed["predecessor_control_revision"])
+            self.assertEqual(8, installed["successor_control_revision"])
+            self.assertEqual("IN_PROGRESS", installed["bootstrap"]["status"])
+            self.git(repo, "add", "planning/backlog.yaml")
+            self.git(repo, "commit", "-m", "fixture: start GRR-0002.S01 B01")
+            candidate = self.git(repo, "rev-parse", "HEAD")
+
+            evidence_relative = "planning/governance-recovery-approvals/GRR-0002.B01.evidence.json"
+            changed_paths = self.git(repo, "diff", "--name-only", f"{approval_intro}..{candidate}", "--").splitlines()
+            evidence = {
+                "schemaVersion": "1.0",
+                "documentType": "governance-recovery-supplement-bootstrap-evidence",
+                "recoveryRequestId": "GRR-0002",
+                "supplementId": "GRR-0002.S01",
+                "bootstrapUnit": "GRR-0002.B01",
+                "branch": self.git(repo, "branch", "--show-current"),
+                "baseCommit": approval_intro,
+                "candidateCommit": candidate,
+                "changedPaths": changed_paths,
+                "riskAnalysis": "The real-Git fixture traverses the exact witness-aware v2 lane.",
+                "requiredOutcomes": [
+                    {"criterion": criterion, "evidence": ["The real-Git lifecycle passed."]}
+                    for criterion in packet["supplementalBootstrap"]["requiredOutcomes"]
+                ],
+                "acceptanceCriteria": [
+                    {"criterion": criterion, "evidence": ["The real-Git lifecycle passed."]}
+                    for criterion in packet["acceptanceCriteria"]
+                ],
+                "checks": [{"id": "v2-lifecycle", "command": "fixture:v2-lifecycle", "result": "passed"}],
+                "deferredCoverage": ["Ordinary W1 execution remains separately gated."],
+                "unverifiedItems": [],
+            }
+            (repo / evidence_relative).write_bytes((json.dumps(evidence, indent=2) + "\n").encode())
+            recoveryctl.freeze_supplement_submission(
+                argparse.Namespace(
+                    repo=repo,
+                    supplement="GRR-0002.S01",
+                    agent="codex",
+                    implementation_commit=candidate,
+                    evidence=evidence_relative,
+                ),
+                remediation=False,
+            )
+            self.git(repo, "add", "planning/backlog.yaml", evidence_relative)
+            self.git(repo, "commit", "-m", "fixture: freeze GRR-0002.B01 review state")
+            reviewed_state = self.git(repo, "rev-parse", "HEAD")
+            frozen = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            bootstrap = frozen["control_plane"]["recovery_holds"][1]["supplements"][0]["bootstrap"]
+            self.assertEqual("REVIEW", bootstrap["status"])
+
+            ledger_relative = "planning/governance-recovery-approvals/GRR-0002.B01.review-R01.json"
+            ledger = {
+                "schemaVersion": "1.0",
+                "documentType": "governance-recovery-supplement-bootstrap-review",
+                "recoveryRequestId": "GRR-0002",
+                "supplementId": "GRR-0002.S01",
+                "bootstrapUnit": "GRR-0002.B01",
+                "attemptId": "R01",
+                "candidateCommit": candidate,
+                "reviewedStateCommit": reviewed_state,
+                "reviewer": "fixture-independent-reviewer",
+                "result": "approved",
+                "evidence": {
+                    "path": evidence_relative,
+                    "sha256": recoveryctl.sha256((repo / evidence_relative).read_bytes()),
+                },
+                "notes": "Approved only for the isolated witness-aware lifecycle fixture.",
+                "findings": [],
+                "closures": [],
+            }
+            (repo / ledger_relative).write_bytes((json.dumps(ledger, indent=2) + "\n").encode())
+            recoveryctl.command_supplement_review(
+                argparse.Namespace(
+                    repo=repo,
+                    supplement="GRR-0002.S01",
+                    reviewer="fixture-independent-reviewer",
+                    from_path=ledger_relative,
+                )
+            )
+            self.git(repo, "add", "planning/backlog.yaml", ledger_relative)
+            self.git(repo, "commit", "-m", "fixture: approve GRR-0002.B01")
+            _approval, _packet, hold, supplement = recoveryctl.validate_supplement(
+                repo,
+                "GRR-0002.S01",
+                require_approved=True,
+            )
+            self.assertEqual("ACTIVE", hold["status"])
+            self.assertEqual("APPROVED", supplement["bootstrap"]["status"])
+            self.assertEqual(witness_payload, witness_path.read_bytes())
+            self.assertEqual(
+                [recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH],
+                self.git(repo, "ls-files", "--others", "--exclude-standard").splitlines(),
+            )
 
     def test_released_hold_ecr_identity_is_prefix_stable_when_w1_a04_is_appended(self) -> None:
         data = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))

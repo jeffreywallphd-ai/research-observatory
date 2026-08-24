@@ -27,6 +27,9 @@ from jsonschema.exceptions import SchemaError
 
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 REVIEW_RESULTS = {"approved": "APPROVED", "changes-requested": "CHANGES_REQUESTED", "blocked": "BLOCKED"}
+CONTROL_RECOVERY_TRIGGER_PATH = "artifacts/evidence/W1.A04.B00.json"
+CONTROL_RECOVERY_TRIGGER_SHA256 = "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+CONTROL_RECOVERY_STATE_PATH = "planning/governance-control-recovery/GCR-0001.B00.state.json"
 
 
 def sha256(payload: bytes) -> str:
@@ -161,6 +164,71 @@ def require_clean(repo: Path, *, allowed_untracked: set[str] | None = None) -> N
     unexpected = sorted(untracked - (allowed_untracked or set()))
     if unexpected:
         raise SystemExit(f"Untracked source exists outside the authorized recovery transition: {unexpected[0]}")
+
+
+def require_supplement_workspace(
+    repo: Path,
+    packet: dict[str, Any],
+    *,
+    transition_untracked: set[str] | None = None,
+) -> None:
+    """Require the exact workspace authorized for one supplement transition.
+
+    The v2 lane is created by GCR-0001 while its atomic W1.A04 failure witness
+    deliberately remains untracked, unstaged, and non-authoritative. Every v2
+    transition must authenticate that one witness and, when applicable,
+    exactly one canonical evidence or review artifact. Legacy v1 supplement
+    history retains its original clean-workspace contract.
+    """
+
+    allowed_transition = set(transition_untracked or set())
+    if packet.get("schemaVersion") != "2.0-recovery-supplement-proposal":
+        require_clean(repo, allowed_untracked=allowed_transition)
+        return
+    if CONTROL_RECOVERY_TRIGGER_PATH in allowed_transition:
+        raise SystemExit("The GCR trigger witness cannot be used as a supplement transition artifact")
+
+    staged = set(git_output(repo, "diff", "--cached", "--name-only", "--").splitlines())
+    if staged:
+        if CONTROL_RECOVERY_TRIGGER_PATH in staged:
+            raise SystemExit("The GCR trigger witness must remain unstaged")
+        raise SystemExit(f"Staged source exists outside the authorized recovery transition: {sorted(staged)[0]}")
+    if subprocess.run(["git", "diff", "--quiet", "HEAD", "--"], cwd=repo, check=False).returncode != 0:
+        raise SystemExit("Tracked worktree changes exist; recovery transitions require an exact clean commit")
+
+    witness_path = safe_repo_path(
+        repo,
+        CONTROL_RECOVERY_TRIGGER_PATH,
+        label="GCR trigger witness",
+        designated_prefix="artifacts/evidence",
+    )
+    if sha256(witness_path.read_bytes()) != CONTROL_RECOVERY_TRIGGER_SHA256:
+        raise SystemExit("The GCR trigger witness hash differs from its approved atomic-failure boundary")
+    state_path = safe_repo_path(
+        repo,
+        CONTROL_RECOVERY_STATE_PATH,
+        label="GCR canonical state",
+        designated_prefix="planning/governance-control-recovery",
+    )
+    state, _state_payload = load_json(state_path, "GCR canonical state")
+    expected_witness = {
+        "path": CONTROL_RECOVERY_TRIGGER_PATH,
+        "sha256": CONTROL_RECOVERY_TRIGGER_SHA256,
+        "role": "atomic-failure-trigger-only",
+        "untracked": True,
+        "unstaged": True,
+        "executionAuthority": False,
+    }
+    if state.get("triggerWitness") != expected_witness:
+        raise SystemExit("The GCR trigger witness is missing its exact non-authoritative state binding")
+
+    expected_untracked = {CONTROL_RECOVERY_TRIGGER_PATH, *allowed_transition}
+    untracked = set(git_output(repo, "ls-files", "--others", "--exclude-standard").splitlines())
+    if untracked != expected_untracked:
+        difference = sorted(untracked ^ expected_untracked)
+        raise SystemExit(
+            "Supplement recovery untracked-path boundary differs: " + (difference[0] if difference else "<unknown>")
+        )
 
 
 def recovery_paths(repo: Path, request_id: str) -> tuple[Path, Path]:
@@ -1540,7 +1608,7 @@ def command_status(args: argparse.Namespace) -> None:
 
 def command_supplement_start(args: argparse.Namespace) -> None:
     approval, packet, _approval_payload, packet_payload = load_supplement_authority(args.repo, args.supplement)
-    require_clean(args.repo)
+    require_supplement_workspace(args.repo, packet)
     backlog_payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
     validate_supplement_boundary(args.repo, packet, data, require_installed=False)
     control = data.get("control_plane") or {}
@@ -1678,7 +1746,7 @@ def freeze_supplement_submission(args: argparse.Namespace, *, remediation: bool)
     )
     if str(args.evidence) != expected_evidence:
         raise SystemExit(f"Supplemental recovery evidence path must be {expected_evidence}")
-    require_clean(args.repo, allowed_untracked={expected_evidence})
+    require_supplement_workspace(args.repo, packet, transition_untracked={expected_evidence})
     document, evidence_payload, relative = supplement_evidence_document(
         args.repo,
         args.supplement,
@@ -1814,7 +1882,7 @@ def command_supplement_review(args: argparse.Namespace) -> None:
         f"planning/governance-recovery-approvals/{bootstrap.get('id')}.review-"
         f"{bootstrap['current_submission']['attempt_id']}.json"
     )
-    require_clean(args.repo, allowed_untracked={expected_relative})
+    require_supplement_workspace(args.repo, packet, transition_untracked={expected_relative})
     ledger, ledger_payload, relative = supplement_review_ledger(args, packet, bootstrap)
     backlog_payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
     mutable = recovery_supplement(
