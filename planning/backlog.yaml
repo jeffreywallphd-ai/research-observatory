@@ -22596,8 +22596,8 @@ verification_profiles:
   server: University-hosted services, identity, collaboration, licensed sources, research-production workflow, and operations.
   cloud: Tenant, residency, metering, security, research-production workload, and SaaS operations.
 control_plane:
-  revision: 6
-  minimum_tool_revision: 6
+  revision: 7
+  minimum_tool_revision: 7
   active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
@@ -22918,6 +22918,23 @@ control_plane:
     - After release, W1 is explicitly resumed before the corrected exact T03 recovery is invoked.
     created_at: '2026-08-22T22:06:24+00:00'
     released_at: null
+  control_generations:
+  - id: GCR-0001
+    bootstrap_id: GCR-0001.B00
+    hold_id: HOLD-W1-GRR-0002
+    predecessor_revision: 6
+    successor_revision: 7
+    approval_reference:
+      path: planning/governance-control-recovery/GCR-0001.approval.json
+      sha256: 2aece9c5ae5677c07ec860765de40d1e848f478b96e614ccc8f9bdb349329455
+      introduction_commit: c34f8398adc54b3703b94daf7482faf9c09cfdfc
+    review_reference:
+      path: planning/governance-control-recovery/GCR-0001.B00.review-R06.json
+      sha256: 2523c124705327abfc9a46e19525bbd7250bdae6a2f6537329c08e9bc4fe7a26
+      reviewed_state_commit: 045366fe02a5819546484cc5fdd50a7a0be7aecd
+      approved_state_commit: e2113ba754e0d68baa5456c14900f799c50d826e
+    adopted_by: codex
+    adopted_at: '2026-08-24T07:30:40+00:00'
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
