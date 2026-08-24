@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "1.0-control-recovery-evidence",
+  "documentType": "governance-control-recovery-bootstrap-evidence",
+  "controlRecoveryId": "GCR-0001",
+  "bootstrapUnit": "GCR-0001.B00",
+  "attemptId": "R02",
+  "commit": "22f9b46dd6772d2df615d3324cd1797f585385f8",
+  "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
+  "branch": "codex/w1-windows-local-runtime",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "changedFiles": [
+    "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R01.json",
+    "planning/backlog.schema.json",
+    "planning/governance-control-recovery/GCR-0001.B00.review-R01.json",
+    "planning/governance-control-recovery/GCR-0001.B00.state.json",
+    "planning/governance-control-recovery/governance-control-recovery-transaction.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement-approval.v2.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement.v2.schema.json",
+    "quality-scope.json",
+    "tests/foundation/test_gcrctl.py",
+    "tests/foundation/test_recoveryctl.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tools/gcrctl.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "id": "affected-control-suite-r02",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_gcrctl tests.foundation.test_recoveryctl tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "governed-python-quality-r02",
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "backlog-validation-r02",
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "active-recovery-validation-r02",
+      "command": ".venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . validate GRR-0002 --require-approved",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "gcr-adverse-state-validation-r02",
+      "command": ".venv\\Scripts\\python.exe tools\\gcrctl.py --repo . validate GCR-0001",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "planning-review-integrity-r02",
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "generated-backlog-views-r02",
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "protected-product-reference-privacy-scope-r02",
+      "command": "git diff --exit-code c34f8398adc54b3703b94daf7482faf9c09cfdfc..22f9b46dd6772d2df615d3324cd1797f585385f8 -- apps/desktop services/core-api packages/contracts design/ui-reference docs/architecture/privacy-controls.md artifacts/evidence/ui-change",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "candidate-whitespace-integrity-r02",
+      "command": "git diff c34f8398adc54b3703b94daf7482faf9c09cfdfc..22f9b46dd6772d2df615d3324cd1797f585385f8 --check",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "index": 1,
+      "statement": "The GCR packet and exclusive-create approval artifact are exact-commit, independently reviewed, hash-bound, path-safe, and bootstrap-only; the approval introduction commit is the tracked-clean codex-branch execution base, the sole untracked trigger witness is exact and unstaged, and all GRR-0002, ECR-0003, W1, T03, and G1 trigger boundaries match current immutable state.",
+      "evidence": [
+        "gcr-adverse-state-validation-r02 reproduces the exact packet, approval base, append-only R01 adverse history, exact witness, and revision-6 stopped boundary at strict-descendant candidate 22f9b46dd6772d2df615d3324cd1797f585385f8.",
+        "active-recovery-validation-r02 and backlog-validation-r02 confirm APPROVED GRR-0002.B00, ACTIVE HOLD-W1-GRR-0002, PAUSED W1, BLOCKED T03, absent W1.A04, and pending G1."
+      ]
+    },
+    {
+      "index": 2,
+      "statement": "Revision 7 records one append-only 6-to-7 generation transition under HOLD-W1-GRR-0002 and rejects missing, duplicated, reordered, rewritten, cross-hold, wrong-predecessor, non-increasing, or unsupported generations.",
+      "evidence": [
+        "affected-control-suite-r02 passed the exact generation schema/semantic matrix, old-reader denial, real-Git adoption lifecycle, and live GCR-state/generation cross-check.",
+        "The transaction successor validator requires the one 6-to-7 generation, unchanged active-hold hash, canonical reviewed/approved commits, and exact adoption evidence before publishing any canonical successor."
+      ]
+    },
+    {
+      "index": 3,
+      "statement": "Released GRR-0001 remains byte/history exact and validates before and after an in-memory W1.A04/ECR-0003 append; future amendments do not alter its historical consecutiveness decision.",
+      "evidence": [
+        "affected-control-suite-r02 passed the released-hold prefix-stability test and all frozen-predecessor rewrite denials without changing the R01 implementation."
+      ]
+    },
+    {
+      "index": 4,
+      "statement": "The v2 supplement controller can represent exact GRR-0002.S01/B01 from revision 7 while W1.A04 is absent, and v1 GRR-0001.S01 history remains valid without migration or fabrication.",
+      "evidence": [
+        "affected-control-suite-r02 passed the exact 7-to-8 v2 supplement-start test and the complete legacy GRR-0001.S01 adverse-to-approved lifecycle.",
+        "active-recovery-validation-r02 confirms W1.A04 remains absent and no v2 supplement was prepared or installed."
+      ]
+    },
+    {
+      "index": 5,
+      "statement": "No ordinary or amendment execution is authorized by GCR approval or B00 approval; GRR-0002.S01, W1.A04, T03, W1 exit, G1, and main integration retain their separate gates.",
+      "evidence": [
+        "The candidate remains at revision 6/CHANGES_REQUESTED and exposes only bounded GCR review/adoption/recovery operations; explicit recovery can only finish already hash-bound successor bytes.",
+        "backlog-validation-r02, active-recovery-validation-r02, and gcr-adverse-state-validation-r02 confirm every ordinary and downstream gate remains closed."
+      ]
+    },
+    {
+      "index": 6,
+      "statement": "All declared failure modes are byte-stable, every changed path is inside the B00 allowlist, protected product/reference/privacy bytes remain unchanged, and governed Python quality passes.",
+      "evidence": [
+        "affected-control-suite-r02 passed 110 tests, including seven real Windows child-process os._exit boundaries, stale and competing writers, malformed/unpublished transaction cleanup, published roll-forward recovery, marker-deletion split-state denial, and idempotent recovery.",
+        "Every current reader fails closed while a manifest or successor payload exists; backlog-first replacement makes revision-6 readers reject a partial successor, and live state/evidence cross-checks reject marker-deleted revision/state splits.",
+        "governed-python-quality-r02 passed formatting, lint, and mypy across 121 governed files; protected-product-reference-privacy-scope-r02 and candidate-whitespace-integrity-r02 passed."
+      ]
+    },
+    {
+      "index": 7,
+      "statement": "B00 evidence maps every required outcome to the exact candidate and selected checks, discloses deferred W1 qualification, and contains no unexplained unverified item.",
+      "evidence": [
+        "This fresh runtime-schema-governed R02 manifest binds candidate 22f9b46dd6772d2df615d3324cd1797f585385f8, all fourteen approval-base delta paths, nine passing checks, all eight criteria, both explicit R01 closures, and no unverified item.",
+        "verificationSelection defers only separately gated GRR-0002.S01/W1.A04 execution and W1 exit qualification."
+      ]
+    },
+    {
+      "index": 8,
+      "statement": "Independent B00 review is bound to the exact reviewed-state commit and has no open blocking finding; only then may a direct-child adoption commit change exactly planning/backlog.yaml and the canonical GCR state from revision 6 to 7 before the revision-7 controller is used to prepare or install GRR-0002.S01.",
+      "evidence": [
+        "The remediated controller derives the unique approved-state commit from the latest ledger, requires exact single-parent candidate-to-REVIEW, REVIEW-to-approved-ledger, and approved-to-adoption-evidence deltas, and compares every evidence Git blob; hidden paths and substituted intermediate commits fail before transaction preparation.",
+        "The write-ahead adoption transaction stages and fsyncs both successor payloads, publishes an immutable schema-validated manifest, uses Windows write-through replacement, validates the exact pair, and removes the manifest only after both canonical records are consistent. Actual R02 approval remains the independent reviewer's separate append-only authority."
+      ]
+    }
+  ],
+  "findingClosures": [
+    {
+      "findingId": "GCR-0001.B00-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Candidate 22f9b46dd6772d2df615d3324cd1797f585385f8 derives reviewed and approved commits from immutable state/ledger history, requires three exact single-parent name/status deltas and exact Git blobs, and passes real-Git denials for hidden reviewed-state, approved-state, adoption-evidence, and substituted-parent commits."
+    },
+    {
+      "findingId": "GCR-0001.B00-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Candidate 22f9b46dd6772d2df615d3324cd1797f585385f8 replaces sequential unjournaled writes with a schema-bound write-ahead transaction, Windows write-through moves, explicit roll-forward recovery, reader transaction/split-state denials, and child-process os._exit tests at all seven persistence boundaries plus stale/concurrent/malformed cases."
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 identified two high-severity adoption risks: authority/path substitution in the three commits after the implementation candidate, and process-termination splits across two canonical records. R02 therefore derives every commit boundary from immutable review history, enforces exact single-parent name/status and Git-blob deltas, and introduces a small immutable write-ahead transaction whose presence denies all readers until explicit idempotent recovery reaches the exact approved successor pair. The selected matrix covers real Windows abrupt termination before/after publication and both replacements, stale/concurrent/malformed inputs, hidden/intermediate commits at every boundary, marker-deleted splits, legacy controller compatibility, current stopped authority, Python quality, planning integrity, and protected paths.",
+    "selectedChecks": [
+      "affected-control-suite-r02",
+      "governed-python-quality-r02",
+      "backlog-validation-r02",
+      "active-recovery-validation-r02",
+      "gcr-adverse-state-validation-r02",
+      "planning-review-integrity-r02",
+      "generated-backlog-views-r02",
+      "protected-product-reference-privacy-scope-r02",
+      "candidate-whitespace-integrity-r02"
+    ],
+    "deferredCoverage": [
+      "Independent GCR-0001.B00 R02 closure review is performed only after this immutable remediation submission is frozen.",
+      "GRR-0002.S01 packet review/approval/B01 and the original W1.A04 bootstrap retry remain separately gated.",
+      "CAP-02.S04.T03 recovery, slice review, complete W1 qualification, G1 approval, local main integration, and remote actions remain deferred to their existing gates."
+    ]
+  }
+}
