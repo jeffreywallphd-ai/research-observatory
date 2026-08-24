@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-control-recovery-request.v1.json",
+  "title": "Governance control-recovery request packet",
+  "type": "object",
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "documentType",
+    "controlRecoveryId",
+    "title",
+    "targetWave",
+    "status",
+    "executionState",
+    "classification",
+    "authorityChain",
+    "triggerEvidence",
+    "activationBoundary",
+    "generationTransition",
+    "bootstrapUnit",
+    "acceptanceCriteria",
+    "verificationObligations",
+    "rollback",
+    "alternatives",
+    "files",
+    "requiredApprovalStatement"
+  ],
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "canonicalPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[A-Za-z0-9._*/-]+$"
+    },
+    "nonEmptyStrings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "artifactReference": {
+      "type": "object",
+      "required": ["path", "sha256", "commit"],
+      "properties": {
+        "path": {"$ref": "#/$defs/canonicalPath"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "commit": {"$ref": "#/$defs/commit"}
+      },
+      "additionalProperties": false
+    },
+    "fileReference": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/canonicalPath"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "$schema": {"const": "./governance-control-recovery-request.schema.json"},
+    "schemaVersion": {"const": "1.0-control-recovery-proposal"},
+    "documentType": {"const": "governance-control-recovery-request-packet"},
+    "controlRecoveryId": {"type": "string", "pattern": "^GCR-[0-9]{4}$"},
+    "title": {"type": "string", "minLength": 1},
+    "targetWave": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
+    "status": {"const": "pending-human-approval"},
+    "executionState": {"const": "non-executable"},
+    "classification": {"const": "recovery-controller-generation-defect"},
+    "authorityChain": {
+      "type": "object",
+      "required": ["activeRecovery", "approvedRepairAmendment", "blockedBootstrap"],
+      "properties": {
+        "activeRecovery": {
+          "type": "object",
+          "required": ["requestId", "holdId", "packet", "approval", "bootstrapReview"],
+          "properties": {
+            "requestId": {"type": "string", "pattern": "^GRR-[0-9]{4}$"},
+            "holdId": {"type": "string", "pattern": "^HOLD-W(?:[0-9]|1[01])-GRR-[0-9]{4}$"},
+            "packet": {"$ref": "#/$defs/artifactReference"},
+            "approval": {"$ref": "#/$defs/artifactReference"},
+            "bootstrapReview": {"$ref": "#/$defs/artifactReference"}
+          },
+          "additionalProperties": false
+        },
+        "approvedRepairAmendment": {
+          "type": "object",
+          "required": ["changeRequestId", "amendmentId", "packet", "approval"],
+          "properties": {
+            "changeRequestId": {"type": "string", "pattern": "^ECR-[0-9]{4}$"},
+            "amendmentId": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
+            "packet": {"$ref": "#/$defs/artifactReference"},
+            "approval": {"$ref": "#/$defs/artifactReference"}
+          },
+          "additionalProperties": false
+        },
+        "blockedBootstrap": {
+          "type": "object",
+          "required": ["id", "candidateCommit", "evidencePath", "evidenceSha256"],
+          "properties": {
+            "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}\\.B00$"},
+            "candidateCommit": {"$ref": "#/$defs/commit"},
+            "evidencePath": {"$ref": "#/$defs/canonicalPath"},
+            "evidenceSha256": {"$ref": "#/$defs/sha256"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "triggerEvidence": {
+      "type": "object",
+      "required": ["discoveryCommit", "backlogSha256", "failedCommand", "diagnostic", "atomicNoMutation", "independentAudit"],
+      "properties": {
+        "discoveryCommit": {"$ref": "#/$defs/commit"},
+        "backlogSha256": {"$ref": "#/$defs/sha256"},
+        "failedCommand": {"type": "string", "minLength": 1},
+        "diagnostic": {"type": "string", "minLength": 1},
+        "atomicNoMutation": {"const": true},
+        "independentAudit": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "activationBoundary": {
+      "type": "object",
+      "required": ["controlRevision", "holdId", "holdStatus", "waveStatus", "waveScope", "taskId", "taskStatus", "amendmentId", "amendmentBacklogStatus", "releaseGate", "releaseGateStatus"],
+      "properties": {
+        "controlRevision": {"type": "integer", "minimum": 1},
+        "holdId": {"type": "string", "pattern": "^HOLD-W(?:[0-9]|1[01])-GRR-[0-9]{4}$"},
+        "holdStatus": {"const": "ACTIVE"},
+        "waveStatus": {"const": "PAUSED"},
+        "waveScope": {"enum": ["wave", "amendment-hold"]},
+        "taskId": {"type": "string", "pattern": "^CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}$"},
+        "taskStatus": {"const": "BLOCKED"},
+        "amendmentId": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"},
+        "amendmentBacklogStatus": {"const": "ABSENT"},
+        "releaseGate": {"type": "string", "pattern": "^G(?:[0-9]|1[01])$"},
+        "releaseGateStatus": {"const": "PENDING"}
+      },
+      "additionalProperties": false
+    },
+    "generationTransition": {
+      "type": "object",
+      "required": ["predecessorControlRevision", "nextControlRevision", "existingHoldPreserved", "newHoldCreated", "installationMode", "postBootstrapGate"],
+      "properties": {
+        "predecessorControlRevision": {"type": "integer", "minimum": 1},
+        "nextControlRevision": {"type": "integer", "minimum": 2},
+        "existingHoldPreserved": {"const": true},
+        "newHoldCreated": {"const": false},
+        "installationMode": {"const": "exact-packet-root-bootstrap"},
+        "postBootstrapGate": {"const": "independently-approved-GRR-0002.S01-B01"}
+      },
+      "additionalProperties": false
+    },
+    "bootstrapUnit": {
+      "type": "object",
+      "required": ["id", "kind", "exceptionReason", "authorizedPaths", "requiredOutcomes", "prohibitedOutcomes"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^GCR-[0-9]{4}\\.B00$"},
+        "kind": {"const": "one-time-recovery-controller-generation"},
+        "exceptionReason": {"type": "string", "minLength": 1},
+        "authorizedPaths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/canonicalPath"}
+        },
+        "requiredOutcomes": {"$ref": "#/$defs/nonEmptyStrings"},
+        "prohibitedOutcomes": {"$ref": "#/$defs/nonEmptyStrings"}
+      },
+      "additionalProperties": false
+    },
+    "acceptanceCriteria": {"$ref": "#/$defs/nonEmptyStrings"},
+    "verificationObligations": {"$ref": "#/$defs/nonEmptyStrings"},
+    "rollback": {"$ref": "#/$defs/nonEmptyStrings"},
+    "alternatives": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "disposition", "consequence"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "disposition": {"enum": ["recommended", "safe", "rejected"]},
+          "consequence": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "files": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/fileReference"}
+    },
+    "requiredApprovalStatement": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

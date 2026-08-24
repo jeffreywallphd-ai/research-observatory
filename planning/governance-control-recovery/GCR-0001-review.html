@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GCR-0001 review — generation-safe recovery controller</title>
+  <style>
+    :root { color-scheme: light; --ink:#172033; --muted:#536078; --line:#d9deea; --panel:#f7f9fc; --accent:#284b8f; --warn:#7a3e00; }
+    body { margin:0; font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:#fff; }
+    main { max-width:980px; margin:0 auto; padding:40px 28px 64px; }
+    h1,h2 { line-height:1.2; } h1 { font-size:2rem; } h2 { margin-top:2rem; }
+    code { background:#eef2f8; padding:.12rem .3rem; border-radius:4px; }
+    .status,.panel { border:1px solid var(--line); border-radius:10px; padding:18px 20px; background:var(--panel); }
+    .status { border-left:5px solid var(--warn); }
+    table { width:100%; border-collapse:collapse; margin:1rem 0; }
+    th,td { border:1px solid var(--line); padding:10px 12px; text-align:left; vertical-align:top; }
+    th { background:#eef2f8; }
+    a { color:var(--accent); } .muted { color:var(--muted); }
+  </style>
+</head>
+<body><main>
+  <p class="muted">Research Observatory · governance control recovery</p>
+  <h1>GCR-0001 — Restore a generation-safe recovery controller</h1>
+  <div class="status"><strong>Decision state:</strong> inert and non-executable. Independent packet review and exact-commit human approval are required before B00 implementation.</div>
+
+  <h2>Observed blocker</h2>
+  <p>The exact W1.A04 B00 submission failed atomically with <code>HOLD-W1-GRR-0001: post-bootstrap change-request identity is not consecutive</code>. The released-hold validator incorrectly reads later ECR identities. The prescribed GRR-0002.S01 installer is itself generation-locked to predecessor revision 4, while live control revision is 6, and it requires the blocked amendment to already exist.</p>
+
+  <h2>Current safe state</h2>
+  <table>
+    <tr><th>Boundary</th><th>State</th></tr>
+    <tr><td>W1</td><td><code>PAUSED</code>, ordinary execution denied</td></tr>
+    <tr><td>CAP-02.S04.T03</td><td><code>BLOCKED</code>, unchanged</td></tr>
+    <tr><td>HOLD-W1-GRR-0002</td><td>Sole <code>ACTIVE</code> hold; B00 independently approved</td></tr>
+    <tr><td>ECR-0003 / W1.A04</td><td>Packet approved externally; amendment absent from backlog because atomic append failed</td></tr>
+    <tr><td>Control revision</td><td>6; supplement installer accepts only predecessor 4</td></tr>
+  </table>
+
+  <h2>Recommended bounded repair</h2>
+  <div class="panel">
+    <ol>
+      <li>Keep the existing GRR-0002 hold exact and active; create no competing hold.</li>
+      <li>Authorize only <code>GCR-0001.B00</code> at one independently reviewed packet commit.</li>
+      <li>Advance control revision 6→7 with an append-only generation record and older-reader fail-closed behavior.</li>
+      <li>Make released-hold validation prefix-stable and supplement installation generation-neutral.</li>
+      <li>Add a versioned pre-append supplement target so GRR-0002.S01 can repair the exact approved W1.A04 bootstrap boundary without fabricated backlog state.</li>
+      <li>After independent B00 approval, require separate GRR-0002.S01 packet review and human approval before retrying W1.A04.</li>
+    </ol>
+  </div>
+
+  <h2>What approval does not authorize</h2>
+  <p>No W1.A04 append or materialization, T03 recovery, task execution, hold release, W1 resume, G1 approval, main merge, remote push, product/privacy/reference change, force, override, or review bypass.</p>
+
+  <h2>Decision alternatives</h2>
+  <table>
+    <tr><th>Alternative</th><th>Disposition</th><th>Consequence</th></tr>
+    <tr><td>Approve exact GCR-0001 packet</td><td>Recommended</td><td>Creates the minimum reviewed root bootstrap needed to restore the prescribed same-hold supplement lane.</td></tr>
+    <tr><td>Keep W1 stopped</td><td>Safe</td><td>No mutation occurs, but revision-6 recovery remains unable to progress.</td></tr>
+    <tr><td>Direct fix, B00 reopening, fake predecessor, or competing hold</td><td>Rejected</td><td>Would bypass or rewrite the existing authority chain.</td></tr>
+  </table>
+
+  <h2>Approval gate</h2>
+  <p>Approval is legally available only after independent review of the exact packet commit. The approval must name that commit and authorize only <code>GCR-0001.B00</code>. B00 still requires separate commit-bound evidence and independent control/security approval.</p>
+</main></body></html>
