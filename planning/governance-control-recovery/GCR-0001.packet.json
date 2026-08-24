@@ -20,12 +20,20 @@
     ],
     "approvalSchema": {
       "path": "planning/governance-control-recovery/governance-control-recovery-runtime.schema.json",
-      "sha256": "f495ba3c15eeaba9065912c9bcbbdb981b4fe0a49b48b4ed004ea570cf701082"
+      "sha256": "95cca23581a4bdbde0f74be44ad5b0224c0fee609b434a521b2b917c90bc70bc"
     },
     "approvalPath": "planning/governance-control-recovery/GCR-0001.approval.json",
+    "untrackedTriggerWitness": {
+      "path": "artifacts/evidence/W1.A04.B00.json",
+      "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+      "role": "atomic-failure-trigger-only",
+      "mustRemainUntrackedAndUnstaged": true,
+      "neverExecutionAuthority": true
+    },
     "approvalIntroduction": {
       "exclusiveCreate": true,
-      "cleanExactBranchHead": true,
+      "trackedCleanExactBranchHead": true,
+      "permittedUntracked": "exact-trigger-witness-only",
       "packetReviewApproved": true,
       "introductionCommitIsExecutionBase": true
     }
@@ -103,6 +111,18 @@
   "lifecycle": {
     "branch": "codex/w1-windows-local-runtime",
     "actor": "codex",
+    "workspaceInvariant": {
+      "triggerWitness": {
+        "path": "artifacts/evidence/W1.A04.B00.json",
+        "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+        "role": "atomic-failure-trigger-only",
+        "mustRemainUntrackedAndUnstaged": true,
+        "neverExecutionAuthority": true
+      },
+      "denyOtherUntracked": true,
+      "denyWitnessStagingOrMutation": true,
+      "appliesAtEveryTransition": true
+    },
     "canonicalPaths": {
       "controller": "tools/gcrctl.py",
       "state": "planning/governance-control-recovery/GCR-0001.B00.state.json",
@@ -113,12 +133,12 @@
     "submission": {
       "base": "approval-introduction-commit",
       "candidateAncestry": "strict-descendant",
-      "cleanBranchAndHead": true,
+      "trackedCleanBranchAndHead": true,
       "pathComparison": "approval-base-to-candidate-exact-allowlist",
       "staleWriter": "compare-and-swap",
       "atomicFailure": "byte-stable",
       "liveRevisionDuringReview": 6,
-      "untrackedException": "only-canonical-current-attempt-evidence"
+      "untrackedException": "exact-trigger-witness-plus-canonical-current-attempt-evidence"
     },
     "review": {
       "independent": true,
@@ -188,6 +208,7 @@
     ],
     "requiredOutcomes": [
       "The repository-owner governance-mismatch protocol is the one-time root authority: an APPROVED R02 packet review permits exclusive creation of the canonical exact-packet approval artifact, whose introduction commit is the only lawful GCR-0001.B00 execution base.",
+      "The exact untracked W1.A04 evidence path and SHA-256 remain an unstaged, non-authoritative atomic-failure witness at every GCR transition; approval permits only that witness, submit/resubmit additionally permit only the canonical current RNN evidence, and every extra path, staging, mutation, or authority use fails closed.",
       "An exact GCR approval and append-only B00 review history bind one implementation candidate to this packet, the sole active GRR-0002 hold, the revision-6 stopped boundary, and the authorized path/outcome inventory.",
       "Canonical GCR state, RNN evidence, RNN review, and adoption-evidence records preserve every submission and finding; adverse review requires a strict-descendant candidate, fresh evidence, and explicit closures.",
       "The control plane advances exactly from revision 6 to revision 7 with an immutable generation record; old revision-6 and earlier readers fail closed, and no existing hold, amendment, review, finding, evidence, checkpoint, or task history is rewritten.",
@@ -206,7 +227,7 @@
     ]
   },
   "acceptanceCriteria": [
-    "The GCR packet and exclusive-create approval artifact are exact-commit, independently reviewed, hash-bound, path-safe, and bootstrap-only; the approval introduction commit is the clean codex-branch execution base, and all GRR-0002, ECR-0003, W1, T03, and G1 trigger boundaries match current immutable state.",
+    "The GCR packet and exclusive-create approval artifact are exact-commit, independently reviewed, hash-bound, path-safe, and bootstrap-only; the approval introduction commit is the tracked-clean codex-branch execution base, the sole untracked trigger witness is exact and unstaged, and all GRR-0002, ECR-0003, W1, T03, and G1 trigger boundaries match current immutable state.",
     "Revision 7 records one append-only 6-to-7 generation transition under HOLD-W1-GRR-0002 and rejects missing, duplicated, reordered, rewritten, cross-hold, wrong-predecessor, non-increasing, or unsupported generations.",
     "Released GRR-0001 remains byte/history exact and validates before and after an in-memory W1.A04/ECR-0003 append; future amendments do not alter its historical consecutiveness decision.",
     "The v2 supplement controller can represent exact GRR-0002.S01/B01 from revision 7 while W1.A04 is absent, and v1 GRR-0001.S01 history remains valid without migration or fabrication.",
@@ -220,6 +241,7 @@
     "Run focused GCR, recoveryctl, taskctl workflow/schema, authority-chain, generated-view, review-page, and governed quality tests, including isolated real-Git revision-6-to-7 activation and old-reader denial.",
     "Reproduce the exact failed W1.A04 append before the fix, prove byte identity, then prove only the read-only post-B01 projection becomes legal after the independently approved B00 state.",
     "Probe wrong/released/competing hold, wrong predecessor/successor revision, missing or forged external W1.A04 authority, altered candidate/evidence, unsafe path, self-review, adverse review, stale/dirty/concurrent writer, and hidden-extra-path denials.",
+    "At approval, submit, review, remediation, and adoption, verify the canonical W1.A04 trigger witness remains untracked, unstaged, byte/hash exact, and non-authoritative; deny its absence, mutation, staging, authority use, every other untracked path, and more than the canonical current RNN evidence exception at submit/resubmit.",
     "Independently review the exact GCR packet before human approval and independently review the exact B00 candidate/evidence before any use of the revision-7 supplement lane.",
     "Defer GRR-0002.S01 approval/B01, W1.A04 submission and task, T03 recovery/review, CAP-02.S04 review, full W1 qualification, G1, local main, and remote actions to their existing later gates."
   ],
@@ -253,19 +275,19 @@
   "files": [
     {
       "path": "planning/governance-control-recovery/governance-control-recovery-request.schema.json",
-      "sha256": "66a4caa2929f54d5a630a18eae665441132ef3356b7a76cd0afcdb038087016e"
+      "sha256": "dd966ffa1d74d8c808ce941ee1991d700fa4dbe0eeb0e85bf9fcbfee4fd69dee"
     },
     {
       "path": "planning/governance-control-recovery/governance-control-recovery-runtime.schema.json",
-      "sha256": "f495ba3c15eeaba9065912c9bcbbdb981b4fe0a49b48b4ed004ea570cf701082"
+      "sha256": "95cca23581a4bdbde0f74be44ad5b0224c0fee609b434a521b2b917c90bc70bc"
     },
     {
       "path": "planning/governance-control-recovery/GCR-0001.md",
-      "sha256": "7738cda708fcc670faac965591adbcf85b820580a7e52d63c87c3338070752d1"
+      "sha256": "f437a5990d854b6f3cabdbdfca08fe8844cde8dbb2f3a1327a9f7400cfc86719"
     },
     {
       "path": "planning/governance-control-recovery/GCR-0001-review.html",
-      "sha256": "8f35d12a8fd29de22ada6b10a5df5cd31c05bb2fc78332af14c114f8c95093dd"
+      "sha256": "0877a3280007ff5b74a1f3940fd07876d67f9f36e9a3b8db390e0f2bfa8ba451"
     }
   ],
   "requiredApprovalStatement": "Approve GCR-0001 at packet commit <40-character SHA>, authorizing only GCR-0001.B00 and its hash-bound governance/controller/schema/test scope under the existing HOLD-W1-GRR-0002. Keep W1 paused, CAP-02.S04.T03 blocked, W1.A04 absent, and G1 pending through independent B00 approval; require separately reviewed and exactly approved GRR-0002.S01/B01 before retrying the original W1.A04 bootstrap submission."
