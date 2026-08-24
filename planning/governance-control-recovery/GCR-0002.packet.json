@@ -16,11 +16,16 @@
         "path": "planning/governance-control-recovery/GCR-0002.review-R01.json",
         "sha256": "85c28dcea84b56fad6080b95394788e42583079dce24b6f2e5b9fe50d151b621",
         "commit": "d82a640c8779e6a243edc603fd6a5e686c45622b"
+      },
+      {
+        "path": "planning/governance-control-recovery/GCR-0002.review-R02.json",
+        "sha256": "2ca995dceb96f4378b9158743a0a5afa3ed586906b7713b3766e139e3c558f23",
+        "commit": "700cdf5aff4dd2792025edab3051aaf981c80963"
       }
     ],
     "approvalSchema": {
       "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v2.schema.json",
-      "sha256": "9a22864f4156a4c12c67bf437230a1ac11041f55cb5dbd5bc4c9912f78dafee4"
+      "sha256": "702296d9ccd6ee26fa1525b95652ff5a481822584ced73dec359e4a3c0bc7331"
     },
     "approvalPath": "planning/governance-control-recovery/GCR-0002.approval.json",
     "authorityManifest": {
@@ -213,7 +218,9 @@
       "Use a new exact gcr2ctl lifecycle rather than reopening or silently generalizing the adopted one-time GCR-0001 controller; every adverse attempt, finding, closure, evidence record, and state remains append-only.",
       "Focused real-Git tests cover v3 authority, exact S02/B02 sequence, 8-to-9 adoption, older-reader denial, wrong or adverse authority, stale/forked/wrong-hold inputs, historic-retry denial, witness denials, atomic no-write, and protected-history preservation.",
       "Adoption uses the canonical GCR-0002 write-ahead manifest, exclusive lock, durable successor files, raw and canonical-content CAS bindings, Windows replace-existing/write-through publication, required file and directory flushes, and cleanup only after the exact successor pair validates.",
+      "Transaction and runtime schemas bind each predecessor and successor backlog hash only to planning/backlog.yaml and each state hash only to the canonical GCR-0002 state path; swapped, duplicated, crossed, omitted, substituted, or redirected record bindings fail validation before any hash is trusted.",
       "Every current or supported older reader fails closed on a prepared transaction, partial publication, missing marker, substitution, stale authority, dirty workspace, or split backlog/state pair; idempotent explicit recover and automatic mutation preflight deterministically restore the exact predecessor pair or complete the exact successor pair.",
+      "R03 evidence includes root-cause analysis: R01 remediation reused one generic content-binding definition and the runtime envelope used generic transaction subobjects, allowing path/hash association to escape schema enforcement; distinct constant bindings and one strict runtime shape prevent recurrence.",
       "Independent B00 control/security review closes every blocking finding before adoption; S02 still requires a separate independent packet review and exact-commit human approval."
     ],
     "prohibitedOutcomes": [
@@ -239,6 +246,7 @@
     "Run focused gcr2ctl, recoveryctl, taskctl schema, authority, quality, and isolated real-Git lifecycle tests selected by the shared control-plane and atomic-persistence risk surface.",
     "Prove revision 8 remains readable before adoption, only approved S02 installs revision 9 afterward, revision-8 readers deny revision 9, and every wrong/adverse/stale/forked/concurrent path leaves backlog and GCR state byte-identical.",
     "Run real child processes with forced termination after every transaction preparation, durable-write, marker, replace-existing, validation, directory-flush, and cleanup boundary; verify all readers fail closed until idempotent recovery produces one exact pair and removes transaction artifacts durably.",
+    "Probe swapped, duplicated, crossed, omitted, substituted, redirected, and extra predecessor/successor backlog/state bindings against both transaction and runtime schemas and prove strict validation occurs before authority or CAS hashes are trusted.",
     "Re-run the exact historic W1.A04 command before and after GCR-0002 and prove it remains denied without mutation; defer the lawful snapshot-based exception entirely to separately approved B02.",
     "At every GCR transition verify the trigger is exact, untracked, unstaged, nonsymlinked, non-authoritative, and the only permitted untracked path except the canonical current RNN evidence at submission/resubmission.",
     "Independently review the exact packet before human approval and independently review the exact B00 candidate/evidence before adoption."
@@ -259,11 +267,11 @@
   ],
   "files": [
     {"path": "planning/governance-control-recovery/governance-control-recovery-request.v2.schema.json", "sha256": "497b12464fb362c47eaa868408ca02be00303bc898872e30f55b6cc7de9e7766"},
-    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v2.schema.json", "sha256": "9a22864f4156a4c12c67bf437230a1ac11041f55cb5dbd5bc4c9912f78dafee4"},
-    {"path": "planning/governance-control-recovery/governance-control-recovery-transaction.v2.schema.json", "sha256": "16fd77bf42483c868058d0a44c572907e98838e7169ebe0b11bf916517e12b5e"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v2.schema.json", "sha256": "702296d9ccd6ee26fa1525b95652ff5a481822584ced73dec359e4a3c0bc7331"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-transaction.v2.schema.json", "sha256": "ebe90b7dbb3ba798d6d57198e111912692f9a854eb2356cd4039493b251d7a66"},
     {"path": "planning/governance-control-recovery/GCR-0002.authority.json", "sha256": "7b75fd3ff9ab403b850708bbb297124ff766462b8b1949395943a7fc67c2d221"},
-    {"path": "planning/governance-control-recovery/GCR-0002.md", "sha256": "be2d8d925d1d4a61e46db45c695ea0de833cd879c8b79bd0884b1f0e649045ab"},
-    {"path": "planning/governance-control-recovery/GCR-0002-review.html", "sha256": "d22c8020e9677e972445acb41567371a4ceeeefe136cf24ec2734d28defb228b"}
+    {"path": "planning/governance-control-recovery/GCR-0002.md", "sha256": "e6a255696c70972bc9271696c7ad75665a0877d5495501be70f13d9d221255c6"},
+    {"path": "planning/governance-control-recovery/GCR-0002-review.html", "sha256": "73949fcebb7120852d67a8fa7242412a0e4bbd4bcebbef5c75d0f1703d93c25e"}
   ],
   "requiredApprovalStatement": "Approve GCR-0002 at packet commit <40-character SHA>, authorizing only GCR-0002.B00 and its hash-bound revision-8-to-9 reader/controller/schema/test scope under the existing HOLD-W1-GRR-0002. Keep W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, G1 pending, and the trigger witness untracked, unstaged, and non-authoritative; require separately reviewed and exactly approved GRR-0002.S02/B02 before any historic W1.A04 retry."
 }
