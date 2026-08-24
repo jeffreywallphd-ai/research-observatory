@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-recovery-authority-manifest",
+  "controlRecoveryId": "GCR-0002",
+  "targetWave": "W1",
+  "activeHold": {
+    "id": "HOLD-W1-GRR-0002",
+    "status": "ACTIVE",
+    "recoveryPacket": {
+      "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+      "sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
+      "commit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e"
+    },
+    "approval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.json",
+      "sha256": "07f2e2da15d74c6a72e97e62a5f3d5a540f39898eb958eff7c92f42b80d6d893",
+      "commit": "0b450222ff569db356b84e413941aa2af585a64e"
+    },
+    "bootstrapReview": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B00.review-R01.json",
+      "sha256": "9a5efe9d7a9feabeb0a11829df4954a74f9d7a6d2d5089af92f4bfc337ccdfe2",
+      "commit": "5bc0b69130caf3f7e8ab96667687b4605d172279"
+    }
+  },
+  "installedControlGeneration": {
+    "id": "GCR-0001",
+    "approval": {
+      "path": "planning/governance-control-recovery/GCR-0001.approval.json",
+      "sha256": "2aece9c5ae5677c07ec860765de40d1e848f478b96e614ccc8f9bdb349329455",
+      "commit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc"
+    },
+    "bootstrapReview": {
+      "path": "planning/governance-control-recovery/GCR-0001.B00.review-R03.json",
+      "sha256": "28ccae497ea5000a5813c1a1ae93eb908c74060d6757628eb659a71aac3e5868",
+      "commit": "db9ec27daa4aa9bc05dbd7cec366c533df0e07e9"
+    },
+    "adoptedState": {
+      "path": "planning/governance-control-recovery/GCR-0001.B00.state.json",
+      "sha256": "60d52346262177dfb249fb6c7a7dd3ce9e3686a0d8ea378a1a2baf7f95c93063",
+      "commit": "80759711525e717b02bfc692210fec97356bf836"
+    }
+  },
+  "latestRecoverySupplement": {
+    "id": "GRR-0002.S01",
+    "bootstrapId": "GRR-0002.B01",
+    "packet": {
+      "path": "planning/governance-recovery-requests/GRR-0002.S01.packet.json",
+      "sha256": "bcb3b8fe42b8a091b22794a4c560b3d76989ebef0ee982a9d529a4a67cb1ee62",
+      "commit": "e4be6a4beaffd26f0f9011e7fe8b2ac8baabc3f2"
+    },
+    "approval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.S01.json",
+      "sha256": "792796d234a8d208d7e99acce32e575e3891b21b347b716c11be6c97a9d30f20",
+      "commit": "68e6df37b0f20dc5e89bdbfd708b24dfcd226240"
+    },
+    "bootstrapReview": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B01.review-R03.json",
+      "sha256": "7c2a547ac369cdfb63ccae1dd2a094ed2b3c8064a46a5e249a123a0633d55d1f",
+      "commit": "c80efb865a37b78df6f4a59b9d14c32c7b840abe"
+    },
+    "candidateCommit": "0b9f4a63e35dbd6163239b39f1ec5b9aa03156bf",
+    "reviewedStateCommit": "bacc5f9a6ff840c01749820e157856aaced2626e",
+    "approvedProjectionCommit": "c80efb865a37b78df6f4a59b9d14c32c7b840abe"
+  },
+  "approvedRepairAmendment": {
+    "changeRequestId": "ECR-0003",
+    "amendmentId": "W1.A04",
+    "packet": {
+      "path": "planning/enabler-change-requests/ECR-0003.packet.json",
+      "sha256": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+      "commit": "77896d26ddac0569e286fe8481c0676408c716b1"
+    },
+    "approval": {
+      "path": "planning/wave-amendment-approvals/W1.A04.json",
+      "sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+      "commit": "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+    },
+    "candidateCommit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6"
+  },
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false,
+    "mayBecomeSubmittedEvidence": false
+  },
+  "stoppedBoundary": {
+    "backlogSha256": "0b3d22f30d3a024e37b6c7b9b07d48f3a0b96dd2fc6c1968809a21d35a2977e7",
+    "controlRevision": 8,
+    "minimumToolRevision": 8,
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "amendmentBacklogStatus": "ABSENT",
+    "blockedTaskId": "CAP-02.S04.T03",
+    "blockedTaskStatus": "BLOCKED",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  }
+}
