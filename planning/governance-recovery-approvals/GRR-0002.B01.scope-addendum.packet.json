@@ -1,0 +1,143 @@
+{
+  "$schema": "./GRR-0002.B01.scope-addendum.schema.json",
+  "schemaVersion": "1.0-b01-scope-addendum-proposal",
+  "documentType": "governance-recovery-supplement-bootstrap-scope-addendum",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S01",
+  "bootstrapUnit": "GRR-0002.B01",
+  "title": "Authorize only deterministic generated outputs required by B01 acceptance criterion 7",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "branch": "codex/w1-windows-local-runtime",
+  "authority": {
+    "supplementPacket": {
+      "path": "planning/governance-recovery-requests/GRR-0002.S01.packet.json",
+      "sha256": "bcb3b8fe42b8a091b22794a4c560b3d76989ebef0ee982a9d529a4a67cb1ee62",
+      "commit": "e4be6a4beaffd26f0f9011e7fe8b2ac8baabc3f2"
+    },
+    "supplementApproval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.S01.json",
+      "sha256": "792796d234a8d208d7e99acce32e575e3891b21b347b716c11be6c97a9d30f20",
+      "introductionCommit": "68e6df37b0f20dc5e89bdbfd708b24dfcd226240"
+    },
+    "installedCandidate": {
+      "commit": "2dcc81d66d0148bee2887fa48fa2f4148978635d",
+      "backlogPath": "planning/backlog.yaml",
+      "backlogSha256": "d80ee7000fbb115bbc7a0e10421c49185fd4911e4a3e5216e0958ac67759a713"
+    },
+    "triggerWitness": {
+      "path": "artifacts/evidence/W1.A04.B00.json",
+      "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+      "untracked": true,
+      "unstaged": true,
+      "executionAuthority": false
+    }
+  },
+  "stoppedBoundary": {
+    "controlRevision": 8,
+    "bootstrapStatus": "IN_PROGRESS",
+    "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "amendmentStatus": "ABSENT",
+    "blockedTaskStatus": "BLOCKED",
+    "releaseGateStatus": "PENDING"
+  },
+  "demonstratedMismatch": {
+    "backlogViewsCommand": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+    "backlogViewsDiagnostic": "STALE generated backlog view: docs\\planning-implementation-plan.md; STALE generated backlog view: planning\\status-summary.md",
+    "reviewSiteCommand": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo . --report artifacts/tmp/GRR-0002.B01-plan-review-site.json",
+    "reviewSiteDiagnostic": "GRR-0002: recovery supplement manifest differs from the append-only hold ledger",
+    "atomicNoMutation": true,
+    "approvalCriterion": 7
+  },
+  "scopeExtension": {
+    "deterministicGeneratedPaths": [
+      "docs/planning-implementation-plan.md",
+      "planning/status-summary.md",
+      "planning/review-site/**"
+    ],
+    "enforcementPaths": [
+      "tests/foundation/test_recoveryctl.py",
+      "tools/recoveryctl.py"
+    ],
+    "generatorCommands": [
+      ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo .",
+      ".venv\\Scripts\\python.exe tools\\plan_review_site.py --repo ."
+    ],
+    "exactSupplementOnly": true,
+    "strictDescendantRequired": true
+  },
+  "requiredOutcomes": [
+    "Add only docs/planning-implementation-plan.md, planning/status-summary.md, and planning/review-site/** to the exact GRR-0002.S01/B01 evidence scope, leaving the approved S01 packet and all other authorized paths unchanged.",
+    "Require an immutable exact packet, independent review, exact human approval, current installed-candidate ancestry, and unchanged witness before recoveryctl recognizes the extension.",
+    "Regenerate the authorized outputs only through the repository generators and require backlog-view and review-site checks to pass before first B01 submission.",
+    "Keep B01 IN_PROGRESS and unapproved until a strict-descendant candidate, criterion-linked evidence, and independent B01 review satisfy the original S01 packet.",
+    "Preserve W1 PAUSED at wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, ACTIVE HOLD-W1-GRR-0002, PENDING G1, and all product/reference/predecessor authority."
+  ],
+  "acceptanceCriteria": [
+    "The addendum schema, packet, review page, declared hashes, approved S01 packet/approval, installed candidate, backlog bytes, witness, branch, and stopped boundary validate exactly at one immutable packet commit.",
+    "Independent packet review confirms the scope omission is reproducible, B01 evidence is otherwise un-submittable, and the three deterministic generated path families are the complete minimum extension.",
+    "Recoveryctl recognizes the extension only when its exact approval is independently reviewed, human-approved, immutable, ancestral, hash-bound, and tied to GRR-0002.S01/B01 candidate 2dcc81d66d0148bee2887fa48fa2f4148978635d.",
+    "Missing, altered, stale, forked, self-reviewed, wrong-candidate, wrong-path, extra-path, witness-deviating, or unapproved addendum authority is rejected without expanding scope or mutating state.",
+    "A strict-descendant candidate changes only the original B01 paths plus the three generated path families and exact enforcement/test paths, and both repository generators are deterministic and clean on repeat.",
+    "The first B01 submission maps every original S01 required outcome and acceptance criterion to truthful evidence, contains only unique passing checks and no unverified item, and remains subject to independent B01 review.",
+    "The addendum grants no B01 approval, W1.A04 append or bootstrap submission, amendment materialization, task claim, T03 recovery, hold release, W1 resume, G1 approval, main integration, push, or product/reference change."
+  ],
+  "prohibitedOutcomes": [
+    "No edit, replacement, reopening, or reinterpretation of the approved GRR-0002.S01 packet, approval, packet review, GRR-0002.B00, GCR-0001, ECR-0003, W1.A04 approval, or prior history.",
+    "No wildcard beyond planning/review-site/**, no arbitrary generated path, no product/runtime/privacy/reference path, and no weakening of existing changed-path enforcement.",
+    "No supplement submission or review before the addendum is independently reviewed, exactly human-approved, enforced, implemented in a strict descendant, and all original checks pass.",
+    "No W1.A04 append, task materialization or execution, T03 recovery, hold release, Wave resume, gate approval, merge, remote action, force, override, or bypass."
+  ],
+  "verificationObligations": [
+    "Validate the one-off Draft 2020-12 schema, packet, file hashes, authority commits/blobs/ancestry, current raw backlog hash, witness, and stopped boundary.",
+    "Reproduce both failed generated-artifact checks byte-stably and independently enumerate the generator delta in a disposable exact-candidate clone.",
+    "Add focused real-Git tests for exact approved addendum loading, the minimal scope union, strict-descendant requirement, and every missing/altered/stale/forked/self-reviewed/wrong-path/extra-path denial.",
+    "Regenerate backlog views and the planning review site, rerun each generator to prove no diff, and pass backlog, supplement, GRR, GCR, ECR, quality, scope, and Git-hygiene checks.",
+    "Obtain independent exact-commit review of this inert addendum before human approval and independent commit-bound B01 review after implementation and first submission."
+  ],
+  "rollback": [
+    "Before addendum approval, retain the inert files and exact IN_PROGRESS B01 stopped state; do not generate or commit out-of-scope outputs.",
+    "An adverse addendum packet review remains append-only and requires a strict-descendant inert packet with explicit finding closures before any approval.",
+    "If exact addendum authority cannot be represented and enforced within the already-approved B01 packet/control/test paths, stop and escalate to a new governance-control recovery packet.",
+    "Never delete or rewrite the installed B01 transition, witness, prior packet, approval, evidence, finding, review, backlog history, or Git object."
+  ],
+  "alternatives": [
+    {
+      "id": "A",
+      "title": "Approve the exact deterministic-output addendum",
+      "disposition": "recommended",
+      "consequence": "Closes only the demonstrated scope omission and restores truthful first B01 submission."
+    },
+    {
+      "id": "B",
+      "title": "Keep B01 and W1 stopped",
+      "disposition": "safe",
+      "consequence": "Preserves all authority but B01 cannot be submitted and W1 cannot progress."
+    },
+    {
+      "id": "C",
+      "title": "Escalate to governance-control recovery",
+      "disposition": "fallback",
+      "consequence": "Required only if exact addendum enforcement proves unrepresentable within current authorized paths."
+    },
+    {
+      "id": "D",
+      "title": "Commit generated outputs without authority",
+      "disposition": "rejected",
+      "consequence": "Would bypass the approved B01 changed-path contract and invalidate evidence."
+    }
+  ],
+  "files": [
+    {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum.schema.json",
+      "sha256": "c89434d681840c2da16f65c0d9c2d2e7f63e79c9870f12d6492fda5b914a15c1"
+    },
+    {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum-review.html",
+      "sha256": "3694031da7b4234c7cc310933f8dba84f77d5a9c6e2d45b2179ceccd4bd174a2"
+    }
+  ],
+  "requiredApprovalStatement": "Approve the GRR-0002.B01 deterministic-output scope addendum at packet commit <40-character SHA>, authorizing only exact hash-bound enforcement and deterministic updates to docs/planning-implementation-plan.md, planning/status-summary.md, and planning/review-site/** for the strict-descendant GRR-0002.S01/B01 candidate. Keep B01 unapproved, W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, HOLD-W1-GRR-0002 active, and G1 pending through independent B01 review."
+}
