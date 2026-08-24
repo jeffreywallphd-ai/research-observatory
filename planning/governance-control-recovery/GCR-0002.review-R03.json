@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "2.0-control-recovery-review",
+  "documentType": "governance-control-recovery-packet-review",
+  "controlRecoveryId": "GCR-0002",
+  "attemptId": "R03",
+  "candidateCommit": "26003f7671e164327e8b1b6066bc82fbe8afed67",
+  "packetSha256": "590f5c3888cb9b65b8a7c2ac3f856f7d7a63e6804daf24b59ebc8a8d78155e5c",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "independent-control-security-reviewer",
+  "result": "approved",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GCR-0002-R01-F01",
+      "disposition": "fixed",
+      "evidence": "The R03 packet preserves and completes the interruption-safe two-record adoption contract introduced in R02: canonical GCR-0002 manifest, lock, backlog-next, and state-next paths; raw and canonical predecessor/successor CAS; exact hold, witness, authority, and evidence bindings; Windows replace-existing/write-through publication with successor, manifest, published-file, and parent-directory flushes; explicit idempotent recovery plus automatic mutation preflight; fail-closed prepared, partial, missing-marker, substituted, stale, dirty, and split states; real child-process abrupt-boundary tests; cleanup only after exact-pair validation; and direct-child exact two-path finalization. The complete transaction shape is now enforced by both the standalone and runtime-v2 schemas, and no residual blocking part of R01-F01 remains."
+    },
+    {
+      "findingId": "GCR-0002-R02-F01",
+      "disposition": "fixed",
+      "evidence": "At exact candidate 26003f7671e164327e8b1b6066bc82fbe8afed67, governance-control-recovery-transaction.v2.schema.json defines distinct backlogBinding and stateBinding objects with const canonical paths, and governance-control-recovery-runtime.v2.schema.json repeats the same strict nested transaction shape. A valid synthesized transaction produced zero errors under both schemas; swapped, duplicated, crossed, omitted, substituted, redirected, and extra nested bindings were rejected by both. Packet, proposal, and review page require strict schema validation before authority or CAS hashes are trusted and bind focused controller denials to the future B00 evidence."
+    }
+  ],
+  "verified": [
+    "The reviewed candidate is exactly 26003f7671e164327e8b1b6066bc82fbe8afed67 on codex/w1-windows-local-runtime with direct parent 700cdf5aff4dd2792025edab3051aaf981c80963. The parent is the R02 ledger-introduction commit, is a strict descendant of R01, and the R03 delta is exactly five modified inert paths: proposal, packet, runtime-v2 schema, transaction-v2 schema, and static review page.",
+    "The append-only R01 and R02 ledgers remain byte-identical to their Git blobs and declared hashes: R01 SHA-256 85c28dcea84b56fad6080b95394788e42583079dce24b6f2e5b9fe50d151b621 at d82a640c8779e6a243edc603fd6a5e686c45622b, and R02 SHA-256 2ca995dceb96f4378b9158743a0a5afa3ed586906b7713b3766e139e3c558f23 at 700cdf5aff4dd2792025edab3051aaf981c80963. The packet binds both records exactly.",
+    "The packet SHA-256 is exactly 590f5c3888cb9b65b8a7c2ac3f856f7d7a63e6804daf24b59ebc8a8d78155e5c. Packet, R01, and R02 validate with zero Draft 2020-12 errors; the request-v2, runtime-v2, and transaction-v2 schemas pass metaschema validation; and all 13 unique packet-declared path/hash bindings match current bytes.",
+    "The R03 root-cause statement correctly identifies reuse of a generic content binding and generic runtime transaction subobjects as the R01/R02 escape. Distinct const path bindings and one complete strict runtime transaction shape address that cause without altering controller, backlog, canonical state, approval, GRR, supplement, amendment, task, gate, generated view, or trigger bytes.",
+    "Focused adversarial validation proved one valid transaction is accepted by both schemas and each swapped, duplicated, crossed, omitted, substituted, redirected, and extra backlog/state binding is rejected by both. The packet explicitly requires controller validation against the strict schema before any authority or raw/canonical CAS hash is trusted.",
+    "The prior WAL, durability, recovery, and abrupt-boundary requirements remain decision-complete: exclusive locking; durable successors and prepared manifest; replace-existing/write-through operations; file and directory flushes; automatic and explicit idempotent recovery; exact predecessor-or-successor terminal pairs only; reader denial for every partial or dirty state; cleanup after validation only; real child-process termination boundaries; and exact two-record finalization.",
+    "The GCR-0002 authority remains bootstrap-only. It grants no S02 installation or approval, B02 work, historical-candidate exception, W1.A04 append or materialization, task action, T03 recovery, hold release, W1 resume, G1 approval, main integration, remote push, or trigger authority. S02 remains a separate independent-review and exact-human-approval gate.",
+    "Affected checks passed: 22 tests in tests.foundation.test_taskctl_schema in 35.273 seconds; deterministic backlog views; the generated planning review site with 19 capabilities, 111 slices, and 150 pages; approved GRR-0002 and GRR-0002.S01 validation; adopted GCR-0001 validation; Python quality for 121 governed files; exact Git ancestry, five-path scope, whitespace hygiene, schema validation, hash bindings, and adversarial binding probes.",
+    "The stopped boundary remains intact: HOLD-W1-GRR-0002 is ACTIVE, GRR-0002.B00 is APPROVED, W1.A04 is absent, post-bootstrap execution and ordinary Wave resume authority remain false, and artifacts/evidence/W1.A04.B00.json remains the sole untracked/unstaged non-authoritative witness with exact SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. No canonical mutation or execution action occurred during review."
+  ],
+  "approvalAvailable": true
+}
