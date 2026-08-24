@@ -1,0 +1,43 @@
+{
+  "$schema": "./GRR-0002.B01.scope-addendum.schema.json",
+  "schemaVersion": "1.0-b01-scope-addendum-approval",
+  "documentType": "governance-recovery-supplement-bootstrap-scope-addendum-approval",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S01",
+  "bootstrapUnit": "GRR-0002.B01",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-24T11:35:32.6859980Z",
+  "decision": "Approve the GRR-0002.B01 deterministic-output scope addendum at packet commit 0dbc0ac113ebff139ce0e90a38757586b6294327, authorizing only exact hash-bound enforcement and deterministic updates to docs/planning-implementation-plan.md, planning/status-summary.md, and planning/review-site/** for the strict-descendant GRR-0002.S01/B01 candidate. Keep B01 unapproved, W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, HOLD-W1-GRR-0002 active, and G1 pending through independent B01 review.",
+  "packet": {
+    "path": "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum.packet.json",
+    "sha256": "9854940c02b9b07fac4c60e3636f01bc64b9604068e220a1a83ec7175bb3bc09",
+    "commit": "0dbc0ac113ebff139ce0e90a38757586b6294327",
+    "schemaPath": "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum.schema.json",
+    "schemaSha256": "c89434d681840c2da16f65c0d9c2d2e7f63e79c9870f12d6492fda5b914a15c1",
+    "reviewPath": "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum-review.html",
+    "reviewSha256": "3694031da7b4234c7cc310933f8dba84f77d5a9c6e2d45b2179ceccd4bd174a2"
+  },
+  "independentReview": {
+    "reviewer": "independent-control-security-reviewer",
+    "attemptId": "R01",
+    "candidateCommit": "0dbc0ac113ebff139ce0e90a38757586b6294327",
+    "packetSha256": "9854940c02b9b07fac4c60e3636f01bc64b9604068e220a1a83ec7175bb3bc09",
+    "result": "APPROVED",
+    "openFindingIds": [],
+    "ledger": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum.review-R01.json",
+      "sha256": "d172f21068de5d6dd7dd33a3b2c211fb5c31c2603c842dfc9af0e4577519d54a",
+      "commit": "953604b3298d9edf896d128526c7f2ca635432bd"
+    }
+  },
+  "executionAuthority": {
+    "scopeExtensionOnly": true,
+    "b01Submission": false,
+    "amendmentAppend": false,
+    "taskExecution": false,
+    "waveResume": false,
+    "holdRelease": false,
+    "gateApproval": false
+  }
+}
