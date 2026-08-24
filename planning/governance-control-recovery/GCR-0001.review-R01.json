@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0-control-recovery-review",
+  "documentType": "governance-control-recovery-packet-review",
+  "controlRecoveryId": "GCR-0001",
+  "attemptId": "R01",
+  "candidateCommit": "40a533fc53364688bc73dc6c9f8b212b12e13f32",
+  "packetSha256": "d173605acea549225ecbfd1f282acb9e6e1d35b59879f4a44cd8f33c2bd752bf",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "gcr1-packet-reviewer",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "GCR-0001-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 1,
+      "title": "The root bootstrap has no non-circular approval-to-activation state machine",
+      "reproduction": "At exact commit 40a533fc53364688bc73dc6c9f8b212b12e13f32, `git ls-tree -r 40a533fc53364688bc73dc6c9f8b212b12e13f32 planning/governance-control-recovery` contains only the proposal, packet, static HTML, and request-packet schema. Current AGENTS.md, docs/governance/repository-governance.md, docs/governance/delivery-control-model.md, and planning/README.md define ECR, GRR, and same-hold supplements but no GCR authority or transition. No `tools/gcrctl.py`, canonical GCR approval schema/path, B00 evidence schema/path, B00 review schema/path, start/submit/review/resubmit/adopt command, or immutable attempt/closure projection exists. GCR-0001.md execution steps 3-5 therefore jump from human packet approval to direct implementation and later append-only review without deciding how that implementation is lawfully started, how exact approval and evidence are persisted, how an adverse candidate is preserved and remediated, or whether revision 7 becomes authoritative before or only after independent B00 approval. The packet proposes creating those controls inside the bootstrap they are supposed to govern, so executing it after approval would require inventing an unapproved direct-edit or activation procedure.",
+      "requiredRemediation": "Create a strict-descendant inert packet revision that freezes one minimal, non-circular root transition. It must (1) name the existing repository-owner/mismatch-protocol authority for this one-time exception and define the canonical exact-commit GCR approval artifact and schema; (2) define the exact approval-introduction commit, clean codex-branch base, permitted candidate ancestry, changed-path comparison, stale-writer/atomic-save boundary, and actor rules; (3) define canonical criterion-evidence and independent severity-ranked review ledgers, immutable RNN attempts, reviewed-state binding, blocking-finding denial, and strict-descendant adverse remediation with explicit closures; and (4) keep the live control plane at revision 6 until an independently APPROVED B00 candidate is bound, then permit exactly one atomic 6-to-7 adoption that appends the generation record and activates older-reader denial. Bind these mechanics in the proposal, packet/schema, and review page, enumerate the needed controller/artifact paths rather than leaving their identities to implementation, preserve this R01 ledger append-only, and request bounded R02 review. Do not implement GCR-0001.B00, write an approval record, change backlog/controller state, prepare GRR-0002.S01, or retry W1.A04 while remediating."
+    }
+  ],
+  "closures": [],
+  "verified": [
+    "The exact candidate is 40a533fc53364688bc73dc6c9f8b212b12e13f32 on codex/w1-windows-local-runtime. Its parent-to-candidate delta adds exactly four inert files under planning/governance-control-recovery and changes no controller, backlog, Wave, task, gate, product, reference, approval, review, or predecessor authority.",
+    "The exact packet SHA-256 is d173605acea549225ecbfd1f282acb9e6e1d35b59879f4a44cd8f33c2bd752bf. Draft 2020-12 schema validation reports zero errors. The schema, proposal, and static-review SHA-256 values match the packet and the exact candidate Git blobs.",
+    "Every GRR-0002, GRR-0002 approval, GRR-0002.B00 R01 review, ECR-0003 packet, and W1.A04 approval path/hash/commit binding matches current bytes and the exact bound Git blob. All referenced commits exist, are ancestral to the candidate, and preserve their immutable introduction history.",
+    "The live backlog SHA-256 is f3ebfba07cb6ccd779942ea8f988b0ceea6fe16cd18ca8f7a65775915da50139 and matches triggerEvidence. The live control plane is revision/minimum 6; HOLD-W1-GRR-0002 is the sole ACTIVE hold with independently APPROVED B00; W1 is PAUSED with wave scope; CAP-02.S04.T03 is BLOCKED with no recovery_control; W1.A04 is absent; and G1 is PENDING.",
+    "Canonical backlog validation passes. GRR-0002 passes approved validation and ECR-0003 passes approved history-bound validation at the candidate.",
+    "The observed prefix defect is reproducible without writes: baseline recovery_hold_errors returns no error, while an in-memory append containing only W1.A04/ECR-0003 returns `HOLD-W1-GRR-0001: post-bootstrap change-request identity is not consecutive`. The released hold incorrectly includes the later ECR instead of validating the historical prefix ending at W1.A03.",
+    "The supplement deadlock is exact: current recoveryctl supplement-start requires control revision and minimum revision 4, records predecessor revision 4, and sets both to CONTROL_TOOL_REVISION 6; the live state is already revision 6. Its v1 activation-boundary validator also requires the blocked W1.A04/bootstrap projection to exist.",
+    "The selected technical outcomes are feasible and appropriately separated: prefix-stable released-hold validation, an exact 6-to-7 generation record, generation-neutral supplements, v1 historical compatibility, and a v2 pre-append repair target can be implemented without altering W1.A04, T03, product, privacy, or UI-reference behavior.",
+    "The proposal, packet, and static review page consistently deny W1.A04 append/materialization, task execution, T03 recovery, hold release, W1 resume, W1/G1 approval, main integration, remote action, competing holds, B00 reopening, fake ancestry, and review bypass.",
+    "artifacts/evidence/W1.A04.B00.json is untracked and its SHA-256 exactly matches 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c in the packet. That is acceptable only as non-authoritative workspace trigger evidence for the atomic failed submission: it is excluded from the packet commit and B00 implementation scope, its content is hash-bound, and any later absence or mismatch must fail closed. It must never be treated as submitted W1.A04 evidence or execution authority.",
+    "No existing GRR-0002, ECR-0003, W1.A04, Wave, or task approval authorizes the GCR implementation. Exact human approval is therefore necessary but, until GCR-0001-R01-F01 is remediated, not sufficient to supply the missing non-circular transition mechanics."
+  ],
+  "approvalAvailable": false
+}
