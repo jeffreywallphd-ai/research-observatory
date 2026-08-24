@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-review",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S01",
+  "bootstrapUnit": "GRR-0002.B01",
+  "attemptId": "R01",
+  "candidateCommit": "8b64f8d194f798de697228d36c6ec984dc6b7f57",
+  "reviewedStateCommit": "083a18e655dd0c796208b5e30d6be4f1da3fbdd2",
+  "reviewer": "independent-control-security-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0002.B01.evidence.json",
+    "sha256": "93196fc35e55d8a6e60f44440f89cc5a6aeb62aa814d815da62aa13eb671552a"
+  },
+  "notes": "CHANGES_REQUESTED after independent commit-bound R01 control/security review. The exact candidate and reviewed-state commits, frozen evidence, 14-path approval-base-to-candidate scope, seven-path submission-state delta, S01 and scope-addendum authority chains, active hold, witness, stopped W1 boundary, read-only W1.A04 projection, and generated views are exact. An independent disposable exact-candidate replay passed all 25 recoveryctl tests in 949.707 seconds; backlog, GRR-0002, GRR-0002.S01, GCR-0001, ECR-0003, capability plans, slice plans, generated views, the 150-page review site, Python quality, and Git diff hygiene also pass. Approval is withheld because the approved scope-addendum packet requires focused proof for every named authority denial, while the sole addendum-specific test omits several distinct mandatory cases and the evidence overstates that coverage. Preserve this R01 ledger and frozen state, add the missing real-Git denial matrix in a strict-descendant candidate, bind fresh remediation evidence with an explicit closure, and use supplement-resubmit for R02.",
+  "findings": [
+    {
+      "id": "GRR-0002.B01-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 7,
+      "title": "The approved scope-addendum authority denial matrix is not fully tested",
+      "reproduction": "At exact candidate 8b64f8d194f798de697228d36c6ec984dc6b7f57, inspect tests/foundation/test_recoveryctl.py lines 1280-1357 or run `rg -n \"approved_b01_scope_addendum_paths\" tests/foundation/test_recoveryctl.py`. The only addendum-specific test proves the valid exact path union, rejects the installed base as non-strict, returns no extension for GRR-0001.S01, rejects one altered approval byte sequence through the immutable-blob guard, and rejects one missing approval as a partial chain. It never constructs the approved packet's separately required stale-authority, forked-authority, self-reviewed-addendum, wrong-canonical-path, extra-approved-path, explicit-unapproved-status, or sibling/wrong-candidate cases. Other tests cover general supplement reviewer independence, stale submission state, and witness workspace deviations, but they do not call the addendum loader with those authority mutations. This contradicts the scope-addendum verification obligation to test every named denial and leaves original S01 acceptance criterion 7's authority/scope verification incomplete, while GRR-0002.B01.evidence.json claims the exact 25-test suite covers that surface.",
+      "requiredRemediation": "Create a strict-descendant in-scope candidate that adds focused disposable real-Git tests for each missing addendum-authority case: stale and forked chain, packet-reviewer/human-approver self-review, wrong or substituted canonical artifact path, extra generated scope path, explicit unapproved approval, and sibling/wrong candidate. Each case must prove fail-closed behavior without backlog/state mutation; retain the existing exact valid-chain, missing/altered/partial, cross-supplement, witness, and strict-descendant checks. Rerun the affected recovery suite and authority/view checks, write fresh canonical GRR-0002.B01.remediation-01.evidence.json that truthfully maps the matrix and closes GRR-0002.B01-R01-F01, then freeze R02 only through `recoveryctl supplement-resubmit` without rewriting R01 history."
+    }
+  ],
+  "closures": []
+}
