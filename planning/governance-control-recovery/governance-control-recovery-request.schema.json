@@ -13,10 +13,12 @@
     "status",
     "executionState",
     "classification",
+    "rootAuthority",
     "authorityChain",
     "triggerEvidence",
     "activationBoundary",
     "generationTransition",
+    "lifecycle",
     "bootstrapUnit",
     "acceptanceCriteria",
     "verificationObligations",
@@ -69,6 +71,36 @@
     "status": {"const": "pending-human-approval"},
     "executionState": {"const": "non-executable"},
     "classification": {"const": "recovery-controller-generation-defect"},
+    "rootAuthority": {
+      "type": "object",
+      "required": ["basis", "exceptionScope", "packetReviewHistory", "approvalSchema", "approvalPath", "approvalIntroduction"],
+      "properties": {
+        "basis": {"const": "repository-owner-governance-mismatch-protocol"},
+        "exceptionScope": {"const": "one-time-exact-packet-bootstrap-only"},
+        "packetReviewHistory": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/artifactReference"}
+        },
+        "approvalSchema": {"$ref": "#/$defs/fileReference"},
+        "approvalPath": {
+          "type": "string",
+          "pattern": "^planning/governance-control-recovery/GCR-[0-9]{4}\\.approval\\.json$"
+        },
+        "approvalIntroduction": {
+          "type": "object",
+          "required": ["exclusiveCreate", "cleanExactBranchHead", "packetReviewApproved", "introductionCommitIsExecutionBase"],
+          "properties": {
+            "exclusiveCreate": {"const": true},
+            "cleanExactBranchHead": {"const": true},
+            "packetReviewApproved": {"const": true},
+            "introductionCommitIsExecutionBase": {"const": true}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "authorityChain": {
       "type": "object",
       "required": ["activeRecovery", "approvedRepairAmendment", "blockedBootstrap"],
@@ -151,6 +183,98 @@
         "newHoldCreated": {"const": false},
         "installationMode": {"const": "exact-packet-root-bootstrap"},
         "postBootstrapGate": {"const": "independently-approved-GRR-0002.S01-B01"}
+      },
+      "additionalProperties": false
+    },
+    "lifecycle": {
+      "type": "object",
+      "required": ["branch", "actor", "canonicalPaths", "submission", "review", "remediation", "adoption", "commands"],
+      "properties": {
+        "branch": {"type": "string", "pattern": "^codex/.+"},
+        "actor": {"type": "string", "minLength": 1},
+        "canonicalPaths": {
+          "type": "object",
+          "required": ["controller", "state", "evidencePattern", "reviewPattern", "adoptionEvidence"],
+          "properties": {
+            "controller": {"$ref": "#/$defs/canonicalPath"},
+            "state": {"$ref": "#/$defs/canonicalPath"},
+            "evidencePattern": {"$ref": "#/$defs/canonicalPath"},
+            "reviewPattern": {"$ref": "#/$defs/canonicalPath"},
+            "adoptionEvidence": {"$ref": "#/$defs/canonicalPath"}
+          },
+          "additionalProperties": false
+        },
+        "submission": {
+          "type": "object",
+          "required": ["base", "candidateAncestry", "cleanBranchAndHead", "pathComparison", "staleWriter", "atomicFailure", "liveRevisionDuringReview", "untrackedException"],
+          "properties": {
+            "base": {"const": "approval-introduction-commit"},
+            "candidateAncestry": {"const": "strict-descendant"},
+            "cleanBranchAndHead": {"const": true},
+            "pathComparison": {"const": "approval-base-to-candidate-exact-allowlist"},
+            "staleWriter": {"const": "compare-and-swap"},
+            "atomicFailure": {"const": "byte-stable"},
+            "liveRevisionDuringReview": {"const": 6},
+            "untrackedException": {"const": "only-canonical-current-attempt-evidence"}
+          },
+          "additionalProperties": false
+        },
+        "review": {
+          "type": "object",
+          "required": ["independent", "severityRanked", "reviewedStateBinding", "immutableAttempts", "blockingFindingDenial", "selfReviewDenied"],
+          "properties": {
+            "independent": {"const": true},
+            "severityRanked": {"const": true},
+            "reviewedStateBinding": {"const": true},
+            "immutableAttempts": {"const": true},
+            "blockingFindingDenial": {"const": true},
+            "selfReviewDenied": {"const": true}
+          },
+          "additionalProperties": false
+        },
+        "remediation": {
+          "type": "object",
+          "required": ["candidateAncestry", "freshEvidence", "explicitClosures", "priorAttemptsPreserved"],
+          "properties": {
+            "candidateAncestry": {"const": "strict-descendant-of-prior-candidate"},
+            "freshEvidence": {"const": true},
+            "explicitClosures": {"const": true},
+            "priorAttemptsPreserved": {"const": true}
+          },
+          "additionalProperties": false
+        },
+        "adoption": {
+          "type": "object",
+          "required": ["requiresApprovedB00", "predecessorRevision", "successorRevision", "singleGenerationRecord", "directChildOfEvidenceCommit", "exactChangedPaths", "olderReadersFailClosed", "postAdoptionGate"],
+          "properties": {
+            "requiresApprovedB00": {"const": true},
+            "predecessorRevision": {"const": 6},
+            "successorRevision": {"const": 7},
+            "singleGenerationRecord": {"const": true},
+            "directChildOfEvidenceCommit": {"const": true},
+            "exactChangedPaths": {
+              "type": "array",
+              "minItems": 2,
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/canonicalPath"}
+            },
+            "olderReadersFailClosed": {"const": true},
+            "postAdoptionGate": {"const": "separate-GRR-0002.S01-review-and-exact-approval"}
+          },
+          "additionalProperties": false
+        },
+        "commands": {
+          "type": "object",
+          "required": ["submit", "review", "resubmit", "adopt", "validate"],
+          "properties": {
+            "submit": {"type": "string", "minLength": 1},
+            "review": {"type": "string", "minLength": 1},
+            "resubmit": {"type": "string", "minLength": 1},
+            "adopt": {"type": "string", "minLength": 1},
+            "validate": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
     },
