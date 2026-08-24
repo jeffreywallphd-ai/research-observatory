@@ -570,9 +570,16 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.git(repo, "config", "user.email", "fixture@example.invalid")
         self.git(repo, "config", "user.name", "Fixture Reviewer")
         self.git(repo, "config", "commit.gpgsign", "false")
-        self.git(repo, "config", "core.autocrlf", "true")
+        self.git(repo, "config", "core.autocrlf", "false")
+        r05_disposition = taskctl.approval_introduction_commit(
+            repo,
+            gcrctl.review_path_for("R05"),
+        )
+        self.assertIsNotNone(r05_disposition)
+        self.git(repo, "checkout", "--detach", str(r05_disposition))
         self.git(repo, "checkout", "-B", gcrctl.BRANCH)
-        shutil.copy2(REPO / "planning/backlog.yaml", repo / "planning/backlog.yaml")
+        backlog_path = repo / "planning/backlog.yaml"
+        backlog_path.write_bytes(backlog_path.read_bytes().replace(b"\n", b"\r\n"))
         witness = repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH
         witness.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(REPO / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH, witness)
@@ -1269,6 +1276,84 @@ class GovernanceRecoveryTests(unittest.TestCase):
             self.git(repo, "commit", "-m", "fixture: make witness authority-bearing")
             with self.assertRaisesRegex(SystemExit, "non-authoritative state binding"):
                 recoveryctl.require_supplement_workspace(repo, packet)
+
+    def test_b01_scope_addendum_is_exact_commit_bound_and_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            empty = Path(temporary) / "empty"
+            empty.mkdir()
+            self.assertEqual(
+                [],
+                recoveryctl.approved_b01_scope_addendum_paths(
+                    empty,
+                    "GRR-0001.S01",
+                    "not-inspected-without-artifacts",
+                ),
+            )
+
+            repo = Path(temporary) / "b01-scope-addendum-fixture"
+            bundle = Path(temporary) / "b01-scope-addendum-fixture.bundle"
+            subprocess.run(
+                ["git", "bundle", "create", str(bundle), "HEAD"],
+                cwd=REPO,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "core.autocrlf=false",
+                    "clone",
+                    "--quiet",
+                    str(bundle),
+                    str(repo),
+                ],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            candidate = self.git(repo, "rev-parse", "HEAD")
+            self.assertEqual(
+                recoveryctl.B01_SCOPE_GENERATED_PATHS,
+                recoveryctl.approved_b01_scope_addendum_paths(
+                    repo,
+                    "GRR-0002.S01",
+                    candidate,
+                ),
+            )
+            with self.assertRaisesRegex(SystemExit, "strictly descend"):
+                recoveryctl.approved_b01_scope_addendum_paths(
+                    repo,
+                    "GRR-0002.S01",
+                    recoveryctl.B01_SCOPE_BASE_CANDIDATE,
+                )
+            self.assertEqual(
+                [],
+                recoveryctl.approved_b01_scope_addendum_paths(
+                    repo,
+                    "GRR-0001.S01",
+                    candidate,
+                ),
+            )
+
+            approval_path = repo / recoveryctl.B01_SCOPE_APPROVAL_PATH
+            approval_payload = approval_path.read_bytes()
+            approval_path.write_bytes(approval_payload + b" ")
+            with self.assertRaisesRegex(SystemExit, "immutable Git blob"):
+                recoveryctl.approved_b01_scope_addendum_paths(
+                    repo,
+                    "GRR-0002.S01",
+                    candidate,
+                )
+            approval_path.write_bytes(approval_payload)
+            approval_path.unlink()
+            with self.assertRaisesRegex(SystemExit, "partial"):
+                recoveryctl.approved_b01_scope_addendum_paths(
+                    repo,
+                    "GRR-0002.S01",
+                    candidate,
+                )
 
     def test_grr_0002_s01_v2_real_git_witness_aware_lifecycle(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
