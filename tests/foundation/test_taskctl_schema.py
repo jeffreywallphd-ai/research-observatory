@@ -48,6 +48,34 @@ class BacklogSchemaTests(unittest.TestCase):
 
         self.assertEqual([], validate(data, capabilities, slices, tasks, gates))
 
+    def test_wave_resume_record_schema_is_exact_and_backward_compatible(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        wave = next(item for item in data["waves"] if item["id"] == "W1")
+        wave["campaign"]["resume_records"] = [
+            {
+                "id": "W1.R01",
+                "wave_id": "W1",
+                "control_revision": 6,
+                "prior_status": "PAUSED",
+                "pre_resume_commit": "a" * 40,
+                "prior_campaign_sha256": "b" * 64,
+                "branch": "codex/w1-windows-local-runtime",
+                "worktree": "C:/workspace/research-observatory",
+                "profile": "LOC",
+                "platform": "windows-x64",
+                "actor": "codex",
+                "resumed_at": "2026-08-24T00:00:00+00:00",
+            }
+        ]
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+
+        del wave["campaign"]["resume_records"][0]["actor"]
+        errors = backlog_schema_errors(data, schema_path=self.schema)
+        self.assertTrue(any("resume_records" in error and "actor" in error for error in errors))
+
+        data = copy.deepcopy(self.canonical)
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+
     def test_bootstrap_scope_addendum_is_exactly_one_generated_path(self) -> None:
         schema = json.loads(
             (REPO / "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json").read_text(

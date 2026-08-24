@@ -36,6 +36,28 @@
         }
       ]
     },
+    "waveResumeRecord": {
+      "type": "object",
+      "required": [
+        "id", "wave_id", "control_revision", "prior_status", "pre_resume_commit",
+        "prior_campaign_sha256", "branch", "worktree", "profile", "platform", "actor", "resumed_at"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])\\.R[0-9]{2,}$"},
+        "wave_id": {"type": "string", "pattern": "^W(?:[0-9]|1[01])$"},
+        "control_revision": {"const": 6},
+        "prior_status": {"const": "PAUSED"},
+        "pre_resume_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "prior_campaign_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "branch": {"type": "string", "minLength": 1},
+        "worktree": {"type": "string", "minLength": 1},
+        "profile": {"enum": ["LOC", "LAB", "UNI", "CLD"]},
+        "platform": {"type": "string", "minLength": 1},
+        "actor": {"type": "string", "minLength": 1},
+        "resumed_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": false
+    },
     "evidenceReferences": {
       "type": "array",
       "items": {"type": "string", "minLength": 1},
@@ -1181,7 +1203,11 @@
               "updated_at": {"$ref": "#/$defs/nullableTimestamp"},
               "pause_reason": {"type": ["string", "null"]},
               "pause_category": {"type": ["string", "null"]},
-              "lease": {"$ref": "#/$defs/nullableLease"}
+              "lease": {"$ref": "#/$defs/nullableLease"},
+              "resume_records": {
+                "type": "array",
+                "items": {"$ref": "#/$defs/waveResumeRecord"}
+              }
             },
             "additionalProperties": false
           },
