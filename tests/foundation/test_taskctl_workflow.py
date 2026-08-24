@@ -2486,6 +2486,16 @@ class TaskctlWorkflowTests(unittest.TestCase):
         cross_wave["resume_records"][0]["wave_id"] = "W2"
         self.assertTrue(any("cross-Wave" in error for error in wave_resume_record_errors(data, "W1", cross_wave, REPO)))
 
+        non_ancestral = copy.deepcopy(campaign)
+        non_ancestral["resume_records"][0]["pre_resume_commit"] = "0" * 40
+        non_ancestral["base_sha"] = "0" * 40
+        self.assertTrue(
+            any(
+                "missing or non-ancestral" in error
+                for error in wave_resume_record_errors(data, "W1", non_ancestral, REPO)
+            )
+        )
+
         duplicate = copy.deepcopy(campaign)
         duplicate["resume_records"].append({**copy.deepcopy(record), "id": "W1.R02"})
         self.assertTrue(
