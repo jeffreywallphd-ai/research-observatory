@@ -1,0 +1,170 @@
+{
+  "$schema": "./governance-recovery-supplement.v2.schema.json",
+  "schemaVersion": "2.0-recovery-supplement-proposal",
+  "documentType": "governance-recovery-supplement-packet",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S01",
+  "title": "Install the approved pre-append W1.A04 bootstrap lane",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "approved-bootstrap-latent-control-defect",
+  "controlTransition": {
+    "predecessorRevision": 7,
+    "successorRevision": 8,
+    "generationNeutral": true,
+    "olderReadersFailClosed": true
+  },
+  "baseRecoveryAuthority": {
+    "packet": {
+      "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+      "sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
+      "commit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e"
+    },
+    "approval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.json",
+      "sha256": "07f2e2da15d74c6a72e97e62a5f3d5a540f39898eb958eff7c92f42b80d6d893",
+      "introductionCommit": "0b450222ff569db356b84e413941aa2af585a64e"
+    },
+    "holdId": "HOLD-W1-GRR-0002",
+    "bootstrapUnit": "GRR-0002.B00",
+    "latestApprovedReview": {
+      "attemptId": "R01",
+      "path": "planning/governance-recovery-approvals/GRR-0002.B00.review-R01.json",
+      "sha256": "9a5efe9d7a9feabeb0a11829df4954a74f9d7a6d2d5089af92f4bfc337ccdfe2",
+      "candidateCommit": "af5c4260413cfa8490ca9540784bcecc12d81fac",
+      "reviewedStateCommit": "47ef6ed1b291d62e7be3875ed0558f04268e5e80"
+    }
+  },
+  "targetAmendmentAuthority": {
+    "changeRequestPacket": {
+      "id": "ECR-0003",
+      "path": "planning/enabler-change-requests/ECR-0003.packet.json",
+      "sha256": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+      "commit": "77896d26ddac0569e286fe8481c0676408c716b1"
+    },
+    "amendmentApproval": {
+      "id": "W1.A04",
+      "path": "planning/wave-amendment-approvals/W1.A04.json",
+      "sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+      "introductionCommit": "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+    },
+    "bootstrap": {
+      "id": "W1.A04.B00",
+      "candidateCommit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+      "evidence": {
+        "path": "artifacts/evidence/W1.A04.B00.json",
+        "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+        "commit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6"
+      }
+    },
+    "backlogPresence": false
+  },
+  "triggerEvidence": {
+    "discoveryCommit": "80759711525e717b02bfc692210fec97356bf836",
+    "backlogSha256": "84d3e463a42c29b12d66d5efe4cd994904baebccb1a91bbb92d7d73fa911f42d",
+    "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml amendment status W1.A04",
+    "diagnostic": "Unknown Wave amendment: W1.A04",
+    "atomicNoMutation": true
+  },
+  "activationBoundary": {
+    "controlRevision": 7,
+    "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "blockedTaskId": "CAP-02.S04.T03",
+    "blockedTaskStatus": "BLOCKED"
+  },
+  "supplementalBootstrap": {
+    "id": "GRR-0002.B01",
+    "kind": "append-only-approved-bootstrap-remediation",
+    "exceptionReason": "The independently approved GRR-0002.B00 left its supplement installer at revision 4 and required the exact repair amendment to exist before a same-hold supplement could authorize its append. GCR-0001 has independently adopted the bounded generation-neutral, witness-aware controller at revision 7; this sequential bootstrap is still mandatory to activate and independently qualify that path before the original W1.A04.B00 submission can be retried.",
+    "authorizedPaths": [
+      "planning/backlog.yaml",
+      "planning/governance-recovery-approvals/GRR-0002.B01*",
+      "tests/foundation/test_recoveryctl.py",
+      "tools/recoveryctl.py"
+    ],
+    "requiredOutcomes": [
+      "Install exactly one sequential GRR-0002.S01/GRR-0002.B01 record under the existing HOLD-W1-GRR-0002 and advance control revision and minimum tool revision from 7 to 8 without creating, replacing, or releasing a hold.",
+      "Authenticate the exact GRR-0002 packet, approval, B00 review, adopted GCR revision-7 generation, ECR-0003 packet, W1.A04 approval, blocked W1.A04.B00 candidate, and witness bytes while W1.A04 remains absent.",
+      "Require the exact unchanged, unstaged, untracked, non-authoritative W1.A04.B00 witness at supplement start, submission, remediation, and review, rejecting every missing, changed, staged, redirected, duplicated, authority-bearing, or accompanied workspace state.",
+      "Freeze criterion-linked B01 evidence and independent severity-ranked review append-only, with no open blocking finding before B01 becomes APPROVED.",
+      "After B01 approval, permit only a retry of the original packet-bound W1.A04.B00 submission; amendment materialization, task activation or claim, live T03 recovery, hold release, W1 resume, and gate approval remain separately gated.",
+      "Preserve product, privacy, approved-reference, task-acceptance, completed-task, release-gate, predecessor-authority, and prior GCR/GRR/ECR evidence bytes and outcomes."
+    ],
+    "prohibitedOutcomes": [
+      "No new or competing hold, GRR-0002.B00 reopening, prior attempt rewrite, arbitrary controller generation, direct backlog edit, force, override, bypass, or skip-review path.",
+      "No W1.A04 append, bootstrap submission, materialization, activation, task claim, CAP-02.S04.T03 recovery, hold release, ordinary W1 resume, G1 approval, local-main integration, or remote push before their own lawful gates.",
+      "No product/runtime, privacy policy, approved UI reference, UI evidence, task acceptance criterion, completed-task outcome, Wave approval, release gate, verification threshold, or predecessor Git-object change.",
+      "No use, staging, tracking, mutation, deletion, redirection, duplication, or authority promotion of the atomic-failure witness."
+    ]
+  },
+  "acceptanceCriteria": [
+    "The exact v2 packet validates against Draft 2020-12, all declared hashes match, and the GRR-0002, GCR revision-7, ECR-0003/W1.A04, blocked bootstrap, and witness authority commits and blobs remain exact and ancestral.",
+    "The pre-install boundary is control revision 7 with one ACTIVE HOLD-W1-GRR-0002, APPROVED GRR-0002.B00, PAUSED W1 at wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, and PENDING G1.",
+    "Supplement start atomically installs only the sequential GRR-0002.S01/GRR-0002.B01 record, advances revision and minimum tool revision to 8, and leaves W1, T03, W1.A04, the active hold, and all prior histories otherwise unchanged.",
+    "The exact witness-aware workspace contract is applied consistently to start, submit/resubmit, and review and denies every missing, changed, staged, tracked, redirected, duplicated, authority-bearing, or accompanied deviation without mutation.",
+    "B01 submission freezes the exact candidate, approval-to-candidate changed paths, criteria, checks, and evidence; independent review is append-only, severity-ranked, and cannot approve with an open blocking finding.",
+    "An independently APPROVED B01 validates a read-only projection of only the original W1.A04.B00 retry while amendment append/materialization, task execution, live T03 recovery, hold release, W1 resume, and G1 remain unauthorized.",
+    "Focused real-Git recovery, older-reader, stale-writer, atomicity, authority, quality, backlog/view, review-site, scope, and Git-hygiene checks pass with no protected product or reference change.",
+    "The packet receives independent exact-commit control/security review with no open finding before human approval, and B01 receives a separate independent commit-bound approval before W1.A04.B00 is retried."
+  ],
+  "verificationObligations": [
+    "Validate the packet schema and every declared file hash, Git blob, introduction commit, ancestry edge, control-generation record, base recovery authority, and target amendment authority.",
+    "Run the real-Git GRR-0002.S01 lifecycle through start, B01 submission, independent review, and approved validation without mocking cleanliness, plus the exact witness deviation matrix.",
+    "Replay affected recoveryctl, taskctl schema/workflow, older-reader, transaction, stale-writer, and atomic-no-write checks selected by the shared control-plane risk surface.",
+    "Validate the read-only target materialization projection, canonical backlog, GRR-0002 and GCR-0001 authority, ECR-0003 approval, generated views, review site, governed Python quality, protected scope, and Git diff hygiene.",
+    "Bind B01 evidence to the exact approval-introduction-to-candidate diff, every required outcome and acceptance criterion, unique passing checks, deferred broader W1 qualification, and an empty unverified list.",
+    "Independently review this exact inert packet before human approval and independently review the exact B01 candidate before retrying only W1.A04.B00."
+  ],
+  "rollback": [
+    "Before packet approval, reject, defer, or retain the inert files while the revision-7 stopped state, active hold, absent amendment, blocked task, and exact witness remain unchanged.",
+    "Before B01 approval, an adverse review preserves the attempt, evidence, findings, and stopped boundary and requires a strict-descendant in-scope resubmission with explicit closures.",
+    "If any authority, witness, control generation, hold, W1 pause, amendment absence, task block, or atomicity condition fails, stop without installing, submitting, reviewing, or retrying anything.",
+    "Never delete, replace, rewrite, synthesize, or repurpose prior GRR, GCR, supplement, approval, attempt, ECR, amendment, task, evidence, finding, checkpoint, or Git history."
+  ],
+  "alternatives": [
+    {
+      "id": "A",
+      "title": "Approve bounded B01 supplement",
+      "disposition": "recommended",
+      "consequence": "Uses the reviewed append-only lane under the existing hold and enables only the next independently reviewed bootstrap boundary."
+    },
+    {
+      "id": "B",
+      "title": "Keep recovery and W1 paused",
+      "disposition": "safe",
+      "consequence": "Makes no mutation, but W1.A04 and CAP-02.S04.T03 cannot progress."
+    },
+    {
+      "id": "C",
+      "title": "Defer or withdraw append-only",
+      "disposition": "safe-if-recorded",
+      "consequence": "Requires a governed disposition and provides no implicit authority to resume W1."
+    },
+    {
+      "id": "D",
+      "title": "Direct edit or immediate W1.A04 retry",
+      "disposition": "rejected",
+      "consequence": "Would bypass mandatory supplement packet, human approval, and independent B01 review gates."
+    }
+  ],
+  "files": [
+    {
+      "path": "planning/governance-recovery-requests/governance-recovery-supplement.v2.schema.json",
+      "sha256": "1dd75bd6db94fd98dbb8b605d8cb750c2158ffe318cdfa823e1aa10bd52ccc53"
+    },
+    {
+      "path": "planning/governance-recovery-requests/GRR-0002.S01.md",
+      "sha256": "e5876482d5faeb20a63f05770f9815304b198b98c3ad826f1e83c94ad5f1484b"
+    },
+    {
+      "path": "planning/governance-recovery-requests/GRR-0002.S01-review.html",
+      "sha256": "2e711c12c13db1aa4fcb91980a44b1e0e0fac23eea2db55e456c3e6c65965618"
+    }
+  ],
+  "requiredApprovalStatement": "Approve GRR-0002.S01 at packet commit <40-character SHA>, authorizing only supplemental bootstrap GRR-0002.B01 and its hash-bound scope under HOLD-W1-GRR-0002. Keep W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, and G1 pending through independent B01 approval; after B01 approval, retry only the original packet-bound W1.A04.B00 submission."
+}

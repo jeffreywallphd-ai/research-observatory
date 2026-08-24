@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GRR-0002.S01 review — Pre-append W1.A04 bootstrap lane</title>
+  <style>
+    :root { color-scheme: light dark; font-family: Inter, system-ui, sans-serif; }
+    body { max-width: 980px; margin: 0 auto; padding: 2rem; line-height: 1.55; }
+    h1, h2 { line-height: 1.2; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    pre { white-space: pre-wrap; padding: 1rem; border: 1px solid #8886; border-radius: .5rem; }
+    .status { border-left: .35rem solid #c88700; padding: .8rem 1rem; background: #c8870014; }
+    .safe { border-left: .35rem solid #177245; padding: .8rem 1rem; background: #17724514; }
+    .deny { border-left: .35rem solid #a12622; padding: .8rem 1rem; background: #a1262214; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #8886; padding: .55rem; text-align: left; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <nav><a href="GRR-0002.S01.md">Canonical proposal</a> · <a href="GRR-0002.S01.packet.json">Hash-bound packet</a> · <a href="governance-recovery-supplement.v2.schema.json">v2 schema</a> · <a href="GRR-0002-review.html">Base GRR review</a></nav>
+  <h1>GRR-0002.S01: install the approved pre-append W1.A04 bootstrap lane</h1>
+  <p class="status"><strong>Pending:</strong> independent exact-commit packet review and separate human approval. This page and packet are inert and grant no execution authority.</p>
+
+  <h2>Decision requested</h2>
+  <p>Authorize only <code>GRR-0002.B01</code> under the existing <code>HOLD-W1-GRR-0002</code>. The supplement advances control revision 7 to 8 and qualifies the already-adopted witness-aware pre-append lane. It does not append W1.A04 or authorize any Wave task.</p>
+
+  <h2>Current stopped boundary</h2>
+  <table>
+    <tr><th>Control</th><td>GCR-0001 adopted at <code>80759711525e717b02bfc692210fec97356bf836</code>; revision 7</td></tr>
+    <tr><th>Recovery</th><td>GRR-0002.B00 independently approved; <code>HOLD-W1-GRR-0002</code> ACTIVE</td></tr>
+    <tr><th>Target authority</th><td>ECR-0003/W1.A04 exactly approved; W1.A04 absent from backlog</td></tr>
+    <tr><th>Witness</th><td><code>artifacts/evidence/W1.A04.B00.json</code>, SHA-256 <code>4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c</code>, sole untracked/unstaged and non-authoritative</td></tr>
+    <tr><th>Execution</th><td>W1 PAUSED; CAP-02.S04.T03 BLOCKED; G1 PENDING</td></tr>
+  </table>
+
+  <h2>What approval would authorize</h2>
+  <div class="safe">
+    <ul>
+      <li>Install exactly one sequential GRR-0002.S01/B01 record and advance revision 7→8.</li>
+      <li>Collect exact candidate evidence and an independent B01 review.</li>
+      <li>After B01 is independently APPROVED, retry only the original hash-bound W1.A04.B00 submission.</li>
+    </ul>
+  </div>
+
+  <h2>What remains prohibited</h2>
+  <div class="deny">
+    <ul>
+      <li>No W1.A04 append/materialization, task activation or claim, T03 recovery, hold release, W1 resume, G1 approval, main integration, or remote push from this approval.</li>
+      <li>No second hold, B00 reopening, predecessor rewrite, direct backlog edit, force, override, or bypass.</li>
+      <li>No product, privacy, approved-reference, acceptance-criterion, completed-task, or verification-threshold change.</li>
+    </ul>
+  </div>
+
+  <h2>Approval criteria</h2>
+  <ol>
+    <li>The v2 packet, proposal, schema, review page, hashes, commits, and authority chain validate exactly.</li>
+    <li>The stopped boundary remains revision 7 / ACTIVE hold / PAUSED W1 / absent W1.A04 / BLOCKED T03.</li>
+    <li>The only installed mutation is the sequential revision-8 B01 record under the existing hold.</li>
+    <li>The witness-aware workspace guard denies every missing, altered, staged, redirected, duplicated, authority-bearing, or accompanied state.</li>
+    <li>B01 evidence and review are append-only and independently commit-bound.</li>
+    <li>Only the original W1.A04.B00 retry becomes eligible after B01 approval; every later transition retains its own gate.</li>
+  </ol>
+
+  <h2>Alternatives</h2>
+  <ol>
+    <li><strong>Approve bounded B01 (recommended):</strong> preserves the hold and uses the reviewed recovery lane.</li>
+    <li><strong>Keep paused:</strong> safe, but W1.A04 and T03 remain blocked.</li>
+    <li><strong>Defer or withdraw append-only:</strong> safe only with the repository-defined disposition; no implicit resume.</li>
+    <li><strong>Direct edit or retry now:</strong> rejected as a gate bypass.</li>
+  </ol>
+
+  <h2>Exact approval statement</h2>
+  <pre>Approve GRR-0002.S01 at packet commit &lt;40-character SHA&gt;, authorizing only supplemental bootstrap GRR-0002.B01 and its hash-bound scope under HOLD-W1-GRR-0002. Keep W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, and G1 pending through independent B01 approval; after B01 approval, retry only the original packet-bound W1.A04.B00 submission.</pre>
+</body>
+</html>
