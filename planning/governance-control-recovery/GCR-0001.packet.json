@@ -20,7 +20,7 @@
     ],
     "approvalSchema": {
       "path": "planning/governance-control-recovery/governance-control-recovery-runtime.schema.json",
-      "sha256": "7cfafef7c2ef4c0d6423a9122b58ec2cba2a090ad81144d6af629612549bbe6f"
+      "sha256": "f495ba3c15eeaba9065912c9bcbbdb981b4fe0a49b48b4ed004ea570cf701082"
     },
     "approvalPath": "planning/governance-control-recovery/GCR-0001.approval.json",
     "approvalIntroduction": {
@@ -150,7 +150,7 @@
     "commands": {
       "submit": "python tools/gcrctl.py --repo . submit GCR-0001 --agent codex --approval-commit <sha> --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0001.B00.RNN.json",
       "review": "python tools/gcrctl.py --repo . review GCR-0001 --reviewer <independent-reviewer> --from planning/governance-control-recovery/GCR-0001.B00.review-RNN.json",
-      "resubmit": "python tools/gcrctl.py --repo . resubmit GCR-0001 --agent codex --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0001.B00.RNN.json --closures <finding-closures.json>",
+      "resubmit": "python tools/gcrctl.py --repo . resubmit GCR-0001 --agent codex --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0001.B00.RNN.json",
       "adopt": "python tools/gcrctl.py --repo . adopt GCR-0001 --agent codex --approved-state-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0001.B00.adoption.json",
       "validate": "python tools/gcrctl.py --repo . validate GCR-0001 --require-approved"
     }
@@ -257,15 +257,15 @@
     },
     {
       "path": "planning/governance-control-recovery/governance-control-recovery-runtime.schema.json",
-      "sha256": "7cfafef7c2ef4c0d6423a9122b58ec2cba2a090ad81144d6af629612549bbe6f"
+      "sha256": "f495ba3c15eeaba9065912c9bcbbdb981b4fe0a49b48b4ed004ea570cf701082"
     },
     {
       "path": "planning/governance-control-recovery/GCR-0001.md",
-      "sha256": "6cca4d41e592e6022cae192e5e6c4ea38e05887a6005656a98ca07bf9b4c6f33"
+      "sha256": "7738cda708fcc670faac965591adbcf85b820580a7e52d63c87c3338070752d1"
     },
     {
       "path": "planning/governance-control-recovery/GCR-0001-review.html",
-      "sha256": "b12fc25c127054f4a0127b0e7189ed3291aaa5e5a0a4ad407d758be2114e4177"
+      "sha256": "8f35d12a8fd29de22ada6b10a5df5cd31c05bb2fc78332af14c114f8c95093dd"
     }
   ],
   "requiredApprovalStatement": "Approve GCR-0001 at packet commit <40-character SHA>, authorizing only GCR-0001.B00 and its hash-bound governance/controller/schema/test scope under the existing HOLD-W1-GRR-0002. Keep W1 paused, CAP-02.S04.T03 blocked, W1.A04 absent, and G1 pending through independent B00 approval; require separately reviewed and exactly approved GRR-0002.S01/B01 before retrying the original W1.A04 bootstrap submission."
