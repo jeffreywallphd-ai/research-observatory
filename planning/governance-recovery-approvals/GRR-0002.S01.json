@@ -1,0 +1,42 @@
+{
+  "$schema": "../governance-recovery-requests/governance-recovery-supplement-approval.v2.schema.json",
+  "schemaVersion": "2.0",
+  "documentType": "governance-recovery-supplement-approval",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S01",
+  "targetWave": "W1",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-24T10:52:32.8603357Z",
+  "decision": "Approve GRR-0002.S01 at packet commit e4be6a4beaffd26f0f9011e7fe8b2ac8baabc3f2, authorizing only supplemental bootstrap GRR-0002.B01 and its hash-bound scope under HOLD-W1-GRR-0002. Keep W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, and G1 pending through independent B01 approval; after B01 approval, retry only the original packet-bound W1.A04.B00 submission.",
+  "packet": {
+    "commit": "e4be6a4beaffd26f0f9011e7fe8b2ac8baabc3f2",
+    "path": "planning/governance-recovery-requests/GRR-0002.S01.packet.json",
+    "sha256": "bcb3b8fe42b8a091b22794a4c560b3d76989ebef0ee982a9d529a4a67cb1ee62",
+    "proposalPath": "planning/governance-recovery-requests/GRR-0002.S01.md",
+    "proposalSha256": "e5876482d5faeb20a63f05770f9815304b198b98c3ad826f1e83c94ad5f1484b",
+    "schemaPath": "planning/governance-recovery-requests/governance-recovery-supplement.v2.schema.json",
+    "schemaSha256": "1dd75bd6db94fd98dbb8b605d8cb750c2158ffe318cdfa823e1aa10bd52ccc53",
+    "reviewPath": "planning/governance-recovery-requests/GRR-0002.S01-review.html",
+    "reviewSha256": "2e711c12c13db1aa4fcb91980a44b1e0e0fac23eea2db55e456c3e6c65965618"
+  },
+  "supplementalBootstrapUnit": "GRR-0002.B01",
+  "independentPacketReview": {
+    "reviewer": "independent-control-security-reviewer",
+    "attemptId": "R01",
+    "candidateCommit": "e4be6a4beaffd26f0f9011e7fe8b2ac8baabc3f2",
+    "packetSha256": "bcb3b8fe42b8a091b22794a4c560b3d76989ebef0ee982a9d529a4a67cb1ee62",
+    "result": "APPROVED",
+    "openFindingIds": [],
+    "closedFindingIds": [],
+    "priorAdverseLedger": null
+  },
+  "executionAuthority": {
+    "supplementalBootstrapOnly": true,
+    "postBootstrapExecution": false,
+    "amendmentMaterialization": false,
+    "ordinaryWaveResume": false,
+    "taskExecution": false,
+    "releaseGateApproval": false
+  }
+}
