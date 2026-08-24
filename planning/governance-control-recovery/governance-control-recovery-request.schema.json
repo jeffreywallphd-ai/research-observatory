@@ -59,6 +59,18 @@
         "sha256": {"$ref": "#/$defs/sha256"}
       },
       "additionalProperties": false
+    },
+    "triggerWitness": {
+      "type": "object",
+      "required": ["path", "sha256", "role", "mustRemainUntrackedAndUnstaged", "neverExecutionAuthority"],
+      "properties": {
+        "path": {"$ref": "#/$defs/canonicalPath"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "role": {"const": "atomic-failure-trigger-only"},
+        "mustRemainUntrackedAndUnstaged": {"const": true},
+        "neverExecutionAuthority": {"const": true}
+      },
+      "additionalProperties": false
     }
   },
   "properties": {
@@ -73,7 +85,7 @@
     "classification": {"const": "recovery-controller-generation-defect"},
     "rootAuthority": {
       "type": "object",
-      "required": ["basis", "exceptionScope", "packetReviewHistory", "approvalSchema", "approvalPath", "approvalIntroduction"],
+      "required": ["basis", "exceptionScope", "packetReviewHistory", "approvalSchema", "approvalPath", "untrackedTriggerWitness", "approvalIntroduction"],
       "properties": {
         "basis": {"const": "repository-owner-governance-mismatch-protocol"},
         "exceptionScope": {"const": "one-time-exact-packet-bootstrap-only"},
@@ -87,12 +99,14 @@
           "type": "string",
           "pattern": "^planning/governance-control-recovery/GCR-[0-9]{4}\\.approval\\.json$"
         },
+        "untrackedTriggerWitness": {"$ref": "#/$defs/triggerWitness"},
         "approvalIntroduction": {
           "type": "object",
-          "required": ["exclusiveCreate", "cleanExactBranchHead", "packetReviewApproved", "introductionCommitIsExecutionBase"],
+          "required": ["exclusiveCreate", "trackedCleanExactBranchHead", "permittedUntracked", "packetReviewApproved", "introductionCommitIsExecutionBase"],
           "properties": {
             "exclusiveCreate": {"const": true},
-            "cleanExactBranchHead": {"const": true},
+            "trackedCleanExactBranchHead": {"const": true},
+            "permittedUntracked": {"const": "exact-trigger-witness-only"},
             "packetReviewApproved": {"const": true},
             "introductionCommitIsExecutionBase": {"const": true}
           },
@@ -188,10 +202,21 @@
     },
     "lifecycle": {
       "type": "object",
-      "required": ["branch", "actor", "canonicalPaths", "submission", "review", "remediation", "adoption", "commands"],
+      "required": ["branch", "actor", "workspaceInvariant", "canonicalPaths", "submission", "review", "remediation", "adoption", "commands"],
       "properties": {
         "branch": {"type": "string", "pattern": "^codex/.+"},
         "actor": {"type": "string", "minLength": 1},
+        "workspaceInvariant": {
+          "type": "object",
+          "required": ["triggerWitness", "denyOtherUntracked", "denyWitnessStagingOrMutation", "appliesAtEveryTransition"],
+          "properties": {
+            "triggerWitness": {"$ref": "#/$defs/triggerWitness"},
+            "denyOtherUntracked": {"const": true},
+            "denyWitnessStagingOrMutation": {"const": true},
+            "appliesAtEveryTransition": {"const": true}
+          },
+          "additionalProperties": false
+        },
         "canonicalPaths": {
           "type": "object",
           "required": ["controller", "state", "evidencePattern", "reviewPattern", "adoptionEvidence"],
@@ -206,16 +231,16 @@
         },
         "submission": {
           "type": "object",
-          "required": ["base", "candidateAncestry", "cleanBranchAndHead", "pathComparison", "staleWriter", "atomicFailure", "liveRevisionDuringReview", "untrackedException"],
+          "required": ["base", "candidateAncestry", "trackedCleanBranchAndHead", "pathComparison", "staleWriter", "atomicFailure", "liveRevisionDuringReview", "untrackedException"],
           "properties": {
             "base": {"const": "approval-introduction-commit"},
             "candidateAncestry": {"const": "strict-descendant"},
-            "cleanBranchAndHead": {"const": true},
+            "trackedCleanBranchAndHead": {"const": true},
             "pathComparison": {"const": "approval-base-to-candidate-exact-allowlist"},
             "staleWriter": {"const": "compare-and-swap"},
             "atomicFailure": {"const": "byte-stable"},
             "liveRevisionDuringReview": {"const": 6},
-            "untrackedException": {"const": "only-canonical-current-attempt-evidence"}
+            "untrackedException": {"const": "exact-trigger-witness-plus-canonical-current-attempt-evidence"}
           },
           "additionalProperties": false
         },
