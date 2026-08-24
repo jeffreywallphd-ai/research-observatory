@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0-enabler-review",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0003",
+  "proposedAmendmentId": "W1.A04",
+  "attemptId": "R01",
+  "candidateCommit": "a90b3a78adc9e2ff1d60fa709072345325286fca",
+  "packetSha256": "a5cd01abfa581768eeaef1a8f26e8e6829b6f08b3aadb759864a4c82de7df5ec",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "ecr3-packet-reviewer",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "ECR-0003-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 5,
+      "title": "The resume-commit security allowlist is not decision-complete",
+      "reproduction": "Run `git diff --name-status bf27fddd8e1732feadc698cd77f540ea9e1c7a0e..54d03055b1c6d9b702859d5fefbbac1e38de39df`; the exact governed resume transition modifies only docs/planning-implementation-plan.md, planning/backlog.yaml, planning/review-site/manifest.json, planning/review-site/waves/W1.html, and planning/status-summary.md. ECR-0003.md section 4.2 item 4 and ECR-0003.packet.json task criterion 4 require an `allowlisted resume-state-view diff`, but neither source enumerates those five paths or states that the committed resume must be their direct-child, modification-only diff. The static and generated review pages also omit the inventory. `planctl ecr validate ECR-0003` therefore passes while the security boundary remains open to materially different implementations of what counts as a related generated/state-view file. The packet separately requires extra commits and unrelated files to fail byte-stably, so an exact reviewer cannot determine conformance without inventing the missing allowlist after approval.",
+      "requiredRemediation": "Create a strict-descendant inert packet revision that enumerates exactly the five permitted resume-commit paths in the canonical proposal and machine packet, binds the candidate recovery HEAD as the direct child of the recorded pre-resume commit, requires modification-only changes to that exact inventory, and denies every added, deleted, renamed, substituted, or extra path. Reflect the same boundary in the static/generated human review surfaces, refresh all affected hashes, retain this R01 ledger append-only, and request a bounded R02 review. Do not execute B00 or T01, append W1.A04, release the hold, resume W1, or alter T03 while remediating the packet."
+    }
+  ],
+  "closures": [],
+  "verified": [
+    "The exact candidate a90b3a78adc9e2ff1d60fa709072345325286fca is clean on codex/w1-windows-local-runtime and directly descends from 5bc0b69130caf3f7e8ab96667687b4605d172279. Its eight-path delta contains only the inert ECR-0003 proposal/packet/static review and generated review-site outputs; it changes no backlog, controller, product, approved reference, evidence, predecessor authority, or release gate.",
+    "The exact ECR-0003 packet SHA-256 is a5cd01abfa581768eeaef1a8f26e8e6829b6f08b3aadb759864a4c82de7df5ec. The canonical proposal, v3 schema, and static human-review SHA-256 values match both current bytes and the exact candidate Git blobs; Draft 2020-12 packet validation and Git whitespace hygiene pass.",
+    "The trigger is independently reproduced from immutable state: the committed resume state 54d03055b1c6d9b702859d5fefbbac1e38de39df stores campaign.base_sha bf27fddd8e1732feadc698cd77f540ea9e1c7a0e. Supplying 54d03055 satisfies current-HEAD identity but fails the campaign-boundary equality; supplying bf27fddd satisfies the campaign comparison but fails current-HEAD identity. The two values cannot simultaneously satisfy the current controller.",
+    "The selected non-self-referential resume-record design is feasible and preserves a clean current HEAD as the stale-writer compare-and-swap boundary. B00 is limited to the schema/controller and two focused schema/workflow tests, may not modify or invoke command_recover, and must receive independent evidence-bound approval before W1.A04.T01 materializes.",
+    "W1.A04.T01 is separately limited to applying the approved resume-record contract to the exact historical T03 recovery. It preserves W1.A03 lineage and recomputation controls, stops the sole lawful recovery at BLOCKED-to-IN_PROGRESS, and defers ordinary T03 evidence/review, slice review, W1 qualification, G1, local-main integration, and remote action to later gates.",
+    "The exact W1 base plus adopted W1.A01, W1.A02/ECR-0001, and W1.A03/ECR-0002 authority chain is ordered, hash-bound, ancestral, and currently valid. ECR-0001 and ECR-0002 both pass approved history-bound validation.",
+    "GRR-0002 and its immutable approval remain exact. GRR-0002.B00 is independently APPROVED at candidate af5c4260413cfa8490ca9540784bcecc12d81fac and frozen state 47ef6ed1b291d62e7be3875ed0558f04268e5e80; its R01 ledger hash matches the active hold and enables only the separately approved ECR-0003/W1.A04 lane.",
+    "The live control projection is revision 6 with released HOLD-W1-GRR-0001 followed by the sole ACTIVE HOLD-W1-GRR-0002. W1 is PAUSED with scope wave and no lease, CAP-02.S04.T03 is BLOCKED with no recovery control/evidence/review, W1.A04 is absent, and G1 remains PENDING. No packet field, approval wording, static page, or generated page grants hidden execution authority.",
+    "The canonical, static, and generated review surfaces consistently show ECR-0003/W1.A04 as pending and non-executable, one B00 plus one task, a separate exact-commit human approval, independent B00/task/exit reviews, adoption checkpoint, active-hold release, explicit ordinary W1 resume, and later T03/Wave/gate transitions. The static page correctly points to section 9 for the exact approval wording.",
+    "Independent checks passed: planctl structural/historical validation for ECR-0003; approved validation for ECR-0001/ECR-0002 and GRR-0002; canonical backlog validation; 150-page review-site validation; generated backlog-view check; 119-file governed Python quality; exact packet/Git-blob hashes; trigger and five-path resume-diff probes; and 11 focused ECR approval, review rendering/hash-tamper, current recovery authority, second-hold atomicity, and v3 recovery-binding tests in 111.656 seconds.",
+    "As expected for an inert pending packet, `planctl ecr validate ECR-0003 --require-approved` fails only because planning/wave-amendment-approvals/W1.A04.json does not exist. Human approval is not legally available while ECR-0003-R01-F01 remains open."
+  ],
+  "approvalAvailable": false
+}
