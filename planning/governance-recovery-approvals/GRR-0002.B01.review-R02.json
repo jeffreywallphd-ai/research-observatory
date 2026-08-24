@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-review",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S01",
+  "bootstrapUnit": "GRR-0002.B01",
+  "attemptId": "R02",
+  "candidateCommit": "7d004e69620f5eddbbbacd038f341b5a4e423df6",
+  "reviewedStateCommit": "8aac65a0cd71b0c1cea5ecc7dfa2777319af7591",
+  "reviewer": "independent-control-security-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0002.B01.remediation-01.evidence.json",
+    "sha256": "4b9e59a6b5239b459a2e7be8568c36ba1f912e8e4d375cfa98f9c056031f8bfa"
+  },
+  "notes": "CHANGES_REQUESTED after bounded independent R02 remediation review. The exact strict-descendant candidate, reviewed-state commit, remediation evidence, prior-candidate-to-candidate ten-path diff, seven-path R02 submission-state delta, S01 and scope-addendum chains, approval-commit ancestry guard, R01 evidence and adverse ledger, current hold, witness, stopped W1 boundary, and read-only W1.A04 projection are exact. An independent disposable exact-candidate replay passed all 27 recoveryctl tests in 970.245 seconds. Backlog, GRR-0002, GRR-0002.S01, GCR-0001, ECR-0003, capability plans, slice plans, generated views, the 150-page review site, governed Python quality, and Git diff hygiene also pass. The remediation adds real-Git stale, copied-fork, self-review, wrong-path, extra-scope, explicit-unapproved, and wrong-candidate denials, but the required byte-exact no-mutation assertions are not present for every denial and the evidence overstates that coverage. GRR-0002.B01-R01-F01 therefore remains open and is not listed as closed. Preserve R01 and R02 histories, add the missing dual backlog/control-state assertions in a strict descendant, include the mandatory third-submission root-cause analysis in fresh evidence, and use supplement-resubmit for R03.",
+  "findings": [
+    {
+      "id": "GRR-0002.B01-R02-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 7,
+      "title": "The denial matrix does not prove byte-exact no-mutation for every required case",
+      "reproduction": "At exact candidate 7d004e69620f5eddbbbacd038f341b5a4e423df6, inspect tests/foundation/test_recoveryctl.py methods test_b01_scope_addendum_is_exact_commit_bound_and_fail_closed, test_b01_scope_addendum_rejects_stale_forked_and_wrong_candidates_without_mutation, and test_b01_scope_addendum_rejects_semantic_authority_substitutions_without_mutation. The stale, copied-fork, self-reviewed, wrong-path, extra-scope, and explicitly-unapproved cases snapshot and compare both planning/backlog.yaml and planning/governance-control-recovery/GCR-0001.B00.state.json. The wrong/base candidate case snapshots and compares only planning/backlog.yaml, and the retained altered-approval and missing/partial-authority cases compare neither authoritative file. Run `rg -n \"approval_payload|wrong_candidate_snapshot|stale_snapshot|fork_snapshot|snapshot =\" tests/foundation/test_recoveryctl.py` to reproduce the assertion asymmetry. All 27 tests still pass because those omitted assertions are absent. This conflicts with GRR-0002.B01-R01-F01's required remediation that each denial prove fail-closed behavior without backlog/state mutation, the approved addendum's no-mutation criterion, and remediation evidence statements that every new denial has byte-exact backlog/control-state assertions.",
+      "requiredRemediation": "In a strict-descendant candidate, use one shared byte-snapshot assertion for both planning/backlog.yaml and planning/governance-control-recovery/GCR-0001.B00.state.json around every addendum-authority denial, including altered approval, missing/partial authority, base/sibling/wrong candidate, stale and forked authority, self-review, wrong canonical path, extra scope, and explicit non-approval. Retain the real-Git authority construction and approval-commit ancestry guard. Because the next submission is R03 with open findings, include a concrete root-cause analysis explaining why the R02 assertion matrix was incomplete, bind fresh canonical GRR-0002.B01.remediation-02.evidence.json to the strict descendant, rerun the full affected suite and authority/planning checks, and resubmit only through `recoveryctl supplement-resubmit`. The R03 review must explicitly close both GRR-0002.B01-R01-F01 and GRR-0002.B01-R02-F01 before approval."
+    }
+  ],
+  "closures": []
+}
