@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0001",
   "bootstrapUnit": "GCR-0001.B00",
-  "status": "REVIEW",
+  "status": "CHANGES_REQUESTED",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0001.approval.json",
     "sha256": "2aece9c5ae5677c07ec860765de40d1e848f478b96e614ccc8f9bdb349329455",
@@ -239,25 +239,58 @@
           "evidence": "Candidate f43424ae99f86c1e41362b9248bdf229595049d3 now derives finalization from the immutable state-changing commit after adoption evidence and validates that commit's own exact revision-7 backlog/state blobs; independent replay confirmed the proof remains valid after a later backlog-only revision change. The broader required boundary is not complete because gcrctl accepts that later revision without verifying its separately authorized supplement transition. That residual risk is carried forward as GCR-0001.B00-R04-F01."
         }
       ]
+    },
+    {
+      "submission": {
+        "attemptId": "R05",
+        "submittedBy": "codex",
+        "submittedAt": "2026-08-24T05:37:27+00:00",
+        "candidateCommit": "fb88a36f4aa01de7b28f1e1ece718c75769daf1f",
+        "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
+        "branch": "codex/w1-windows-local-runtime",
+        "evidence": {
+          "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R05.json",
+          "sha256": "5bd47c2b38719e5c458c6677c5fbf37e18d65cc4a5e60a449425bdd21d5bad80",
+          "commit": "fb88a36f4aa01de7b28f1e1ece718c75769daf1f"
+        },
+        "priorAttemptId": "R04",
+        "openFindingIds": [
+          "GCR-0001.B00-R04-F01"
+        ],
+        "rootCauseAnalysis": "Root cause analysis for fifth submission: R04 correctly authenticated the immutable revision-7 finalization but split successor-generation validation between gcrctl's schema/basic stopped-state boundary and taskctl's canonical supplement/generation-history semantics. Its positive later-revision regression called the narrower state-history helper directly and therefore normalized an unsupported revision 8 instead of proving its authority. R05 removes that semantic gap by reusing taskctl.governance_control_generation_errors inside state-history validation and the complete canonical taskctl.validate result in gcrctl validate/status, with both unauthorized revision-8 denial and authorized 7-to-8 supplement coverage."
+      },
+      "review": {
+        "reviewer": "independent-control-security-reviewer",
+        "result": "changes-requested",
+        "reviewedAt": "2026-08-24T05:56:46+00:00",
+        "reviewedStateCommit": "6833d6b7031769847a0006fdc2ba1af84d49dc8e",
+        "notes": "CHANGES_REQUESTED at exact frozen REVIEW state 6833d6b7031769847a0006fdc2ba1af84d49dc8e on codex/w1-windows-local-runtime. Candidate fb88a36f4aa01de7b28f1e1ece718c75769daf1f strictly descends from R04 candidate f43424ae99f86c1e41362b9248bdf229595049d3 and approval base c34f8398adc54b3703b94daf7482faf9c09cfdfc. The R05 evidence SHA-256 is 5bd47c2b38719e5c458c6677c5fbf37e18d65cc4a5e60a449425bdd21d5bad80; its twenty-one-path approval-base inventory exactly matches Git, candidate-to-reviewed-state is exactly A R05 evidence plus M canonical state, and the sole workspace witness remains exact, untracked, unstaged, and non-authoritative. Independent replay passed five focused generation/finalization/recovery/v2-start tests in 43.316 seconds, all 112 submitted tests in 801.164 seconds, governed quality over 121 files, backlog, active GRR-0002, adverse GCR, review-site, generated-view, protected-scope, and whitespace checks. R04-F01 closes, unauthorized revision 8 now fails closed, and existing finalization/recovery controls remain intact. The exact witness-only require_clean probe and suite inventory establish the new HIGH end-to-end lifecycle blocker and the related evidence overclaim. Revision-7 adoption, GRR-0002.S01 preparation or installation, and the W1.A04 retry remain unavailable. GCR-0001 stays REVIEW at control revision 6 under the active GRR-0002 hold; this ledger grants no approval, adoption, recovery, supplement, amendment, Wave, merge, or execution authority."
+      },
+      "ledger": {
+        "path": "planning/governance-control-recovery/GCR-0001.B00.review-R05.json",
+        "sha256": "9bd3d078368896b8f588c0e4f659b0071ffb8fe46514887bd047ef9cde0391d5",
+        "commit": "6833d6b7031769847a0006fdc2ba1af84d49dc8e"
+      },
+      "findings": [
+        {
+          "id": "GCR-0001.B00-R05-F01",
+          "severity": "high",
+          "blocking": true,
+          "criterionIndex": 4,
+          "title": "The v2 supplement lane rejects the required W1.A04 trigger witness before transition",
+          "reproduction": "At exact frozen R05 reviewed state 6833d6b7031769847a0006fdc2ba1af84d49dc8e, git status contains only the packet-bound, untracked and unstaged artifacts/evidence/W1.A04.B00.json witness with SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. Calling recoveryctl.require_clean on that exact workspace fails with Untracked source exists outside the authorized recovery transition: artifacts/evidence/W1.A04.B00.json. command_supplement_start invokes require_clean with no allowed path; freeze_supplement_submission and command_supplement_review allow only their new evidence or ledger path, so they also reject the still-required witness. The submitted v2 start test patches recoveryctl.require_clean and authority/state persistence, then inspects only an in-memory GRR-0001.S01 start. The full submission/review/remediation lifecycle is a separate clean-fixture legacy v1 GRR-0001.S01 test; no test contains GRR-0002.S01. Therefore the evidence claims that the complete authorized GRR-0002.S01 7-to-8 lifecycle is green even though the real first command, and each later B01 transition, cannot run from the exact workspace R05 binds. Deleting, staging, mutating, or treating the witness as authority is not an approved transition, so criterion 4 remains infeasible without a bypass.",
+          "requiredRemediation": "In a strict-descendant R06 candidate, give the v2 pre-append GRR-0002.S01 lifecycle one shared exact workspace guard that permits only the unchanged, unstaged, non-authoritative artifacts/evidence/W1.A04.B00.json witness with its packet-bound SHA-256, plus the one canonical current transition artifact where applicable. Apply it consistently to supplement start, submit/resubmit, and review while denying a missing, changed, staged, authority-bearing, redirected, or duplicate witness and every unrelated staged, tracked, or untracked path. Add a real-Git end-to-end v2 GRR-0002.S01 7-to-8 start, B01 submit, independent review, and approved validation replay without mocking cleanliness, plus byte-stable denials for witness and workspace deviations. Preserve R01-R05 append-only and replace the unsupported complete-lifecycle evidence claim with exact executable results."
+        }
+      ],
+      "closures": [
+        {
+          "findingId": "GCR-0001.B00-R04-F01",
+          "disposition": "fixed",
+          "evidence": "Candidate fb88a36f4aa01de7b28f1e1ece718c75769daf1f reuses taskctl.governance_control_generation_errors in adopted state-history validation and the complete canonical taskctl.validate result in gcrctl validate/status. Independent real-Git replay confirmed that revision 8 without an explicit supplement transition is denied at state-history and command boundaries, while an explicit 7-to-8 transition preserves the immutable revision-7 finalization. Prior exact R02-reader, hidden/substituted finalization, and recovery-workspace boundaries remain green."
+        }
+      ]
     }
   ],
-  "currentSubmission": {
-    "attemptId": "R05",
-    "submittedBy": "codex",
-    "submittedAt": "2026-08-24T05:37:27+00:00",
-    "candidateCommit": "fb88a36f4aa01de7b28f1e1ece718c75769daf1f",
-    "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
-    "branch": "codex/w1-windows-local-runtime",
-    "evidence": {
-      "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R05.json",
-      "sha256": "5bd47c2b38719e5c458c6677c5fbf37e18d65cc4a5e60a449425bdd21d5bad80",
-      "commit": "fb88a36f4aa01de7b28f1e1ece718c75769daf1f"
-    },
-    "priorAttemptId": "R04",
-    "openFindingIds": [
-      "GCR-0001.B00-R04-F01"
-    ],
-    "rootCauseAnalysis": "Root cause analysis for fifth submission: R04 correctly authenticated the immutable revision-7 finalization but split successor-generation validation between gcrctl's schema/basic stopped-state boundary and taskctl's canonical supplement/generation-history semantics. Its positive later-revision regression called the narrower state-history helper directly and therefore normalized an unsupported revision 8 instead of proving its authority. R05 removes that semantic gap by reusing taskctl.governance_control_generation_errors inside state-history validation and the complete canonical taskctl.validate result in gcrctl validate/status, with both unauthorized revision-8 denial and authorized 7-to-8 supplement coverage."
-  },
+  "currentSubmission": null,
   "adoption": null
 }
