@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0001",
   "bootstrapUnit": "GCR-0001.B00",
-  "status": "REVIEW",
+  "status": "CHANGES_REQUESTED",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0001.approval.json",
     "sha256": "2aece9c5ae5677c07ec860765de40d1e848f478b96e614ccc8f9bdb349329455",
@@ -124,25 +124,67 @@
           "evidence": "Candidate 22f9b46dd6772d2df615d3324cd1797f585385f8 replaces the unjournaled sequential write with schema-bound durable successor payloads, a write-ahead manifest, Windows MoveFileExW replace-existing/write-through publication, cross-reader transaction/split-state denial, and idempotent explicit recovery. Independent replay passed all seven child-process abrupt boundaries: unpublished payloads restore the exact predecessor; a published transaction completes the exact successor; marker-deleted split state fails closed; and all canonical transaction artifacts are removed after recovery."
         }
       ]
+    },
+    {
+      "submission": {
+        "attemptId": "R03",
+        "submittedBy": "codex",
+        "submittedAt": "2026-08-24T04:19:11+00:00",
+        "candidateCommit": "d94ec5a5fef01fe425b7bc0d784d5915a46ab4db",
+        "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
+        "branch": "codex/w1-windows-local-runtime",
+        "evidence": {
+          "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R03.json",
+          "sha256": "cded1c041283234e7084eb2bb987119c9d69f79bcd9994fe70b92bd55e972185",
+          "commit": "d94ec5a5fef01fe425b7bc0d784d5915a46ab4db"
+        },
+        "priorAttemptId": "R02",
+        "openFindingIds": [
+          "GCR-0001.B00-R02-F01"
+        ],
+        "rootCauseAnalysis": "R02 closed the commit-chain and interruption-atomicity findings but identified one high-severity finalization boundary: a hidden path could enter the post-adoption commit and explicit recovery could complete beside unrelated workspace state. R03 therefore derives the finalization commit from immutable evidence ancestry and exact live Git blobs, requires its exact direct-child two-path delta in both current and older readers, exposes only fail-closed pending finalization before that commit, and admits recovery only from an exact staged/tracked/untracked workspace whose canonical bytes match a declared transaction boundary."
+      },
+      "review": {
+        "reviewer": "independent-control-security-reviewer",
+        "result": "changes-requested",
+        "reviewedAt": "2026-08-24T04:40:25+00:00",
+        "reviewedStateCommit": "e2b4e6130c53226d42fd6a42fe6af99c2f398f6c",
+        "notes": "CHANGES_REQUESTED at exact frozen REVIEW state e2b4e6130c53226d42fd6a42fe6af99c2f398f6c on codex/w1-windows-local-runtime. Candidate d94ec5a5fef01fe425b7bc0d784d5915a46ab4db strictly descends from R02 candidate 22f9b46dd6772d2df615d3324cd1797f585385f8 and approval base c34f8398adc54b3703b94daf7482faf9c09cfdfc. The R03 evidence SHA-256 is cded1c041283234e7084eb2bb987119c9d69f79bcd9994fe70b92bd55e972185; its sixteen-path approval-base inventory exactly matches Git, candidate-to-reviewed-state is exactly A R03 evidence plus M canonical state, and the sole workspace witness remains exact, untracked, unstaged, and non-authoritative. Independent replay passed all 112 submitted tests in 806.626 seconds, governed quality over 121 files, backlog, active GRR-0002, adverse GCR, review-site, generated-view, protected-scope, and whitespace checks. Current-reader finalization and exact recovery-workspace denials otherwise work as declared. The exact R02-reader and post-finalization-evolution probes establish the two open HIGH findings, so revision 7 adoption, GRR-0002.S01 preparation or installation, and the W1.A04 retry remain unavailable. GCR-0001 stays REVIEW at control revision 6 under the active GRR-0002 hold; this ledger grants no approval, adoption, recovery, supplement, amendment, Wave, merge, or execution authority."
+      },
+      "ledger": {
+        "path": "planning/governance-control-recovery/GCR-0001.B00.review-R03.json",
+        "sha256": "28ccae497ea5000a5813c1a1ae93eb908c74060d6757628eb659a71aac3e5868",
+        "commit": "e2b4e6130c53226d42fd6a42fe6af99c2f398f6c"
+      },
+      "findings": [
+        {
+          "id": "GCR-0001.B00-R03-F01",
+          "severity": "high",
+          "blocking": true,
+          "criterionIndex": 8,
+          "title": "The exact preceding reader accepts a hidden-path adoption finalization",
+          "reproduction": "Load tools/taskctl.py from the exact preceding R02 candidate 22f9b46dd6772d2df615d3324cd1797f585385f8 and execute its governance_control_generation_errors against an otherwise valid real-Git GCR approval, review, and adoption lifecycle. Commit the adopted backlog and state as the direct child of the adoption-evidence commit together with A planning/hidden-final-adoption.txt. The current R03 reader returns GCR-0001 adoption finalization commit is not the exact two-path transition, while the exact R02 reader returns an empty error list. R03 adds the finalization check without a successor-state or control marker that the already revision-8 R02 reader rejects; the submitted older-reader test only patches the current implementation to revision 6 and therefore does not exercise this immediate predecessor. The hidden path can consequently be accepted by a supported stale taskctl path, contradicting criteria 2 and 8, the packet's old-reader fail-closed rule, and the R03 claim that the exact direct-child boundary is enforced in current and older readers.",
+          "requiredRemediation": "In a strict-descendant R04 candidate, add a canonical, packet-consistent successor-state or tool-generation marker that the exact R02 taskctl reader fails closed on and that the current gcrctl/taskctl readers require before accepting revision 7. Do not rely only on a new optional field that the old reader ignores or on a simulated revision-6 constant. Add a real-Git regression that loads the exact R02 taskctl implementation and proves it rejects an otherwise valid revision-7 adoption containing a hidden finalization path, while the current reader accepts only the exact direct-child two-path finalization. Preserve all prior attempts and submit fresh evidence with an explicit closure for this finding."
+        },
+        {
+          "id": "GCR-0001.B00-R03-F02",
+          "severity": "high",
+          "blocking": true,
+          "criterionIndex": 4,
+          "title": "Finalization proof is coupled to the mutable live backlog and fails after lawful evolution",
+          "reproduction": "In a temporary real-Git lifecycle, complete an otherwise valid GCR adoption, commit the exact direct-child two-path finalization, and call governance_control_adoption_finalization_errors with the live state and backlog bytes; it returns an empty list. Then make a later backlog-only commit representing subsequent lawful control evolution and call the same helper with the unchanged adopted state and the new live backlog bytes; it returns GCR-0001 adoption is pending its exact finalization commit. The helper searches history for a state-path-changing commit whose backlog blob equals the current live backlog, so any later authorized backlog evolution, including the separately gated GRR-0002.S01 7-to-8 supplement required by criterion 4, makes the immutable revision-7 finalization undiscoverable. Current gcrctl and taskctl will then reject the otherwise valid generation history indefinitely.",
+          "requiredRemediation": "In the same strict-descendant candidate, derive the unique direct-child finalization from the immutable adoption-evidence commit and validate that commit's own exact two-path delta and revision-7 backlog/state blobs, rather than comparing its backlog blob to mutable live backlog bytes. Validate later live backlog revisions through their separately authorized append-only supplement/generation transitions. Add a real-Git test that proves exact revision-7 finalization remains valid after a lawful later backlog transition, including the revision-7-to-8 boundary required for GRR-0002.S01, while hidden, substituted, omitted, duplicated, and unrelated finalization commits still fail closed."
+        }
+      ],
+      "closures": [
+        {
+          "findingId": "GCR-0001.B00-R02-F01",
+          "disposition": "superseded",
+          "evidence": "Candidate d94ec5a5fef01fe425b7bc0d784d5915a46ab4db closes the R02 reproduction in the current reader and adds an exact recovery-workspace guard: the current reader rejects hidden and substituted finalization commits, and unrelated untracked, staged, or tracked recovery state is denied with byte stability. Independent replay nevertheless found two narrower blocking boundaries not isolated in R02: the exact preceding R02 taskctl reader accepts the hidden-path finalization, and the immutable finalization becomes undiscoverable after later lawful backlog evolution. Those remaining risks are carried forward as GCR-0001.B00-R03-F01 and GCR-0001.B00-R03-F02."
+        }
+      ]
     }
   ],
-  "currentSubmission": {
-    "attemptId": "R03",
-    "submittedBy": "codex",
-    "submittedAt": "2026-08-24T04:19:11+00:00",
-    "candidateCommit": "d94ec5a5fef01fe425b7bc0d784d5915a46ab4db",
-    "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
-    "branch": "codex/w1-windows-local-runtime",
-    "evidence": {
-      "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R03.json",
-      "sha256": "cded1c041283234e7084eb2bb987119c9d69f79bcd9994fe70b92bd55e972185",
-      "commit": "d94ec5a5fef01fe425b7bc0d784d5915a46ab4db"
-    },
-    "priorAttemptId": "R02",
-    "openFindingIds": [
-      "GCR-0001.B00-R02-F01"
-    ],
-    "rootCauseAnalysis": "R02 closed the commit-chain and interruption-atomicity findings but identified one high-severity finalization boundary: a hidden path could enter the post-adoption commit and explicit recovery could complete beside unrelated workspace state. R03 therefore derives the finalization commit from immutable evidence ancestry and exact live Git blobs, requires its exact direct-child two-path delta in both current and older readers, exposes only fail-closed pending finalization before that commit, and admits recovery only from an exact staged/tracked/untracked workspace whose canonical bytes match a declared transaction boundary."
-  },
+  "currentSubmission": null,
   "adoption": null
 }
