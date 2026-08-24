@@ -1836,10 +1836,51 @@ def git_name_status_delta(repo: Path, parent: str, commit: str) -> dict[str, str
     return {fields[offset + 1]: fields[offset] for offset in range(0, len(fields), 2)}
 
 
+def git_commits_changing_path_after(repo: Path, ancestor: str, path: str) -> list[str]:
+    result = subprocess.run(
+        ["git", "rev-list", "--reverse", "--ancestry-path", f"{ancestor}..HEAD", "--", path],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.stdout.strip().splitlines() if result.returncode == 0 else []
+
+
 @lru_cache(maxsize=512)
 def git_blob(repo: Path, commit: str, path: str) -> bytes | None:
     result = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=repo, capture_output=True, check=False)
     return result.stdout if result.returncode == 0 else None
+
+
+def governance_control_adoption_finalization_errors(
+    repo: Path,
+    evidence_commit: str,
+    backlog_payload: bytes,
+    state_payload: bytes,
+) -> list[str]:
+    """Derive and validate the unique exact GCR adoption-finalization commit."""
+    if not git_commit_exists(repo, evidence_commit) or not git_is_ancestor(repo, evidence_commit):
+        return ["GCR-0001 adoption evidence commit is absent from current history"]
+    state_path = "planning/governance-control-recovery/GCR-0001.B00.state.json"
+    backlog_path = "planning/backlog.yaml"
+    matches = [
+        commit
+        for commit in git_commits_changing_path_after(repo, evidence_commit, state_path)
+        if git_blob(repo, commit, state_path) == state_payload
+        and git_blob(repo, commit, backlog_path) == backlog_payload
+    ]
+    if not matches:
+        return ["GCR-0001 adoption is pending its exact finalization commit"]
+    if len(matches) != 1:
+        return ["GCR-0001 adoption finalization commit is not unique"]
+    finalization_commit = matches[0]
+    if git_commit_parents(repo, finalization_commit) != [evidence_commit]:
+        return ["GCR-0001 adoption finalization is not the direct child of its evidence commit"]
+    expected_delta = {backlog_path: "M", state_path: "M"}
+    if git_name_status_delta(repo, evidence_commit, finalization_commit) != expected_delta:
+        return ["GCR-0001 adoption finalization commit is not the exact two-path transition"]
+    return []
 
 
 def safe_control_path(
@@ -3212,6 +3253,16 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
         or evidence_document.get("reviewedStateCommit") != approved_state
     ):
         errors.append("GCR-0001 live adoption state/evidence does not match the adopted generation")
+    live_state_path = repo / "planning/governance-control-recovery/GCR-0001.B00.state.json"
+    if live_state.get("status") == "ADOPTED" and live_state_path.is_file() and not live_state_path.is_symlink():
+        errors.extend(
+            governance_control_adoption_finalization_errors(
+                repo,
+                evidence_commit,
+                (repo / "planning/backlog.yaml").read_bytes(),
+                live_state_path.read_bytes(),
+            )
+        )
     return errors
 
 

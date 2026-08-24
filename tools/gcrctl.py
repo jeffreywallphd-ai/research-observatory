@@ -215,6 +215,37 @@ def require_workspace(repo: Path, *, extra_untracked: set[str] | None = None) ->
         raise SystemExit(f"GCR untracked-path boundary differs: {unexpected[0] if unexpected else '<unknown>'}")
 
 
+def require_recovery_workspace(
+    repo: Path,
+    *,
+    present_artifacts: set[str],
+    expected_tracked: set[str] | None = None,
+) -> None:
+    """Require the exact Git workspace permitted for transaction recovery."""
+    if git(repo, "branch", "--show-current") != BRANCH:
+        raise SystemExit(f"GCR recovery requires exact branch {BRANCH}")
+    validate_trigger(repo)
+    staged = set(git(repo, "diff", "--cached", "--name-only", "--").splitlines())
+    if staged:
+        raise SystemExit(f"GCR recovery staged-path boundary differs: {sorted(staged)[0]}")
+    untracked = set(git(repo, "ls-files", "--others", "--exclude-standard").splitlines())
+    allowed_untracked = {TRIGGER_PATH, *present_artifacts}
+    if untracked != allowed_untracked:
+        unexpected = sorted(untracked ^ allowed_untracked)
+        raise SystemExit(
+            f"GCR recovery untracked-path boundary differs: {unexpected[0] if unexpected else '<unknown>'}"
+        )
+    tracked = set(git(repo, "diff", "--name-only", "HEAD", "--").splitlines())
+    canonical = {BACKLOG_PATH, STATE_PATH}
+    if expected_tracked is None:
+        unexpected_tracked = tracked - canonical
+        if unexpected_tracked:
+            raise SystemExit(f"GCR recovery tracked-path boundary differs: {sorted(unexpected_tracked)[0]}")
+    elif tracked != expected_tracked:
+        unexpected = sorted(tracked ^ expected_tracked)
+        raise SystemExit(f"GCR recovery tracked-path boundary differs: {unexpected[0] if unexpected else '<unknown>'}")
+
+
 def load_authority(repo: Path) -> tuple[dict[str, Any], dict[str, Any], str]:
     packet_path = safe_path(repo, PACKET_PATH, label="GCR packet")
     approval_path = safe_path(repo, APPROVAL_PATH, label="GCR approval")
@@ -778,6 +809,16 @@ def validate_state_history(repo: Path, state: dict[str, Any], packet: dict[str, 
         raise SystemExit("GCR live state differs from the latest immutable review result")
     if (state.get("status") == "ADOPTED") != (state.get("adoption") is not None):
         raise SystemExit("GCR adoption state and adoption record differ")
+    if state.get("status") == "ADOPTED":
+        adoption = state.get("adoption") or {}
+        finalization_errors = taskctl.governance_control_adoption_finalization_errors(
+            repo,
+            str((adoption.get("evidence") or {}).get("commit") or ""),
+            (repo / BACKLOG_PATH).read_bytes(),
+            (repo / STATE_PATH).read_bytes(),
+        )
+        if finalization_errors:
+            raise SystemExit("GCR adoption finalization failed:\n- " + "\n- ".join(finalization_errors))
 
 
 def command_validate(args: argparse.Namespace) -> None:
@@ -802,11 +843,21 @@ def command_status(args: argparse.Namespace) -> None:
     _approval, _packet, approval_base = load_authority(args.repo)
     state, _payload = load_state(args.repo, required=False)
     backlog = yaml.safe_load((args.repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+    bootstrap_status = (state or {}).get("status", "AUTHORIZED")
+    if state is not None and bootstrap_status == "ADOPTED":
+        adoption = state.get("adoption") or {}
+        if taskctl.governance_control_adoption_finalization_errors(
+            args.repo,
+            str((adoption.get("evidence") or {}).get("commit") or ""),
+            (args.repo / BACKLOG_PATH).read_bytes(),
+            (args.repo / STATE_PATH).read_bytes(),
+        ):
+            bootstrap_status = "ADOPTION_FINALIZATION_PENDING_OR_INVALID"
     print(
         yaml.safe_dump(
             {
                 "controlRecovery": GCR_ID,
-                "bootstrap": {"id": BOOTSTRAP_ID, "status": (state or {}).get("status", "AUTHORIZED")},
+                "bootstrap": {"id": BOOTSTRAP_ID, "status": bootstrap_status},
                 "approvalBase": approval_base,
                 "controlRevision": backlog["control_plane"]["revision"],
                 "adoptionTransaction": (
@@ -892,6 +943,19 @@ def transaction_artifacts(repo: Path) -> dict[str, Path]:
 
 def transaction_artifacts_present(repo: Path) -> list[str]:
     return [relative for relative, path in transaction_artifacts(repo).items() if os.path.lexists(path)]
+
+
+def transaction_expected_tracked_paths(repo: Path, transaction: dict[str, Any]) -> set[str]:
+    predecessor = transaction.get("predecessor") or {}
+    successor = transaction.get("successor") or {}
+    expected: set[str] = set()
+    for relative, key in ((BACKLOG_PATH, "backlogSha256"), (STATE_PATH, "stateSha256")):
+        current_hash = sha256((repo / relative).read_bytes())
+        if current_hash == successor.get(key):
+            expected.add(relative)
+        elif current_hash != predecessor.get(key):
+            raise SystemExit(f"GCR canonical {relative} bytes match neither transaction boundary")
+    return expected
 
 
 def fsync_directory(directory: Path) -> None:
@@ -1093,6 +1157,11 @@ def complete_adoption_transaction_locked(repo: Path, packet: dict[str, Any]) -> 
         raise SystemExit("GCR adoption transaction manifest is missing or redirected")
     transaction, _payload = load_json(transaction_path, "GCR adoption transaction")
     validate_transaction(repo, transaction)
+    require_recovery_workspace(
+        repo,
+        present_artifacts=set(transaction_artifacts_present(repo)),
+        expected_tracked=transaction_expected_tracked_paths(repo, transaction),
+    )
     _predecessor_backlog, _predecessor_state = validate_transaction_authority(repo, packet, transaction)
     backlog_path = repo / BACKLOG_PATH
     state_path_value = repo / STATE_PATH
@@ -1138,11 +1207,21 @@ def complete_adoption_transaction_locked(repo: Path, packet: dict[str, Any]) -> 
     ):
         raise SystemExit("GCR adoption transaction did not reach its exact successor pair")
     validate_successor_pair(repo, transaction, backlog_path.read_bytes(), state_path_value.read_bytes())
+    require_recovery_workspace(
+        repo,
+        present_artifacts=set(transaction_artifacts_present(repo)),
+        expected_tracked={BACKLOG_PATH, STATE_PATH},
+    )
     adoption_fault_boundary("successor-validated")
     unlink_durable(transaction_path)
     adoption_fault_boundary("transaction-removed")
     if transaction_artifacts_present(repo):
         raise SystemExit("GCR adoption transaction cleanup left an unexpected artifact")
+    require_recovery_workspace(
+        repo,
+        present_artifacts=set(),
+        expected_tracked={BACKLOG_PATH, STATE_PATH},
+    )
 
 
 def cleanup_unpublished_transaction_locked(
@@ -1152,6 +1231,11 @@ def cleanup_unpublished_transaction_locked(
     include_manifest: bool = False,
 ) -> None:
     artifacts = transaction_artifacts(repo)
+    require_recovery_workspace(
+        repo,
+        present_artifacts=set(transaction_artifacts_present(repo)),
+        expected_tracked=set(),
+    )
     if os.path.lexists(artifacts[TRANSACTION_PATH]) and not include_manifest:
         raise SystemExit("Published GCR adoption transaction requires governed recovery")
     state, state_payload = load_state(repo, required=True)
@@ -1188,13 +1272,12 @@ def recover_adoption_transaction(repo: Path, packet: dict[str, Any]) -> str:
     present = transaction_artifacts_present(repo)
     if not present:
         return "ABSENT"
-    if git(repo, "branch", "--show-current") != BRANCH:
-        raise SystemExit(f"GCR recovery requires exact branch {BRANCH}")
-    validate_trigger(repo)
+    require_recovery_workspace(repo, present_artifacts=set(present))
     with taskctl.exclusive_backlog_lock(repo / BACKLOG_PATH):
         present = transaction_artifacts_present(repo)
         if not present:
             return "ABSENT"
+        require_recovery_workspace(repo, present_artifacts=set(present))
         if TRANSACTION_PATH not in present:
             cleanup_unpublished_transaction_locked(repo, packet)
             return "RESTORED_PREDECESSOR"
@@ -1366,7 +1449,10 @@ def command_adopt(args: argparse.Namespace) -> None:
         evidence_relative=evidence_relative,
         evidence_payload=evidence_payload,
     )
-    print("Adopted GCR-0001 revision 6-to-7; GRR-0002.S01 remains separately gated")
+    print(
+        "Prepared GCR-0001 revision 6-to-7 successor; exact two-path finalization commit is required "
+        "before GRR-0002.S01"
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
