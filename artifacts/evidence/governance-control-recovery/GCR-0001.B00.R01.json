@@ -1,0 +1,176 @@
+{
+  "schemaVersion": "1.0-control-recovery-evidence",
+  "documentType": "governance-control-recovery-bootstrap-evidence",
+  "controlRecoveryId": "GCR-0001",
+  "bootstrapUnit": "GCR-0001.B00",
+  "attemptId": "R01",
+  "commit": "060899b5ec438003ad188d3be21da1f29b8d3908",
+  "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
+  "branch": "codex/w1-windows-local-runtime",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "changedFiles": [
+    "planning/backlog.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement-approval.v2.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement.v2.schema.json",
+    "quality-scope.json",
+    "tests/foundation/test_gcrctl.py",
+    "tests/foundation/test_recoveryctl.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tools/gcrctl.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "id": "affected-control-suite",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_gcrctl tests.foundation.test_recoveryctl tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "governed-python-quality",
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "backlog-validation",
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "active-recovery-validation",
+      "command": ".venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . validate GRR-0002 --require-approved",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "gcr-authority-validation",
+      "command": ".venv\\Scripts\\python.exe tools\\gcrctl.py --repo . validate GCR-0001",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "planning-review-integrity",
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "generated-backlog-views",
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "protected-product-reference-privacy-scope",
+      "command": "git diff --exit-code c34f8398adc54b3703b94daf7482faf9c09cfdfc..060899b5ec438003ad188d3be21da1f29b8d3908 -- apps/desktop services/core-api packages/contracts design/ui-reference docs/architecture/privacy-controls.md artifacts/evidence/ui-change",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "candidate-whitespace-integrity",
+      "command": "git diff c34f8398adc54b3703b94daf7482faf9c09cfdfc..060899b5ec438003ad188d3be21da1f29b8d3908 --check",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "index": 1,
+      "statement": "The GCR packet and exclusive-create approval artifact are exact-commit, independently reviewed, hash-bound, path-safe, and bootstrap-only; the approval introduction commit is the tracked-clean codex-branch execution base, the sole untracked trigger witness is exact and unstaged, and all GRR-0002, ECR-0003, W1, T03, and G1 trigger boundaries match current immutable state.",
+      "evidence": [
+        "gcr-authority-validation reproduced the exact packet, approval-introduction, Git-blob, branch, witness, and stopped-boundary bindings at candidate 060899b5ec438003ad188d3be21da1f29b8d3908.",
+        "active-recovery-validation reproduced APPROVED GRR-0002.B00, ACTIVE HOLD-W1-GRR-0002, and next amendment W1.A04 without granting ordinary execution.",
+        "backlog-validation passed with W1 PAUSED, CAP-02.S04.T03 BLOCKED, W1.A04 absent, and G1 PENDING."
+      ]
+    },
+    {
+      "index": 2,
+      "statement": "Revision 7 records one append-only 6-to-7 generation transition under HOLD-W1-GRR-0002 and rejects missing, duplicated, reordered, rewritten, cross-hold, wrong-predecessor, non-increasing, or unsupported generations.",
+      "evidence": [
+        "affected-control-suite passed the real-Git GCR submit-review-direct-child-adoption lifecycle and exact generation schema/semantic denial matrix.",
+        "test_gcr_generation_is_exact_and_revision_six_reader_fails_closed proved the one-record 6-to-7 identity and older-reader denial."
+      ]
+    },
+    {
+      "index": 3,
+      "statement": "Released GRR-0001 remains byte/history exact and validates before and after an in-memory W1.A04/ECR-0003 append; future amendments do not alter its historical consecutiveness decision.",
+      "evidence": [
+        "affected-control-suite passed test_released_hold_ecr_identity_is_prefix_stable_when_w1_a04_is_appended.",
+        "The implementation evaluates each released hold against its historical amendment prefix while retaining the frozen predecessor-byte and review-history guards."
+      ]
+    },
+    {
+      "index": 4,
+      "statement": "The v2 supplement controller can represent exact GRR-0002.S01/B01 from revision 7 while W1.A04 is absent, and v1 GRR-0001.S01 history remains valid without migration or fabrication.",
+      "evidence": [
+        "affected-control-suite passed test_v2_supplement_start_uses_exact_seven_to_eight_transition and the complete legacy GRR-0001.S01 R01-to-R02 lifecycle.",
+        "The version-selected schemas and controller bind an explicit 7-to-8 transition and external W1.A04 approval/candidate/evidence while requiring the amendment to remain absent before append."
+      ]
+    },
+    {
+      "index": 5,
+      "statement": "No ordinary or amendment execution is authorized by GCR approval or B00 approval; GRR-0002.S01, W1.A04, T03, W1 exit, G1, and main integration retain their separate gates.",
+      "evidence": [
+        "gcr-authority-validation reported bootstrap AUTHORIZED at control revision 6 and did not create state, change backlog, or authorize ordinary execution.",
+        "active-recovery-validation and backlog-validation confirm the active hold, paused Wave, blocked task, absent amendment, and pending G1 remain intact.",
+        "The GCR controller exposes only submit, resubmit, review, validate, status, and exact adoption commands; adoption ends at revision 7 and names GRR-0002.S01 as the separate next gate."
+      ]
+    },
+    {
+      "index": 6,
+      "statement": "All declared failure modes are byte-stable, every changed path is inside the B00 allowlist, protected product/reference/privacy bytes remain unchanged, and governed Python quality passes.",
+      "evidence": [
+        "affected-control-suite passed 105 tests, including stale, dirty, unsafe-path, self-review, ancestry, identity, projection-tamper, atomic-write, and older-reader denial cases.",
+        "governed-python-quality passed formatting, lint, and mypy over 121 governed files.",
+        "protected-product-reference-privacy-scope and candidate-whitespace-integrity passed; the ten changed paths exactly match the evidence inventory and approved B00 allowlist."
+      ]
+    },
+    {
+      "index": 7,
+      "statement": "B00 evidence maps every required outcome to the exact candidate and selected checks, discloses deferred W1 qualification, and contains no unexplained unverified item.",
+      "evidence": [
+        "This runtime-schema-governed R01 manifest binds base c34f8398adc54b3703b94daf7482faf9c09cfdfc, candidate 060899b5ec438003ad188d3be21da1f29b8d3908, all ten changed paths, nine passing checks, all eight criteria, and the exact trigger witness.",
+        "verificationSelection defers only the separately gated GRR-0002.S01/W1.A04 execution and W1 exit qualification; unverifiedItems is empty."
+      ]
+    },
+    {
+      "index": 8,
+      "statement": "Independent B00 review is bound to the exact reviewed-state commit and has no open blocking finding; only then may a direct-child adoption commit change exactly planning/backlog.yaml and the canonical GCR state from revision 6 to 7 before the revision-7 controller is used to prepare or install GRR-0002.S01.",
+      "evidence": [
+        "affected-control-suite proved that review consumes the immutable REVIEW-state commit, denies self-review or open blockers, preserves every attempt, and permits adoption only from an APPROVED state through a direct-child evidence commit.",
+        "The exact adoption writer validates and atomically limits its mutation to planning/backlog.yaml and planning/governance-control-recovery/GCR-0001.B00.state.json; the actual R01 disposition remains the independent reviewer's separate append-only authority."
+      ]
+    }
+  ],
+  "findingClosures": [],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This bootstrap changes governance readers, schemas, recovery transition semantics, append-only history validation, and an atomic two-file adoption path. The credible risks are authority substitution, historical-prefix regression, fabricated pre-append amendment state, wrong generation transition, stale or partial writes, hidden scope expansion, reviewer/projection tamper, and older-reader acceptance. Focused GCR tests, the full affected recovery/task workflow suite, governed quality, current authority validation, generated planning checks, and protected-path diff checks cover that surface.",
+    "selectedChecks": [
+      "affected-control-suite",
+      "governed-python-quality",
+      "backlog-validation",
+      "active-recovery-validation",
+      "gcr-authority-validation",
+      "planning-review-integrity",
+      "generated-backlog-views",
+      "protected-product-reference-privacy-scope",
+      "candidate-whitespace-integrity"
+    ],
+    "deferredCoverage": [
+      "Independent GCR-0001.B00 R01 disposition is performed after this immutable submission is frozen.",
+      "GRR-0002.S01 packet approval/B01 execution and the original W1.A04 bootstrap retry remain separately gated.",
+      "CAP-02.S04.T03 recovery, slice review, complete W1 qualification, G1 approval, local main integration, and remote actions remain deferred to their existing gates."
+    ]
+  }
+}
