@@ -744,6 +744,13 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.git(repo, "config", "core.autocrlf", "false")
         return repo
 
+    @staticmethod
+    def b01_control_snapshot(repo: Path) -> dict[str, bytes]:
+        return {
+            relative: (repo / relative).read_bytes()
+            for relative in ("planning/backlog.yaml", recoveryctl.CONTROL_RECOVERY_STATE_PATH)
+        }
+
     def b01_scope_variant(
         self,
         repo: Path,
@@ -1427,12 +1434,15 @@ class GovernanceRecoveryTests(unittest.TestCase):
                     candidate,
                 ),
             )
+            strict_snapshot = self.b01_control_snapshot(repo)
             with self.assertRaisesRegex(SystemExit, "strictly descend"):
                 recoveryctl.approved_b01_scope_addendum_paths(
                     repo,
                     "GRR-0002.S01",
                     recoveryctl.B01_SCOPE_BASE_CANDIDATE,
                 )
+            self.assertEqual(strict_snapshot, self.b01_control_snapshot(repo))
+            cross_supplement_snapshot = self.b01_control_snapshot(repo)
             self.assertEqual(
                 [],
                 recoveryctl.approved_b01_scope_addendum_paths(
@@ -1441,24 +1451,29 @@ class GovernanceRecoveryTests(unittest.TestCase):
                     candidate,
                 ),
             )
+            self.assertEqual(cross_supplement_snapshot, self.b01_control_snapshot(repo))
 
             approval_path = repo / recoveryctl.B01_SCOPE_APPROVAL_PATH
             approval_payload = approval_path.read_bytes()
             approval_path.write_bytes(approval_payload + b" ")
+            altered_snapshot = self.b01_control_snapshot(repo)
             with self.assertRaisesRegex(SystemExit, "immutable Git blob"):
                 recoveryctl.approved_b01_scope_addendum_paths(
                     repo,
                     "GRR-0002.S01",
                     candidate,
                 )
+            self.assertEqual(altered_snapshot, self.b01_control_snapshot(repo))
             approval_path.write_bytes(approval_payload)
             approval_path.unlink()
+            partial_snapshot = self.b01_control_snapshot(repo)
             with self.assertRaisesRegex(SystemExit, "partial"):
                 recoveryctl.approved_b01_scope_addendum_paths(
                     repo,
                     "GRR-0002.S01",
                     candidate,
                 )
+            self.assertEqual(partial_snapshot, self.b01_control_snapshot(repo))
 
     def test_b01_scope_addendum_rejects_stale_forked_and_wrong_candidates_without_mutation(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -1466,20 +1481,14 @@ class GovernanceRecoveryTests(unittest.TestCase):
             authority_head = self.git(repo, "rev-parse", "HEAD")
 
             self.git(repo, "checkout", "--detach", recoveryctl.B01_SCOPE_REVIEW_COMMIT)
-            stale_snapshot = {
-                relative: (repo / relative).read_bytes()
-                for relative in ("planning/backlog.yaml", recoveryctl.CONTROL_RECOVERY_STATE_PATH)
-            }
+            stale_snapshot = self.b01_control_snapshot(repo)
             with self.assertRaisesRegex(SystemExit, "partial"):
                 recoveryctl.approved_b01_scope_addendum_paths(
                     repo,
                     "GRR-0002.S01",
                     recoveryctl.B01_SCOPE_REVIEW_COMMIT,
                 )
-            self.assertEqual(
-                stale_snapshot,
-                {relative: (repo / relative).read_bytes() for relative in stale_snapshot},
-            )
+            self.assertEqual(stale_snapshot, self.b01_control_snapshot(repo))
 
             self.git(repo, "checkout", "--detach", recoveryctl.B01_SCOPE_BASE_CANDIDATE)
             self.git(repo, "commit", "--allow-empty", "-m", "fixture: diverge before copied authority")
@@ -1491,29 +1500,23 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 self.git(repo, "cherry-pick", commit)
             fork_candidate = self.git(repo, "rev-parse", "HEAD")
             self.git(repo, "checkout", "--detach", authority_head)
-            fork_snapshot = {
-                relative: (repo / relative).read_bytes()
-                for relative in ("planning/backlog.yaml", recoveryctl.CONTROL_RECOVERY_STATE_PATH)
-            }
+            fork_snapshot = self.b01_control_snapshot(repo)
             with self.assertRaisesRegex(SystemExit, "approval is outside the required Git ancestry"):
                 recoveryctl.approved_b01_scope_addendum_paths(
                     repo,
                     "GRR-0002.S01",
                     fork_candidate,
                 )
-            self.assertEqual(
-                fork_snapshot,
-                {relative: (repo / relative).read_bytes() for relative in fork_snapshot},
-            )
+            self.assertEqual(fork_snapshot, self.b01_control_snapshot(repo))
 
-            wrong_candidate_snapshot = (repo / "planning/backlog.yaml").read_bytes()
+            wrong_candidate_snapshot = self.b01_control_snapshot(repo)
             with self.assertRaisesRegex(SystemExit, "strictly descend"):
                 recoveryctl.approved_b01_scope_addendum_paths(
                     repo,
                     "GRR-0002.S01",
                     recoveryctl.B01_SCOPE_BASE_CANDIDATE,
                 )
-            self.assertEqual(wrong_candidate_snapshot, (repo / "planning/backlog.yaml").read_bytes())
+            self.assertEqual(wrong_candidate_snapshot, self.b01_control_snapshot(repo))
 
     def test_b01_scope_addendum_rejects_semantic_authority_substitutions_without_mutation(self) -> None:
         cases = (
@@ -1532,10 +1535,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
                         packet_change=packet_change,
                         approval_change=approval_change,
                     )
-                    snapshot = {
-                        relative: (repo / relative).read_bytes()
-                        for relative in ("planning/backlog.yaml", recoveryctl.CONTROL_RECOVERY_STATE_PATH)
-                    }
+                    snapshot = self.b01_control_snapshot(repo)
                     with ExitStack() as stack:
                         for name, value in overrides.items():
                             stack.enter_context(patch.object(recoveryctl, name, value))
@@ -1545,10 +1545,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
                                 "GRR-0002.S01",
                                 candidate,
                             )
-                    self.assertEqual(
-                        snapshot,
-                        {relative: (repo / relative).read_bytes() for relative in snapshot},
-                    )
+                    self.assertEqual(snapshot, self.b01_control_snapshot(repo))
 
     def test_grr_0002_s01_v2_real_git_witness_aware_lifecycle(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
