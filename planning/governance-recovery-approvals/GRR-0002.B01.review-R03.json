@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-review",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S01",
+  "bootstrapUnit": "GRR-0002.B01",
+  "attemptId": "R03",
+  "candidateCommit": "0b9f4a63e35dbd6163239b39f1ec5b9aa03156bf",
+  "reviewedStateCommit": "bacc5f9a6ff840c01749820e157856aaced2626e",
+  "reviewer": "independent-control-security-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0002.B01.remediation-02.evidence.json",
+    "sha256": "7a53880c91eb34c7d64dfe4b41764d9855426fade152008e2fe01edb9bc800f5"
+  },
+  "notes": "APPROVED after bounded independent R03 remediation review. The exact strict-descendant candidate, frozen reviewed-state commit, canonical remediation evidence, six-path prior-candidate-to-candidate delta, seven-path R03 submission-state delta, S01 and scope-addendum authority chains, approval ancestry, active hold, exact witness, stopped W1 boundary, and read-only W1.A04.B00 projection are exact. The mandatory third-submission root-cause analysis identifies the shared-helper and attempt-coupled-fixture causes of the two prior omissions and records concrete corrective and preventive actions. R01 and R02 evidence, adverse ledgers, findings, commits, and hashes remain append-only. The remediation applies one byte-exact dual-file snapshot to every retained and added addendum-authority denial, including altered, missing/partial, base/wrong candidate, stale, forked, self-reviewed, wrong-path, extra-scope, and explicitly unapproved authority, and the workspace test now selects the first actually absent canonical remediation evidence path. An independent disposable exact-candidate replay passed all 27 recoveryctl tests in 979.695 seconds; the fixture and bundle were removed. Backlog, GRR-0002, GRR-0002.S01, GCR-0001, ECR-0003, capability plans, slice plans, generated views, the 150-page review site, governed Python quality, exact hashes, ancestry, and Git diff hygiene also pass. No new finding remains. This ledger does not itself record the controller review transition or authorize amendment materialization, task execution, live T03 recovery, hold release, W1 resume, or G1 approval; those remain separately gated.",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GRR-0002.B01-R01-F01",
+      "notes": "CLOSED. The focused real-Git denial matrix now covers every scope-addendum authority case required by R01: stale and copied-fork chains, packet-reviewer/human-approver self-review, wrong canonical path, extra generated scope, explicit non-approval, base/wrong candidate, altered approval, missing/partial authority, cross-supplement isolation, valid exact authority, and the approval-commit ancestry guard. Every denial is acceptance-bound and the exact-candidate 27-test replay passes."
+    },
+    {
+      "findingId": "GRR-0002.B01-R02-F01",
+      "notes": "CLOSED. One shared b01_control_snapshot helper captures raw planning/backlog.yaml and planning/governance-control-recovery/GCR-0001.B00.state.json bytes before every addendum denial and compares both afterward, including the previously omitted altered, missing/partial, and base/wrong-candidate cases. The first-absent remediation-artifact fixture removes attempt-count coupling, the mandatory R03 root-cause analysis is present, and the independent exact-candidate replay passes all 27 tests without mutation or residual fixtures."
+    }
+  ]
+}

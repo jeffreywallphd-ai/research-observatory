@@ -8257,7 +8257,7 @@
         {
           "id": "GRR-0002.S01",
           "bootstrap_id": "GRR-0002.B01",
-          "bootstrap_status": "REVIEW",
+          "bootstrap_status": "APPROVED",
           "packet_path": "planning/governance-recovery-requests/GRR-0002.S01.packet.json",
           "packet_sha256": "bcb3b8fe42b8a091b22794a4c560b3d76989ebef0ee982a9d529a4a67cb1ee62",
           "packet_commit": "e4be6a4beaffd26f0f9011e7fe8b2ac8baabc3f2",
