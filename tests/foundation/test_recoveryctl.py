@@ -1307,7 +1307,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
             witness.write_bytes(witness_payload)
 
             recoveryctl.require_supplement_workspace(repo, packet)
-            transition_relative = "planning/governance-recovery-approvals/GRR-0002.B01.evidence.json"
+            transition_relative = "planning/governance-recovery-approvals/GRR-0002.B01.remediation-01.evidence.json"
             transition = repo / transition_relative
             transition.write_text("{}\n", encoding="utf-8")
             recoveryctl.require_supplement_workspace(
