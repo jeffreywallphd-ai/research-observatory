@@ -22596,8 +22596,8 @@ verification_profiles:
   server: University-hosted services, identity, collaboration, licensed sources, research-production workflow, and operations.
   cloud: Tenant, residency, metering, security, research-production workload, and SaaS operations.
 control_plane:
-  revision: 7
-  minimum_tool_revision: 7
+  revision: 8
+  minimum_tool_revision: 8
   active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
@@ -22902,7 +22902,33 @@ control_plane:
         ledger:
           path: planning/governance-recovery-approvals/GRR-0002.B00.review-R01.json
           sha256: 9a5efe9d7a9feabeb0a11829df4954a74f9d7a6d2d5089af92f4bfc337ccdfe2
-    supplements: []
+    supplements:
+    - id: GRR-0002.S01
+      predecessor_control_revision: 7
+      packet_reference:
+        path: planning/governance-recovery-requests/GRR-0002.S01.packet.json
+        sha256: bcb3b8fe42b8a091b22794a4c560b3d76989ebef0ee982a9d529a4a67cb1ee62
+        commit: e4be6a4beaffd26f0f9011e7fe8b2ac8baabc3f2
+      approval_reference:
+        path: planning/governance-recovery-approvals/GRR-0002.S01.json
+        sha256: 792796d234a8d208d7e99acce32e575e3891b21b347b716c11be6c97a9d30f20
+        introduction_commit: 68e6df37b0f20dc5e89bdbfd708b24dfcd226240
+      bootstrap:
+        id: GRR-0002.B01
+        status: IN_PROGRESS
+        implementer: codex
+        implementation_commit: null
+        submission_branch: null
+        evidence: null
+        review:
+          reviewer: null
+          result: null
+          reviewed_at: null
+          notes: null
+        current_submission: null
+        attempts: []
+      created_at: '2026-08-24T10:53:23+00:00'
+      successor_control_revision: 8
     post_bootstrap:
       required_change_request_id: ECR-0003
       required_amendment_id: W1.A04
