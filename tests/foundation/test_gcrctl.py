@@ -363,8 +363,32 @@ class GcrctlTests(unittest.TestCase):
                 yaml.safe_dump(evolved_backlog, sort_keys=False),
                 encoding="utf-8",
             )
+            with self.assertRaisesRegex(SystemExit, "latest explicit generation transition"):
+                gcrctl.validate_state_history(repo, adopted_state, packet)
+            validate_args = argparse.Namespace(repo=repo, require_approved=False)
+            with (
+                patch.object(gcrctl, "load_authority", return_value=({}, packet, base)),
+                patch.object(
+                    gcrctl,
+                    "current_boundary",
+                    return_value=((repo / gcrctl.BACKLOG_PATH).read_bytes(), evolved_backlog),
+                ),
+                self.assertRaisesRegex(SystemExit, "latest explicit generation transition"),
+            ):
+                gcrctl.command_validate(validate_args)
+            evolved_backlog["control_plane"]["recovery_holds"][0]["supplements"] = [
+                {
+                    "id": "GRR-0002.S01",
+                    "predecessor_control_revision": 7,
+                    "successor_control_revision": 8,
+                }
+            ]
+            (repo / gcrctl.BACKLOG_PATH).write_text(
+                yaml.safe_dump(evolved_backlog, sort_keys=False),
+                encoding="utf-8",
+            )
             self.git(repo, "add", gcrctl.BACKLOG_PATH)
-            self.git(repo, "commit", "-m", "lawful later control evolution")
+            self.git(repo, "commit", "-m", "explicit later control evolution")
             self.assertEqual(
                 [],
                 taskctl.governance_control_adoption_finalization_errors(
