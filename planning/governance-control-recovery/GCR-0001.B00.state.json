@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0001",
   "bootstrapUnit": "GCR-0001.B00",
-  "status": "CHANGES_REQUESTED",
+  "status": "REVIEW",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0001.approval.json",
     "sha256": "2aece9c5ae5677c07ec860765de40d1e848f478b96e614ccc8f9bdb349329455",
@@ -241,6 +241,23 @@
       ]
     }
   ],
-  "currentSubmission": null,
+  "currentSubmission": {
+    "attemptId": "R05",
+    "submittedBy": "codex",
+    "submittedAt": "2026-08-24T05:37:27+00:00",
+    "candidateCommit": "fb88a36f4aa01de7b28f1e1ece718c75769daf1f",
+    "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R05.json",
+      "sha256": "5bd47c2b38719e5c458c6677c5fbf37e18d65cc4a5e60a449425bdd21d5bad80",
+      "commit": "fb88a36f4aa01de7b28f1e1ece718c75769daf1f"
+    },
+    "priorAttemptId": "R04",
+    "openFindingIds": [
+      "GCR-0001.B00-R04-F01"
+    ],
+    "rootCauseAnalysis": "Root cause analysis for fifth submission: R04 correctly authenticated the immutable revision-7 finalization but split successor-generation validation between gcrctl's schema/basic stopped-state boundary and taskctl's canonical supplement/generation-history semantics. Its positive later-revision regression called the narrower state-history helper directly and therefore normalized an unsupported revision 8 instead of proving its authority. R05 removes that semantic gap by reusing taskctl.governance_control_generation_errors inside state-history validation and the complete canonical taskctl.validate result in gcrctl validate/status, with both unauthorized revision-8 denial and authorized 7-to-8 supplement coverage."
+  },
   "adoption": null
 }
