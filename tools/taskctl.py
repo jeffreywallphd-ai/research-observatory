@@ -232,6 +232,17 @@ def wave_checkpoint_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[st
     }
 
 
+def wave_resume_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
+    """Freeze durable Wave resume records while permitting one authorized append."""
+    return {
+        str(wave["id"]): tuple(
+            json.dumps(record, sort_keys=True, separators=(",", ":"))
+            for record in (wave.get("campaign") or {}).get("resume_records", [])
+        )
+        for wave in data.get("waves", [])
+    }
+
+
 def task_review_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, ...]]:
     snapshot: dict[str, tuple[str, ...]] = {}
     task_documents = [
@@ -490,6 +501,8 @@ def save_validated(
     expected_amendment_history: dict[str, tuple[str, ...]] | None = None,
     expected_task_review_history: dict[str, tuple[str, ...]] | None = None,
     expected_wave_checkpoint_history: dict[str, tuple[str, ...]] | None = None,
+    expected_wave_resume_history: dict[str, tuple[str, ...]] | None = None,
+    authorized_wave_resume_append: str | None = None,
     expected_recovery_history: dict[str, tuple[str, ...]] | None = None,
     expected_released_recovery_holds: dict[str, str] | None = None,
     expected_task_recovery_history: dict[str, tuple[str, ...]] | None = None,
@@ -526,6 +539,21 @@ def save_validated(
             current = current_history.get(wave_id)
             if current is None or current[: len(prior)] != prior:
                 raise SystemExit(f"Append-only Wave checkpoint history changed for {wave_id}")
+    if expected_wave_resume_history is not None:
+        current_history = wave_resume_history_snapshot(document)
+        for wave_id, prior in expected_wave_resume_history.items():
+            current = current_history.get(wave_id)
+            if current is None or current[: len(prior)] != prior:
+                raise SystemExit(f"Append-only Wave resume history changed for {wave_id}")
+            appended = len(current) - len(prior)
+            if appended and (wave_id != authorized_wave_resume_append or appended != 1):
+                raise SystemExit(f"Unauthorized Wave resume history append for {wave_id}")
+        if authorized_wave_resume_append is not None and (
+            authorized_wave_resume_append not in expected_wave_resume_history
+            or len(current_history.get(authorized_wave_resume_append, ()))
+            != len(expected_wave_resume_history[authorized_wave_resume_append]) + 1
+        ):
+            raise SystemExit(f"Authorized Wave resume record was not appended for {authorized_wave_resume_append}")
     if expected_recovery_history is not None:
         current_history = recovery_history_snapshot(document)
         for hold_id, prior in expected_recovery_history.items():
@@ -583,6 +611,8 @@ def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
         expected_amendment_history=getattr(args, "source_amendment_history", None),
         expected_task_review_history=getattr(args, "source_task_review_history", None),
         expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
+        expected_wave_resume_history=getattr(args, "source_wave_resume_history", None),
+        authorized_wave_resume_append=getattr(args, "authorized_wave_resume_append", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
         expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
         expected_task_recovery_history=getattr(args, "source_task_recovery_history", None),
@@ -3221,6 +3251,103 @@ def evidence_reference_errors(tasks: dict[str, dict[str, Any]], repo: Path) -> l
     return errors
 
 
+def wave_resume_record_errors(
+    data: dict[str, Any],
+    wave_id: str,
+    campaign: dict[str, Any],
+    repo: Path | None,
+) -> list[str]:
+    """Validate durable PAUSED-to-ACTIVE resume authority without self-reference."""
+    errors: list[str] = []
+    records = campaign.get("resume_records", [])
+    if not isinstance(records, list):
+        return [f"{wave_id}: Wave resume history is malformed"]
+    control_revision = int((data.get("control_plane") or {}).get("revision", 0))
+    if wave_id == "W1" and control_revision >= 6 and campaign.get("status") == "ACTIVE" and not records:
+        errors.append(f"{wave_id}: revision-6 resumed Wave campaign lacks its durable resume record")
+    expected_ids = [f"{wave_id}.R{index:02d}" for index in range(1, len(records) + 1)]
+    actual_ids = [str(record.get("id")) if isinstance(record, dict) else "<malformed>" for record in records]
+    if actual_ids != expected_ids:
+        errors.append(f"{wave_id}: Wave resume record IDs are duplicated, gapped, reordered, or cross-Wave")
+    commits: list[str] = []
+    previous_time: dt.datetime | None = None
+    for record in records:
+        if not isinstance(record, dict):
+            errors.append(f"{wave_id}: Wave resume record is malformed")
+            continue
+        record_id = str(record.get("id") or "<unknown>")
+        if record.get("wave_id") != wave_id:
+            errors.append(f"{record_id}: Wave resume record is cross-Wave")
+        if record.get("control_revision") != CONTROL_TOOL_REVISION or record.get("prior_status") != "PAUSED":
+            errors.append(f"{record_id}: Wave resume record control or prior-state boundary is invalid")
+        actor = str(record.get("actor") or "")
+        if not actor or actor != actor.strip():
+            errors.append(f"{record_id}: Wave resume actor identity is not normalized")
+        commit = str(record.get("pre_resume_commit") or "")
+        commits.append(commit)
+        try:
+            resumed_at = parse_time(str(record.get("resumed_at") or ""))
+        except ValueError:
+            resumed_at = None
+            errors.append(f"{record_id}: Wave resume timestamp is invalid")
+        if resumed_at is not None and previous_time is not None and resumed_at < previous_time:
+            errors.append(f"{record_id}: Wave resume timestamps are stale or reordered")
+        if resumed_at is not None:
+            previous_time = resumed_at
+        if repo is None:
+            continue
+        if not git_commit_exists(repo, commit) or not git_is_ancestor(repo, commit):
+            errors.append(f"{record_id}: pre-resume commit is missing or non-ancestral")
+            continue
+        historical = historical_backlog_document(repo, commit)
+        historical_wave = next(
+            (item for item in (historical or {}).get("waves", []) if item.get("id") == wave_id),
+            None,
+        )
+        prior = (historical_wave or {}).get("campaign") or {}
+        if prior.get("status") != "PAUSED":
+            errors.append(f"{record_id}: pre-resume commit does not contain the bound PAUSED campaign")
+            continue
+        if canonical_json_sha256(prior) != record.get("prior_campaign_sha256"):
+            errors.append(f"{record_id}: prior PAUSED campaign hash is stale or rewritten")
+        for field in ("branch", "profile", "platform"):
+            if record.get(field) != prior.get(field):
+                errors.append(f"{record_id}: {field} differs from the bound PAUSED campaign")
+        try:
+            if Path(str(record.get("worktree") or "")).resolve() != Path(str(prior.get("worktree") or "")).resolve():
+                errors.append(f"{record_id}: worktree differs from the bound PAUSED campaign")
+        except OSError:
+            errors.append(f"{record_id}: worktree cannot be resolved")
+        if record.get("actor") != prior.get("owner"):
+            errors.append(f"{record_id}: actor differs from the bound PAUSED campaign owner")
+        try:
+            if resumed_at is not None and resumed_at < parse_time(str(prior.get("updated_at") or "")):
+                errors.append(f"{record_id}: resume timestamp predates the PAUSED campaign boundary")
+        except ValueError:
+            errors.append(f"{record_id}: bound PAUSED campaign timestamp is invalid")
+    if len(commits) != len(set(commits)):
+        errors.append(f"{wave_id}: duplicate pre-resume commit exists in Wave resume history")
+    if records and isinstance(records[-1], dict):
+        latest = records[-1]
+        projection = {
+            "base_sha": latest.get("pre_resume_commit"),
+            "branch": latest.get("branch"),
+            "worktree": latest.get("worktree"),
+            "profile": latest.get("profile"),
+            "platform": latest.get("platform"),
+            "owner": latest.get("actor"),
+        }
+        current = {field: campaign.get(field) for field in projection}
+        if current != projection:
+            errors.append(f"{wave_id}: latest Wave resume record is stale or has the wrong campaign identity")
+        try:
+            if parse_time(str(latest.get("resumed_at") or "")) > parse_time(str(campaign.get("updated_at") or "")):
+                errors.append(f"{wave_id}: latest Wave resume record postdates the campaign projection")
+        except ValueError:
+            pass
+    return errors
+
+
 def validate(
     data: dict[str, Any],
     capabilities: dict[str, dict[str, Any]],
@@ -3286,6 +3413,7 @@ def validate(
             errors.append(f"{wave_id}: pending pre-Wave approval cannot carry an approved inventory")
         campaign = wave.get("campaign") or {}
         if campaign:
+            errors.extend(wave_resume_record_errors(data, wave_id, campaign, repo))
             if campaign.get("status") not in CAMPAIGN_STATES:
                 errors.append(f"{wave_id}: invalid Wave campaign status")
             if campaign.get("status") == "ACTIVE" and (
@@ -5321,6 +5449,7 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
         expected_amendment_history=getattr(args, "source_amendment_history", None),
         expected_task_review_history=getattr(args, "source_task_review_history", None),
         expected_wave_checkpoint_history=getattr(args, "source_wave_checkpoint_history", None),
+        expected_wave_resume_history=getattr(args, "source_wave_resume_history", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
         expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
         expected_frozen_waves=frozen_waves,
@@ -5512,6 +5641,7 @@ def command_amendment_bootstrap_submit(args, data, capabilities, slices, tasks, 
         expected_sha256=getattr(args, "source_sha256", None),
         expected_identity=getattr(args, "source_identity", None),
         expected_approved_waves=getattr(args, "source_approved_waves", None),
+        expected_wave_resume_history=getattr(args, "source_wave_resume_history", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
         expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
         repo=repo,
@@ -5699,6 +5829,7 @@ def command_amendment_materialize(args, data, capabilities, slices, tasks, gates
         expected_identity=getattr(args, "source_identity", None),
         expected_approved_waves=getattr(args, "source_approved_waves", None),
         expected_amendment_history=getattr(args, "source_amendment_history", None),
+        expected_wave_resume_history=getattr(args, "source_wave_resume_history", None),
         expected_recovery_history=getattr(args, "source_recovery_history", None),
         expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
         repo=repo,
@@ -6340,10 +6471,34 @@ def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
         base_sha=args.base_sha,
         worktree=args.worktree,
     )
+    require_clean_repository(Path(worktree))
     if campaign.get("owner") != agent:
         raise SystemExit(f"Paused Wave is owned by {campaign.get('owner')}, not {agent}")
     if campaign.get("branch") and campaign.get("branch") != branch:
         raise SystemExit("Paused Wave must resume on its recorded branch")
+    if campaign.get("worktree") and Path(str(campaign["worktree"])).resolve() != Path(worktree).resolve():
+        raise SystemExit("Paused Wave must resume in its recorded canonical worktree")
+    if campaign.get("profile") != args.profile or campaign.get("platform") != args.platform:
+        raise SystemExit("Paused Wave must resume with its recorded profile and platform")
+    prior_campaign = copy.deepcopy(campaign)
+    now = utc_now()
+    resume_records = list(campaign.get("resume_records", []))
+    resume_records.append(
+        {
+            "id": f"{wave['id']}.R{len(resume_records) + 1:02d}",
+            "wave_id": wave["id"],
+            "control_revision": CONTROL_TOOL_REVISION,
+            "prior_status": "PAUSED",
+            "pre_resume_commit": base_sha,
+            "prior_campaign_sha256": canonical_json_sha256(prior_campaign),
+            "branch": branch,
+            "worktree": worktree,
+            "profile": args.profile,
+            "platform": args.platform,
+            "actor": agent,
+            "resumed_at": now,
+        }
+    )
     campaign.update(
         status="ACTIVE",
         branch=branch,
@@ -6351,12 +6506,14 @@ def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
         base_sha=base_sha,
         profile=args.profile,
         platform=args.platform,
-        updated_at=utc_now(),
+        updated_at=now,
         pause_reason=None,
         pause_category=None,
         lease=new_lease(agent, args.lease_hours),
+        resume_records=resume_records,
     )
     wave["completion"]["status"] = "IN_PROGRESS"
+    args.authorized_wave_resume_append = str(wave["id"])
     persist(args, data)
 
 
@@ -7961,6 +8118,7 @@ def main() -> None:
     args.source_amendment_history = amendment_history_snapshot(data)
     args.source_task_review_history = task_review_history_snapshot(data)
     args.source_wave_checkpoint_history = wave_checkpoint_history_snapshot(data)
+    args.source_wave_resume_history = wave_resume_history_snapshot(data)
     args.source_recovery_history = recovery_history_snapshot(data)
     args.source_released_recovery_holds = released_recovery_hold_snapshot(data)
     args.source_task_recovery_history = task_recovery_history_snapshot(data)

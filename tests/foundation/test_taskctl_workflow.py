@@ -24,6 +24,7 @@ from taskctl import (  # noqa: E402
     approved_wave_snapshot,
     bootstrap_scope_addendum_errors,
     build_parser,
+    canonical_json_sha256,
     command_amendment_dispose,
     command_block,
     command_cancel,
@@ -55,6 +56,8 @@ from taskctl import (  # noqa: E402
     save_atomic,
     save_validated,
     validate,
+    wave_resume_history_snapshot,
+    wave_resume_record_errors,
 )
 
 
@@ -2334,6 +2337,215 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("wave", wave["campaign"]["scope"])
         self.assertEqual("ACTIVE", wave["campaign"]["status"])
         self.assertEqual("IN_PROGRESS", wave["completion"]["status"])
+
+    def test_wave_resume_appends_one_non_self_referential_record(self) -> None:
+        context = self.workflow()
+        data, capabilities, slices, tasks, _gates = context
+        capabilities["CAP-00"]["campaign"] = None
+        wave = data["waves"][0]
+        wave["id"] = "W1"
+        slices["CAP-00.S01"]["wave"] = "W1"
+        tasks["CAP-00.S01.T01"]["wave"] = "W1"
+        wave["campaign"] = {
+            "status": "PAUSED",
+            "scope": "wave",
+            "owner": "alice",
+            "branch": "codex/test",
+            "worktree": REPO.as_posix(),
+            "base_sha": "9" * 40,
+            "profile": "LOC",
+            "platform": "windows-x64",
+            "started_at": "2026-08-20T00:00:00+00:00",
+            "updated_at": "2026-08-23T00:00:00+00:00",
+            "pause_reason": "Quiescent test boundary",
+            "pause_category": "human-decision",
+            "lease": None,
+        }
+        wave["completion"]["status"] = "PAUSED"
+        prior = copy.deepcopy(wave["campaign"])
+        args = Namespace(
+            wave="W1",
+            agent="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        identity = ("alice", "codex/test", "a" * 40, REPO.as_posix())
+        with (
+            patch("taskctl.approved_unbootstrapped_amendment", return_value=None),
+            patch("taskctl.global_program_position", return_value={"state": "ACTIVE_WAVE", "current_wave": "W1"}),
+            patch("taskctl.require_wave_planning_ready"),
+            patch("taskctl.git_execution_identity", return_value=identity),
+            patch("taskctl.require_clean_repository"),
+            patch("taskctl.persist") as persisted,
+        ):
+            command_wave_resume(args, *context)
+
+        record = wave["campaign"]["resume_records"][0]
+        self.assertEqual("W1.R01", record["id"])
+        self.assertEqual("W1", record["wave_id"])
+        self.assertEqual("a" * 40, record["pre_resume_commit"])
+        self.assertEqual(canonical_json_sha256(prior), record["prior_campaign_sha256"])
+        self.assertEqual("alice", record["actor"])
+        self.assertEqual(record["resumed_at"], wave["campaign"]["updated_at"])
+        self.assertEqual("a" * 40, wave["campaign"]["base_sha"])
+        self.assertEqual("W1", args.authorized_wave_resume_append)
+        persisted.assert_called_once()
+
+    def test_wave_resume_wrong_identity_fails_without_mutation(self) -> None:
+        context = self.workflow()
+        data, capabilities, slices, tasks, _gates = context
+        capabilities["CAP-00"]["campaign"] = None
+        wave = data["waves"][0]
+        wave["id"] = "W1"
+        slices["CAP-00.S01"]["wave"] = "W1"
+        tasks["CAP-00.S01.T01"]["wave"] = "W1"
+        wave["campaign"] = {
+            "status": "PAUSED",
+            "scope": "wave",
+            "owner": "alice",
+            "branch": "codex/test",
+            "worktree": REPO.as_posix(),
+            "base_sha": "9" * 40,
+            "profile": "LOC",
+            "platform": "windows-x64",
+            "started_at": "2026-08-20T00:00:00+00:00",
+            "updated_at": "2026-08-23T00:00:00+00:00",
+            "pause_reason": "Quiescent test boundary",
+            "pause_category": "human-decision",
+            "lease": None,
+        }
+        before = json.dumps(data, sort_keys=True)
+        args = Namespace(
+            wave="W1",
+            agent="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            profile="LAB",
+            platform="windows-x64",
+            lease_hours=8,
+            file=str(REPO / "planning" / "backlog.yaml"),
+        )
+        identity = ("alice", "codex/test", "a" * 40, REPO.as_posix())
+        with (
+            patch("taskctl.approved_unbootstrapped_amendment", return_value=None),
+            patch("taskctl.global_program_position", return_value={"state": "ACTIVE_WAVE", "current_wave": "W1"}),
+            patch("taskctl.require_wave_planning_ready"),
+            patch("taskctl.git_execution_identity", return_value=identity),
+            patch("taskctl.require_clean_repository"),
+            self.assertRaisesRegex(SystemExit, "recorded profile and platform"),
+        ):
+            command_wave_resume(args, *context)
+        self.assertEqual(before, json.dumps(data, sort_keys=True))
+
+    def test_wave_resume_records_validate_historical_binding_and_fail_closed(self) -> None:
+        data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
+        wave = next(item for item in data["waves"] if item["id"] == "W1")
+        prior = copy.deepcopy(wave["campaign"])
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
+        ).stdout.strip()
+        resumed_at = "2026-08-24T00:00:00+00:00"
+        record = {
+            "id": "W1.R01",
+            "wave_id": "W1",
+            "control_revision": 6,
+            "prior_status": "PAUSED",
+            "pre_resume_commit": head,
+            "prior_campaign_sha256": canonical_json_sha256(prior),
+            "branch": prior["branch"],
+            "worktree": prior["worktree"],
+            "profile": prior["profile"],
+            "platform": prior["platform"],
+            "actor": prior["owner"],
+            "resumed_at": resumed_at,
+        }
+        campaign = copy.deepcopy(prior)
+        campaign.update(
+            status="ACTIVE",
+            base_sha=head,
+            updated_at=resumed_at,
+            pause_reason=None,
+            pause_category=None,
+            resume_records=[record],
+        )
+        self.assertEqual([], wave_resume_record_errors(data, "W1", campaign, REPO))
+
+        stale = copy.deepcopy(campaign)
+        stale["resume_records"][0]["prior_campaign_sha256"] = "0" * 64
+        self.assertTrue(
+            any("stale or rewritten" in error for error in wave_resume_record_errors(data, "W1", stale, REPO))
+        )
+
+        cross_wave = copy.deepcopy(campaign)
+        cross_wave["resume_records"][0]["wave_id"] = "W2"
+        self.assertTrue(any("cross-Wave" in error for error in wave_resume_record_errors(data, "W1", cross_wave, REPO)))
+
+        duplicate = copy.deepcopy(campaign)
+        duplicate["resume_records"].append({**copy.deepcopy(record), "id": "W1.R02"})
+        self.assertTrue(
+            any(
+                "duplicate pre-resume commit" in error
+                for error in wave_resume_record_errors(data, "W1", duplicate, REPO)
+            )
+        )
+
+        missing = copy.deepcopy(campaign)
+        missing.pop("resume_records")
+        self.assertTrue(
+            any(
+                "lacks its durable resume record" in error
+                for error in wave_resume_record_errors(data, "W1", missing, None)
+            )
+        )
+
+    def test_wave_resume_history_is_append_only_and_only_resume_may_append(self) -> None:
+        data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
+        wave = next(item for item in data["waves"] if item["id"] == "W1")
+        record = {
+            "id": "W1.R01",
+            "wave_id": "W1",
+            "control_revision": 6,
+            "prior_status": "PAUSED",
+            "pre_resume_commit": "a" * 40,
+            "prior_campaign_sha256": "b" * 64,
+            "branch": wave["campaign"]["branch"],
+            "worktree": wave["campaign"]["worktree"],
+            "profile": wave["campaign"]["profile"],
+            "platform": wave["campaign"]["platform"],
+            "actor": wave["campaign"]["owner"],
+            "resumed_at": wave["campaign"]["updated_at"],
+        }
+        snapshot = wave_resume_history_snapshot(data)
+        wave["campaign"]["resume_records"] = [record]
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "backlog.yaml"
+            destination.write_text("sentinel: true\n", encoding="utf-8")
+            with self.assertRaisesRegex(SystemExit, "Unauthorized Wave resume history append for W1"):
+                save_validated(
+                    str(destination),
+                    data,
+                    expected_wave_resume_history=snapshot,
+                )
+            self.assertEqual("sentinel: true\n", destination.read_text(encoding="utf-8"))
+
+        preserved = wave_resume_history_snapshot(data)
+        wave["campaign"]["resume_records"][0]["actor"] = "mallory"
+        with tempfile.TemporaryDirectory() as temporary:
+            destination = Path(temporary) / "backlog.yaml"
+            destination.write_text("sentinel: true\n", encoding="utf-8")
+            with self.assertRaisesRegex(SystemExit, "Append-only Wave resume history changed for W1"):
+                save_validated(
+                    str(destination),
+                    data,
+                    expected_wave_resume_history=preserved,
+                )
+            self.assertEqual("sentinel: true\n", destination.read_text(encoding="utf-8"))
 
     def test_wave_checkpoint_and_exit_review_are_distinct_from_gate_approval(self) -> None:
         context = self.workflow()
