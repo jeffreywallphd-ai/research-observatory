@@ -1,0 +1,918 @@
+#!/usr/bin/env python3
+"""One-time, exact-packet Governance Control Recovery controller.
+
+GCR-0001 exists only because the active GRR hold and its supplement installer
+could not represent their own next generation.  This controller deliberately
+has no generic request creation path and recognizes only GCR-0001.B00.
+"""
+
+from __future__ import annotations
+
+import argparse
+import copy
+import hashlib
+import json
+import os
+import re
+import subprocess
+import tempfile
+from pathlib import Path, PurePosixPath
+from typing import Any
+
+import taskctl
+import yaml
+from jsonschema import Draft202012Validator, FormatChecker
+from jsonschema.exceptions import SchemaError
+
+GCR_ID = "GCR-0001"
+BOOTSTRAP_ID = "GCR-0001.B00"
+BRANCH = "codex/w1-windows-local-runtime"
+ACTOR = "codex"
+PACKET_COMMIT = "f4a88faac67e384514c486c161161e6fcc395fab"
+PACKET_SHA256 = "43551219b638e1e3a740ee650a836bbb26d81c20fd06dee44828e6615fcf077c"
+APPROVAL_PATH = "planning/governance-control-recovery/GCR-0001.approval.json"
+PACKET_PATH = "planning/governance-control-recovery/GCR-0001.packet.json"
+RUNTIME_SCHEMA_PATH = "planning/governance-control-recovery/governance-control-recovery-runtime.schema.json"
+STATE_PATH = "planning/governance-control-recovery/GCR-0001.B00.state.json"
+TRIGGER_PATH = "artifacts/evidence/W1.A04.B00.json"
+TRIGGER_SHA256 = "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+BACKLOG_SHA256 = "f3ebfba07cb6ccd779942ea8f988b0ceea6fe16cd18ca8f7a65775915da50139"
+SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+RESULT_STATUS = {
+    "approved": "APPROVED",
+    "changes-requested": "CHANGES_REQUESTED",
+    "blocked": "BLOCKED",
+}
+
+
+def sha256(payload: bytes) -> str:
+    return hashlib.sha256(payload).hexdigest()
+
+
+def git(repo: Path, *arguments: str) -> str:
+    result = subprocess.run(["git", *arguments], cwd=repo, capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        raise SystemExit(f"Git command failed: git {' '.join(arguments)}\n{result.stderr.strip()}")
+    return result.stdout.strip()
+
+
+def safe_path(
+    repo: Path,
+    relative: str,
+    *,
+    label: str,
+    prefix: str | None = None,
+    require_exists: bool = True,
+) -> Path:
+    if not relative or "\\" in relative or ":" in relative or re.search(r"(?:^|/)\.{1,2}(?:/|$)", relative):
+        raise SystemExit(f"{label} is not a canonical repository path: {relative!r}")
+    pure = PurePosixPath(relative)
+    if pure.is_absolute() or pure.as_posix() != relative:
+        raise SystemExit(f"{label} is not canonical: {relative!r}")
+    if prefix and relative != prefix and not relative.startswith(prefix.rstrip("/") + "/"):
+        raise SystemExit(f"{label} is outside {prefix}: {relative!r}")
+    path = repo.joinpath(*pure.parts)
+    try:
+        path.resolve(strict=False).relative_to(repo.resolve(strict=True))
+    except (OSError, ValueError) as exc:
+        raise SystemExit(f"{label} resolves outside the repository: {relative!r}") from exc
+    if require_exists and not path.is_file():
+        raise SystemExit(f"{label} does not exist: {relative!r}")
+    return path
+
+
+def load_json(path: Path, label: str) -> tuple[dict[str, Any], bytes]:
+    try:
+        payload = path.read_bytes()
+        value = json.loads(payload)
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Cannot load {label}: {path}: {exc}") from exc
+    if not isinstance(value, dict):
+        raise SystemExit(f"{label} must be a JSON object: {path}")
+    return value, payload
+
+
+def runtime_schema(repo: Path) -> dict[str, Any]:
+    schema, _payload = load_json(safe_path(repo, RUNTIME_SCHEMA_PATH, label="GCR runtime schema"), "schema")
+    try:
+        Draft202012Validator.check_schema(schema)
+    except SchemaError as exc:
+        raise SystemExit(f"GCR runtime schema is invalid: {exc}") from exc
+    return schema
+
+
+def validate_runtime(repo: Path, document: dict[str, Any], label: str) -> None:
+    errors = sorted(
+        Draft202012Validator(runtime_schema(repo), format_checker=FormatChecker()).iter_errors(document),
+        key=lambda error: tuple(str(part) for part in error.absolute_path),
+    )
+    if errors:
+        rendered = [
+            "$"
+            + "".join(f"[{part}]" if isinstance(part, int) else f".{part}" for part in error.absolute_path)
+            + f": {error.message}"
+            for error in errors
+        ]
+        raise SystemExit(f"{label} runtime-schema validation failed:\n- " + "\n- ".join(rendered))
+
+
+def trigger_witness() -> dict[str, Any]:
+    return {
+        "path": TRIGGER_PATH,
+        "sha256": TRIGGER_SHA256,
+        "role": "atomic-failure-trigger-only",
+        "untracked": True,
+        "unstaged": True,
+        "executionAuthority": False,
+    }
+
+
+def validate_trigger(repo: Path) -> None:
+    path = safe_path(repo, TRIGGER_PATH, label="GCR trigger witness", prefix="artifacts/evidence")
+    if sha256(path.read_bytes()) != TRIGGER_SHA256:
+        raise SystemExit("GCR trigger witness is missing or has changed")
+    staged = set(git(repo, "diff", "--cached", "--name-only", "--").splitlines())
+    if TRIGGER_PATH in staged:
+        raise SystemExit("GCR trigger witness must remain unstaged")
+
+
+def require_workspace(repo: Path, *, extra_untracked: set[str] | None = None) -> None:
+    if git(repo, "branch", "--show-current") != BRANCH:
+        raise SystemExit(f"GCR transitions require exact branch {BRANCH}")
+    if subprocess.run(["git", "diff", "--quiet", "HEAD", "--"], cwd=repo, check=False).returncode != 0:
+        raise SystemExit("Tracked worktree changes exist; GCR transitions require an exact commit")
+    validate_trigger(repo)
+    allowed = {TRIGGER_PATH, *(extra_untracked or set())}
+    untracked = set(git(repo, "ls-files", "--others", "--exclude-standard").splitlines())
+    if untracked != allowed:
+        unexpected = sorted(untracked ^ allowed)
+        raise SystemExit(f"GCR untracked-path boundary differs: {unexpected[0] if unexpected else '<unknown>'}")
+
+
+def load_authority(repo: Path) -> tuple[dict[str, Any], dict[str, Any], str]:
+    packet_path = safe_path(repo, PACKET_PATH, label="GCR packet")
+    approval_path = safe_path(repo, APPROVAL_PATH, label="GCR approval")
+    packet, packet_payload = load_json(packet_path, "GCR packet")
+    approval, approval_payload = load_json(approval_path, "GCR approval")
+    if sha256(packet_payload) != PACKET_SHA256:
+        raise SystemExit("GCR packet hash differs from the approved packet")
+    if taskctl.git_blob(repo, PACKET_COMMIT, PACKET_PATH) != packet_payload:
+        raise SystemExit("GCR packet differs from its immutable approved Git blob")
+    validate_runtime(repo, approval, "GCR approval")
+    approval_intro = taskctl.approval_introduction_commit(repo, APPROVAL_PATH)
+    if not approval_intro or taskctl.git_blob(repo, approval_intro, APPROVAL_PATH) != approval_payload:
+        raise SystemExit("GCR approval is absent, replaced, or edited after introduction")
+    if not taskctl.git_is_ancestor(repo, PACKET_COMMIT, approval_intro):
+        raise SystemExit("GCR approval does not descend from its exact packet")
+    packet_reference = approval.get("packet") or {}
+    review_reference = (approval.get("independentPacketReview") or {}).get("ledger") or {}
+    if (
+        packet_reference != {"path": PACKET_PATH, "sha256": PACKET_SHA256, "commit": PACKET_COMMIT}
+        or approval.get("status") != "APPROVED"
+        or approval.get("controlRecoveryId") != GCR_ID
+        or approval.get("triggerWitness") != trigger_witness()
+        or (approval.get("executionAuthority") or {}).get("bootstrapUnit") != BOOTSTRAP_ID
+    ):
+        raise SystemExit("GCR approval identity, packet, witness, or execution scope is invalid")
+    review_path = safe_path(
+        repo,
+        str(review_reference.get("path") or ""),
+        label="GCR packet review",
+        prefix="planning/governance-control-recovery",
+    )
+    review_payload = review_path.read_bytes()
+    review_commit = str(review_reference.get("commit") or "")
+    if (
+        sha256(review_payload) != review_reference.get("sha256")
+        or not taskctl.git_commit_exists(repo, review_commit)
+        or not taskctl.git_is_ancestor(repo, review_commit)
+        or taskctl.git_blob(repo, review_commit, str(review_reference.get("path"))) != review_payload
+    ):
+        raise SystemExit("GCR packet review binding is invalid")
+    for pattern in (packet.get("bootstrapUnit") or {}).get("authorizedPaths", []):
+        validate_scope_pattern(str(pattern))
+    validate_trigger(repo)
+    return approval, packet, str(approval_intro)
+
+
+def validate_scope_pattern(pattern: str) -> None:
+    if "**" in pattern and not pattern.endswith("/**"):
+        raise SystemExit(f"GCR authorized wildcard is unsafe: {pattern}")
+    if pattern.count("*") > (2 if pattern.endswith("/**") else 1):
+        raise SystemExit(f"GCR authorized wildcard is unsupported: {pattern}")
+    lexical = pattern[:-3].rstrip("/") if pattern.endswith("/**") else pattern.replace("*", "scope")
+    pure = PurePosixPath(lexical)
+    if pure.is_absolute() or ".." in pure.parts or "\\" in pattern:
+        raise SystemExit(f"GCR authorized path is unsafe: {pattern}")
+
+
+def path_authorized(relative: str, patterns: list[str]) -> bool:
+    for pattern in patterns:
+        if pattern.endswith("/**"):
+            prefix = pattern[:-3].rstrip("/")
+            if relative == prefix or relative.startswith(prefix + "/"):
+                return True
+        elif "*" in PurePosixPath(pattern).name:
+            expression = re.escape(pattern).replace(r"\*", "[^/]*")
+            if re.fullmatch(expression, relative):
+                return True
+        elif relative == pattern:
+            return True
+    return False
+
+
+def current_boundary(repo: Path, packet: dict[str, Any], *, revision: int = 6) -> tuple[bytes, dict[str, Any]]:
+    backlog_path = repo / "planning/backlog.yaml"
+    payload = backlog_path.read_bytes()
+    data, _capabilities, _slices, tasks, gates = taskctl.load(str(backlog_path))
+    control = data.get("control_plane") or {}
+    active = taskctl.active_recovery_holds(data)
+    wave = taskctl.wave_map(data).get("W1") or {}
+    task = tasks.get("CAP-02.S04.T03") or {}
+    gate = gates.get("G1") or {}
+    if (
+        control.get("revision") != revision
+        or control.get("minimum_tool_revision") != revision
+        or len(active) != 1
+        or active[0].get("id") != "HOLD-W1-GRR-0002"
+        or (active[0].get("bootstrap") or {}).get("status") != "APPROVED"
+        or (wave.get("campaign") or {}).get("status") != "PAUSED"
+        or (wave.get("campaign") or {}).get("scope") != "wave"
+        or task.get("status") != "BLOCKED"
+        or task.get("recovery_control") is not None
+        or "W1.A04" in taskctl.wave_amendment_map(data)
+        or gate.get("status") != "PENDING"
+    ):
+        raise SystemExit("GCR stopped boundary differs from the exact approved packet")
+    if revision == 6 and sha256(payload) != BACKLOG_SHA256:
+        raise SystemExit("GCR revision-6 backlog bytes differ from the approved trigger")
+    if (packet.get("activationBoundary") or {}).get("controlRevision") != 6:
+        raise SystemExit("GCR packet activation revision is invalid")
+    return payload, data
+
+
+def state_path(repo: Path, *, require_exists: bool = True) -> Path:
+    return safe_path(repo, STATE_PATH, label="GCR state", require_exists=require_exists)
+
+
+def load_state(repo: Path, *, required: bool) -> tuple[dict[str, Any] | None, bytes | None]:
+    path = repo.joinpath(*PurePosixPath(STATE_PATH).parts)
+    if not path.is_file():
+        if required:
+            raise SystemExit("Canonical GCR state does not exist")
+        return None, None
+    state, payload = load_json(path, "GCR state")
+    validate_runtime(repo, state, "GCR state")
+    if (
+        state.get("controlRecoveryId") != GCR_ID
+        or state.get("bootstrapUnit") != BOOTSTRAP_ID
+        or state.get("triggerWitness") != trigger_witness()
+    ):
+        raise SystemExit("GCR state identity or trigger witness is invalid")
+    return state, payload
+
+
+def write_json_atomic(path: Path, document: dict[str, Any]) -> None:
+    payload = (json.dumps(document, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=f"{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def changed_paths(repo: Path, base: str, candidate: str) -> list[str]:
+    if not taskctl.git_commit_exists(repo, base) or not taskctl.git_commit_exists(repo, candidate):
+        raise SystemExit("GCR base or candidate commit is absent")
+    if base == candidate or not taskctl.git_is_ancestor(repo, base, candidate):
+        raise SystemExit("GCR implementation candidate must strictly descend from its required base")
+    return sorted(line for line in git(repo, "diff", "--name-only", f"{base}..{candidate}", "--").splitlines() if line)
+
+
+def evidence_path_for(attempt_id: str) -> str:
+    return f"artifacts/evidence/governance-control-recovery/{BOOTSTRAP_ID}.{attempt_id}.json"
+
+
+def review_path_for(attempt_id: str) -> str:
+    return f"planning/governance-control-recovery/{BOOTSTRAP_ID}.review-{attempt_id}.json"
+
+
+def open_findings(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    opened: dict[str, dict[str, Any]] = {}
+    for attempt in state.get("attempts", []):
+        for closure in attempt.get("closures", []):
+            opened.pop(str(closure.get("findingId") or ""), None)
+        for finding in attempt.get("findings", []):
+            opened[str(finding.get("id") or "")] = finding
+    return opened
+
+
+def evidence_document(
+    repo: Path,
+    packet: dict[str, Any],
+    relative: str,
+    candidate: str,
+    approval_base: str,
+    attempt_id: str,
+    prior_open: dict[str, dict[str, Any]],
+) -> tuple[dict[str, Any], bytes]:
+    expected = evidence_path_for(attempt_id)
+    if relative != expected:
+        raise SystemExit(f"GCR evidence path must be {expected}")
+    path = safe_path(repo, relative, label="GCR evidence", prefix="artifacts/evidence/governance-control-recovery")
+    document, payload = load_json(path, "GCR evidence")
+    validate_runtime(repo, document, "GCR evidence")
+    actual_paths = changed_paths(repo, approval_base, candidate)
+    patterns = [str(item) for item in (packet.get("bootstrapUnit") or {}).get("authorizedPaths", [])]
+    outside = [path_value for path_value in actual_paths if not path_authorized(path_value, patterns)]
+    criteria = document.get("acceptanceCriteria") or []
+    expected_criteria = packet.get("acceptanceCriteria") or []
+    closure_ids = [str(item.get("findingId") or "") for item in document.get("findingClosures", [])]
+    if (
+        document.get("controlRecoveryId") != GCR_ID
+        or document.get("bootstrapUnit") != BOOTSTRAP_ID
+        or document.get("attemptId") != attempt_id
+        or document.get("commit") != candidate
+        or document.get("baseCommit") != approval_base
+        or document.get("branch") != BRANCH
+        or document.get("triggerWitness") != trigger_witness()
+        or sorted(document.get("changedFiles") or []) != actual_paths
+        or outside
+        or [item.get("index") for item in criteria] != list(range(1, len(expected_criteria) + 1))
+        or [item.get("statement") for item in criteria] != expected_criteria
+        or document.get("unverifiedItems") != []
+        or len(closure_ids) != len(set(closure_ids))
+        or set(closure_ids) != set(prior_open)
+    ):
+        raise SystemExit("GCR evidence identity, scope, criteria, closures, or verification boundary is invalid")
+    checks = document.get("checks") or []
+    if (
+        not checks
+        or len({str(item.get("id")) for item in checks}) != len(checks)
+        or any(item.get("exitCode") != 0 or item.get("result") != "passed" for item in checks)
+    ):
+        raise SystemExit("GCR evidence checks must be unique and passing")
+    for closure in document.get("findingClosures", []):
+        finding = prior_open.get(str(closure.get("findingId"))) or {}
+        if finding.get("blocking") is True and closure.get("disposition") == "accepted-risk":
+            raise SystemExit("Blocking GCR findings cannot close as accepted risk")
+    return document, payload
+
+
+def freeze_submission(args: argparse.Namespace, *, remediation: bool) -> None:
+    _approval, packet, approval_base = load_authority(args.repo)
+    state, _state_payload = load_state(args.repo, required=remediation)
+    if remediation:
+        assert state is not None
+        if state.get("status") not in {"CHANGES_REQUESTED", "BLOCKED"} or state.get("currentSubmission") is not None:
+            raise SystemExit("GCR remediation requires an adverse immutable prior review")
+    elif state is not None:
+        raise SystemExit("Initial GCR submission refuses an existing canonical state")
+    attempts = (state or {}).get("attempts", [])
+    attempt_id = f"R{len(attempts) + 1:02d}"
+    evidence_relative = str(args.evidence)
+    require_workspace(args.repo, extra_untracked={evidence_relative})
+    agent = str(args.agent).strip()
+    if agent != ACTOR or args.agent != agent:
+        raise SystemExit(f"GCR implementer must be exact actor {ACTOR}")
+    candidate = str(args.implementation_commit)
+    if candidate != git(args.repo, "rev-parse", "HEAD"):
+        raise SystemExit("GCR implementation candidate must equal current HEAD")
+    if not remediation and str(args.approval_commit) != approval_base:
+        raise SystemExit("GCR approval commit must equal the immutable approval introduction")
+    if remediation:
+        prior_candidate = str((attempts[-1].get("submission") or {}).get("candidateCommit") or "")
+        if prior_candidate == candidate or not taskctl.git_is_ancestor(args.repo, prior_candidate, candidate):
+            raise SystemExit("GCR remediation candidate must strictly descend from the prior candidate")
+    prior_open = open_findings(state or {"attempts": []})
+    document, evidence_payload = evidence_document(
+        args.repo,
+        packet,
+        evidence_relative,
+        candidate,
+        approval_base,
+        attempt_id,
+        prior_open,
+    )
+    current_boundary(args.repo, packet)
+    submission = {
+        "attemptId": attempt_id,
+        "submittedBy": agent,
+        "submittedAt": taskctl.utc_now(),
+        "candidateCommit": candidate,
+        "baseCommit": approval_base,
+        "branch": BRANCH,
+        "evidence": {"path": evidence_relative, "sha256": sha256(evidence_payload), "commit": candidate},
+        "priorAttemptId": attempts[-1]["submission"]["attemptId"] if attempts else None,
+        "openFindingIds": sorted(prior_open),
+        "rootCauseAnalysis": (
+            str(document.get("verificationSelection", {}).get("riskAnalysis")) if len(attempts) >= 2 else None
+        ),
+    }
+    candidate_state = {
+        "schemaVersion": "1.0-control-recovery-state",
+        "documentType": "governance-control-recovery-bootstrap-state",
+        "controlRecoveryId": GCR_ID,
+        "bootstrapUnit": BOOTSTRAP_ID,
+        "status": "REVIEW",
+        "approval": {
+            "path": APPROVAL_PATH,
+            "sha256": sha256((args.repo / APPROVAL_PATH).read_bytes()),
+            "commit": approval_base,
+        },
+        "triggerWitness": trigger_witness(),
+        "attempts": attempts,
+        "currentSubmission": submission,
+        "adoption": None,
+    }
+    validate_runtime(args.repo, candidate_state, "GCR submission state")
+    write_json_atomic(args.repo / STATE_PATH, candidate_state)
+    print(f"Submitted {BOOTSTRAP_ID}/{attempt_id} for independent review; revision 6 remains active")
+
+
+def validate_review_ledger(
+    repo: Path,
+    ledger: dict[str, Any],
+    state: dict[str, Any],
+    relative: str,
+    reviewer: str,
+    reviewed_state: str,
+) -> None:
+    validate_runtime(repo, ledger, "GCR review ledger")
+    submission = state.get("currentSubmission") or {}
+    attempt_id = str(submission.get("attemptId") or "")
+    if relative != review_path_for(attempt_id):
+        raise SystemExit(f"GCR review ledger path must be {review_path_for(attempt_id)}")
+    findings = ledger.get("findings") or []
+    severities = [SEVERITY_ORDER.get(str(item.get("severity")), 99) for item in findings]
+    prior_open = open_findings(state)
+    closure_ids = [str(item.get("findingId") or "") for item in ledger.get("closures", [])]
+    if (
+        ledger.get("controlRecoveryId") != GCR_ID
+        or ledger.get("bootstrapUnit") != BOOTSTRAP_ID
+        or ledger.get("attemptId") != attempt_id
+        or ledger.get("candidateCommit") != submission.get("candidateCommit")
+        or ledger.get("reviewedStateCommit") != reviewed_state
+        or ledger.get("reviewer") != reviewer
+        or reviewer == submission.get("submittedBy")
+        or ledger.get("evidence") != submission.get("evidence")
+        or severities != sorted(severities)
+        or len({str(item.get("id")) for item in findings}) != len(findings)
+        or len(closure_ids) != len(set(closure_ids))
+        or set(closure_ids) != set(prior_open)
+    ):
+        raise SystemExit("GCR review identity, independence, evidence, ordering, or closures are invalid")
+    after_open = dict(prior_open)
+    for closure_id in closure_ids:
+        after_open.pop(closure_id, None)
+    for finding in findings:
+        after_open[str(finding.get("id"))] = finding
+    if ledger.get("result") == "approved" and any(item.get("blocking") is True for item in after_open.values()):
+        raise SystemExit("GCR approval retains an open blocking finding")
+
+
+def command_review(args: argparse.Namespace) -> None:
+    _approval, _packet, _approval_base = load_authority(args.repo)
+    state, _payload = load_state(args.repo, required=True)
+    assert state is not None
+    if state.get("status") != "REVIEW" or state.get("currentSubmission") is None:
+        raise SystemExit("GCR state has no frozen submission eligible for review")
+    relative = str(args.ledger)
+    require_workspace(args.repo, extra_untracked={relative})
+    reviewer = str(args.reviewer).strip()
+    if not reviewer or reviewer != args.reviewer or reviewer == ACTOR:
+        raise SystemExit("GCR reviewer must be normalized and independent")
+    reviewed_state = git(args.repo, "rev-parse", "HEAD")
+    path = safe_path(
+        args.repo,
+        relative,
+        label="GCR review ledger",
+        prefix="planning/governance-control-recovery",
+    )
+    ledger, ledger_payload = load_json(path, "GCR review ledger")
+    validate_review_ledger(args.repo, ledger, state, relative, reviewer, reviewed_state)
+    submission = copy.deepcopy(state["currentSubmission"])
+    projection = {
+        "reviewer": reviewer,
+        "result": ledger["result"],
+        "reviewedAt": taskctl.utc_now(),
+        "reviewedStateCommit": reviewed_state,
+        "notes": ledger.get("notes"),
+    }
+    attempt = {
+        "submission": submission,
+        "review": projection,
+        "ledger": {"path": relative, "sha256": sha256(ledger_payload), "commit": reviewed_state},
+        "findings": ledger.get("findings") or [],
+        "closures": ledger.get("closures") or [],
+    }
+    state["attempts"].append(attempt)
+    state["status"] = RESULT_STATUS[str(ledger["result"])]
+    state["currentSubmission"] = None
+    validate_runtime(args.repo, state, "GCR reviewed state")
+    write_json_atomic(args.repo / STATE_PATH, state)
+    print(f"Recorded {BOOTSTRAP_ID}/{submission['attemptId']} as {state['status']}")
+
+
+def validate_state_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) -> None:
+    prior_candidate: str | None = None
+    prior_open: dict[str, dict[str, Any]] = {}
+    prior_attempts: list[dict[str, Any]] = []
+    approval_base = str((state.get("approval") or {}).get("commit") or "")
+    approval_path = safe_path(
+        repo,
+        str((state.get("approval") or {}).get("path") or ""),
+        label="GCR historical approval",
+        prefix="planning/governance-control-recovery",
+    )
+    approval_payload = approval_path.read_bytes()
+    if (
+        (state.get("approval") or {}).get("path") != APPROVAL_PATH
+        or sha256(approval_payload) != (state.get("approval") or {}).get("sha256")
+        or taskctl.git_blob(repo, approval_base, APPROVAL_PATH) != approval_payload
+    ):
+        raise SystemExit("GCR state approval binding is invalid")
+    for index, attempt in enumerate(state.get("attempts", []), start=1):
+        submission = attempt.get("submission") or {}
+        attempt_id = f"R{index:02d}"
+        candidate = str(submission.get("candidateCommit") or "")
+        if (
+            submission.get("attemptId") != attempt_id
+            or submission.get("submittedBy") != ACTOR
+            or submission.get("baseCommit") != approval_base
+            or submission.get("branch") != BRANCH
+            or submission.get("priorAttemptId") != (f"R{index - 1:02d}" if index > 1 else None)
+            or submission.get("openFindingIds") != sorted(prior_open)
+        ):
+            raise SystemExit("GCR attempt history identity, base, branch, or prior-finding binding is invalid")
+        if (
+            not taskctl.git_commit_exists(repo, candidate)
+            or not taskctl.git_is_ancestor(repo, approval_base, candidate)
+            or not taskctl.git_is_ancestor(repo, candidate)
+        ):
+            raise SystemExit("GCR candidate is absent from the approved ancestry")
+        if prior_candidate is not None and (
+            prior_candidate == candidate or not taskctl.git_is_ancestor(repo, prior_candidate, candidate)
+        ):
+            raise SystemExit("GCR remediation candidate ancestry is invalid")
+        evidence = submission.get("evidence") or {}
+        _evidence_document, evidence_payload = evidence_document(
+            repo,
+            packet,
+            str(evidence.get("path") or ""),
+            candidate,
+            approval_base,
+            attempt_id,
+            prior_open,
+        )
+        if sha256(evidence_payload) != evidence.get("sha256") or evidence.get("commit") != candidate:
+            raise SystemExit("GCR historical evidence hash/candidate binding is invalid")
+        review = attempt.get("review") or {}
+        reviewed_state = str(review.get("reviewedStateCommit") or "")
+        if (
+            not taskctl.git_commit_exists(repo, reviewed_state)
+            or reviewed_state == candidate
+            or not taskctl.git_is_ancestor(repo, candidate, reviewed_state)
+            or not taskctl.git_is_ancestor(repo, reviewed_state)
+        ):
+            raise SystemExit("GCR reviewed-state commit is absent or outside candidate ancestry")
+        historical_payload = taskctl.git_blob(repo, reviewed_state, STATE_PATH)
+        try:
+            historical_state = json.loads(historical_payload or b"")
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise SystemExit("GCR reviewed-state Git blob is missing or malformed") from exc
+        validate_runtime(repo, historical_state, "GCR reviewed-state Git blob")
+        if (
+            historical_state.get("status") != "REVIEW"
+            or historical_state.get("attempts") != prior_attempts
+            or historical_state.get("currentSubmission") != submission
+            or historical_state.get("adoption") is not None
+            or historical_state.get("approval") != state.get("approval")
+            or historical_state.get("triggerWitness") != trigger_witness()
+        ):
+            raise SystemExit("GCR reviewed-state Git blob does not reproduce the frozen submission")
+        ledger = attempt.get("ledger") or {}
+        ledger_relative = str(ledger.get("path") or "")
+        ledger_path = safe_path(
+            repo,
+            ledger_relative,
+            label="GCR historical review",
+            prefix="planning/governance-control-recovery",
+        )
+        ledger_document, ledger_payload = load_json(ledger_path, "GCR historical review")
+        if (
+            ledger_relative != review_path_for(attempt_id)
+            or sha256(ledger_payload) != ledger.get("sha256")
+            or ledger.get("commit") != reviewed_state
+        ):
+            raise SystemExit("GCR historical review path, hash, or reviewed-state binding is invalid")
+        validate_review_ledger(
+            repo,
+            ledger_document,
+            historical_state,
+            ledger_relative,
+            str(review.get("reviewer") or ""),
+            reviewed_state,
+        )
+        ledger_introduction = taskctl.approval_introduction_commit(repo, ledger_relative)
+        if (
+            not ledger_introduction
+            or ledger_introduction == reviewed_state
+            or not taskctl.git_is_ancestor(repo, reviewed_state, ledger_introduction)
+            or not taskctl.git_is_ancestor(repo, ledger_introduction)
+            or taskctl.git_blob(repo, ledger_introduction, ledger_relative) != ledger_payload
+        ):
+            raise SystemExit("GCR historical review is absent, replaced, or outside reviewed-state ancestry")
+        if (
+            review.get("result") != ledger_document.get("result")
+            or review.get("reviewer") != ledger_document.get("reviewer")
+            or review.get("reviewedStateCommit") != ledger_document.get("reviewedStateCommit")
+            or review.get("notes") != ledger_document.get("notes")
+            or attempt.get("findings") != ledger_document.get("findings")
+            or attempt.get("closures") != ledger_document.get("closures")
+        ):
+            raise SystemExit("GCR review projection differs from its immutable ledger")
+        closure_ids = {str(item.get("findingId")) for item in attempt.get("closures", [])}
+        if closure_ids != set(prior_open):
+            raise SystemExit("GCR historical closures do not exactly reconcile prior findings")
+        for closure_id in closure_ids:
+            prior_open.pop(closure_id, None)
+        for finding in attempt.get("findings", []):
+            prior_open[str(finding.get("id"))] = finding
+        if (attempt.get("review") or {}).get("result") == "approved" and any(
+            item.get("blocking") is True for item in prior_open.values()
+        ):
+            raise SystemExit("GCR historical approval retains a blocking finding")
+        prior_candidate = candidate
+        prior_attempts.append(attempt)
+    current = state.get("currentSubmission")
+    if current is not None:
+        attempt_id = f"R{len(prior_attempts) + 1:02d}"
+        candidate = str(current.get("candidateCommit") or "")
+        evidence = current.get("evidence") or {}
+        if (
+            state.get("status") != "REVIEW"
+            or current.get("attemptId") != attempt_id
+            or current.get("submittedBy") != ACTOR
+            or current.get("baseCommit") != approval_base
+            or current.get("branch") != BRANCH
+            or current.get("priorAttemptId") != (f"R{len(prior_attempts):02d}" if prior_attempts else None)
+            or current.get("openFindingIds") != sorted(prior_open)
+            or not taskctl.git_commit_exists(repo, candidate)
+            or not taskctl.git_is_ancestor(repo, approval_base, candidate)
+            or not taskctl.git_is_ancestor(repo, candidate)
+            or (
+                prior_candidate is not None
+                and (prior_candidate == candidate or not taskctl.git_is_ancestor(repo, prior_candidate, candidate))
+            )
+        ):
+            raise SystemExit("GCR current submission is not the next strict approved-ancestry candidate")
+        _document, evidence_payload = evidence_document(
+            repo,
+            packet,
+            str(evidence.get("path") or ""),
+            candidate,
+            approval_base,
+            attempt_id,
+            prior_open,
+        )
+        if sha256(evidence_payload) != evidence.get("sha256") or evidence.get("commit") != candidate:
+            raise SystemExit("GCR current submission evidence binding is invalid")
+    elif state.get("status") == "REVIEW":
+        raise SystemExit("GCR REVIEW state lacks its frozen current submission")
+    elif not prior_attempts:
+        raise SystemExit("GCR reviewed state lacks immutable review history")
+    elif (
+        state.get("status") != "ADOPTED"
+        and state.get("status") != RESULT_STATUS[str((prior_attempts[-1].get("review") or {}).get("result"))]
+    ):
+        raise SystemExit("GCR live state differs from the latest immutable review result")
+    if (state.get("status") == "ADOPTED") != (state.get("adoption") is not None):
+        raise SystemExit("GCR adoption state and adoption record differ")
+
+
+def command_validate(args: argparse.Namespace) -> None:
+    _approval, packet, _approval_base = load_authority(args.repo)
+    backlog = yaml.safe_load((args.repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+    revision = int(backlog["control_plane"]["revision"])
+    current_boundary(args.repo, packet, revision=(7 if revision >= 7 else 6))
+    state, _payload = load_state(args.repo, required=False)
+    status = "AUTHORIZED"
+    if state is not None:
+        validate_state_history(args.repo, state, packet)
+        status = str(state.get("status"))
+    if args.require_approved and status not in {"APPROVED", "ADOPTED"}:
+        raise SystemExit(f"{BOOTSTRAP_ID} is not independently approved")
+    print(f"Valid {GCR_ID}: bootstrap={status}; control={revision}")
+
+
+def command_status(args: argparse.Namespace) -> None:
+    _approval, _packet, approval_base = load_authority(args.repo)
+    state, _payload = load_state(args.repo, required=False)
+    backlog = yaml.safe_load((args.repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+    print(
+        yaml.safe_dump(
+            {
+                "controlRecovery": GCR_ID,
+                "bootstrap": {"id": BOOTSTRAP_ID, "status": (state or {}).get("status", "AUTHORIZED")},
+                "approvalBase": approval_base,
+                "controlRevision": backlog["control_plane"]["revision"],
+                "ordinaryExecutionAuthority": False,
+            },
+            sort_keys=False,
+        ).rstrip()
+    )
+
+
+def atomic_adoption_write(
+    repo: Path,
+    *,
+    expected_backlog: bytes,
+    expected_state: bytes,
+    backlog_document: dict[str, Any],
+    state_document: dict[str, Any],
+) -> None:
+    backlog_path = repo / "planning/backlog.yaml"
+    state_file = repo / STATE_PATH
+    backlog_bytes = yaml.safe_dump(
+        taskctl.serializable_backlog(backlog_document),
+        sort_keys=False,
+        allow_unicode=True,
+        width=120,
+    ).encode("utf-8")
+    state_bytes = (json.dumps(state_document, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    with taskctl.exclusive_backlog_lock(backlog_path):
+        if backlog_path.read_bytes() != expected_backlog or state_file.read_bytes() != expected_state:
+            raise SystemExit("GCR adoption state changed after validation; no transition was written")
+        temporary: list[tuple[Path, str]] = []
+        backups = {backlog_path: expected_backlog, state_file: expected_state}
+        try:
+            for destination, payload in ((backlog_path, backlog_bytes), (state_file, state_bytes)):
+                fd, name = tempfile.mkstemp(prefix=f"{destination.name}.", suffix=".tmp", dir=destination.parent)
+                with os.fdopen(fd, "wb") as handle:
+                    handle.write(payload)
+                    handle.flush()
+                    os.fsync(handle.fileno())
+                temporary.append((destination, name))
+            for destination, name in temporary:
+                os.replace(name, destination)
+        except BaseException:
+            for destination, payload in backups.items():
+                destination.write_bytes(payload)
+            raise
+        finally:
+            for _destination, name in temporary:
+                if os.path.exists(name):
+                    os.unlink(name)
+
+
+def command_adopt(args: argparse.Namespace) -> None:
+    _approval, packet, approval_base = load_authority(args.repo)
+    state, state_payload = load_state(args.repo, required=True)
+    assert state is not None and state_payload is not None
+    if state.get("status") != "APPROVED" or not state.get("attempts"):
+        raise SystemExit("GCR adoption requires an independently approved B00 state")
+    validate_state_history(args.repo, state, packet)
+    approved_state = str(args.approved_state_commit)
+    evidence_commit = git(args.repo, "rev-parse", "HEAD")
+    if approved_state != git(args.repo, "rev-parse", "HEAD^"):
+        raise SystemExit("GCR adoption evidence commit must be the direct child of the approved state")
+    if not taskctl.git_is_ancestor(args.repo, approved_state, evidence_commit):
+        raise SystemExit("GCR adoption evidence ancestry is invalid")
+    evidence_relative = str(args.evidence)
+    if evidence_relative != "artifacts/evidence/governance-control-recovery/GCR-0001.B00.adoption.json":
+        raise SystemExit("GCR adoption evidence path is not canonical")
+    require_workspace(args.repo)
+    evidence_path = safe_path(args.repo, evidence_relative, label="GCR adoption evidence")
+    evidence, evidence_payload = load_json(evidence_path, "GCR adoption evidence")
+    validate_runtime(args.repo, evidence, "GCR adoption evidence")
+    if (
+        evidence.get("controlRecoveryId") != GCR_ID
+        or evidence.get("bootstrapUnit") != BOOTSTRAP_ID
+        or evidence.get("reviewedStateCommit") != approved_state
+        or evidence.get("triggerWitness") != trigger_witness()
+        or sorted(evidence.get("expectedChangedFiles") or []) != sorted(["planning/backlog.yaml", STATE_PATH])
+        or evidence.get("unverifiedItems") != []
+        or any(item.get("exitCode") != 0 or item.get("result") != "passed" for item in evidence.get("checks", []))
+    ):
+        raise SystemExit("GCR adoption evidence identity, paths, checks, or state binding is invalid")
+    backlog_payload, data = current_boundary(args.repo, packet)
+    latest = state["attempts"][-1]
+    review = latest.get("review") or {}
+    ledger = latest.get("ledger") or {}
+    ledger_path = safe_path(args.repo, str(ledger.get("path") or ""), label="GCR approved review")
+    ledger_payload = ledger_path.read_bytes()
+    now = taskctl.utc_now()
+    generation = {
+        "id": GCR_ID,
+        "bootstrap_id": BOOTSTRAP_ID,
+        "hold_id": "HOLD-W1-GRR-0002",
+        "predecessor_revision": 6,
+        "successor_revision": 7,
+        "approval_reference": {
+            "path": APPROVAL_PATH,
+            "sha256": sha256((args.repo / APPROVAL_PATH).read_bytes()),
+            "introduction_commit": approval_base,
+        },
+        "review_reference": {
+            "path": ledger.get("path"),
+            "sha256": sha256(ledger_payload),
+            "reviewed_state_commit": review.get("reviewedStateCommit"),
+            "approved_state_commit": approved_state,
+        },
+        "adopted_by": str(args.agent).strip(),
+        "adopted_at": now,
+    }
+    if generation["adopted_by"] != ACTOR or args.agent != generation["adopted_by"]:
+        raise SystemExit(f"GCR adopter must be exact actor {ACTOR}")
+    candidate = copy.deepcopy(taskctl.serializable_backlog(data))
+    control = candidate["control_plane"]
+    if control.get("control_generations"):
+        raise SystemExit("GCR generation was already adopted")
+    control["revision"] = 7
+    control["minimum_tool_revision"] = 7
+    control["control_generations"] = [generation]
+    schema_errors = taskctl.backlog_schema_errors(candidate)
+    semantic_errors = taskctl.validate(*taskctl.index_backlog(candidate), repo=args.repo)
+    if schema_errors or semantic_errors:
+        raise SystemExit("GCR adoption candidate is invalid:\n- " + "\n- ".join([*schema_errors, *semantic_errors]))
+    state["status"] = "ADOPTED"
+    state["adoption"] = {
+        "adoptedBy": ACTOR,
+        "adoptedAt": now,
+        "predecessorRevision": 6,
+        "successorRevision": 7,
+        "reviewedStateCommit": approved_state,
+        "evidence": {"path": evidence_relative, "sha256": sha256(evidence_payload), "commit": evidence_commit},
+    }
+    validate_runtime(args.repo, state, "GCR adopted state")
+    atomic_adoption_write(
+        args.repo,
+        expected_backlog=backlog_payload,
+        expected_state=state_payload,
+        backlog_document=candidate,
+        state_document=state,
+    )
+    print("Adopted GCR-0001 revision 6-to-7; GRR-0002.S01 remains separately gated")
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repo", type=Path, default=Path("."))
+    commands = parser.add_subparsers(dest="command", required=True)
+    submit = commands.add_parser("submit")
+    submit.add_argument("request")
+    submit.add_argument("--agent", required=True)
+    submit.add_argument("--approval-commit", required=True)
+    submit.add_argument("--implementation-commit", required=True)
+    submit.add_argument("--evidence", required=True)
+    resubmit = commands.add_parser("resubmit")
+    resubmit.add_argument("request")
+    resubmit.add_argument("--agent", required=True)
+    resubmit.add_argument("--implementation-commit", required=True)
+    resubmit.add_argument("--evidence", required=True)
+    review = commands.add_parser("review")
+    review.add_argument("request")
+    review.add_argument("--reviewer", required=True)
+    review.add_argument("--from", dest="ledger", required=True)
+    adopt = commands.add_parser("adopt")
+    adopt.add_argument("request")
+    adopt.add_argument("--agent", required=True)
+    adopt.add_argument("--approved-state-commit", required=True)
+    adopt.add_argument("--evidence", required=True)
+    validate = commands.add_parser("validate")
+    validate.add_argument("request")
+    validate.add_argument("--require-approved", action="store_true")
+    status = commands.add_parser("status")
+    status.add_argument("request")
+    return parser
+
+
+def main() -> int:
+    args = build_parser().parse_args()
+    args.repo = args.repo.resolve()
+    if getattr(args, "request", GCR_ID) != GCR_ID:
+        raise SystemExit(f"gcrctl recognizes only {GCR_ID}")
+    if args.command == "submit":
+        freeze_submission(args, remediation=False)
+    elif args.command == "resubmit":
+        freeze_submission(args, remediation=True)
+    elif args.command == "review":
+        command_review(args)
+    elif args.command == "adopt":
+        command_adopt(args)
+    elif args.command == "validate":
+        command_validate(args)
+    elif args.command == "status":
+        command_status(args)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -339,14 +339,30 @@ def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str,
     packet_path, approval_path = supplement_paths(repo, supplement_id)
     packet, packet_payload = load_json(packet_path, "recovery supplement packet")
     approval, approval_payload = load_json(approval_path, "recovery supplement approval")
+    packet_schema_name = {
+        "./governance-recovery-supplement.schema.json": "governance-recovery-supplement.schema.json",
+        "./governance-recovery-supplement.v2.schema.json": "governance-recovery-supplement.v2.schema.json",
+    }.get(str(packet.get("$schema") or ""))
+    approval_schema_reference = str(approval.get("$schema") or "")
+    approval_schema_name = None
+    if approval_schema_reference == (
+        "../governance-recovery-requests/governance-recovery-supplement-approval.schema.json"
+    ):
+        approval_schema_name = "governance-recovery-supplement-approval.schema.json"
+    elif approval_schema_reference == (
+        "../governance-recovery-requests/governance-recovery-supplement-approval.v2.schema.json"
+    ):
+        approval_schema_name = "governance-recovery-supplement-approval.v2.schema.json"
+    if packet_schema_name is None or approval_schema_name is None:
+        raise SystemExit("Unsupported recovery supplement packet or approval schema")
     packet_schema = safe_repo_path(
         repo,
-        "planning/governance-recovery-requests/governance-recovery-supplement.schema.json",
+        f"planning/governance-recovery-requests/{packet_schema_name}",
         label="Recovery supplement packet schema",
     )
     approval_schema = safe_repo_path(
         repo,
-        "planning/governance-recovery-requests/governance-recovery-supplement-approval.schema.json",
+        f"planning/governance-recovery-requests/{approval_schema_name}",
         label="Recovery supplement approval schema",
     )
     errors = schema_errors(packet, packet_schema)
@@ -393,24 +409,27 @@ def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str,
     ):
         raise SystemExit("Recovery supplement lacks an exact independent packet approval")
     prior = review.get("priorAdverseLedger") or {}
-    prior_payload = exact_file_reference(
-        repo,
-        prior,
-        commit=packet_commit,
-        label="Recovery supplement prior adverse review",
-    )
-    prior_ledger = json.loads(prior_payload)
-    prior_attempt = str(prior_ledger.get("attemptId") or "")
-    expected_review_attempt = (
-        f"R{int(prior_attempt.removeprefix('R')) + 1:02d}" if re.fullmatch(r"R[0-9]{2,}", prior_attempt) else ""
-    )
-    if (
-        prior_ledger.get("result") not in {"changes-requested", "blocked"}
-        or review.get("attemptId") != expected_review_attempt
-        or sorted(review.get("closedFindingIds") or [])
-        != sorted(str(item.get("id")) for item in prior_ledger.get("findings", []))
-    ):
-        raise SystemExit("Recovery supplement approval does not exactly close the prior adverse packet review")
+    if prior:
+        prior_payload = exact_file_reference(
+            repo,
+            prior,
+            commit=packet_commit,
+            label="Recovery supplement prior adverse review",
+        )
+        prior_ledger = json.loads(prior_payload)
+        prior_attempt = str(prior_ledger.get("attemptId") or "")
+        expected_review_attempt = (
+            f"R{int(prior_attempt.removeprefix('R')) + 1:02d}" if re.fullmatch(r"R[0-9]{2,}", prior_attempt) else ""
+        )
+        if (
+            prior_ledger.get("result") not in {"changes-requested", "blocked"}
+            or review.get("attemptId") != expected_review_attempt
+            or sorted(review.get("closedFindingIds") or [])
+            != sorted(str(item.get("id")) for item in prior_ledger.get("findings", []))
+        ):
+            raise SystemExit("Recovery supplement approval does not exactly close the prior adverse packet review")
+    elif review.get("attemptId") != "R01" or review.get("closedFindingIds") != []:
+        raise SystemExit("First-round recovery supplement approval has invalid review history")
     execution = approval.get("executionAuthority") or {}
     if execution.get("supplementalBootstrapOnly") is not True or any(
         execution.get(field) is not False
@@ -519,6 +538,18 @@ def validate_supplement_boundary(
     activation = packet.get("activationBoundary") or {}
     blocked_task = taskctl.index_backlog(data)[3].get(str(activation.get("blockedTaskId") or "")) or {}
     installed = [item for item in hold.get("supplements", []) if item.get("id") == supplement_id]
+    if packet.get("schemaVersion") == "2.0-recovery-supplement-proposal":
+        validate_preappend_supplement_boundary(
+            repo,
+            packet,
+            data,
+            hold=hold,
+            wave=wave,
+            blocked_task=blocked_task,
+            installed=installed,
+            require_installed=require_installed,
+        )
+        return hold, {}
     exact_activation = (
         hold.get("id") != (packet.get("baseRecoveryAuthority") or {}).get("holdId")
         or hold.get("status") != activation.get("holdStatus")
@@ -600,6 +631,125 @@ def validate_supplement_boundary(
     return hold, amendment
 
 
+def validate_preappend_supplement_boundary(
+    repo: Path,
+    packet: dict[str, Any],
+    data: dict[str, Any],
+    *,
+    hold: dict[str, Any],
+    wave: dict[str, Any],
+    blocked_task: dict[str, Any],
+    installed: list[dict[str, Any]],
+    require_installed: bool,
+) -> None:
+    """Validate a v2 supplement without fabricating the blocked amendment in backlog state."""
+    activation = packet.get("activationBoundary") or {}
+    transition = packet.get("controlTransition") or {}
+    target = packet.get("targetAmendmentAuthority") or {}
+    amendment_reference = target.get("amendmentApproval") or {}
+    amendment_id = str(amendment_reference.get("id") or "")
+    control = data.get("control_plane") or {}
+    expected_revision_value = (
+        transition.get("successorRevision") if require_installed else transition.get("predecessorRevision")
+    )
+    if not isinstance(expected_revision_value, int):
+        raise SystemExit("Supplement control transition revision is missing or malformed")
+    expected_revision = expected_revision_value
+    exact = (
+        hold.get("id") == (packet.get("baseRecoveryAuthority") or {}).get("holdId")
+        and hold.get("status") == activation.get("holdStatus") == "ACTIVE"
+        and (hold.get("bootstrap") or {}).get("status") == "APPROVED"
+        and wave.get("id") == packet.get("targetWave")
+        and (wave.get("campaign") or {}).get("status") == activation.get("waveStatus") == "PAUSED"
+        and (wave.get("campaign") or {}).get("scope") == activation.get("waveScope") == "wave"
+        and activation.get("amendmentBacklogStatus") == "ABSENT"
+        and amendment_id not in taskctl.wave_amendment_map(data)
+        and target.get("backlogPresence") is False
+        and blocked_task.get("status") == activation.get("blockedTaskStatus") == "BLOCKED"
+        and control.get("revision") == expected_revision
+        and control.get("minimum_tool_revision") == expected_revision
+    )
+    if not exact:
+        raise SystemExit("Recovery supplement activation boundary differs from the stopped pre-append state")
+    if require_installed:
+        if len(installed) != 1:
+            raise SystemExit(f"Recovery supplement {packet.get('supplementId')} is not installed")
+        installed_transition = installed[0]
+        if installed_transition.get("predecessor_control_revision") != transition.get(
+            "predecessorRevision"
+        ) or installed_transition.get("successor_control_revision") != transition.get("successorRevision"):
+            raise SystemExit("Installed recovery supplement transition differs from its exact packet")
+    elif installed:
+        raise SystemExit(f"Recovery supplement {packet.get('supplementId')} is already installed")
+
+    approval_relative = str(amendment_reference.get("path") or "")
+    approval_path = safe_repo_path(
+        repo,
+        approval_relative,
+        label="Pre-append target amendment approval",
+        designated_prefix="planning/wave-amendment-approvals",
+    )
+    approval_payload = approval_path.read_bytes()
+    introduction = str(amendment_reference.get("introductionCommit") or "")
+    require_commit(repo, introduction, label="Pre-append amendment approval introduction")
+    if (
+        sha256(approval_payload) != amendment_reference.get("sha256")
+        or taskctl.git_blob(repo, introduction, approval_relative) != approval_payload
+    ):
+        raise SystemExit("Pre-append target amendment approval hash/blob mismatch")
+    approval = json.loads(approval_payload)
+    ecr = target.get("changeRequestPacket") or {}
+    if (
+        approval.get("status") != "APPROVED"
+        or approval.get("amendmentId") != amendment_id
+        or approval.get("changeRequestId") != ecr.get("id")
+        or approval.get("targetWave") != packet.get("targetWave")
+    ):
+        raise SystemExit("Pre-append target amendment approval identity or status mismatch")
+
+    ecr_relative = str(ecr.get("path") or "")
+    ecr_path = safe_repo_path(
+        repo,
+        ecr_relative,
+        label="Pre-append target ECR packet",
+        designated_prefix="planning/enabler-change-requests",
+    )
+    ecr_payload = ecr_path.read_bytes()
+    ecr_commit = str(ecr.get("commit") or "")
+    require_commit(repo, ecr_commit, label="Pre-append target ECR packet commit")
+    if (
+        sha256(ecr_payload) != ecr.get("sha256")
+        or taskctl.git_blob(repo, ecr_commit, ecr_relative) != ecr_payload
+        or (approval.get("packet") or {}).get("commit") != ecr_commit
+    ):
+        raise SystemExit("Pre-append target ECR packet hash/blob/approval binding mismatch")
+
+    bootstrap = target.get("bootstrap") or {}
+    candidate = str(bootstrap.get("candidateCommit") or "")
+    require_commit(repo, candidate, label="Pre-append amendment bootstrap candidate")
+    evidence = bootstrap.get("evidence") or {}
+    evidence_relative = str(evidence.get("path") or "")
+    evidence_path = safe_repo_path(
+        repo,
+        evidence_relative,
+        label="Pre-append amendment bootstrap evidence",
+        designated_prefix="artifacts/evidence",
+    )
+    evidence_payload = evidence_path.read_bytes()
+    evidence_document = json.loads(evidence_payload)
+    if (
+        evidence.get("commit") != candidate
+        or sha256(evidence_payload) != evidence.get("sha256")
+        or evidence_document.get("taskId") != bootstrap.get("id")
+        or evidence_document.get("commit") != candidate
+    ):
+        raise SystemExit("Pre-append amendment bootstrap evidence identity/hash mismatch")
+    if not require_installed:
+        trigger = packet.get("triggerEvidence") or {}
+        if sha256((repo / "planning/backlog.yaml").read_bytes()) != trigger.get("backlogSha256"):
+            raise SystemExit("Recovery supplement trigger backlog is stale; no transition was written")
+
+
 def validate_target_materialization_projection(
     repo: Path,
     packet: dict[str, Any],
@@ -610,6 +760,28 @@ def validate_target_materialization_projection(
     """Prove the exact amendment materialization delta without writing canonical state."""
     target = packet.get("targetAmendmentAuthority") or {}
     amendment_id = str((target.get("amendmentApproval") or {}).get("id") or "")
+    if packet.get("schemaVersion") == "2.0-recovery-supplement-proposal":
+        hold = recovery_hold(data, str(packet.get("recoveryRequestId") or ""))
+        supplement = recovery_supplement(hold, str(packet.get("supplementId") or ""))
+        bootstrap_status = str((supplement.get("bootstrap") or {}).get("status") or "")
+        if amendment_id in taskctl.wave_amendment_map(data):
+            raise SystemExit("Pre-append target projection refuses fabricated amendment state")
+        if bootstrap_status != "APPROVED" and not allow_unapproved_supplement_gate:
+            raise SystemExit("Pre-append target projection requires an independently approved supplement")
+        target_bootstrap = target.get("bootstrap") or {}
+        return {
+            "amendment": amendment_id,
+            "bootstrapUnit": target_bootstrap.get("id"),
+            "candidateCommit": target_bootstrap.get("candidateCommit"),
+            "evidence": target_bootstrap.get("evidence"),
+            "backlogPresence": False,
+            "appendOrExecutionPerformed": False,
+            "authorizationGate": (
+                None
+                if bootstrap_status == "APPROVED"
+                else "latest supplemental bootstrap must be independently APPROVED"
+            ),
+        }
     projected = copy.deepcopy(taskctl.serializable_backlog(data))
     amendment = taskctl.wave_amendment_map(projected).get(amendment_id) or {}
     approval, amendment_packet, _payload = taskctl.load_amendment_authority(repo, amendment_id)
@@ -803,7 +975,7 @@ def validate_start_boundary(
     if taskctl.active_recovery_holds(data):
         raise SystemExit("A governance recovery hold is already ACTIVE")
     control = data.get("control_plane") or {}
-    if control.get("revision") not in {5, taskctl.CONTROL_TOOL_REVISION} or (
+    if control.get("revision") not in {5, taskctl.RECOVERY_BASE_REVISION} or (
         control.get("minimum_tool_revision") != control.get("revision")
     ):
         raise SystemExit("Recovery bootstrap start requires a supported exact predecessor control revision")
@@ -914,8 +1086,8 @@ def command_bootstrap_start(args: argparse.Namespace) -> None:
         "released_at": None,
     }
     control.setdefault("recovery_holds", []).append(hold)
-    control["revision"] = taskctl.CONTROL_TOOL_REVISION
-    control["minimum_tool_revision"] = taskctl.CONTROL_TOOL_REVISION
+    control["revision"] = taskctl.RECOVERY_BASE_REVISION
+    control["minimum_tool_revision"] = taskctl.RECOVERY_BASE_REVISION
     save_backlog(args.repo, backlog_payload, data)
     print(f"Installed {hold['id']}/{bootstrap.get('id')}; {packet.get('targetWave')} remains PAUSED")
 
@@ -1372,8 +1544,16 @@ def command_supplement_start(args: argparse.Namespace) -> None:
     backlog_payload, data, _capabilities, _slices, _tasks, _gates = backlog_state(args.repo)
     validate_supplement_boundary(args.repo, packet, data, require_installed=False)
     control = data.get("control_plane") or {}
-    if control.get("revision") != 4 or control.get("minimum_tool_revision") != 4:
-        raise SystemExit("Supplement installation requires the exact predecessor control revision 4")
+    transition = packet.get("controlTransition") or {
+        "predecessorRevision": 4,
+        "successorRevision": 6,
+    }
+    predecessor = int(transition.get("predecessorRevision") or 0)
+    successor = int(transition.get("successorRevision") or 0)
+    if successor <= predecessor or successor > taskctl.CONTROL_TOOL_REVISION:
+        raise SystemExit("Supplement control transition is not strictly increasing or supported")
+    if control.get("revision") != predecessor or control.get("minimum_tool_revision") != predecessor:
+        raise SystemExit(f"Supplement installation requires the exact predecessor control revision {predecessor}")
     request_id = str(packet.get("recoveryRequestId") or "")
     hold = recovery_hold(data, request_id)
     existing = hold.get("supplements", [])
@@ -1390,38 +1570,39 @@ def command_supplement_start(args: argparse.Namespace) -> None:
     approval_introduction = taskctl.approval_introduction_commit(args.repo, approval_relative)
     if not approval_introduction:
         raise SystemExit("Supplemental recovery approval introduction is unavailable")
-    hold.setdefault("supplements", []).append(
-        {
-            "id": args.supplement,
-            "predecessor_control_revision": 4,
-            "packet_reference": {
-                "path": packet_reference.get("path"),
-                "sha256": sha256(packet_payload),
-                "commit": packet_reference.get("commit"),
-            },
-            "approval_reference": {
-                "path": approval_relative,
-                "sha256": sha256((args.repo / approval_relative).read_bytes()),
-                "introduction_commit": approval_introduction,
-            },
-            "bootstrap": {
-                "id": bootstrap_id,
-                "status": "IN_PROGRESS",
-                "implementer": implementer,
-                "implementation_commit": None,
-                "submission_branch": None,
-                "evidence": None,
-                "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
-                "current_submission": None,
-                "attempts": [],
-            },
-            "created_at": taskctl.utc_now(),
-        }
-    )
+    installed_supplement = {
+        "id": args.supplement,
+        "predecessor_control_revision": predecessor,
+        "packet_reference": {
+            "path": packet_reference.get("path"),
+            "sha256": sha256(packet_payload),
+            "commit": packet_reference.get("commit"),
+        },
+        "approval_reference": {
+            "path": approval_relative,
+            "sha256": sha256((args.repo / approval_relative).read_bytes()),
+            "introduction_commit": approval_introduction,
+        },
+        "bootstrap": {
+            "id": bootstrap_id,
+            "status": "IN_PROGRESS",
+            "implementer": implementer,
+            "implementation_commit": None,
+            "submission_branch": None,
+            "evidence": None,
+            "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+            "current_submission": None,
+            "attempts": [],
+        },
+        "created_at": taskctl.utc_now(),
+    }
+    if packet.get("schemaVersion") == "2.0-recovery-supplement-proposal":
+        installed_supplement["successor_control_revision"] = successor
+    hold.setdefault("supplements", []).append(installed_supplement)
     for other_hold in control.get("recovery_holds", []):
         other_hold.setdefault("supplements", [])
-    control["revision"] = taskctl.CONTROL_TOOL_REVISION
-    control["minimum_tool_revision"] = taskctl.CONTROL_TOOL_REVISION
+    control["revision"] = successor
+    control["minimum_tool_revision"] = successor
     save_backlog(args.repo, backlog_payload, data)
     print(f"Installed {args.supplement}/{bootstrap_id}; W1 and ordinary execution remain paused")
 

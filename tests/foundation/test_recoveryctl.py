@@ -511,8 +511,8 @@ class GovernanceRecoveryTests(unittest.TestCase):
         current = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
         current_supplement = copy.deepcopy(current["control_plane"]["recovery_holds"][0]["supplements"][0])
         backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
-        backlog["control_plane"]["revision"] = taskctl.CONTROL_TOOL_REVISION
-        backlog["control_plane"]["minimum_tool_revision"] = taskctl.CONTROL_TOOL_REVISION
+        backlog["control_plane"]["revision"] = taskctl.RECOVERY_BASE_REVISION
+        backlog["control_plane"]["minimum_tool_revision"] = taskctl.RECOVERY_BASE_REVISION
         hold = backlog["control_plane"]["recovery_holds"][0]
         hold["supplements"] = [current_supplement]
         b00_snapshot = copy.deepcopy(hold["bootstrap"])
@@ -732,13 +732,14 @@ class GovernanceRecoveryTests(unittest.TestCase):
             recoveryctl.command_supplement_start(args)
 
         installed = captured["data"]
-        self.assertEqual(taskctl.CONTROL_TOOL_REVISION, installed["control_plane"]["revision"])
-        self.assertEqual(taskctl.CONTROL_TOOL_REVISION, installed["control_plane"]["minimum_tool_revision"])
+        self.assertEqual(6, installed["control_plane"]["revision"])
+        self.assertEqual(6, installed["control_plane"]["minimum_tool_revision"])
         supplement = installed["control_plane"]["recovery_holds"][0]["supplements"][0]
         self.assertEqual("GRR-0001.S01", supplement["id"])
         self.assertEqual("GRR-0001.B01", supplement["bootstrap"]["id"])
         self.assertEqual("IN_PROGRESS", supplement["bootstrap"]["status"])
         self.assertEqual([], supplement["bootstrap"]["attempts"])
+        self.assertNotIn("successor_control_revision", supplement)
         self.assertEqual([], taskctl.backlog_schema_errors(taskctl.serializable_backlog(installed)))
 
         _current_payload, current, _capabilities, _slices, _tasks, _gates = recoveryctl.backlog_state(REPO)
@@ -746,6 +747,68 @@ class GovernanceRecoveryTests(unittest.TestCase):
         stale["control_plane"]["recovery_holds"][0]["id"] = "HOLD-W1-GRR-9999"
         with self.assertRaisesRegex(SystemExit, "activation boundary"):
             recoveryctl.validate_supplement_boundary(REPO, packet, stale, require_installed=True)
+
+    def test_v2_supplement_start_uses_exact_seven_to_eight_transition(self) -> None:
+        approval, packet, _approval_payload, _packet_payload = recoveryctl.load_supplement_authority(
+            REPO, "GRR-0001.S01"
+        )
+        packet = copy.deepcopy(packet)
+        packet["schemaVersion"] = "2.0-recovery-supplement-proposal"
+        packet["controlTransition"] = {
+            "predecessorRevision": 7,
+            "successorRevision": 8,
+            "generationNeutral": True,
+            "olderReadersFailClosed": True,
+        }
+        payload, data, capabilities, slices, tasks, gates = recoveryctl.backlog_state(REPO)
+        data = copy.deepcopy(data)
+        data["control_plane"]["revision"] = 7
+        data["control_plane"]["minimum_tool_revision"] = 7
+        data["control_plane"]["recovery_holds"][0]["supplements"] = []
+        captured: dict[str, Any] = {}
+
+        def capture(_repo: Path, prior: bytes, candidate: dict[str, Any]) -> None:
+            self.assertEqual(payload, prior)
+            captured["data"] = copy.deepcopy(candidate)
+
+        args = argparse.Namespace(repo=REPO, supplement="GRR-0001.S01", agent="codex")
+        with (
+            patch.object(
+                recoveryctl,
+                "load_supplement_authority",
+                return_value=(approval, packet, b"approval", json.dumps(packet).encode()),
+            ),
+            patch.object(recoveryctl, "require_clean"),
+            patch.object(
+                recoveryctl,
+                "backlog_state",
+                return_value=(payload, data, capabilities, slices, tasks, gates),
+            ),
+            patch.object(
+                recoveryctl,
+                "validate_supplement_boundary",
+                return_value=(data["control_plane"]["recovery_holds"][0], {}),
+            ),
+            patch.object(recoveryctl, "save_backlog", side_effect=capture),
+        ):
+            recoveryctl.command_supplement_start(args)
+
+        installed = captured["data"]
+        self.assertEqual(8, installed["control_plane"]["revision"])
+        self.assertEqual(8, installed["control_plane"]["minimum_tool_revision"])
+        supplement = installed["control_plane"]["recovery_holds"][0]["supplements"][0]
+        self.assertEqual(7, supplement["predecessor_control_revision"])
+        self.assertEqual(8, supplement["successor_control_revision"])
+
+    def test_released_hold_ecr_identity_is_prefix_stable_when_w1_a04_is_appended(self) -> None:
+        data = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
+        data = copy.deepcopy(data)
+        data["wave_amendments"].append({"id": "W1.A04", "target_wave": "W1", "change_request_id": "ECR-0003"})
+        errors = taskctl.recovery_hold_errors(data, None)
+        self.assertNotIn(
+            "HOLD-W1-GRR-0001: post-bootstrap change-request identity is not consecutive",
+            errors,
+        )
 
     def test_supplement_submission_review_remediation_and_adversarial_lifecycle(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
