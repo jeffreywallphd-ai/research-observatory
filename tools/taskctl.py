@@ -60,6 +60,11 @@ COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_RE
 CONTROL_TOOL_REVISION = 8
 GCR_ADOPTION_REVISION = 7
 RECOVERY_BASE_REVISION = 6
+GCR_ADOPTION_TRANSACTION_PATHS = (
+    "planning/governance-control-recovery/GCR-0001.B00.adoption-transaction.json",
+    "planning/governance-control-recovery/GCR-0001.B00.adoption-backlog.next",
+    "planning/governance-control-recovery/GCR-0001.B00.adoption-state.next",
+)
 AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
 EXACT_T03_RECOVERY = {
     "task_id": "CAP-02.S04.T03",
@@ -1801,6 +1806,36 @@ def git_is_ancestor(repo: Path, ancestor: str, descendant: str = "HEAD") -> bool
     return result.returncode == 0
 
 
+def git_commit_parents(repo: Path, commit: str) -> list[str]:
+    result = subprocess.run(
+        ["git", "show", "-s", "--format=%P", commit],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.stdout.strip().split() if result.returncode == 0 else []
+
+
+def git_name_status_delta(repo: Path, parent: str, commit: str) -> dict[str, str]:
+    result = subprocess.run(
+        ["git", "diff-tree", "--no-commit-id", "--name-status", "-r", "--no-renames", "-z", parent, commit],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        return {}
+    try:
+        fields = result.stdout.decode("utf-8", errors="strict").split("\0")
+    except UnicodeError:
+        return {}
+    fields = fields[:-1] if fields and fields[-1] == "" else fields
+    if len(fields) % 2:
+        return {}
+    return {fields[offset + 1]: fields[offset] for offset in range(0, len(fields), 2)}
+
+
 @lru_cache(maxsize=512)
 def git_blob(repo: Path, commit: str, path: str) -> bytes | None:
     result = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=repo, capture_output=True, check=False)
@@ -3017,12 +3052,32 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
 def governance_control_generation_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
     """Validate the one-time GCR generation and its exact approved authority."""
     errors: list[str] = []
+    if repo is not None:
+        transaction_artifacts = [
+            relative for relative in GCR_ADOPTION_TRANSACTION_PATHS if os.path.lexists(repo / relative)
+        ]
+        if transaction_artifacts:
+            errors.append(
+                "GCR-0001 adoption transaction requires explicit gcrctl recovery: " + ", ".join(transaction_artifacts)
+            )
     control = data.get("control_plane") or {}
     revision = int(control.get("revision") or 0)
+    live_state: dict[str, Any] = {}
+    if repo is not None:
+        state_path = repo / "planning/governance-control-recovery/GCR-0001.B00.state.json"
+        if state_path.is_file() and not state_path.is_symlink():
+            try:
+                loaded_state = json.loads(state_path.read_bytes())
+                if isinstance(loaded_state, dict):
+                    live_state = loaded_state
+            except OSError, UnicodeError, json.JSONDecodeError:
+                errors.append("GCR-0001 live state is unreadable or malformed")
     generations = control.get("control_generations") or []
     if revision < GCR_ADOPTION_REVISION:
         if generations:
             errors.append("control revisions before 7 cannot contain GCR generation records")
+        if live_state.get("status") == "ADOPTED" or live_state.get("adoption") is not None:
+            errors.append("control revision 6 cannot coexist with an adopted GCR-0001 live state")
         return errors
     if len(generations) != 1:
         return ["control revision 7 or later requires exactly one GCR generation record"]
@@ -3093,6 +3148,17 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
         or not git_is_ancestor(repo, reviewed_state, approved_state)
     ):
         errors.append("GCR-0001 approved state does not strictly descend from its reviewed state")
+    review_relative = str(review_reference.get("path") or "")
+    if (
+        approval_introduction_commit(repo, review_relative) != approved_state
+        or git_commit_parents(repo, approved_state) != [reviewed_state]
+        or git_name_status_delta(repo, reviewed_state, approved_state)
+        != {
+            review_relative: "A",
+            "planning/governance-control-recovery/GCR-0001.B00.state.json": "M",
+        }
+    ):
+        errors.append("GCR-0001 approved state is not the canonical exact review-ledger application commit")
     state_payload = git_blob(
         repo,
         approved_state,
@@ -3116,6 +3182,36 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
         or (latest_attempt.get("ledger") or {}).get("sha256") != review_reference.get("sha256")
     ):
         errors.append("GCR-0001 approved-state Git blob does not reproduce the approved review")
+    adoption = live_state.get("adoption") or {}
+    evidence = adoption.get("evidence") or {}
+    evidence_relative = str(evidence.get("path") or "")
+    evidence_commit = str(evidence.get("commit") or "")
+    try:
+        evidence_path = safe_control_path(
+            repo,
+            evidence_relative,
+            prefix="artifacts/evidence/governance-control-recovery",
+            label="GCR-0001 adoption evidence",
+        )
+        evidence_payload = evidence_path.read_bytes()
+        evidence_document = json.loads(evidence_payload)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+        errors.append(f"GCR-0001 cannot load adoption evidence: {exc}")
+        evidence_payload = b""
+        evidence_document = {}
+    if (
+        live_state.get("status") != "ADOPTED"
+        or adoption.get("predecessorRevision") != 6
+        or adoption.get("successorRevision") != GCR_ADOPTION_REVISION
+        or adoption.get("reviewedStateCommit") != approved_state
+        or evidence_relative != "artifacts/evidence/governance-control-recovery/GCR-0001.B00.adoption.json"
+        or hashlib.sha256(evidence_payload).hexdigest() != evidence.get("sha256")
+        or not git_commit_exists(repo, evidence_commit)
+        or not git_is_ancestor(repo, evidence_commit)
+        or git_blob(repo, evidence_commit, evidence_relative) != evidence_payload
+        or evidence_document.get("reviewedStateCommit") != approved_state
+    ):
+        errors.append("GCR-0001 live adoption state/evidence does not match the adopted generation")
     return errors
 
 

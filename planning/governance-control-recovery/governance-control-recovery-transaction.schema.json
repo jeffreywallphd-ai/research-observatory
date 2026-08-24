@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-control-recovery.transaction.v1.json",
+  "title": "GCR-0001 adoption write-ahead transaction",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "transactionId",
+    "controlRecoveryId",
+    "bootstrapUnit",
+    "reviewedStateCommit",
+    "approvedStateCommit",
+    "evidenceCommit",
+    "evidence",
+    "paths",
+    "predecessor",
+    "successor",
+    "createdAt"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0-control-recovery-adoption-transaction"},
+    "documentType": {"const": "governance-control-recovery-adoption-transaction"},
+    "transactionId": {"const": "GCR-0001.B00.ADOPT"},
+    "controlRecoveryId": {"const": "GCR-0001"},
+    "bootstrapUnit": {"const": "GCR-0001.B00"},
+    "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+    "approvedStateCommit": {"$ref": "#/$defs/commit"},
+    "evidenceCommit": {"$ref": "#/$defs/commit"},
+    "evidence": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.adoption.json"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "paths": {
+      "type": "object",
+      "required": ["backlog", "state", "backlogNext", "stateNext"],
+      "properties": {
+        "backlog": {"const": "planning/backlog.yaml"},
+        "state": {"const": "planning/governance-control-recovery/GCR-0001.B00.state.json"},
+        "backlogNext": {
+          "const": "planning/governance-control-recovery/GCR-0001.B00.adoption-backlog.next"
+        },
+        "stateNext": {
+          "const": "planning/governance-control-recovery/GCR-0001.B00.adoption-state.next"
+        }
+      },
+      "additionalProperties": false
+    },
+    "predecessor": {"$ref": "#/$defs/pair"},
+    "successor": {"$ref": "#/$defs/pair"},
+    "createdAt": {"$ref": "#/$defs/timestamp"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "pair": {
+      "type": "object",
+      "required": ["backlogSha256", "stateSha256", "holdSha256"],
+      "properties": {
+        "backlogSha256": {"$ref": "#/$defs/sha256"},
+        "stateSha256": {"$ref": "#/$defs/sha256"},
+        "holdSha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

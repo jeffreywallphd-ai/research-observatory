@@ -47,13 +47,14 @@ class GcrctlTests(unittest.TestCase):
         schema = repo / gcrctl.RUNTIME_SCHEMA_PATH
         schema.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(REPO / gcrctl.RUNTIME_SCHEMA_PATH, schema)
+        shutil.copy2(REPO / gcrctl.TRANSACTION_SCHEMA_PATH, repo / gcrctl.TRANSACTION_SCHEMA_PATH)
         self.write_json(repo, gcrctl.APPROVAL_PATH, {"fixture": True})
         backlog: dict[str, Any] = {
             "control_plane": {
                 "revision": 6,
                 "minimum_tool_revision": 6,
                 "active_amendment": None,
-                "recovery_holds": [],
+                "recovery_holds": [{"id": "HOLD-W1-GRR-0002", "status": "ACTIVE"}],
             }
         }
         (repo / "planning/backlog.yaml").write_text(yaml.safe_dump(backlog, sort_keys=False), encoding="utf-8")
@@ -103,6 +104,84 @@ class GcrctlTests(unittest.TestCase):
                     "selectedChecks": ["focused"],
                     "deferredCoverage": ["Wave qualification"],
                 },
+            },
+        )
+        return relative
+
+    def approved_fixture(
+        self,
+        temporary: str,
+        *,
+        hidden_stage: str | None = None,
+    ) -> tuple[Path, dict, str, str]:
+        repo, base, candidate, packet = self.fixture(temporary)
+        evidence_relative = self.evidence(repo, base, candidate, packet)
+        submit = argparse.Namespace(
+            repo=repo,
+            agent=gcrctl.ACTOR,
+            approval_commit=base,
+            implementation_commit=candidate,
+            evidence=evidence_relative,
+        )
+        with (
+            patch.object(gcrctl, "load_authority", return_value=({}, packet, base)),
+            patch.object(gcrctl, "current_boundary", return_value=(b"backlog", {})),
+        ):
+            gcrctl.freeze_submission(submit, remediation=False)
+        state = json.loads((repo / gcrctl.STATE_PATH).read_text(encoding="utf-8"))
+        if hidden_stage == "reviewed":
+            (repo / "planning/hidden-reviewed.txt").write_text("hidden\n", encoding="utf-8")
+            self.git(repo, "add", "planning/hidden-reviewed.txt")
+        self.git(repo, "add", gcrctl.STATE_PATH, evidence_relative)
+        self.git(repo, "commit", "-m", "reviewed state")
+        reviewed_state = self.git(repo, "rev-parse", "HEAD")
+        review_relative = gcrctl.review_path_for("R01")
+        self.write_json(
+            repo,
+            review_relative,
+            {
+                "schemaVersion": "1.0-control-recovery-review",
+                "documentType": "governance-control-recovery-bootstrap-review",
+                "controlRecoveryId": gcrctl.GCR_ID,
+                "bootstrapUnit": gcrctl.BOOTSTRAP_ID,
+                "attemptId": "R01",
+                "candidateCommit": candidate,
+                "reviewedStateCommit": reviewed_state,
+                "reviewer": "independent-reviewer",
+                "result": "approved",
+                "evidence": state["currentSubmission"]["evidence"],
+                "findings": [],
+                "closures": [],
+                "notes": "Approved isolated lifecycle.",
+            },
+        )
+        review = argparse.Namespace(repo=repo, reviewer="independent-reviewer", ledger=review_relative)
+        with patch.object(gcrctl, "load_authority", return_value=({}, packet, base)):
+            gcrctl.command_review(review)
+        if hidden_stage == "approved":
+            (repo / "planning/hidden-approved.txt").write_text("hidden\n", encoding="utf-8")
+            self.git(repo, "add", "planning/hidden-approved.txt")
+        self.git(repo, "add", gcrctl.STATE_PATH, review_relative)
+        self.git(repo, "commit", "-m", "approved state")
+        return repo, packet, base, self.git(repo, "rev-parse", "HEAD")
+
+    def write_adoption_evidence(self, repo: Path, approved_state: str) -> str:
+        relative = "artifacts/evidence/governance-control-recovery/GCR-0001.B00.adoption.json"
+        self.write_json(
+            repo,
+            relative,
+            {
+                "schemaVersion": "1.0-control-recovery-adoption-evidence",
+                "documentType": "governance-control-recovery-adoption-evidence",
+                "controlRecoveryId": gcrctl.GCR_ID,
+                "bootstrapUnit": gcrctl.BOOTSTRAP_ID,
+                "reviewedStateCommit": approved_state,
+                "triggerWitness": gcrctl.trigger_witness(),
+                "predecessorRevision": 6,
+                "successorRevision": 7,
+                "expectedChangedFiles": ["planning/backlog.yaml", gcrctl.STATE_PATH],
+                "checks": [{"id": "adoption", "command": "adoption", "exitCode": 0, "result": "passed"}],
+                "unverifiedItems": [],
             },
         )
         return relative
@@ -213,6 +292,249 @@ class GcrctlTests(unittest.TestCase):
                 sorted(["planning/backlog.yaml", gcrctl.STATE_PATH]),
                 sorted(self.git(repo, "diff", "--name-only", "HEAD", "--").splitlines()),
             )
+
+    def test_adoption_denies_hidden_evidence_commit_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo, packet, base, approved_state = self.approved_fixture(temporary)
+            adoption_relative = self.write_adoption_evidence(repo, approved_state)
+            hidden = repo / "planning/unauthorized-hidden.txt"
+            hidden.write_text("hidden\n", encoding="utf-8")
+            self.git(repo, "add", adoption_relative, "planning/unauthorized-hidden.txt")
+            self.git(repo, "commit", "-m", "evidence with hidden path")
+            before_backlog = (repo / gcrctl.BACKLOG_PATH).read_bytes()
+            before_state = (repo / gcrctl.STATE_PATH).read_bytes()
+            args = argparse.Namespace(
+                repo=repo,
+                approved_state_commit=approved_state,
+                evidence=adoption_relative,
+                agent=gcrctl.ACTOR,
+            )
+            with (
+                patch.object(gcrctl, "load_authority", return_value=({}, packet, base)),
+                self.assertRaisesRegex(SystemExit, "exact single-parent path/status delta"),
+            ):
+                gcrctl.command_adopt(args)
+            self.assertEqual(before_backlog, (repo / gcrctl.BACKLOG_PATH).read_bytes())
+            self.assertEqual(before_state, (repo / gcrctl.STATE_PATH).read_bytes())
+            self.assertEqual([], gcrctl.transaction_artifacts_present(repo))
+
+    def test_adoption_denies_hidden_state_paths_and_substituted_parent(self) -> None:
+        for stage in ("reviewed", "approved"):
+            with self.subTest(stage=stage), tempfile.TemporaryDirectory() as temporary:
+                repo, packet, base, approved_state = self.approved_fixture(temporary, hidden_stage=stage)
+                adoption_relative = self.write_adoption_evidence(repo, approved_state)
+                self.git(repo, "add", adoption_relative)
+                self.git(repo, "commit", "-m", "adoption evidence")
+                args = argparse.Namespace(
+                    repo=repo,
+                    approved_state_commit=approved_state,
+                    evidence=adoption_relative,
+                    agent=gcrctl.ACTOR,
+                )
+                with (
+                    patch.object(gcrctl, "load_authority", return_value=({}, packet, base)),
+                    self.assertRaisesRegex(SystemExit, "exact single-parent path/status delta"),
+                ):
+                    gcrctl.command_adopt(args)
+                self.assertEqual([], gcrctl.transaction_artifacts_present(repo))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            repo, packet, base, approved_state = self.approved_fixture(temporary)
+            intermediate = repo / "planning/intermediate.txt"
+            intermediate.write_text("intermediate\n", encoding="utf-8")
+            self.git(repo, "add", "planning/intermediate.txt")
+            self.git(repo, "commit", "-m", "substituted approved parent")
+            substituted = self.git(repo, "rev-parse", "HEAD")
+            adoption_relative = self.write_adoption_evidence(repo, substituted)
+            self.git(repo, "add", adoption_relative)
+            self.git(repo, "commit", "-m", "adoption evidence")
+            args = argparse.Namespace(
+                repo=repo,
+                approved_state_commit=substituted,
+                evidence=adoption_relative,
+                agent=gcrctl.ACTOR,
+            )
+            with (
+                patch.object(gcrctl, "load_authority", return_value=({}, packet, base)),
+                self.assertRaisesRegex(SystemExit, "canonical latest ledger introduction"),
+            ):
+                gcrctl.command_adopt(args)
+            self.assertEqual([], gcrctl.transaction_artifacts_present(repo))
+
+    def test_adoption_transaction_recovers_every_abrupt_persistence_boundary(self) -> None:
+        boundaries = [
+            "backlog-next-durable",
+            "state-next-durable",
+            "transaction-published",
+            "backlog-replaced",
+            "state-replaced",
+            "successor-validated",
+            "transaction-removed",
+        ]
+        published = {
+            "transaction-published",
+            "backlog-replaced",
+            "state-replaced",
+            "successor-validated",
+            "transaction-removed",
+        }
+        for boundary in boundaries:
+            with self.subTest(boundary=boundary), tempfile.TemporaryDirectory() as temporary:
+                repo, packet, _base, approved_state = self.approved_fixture(temporary)
+                adoption_relative = self.write_adoption_evidence(repo, approved_state)
+                self.git(repo, "add", adoption_relative)
+                self.git(repo, "commit", "-m", "adoption evidence")
+                evidence_commit = self.git(repo, "rev-parse", "HEAD")
+                old_backlog = (repo / gcrctl.BACKLOG_PATH).read_bytes()
+                old_state = (repo / gcrctl.STATE_PATH).read_bytes()
+                child = "\n".join(
+                    [
+                        "import copy, hashlib, json, os, pathlib, sys, yaml",
+                        "from unittest.mock import patch",
+                        f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
+                        "import gcrctl, taskctl",
+                        "repo = pathlib.Path(sys.argv[1])",
+                        "boundary = sys.argv[2]",
+                        "packet = json.loads(sys.argv[3])",
+                        f"approved = {json.dumps(approved_state)}",
+                        f"evidence_commit = {json.dumps(evidence_commit)}",
+                        f"evidence_relative = {json.dumps(adoption_relative)}",
+                        "old_backlog = (repo / gcrctl.BACKLOG_PATH).read_bytes()",
+                        "old_state = (repo / gcrctl.STATE_PATH).read_bytes()",
+                        "backlog = yaml.safe_load(old_backlog)",
+                        "state = json.loads(old_state)",
+                        "latest = state['attempts'][-1]",
+                        "reviewed = latest['review']['reviewedStateCommit']",
+                        "ledger = latest['ledger']",
+                        "evidence_payload = (repo / evidence_relative).read_bytes()",
+                        "backlog['control_plane']['revision'] = 7",
+                        "backlog['control_plane']['minimum_tool_revision'] = 7",
+                        "backlog['control_plane']['control_generations'] = [{",
+                        "  'id': gcrctl.GCR_ID, 'bootstrap_id': gcrctl.BOOTSTRAP_ID,",
+                        "  'hold_id': 'HOLD-W1-GRR-0002', 'predecessor_revision': 6, 'successor_revision': 7,",
+                        "  'approval_reference': {",
+                        "    'path': gcrctl.APPROVAL_PATH, 'sha256': '0' * 64,",
+                        "    'introduction_commit': state['approval']['commit']},",
+                        "  'review_reference': {",
+                        "    'path': ledger['path'], 'sha256': ledger['sha256'],",
+                        "    'reviewed_state_commit': reviewed, 'approved_state_commit': approved},",
+                        "  'adopted_by': gcrctl.ACTOR, 'adopted_at': '2026-08-24T00:00:00+00:00'",
+                        "}]",
+                        "state['status'] = 'ADOPTED'",
+                        "state['adoption'] = {",
+                        "  'adoptedBy': gcrctl.ACTOR, 'adoptedAt': '2026-08-24T00:00:00+00:00',",
+                        "  'predecessorRevision': 6, 'successorRevision': 7, 'reviewedStateCommit': approved,",
+                        "  'evidence': {",
+                        "    'path': evidence_relative,",
+                        "    'sha256': hashlib.sha256(evidence_payload).hexdigest(),",
+                        "    'commit': evidence_commit}",
+                        "}",
+                        "def crash(label):",
+                        "    if label == boundary:",
+                        "        os._exit(77)",
+                        "gcrctl.adoption_fault_boundary = crash",
+                        "with patch.object(taskctl, 'backlog_schema_errors', return_value=[]), \\",
+                        "     patch.object(taskctl, 'validate', return_value=[]):",
+                        "    gcrctl.atomic_adoption_write(",
+                        "        repo, expected_backlog=old_backlog, expected_state=old_state,",
+                        "        backlog_document=backlog, state_document=state, packet=packet,",
+                        "        reviewed_state=reviewed, approved_state=approved, evidence_commit=evidence_commit,",
+                        "        evidence_relative=evidence_relative, evidence_payload=evidence_payload)",
+                    ]
+                )
+                result = subprocess.run(
+                    [sys.executable, "-c", child, str(repo), boundary, json.dumps(packet)],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(77, result.returncode, result.stdout + result.stderr)
+                present = gcrctl.transaction_artifacts_present(repo)
+                if boundary != "transaction-removed":
+                    self.assertTrue(present)
+                    backlog_document = yaml.safe_load((repo / gcrctl.BACKLOG_PATH).read_text(encoding="utf-8"))
+                    self.assertTrue(
+                        any(
+                            "requires explicit gcrctl recovery" in error
+                            for error in taskctl.governance_control_generation_errors(backlog_document, repo)
+                        )
+                    )
+                    if boundary == "backlog-replaced":
+                        saved_artifacts = {
+                            relative: path.read_bytes()
+                            for relative, path in gcrctl.transaction_artifacts(repo).items()
+                            if path.is_file()
+                        }
+                        for relative in saved_artifacts:
+                            (repo / relative).unlink()
+                        split_errors = taskctl.governance_control_generation_errors(backlog_document, repo)
+                        self.assertTrue(
+                            any("live adoption state/evidence" in error for error in split_errors),
+                            split_errors,
+                        )
+                        for relative, payload in saved_artifacts.items():
+                            (repo / relative).write_bytes(payload)
+                with (
+                    patch.object(taskctl, "backlog_schema_errors", return_value=[]),
+                    patch.object(taskctl, "validate", return_value=[]),
+                ):
+                    outcome = gcrctl.recover_adoption_transaction(repo, packet)
+                if boundary in published:
+                    self.assertEqual("ABSENT" if boundary == "transaction-removed" else "COMPLETED_SUCCESSOR", outcome)
+                    self.assertNotEqual(old_backlog, (repo / gcrctl.BACKLOG_PATH).read_bytes())
+                    self.assertNotEqual(old_state, (repo / gcrctl.STATE_PATH).read_bytes())
+                else:
+                    self.assertEqual("RESTORED_PREDECESSOR", outcome)
+                    self.assertEqual(old_backlog, (repo / gcrctl.BACKLOG_PATH).read_bytes())
+                    self.assertEqual(old_state, (repo / gcrctl.STATE_PATH).read_bytes())
+                self.assertEqual([], gcrctl.transaction_artifacts_present(repo))
+                self.assertEqual("ABSENT", gcrctl.recover_adoption_transaction(repo, packet))
+
+    def test_adoption_transaction_denies_stale_bytes_and_competing_writer(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo, packet, base, approved_state = self.approved_fixture(temporary)
+            adoption_relative = self.write_adoption_evidence(repo, approved_state)
+            self.git(repo, "add", adoption_relative)
+            self.git(repo, "commit", "-m", "adoption evidence")
+            backlog_path = repo / gcrctl.BACKLOG_PATH
+            state_path = repo / gcrctl.STATE_PATH
+            backlog_payload = backlog_path.read_bytes()
+            state_payload = state_path.read_bytes()
+            backlog_document = yaml.safe_load(backlog_payload)
+
+            def stale_boundary(_repo: Path, _packet: dict) -> tuple[bytes, dict]:
+                backlog_path.write_bytes(backlog_payload + b"\n")
+                return backlog_payload, backlog_document
+
+            args = argparse.Namespace(
+                repo=repo,
+                approved_state_commit=approved_state,
+                evidence=adoption_relative,
+                agent=gcrctl.ACTOR,
+            )
+            with (
+                patch.object(gcrctl, "load_authority", return_value=({}, packet, base)),
+                patch.object(gcrctl, "current_boundary", side_effect=stale_boundary),
+                patch.object(taskctl, "backlog_schema_errors", return_value=[]),
+                patch.object(taskctl, "validate", return_value=[]),
+                self.assertRaisesRegex(SystemExit, "changed after validation"),
+            ):
+                gcrctl.command_adopt(args)
+            self.assertEqual(state_payload, state_path.read_bytes())
+            self.assertEqual([], gcrctl.transaction_artifacts_present(repo))
+            backlog_path.write_bytes(backlog_payload)
+
+            transaction_path = repo / gcrctl.TRANSACTION_PATH
+            transaction_path.write_text("{}\n", encoding="utf-8")
+            with (
+                patch.object(gcrctl, "load_authority", return_value=({}, packet, base)),
+                self.assertRaisesRegex(SystemExit, "transaction exists"),
+            ):
+                gcrctl.command_adopt(args)
+            self.assertEqual(backlog_payload, backlog_path.read_bytes())
+            self.assertEqual(state_payload, state_path.read_bytes())
+            self.assertEqual("RESTORED_PREDECESSOR", gcrctl.recover_adoption_transaction(repo, packet))
+            self.assertEqual([], gcrctl.transaction_artifacts_present(repo))
 
     def test_submit_denies_wrong_actor_without_writing_state(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
