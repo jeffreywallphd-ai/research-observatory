@@ -21,7 +21,7 @@
 <body><main>
   <p class="muted">Research Observatory · governance control recovery</p>
   <h1>GCR-0001 — Restore a generation-safe recovery controller</h1>
-  <div class="status"><strong>Decision state:</strong> inert and non-executable. Independent packet review and exact-commit human approval are required before B00 implementation.</div>
+  <div class="status"><strong>Decision state:</strong> inert and non-executable. R01 requested a non-circular approval-to-adoption lifecycle; this strict-descendant revision closes that finding and requires independent R02 review before exact-commit human approval is legally available.</div>
 
   <h2>Observed blocker</h2>
   <p>The exact W1.A04 B00 submission failed atomically with <code>HOLD-W1-GRR-0001: post-bootstrap change-request identity is not consecutive</code>. The released-hold validator incorrectly reads later ECR identities. The prescribed GRR-0002.S01 installer is itself generation-locked to predecessor revision 4, while live control revision is 6, and it requires the blocked amendment to already exist.</p>
@@ -48,6 +48,20 @@
     </ol>
   </div>
 
+  <h2>Root authority and controlled lifecycle</h2>
+  <p>The one-time root authority is the repository-owner governance-mismatch protocol, available only because the active hold still fails closed and both established repair controllers are proven unable to represent their own next generation. It does not create a competing hold or authorize ordinary execution.</p>
+  <table>
+    <tr><th>Stage</th><th>Frozen control</th></tr>
+    <tr><td>Approval</td><td>After APPROVED R02 and exact human approval, exclusively create <code>GCR-0001.approval.json</code>. Its clean exact-branch introduction commit is the sole execution base.</td></tr>
+    <tr><td>Submission</td><td>A strict-descendant candidate on <code>codex/w1-windows-local-runtime</code>; actor, HEAD, ancestry, complete approval-base diff, allowlist, hashes, active hold, and revision 6 are verified by compare-and-swap. Only the canonical current-attempt evidence may be untracked.</td></tr>
+    <tr><td>Review</td><td>Canonical RNN evidence, state, and independent severity-ranked review ledgers bind the candidate and reviewed-state commit. Self-review and any open blocking finding deny approval.</td></tr>
+    <tr><td>Remediation</td><td>Preserve every attempt and finding. Require a strict-descendant candidate, fresh evidence, explicit closures, and a new reviewed-state commit.</td></tr>
+    <tr><td>Adoption</td><td>Backlog remains revision 6 through APPROVED B00. A pre-adoption evidence commit's direct child may atomically change only <code>planning/backlog.yaml</code> and the canonical GCR state, append exactly one 6→7 generation record, and activate older-reader denial.</td></tr>
+    <tr><td>Next gate</td><td>Revision 7 still cannot prepare or install GRR-0002.S01 without separate packet review and exact human approval.</td></tr>
+  </table>
+
+  <p>The canonical controller is <code>tools/gcrctl.py</code>. The packet freezes its <code>submit</code>, <code>review</code>, <code>resubmit</code>, <code>adopt</code>, and <code>validate</code> command shapes plus approval, state, evidence, review, and adoption artifact paths under a runtime schema that exists before implementation.</p>
+
   <h2>What approval does not authorize</h2>
   <p>No W1.A04 append or materialization, T03 recovery, task execution, hold release, W1 resume, G1 approval, main merge, remote push, product/privacy/reference change, force, override, or review bypass.</p>
 
@@ -60,5 +74,5 @@
   </table>
 
   <h2>Approval gate</h2>
-  <p>Approval is legally available only after independent review of the exact packet commit. The approval must name that commit and authorize only <code>GCR-0001.B00</code>. B00 still requires separate commit-bound evidence and independent control/security approval.</p>
+  <p>Approval is legally available only after an independent R02 review closes <code>GCR-0001-R01-F01</code> against the exact strict-descendant packet commit. The approval must name that commit and authorize only <code>GCR-0001.B00</code>. Its exclusive-create approval artifact and introduction commit become the execution base; B00 still requires separate commit-bound evidence and independent control/security approval before the 6→7 adoption.</p>
 </main></body></html>
