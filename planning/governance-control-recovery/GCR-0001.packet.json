@@ -1,0 +1,188 @@
+{
+  "$schema": "./governance-control-recovery-request.schema.json",
+  "schemaVersion": "1.0-control-recovery-proposal",
+  "documentType": "governance-control-recovery-request-packet",
+  "controlRecoveryId": "GCR-0001",
+  "title": "Restore a generation-safe recovery controller",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "recovery-controller-generation-defect",
+  "authorityChain": {
+    "activeRecovery": {
+      "requestId": "GRR-0002",
+      "holdId": "HOLD-W1-GRR-0002",
+      "packet": {
+        "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+        "sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
+        "commit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e"
+      },
+      "approval": {
+        "path": "planning/governance-recovery-approvals/GRR-0002.json",
+        "sha256": "07f2e2da15d74c6a72e97e62a5f3d5a540f39898eb958eff7c92f42b80d6d893",
+        "commit": "0b450222ff569db356b84e413941aa2af585a64e"
+      },
+      "bootstrapReview": {
+        "path": "planning/governance-recovery-approvals/GRR-0002.B00.review-R01.json",
+        "sha256": "9a5efe9d7a9feabeb0a11829df4954a74f9d7a6d2d5089af92f4bfc337ccdfe2",
+        "commit": "5bc0b69130caf3f7e8ab96667687b4605d172279"
+      }
+    },
+    "approvedRepairAmendment": {
+      "changeRequestId": "ECR-0003",
+      "amendmentId": "W1.A04",
+      "packet": {
+        "path": "planning/enabler-change-requests/ECR-0003.packet.json",
+        "sha256": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+        "commit": "77896d26ddac0569e286fe8481c0676408c716b1"
+      },
+      "approval": {
+        "path": "planning/wave-amendment-approvals/W1.A04.json",
+        "sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+        "commit": "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+      }
+    },
+    "blockedBootstrap": {
+      "id": "W1.A04.B00",
+      "candidateCommit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+      "evidencePath": "artifacts/evidence/W1.A04.B00.json",
+      "evidenceSha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+    }
+  },
+  "triggerEvidence": {
+    "discoveryCommit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+    "backlogSha256": "f3ebfba07cb6ccd779942ea8f988b0ceea6fe16cd18ca8f7a65775915da50139",
+    "failedCommand": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-submit W1.A04 --agent codex --approval-commit 4f92ba991fd19a2c0ae413b34416a2901d7f84b9 --implementation-commit 214ac1aac53b4396ee29f7a935ddcac2a34618b6 --evidence artifacts/evidence/W1.A04.B00.json",
+    "diagnostic": "Refusing to save invalid backlog state: HOLD-W1-GRR-0001: post-bootstrap change-request identity is not consecutive",
+    "atomicNoMutation": true,
+    "independentAudit": "An independent read-only control/security audit reproduced the prefix-instability, verified that GRR-0002.S01 is unrepresentable at revision 6, confirmed atomic non-mutation, and found no existing approval that authorizes a fix."
+  },
+  "activationBoundary": {
+    "controlRevision": 6,
+    "holdId": "HOLD-W1-GRR-0002",
+    "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "taskId": "CAP-02.S04.T03",
+    "taskStatus": "BLOCKED",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "generationTransition": {
+    "predecessorControlRevision": 6,
+    "nextControlRevision": 7,
+    "existingHoldPreserved": true,
+    "newHoldCreated": false,
+    "installationMode": "exact-packet-root-bootstrap",
+    "postBootstrapGate": "independently-approved-GRR-0002.S01-B01"
+  },
+  "bootstrapUnit": {
+    "id": "GCR-0001.B00",
+    "kind": "one-time-recovery-controller-generation",
+    "exceptionReason": "The sole active GRR-0002 hold remains valid, but its independently approved B00 left both the historical released-hold validator and same-hold supplement installer unable to represent the exact separately approved W1.A04 bootstrap transition. The current supplement lane cannot install its own next generation because it is hard-coded to predecessor revision 4 and requires the blocked amendment to already exist. No existing executable governance command can repair this controller generation.",
+    "authorizedPaths": [
+      "AGENTS.md",
+      "docs/governance/delivery-control-model.md",
+      "docs/governance/repository-governance.md",
+      "docs/planning-implementation-plan.md",
+      "planning/README.md",
+      "planning/backlog.schema.json",
+      "planning/backlog.yaml",
+      "planning/governance-control-recovery/**",
+      "planning/governance-recovery-requests/README.md",
+      "planning/governance-recovery-requests/governance-recovery-supplement-approval.v2.schema.json",
+      "planning/governance-recovery-requests/governance-recovery-supplement.v2.schema.json",
+      "planning/review-site/**",
+      "planning/status-summary.md",
+      "quality-scope.json",
+      "tests/foundation/test_gcrctl.py",
+      "tests/foundation/test_recoveryctl.py",
+      "tests/foundation/test_taskctl_schema.py",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tools/backlog_views.py",
+      "tools/gcrctl.py",
+      "tools/plan_review_check.py",
+      "tools/plan_review_site.py",
+      "tools/recoveryctl.py",
+      "tools/taskctl.py"
+    ],
+    "requiredOutcomes": [
+      "An exact GCR approval and append-only B00 review history bind one implementation candidate to this packet, the sole active GRR-0002 hold, the revision-6 stopped boundary, and the authorized path/outcome inventory.",
+      "The control plane advances exactly from revision 6 to revision 7 with an immutable generation record; old revision-6 and earlier readers fail closed, and no existing hold, amendment, review, finding, evidence, checkpoint, or task history is rewritten.",
+      "Released recovery holds validate their required ECR identity against the historical amendment prefix ending at that hold's required amendment, so later same-Wave amendments cannot make terminal released authority stale.",
+      "Supplement installation is generation-neutral: the packet binds an exact predecessor and strictly greater successor revision, the controller records both, and no hard-coded revision 4 or implicit current-revision jump remains.",
+      "A versioned v2 supplement can target a separately approved but not-yet-appended repair amendment by binding its immutable ECR packet, approval record, candidate commit, and evidence, without fabricating amendment/bootstrap backlog state.",
+      "GRR-0002.S01 remains inert until separate packet review and exact human approval; after B01 independent approval, only the original atomic W1.A04 B00 submission may be retried.",
+      "Focused real-state and isolated-Git tests cover the observed prefix failure, revision-6 supplement installation, older-reader denial, pre-append target binding, path/hash/reviewer/identity/stale/dirty/concurrent denials, and byte-stable failure.",
+      "GCR-0001.B00 receives independent control/security review with all blocking findings closed before any GRR-0002.S01 packet is installed or any W1.A04 transition is retried."
+    ],
+    "prohibitedOutcomes": [
+      "No new or competing recovery hold, GRR-0001/GRR-0002 B00 reopening, terminal-history rewrite, fake predecessor revision, arbitrary controller generation, force, override, bypass, or skip-review path.",
+      "No W1.A04 append, bootstrap submission/review, task materialization, activation, claim, evidence, completion, amendment adoption, T03 recovery, slice/Wave approval, hold release, W1 resume, G1 approval, main integration, or remote push.",
+      "No product/runtime, privacy policy, approved UI reference, UI evidence, task acceptance criterion, verification threshold, completed-task outcome, Wave approval, or release-gate change.",
+      "No weakening of exact packet/hash/path authority, clean Git identity, stale-writer compare-and-swap, append-only review, reviewer independence, old-reader fail-closed behavior, or atomic persistence."
+    ]
+  },
+  "acceptanceCriteria": [
+    "The GCR packet and approval are exact-commit, independently reviewed, hash-bound, path-safe, and bootstrap-only; all GRR-0002, ECR-0003, W1, T03, and G1 trigger boundaries match current immutable state.",
+    "Revision 7 records one append-only 6-to-7 generation transition under HOLD-W1-GRR-0002 and rejects missing, duplicated, reordered, rewritten, cross-hold, wrong-predecessor, non-increasing, or unsupported generations.",
+    "Released GRR-0001 remains byte/history exact and validates before and after an in-memory W1.A04/ECR-0003 append; future amendments do not alter its historical consecutiveness decision.",
+    "The v2 supplement controller can represent exact GRR-0002.S01/B01 from revision 7 while W1.A04 is absent, and v1 GRR-0001.S01 history remains valid without migration or fabrication.",
+    "No ordinary or amendment execution is authorized by GCR approval or B00 approval; GRR-0002.S01, W1.A04, T03, W1 exit, G1, and main integration retain their separate gates.",
+    "All declared failure modes are byte-stable, every changed path is inside the B00 allowlist, protected product/reference/privacy bytes remain unchanged, and governed Python quality passes.",
+    "B00 evidence maps every required outcome to the exact candidate and selected checks, discloses deferred W1 qualification, and contains no unexplained unverified item.",
+    "Independent B00 review has no open blocking finding before the revision-7 controller is used to prepare or install GRR-0002.S01."
+  ],
+  "verificationObligations": [
+    "Validate this packet with Draft 2020-12 and verify every authority/file hash, Git blob, introduction commit, ancestry relation, trigger backlog hash, candidate commit, and evidence hash.",
+    "Run focused GCR, recoveryctl, taskctl workflow/schema, authority-chain, generated-view, review-page, and governed quality tests, including isolated real-Git revision-6-to-7 activation and old-reader denial.",
+    "Reproduce the exact failed W1.A04 append before the fix, prove byte identity, then prove only the read-only post-B01 projection becomes legal after the independently approved B00 state.",
+    "Probe wrong/released/competing hold, wrong predecessor/successor revision, missing or forged external W1.A04 authority, altered candidate/evidence, unsafe path, self-review, adverse review, stale/dirty/concurrent writer, and hidden-extra-path denials.",
+    "Independently review the exact GCR packet before human approval and independently review the exact B00 candidate/evidence before any use of the revision-7 supplement lane.",
+    "Defer GRR-0002.S01 approval/B01, W1.A04 submission and task, T03 recovery/review, CAP-02.S04 review, full W1 qualification, G1, local main, and remote actions to their existing later gates."
+  ],
+  "rollback": [
+    "Before exact human approval, reject or revise only through a strict-descendant inert packet; W1, T03, G1, and HOLD-W1-GRR-0002 remain unchanged.",
+    "An adverse GCR B00 review remains append-only and requires a strict-descendant candidate with explicit finding closures; the revision-7 controller must not be used while a blocker is open.",
+    "If the existing hold, predecessor histories, approved W1.A04 authority, or exact stopped boundary cannot be preserved, stop without state mutation.",
+    "After B00 approval, withhold GRR-0002.S01 preparation or installation if the generation record, older-reader denial, prefix validation, or pre-append target binding fails.",
+    "Never roll back by deleting, replacing, reopening, rewriting, or synthesizing a Wave, task, ECR, amendment, GRR, supplement, GCR, approval, review, finding, evidence, checkpoint, hold, or Git object."
+  ],
+  "alternatives": [
+    {
+      "id": "A",
+      "title": "Approve bounded GCR-0001 root bootstrap",
+      "disposition": "recommended",
+      "consequence": "Restores the prescribed same-hold supplement lane with the smallest separately reviewed control-generation change and keeps all W1 execution gates closed."
+    },
+    {
+      "id": "B",
+      "title": "Keep W1 and recovery stopped",
+      "disposition": "safe",
+      "consequence": "Preserves the current atomic boundary indefinitely but leaves revision-6 governance unable to append the approved repair amendment."
+    },
+    {
+      "id": "C",
+      "title": "Direct fix or reopen approved authority",
+      "disposition": "rejected",
+      "consequence": "Would bypass the active hold, rewrite an approved bootstrap, fabricate supplement ancestry, or create a competing authority chain."
+    }
+  ],
+  "files": [
+    {
+      "path": "planning/governance-control-recovery/governance-control-recovery-request.schema.json",
+      "sha256": "761f8d1c08d992de894638289cb376b1c3e1c25cd1195e8b6736c409e75b7eb5"
+    },
+    {
+      "path": "planning/governance-control-recovery/GCR-0001.md",
+      "sha256": "0f96e3f58e2ddc8b6e0bc1397c23839235ceaa977fdb2832621557eb4a9f84f8"
+    },
+    {
+      "path": "planning/governance-control-recovery/GCR-0001-review.html",
+      "sha256": "efd33b4069b000248f5525897157a43430501cb3447a252d8bf8d28417137047"
+    }
+  ],
+  "requiredApprovalStatement": "Approve GCR-0001 at packet commit <40-character SHA>, authorizing only GCR-0001.B00 and its hash-bound governance/controller/schema/test scope under the existing HOLD-W1-GRR-0002. Keep W1 paused, CAP-02.S04.T03 blocked, W1.A04 absent, and G1 pending through independent B00 approval; require separately reviewed and exactly approved GRR-0002.S01/B01 before retrying the original W1.A04 bootstrap submission."
+}
