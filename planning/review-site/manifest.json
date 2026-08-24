@@ -8253,7 +8253,19 @@
       ],
       "bootstrap_id": "GRR-0002.B00",
       "bootstrap_status": "APPROVED",
-      "supplements": [],
+      "supplements": [
+        {
+          "id": "GRR-0002.S01",
+          "bootstrap_id": "GRR-0002.B01",
+          "bootstrap_status": "IN_PROGRESS",
+          "packet_path": "planning/governance-recovery-requests/GRR-0002.S01.packet.json",
+          "packet_sha256": "bcb3b8fe42b8a091b22794a4c560b3d76989ebef0ee982a9d529a4a67cb1ee62",
+          "packet_commit": "e4be6a4beaffd26f0f9011e7fe8b2ac8baabc3f2",
+          "approval_path": "planning/governance-recovery-approvals/GRR-0002.S01.json",
+          "approval_sha256": "792796d234a8d208d7e99acce32e575e3891b21b347b716c11be6c97a9d30f20",
+          "approval_commit": "68e6df37b0f20dc5e89bdbfd708b24dfcd226240"
+        }
+      ],
       "page": "recoveries/GRR-0002.html"
     }
   ]
