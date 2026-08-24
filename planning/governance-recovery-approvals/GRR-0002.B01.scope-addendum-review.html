@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GRR-0002.B01 scope-addendum review</title>
+  <style>
+    :root { color-scheme: light dark; font-family: Inter, system-ui, sans-serif; }
+    body { max-width: 980px; margin: 0 auto; padding: 2rem; line-height: 1.55; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    pre { white-space: pre-wrap; padding: 1rem; border: 1px solid #8886; border-radius: .5rem; }
+    .pending { border-left: .35rem solid #c88700; padding: .8rem 1rem; background: #c8870014; }
+    .allow { border-left: .35rem solid #177245; padding: .8rem 1rem; background: #17724514; }
+    .deny { border-left: .35rem solid #a12622; padding: .8rem 1rem; background: #a1262214; }
+  </style>
+</head>
+<body>
+  <h1>GRR-0002.B01 deterministic-output scope addendum</h1>
+  <p><a href="GRR-0002.B01.scope-addendum.packet.json">Hash-bound packet</a> · <a href="GRR-0002.B01.scope-addendum.schema.json">Schema</a> · <a href="../governance-recovery-requests/GRR-0002.S01-review.html">Approved S01 decision</a></p>
+  <p class="pending"><strong>Pending:</strong> independent exact-commit review and separate human approval. This addendum is inert and B01 remains unsubmitted.</p>
+
+  <h2>Why another decision is mandatory</h2>
+  <p>The approved S01 packet requires generated-view and review-site checks to pass, but its B01 path inventory omitted the deterministic outputs those checks must update after the revision-8 backlog transition. Current checks fail exactly on the two generated backlog documents and the review-site supplement manifest. Evidence validation rejects either failed checks or out-of-scope generated files, so B01 cannot truthfully be submitted.</p>
+
+  <h2>Exact stopped boundary</h2>
+  <ul>
+    <li>Candidate <code>2dcc81d66d0148bee2887fa48fa2f4148978635d</code>; control revision/minimum revision 8.</li>
+    <li>GRR-0002.S01/B01 is <code>IN_PROGRESS</code>; no B01 evidence or review exists.</li>
+    <li>HOLD-W1-GRR-0002 remains ACTIVE; W1 remains PAUSED at wave scope.</li>
+    <li>W1.A04 remains absent, CAP-02.S04.T03 remains BLOCKED, and G1 remains PENDING.</li>
+    <li>The exact W1.A04.B00 witness remains sole untracked/unstaged and non-authoritative.</li>
+  </ul>
+
+  <h2>Scope extension requested</h2>
+  <div class="allow">
+    <ul>
+      <li><code>docs/planning-implementation-plan.md</code></li>
+      <li><code>planning/status-summary.md</code></li>
+      <li><code>planning/review-site/**</code></li>
+      <li>Exact addendum enforcement only in already-authorized <code>tools/recoveryctl.py</code> and <code>tests/foundation/test_recoveryctl.py</code>.</li>
+    </ul>
+  </div>
+
+  <h2>Still prohibited</h2>
+  <div class="deny">
+    <ul>
+      <li>No B01 approval, W1.A04 append or submission, task execution, T03 recovery, hold release, W1 resume, G1 approval, main integration, or push.</li>
+      <li>No edit to the approved S01 packet or approval, no B00 reopening, no S02 start, and no generic scope wildcard.</li>
+      <li>No product, privacy, approved-reference, task-acceptance, completed-task, predecessor-authority, or threshold change.</li>
+    </ul>
+  </div>
+
+  <h2>Approval criteria</h2>
+  <ol>
+    <li>The addendum is exact-candidate/hash-bound and independently reviewed with no open finding.</li>
+    <li>Only the three deterministic generated path families are added to S01/B01 evidence scope.</li>
+    <li>The controller accepts the extension only from the exact immutable packet and approval chain and rejects missing, altered, stale, forked, self-reviewed, or extra-path authority.</li>
+    <li>A strict-descendant candidate regenerates the outputs deterministically and then passes backlog-view and review-site checks before first B01 submission.</li>
+    <li>All W1, amendment, task, hold, gate, product, reference, and witness denials remain intact.</li>
+  </ol>
+
+  <h2>Alternatives</h2>
+  <ol>
+    <li><strong>Approve the exact deterministic-output addendum (recommended):</strong> closes only the demonstrated scope omission.</li>
+    <li><strong>Keep B01 and W1 stopped:</strong> safe, but B01 cannot be submitted.</li>
+    <li><strong>Escalate to a new governance-control recovery packet:</strong> required only if this bounded addendum cannot be represented or enforced.</li>
+    <li><strong>Commit outputs without authority:</strong> rejected as a scope bypass.</li>
+  </ol>
+
+  <h2>Exact approval statement</h2>
+  <pre>Approve the GRR-0002.B01 deterministic-output scope addendum at packet commit &lt;40-character SHA&gt;, authorizing only exact hash-bound enforcement and deterministic updates to docs/planning-implementation-plan.md, planning/status-summary.md, and planning/review-site/** for the strict-descendant GRR-0002.S01/B01 candidate. Keep B01 unapproved, W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, HOLD-W1-GRR-0002 active, and G1 pending through independent B01 review.</pre>
+</body>
+</html>

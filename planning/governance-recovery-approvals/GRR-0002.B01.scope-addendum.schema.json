@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/GRR-0002.B01.scope-addendum.v1.json",
+  "title": "Exact GRR-0002.B01 deterministic-output scope addendum",
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[A-Za-z0-9._*/-]+$"},
+    "strings": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "reference": {
+      "type": "object",
+      "required": ["path", "sha256", "commit"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "commit": {"$ref": "#/$defs/commit"}
+      },
+      "additionalProperties": false
+    },
+    "fileReference": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "$schema", "schemaVersion", "documentType", "recoveryRequestId", "supplementId",
+        "bootstrapUnit", "title", "status", "executionState", "branch", "authority",
+        "stoppedBoundary", "demonstratedMismatch", "scopeExtension", "requiredOutcomes",
+        "acceptanceCriteria", "prohibitedOutcomes", "verificationObligations", "rollback",
+        "alternatives", "files", "requiredApprovalStatement"
+      ],
+      "properties": {
+        "$schema": {"const": "./GRR-0002.B01.scope-addendum.schema.json"},
+        "schemaVersion": {"const": "1.0-b01-scope-addendum-proposal"},
+        "documentType": {"const": "governance-recovery-supplement-bootstrap-scope-addendum"},
+        "recoveryRequestId": {"const": "GRR-0002"},
+        "supplementId": {"const": "GRR-0002.S01"},
+        "bootstrapUnit": {"const": "GRR-0002.B01"},
+        "title": {"type": "string", "minLength": 1},
+        "status": {"const": "pending-human-approval"},
+        "executionState": {"const": "non-executable"},
+        "branch": {"const": "codex/w1-windows-local-runtime"},
+        "authority": {
+          "type": "object",
+          "required": ["supplementPacket", "supplementApproval", "installedCandidate", "triggerWitness"],
+          "properties": {
+            "supplementPacket": {"$ref": "#/$defs/reference"},
+            "supplementApproval": {
+              "type": "object",
+              "required": ["path", "sha256", "introductionCommit"],
+              "properties": {
+                "path": {"$ref": "#/$defs/path"},
+                "sha256": {"$ref": "#/$defs/sha256"},
+                "introductionCommit": {"$ref": "#/$defs/commit"}
+              },
+              "additionalProperties": false
+            },
+            "installedCandidate": {
+              "type": "object",
+              "required": ["commit", "backlogPath", "backlogSha256"],
+              "properties": {
+                "commit": {"$ref": "#/$defs/commit"},
+                "backlogPath": {"const": "planning/backlog.yaml"},
+                "backlogSha256": {"$ref": "#/$defs/sha256"}
+              },
+              "additionalProperties": false
+            },
+            "triggerWitness": {
+              "type": "object",
+              "required": ["path", "sha256", "untracked", "unstaged", "executionAuthority"],
+              "properties": {
+                "path": {"const": "artifacts/evidence/W1.A04.B00.json"},
+                "sha256": {"$ref": "#/$defs/sha256"},
+                "untracked": {"const": true},
+                "unstaged": {"const": true},
+                "executionAuthority": {"const": false}
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "stoppedBoundary": {
+          "type": "object",
+          "required": ["controlRevision", "bootstrapStatus", "holdStatus", "waveStatus", "waveScope", "amendmentStatus", "blockedTaskStatus", "releaseGateStatus"],
+          "properties": {
+            "controlRevision": {"const": 8},
+            "bootstrapStatus": {"const": "IN_PROGRESS"},
+            "holdStatus": {"const": "ACTIVE"},
+            "waveStatus": {"const": "PAUSED"},
+            "waveScope": {"const": "wave"},
+            "amendmentStatus": {"const": "ABSENT"},
+            "blockedTaskStatus": {"const": "BLOCKED"},
+            "releaseGateStatus": {"const": "PENDING"}
+          },
+          "additionalProperties": false
+        },
+        "demonstratedMismatch": {
+          "type": "object",
+          "required": ["backlogViewsCommand", "backlogViewsDiagnostic", "reviewSiteCommand", "reviewSiteDiagnostic", "atomicNoMutation", "approvalCriterion"],
+          "properties": {
+            "backlogViewsCommand": {"type": "string", "minLength": 1},
+            "backlogViewsDiagnostic": {"type": "string", "minLength": 1},
+            "reviewSiteCommand": {"type": "string", "minLength": 1},
+            "reviewSiteDiagnostic": {"type": "string", "minLength": 1},
+            "atomicNoMutation": {"const": true},
+            "approvalCriterion": {"const": 7}
+          },
+          "additionalProperties": false
+        },
+        "scopeExtension": {
+          "type": "object",
+          "required": ["deterministicGeneratedPaths", "enforcementPaths", "generatorCommands", "exactSupplementOnly", "strictDescendantRequired"],
+          "properties": {
+            "deterministicGeneratedPaths": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/path"}
+            },
+            "enforcementPaths": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/path"}
+            },
+            "generatorCommands": {"$ref": "#/$defs/strings"},
+            "exactSupplementOnly": {"const": true},
+            "strictDescendantRequired": {"const": true}
+          },
+          "additionalProperties": false
+        },
+        "requiredOutcomes": {"$ref": "#/$defs/strings"},
+        "acceptanceCriteria": {"$ref": "#/$defs/strings"},
+        "prohibitedOutcomes": {"$ref": "#/$defs/strings"},
+        "verificationObligations": {"$ref": "#/$defs/strings"},
+        "rollback": {"$ref": "#/$defs/strings"},
+        "alternatives": {"type": "array", "minItems": 2, "items": {"type": "object"}},
+        "files": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/fileReference"}},
+        "requiredApprovalStatement": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "$schema", "schemaVersion", "documentType", "recoveryRequestId", "supplementId",
+        "bootstrapUnit", "status", "approvedBy", "approvedAt", "decision", "packet",
+        "independentReview", "executionAuthority"
+      ],
+      "properties": {
+        "$schema": {"const": "./GRR-0002.B01.scope-addendum.schema.json"},
+        "schemaVersion": {"const": "1.0-b01-scope-addendum-approval"},
+        "documentType": {"const": "governance-recovery-supplement-bootstrap-scope-addendum-approval"},
+        "recoveryRequestId": {"const": "GRR-0002"},
+        "supplementId": {"const": "GRR-0002.S01"},
+        "bootstrapUnit": {"const": "GRR-0002.B01"},
+        "status": {"const": "APPROVED"},
+        "approvedBy": {"type": "string", "minLength": 1},
+        "approvedAt": {"type": "string", "format": "date-time"},
+        "decision": {"type": "string", "minLength": 1},
+        "packet": {
+          "type": "object",
+          "required": ["path", "sha256", "commit", "schemaPath", "schemaSha256", "reviewPath", "reviewSha256"],
+          "properties": {
+            "path": {"$ref": "#/$defs/path"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "commit": {"$ref": "#/$defs/commit"},
+            "schemaPath": {"$ref": "#/$defs/path"},
+            "schemaSha256": {"$ref": "#/$defs/sha256"},
+            "reviewPath": {"$ref": "#/$defs/path"},
+            "reviewSha256": {"$ref": "#/$defs/sha256"}
+          },
+          "additionalProperties": false
+        },
+        "independentReview": {
+          "type": "object",
+          "required": ["reviewer", "attemptId", "candidateCommit", "packetSha256", "result", "openFindingIds", "ledger"],
+          "properties": {
+            "reviewer": {"type": "string", "minLength": 1},
+            "attemptId": {"const": "R01"},
+            "candidateCommit": {"$ref": "#/$defs/commit"},
+            "packetSha256": {"$ref": "#/$defs/sha256"},
+            "result": {"const": "APPROVED"},
+            "openFindingIds": {"type": "array", "maxItems": 0},
+            "ledger": {"$ref": "#/$defs/reference"}
+          },
+          "additionalProperties": false
+        },
+        "executionAuthority": {
+          "type": "object",
+          "required": ["scopeExtensionOnly", "b01Submission", "amendmentAppend", "taskExecution", "waveResume", "holdRelease", "gateApproval"],
+          "properties": {
+            "scopeExtensionOnly": {"const": true},
+            "b01Submission": {"const": false},
+            "amendmentAppend": {"const": false},
+            "taskExecution": {"const": false},
+            "waveResume": {"const": false},
+            "holdRelease": {"const": false},
+            "gateApproval": {"const": false}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}
