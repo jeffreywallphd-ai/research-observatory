@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-control-recovery.transaction.v2.json",
+  "title": "GCR-0002 interruption-safe adoption transaction",
+  "type": "object",
+  "required": [
+    "schemaVersion", "documentType", "transactionId", "controlRecoveryId", "bootstrapUnit",
+    "status", "createdBy", "createdAt", "branch", "adoptionEvidenceCommit", "reviewedStateCommit",
+    "activeHold", "triggerWitness", "predecessor", "successor", "paths", "durability",
+    "publicationOrder", "recovery", "finalization"
+  ],
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[A-Za-z0-9._*/-]+$"},
+    "contentBinding": {
+      "type": "object",
+      "required": ["path", "rawSha256", "canonicalSha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "rawSha256": {"$ref": "#/$defs/sha256"},
+        "canonicalSha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "schemaVersion": {"const": "2.0-control-recovery-adoption-transaction"},
+    "documentType": {"const": "governance-control-recovery-adoption-transaction"},
+    "transactionId": {"const": "GCR-0002.B00.ADOPT"},
+    "controlRecoveryId": {"const": "GCR-0002"},
+    "bootstrapUnit": {"const": "GCR-0002.B00"},
+    "status": {"const": "PREPARED"},
+    "createdBy": {"const": "codex"},
+    "createdAt": {"$ref": "#/$defs/timestamp"},
+    "branch": {"const": "codex/w1-windows-local-runtime"},
+    "adoptionEvidenceCommit": {"$ref": "#/$defs/commit"},
+    "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+    "activeHold": {
+      "type": "object",
+      "required": ["id", "status", "recoveryRequestId", "latestApprovedSupplement"],
+      "properties": {
+        "id": {"const": "HOLD-W1-GRR-0002"},
+        "status": {"const": "ACTIVE"},
+        "recoveryRequestId": {"const": "GRR-0002"},
+        "latestApprovedSupplement": {"const": "GRR-0002.S01"}
+      },
+      "additionalProperties": false
+    },
+    "triggerWitness": {
+      "type": "object",
+      "required": ["path", "sha256", "untracked", "unstaged", "executionAuthority"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/W1.A04.B00.json"},
+        "sha256": {"const": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"},
+        "untracked": {"const": true},
+        "unstaged": {"const": true},
+        "executionAuthority": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "predecessor": {
+      "type": "object",
+      "required": ["controlRevision", "minimumToolRevision", "backlog", "state"],
+      "properties": {
+        "controlRevision": {"const": 8},
+        "minimumToolRevision": {"const": 8},
+        "backlog": {"$ref": "#/$defs/contentBinding"},
+        "state": {"$ref": "#/$defs/contentBinding"}
+      },
+      "additionalProperties": false
+    },
+    "successor": {
+      "type": "object",
+      "required": ["controlRevision", "minimumToolRevision", "backlog", "state"],
+      "properties": {
+        "controlRevision": {"const": 9},
+        "minimumToolRevision": {"const": 9},
+        "backlog": {"$ref": "#/$defs/contentBinding"},
+        "state": {"$ref": "#/$defs/contentBinding"}
+      },
+      "additionalProperties": false
+    },
+    "paths": {
+      "type": "object",
+      "required": ["manifest", "lock", "backlogNext", "stateNext", "backlog", "state"],
+      "properties": {
+        "manifest": {"const": "planning/governance-control-recovery/GCR-0002.B00.adoption-transaction.json"},
+        "lock": {"const": "planning/governance-control-recovery/GCR-0002.B00.adoption.lock"},
+        "backlogNext": {"const": "planning/governance-control-recovery/GCR-0002.B00.adoption-backlog.next"},
+        "stateNext": {"const": "planning/governance-control-recovery/GCR-0002.B00.adoption-state.next"},
+        "backlog": {"const": "planning/backlog.yaml"},
+        "state": {"const": "planning/governance-control-recovery/GCR-0002.B00.state.json"}
+      },
+      "additionalProperties": false
+    },
+    "durability": {
+      "type": "object",
+      "required": ["sameFilesystem", "exclusiveCreateLock", "replaceExistingWriteThrough", "flushSuccessorFilesBeforeManifest", "flushManifestBeforePublication", "flushPublishedFiles", "flushParentDirectories", "cleanupAfterValidatedPairOnly"],
+      "properties": {
+        "sameFilesystem": {"const": true},
+        "exclusiveCreateLock": {"const": true},
+        "replaceExistingWriteThrough": {"const": true},
+        "flushSuccessorFilesBeforeManifest": {"const": true},
+        "flushManifestBeforePublication": {"const": true},
+        "flushPublishedFiles": {"const": true},
+        "flushParentDirectories": {"const": true},
+        "cleanupAfterValidatedPairOnly": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "publicationOrder": {
+      "const": [
+        "acquire-exclusive-lock",
+        "authenticate-authority-cas-workspace-and-witness",
+        "write-and-flush-successor-files",
+        "exclusive-create-and-flush-prepared-manifest",
+        "replace-backlog-write-through-and-flush",
+        "replace-state-write-through-and-flush",
+        "validate-exact-successor-pair",
+        "flush-parent-directories",
+        "remove-and-flush-transaction-artifacts"
+      ]
+    },
+    "recovery": {
+      "type": "object",
+      "required": ["command", "idempotent", "automaticPreflight", "validTerminalPairs", "failClosedStates", "decisionRule"],
+      "properties": {
+        "command": {"const": "python tools/gcr2ctl.py --repo . recover GCR-0002 --agent codex"},
+        "idempotent": {"const": true},
+        "automaticPreflight": {"const": true},
+        "validTerminalPairs": {"const": ["exact-predecessor-pair", "exact-successor-pair"]},
+        "failClosedStates": {"const": ["prepared", "partial-publication", "marker-missing", "substituted", "stale", "dirty-workspace", "split-backlog-state"]},
+        "decisionRule": {"const": "complete-successor-only-when-manifest-authority-and-both-durable-successors-validate-otherwise-restore-exact-predecessor-pair"}
+      },
+      "additionalProperties": false
+    },
+    "finalization": {
+      "type": "object",
+      "required": ["directChildOfAdoptionEvidenceCommit", "exactChangedFiles", "transactionArtifactsAbsent", "predecessorOrSuccessorPairOnly"],
+      "properties": {
+        "directChildOfAdoptionEvidenceCommit": {"const": true},
+        "exactChangedFiles": {"const": ["planning/backlog.yaml", "planning/governance-control-recovery/GCR-0002.B00.state.json"]},
+        "transactionArtifactsAbsent": {"const": true},
+        "predecessorOrSuccessorPairOnly": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

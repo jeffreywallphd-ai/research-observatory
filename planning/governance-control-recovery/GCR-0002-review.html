@@ -20,7 +20,11 @@
 <tr><td>Trigger witness</td><td>Exact, untracked, unstaged, non-authoritative</td></tr></table>
 
 <h2>Recommended bounded repair</h2>
-<ol><li>Authorize only <code>GCR-0002.B00</code> under the existing hold.</li><li>Add an exact v3 supplement reader/schema for sequential <code>GRR-0002.S02/B02</code>.</li><li>Keep live control at 8 through independent B00 approval.</li><li>Adopt one exact 8→9 generation record; revision-8 readers then fail closed.</li><li>Independently review and exactly approve S02 before starting B02.</li><li>Make B02 authenticate the untracked trigger but record a committed packet snapshot, never the trigger path.</li></ol>
+<ol><li>Authorize only <code>GCR-0002.B00</code> under the existing hold.</li><li>Add an exact v3 supplement reader/schema for sequential <code>GRR-0002.S02/B02</code>.</li><li>Keep live control at 8 through independent B00 approval.</li><li>Adopt one exact 8→9 generation using the GCR-0002 write-ahead transaction and idempotent recovery contract; revision-8 readers then fail closed.</li><li>Independently review and exactly approve S02 before starting B02.</li><li>Make B02 authenticate the untracked trigger but record a committed packet snapshot, never the trigger path.</li></ol>
+
+<h2>Crash-safe adoption contract</h2>
+<p>The adoption exclusively creates a lock, two durable successor files, and a schema-valid prepared manifest. The manifest binds raw and canonical predecessor/successor hashes, approved state and evidence commits, the active hold, exact trigger, branch, actor, and 8→9 revisions. Windows publication uses replace-existing/write-through operations plus file and directory flushes. All readers fail closed on prepared, partial, missing-marker, substituted, stale, dirty, or split states.</p>
+<p><code>gcr2ctl recover</code> is idempotent and is also an automatic mutation preflight. It can only restore the exact predecessor pair or complete the exact successor pair. Real child-process tests terminate after every preparation, write, marker, replacement, validation, flush, and cleanup boundary. Transaction artifacts are removed only after an exact pair validates, and the final Git commit remains the direct child of adoption evidence with exactly the two canonical paths changed.</p>
 
 <h2>What approval does not authorize</h2>
 <p>No S02 installation, B02 implementation, historical-candidate exception, W1.A04 append, amendment materialization, task execution, T03 recovery, hold release, W1 resume, G1 approval, main merge, remote push, trigger promotion, 8→8 transition, or authority rewrite.</p>
@@ -29,5 +33,5 @@
 <table><tr><th>Option</th><th>Disposition</th><th>Consequence</th></tr><tr><td>Approve exact GCR-0002 packet</td><td>Recommended</td><td>Creates the minimum reviewed reader generation while all W1 gates remain closed.</td></tr><tr><td>Keep recovery stopped</td><td>Safe</td><td>No mutation occurs; W1 remains unable to progress.</td></tr><tr><td>Create S02 now or use 8→8</td><td>Rejected</td><td>Would bypass the strict control-revision and older-reader boundary.</td></tr><tr><td>Promote the trigger or add a generic historic bypass</td><td>Rejected</td><td>Would contradict GCR-0001 and broaden recovery authority.</td></tr></table>
 
 <h2>Approval gate</h2>
-<div class="safe">Approval becomes legally available only after an independent APPROVED packet review is committed for the exact packet commit. Human approval must name that commit and authorize only GCR-0002.B00. B00 still requires separate evidence, independent review, and exact 8→9 adoption.</div>
+<div class="safe">R01 is preserved append-only. Approval becomes legally available only after an independent R02 closes <code>GCR-0002-R01-F01</code> against the exact strict-descendant packet commit. Human approval must name that commit and authorize only GCR-0002.B00. B00 still requires separate evidence, independent review, and crash-safe exact 8→9 adoption.</div>
 </main></body></html>
