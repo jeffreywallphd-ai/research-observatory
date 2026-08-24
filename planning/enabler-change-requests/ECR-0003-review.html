@@ -55,11 +55,29 @@
     <ul>
       <li>Exact W1 base plus adopted W1.A01/A02/A03 chain and sole active GRR-0002 hold remain hash-bound.</li>
       <li>The real isolated-Git resume/write/commit/recover sequence succeeds exactly once.</li>
-      <li>Uncommitted, extra, rewritten, unrelated-diff, wrong-head, dirty, stale, duplicate, unsafe, and competing-writer paths are byte-stably denied.</li>
+      <li>The recovery head is the direct child of the recorded pre-resume commit and changes exactly five modification-only state-view paths.</li>
+      <li>Uncommitted, extra-commit, rewritten, add/delete/rename/copy/type-change/substitution/extra/omitted-path, wrong-head, dirty, stale, duplicate, unsafe, and competing-writer cases are byte-stably denied.</li>
       <li>Existing T03 lineage, UI-gate, privacy, product, amendment, review, checkpoint, and BLOCKED-to-IN_PROGRESS limits remain intact.</li>
       <li>B00, T01, and amendment exit each receive independent commit-bound review.</li>
       <li>No product/reference, completed outcome, Wave approval, release gate, profile, or threshold changes.</li>
     </ul>
+  </section>
+  <section>
+    <h2>Exact resume-commit allowlist</h2>
+    <p>The direct-child resume commit must report status <code>M</code> for exactly these paths and no others:</p>
+    <ul>
+      <li><code>docs/planning-implementation-plan.md</code></li>
+      <li><code>planning/backlog.yaml</code></li>
+      <li><code>planning/review-site/manifest.json</code></li>
+      <li><code>planning/review-site/waves/W1.html</code></li>
+      <li><code>planning/status-summary.md</code></li>
+    </ul>
+    <p>Any added, deleted, renamed, copied, type-changed, substituted, omitted, or extra path is denied.</p>
+  </section>
+  <section class="pending">
+    <h2>Independent packet-review history</h2>
+    <p><code>R01</code> at <code>a90b3a78adc9e2ff1d60fa709072345325286fca</code> returned <strong>changes requested</strong> because the packet named an allowlist without enumerating it or requiring direct-child, modification-only semantics.</p>
+    <p>The strict-descendant R02 remediation adds only that exact five-path boundary and refreshed inert review surfaces. It preserves the R01 ledger and grants no execution authority.</p>
   </section>
   <section>
     <h2>Decision</h2>

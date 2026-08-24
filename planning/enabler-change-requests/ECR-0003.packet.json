@@ -122,16 +122,16 @@
         "The repair targets only CAP-02.S04.T03 and preserves the exact W1.A03 amendment, checkpoint, GRR-0001 release, task base/foundation/candidate/block/pause, UI evidence, approved reference, privacy/product checks, and BLOCKED-to-IN_PROGRESS boundary.",
         "The resume record's pre-resume commit is immutable transition authority; it is never required to equal the later current execution HEAD.",
         "The clean full current Git HEAD supplied through git_execution_identity is the exact stale-writer compare-and-swap boundary used for the one recovery persistence operation.",
-        "Current HEAD is proven to contain exactly the recorded resume transition through strict ancestry, matching historical/current backlog projections, and an allowlisted resume-state-view diff with no hidden source, product, reference, evidence, policy, or controller changes.",
+        "Current HEAD is proven to be the direct child of the recorded pre-resume commit and its diff is modification-only with status M for exactly docs/planning-implementation-plan.md, planning/backlog.yaml, planning/review-site/manifest.json, planning/review-site/waves/W1.html, and planning/status-summary.md; matching historical/current backlog projections are required and any added, deleted, renamed, copied, type-changed, substituted, omitted, or extra path is denied.",
         "All authority, hold, amendment, checkpoint, lease, task, manifest, Git-object, path, hash, UI, privacy, and product validations are recomputed immediately before one compare-and-swap save.",
         "An isolated real-Git integration invokes the actual resume command, regenerates and commits the exact state views, invokes the actual recovery command, and proves only T03 becomes IN_PROGRESS with the committed resume HEAD as its new base.",
-        "Uncommitted, extra-commit, squashed/amended, unrelated-diff, wrong-predecessor/head, wrong branch/worktree/profile/platform/actor, expired-lease, altered-authority/task/manifest, duplicate, dirty, unsafe-path, and concurrent-writer attempts fail byte-stably.",
+        "Uncommitted, non-direct-child or extra-commit, squashed/amended, added/deleted/renamed/copied/type-changed/substituted/omitted/extra-path, wrong-predecessor/head, wrong branch/worktree/profile/platform/actor, expired-lease, altered-authority/task/manifest, duplicate, dirty, unsafe-path, and concurrent-writer attempts fail byte-stably.",
         "The live recovery remains denied under the active W1.A04 hold; actual T03 recovery requires later adoption, hold release, explicit ordinary W1 resume, and a newly committed resume record.",
         "No product/runtime, approved reference, privacy policy, T03 acceptance, completed task, predecessor authority, Wave approval, release gate, canonical profile, threshold, merge, or remote state changes."
       ],
       "verification": [
         "Run focused taskctl schema, Wave workflow, amendment, and exact task-recovery tests for every acceptance and denial boundary.",
-        "Run an isolated real-Git CLI integration for resume mutation, generated-state commit, recovery success, one-save persistence, and competing-writer preservation.",
+        "Run an isolated real-Git CLI integration for resume mutation, the exact five-path modification-only direct-child state commit, recovery success, one-save persistence, and competing-writer preservation, plus denials for every path-status or inventory deviation.",
         "Re-run the exact historical T03 UI gate and privacy/product contract checks retained by W1.A03.",
         "Validate backlog, GRR-0002, ECR-0003/ECR-0002/ECR-0001 authority, review pages, generated views, governed Python quality, exact changed scope, and protected product/reference diff.",
         "Obtain independent commit-bound task review with severity-ranked findings and explicit closures before completion."
@@ -143,7 +143,7 @@
     "The active GRR-0002 hold and independently approved B00 ledger remain exact, sole, hash-bound, and unreleased through W1.A04 adoption.",
     "B00 adds a fail-closed non-self-referential resume-record contract and receives independent approval before task materialization.",
     "W1.A04.T01 repairs the real committed-resume boundary while preserving every W1.A03 recovery authorization, recomputation, and denial condition.",
-    "The real resume/write/commit/recover integration succeeds exactly once, and every stale, dirty, hidden-diff, wrong-state, wrong-authority, unsafe, duplicate, or concurrent attempt is byte-stably denied.",
+    "The real resume/write/commit/recover integration succeeds exactly once only when the recovery head is the exact five-path modification-only direct child of the recorded pre-resume commit, and every stale, dirty, added/deleted/renamed/copied/type-changed/substituted/omitted/extra-path, wrong-state, wrong-authority, unsafe, duplicate, or concurrent attempt is byte-stably denied.",
     "No product/runtime, approved reference, privacy, T03 acceptance, completed-task, predecessor, Wave approval, release-gate, canonical profile, or threshold changes.",
     "Focused controller/schema/recovery, authority, UI/privacy, generated-view/review-page, quality, scope, and security checks pass with criterion-linked commit-bound evidence.",
     "B00, T01, and amendment exit receive independent review, all blocking findings are closed, and adoption records a bound W1 control/security checkpoint while W1 remains PAUSED."
@@ -152,7 +152,7 @@
     "Validate this packet against the exact generic Draft 2020-12 v3 schema and verify every declared file hash.",
     "Verify the complete W1 base/A01/A02/A03 chain and exact sole active GRR-0002 packet, approval, hold, candidate, frozen review state, ledger, and post-bootstrap identity.",
     "At B00, run focused schema/workflow tests for resume-record creation, preservation, historical compatibility, and atomic denials plus authority, quality, review-page, generated-view, and diff checks.",
-    "At T01, run the real isolated-Git CLI sequence and focused recovery adversarial matrix, exact UI/privacy recomputation, stale-writer/CAS checks, and protected product/reference diff.",
+    "At T01, run the real isolated-Git CLI sequence with the exact five-path modification-only direct-child resume diff and denials for every alternate path status or inventory, plus the focused recovery adversarial matrix, exact UI/privacy recomputation, stale-writer/CAS checks, and protected product/reference diff.",
     "Independently review the packet, B00, T01, and amendment exit; require separate explicit human approval for this exact packet commit and a committed security checkpoint for adoption.",
     "Defer live T03 recovery, ordinary T03 evidence/review, CAP-02.S04 slice review, complete W1 qualification, local-main integration, and G1 approval to their separately authorized transitions."
   ],
@@ -172,7 +172,7 @@
   "files": [
     {
       "path": "planning/enabler-change-requests/ECR-0003.md",
-      "sha256": "cb6d7db89ce0d35f07a3d10ff5bc3806d984908c559e5f28ca67aad40865a352",
+      "sha256": "37c5bccc32688e4b6ebfd1603dd6c42381046ea07e51808f90fb71c0af097028",
       "role": "canonical-proposal"
     },
     {
@@ -182,7 +182,7 @@
     },
     {
       "path": "planning/enabler-change-requests/ECR-0003-review.html",
-      "sha256": "86d2899be0aab6f17d62bf9d13e7ac654686cdd5cdd28304238d76f5f938d56a",
+      "sha256": "01c8f2efacf775627c90d64d6c49d13b55f43cd8b13cb6453d94942115bd3d9e",
       "role": "human-review"
     }
   ]
