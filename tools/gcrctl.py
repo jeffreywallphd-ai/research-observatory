@@ -814,6 +814,9 @@ def validate_state_history(repo: Path, state: dict[str, Any], packet: dict[str, 
     if state.get("status") == "ADOPTION_FINALIZATION":
         adoption = state.get("adoption") or {}
         backlog = yaml.safe_load((repo / BACKLOG_PATH).read_text(encoding="utf-8"))
+        transition_errors = taskctl.governance_control_generation_errors(backlog, repo=None)
+        if transition_errors:
+            raise SystemExit("GCR control generation history is invalid:\n- " + "\n- ".join(transition_errors))
         generations = (backlog.get("control_plane") or {}).get("control_generations") or []
         if not generations:
             raise SystemExit("GCR adoption finalization lacks its immutable generation")
@@ -834,7 +837,10 @@ def command_validate(args: argparse.Namespace) -> None:
         raise SystemExit(f"GCR adoption transaction requires explicit recovery: {present}")
     backlog = yaml.safe_load((args.repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
     revision = int(backlog["control_plane"]["revision"])
-    current_boundary(args.repo, packet, revision=revision)
+    _backlog_payload, data = current_boundary(args.repo, packet, revision=revision)
+    semantic_errors = taskctl.validate(*taskctl.index_backlog(data), repo=args.repo)
+    if semantic_errors:
+        raise SystemExit("GCR control semantics are invalid:\n- " + "\n- ".join(semantic_errors))
     state, _payload = load_state(args.repo, required=False)
     status = "AUTHORIZED"
     if state is not None:
@@ -849,8 +855,11 @@ def command_status(args: argparse.Namespace) -> None:
     _approval, _packet, approval_base = load_authority(args.repo)
     state, _payload = load_state(args.repo, required=False)
     backlog = yaml.safe_load((args.repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+    semantic_errors = taskctl.validate(*taskctl.index_backlog(backlog), repo=args.repo)
     bootstrap_status = (state or {}).get("status", "AUTHORIZED")
-    if state is not None and bootstrap_status == "ADOPTION_FINALIZATION":
+    if semantic_errors:
+        bootstrap_status = "CONTROL_HISTORY_INVALID"
+    elif state is not None and bootstrap_status == "ADOPTION_FINALIZATION":
         adoption = state.get("adoption") or {}
         generations = (backlog.get("control_plane") or {}).get("control_generations") or []
         if not generations or taskctl.governance_control_adoption_finalization_errors(
@@ -876,6 +885,10 @@ def command_status(args: argparse.Namespace) -> None:
                     if transaction_artifacts_present(args.repo)
                     else {"status": "ABSENT", "artifacts": []}
                 ),
+                "controlValidation": {
+                    "status": "INVALID" if semantic_errors else "VALID",
+                    "firstError": semantic_errors[0] if semantic_errors else None,
+                },
                 "ordinaryExecutionAuthority": False,
             },
             sort_keys=False,
