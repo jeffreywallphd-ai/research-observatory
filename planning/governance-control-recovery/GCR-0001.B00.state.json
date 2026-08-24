@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0001",
   "bootstrapUnit": "GCR-0001.B00",
-  "status": "CHANGES_REQUESTED",
+  "status": "REVIEW",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0001.approval.json",
     "sha256": "2aece9c5ae5677c07ec860765de40d1e848f478b96e614ccc8f9bdb349329455",
@@ -185,6 +185,24 @@
       ]
     }
   ],
-  "currentSubmission": null,
+  "currentSubmission": {
+    "attemptId": "R04",
+    "submittedBy": "codex",
+    "submittedAt": "2026-08-24T04:59:42+00:00",
+    "candidateCommit": "f43424ae99f86c1e41362b9248bdf229595049d3",
+    "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R04.json",
+      "sha256": "2aaf3fc585784bb3a583351be79f1dd553f67bacaf2a992d8530ddb3edd45560",
+      "commit": "f43424ae99f86c1e41362b9248bdf229595049d3"
+    },
+    "priorAttemptId": "R03",
+    "openFindingIds": [
+      "GCR-0001.B00-R03-F01",
+      "GCR-0001.B00-R03-F02"
+    ],
+    "rootCauseAnalysis": "R03 fixed current-reader finalization and dirty recovery boundaries but exposed two high-severity generational compatibility defects: the immediately preceding R02 taskctl could accept a hidden finalization, and the proof depended on mutable live backlog bytes. R04 uses a required persisted finalization state that R02 rejects, derives effective adoption only in current readers after the exact commit, and validates the finalization commit's own immutable revision-7 generation so later separately governed revisions remain legal."
+  },
   "adoption": null
 }
