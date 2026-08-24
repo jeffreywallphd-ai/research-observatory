@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "1.0-control-recovery-evidence",
+  "documentType": "governance-control-recovery-bootstrap-evidence",
+  "controlRecoveryId": "GCR-0001",
+  "bootstrapUnit": "GCR-0001.B00",
+  "attemptId": "R06",
+  "commit": "759d9377f01d1edf377987a47af3bcaa9258ae33",
+  "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
+  "branch": "codex/w1-windows-local-runtime",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "changedFiles": [
+    "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R01.json",
+    "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R02.json",
+    "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R03.json",
+    "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R04.json",
+    "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R05.json",
+    "planning/backlog.schema.json",
+    "planning/governance-control-recovery/GCR-0001.B00.review-R01.json",
+    "planning/governance-control-recovery/GCR-0001.B00.review-R02.json",
+    "planning/governance-control-recovery/GCR-0001.B00.review-R03.json",
+    "planning/governance-control-recovery/GCR-0001.B00.review-R04.json",
+    "planning/governance-control-recovery/GCR-0001.B00.review-R05.json",
+    "planning/governance-control-recovery/GCR-0001.B00.state.json",
+    "planning/governance-control-recovery/governance-control-recovery-runtime.schema.json",
+    "planning/governance-control-recovery/governance-control-recovery-transaction.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement-approval.v2.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement.v2.schema.json",
+    "quality-scope.json",
+    "tests/foundation/test_gcrctl.py",
+    "tests/foundation/test_recoveryctl.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tools/gcrctl.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "id": "affected-control-suite-r06",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_gcrctl tests.foundation.test_recoveryctl tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "governed-python-quality-r06",
+      "command": ".venv\\Scripts\\python.exe tools\\quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "backlog-validation-r06",
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning\\backlog.yaml validate",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "active-recovery-validation-r06",
+      "command": ".venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . validate GRR-0002 --require-approved",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "gcr-adverse-state-validation-r06",
+      "command": ".venv\\Scripts\\python.exe tools\\gcrctl.py --repo . validate GCR-0001",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "planning-review-integrity-r06",
+      "command": ".venv\\Scripts\\python.exe tools\\plan_review_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "generated-backlog-views-r06",
+      "command": ".venv\\Scripts\\python.exe tools\\backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "protected-product-reference-privacy-scope-r06",
+      "command": "git diff --exit-code c34f8398adc54b3703b94daf7482faf9c09cfdfc..759d9377f01d1edf377987a47af3bcaa9258ae33 -- apps/desktop services/core-api packages/contracts design/ui-reference docs/architecture/privacy-controls.md artifacts/evidence/ui-change",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "candidate-whitespace-integrity-r06",
+      "command": "git diff c34f8398adc54b3703b94daf7482faf9c09cfdfc..759d9377f01d1edf377987a47af3bcaa9258ae33 --check",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "index": 1,
+      "statement": "The GCR packet and exclusive-create approval artifact are exact-commit, independently reviewed, hash-bound, path-safe, and bootstrap-only; the approval introduction commit is the tracked-clean codex-branch execution base, the sole untracked trigger witness is exact and unstaged, and all GRR-0002, ECR-0003, W1, T03, and G1 trigger boundaries match current immutable state.",
+      "evidence": [
+        "gcr-adverse-state-validation-r06 reproduces the exact packet, approval base, append-only R01-R05 adverse history, exact witness, and revision-6 stopped boundary at strict-descendant candidate 759d9377f01d1edf377987a47af3bcaa9258ae33.",
+        "active-recovery-validation-r06 and backlog-validation-r06 confirm APPROVED GRR-0002.B00, ACTIVE HOLD-W1-GRR-0002, PAUSED W1, BLOCKED T03, absent W1.A04, and pending G1."
+      ]
+    },
+    {
+      "index": 2,
+      "statement": "Revision 7 records one append-only 6-to-7 generation transition under HOLD-W1-GRR-0002 and rejects missing, duplicated, reordered, rewritten, cross-hold, wrong-predecessor, non-increasing, or unsupported generations.",
+      "evidence": [
+        "affected-control-suite-r06 passed the exact generation matrix, actual Windows-byte adoption lifecycle, canonical taskctl generation-history reuse, and current/live generation cross-check.",
+        "The write-ahead transaction retains exact raw compare-and-swap hashes and independently authenticates canonical predecessor/successor content against immutable Git authority, so the approved CRLF Windows trigger and normalized LF Git blob cannot be confused or substituted."
+      ]
+    },
+    {
+      "index": 3,
+      "statement": "Released GRR-0001 remains byte/history exact and validates before and after an in-memory W1.A04/ECR-0003 append; future amendments do not alter its historical consecutiveness decision.",
+      "evidence": [
+        "affected-control-suite-r06 passed released-hold prefix stability and all frozen-predecessor rewrite denials."
+      ]
+    },
+    {
+      "index": 4,
+      "statement": "The v2 supplement controller can represent exact GRR-0002.S01/B01 from revision 7 while W1.A04 is absent, and v1 GRR-0001.S01 history remains valid without migration or fabrication.",
+      "evidence": [
+        "affected-control-suite-r06 executed a real-Git GRR-0002.S01 lifecycle through actual GCR revision-7 adoption, exact v2 packet approval, supplement start, B01 evidence submission, independent review, and approved validation without mocking cleanliness.",
+        "The same suite passed the full legacy GRR-0001.S01 adverse-to-remediated lifecycle and denies missing, changed, staged, redirected, authority-bearing, duplicated, or accompanied trigger witnesses plus unrelated tracked, staged, and untracked paths."
+      ]
+    },
+    {
+      "index": 5,
+      "statement": "No ordinary or amendment execution is authorized by GCR approval or B00 approval; GRR-0002.S01, W1.A04, T03, W1 exit, G1, and main integration retain their separate gates.",
+      "evidence": [
+        "The candidate remains revision 6/CHANGES_REQUESTED and exposes only bounded GCR operations; all real-Git supplement activity occurs only in disposable isolated repositories.",
+        "backlog-validation-r06, active-recovery-validation-r06, and gcr-adverse-state-validation-r06 confirm every downstream live-repository gate remains closed."
+      ]
+    },
+    {
+      "index": 6,
+      "statement": "All declared failure modes are byte-stable, every changed path is inside the B00 allowlist, protected product/reference/privacy bytes remain unchanged, and governed Python quality passes.",
+      "evidence": [
+        "affected-control-suite-r06 passed 114 tests in 994.121 seconds, including abrupt transaction boundaries, stale/competing writers, Windows EOL normalization, exact recovery workspace, witness deviations, unauthorized generation evolution, and both v1 and v2 lifecycles.",
+        "governed-python-quality-r06 passed formatting, lint, and mypy across 121 files; protected scope and whitespace checks passed."
+      ]
+    },
+    {
+      "index": 7,
+      "statement": "B00 evidence maps every required outcome to the exact candidate and selected checks, discloses deferred W1 qualification, and contains no unexplained unverified item.",
+      "evidence": [
+        "This R06 manifest binds candidate 759d9377f01d1edf377987a47af3bcaa9258ae33, all twenty-three approval-base delta paths, nine passing checks, eight criteria, the exact R05 closure, and no unverified item.",
+        "Only independent R06 review and separately gated live GRR-0002.S01/W1 work remain deferred."
+      ]
+    },
+    {
+      "index": 8,
+      "statement": "Independent B00 review is bound to the exact reviewed-state commit and has no open blocking finding; only then may a direct-child adoption commit change exactly planning/backlog.yaml and the canonical GCR state from revision 6 to 7 before the revision-7 controller is used to prepare or install GRR-0002.S01.",
+      "evidence": [
+        "The exact R02 taskctl implementation rejects the canonical finalization marker; the current reader requires that marker and derives the unique direct-child exact-two-path commit from immutable adoption-evidence ancestry.",
+        "The actual Windows-byte lifecycle proves the write-ahead transaction reaches that exact finalization despite Git EOL normalization, while every subsequent generation still requires canonical taskctl supplement authority.",
+        "Current-reader hidden, substituted, omitted, duplicate, unsupported-generation, dirty-recovery, and witness-workspace paths remain fail-closed."
+      ]
+    }
+  ],
+  "findingClosures": [
+    {
+      "findingId": "GCR-0001.B00-R05-F01",
+      "disposition": "fixed",
+      "evidence": "Candidate 759d9377f01d1edf377987a47af3bcaa9258ae33 applies one shared v2 workspace guard to supplement start, submit/resubmit, and review. It requires the exact unchanged, unstaged, untracked, non-authoritative W1.A04 witness plus only the canonical current transition artifact. Independent-ready real-Git coverage traverses GRR-0002.S01 start, B01 submission, independent approval, and approved validation without mocking cleanliness, and byte-stably denies every declared witness/workspace deviation."
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Root cause analysis for sixth submission: R05 authenticated successor generations but left the v2 supplement commands on the legacy clean-workspace helper, whose contract could not represent GCR-0001's deliberately untracked atomic-failure witness. The only v2 start test mocked that helper and no test traversed GRR-0002.S01 submission/review. R06 centralizes the exact witness-aware v2 workspace contract and adds an unmocked real-Git lifecycle. That lifecycle also exposed a Windows-only adoption defect: the approved CRLF trigger bytes and normalized LF Git blob are semantically identical but raw-hash unequal, while transaction recovery incorrectly required equality. R06 retains raw CAS hashes and adds immutable canonical-content hashes for predecessor/successor authentication, allowing only encoding-equivalent bytes and preserving every stale, substituted, and crash-recovery denial.",
+    "selectedChecks": [
+      "affected-control-suite-r06",
+      "governed-python-quality-r06",
+      "backlog-validation-r06",
+      "active-recovery-validation-r06",
+      "gcr-adverse-state-validation-r06",
+      "planning-review-integrity-r06",
+      "generated-backlog-views-r06",
+      "protected-product-reference-privacy-scope-r06",
+      "candidate-whitespace-integrity-r06"
+    ],
+    "deferredCoverage": [
+      "Independent GCR-0001.B00 R06 closure review is performed only after this immutable submission is frozen.",
+      "Live GRR-0002.S01 packet review/approval/B01 and the original W1.A04 bootstrap retry remain separately gated.",
+      "CAP-02.S04.T03 recovery, slice review, complete W1 qualification, G1 approval, local main integration, and remote actions remain deferred."
+    ]
+  }
+}
