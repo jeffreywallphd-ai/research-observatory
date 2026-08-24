@@ -14,11 +14,21 @@
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "timestamp": {"type": "string", "format": "date-time"},
     "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[A-Za-z0-9._*/-]+$"},
-    "contentBinding": {
+    "backlogBinding": {
       "type": "object",
       "required": ["path", "rawSha256", "canonicalSha256"],
       "properties": {
-        "path": {"$ref": "#/$defs/path"},
+        "path": {"const": "planning/backlog.yaml"},
+        "rawSha256": {"$ref": "#/$defs/sha256"},
+        "canonicalSha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "stateBinding": {
+      "type": "object",
+      "required": ["path", "rawSha256", "canonicalSha256"],
+      "properties": {
+        "path": {"const": "planning/governance-control-recovery/GCR-0002.B00.state.json"},
         "rawSha256": {"$ref": "#/$defs/sha256"},
         "canonicalSha256": {"$ref": "#/$defs/sha256"}
       },
@@ -66,8 +76,8 @@
       "properties": {
         "controlRevision": {"const": 8},
         "minimumToolRevision": {"const": 8},
-        "backlog": {"$ref": "#/$defs/contentBinding"},
-        "state": {"$ref": "#/$defs/contentBinding"}
+        "backlog": {"$ref": "#/$defs/backlogBinding"},
+        "state": {"$ref": "#/$defs/stateBinding"}
       },
       "additionalProperties": false
     },
@@ -77,8 +87,8 @@
       "properties": {
         "controlRevision": {"const": 9},
         "minimumToolRevision": {"const": 9},
-        "backlog": {"$ref": "#/$defs/contentBinding"},
-        "state": {"$ref": "#/$defs/contentBinding"}
+        "backlog": {"$ref": "#/$defs/backlogBinding"},
+        "state": {"$ref": "#/$defs/stateBinding"}
       },
       "additionalProperties": false
     },
