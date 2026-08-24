@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0-enabler-review",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0003",
+  "proposedAmendmentId": "W1.A04",
+  "attemptId": "R02",
+  "candidateCommit": "77896d26ddac0569e286fe8481c0676408c716b1",
+  "packetSha256": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "ecr3-packet-reviewer",
+  "result": "approved",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "ECR-0003-R01-F01",
+      "disposition": "closed",
+      "notes": "The strict-descendant packet now requires recovery HEAD to be the direct child of the recorded pre-resume commit and requires its Git diff to contain status M for exactly docs/planning-implementation-plan.md, planning/backlog.yaml, planning/review-site/manifest.json, planning/review-site/waves/W1.html, and planning/status-summary.md. It explicitly denies added, deleted, renamed, copied, type-changed, substituted, omitted, or extra paths; task verification requires adversarial coverage for every path-status or inventory deviation. The canonical proposal, machine packet, static human page, and generated review page consistently expose the same boundary."
+    }
+  ],
+  "verified": [
+    "The exact clean R02 candidate 77896d26ddac0569e286fe8481c0676408c716b1 strictly descends from reviewed R01 candidate a90b3a78adc9e2ff1d60fa709072345325286fca through the one-file R01 ledger commit 141c02c91dbc2596857dc917ef9919554781e799. The remediation commit's parent is 141c02c91dbc2596857dc917ef9919554781e799.",
+    "The immutable R01 ledger SHA-256 remains 6ee540a497f0d6daae42fe561cffd8a02beb463a46b538ed97ee5c9da337f53d at both its introduction and R02. Its adverse disposition, finding identity, severity, reproduction, required remediation, and approvalAvailable=false projection are byte-identical.",
+    "The a90b3a7..77896d2 delta is exactly the committed R01 ledger plus ECR-0003.md, ECR-0003.packet.json, ECR-0003-review.html, planning/review-site/enablers/ECR-0003.html, and planning/review-site/manifest.json. The R01-to-R02 remediation changes only those five inert packet/review surfaces; no backlog, schema, controller, test, authority, approval, evidence, product, reference, gate, or Git-history record changes.",
+    "ECR-0003-R01-F01 replays and closes. Immutable resume commit 54d03055b1c6d9b702859d5fefbbac1e38de39df is the direct child of bf27fddd8e1732feadc698cd77f540ea9e1c7a0e, and both rename-detecting and no-rename Git name-status projections report exactly five M paths: docs/planning-implementation-plan.md, planning/backlog.yaml, planning/review-site/manifest.json, planning/review-site/waves/W1.html, and planning/status-summary.md.",
+    "The canonical T01 contract requires direct-child ancestry, all five paths with status M in any Git-reported order, matching PAUSED-to-ACTIVE backlog projections, and no hidden source/product/reference/evidence/policy/controller byte. It denies non-direct-child and extra commits plus every added, deleted, renamed, copied, type-changed, substituted, omitted, or extra path without mutation.",
+    "The packet verification duties require an isolated real-Git CLI resume/write/commit/recover integration using the exact five-path modification-only direct child and byte-stable adversarial denials for every alternate path status or inventory. This makes the future implementation and independent task-review conformance boundary exact without implementing the repair in the packet revision.",
+    "The static human page provides a dedicated exact allowlist section with the same five paths, status M requirement, direct-child boundary, and denial inventory. The generated page displays the exact acceptance criterion and embeds the complete corrected canonical proposal; its source-record hashes match the packet and current Git blobs.",
+    "The R02 machine packet differs from the R01 packet only in the two affected task criteria, one task verification duty, packet acceptance criterion 5, verification obligation 4, and refreshed proposal/static-review hashes. The authority chain, recovery authority, activation boundary, B00 authorized scope/outcomes, one-task inventory, rollback, non-goals, and approval wording are unchanged.",
+    "The exact R02 packet SHA-256 is 3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687. The proposal SHA-256 is 37c5bccc32688e4b6ebfd1603dd6c42381046ea07e51808f90fb71c0af097028, schema SHA-256 remains 8a0fadc0c22e1111b1b5da9c8e5f45d8aeac19c0c2f94ef246add05f6b35c795, and static review SHA-256 is 01c8f2efacf775627c90d64d6c49d13b55f43cd8b13cb6453d94942115bd3d9e; all match the exact candidate Git blobs.",
+    "ECR-0003 structural/historical validation passes. As expected, require-approved validation still fails only because W1.A04 has no immutable human approval record. GRR-0002 remains valid with its B00 APPROVED, sole active hold, and W1.A04 as the separately required next amendment.",
+    "Independent bounded checks passed: eight ECR approval and review-render/hash-tamper tests in 8.622 seconds; packet bounded-delta and four-surface allowlist assertions; 150-page review-site validation; generated backlog-view check; canonical backlog validation for 20 capabilities, 117 slices, 359 tasks, and 12 gates; 119-file governed Python quality; exact Git-blob hashes; R01 byte-preservation; strict ancestry; protected/no-authority diff; and Git whitespace/status hygiene.",
+    "W1 remains PAUSED with scope wave and no lease, CAP-02.S04.T03 remains BLOCKED without recovery control/evidence/review, HOLD-W1-GRR-0002 remains ACTIVE, W1.A04 remains absent, and G1 remains PENDING. The packet grants no B00/T01 execution, hold release, Wave resume, T03 recovery, local-main integration, or remote authority."
+  ],
+  "approvalAvailable": true
+}
