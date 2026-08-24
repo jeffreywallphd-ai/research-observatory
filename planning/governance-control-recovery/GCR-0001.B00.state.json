@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0001",
   "bootstrapUnit": "GCR-0001.B00",
-  "status": "REVIEW",
+  "status": "CHANGES_REQUESTED",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0001.approval.json",
     "sha256": "2aece9c5ae5677c07ec860765de40d1e848f478b96e614ccc8f9bdb349329455",
@@ -17,22 +17,59 @@
     "unstaged": true,
     "executionAuthority": false
   },
-  "attempts": [],
-  "currentSubmission": {
-    "attemptId": "R01",
-    "submittedBy": "codex",
-    "submittedAt": "2026-08-24T02:47:02+00:00",
-    "candidateCommit": "060899b5ec438003ad188d3be21da1f29b8d3908",
-    "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
-    "branch": "codex/w1-windows-local-runtime",
-    "evidence": {
-      "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R01.json",
-      "sha256": "7c614d5cb7a67df4d73f9ae9866d184744e4d613f25abbc6163f2c97ab085d27",
-      "commit": "060899b5ec438003ad188d3be21da1f29b8d3908"
-    },
-    "priorAttemptId": null,
-    "openFindingIds": [],
-    "rootCauseAnalysis": null
-  },
+  "attempts": [
+    {
+      "submission": {
+        "attemptId": "R01",
+        "submittedBy": "codex",
+        "submittedAt": "2026-08-24T02:47:02+00:00",
+        "candidateCommit": "060899b5ec438003ad188d3be21da1f29b8d3908",
+        "baseCommit": "c34f8398adc54b3703b94daf7482faf9c09cfdfc",
+        "branch": "codex/w1-windows-local-runtime",
+        "evidence": {
+          "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R01.json",
+          "sha256": "7c614d5cb7a67df4d73f9ae9866d184744e4d613f25abbc6163f2c97ab085d27",
+          "commit": "060899b5ec438003ad188d3be21da1f29b8d3908"
+        },
+        "priorAttemptId": null,
+        "openFindingIds": [],
+        "rootCauseAnalysis": null
+      },
+      "review": {
+        "reviewer": "independent-control-security-reviewer",
+        "result": "changes-requested",
+        "reviewedAt": "2026-08-24T03:03:42+00:00",
+        "reviewedStateCommit": "884e7d7120506178d1c57234626e73aff1df2c7f",
+        "notes": "CHANGES_REQUESTED at exact frozen REVIEW state 884e7d7120506178d1c57234626e73aff1df2c7f on codex/w1-windows-local-runtime. The approval introduction c34f8398adc54b3703b94daf7482faf9c09cfdfc, candidate 060899b5ec438003ad188d3be21da1f29b8d3908, packet SHA-256 43551219b638e1e3a740ee650a836bbb26d81c20fd06dee44828e6615fcf077c, evidence SHA-256 7c614d5cb7a67df4d73f9ae9866d184744e4d613f25abbc6163f2c97ab085d27, exact ten-path candidate delta, two-path reviewed-state delta, trigger witness, active GRR-0002 hold, paused W1/blocked T03/absent W1.A04/pending G1 boundary, runtime schemas, and current REVIEW state all revalidate. Independent replay passed all 105 affected control tests in 752.850 seconds, governed Python quality over 121 files, backlog validation, approved GRR-0002 validation, GCR REVIEW validation, the 150-page planning review check, generated backlog views, diff hygiene, and protected product/reference/privacy scope. The prefix-stable released-hold repair, versioned 7-to-8 supplement model, revision schemas, older-reader denial, and no-ordinary-authority boundary are otherwise feasible and passed their focused checks. The two reproducible high-severity adoption blockers mean revision 7, GRR-0002.S01 preparation/installation, and any W1.A04 retry remain unavailable until strict-descendant remediation receives fresh evidence and independent R02 closure."
+      },
+      "ledger": {
+        "path": "planning/governance-control-recovery/GCR-0001.B00.review-R01.json",
+        "sha256": "e367c273abc2d56ac89aa638113ce0dbbe6d7429e5d2930292f2abe582e67b2d",
+        "commit": "884e7d7120506178d1c57234626e73aff1df2c7f"
+      },
+      "findings": [
+        {
+          "id": "GCR-0001.B00-R01-F01",
+          "severity": "high",
+          "blocking": true,
+          "criterionIndex": 8,
+          "title": "Adoption accepts unbound intermediate commits and hidden tracked paths",
+          "reproduction": "At candidate 060899b5ec438003ad188d3be21da1f29b8d3908, tools/gcrctl.py command_adopt checks only that --approved-state-commit equals HEAD^ and is ancestral to HEAD. It does not prove that this parent is the canonical commit applying the latest APPROVED ledger/state, does not constrain the reviewed-state-to-approved-state delta, and does not compare the complete approved-state-to-evidence-commit diff to the single canonical adoption-evidence path. A temporary real-Git replay subclassed the shipped happy-path lifecycle test so that planning/unauthorized-hidden.txt was added beside artifacts/evidence/governance-control-recovery/GCR-0001.B00.adoption.json in the evidence commit. The unchanged controller printed the 6-to-7 adoption success and the test passed with hidden_extra_commit_accepted=True. The shipped test inspects only the uncommitted post-command diff, so it cannot detect the already committed extra path. This violates the exact ancestry/path authority, hidden-extra-path denial, and direct-child adoption boundary required by acceptance criterion 8 and verification obligation 4.",
+          "requiredRemediation": "In a strict-descendant candidate, derive rather than trust the canonical latest reviewed-state and approved-state commits. Require the APPROVED ledger/state application to have the exact permitted status/path delta and ancestry, require the pre-adoption evidence commit to be its direct child with exactly one added canonical adoption-evidence file and no add/delete/rename/copy/type-change/substitution/omission/extra path, and verify that file's exact Git blob/hash. Add isolated real-Git denial tests for hidden paths and intermediate/substituted commits at both boundaries while preserving the append-only R01 finding and using fresh R02 evidence with an explicit closure."
+        },
+        {
+          "id": "GCR-0001.B00-R01-F02",
+          "severity": "high",
+          "blocking": true,
+          "criterionIndex": 6,
+          "title": "The two-file adoption writer is not interruption-atomic",
+          "reproduction": "tools/gcrctl.py atomic_adoption_write prepares two temporary files and then calls os.replace sequentially for planning/backlog.yaml and the canonical GCR state. Its exception handler can restore bytes only while the process remains alive. An independent child-process probe forced os._exit(77) immediately after the first real replacement; the child terminated with 77 and partial_write_observed=True: backlog bytes had advanced while GCR state bytes remained APPROVED. No durable transaction marker or startup recovery exists. Moreover, command_validate selects the revision from the backlog and validate_state_history accepts an APPROVED state with no adoption record, so the resulting revision-7/APPROVED split is not expressly rejected. The shipped affected suite has an exception-path atomic-save test for a different single-file writer but no abrupt-interruption GCR adoption test. This violates acceptance criterion 6, the required byte-stable/atomic failure behavior, and the prohibition on weakening atomic persistence.",
+          "requiredRemediation": "Implement an interruption-safe two-record adoption protocol that either exposes both successor records or preserves/restores both predecessor records across process termination, and make every reader fail closed on or deterministically recover any prepared/partial combination. Bind the transaction to the exact expected backlog/state bytes and approved evidence commit, fsync the required files/directories on Windows as appropriate, and add child-process abrupt-termination tests at every persistence boundary plus stale/concurrent failure tests proving byte-stable predecessor state or a fully consistent successor. Preserve this R01 finding append-only and close it only with fresh R02 evidence from a strict-descendant candidate."
+        }
+      ],
+      "closures": []
+    }
+  ],
+  "currentSubmission": null,
   "adoption": null
 }
