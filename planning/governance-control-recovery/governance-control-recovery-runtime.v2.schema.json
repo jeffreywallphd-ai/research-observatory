@@ -137,6 +137,33 @@
         "expectedChangedFiles": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
         "checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/check"}}, "unverifiedItems": {"type": "array", "maxItems": 0}
       }, "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "transactionId", "controlRecoveryId", "bootstrapUnit", "status", "createdBy", "createdAt", "branch", "adoptionEvidenceCommit", "reviewedStateCommit", "activeHold", "triggerWitness", "predecessor", "successor", "paths", "durability", "publicationOrder", "recovery", "finalization"],
+      "properties": {
+        "schemaVersion": {"const": "2.0-control-recovery-adoption-transaction"},
+        "documentType": {"const": "governance-control-recovery-adoption-transaction"},
+        "transactionId": {"const": "GCR-0002.B00.ADOPT"},
+        "controlRecoveryId": {"const": "GCR-0002"},
+        "bootstrapUnit": {"const": "GCR-0002.B00"},
+        "status": {"const": "PREPARED"},
+        "createdBy": {"const": "codex"},
+        "createdAt": {"$ref": "#/$defs/timestamp"},
+        "branch": {"const": "codex/w1-windows-local-runtime"},
+        "adoptionEvidenceCommit": {"$ref": "#/$defs/commit"},
+        "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+        "activeHold": {"type": "object"},
+        "triggerWitness": {"type": "object"},
+        "predecessor": {"type": "object"},
+        "successor": {"type": "object"},
+        "paths": {"type": "object"},
+        "durability": {"type": "object"},
+        "publicationOrder": {"type": "array", "minItems": 8, "uniqueItems": true},
+        "recovery": {"type": "object"},
+        "finalization": {"type": "object"}
+      },
+      "additionalProperties": false
     }
   ]
 }
