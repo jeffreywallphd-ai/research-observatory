@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -713,6 +714,110 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.assertEqual([], taskctl.validate(*taskctl.load(str(repo / "planning/backlog.yaml"))[0:5], repo=repo))
         return repo
 
+    def b01_scope_clone(self, temporary: str) -> Path:
+        repo = Path(temporary) / "b01-scope-authority-fixture"
+        bundle = Path(temporary) / "b01-scope-authority-fixture.bundle"
+        subprocess.run(
+            ["git", "bundle", "create", str(bundle), "HEAD"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        subprocess.run(
+            [
+                "git",
+                "-c",
+                "core.autocrlf=false",
+                "clone",
+                "--quiet",
+                str(bundle),
+                str(repo),
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.git(repo, "config", "user.email", "fixture@example.invalid")
+        self.git(repo, "config", "user.name", "Fixture Reviewer")
+        self.git(repo, "config", "commit.gpgsign", "false")
+        self.git(repo, "config", "core.autocrlf", "false")
+        return repo
+
+    def b01_scope_variant(
+        self,
+        repo: Path,
+        label: str,
+        *,
+        packet_change: str | None = None,
+        approval_change: str | None = None,
+    ) -> tuple[str, dict[str, str]]:
+        """Build an internally bound direct-child authority variant in real Git."""
+
+        self.git(repo, "checkout", "--detach", recoveryctl.B01_SCOPE_BASE_CANDIDATE)
+        for relative in (recoveryctl.B01_SCOPE_SCHEMA_PATH, recoveryctl.B01_SCOPE_REVIEW_PAGE_PATH):
+            destination = repo / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(REPO / relative, destination)
+
+        packet_path = repo / recoveryctl.B01_SCOPE_PACKET_PATH
+        packet_path.parent.mkdir(parents=True, exist_ok=True)
+        packet = json.loads((REPO / recoveryctl.B01_SCOPE_PACKET_PATH).read_bytes())
+        if packet_change == "extra-scope":
+            packet["scopeExtension"]["deterministicGeneratedPaths"].append("planning/unapproved-output/**")
+        packet_payload = (json.dumps(packet, indent=2) + "\n").encode()
+        packet_path.write_bytes(packet_payload)
+        self.git(
+            repo,
+            "add",
+            "--",
+            recoveryctl.B01_SCOPE_PACKET_PATH,
+            recoveryctl.B01_SCOPE_SCHEMA_PATH,
+            recoveryctl.B01_SCOPE_REVIEW_PAGE_PATH,
+        )
+        self.git(repo, "commit", "-m", f"fixture: {label} packet")
+        packet_commit = self.git(repo, "rev-parse", "HEAD")
+        packet_sha = hashlib.sha256(packet_payload).hexdigest()
+
+        ledger_path = repo / recoveryctl.B01_SCOPE_REVIEW_LEDGER_PATH
+        ledger = json.loads((REPO / recoveryctl.B01_SCOPE_REVIEW_LEDGER_PATH).read_bytes())
+        ledger["candidateCommit"] = packet_commit
+        ledger["packetSha256"] = packet_sha
+        ledger_payload = (json.dumps(ledger, indent=2) + "\n").encode()
+        ledger_path.write_bytes(ledger_payload)
+        self.git(repo, "add", "--", recoveryctl.B01_SCOPE_REVIEW_LEDGER_PATH)
+        self.git(repo, "commit", "-m", f"fixture: {label} review")
+        review_commit = self.git(repo, "rev-parse", "HEAD")
+        review_sha = hashlib.sha256(ledger_payload).hexdigest()
+
+        approval_path = repo / recoveryctl.B01_SCOPE_APPROVAL_PATH
+        approval = json.loads((REPO / recoveryctl.B01_SCOPE_APPROVAL_PATH).read_bytes())
+        approval["packet"]["commit"] = packet_commit
+        approval["packet"]["sha256"] = packet_sha
+        approval["independentReview"]["candidateCommit"] = packet_commit
+        approval["independentReview"]["packetSha256"] = packet_sha
+        approval["independentReview"]["ledger"]["commit"] = review_commit
+        approval["independentReview"]["ledger"]["sha256"] = review_sha
+        if approval_change == "self-review":
+            approval["approvedBy"] = approval["independentReview"]["reviewer"]
+        elif approval_change == "wrong-path":
+            approval["packet"]["path"] = "planning/governance-recovery-approvals/GRR-0002.B01.substituted.packet.json"
+        elif approval_change == "unapproved":
+            approval["status"] = "CHANGES_REQUESTED"
+        approval_payload = (json.dumps(approval, indent=2) + "\n").encode()
+        approval_path.write_bytes(approval_payload)
+        self.git(repo, "add", "--", recoveryctl.B01_SCOPE_APPROVAL_PATH)
+        self.git(repo, "commit", "-m", f"fixture: {label} approval")
+        approval_commit = self.git(repo, "rev-parse", "HEAD")
+        return approval_commit, {
+            "B01_SCOPE_PACKET_COMMIT": packet_commit,
+            "B01_SCOPE_PACKET_SHA256": packet_sha,
+            "B01_SCOPE_REVIEW_COMMIT": review_commit,
+            "B01_SCOPE_REVIEW_SHA256": review_sha,
+            "B01_SCOPE_APPROVAL_COMMIT": approval_commit,
+            "B01_SCOPE_APPROVAL_SHA256": hashlib.sha256(approval_payload).hexdigest(),
+        }
+
     def install_v2_supplement_authority(self, repo: Path) -> tuple[dict[str, Any], str]:
         """Freeze and approve an exact GRR-0002.S01 fixture packet in Git."""
 
@@ -1354,6 +1459,96 @@ class GovernanceRecoveryTests(unittest.TestCase):
                     "GRR-0002.S01",
                     candidate,
                 )
+
+    def test_b01_scope_addendum_rejects_stale_forked_and_wrong_candidates_without_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = self.b01_scope_clone(temporary)
+            authority_head = self.git(repo, "rev-parse", "HEAD")
+
+            self.git(repo, "checkout", "--detach", recoveryctl.B01_SCOPE_REVIEW_COMMIT)
+            stale_snapshot = {
+                relative: (repo / relative).read_bytes()
+                for relative in ("planning/backlog.yaml", recoveryctl.CONTROL_RECOVERY_STATE_PATH)
+            }
+            with self.assertRaisesRegex(SystemExit, "partial"):
+                recoveryctl.approved_b01_scope_addendum_paths(
+                    repo,
+                    "GRR-0002.S01",
+                    recoveryctl.B01_SCOPE_REVIEW_COMMIT,
+                )
+            self.assertEqual(
+                stale_snapshot,
+                {relative: (repo / relative).read_bytes() for relative in stale_snapshot},
+            )
+
+            self.git(repo, "checkout", "--detach", recoveryctl.B01_SCOPE_BASE_CANDIDATE)
+            self.git(repo, "commit", "--allow-empty", "-m", "fixture: diverge before copied authority")
+            for commit in (
+                recoveryctl.B01_SCOPE_PACKET_COMMIT,
+                recoveryctl.B01_SCOPE_REVIEW_COMMIT,
+                recoveryctl.B01_SCOPE_APPROVAL_COMMIT,
+            ):
+                self.git(repo, "cherry-pick", commit)
+            fork_candidate = self.git(repo, "rev-parse", "HEAD")
+            self.git(repo, "checkout", "--detach", authority_head)
+            fork_snapshot = {
+                relative: (repo / relative).read_bytes()
+                for relative in ("planning/backlog.yaml", recoveryctl.CONTROL_RECOVERY_STATE_PATH)
+            }
+            with self.assertRaisesRegex(SystemExit, "approval is outside the required Git ancestry"):
+                recoveryctl.approved_b01_scope_addendum_paths(
+                    repo,
+                    "GRR-0002.S01",
+                    fork_candidate,
+                )
+            self.assertEqual(
+                fork_snapshot,
+                {relative: (repo / relative).read_bytes() for relative in fork_snapshot},
+            )
+
+            wrong_candidate_snapshot = (repo / "planning/backlog.yaml").read_bytes()
+            with self.assertRaisesRegex(SystemExit, "strictly descend"):
+                recoveryctl.approved_b01_scope_addendum_paths(
+                    repo,
+                    "GRR-0002.S01",
+                    recoveryctl.B01_SCOPE_BASE_CANDIDATE,
+                )
+            self.assertEqual(wrong_candidate_snapshot, (repo / "planning/backlog.yaml").read_bytes())
+
+    def test_b01_scope_addendum_rejects_semantic_authority_substitutions_without_mutation(self) -> None:
+        cases = (
+            ("self-reviewed", None, "self-review", "approval or independent review is invalid"),
+            ("wrong-canonical-path", None, "wrong-path", "approval or independent review is invalid"),
+            ("extra-approved-path", "extra-scope", None, "schema validation failed|extension differs"),
+            ("explicitly-unapproved", None, "unapproved", "schema validation failed"),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = self.b01_scope_clone(temporary)
+            for label, packet_change, approval_change, expected in cases:
+                with self.subTest(label=label):
+                    candidate, overrides = self.b01_scope_variant(
+                        repo,
+                        label,
+                        packet_change=packet_change,
+                        approval_change=approval_change,
+                    )
+                    snapshot = {
+                        relative: (repo / relative).read_bytes()
+                        for relative in ("planning/backlog.yaml", recoveryctl.CONTROL_RECOVERY_STATE_PATH)
+                    }
+                    with ExitStack() as stack:
+                        for name, value in overrides.items():
+                            stack.enter_context(patch.object(recoveryctl, name, value))
+                        with self.assertRaisesRegex(SystemExit, expected):
+                            recoveryctl.approved_b01_scope_addendum_paths(
+                                repo,
+                                "GRR-0002.S01",
+                                candidate,
+                            )
+                    self.assertEqual(
+                        snapshot,
+                        {relative: (repo / relative).read_bytes() for relative in snapshot},
+                    )
 
     def test_grr_0002_s01_v2_real_git_witness_aware_lifecycle(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
