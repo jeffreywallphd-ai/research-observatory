@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0001",
+  "bootstrapUnit": "GCR-0001.B00",
+  "attemptId": "R02",
+  "candidateCommit": "22f9b46dd6772d2df615d3324cd1797f585385f8",
+  "reviewedStateCommit": "c7bb8c49a499df76bbcebd9d001a8e8302ace2ce",
+  "reviewer": "independent-control-security-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R02.json",
+    "sha256": "acc5b3bf151dec1bca317ac430a06718974bf061e0f053b3dfedcb6f7e702fac",
+    "commit": "22f9b46dd6772d2df615d3324cd1797f585385f8"
+  },
+  "findings": [
+    {
+      "id": "GCR-0001.B00-R02-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 8,
+      "title": "The final adoption commit and recovery workspace remain outside the exact path boundary",
+      "reproduction": "The strict-descendant candidate correctly constrains candidate-to-REVIEW, REVIEW-to-disposition, and approved-state-to-adoption-evidence commits, but neither gcrctl nor taskctl derives and validates the later commit that records the canonical ADOPTED state and revision-7 backlog. In a temporary real-Git lifecycle, the remediated controller completed adoption; the resulting backlog and state were then committed together with planning/hidden-final-adoption.txt. The commit's name/status delta was M planning/backlog.yaml, M planning/governance-control-recovery/GCR-0001.B00.state.json, and A planning/hidden-final-adoption.txt, yet gcrctl.validate_state_history returned successfully and hidden_final_adoption_commit_accepted=True. A second temporary lifecycle stopped immediately after transaction publication, created unrelated-untracked.tmp, and invoked recover_adoption_transaction. Recovery returned COMPLETED_SUCCESSOR while the unrelated file survived, producing dirty_recovery_accepted=True. recover checks branch, trigger witness, transaction authority, and canonical record hashes, but it does not deny unrelated staged, tracked-worktree, or untracked paths. These paths can therefore coexist with completion of the exact governance transition, contrary to acceptance criterion 8's direct-child exactly-two-path adoption commit, the packet's every-extra-path denial, and its clean Git identity prohibition.",
+      "requiredRemediation": "In a strict-descendant R03 candidate, add a non-circular finalization invariant that derives the unique commit introducing the adopted backlog/state pair, requires it to be the direct child of the exact adoption-evidence commit, requires the complete no-renames name/status delta to be exactly M planning/backlog.yaml and M planning/governance-control-recovery/GCR-0001.B00.state.json, and verifies both Git blobs against the live successor bytes before any adopted generation is accepted by gcrctl or taskctl. Before that commit exists, expose only a fail-closed pending-finalization state and deny downstream recovery-supplement use. Add a specialized recovery workspace guard that permits only the hash-bound trigger witness, the exact canonical transaction artifacts, and canonical backlog/state bytes at a declared predecessor/successor boundary; deny every other untracked path, every staged path, and every unrelated tracked worktree change before cleanup or roll-forward. Add real-Git tests for hidden/substituted final adoption commits and for untracked, staged, and unrelated tracked dirty recovery attempts. Preserve R01 and R02 append-only, submit fresh R03 evidence, and explicitly close this finding before revision 7 is usable."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "GCR-0001.B00-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Candidate 22f9b46dd6772d2df615d3324cd1797f585385f8 derives the canonical approved state from the latest immutable ledger; exact single-parent no-renames status/path comparisons bind candidate-to-REVIEW, REVIEW-to-disposition, and approved-state-to-adoption-evidence commits and their Git blobs. Independent replay confirmed hidden reviewed-state, hidden approved-state, hidden adoption-evidence, and substituted-parent commits are denied before transaction preparation."
+    },
+    {
+      "findingId": "GCR-0001.B00-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Candidate 22f9b46dd6772d2df615d3324cd1797f585385f8 replaces the unjournaled sequential write with schema-bound durable successor payloads, a write-ahead manifest, Windows MoveFileExW replace-existing/write-through publication, cross-reader transaction/split-state denial, and idempotent explicit recovery. Independent replay passed all seven child-process abrupt boundaries: unpublished payloads restore the exact predecessor; a published transaction completes the exact successor; marker-deleted split state fails closed; and all canonical transaction artifacts are removed after recovery."
+    }
+  ],
+  "notes": "CHANGES_REQUESTED at exact frozen REVIEW state c7bb8c49a499df76bbcebd9d001a8e8302ace2ce on codex/w1-windows-local-runtime. Candidate 22f9b46dd6772d2df615d3324cd1797f585385f8 strictly descends from R01 candidate 060899b5ec438003ad188d3be21da1f29b8d3908 and the immutable approval base c34f8398adc54b3703b94daf7482faf9c09cfdfc. The R02 evidence SHA-256 is acc5b3bf151dec1bca317ac430a06718974bf061e0f053b3dfedcb6f7e702fac; its fourteen-path approval-base inventory exactly matches Git, its candidate-to-reviewed-state delta is exactly A R02 evidence plus M canonical state, its two closure records exactly reconcile the R01 findings, and its witness/authority/stopped-boundary bindings revalidate. The exact R01 path-substitution reproduction now fails closed and the exact R01 abrupt-write reproduction is safely recoverable, so both prior findings close. The WAL schema, durable publication/cleanup logic, live transaction and marker-deleted split denials, unchanged active GRR-0002 hold, revision-6 PAUSED W1/BLOCKED T03/absent W1.A04/PENDING G1 boundary, protected product/reference/privacy scope, and no-ordinary-authority constraints otherwise remain intact. The new high-severity finalization/workspace finding keeps revision 7, GRR-0002.S01 preparation or installation, and the W1.A04 retry unavailable pending strict-descendant R03 remediation and independent closure."
+}
