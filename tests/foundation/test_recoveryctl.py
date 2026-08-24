@@ -1314,7 +1314,13 @@ class GovernanceRecoveryTests(unittest.TestCase):
             witness.write_bytes(witness_payload)
 
             recoveryctl.require_supplement_workspace(repo, packet)
-            transition_relative = "planning/governance-recovery-approvals/GRR-0002.B01.remediation-01.evidence.json"
+            transition_relative = ""
+            for index in range(1, 100):
+                candidate = f"planning/governance-recovery-approvals/GRR-0002.B01.remediation-{index:02d}.evidence.json"
+                if not (repo / candidate).exists():
+                    transition_relative = candidate
+                    break
+            self.assertTrue(transition_relative)
             transition = repo / transition_relative
             transition.write_text("{}\n", encoding="utf-8")
             recoveryctl.require_supplement_workspace(
