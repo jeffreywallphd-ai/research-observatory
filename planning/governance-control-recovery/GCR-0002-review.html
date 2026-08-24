@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GCR-0002 review</title>
+<style>body{font-family:system-ui,sans-serif;max-width:980px;margin:0 auto;padding:2rem;color:#172033;background:#f6f8fb}main{background:#fff;padding:2rem;border:1px solid #d9e0ea;border-radius:12px}h1,h2{color:#102a43}code{background:#eef2f7;padding:.1rem .3rem;border-radius:4px}table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:1px solid #ccd6e0;padding:.65rem;text-align:left;vertical-align:top}.warn{border-left:5px solid #bd5b00;background:#fff5e8;padding:1rem}.safe{border-left:5px solid #237a3b;background:#edf9f0;padding:1rem}</style></head>
+<body><main>
+<p><a href="../review-site/waves/W1.html">W1 review</a></p>
+<h1>GCR-0002 — Enable the next sequential recovery supplement</h1>
+<div class="warn"><strong>Inert packet.</strong> No implementation, supplement, amendment, task, resume, gate, merge, or remote authority exists before independent packet review and exact-commit human approval.</div>
+
+<h2>Why this recovery is necessary</h2>
+<p>The exact post-B01 W1.A04 retry failed atomically because its historical candidate is not current <code>HEAD</code>. The mandated next same-hold supplement cannot yet be represented: revision-8 tools and schema cap supported control at 8, while a supplement must strictly increase the minimum revision.</p>
+<p>The original untracked W1.A04 file is also immutable trigger-only evidence under GCR-0001. It may authenticate a future bounded retry but may not be recorded as submitted amendment evidence. B02 must instead bind a committed byte-identical snapshot.</p>
+
+<h2>Current safe boundary</h2>
+<table><tr><th>Boundary</th><th>State</th></tr>
+<tr><td>Control</td><td>revision/minimum 8; no supported 8→9 supplement reader</td></tr>
+<tr><td>Recovery</td><td><code>HOLD-W1-GRR-0002</code> ACTIVE; B00, S01/B01 independently approved</td></tr>
+<tr><td>W1</td><td>PAUSED at ordinary Wave scope</td></tr>
+<tr><td>W1.A04</td><td>Absent; exact historical candidate <code>214ac1…</code></td></tr>
+<tr><td>CAP-02.S04.T03 / G1</td><td>BLOCKED / PENDING</td></tr>
+<tr><td>Trigger witness</td><td>Exact, untracked, unstaged, non-authoritative</td></tr></table>
+
+<h2>Recommended bounded repair</h2>
+<ol><li>Authorize only <code>GCR-0002.B00</code> under the existing hold.</li><li>Add an exact v3 supplement reader/schema for sequential <code>GRR-0002.S02/B02</code>.</li><li>Keep live control at 8 through independent B00 approval.</li><li>Adopt one exact 8→9 generation record; revision-8 readers then fail closed.</li><li>Independently review and exactly approve S02 before starting B02.</li><li>Make B02 authenticate the untracked trigger but record a committed packet snapshot, never the trigger path.</li></ol>
+
+<h2>What approval does not authorize</h2>
+<p>No S02 installation, B02 implementation, historical-candidate exception, W1.A04 append, amendment materialization, task execution, T03 recovery, hold release, W1 resume, G1 approval, main merge, remote push, trigger promotion, 8→8 transition, or authority rewrite.</p>
+
+<h2>Alternatives</h2>
+<table><tr><th>Option</th><th>Disposition</th><th>Consequence</th></tr><tr><td>Approve exact GCR-0002 packet</td><td>Recommended</td><td>Creates the minimum reviewed reader generation while all W1 gates remain closed.</td></tr><tr><td>Keep recovery stopped</td><td>Safe</td><td>No mutation occurs; W1 remains unable to progress.</td></tr><tr><td>Create S02 now or use 8→8</td><td>Rejected</td><td>Would bypass the strict control-revision and older-reader boundary.</td></tr><tr><td>Promote the trigger or add a generic historic bypass</td><td>Rejected</td><td>Would contradict GCR-0001 and broaden recovery authority.</td></tr></table>
+
+<h2>Approval gate</h2>
+<div class="safe">Approval becomes legally available only after an independent APPROVED packet review is committed for the exact packet commit. Human approval must name that commit and authorize only GCR-0002.B00. B00 still requires separate evidence, independent review, and exact 8→9 adoption.</div>
+</main></body></html>

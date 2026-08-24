@@ -1,0 +1,238 @@
+{
+  "$schema": "./governance-control-recovery-request.v2.schema.json",
+  "schemaVersion": "2.0-control-recovery-proposal",
+  "documentType": "governance-control-recovery-request-packet",
+  "controlRecoveryId": "GCR-0002",
+  "title": "Enable the next sequential recovery supplement",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "recovery-controller-generation-defect",
+  "rootAuthority": {
+    "basis": "repository-owner-governance-mismatch-protocol",
+    "exceptionScope": "one-time-exact-packet-bootstrap-only",
+    "packetReviewHistory": [],
+    "approvalSchema": {
+      "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v2.schema.json",
+      "sha256": "c2bf41f2f427e17b5fd305287fae901ebba54e318a37dd812f0e0090e3cc899d"
+    },
+    "approvalPath": "planning/governance-control-recovery/GCR-0002.approval.json",
+    "authorityManifest": {
+      "path": "planning/governance-control-recovery/GCR-0002.authority.json",
+      "sha256": "7b75fd3ff9ab403b850708bbb297124ff766462b8b1949395943a7fc67c2d221"
+    },
+    "untrackedTriggerWitness": {
+      "path": "artifacts/evidence/W1.A04.B00.json",
+      "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+      "role": "atomic-failure-trigger-only",
+      "mustRemainUntrackedAndUnstaged": true,
+      "neverExecutionAuthority": true
+    },
+    "approvalIntroduction": {
+      "exclusiveCreate": true,
+      "trackedCleanExactBranchHead": true,
+      "permittedUntracked": "exact-trigger-witness-only",
+      "packetReviewApproved": true,
+      "introductionCommitIsExecutionBase": true
+    }
+  },
+  "authorityChain": {
+    "activeRecovery": {
+      "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+      "sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22"
+    },
+    "installedControlRecovery": {
+      "path": "planning/governance-control-recovery/GCR-0001.B00.state.json",
+      "sha256": "60d52346262177dfb249fb6c7a7dd3ce9e3686a0d8ea378a1a2baf7f95c93063"
+    },
+    "latestSupplement": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B01.review-R03.json",
+      "sha256": "7c2a547ac369cdfb63ccae1dd2a094ed2b3c8064a46a5e249a123a0633d55d1f"
+    },
+    "approvedRepairAmendment": {
+      "path": "planning/wave-amendment-approvals/W1.A04.json",
+      "sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab"
+    },
+    "blockedBootstrap": {
+      "id": "W1.A04.B00",
+      "approvalCommit": "4f92ba991fd19a2c0ae413b34416a2901d7f84b9",
+      "candidateCommit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+      "triggerPath": "artifacts/evidence/W1.A04.B00.json",
+      "triggerSha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+    }
+  },
+  "triggerEvidence": {
+    "discoveryCommit": "c80efb865a37b78df6f4a59b9d14c32c7b840abe",
+    "backlogSha256": "0b3d22f30d3a024e37b6c7b9b07d48f3a0b96dd2fc6c1968809a21d35a2977e7",
+    "failedCommand": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-submit W1.A04 --agent codex --approval-commit 4f92ba991fd19a2c0ae413b34416a2901d7f84b9 --implementation-commit 214ac1aac53b4396ee29f7a935ddcac2a34618b6 --evidence artifacts/evidence/W1.A04.B00.json",
+    "diagnostic": "Amendment bootstrap implementation commit must equal current HEAD",
+    "atomicNoMutation": true,
+    "independentAudit": "Read-only control review confirmed two blockers: revision-8 recoveryctl/taskctl/backlog schema cannot represent the mandatory strictly increasing GRR-0002.S02 transition, and immutable GCR-0001 forbids promotion of the untracked trigger into submitted W1.A04 evidence. GCR-0002 must enable only an 8-to-9 v3 reader; later S02/B02 must use a committed byte-identical snapshot while the trigger remains authentication-only."
+  },
+  "activationBoundary": {
+    "controlRevision": 8,
+    "minimumToolRevision": 8,
+    "holdId": "HOLD-W1-GRR-0002",
+    "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "taskId": "CAP-02.S04.T03",
+    "taskStatus": "BLOCKED",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "generationTransition": {
+    "predecessorControlRevision": 8,
+    "nextControlRevision": 9,
+    "existingHoldPreserved": true,
+    "newHoldCreated": false,
+    "installationMode": "exact-packet-root-bootstrap",
+    "postBootstrapGate": "independently-reviewed-and-exactly-approved-GRR-0002.S02"
+  },
+  "lifecycle": {
+    "branch": "codex/w1-windows-local-runtime",
+    "actor": "codex",
+    "workspaceInvariant": {
+      "triggerWitness": {
+        "path": "artifacts/evidence/W1.A04.B00.json",
+        "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+        "role": "atomic-failure-trigger-only",
+        "mustRemainUntrackedAndUnstaged": true,
+        "neverExecutionAuthority": true
+      },
+      "denyOtherUntracked": true,
+      "denyWitnessStagingOrMutation": true,
+      "appliesAtEveryTransition": true
+    },
+    "canonicalPaths": {
+      "controller": "tools/gcr2ctl.py",
+      "state": "planning/governance-control-recovery/GCR-0002.B00.state.json",
+      "evidencePattern": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.RNN.json",
+      "reviewPattern": "planning/governance-control-recovery/GCR-0002.B00.review-RNN.json",
+      "adoptionEvidence": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.adoption.json"
+    },
+    "submission": {
+      "base": "approval-introduction-commit",
+      "candidateAncestry": "strict-descendant",
+      "trackedCleanBranchAndHead": true,
+      "pathComparison": "approval-base-to-candidate-exact-allowlist",
+      "staleWriter": "compare-and-swap",
+      "atomicFailure": "byte-stable",
+      "liveRevisionDuringReview": 8,
+      "untrackedException": "exact-trigger-witness-plus-canonical-current-attempt-evidence"
+    },
+    "review": {
+      "independent": true,
+      "severityRanked": true,
+      "reviewedStateBinding": true,
+      "immutableAttempts": true,
+      "blockingFindingDenial": true,
+      "selfReviewDenied": true
+    },
+    "remediation": {
+      "candidateAncestry": "strict-descendant-of-prior-candidate",
+      "freshEvidence": true,
+      "explicitClosures": true,
+      "priorAttemptsPreserved": true
+    },
+    "adoption": {
+      "requiresApprovedB00": true,
+      "predecessorRevision": 8,
+      "successorRevision": 9,
+      "singleGenerationRecord": true,
+      "directChildOfEvidenceCommit": true,
+      "exactChangedPaths": [
+        "planning/backlog.yaml",
+        "planning/governance-control-recovery/GCR-0002.B00.state.json"
+      ],
+      "olderReadersFailClosed": true,
+      "postAdoptionGate": "separate-GRR-0002.S02-review-and-exact-approval"
+    },
+    "commands": {
+      "submit": "python tools/gcr2ctl.py --repo . submit GCR-0002 --agent codex --approval-commit <sha> --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0002.B00.RNN.json",
+      "review": "python tools/gcr2ctl.py --repo . review GCR-0002 --reviewer <independent-reviewer> --from planning/governance-control-recovery/GCR-0002.B00.review-RNN.json",
+      "resubmit": "python tools/gcr2ctl.py --repo . resubmit GCR-0002 --agent codex --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0002.B00.RNN.json",
+      "adopt": "python tools/gcr2ctl.py --repo . adopt GCR-0002 --agent codex --approved-state-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0002.B00.adoption.json",
+      "validate": "python tools/gcr2ctl.py --repo . validate GCR-0002 --require-approved"
+    }
+  },
+  "bootstrapUnit": {
+    "id": "GCR-0002.B00",
+    "kind": "one-time-recovery-controller-generation",
+    "exceptionReason": "The sole active hold and approved B01 remain valid, but the mandated sequential S02 cannot raise control above revision 8 with the installed reader/schema. The exact W1.A04 retry is also constrained by an immutable trigger-only rule. No established executable controller can represent the next safe supplement generation, so a second exact repository-owner mismatch bootstrap is required before S02 can be prepared for approval.",
+    "authorizedPaths": [
+      "artifacts/evidence/governance-control-recovery/GCR-0002.B00*",
+      "planning/backlog.schema.json",
+      "planning/backlog.yaml",
+      "planning/governance-control-recovery/GCR-0002*",
+      "planning/governance-control-recovery/governance-control-recovery-runtime.v2.schema.json",
+      "planning/governance-recovery-requests/governance-recovery-supplement.v3.schema.json",
+      "planning/governance-recovery-requests/governance-recovery-supplement-approval.v3.schema.json",
+      "quality-scope.json",
+      "tests/foundation/test_gcr2ctl.py",
+      "tests/foundation/test_recoveryctl.py",
+      "tests/foundation/test_taskctl_schema.py",
+      "tools/gcr2ctl.py",
+      "tools/recoveryctl.py",
+      "tools/taskctl.py"
+    ],
+    "requiredOutcomes": [
+      "Bind GCR-0002 approval and append-only B00 review history to the exact packet, authority manifest, active hold, approved GCR-0001 generation, approved S01/B01 chain, approved ECR-0003/W1.A04 authority, stopped revision-8 boundary, and trigger bytes.",
+      "Keep the live backlog at control and minimum revision 8 through implementation and independent B00 approval; only an approved direct-child adoption may append one exact 8-to-9 generation record.",
+      "Add v3 supplement packet and approval schemas plus recoveryctl support that can validate and install only the next exact GRR-0002.S02/GRR-0002.B02 transition from revision 8 to 9 after its own independent review and exact human approval.",
+      "Raise the taskctl and backlog-schema supported control ceiling to 9 while preserving revision-8 readability before adoption and making revision-8 readers fail closed after adoption.",
+      "Preserve the exact W1.A04 retry denial until B02 is independently approved; GCR-0002 supplies no historical-candidate, snapshot, witness-aware amendment, review, release, resume, task, or recovery execution behavior.",
+      "Preserve the trigger as exact, untracked, unstaged, nonsymlinked, non-authoritative authentication-only material and reject every missing, mutated, staged, tracked, redirected, duplicated, or accompanied workspace state without mutation.",
+      "Use a new exact gcr2ctl lifecycle rather than reopening or silently generalizing the adopted one-time GCR-0001 controller; every adverse attempt, finding, closure, evidence record, and state remains append-only.",
+      "Focused real-Git tests cover v3 authority, exact S02/B02 sequence, 8-to-9 adoption, older-reader denial, wrong or adverse authority, stale/forked/wrong-hold inputs, historic-retry denial, witness denials, atomic no-write, and protected-history preservation.",
+      "Independent B00 control/security review closes every blocking finding before adoption; S02 still requires a separate independent packet review and exact-commit human approval."
+    ],
+    "prohibitedOutcomes": [
+      "No S02 packet approval or installation, B02 start or implementation, W1.A04 append, bootstrap submission or review, task materialization or claim, T03 mutation, hold release, W1 resume, G1 approval, main integration, or remote push.",
+      "No promotion, staging, tracking, mutation, deletion, restoration, replacement, redirection, duplication, or authority use of artifacts/evidence/W1.A04.B00.json.",
+      "No 8-to-8 supplement, arbitrary successor revision, generic historical-candidate switch, general dirty-worktree exception, reopened GCR-0001/GRR B00/B01, edited S01/B01, competing hold, direct backlog edit, force, override, bypass, or skip-review path.",
+      "No product/runtime, privacy, approved-reference, task-acceptance, completed-task, release-gate, Wave-approval, verification-threshold, predecessor-authority, or protected-history change."
+    ]
+  },
+  "acceptanceCriteria": [
+    "The v2 GCR packet, schemas, authority manifest, proposal, and review page are Draft 2020-12 valid, hash-bound, path-safe, exact-commit reviewable, and bootstrap-only.",
+    "All GRR-0002, GCR-0001, S01/B01, ECR-0003/W1.A04, hold, Wave, T03, G1, backlog, Git ancestry, and witness identities in the authority manifest reproduce current immutable state.",
+    "GCR-0002 approval can be introduced only after an independent APPROVED packet review at the exact packet commit; its clean codex-branch introduction commit is the sole B00 base.",
+    "The B00 candidate changes only authorized controller/schema/test/governance paths, keeps live revision 8 during review, and cannot install or fabricate S02.",
+    "After independent B00 approval, adoption changes exactly backlog and GCR-0002 state, records one 8-to-9 generation, and makes unsupported revision-8 readers fail closed.",
+    "Revision-9 recoveryctl accepts only independently reviewed and exactly approved sequential GRR-0002.S02/B02 authority and rejects stale, forked, wrong-hold, wrong-predecessor, non-increasing, unsupported, missing, or adverse authority byte-stably.",
+    "The original W1.A04 retry remains denied after GCR-0002 adoption and until independently approved B02; the trigger remains non-authoritative and no ordinary execution gate changes.",
+    "Criterion-linked B00 evidence, real-Git denial coverage, governed Python quality, exact diff scope, and independent review pass with no unexplained unverified item."
+  ],
+  "verificationObligations": [
+    "Validate both GCR-0002 schemas and packet with Draft 2020-12 and verify every declared file/authority hash, Git blob, introduction commit, ancestry edge, backlog SHA, state boundary, and trigger invariant.",
+    "Run focused gcr2ctl, recoveryctl, taskctl schema, authority, quality, and isolated real-Git lifecycle tests selected by the shared control-plane and atomic-persistence risk surface.",
+    "Prove revision 8 remains readable before adoption, only approved S02 installs revision 9 afterward, revision-8 readers deny revision 9, and every wrong/adverse/stale/forked/concurrent path leaves backlog and GCR state byte-identical.",
+    "Re-run the exact historic W1.A04 command before and after GCR-0002 and prove it remains denied without mutation; defer the lawful snapshot-based exception entirely to separately approved B02.",
+    "At every GCR transition verify the trigger is exact, untracked, unstaged, nonsymlinked, non-authoritative, and the only permitted untracked path except the canonical current RNN evidence at submission/resubmission.",
+    "Independently review the exact packet before human approval and independently review the exact B00 candidate/evidence before adoption."
+  ],
+  "rollback": [
+    "Before human approval, reject or revise only through a strict-descendant inert packet; revision 8, the active hold, W1 pause, T03 block, G1, W1.A04 absence, and trigger remain unchanged.",
+    "An adverse B00 review remains append-only and requires a strict-descendant candidate with fresh evidence and explicit closures; revision 9 cannot be adopted while any blocker is open.",
+    "If the hold, GCR-0001, S01/B01, W1.A04 approval, trigger, stopped state, or exact two-path adoption cannot be preserved, stop without mutation.",
+    "After GCR-0002 adoption, withhold S02 preparation or installation if v3 authority, exact sequencing, older-reader denial, or historic-retry denial fails.",
+    "Never roll back by deleting, replacing, reopening, rewriting, synthesizing, or repurposing any Wave, task, ECR, amendment, GRR, supplement, GCR, approval, review, finding, evidence, checkpoint, hold, witness, or Git object."
+  ],
+  "alternatives": [
+    {"id": "A", "title": "Approve bounded GCR-0002 bootstrap", "disposition": "recommended", "consequence": "Creates the smallest reviewed 8-to-9 reader generation while every W1 execution gate remains closed."},
+    {"id": "B", "title": "Keep W1 and recovery stopped", "disposition": "safe", "consequence": "Preserves the current atomic boundary indefinitely but leaves the mandatory S02 lane unrepresentable."},
+    {"id": "C", "title": "Create S02 now or use 8-to-8", "disposition": "rejected", "consequence": "Would bypass the strictly increasing control revision and older-reader fail-closed requirement."},
+    {"id": "D", "title": "Promote the witness or add a generic historic bypass", "disposition": "rejected", "consequence": "Would contradict immutable GCR-0001 authority and broaden recovery beyond the demonstrated defect."}
+  ],
+  "files": [
+    {"path": "planning/governance-control-recovery/governance-control-recovery-request.v2.schema.json", "sha256": "ad3b05abd03b080c0547463fb90e29ceada90cc51ea45054afdd7947bd851cf8"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v2.schema.json", "sha256": "c2bf41f2f427e17b5fd305287fae901ebba54e318a37dd812f0e0090e3cc899d"},
+    {"path": "planning/governance-control-recovery/GCR-0002.authority.json", "sha256": "7b75fd3ff9ab403b850708bbb297124ff766462b8b1949395943a7fc67c2d221"},
+    {"path": "planning/governance-control-recovery/GCR-0002.md", "sha256": "4ad455bc52eadfe381db1dda7cad6e41f5454517c730deb28f2fc4ba35639662"},
+    {"path": "planning/governance-control-recovery/GCR-0002-review.html", "sha256": "03e4ecaa72fac265c632be612932495129298983f9c9346a8138f51dfc68679a"}
+  ],
+  "requiredApprovalStatement": "Approve GCR-0002 at packet commit <40-character SHA>, authorizing only GCR-0002.B00 and its hash-bound revision-8-to-9 reader/controller/schema/test scope under the existing HOLD-W1-GRR-0002. Keep W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, G1 pending, and the trigger witness untracked, unstaged, and non-authoritative; require separately reviewed and exactly approved GRR-0002.S02/B02 before any historic W1.A04 retry."
+}
