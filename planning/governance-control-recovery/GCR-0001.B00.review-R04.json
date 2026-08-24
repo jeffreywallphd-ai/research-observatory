@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0001",
+  "bootstrapUnit": "GCR-0001.B00",
+  "attemptId": "R04",
+  "candidateCommit": "f43424ae99f86c1e41362b9248bdf229595049d3",
+  "reviewedStateCommit": "b9410f5004a91e063c50f4abe2b45c5c0c83d63f",
+  "reviewer": "independent-control-security-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0001.B00.R04.json",
+    "sha256": "2aaf3fc585784bb3a583351be79f1dd553f67bacaf2a992d8530ddb3edd45560",
+    "commit": "f43424ae99f86c1e41362b9248bdf229595049d3"
+  },
+  "findings": [
+    {
+      "id": "GCR-0001.B00-R04-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 4,
+      "title": "gcrctl accepts revision-8 evolution without an authorized supplement transition",
+      "reproduction": "Complete an otherwise valid temporary real-Git GCR lifecycle through the exact direct-child revision-7 finalization, then change only control_plane.revision and minimum_tool_revision from 7 to 8 and commit the backlog without adding or adopting any supplement. Current taskctl.governance_control_generation_errors reports control revision differs from the latest explicit generation transition, but gcrctl.validate_state_history returns successfully. The submitted test_real_git_submit_review_and_direct_child_adoption performs this same unauthorized synthetic evolution, asserts only that no finalization-specific error exists, and then treats successful gcrctl state validation as expected. R04 changed command_validate to pass the live revision into current_boundary; that boundary loads only the backlog schema and checks revision/minimum equality plus basic stopped state, while validate_state_history authenticates the immutable revision-7 finalization but never invokes the append-only supplement/generation semantic check. Consequently the gcrctl reader can present an unsupported revision 8 as valid even though the taskctl reader correctly denies it, contradicting criterion 4 and the R03-F02 requirement that later revisions be validated through their separately authorized supplement transitions.",
+      "requiredRemediation": "In a strict-descendant R05 candidate, make gcrctl validation and status reuse the canonical taskctl generation-transition semantics, or an equivalent single non-circular validator, so every revision above 7 is accepted only when the immutable revision-7 generation and the exact sequential supplement authority/history produce that live revision. Add real-Git command-level denials for revision 8 with no supplement and with missing, forged, reordered, cross-hold, or unadopted supplement authority, while retaining a passing exact GRR-0002.S01 7-to-8 lifecycle and immutable finalization proof. Preserve R01-R04 append-only and submit fresh evidence with an explicit closure for this finding."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "GCR-0001.B00-R03-F01",
+      "disposition": "fixed",
+      "evidence": "Candidate f43424ae99f86c1e41362b9248bdf229595049d3 persists ADOPTION_FINALIZATION in the canonical successor state. Independent real-Git replay loaded taskctl from exact R02 candidate 22f9b46dd6772d2df615d3324cd1797f585385f8 and confirmed that reader rejects the marked adoption, while the current reader rejects hidden and substituted finalization commits and accepts only the exact direct-child two-path commit."
+    },
+    {
+      "findingId": "GCR-0001.B00-R03-F02",
+      "disposition": "superseded",
+      "evidence": "Candidate f43424ae99f86c1e41362b9248bdf229595049d3 now derives finalization from the immutable state-changing commit after adoption evidence and validates that commit's own exact revision-7 backlog/state blobs; independent replay confirmed the proof remains valid after a later backlog-only revision change. The broader required boundary is not complete because gcrctl accepts that later revision without verifying its separately authorized supplement transition. That residual risk is carried forward as GCR-0001.B00-R04-F01."
+    }
+  ],
+  "notes": "CHANGES_REQUESTED at exact frozen REVIEW state b9410f5004a91e063c50f4abe2b45c5c0c83d63f on codex/w1-windows-local-runtime. Candidate f43424ae99f86c1e41362b9248bdf229595049d3 strictly descends from R03 candidate d94ec5a5fef01fe425b7bc0d784d5915a46ab4db and approval base c34f8398adc54b3703b94daf7482faf9c09cfdfc. The R04 evidence SHA-256 is 2aaf3fc585784bb3a583351be79f1dd553f67bacaf2a992d8530ddb3edd45560; its nineteen-path approval-base inventory exactly matches Git, candidate-to-reviewed-state is exactly A R04 evidence plus M canonical state, and the sole workspace witness remains exact, untracked, unstaged, and non-authoritative. Independent replay passed the four focused finalization/recovery tests in 40.638 seconds, all 112 submitted tests in 800.973 seconds, governed quality over 121 files, backlog, active GRR-0002, adverse GCR, review-site, generated-view, protected-scope, and whitespace checks. Exact R02-reader denial, current hidden/substituted finalization denial, immutable revision-7 proof after later backlog evolution, exact recovery workspace, and the complete valid v2 supplement lifecycle work as declared. The unauthorized revision-8 probe establishes the remaining HIGH finding, so revision-7 adoption, GRR-0002.S01 preparation or installation, and the W1.A04 retry remain unavailable. GCR-0001 stays REVIEW at control revision 6 under the active GRR-0002 hold; this ledger grants no approval, adoption, recovery, supplement, amendment, Wave, merge, or execution authority."
+}
