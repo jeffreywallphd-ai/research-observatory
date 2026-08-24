@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0-control-recovery-adoption-evidence",
+  "documentType": "governance-control-recovery-adoption-evidence",
+  "controlRecoveryId": "GCR-0001",
+  "bootstrapUnit": "GCR-0001.B00",
+  "reviewedStateCommit": "e2113ba754e0d68baa5456c14900f799c50d826e",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "predecessorRevision": 6,
+  "successorRevision": 7,
+  "expectedChangedFiles": [
+    "planning/backlog.yaml",
+    "planning/governance-control-recovery/GCR-0001.B00.state.json"
+  ],
+  "checks": [
+    {
+      "id": "gcr-approved-boundary",
+      "command": ".venv\\Scripts\\python.exe tools\\gcrctl.py --repo . validate GCR-0001 --require-approved",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "active-recovery-hold",
+      "command": ".venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . validate GRR-0002 --require-approved",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "canonical-predecessor-backlog",
+      "command": ".venv\\Scripts\\python.exe tools\\taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "unverifiedItems": []
+}
