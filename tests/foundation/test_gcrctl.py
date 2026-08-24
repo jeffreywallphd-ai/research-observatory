@@ -44,6 +44,7 @@ class GcrctlTests(unittest.TestCase):
         self.git(repo, "config", "user.name", "GCR Test")
         self.git(repo, "config", "core.autocrlf", "false")
         self.git(repo, "checkout", "-b", gcrctl.BRANCH)
+        shutil.copy2(REPO / ".gitignore", repo / ".gitignore")
         schema = repo / gcrctl.RUNTIME_SCHEMA_PATH
         schema.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(REPO / gcrctl.RUNTIME_SCHEMA_PATH, schema)
@@ -186,6 +187,34 @@ class GcrctlTests(unittest.TestCase):
         )
         return relative
 
+    def adopt_approved_fixture(
+        self,
+        repo: Path,
+        packet: dict,
+        base: str,
+        approved_state: str,
+    ) -> str:
+        adoption_relative = self.write_adoption_evidence(repo, approved_state)
+        self.git(repo, "add", adoption_relative)
+        self.git(repo, "commit", "-m", "adoption evidence")
+        evidence_commit = self.git(repo, "rev-parse", "HEAD")
+        args = argparse.Namespace(
+            repo=repo,
+            approved_state_commit=approved_state,
+            evidence=adoption_relative,
+            agent=gcrctl.ACTOR,
+        )
+        backlog_payload = (repo / gcrctl.BACKLOG_PATH).read_bytes()
+        backlog_document = yaml.safe_load(backlog_payload)
+        with (
+            patch.object(gcrctl, "load_authority", return_value=({}, packet, base)),
+            patch.object(gcrctl, "current_boundary", return_value=(backlog_payload, backlog_document)),
+            patch.object(taskctl, "backlog_schema_errors", return_value=[]),
+            patch.object(taskctl, "validate", return_value=[]),
+        ):
+            gcrctl.command_adopt(args)
+        return evidence_commit
+
     def test_current_exact_authority_is_approved_and_witness_is_non_authoritative(self) -> None:
         approval, packet, introduction = gcrctl.load_authority(REPO)
         self.assertEqual("APPROVED", approval["status"])
@@ -292,6 +321,82 @@ class GcrctlTests(unittest.TestCase):
                 sorted(["planning/backlog.yaml", gcrctl.STATE_PATH]),
                 sorted(self.git(repo, "diff", "--name-only", "HEAD", "--").splitlines()),
             )
+            self.assertTrue(
+                any(
+                    "pending its exact finalization commit" in error
+                    for error in taskctl.governance_control_generation_errors(adopted_backlog, repo)
+                )
+            )
+            with self.assertRaisesRegex(SystemExit, "pending its exact finalization commit"):
+                gcrctl.validate_state_history(repo, adopted_state, packet)
+            self.git(repo, "add", gcrctl.BACKLOG_PATH, gcrctl.STATE_PATH)
+            self.git(repo, "commit", "-m", "exact adoption finalization")
+            self.assertEqual(
+                [],
+                taskctl.governance_control_adoption_finalization_errors(
+                    repo,
+                    adopted_state["adoption"]["evidence"]["commit"],
+                    (repo / gcrctl.BACKLOG_PATH).read_bytes(),
+                    (repo / gcrctl.STATE_PATH).read_bytes(),
+                ),
+            )
+            self.assertFalse(
+                any(
+                    "adoption finalization" in error
+                    for error in taskctl.governance_control_generation_errors(adopted_backlog, repo)
+                )
+            )
+            gcrctl.validate_state_history(repo, adopted_state, packet)
+
+    def test_adoption_denies_hidden_finalization_commit_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo, packet, base, approved_state = self.approved_fixture(temporary)
+            evidence_commit = self.adopt_approved_fixture(repo, packet, base, approved_state)
+            hidden = repo / "planning/hidden-final-adoption.txt"
+            hidden.write_text("hidden\n", encoding="utf-8")
+            self.git(repo, "add", gcrctl.BACKLOG_PATH, gcrctl.STATE_PATH, "planning/hidden-final-adoption.txt")
+            self.git(repo, "commit", "-m", "adoption finalization with hidden path")
+            adopted_state = json.loads((repo / gcrctl.STATE_PATH).read_text(encoding="utf-8"))
+            errors = taskctl.governance_control_adoption_finalization_errors(
+                repo,
+                evidence_commit,
+                (repo / gcrctl.BACKLOG_PATH).read_bytes(),
+                (repo / gcrctl.STATE_PATH).read_bytes(),
+            )
+            self.assertEqual(
+                ["GCR-0001 adoption finalization commit is not the exact two-path transition"],
+                errors,
+            )
+            adopted_backlog = yaml.safe_load((repo / gcrctl.BACKLOG_PATH).read_text(encoding="utf-8"))
+            self.assertIn(
+                "GCR-0001 adoption finalization commit is not the exact two-path transition",
+                taskctl.governance_control_generation_errors(adopted_backlog, repo),
+            )
+            with self.assertRaisesRegex(SystemExit, "exact two-path transition"):
+                gcrctl.validate_state_history(repo, adopted_state, packet)
+
+    def test_adoption_denies_substituted_finalization_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo, packet, base, approved_state = self.approved_fixture(temporary)
+            evidence_commit = self.adopt_approved_fixture(repo, packet, base, approved_state)
+            intermediate = repo / "planning/intermediate-final-adoption.txt"
+            intermediate.write_text("intermediate\n", encoding="utf-8")
+            self.git(repo, "add", "planning/intermediate-final-adoption.txt")
+            self.git(repo, "commit", "-m", "substitute finalization parent")
+            self.git(repo, "add", gcrctl.BACKLOG_PATH, gcrctl.STATE_PATH)
+            self.git(repo, "commit", "-m", "late exact adoption pair")
+            adopted_state = json.loads((repo / gcrctl.STATE_PATH).read_text(encoding="utf-8"))
+            self.assertEqual(
+                ["GCR-0001 adoption finalization is not the direct child of its evidence commit"],
+                taskctl.governance_control_adoption_finalization_errors(
+                    repo,
+                    evidence_commit,
+                    (repo / gcrctl.BACKLOG_PATH).read_bytes(),
+                    (repo / gcrctl.STATE_PATH).read_bytes(),
+                ),
+            )
+            with self.assertRaisesRegex(SystemExit, "not the direct child"):
+                gcrctl.validate_state_history(repo, adopted_state, packet)
 
     def test_adoption_denies_hidden_evidence_commit_path(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -474,6 +579,53 @@ class GcrctlTests(unittest.TestCase):
                         )
                         for relative, payload in saved_artifacts.items():
                             (repo / relative).write_bytes(payload)
+                if boundary == "transaction-published":
+                    canonical_before = {
+                        gcrctl.BACKLOG_PATH: (repo / gcrctl.BACKLOG_PATH).read_bytes(),
+                        gcrctl.STATE_PATH: (repo / gcrctl.STATE_PATH).read_bytes(),
+                    }
+                    artifacts_before = {
+                        relative: path.read_bytes()
+                        for relative, path in gcrctl.transaction_artifacts(repo).items()
+                        if path.is_file()
+                    }
+
+                    unrelated = repo / "unrelated-untracked.tmp"
+                    unrelated.write_text("unrelated\n", encoding="utf-8")
+                    with self.assertRaisesRegex(SystemExit, "recovery untracked-path boundary differs"):
+                        gcrctl.recover_adoption_transaction(repo, packet)
+                    unrelated.unlink()
+
+                    staged_relative = "planning/staged-recovery.txt"
+                    (repo / staged_relative).write_text("staged\n", encoding="utf-8")
+                    self.git(repo, "add", staged_relative)
+                    with self.assertRaisesRegex(SystemExit, "recovery staged-path boundary differs"):
+                        gcrctl.recover_adoption_transaction(repo, packet)
+                    self.git(repo, "restore", "--staged", staged_relative)
+                    (repo / staged_relative).unlink()
+
+                    tracked_path = repo / "tools/gcrctl.py"
+                    tracked_before = tracked_path.read_bytes()
+                    tracked_path.write_bytes(tracked_before + b"# unrelated\n")
+                    with self.assertRaisesRegex(SystemExit, "recovery tracked-path boundary differs"):
+                        gcrctl.recover_adoption_transaction(repo, packet)
+                    tracked_path.write_bytes(tracked_before)
+
+                    self.assertEqual(
+                        canonical_before,
+                        {
+                            gcrctl.BACKLOG_PATH: (repo / gcrctl.BACKLOG_PATH).read_bytes(),
+                            gcrctl.STATE_PATH: (repo / gcrctl.STATE_PATH).read_bytes(),
+                        },
+                    )
+                    self.assertEqual(
+                        artifacts_before,
+                        {
+                            relative: path.read_bytes()
+                            for relative, path in gcrctl.transaction_artifacts(repo).items()
+                            if path.is_file()
+                        },
+                    )
                 with (
                     patch.object(taskctl, "backlog_schema_errors", return_value=[]),
                     patch.object(taskctl, "validate", return_value=[]),
