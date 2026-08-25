@@ -34,6 +34,125 @@ class Gcr3ctlTests(unittest.TestCase):
         path.write_bytes((json.dumps(document, indent=2) + "\n").encode())
         return path
 
+    def test_runtime_schema_selection_is_exactly_versioned(self) -> None:
+        with patch.object(gcr3ctl, "validate_schema") as validate:
+            gcr3ctl.validate_runtime(
+                REPO,
+                {"schemaVersion": "3.1-control-recovery-state"},
+                "successor",
+            )
+            validate.assert_called_once_with(
+                REPO,
+                {"schemaVersion": "3.1-control-recovery-state"},
+                gcr3ctl.SUCCESSOR_RUNTIME_SCHEMA_PATH,
+                "successor",
+            )
+        with patch.object(gcr3ctl, "validate_schema") as validate:
+            gcr3ctl.validate_runtime(
+                REPO,
+                {"schemaVersion": "3.0-control-recovery-state"},
+                "frozen",
+            )
+            validate.assert_called_once_with(
+                REPO,
+                {"schemaVersion": "3.0-control-recovery-state"},
+                gcr3ctl.RUNTIME_SCHEMA_PATH,
+                "frozen",
+            )
+
+    def test_bridge_only_lineage_path_cannot_change_after_finalization(self) -> None:
+        finalization = "1" * 40
+        candidate = "2" * 40
+        bridge_only = "tools/gcr4ctl.py"
+        with (
+            patch.object(gcr3ctl, "validate_gcr4_bridge", return_value=finalization),
+            patch.object(gcr3ctl, "changed_paths", return_value=[bridge_only]),
+            patch.object(taskctl, "git_is_ancestor", return_value=True),
+            patch.object(taskctl, "git_blob", side_effect=[b"changed", b"frozen"]),
+            self.assertRaisesRegex(SystemExit, "bridge-only path changed"),
+        ):
+            gcr3ctl.exact_gcr4_lineage_paths(
+                REPO,
+                {"schemaVersion": "3.1-control-recovery-state"},
+                candidate=candidate,
+                original_patterns=["tools/gcr3ctl.py"],
+            )
+        with (
+            patch.object(gcr3ctl, "validate_gcr4_bridge", return_value=finalization),
+            patch.object(gcr3ctl, "changed_paths", return_value=[bridge_only]),
+            patch.object(taskctl, "git_is_ancestor", return_value=True),
+            patch.object(taskctl, "git_blob", side_effect=[b"frozen", b"frozen"]),
+        ):
+            self.assertEqual(
+                {bridge_only},
+                gcr3ctl.exact_gcr4_lineage_paths(
+                    REPO,
+                    {"schemaVersion": "3.1-control-recovery-state"},
+                    candidate=candidate,
+                    original_patterns=["tools/gcr3ctl.py"],
+                ),
+            )
+
+    def test_r02_changed_files_exclude_only_authenticated_bridge_lineage(self) -> None:
+        candidate = "2" * 40
+        base = "3" * 40
+        packet = {
+            "acceptanceCriteria": ["criterion"],
+            "bootstrapUnit": {"authorizedPaths": ["tools/gcr3ctl.py"]},
+        }
+        document = {
+            "controlRecoveryId": gcr3ctl.GCR_ID,
+            "bootstrapUnit": gcr3ctl.BOOTSTRAP_ID,
+            "attemptId": "R02",
+            "commit": candidate,
+            "baseCommit": base,
+            "branch": gcr3ctl.BRANCH,
+            "triggerWitness": gcr3ctl.trigger_witness(),
+            "changedFiles": ["tools/gcr3ctl.py"],
+            "acceptanceCriteria": [{"index": 1, "statement": "criterion", "evidence": ["proved"]}],
+            "findingClosures": [],
+            "unverifiedItems": [],
+            "checks": [{"id": "focused", "exitCode": 0, "result": "passed"}],
+            "verificationSelection": {"selectedChecks": ["focused"]},
+        }
+        with (
+            patch.object(gcr3ctl, "validate_runtime"),
+            patch.object(
+                gcr3ctl,
+                "changed_paths",
+                return_value=["tools/gcr3ctl.py", "tools/gcr4ctl.py"],
+            ),
+            patch.object(
+                gcr3ctl,
+                "exact_gcr4_lineage_paths",
+                return_value={"tools/gcr4ctl.py"},
+            ),
+        ):
+            gcr3ctl.validate_evidence_document(
+                REPO,
+                packet,
+                gcr3ctl.evidence_path("R02"),
+                document,
+                candidate,
+                base,
+                "R02",
+                {},
+                bridge_state={"schemaVersion": "3.1-control-recovery-state"},
+            )
+            document["changedFiles"] = ["tools/gcr3ctl.py", "tools/gcr4ctl.py"]
+            with self.assertRaisesRegex(SystemExit, "evidence identity, scope"):
+                gcr3ctl.validate_evidence_document(
+                    REPO,
+                    packet,
+                    gcr3ctl.evidence_path("R02"),
+                    document,
+                    candidate,
+                    base,
+                    "R02",
+                    {},
+                    bridge_state={"schemaVersion": "3.1-control-recovery-state"},
+                )
+
     def fixture(self, temporary: str) -> tuple[Path, str, str, dict]:
         repo = Path(temporary)
         self.git(repo, "init")
@@ -164,7 +283,40 @@ class Gcr3ctlTests(unittest.TestCase):
         state_path.parent.mkdir(parents=True, exist_ok=True)
         attempt_id = "R01"
         evidence_relative = gcr3ctl.evidence_path(attempt_id)
-        evidence_payload = (json.dumps({"fixture": "canonical R01 evidence"}, indent=2) + "\n").encode()
+        packet = {
+            "acceptanceCriteria": ["Synthetic recovery fixture criterion."],
+            "bootstrapUnit": {"authorizedPaths": ["tools/gcr3ctl.py"]},
+        }
+        evidence_document = {
+            "schemaVersion": "3.0-control-recovery-evidence",
+            "documentType": "governance-control-recovery-bootstrap-evidence",
+            "controlRecoveryId": gcr3ctl.GCR_ID,
+            "bootstrapUnit": gcr3ctl.BOOTSTRAP_ID,
+            "attemptId": attempt_id,
+            "commit": candidate,
+            "baseCommit": approval_base,
+            "branch": gcr3ctl.BRANCH,
+            "triggerWitness": gcr3ctl.trigger_witness(),
+            "changedFiles": ["tools/gcr3ctl.py"],
+            "checks": [{"id": "fixture", "command": "fixture", "exitCode": 0, "result": "passed"}],
+            "acceptanceCriteria": [
+                {
+                    "index": 1,
+                    "statement": "Synthetic recovery fixture criterion.",
+                    "evidence": ["Exercised by the synthetic recovery fixture."],
+                }
+            ],
+            "findingClosures": [],
+            "unverifiedItems": [],
+            "verificationSelection": {
+                "riskAnalysis": "Synthetic recovery fixture scope.",
+                "selectedChecks": ["fixture"],
+                "deferredChecks": [],
+            },
+        }
+        if ledger_state_mismatch == "candidate-evidence-scope":
+            evidence_document["changedFiles"] = ["tools/unapproved.py"]
+        evidence_payload = (json.dumps(evidence_document, indent=2) + "\n").encode()
         evidence_path = repo / evidence_relative
         evidence_path.parent.mkdir(parents=True, exist_ok=True)
         evidence_path.write_bytes(evidence_payload)
@@ -204,7 +356,7 @@ class Gcr3ctlTests(unittest.TestCase):
         self.git(repo, "add", evidence_relative, gcr3ctl.STATE_PATH)
         self.git(repo, "commit", "-m", "freeze synthetic R01 submission")
         reviewed_state = self.git(repo, "rev-parse", "HEAD")
-        authority: tuple[dict, dict, str] = ({}, {}, approval_base)
+        authority: tuple[dict, dict, str] = ({}, packet, approval_base)
         gcr3ctl.validate_history(repo, state, authority[1])
         closures: list[dict[str, str]] = []
         ledger_relative = gcr3ctl.review_path(attempt_id)
@@ -589,6 +741,7 @@ class Gcr3ctlTests(unittest.TestCase):
             "evidence",
             "reviewer",
             "candidate",
+            "candidate-evidence-scope",
         )
         for scenario in scenarios:
             with self.subTest(scenario=scenario), tempfile.TemporaryDirectory() as temporary:
@@ -669,6 +822,9 @@ class Gcr3ctlTests(unittest.TestCase):
                 (repo / ".git/gcr3-transaction.json").write_bytes((json.dumps(transaction, indent=2) + "\n").encode())
                 (repo / ".git/gcr3-anchor.json").write_bytes((json.dumps(anchor, indent=2) + "\n").encode())
                 (repo / ".git/gcr3-authority-base").write_text(authority[2], encoding="ascii")
+                (repo / ".git/gcr3-authority-packet.json").write_bytes(
+                    (json.dumps(authority[1], indent=2) + "\n").encode()
+                )
                 (repo / ".git/gcr3-successor-backlog").write_bytes(successor_backlog)
                 (repo / ".git/gcr3-successor-state").write_bytes(successor_state)
                 child = "\n".join(
@@ -682,7 +838,10 @@ class Gcr3ctlTests(unittest.TestCase):
                         "new_state = (repo / '.git/gcr3-successor-state').read_bytes()",
                         "transaction = json.loads((repo / '.git/gcr3-transaction.json').read_bytes())",
                         "anchor = json.loads((repo / '.git/gcr3-anchor.json').read_bytes())",
-                        "authority = ({}, {}, (repo / '.git/gcr3-authority-base').read_text(encoding='ascii'))",
+                        (
+                            "authority = ({}, json.loads((repo / '.git/gcr3-authority-packet.json').read_bytes()), "
+                            "(repo / '.git/gcr3-authority-base').read_text(encoding='ascii'))"
+                        ),
                         "def crash(label):",
                         "  if label == boundary: os._exit(77)",
                         "gcr3ctl.adoption_fault_boundary = crash",

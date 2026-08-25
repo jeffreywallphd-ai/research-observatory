@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/GCR-0004.B00.gcr3-runtime.json",
+  "title": "GCR-0003 state after the exact GCR-0004 R01 review-transition bridge",
+  "type": "object",
+  "required": [
+    "schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "status", "approval",
+    "triggerWitness", "attempts", "currentSubmission", "adoption", "reviewTransitionRecovery"
+  ],
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "attempt": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[A-Za-z0-9._*/-]+$"},
+    "reference": {
+      "type": "object", "required": ["path", "sha256", "commit"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}},
+      "additionalProperties": false
+    },
+    "witness": {
+      "type": "object", "required": ["path", "sha256", "role", "untracked", "unstaged", "executionAuthority"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/W1.A04.B00.json"},
+        "sha256": {"const": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"},
+        "role": {"const": "atomic-failure-trigger-only"},
+        "untracked": {"const": true}, "unstaged": {"const": true}, "executionAuthority": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object", "required": ["id", "severity", "blocking", "criterionIndex", "title", "reproduction", "requiredRemediation"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^GCR-0003(?:\\.B00)?-R[0-9]{2,}-F[0-9]{2,}$"},
+        "severity": {"enum": ["critical", "high", "medium", "low"]}, "blocking": {"type": "boolean"},
+        "criterionIndex": {"type": "integer", "minimum": 1}, "title": {"type": "string", "minLength": 1},
+        "reproduction": {"type": "string", "minLength": 1}, "requiredRemediation": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "closure": {
+      "type": "object", "required": ["findingId", "disposition", "evidence"],
+      "properties": {
+        "findingId": {"type": "string", "minLength": 1},
+        "disposition": {"enum": ["fixed", "not-reproduced", "superseded", "accepted-risk"]},
+        "evidence": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "submission": {
+      "type": "object",
+      "required": ["attemptId", "submittedBy", "submittedAt", "candidateCommit", "baseCommit", "branch", "evidence", "priorAttemptId", "openFindingIds", "rootCauseAnalysis"],
+      "properties": {
+        "attemptId": {"$ref": "#/$defs/attempt"}, "submittedBy": {"const": "codex"},
+        "submittedAt": {"$ref": "#/$defs/timestamp"}, "candidateCommit": {"$ref": "#/$defs/commit"},
+        "baseCommit": {"const": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c"},
+        "branch": {"const": "codex/w1-windows-local-runtime"}, "evidence": {"$ref": "#/$defs/reference"},
+        "priorAttemptId": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/attempt"}]},
+        "openFindingIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "rootCauseAnalysis": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object", "required": ["reviewer", "result", "reviewedAt", "reviewedStateCommit", "notes"],
+      "properties": {
+        "reviewer": {"type": "string", "minLength": 1}, "result": {"enum": ["approved", "changes-requested", "blocked"]},
+        "reviewedAt": {"$ref": "#/$defs/timestamp"}, "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "historyAttempt": {
+      "type": "object", "required": ["submission", "review", "ledger", "findings", "closures"],
+      "properties": {
+        "submission": {"$ref": "#/$defs/submission"}, "review": {"$ref": "#/$defs/review"},
+        "ledger": {"$ref": "#/$defs/reference"},
+        "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/closure"}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "schemaVersion": {"const": "3.1-control-recovery-state"},
+    "documentType": {"const": "governance-control-recovery-bootstrap-state"},
+    "controlRecoveryId": {"const": "GCR-0003"}, "bootstrapUnit": {"const": "GCR-0003.B00"},
+    "status": {"enum": ["REVIEW", "CHANGES_REQUESTED", "BLOCKED", "APPROVED", "ADOPTION_FINALIZATION", "ADOPTED"]},
+    "approval": {
+      "type": "object", "required": ["path", "sha256", "commit"],
+      "properties": {
+        "path": {"const": "planning/governance-control-recovery/GCR-0003.approval.json"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "commit": {"const": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c"}
+      },
+      "additionalProperties": false
+    },
+    "triggerWitness": {"$ref": "#/$defs/witness"},
+    "attempts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/historyAttempt"}},
+    "currentSubmission": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/submission"}]},
+    "adoption": {
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object", "required": ["adoptedBy", "adoptedAt", "predecessorRevision", "successorRevision", "supportedControlCeiling", "reviewedStateCommit", "evidence"],
+          "properties": {
+            "adoptedBy": {"const": "codex"}, "adoptedAt": {"$ref": "#/$defs/timestamp"},
+            "predecessorRevision": {"const": 9}, "successorRevision": {"const": 10},
+            "supportedControlCeiling": {"const": 11}, "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+            "evidence": {"$ref": "#/$defs/reference"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "reviewTransitionRecovery": {
+      "type": "object",
+      "required": ["controlRecoveryId", "bootstrapUnit", "reviewedStateCommit", "adverseLedger", "approvedGcr4StateCommit", "applicationEvidence", "result", "controlRevision", "ordinaryExecutionAuthority"],
+      "properties": {
+        "controlRecoveryId": {"const": "GCR-0004"}, "bootstrapUnit": {"const": "GCR-0004.B00"},
+        "reviewedStateCommit": {"const": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5"},
+        "adverseLedger": {
+          "type": "object", "required": ["path", "sha256"],
+          "properties": {
+            "path": {"const": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json"},
+            "sha256": {"const": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b"}
+          },
+          "additionalProperties": false
+        },
+        "approvedGcr4StateCommit": {"$ref": "#/$defs/commit"},
+        "applicationEvidence": {"$ref": "#/$defs/reference"},
+        "result": {"const": "changes-requested"}, "controlRevision": {"const": 9},
+        "ordinaryExecutionAuthority": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "REVIEW"}}},
+      "then": {"properties": {"currentSubmission": {"type": "object"}, "adoption": {"const": null}}}
+    },
+    {
+      "if": {"properties": {"status": {"enum": ["CHANGES_REQUESTED", "BLOCKED", "APPROVED"]}}},
+      "then": {"properties": {"currentSubmission": {"const": null}, "adoption": {"const": null}}}
+    },
+    {
+      "if": {"properties": {"status": {"enum": ["ADOPTION_FINALIZATION", "ADOPTED"]}}},
+      "then": {"properties": {"currentSubmission": {"const": null}, "adoption": {"type": "object"}}}
+    }
+  ],
+  "additionalProperties": false
+}
