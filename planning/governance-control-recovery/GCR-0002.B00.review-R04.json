@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "2.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0002",
+  "bootstrapUnit": "GCR-0002.B00",
+  "attemptId": "R04",
+  "candidateCommit": "38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7",
+  "reviewedStateCommit": "9518eaf538aebbf57164c1c0dfa2c44690177ca2",
+  "reviewer": "independent-commit-bound-remediation-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R04.json",
+    "sha256": "ffd49e1e9e89779c1c3f92e0ab22396c252705c6578abaae40152d60b44a3c2b",
+    "commit": "38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7"
+  },
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GCR-0002.B00-R03-F01",
+      "disposition": "fixed",
+      "evidence": "At exact R04 candidate 38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7, validate_history loads and v2-schema-validates each immutable reviewed-state and ledger Git blob, reapplies validate_review to the exact frozen submission, requires a normalized independent reviewer and globally unique ordered finding IDs, limits unique closures to the prior open set, and denies approval with any new finding or unresolved prior blocking finding. It compares the ledger's complete identity, candidate, reviewed-state commit, reviewer, result, evidence, findings, closures, and notes to the state attempt, reconstructs the exact approval-state document from the REVIEW projection plus that attempt, and canonical_approved_state additionally refuses any remaining open finding. The independent full GCR2 suite passed all 11 tests in 217.781 seconds, including adverse-ledger/approved-state, approved-ledger/adverse-state, individually substituted findings, closures, evidence, reviewer, and candidate, coherent alternate approval authority, production CRLF raw-byte restoration, and every declared child-process boundary; denial cases preserve backlog, state, lock, manifest, and successor artifacts byte-for-byte."
+    }
+  ],
+  "notes": "APPROVED for the exact frozen R04 submission. HEAD and reviewedStateCommit both resolve to 9518eaf538aebbf57164c1c0dfa2c44690177ca2, whose sole parent is candidate 38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7 and whose delta adds only exact R04 evidence plus the state submission transition. The candidate strictly descends from the ordered R03 review projection at 886b6db8dbfb1adb37cbdec696c9c068ed9ea493; the immutable approval has exactly one introduction commit, c029ba348a8bd0abee23e11c078aff4b8fd0b02b. The approval-base-to-candidate delta is exactly the seventeen evidence-declared, packet-authorized paths, while the R03 reviewed-state-to-R04 candidate remediation delta is confined to the immutable R03 ledger/state projection plus tools/gcr2ctl.py and tests/foundation/test_gcr2ctl.py. R04 evidence is exact at SHA-256 ffd49e1e9e89779c1c3f92e0ab22396c252705c6578abaae40152d60b44a3c2b, explicitly closes GCR-0002.B00-R03-F01, contains the required continuing root-cause analysis, and reports no unverified item. Independently, 11 GCR2 tests passed in 217.781 seconds; 26 affected taskctl-schema and v2/v3 recovery tests passed in 36.483 seconds; governed Python formatting, lint, and type quality passed for 123 files. Code inspection and those real-Git tests preserve raw Windows CRLF predecessor bytes, unpatched successor validation, exact predecessor-or-successor recovery, durable cleanup, and byte-stable denial before mutation. The protected W1.A04 witness remains exact, untracked, unstaged, and non-authoritative at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. No gcr2ctl review, adopt, or recover command, state transition, Wave/amendment/task/gate action, stage, commit, or merge was performed."
+}
