@@ -2589,6 +2589,177 @@ def recovery_bootstrap_projection_errors(
     return errors
 
 
+def recovery_v4_supplement_packet_review_errors(
+    repo: Path,
+    supplement_id: str,
+    approval: dict[str, Any],
+    packet: dict[str, Any],
+    packet_payload: bytes,
+    packet_commit: str,
+    approval_introduction: str,
+) -> list[str]:
+    """Fail closed unless v4 human approval follows an immutable independent review ledger."""
+    errors: list[str] = []
+    projection = approval.get("independentPacketReview") or {}
+    reference = projection.get("ledger") or {}
+    attempt_id = str(projection.get("attemptId") or "")
+    relative = str(reference.get("path") or "")
+    expected_relative = f"planning/governance-recovery-requests/{supplement_id}.review-{attempt_id}.json"
+    review_commit = str(reference.get("commit") or "")
+    ledger: dict[str, Any] = {}
+    ledger_payload = b""
+    if relative != expected_relative:
+        errors.append(f"{supplement_id}: v4 packet-review ledger path is not canonical")
+    try:
+        path = safe_control_path(
+            repo,
+            relative,
+            prefix="planning/governance-recovery-requests",
+            label=f"{supplement_id} v4 packet-review ledger",
+        )
+        ledger_payload = path.read_bytes()
+        ledger = json.loads(ledger_payload)
+        schema = load_json_schema(
+            repo / "planning/governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json"
+        )
+        Draft202012Validator(schema, format_checker=FORMAT_CHECKER).validate(ledger)
+    except (OSError, ValueError, json.JSONDecodeError, SchemaError, ValidationError) as exc:
+        errors.append(f"{supplement_id}: invalid v4 packet-review ledger: {exc}")
+        return errors
+    if hashlib.sha256(ledger_payload).hexdigest() != reference.get("sha256"):
+        errors.append(f"{supplement_id}: v4 packet-review ledger hash mismatch")
+    if approval_introduction_commit(repo, relative) != review_commit:
+        errors.append(f"{supplement_id}: v4 packet-review ledger lacks a unique immutable introduction")
+    if not git_commit_exists(repo, review_commit) or not git_is_ancestor(repo, review_commit):
+        errors.append(f"{supplement_id}: v4 packet-review commit is absent from current history")
+    elif git_blob(repo, review_commit, relative) != ledger_payload:
+        errors.append(f"{supplement_id}: v4 packet-review ledger differs from its immutable Git blob")
+    if (
+        review_commit == packet_commit
+        or not git_is_ancestor(repo, packet_commit, review_commit)
+        or approval_introduction == review_commit
+        or not git_is_ancestor(repo, review_commit, approval_introduction)
+    ):
+        errors.append(f"{supplement_id}: v4 packet review/approval ancestry is invalid")
+    reviewer = str(ledger.get("reviewer") or "")
+    findings = ledger.get("findings") or []
+    closures = ledger.get("closures") or []
+    finding_ids = [str(item.get("id") or "") for item in findings]
+    closure_ids = [str(item.get("findingId") or "") for item in closures]
+    severities = [REVIEW_SEVERITY_ORDER.get(str(item.get("severity") or ""), 99) for item in findings]
+    if (
+        ledger.get("documentType") != "governance-recovery-supplement-packet-review"
+        or ledger.get("recoveryRequestId") != supplement_id.split(".", 1)[0]
+        or ledger.get("supplementId") != supplement_id
+        or ledger.get("attemptId") != attempt_id
+        or ledger.get("candidateCommit") != packet_commit
+        or ledger.get("packetSha256") != hashlib.sha256(packet_payload).hexdigest()
+        or not reviewer
+        or reviewer != reviewer.strip()
+        or reviewer == approval.get("approvedBy")
+        or severities != sorted(severities)
+        or len(finding_ids) != len(set(finding_ids))
+        or len(closure_ids) != len(set(closure_ids))
+        or any(
+            not finding_id.startswith(f"{supplement_id}-{attempt_id}-F")
+            or int(finding.get("criterionIndex") or 0) > len(packet.get("acceptanceCriteria") or [])
+            for finding_id, finding in zip(finding_ids, findings, strict=True)
+        )
+    ):
+        errors.append(f"{supplement_id}: v4 packet-review identity, ordering, or independence is invalid")
+    prior = ledger.get("priorAttempt")
+    prior_findings: dict[str, dict[str, Any]] = {}
+    if prior is None:
+        if attempt_id != "R01" or closures:
+            errors.append(f"{supplement_id}: v4 first packet review has invalid prior history")
+    else:
+        prior_reference = (prior or {}).get("ledger") or {}
+        prior_attempt = str((prior or {}).get("attemptId") or "")
+        prior_relative = str(prior_reference.get("path") or "")
+        prior_commit = str(prior_reference.get("commit") or "")
+        prior_ledger: dict[str, Any] = {}
+        try:
+            prior_path = safe_control_path(
+                repo,
+                prior_relative,
+                prefix="planning/governance-recovery-requests",
+                label=f"{supplement_id} prior v4 packet-review ledger",
+            )
+            prior_payload = prior_path.read_bytes()
+            prior_ledger = json.loads(prior_payload)
+            schema = load_json_schema(
+                repo / "planning/governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json"
+            )
+            Draft202012Validator(schema, format_checker=FORMAT_CHECKER).validate(prior_ledger)
+        except (OSError, ValueError, json.JSONDecodeError, SchemaError, ValidationError) as exc:
+            errors.append(f"{supplement_id}: invalid prior v4 packet-review ledger: {exc}")
+            prior_payload = b""
+        if prior_relative != f"planning/governance-recovery-requests/{supplement_id}.review-{prior_attempt}.json":
+            errors.append(f"{supplement_id}: prior v4 packet-review path is not canonical")
+        if (
+            hashlib.sha256(prior_payload).hexdigest() != prior_reference.get("sha256")
+            or approval_introduction_commit(repo, prior_relative) != prior_commit
+            or not git_commit_exists(repo, prior_commit)
+            or git_blob(repo, prior_commit, prior_relative) != prior_payload
+            or prior_commit == review_commit
+            or not git_is_ancestor(repo, prior_commit, review_commit)
+        ):
+            errors.append(f"{supplement_id}: prior v4 packet-review authority is stale or forked")
+        expected_attempt = (
+            f"R{int(prior_attempt.removeprefix('R')) + 1:02d}" if re.fullmatch(r"R[0-9]{2,}", prior_attempt) else ""
+        )
+        prior_finding_list = prior_ledger.get("findings") or []
+        prior_findings = {str(item.get("id") or ""): item for item in prior_finding_list}
+        prior_candidate = str(prior_ledger.get("candidateCommit") or "")
+        prior_packet_payload = git_blob(
+            repo,
+            prior_candidate,
+            f"planning/governance-recovery-requests/{supplement_id}.packet.json",
+        )
+        prior_severities = [
+            REVIEW_SEVERITY_ORDER.get(str(item.get("severity") or ""), 99) for item in prior_finding_list
+        ]
+        prior_reviewer = str(prior_ledger.get("reviewer") or "")
+        if (
+            attempt_id != expected_attempt
+            or prior_ledger.get("documentType") != "governance-recovery-supplement-packet-review"
+            or prior_ledger.get("recoveryRequestId") != supplement_id.split(".", 1)[0]
+            or prior_ledger.get("supplementId") != supplement_id
+            or prior_ledger.get("attemptId") != prior_attempt
+            or prior_ledger.get("result") != (prior or {}).get("result")
+            or prior_ledger.get("result") not in {"changes-requested", "blocked"}
+            or not prior_findings
+            or prior_severities != sorted(prior_severities)
+            or not prior_reviewer
+            or prior_reviewer != prior_reviewer.strip()
+            or prior_reviewer == approval.get("approvedBy")
+            or prior_packet_payload is None
+            or prior_ledger.get("packetSha256") != hashlib.sha256(prior_packet_payload or b"").hexdigest()
+            or not git_is_ancestor(repo, prior_candidate, prior_commit)
+            or prior_candidate == packet_commit
+            or not git_is_ancestor(repo, prior_candidate, packet_commit)
+            or set(closure_ids) != set(prior_findings)
+        ):
+            errors.append(f"{supplement_id}: v4 packet-review prior-attempt chain is invalid")
+        if any(
+            prior_findings.get(str(closure.get("findingId") or ""), {}).get("blocking") is True
+            and closure.get("disposition") == "accepted-risk"
+            for closure in closures
+        ):
+            errors.append(f"{supplement_id}: blocking v4 packet-review finding cannot be accepted as risk")
+    if (
+        ledger.get("result") != "approved"
+        or ledger.get("approvalAvailable") is not True
+        or findings
+        or projection.get("candidateCommit") != packet_commit
+        or projection.get("result") != "APPROVED"
+        or projection.get("openFindingIds") != []
+        or sorted(projection.get("closedFindingIds") or []) != sorted(closure_ids)
+    ):
+        errors.append(f"{supplement_id}: v4 packet review is adverse, unresolved, stale, or misprojected")
+    return errors
+
+
 def recovery_supplement_authority_errors(
     data: dict[str, Any],
     repo: Path,
@@ -2672,15 +2843,37 @@ def recovery_supplement_authority_errors(
         )
     ):
         errors.append(f"{supplement_id}: supplemental approval is not bootstrap-only")
-    review = approval.get("independentPacketReview") or {}
-    if (
-        review.get("result") != "APPROVED"
-        or review.get("candidateCommit") != packet_reference.get("commit")
-        or review.get("packetSha256") != packet_reference.get("sha256")
-        or review.get("reviewer") == approval.get("approvedBy")
-        or review.get("openFindingIds") != []
+    if approval.get("$schema") == (
+        "../governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json"
     ):
-        errors.append(f"{supplement_id}: supplemental packet review is absent, stale, or not independent")
+        approval_reference = supplement.get("approval_reference") or {}
+        approval_relative = str(approval_reference.get("path") or "")
+        approval_introduction = str(approval_reference.get("introduction_commit") or "")
+        if approval_introduction_commit(repo, approval_relative) != approval_introduction:
+            errors.append(f"{supplement_id}: v4 human approval lacks a unique immutable introduction")
+        if not git_is_ancestor(repo, str(packet_reference.get("commit") or ""), approval_introduction):
+            errors.append(f"{supplement_id}: v4 human approval does not descend from its packet")
+        errors.extend(
+            recovery_v4_supplement_packet_review_errors(
+                repo,
+                supplement_id,
+                approval,
+                packet,
+                payloads.get("packet") or b"",
+                str(packet_reference.get("commit") or ""),
+                approval_introduction,
+            )
+        )
+    else:
+        review = approval.get("independentPacketReview") or {}
+        if (
+            review.get("result") != "APPROVED"
+            or review.get("candidateCommit") != packet_reference.get("commit")
+            or review.get("packetSha256") != packet_reference.get("sha256")
+            or review.get("reviewer") == approval.get("approvedBy")
+            or review.get("openFindingIds") != []
+        ):
+            errors.append(f"{supplement_id}: supplemental packet review is absent, stale, or not independent")
     base = packet.get("baseRecoveryAuthority") or {}
     base_packet = base.get("packet") or {}
     base_approval = base.get("approval") or {}
