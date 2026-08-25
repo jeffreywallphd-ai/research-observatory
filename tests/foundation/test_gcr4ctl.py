@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import shutil
 import subprocess
@@ -7,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from jsonschema import Draft202012Validator
 
@@ -64,6 +66,22 @@ class Gcr4ctlTests(unittest.TestCase):
             self.assertEqual((None, None), gcr4ctl.load_state(repo, required=False))
             with self.assertRaisesRegex(SystemExit, "state is absent"):
                 gcr4ctl.load_state(repo, required=True)
+
+    def test_initial_submission_rejects_a_substituted_approval_argument(self) -> None:
+        args = argparse.Namespace(
+            repo=REPO,
+            approval_commit="f" * 40,
+            agent=gcr4ctl.ACTOR,
+            implementation_commit="e" * 40,
+            evidence=gcr4ctl.evidence_path("R01"),
+        )
+        with (
+            patch.object(gcr4ctl, "load_authority", return_value=({}, {}, gcr4ctl.APPROVAL_COMMIT)),
+            patch.object(gcr4ctl, "present_transaction_artifacts", return_value=[]),
+            patch.object(gcr4ctl, "load_state", return_value=(None, None)),
+            self.assertRaisesRegex(SystemExit, "approval-commit argument differs"),
+        ):
+            gcr4ctl.freeze_submission(args, remediation=False)
 
     def test_exact_approved_authority_is_valid(self) -> None:
         approval, packet, introduction = gcr4ctl.load_authority(REPO)
