@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0003",
   "bootstrapUnit": "GCR-0003.B00",
-  "status": "CHANGES_REQUESTED",
+  "status": "REVIEW",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0003.approval.json",
     "sha256": "82a6187fa47e55c286ef3ae60bd185c94dfcdf5ba87c1283391d315988528ca7",
@@ -170,7 +170,25 @@
       "closures": []
     }
   ],
-  "currentSubmission": null,
+  "currentSubmission": {
+    "attemptId": "R04",
+    "submittedBy": "codex",
+    "candidateCommit": "4e541ee9f7e442c52ab742caf40863e58c95ab6a",
+    "baseCommit": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.R04.json",
+      "sha256": "77d4f5a7fff408f864ea0e8caed8a92f34ea6ce821b3610eb5764fb23a0b8f81",
+      "commit": "4e541ee9f7e442c52ab742caf40863e58c95ab6a"
+    },
+    "submittedAt": "2026-08-25T23:15:14+00:00",
+    "priorAttemptId": "R03",
+    "openFindingIds": [
+      "GCR-0003.B00-R02-F01",
+      "GCR-0003.B00-R03-F01"
+    ],
+    "rootCauseAnalysis": "R03 required prior-review ancestry but reused an inclusive ancestor predicate and omitted the equality boundary from its real-Git matrix; the reader therefore accepted a candidate that was not a strict-descendant remediation commit."
+  },
   "adoption": null,
   "reviewTransitionRecovery": {
     "controlRecoveryId": "GCR-0004",
