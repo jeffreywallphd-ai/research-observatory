@@ -1312,6 +1312,7 @@ class Gcr3ctlTests(unittest.TestCase):
             "wrong-prior-commit",
             "wrong-prior-candidate",
             "wrong-prior-result",
+            "candidate-equals-prior-review",
             "skipped-r02",
             "repeated-attempt",
             "stale-closure",
@@ -1435,11 +1436,15 @@ class Gcr3ctlTests(unittest.TestCase):
                         "recoveryRequestId": "GRR-0002",
                         "supplementId": "GRR-0002.S02",
                         "attemptId": "R02",
-                        "candidateCommit": packet_r01_commit
+                        "candidateCommit": review_r01_commit
+                        if variant == "candidate-equals-prior-review"
+                        else packet_r01_commit
                         if variant == "wrong-prior-candidate"
                         else packet_r02_commit,
                         "packetSha256": recoveryctl.sha256(
-                            packet_r01_payload if variant == "wrong-prior-candidate" else packet_r02_payload
+                            packet_r01_payload
+                            if variant in {"wrong-prior-candidate", "candidate-equals-prior-review"}
+                            else packet_r02_payload
                         ),
                         "reviewer": "independent-s02-history-reviewer",
                         "result": "changes-requested",
