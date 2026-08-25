@@ -805,6 +805,7 @@ class Gcr3ctlTests(unittest.TestCase):
             self.git(repo, "config", "user.name", "GCR3 E2E Fixture")
             self.git(repo, "config", "core.autocrlf", "false")
             self.assertEqual(gcr3ctl.BRANCH, self.git(repo, "branch", "--show-current"))
+            self.git(repo, "checkout", "-B", gcr3ctl.BRANCH, gcr3ctl.APPROVAL_COMMIT)
             for relative in implementation_paths:
                 destination = repo / relative
                 destination.parent.mkdir(parents=True, exist_ok=True)
