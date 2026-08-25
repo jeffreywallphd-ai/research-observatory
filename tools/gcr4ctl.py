@@ -1026,6 +1026,7 @@ def restore_predecessor(repo: Path, predecessor: bytes) -> None:
         if not next_path.is_file() or next_path.is_symlink():
             raise SystemExit("GCR-0004 state-next artifact is redirected")
         unlink_durable(next_path)
+        adoption_fault_boundary(f"gcr4-cleanup-{PurePosixPath(STATE_NEXT_PATH).name}")
     write_new_durable(next_path, predecessor)
     move_write_through(next_path, repo / GCR3_STATE_PATH)
     if sha256((repo / GCR3_STATE_PATH).read_bytes()) != GCR3_STATE_SHA256:
@@ -1060,11 +1061,30 @@ def recover_transaction(repo: Path) -> str:
     present = present_transaction_artifacts(repo)
     if not present:
         return "ABSENT"
-    if git(repo, "branch", "--show-current") != BRANCH or git(repo, "diff", "--cached", "--name-only", "--"):
-        raise SystemExit("GCR-0004 recovery requires the exact branch and an unstaged index")
+    if git(repo, "branch", "--show-current") != BRANCH:
+        raise SystemExit("GCR-0004 recovery requires the exact branch")
+    if git(repo, "diff", "--cached", "--name-only", "--"):
+        raise SystemExit("GCR-0004 recovery refuses staged changes")
     validate_trigger(repo)
     validate_adverse_ledger(repo, require_untracked=True)
+    allowed_untracked = {TRIGGER_PATH, GCR3_LEDGER_PATH, *present}
+    untracked = set(git(repo, "ls-files", "--others", "--exclude-standard").splitlines())
+    if untracked != allowed_untracked:
+        difference = sorted(untracked ^ allowed_untracked)
+        raise SystemExit(
+            f"GCR-0004 recovery untracked-path boundary differs: {difference[0] if difference else '<unknown>'}"
+        )
+    dirty_tracked = set(git(repo, "diff", "--name-only", "HEAD", "--").splitlines())
+    unrelated_tracked = dirty_tracked - {GCR3_STATE_PATH}
+    if unrelated_tracked:
+        raise SystemExit(f"GCR-0004 recovery refuses unrelated tracked dirt: {sorted(unrelated_tracked)[0]}")
     anchor, predecessor, _approved_state, _evidence_commit = load_anchor(repo)
+    live_state = repo / GCR3_STATE_PATH
+    if not live_state.is_file() or live_state.is_symlink():
+        raise SystemExit("GCR-0004 recovery canonical state is absent or redirected")
+    live_sha256 = sha256(live_state.read_bytes())
+    if live_sha256 not in {GCR3_STATE_SHA256, str(anchor.get("successorStateSha256") or "")}:
+        raise SystemExit("GCR-0004 recovery canonical state is neither the exact predecessor nor successor")
     with transaction_lock(repo, recover=True):
         manifest = transaction_artifacts(repo)[TRANSACTION_PATH]
         if not manifest.is_file() or manifest.is_symlink():

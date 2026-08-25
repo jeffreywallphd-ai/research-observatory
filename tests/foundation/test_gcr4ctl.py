@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -39,6 +40,7 @@ class Gcr4ctlTests(unittest.TestCase):
             gcr4ctl.GCR3_RUNTIME_V3_PATH,
             gcr4ctl.GCR3_SUCCESSOR_SCHEMA_PATH,
             gcr4ctl.TRANSACTION_SCHEMA_PATH,
+            gcr4ctl.BACKLOG_PATH,
         ):
             destination = repo / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -59,6 +61,50 @@ class Gcr4ctlTests(unittest.TestCase):
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(REPO / relative, destination)
         return repo
+
+    def prepared_transaction_fixture(self, temporary: str) -> tuple[Path, bytes, bytes, dict, dict]:
+        repo = self.exact_boundary_fixture(temporary)
+        predecessor = (repo / gcr4ctl.GCR3_STATE_PATH).read_bytes()
+        approved_state = self.git(repo, "rev-parse", "HEAD")
+        evidence_path = repo / gcr4ctl.APPLICATION_EVIDENCE_PATH
+        evidence_path.parent.mkdir(parents=True, exist_ok=True)
+        evidence_payload = b'{"exact":"application-evidence"}\n'
+        evidence_path.write_bytes(evidence_payload)
+        self.git(repo, "add", gcr4ctl.APPLICATION_EVIDENCE_PATH)
+        self.git(repo, "commit", "-m", "exact application evidence")
+        evidence_commit = self.git(repo, "rev-parse", "HEAD")
+        successor_document = gcr4ctl.recovered_gcr3_state(
+            repo,
+            approved_state=approved_state,
+            evidence_commit=evidence_commit,
+            evidence_payload=evidence_payload,
+        )
+        successor = (json.dumps(successor_document, indent=2) + "\n").encode()
+        transaction = gcr4ctl.transaction_document(
+            predecessor=predecessor,
+            successor=successor,
+            approved_state=approved_state,
+            evidence_commit=evidence_commit,
+        )
+        anchor = gcr4ctl.application_anchor(
+            approved_state=approved_state,
+            evidence_commit=evidence_commit,
+            predecessor_payload=predecessor,
+            successor_payload=successor,
+        )
+        return repo, predecessor, successor, transaction, anchor
+
+    def write_prepared_transaction(
+        self,
+        repo: Path,
+        successor: bytes,
+        transaction: dict,
+        anchor: dict,
+    ) -> None:
+        artifacts = gcr4ctl.transaction_artifacts(repo)
+        artifacts[gcr4ctl.LOCK_PATH].write_bytes((json.dumps(anchor, indent=2) + "\n").encode())
+        artifacts[gcr4ctl.STATE_NEXT_PATH].write_bytes(successor)
+        artifacts[gcr4ctl.TRANSACTION_PATH].write_bytes((json.dumps(transaction, indent=2) + "\n").encode())
 
     def test_optional_state_loader_accepts_authorized_absence(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -246,6 +292,96 @@ class Gcr4ctlTests(unittest.TestCase):
                 )
                 self.assertEqual([], gcr4ctl.present_transaction_artifacts(repo))
                 self.assertEqual("ABSENT", gcr4ctl.recover_transaction(repo))
+
+    def test_recovery_refuses_unrelated_untracked_tracked_and_staged_dirt_byte_stably(self) -> None:
+        scenarios = ("untracked", "tracked", "staged", "substituted-state")
+        guarded = (
+            gcr4ctl.GCR3_STATE_PATH,
+            gcr4ctl.GCR3_LEDGER_PATH,
+            gcr4ctl.TRIGGER_PATH,
+            gcr4ctl.BACKLOG_PATH,
+            gcr4ctl.LOCK_PATH,
+            gcr4ctl.STATE_NEXT_PATH,
+            gcr4ctl.TRANSACTION_PATH,
+        )
+        for scenario in scenarios:
+            with self.subTest(scenario=scenario), tempfile.TemporaryDirectory() as temporary:
+                repo, _predecessor, successor, transaction, anchor = self.prepared_transaction_fixture(temporary)
+                self.write_prepared_transaction(repo, successor, transaction, anchor)
+                if scenario == "untracked":
+                    (repo / "unexpected.txt").write_text("deny\n", encoding="utf-8")
+                elif scenario == "tracked":
+                    with (repo / gcr4ctl.BACKLOG_PATH).open("ab") as stream:
+                        stream.write(b"# unauthorized tracked dirt\n")
+                elif scenario == "staged":
+                    (repo / "unexpected.txt").write_text("deny\n", encoding="utf-8")
+                    self.git(repo, "add", "unexpected.txt")
+                else:
+                    (repo / gcr4ctl.GCR3_STATE_PATH).write_bytes(b'{"substituted":true}\n')
+                before = {relative: (repo / relative).read_bytes() for relative in guarded}
+                with self.assertRaises(SystemExit):
+                    gcr4ctl.recover_transaction(repo)
+                after = {relative: (repo / relative).read_bytes() for relative in guarded}
+                self.assertEqual(before, after)
+
+    def test_recovery_refuses_a_redirected_transaction_artifact_before_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo, predecessor, successor, transaction, anchor = self.prepared_transaction_fixture(temporary)
+            self.write_prepared_transaction(repo, successor, transaction, anchor)
+            state_next = repo / gcr4ctl.STATE_NEXT_PATH
+            state_next.unlink()
+            target = repo / ".git/gcr4-redirect-target"
+            target.write_bytes(successor)
+            try:
+                os.symlink(target, state_next)
+            except OSError:
+                target.unlink()
+                target.mkdir()
+                junction = subprocess.run(
+                    ["cmd", "/c", "mklink", "/J", str(state_next), str(target)],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if junction.returncode != 0:
+                    self.skipTest(f"symbolic links and junctions unavailable: {junction.stderr}")
+            with self.assertRaisesRegex(SystemExit, "redirected"):
+                gcr4ctl.recover_transaction(repo)
+            self.assertEqual(predecessor, (repo / gcr4ctl.GCR3_STATE_PATH).read_bytes())
+            self.assertEqual(
+                gcr4ctl.GCR3_LEDGER_SHA256,
+                gcr4ctl.sha256((repo / gcr4ctl.GCR3_LEDGER_PATH).read_bytes()),
+            )
+            self.assertEqual(gcr4ctl.TRIGGER_SHA256, gcr4ctl.sha256((repo / gcr4ctl.TRIGGER_PATH).read_bytes()))
+
+    def test_recovery_crash_during_state_next_cleanup_is_idempotent(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo, predecessor, successor, transaction, anchor = self.prepared_transaction_fixture(temporary)
+            self.write_prepared_transaction(repo, successor, transaction, anchor)
+            (repo / gcr4ctl.TRANSACTION_PATH).unlink()
+            child = "\n".join(
+                [
+                    "import os, pathlib, sys",
+                    f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
+                    "import gcr4ctl",
+                    "repo = pathlib.Path(sys.argv[1])",
+                    "def crash(label):",
+                    ("  if label == 'gcr4-cleanup-GCR-0004.B00.gcr3-state.next': os._exit(77)"),
+                    "gcr4ctl.adoption_fault_boundary = crash",
+                    "gcr4ctl.recover_transaction(repo)",
+                ]
+            )
+            result = subprocess.run(
+                [sys.executable, "-c", child, str(repo)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(77, result.returncode, result.stdout + result.stderr)
+            self.assertEqual("RESTORED_PREDECESSOR", gcr4ctl.recover_transaction(repo))
+            self.assertEqual(predecessor, (repo / gcr4ctl.GCR3_STATE_PATH).read_bytes())
+            self.assertEqual([], gcr4ctl.present_transaction_artifacts(repo))
+            self.assertEqual("ABSENT", gcr4ctl.recover_transaction(repo))
 
 
 if __name__ == "__main__":

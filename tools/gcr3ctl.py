@@ -546,9 +546,17 @@ def validate_gcr4_bridge(repo: Path, state: dict[str, Any]) -> str:
     ledger_payload = taskctl.git_blob(repo, finalization, GCR3_R01_LEDGER_PATH)
     bridge_state_payload = taskctl.git_blob(repo, finalization, STATE_PATH)
     frozen_payload = taskctl.git_blob(repo, GCR3_R01_REVIEWED_STATE_COMMIT, STATE_PATH)
+    current_ledger_payload = safe_path(
+        repo,
+        GCR3_R01_LEDGER_PATH,
+        label="current GCR-0003 R01 adverse ledger",
+        prefix="planning/governance-control-recovery",
+    ).read_bytes()
     if (
         ledger_payload is None
         or sha256(ledger_payload) != GCR3_R01_LEDGER_SHA256
+        or current_ledger_payload != ledger_payload
+        or taskctl.git_blob(repo, "HEAD", GCR3_R01_LEDGER_PATH) != ledger_payload
         or bridge_state_payload is None
         or frozen_payload is None
         or sha256(frozen_payload) != GCR3_R01_REVIEWED_STATE_SHA256
