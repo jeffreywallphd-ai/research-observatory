@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "4.0-control-recovery-evidence",
+  "documentType": "governance-control-recovery-bootstrap-evidence",
+  "controlRecoveryId": "GCR-0004",
+  "bootstrapUnit": "GCR-0004.B00",
+  "attemptId": "R02",
+  "commit": "f155d66fe5eece04713fc8b120faf6aef5bcad96",
+  "baseCommit": "e56218e5c0cc2823d78cfb855e66eb82d39c4cda",
+  "branch": "codex/w1-windows-local-runtime",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "adverseLedger": {
+    "path": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+    "sha256": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "changedFiles": [
+    "artifacts/evidence/governance-control-recovery/GCR-0004.B00.R01.json",
+    "planning/governance-control-recovery/GCR-0004.B00.gcr3-runtime.schema.json",
+    "planning/governance-control-recovery/GCR-0004.B00.review-R01.json",
+    "planning/governance-control-recovery/GCR-0004.B00.state.json",
+    "quality-scope.json",
+    "tests/foundation/test_gcr3ctl.py",
+    "tests/foundation/test_gcr4ctl.py",
+    "tools/gcr3ctl.py",
+    "tools/gcr4ctl.py"
+  ],
+  "checks": [
+    {
+      "id": "exact-unmocked-gcr4-bridge-r02-lifecycle",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_gcr3ctl.Gcr3ctlTests.test_real_git_gcr4_bridge_to_strict_descendant_gcr3_r02_and_authority_denials -v",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "exact-gcr4-recovery-suite",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_gcr4ctl -v",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "governed-python-quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "gcr4-authority-validation",
+      "command": ".venv\\Scripts\\python.exe tools/gcr4ctl.py --repo . validate GCR-0004",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "exact-remediation-diff-hygiene",
+      "command": "git diff --check 6dbec221699457741ed0c3eb0e471b17f74f1bf0..f155d66fe5eece04713fc8b120faf6aef5bcad96",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "index": 1,
+      "statement": "The GCR-0004 packet, request/runtime/transaction schemas, authority manifest, proposal, and review page are Draft 2020-12 valid where applicable, path-safe, internally hash-bound, exact-commit reviewable, and inert.",
+      "evidence": ["The exact GCR-0004 suite validates every schema and immutable authority binding at candidate f155d669."]
+    },
+    {
+      "index": 2,
+      "statement": "Every GCR-0003 packet/review/approval/candidate/evidence/state/ledger, active-hold, backlog, W1, T03, W1.A04, G1, Git ancestry, and witness identity reproduces the exact frozen boundary and immutable bytes.",
+      "evidence": ["The unmocked lifecycle begins from exact reviewed-state commit 702ffbc and authenticates every GCR-0003/GCR-0004 Git binding; protected hashes and the stopped revision-9 boundary reproduce exactly."]
+    },
+    {
+      "index": 3,
+      "statement": "The failed review command is reproducible and byte-stable: it authenticates the exact ledger, fails only at the adverse-status runtime-v3 mismatch, and leaves state and ledger hashes unchanged.",
+      "evidence": ["The exact bridge fixture preserves the frozen state, ledger, runtime-v3 schema, and backlog while proving the old reader rejects and the separately authorized successor envelope represents the adverse result."]
+    },
+    {
+      "index": 4,
+      "statement": "GCR-0004 approval can be introduced only after an independent APPROVED packet review at the exact packet commit; its clean codex-branch introduction commit is the sole B00 implementation base.",
+      "evidence": ["Controller validation and the unmocked fixture bind packet 55cfb8e, packet review edac7c8, approval e56218e, exact branch, and candidate ancestry."]
+    },
+    {
+      "index": 5,
+      "statement": "B00 implementation changes only authorized controller/test/evidence/state paths, cannot edit runtime-v3 or the adverse ledger, keeps revision 9, and cannot apply the bridge before independent B00 approval.",
+      "evidence": ["The approval-base diff contains exactly six authorized paths; controller validation remains CHANGES_REQUESTED/control 9 before R02 review; protected runtime, ledger, witness, and backlog hashes remain exact."]
+    },
+    {
+      "index": 6,
+      "statement": "The successor reader accepts only the exact independently approved GCR-0004 bridge, preserves reviewedStateCommit 702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5, and rejects missing, stale, forked, adverse, substituted, dirty, or internally inconsistent authority byte-stably.",
+      "evidence": ["The 523.426-second unmocked real-Git test executes the exact successful bridge and rejects eight missing, forked, adverse, stale, substituted, or post-finalization-mutated authority variants without mocking validate_gcr4_bridge."]
+    },
+    {
+      "index": 7,
+      "statement": "Application derives the exact GCR-0003 R01 attempt and CHANGES_REQUESTED state from the unchanged ledger, records explicit GCR-0004 recovery authority, and closes no finding.",
+      "evidence": ["The real controller application derives the singular GCR-0003 R01 attempt and both open findings from the byte-identical ledger, records the exact recovery chain, and leaves its closures empty."]
+    },
+    {
+      "index": 8,
+      "statement": "Application and repeated recovery can yield only the exact frozen predecessor or exact ledger-derived successor, including abrupt child-process termination at every durable boundary.",
+      "evidence": ["The 11-test recovery suite covers every durable boundary including state-next cleanup, idempotent repetition, redirected artifacts, and byte-stable denial of unrelated untracked, tracked, staged, and substituted-state dirt."]
+    },
+    {
+      "index": 9,
+      "statement": "The finalization commit is the direct child of application evidence and changes exactly the R01 ledger and GCR-0003 state; revision 9 and every ordinary execution gate remain closed.",
+      "evidence": ["The unmocked lifecycle uses real gcr4ctl application/recovery, verifies the direct-child finalization has exactly ledger A plus GCR-0003 state M, validates control 9, then proves only a strict-descendant ordinary GCR-0003 R02 may be submitted."]
+    },
+    {
+      "index": 10,
+      "statement": "Criterion-linked evidence, adversarial real-Git coverage, governed Python quality, exact diff scope, protected hashes, and independent review pass with no unexplained unverified item.",
+      "evidence": ["All five selected exact-candidate checks pass at f155d669; this R02 manifest links every criterion, closes both R01 findings, and reports no unverified item before independent review."]
+    }
+  ],
+  "findingClosures": [
+    {
+      "findingId": "GCR-0004.B00-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Added and passed an unmocked real-Git lifecycle rooted at exact 702ffbc through real GCR-0004 approval, application/recovery, exact finalization, real successor-reader validation, strict-descendant GCR-0003 R02 submission, and eight byte-stable adverse authority variants; also fixed the post-finalization ledger immutability defect it exposed."
+    },
+    {
+      "findingId": "GCR-0004.B00-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Recovery now enforces exact branch, staged-index denial, exact allowed untracked paths, no unrelated tracked dirt, and exact predecessor/successor live-state bytes before mutation; tests prove byte-stable denial for unrelated untracked/tracked/staged/substituted dirt, redirected artifacts, repeated recovery, and the previously omitted state-next cleanup crash boundary."
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R01 identified two HIGH control failures in commit-bound proof and crash recovery. R02 therefore runs the exact unmocked Git authority lifecycle and denial matrix, the complete affected GCR-0004 recovery/workspace/crash suite, governed Python quality, controller authority validation, and exact diff/hash hygiene. Broader product and deployment qualification remains deferred because the Wave is paused and these changes affect only governance tooling, tests, and an inert successor schema.",
+    "selectedChecks": [
+      "exact-unmocked-gcr4-bridge-r02-lifecycle",
+      "exact-gcr4-recovery-suite",
+      "governed-python-quality",
+      "gcr4-authority-validation",
+      "exact-remediation-diff-hygiene"
+    ],
+    "deferredChecks": ["Full repository and Windows deployment qualification remains deferred to the W1 exit matrix after the recovery chain lawfully permits Wave resumption."]
+  }
+}
