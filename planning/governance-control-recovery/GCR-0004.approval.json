@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "4.0-control-recovery-approval",
+  "documentType": "governance-control-recovery-approval",
+  "controlRecoveryId": "GCR-0004",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-25T10:43:02.2905324Z",
+  "decision": "Approve only GCR-0004.B00 for exact independently reviewed packet commit 55cfb8ed74166398e387228a90b30365e78bf3cd, preserving runtime-v3 and the GCR-0003 R01 ledger byte-for-byte and authorizing no bridge application before independent B00 approval.",
+  "packet": {
+    "path": "planning/governance-control-recovery/GCR-0004.packet.json",
+    "sha256": "274b0fc717691e909c7d05d1bf6411beca69749ed6d45ff30039ce6d33c57591",
+    "commit": "55cfb8ed74166398e387228a90b30365e78bf3cd"
+  },
+  "independentPacketReview": {
+    "attemptId": "R01",
+    "candidateCommit": "55cfb8ed74166398e387228a90b30365e78bf3cd",
+    "ledger": {
+      "path": "planning/governance-control-recovery/GCR-0004.review-R01.json",
+      "sha256": "12fcc12914d4e30d038fc8c3d4d8822247e2481e6b19877ac9bd21bc70af9e4e",
+      "commit": "edac7c8bf30c9b29dfde3cf351894a9de3c3fa73"
+    },
+    "result": "APPROVED",
+    "closedFindingIds": [],
+    "openFindingIds": []
+  },
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "executionAuthority": {
+    "bootstrapOnly": true,
+    "bootstrapUnit": "GCR-0004.B00",
+    "ordinaryExecution": false,
+    "reviewTransitionBeforeB00Review": false
+  }
+}
