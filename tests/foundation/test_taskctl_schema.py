@@ -243,6 +243,9 @@ class BacklogSchemaTests(unittest.TestCase):
         data = copy.deepcopy(self.canonical)
         data["control_plane"]["revision"] = 7
         data["control_plane"]["minimum_tool_revision"] = 7
+        next(hold for hold in data["control_plane"]["recovery_holds"] if hold["id"] == "HOLD-W1-GRR-0002")[
+            "supplements"
+        ] = []
         data["control_plane"]["control_generations"] = [
             {
                 "id": "GCR-0001",
@@ -692,22 +695,32 @@ class BacklogSchemaTests(unittest.TestCase):
 
     def test_revision_nine_schema_requires_the_exact_second_gcr_generation(self) -> None:
         data = copy.deepcopy(self.canonical)
-        data["control_plane"]["revision"] = 9
-        data["control_plane"]["minimum_tool_revision"] = 9
-        data["control_plane"]["control_generations"].append(
+        self.assertEqual(9, data["control_plane"]["revision"])
+        self.assertEqual(
+            ["GCR-0001", "GCR-0002"], [item["id"] for item in data["control_plane"]["control_generations"]]
+        )
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+        self.assertEqual([], taskctl.governance_control_generation_errors(data, None))
+        self.assertEqual([], taskctl.recovery_hold_errors(data, None))
+
+        revision_ten = copy.deepcopy(data)
+        revision_ten["control_plane"]["revision"] = 10
+        revision_ten["control_plane"]["minimum_tool_revision"] = 10
+        revision_ten["control_plane"]["control_generations"].append(
             {
-                "id": "GCR-0002",
-                "bootstrap_id": "GCR-0002.B00",
+                "id": "GCR-0003",
+                "bootstrap_id": "GCR-0003.B00",
                 "hold_id": "HOLD-W1-GRR-0002",
-                "predecessor_revision": 8,
-                "successor_revision": 9,
+                "predecessor_revision": 9,
+                "successor_revision": 10,
+                "supported_control_ceiling": 11,
                 "approval_reference": {
-                    "path": "planning/governance-control-recovery/GCR-0002.approval.json",
+                    "path": "planning/governance-control-recovery/GCR-0003.approval.json",
                     "sha256": "a" * 64,
                     "introduction_commit": "b" * 40,
                 },
                 "review_reference": {
-                    "path": "planning/governance-control-recovery/GCR-0002.B00.review-R01.json",
+                    "path": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
                     "sha256": "c" * 64,
                     "reviewed_state_commit": "d" * 40,
                     "approved_state_commit": "e" * 40,
@@ -716,11 +729,32 @@ class BacklogSchemaTests(unittest.TestCase):
                 "adopted_at": "2026-08-25T00:00:00+00:00",
             }
         )
-        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
-        crossed = copy.deepcopy(data)
-        crossed["control_plane"]["control_generations"][1]["predecessor_revision"] = 7
+        self.assertEqual([], backlog_schema_errors(revision_ten, schema_path=self.schema))
+        self.assertEqual([], taskctl.governance_control_generation_errors(revision_ten, None))
+        self.assertEqual([], taskctl.recovery_hold_errors(revision_ten, None))
+
+        revision_eleven = copy.deepcopy(revision_ten)
+        revision_eleven["control_plane"]["revision"] = 11
+        revision_eleven["control_plane"]["minimum_tool_revision"] = 11
+        hold = next(
+            item for item in revision_eleven["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
+        )
+        supplement = copy.deepcopy(hold["supplements"][0])
+        supplement["id"] = "GRR-0002.S02"
+        supplement["predecessor_control_revision"] = 10
+        supplement["successor_control_revision"] = 11
+        supplement["packet_reference"]["path"] = "planning/governance-recovery-requests/GRR-0002.S02.packet.json"
+        supplement["approval_reference"]["path"] = "planning/governance-recovery-approvals/GRR-0002.S02.json"
+        supplement["bootstrap"]["id"] = "GRR-0002.B02"
+        hold["supplements"].append(supplement)
+        self.assertEqual([], backlog_schema_errors(revision_eleven, schema_path=self.schema))
+        self.assertEqual([], taskctl.governance_control_generation_errors(revision_eleven, None))
+        self.assertEqual([], taskctl.recovery_hold_errors(revision_eleven, None))
+
+        crossed = copy.deepcopy(revision_ten)
+        crossed["control_plane"]["control_generations"][2]["predecessor_revision"] = 8
         self.assertTrue(backlog_schema_errors(crossed, schema_path=self.schema))
-        missing = copy.deepcopy(data)
+        missing = copy.deepcopy(revision_ten)
         missing["control_plane"]["control_generations"].pop()
         self.assertTrue(taskctl.governance_control_generation_errors(missing, None))
 
