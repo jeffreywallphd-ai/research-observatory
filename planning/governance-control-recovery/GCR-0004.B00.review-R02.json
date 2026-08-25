@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "4.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0004",
+  "bootstrapUnit": "GCR-0004.B00",
+  "attemptId": "R02",
+  "candidateCommit": "f155d66fe5eece04713fc8b120faf6aef5bcad96",
+  "reviewedStateCommit": "48dfbbd4e35c42ec5c9d9b55797114b4886ec053",
+  "reviewer": "independent-gcr4-b00-control-security-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0004.B00.R02.json",
+    "sha256": "f7cdde3e2760e7e3bd5976fcb2c15ee92eb22796626d9572e694a70c0040cb0d",
+    "commit": "f155d66fe5eece04713fc8b120faf6aef5bcad96"
+  },
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GCR-0004.B00-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Independently reran `test_real_git_gcr4_bridge_to_strict_descendant_gcr3_r02_and_authority_denials`: it passed in 495.902 seconds using real GCR-0004 submit, independent review, apply, recover, exact two-path finalization, GCR-0004 validate, real GCR-0003 validate, and strict-descendant GCR-0003 R02 resubmit. It begins from the exact 702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5 state boundary preserved through the immutable GCR-0004 approval, and its eight isolated missing-packet, substituted-packet-review, substituted-approval, forked-B00, adverse-B00, stale-application-evidence, substituted-application-evidence, and post-finalization-mutated-ledger histories all fail with identical before/after HEAD, status, and protected-file snapshots. Inspection confirms this lifecycle does not mock validate_gcr4_bridge or the successor authority boundary."
+    },
+    {
+      "findingId": "GCR-0004.B00-R01-F02",
+      "disposition": "fixed",
+      "evidence": "Independently reran all 11 GCR-0004 tests in 26.003 seconds. They cover unrelated untracked, unrelated tracked, staged, substituted canonical-state, and redirected-artifact denial; every original publication/cleanup interruption plus the formerly omitted state-next cleanup boundary; exact predecessor-or-successor outcomes; idempotent repeated recovery; and artifact cleanup only after a valid terminal state. A separate direct replay of the original exploit now exits with `GCR-0004 recovery untracked-path boundary differs: unexpected.txt` before mutation, leaving the frozen predecessor, ledger, witness, backlog, lock, successor, and manifest byte-identical and preserving all three recovery artifacts."
+    }
+  ],
+  "notes": "APPROVED at exact frozen reviewed-state commit 48dfbbd4e35c42ec5c9d9b55797114b4886ec053, whose sole parent is candidate f155d66fe5eece04713fc8b120faf6aef5bcad96. R02 strictly descends from R01 candidate d1a377b341094eb5c92c22ad7099f51c5feeb80b and the immutable R01 adverse projection commit 6dbec221699457741ed0c3eb0e471b17f74f1bf0. The unique GCR-0004 approval introduction remains e56218e5c0cc2823d78cfb855e66eb82d39c4cda. The R02 remediation delta is confined to the prior append-only review/state projection, tools/gcr3ctl.py, tools/gcr4ctl.py, and their two focused tests; the approval-base-to-candidate scope exactly matches the nine evidence-declared authorized paths. R02 evidence is exact at SHA-256 f7cdde3e2760e7e3bd5976fcb2c15ee92eb22796626d9572e694a70c0040cb0d, includes explicit fixed closures for both R01 HIGH findings, and reports no unverified item. Independently, the unmocked real-Git 702ffbc-to-GCR-0004-bridge-to-GCR-0003-R02 lifecycle and eight adverse variants passed in 495.902 seconds; all 11 affected GCR-0004 recovery tests passed in 26.003 seconds; governed Python formatting, lint, and type quality passed for 127 files; gcr4ctl validation reports REVIEW at control revision 9; and exact remediation, approval-base, and submission diff hygiene pass. The frozen GCR-0003 state, adverse ledger, runtime-v3 schema, backlog, and protected witness remain exact at their approved SHA-256 values; the ledger and witness remain untracked, unstaged, and non-authoritative. No controller review/apply/recover transition, canonical state mutation, staging, commit, GCR-0003 remediation/adoption, S02/B02 action, Wave/task/amendment/gate action, or protected-file mutation was performed."
+}
