@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-control-recovery-transaction.v4.json",
+  "title": "Exact GCR-0004 R01 review-transition recovery transaction",
+  "type": "object",
+  "required": [
+    "schemaVersion", "documentType", "transactionId", "controlRecoveryId", "bootstrapUnit", "status",
+    "createdBy", "createdAt", "branch", "reviewedStateCommit", "approvedGcr4StateCommit",
+    "applicationEvidenceCommit", "activeHold", "triggerWitness", "adverseLedger", "predecessorState",
+    "successorState", "paths", "durability", "publicationOrder", "recovery", "finalization"
+  ],
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "binding": {
+      "type": "object", "required": ["path", "rawSha256", "canonicalSha256"],
+      "properties": {
+        "path": {"const": "planning/governance-control-recovery/GCR-0003.B00.state.json"},
+        "rawSha256": {"$ref": "#/$defs/sha256"}, "canonicalSha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "schemaVersion": {"const": "4.0-control-recovery-review-transition"},
+    "documentType": {"const": "governance-control-recovery-review-transition-transaction"},
+    "transactionId": {"const": "GCR-0004.B00.APPLY"},
+    "controlRecoveryId": {"const": "GCR-0004"}, "bootstrapUnit": {"const": "GCR-0004.B00"},
+    "status": {"const": "PREPARED"}, "createdBy": {"const": "codex"},
+    "createdAt": {"$ref": "#/$defs/timestamp"}, "branch": {"const": "codex/w1-windows-local-runtime"},
+    "reviewedStateCommit": {"const": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5"},
+    "approvedGcr4StateCommit": {"$ref": "#/$defs/commit"}, "applicationEvidenceCommit": {"$ref": "#/$defs/commit"},
+    "activeHold": {
+      "type": "object", "required": ["id", "status", "recoveryRequestId", "installedControlGeneration"],
+      "properties": {
+        "id": {"const": "HOLD-W1-GRR-0002"}, "status": {"const": "ACTIVE"},
+        "recoveryRequestId": {"const": "GRR-0002"}, "installedControlGeneration": {"const": "GCR-0002"}
+      },
+      "additionalProperties": false
+    },
+    "triggerWitness": {
+      "type": "object", "required": ["path", "sha256", "untracked", "unstaged", "executionAuthority"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/W1.A04.B00.json"},
+        "sha256": {"const": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"},
+        "untracked": {"const": true}, "unstaged": {"const": true}, "executionAuthority": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "adverseLedger": {
+      "type": "object", "required": ["path", "sha256", "reviewedStateCommit", "result", "bytePreserved"],
+      "properties": {
+        "path": {"const": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json"},
+        "sha256": {"const": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b"},
+        "reviewedStateCommit": {"const": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5"},
+        "result": {"const": "changes-requested"}, "bytePreserved": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "predecessorState": {"$ref": "#/$defs/binding"}, "successorState": {"$ref": "#/$defs/binding"},
+    "paths": {
+      "type": "object", "required": ["manifest", "lock", "stateNext", "state", "ledger"],
+      "properties": {
+        "manifest": {"const": "planning/governance-control-recovery/GCR-0004.B00.application-transaction.json"},
+        "lock": {"const": "planning/governance-control-recovery/GCR-0004.B00.application.lock"},
+        "stateNext": {"const": "planning/governance-control-recovery/GCR-0004.B00.gcr3-state.next"},
+        "state": {"const": "planning/governance-control-recovery/GCR-0003.B00.state.json"},
+        "ledger": {"const": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json"}
+      },
+      "additionalProperties": false
+    },
+    "durability": {
+      "type": "object", "required": ["sameFilesystem", "exclusiveCreateLock", "replaceExistingWriteThrough", "flushSuccessorBeforeManifest", "flushManifestBeforePublication", "flushPublishedState", "flushParentDirectories", "cleanupAfterValidatedPairOnly"],
+      "properties": {
+        "sameFilesystem": {"const": true}, "exclusiveCreateLock": {"const": true},
+        "replaceExistingWriteThrough": {"const": true}, "flushSuccessorBeforeManifest": {"const": true},
+        "flushManifestBeforePublication": {"const": true}, "flushPublishedState": {"const": true},
+        "flushParentDirectories": {"const": true}, "cleanupAfterValidatedPairOnly": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "publicationOrder": {"const": ["authenticate-authority-workspace-ledger-and-cas", "acquire-exclusive-lock", "write-and-flush-successor-state", "exclusive-create-and-flush-prepared-manifest", "replace-state-write-through-and-flush", "validate-exact-ledger-state-pair", "flush-parent-directories", "remove-and-flush-transaction-artifacts"]},
+    "recovery": {
+      "type": "object", "required": ["command", "idempotent", "automaticPreflight", "validTerminalPairs", "failClosedStates", "decisionRule"],
+      "properties": {
+        "command": {"const": "python tools/gcr4ctl.py --repo . recover GCR-0004 --agent codex"},
+        "idempotent": {"const": true}, "automaticPreflight": {"const": true},
+        "validTerminalPairs": {"const": ["exact-frozen-state-plus-untracked-ledger", "exact-derived-state-plus-byte-identical-ledger"]},
+        "failClosedStates": {"const": ["prepared", "partial-publication", "marker-missing", "substituted", "stale", "dirty-workspace", "split-ledger-state"]},
+        "decisionRule": {"const": "complete-successor-only-when-manifest-authority-ledger-and-durable-successor-validate-otherwise-restore-exact-frozen-state"}
+      },
+      "additionalProperties": false
+    },
+    "finalization": {
+      "type": "object", "required": ["directChildOfApplicationEvidenceCommit", "exactChangedFiles", "transactionArtifactsAbsent", "controlRevisionUnchanged", "ordinaryExecutionDenied"],
+      "properties": {
+        "directChildOfApplicationEvidenceCommit": {"const": true},
+        "exactChangedFiles": {"const": ["planning/governance-control-recovery/GCR-0003.B00.review-R01.json", "planning/governance-control-recovery/GCR-0003.B00.state.json"]},
+        "transactionArtifactsAbsent": {"const": true}, "controlRevisionUnchanged": {"const": 9},
+        "ordinaryExecutionDenied": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

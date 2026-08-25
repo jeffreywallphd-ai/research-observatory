@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GCR-0004 review</title>
+<style>body{font-family:system-ui,sans-serif;max-width:980px;margin:0 auto;padding:2rem;color:#172033;background:#f6f8fb}main{background:#fff;padding:2rem;border:1px solid #d9e0ea;border-radius:12px}h1,h2{color:#102a43}code{background:#eef2f7;padding:.1rem .3rem;border-radius:4px}table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:1px solid #ccd6e0;padding:.65rem;text-align:left;vertical-align:top}.warn{border-left:5px solid #bd5b00;background:#fff5e8;padding:1rem}.safe{border-left:5px solid #237a3b;background:#edf9f0;padding:1rem}.deny{border-left:5px solid #a61b1b;background:#fff0f0;padding:1rem}</style></head>
+<body><main>
+<p><a href="../review-site/waves/W1.html">W1 review</a> · <a href="GCR-0004.md">Canonical proposal</a></p>
+<h1>GCR-0004 — Recover the exact GCR-0003 R01 adverse-review projection</h1>
+<div class="warn"><strong>Inert packet.</strong> It grants no implementation, review-transition, GCR-0003 remediation/adoption, S02/B02, Wave, task, gate, merge, or remote authority before independent packet review and exact-commit human approval.</div>
+
+<h2>What failed</h2>
+<p>Independent GCR-0003 B00 review produced an exact <code>CHANGES_REQUESTED</code> ledger. The approved controller authenticated and derived that result, but its final runtime-schema check rejected the adverse state because runtime-v3 accidentally omits <code>CHANGES_REQUESTED</code> and <code>BLOCKED</code>. No canonical write occurred.</p>
+<table><tr><th>Frozen boundary</th><th>Exact value</th></tr>
+<tr><td>Reviewed-state commit</td><td><code>702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5</code></td></tr>
+<tr><td>Frozen state SHA-256</td><td><code>0828cb7a52ff5f739dcfbc49832e7b2437f997fced38bac917098081368328e4</code></td></tr>
+<tr><td>Adverse ledger SHA-256</td><td><code>cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b</code></td></tr>
+<tr><td>Defective runtime-v3 SHA-256</td><td><code>7918c0d255074fdbfd1c400aa9e4008ad6d8efa91584a3010d59612f4cc57124</code></td></tr>
+<tr><td>Control / W1</td><td>revision/minimum 9; active hold; W1 PAUSED; T03 BLOCKED; W1.A04 ABSENT; G1 PENDING</td></tr></table>
+
+<h2>Why ordinary R02 cannot start</h2>
+<p>GCR-0003 hash-freezes runtime-v3 and requires its normal review-projection commit to be the direct child of the reviewed state changing only ledger and state. Editing the schema or controller inside that projection changes approved authority or history topology. Direct state edits, result reinterpretation, and discarding the adverse ledger are prohibited.</p>
+
+<h2>Recommended exact bridge</h2>
+<ol><li>Implement and independently review only <code>GCR-0004.B00</code>.</li><li>Authenticate the frozen state, unchanged adverse ledger, both control-recovery authority chains, active hold, stopped Wave boundary, and witness.</li><li>Use a successor runtime envelope and crash-safe one-time controller to derive the exact adverse state from the ledger.</li><li>Finalize one commit that adds the existing ledger and updates only the GCR-0003 state, explicitly recording the GCR-0004 bridge.</li><li>Resume normal GCR-0003 R02 remediation; do not close findings or adopt revision 10 in the bridge.</li></ol>
+
+<h2>Safety boundary</h2>
+<div class="deny">No runtime-v3 edit, adverse-ledger edit, finding closure, GCR-0003 R02 approval/adoption, control revision change, S02/B02 action, W1.A04 action, hold release, W1 resume, task claim, G1 approval, product/reference change, local-main integration, or remote action.</div>
+
+<h2 id="decision-register">Alternatives</h2>
+<table><tr><th>Option</th><th>Disposition</th><th>Consequence</th></tr>
+<tr><td>A — Approve exact GCR-0004</td><td>Recommended</td><td>Preserves R01 and restores the approved remediation lane through explicit recovery authority.</td></tr>
+<tr><td>B — Keep stopped</td><td>Safe</td><td>No mutation; GCR-0003, S02/B02, and W1 remain unavailable.</td></tr>
+<tr><td>C — Edit/reinterpret runtime-v3</td><td>Rejected</td><td>Invalidates hash-frozen authority or rewrites the review result.</td></tr>
+<tr><td>D — Manual projection or skipped review</td><td>Rejected</td><td>Fabricates append-only history or bypasses an unmet gate.</td></tr></table>
+
+<h2>Approval gate</h2>
+<div class="safe">After an independent APPROVED packet review at the exact packet commit, human approval may authorize only GCR-0004.B00. A separate independent B00 approval remains mandatory before the bridge may be applied.</div>
+</main></body></html>

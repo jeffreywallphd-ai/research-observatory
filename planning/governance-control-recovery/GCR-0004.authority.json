@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-recovery-authority-manifest",
+  "controlRecoveryId": "GCR-0004",
+  "targetWave": "W1",
+  "frozenGcr3ReviewBoundary": {
+    "reviewedStateCommit": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5",
+    "candidateCommit": "a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873",
+    "approvalBaseCommit": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c",
+    "state": {
+      "path": "planning/governance-control-recovery/GCR-0003.B00.state.json",
+      "sha256": "0828cb7a52ff5f739dcfbc49832e7b2437f997fced38bac917098081368328e4",
+      "status": "REVIEW"
+    },
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.R01.json",
+      "sha256": "381a54d41594072cd66c78d50e13ad822926c218d2df1e1ad80d60838c19815a",
+      "commit": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5"
+    },
+    "adverseLedger": {
+      "path": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+      "sha256": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b",
+      "reviewedStateCommit": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5",
+      "result": "changes-requested",
+      "untracked": true,
+      "unstaged": true,
+      "executionAuthority": false
+    }
+  },
+  "gcr3Authority": {
+    "packet": {
+      "path": "planning/governance-control-recovery/GCR-0003.packet.json",
+      "sha256": "dc6055395a409fe4a9753657522cf54181bf881c15c72ba65aa3cccd32d2a666",
+      "commit": "f062cff48036bce9f094b86370a9499837f4b358"
+    },
+    "packetReview": {
+      "path": "planning/governance-control-recovery/GCR-0003.review-R01.json",
+      "sha256": "aefba1307351916d83f4ad93959227bed4faa1792b67cda96b2f7121f9faba6a",
+      "commit": "dd7da0b1c8a38a73b8a928bfe3dd2c8587369ca9"
+    },
+    "approval": {
+      "path": "planning/governance-control-recovery/GCR-0003.approval.json",
+      "sha256": "82a6187fa47e55c286ef3ae60bd185c94dfcdf5ba87c1283391d315988528ca7",
+      "commit": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c"
+    },
+    "runtimeV3": {
+      "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v3.schema.json",
+      "sha256": "7918c0d255074fdbfd1c400aa9e4008ad6d8efa91584a3010d59612f4cc57124",
+      "packetFrozen": true
+    },
+    "controller": {
+      "path": "tools/gcr3ctl.py",
+      "sha256": "dd99f03c508d79634d03994c4bbf9521aecc94519702b76752c55b45a33f6e48",
+      "candidateCommit": "a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873"
+    }
+  },
+  "failedTransition": {
+    "command": ".venv\\Scripts\\python.exe tools/gcr3ctl.py --repo . review GCR-0003 --reviewer independent-gcr3-b00-control-security-reviewer --from planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+    "exitCode": 1,
+    "diagnostic": "GCR-0003 reviewed state schema validation failed because the derived CHANGES_REQUESTED status is absent from the packet-frozen runtime-v3 state enum.",
+    "atomicNoMutation": true,
+    "stateSha256AfterFailure": "0828cb7a52ff5f739dcfbc49832e7b2437f997fced38bac917098081368328e4",
+    "ledgerSha256AfterFailure": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b"
+  },
+  "activeHold": {
+    "id": "HOLD-W1-GRR-0002",
+    "status": "ACTIVE",
+    "recoveryRequestId": "GRR-0002",
+    "installedControlGeneration": "GCR-0002",
+    "latestApprovedSupplement": "GRR-0002.S01"
+  },
+  "stoppedBoundary": {
+    "backlogSha256": "c7347d103cc1fc6cf54be319f96a8ca5dcf74eddbedd70a3d77a097d335b978d",
+    "controlRevision": 9,
+    "minimumToolRevision": 9,
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "blockedTaskId": "CAP-02.S04.T03",
+    "blockedTaskStatus": "BLOCKED",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false,
+    "mayBecomeSubmittedEvidence": false
+  }
+}
