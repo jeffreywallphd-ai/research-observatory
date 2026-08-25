@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "3.0-control-recovery-approval",
+  "documentType": "governance-control-recovery-approval",
+  "controlRecoveryId": "GCR-0003",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-25T02:57:02.9430175Z",
+  "decision": "The repository owner explicitly approved proceeding in direct response to the exact-commit GCR-0003 approval request for f062cff48036bce9f094b86370a9499837f4b358. Authorize only GCR-0003.B00 and its hash-bound revision-9-to-10 reader/controller/schema/test scope under HOLD-W1-GRR-0002. Keep W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, G1 pending, and the trigger witness untracked, unstaged, and non-authoritative; require separately reviewed and exactly approved GRR-0002.S02/B02 before any historic W1.A04 retry.",
+  "packet": {
+    "path": "planning/governance-control-recovery/GCR-0003.packet.json",
+    "sha256": "dc6055395a409fe4a9753657522cf54181bf881c15c72ba65aa3cccd32d2a666",
+    "commit": "f062cff48036bce9f094b86370a9499837f4b358"
+  },
+  "independentPacketReview": {
+    "attemptId": "R01",
+    "candidateCommit": "f062cff48036bce9f094b86370a9499837f4b358",
+    "ledger": {
+      "path": "planning/governance-control-recovery/GCR-0003.review-R01.json",
+      "sha256": "aefba1307351916d83f4ad93959227bed4faa1792b67cda96b2f7121f9faba6a",
+      "commit": "dd7da0b1c8a38a73b8a928bfe3dd2c8587369ca9"
+    },
+    "result": "APPROVED",
+    "closedFindingIds": [],
+    "openFindingIds": []
+  },
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "executionAuthority": {
+    "bootstrapOnly": true,
+    "bootstrapUnit": "GCR-0003.B00",
+    "ordinaryExecution": false,
+    "revisionAdoptionBeforeReview": false
+  }
+}
