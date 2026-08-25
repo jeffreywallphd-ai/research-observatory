@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "4.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0004",
+  "bootstrapUnit": "GCR-0004.B00",
+  "attemptId": "R01",
+  "candidateCommit": "d1a377b341094eb5c92c22ad7099f51c5feeb80b",
+  "reviewedStateCommit": "5b2d02ac41437467fe8d99920e33d1b699e193cb",
+  "reviewer": "independent-gcr4-b00-control-security-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0004.B00.R01.json",
+    "sha256": "b404e18865bc4ba67d1b1d1b3260bb07d49d2dacd732085ce9714b54940176d8",
+    "commit": "d1a377b341094eb5c92c22ad7099f51c5feeb80b"
+  },
+  "findings": [
+    {
+      "id": "GCR-0004.B00-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 6,
+      "title": "The claimed real-Git lifecycle never traverses the GCR-0004 bridge or authenticates its successor lineage",
+      "reproduction": "Run the evidence-declared `.venv\\Scripts\\python.exe -m unittest tests.foundation.test_gcr3ctl.Gcr3ctlTests.test_real_git_revision_nine_to_gcr3_then_separately_approved_v4_s02 -v`; it passes, but inspection of the exact candidate shows that the fixture checks out the GCR-0003 approval commit, copies the GCR-0003 implementation paths, submits a fresh GCR-0003 R01, writes an APPROVED GCR-0003 review, adopts 9-to-10, and then creates S02. It never installs or reviews GCR-0004.B00, never calls gcr4ctl apply/recover, never finalizes the exact adverse ledger plus successor state, and never exercises the real `validate_gcr4_bridge` authority/lineage reader. The three new narrow GCR-0003 bridge tests pass in 0.002 seconds only by mocking `validate_gcr4_bridge` or its lineage result, while the focused GCR-0004 suite tests successor construction in an isolated synthetic boundary but does not pass the finalized bridge through the GCR-0003 reader. Evidence statements for criteria 6 and 9 therefore attribute successor-reader eligibility, exact bridge-lineage denial, and direct-child finalization proof to a test that cannot establish them, and the packet's mandatory unmocked real-Git path from exact frozen commit 702ffbc through approved GCR-0004 application to ordinary GCR-0003 R02 eligibility remains unverified.",
+      "requiredRemediation": "In a strict-descendant R02 candidate, add an unmocked disposable real-Git test rooted at the exact 702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5 boundary with the exact witness and unchanged adverse ledger. Materialize the independently approved GCR-0004 B00 review projection, bind application evidence, run the real crash-safe apply/recovery controller, finalize exactly the ledger and GCR-0003 state as a direct child, and then prove the real GCR-0003 successor reader permits only a strict-descendant R02 resubmission. Add byte-stable denial variants for missing, forked, stale, substituted, adverse, or post-finalization-mutated packet/review/approval/B00/evidence/finalization authority without mocking the authority boundary. Record the actual checks truthfully in fresh R02 evidence and explicitly close this finding."
+    },
+    {
+      "id": "GCR-0004.B00-R01-F02",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 8,
+      "title": "Interrupted recovery mutates the canonical state through unauthorized workspace dirt",
+      "reproduction": "In a disposable exact-boundary Git fixture, create the authenticated GCR-0004 application lock, durable successor, and transaction manifest, then create an unrelated untracked `unexpected.txt` before calling `gcr4ctl.recover_transaction(repo)`. The function returns `COMPLETED_SUCCESSOR`, changes `planning/governance-control-recovery/GCR-0003.B00.state.json` from the frozen predecessor to the successor, and deletes the transaction artifacts while the unauthorized file remains. `command_recover` calls the same function after authority loading, and the recovery preflight checks only branch, staged index, witness, and adverse ledger; it never enforces the packet's exact every-transition untracked boundary or denies unrelated unstaged tracked changes. This contradicts the lifecycle invariant `denyOtherUntracked=true` with `appliesAtEveryTransition=true`, the transaction's `dirty-workspace` fail-closed state, and criterion 8's exact terminal-state control. Additionally, `test_child_process_crashes_recover_to_one_exact_state` enumerates cleanup faults for the manifest and lock but omits the reachable `gcr4-cleanup-GCR-0004.B00.gcr3-state.next` boundary while the R01 evidence claims every reachable durable boundary was tested.",
+      "requiredRemediation": "In the R02 candidate, add a recovery-specific workspace guard that permits only the exact witness, exact adverse ledger, the recognized subset of transaction artifacts, and the expected canonical GCR-0003 state delta; reject any unrelated untracked, staged, or unstaged tracked path before state publication, predecessor restoration, or artifact cleanup. Preserve the ability to recover the authorized dirty state path after a crash, but make every unauthorized-dirt denial byte-stable for the state, ledger, witness, backlog, and transaction artifacts. Extend child-process tests to the omitted state-next cleanup boundary and add real-Git denial cases for unrelated untracked and tracked dirt, staged changes, redirected artifacts, and repeated recovery. Record the corrected checks in fresh R02 evidence and explicitly close this finding."
+    }
+  ],
+  "closures": [],
+  "notes": "CHANGES_REQUESTED at exact frozen reviewed-state commit 5b2d02ac41437467fe8d99920e33d1b699e193cb, whose sole parent is candidate d1a377b341094eb5c92c22ad7099f51c5feeb80b. The unique approval introduction is e56218e5c0cc2823d78cfb855e66eb82d39c4cda; the base-to-candidate delta is exactly the six evidence-declared packet-authorized implementation/schema/test/quality paths, and the candidate-to-reviewed-state delta adds only exact R01 evidence plus canonical state. Approval, packet review, packet, runtime schemas, evidence, and state validate and reproduce their immutable hashes and Git ancestry. The focused GCR-0004 suite passed 8 tests in 15.142 seconds; the named GCR-0003 real-Git lifecycle passed in 146.527 seconds; three narrow reader/lineage tests passed; governed Python quality passed for 127 files; gcr4ctl validate reports REVIEW at control revision 9; and both exact diff checks pass. The frozen GCR-0003 state, adverse ledger, runtime-v3 schema, backlog, and witness remain exact at their approved hashes; the ledger and witness remain untracked and unstaged. Those positive results do not establish the missing unmocked bridge lifecycle and do not cure the reproduced dirty-recovery mutation. No gcr4ctl review/apply/recover transition, canonical state mutation, staging, commit, GCR-0003 remediation/adoption, S02/B02 action, Wave/task/amendment/gate action, or protected-file mutation was performed."
+}
