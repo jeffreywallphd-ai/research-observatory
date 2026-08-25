@@ -9,6 +9,7 @@ a task, or approve a release gate.
 from __future__ import annotations
 
 import argparse
+import base64
 import copy
 import json
 import os
@@ -57,6 +58,7 @@ BACKLOG_PATH = "planning/backlog.yaml"
 TRIGGER_PATH = "artifacts/evidence/W1.A04.B00.json"
 TRIGGER_SHA256 = "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
 BACKLOG_SHA256 = "0b3d22f30d3a024e37b6c7b9b07d48f3a0b96dd2fc6c1968809a21d35a2977e7"
+ADOPTION_EVIDENCE_PATH = "artifacts/evidence/governance-control-recovery/GCR-0002.B00.adoption.json"
 RESULT_STATUS = {"approved": "APPROVED", "changes-requested": "CHANGES_REQUESTED", "blocked": "BLOCKED"}
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 
@@ -568,14 +570,17 @@ def present_transaction_artifacts(repo: Path) -> list[str]:
 
 
 @contextmanager
-def transaction_lock(repo: Path, *, recover: bool = False) -> Iterator[None]:
+def transaction_lock(repo: Path, *, anchor: dict[str, Any] | None = None, recover: bool = False) -> Iterator[None]:
     path = transaction_artifacts(repo)[LOCK_PATH]
     if os.path.lexists(path):
         if not recover or not path.is_file() or path.is_symlink():
             raise SystemExit("GCR-0002 adoption lock already exists or is redirected")
         yield
         return
-    payload = (json.dumps({"transactionId": f"{BOOTSTRAP_ID}.ADOPT", "actor": ACTOR}) + "\n").encode()
+    if recover or anchor is None:
+        raise SystemExit("GCR-0002 adoption requires an exact recovery anchor")
+    validate_recovery_anchor(repo, anchor)
+    payload = (json.dumps(anchor, indent=2, ensure_ascii=False) + "\n").encode()
     write_new_durable(path, payload)
     adoption_fault_boundary("lock-durable")
     try:
@@ -590,6 +595,144 @@ def canonical_sha(document: dict[str, Any]) -> str:
 
 def binding(path: str, payload: bytes, document: dict[str, Any]) -> dict[str, str]:
     return {"path": path, "rawSha256": sha256(payload), "canonicalSha256": canonical_sha(document)}
+
+
+def recovery_anchor_document(
+    *, transaction: dict[str, Any], predecessor_backlog: bytes, predecessor_state: bytes
+) -> dict[str, Any]:
+    """Build the durable pre-publication authority and raw-byte recovery anchor."""
+    return {
+        "schemaVersion": "2.0-control-recovery-adoption-anchor",
+        "documentType": "governance-control-recovery-adoption-anchor",
+        "transactionId": f"{BOOTSTRAP_ID}.ADOPT",
+        "controlRecoveryId": GCR_ID,
+        "bootstrapUnit": BOOTSTRAP_ID,
+        "actor": ACTOR,
+        "branch": BRANCH,
+        "adoptionEvidenceCommit": transaction["adoptionEvidenceCommit"],
+        "approvedStateCommit": transaction["reviewedStateCommit"],
+        "predecessor": copy.deepcopy(transaction["predecessor"]),
+        "predecessorPayloads": {
+            "backlogBase64": base64.b64encode(predecessor_backlog).decode("ascii"),
+            "stateBase64": base64.b64encode(predecessor_state).decode("ascii"),
+        },
+    }
+
+
+def _decode_anchor_payload(value: object, label: str) -> bytes:
+    if not isinstance(value, str) or not value:
+        raise SystemExit(f"GCR-0002 recovery anchor {label} payload is absent")
+    try:
+        return base64.b64decode(value.encode("ascii"), validate=True)
+    except (UnicodeError, ValueError) as exc:
+        raise SystemExit(f"GCR-0002 recovery anchor {label} payload is invalid") from exc
+
+
+def validate_recovery_anchor(repo: Path, anchor: dict[str, Any]) -> tuple[bytes, bytes]:
+    """Authenticate the exact committed recovery base and its raw worktree preimages."""
+    expected_keys = {
+        "schemaVersion",
+        "documentType",
+        "transactionId",
+        "controlRecoveryId",
+        "bootstrapUnit",
+        "actor",
+        "branch",
+        "adoptionEvidenceCommit",
+        "approvedStateCommit",
+        "predecessor",
+        "predecessorPayloads",
+    }
+    evidence_commit = str(anchor.get("adoptionEvidenceCommit") or "")
+    approved_state = str(anchor.get("approvedStateCommit") or "")
+    if (
+        set(anchor) != expected_keys
+        or anchor.get("schemaVersion") != "2.0-control-recovery-adoption-anchor"
+        or anchor.get("documentType") != "governance-control-recovery-adoption-anchor"
+        or anchor.get("transactionId") != f"{BOOTSTRAP_ID}.ADOPT"
+        or anchor.get("controlRecoveryId") != GCR_ID
+        or anchor.get("bootstrapUnit") != BOOTSTRAP_ID
+        or anchor.get("actor") != ACTOR
+        or anchor.get("branch") != BRANCH
+        or git(repo, "rev-parse", "HEAD") != evidence_commit
+    ):
+        raise SystemExit("GCR-0002 recovery anchor identity or HEAD binding is invalid")
+    parents = git(repo, "rev-list", "--parents", "-n", "1", evidence_commit).split()
+    if parents != [evidence_commit, approved_state]:
+        raise SystemExit("GCR-0002 recovery anchor is not based on the exact approved-state parent")
+    require_exact_commit_delta(
+        repo,
+        parent=approved_state,
+        commit=evidence_commit,
+        expected={ADOPTION_EVIDENCE_PATH: "A"},
+        label="GCR-0002 recovery-anchor adoption-evidence commit",
+    )
+    evidence_payload = taskctl.git_blob(repo, evidence_commit, ADOPTION_EVIDENCE_PATH)
+    if evidence_payload is None:
+        raise SystemExit("GCR-0002 recovery anchor adoption evidence is unavailable")
+    try:
+        evidence = json.loads(evidence_payload)
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise SystemExit("GCR-0002 recovery anchor adoption evidence is malformed") from exc
+    validate_runtime(repo, evidence, "GCR-0002 recovery anchor adoption evidence")
+    if (
+        evidence.get("controlRecoveryId") != GCR_ID
+        or evidence.get("bootstrapUnit") != BOOTSTRAP_ID
+        or evidence.get("reviewedStateCommit") != approved_state
+        or evidence.get("triggerWitness") != trigger_witness()
+        or evidence.get("predecessorRevision") != 8
+        or evidence.get("successorRevision") != 9
+        or evidence.get("expectedChangedFiles") != [BACKLOG_PATH, STATE_PATH]
+        or evidence.get("unverifiedItems") != []
+    ):
+        raise SystemExit("GCR-0002 recovery anchor adoption evidence binding is invalid")
+    payloads = anchor.get("predecessorPayloads")
+    predecessor = anchor.get("predecessor")
+    if not isinstance(payloads, dict) or set(payloads) != {"backlogBase64", "stateBase64"}:
+        raise SystemExit("GCR-0002 recovery anchor payload map is invalid")
+    if not isinstance(predecessor, dict) or set(predecessor) != {
+        "controlRevision",
+        "minimumToolRevision",
+        "backlog",
+        "state",
+    }:
+        raise SystemExit("GCR-0002 recovery anchor predecessor map is invalid")
+    backlog_payload = _decode_anchor_payload(payloads.get("backlogBase64"), "backlog")
+    state_payload = _decode_anchor_payload(payloads.get("stateBase64"), "state")
+    try:
+        backlog = yaml.safe_load(backlog_payload)
+        state = json.loads(state_payload)
+        committed_backlog = yaml.safe_load(taskctl.git_blob(repo, approved_state, BACKLOG_PATH) or b"")
+    except (UnicodeError, yaml.YAMLError, json.JSONDecodeError) as exc:
+        raise SystemExit("GCR-0002 recovery anchor predecessor payload is malformed") from exc
+    committed_state = taskctl.git_blob(repo, approved_state, STATE_PATH)
+    if (
+        not isinstance(backlog, dict)
+        or not isinstance(state, dict)
+        or not isinstance(committed_backlog, dict)
+        or sha256(backlog_payload) != BACKLOG_SHA256
+        or predecessor.get("controlRevision") != 8
+        or predecessor.get("minimumToolRevision") != 8
+        or predecessor.get("backlog") != binding(BACKLOG_PATH, backlog_payload, backlog)
+        or predecessor.get("state") != binding(STATE_PATH, state_payload, state)
+        or canonical_sha(backlog) != canonical_sha(committed_backlog)
+        or committed_state != state_payload
+        or (backlog.get("control_plane") or {}).get("revision") != 8
+        or (backlog.get("control_plane") or {}).get("minimum_tool_revision") != 8
+        or state.get("status") != "APPROVED"
+    ):
+        raise SystemExit("GCR-0002 recovery anchor predecessor authority or raw bytes are invalid")
+    validate_runtime(repo, state, "GCR-0002 recovery anchor predecessor state")
+    return backlog_payload, state_payload
+
+
+def load_recovery_anchor(repo: Path) -> tuple[dict[str, Any], bytes, bytes]:
+    path = transaction_artifacts(repo)[LOCK_PATH]
+    if not path.is_file() or path.is_symlink():
+        raise SystemExit("GCR-0002 recovery anchor is absent or redirected")
+    anchor, _payload = load_json(path, "GCR-0002 recovery anchor")
+    backlog, state = validate_recovery_anchor(repo, anchor)
+    return anchor, backlog, state
 
 
 def transaction_document(
@@ -700,7 +843,10 @@ def transaction_document(
 
 
 def pair_matches(repo: Path, transaction: dict[str, Any], generation: str) -> bool:
-    bindings = transaction[generation]
+    return bindings_match(repo, transaction[generation])
+
+
+def bindings_match(repo: Path, bindings: dict[str, Any]) -> bool:
     for label, path in (("backlog", repo / BACKLOG_PATH), ("state", repo / STATE_PATH)):
         if not path.is_file() or path.is_symlink():
             return False
@@ -737,14 +883,9 @@ def validate_successor_pair(repo: Path, backlog_payload: bytes, state_payload: b
         raise SystemExit("GCR-0002 successor pair is not an exact valid revision-9 adoption")
 
 
-def restore_predecessor(repo: Path) -> None:
-    head = git(repo, "rev-parse", "HEAD")
-    backlog = taskctl.git_blob(repo, head, BACKLOG_PATH)
-    state = taskctl.git_blob(repo, head, STATE_PATH)
-    if backlog is None or state is None:
-        raise SystemExit("GCR-0002 predecessor Git pair is unavailable")
-    if sha256(backlog) != BACKLOG_SHA256:
-        raise SystemExit("GCR-0002 predecessor backlog Git blob is not the approved revision-8 boundary")
+def restore_predecessor(repo: Path, anchor: dict[str, Any], backlog: bytes, state: bytes) -> None:
+    # The raw snapshots are authenticated before any write. In particular, do
+    # not reconstruct the Windows worktree bytes from normalized Git blobs.
     artifacts = transaction_artifacts(repo)
     for relative, payload, live in (
         (BACKLOG_NEXT_PATH, backlog, repo / BACKLOG_PATH),
@@ -757,6 +898,10 @@ def restore_predecessor(repo: Path) -> None:
             unlink_durable(staged)
         write_new_durable(staged, payload)
         move_write_through(staged, live)
+    if not bindings_match(repo, anchor["predecessor"]):
+        raise SystemExit("GCR-0002 predecessor restoration did not produce the exact pair")
+    fsync_directory((repo / BACKLOG_PATH).parent)
+    fsync_directory((repo / STATE_PATH).parent)
 
 
 def cleanup_transaction(repo: Path) -> None:
@@ -813,18 +958,25 @@ def recover_transaction(repo: Path) -> str:
     with taskctl.exclusive_backlog_lock(repo / BACKLOG_PATH):
         if not present_transaction_artifacts(repo):
             return "ABSENT"
+        anchor, predecessor_backlog, predecessor_state = load_recovery_anchor(repo)
         with transaction_lock(repo, recover=True):
             manifest = transaction_artifacts(repo)[TRANSACTION_PATH]
             if not manifest.is_file() or manifest.is_symlink():
-                restore_predecessor(repo)
+                restore_predecessor(repo, anchor, predecessor_backlog, predecessor_state)
                 cleanup_transaction(repo)
                 return "RESTORED_PREDECESSOR"
             try:
                 transaction, _payload = load_json(manifest, "GCR-0002 transaction")
                 validate_transaction(repo, transaction)
+                if (
+                    transaction.get("adoptionEvidenceCommit") != anchor.get("adoptionEvidenceCommit")
+                    or transaction.get("reviewedStateCommit") != anchor.get("approvedStateCommit")
+                    or transaction.get("predecessor") != anchor.get("predecessor")
+                ):
+                    raise SystemExit("GCR-0002 transaction differs from the durable recovery anchor")
                 complete_transaction(repo, transaction)
             except SystemExit:
-                restore_predecessor(repo)
+                restore_predecessor(repo, anchor, predecessor_backlog, predecessor_state)
                 cleanup_transaction(repo)
                 return "RESTORED_PREDECESSOR"
     return "COMPLETED_SUCCESSOR"
@@ -871,7 +1023,7 @@ def command_adopt(args: argparse.Namespace) -> None:
     if str(args.approved_state_commit) != approved_state:
         raise SystemExit("GCR-0002 approved-state argument differs from the canonical review projection")
     evidence_relative = str(args.evidence)
-    canonical_evidence = "artifacts/evidence/governance-control-recovery/GCR-0002.B00.adoption.json"
+    canonical_evidence = ADOPTION_EVIDENCE_PATH
     if evidence_relative != canonical_evidence:
         raise SystemExit(f"GCR-0002 adoption evidence path must be {canonical_evidence}")
     evidence_commit = git(args.repo, "rev-parse", "HEAD")
@@ -957,8 +1109,14 @@ def command_adopt(args: argparse.Namespace) -> None:
     )
     validate_transaction(args.repo, transaction)
     validate_successor_pair(args.repo, successor_backlog, successor_state)
+    anchor = recovery_anchor_document(
+        transaction=transaction,
+        predecessor_backlog=backlog_payload,
+        predecessor_state=state_payload,
+    )
+    validate_recovery_anchor(args.repo, anchor)
     artifacts = transaction_artifacts(args.repo)
-    with taskctl.exclusive_backlog_lock(args.repo / BACKLOG_PATH), transaction_lock(args.repo):
+    with taskctl.exclusive_backlog_lock(args.repo / BACKLOG_PATH), transaction_lock(args.repo, anchor=anchor):
         if (args.repo / BACKLOG_PATH).read_bytes() != backlog_payload or (
             args.repo / STATE_PATH
         ).read_bytes() != state_payload:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import copy
 import json
 import shutil
@@ -118,6 +119,137 @@ class Gcr2ctlTests(unittest.TestCase):
             gcr2ctl.freeze_submission(args, remediation=False)
         return repo, packet, base, candidate, evidence
 
+    def recovery_fixture(self, temporary: str) -> tuple[Path, bytes, bytes, bytes, bytes, dict, dict]:
+        repo = Path(temporary)
+        self.git(repo, "init")
+        self.git(repo, "config", "user.email", "gcr2@example.test")
+        self.git(repo, "config", "user.name", "GCR2 Test")
+        self.git(repo, "config", "core.autocrlf", "false")
+        self.git(repo, "checkout", "-b", gcr2ctl.BRANCH)
+        for relative in (
+            ".gitignore",
+            ".gitattributes",
+            gcr2ctl.RUNTIME_SCHEMA_PATH,
+            gcr2ctl.TRANSACTION_SCHEMA_PATH,
+            gcr2ctl.BACKLOG_PATH,
+        ):
+            destination = repo / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(REPO / relative, destination)
+        state: dict[str, object] = {
+            "schemaVersion": "2.0-control-recovery-state",
+            "documentType": "governance-control-recovery-bootstrap-state",
+            "controlRecoveryId": gcr2ctl.GCR_ID,
+            "bootstrapUnit": gcr2ctl.BOOTSTRAP_ID,
+            "status": "APPROVED",
+            "approval": {"path": gcr2ctl.APPROVAL_PATH, "sha256": "0" * 64, "commit": "0" * 40},
+            "triggerWitness": gcr2ctl.trigger_witness(),
+            "attempts": [],
+            "currentSubmission": None,
+            "adoption": None,
+        }
+        state_path = repo / gcr2ctl.STATE_PATH
+        state_path.parent.mkdir(parents=True, exist_ok=True)
+        state_path.write_bytes((json.dumps(state, indent=2) + "\n").encode())
+        self.git(repo, "add", ".")
+        self.git(repo, "commit", "-m", "approved state")
+        approved_state = self.git(repo, "rev-parse", "HEAD")
+        evidence = {
+            "schemaVersion": "2.0-control-recovery-adoption-evidence",
+            "documentType": "governance-control-recovery-adoption-evidence",
+            "controlRecoveryId": gcr2ctl.GCR_ID,
+            "bootstrapUnit": gcr2ctl.BOOTSTRAP_ID,
+            "reviewedStateCommit": approved_state,
+            "triggerWitness": gcr2ctl.trigger_witness(),
+            "predecessorRevision": 8,
+            "successorRevision": 9,
+            "expectedChangedFiles": [gcr2ctl.BACKLOG_PATH, gcr2ctl.STATE_PATH],
+            "checks": [{"id": "recovery", "command": "recovery", "exitCode": 0, "result": "passed"}],
+            "unverifiedItems": [],
+        }
+        evidence_path = repo / gcr2ctl.ADOPTION_EVIDENCE_PATH
+        evidence_path.parent.mkdir(parents=True, exist_ok=True)
+        evidence_path.write_bytes((json.dumps(evidence, indent=2) + "\n").encode())
+        self.git(repo, "add", gcr2ctl.ADOPTION_EVIDENCE_PATH)
+        self.git(repo, "commit", "-m", "adoption evidence")
+        evidence_commit = self.git(repo, "rev-parse", "HEAD")
+        trigger = repo / gcr2ctl.TRIGGER_PATH
+        trigger.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(REPO / gcr2ctl.TRIGGER_PATH, trigger)
+        predecessor_backlog = (repo / gcr2ctl.BACKLOG_PATH).read_bytes()
+        predecessor_state = state_path.read_bytes()
+        self.assertEqual(gcr2ctl.BACKLOG_SHA256, gcr2ctl.sha256(predecessor_backlog))
+        self.assertNotEqual(
+            gcr2ctl.sha256(predecessor_backlog),
+            gcr2ctl.sha256(taskctl.git_blob(repo, approved_state, gcr2ctl.BACKLOG_PATH) or b""),
+        )
+        successor_backlog_document = yaml.safe_load(predecessor_backlog)
+        control = successor_backlog_document["control_plane"]
+        control["revision"] = 9
+        control["minimum_tool_revision"] = 9
+        control["control_generations"].append(
+            {
+                "id": gcr2ctl.GCR_ID,
+                "bootstrap_id": gcr2ctl.BOOTSTRAP_ID,
+                "hold_id": "HOLD-W1-GRR-0002",
+                "predecessor_revision": 8,
+                "successor_revision": 9,
+                "approval_reference": {
+                    "path": gcr2ctl.APPROVAL_PATH,
+                    "sha256": "1" * 64,
+                    "introduction_commit": "1" * 40,
+                },
+                "review_reference": {
+                    "path": gcr2ctl.review_path("R01"),
+                    "sha256": "2" * 64,
+                    "reviewed_state_commit": "2" * 40,
+                    "approved_state_commit": approved_state,
+                },
+                "adopted_by": gcr2ctl.ACTOR,
+                "adopted_at": "2026-08-25T00:00:00+00:00",
+            }
+        )
+        successor_backlog = yaml.safe_dump(successor_backlog_document, sort_keys=False).encode()
+        successor_state_document = copy.deepcopy(state)
+        successor_state_document["status"] = "ADOPTION_FINALIZATION"
+        successor_state_document["adoption"] = {
+            "adoptedBy": gcr2ctl.ACTOR,
+            "adoptedAt": "2026-08-25T00:00:00+00:00",
+            "predecessorRevision": 8,
+            "successorRevision": 9,
+            "reviewedStateCommit": approved_state,
+            "evidence": {
+                "path": gcr2ctl.ADOPTION_EVIDENCE_PATH,
+                "sha256": gcr2ctl.sha256(evidence_path.read_bytes()),
+                "commit": evidence_commit,
+            },
+        }
+        successor_state = (json.dumps(successor_state_document, indent=2) + "\n").encode()
+        transaction = gcr2ctl.transaction_document(
+            predecessor_backlog=predecessor_backlog,
+            predecessor_state=predecessor_state,
+            successor_backlog=successor_backlog,
+            successor_state=successor_state,
+            reviewed_state=approved_state,
+            evidence_commit=evidence_commit,
+        )
+        anchor = gcr2ctl.recovery_anchor_document(
+            transaction=transaction,
+            predecessor_backlog=predecessor_backlog,
+            predecessor_state=predecessor_state,
+        )
+        gcr2ctl.validate_recovery_anchor(repo, anchor)
+        gcr2ctl.validate_successor_pair(repo, successor_backlog, successor_state)
+        return (
+            repo,
+            predecessor_backlog,
+            predecessor_state,
+            successor_backlog,
+            successor_state,
+            transaction,
+            anchor,
+        )
+
     def test_repository_authority_is_valid_at_revision_eight(self) -> None:
         approval, packet, base = gcr2ctl.load_authority(REPO)
         self.assertEqual("APPROVED", approval["status"])
@@ -184,21 +316,75 @@ class Gcr2ctlTests(unittest.TestCase):
 
     def test_unpublished_transaction_restores_exact_predecessor_and_cleans_artifacts(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            repo, _packet, _base, _candidate, evidence = self.submitted_fixture(temporary)
-            self.git(repo, "add", evidence, gcr2ctl.STATE_PATH)
-            self.git(repo, "commit", "-m", "freeze submitted state")
-            predecessor_backlog = (repo / gcr2ctl.BACKLOG_PATH).read_bytes()
-            predecessor_state = (repo / gcr2ctl.STATE_PATH).read_bytes()
+            (
+                repo,
+                predecessor_backlog,
+                predecessor_state,
+                _successor_backlog,
+                _successor_state,
+                _transaction,
+                anchor,
+            ) = self.recovery_fixture(temporary)
             artifacts = gcr2ctl.transaction_artifacts(repo)
-            gcr2ctl.write_new_durable(artifacts[gcr2ctl.LOCK_PATH], b"lock\n")
+            with gcr2ctl.transaction_lock(repo, anchor=anchor):
+                pass
             gcr2ctl.write_new_durable(artifacts[gcr2ctl.BACKLOG_NEXT_PATH], b"substituted\n")
             (repo / gcr2ctl.BACKLOG_PATH).write_bytes(b"partial\n")
-            with patch.object(gcr2ctl, "BACKLOG_SHA256", gcr2ctl.sha256(predecessor_backlog)):
-                self.assertEqual("RESTORED_PREDECESSOR", gcr2ctl.recover_transaction(repo))
+            self.assertEqual("RESTORED_PREDECESSOR", gcr2ctl.recover_transaction(repo))
             self.assertEqual(predecessor_backlog, (repo / gcr2ctl.BACKLOG_PATH).read_bytes())
             self.assertEqual(predecessor_state, (repo / gcr2ctl.STATE_PATH).read_bytes())
             self.assertEqual([], gcr2ctl.present_transaction_artifacts(repo))
             self.assertEqual("ABSENT", gcr2ctl.recover_transaction(repo))
+
+    def test_invalid_manifest_restores_but_stale_head_and_substituted_anchor_fail_closed(self) -> None:
+        for scenario in ("invalid-manifest", "stale-head", "substituted-anchor"):
+            with self.subTest(scenario=scenario), tempfile.TemporaryDirectory() as temporary:
+                (
+                    repo,
+                    predecessor_backlog,
+                    predecessor_state,
+                    _successor_backlog,
+                    _successor_state,
+                    _transaction,
+                    anchor,
+                ) = self.recovery_fixture(temporary)
+                artifacts = gcr2ctl.transaction_artifacts(repo)
+                with gcr2ctl.transaction_lock(repo, anchor=anchor):
+                    pass
+                if scenario == "invalid-manifest":
+                    gcr2ctl.write_new_durable(artifacts[gcr2ctl.TRANSACTION_PATH], b"not-json\n")
+                elif scenario == "stale-head":
+                    unrelated = repo / "unrelated.txt"
+                    unrelated.write_text("new head\n", encoding="utf-8")
+                    self.git(repo, "add", "unrelated.txt")
+                    self.git(repo, "commit", "-m", "unrelated head")
+                else:
+                    changed = copy.deepcopy(anchor)
+                    changed_state = json.dumps({"status": "APPROVED"}).encode()
+                    changed["predecessorPayloads"]["stateBase64"] = base64.b64encode(changed_state).decode("ascii")
+                    changed["predecessor"]["state"] = gcr2ctl.binding(
+                        gcr2ctl.STATE_PATH, changed_state, json.loads(changed_state)
+                    )
+                    artifacts[gcr2ctl.LOCK_PATH].write_bytes((json.dumps(changed, indent=2) + "\n").encode())
+                (repo / gcr2ctl.BACKLOG_PATH).write_bytes(b"partial backlog\n")
+                (repo / gcr2ctl.STATE_PATH).write_bytes(b"partial state\n")
+                before = {
+                    path: (repo / path).read_bytes()
+                    for path in (gcr2ctl.BACKLOG_PATH, gcr2ctl.STATE_PATH, gcr2ctl.LOCK_PATH)
+                }
+                if scenario == "invalid-manifest":
+                    self.assertEqual("RESTORED_PREDECESSOR", gcr2ctl.recover_transaction(repo))
+                    self.assertEqual(predecessor_backlog, (repo / gcr2ctl.BACKLOG_PATH).read_bytes())
+                    self.assertEqual(predecessor_state, (repo / gcr2ctl.STATE_PATH).read_bytes())
+                    self.assertEqual([], gcr2ctl.present_transaction_artifacts(repo))
+                else:
+                    with self.assertRaisesRegex(SystemExit, "recovery anchor"):
+                        gcr2ctl.recover_transaction(repo)
+                    after = {
+                        path: (repo / path).read_bytes()
+                        for path in (gcr2ctl.BACKLOG_PATH, gcr2ctl.STATE_PATH, gcr2ctl.LOCK_PATH)
+                    }
+                    self.assertEqual(before, after)
 
     def test_taskctl_revision_eight_reader_fails_closed_on_revision_nine(self) -> None:
         backlog = yaml.safe_load((REPO / gcr2ctl.BACKLOG_PATH).read_text(encoding="utf-8"))
@@ -231,46 +417,37 @@ class Gcr2ctlTests(unittest.TestCase):
         ]
         for boundary in boundaries:
             with self.subTest(boundary=boundary), tempfile.TemporaryDirectory() as temporary:
-                repo, _packet, _base, _candidate, evidence = self.submitted_fixture(temporary)
-                self.git(repo, "add", evidence, gcr2ctl.STATE_PATH)
-                self.git(repo, "commit", "-m", "freeze submitted state")
-                predecessor_backlog = (repo / gcr2ctl.BACKLOG_PATH).read_bytes()
-                predecessor_state = (repo / gcr2ctl.STATE_PATH).read_bytes()
-                successor_backlog_document = yaml.safe_load(predecessor_backlog)
-                successor_backlog_document["control_plane"]["revision"] = 9
-                successor_backlog_document["control_plane"]["minimum_tool_revision"] = 9
-                successor_backlog = yaml.safe_dump(successor_backlog_document, sort_keys=False).encode()
-                successor_state_document = json.loads(predecessor_state)
-                successor_state_document["status"] = "ADOPTION_FINALIZATION"
-                successor_state = (json.dumps(successor_state_document, indent=2) + "\n").encode()
+                (
+                    repo,
+                    predecessor_backlog,
+                    predecessor_state,
+                    successor_backlog,
+                    successor_state,
+                    transaction,
+                    anchor,
+                ) = self.recovery_fixture(temporary)
+                (repo / ".git/gcr2-transaction.json").write_bytes((json.dumps(transaction, indent=2) + "\n").encode())
+                (repo / ".git/gcr2-anchor.json").write_bytes((json.dumps(anchor, indent=2) + "\n").encode())
+                (repo / ".git/gcr2-successor-backlog").write_bytes(successor_backlog)
+                (repo / ".git/gcr2-successor-state").write_bytes(successor_state)
                 child = "\n".join(
                     [
                         "import json, os, pathlib, sys, yaml",
-                        "from unittest.mock import patch",
                         f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
                         "import gcr2ctl, taskctl",
                         "repo = pathlib.Path(sys.argv[1])",
                         "boundary = sys.argv[2]",
-                        "old_backlog = (repo / gcr2ctl.BACKLOG_PATH).read_bytes()",
-                        "old_state = (repo / gcr2ctl.STATE_PATH).read_bytes()",
-                        "backlog = yaml.safe_load(old_backlog)",
-                        "backlog['control_plane']['revision'] = 9",
-                        "backlog['control_plane']['minimum_tool_revision'] = 9",
-                        "new_backlog = yaml.safe_dump(backlog, sort_keys=False).encode()",
-                        "state = json.loads(old_state)",
-                        "state['status'] = 'ADOPTION_FINALIZATION'",
-                        "new_state = (json.dumps(state, indent=2) + '\\n').encode()",
-                        "transaction = gcr2ctl.transaction_document(",
-                        "  predecessor_backlog=old_backlog, predecessor_state=old_state,",
-                        "  successor_backlog=new_backlog, successor_state=new_state,",
-                        "  reviewed_state='1' * 40, evidence_commit='2' * 40)",
+                        "new_backlog = (repo / '.git/gcr2-successor-backlog').read_bytes()",
+                        "new_state = (repo / '.git/gcr2-successor-state').read_bytes()",
+                        "transaction = json.loads((repo / '.git/gcr2-transaction.json').read_bytes())",
+                        "anchor = json.loads((repo / '.git/gcr2-anchor.json').read_bytes())",
                         "def crash(label):",
                         "  if label == boundary: os._exit(77)",
                         "gcr2ctl.adoption_fault_boundary = crash",
                         "artifacts = gcr2ctl.transaction_artifacts(repo)",
                         (
                             "with taskctl.exclusive_backlog_lock(repo / gcr2ctl.BACKLOG_PATH), "
-                            "gcr2ctl.transaction_lock(repo):"
+                            "gcr2ctl.transaction_lock(repo, anchor=anchor):"
                         ),
                         "  gcr2ctl.write_new_durable(artifacts[gcr2ctl.BACKLOG_NEXT_PATH], new_backlog)",
                         "  crash('backlog-next-durable')",
@@ -281,8 +458,7 @@ class Gcr2ctlTests(unittest.TestCase):
                             "(json.dumps(transaction, indent=2) + '\\n').encode())"
                         ),
                         "  crash('transaction-published')",
-                        "  with patch.object(gcr2ctl, 'validate_successor_pair'):",
-                        "    gcr2ctl.complete_transaction(repo, transaction)",
+                        "  gcr2ctl.complete_transaction(repo, transaction)",
                     ]
                 )
                 result = subprocess.run(
@@ -293,11 +469,7 @@ class Gcr2ctlTests(unittest.TestCase):
                 )
                 self.assertEqual(77, result.returncode, result.stdout + result.stderr)
                 if gcr2ctl.present_transaction_artifacts(repo):
-                    with (
-                        patch.object(gcr2ctl, "BACKLOG_SHA256", gcr2ctl.sha256(predecessor_backlog)),
-                        patch.object(gcr2ctl, "validate_successor_pair"),
-                    ):
-                        outcome = gcr2ctl.recover_transaction(repo)
+                    outcome = gcr2ctl.recover_transaction(repo)
                     self.assertIn(outcome, {"RESTORED_PREDECESSOR", "COMPLETED_SUCCESSOR"})
                 live = (
                     (repo / gcr2ctl.BACKLOG_PATH).read_bytes(),
