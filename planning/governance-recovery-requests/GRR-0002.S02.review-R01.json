@@ -1,0 +1,33 @@
+{
+  "$schema": "./governance-recovery-supplement-approval.v4.schema.json",
+  "schemaVersion": "4.0",
+  "documentType": "governance-recovery-supplement-packet-review",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S02",
+  "attemptId": "R01",
+  "candidateCommit": "e28c0f7449497438654e53a1955ad4a2da316b08",
+  "packetSha256": "98291204bb0481ba84871e50980704e6c6293e7523767011bd78c4932fc580cb",
+  "reviewer": "independent-grr2-s02-packet-reviewer",
+  "result": "changes-requested",
+  "findings": [
+    {
+      "id": "GRR-0002.S02-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 7,
+      "title": "The authorized B02 scope cannot make the exact historic W1.A04.B00 retry executable",
+      "reproduction": "At exact packet commit e28c0f7449497438654e53a1955ad4a2da316b08, inspect `taskctl.command_amendment_append_bootstrap_submit`. After validating the active recovery hold and exact ECR/W1.A04 authority, it unconditionally resolves current HEAD and raises `Amendment bootstrap implementation commit must equal current HEAD` unless the supplied implementation commit equals that HEAD. The packet requires the later retry to use exact historic candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6, while the packet commit and every lawful S02 approval, B02 installation, submission, and approval commit necessarily descend beyond that candidate. `require_recovery_hold_permission` can admit the amendment command after the latest supplement bootstrap is approved, but it does not relax the subsequent current-HEAD guard. The existing unmocked revision-9-to-10-to-11 test calls `assert_historic_retry_denied` after S02 start and never submits or approves B02 or proves the required post-B02 retry. Finally, the packet authorizes B02 changes only to planning/backlog.yaml, planning/governance-recovery-approvals/GRR-0002.B02*, tests/foundation/test_recoveryctl.py, and tools/recoveryctl.py; it excludes tools/taskctl.py and taskctl workflow tests, so B02 cannot lawfully repair the enforcing command. The required exact retry therefore remains impossible even after B02 approval.",
+      "requiredRemediation": "Freeze a strict-descendant R02 packet that makes the post-B02 retry decision-complete. Add only the minimum taskctl controller and focused taskctl test paths needed to the B02 authorized scope, and require B02 to implement a fail-closed exception limited to amendment bootstrap-submit for exact W1.A04/W1.A04.B00, exact candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6, exact evidence SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c, the exact approved ECR-0003/W1.A04 authority, the sole active HOLD-W1-GRR-0002, sequential approved GRR-0002.S02/B02 at revision 11, and the exact untracked/unstaged/non-authoritative witness workspace. Preserve ordinary current-HEAD denial for every other candidate, amendment, task, command, hold, revision, evidence, or workspace state. Require real-Git tests proving denial before B02 approval, successful atomic submission of only the historic candidate after B02 approval, and byte-stable denial for wrong candidate/current HEAD, wrong approval or supplement, adverse/open B02 review, wrong revision/hold, changed/staged/tracked/accompanied witness, append/materialization/task/T03/resume/gate actions, stale writer, and replay after the one lawful submission. Retain the separate independent B02 review gate and all existing revision, hold, rollback, and prohibited-scope controls."
+    }
+  ],
+  "closures": [],
+  "priorAttempt": null,
+  "verified": [
+    "The exact three-file packet commit, packet SHA-256, Draft 2020-12 version-4 schema validation, declared file hashes, Git blobs, and diff hygiene reproduce.",
+    "The base GRR-0002 authority, adopted GCR-0003 review/state/evidence chain, ECR-0003 packet, W1.A04 approval, and their exact hashes, commits, unique introductions, blobs, and ancestry reproduce; the historic witness is intentionally untracked rather than a Git blob, while its bytes, embedded candidate binding, ancestry, unstaged state, and non-authoritative role reproduce.",
+    "The live control boundary is revision/minimum 10 with one ACTIVE HOLD-W1-GRR-0002, PAUSED W1 at wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, and PENDING G1.",
+    "The packet and review page consistently prohibit S02/B02/W1/amendment/task/T03/hold/gate/main/remote execution before their stated gates, and no S02 human approval currently exists.",
+    "The version-4 readers retain separate immutable packet-review authority, recursive history authentication, strict-descendant remediation denial, chronological finding/closure folding, exact 10-to-11 sequencing, v3 immutability, older-reader denial, and historic-retry denial before B02 approval."
+  ],
+  "approvalAvailable": false
+}
