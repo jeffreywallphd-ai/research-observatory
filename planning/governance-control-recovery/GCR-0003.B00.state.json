@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0003",
   "bootstrapUnit": "GCR-0003.B00",
-  "status": "CHANGES_REQUESTED",
+  "status": "REVIEW",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0003.approval.json",
     "sha256": "82a6187fa47e55c286ef3ae60bd185c94dfcdf5ba87c1283391d315988528ca7",
@@ -126,7 +126,24 @@
       ]
     }
   ],
-  "currentSubmission": null,
+  "currentSubmission": {
+    "attemptId": "R03",
+    "submittedBy": "codex",
+    "candidateCommit": "cc2ce51c4d1f7d330530ee138eb5b70c96e0df98",
+    "baseCommit": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.R03.json",
+      "sha256": "951be6eb9ba72396857b250da3a753f79ebdf2b616189c50fe8ee75feaf17f75",
+      "commit": "cc2ce51c4d1f7d330530ee138eb5b70c96e0df98"
+    },
+    "submittedAt": "2026-08-25T22:53:05+00:00",
+    "priorAttemptId": "R02",
+    "openFindingIds": [
+      "GCR-0003.B00-R02-F01"
+    ],
+    "rootCauseAnalysis": "R02 modeled append-only supplement review authority as a one-hop predecessor check, and its tests exercised only R01; the missing recursive history fold allowed older open blockers to disappear."
+  },
   "adoption": null,
   "reviewTransitionRecovery": {
     "controlRecoveryId": "GCR-0004",
