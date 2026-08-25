@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-control-recovery.runtime.v3.json",
+  "title": "GCR-0003 approval and bootstrap runtime records",
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "attempt": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[A-Za-z0-9._*/-]+$"},
+    "reference": {
+      "type": "object", "required": ["path", "sha256", "commit"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}},
+      "additionalProperties": false
+    },
+    "witness": {
+      "type": "object", "required": ["path", "sha256", "role", "untracked", "unstaged", "executionAuthority"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/W1.A04.B00.json"},
+        "sha256": {"const": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"},
+        "role": {"const": "atomic-failure-trigger-only"},
+        "untracked": {"const": true}, "unstaged": {"const": true}, "executionAuthority": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "transactionWitness": {
+      "type": "object", "required": ["path", "sha256", "untracked", "unstaged", "executionAuthority"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/W1.A04.B00.json"},
+        "sha256": {"const": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"},
+        "untracked": {"const": true}, "unstaged": {"const": true}, "executionAuthority": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object", "required": ["id", "severity", "blocking", "criterionIndex", "title", "reproduction", "requiredRemediation"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^GCR-0003(?:\\.B00)?-R[0-9]{2,}-F[0-9]{2,}$"},
+        "severity": {"enum": ["critical", "high", "medium", "low"]}, "blocking": {"type": "boolean"},
+        "criterionIndex": {"type": "integer", "minimum": 1}, "title": {"type": "string", "minLength": 1},
+        "reproduction": {"type": "string", "minLength": 1}, "requiredRemediation": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "closure": {
+      "type": "object", "required": ["findingId", "disposition", "evidence"],
+      "properties": {
+        "findingId": {"type": "string", "minLength": 1},
+        "disposition": {"enum": ["fixed", "not-reproduced", "superseded", "accepted-risk"]},
+        "evidence": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "check": {
+      "type": "object", "required": ["id", "command", "exitCode", "result"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "command": {"type": "string", "minLength": 1},
+        "exitCode": {"type": "integer"}, "result": {"enum": ["passed", "failed"]}, "outputSha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "criterion": {
+      "type": "object", "required": ["index", "statement", "evidence"],
+      "properties": {
+        "index": {"type": "integer", "minimum": 1}, "statement": {"type": "string", "minLength": 1},
+        "evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "submission": {
+      "type": "object",
+      "required": ["attemptId", "submittedBy", "submittedAt", "candidateCommit", "baseCommit", "branch", "evidence", "priorAttemptId", "openFindingIds", "rootCauseAnalysis"],
+      "properties": {
+        "attemptId": {"$ref": "#/$defs/attempt"}, "submittedBy": {"type": "string", "minLength": 1},
+        "submittedAt": {"$ref": "#/$defs/timestamp"}, "candidateCommit": {"$ref": "#/$defs/commit"},
+        "baseCommit": {"$ref": "#/$defs/commit"}, "branch": {"const": "codex/w1-windows-local-runtime"},
+        "evidence": {"$ref": "#/$defs/reference"},
+        "priorAttemptId": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/attempt"}]},
+        "openFindingIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "rootCauseAnalysis": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "reviewProjection": {
+      "type": "object", "required": ["reviewer", "result", "reviewedAt", "reviewedStateCommit", "notes"],
+      "properties": {
+        "reviewer": {"type": "string", "minLength": 1}, "result": {"enum": ["approved", "changes-requested", "blocked"]},
+        "reviewedAt": {"$ref": "#/$defs/timestamp"}, "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "historyAttempt": {
+      "type": "object", "required": ["submission", "review", "ledger", "findings", "closures"],
+      "properties": {
+        "submission": {"$ref": "#/$defs/submission"}, "review": {"$ref": "#/$defs/reviewProjection"},
+        "ledger": {"$ref": "#/$defs/reference"}, "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/closure"}}
+      },
+      "additionalProperties": false
+    },
+    "backlogBinding": {
+      "type": "object", "required": ["path", "rawSha256", "canonicalSha256"],
+      "properties": {
+        "path": {"const": "planning/backlog.yaml"}, "rawSha256": {"$ref": "#/$defs/sha256"},
+        "canonicalSha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "stateBinding": {
+      "type": "object", "required": ["path", "rawSha256", "canonicalSha256"],
+      "properties": {
+        "path": {"const": "planning/governance-control-recovery/GCR-0003.B00.state.json"},
+        "rawSha256": {"$ref": "#/$defs/sha256"}, "canonicalSha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "transaction": {
+      "type": "object",
+      "required": [
+        "schemaVersion", "documentType", "transactionId", "controlRecoveryId", "bootstrapUnit", "status",
+        "createdBy", "createdAt", "branch", "authorityBaseCommit", "adoptionEvidenceCommit", "reviewedStateCommit",
+        "activeHold", "triggerWitness", "predecessor", "successor", "paths", "durability", "publicationOrder",
+        "recovery", "finalization"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "3.0-control-recovery-adoption-transaction"},
+        "documentType": {"const": "governance-control-recovery-adoption-transaction"},
+        "transactionId": {"const": "GCR-0003.B00.ADOPT"},
+        "controlRecoveryId": {"const": "GCR-0003"},
+        "bootstrapUnit": {"const": "GCR-0003.B00"},
+        "status": {"const": "PREPARED"}, "createdBy": {"const": "codex"},
+        "createdAt": {"$ref": "#/$defs/timestamp"}, "branch": {"const": "codex/w1-windows-local-runtime"},
+        "authorityBaseCommit": {"const": "72e2989440292ca30f8b5d4717aa61c56c5b9f48"},
+        "adoptionEvidenceCommit": {"$ref": "#/$defs/commit"}, "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+        "activeHold": {
+          "type": "object", "required": ["id", "status", "recoveryRequestId", "latestApprovedSupplement", "installedControlGeneration"],
+          "properties": {
+            "id": {"const": "HOLD-W1-GRR-0002"}, "status": {"const": "ACTIVE"},
+            "recoveryRequestId": {"const": "GRR-0002"}, "latestApprovedSupplement": {"const": "GRR-0002.S01"},
+            "installedControlGeneration": {"const": "GCR-0002"}
+          },
+          "additionalProperties": false
+        },
+        "triggerWitness": {"$ref": "#/$defs/transactionWitness"},
+        "predecessor": {
+          "type": "object", "required": ["controlRevision", "minimumToolRevision", "supportedControlCeiling", "backlog", "state"],
+          "properties": {
+            "controlRevision": {"const": 9}, "minimumToolRevision": {"const": 9}, "supportedControlCeiling": {"const": 9},
+            "backlog": {"$ref": "#/$defs/backlogBinding"}, "state": {"$ref": "#/$defs/stateBinding"}
+          },
+          "additionalProperties": false
+        },
+        "successor": {
+          "type": "object", "required": ["controlRevision", "minimumToolRevision", "supportedControlCeiling", "backlog", "state"],
+          "properties": {
+            "controlRevision": {"const": 10}, "minimumToolRevision": {"const": 10}, "supportedControlCeiling": {"const": 11},
+            "backlog": {"$ref": "#/$defs/backlogBinding"}, "state": {"$ref": "#/$defs/stateBinding"}
+          },
+          "additionalProperties": false
+        },
+        "paths": {
+          "type": "object", "required": ["manifest", "lock", "backlogNext", "stateNext", "backlog", "state"],
+          "properties": {
+            "manifest": {"const": "planning/governance-control-recovery/GCR-0003.B00.adoption-transaction.json"},
+            "lock": {"const": "planning/governance-control-recovery/GCR-0003.B00.adoption.lock"},
+            "backlogNext": {"const": "planning/governance-control-recovery/GCR-0003.B00.adoption-backlog.next"},
+            "stateNext": {"const": "planning/governance-control-recovery/GCR-0003.B00.adoption-state.next"},
+            "backlog": {"const": "planning/backlog.yaml"},
+            "state": {"const": "planning/governance-control-recovery/GCR-0003.B00.state.json"}
+          },
+          "additionalProperties": false
+        },
+        "durability": {
+          "type": "object", "required": ["sameFilesystem", "exclusiveCreateLock", "replaceExistingWriteThrough", "flushSuccessorFilesBeforeManifest", "flushManifestBeforePublication", "flushPublishedFiles", "flushParentDirectories", "cleanupAfterValidatedPairOnly"],
+          "properties": {
+            "sameFilesystem": {"const": true}, "exclusiveCreateLock": {"const": true},
+            "replaceExistingWriteThrough": {"const": true}, "flushSuccessorFilesBeforeManifest": {"const": true},
+            "flushManifestBeforePublication": {"const": true}, "flushPublishedFiles": {"const": true},
+            "flushParentDirectories": {"const": true}, "cleanupAfterValidatedPairOnly": {"const": true}
+          },
+          "additionalProperties": false
+        },
+        "publicationOrder": {"const": ["acquire-exclusive-lock", "authenticate-authority-cas-workspace-and-witness", "write-and-flush-successor-files", "exclusive-create-and-flush-prepared-manifest", "replace-backlog-write-through-and-flush", "replace-state-write-through-and-flush", "validate-exact-successor-pair", "flush-parent-directories", "remove-and-flush-transaction-artifacts"]},
+        "recovery": {
+          "type": "object", "required": ["command", "idempotent", "automaticPreflight", "validTerminalPairs", "failClosedStates", "decisionRule"],
+          "properties": {
+            "command": {"const": "python tools/gcr3ctl.py --repo . recover GCR-0003 --agent codex"},
+            "idempotent": {"const": true}, "automaticPreflight": {"const": true},
+            "validTerminalPairs": {"const": ["exact-predecessor-pair", "exact-successor-pair"]},
+            "failClosedStates": {"const": ["prepared", "partial-publication", "marker-missing", "substituted", "stale", "dirty-workspace", "split-backlog-state"]},
+            "decisionRule": {"const": "complete-successor-only-when-manifest-authority-and-both-durable-successors-validate-otherwise-restore-exact-predecessor-pair"}
+          },
+          "additionalProperties": false
+        },
+        "finalization": {
+          "type": "object", "required": ["directChildOfAdoptionEvidenceCommit", "exactChangedFiles", "transactionArtifactsAbsent", "predecessorOrSuccessorPairOnly"],
+          "properties": {
+            "directChildOfAdoptionEvidenceCommit": {"const": true},
+            "exactChangedFiles": {"const": ["planning/backlog.yaml", "planning/governance-control-recovery/GCR-0003.B00.state.json"]},
+            "transactionArtifactsAbsent": {"const": true}, "predecessorOrSuccessorPairOnly": {"const": true}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "attemptId", "candidateCommit", "packetSha256", "branch", "reviewer", "result", "findings", "closures", "verified", "approvalAvailable"],
+      "properties": {
+        "schemaVersion": {"const": "3.0-control-recovery-review"},
+        "documentType": {"const": "governance-control-recovery-packet-review"},
+        "controlRecoveryId": {"const": "GCR-0003"}, "attemptId": {"$ref": "#/$defs/attempt"},
+        "candidateCommit": {"$ref": "#/$defs/commit"}, "packetSha256": {"$ref": "#/$defs/sha256"},
+        "branch": {"const": "codex/w1-windows-local-runtime"}, "reviewer": {"type": "string", "minLength": 1},
+        "result": {"enum": ["approved", "changes-requested", "blocked"]},
+        "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/closure"}},
+        "verified": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "approvalAvailable": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "status", "approvedBy", "approvedAt", "decision", "packet", "independentPacketReview", "triggerWitness", "executionAuthority"],
+      "properties": {
+        "schemaVersion": {"const": "3.0-control-recovery-approval"},
+        "documentType": {"const": "governance-control-recovery-approval"},
+        "controlRecoveryId": {"const": "GCR-0003"}, "status": {"const": "APPROVED"},
+        "approvedBy": {"type": "string", "minLength": 1}, "approvedAt": {"$ref": "#/$defs/timestamp"},
+        "decision": {"type": "string", "minLength": 1},
+        "packet": {
+          "type": "object", "required": ["path", "sha256", "commit"],
+          "properties": {
+            "path": {"const": "planning/governance-control-recovery/GCR-0003.packet.json"},
+            "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}
+          },
+          "additionalProperties": false
+        },
+        "independentPacketReview": {
+          "type": "object", "required": ["attemptId", "candidateCommit", "ledger", "result", "closedFindingIds", "openFindingIds"],
+          "properties": {
+            "attemptId": {"$ref": "#/$defs/attempt"}, "candidateCommit": {"$ref": "#/$defs/commit"},
+            "ledger": {"$ref": "#/$defs/reference"}, "result": {"const": "APPROVED"},
+            "closedFindingIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+            "openFindingIds": {"const": []}
+          },
+          "additionalProperties": false
+        },
+        "triggerWitness": {"$ref": "#/$defs/witness"},
+        "executionAuthority": {
+          "type": "object", "required": ["bootstrapOnly", "bootstrapUnit", "ordinaryExecution", "revisionAdoptionBeforeReview"],
+          "properties": {
+            "bootstrapOnly": {"const": true}, "bootstrapUnit": {"const": "GCR-0003.B00"},
+            "ordinaryExecution": {"const": false}, "revisionAdoptionBeforeReview": {"const": false}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "attemptId", "commit", "baseCommit", "branch", "triggerWitness", "changedFiles", "checks", "acceptanceCriteria", "findingClosures", "unverifiedItems", "verificationSelection"],
+      "properties": {
+        "schemaVersion": {"const": "3.0-control-recovery-evidence"},
+        "documentType": {"const": "governance-control-recovery-bootstrap-evidence"},
+        "controlRecoveryId": {"const": "GCR-0003"}, "bootstrapUnit": {"const": "GCR-0003.B00"},
+        "attemptId": {"$ref": "#/$defs/attempt"}, "commit": {"$ref": "#/$defs/commit"},
+        "baseCommit": {"$ref": "#/$defs/commit"}, "branch": {"const": "codex/w1-windows-local-runtime"},
+        "triggerWitness": {"$ref": "#/$defs/witness"},
+        "changedFiles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+        "checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/check"}},
+        "acceptanceCriteria": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/criterion"}},
+        "findingClosures": {"type": "array", "items": {"$ref": "#/$defs/closure"}},
+        "unverifiedItems": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "verificationSelection": {
+          "type": "object", "required": ["riskAnalysis", "selectedChecks", "deferredChecks"],
+          "properties": {
+            "riskAnalysis": {"type": "string", "minLength": 1},
+            "selectedChecks": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+            "deferredChecks": {"type": "array", "items": {"type": "string", "minLength": 1}}
+          },
+          "additionalProperties": false
+        },
+        "rootCauseAnalysis": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "attemptId", "candidateCommit", "reviewedStateCommit", "reviewer", "result", "evidence", "findings", "closures", "notes"],
+      "properties": {
+        "schemaVersion": {"const": "3.0-control-recovery-review"},
+        "documentType": {"const": "governance-control-recovery-bootstrap-review"},
+        "controlRecoveryId": {"const": "GCR-0003"}, "bootstrapUnit": {"const": "GCR-0003.B00"},
+        "attemptId": {"$ref": "#/$defs/attempt"}, "candidateCommit": {"$ref": "#/$defs/commit"},
+        "reviewedStateCommit": {"$ref": "#/$defs/commit"}, "reviewer": {"type": "string", "minLength": 1},
+        "result": {"enum": ["approved", "changes-requested", "blocked"]}, "evidence": {"$ref": "#/$defs/reference"},
+        "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/closure"}}, "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "status", "approval", "triggerWitness", "attempts", "currentSubmission", "adoption"],
+      "properties": {
+        "schemaVersion": {"const": "3.0-control-recovery-state"},
+        "documentType": {"const": "governance-control-recovery-bootstrap-state"},
+        "controlRecoveryId": {"const": "GCR-0003"}, "bootstrapUnit": {"const": "GCR-0003.B00"},
+        "status": {"enum": ["READY", "REVIEW", "APPROVED", "ADOPTION_FINALIZATION", "ADOPTED"]},
+        "approval": {
+          "type": "object", "required": ["path", "sha256", "commit"],
+          "properties": {
+            "path": {"const": "planning/governance-control-recovery/GCR-0003.approval.json"},
+            "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}
+          },
+          "additionalProperties": false
+        },
+        "triggerWitness": {"$ref": "#/$defs/witness"},
+        "attempts": {"type": "array", "items": {"$ref": "#/$defs/historyAttempt"}},
+        "currentSubmission": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/submission"}]},
+        "adoption": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "type": "object", "required": ["adoptedBy", "adoptedAt", "predecessorRevision", "successorRevision", "supportedControlCeiling", "reviewedStateCommit", "evidence"],
+              "properties": {
+                "adoptedBy": {"const": "codex"}, "adoptedAt": {"$ref": "#/$defs/timestamp"},
+                "predecessorRevision": {"const": 9}, "successorRevision": {"const": 10},
+                "supportedControlCeiling": {"const": 11}, "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+                "evidence": {"$ref": "#/$defs/reference"}
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "reviewedStateCommit", "triggerWitness", "predecessorRevision", "successorRevision", "supportedControlCeiling", "expectedChangedFiles", "checks", "unverifiedItems"],
+      "properties": {
+        "schemaVersion": {"const": "3.0-control-recovery-adoption-evidence"},
+        "documentType": {"const": "governance-control-recovery-adoption-evidence"},
+        "controlRecoveryId": {"const": "GCR-0003"}, "bootstrapUnit": {"const": "GCR-0003.B00"},
+        "reviewedStateCommit": {"$ref": "#/$defs/commit"}, "triggerWitness": {"$ref": "#/$defs/witness"},
+        "predecessorRevision": {"const": 9}, "successorRevision": {"const": 10}, "supportedControlCeiling": {"const": 11},
+        "expectedChangedFiles": {"const": ["planning/backlog.yaml", "planning/governance-control-recovery/GCR-0003.B00.state.json"]},
+        "checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/check"}},
+        "unverifiedItems": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    {"$ref": "#/$defs/transaction"}
+  ]
+}
