@@ -59,6 +59,15 @@ TRIGGER_PATH = "artifacts/evidence/W1.A04.B00.json"
 TRIGGER_SHA256 = "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
 BACKLOG_SHA256 = "0b3d22f30d3a024e37b6c7b9b07d48f3a0b96dd2fc6c1968809a21d35a2977e7"
 ADOPTION_EVIDENCE_PATH = "artifacts/evidence/governance-control-recovery/GCR-0002.B00.adoption.json"
+R03_ROOT_CAUSE_ANALYSIS = (
+    "The first implementation trusted normalized Git blobs and test-patched validation instead of preserving the "
+    "exact raw predecessor pair. R02 preserved raw bytes but authenticated structural self-consistency rather than "
+    "deriving the one canonical human-approved, independently reviewed state, so a coherent alternate history could "
+    "substitute its own authority. The shared root cause was piecemeal trust-boundary validation; R03 uses the "
+    "existing append-only history and canonical approval-projection derivation as the sole anchor authority and tests "
+    "substitution directly. The packet-level precursor was likewise caused by generic content bindings and runtime "
+    "subobjects; distinct constant bindings and one strict runtime shape remain enforced."
+)
 RESULT_STATUS = {"approved": "APPROVED", "changes-requested": "CHANGES_REQUESTED", "blocked": "BLOCKED"}
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 
@@ -348,9 +357,10 @@ def validate_evidence(
 
 
 def freeze_submission(args: argparse.Namespace, *, remediation: bool) -> None:
-    _approval, packet, approval_base = load_authority(args.repo)
+    authority = load_authority(args.repo)
+    _approval, packet, approval_base = authority
     if present_transaction_artifacts(args.repo):
-        recover_transaction(args.repo)
+        recover_transaction(args.repo, authority)
     state, _payload = load_state(args.repo, required=False)
     if remediation:
         if state is None or state.get("status") not in {"CHANGES_REQUESTED", "BLOCKED"}:
@@ -391,7 +401,7 @@ def freeze_submission(args: argparse.Namespace, *, remediation: bool) -> None:
         "submittedAt": taskctl.utc_now(),
         "priorAttemptId": (attempts[-1].get("submission") or {}).get("attemptId") if attempts else None,
         "openFindingIds": sorted(prior_open),
-        "rootCauseAnalysis": None,
+        "rootCauseAnalysis": R03_ROOT_CAUSE_ANALYSIS if len(attempts) >= 2 else None,
     }
     if state is None:
         state = {
@@ -459,9 +469,9 @@ def validate_review(
 
 
 def command_review(args: argparse.Namespace) -> None:
-    _approval, _packet, _base = load_authority(args.repo)
+    authority = load_authority(args.repo)
     if present_transaction_artifacts(args.repo):
-        recover_transaction(args.repo)
+        recover_transaction(args.repo, authority)
     state, _payload = load_state(args.repo, required=True)
     assert state is not None
     if state.get("status") != "REVIEW" or not state.get("currentSubmission"):
@@ -519,6 +529,8 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
         if (
             submission.get("baseCommit") != (state.get("approval") or {}).get("commit")
             or submission.get("branch") != BRANCH
+            or (index >= 2 and submission.get("rootCauseAnalysis") != R03_ROOT_CAUSE_ANALYSIS)
+            or (index < 2 and submission.get("rootCauseAnalysis") is not None)
         ):
             raise SystemExit(f"GCR-0002 {attempt_id} submission base or branch is invalid")
         if prior_candidate and (
@@ -551,10 +563,33 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
         ledger_payload = taskctl.git_blob(repo, approval_projection, ledger_relative)
         if ledger_payload is None or sha256(ledger_payload) != ledger.get("sha256"):
             raise SystemExit(f"GCR-0002 {attempt_id} review ledger Git binding is invalid")
+    current = state.get("currentSubmission")
     expected_status = RESULT_STATUS[str((attempts[-1].get("review") or {}).get("result"))] if attempts else "REVIEW"
-    if attempts and state.get("status") not in {expected_status, "ADOPTION_FINALIZATION"}:
+    if current is not None:
+        current_candidate = str(current.get("candidateCommit") or "")
+        latest_candidate = str((attempts[-1].get("submission") or {}).get("candidateCommit") or "") if attempts else ""
+        if (
+            state.get("status") != "REVIEW"
+            or current.get("attemptId") != f"R{len(attempts) + 1:02d}"
+            or current.get("baseCommit") != (state.get("approval") or {}).get("commit")
+            or current.get("branch") != BRANCH
+            or current.get("priorAttemptId")
+            != (((attempts[-1].get("submission") or {}).get("attemptId")) if attempts else None)
+            or set(current.get("openFindingIds") or []) != set(open_findings(state))
+            or (
+                bool(attempts)
+                and (
+                    current_candidate == latest_candidate
+                    or not taskctl.git_is_ancestor(repo, latest_candidate, current_candidate)
+                )
+            )
+            or (len(attempts) >= 2 and current.get("rootCauseAnalysis") != R03_ROOT_CAUSE_ANALYSIS)
+            or (len(attempts) < 2 and current.get("rootCauseAnalysis") is not None)
+        ):
+            raise SystemExit("GCR-0002 current remediation submission is not the exact next REVIEW projection")
+    elif attempts and state.get("status") not in {expected_status, "ADOPTION_FINALIZATION"}:
         raise SystemExit("GCR-0002 state status differs from the latest immutable review")
-    if state.get("status") == "REVIEW" and state.get("currentSubmission") is None:
+    elif not attempts and state.get("status") == "REVIEW":
         raise SystemExit("GCR-0002 REVIEW state lacks its frozen submission")
 
 
@@ -570,16 +605,22 @@ def present_transaction_artifacts(repo: Path) -> list[str]:
 
 
 @contextmanager
-def transaction_lock(repo: Path, *, anchor: dict[str, Any] | None = None, recover: bool = False) -> Iterator[None]:
+def transaction_lock(
+    repo: Path,
+    *,
+    anchor: dict[str, Any] | None = None,
+    authority: tuple[dict[str, Any], dict[str, Any], str] | None = None,
+    recover: bool = False,
+) -> Iterator[None]:
     path = transaction_artifacts(repo)[LOCK_PATH]
     if os.path.lexists(path):
         if not recover or not path.is_file() or path.is_symlink():
             raise SystemExit("GCR-0002 adoption lock already exists or is redirected")
         yield
         return
-    if recover or anchor is None:
+    if recover or anchor is None or authority is None:
         raise SystemExit("GCR-0002 adoption requires an exact recovery anchor")
-    validate_recovery_anchor(repo, anchor)
+    validate_recovery_anchor(repo, anchor, authority)
     payload = (json.dumps(anchor, indent=2, ensure_ascii=False) + "\n").encode()
     write_new_durable(path, payload)
     adoption_fault_boundary("lock-durable")
@@ -628,7 +669,11 @@ def _decode_anchor_payload(value: object, label: str) -> bytes:
         raise SystemExit(f"GCR-0002 recovery anchor {label} payload is invalid") from exc
 
 
-def validate_recovery_anchor(repo: Path, anchor: dict[str, Any]) -> tuple[bytes, bytes]:
+def validate_recovery_anchor(
+    repo: Path,
+    anchor: dict[str, Any],
+    authority: tuple[dict[str, Any], dict[str, Any], str],
+) -> tuple[bytes, bytes]:
     """Authenticate the exact committed recovery base and its raw worktree preimages."""
     expected_keys = {
         "schemaVersion",
@@ -723,15 +768,31 @@ def validate_recovery_anchor(repo: Path, anchor: dict[str, Any]) -> tuple[bytes,
     ):
         raise SystemExit("GCR-0002 recovery anchor predecessor authority or raw bytes are invalid")
     validate_runtime(repo, state, "GCR-0002 recovery anchor predecessor state")
+    _approval, packet, approval_base = authority
+    expected_approval = {
+        "path": APPROVAL_PATH,
+        "sha256": sha256((repo / APPROVAL_PATH).read_bytes()),
+        "commit": approval_base,
+    }
+    if state.get("approval") != expected_approval:
+        raise SystemExit("GCR-0002 recovery anchor approval reference is not canonical")
+    validate_history(repo, state, packet)
+    _reviewed_state, canonical_approved_state_commit, _ledger, _ledger_payload = canonical_approved_state(
+        repo, state, state_payload
+    )
+    if canonical_approved_state_commit != approved_state:
+        raise SystemExit("GCR-0002 recovery anchor approved-state projection is not canonical")
     return backlog_payload, state_payload
 
 
-def load_recovery_anchor(repo: Path) -> tuple[dict[str, Any], bytes, bytes]:
+def load_recovery_anchor(
+    repo: Path, authority: tuple[dict[str, Any], dict[str, Any], str]
+) -> tuple[dict[str, Any], bytes, bytes]:
     path = transaction_artifacts(repo)[LOCK_PATH]
     if not path.is_file() or path.is_symlink():
         raise SystemExit("GCR-0002 recovery anchor is absent or redirected")
     anchor, _payload = load_json(path, "GCR-0002 recovery anchor")
-    backlog, state = validate_recovery_anchor(repo, anchor)
+    backlog, state = validate_recovery_anchor(repo, anchor, authority)
     return anchor, backlog, state
 
 
@@ -950,7 +1011,7 @@ def complete_transaction(repo: Path, transaction: dict[str, Any]) -> None:
     cleanup_transaction(repo)
 
 
-def recover_transaction(repo: Path) -> str:
+def recover_transaction(repo: Path, authority: tuple[dict[str, Any], dict[str, Any], str]) -> str:
     present = present_transaction_artifacts(repo)
     if not present:
         return "ABSENT"
@@ -958,7 +1019,7 @@ def recover_transaction(repo: Path) -> str:
     with taskctl.exclusive_backlog_lock(repo / BACKLOG_PATH):
         if not present_transaction_artifacts(repo):
             return "ABSENT"
-        anchor, predecessor_backlog, predecessor_state = load_recovery_anchor(repo)
+        anchor, predecessor_backlog, predecessor_state = load_recovery_anchor(repo, authority)
         with transaction_lock(repo, recover=True):
             manifest = transaction_artifacts(repo)[TRANSACTION_PATH]
             if not manifest.is_file() or manifest.is_symlink():
@@ -1013,9 +1074,10 @@ def canonical_approved_state(
 
 
 def command_adopt(args: argparse.Namespace) -> None:
-    _approval, packet, approval_base = load_authority(args.repo)
+    authority = load_authority(args.repo)
+    _approval, packet, approval_base = authority
     if present_transaction_artifacts(args.repo):
-        recover_transaction(args.repo)
+        recover_transaction(args.repo, authority)
     state, state_payload = load_state(args.repo, required=True)
     assert state is not None and state_payload is not None
     validate_history(args.repo, state, packet)
@@ -1114,9 +1176,12 @@ def command_adopt(args: argparse.Namespace) -> None:
         predecessor_backlog=backlog_payload,
         predecessor_state=state_payload,
     )
-    validate_recovery_anchor(args.repo, anchor)
+    validate_recovery_anchor(args.repo, anchor, authority)
     artifacts = transaction_artifacts(args.repo)
-    with taskctl.exclusive_backlog_lock(args.repo / BACKLOG_PATH), transaction_lock(args.repo, anchor=anchor):
+    with (
+        taskctl.exclusive_backlog_lock(args.repo / BACKLOG_PATH),
+        transaction_lock(args.repo, anchor=anchor, authority=authority),
+    ):
         if (args.repo / BACKLOG_PATH).read_bytes() != backlog_payload or (
             args.repo / STATE_PATH
         ).read_bytes() != state_payload:
@@ -1135,10 +1200,13 @@ def command_adopt(args: argparse.Namespace) -> None:
 
 
 def command_recover(args: argparse.Namespace) -> None:
-    load_authority(args.repo)
+    authority = load_authority(args.repo)
     if str(args.agent).strip() != ACTOR or args.agent != ACTOR:
         raise SystemExit(f"GCR-0002 recovery actor must be {ACTOR}")
-    print(f"GCR-0002 adoption recovery: {recover_transaction(args.repo)}; ordinary execution remains unauthorized")
+    print(
+        f"GCR-0002 adoption recovery: {recover_transaction(args.repo, authority)}; "
+        "ordinary execution remains unauthorized"
+    )
 
 
 def command_validate(args: argparse.Namespace) -> None:
