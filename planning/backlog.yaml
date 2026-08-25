@@ -22596,8 +22596,8 @@ verification_profiles:
   server: University-hosted services, identity, collaboration, licensed sources, research-production workflow, and operations.
   cloud: Tenant, residency, metering, security, research-production workload, and SaaS operations.
 control_plane:
-  revision: 9
-  minimum_tool_revision: 9
+  revision: 10
+  minimum_tool_revision: 10
   active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
@@ -23066,6 +23066,23 @@ control_plane:
       approved_state_commit: b5a8d3f4d01b25a22dfd3d30a99398983fe1b186
     adopted_by: codex
     adopted_at: '2026-08-25T02:19:11+00:00'
+  - id: GCR-0003
+    bootstrap_id: GCR-0003.B00
+    hold_id: HOLD-W1-GRR-0002
+    predecessor_revision: 9
+    successor_revision: 10
+    supported_control_ceiling: 11
+    approval_reference:
+      path: planning/governance-control-recovery/GCR-0003.approval.json
+      sha256: 82a6187fa47e55c286ef3ae60bd185c94dfcdf5ba87c1283391d315988528ca7
+      introduction_commit: d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c
+    review_reference:
+      path: planning/governance-control-recovery/GCR-0003.B00.review-R04.json
+      sha256: 663aeee91040ca39dec74f7846c6894c4c0530b13d2a8a5ceb466831491c3236
+      reviewed_state_commit: a14f65cf64f6d40584a6204177cb9d0bccdcec86
+      approved_state_commit: eb10e880aec3ddf26e9311f4de7ee1370029a0d6
+    adopted_by: codex
+    adopted_at: '2026-08-25T23:25:46+00:00'
 wave_approval_bases:
 - wave_id: W1
   packet_commit: 594e63be501711d67d17a4aef176bb9b6a8748be
