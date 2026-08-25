@@ -546,146 +546,158 @@ def validate_v4_supplement_packet_review(
     packet_payload: bytes,
     schema_path: Path,
 ) -> dict[str, Any]:
-    """Authenticate the immutable v4 packet-review ledger referenced by human approval."""
-    review_projection = approval.get("independentPacketReview") or {}
-    ledger_reference = review_projection.get("ledger") or {}
-    ledger_relative = str(ledger_reference.get("path") or "")
-    attempt_id = str(review_projection.get("attemptId") or "")
-    expected_relative = f"planning/governance-recovery-requests/{supplement_id}.review-{attempt_id}.json"
-    if ledger_relative != expected_relative:
-        raise SystemExit("Version-4 supplement packet-review ledger path is not canonical")
-    review_commit = str(ledger_reference.get("commit") or "")
-    require_commit(repo, review_commit, label="Version-4 supplement packet-review introduction")
-    if taskctl.approval_introduction_commit(repo, ledger_relative) != review_commit:
-        raise SystemExit("Version-4 supplement packet-review ledger lacks a unique immutable introduction")
-    if (
-        review_commit == packet_commit
-        or not taskctl.git_is_ancestor(repo, packet_commit, review_commit)
-        or approval_introduction == review_commit
-        or not taskctl.git_is_ancestor(repo, review_commit, approval_introduction)
-    ):
-        raise SystemExit("Version-4 supplement packet review/approval ancestry is invalid")
-    ledger_payload = exact_file_reference(
-        repo,
-        ledger_reference,
-        commit=review_commit,
-        label="Version-4 supplement packet-review ledger",
-    )
-    try:
-        ledger = json.loads(ledger_payload)
-    except (UnicodeError, json.JSONDecodeError) as exc:
-        raise SystemExit("Version-4 supplement packet-review ledger is malformed") from exc
-    if not isinstance(ledger, dict):
-        raise SystemExit("Version-4 supplement packet-review ledger must be an object")
-    ledger_errors = schema_errors(ledger, schema_path)
-    if ledger_errors:
-        raise SystemExit(
-            "Version-4 supplement packet-review schema validation failed:\n- " + "\n- ".join(ledger_errors)
+    """Authenticate and fold the complete immutable v4 packet-review history."""
+    projection = approval.get("independentPacketReview") or {}
+    current_attempt = str(projection.get("attemptId") or "")
+    reference = projection.get("ledger") or {}
+    expected_result: str | None = None
+    successor_candidate: str | None = None
+    seen: set[tuple[str, str, str]] = set()
+    newest_to_oldest: list[tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]] = []
+    packet_relative = f"planning/governance-recovery-requests/{supplement_id}.packet.json"
+
+    while True:
+        attempt_match = re.fullmatch(r"R([0-9]{2,})", current_attempt)
+        attempt_number = int(attempt_match.group(1)) if attempt_match else 0
+        if attempt_number < 1 or current_attempt != f"R{attempt_number:02d}":
+            raise SystemExit("Version-4 supplement packet-review attempt identity is invalid")
+        relative = str(reference.get("path") or "")
+        expected_relative = f"planning/governance-recovery-requests/{supplement_id}.review-{current_attempt}.json"
+        review_commit = str(reference.get("commit") or "")
+        identity = (current_attempt, relative, review_commit)
+        if relative != expected_relative or identity in seen:
+            raise SystemExit("Version-4 supplement packet-review history is noncanonical or cyclic")
+        seen.add(identity)
+        require_commit(repo, review_commit, label="Version-4 supplement packet-review introduction")
+        if taskctl.approval_introduction_commit(repo, relative) != review_commit:
+            raise SystemExit("Version-4 supplement packet-review ledger lacks a unique immutable introduction")
+        ledger_payload = exact_file_reference(
+            repo,
+            reference,
+            commit=review_commit,
+            label="Version-4 supplement packet-review ledger",
         )
-    reviewer = str(ledger.get("reviewer") or "")
-    findings = ledger.get("findings") or []
-    closures = ledger.get("closures") or []
-    finding_ids = [str(item.get("id") or "") for item in findings]
-    closure_ids = [str(item.get("findingId") or "") for item in closures]
-    severity = [SEVERITY_ORDER.get(str(item.get("severity") or ""), 99) for item in findings]
-    if (
-        ledger.get("documentType") != "governance-recovery-supplement-packet-review"
-        or ledger.get("recoveryRequestId") != supplement_id.split(".", 1)[0]
-        or ledger.get("supplementId") != supplement_id
-        or ledger.get("attemptId") != attempt_id
-        or ledger.get("candidateCommit") != packet_commit
-        or ledger.get("packetSha256") != sha256(packet_payload)
-        or not reviewer
-        or reviewer != reviewer.strip()
-        or reviewer == approval.get("approvedBy")
-        or severity != sorted(severity)
-        or len(finding_ids) != len(set(finding_ids))
-        or len(closure_ids) != len(set(closure_ids))
-        or any(
-            not finding_id.startswith(f"{supplement_id}-{attempt_id}-F")
-            or int(finding.get("criterionIndex") or 0) > len(packet.get("acceptanceCriteria") or [])
-            for finding_id, finding in zip(finding_ids, findings, strict=True)
-        )
-    ):
-        raise SystemExit("Version-4 supplement packet-review identity, ordering, or independence is invalid")
-    prior = ledger.get("priorAttempt")
-    prior_findings: dict[str, dict[str, Any]] = {}
-    if prior is None:
-        if attempt_id != "R01" or closures:
-            raise SystemExit("Version-4 supplement first packet review has invalid prior history")
-    else:
-        prior_reference = (prior or {}).get("ledger") or {}
-        prior_relative = str(prior_reference.get("path") or "")
+        try:
+            ledger = json.loads(ledger_payload)
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise SystemExit("Version-4 supplement packet-review ledger is malformed") from exc
+        if not isinstance(ledger, dict):
+            raise SystemExit("Version-4 supplement packet-review ledger must be an object")
+        ledger_errors = schema_errors(ledger, schema_path)
+        if ledger_errors:
+            raise SystemExit(
+                "Version-4 supplement packet-review schema validation failed:\n- " + "\n- ".join(ledger_errors)
+            )
+        candidate = str(ledger.get("candidateCommit") or "")
+        round_packet_payload: bytes | None
+        if current_attempt == str(projection.get("attemptId") or ""):
+            round_packet = packet
+            round_packet_payload = packet_payload
+            if candidate != packet_commit:
+                raise SystemExit("Version-4 supplement latest packet-review candidate is stale")
+        else:
+            round_packet_payload = taskctl.git_blob(repo, candidate, packet_relative)
+            try:
+                round_packet = json.loads(round_packet_payload or b"")
+            except (UnicodeError, json.JSONDecodeError) as exc:
+                raise SystemExit("Version-4 supplement historical review packet is unavailable") from exc
+        if not isinstance(round_packet, dict):
+            raise SystemExit("Version-4 supplement historical review packet must be an object")
+        findings = ledger.get("findings") or []
+        closures = ledger.get("closures") or []
+        finding_ids = [str(item.get("id") or "") for item in findings]
+        closure_ids = [str(item.get("findingId") or "") for item in closures]
+        reviewer = str(ledger.get("reviewer") or "")
+        severities = [SEVERITY_ORDER.get(str(item.get("severity") or ""), 99) for item in findings]
+        if (
+            ledger.get("documentType") != "governance-recovery-supplement-packet-review"
+            or ledger.get("recoveryRequestId") != supplement_id.split(".", 1)[0]
+            or ledger.get("supplementId") != supplement_id
+            or ledger.get("attemptId") != current_attempt
+            or (expected_result is not None and ledger.get("result") != expected_result)
+            or round_packet_payload is None
+            or ledger.get("packetSha256") != sha256(round_packet_payload or b"")
+            or review_commit == candidate
+            or not taskctl.git_is_ancestor(repo, candidate, review_commit)
+            or (
+                successor_candidate is not None
+                and not taskctl.git_is_ancestor(repo, review_commit, successor_candidate)
+            )
+            or not reviewer
+            or reviewer != reviewer.strip()
+            or reviewer == approval.get("approvedBy")
+            or severities != sorted(severities)
+            or len(finding_ids) != len(set(finding_ids))
+            or len(closure_ids) != len(set(closure_ids))
+            or any(
+                not finding_id.startswith(f"{supplement_id}-{current_attempt}-F")
+                or int(finding.get("criterionIndex") or 0) > len(round_packet.get("acceptanceCriteria") or [])
+                for finding_id, finding in zip(finding_ids, findings, strict=True)
+            )
+        ):
+            raise SystemExit("Version-4 supplement packet-review identity, ordering, or ancestry is invalid")
+        newest_to_oldest.append((ledger, findings, closures))
+        prior = ledger.get("priorAttempt")
+        if attempt_number == 1:
+            if prior is not None:
+                raise SystemExit("Version-4 supplement R01 packet review cannot name a predecessor")
+            break
+        if prior is None:
+            raise SystemExit("Version-4 supplement packet-review history is truncated before R01")
         prior_attempt = str((prior or {}).get("attemptId") or "")
-        if prior_relative != f"planning/governance-recovery-requests/{supplement_id}.review-{prior_attempt}.json":
-            raise SystemExit("Version-4 supplement prior packet-review path is not canonical")
-        prior_commit = str(prior_reference.get("commit") or "")
-        require_commit(repo, prior_commit, label="Version-4 supplement prior packet review")
-        if (
-            taskctl.approval_introduction_commit(repo, prior_relative) != prior_commit
-            or prior_commit == review_commit
-            or not taskctl.git_is_ancestor(repo, prior_commit, review_commit)
-        ):
-            raise SystemExit("Version-4 supplement prior packet-review ancestry is invalid")
-        prior_payload = exact_file_reference(
-            repo,
-            prior_reference,
-            commit=prior_commit,
-            label="Version-4 supplement prior packet-review ledger",
-        )
-        prior_ledger = json.loads(prior_payload)
-        prior_errors = schema_errors(prior_ledger, schema_path)
-        if prior_errors:
-            raise SystemExit("Version-4 supplement prior packet-review schema validation failed")
-        prior_candidate = str(prior_ledger.get("candidateCommit") or "")
-        prior_packet_payload = taskctl.git_blob(
-            repo,
-            prior_candidate,
-            f"planning/governance-recovery-requests/{supplement_id}.packet.json",
-        )
-        expected_attempt = (
-            f"R{int(prior_attempt.removeprefix('R')) + 1:02d}" if re.fullmatch(r"R[0-9]{2,}", prior_attempt) else ""
-        )
-        prior_finding_list = prior_ledger.get("findings") or []
-        prior_findings = {str(item.get("id") or ""): item for item in prior_finding_list}
-        prior_severity = [SEVERITY_ORDER.get(str(item.get("severity") or ""), 99) for item in prior_finding_list]
-        prior_reviewer = str(prior_ledger.get("reviewer") or "")
-        if (
-            attempt_id != expected_attempt
-            or prior_ledger.get("documentType") != "governance-recovery-supplement-packet-review"
-            or prior_ledger.get("recoveryRequestId") != supplement_id.split(".", 1)[0]
-            or prior_ledger.get("supplementId") != supplement_id
-            or prior_ledger.get("attemptId") != prior_attempt
-            or prior_ledger.get("result") != (prior or {}).get("result")
-            or prior_ledger.get("result") not in {"changes-requested", "blocked"}
-            or not prior_findings
-            or prior_severity != sorted(prior_severity)
-            or not prior_reviewer
-            or prior_reviewer != prior_reviewer.strip()
-            or prior_reviewer == approval.get("approvedBy")
-            or prior_packet_payload is None
-            or prior_ledger.get("packetSha256") != sha256(prior_packet_payload or b"")
-            or not taskctl.git_is_ancestor(repo, prior_candidate, prior_commit)
-            or prior_candidate == packet_commit
-            or not taskctl.git_is_ancestor(repo, prior_candidate, packet_commit)
-            or set(closure_ids) != set(prior_findings)
-        ):
-            raise SystemExit("Version-4 supplement packet-review prior-attempt chain is invalid")
+        if prior_attempt != f"R{attempt_number - 1:02d}" or (prior or {}).get("result") not in {
+            "changes-requested",
+            "blocked",
+        }:
+            raise SystemExit("Version-4 supplement packet-review predecessor is skipped or non-adverse")
+        reference = (prior or {}).get("ledger") or {}
+        expected_result = str((prior or {}).get("result") or "")
+        successor_candidate = candidate
+        current_attempt = prior_attempt
+
+    chronological = list(reversed(newest_to_oldest))
+    open_findings: dict[str, dict[str, Any]] = {}
+    all_finding_ids: set[str] = set()
+    closed_finding_ids: list[str] = []
+    for index, (ledger, findings, closures) in enumerate(chronological):
         for closure in closures:
-            finding = prior_findings.get(str(closure.get("findingId") or "")) or {}
-            if finding.get("blocking") is True and closure.get("disposition") == "accepted-risk":
-                raise SystemExit("Version-4 supplement blocking packet-review finding cannot be accepted as risk")
+            finding_id = str(closure.get("findingId") or "")
+            finding = open_findings.get(finding_id)
+            if finding is None or (finding.get("blocking") is True and closure.get("disposition") == "accepted-risk"):
+                raise SystemExit("Version-4 supplement packet-review closure is stale, duplicated, or unsafe")
+            del open_findings[finding_id]
+            closed_finding_ids.append(finding_id)
+        for finding in findings:
+            finding_id = str(finding.get("id") or "")
+            if finding_id in all_finding_ids:
+                raise SystemExit("Version-4 supplement packet-review finding history is duplicated")
+            all_finding_ids.add(finding_id)
+            open_findings[finding_id] = finding
+        result = ledger.get("result")
+        is_latest = index == len(chronological) - 1
+        if result == "approved":
+            if not is_latest or ledger.get("approvalAvailable") is not True or findings or open_findings:
+                raise SystemExit("Version-4 supplement packet review approves unresolved or new findings")
+        elif (
+            result not in {"changes-requested", "blocked"}
+            or ledger.get("approvalAvailable") is not False
+            or not open_findings
+        ):
+            raise SystemExit("Version-4 supplement adverse packet-review disposition is inconsistent")
+
+    latest = newest_to_oldest[0][0]
+    latest_commit = str((projection.get("ledger") or {}).get("commit") or "")
     if (
-        ledger.get("result") != "approved"
-        or ledger.get("approvalAvailable") is not True
-        or findings
-        or review_projection.get("candidateCommit") != packet_commit
-        or review_projection.get("result") != "APPROVED"
-        or sorted(review_projection.get("closedFindingIds") or []) != sorted(closure_ids)
-        or review_projection.get("openFindingIds") != []
+        latest.get("result") != "approved"
+        or projection.get("candidateCommit") != packet_commit
+        or projection.get("result") != "APPROVED"
+        or sorted(projection.get("closedFindingIds") or []) != sorted(closed_finding_ids)
+        or sorted(projection.get("openFindingIds") or []) != sorted(open_findings)
+        or latest_commit == approval_introduction
+        or not taskctl.git_is_ancestor(repo, latest_commit, approval_introduction)
     ):
-        raise SystemExit("Version-4 supplement packet review is adverse, unresolved, stale, or misprojected")
-    return ledger
+        raise SystemExit("Version-4 supplement packet review is unresolved, stale, forked, or misprojected")
+    return latest
 
 
 def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str, Any], dict[str, Any], bytes, bytes]:

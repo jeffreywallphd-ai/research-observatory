@@ -1304,6 +1304,249 @@ class Gcr3ctlTests(unittest.TestCase):
                 ),
             )
 
+    def test_v4_s02_multi_round_review_history_is_recursive_and_cannot_erase_findings(self) -> None:
+        variants = (
+            "valid",
+            "truncated-r02",
+            "wrong-prior-hash",
+            "wrong-prior-commit",
+            "wrong-prior-candidate",
+            "wrong-prior-result",
+            "skipped-r02",
+            "repeated-attempt",
+            "stale-closure",
+            "accepted-blocking-risk",
+            "unresolved-r01-blocker",
+        )
+
+        def finding(attempt: str) -> dict[str, Any]:
+            return {
+                "id": f"GRR-0002.S02-{attempt}-F01",
+                "severity": "high",
+                "blocking": True,
+                "criterionIndex": 1,
+                "title": f"Fixture {attempt} blocking finding",
+                "reproduction": f"Fixture {attempt} reproduction.",
+                "requiredRemediation": f"Fixture {attempt} remediation.",
+            }
+
+        def closure(finding_id: str, *, accepted: bool = False) -> dict[str, Any]:
+            return {
+                "findingId": finding_id,
+                "disposition": "accepted-risk" if accepted else "fixed",
+                "evidence": "Fixture exact closure evidence.",
+            }
+
+        with tempfile.TemporaryDirectory() as temporary:
+            for variant in variants:
+                with self.subTest(variant=variant):
+                    repo = Path(temporary) / variant
+                    repo.mkdir()
+                    self.git(repo, "init")
+                    self.git(repo, "config", "user.email", "s02-history@example.test")
+                    self.git(repo, "config", "user.name", "S02 History Fixture")
+                    self.git(repo, "config", "commit.gpgsign", "false")
+                    self.git(repo, "config", "core.autocrlf", "false")
+                    schema_relative = (
+                        "planning/governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json"
+                    )
+                    schema_path = repo / schema_relative
+                    schema_path.parent.mkdir(parents=True)
+                    shutil.copy2(REPO / schema_relative, schema_path)
+
+                    def commit_packet(fixture_repo: Path, attempt: str) -> tuple[dict[str, Any], bytes, str]:
+                        fixture_packet_relative = "planning/governance-recovery-requests/GRR-0002.S02.packet.json"
+                        document = {
+                            "acceptanceCriteria": ["The complete append-only review history is required."],
+                            "fixtureAttempt": attempt,
+                        }
+                        self.write_json(fixture_repo, fixture_packet_relative, document)
+                        self.git(fixture_repo, "add", "--", fixture_packet_relative)
+                        self.git(fixture_repo, "commit", "-m", f"fixture: freeze S02 {attempt} packet")
+                        return (
+                            document,
+                            (fixture_repo / fixture_packet_relative).read_bytes(),
+                            self.git(fixture_repo, "rev-parse", "HEAD"),
+                        )
+
+                    def commit_ledger(
+                        fixture_repo: Path, attempt: str, document: dict[str, Any]
+                    ) -> tuple[str, bytes, str]:
+                        relative = f"planning/governance-recovery-requests/GRR-0002.S02.review-{attempt}.json"
+                        self.write_json(fixture_repo, relative, document)
+                        self.git(fixture_repo, "add", "--", relative)
+                        self.git(fixture_repo, "commit", "-m", f"fixture: record S02 {attempt} review")
+                        return (
+                            relative,
+                            (fixture_repo / relative).read_bytes(),
+                            self.git(fixture_repo, "rev-parse", "HEAD"),
+                        )
+
+                    _packet_r01, packet_r01_payload, packet_r01_commit = commit_packet(repo, "R01")
+                    finding_r01 = finding("R01")
+                    ledger_r01 = {
+                        "$schema": "./governance-recovery-supplement-approval.v4.schema.json",
+                        "schemaVersion": "4.0",
+                        "documentType": "governance-recovery-supplement-packet-review",
+                        "recoveryRequestId": "GRR-0002",
+                        "supplementId": "GRR-0002.S02",
+                        "attemptId": "R01",
+                        "candidateCommit": packet_r01_commit,
+                        "packetSha256": recoveryctl.sha256(packet_r01_payload),
+                        "reviewer": "independent-s02-history-reviewer",
+                        "result": "changes-requested",
+                        "findings": [finding_r01],
+                        "closures": [],
+                        "priorAttempt": None,
+                        "verified": ["Fixture R01 review."],
+                        "approvalAvailable": False,
+                    }
+                    review_r01, review_r01_payload, review_r01_commit = commit_ledger(repo, "R01", ledger_r01)
+
+                    _packet_r02, packet_r02_payload, packet_r02_commit = commit_packet(repo, "R02")
+                    finding_r02 = finding("R02")
+                    prior_r01: dict[str, Any] = {
+                        "attemptId": "R01",
+                        "ledger": {
+                            "path": review_r01,
+                            "sha256": recoveryctl.sha256(review_r01_payload),
+                            "commit": review_r01_commit,
+                        },
+                        "result": "changes-requested",
+                    }
+                    if variant == "wrong-prior-hash":
+                        prior_r01["ledger"]["sha256"] = "0" * 64
+                    elif variant == "wrong-prior-commit":
+                        prior_r01["ledger"]["commit"] = packet_r01_commit
+                    elif variant == "wrong-prior-result":
+                        prior_r01["result"] = "blocked"
+                    elif variant == "repeated-attempt":
+                        prior_r01["attemptId"] = "R02"
+                    r02_prior: dict[str, Any] | None = None if variant == "truncated-r02" else prior_r01
+                    r02_closures = [] if variant == "unresolved-r01-blocker" else [closure(finding_r01["id"])]
+                    if variant == "stale-closure":
+                        r02_closures = [closure("GRR-0002.S02-R01-F99")]
+                    elif variant == "accepted-blocking-risk":
+                        r02_closures = [closure(finding_r01["id"], accepted=True)]
+                    ledger_r02 = {
+                        "$schema": "./governance-recovery-supplement-approval.v4.schema.json",
+                        "schemaVersion": "4.0",
+                        "documentType": "governance-recovery-supplement-packet-review",
+                        "recoveryRequestId": "GRR-0002",
+                        "supplementId": "GRR-0002.S02",
+                        "attemptId": "R02",
+                        "candidateCommit": packet_r01_commit
+                        if variant == "wrong-prior-candidate"
+                        else packet_r02_commit,
+                        "packetSha256": recoveryctl.sha256(
+                            packet_r01_payload if variant == "wrong-prior-candidate" else packet_r02_payload
+                        ),
+                        "reviewer": "independent-s02-history-reviewer",
+                        "result": "changes-requested",
+                        "findings": [finding_r02],
+                        "closures": r02_closures,
+                        "priorAttempt": r02_prior,
+                        "verified": ["Fixture R02 review."],
+                        "approvalAvailable": False,
+                    }
+                    review_r02, review_r02_payload, review_r02_commit = commit_ledger(repo, "R02", ledger_r02)
+
+                    packet_r03, packet_r03_payload, packet_r03_commit = commit_packet(repo, "R03")
+                    prior_r02 = {
+                        "attemptId": "R02",
+                        "ledger": {
+                            "path": review_r02,
+                            "sha256": recoveryctl.sha256(review_r02_payload),
+                            "commit": review_r02_commit,
+                        },
+                        "result": "changes-requested",
+                    }
+                    if variant == "skipped-r02":
+                        prior_r02 = {
+                            "attemptId": "R01",
+                            "ledger": {
+                                "path": review_r01,
+                                "sha256": recoveryctl.sha256(review_r01_payload),
+                                "commit": review_r01_commit,
+                            },
+                            "result": "changes-requested",
+                        }
+                    ledger_r03 = {
+                        "$schema": "./governance-recovery-supplement-approval.v4.schema.json",
+                        "schemaVersion": "4.0",
+                        "documentType": "governance-recovery-supplement-packet-review",
+                        "recoveryRequestId": "GRR-0002",
+                        "supplementId": "GRR-0002.S02",
+                        "attemptId": "R03",
+                        "candidateCommit": packet_r03_commit,
+                        "packetSha256": recoveryctl.sha256(packet_r03_payload),
+                        "reviewer": "independent-s02-history-reviewer",
+                        "result": "approved",
+                        "findings": [],
+                        "closures": [closure(finding_r02["id"])],
+                        "priorAttempt": prior_r02,
+                        "verified": ["Fixture R03 review."],
+                        "approvalAvailable": True,
+                    }
+                    review_r03, review_r03_payload, review_r03_commit = commit_ledger(repo, "R03", ledger_r03)
+                    approval_marker = "planning/governance-recovery-approvals/GRR-0002.S02.json"
+                    self.write_json(repo, approval_marker, {"approved": True})
+                    self.git(repo, "add", "--", approval_marker)
+                    self.git(repo, "commit", "-m", "fixture: record later human approval")
+                    approval_introduction = self.git(repo, "rev-parse", "HEAD")
+                    closed_ids = [finding_r01["id"], finding_r02["id"]]
+                    if variant == "unresolved-r01-blocker":
+                        closed_ids = [finding_r02["id"]]
+                    approval = {
+                        "approvedBy": "fixture-repository-owner",
+                        "independentPacketReview": {
+                            "attemptId": "R03",
+                            "candidateCommit": packet_r03_commit,
+                            "ledger": {
+                                "path": review_r03,
+                                "sha256": recoveryctl.sha256(review_r03_payload),
+                                "commit": review_r03_commit,
+                            },
+                            "result": "APPROVED",
+                            "openFindingIds": [],
+                            "closedFindingIds": closed_ids,
+                        },
+                    }
+                    taskctl_errors = taskctl.recovery_v4_supplement_packet_review_errors(
+                        repo,
+                        "GRR-0002.S02",
+                        approval,
+                        packet_r03,
+                        packet_r03_payload,
+                        packet_r03_commit,
+                        approval_introduction,
+                    )
+                    if variant == "valid":
+                        recoveryctl.validate_v4_supplement_packet_review(
+                            repo,
+                            "GRR-0002.S02",
+                            approval,
+                            approval_introduction=approval_introduction,
+                            packet_commit=packet_r03_commit,
+                            packet=packet_r03,
+                            packet_payload=packet_r03_payload,
+                            schema_path=schema_path,
+                        )
+                        self.assertEqual([], taskctl_errors)
+                    else:
+                        with self.assertRaises((SystemExit, OSError, ValueError)):
+                            recoveryctl.validate_v4_supplement_packet_review(
+                                repo,
+                                "GRR-0002.S02",
+                                approval,
+                                approval_introduction=approval_introduction,
+                                packet_commit=packet_r03_commit,
+                                packet=packet_r03,
+                                packet_payload=packet_r03_payload,
+                                schema_path=schema_path,
+                            )
+                        self.assertTrue(taskctl_errors)
+
     def test_submit_freezes_exact_real_git_candidate_and_witness(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             repo, _packet, _base, candidate, evidence = self.submitted_fixture(temporary)
