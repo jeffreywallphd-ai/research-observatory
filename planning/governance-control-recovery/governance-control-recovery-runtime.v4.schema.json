@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-control-recovery.runtime.v4.json",
+  "title": "GCR-0004 approval, bootstrap, and exact GCR-0003 review-transition recovery records",
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "attempt": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[A-Za-z0-9._*/-]+$"},
+    "reference": {
+      "type": "object", "required": ["path", "sha256", "commit"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}},
+      "additionalProperties": false
+    },
+    "witness": {
+      "type": "object", "required": ["path", "sha256", "role", "untracked", "unstaged", "executionAuthority"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/W1.A04.B00.json"},
+        "sha256": {"const": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"},
+        "role": {"const": "atomic-failure-trigger-only"},
+        "untracked": {"const": true}, "unstaged": {"const": true}, "executionAuthority": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "check": {
+      "type": "object", "required": ["id", "command", "exitCode", "result"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "command": {"type": "string", "minLength": 1},
+        "exitCode": {"type": "integer"}, "result": {"enum": ["passed", "failed"]},
+        "outputSha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "criterion": {
+      "type": "object", "required": ["index", "statement", "evidence"],
+      "properties": {
+        "index": {"type": "integer", "minimum": 1}, "statement": {"type": "string", "minLength": 1},
+        "evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object", "required": ["id", "severity", "blocking", "criterionIndex", "title", "reproduction", "requiredRemediation"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["critical", "high", "medium", "low"]}, "blocking": {"type": "boolean"},
+        "criterionIndex": {"type": "integer", "minimum": 1}, "title": {"type": "string", "minLength": 1},
+        "reproduction": {"type": "string", "minLength": 1}, "requiredRemediation": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "closure": {
+      "type": "object", "required": ["findingId", "disposition", "evidence"],
+      "properties": {
+        "findingId": {"type": "string", "minLength": 1},
+        "disposition": {"enum": ["fixed", "not-reproduced", "superseded", "accepted-risk"]},
+        "evidence": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "submission": {
+      "type": "object",
+      "required": ["attemptId", "submittedBy", "submittedAt", "candidateCommit", "baseCommit", "branch", "evidence", "priorAttemptId", "openFindingIds", "rootCauseAnalysis"],
+      "properties": {
+        "attemptId": {"$ref": "#/$defs/attempt"}, "submittedBy": {"type": "string", "minLength": 1},
+        "submittedAt": {"$ref": "#/$defs/timestamp"}, "candidateCommit": {"$ref": "#/$defs/commit"},
+        "baseCommit": {"$ref": "#/$defs/commit"}, "branch": {"const": "codex/w1-windows-local-runtime"},
+        "evidence": {"$ref": "#/$defs/reference"},
+        "priorAttemptId": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/attempt"}]},
+        "openFindingIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "rootCauseAnalysis": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "reviewProjection": {
+      "type": "object", "required": ["reviewer", "result", "reviewedAt", "reviewedStateCommit", "notes"],
+      "properties": {
+        "reviewer": {"type": "string", "minLength": 1}, "result": {"enum": ["approved", "changes-requested", "blocked"]},
+        "reviewedAt": {"$ref": "#/$defs/timestamp"}, "reviewedStateCommit": {"$ref": "#/$defs/commit"},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "historyAttempt": {
+      "type": "object", "required": ["submission", "review", "ledger", "findings", "closures"],
+      "properties": {
+        "submission": {"$ref": "#/$defs/submission"}, "review": {"$ref": "#/$defs/reviewProjection"},
+        "ledger": {"$ref": "#/$defs/reference"},
+        "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/closure"}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "attemptId", "candidateCommit", "packetSha256", "branch", "reviewer", "result", "findings", "closures", "verified", "approvalAvailable"],
+      "properties": {
+        "schemaVersion": {"const": "4.0-control-recovery-review"},
+        "documentType": {"const": "governance-control-recovery-packet-review"},
+        "controlRecoveryId": {"const": "GCR-0004"}, "attemptId": {"$ref": "#/$defs/attempt"},
+        "candidateCommit": {"$ref": "#/$defs/commit"}, "packetSha256": {"$ref": "#/$defs/sha256"},
+        "branch": {"const": "codex/w1-windows-local-runtime"}, "reviewer": {"type": "string", "minLength": 1},
+        "result": {"enum": ["approved", "changes-requested", "blocked"]},
+        "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/closure"}},
+        "verified": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "approvalAvailable": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "status", "approvedBy", "approvedAt", "decision", "packet", "independentPacketReview", "triggerWitness", "executionAuthority"],
+      "properties": {
+        "schemaVersion": {"const": "4.0-control-recovery-approval"},
+        "documentType": {"const": "governance-control-recovery-approval"},
+        "controlRecoveryId": {"const": "GCR-0004"}, "status": {"const": "APPROVED"},
+        "approvedBy": {"type": "string", "minLength": 1}, "approvedAt": {"$ref": "#/$defs/timestamp"},
+        "decision": {"type": "string", "minLength": 1},
+        "packet": {
+          "type": "object", "required": ["path", "sha256", "commit"],
+          "properties": {
+            "path": {"const": "planning/governance-control-recovery/GCR-0004.packet.json"},
+            "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}
+          },
+          "additionalProperties": false
+        },
+        "independentPacketReview": {
+          "type": "object", "required": ["attemptId", "candidateCommit", "ledger", "result", "closedFindingIds", "openFindingIds"],
+          "properties": {
+            "attemptId": {"$ref": "#/$defs/attempt"}, "candidateCommit": {"$ref": "#/$defs/commit"},
+            "ledger": {"$ref": "#/$defs/reference"}, "result": {"const": "APPROVED"},
+            "closedFindingIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+            "openFindingIds": {"const": []}
+          },
+          "additionalProperties": false
+        },
+        "triggerWitness": {"$ref": "#/$defs/witness"},
+        "executionAuthority": {
+          "type": "object", "required": ["bootstrapOnly", "bootstrapUnit", "ordinaryExecution", "reviewTransitionBeforeB00Review"],
+          "properties": {
+            "bootstrapOnly": {"const": true}, "bootstrapUnit": {"const": "GCR-0004.B00"},
+            "ordinaryExecution": {"const": false}, "reviewTransitionBeforeB00Review": {"const": false}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "attemptId", "commit", "baseCommit", "branch", "triggerWitness", "adverseLedger", "changedFiles", "checks", "acceptanceCriteria", "findingClosures", "unverifiedItems", "verificationSelection"],
+      "properties": {
+        "schemaVersion": {"const": "4.0-control-recovery-evidence"},
+        "documentType": {"const": "governance-control-recovery-bootstrap-evidence"},
+        "controlRecoveryId": {"const": "GCR-0004"}, "bootstrapUnit": {"const": "GCR-0004.B00"},
+        "attemptId": {"$ref": "#/$defs/attempt"}, "commit": {"$ref": "#/$defs/commit"},
+        "baseCommit": {"$ref": "#/$defs/commit"}, "branch": {"const": "codex/w1-windows-local-runtime"},
+        "triggerWitness": {"$ref": "#/$defs/witness"},
+        "adverseLedger": {
+          "type": "object", "required": ["path", "sha256", "untracked", "unstaged", "executionAuthority"],
+          "properties": {
+            "path": {"const": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json"},
+            "sha256": {"const": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b"},
+            "untracked": {"const": true}, "unstaged": {"const": true}, "executionAuthority": {"const": false}
+          },
+          "additionalProperties": false
+        },
+        "changedFiles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+        "checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/check"}},
+        "acceptanceCriteria": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/criterion"}},
+        "findingClosures": {"type": "array", "items": {"$ref": "#/$defs/closure"}},
+        "unverifiedItems": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "verificationSelection": {
+          "type": "object", "required": ["riskAnalysis", "selectedChecks", "deferredChecks"],
+          "properties": {
+            "riskAnalysis": {"type": "string", "minLength": 1},
+            "selectedChecks": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+            "deferredChecks": {"type": "array", "items": {"type": "string", "minLength": 1}}
+          },
+          "additionalProperties": false
+        },
+        "rootCauseAnalysis": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "attemptId", "candidateCommit", "reviewedStateCommit", "reviewer", "result", "evidence", "findings", "closures", "notes"],
+      "properties": {
+        "schemaVersion": {"const": "4.0-control-recovery-review"},
+        "documentType": {"const": "governance-control-recovery-bootstrap-review"},
+        "controlRecoveryId": {"const": "GCR-0004"}, "bootstrapUnit": {"const": "GCR-0004.B00"},
+        "attemptId": {"$ref": "#/$defs/attempt"}, "candidateCommit": {"$ref": "#/$defs/commit"},
+        "reviewedStateCommit": {"$ref": "#/$defs/commit"}, "reviewer": {"type": "string", "minLength": 1},
+        "result": {"enum": ["approved", "changes-requested", "blocked"]}, "evidence": {"$ref": "#/$defs/reference"},
+        "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/closure"}}, "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "status", "approval", "triggerWitness", "adverseLedger", "attempts", "currentSubmission", "application"],
+      "properties": {
+        "schemaVersion": {"const": "4.0-control-recovery-state"},
+        "documentType": {"const": "governance-control-recovery-bootstrap-state"},
+        "controlRecoveryId": {"const": "GCR-0004"}, "bootstrapUnit": {"const": "GCR-0004.B00"},
+        "status": {"enum": ["REVIEW", "CHANGES_REQUESTED", "BLOCKED", "APPROVED", "APPLICATION_FINALIZATION", "APPLIED"]},
+        "approval": {"$ref": "#/$defs/reference"}, "triggerWitness": {"$ref": "#/$defs/witness"},
+        "adverseLedger": {
+          "type": "object", "required": ["path", "sha256", "untracked", "unstaged", "executionAuthority"],
+          "properties": {
+            "path": {"const": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json"},
+            "sha256": {"const": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b"},
+            "untracked": {"const": true}, "unstaged": {"const": true}, "executionAuthority": {"const": false}
+          },
+          "additionalProperties": false
+        },
+        "attempts": {"type": "array", "items": {"$ref": "#/$defs/historyAttempt"}},
+        "currentSubmission": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/submission"}]},
+        "application": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "type": "object", "required": ["appliedBy", "appliedAt", "reviewedStateCommit", "result", "controlRevision", "approvedStateCommit", "evidence"],
+              "properties": {
+                "appliedBy": {"const": "codex"}, "appliedAt": {"$ref": "#/$defs/timestamp"},
+                "reviewedStateCommit": {"const": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5"},
+                "result": {"const": "changes-requested"}, "controlRevision": {"const": 9},
+                "approvedStateCommit": {"$ref": "#/$defs/commit"}, "evidence": {"$ref": "#/$defs/reference"}
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "approvedStateCommit", "reviewedStateCommit", "triggerWitness", "adverseLedger", "predecessorStateSha256", "successorStatus", "controlRevision", "expectedChangedFiles", "checks", "unverifiedItems"],
+      "properties": {
+        "schemaVersion": {"const": "4.0-control-recovery-application-evidence"},
+        "documentType": {"const": "governance-control-recovery-review-transition-evidence"},
+        "controlRecoveryId": {"const": "GCR-0004"}, "bootstrapUnit": {"const": "GCR-0004.B00"},
+        "approvedStateCommit": {"$ref": "#/$defs/commit"},
+        "reviewedStateCommit": {"const": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5"},
+        "triggerWitness": {"$ref": "#/$defs/witness"},
+        "adverseLedger": {
+          "type": "object", "required": ["path", "sha256", "bytePreserved"],
+          "properties": {
+            "path": {"const": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json"},
+            "sha256": {"const": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b"},
+            "bytePreserved": {"const": true}
+          },
+          "additionalProperties": false
+        },
+        "predecessorStateSha256": {"const": "0828cb7a52ff5f739dcfbc49832e7b2437f997fced38bac917098081368328e4"},
+        "successorStatus": {"const": "CHANGES_REQUESTED"}, "controlRevision": {"const": 9},
+        "expectedChangedFiles": {"const": ["planning/governance-control-recovery/GCR-0003.B00.review-R01.json", "planning/governance-control-recovery/GCR-0003.B00.state.json"]},
+        "checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/check"}},
+        "unverifiedItems": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "status", "approval", "triggerWitness", "attempts", "currentSubmission", "adoption", "reviewTransitionRecovery"],
+      "properties": {
+        "schemaVersion": {"const": "3.1-control-recovery-state"},
+        "documentType": {"const": "governance-control-recovery-bootstrap-state"},
+        "controlRecoveryId": {"const": "GCR-0003"}, "bootstrapUnit": {"const": "GCR-0003.B00"},
+        "status": {"const": "CHANGES_REQUESTED"}, "approval": {"$ref": "#/$defs/reference"},
+        "triggerWitness": {"$ref": "#/$defs/witness"},
+        "attempts": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"$ref": "#/$defs/historyAttempt"}},
+        "currentSubmission": {"const": null}, "adoption": {"const": null},
+        "reviewTransitionRecovery": {
+          "type": "object", "required": ["controlRecoveryId", "bootstrapUnit", "reviewedStateCommit", "adverseLedger", "approvedGcr4StateCommit", "applicationEvidence", "result", "controlRevision", "ordinaryExecutionAuthority"],
+          "properties": {
+            "controlRecoveryId": {"const": "GCR-0004"}, "bootstrapUnit": {"const": "GCR-0004.B00"},
+            "reviewedStateCommit": {"const": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5"},
+            "adverseLedger": {
+              "type": "object", "required": ["path", "sha256"],
+              "properties": {
+                "path": {"const": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json"},
+                "sha256": {"const": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b"}
+              },
+              "additionalProperties": false
+            },
+            "approvedGcr4StateCommit": {"$ref": "#/$defs/commit"}, "applicationEvidence": {"$ref": "#/$defs/reference"},
+            "result": {"const": "changes-requested"}, "controlRevision": {"const": 9},
+            "ordinaryExecutionAuthority": {"const": false}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

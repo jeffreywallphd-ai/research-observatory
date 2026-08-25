@@ -1,0 +1,257 @@
+{
+  "$schema": "./governance-control-recovery-request.v4.schema.json",
+  "schemaVersion": "4.0-control-recovery-proposal",
+  "documentType": "governance-control-recovery-request-packet",
+  "controlRecoveryId": "GCR-0004",
+  "title": "Recover the exact GCR-0003 R01 adverse-review projection",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "approved-bootstrap-review-transition-defect",
+  "rootAuthority": {
+    "basis": "repository-owner-governance-mismatch-protocol",
+    "exceptionScope": "one-time-exact-review-transition-recovery-only",
+    "packetReviewHistory": [],
+    "approvalSchema": {
+      "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v4.schema.json",
+      "sha256": "261f5ea6368b11f4afb76c6af3457e97d70fe4330d51e6debd4c6c7b3f305b15"
+    },
+    "approvalPath": "planning/governance-control-recovery/GCR-0004.approval.json",
+    "authorityManifest": {
+      "path": "planning/governance-control-recovery/GCR-0004.authority.json",
+      "sha256": "dbe22531c8b29c8881c9a0e0b496f45c8ec64aa70de6a688fbe4b1c66fd6ed39"
+    },
+    "untrackedTriggerWitness": {
+      "path": "artifacts/evidence/W1.A04.B00.json",
+      "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+      "role": "atomic-failure-trigger-only",
+      "mustRemainUntrackedAndUnstaged": true,
+      "neverExecutionAuthority": true
+    },
+    "approvalIntroduction": {
+      "exclusiveCreate": true,
+      "trackedCleanExactBranchHead": true,
+      "permittedUntracked": "exact-witness-plus-exact-adverse-ledger",
+      "packetReviewApproved": true,
+      "introductionCommitIsExecutionBase": true
+    }
+  },
+  "predecessorAuthority": {
+    "gcr3Packet": {
+      "path": "planning/governance-control-recovery/GCR-0003.packet.json",
+      "sha256": "dc6055395a409fe4a9753657522cf54181bf881c15c72ba65aa3cccd32d2a666",
+      "commit": "f062cff48036bce9f094b86370a9499837f4b358"
+    },
+    "gcr3PacketReview": {
+      "path": "planning/governance-control-recovery/GCR-0003.review-R01.json",
+      "sha256": "aefba1307351916d83f4ad93959227bed4faa1792b67cda96b2f7121f9faba6a",
+      "commit": "dd7da0b1c8a38a73b8a928bfe3dd2c8587369ca9"
+    },
+    "gcr3Approval": {
+      "path": "planning/governance-control-recovery/GCR-0003.approval.json",
+      "sha256": "82a6187fa47e55c286ef3ae60bd185c94dfcdf5ba87c1283391d315988528ca7",
+      "commit": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c"
+    },
+    "gcr3Candidate": "a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873",
+    "gcr3Evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.R01.json",
+      "sha256": "381a54d41594072cd66c78d50e13ad822926c218d2df1e1ad80d60838c19815a",
+      "commit": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5"
+    },
+    "frozenReviewedState": {
+      "path": "planning/governance-control-recovery/GCR-0003.B00.state.json",
+      "sha256": "0828cb7a52ff5f739dcfbc49832e7b2437f997fced38bac917098081368328e4",
+      "commit": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5",
+      "status": "REVIEW"
+    },
+    "adverseLedger": {
+      "path": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+      "sha256": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b",
+      "reviewedStateCommit": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5",
+      "result": "changes-requested",
+      "untracked": true,
+      "unstaged": true,
+      "executionAuthority": false
+    },
+    "defectiveRuntimeV3": {
+      "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v3.schema.json",
+      "sha256": "7918c0d255074fdbfd1c400aa9e4008ad6d8efa91584a3010d59612f4cc57124",
+      "packetFrozen": true,
+      "mustRemainUnchanged": true
+    }
+  },
+  "triggerEvidence": {
+    "failedCommand": ".venv\\Scripts\\python.exe tools/gcr3ctl.py --repo . review GCR-0003 --reviewer independent-gcr3-b00-control-security-reviewer --from planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+    "exitCode": 1,
+    "diagnostic": "The exact ledger-derived CHANGES_REQUESTED state failed runtime-v3 validation because the packet-frozen state enum omits adverse statuses; the command wrote no canonical state.",
+    "atomicNoMutation": true,
+    "stateSha256AfterFailure": "0828cb7a52ff5f739dcfbc49832e7b2437f997fced38bac917098081368328e4",
+    "ledgerSha256AfterFailure": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b",
+    "independentAudit": "A read-only boundary audit confirmed that editing runtime-v3 invalidates GCR-0003 authority and that changing the normal two-file projection topology requires a new exact packet and human approval."
+  },
+  "activationBoundary": {
+    "controlRevision": 9,
+    "minimumToolRevision": 9,
+    "holdId": "HOLD-W1-GRR-0002",
+    "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "taskId": "CAP-02.S04.T03",
+    "taskStatus": "BLOCKED",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "reviewTransition": {
+    "kind": "one-time-exact-gcr3-r01-adverse-projection-recovery",
+    "reviewedStateCommit": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5",
+    "result": "changes-requested",
+    "controlRevisionBefore": 9,
+    "controlRevisionAfter": 9,
+    "normalProjectionUnavailable": true,
+    "explicitRecoveryAuthority": true,
+    "exactFinalChangedPaths": [
+      "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+      "planning/governance-control-recovery/GCR-0003.B00.state.json"
+    ],
+    "postRecoveryState": "CHANGES_REQUESTED",
+    "ordinaryExecutionStillDenied": true
+  },
+  "lifecycle": {
+    "branch": "codex/w1-windows-local-runtime",
+    "actor": "codex",
+    "workspaceInvariant": {
+      "triggerWitness": {
+        "path": "artifacts/evidence/W1.A04.B00.json",
+        "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+        "role": "atomic-failure-trigger-only",
+        "mustRemainUntrackedAndUnstaged": true,
+        "neverExecutionAuthority": true
+      },
+      "adverseLedger": "exact-untracked-unchanged-GCR-0003.B00.review-R01",
+      "denyOtherUntracked": true,
+      "denyStagingOrMutation": true,
+      "appliesAtEveryTransition": true
+    },
+    "canonicalPaths": {
+      "controller": "tools/gcr4ctl.py",
+      "state": "planning/governance-control-recovery/GCR-0004.B00.state.json",
+      "evidencePattern": "artifacts/evidence/governance-control-recovery/GCR-0004.B00.RNN.json",
+      "reviewPattern": "planning/governance-control-recovery/GCR-0004.B00.review-RNN.json",
+      "applicationEvidence": "artifacts/evidence/governance-control-recovery/GCR-0004.B00.application.json",
+      "transactionSchema": "planning/governance-control-recovery/governance-control-recovery-transaction.v4.schema.json",
+      "transaction": "planning/governance-control-recovery/GCR-0004.B00.application-transaction.json",
+      "lock": "planning/governance-control-recovery/GCR-0004.B00.application.lock",
+      "stateNext": "planning/governance-control-recovery/GCR-0004.B00.gcr3-state.next"
+    },
+    "implementation": {
+      "base": "GCR-0004-approval-introduction-commit",
+      "candidateAncestry": "strict-descendant",
+      "exactAllowlist": true,
+      "liveRevision": 9,
+      "noBridgeBeforeApproval": true
+    },
+    "review": {
+      "independent": true,
+      "commitBound": true,
+      "severityRanked": true,
+      "blockingFindingDenial": true,
+      "appendOnly": true
+    },
+    "application": {
+      "requiresApprovedB00": true,
+      "ledgerBytePreserved": true,
+      "stateLedgerDerived": true,
+      "explicitBridgeRecord": true,
+      "crashSafe": true,
+      "directChildFinalization": true,
+      "exactChangedPaths": [
+        "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+        "planning/governance-control-recovery/GCR-0003.B00.state.json"
+      ],
+      "postApplicationGate": "ordinary-GCR-0003-R02-resubmission-and-independent-review"
+    },
+    "commands": {
+      "submit": "python tools/gcr4ctl.py --repo . submit GCR-0004 --agent codex --approval-commit <sha> --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0004.B00.RNN.json",
+      "review": "python tools/gcr4ctl.py --repo . review GCR-0004 --reviewer <independent-reviewer> --from planning/governance-control-recovery/GCR-0004.B00.review-RNN.json",
+      "resubmit": "python tools/gcr4ctl.py --repo . resubmit GCR-0004 --agent codex --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0004.B00.RNN.json",
+      "apply": "python tools/gcr4ctl.py --repo . apply GCR-0004 --agent codex --approved-state-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0004.B00.application.json",
+      "recover": "python tools/gcr4ctl.py --repo . recover GCR-0004 --agent codex",
+      "validate": "python tools/gcr4ctl.py --repo . validate GCR-0004"
+    }
+  },
+  "bootstrapUnit": {
+    "id": "GCR-0004.B00",
+    "kind": "one-time-review-transition-recovery-controller",
+    "exceptionReason": "The independently reviewed GCR-0003 R01 adverse result cannot be represented by its packet-frozen runtime-v3 schema, and its exact normal projection topology cannot include the required controller/schema repair.",
+    "authorizedPaths": [
+      "artifacts/evidence/governance-control-recovery/GCR-0004.B00*",
+      "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+      "planning/governance-control-recovery/GCR-0003.B00.state.json",
+      "planning/governance-control-recovery/GCR-0004.B00*",
+      "quality-scope.json",
+      "tests/foundation/test_gcr3ctl.py",
+      "tests/foundation/test_gcr4ctl.py",
+      "tools/gcr3ctl.py",
+      "tools/gcr4ctl.py"
+    ],
+    "requiredOutcomes": [
+      "Bind all authority to exact GCR-0003 reviewed-state commit 702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5, candidate a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873, frozen state SHA-256 0828cb7a52ff5f739dcfbc49832e7b2437f997fced38bac917098081368328e4, adverse ledger SHA-256 cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b, active hold, stopped W1 boundary, and protected witness.",
+      "Preserve the defective runtime-v3 schema, GCR-0003 packet, approval, packet review, R01 evidence, candidate, and adverse ledger byte-for-byte as immutable history.",
+      "Implement a separate exact gcr4ctl B00 lifecycle with commit-bound evidence, append-only attempts, independent review, caller-supplied third-round root-cause analysis, and no ordinary execution authority.",
+      "Teach gcr3ctl to accept only the exact independently approved GCR-0004 bridge and successor runtime envelope; reject absent, stale, forked, adverse, wrong-ledger, wrong-state, wrong-hold, dirty, or substituted bridge authority before mutation.",
+      "After independent GCR-0004 B00 approval, derive the GCR-0003 R01 attempt, findings, closures, and CHANGES_REQUESTED state only from the unchanged ledger and frozen submission.",
+      "Record the exceptional transition explicitly in the successor GCR-0003 state rather than representing it as the unavailable original direct-child projection.",
+      "Apply a crash-safe write-ahead protocol with exact raw/canonical state CAS, exclusive lock, durable successor state, Windows replace-existing/write-through publication, file/directory flushes, exact-pair validation, idempotent recovery, and cleanup only after validation.",
+      "Finalize the bridge as a direct-child commit adding the exact adverse ledger and modifying only GCR-0003 state; every other path remains unchanged.",
+      "Keep live control/minimum revision 9, HOLD-W1-GRR-0002 ACTIVE, W1 PAUSED, CAP-02.S04.T03 BLOCKED, W1.A04 absent, G1 PENDING, and the witness untracked, unstaged, unchanged, and non-authoritative.",
+      "Leave both GCR-0003 R01 findings open; after the bridge, require ordinary strict-descendant R02 evidence, explicit closures, independent review, and original GCR-0003 adoption before any S02 packet."
+    ],
+    "prohibitedOutcomes": [
+      "No edit, replacement, deletion, staging, reinterpretation, or synthesis of runtime-v3, the GCR-0003 R01 adverse ledger, prior GCR/GRR/ECR authority, prior evidence/reviews/findings, or the protected witness.",
+      "No representation of the bridge as the original direct-child R01 projection, no skipped/adverse review erasure, no finding closure, and no weakening of exact history validation outside the singular approved bridge.",
+      "No control revision change, GCR-0003 adoption, S02 packet creation/approval/start, B02 action, W1.A04 materialization, amendment/task mutation, hold release, W1 resume, G1 approval, main integration, remote push, or product/reference change.",
+      "No generic recovery command, arbitrary reviewed-state/candidate/ledger selector, dirty-worktree exception, same-revision supplement, competing hold, rollback, force, override, or bypass."
+    ]
+  },
+  "acceptanceCriteria": [
+    "The GCR-0004 packet, request/runtime/transaction schemas, authority manifest, proposal, and review page are Draft 2020-12 valid where applicable, path-safe, internally hash-bound, exact-commit reviewable, and inert.",
+    "Every GCR-0003 packet/review/approval/candidate/evidence/state/ledger, active-hold, backlog, W1, T03, W1.A04, G1, Git ancestry, and witness identity reproduces the exact frozen boundary and immutable bytes.",
+    "The failed review command is reproducible and byte-stable: it authenticates the exact ledger, fails only at the adverse-status runtime-v3 mismatch, and leaves state and ledger hashes unchanged.",
+    "GCR-0004 approval can be introduced only after an independent APPROVED packet review at the exact packet commit; its clean codex-branch introduction commit is the sole B00 implementation base.",
+    "B00 implementation changes only authorized controller/test/evidence/state paths, cannot edit runtime-v3 or the adverse ledger, keeps revision 9, and cannot apply the bridge before independent B00 approval.",
+    "The successor reader accepts only the exact independently approved GCR-0004 bridge, preserves reviewedStateCommit 702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5, and rejects missing, stale, forked, adverse, substituted, dirty, or internally inconsistent authority byte-stably.",
+    "Application derives the exact GCR-0003 R01 attempt and CHANGES_REQUESTED state from the unchanged ledger, records explicit GCR-0004 recovery authority, and closes no finding.",
+    "Application and repeated recovery can yield only the exact frozen predecessor or exact ledger-derived successor, including abrupt child-process termination at every durable boundary.",
+    "The finalization commit is the direct child of application evidence and changes exactly the R01 ledger and GCR-0003 state; revision 9 and every ordinary execution gate remain closed.",
+    "Criterion-linked evidence, adversarial real-Git coverage, governed Python quality, exact diff scope, protected hashes, and independent review pass with no unexplained unverified item."
+  ],
+  "verificationObligations": [
+    "Validate all schemas and exact file/hash/Git bindings, GCR-0003 and GCR-0004 authority, frozen state, adverse ledger, active hold, backlog, W1/T03/W1.A04/G1 boundary, and witness invariants.",
+    "Run a real-Git test from exact frozen commit 702ffbc through GCR-0004 approval, B00 review, crash-safe bridge application, and ordinary GCR-0003 R02 eligibility without direct state edits or mocked authority boundaries.",
+    "Cover missing/mutated/staged/tracked/symlinked witness; missing/mutated/staged/tracked ledger; wrong hashes/commits/candidate/state/result/reviewer/findings/closures; adverse GCR-0004 review; dirty workspace; forked authority; stale CAS; transaction substitution; abrupt termination; repeated recovery; and old-reader denial.",
+    "Prove byte-identical denial for backlog, frozen GCR-0003 state, ledger, hold, W1, task, amendment, gate, product, references, and protected prior authority on every failed check.",
+    "Run governed Python quality and Git diff/check/status hygiene selected by the exact changed-path risk surface."
+  ],
+  "rollback": [
+    "Before approved application, delete only uncommitted GCR-0004 transaction artifacts; the frozen GCR-0003 state and untracked adverse ledger remain exact.",
+    "During an interrupted application, gcr4ctl recover must restore the exact frozen predecessor or complete the exact ledger-derived successor from the authenticated manifest; no manual partial cleanup is permitted.",
+    "After finalization, do not rewrite or roll back history; corrective work uses append-only GCR-0004 review remediation or ordinary GCR-0003 R02 review as applicable."
+  ],
+  "alternatives": [
+    {"id": "A", "title": "Approve exact GCR-0004 bridge", "disposition": "recommended", "consequence": "Preserves the adverse review and lawfully restores ordinary GCR-0003 R02 remediation."},
+    {"id": "B", "title": "Keep recovery stopped", "disposition": "safe", "consequence": "No mutation occurs; GCR-0003, S02/B02, and W1 remain unavailable."},
+    {"id": "C", "title": "Edit or reinterpret runtime-v3", "disposition": "rejected", "consequence": "Invalidates hash-frozen GCR-0003 authority or rewrites the independent review result."},
+    {"id": "D", "title": "Manual projection or skipped R01", "disposition": "rejected", "consequence": "Fabricates append-only history or bypasses an unmet review gate."}
+  ],
+  "files": [
+    {"path": "planning/governance-control-recovery/GCR-0004.md", "sha256": "ca153dcbc7129a5f0e82f5e815e72dfc10a0c74d591377d3a882fbb2d4a93354"},
+    {"path": "planning/governance-control-recovery/GCR-0004-review.html", "sha256": "e4548393e08497745e3442431504a057a8397c76ba83c9f0999cf1e3ee7daa00"},
+    {"path": "planning/governance-control-recovery/GCR-0004.authority.json", "sha256": "dbe22531c8b29c8881c9a0e0b496f45c8ec64aa70de6a688fbe4b1c66fd6ed39"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-request.v4.schema.json", "sha256": "02cc6312ce4c4421b55134eca8ceffcb1f45df75e7bec913dd33de778dcd852f"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v4.schema.json", "sha256": "261f5ea6368b11f4afb76c6af3457e97d70fe4330d51e6debd4c6c7b3f305b15"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-transaction.v4.schema.json", "sha256": "e4615cd52a917ee3f2e752a2a9dca4680afb4d95fc5d4b743576cc90c08ed280"}
+  ],
+  "requiredApprovalStatement": "Approve only GCR-0004.B00 for the exact independently reviewed packet commit, preserving runtime-v3 and the GCR-0003 R01 ledger byte-for-byte and authorizing no bridge application before independent B00 approval."
+}
