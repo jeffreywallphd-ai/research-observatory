@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "2.0-control-recovery-adoption-evidence",
+  "documentType": "governance-control-recovery-adoption-evidence",
+  "controlRecoveryId": "GCR-0002",
+  "bootstrapUnit": "GCR-0002.B00",
+  "reviewedStateCommit": "b5a8d3f4d01b25a22dfd3d30a99398983fe1b186",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "predecessorRevision": 8,
+  "successorRevision": 9,
+  "expectedChangedFiles": [
+    "planning/backlog.yaml",
+    "planning/governance-control-recovery/GCR-0002.B00.state.json"
+  ],
+  "checks": [
+    {
+      "id": "approved-control-recovery-authority",
+      "command": ".venv\\Scripts\\python.exe tools/gcr2ctl.py --repo . validate GCR-0002",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "durable-recovery-and-semantic-authority",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_gcr2ctl",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "affected-schema-and-v3-recovery",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_schema tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v3_supplement_start_installs_only_exact_s02_eight_to_nine tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v2_supplement_start_uses_exact_seven_to_eight_transition tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v2_supplement_workspace_requires_exact_non_authoritative_witness",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "governed-python-quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "unverifiedItems": []
+}
