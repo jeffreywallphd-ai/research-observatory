@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "3.0-control-recovery-evidence",
+  "documentType": "governance-control-recovery-bootstrap-evidence",
+  "controlRecoveryId": "GCR-0003",
+  "bootstrapUnit": "GCR-0003.B00",
+  "attemptId": "R01",
+  "commit": "a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873",
+  "baseCommit": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c",
+  "branch": "codex/w1-windows-local-runtime",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "changedFiles": [
+    "planning/backlog.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement.v4.schema.json",
+    "quality-scope.json",
+    "tests/foundation/test_gcr3ctl.py",
+    "tests/foundation/test_recoveryctl.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tools/gcr3ctl.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "id": "gcr3-focused-real-git-and-crash-boundaries",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_gcr3ctl -v",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "predecessor-control-compatibility",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_schema.BacklogSchemaTests.test_revision_nine_schema_requires_the_exact_second_gcr_generation tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v3_s02_is_byte_stably_denied_after_revision_nine_adoption tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v2_supplement_start_uses_exact_seven_to_eight_transition tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v2_supplement_workspace_requires_exact_non_authoritative_witness -v",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "governed-python-quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "backlog-and-gcr3-authority-validation",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/gcr3ctl.py --repo . validate GCR-0003",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "exact-diff-and-protected-boundary",
+      "command": "Git exact approval-to-candidate path diff; PowerShell SHA-256 checks for the untracked witness and immutable v3 supplement schemas; Git status confirms only the witness is untracked",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "index": 1,
+      "statement": "The v3 GCR request, runtime, and transaction schemas, authority manifest, proposal, review page, and packet are Draft 2020-12 valid where applicable, path-safe, internally hash-bound, exact-commit reviewable, and bootstrap-only.",
+      "evidence": ["gcr3-focused-real-git-and-crash-boundaries", "backlog-and-gcr3-authority-validation"]
+    },
+    {
+      "index": 2,
+      "statement": "Every GRR-0002, GCR-0002, S01/B01, ECR-0003/W1.A04, hold, W1, T03, G1, backlog, Git ancestry, and witness identity in the authority manifest reproduces exact commit 72e2989440292ca30f8b5d4717aa61c56c5b9f48 and current immutable bytes.",
+      "evidence": ["backlog-and-gcr3-authority-validation", "exact-diff-and-protected-boundary"]
+    },
+    {
+      "index": 3,
+      "statement": "GCR-0003 approval can be introduced only after an independent APPROVED packet review at the exact packet commit; its clean codex-branch introduction commit is the sole B00 execution base.",
+      "evidence": ["gcr3-focused-real-git-and-crash-boundaries", "backlog-and-gcr3-authority-validation"]
+    },
+    {
+      "index": 4,
+      "statement": "The B00 candidate changes only authorized controller/schema/test/governance paths, keeps live revision 9 during review, preserves every v3 supplement artifact unchanged, and cannot create, approve, install, or fabricate S02/B02.",
+      "evidence": ["gcr3-focused-real-git-and-crash-boundaries", "predecessor-control-compatibility", "exact-diff-and-protected-boundary"]
+    },
+    {
+      "index": 5,
+      "statement": "After independent B00 approval, adoption uses the exact durable write-ahead protocol, finishes as a direct-child commit changing only backlog and GCR-0003 state, records one 9-to-10 generation with supported ceiling 11, and makes unsupported revision-9 readers fail closed.",
+      "evidence": ["gcr3-focused-real-git-and-crash-boundaries"]
+    },
+    {
+      "index": 6,
+      "statement": "The later version-4 reader accepts only independently reviewed and exactly approved sequential GRR-0002.S02/B02 authority at live revision 10, raises revision and minimum to 11, and rejects stale, forked, wrong-hold, wrong-generation, wrong-predecessor, non-increasing, unsupported, missing, or adverse authority byte-stably.",
+      "evidence": ["gcr3-focused-real-git-and-crash-boundaries", "predecessor-control-compatibility"]
+    },
+    {
+      "index": 7,
+      "statement": "A real-Git end-to-end test starts at the exact revision-9 adoption, does not mock supplement boundary validation, and proves GCR-0003 adoption plus separately approved S02 start through revision 11 without amendment, task, Wave, gate, main, remote, product, or witness mutation.",
+      "evidence": ["gcr3-focused-real-git-and-crash-boundaries"]
+    },
+    {
+      "index": 8,
+      "statement": "The original W1.A04 retry remains denied after GCR-0003 adoption and until independently approved B02; the trigger remains non-authoritative and every ordinary execution gate remains closed.",
+      "evidence": ["gcr3-focused-real-git-and-crash-boundaries", "exact-diff-and-protected-boundary"]
+    },
+    {
+      "index": 9,
+      "statement": "Child-process abrupt termination at every preparation, durable-write, marker, replacement, validation, flush, and cleanup boundary leaves a fail-closed recoverable state; repeated recovery yields only the exact predecessor pair or exact successor pair.",
+      "evidence": ["gcr3-focused-real-git-and-crash-boundaries"]
+    },
+    {
+      "index": 10,
+      "statement": "Criterion-linked B00 evidence, real-Git denial coverage, governed Python quality, exact diff scope, and independent review pass with no unexplained unverified item.",
+      "evidence": ["gcr3-focused-real-git-and-crash-boundaries", "governed-python-quality", "backlog-and-gcr3-authority-validation", "exact-diff-and-protected-boundary"]
+    }
+  ],
+  "findingClosures": [],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "GCR-0003 raises the shared governance control generation from 9 to 10, extends the supported ceiling to 11, adds exact v4 supplement authority, and installs a crash-safe two-file adoption protocol while an ACTIVE recovery hold protects W1. The selected checks cover immutable approval and manifest authority, exact scope, v3 preservation, v4 sequencing, old-reader and historic-retry denial, unmocked real-Git execution, abrupt child-process termination, live backlog/state validation, governed Python quality, and the protected witness. No product, design-reference, amendment, task, Wave, gate, main, or remote state is changed by B00.",
+    "selectedChecks": [
+      "gcr3-focused-real-git-and-crash-boundaries",
+      "predecessor-control-compatibility",
+      "governed-python-quality",
+      "backlog-and-gcr3-authority-validation",
+      "exact-diff-and-protected-boundary"
+    ],
+    "deferredChecks": [
+      "GRR-0002.S02/B02 packet review, exact human approval, bootstrap execution, and exit review remain separately governed after GCR-0003 adoption.",
+      "Complete affected/full repository and Windows deployment qualification remains due at the W1 exit gate."
+    ]
+  }
+}
