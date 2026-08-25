@@ -31,6 +31,7 @@ CONTROL_RECOVERY_TRIGGER_PATH = "artifacts/evidence/W1.A04.B00.json"
 CONTROL_RECOVERY_TRIGGER_SHA256 = "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
 CONTROL_RECOVERY_STATE_PATH = "planning/governance-control-recovery/GCR-0001.B00.state.json"
 CONTROL_RECOVERY_V2_STATE_PATH = "planning/governance-control-recovery/GCR-0002.B00.state.json"
+CONTROL_RECOVERY_V3_STATE_PATH = "planning/governance-control-recovery/GCR-0003.B00.state.json"
 B01_SCOPE_PACKET_PATH = "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum.packet.json"
 B01_SCOPE_SCHEMA_PATH = "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum.schema.json"
 B01_SCOPE_REVIEW_PAGE_PATH = "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum-review.html"
@@ -193,7 +194,7 @@ def require_supplement_workspace(
 ) -> None:
     """Require the exact workspace authorized for one supplement transition.
 
-    The generation-neutral lanes created by GCR-0001 and GCR-0002 keep the
+    The generation-neutral lanes created by GCR-0001, GCR-0002, and GCR-0003 keep the
     atomic W1.A04 failure witness untracked, unstaged, and non-authoritative.
     Every such transition authenticates that witness and, when applicable,
     exactly one canonical evidence or review artifact. Legacy v1 supplement
@@ -205,6 +206,7 @@ def require_supplement_workspace(
     if generation not in {
         "2.0-recovery-supplement-proposal",
         "3.0-recovery-supplement-proposal",
+        "4.0-recovery-supplement-proposal",
     }:
         require_clean(repo, allowed_untracked=allowed_transition)
         return
@@ -227,11 +229,11 @@ def require_supplement_workspace(
     )
     if sha256(witness_path.read_bytes()) != CONTROL_RECOVERY_TRIGGER_SHA256:
         raise SystemExit("The GCR trigger witness hash differs from its approved atomic-failure boundary")
-    state_relative = (
-        CONTROL_RECOVERY_V2_STATE_PATH
-        if generation == "3.0-recovery-supplement-proposal"
-        else CONTROL_RECOVERY_STATE_PATH
-    )
+    state_relative = {
+        "2.0-recovery-supplement-proposal": CONTROL_RECOVERY_STATE_PATH,
+        "3.0-recovery-supplement-proposal": CONTROL_RECOVERY_V2_STATE_PATH,
+        "4.0-recovery-supplement-proposal": CONTROL_RECOVERY_V3_STATE_PATH,
+    }[generation]
     state_path = safe_repo_path(
         repo,
         state_relative,
@@ -249,6 +251,17 @@ def require_supplement_workspace(
     }
     if state.get("triggerWitness") != expected_witness:
         raise SystemExit("The GCR trigger witness is missing its exact non-authoritative state binding")
+    if generation == "4.0-recovery-supplement-proposal":
+        adoption = state.get("adoption") or {}
+        if (
+            state.get("controlRecoveryId") != "GCR-0003"
+            or state.get("bootstrapUnit") != "GCR-0003.B00"
+            or state.get("status") != "ADOPTION_FINALIZATION"
+            or adoption.get("predecessorRevision") != 9
+            or adoption.get("successorRevision") != 10
+            or adoption.get("supportedControlCeiling") != 11
+        ):
+            raise SystemExit("Version-4 supplement requires the exact adopted GCR-0003 state")
 
     expected_untracked = {CONTROL_RECOVERY_TRIGGER_PATH, *allowed_transition}
     untracked = set(git_output(repo, "ls-files", "--others", "--exclude-standard").splitlines())
@@ -431,6 +444,97 @@ def exact_file_reference(
     return payload
 
 
+def validate_v4_installed_control_recovery(repo: Path, packet: dict[str, Any], packet_commit: str) -> None:
+    """Bind a v4 S02 packet to the exact adopted GCR-0003 authority."""
+    if packet.get("schemaVersion") != "4.0-recovery-supplement-proposal":
+        return
+    authority = packet.get("installedControlRecovery") or {}
+    transition = authority.get("controlTransition") or {}
+    if (
+        authority.get("controlRecoveryId") != "GCR-0003"
+        or authority.get("bootstrapUnit") != "GCR-0003.B00"
+        or transition != {"predecessorRevision": 9, "successorRevision": 10, "supportedControlCeiling": 11}
+    ):
+        raise SystemExit("Version-4 supplement installed control-recovery identity is invalid")
+    references = {
+        "approval": authority.get("approval") or {},
+        "review": authority.get("latestApprovedReview") or {},
+        "state": authority.get("adoptedState") or {},
+        "evidence": authority.get("adoptionEvidence") or {},
+    }
+    expected_paths = {
+        "approval": "planning/governance-control-recovery/GCR-0003.approval.json",
+        "state": "planning/governance-control-recovery/GCR-0003.B00.state.json",
+        "evidence": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.adoption.json",
+    }
+    documents: dict[str, dict[str, Any]] = {}
+    for label, reference in references.items():
+        relative = str(reference.get("path") or "")
+        if label in expected_paths and relative != expected_paths[label]:
+            raise SystemExit(f"Version-4 supplement GCR-0003 {label} path is not canonical")
+        if (
+            label == "review"
+            and re.fullmatch(
+                r"planning/governance-control-recovery/GCR-0003\.B00\.review-R[0-9]{2,}\.json",
+                relative,
+            )
+            is None
+        ):
+            raise SystemExit("Version-4 supplement GCR-0003 review path is not canonical")
+        commit = str(reference.get("commit") or "")
+        require_commit(repo, commit, label=f"Version-4 GCR-0003 {label}")
+        payload = exact_file_reference(repo, reference, commit=commit, label=f"Version-4 GCR-0003 {label}")
+        try:
+            document = json.loads(payload)
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise SystemExit(f"Version-4 GCR-0003 {label} is malformed") from exc
+        if not isinstance(document, dict):
+            raise SystemExit(f"Version-4 GCR-0003 {label} must be an object")
+        documents[label] = document
+    adoption_commit = str(authority.get("adoptionCommit") or "")
+    require_commit(repo, adoption_commit, label="Version-4 GCR-0003 adoption")
+    if adoption_commit != references["state"].get("commit") or not taskctl.git_is_ancestor(
+        repo, adoption_commit, packet_commit
+    ):
+        raise SystemExit("Version-4 supplement packet does not descend from the exact GCR-0003 adoption")
+    approval = documents["approval"]
+    review = documents["review"]
+    state = documents["state"]
+    evidence = documents["evidence"]
+    adoption = state.get("adoption") or {}
+    latest_attempt = (state.get("attempts") or [{}])[-1]
+    if (
+        approval.get("controlRecoveryId") != "GCR-0003"
+        or approval.get("status") != "APPROVED"
+        or review.get("controlRecoveryId") != "GCR-0003"
+        or review.get("bootstrapUnit") != "GCR-0003.B00"
+        or review.get("result") != "approved"
+        or review.get("findings") != []
+        or state.get("controlRecoveryId") != "GCR-0003"
+        or state.get("bootstrapUnit") != "GCR-0003.B00"
+        or state.get("status") != "ADOPTION_FINALIZATION"
+        or state.get("approval")
+        != {
+            "path": references["approval"].get("path"),
+            "sha256": references["approval"].get("sha256"),
+            "commit": references["approval"].get("commit"),
+        }
+        or (latest_attempt.get("review") or {}).get("result") != "approved"
+        or (latest_attempt.get("ledger") or {}).get("path") != references["review"].get("path")
+        or (latest_attempt.get("ledger") or {}).get("sha256") != references["review"].get("sha256")
+        or adoption.get("predecessorRevision") != 9
+        or adoption.get("successorRevision") != 10
+        or adoption.get("supportedControlCeiling") != 11
+        or adoption.get("evidence") != references["evidence"]
+        or evidence.get("controlRecoveryId") != "GCR-0003"
+        or evidence.get("bootstrapUnit") != "GCR-0003.B00"
+        or evidence.get("predecessorRevision") != 9
+        or evidence.get("successorRevision") != 10
+        or evidence.get("supportedControlCeiling") != 11
+    ):
+        raise SystemExit("Version-4 supplement GCR-0003 authority chain is stale, adverse, or substituted")
+
+
 def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str, Any], dict[str, Any], bytes, bytes]:
     packet_path, approval_path = supplement_paths(repo, supplement_id)
     packet, packet_payload = load_json(packet_path, "recovery supplement packet")
@@ -439,6 +543,7 @@ def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str,
         "./governance-recovery-supplement.schema.json": "governance-recovery-supplement.schema.json",
         "./governance-recovery-supplement.v2.schema.json": "governance-recovery-supplement.v2.schema.json",
         "./governance-recovery-supplement.v3.schema.json": "governance-recovery-supplement.v3.schema.json",
+        "./governance-recovery-supplement.v4.schema.json": "governance-recovery-supplement.v4.schema.json",
     }.get(str(packet.get("$schema") or ""))
     approval_schema_reference = str(approval.get("$schema") or "")
     approval_schema_name = None
@@ -454,6 +559,10 @@ def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str,
         "../governance-recovery-requests/governance-recovery-supplement-approval.v3.schema.json"
     ):
         approval_schema_name = "governance-recovery-supplement-approval.v3.schema.json"
+    elif approval_schema_reference == (
+        "../governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json"
+    ):
+        approval_schema_name = "governance-recovery-supplement-approval.v4.schema.json"
     if packet_schema_name is None or approval_schema_name is None:
         raise SystemExit("Unsupported recovery supplement packet or approval schema")
     packet_schema = safe_repo_path(
@@ -491,6 +600,7 @@ def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str,
     require_commit(repo, packet_commit, label="Recovery supplement packet commit")
     if taskctl.git_blob(repo, packet_commit, packet_relative) != packet_payload:
         raise SystemExit("Recovery supplement packet differs from the immutable approved Git blob")
+    validate_v4_installed_control_recovery(repo, packet, packet_commit)
     approval_relative = f"planning/governance-recovery-approvals/{supplement_id}.json"
     approval_introduction = taskctl.approval_introduction_commit(repo, approval_relative)
     if not approval_introduction:
@@ -642,6 +752,7 @@ def validate_supplement_boundary(
     if packet.get("schemaVersion") in {
         "2.0-recovery-supplement-proposal",
         "3.0-recovery-supplement-proposal",
+        "4.0-recovery-supplement-proposal",
     }:
         validate_preappend_supplement_boundary(
             repo,
@@ -746,13 +857,27 @@ def validate_preappend_supplement_boundary(
     installed: list[dict[str, Any]],
     require_installed: bool,
 ) -> None:
-    """Validate a v2 supplement without fabricating the blocked amendment in backlog state."""
+    """Validate a pre-append supplement without fabricating the blocked amendment in backlog state."""
     activation = packet.get("activationBoundary") or {}
     transition = packet.get("controlTransition") or {}
     target = packet.get("targetAmendmentAuthority") or {}
     amendment_reference = target.get("amendmentApproval") or {}
     amendment_id = str(amendment_reference.get("id") or "")
     control = data.get("control_plane") or {}
+    if packet.get("schemaVersion") == "4.0-recovery-supplement-proposal":
+        generations = control.get("control_generations") or []
+        latest_generation = generations[-1] if generations else {}
+        if (
+            transition.get("predecessorRevision") != 10
+            or transition.get("successorRevision") != 11
+            or activation.get("controlRevision") != 10
+            or [item.get("id") for item in generations] != ["GCR-0001", "GCR-0002", "GCR-0003"]
+            or latest_generation.get("bootstrap_id") != "GCR-0003.B00"
+            or latest_generation.get("predecessor_revision") != 9
+            or latest_generation.get("successor_revision") != 10
+            or latest_generation.get("supported_control_ceiling") != 11
+        ):
+            raise SystemExit("Version-4 supplement lacks the exact adopted GCR-0003 9-to-10 authority")
     expected_revision_value = (
         transition.get("successorRevision") if require_installed else transition.get("predecessorRevision")
     )
@@ -867,6 +992,7 @@ def validate_target_materialization_projection(
     if packet.get("schemaVersion") in {
         "2.0-recovery-supplement-proposal",
         "3.0-recovery-supplement-proposal",
+        "4.0-recovery-supplement-proposal",
     }:
         hold = recovery_hold(data, str(packet.get("recoveryRequestId") or ""))
         supplement = recovery_supplement(hold, str(packet.get("supplementId") or ""))
@@ -1890,6 +2016,7 @@ def command_supplement_start(args: argparse.Namespace) -> None:
     if packet.get("schemaVersion") in {
         "2.0-recovery-supplement-proposal",
         "3.0-recovery-supplement-proposal",
+        "4.0-recovery-supplement-proposal",
     }:
         installed_supplement["successor_control_revision"] = successor
     hold.setdefault("supplements", []).append(installed_supplement)

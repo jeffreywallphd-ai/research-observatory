@@ -57,7 +57,7 @@ PLATFORMS = {
 CAMPAIGN_STATES = {"PLANNED", "ACTIVE", "PAUSED", "REVIEW", "COMPLETE", "CANCELLED"}
 CAMPAIGN_SCOPES = {"wave", "amendment-hold", "capability-wave"}  # capability-wave is historical only.
 COMPLETION_STATES = {"PENDING", "IN_PROGRESS", "REVIEW", "APPROVED", "CHANGES_REQUESTED", "BLOCKED", "PAUSED"}
-CONTROL_TOOL_REVISION = 9
+CONTROL_TOOL_REVISION = 11
 GCR_ADOPTION_REVISION = 7
 RECOVERY_BASE_REVISION = 6
 GCR_ADOPTION_TRANSACTION_PATHS = (
@@ -68,6 +68,10 @@ GCR_ADOPTION_TRANSACTION_PATHS = (
     "planning/governance-control-recovery/GCR-0002.B00.adoption-transaction.json",
     "planning/governance-control-recovery/GCR-0002.B00.adoption-backlog.next",
     "planning/governance-control-recovery/GCR-0002.B00.adoption-state.next",
+    "planning/governance-control-recovery/GCR-0003.B00.adoption.lock",
+    "planning/governance-control-recovery/GCR-0003.B00.adoption-transaction.json",
+    "planning/governance-control-recovery/GCR-0003.B00.adoption-backlog.next",
+    "planning/governance-control-recovery/GCR-0003.B00.adoption-state.next",
 )
 AMENDMENT_TERMINAL_STATES = {"ADOPTED", "DEFERRED", "WITHDRAWN"}
 EXACT_T03_RECOVERY = {
@@ -2721,9 +2725,93 @@ def recovery_supplement_authority_errors(
     target = packet.get("targetAmendmentAuthority") or {}
     target_approval = target.get("amendmentApproval") or {}
     target_bootstrap = target.get("bootstrap") or {}
+    if packet.get("schemaVersion") == "4.0-recovery-supplement-proposal":
+        installed_control = packet.get("installedControlRecovery") or {}
+        generations = (data.get("control_plane") or {}).get("control_generations") or []
+        generation = generations[-1] if generations else {}
+        installed_approval = installed_control.get("approval") or {}
+        installed_review = installed_control.get("latestApprovedReview") or {}
+        installed_state = installed_control.get("adoptedState") or {}
+        installed_evidence = installed_control.get("adoptionEvidence") or {}
+        generation_approval = generation.get("approval_reference") or {}
+        generation_review = generation.get("review_reference") or {}
+        if (
+            installed_control.get("controlRecoveryId") != "GCR-0003"
+            or installed_control.get("bootstrapUnit") != "GCR-0003.B00"
+            or (installed_control.get("controlTransition") or {})
+            != {"predecessorRevision": 9, "successorRevision": 10, "supportedControlCeiling": 11}
+            or generation.get("id") != "GCR-0003"
+            or generation.get("bootstrap_id") != "GCR-0003.B00"
+            or generation.get("predecessor_revision") != 9
+            or generation.get("successor_revision") != 10
+            or generation.get("supported_control_ceiling") != 11
+            or installed_approval
+            != {
+                "path": generation_approval.get("path"),
+                "sha256": generation_approval.get("sha256"),
+                "commit": generation_approval.get("introduction_commit"),
+            }
+            or installed_review
+            != {
+                "path": generation_review.get("path"),
+                "sha256": generation_review.get("sha256"),
+                "commit": generation_review.get("approved_state_commit"),
+            }
+            or installed_control.get("adoptionCommit") != installed_state.get("commit")
+        ):
+            errors.append(f"{supplement_id}: installed GCR-0003 authority differs from the live generation")
+        loaded_installed: dict[str, dict[str, Any]] = {}
+        for label, reference in (
+            ("state", installed_state),
+            ("evidence", installed_evidence),
+        ):
+            relative = str(reference.get("path") or "")
+            commit = str(reference.get("commit") or "")
+            try:
+                path = safe_control_path(
+                    repo,
+                    relative,
+                    prefix=(
+                        "planning/governance-control-recovery"
+                        if label == "state"
+                        else "artifacts/evidence/governance-control-recovery"
+                    ),
+                    label=f"{supplement_id} installed GCR-0003 {label}",
+                )
+                payload = path.read_bytes()
+                loaded_installed[label] = json.loads(payload)
+            except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+                errors.append(f"{supplement_id}: cannot load installed GCR-0003 {label}: {exc}")
+                continue
+            if (
+                hashlib.sha256(payload).hexdigest() != reference.get("sha256")
+                or not git_commit_exists(repo, commit)
+                or not git_is_ancestor(repo, commit)
+                or git_blob(repo, commit, relative) != payload
+            ):
+                errors.append(f"{supplement_id}: installed GCR-0003 {label} binding is invalid")
+        installed_state_document = loaded_installed.get("state") or {}
+        installed_evidence_document = loaded_installed.get("evidence") or {}
+        adoption = installed_state_document.get("adoption") or {}
+        if (
+            installed_state.get("path") != "planning/governance-control-recovery/GCR-0003.B00.state.json"
+            or installed_evidence.get("path")
+            != "artifacts/evidence/governance-control-recovery/GCR-0003.B00.adoption.json"
+            or installed_state_document.get("status") != "ADOPTION_FINALIZATION"
+            or adoption.get("predecessorRevision") != 9
+            or adoption.get("successorRevision") != 10
+            or adoption.get("supportedControlCeiling") != 11
+            or adoption.get("evidence") != installed_evidence
+            or installed_evidence_document.get("controlRecoveryId") != "GCR-0003"
+            or installed_evidence_document.get("predecessorRevision") != 9
+            or installed_evidence_document.get("successorRevision") != 10
+            or installed_evidence_document.get("supportedControlCeiling") != 11
+        ):
+            errors.append(f"{supplement_id}: installed GCR-0003 state/evidence authority is invalid")
     if packet.get("schemaVersion") in {
         "2.0-recovery-supplement-proposal",
         "3.0-recovery-supplement-proposal",
+        "4.0-recovery-supplement-proposal",
     }:
         transition = packet.get("controlTransition") or {}
         if supplement.get("predecessor_control_revision") != transition.get("predecessorRevision") or supplement.get(
@@ -2949,7 +3037,6 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
                     f"{hold_id}: unapproved latest recovery supplement requires the exact repair amendment "
                     "to remain unmaterialized under ordinary Wave scope"
                 )
-        prior_successor: int | None = None
         for index, supplement in enumerate(supplements, start=1):
             supplement_id = str(supplement.get("id") or "")
             supplement_bootstrap = supplement.get("bootstrap") or {}
@@ -2965,12 +3052,34 @@ def recovery_hold_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
                 successor = int(successor_value or 0)
                 if successor <= predecessor:
                     errors.append(f"{supplement_id}: successor control revision is not greater than predecessor")
-                if prior_successor is not None and predecessor != prior_successor:
-                    errors.append(
-                        f"{supplement_id}: predecessor control revision does not continue the supplement chain"
-                    )
-            prior_successor = successor
             errors.extend(recovery_bootstrap_projection_errors(supplement_id, supplement_bootstrap))
+        if int(control.get("revision") or 0) >= GCR_ADOPTION_REVISION:
+            transitions = [
+                (
+                    int(generation.get("predecessor_revision") or 0),
+                    int(generation.get("successor_revision") or 0),
+                    str(generation.get("id") or ""),
+                )
+                for generation in control.get("control_generations", [])
+            ]
+            transitions.extend(
+                (
+                    int(supplement.get("predecessor_control_revision") or 0),
+                    int(supplement.get("successor_control_revision") or 6),
+                    str(supplement.get("id") or ""),
+                )
+                for recovery_hold in control.get("recovery_holds", [])
+                for supplement in recovery_hold.get("supplements", [])
+            )
+            ordered_transitions = sorted(transitions, key=lambda item: (item[0], item[1], item[2]))
+            cursor = min((item[0] for item in ordered_transitions), default=RECOVERY_BASE_REVISION)
+            for predecessor, successor, transition_id in ordered_transitions:
+                if predecessor != cursor or successor <= predecessor:
+                    errors.append(f"{transition_id}: control transition does not continue the interleaved global chain")
+                    break
+                cursor = successor
+            if ordered_transitions and cursor != int(control.get("revision") or 0):
+                errors.append("interleaved global control transition chain does not reach the live revision")
         if hold.get("status") == "ACTIVE":
             campaign = (waves.get(wave_id) or {}).get("campaign") or {}
             if campaign.get("status") != "PAUSED" or campaign.get("scope") not in {"wave", "amendment-hold"}:
@@ -3140,7 +3249,7 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
         if live_state.get("status") == "ADOPTED" or live_state.get("adoption") is not None:
             errors.append("control revision 6 cannot coexist with an adopted GCR-0001 live state")
         return errors
-    expected_generation_count = 2 if revision >= 9 else 1
+    expected_generation_count = 3 if revision >= 10 else 2 if revision >= 9 else 1
     if len(generations) != expected_generation_count:
         return [f"control revision {revision} requires exactly {expected_generation_count} GCR generation record(s)"]
     generation = generations[0] or {}
@@ -3152,18 +3261,16 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
         or generation.get("successor_revision") != GCR_ADOPTION_REVISION
     ):
         errors.append("GCR-0001 generation identity or 6-to-7 transition is invalid")
-    if revision == GCR_ADOPTION_REVISION:
-        latest_successor = GCR_ADOPTION_REVISION
-    elif revision >= 9:
-        latest_successor = int((generations[-1] or {}).get("successor_revision") or 0)
-    else:
-        successors = [
-            int(supplement.get("successor_control_revision") or 0)
-            for hold in control.get("recovery_holds", [])
-            for supplement in hold.get("supplements", [])
-            if supplement.get("successor_control_revision") is not None
-        ]
-        latest_successor = max(successors, default=GCR_ADOPTION_REVISION)
+    successors = [
+        int(supplement.get("successor_control_revision") or 0)
+        for hold in control.get("recovery_holds", [])
+        for supplement in hold.get("supplements", [])
+        if supplement.get("successor_control_revision") is not None
+    ]
+    latest_successor = max(
+        [int((generations[-1] or {}).get("successor_revision") or 0), *successors],
+        default=GCR_ADOPTION_REVISION,
+    )
     if latest_successor != revision:
         errors.append("control revision differs from the latest explicit generation transition")
     if repo is None:
@@ -3292,6 +3399,8 @@ def governance_control_generation_errors(data: dict[str, Any], repo: Path | None
         )
     if revision >= 9:
         errors.extend(governance_control_v2_generation_errors(repo, generations[1]))
+    if revision >= 10:
+        errors.extend(governance_control_v3_generation_errors(repo, generations[2]))
     return errors
 
 
@@ -3445,6 +3554,162 @@ def governance_control_v2_generation_errors(repo: Path, generation: dict[str, An
             or (final_generations[0] or {}).get("id") != "GCR-0001"
         ):
             errors.append("GCR-0002 finalization does not freeze the exact revision-9 generation ledger")
+    return errors
+
+
+def governance_control_v3_generation_errors(repo: Path, generation: dict[str, Any]) -> list[str]:
+    """Validate the exact GCR-0003 9-to-10 generation and finalization."""
+    errors: list[str] = []
+    if (
+        generation.get("id") != "GCR-0003"
+        or generation.get("bootstrap_id") != "GCR-0003.B00"
+        or generation.get("hold_id") != "HOLD-W1-GRR-0002"
+        or generation.get("predecessor_revision") != 9
+        or generation.get("successor_revision") != 10
+        or generation.get("supported_control_ceiling") != 11
+    ):
+        return ["GCR-0003 generation identity or 9-to-10 transition is invalid"]
+    approval_reference = generation.get("approval_reference") or {}
+    review_reference = generation.get("review_reference") or {}
+    references = (
+        (
+            "approval",
+            approval_reference,
+            "introduction_commit",
+            "planning/governance-control-recovery/GCR-0003.approval.json",
+        ),
+        ("review", review_reference, "approved_state_commit", str(review_reference.get("path") or "")),
+    )
+    loaded: dict[str, dict[str, Any]] = {}
+    for label, reference, commit_field, expected_path in references:
+        relative = str(reference.get("path") or "")
+        if relative != expected_path:
+            errors.append(f"GCR-0003 {label} path is not canonical")
+            continue
+        try:
+            path = safe_control_path(
+                repo,
+                relative,
+                prefix="planning/governance-control-recovery",
+                label=f"GCR-0003 {label}",
+            )
+            payload = path.read_bytes()
+            loaded[label] = json.loads(payload)
+        except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"GCR-0003 cannot load {label} authority: {exc}")
+            continue
+        if hashlib.sha256(payload).hexdigest() != reference.get("sha256"):
+            errors.append(f"GCR-0003 {label} authority hash mismatch")
+        commit = str(reference.get(commit_field) or "")
+        if not git_commit_exists(repo, commit) or not git_is_ancestor(repo, commit):
+            errors.append(f"GCR-0003 {label} authority commit is absent from current history")
+        elif git_blob(repo, commit, relative) != payload:
+            errors.append(f"GCR-0003 {label} authority differs from its immutable Git blob")
+    approval = loaded.get("approval") or {}
+    review = loaded.get("review") or {}
+    if approval.get("status") != "APPROVED" or approval.get("controlRecoveryId") != "GCR-0003":
+        errors.append("GCR-0003 approval identity or status mismatch")
+    if review.get("result") != "approved" or review.get("controlRecoveryId") != "GCR-0003":
+        errors.append("GCR-0003 bootstrap review identity or status mismatch")
+    reviewed_state = str(review_reference.get("reviewed_state_commit") or "")
+    approved_state = str(review_reference.get("approved_state_commit") or "")
+    state_relative = "planning/governance-control-recovery/GCR-0003.B00.state.json"
+    review_relative = str(review_reference.get("path") or "")
+    if (
+        review.get("reviewedStateCommit") != reviewed_state
+        or approval_introduction_commit(repo, review_relative) != approved_state
+        or git_commit_parents(repo, approved_state) != [reviewed_state]
+        or git_name_status_delta(repo, reviewed_state, approved_state) != {review_relative: "A", state_relative: "M"}
+    ):
+        errors.append("GCR-0003 approved state is not the canonical exact review-ledger application commit")
+    approved_payload = git_blob(repo, approved_state, state_relative)
+    try:
+        approved_document = json.loads(approved_payload or b"")
+    except UnicodeError, json.JSONDecodeError:
+        approved_document = {}
+    attempts = approved_document.get("attempts") or []
+    latest = attempts[-1] if attempts else {}
+    if (
+        approved_document.get("controlRecoveryId") != "GCR-0003"
+        or approved_document.get("bootstrapUnit") != "GCR-0003.B00"
+        or approved_document.get("status") != "APPROVED"
+        or approved_document.get("currentSubmission") is not None
+        or approved_document.get("adoption") is not None
+        or (latest.get("review") or {}).get("result") != "approved"
+        or (latest.get("review") or {}).get("reviewedStateCommit") != reviewed_state
+        or (latest.get("ledger") or {}).get("path") != review_relative
+        or (latest.get("ledger") or {}).get("sha256") != review_reference.get("sha256")
+    ):
+        errors.append("GCR-0003 approved-state Git blob does not reproduce the approved review")
+    live_path = repo / state_relative
+    try:
+        live_state = json.loads(live_path.read_bytes())
+    except OSError, UnicodeError, json.JSONDecodeError:
+        return [*errors, "GCR-0003 live state is unreadable or malformed"]
+    adoption = live_state.get("adoption") or {}
+    evidence = adoption.get("evidence") or {}
+    evidence_relative = str(evidence.get("path") or "")
+    evidence_commit = str(evidence.get("commit") or "")
+    try:
+        evidence_path = safe_control_path(
+            repo,
+            evidence_relative,
+            prefix="artifacts/evidence/governance-control-recovery",
+            label="GCR-0003 adoption evidence",
+        )
+        evidence_payload = evidence_path.read_bytes()
+        evidence_document = json.loads(evidence_payload)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+        errors.append(f"GCR-0003 cannot load adoption evidence: {exc}")
+        evidence_payload = b""
+        evidence_document = {}
+    if (
+        live_state.get("status") != "ADOPTION_FINALIZATION"
+        or adoption.get("predecessorRevision") != 9
+        or adoption.get("successorRevision") != 10
+        or adoption.get("supportedControlCeiling") != 11
+        or adoption.get("reviewedStateCommit") != approved_state
+        or evidence_relative != "artifacts/evidence/governance-control-recovery/GCR-0003.B00.adoption.json"
+        or hashlib.sha256(evidence_payload).hexdigest() != evidence.get("sha256")
+        or not git_commit_exists(repo, evidence_commit)
+        or not git_is_ancestor(repo, evidence_commit)
+        or git_blob(repo, evidence_commit, evidence_relative) != evidence_payload
+        or evidence_document.get("reviewedStateCommit") != approved_state
+    ):
+        errors.append("GCR-0003 live adoption state/evidence does not match the adopted generation")
+    if git_commit_parents(repo, evidence_commit) != [approved_state] or git_name_status_delta(
+        repo, approved_state, evidence_commit
+    ) != {evidence_relative: "A"}:
+        errors.append("GCR-0003 adoption evidence is not the exact direct child of its approved state")
+    matches = [
+        commit
+        for commit in git_commits_changing_path_after(repo, evidence_commit, state_relative)
+        if git_blob(repo, commit, state_relative) == live_path.read_bytes()
+    ]
+    if len(matches) != 1:
+        errors.append("GCR-0003 adoption finalization commit is absent or not unique")
+    else:
+        finalization = matches[0]
+        if git_commit_parents(repo, finalization) != [evidence_commit] or git_name_status_delta(
+            repo, evidence_commit, finalization
+        ) != {"planning/backlog.yaml": "M", state_relative: "M"}:
+            errors.append("GCR-0003 adoption finalization is not the exact direct-child two-path transition")
+        finalization_backlog = git_blob(repo, finalization, "planning/backlog.yaml")
+        try:
+            finalization_document = yaml.safe_load((finalization_backlog or b"").decode("utf-8"))
+        except UnicodeError, yaml.YAMLError:
+            finalization_document = {}
+        finalization_control = (finalization_document or {}).get("control_plane") or {}
+        final_generations = finalization_control.get("control_generations") or []
+        if (
+            finalization_control.get("revision") != 10
+            or finalization_control.get("minimum_tool_revision") != 10
+            or len(final_generations) != 3
+            or final_generations[2] != generation
+            or (final_generations[0] or {}).get("id") != "GCR-0001"
+            or (final_generations[1] or {}).get("id") != "GCR-0002"
+        ):
+            errors.append("GCR-0003 finalization does not freeze the exact revision-10 generation ledger")
     return errors
 
 

@@ -2544,13 +2544,12 @@ class GovernanceRecoveryTests(unittest.TestCase):
         ):
             recoveryctl.require_clean(REPO)
 
-    def test_v3_supplement_start_installs_only_exact_s02_eight_to_nine(self) -> None:
-        payload, data, capabilities, slices, tasks, gates = recoveryctl.backlog_state(REPO)
-        data = copy.deepcopy(data)
-        predecessor = copy.deepcopy(data)
-        self.assertEqual(8, data["control_plane"]["revision"])
-        hold = data["control_plane"]["recovery_holds"][1]
-        self.assertEqual(["GRR-0002.S01"], [item["id"] for item in hold["supplements"]])
+    def test_v3_s02_is_byte_stably_denied_after_revision_nine_adoption(self) -> None:
+        payload, data, _capabilities, _slices, tasks, _gates = recoveryctl.backlog_state(REPO)
+        self.assertEqual(9, data["control_plane"]["revision"])
+        hold = recoveryctl.recovery_hold(data, "GRR-0002")
+        wave = taskctl.wave_map(data)["W1"]
+        blocked_task = tasks["CAP-02.S04.T03"]
         packet = {
             "schemaVersion": "3.0-recovery-supplement-proposal",
             "recoveryRequestId": "GRR-0002",
@@ -2561,65 +2560,36 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 "generationNeutral": True,
                 "olderReadersFailClosed": True,
             },
+            "targetWave": "W1",
+            "baseRecoveryAuthority": {"holdId": "HOLD-W1-GRR-0002"},
+            "targetAmendmentAuthority": {
+                "amendmentApproval": {"id": "W1.A04"},
+                "backlogPresence": False,
+            },
+            "activationBoundary": {
+                "controlRevision": 8,
+                "holdStatus": "ACTIVE",
+                "waveStatus": "PAUSED",
+                "waveScope": "wave",
+                "amendmentBacklogStatus": "ABSENT",
+                "blockedTaskStatus": "BLOCKED",
+            },
             "supplementalBootstrap": {"id": "GRR-0002.B02"},
         }
-        approval = {
-            "packet": {
-                "path": "planning/governance-recovery-requests/GRR-0002.S02.packet.json",
-                "commit": "a" * 40,
-            }
-        }
-        captured: dict[str, Any] = {}
-        original_read_bytes = Path.read_bytes
-
-        def read_bytes(path: Path) -> bytes:
-            if path == REPO / "planning/governance-recovery-approvals/GRR-0002.S02.json":
-                return b"approval"
-            return original_read_bytes(path)
-
-        def capture(_repo: Path, prior: bytes, candidate: dict[str, Any]) -> None:
-            self.assertEqual(payload, prior)
-            captured["data"] = copy.deepcopy(candidate)
-
-        args = argparse.Namespace(repo=REPO, supplement="GRR-0002.S02", agent="codex")
-        with (
-            patch.object(
-                recoveryctl, "load_supplement_authority", return_value=(approval, packet, b"approval", b"packet")
-            ),
-            patch.object(recoveryctl, "require_supplement_workspace"),
-            patch.object(
-                recoveryctl, "backlog_state", return_value=(payload, data, capabilities, slices, tasks, gates)
-            ),
-            patch.object(recoveryctl, "validate_supplement_boundary"),
-            patch.object(taskctl, "approval_introduction_commit", return_value="b" * 40),
-            patch.object(Path, "read_bytes", read_bytes),
-            patch.object(recoveryctl, "save_backlog", side_effect=capture),
-        ):
-            recoveryctl.command_supplement_start(args)
-        installed = captured["data"]
-        self.assertEqual(9, installed["control_plane"]["revision"])
-        latest = installed["control_plane"]["recovery_holds"][1]["supplements"][-1]
-        self.assertEqual("GRR-0002.S02", latest["id"])
-        self.assertEqual(8, latest["predecessor_control_revision"])
-        self.assertEqual(9, latest["successor_control_revision"])
-        self.assertEqual("GRR-0002.B02", latest["bootstrap"]["id"])
-
-        stale = predecessor
-        with (
-            patch.object(
-                recoveryctl, "load_supplement_authority", return_value=(approval, packet, b"approval", b"packet")
-            ),
-            patch.object(recoveryctl, "require_supplement_workspace"),
-            patch.object(
-                recoveryctl, "backlog_state", return_value=(payload, stale, capabilities, slices, tasks, gates)
-            ),
-            patch.object(recoveryctl, "validate_supplement_boundary"),
-            patch.object(taskctl, "CONTROL_TOOL_REVISION", 8),
-            patch.object(Path, "read_bytes", read_bytes),
-            self.assertRaisesRegex(SystemExit, "strictly increasing or supported"),
-        ):
-            recoveryctl.command_supplement_start(args)
-        self.assertEqual(8, stale["control_plane"]["revision"])
+        before = (REPO / "planning/backlog.yaml").read_bytes()
+        with self.assertRaisesRegex(SystemExit, "activation boundary differs"):
+            recoveryctl.validate_preappend_supplement_boundary(
+                REPO,
+                packet,
+                data,
+                hold=hold,
+                wave=wave,
+                blocked_task=blocked_task,
+                installed=[],
+                require_installed=False,
+            )
+        self.assertEqual(payload, before)
+        self.assertEqual(before, (REPO / "planning/backlog.yaml").read_bytes())
 
 
 if __name__ == "__main__":
