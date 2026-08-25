@@ -621,7 +621,10 @@ def validate_v4_supplement_packet_review(
             or not taskctl.git_is_ancestor(repo, candidate, review_commit)
             or (
                 successor_candidate is not None
-                and not taskctl.git_is_ancestor(repo, review_commit, successor_candidate)
+                and (
+                    review_commit == successor_candidate
+                    or not taskctl.git_is_ancestor(repo, review_commit, successor_candidate)
+                )
             )
             or not reviewer
             or reviewer != reviewer.strip()

@@ -2673,7 +2673,13 @@ def recovery_v4_supplement_packet_review_errors(
                 or ledger.get("packetSha256") != hashlib.sha256(round_packet_payload or b"").hexdigest()
                 or review_commit == candidate
                 or not git_is_ancestor(repo, candidate, review_commit)
-                or (successor_candidate is not None and not git_is_ancestor(repo, review_commit, successor_candidate))
+                or (
+                    successor_candidate is not None
+                    and (
+                        review_commit == successor_candidate
+                        or not git_is_ancestor(repo, review_commit, successor_candidate)
+                    )
+                )
                 or not reviewer
                 or reviewer != reviewer.strip()
                 or reviewer == approval.get("approvedBy")
