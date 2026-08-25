@@ -58,6 +58,13 @@ class Gcr4ctlTests(unittest.TestCase):
             shutil.copy2(REPO / relative, destination)
         return repo
 
+    def test_optional_state_loader_accepts_authorized_absence(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            self.assertEqual((None, None), gcr4ctl.load_state(repo, required=False))
+            with self.assertRaisesRegex(SystemExit, "state is absent"):
+                gcr4ctl.load_state(repo, required=True)
+
     def test_exact_approved_authority_is_valid(self) -> None:
         approval, packet, introduction = gcr4ctl.load_authority(REPO)
         self.assertEqual(gcr4ctl.APPROVAL_COMMIT, introduction)

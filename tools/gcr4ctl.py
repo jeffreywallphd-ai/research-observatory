@@ -277,7 +277,13 @@ def load_authority(repo: Path) -> tuple[dict[str, Any], dict[str, Any], str]:
 
 
 def state_path(repo: Path) -> Path:
-    return safe_path(repo, STATE_PATH, label="GCR-0004 state", prefix="planning/governance-control-recovery")
+    return safe_path(
+        repo,
+        STATE_PATH,
+        label="GCR-0004 state",
+        prefix="planning/governance-control-recovery",
+        require_exists=False,
+    )
 
 
 def load_state(repo: Path, *, required: bool) -> tuple[dict[str, Any] | None, bytes | None]:
