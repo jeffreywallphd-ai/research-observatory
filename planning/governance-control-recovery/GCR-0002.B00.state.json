@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0002",
   "bootstrapUnit": "GCR-0002.B00",
-  "status": "REVIEW",
+  "status": "CHANGES_REQUESTED",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0002.approval.json",
     "sha256": "ae877459b2f6b2ad1e1ca0551f5efc80e7a096e86b562c4baa22fcd20d91ebe7",
@@ -59,25 +59,58 @@
         }
       ],
       "closures": []
+    },
+    {
+      "submission": {
+        "attemptId": "R02",
+        "submittedBy": "codex",
+        "candidateCommit": "28ee69a90e51be3d704a73371c1613ae3b7c91c3",
+        "baseCommit": "c029ba348a8bd0abee23e11c078aff4b8fd0b02b",
+        "branch": "codex/w1-windows-local-runtime",
+        "evidence": {
+          "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R02.json",
+          "sha256": "7395e3d24b59cd9825fcefc28c51a6bb18c52dbfabaaa096f0a89b4852e867d9",
+          "commit": "28ee69a90e51be3d704a73371c1613ae3b7c91c3"
+        },
+        "submittedAt": "2026-08-25T01:22:36+00:00",
+        "priorAttemptId": "R01",
+        "openFindingIds": [
+          "GCR-0002.B00-R01-F01"
+        ],
+        "rootCauseAnalysis": null
+      },
+      "review": {
+        "reviewer": "independent-control-security-reviewer",
+        "result": "changes-requested",
+        "reviewedAt": "2026-08-25T01:28:54+00:00",
+        "reviewedStateCommit": "35200904cf7ecb0d7072aaf727859a2e838387ee",
+        "notes": "The R02 candidate 28ee69a90e51be3d704a73371c1613ae3b7c91c3 is a strict descendant of R01 candidate b3985b95003807bf14b88e6a09be6ca3e88e23c5. The immutable R01 evidence and review ledger remain exact and append-only at SHA-256 a3fd508a46349b3f7236895a2153c406633d081c9e361b60d7fe948092af812b and ca33cbebfa3e92ea3c73d79389cc2cc300d7a7c35192320d8a3c70796d1f4d65; review-projection commit f400fb1 preserves the exact two-path ledger/state application. The prior-candidate-to-R02-candidate delta is exactly five authorized paths: added immutable R01 evidence, review ledger, and state plus modified tools/gcr2ctl.py and tests/foundation/test_gcr2ctl.py. Reviewed-state 35200904cf7ecb0d7072aaf727859a2e838387ee is the direct child of the candidate and adds only exact R02 evidence plus the state submission transition. The raw CRLF anchor, missing/invalid-manifest restoration, direct HEAD/parent shape, simple stale/payload substitution denial, unpatched successor validation, exact scope, revision-8 stopped boundary, v3 sequencing, witness, and no ordinary execution authority were inspected. The 26 affected taskctl-schema/v3/v2 recovery tests passed in 50.461 seconds; governed and affected static quality passed; backlog validation passed. The focused GCR2 replay was stopped after the independently reproduced HIGH authority-substitution defect became dispositive and is not relied on for approval. Live `gcr2ctl validate GCR-0002` at the frozen R02 reviewed state also returns `GCR-0002 state status differs from the latest immutable review` because validate_history does not recognize a remediation REVIEW projection with prior attempts; no mutation results. The protected witness remains exact, untracked, unstaged, and non-authoritative at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. No review transition, adoption, Wave/amendment/task/gate action, or canonical mutation was performed."
+      },
+      "ledger": {
+        "path": "planning/governance-control-recovery/GCR-0002.B00.review-R02.json",
+        "sha256": "a2f28e6ff7b776f0b2e2fe3fb571c4ffad1c19667de1d6b1ec6d91ec1664c138",
+        "commit": "35200904cf7ecb0d7072aaf727859a2e838387ee"
+      },
+      "findings": [
+        {
+          "id": "GCR-0002.B00-R02-F01",
+          "severity": "high",
+          "blocking": true,
+          "criterionIndex": 8,
+          "title": "A self-consistent substituted review/evidence chain is accepted as predecessor authority",
+          "reproduction": "At exact candidate 28ee69a90e51be3d704a73371c1613ae3b7c91c3, validate_recovery_anchor requires the anchor HEAD to be a direct-child adoption-evidence commit and validates the parent state's schema, status, raw bytes, and canonical backlog, but it never proves that approvedStateCommit is the canonical independently approved GCR-0002.B00 review projection. It does not replay validate_history, bind the state's approval reference to the immutable GCR-0002 approval, require an approved latest attempt/ledger, or derive the exact ledger-introduction commit. In a disposable real-Git fixture, branch from the original approved-state parent, change only the schema-valid state approval sha256 and commit fields, commit that substituted APPROVED state, add a schema-valid adoption evidence file naming the substituted parent and commit it as the direct child, then create a self-consistent lock anchor whose state payload/binding names those bytes. With the exact witness present, replace the live backlog/state with partial bytes and call recover_transaction. The result is RESTORED_PREDECESSOR; the controller restores the unapproved state containing approval SHA ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff and removes every transaction artifact. The R02 test named `test_invalid_manifest_restores_but_stale_head_and_substituted_anchor_fail_closed` changes payload bytes under the original immutable commits or moves HEAD away from the anchor, so it does not cover a coherent substituted parent/evidence/anchor chain. This preserves the core R01 authority defect despite correcting CRLF raw-byte restoration and violates criterion 8's exact predecessor terminal-pair guarantee.",
+          "requiredRemediation": "In a strict-descendant candidate, authenticate approvedStateCommit as the unique canonical independently approved GCR-0002.B00 review projection before trusting any anchor preimage: validate the exact immutable approval reference; complete append-only submission/evidence/review history; latest independent approved ledger and absence of open blockers; exact reviewed-state-to-ledger/state projection delta; ledger/state Git blobs and hashes; and the exact adoption-evidence direct child. Recovery must reject a fully self-consistent alternate APPROVED parent/evidence/anchor chain, fork, altered approval reference, substituted ledger/history, or wrong candidate without changing backlog, state, lock, manifest, or successor artifacts. Add real-Git adversarial tests constructing those coherent alternate histories, preserve the Windows CRLF/unpatched crash tests, and submit fresh evidence that explicitly closes GCR-0002.B00-R02-F01."
+        }
+      ],
+      "closures": [
+        {
+          "findingId": "GCR-0002.B00-R01-F01",
+          "disposition": "superseded",
+          "evidence": "R02 fixes the literal Windows CRLF Git-blob mismatch by durably anchoring and restoring the raw backlog/state preimages; it binds HEAD to the anchor's evidence commit, rejects simple stale-HEAD and payload substitutions byte-stably, and removes the BACKLOG_SHA256 and successor-validation patches from focused crash recovery. The remaining authority part of R01-F01 is narrowed and reproduced as GCR-0002.B00-R02-F01: the anchor can substitute a complete schema-valid APPROVED parent plus matching direct-child evidence because that parent is not bound to the canonical independently approved review projection."
+        }
+      ]
     }
   ],
-  "currentSubmission": {
-    "attemptId": "R02",
-    "submittedBy": "codex",
-    "candidateCommit": "28ee69a90e51be3d704a73371c1613ae3b7c91c3",
-    "baseCommit": "c029ba348a8bd0abee23e11c078aff4b8fd0b02b",
-    "branch": "codex/w1-windows-local-runtime",
-    "evidence": {
-      "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R02.json",
-      "sha256": "7395e3d24b59cd9825fcefc28c51a6bb18c52dbfabaaa096f0a89b4852e867d9",
-      "commit": "28ee69a90e51be3d704a73371c1613ae3b7c91c3"
-    },
-    "submittedAt": "2026-08-25T01:22:36+00:00",
-    "priorAttemptId": "R01",
-    "openFindingIds": [
-      "GCR-0002.B00-R01-F01"
-    ],
-    "rootCauseAnalysis": null
-  },
+  "currentSubmission": null,
   "adoption": null
 }
