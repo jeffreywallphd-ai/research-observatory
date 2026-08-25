@@ -1074,7 +1074,12 @@ class Gcr3ctlTests(unittest.TestCase):
         self.assertEqual(10, transition["predecessorRevision"]["const"])
         self.assertEqual(11, transition["successorRevision"]["const"])
         self.assertEqual("GRR-0002.S02", packet_schema["properties"]["supplementId"]["const"])
-        self.assertEqual("GRR-0002.B02", approval_schema["properties"]["supplementalBootstrapUnit"]["const"])
+        review_contract, approval_contract = approval_schema["oneOf"]
+        self.assertEqual(
+            "governance-recovery-supplement-packet-review",
+            review_contract["properties"]["documentType"]["const"],
+        )
+        self.assertEqual("GRR-0002.B02", approval_contract["properties"]["supplementalBootstrapUnit"]["const"])
         self.assertEqual(
             "943c650120b32d3a2837e96c769f48c9c9afa4435ecb2fe1275c17d7f1cd1e7d",
             gcr3ctl.sha256(
@@ -1092,6 +1097,212 @@ class Gcr3ctlTests(unittest.TestCase):
                 ).read_bytes()
             ),
         )
+
+    def test_v4_s02_packet_review_ledger_is_separate_immutable_and_fail_closed(self) -> None:
+        cases = {
+            "embedded-only": "embedded-only",
+            "wrong-ledger-hash": "wrong-ledger-hash",
+            "wrong-ledger-commit": "wrong-ledger-commit",
+            "wrong-candidate": "wrong-candidate",
+            "adverse-review": "adverse-review",
+            "open-blocker": "open-blocker",
+            "forked-review": "forked-review",
+            "substituted-closures": "substituted-closures",
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            for label, variant in cases.items():
+                with self.subTest(case=label):
+                    repo = Path(temporary) / label
+                    repo.mkdir()
+                    self.git(repo, "init")
+                    self.git(repo, "config", "user.email", "s02-review@example.test")
+                    self.git(repo, "config", "user.name", "S02 Review Fixture")
+                    self.git(repo, "config", "commit.gpgsign", "false")
+                    self.git(repo, "config", "core.autocrlf", "false")
+                    schema_relative = (
+                        "planning/governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json"
+                    )
+                    schema_path = repo / schema_relative
+                    schema_path.parent.mkdir(parents=True)
+                    shutil.copy2(REPO / schema_relative, schema_path)
+                    packet_relative = "planning/governance-recovery-requests/GRR-0002.S02.packet.json"
+                    packet = {"acceptanceCriteria": ["The exact reviewed packet is required."]}
+                    self.write_json(repo, packet_relative, packet)
+                    self.git(repo, "add", "--", schema_relative, packet_relative)
+                    self.git(repo, "commit", "-m", "fixture: freeze S02 packet")
+                    packet_commit = self.git(repo, "rev-parse", "HEAD")
+                    packet_payload = (repo / packet_relative).read_bytes()
+                    review_relative = "planning/governance-recovery-requests/GRR-0002.S02.review-R01.json"
+                    finding = {
+                        "id": "GRR-0002.S02-R01-F01",
+                        "severity": "high",
+                        "blocking": True,
+                        "criterionIndex": 1,
+                        "title": "Fixture blocking finding",
+                        "reproduction": "Fixture reproduction.",
+                        "requiredRemediation": "Fixture remediation.",
+                    }
+                    ledger = {
+                        "$schema": "./governance-recovery-supplement-approval.v4.schema.json",
+                        "schemaVersion": "4.0",
+                        "documentType": "governance-recovery-supplement-packet-review",
+                        "recoveryRequestId": "GRR-0002",
+                        "supplementId": "GRR-0002.S02",
+                        "attemptId": "R01",
+                        "candidateCommit": "0" * 40 if variant == "wrong-candidate" else packet_commit,
+                        "packetSha256": recoveryctl.sha256(packet_payload),
+                        "reviewer": "independent-s02-reviewer",
+                        "result": "changes-requested" if variant == "adverse-review" else "approved",
+                        "findings": [finding] if variant in {"adverse-review", "open-blocker"} else [],
+                        "closures": [],
+                        "priorAttempt": None,
+                        "verified": ["Fixture packet review."],
+                        "approvalAvailable": variant not in {"adverse-review"},
+                    }
+                    self.write_json(repo, review_relative, ledger)
+                    if variant == "forked-review":
+                        self.git(repo, "checkout", "-b", "review-fork")
+                    self.git(repo, "add", "--", review_relative)
+                    self.git(repo, "commit", "-m", "fixture: record S02 packet review")
+                    review_commit = self.git(repo, "rev-parse", "HEAD")
+                    review_payload = (repo / review_relative).read_bytes()
+                    if variant == "forked-review":
+                        self.git(repo, "checkout", "-b", "approval-fork", packet_commit)
+                        (repo / review_relative).write_bytes(review_payload)
+                    approval_marker = "planning/governance-recovery-approvals/GRR-0002.S02.json"
+                    self.write_json(repo, approval_marker, {"approved": True})
+                    self.git(repo, "add", "--", approval_marker)
+                    self.git(repo, "commit", "-m", "fixture: record later human approval")
+                    approval_introduction = self.git(repo, "rev-parse", "HEAD")
+                    projection = {
+                        "attemptId": "R01",
+                        "candidateCommit": packet_commit,
+                        "ledger": {
+                            "path": review_relative,
+                            "sha256": (
+                                "0" * 64 if variant == "wrong-ledger-hash" else recoveryctl.sha256(review_payload)
+                            ),
+                            "commit": packet_commit if variant == "wrong-ledger-commit" else review_commit,
+                        },
+                        "result": "APPROVED",
+                        "openFindingIds": [],
+                        "closedFindingIds": ["fabricated"] if variant == "substituted-closures" else [],
+                    }
+                    if variant == "embedded-only":
+                        projection.pop("ledger")
+                        projection["reviewer"] = "fabricated-independent-reviewer"
+                    approval = {
+                        "approvedBy": "fixture-repository-owner",
+                        "independentPacketReview": projection,
+                    }
+                    with self.assertRaises((SystemExit, OSError, ValueError)):
+                        recoveryctl.validate_v4_supplement_packet_review(
+                            repo,
+                            "GRR-0002.S02",
+                            approval,
+                            approval_introduction=approval_introduction,
+                            packet_commit=packet_commit,
+                            packet=packet,
+                            packet_payload=packet_payload,
+                            schema_path=schema_path,
+                        )
+                    self.assertTrue(
+                        taskctl.recovery_v4_supplement_packet_review_errors(
+                            repo,
+                            "GRR-0002.S02",
+                            approval,
+                            packet,
+                            packet_payload,
+                            packet_commit,
+                            approval_introduction,
+                        )
+                    )
+
+            valid_repo = Path(temporary) / "valid"
+            valid_repo.mkdir()
+            self.git(valid_repo, "init")
+            self.git(valid_repo, "config", "user.email", "s02-review@example.test")
+            self.git(valid_repo, "config", "user.name", "S02 Review Fixture")
+            self.git(valid_repo, "config", "commit.gpgsign", "false")
+            self.git(valid_repo, "config", "core.autocrlf", "false")
+            schema_relative = (
+                "planning/governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json"
+            )
+            schema_path = valid_repo / schema_relative
+            schema_path.parent.mkdir(parents=True)
+            shutil.copy2(REPO / schema_relative, schema_path)
+            packet_relative = "planning/governance-recovery-requests/GRR-0002.S02.packet.json"
+            packet = {"acceptanceCriteria": ["The exact reviewed packet is required."]}
+            self.write_json(valid_repo, packet_relative, packet)
+            self.git(valid_repo, "add", "--", schema_relative, packet_relative)
+            self.git(valid_repo, "commit", "-m", "fixture: freeze S02 packet")
+            packet_commit = self.git(valid_repo, "rev-parse", "HEAD")
+            packet_payload = (valid_repo / packet_relative).read_bytes()
+            review_relative = "planning/governance-recovery-requests/GRR-0002.S02.review-R01.json"
+            ledger = {
+                "$schema": "./governance-recovery-supplement-approval.v4.schema.json",
+                "schemaVersion": "4.0",
+                "documentType": "governance-recovery-supplement-packet-review",
+                "recoveryRequestId": "GRR-0002",
+                "supplementId": "GRR-0002.S02",
+                "attemptId": "R01",
+                "candidateCommit": packet_commit,
+                "packetSha256": recoveryctl.sha256(packet_payload),
+                "reviewer": "independent-s02-reviewer",
+                "result": "approved",
+                "findings": [],
+                "closures": [],
+                "priorAttempt": None,
+                "verified": ["Fixture packet review."],
+                "approvalAvailable": True,
+            }
+            self.write_json(valid_repo, review_relative, ledger)
+            self.git(valid_repo, "add", "--", review_relative)
+            self.git(valid_repo, "commit", "-m", "fixture: independently approve S02 packet")
+            review_commit = self.git(valid_repo, "rev-parse", "HEAD")
+            review_payload = (valid_repo / review_relative).read_bytes()
+            approval_marker = "planning/governance-recovery-approvals/GRR-0002.S02.json"
+            self.write_json(valid_repo, approval_marker, {"approved": True})
+            self.git(valid_repo, "add", "--", approval_marker)
+            self.git(valid_repo, "commit", "-m", "fixture: record later human approval")
+            approval_introduction = self.git(valid_repo, "rev-parse", "HEAD")
+            approval = {
+                "approvedBy": "fixture-repository-owner",
+                "independentPacketReview": {
+                    "attemptId": "R01",
+                    "candidateCommit": packet_commit,
+                    "ledger": {
+                        "path": review_relative,
+                        "sha256": recoveryctl.sha256(review_payload),
+                        "commit": review_commit,
+                    },
+                    "result": "APPROVED",
+                    "openFindingIds": [],
+                    "closedFindingIds": [],
+                },
+            }
+            recoveryctl.validate_v4_supplement_packet_review(
+                valid_repo,
+                "GRR-0002.S02",
+                approval,
+                approval_introduction=approval_introduction,
+                packet_commit=packet_commit,
+                packet=packet,
+                packet_payload=packet_payload,
+                schema_path=schema_path,
+            )
+            self.assertEqual(
+                [],
+                taskctl.recovery_v4_supplement_packet_review_errors(
+                    valid_repo,
+                    "GRR-0002.S02",
+                    approval,
+                    packet,
+                    packet_payload,
+                    packet_commit,
+                    approval_introduction,
+                ),
+            )
 
     def test_submit_freezes_exact_real_git_candidate_and_witness(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -1657,6 +1868,9 @@ class Gcr3ctlTests(unittest.TestCase):
             (repo / proposal_relative).write_bytes(b"# Fixture GRR-0002.S02\n")
             (repo / review_page_relative).write_bytes(b"<!doctype html><title>Fixture S02 review</title>\n")
             schema_relative = "planning/governance-recovery-requests/governance-recovery-supplement.v4.schema.json"
+            approval_schema_relative = (
+                "planning/governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json"
+            )
             backlog_payload = (repo / gcr3ctl.BACKLOG_PATH).read_bytes()
             packet_relative = "planning/governance-recovery-requests/GRR-0002.S02.packet.json"
             s02_packet = {
@@ -1793,6 +2007,10 @@ class Gcr3ctlTests(unittest.TestCase):
                 ],
                 "files": [
                     {"path": schema_relative, "sha256": recoveryctl.sha256((repo / schema_relative).read_bytes())},
+                    {
+                        "path": approval_schema_relative,
+                        "sha256": recoveryctl.sha256((repo / approval_schema_relative).read_bytes()),
+                    },
                     {"path": proposal_relative, "sha256": recoveryctl.sha256((repo / proposal_relative).read_bytes())},
                     {
                         "path": review_page_relative,
@@ -1810,6 +2028,36 @@ class Gcr3ctlTests(unittest.TestCase):
             self.git(repo, "commit", "-m", "fixture: freeze independently reviewed v4 S02 packet")
             packet_commit = self.git(repo, "rev-parse", "HEAD")
             packet_payload = (repo / packet_relative).read_bytes()
+            review_relative = "planning/governance-recovery-requests/GRR-0002.S02.review-R01.json"
+            review_ledger = {
+                "$schema": "./governance-recovery-supplement-approval.v4.schema.json",
+                "schemaVersion": "4.0",
+                "documentType": "governance-recovery-supplement-packet-review",
+                "recoveryRequestId": "GRR-0002",
+                "supplementId": "GRR-0002.S02",
+                "attemptId": "R01",
+                "candidateCommit": packet_commit,
+                "packetSha256": recoveryctl.sha256(packet_payload),
+                "reviewer": "independent-fixture-s02-reviewer",
+                "result": "approved",
+                "findings": [],
+                "closures": [],
+                "priorAttempt": None,
+                "verified": ["Exact packet identity, authority chain, scope, rollback, and denial boundary."],
+                "approvalAvailable": True,
+            }
+            self.write_json(repo, review_relative, review_ledger)
+            self.assertEqual(
+                [],
+                recoveryctl.schema_errors(
+                    review_ledger,
+                    repo / approval_schema_relative,
+                ),
+            )
+            self.git(repo, "add", "--", review_relative)
+            self.git(repo, "commit", "-m", "fixture: independently approve exact v4 S02 packet")
+            review_commit = self.git(repo, "rev-parse", "HEAD")
+            review_payload = (repo / review_relative).read_bytes()
             approval_relative = "planning/governance-recovery-approvals/GRR-0002.S02.json"
             s02_approval = {
                 "$schema": "../governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json",
@@ -1835,14 +2083,16 @@ class Gcr3ctlTests(unittest.TestCase):
                 },
                 "supplementalBootstrapUnit": "GRR-0002.B02",
                 "independentPacketReview": {
-                    "reviewer": "independent-fixture-s02-reviewer",
                     "attemptId": "R01",
                     "candidateCommit": packet_commit,
-                    "packetSha256": recoveryctl.sha256(packet_payload),
+                    "ledger": {
+                        "path": review_relative,
+                        "sha256": recoveryctl.sha256(review_payload),
+                        "commit": review_commit,
+                    },
                     "result": "APPROVED",
                     "openFindingIds": [],
                     "closedFindingIds": [],
-                    "priorAdverseLedger": None,
                 },
                 "executionAuthority": {
                     "supplementalBootstrapOnly": True,
