@@ -1,0 +1,46 @@
+{
+  "$schema": "../governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json",
+  "schemaVersion": "4.0",
+  "documentType": "governance-recovery-supplement-approval",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S02",
+  "targetWave": "W1",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-25T23:52:12.4479065Z",
+  "decision": "Approve GRR-0002.S02 at packet commit 070f408ed257b3c1345a29c3be2c2f882952b856, authorizing only supplemental bootstrap GRR-0002.B02 and its hash-bound revision-10-to-11 scope under HOLD-W1-GRR-0002. Keep W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, G1 pending, the hold active, and the trigger witness untracked, unstaged, and non-authoritative through independent B02 approval; after B02 approval, retry only the original packet-bound W1.A04.B00 submission at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6.",
+  "packet": {
+    "commit": "070f408ed257b3c1345a29c3be2c2f882952b856",
+    "path": "planning/governance-recovery-requests/GRR-0002.S02.packet.json",
+    "sha256": "14452cb6e6f3959996458d7b84df0105a7f6e4bbf3f4c5fc36e9d0f0506d43c8",
+    "proposalPath": "planning/governance-recovery-requests/GRR-0002.S02.md",
+    "proposalSha256": "5245a169ac1aba229cc45b0273a936d5d284b71f6c410f24d946dfb0770cbba7",
+    "schemaPath": "planning/governance-recovery-requests/governance-recovery-supplement.v4.schema.json",
+    "schemaSha256": "23f8e5b4185d546a4e5b8b7457b152fa74008bed6cd9d3c868248c0c8ae33858",
+    "reviewPath": "planning/governance-recovery-requests/GRR-0002.S02-review.html",
+    "reviewSha256": "23fa71f7b67e90b7a0e7606c8797a5d88c24886b0bec7f38689248d9a1a826b1"
+  },
+  "supplementalBootstrapUnit": "GRR-0002.B02",
+  "independentPacketReview": {
+    "attemptId": "R02",
+    "candidateCommit": "070f408ed257b3c1345a29c3be2c2f882952b856",
+    "ledger": {
+      "path": "planning/governance-recovery-requests/GRR-0002.S02.review-R02.json",
+      "sha256": "b0ccb726144cdecc59704a5e943c584e9baefa3d6c7a19dcbf3fb0d7f50a36c3",
+      "commit": "e9b48cee083aa4ba14a19ed45818ea378e29a61b"
+    },
+    "result": "APPROVED",
+    "openFindingIds": [],
+    "closedFindingIds": [
+      "GRR-0002.S02-R01-F01"
+    ]
+  },
+  "executionAuthority": {
+    "supplementalBootstrapOnly": true,
+    "postBootstrapExecution": false,
+    "amendmentMaterialization": false,
+    "ordinaryWaveResume": false,
+    "taskExecution": false,
+    "releaseGateApproval": false
+  }
+}
