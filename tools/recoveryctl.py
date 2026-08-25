@@ -30,6 +30,7 @@ REVIEW_RESULTS = {"approved": "APPROVED", "changes-requested": "CHANGES_REQUESTE
 CONTROL_RECOVERY_TRIGGER_PATH = "artifacts/evidence/W1.A04.B00.json"
 CONTROL_RECOVERY_TRIGGER_SHA256 = "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
 CONTROL_RECOVERY_STATE_PATH = "planning/governance-control-recovery/GCR-0001.B00.state.json"
+CONTROL_RECOVERY_V2_STATE_PATH = "planning/governance-control-recovery/GCR-0002.B00.state.json"
 B01_SCOPE_PACKET_PATH = "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum.packet.json"
 B01_SCOPE_SCHEMA_PATH = "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum.schema.json"
 B01_SCOPE_REVIEW_PAGE_PATH = "planning/governance-recovery-approvals/GRR-0002.B01.scope-addendum-review.html"
@@ -192,15 +193,19 @@ def require_supplement_workspace(
 ) -> None:
     """Require the exact workspace authorized for one supplement transition.
 
-    The v2 lane is created by GCR-0001 while its atomic W1.A04 failure witness
-    deliberately remains untracked, unstaged, and non-authoritative. Every v2
-    transition must authenticate that one witness and, when applicable,
+    The generation-neutral lanes created by GCR-0001 and GCR-0002 keep the
+    atomic W1.A04 failure witness untracked, unstaged, and non-authoritative.
+    Every such transition authenticates that witness and, when applicable,
     exactly one canonical evidence or review artifact. Legacy v1 supplement
     history retains its original clean-workspace contract.
     """
 
     allowed_transition = set(transition_untracked or set())
-    if packet.get("schemaVersion") != "2.0-recovery-supplement-proposal":
+    generation = str(packet.get("schemaVersion") or "")
+    if generation not in {
+        "2.0-recovery-supplement-proposal",
+        "3.0-recovery-supplement-proposal",
+    }:
         require_clean(repo, allowed_untracked=allowed_transition)
         return
     if CONTROL_RECOVERY_TRIGGER_PATH in allowed_transition:
@@ -222,9 +227,14 @@ def require_supplement_workspace(
     )
     if sha256(witness_path.read_bytes()) != CONTROL_RECOVERY_TRIGGER_SHA256:
         raise SystemExit("The GCR trigger witness hash differs from its approved atomic-failure boundary")
+    state_relative = (
+        CONTROL_RECOVERY_V2_STATE_PATH
+        if generation == "3.0-recovery-supplement-proposal"
+        else CONTROL_RECOVERY_STATE_PATH
+    )
     state_path = safe_repo_path(
         repo,
-        CONTROL_RECOVERY_STATE_PATH,
+        state_relative,
         label="GCR canonical state",
         designated_prefix="planning/governance-control-recovery",
     )
@@ -428,6 +438,7 @@ def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str,
     packet_schema_name = {
         "./governance-recovery-supplement.schema.json": "governance-recovery-supplement.schema.json",
         "./governance-recovery-supplement.v2.schema.json": "governance-recovery-supplement.v2.schema.json",
+        "./governance-recovery-supplement.v3.schema.json": "governance-recovery-supplement.v3.schema.json",
     }.get(str(packet.get("$schema") or ""))
     approval_schema_reference = str(approval.get("$schema") or "")
     approval_schema_name = None
@@ -439,6 +450,10 @@ def load_supplement_authority(repo: Path, supplement_id: str) -> tuple[dict[str,
         "../governance-recovery-requests/governance-recovery-supplement-approval.v2.schema.json"
     ):
         approval_schema_name = "governance-recovery-supplement-approval.v2.schema.json"
+    elif approval_schema_reference == (
+        "../governance-recovery-requests/governance-recovery-supplement-approval.v3.schema.json"
+    ):
+        approval_schema_name = "governance-recovery-supplement-approval.v3.schema.json"
     if packet_schema_name is None or approval_schema_name is None:
         raise SystemExit("Unsupported recovery supplement packet or approval schema")
     packet_schema = safe_repo_path(
@@ -624,7 +639,10 @@ def validate_supplement_boundary(
     activation = packet.get("activationBoundary") or {}
     blocked_task = taskctl.index_backlog(data)[3].get(str(activation.get("blockedTaskId") or "")) or {}
     installed = [item for item in hold.get("supplements", []) if item.get("id") == supplement_id]
-    if packet.get("schemaVersion") == "2.0-recovery-supplement-proposal":
+    if packet.get("schemaVersion") in {
+        "2.0-recovery-supplement-proposal",
+        "3.0-recovery-supplement-proposal",
+    }:
         validate_preappend_supplement_boundary(
             repo,
             packet,
@@ -846,7 +864,10 @@ def validate_target_materialization_projection(
     """Prove the exact amendment materialization delta without writing canonical state."""
     target = packet.get("targetAmendmentAuthority") or {}
     amendment_id = str((target.get("amendmentApproval") or {}).get("id") or "")
-    if packet.get("schemaVersion") == "2.0-recovery-supplement-proposal":
+    if packet.get("schemaVersion") in {
+        "2.0-recovery-supplement-proposal",
+        "3.0-recovery-supplement-proposal",
+    }:
         hold = recovery_hold(data, str(packet.get("recoveryRequestId") or ""))
         supplement = recovery_supplement(hold, str(packet.get("supplementId") or ""))
         bootstrap_status = str((supplement.get("bootstrap") or {}).get("status") or "")
@@ -1866,7 +1887,10 @@ def command_supplement_start(args: argparse.Namespace) -> None:
         },
         "created_at": taskctl.utc_now(),
     }
-    if packet.get("schemaVersion") == "2.0-recovery-supplement-proposal":
+    if packet.get("schemaVersion") in {
+        "2.0-recovery-supplement-proposal",
+        "3.0-recovery-supplement-proposal",
+    }:
         installed_supplement["successor_control_revision"] = successor
     hold.setdefault("supplements", []).append(installed_supplement)
     for other_hold in control.get("recovery_holds", []):

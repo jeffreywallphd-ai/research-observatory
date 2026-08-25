@@ -690,6 +690,40 @@ class BacklogSchemaTests(unittest.TestCase):
         ):
             self.load_copy(data)
 
+    def test_revision_nine_schema_requires_the_exact_second_gcr_generation(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        data["control_plane"]["revision"] = 9
+        data["control_plane"]["minimum_tool_revision"] = 9
+        data["control_plane"]["control_generations"].append(
+            {
+                "id": "GCR-0002",
+                "bootstrap_id": "GCR-0002.B00",
+                "hold_id": "HOLD-W1-GRR-0002",
+                "predecessor_revision": 8,
+                "successor_revision": 9,
+                "approval_reference": {
+                    "path": "planning/governance-control-recovery/GCR-0002.approval.json",
+                    "sha256": "a" * 64,
+                    "introduction_commit": "b" * 40,
+                },
+                "review_reference": {
+                    "path": "planning/governance-control-recovery/GCR-0002.B00.review-R01.json",
+                    "sha256": "c" * 64,
+                    "reviewed_state_commit": "d" * 40,
+                    "approved_state_commit": "e" * 40,
+                },
+                "adopted_by": "codex",
+                "adopted_at": "2026-08-25T00:00:00+00:00",
+            }
+        )
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+        crossed = copy.deepcopy(data)
+        crossed["control_plane"]["control_generations"][1]["predecessor_revision"] = 7
+        self.assertTrue(backlog_schema_errors(crossed, schema_path=self.schema))
+        missing = copy.deepcopy(data)
+        missing["control_plane"]["control_generations"].pop()
+        self.assertTrue(taskctl.governance_control_generation_errors(missing, None))
+
 
 if __name__ == "__main__":
     unittest.main()
