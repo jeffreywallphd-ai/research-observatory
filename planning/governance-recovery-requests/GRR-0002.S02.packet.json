@@ -115,14 +115,17 @@
       "planning/backlog.yaml",
       "planning/governance-recovery-approvals/GRR-0002.B02*",
       "tests/foundation/test_recoveryctl.py",
-      "tools/recoveryctl.py"
+      "tests/foundation/test_taskctl_schema.py",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tools/recoveryctl.py",
+      "tools/taskctl.py"
     ],
     "requiredOutcomes": [
       "Install exactly one sequential GRR-0002.S02/GRR-0002.B02 record under the existing HOLD-W1-GRR-0002 and advance control revision and minimum tool revision from 10 to 11 without creating, transferring, replacing, or releasing a hold.",
       "Authenticate the exact GRR-0002 packet, approval, B00 review, adopted GCR-0003 revision-10 generation, ECR-0003 packet, W1.A04 approval, blocked W1.A04.B00 candidate, and witness bytes while W1.A04 remains absent.",
       "Require the exact unchanged, unstaged, untracked, non-authoritative W1.A04.B00 witness at supplement start, submission, remediation, and review, rejecting every missing, changed, staged, tracked, redirected, duplicated, authority-bearing, or accompanied workspace state.",
       "Freeze criterion-linked B02 evidence and independent severity-ranked review append-only, with no open blocking finding before B02 becomes APPROVED and strict-descendant remediation after every adverse review.",
-      "After B02 approval, permit only a retry of the original packet-bound W1.A04.B00 submission at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6; amendment append or materialization, task activation or claim, live T03 recovery, hold release, W1 resume, and gate approval remain separately gated.",
+      "After B02 approval, implement one fail-closed amendment bootstrap-submit exception limited to exact W1.A04/W1.A04.B00, candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6, evidence SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c, approved ECR-0003/W1.A04 authority, the sole active HOLD-W1-GRR-0002, sequential independently approved GRR-0002.S02/B02 at revision 11, and the exact witness-only workspace; preserve current-HEAD denial for every other candidate, amendment, command, hold, revision, evidence, and workspace, while amendment append or materialization, task activation or claim, live T03 recovery, hold release, W1 resume, and gate approval remain separately gated.",
       "Preserve product, privacy, approved-reference, task-acceptance, completed-task, release-gate, predecessor-authority, immutable version-3 supplement, and prior GCR/GRR/ECR evidence bytes and outcomes."
     ],
     "prohibitedOutcomes": [
@@ -139,14 +142,14 @@
     "Supplement start atomically installs only the sequential GRR-0002.S02/GRR-0002.B02 record, advances revision and minimum tool revision to 11, and leaves W1, T03, W1.A04, the active hold, and all prior histories otherwise unchanged.",
     "The exact witness-aware workspace contract is applied consistently to start, submit/resubmit, and review and denies every missing, changed, staged, tracked, redirected, duplicated, authority-bearing, or accompanied deviation without mutation.",
     "B02 submission freezes the exact candidate, approval-to-candidate changed paths, criteria, checks, and evidence; independent review is append-only, severity-ranked, and cannot approve with an open blocking finding.",
-    "An independently APPROVED B02 validates a read-only projection of only the original W1.A04.B00 retry at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6 while amendment append/materialization, task execution, live T03 recovery, hold release, W1 resume, and G1 remain unauthorized.",
+    "An independently APPROVED B02 enables one atomic submission of only the original W1.A04.B00 retry at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6 under exact candidate, evidence, ECR/amendment, supplement/B02, revision, hold, and witness guards, while ordinary current-HEAD denial and every amendment append/materialization, task execution, live T03 recovery, hold release, W1 resume, and G1 gate remain unauthorized.",
     "Focused real-Git recovery, multi-round review, strict-ancestry, older-reader, historic-retry, atomicity, authority, quality, backlog/view, review-site, scope, and Git-hygiene checks pass with no protected product or reference change.",
     "The packet receives independent exact-commit control/security review with no open finding before human approval, and B02 receives a separate independent commit-bound approval before W1.A04.B00 is retried."
   ],
   "verificationObligations": [
     "Validate both version-4 schemas and every declared file hash, Git blob, introduction commit, ancestry edge, adopted control-generation record, base recovery authority, and target amendment authority.",
-    "Run the real-Git revision 9-to-10-to-11 lifecycle without mocking supplement boundary validation, plus recursive packet-review history denials including equality, truncation, substitution, skipped attempts, stale closure, unsafe accepted risk, and unresolved older findings.",
-    "Run the exact GRR-0002.S02 witness-deviation matrix through start, B02 submission/resubmission, and review without mocking workspace cleanliness.",
+    "Run the real-Git revision 9-to-10-to-11 lifecycle without mocking supplement boundary validation through independent B02 approval, denial of the historic retry before approval, and one atomic exact-candidate submission after approval, plus recursive packet-review history denials including equality, truncation, substitution, skipped attempts, stale closure, unsafe accepted risk, and unresolved older findings.",
+    "Run the exact GRR-0002.S02 historic-retry and witness-deviation matrix through start, B02 submission/resubmission, review, and post-approval W1.A04.B00 submission without mocking workspace cleanliness; deny wrong candidate/current HEAD, wrong ECR/amendment/supplement authority, adverse or open B02 review, wrong revision/hold, changed/staged/tracked/accompanied witness, stale writer, prohibited append/materialization/task/T03/resume/gate actions, and replay after the one lawful submission.",
     "Replay affected recoveryctl, taskctl schema/workflow, older-reader, stale-writer, transaction, historic-retry, and atomic-no-write checks selected by the shared control-plane risk surface.",
     "Validate the read-only target materialization projection, canonical backlog, GRR-0002 and GCR-0003 authority, ECR-0003 approval, generated views, review site, governed Python quality, protected scope, and Git diff hygiene.",
     "Bind B02 evidence to the exact approval-introduction-to-candidate diff, every required outcome and acceptance criterion, unique passing checks, deferred broader W1 qualification, and an empty unverified list.",
@@ -195,11 +198,11 @@
     },
     {
       "path": "planning/governance-recovery-requests/GRR-0002.S02.md",
-      "sha256": "c20feb33722a65e2ccdc211d7197583b7d88204cb83ca851002442776597658c"
+      "sha256": "5245a169ac1aba229cc45b0273a936d5d284b71f6c410f24d946dfb0770cbba7"
     },
     {
       "path": "planning/governance-recovery-requests/GRR-0002.S02-review.html",
-      "sha256": "29bccd87b6b59af8b13861dda4dc28c17d8a41b0bed3525351024f60286b25b8"
+      "sha256": "23fa71f7b67e90b7a0e7606c8797a5d88c24886b0bec7f38689248d9a1a826b1"
     }
   ],
   "requiredApprovalStatement": "Approve GRR-0002.S02 at packet commit <40-character SHA>, authorizing only supplemental bootstrap GRR-0002.B02 and its hash-bound revision-10-to-11 scope under HOLD-W1-GRR-0002. Keep W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, G1 pending, the hold active, and the trigger witness untracked, unstaged, and non-authoritative through independent B02 approval; after B02 approval, retry only the original packet-bound W1.A04.B00 submission at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6."
