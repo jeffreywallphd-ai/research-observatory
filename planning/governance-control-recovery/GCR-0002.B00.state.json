@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0002",
   "bootstrapUnit": "GCR-0002.B00",
-  "status": "CHANGES_REQUESTED",
+  "status": "REVIEW",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0002.approval.json",
     "sha256": "ae877459b2f6b2ad1e1ca0551f5efc80e7a096e86b562c4baa22fcd20d91ebe7",
@@ -111,6 +111,23 @@
       ]
     }
   ],
-  "currentSubmission": null,
+  "currentSubmission": {
+    "attemptId": "R03",
+    "submittedBy": "codex",
+    "candidateCommit": "e36f6f17193ff9a5615a77f8697e755529835eed",
+    "baseCommit": "c029ba348a8bd0abee23e11c078aff4b8fd0b02b",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R03.json",
+      "sha256": "4786c800dc375350e41cb4fe77af597c7890bcae3fee1c9eac9583828281f9c2",
+      "commit": "e36f6f17193ff9a5615a77f8697e755529835eed"
+    },
+    "submittedAt": "2026-08-25T01:43:58+00:00",
+    "priorAttemptId": "R02",
+    "openFindingIds": [
+      "GCR-0002.B00-R02-F01"
+    ],
+    "rootCauseAnalysis": "The first implementation trusted normalized Git blobs and test-patched validation instead of preserving the exact raw predecessor pair. R02 preserved raw bytes but authenticated structural self-consistency rather than deriving the one canonical human-approved, independently reviewed state, so a coherent alternate history could substitute its own authority. The shared root cause was piecemeal trust-boundary validation; R03 uses the existing append-only history and canonical approval-projection derivation as the sole anchor authority and tests substitution directly. The packet-level precursor was likewise caused by generic content bindings and runtime subobjects; distinct constant bindings and one strict runtime shape remain enforced."
+  },
   "adoption": null
 }
