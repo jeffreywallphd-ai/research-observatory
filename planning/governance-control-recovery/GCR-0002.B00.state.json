@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0002",
   "bootstrapUnit": "GCR-0002.B00",
-  "status": "REVIEW",
+  "status": "APPROVED",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0002.approval.json",
     "sha256": "ae877459b2f6b2ad1e1ca0551f5efc80e7a096e86b562c4baa22fcd20d91ebe7",
@@ -159,25 +159,48 @@
           "evidence": "R03 correctly binds the predecessor approval reference to the unique immutable GCR-0002 approval, replays the ordered Git introduction and exact two-file projection shape for each state-recorded review, requires the anchor to name the derived projection, preserves raw CRLF predecessor bytes, and rejects the R02 coherent altered-approval case byte-stably. The remaining authority defect is narrowed and reproduced as GCR-0002.B00-R03-F01: the ordered projection does not reconcile the immutable review document's adverse disposition and finding set with the state record that is used to derive approval."
         }
       ]
+    },
+    {
+      "submission": {
+        "attemptId": "R04",
+        "submittedBy": "codex",
+        "candidateCommit": "38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7",
+        "baseCommit": "c029ba348a8bd0abee23e11c078aff4b8fd0b02b",
+        "branch": "codex/w1-windows-local-runtime",
+        "evidence": {
+          "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R04.json",
+          "sha256": "ffd49e1e9e89779c1c3f92e0ab22396c252705c6578abaae40152d60b44a3c2b",
+          "commit": "38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7"
+        },
+        "submittedAt": "2026-08-25T02:08:29+00:00",
+        "priorAttemptId": "R03",
+        "openFindingIds": [
+          "GCR-0002.B00-R03-F01"
+        ],
+        "rootCauseAnalysis": "R03 bound recovery to the unique ordered approval and review commits, but it authenticated the historical ledger only as an opaque hashed blob and then trusted the separate state-side disposition. The adversarial review proved that two individually schema-valid documents could disagree while retaining the expected commit shape. The continuing root cause was treating structural commit authentication as a substitute for semantic reconciliation across the authority boundary. R04 parses and validates every immutable ledger, reapplies the controlled-review invariants to its frozen submission, derives the exact state projection from that ledger, and tests each contradictory field before recovery can mutate or clean any protected artifact."
+      },
+      "review": {
+        "reviewer": "independent-commit-bound-remediation-reviewer",
+        "result": "approved",
+        "reviewedAt": "2026-08-25T02:16:41+00:00",
+        "reviewedStateCommit": "9518eaf538aebbf57164c1c0dfa2c44690177ca2",
+        "notes": "APPROVED for the exact frozen R04 submission. HEAD and reviewedStateCommit both resolve to 9518eaf538aebbf57164c1c0dfa2c44690177ca2, whose sole parent is candidate 38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7 and whose delta adds only exact R04 evidence plus the state submission transition. The candidate strictly descends from the ordered R03 review projection at 886b6db8dbfb1adb37cbdec696c9c068ed9ea493; the immutable approval has exactly one introduction commit, c029ba348a8bd0abee23e11c078aff4b8fd0b02b. The approval-base-to-candidate delta is exactly the seventeen evidence-declared, packet-authorized paths, while the R03 reviewed-state-to-R04 candidate remediation delta is confined to the immutable R03 ledger/state projection plus tools/gcr2ctl.py and tests/foundation/test_gcr2ctl.py. R04 evidence is exact at SHA-256 ffd49e1e9e89779c1c3f92e0ab22396c252705c6578abaae40152d60b44a3c2b, explicitly closes GCR-0002.B00-R03-F01, contains the required continuing root-cause analysis, and reports no unverified item. Independently, 11 GCR2 tests passed in 217.781 seconds; 26 affected taskctl-schema and v2/v3 recovery tests passed in 36.483 seconds; governed Python formatting, lint, and type quality passed for 123 files. Code inspection and those real-Git tests preserve raw Windows CRLF predecessor bytes, unpatched successor validation, exact predecessor-or-successor recovery, durable cleanup, and byte-stable denial before mutation. The protected W1.A04 witness remains exact, untracked, unstaged, and non-authoritative at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. No gcr2ctl review, adopt, or recover command, state transition, Wave/amendment/task/gate action, stage, commit, or merge was performed."
+      },
+      "ledger": {
+        "path": "planning/governance-control-recovery/GCR-0002.B00.review-R04.json",
+        "sha256": "a5c2edad78fa17141a30240e1b3c6ab91129b720b80c6d0f74e385100c595087",
+        "commit": "9518eaf538aebbf57164c1c0dfa2c44690177ca2"
+      },
+      "findings": [],
+      "closures": [
+        {
+          "findingId": "GCR-0002.B00-R03-F01",
+          "disposition": "fixed",
+          "evidence": "At exact R04 candidate 38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7, validate_history loads and v2-schema-validates each immutable reviewed-state and ledger Git blob, reapplies validate_review to the exact frozen submission, requires a normalized independent reviewer and globally unique ordered finding IDs, limits unique closures to the prior open set, and denies approval with any new finding or unresolved prior blocking finding. It compares the ledger's complete identity, candidate, reviewed-state commit, reviewer, result, evidence, findings, closures, and notes to the state attempt, reconstructs the exact approval-state document from the REVIEW projection plus that attempt, and canonical_approved_state additionally refuses any remaining open finding. The independent full GCR2 suite passed all 11 tests in 217.781 seconds, including adverse-ledger/approved-state, approved-ledger/adverse-state, individually substituted findings, closures, evidence, reviewer, and candidate, coherent alternate approval authority, production CRLF raw-byte restoration, and every declared child-process boundary; denial cases preserve backlog, state, lock, manifest, and successor artifacts byte-for-byte."
+        }
+      ]
     }
   ],
-  "currentSubmission": {
-    "attemptId": "R04",
-    "submittedBy": "codex",
-    "candidateCommit": "38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7",
-    "baseCommit": "c029ba348a8bd0abee23e11c078aff4b8fd0b02b",
-    "branch": "codex/w1-windows-local-runtime",
-    "evidence": {
-      "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R04.json",
-      "sha256": "ffd49e1e9e89779c1c3f92e0ab22396c252705c6578abaae40152d60b44a3c2b",
-      "commit": "38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7"
-    },
-    "submittedAt": "2026-08-25T02:08:29+00:00",
-    "priorAttemptId": "R03",
-    "openFindingIds": [
-      "GCR-0002.B00-R03-F01"
-    ],
-    "rootCauseAnalysis": "R03 bound recovery to the unique ordered approval and review commits, but it authenticated the historical ledger only as an opaque hashed blob and then trusted the separate state-side disposition. The adversarial review proved that two individually schema-valid documents could disagree while retaining the expected commit shape. The continuing root cause was treating structural commit authentication as a substitute for semantic reconciliation across the authority boundary. R04 parses and validates every immutable ledger, reapplies the controlled-review invariants to its frozen submission, derives the exact state projection from that ledger, and tests each contradictory field before recovery can mutate or clean any protected artifact."
-  },
+  "currentSubmission": null,
   "adoption": null
 }
