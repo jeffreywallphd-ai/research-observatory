@@ -20,6 +20,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 import gcr3ctl  # noqa: E402
+import gcr4ctl  # noqa: E402
 import recoveryctl  # noqa: E402
 import taskctl  # noqa: E402
 
@@ -33,6 +34,271 @@ class Gcr3ctlTests(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes((json.dumps(document, indent=2) + "\n").encode())
         return path
+
+    def run_python(self, repo: Path, *arguments: str, expected: int = 0) -> subprocess.CompletedProcess[str]:
+        result = subprocess.run(
+            [sys.executable, *arguments],
+            cwd=repo,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(expected, result.returncode, result.stdout + result.stderr)
+        return result
+
+    def create_exact_gcr4_bridge(self, temporary: str) -> tuple[Path, str, str, str, str]:
+        repo = Path(temporary) / "gcr4-bridge"
+        bundle = Path(temporary) / "gcr4-source.bundle"
+        bundled = subprocess.run(
+            [
+                "git",
+                "-c",
+                f"safe.directory={REPO.as_posix()}",
+                "-C",
+                str(REPO),
+                "bundle",
+                "create",
+                str(bundle),
+                gcr4ctl.BRANCH,
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, bundled.returncode, bundled.stdout + bundled.stderr)
+        cloned = subprocess.run(
+            ["git", "clone", "-b", gcr4ctl.BRANCH, str(bundle), str(repo)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, cloned.returncode, cloned.stdout + cloned.stderr)
+        self.git(repo, "config", "user.email", "gcr4-bridge@example.test")
+        self.git(repo, "config", "user.name", "GCR4 Bridge Fixture")
+        self.git(repo, "config", "core.autocrlf", "false")
+        self.git(repo, "checkout", "-B", gcr4ctl.BRANCH, gcr4ctl.APPROVAL_COMMIT)
+        self.assertEqual(
+            "",
+            self.git(
+                repo,
+                "diff",
+                "--name-only",
+                f"{gcr4ctl.GCR3_REVIEWED_STATE_COMMIT}..{gcr4ctl.APPROVAL_COMMIT}",
+                "--",
+                gcr4ctl.GCR3_STATE_PATH,
+                gcr4ctl.BACKLOG_PATH,
+            ),
+        )
+        frozen = subprocess.run(
+            ["git", "show", f"{gcr4ctl.GCR3_REVIEWED_STATE_COMMIT}:{gcr4ctl.GCR3_STATE_PATH}"],
+            cwd=repo,
+            capture_output=True,
+            check=True,
+        ).stdout
+        self.assertEqual(gcr4ctl.GCR3_STATE_SHA256, gcr4ctl.sha256(frozen))
+        self.assertEqual(frozen, (repo / gcr4ctl.GCR3_STATE_PATH).read_bytes())
+
+        implementation_paths = [
+            gcr4ctl.GCR3_SUCCESSOR_SCHEMA_PATH,
+            "quality-scope.json",
+            "tests/foundation/test_gcr3ctl.py",
+            "tests/foundation/test_gcr4ctl.py",
+            "tools/gcr3ctl.py",
+            "tools/gcr4ctl.py",
+        ]
+        for relative in implementation_paths:
+            destination = repo / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(REPO / relative, destination)
+        self.git(repo, "add", "--", *implementation_paths)
+        self.git(repo, "commit", "-m", "fixture: implement exact GCR-0004 B00")
+        candidate = self.git(repo, "rev-parse", "HEAD")
+        self.assertNotEqual(gcr4ctl.APPROVAL_COMMIT, candidate)
+
+        for relative in (gcr4ctl.TRIGGER_PATH, gcr4ctl.GCR3_LEDGER_PATH):
+            destination = repo / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(REPO / relative, destination)
+        self.assertEqual(gcr4ctl.TRIGGER_SHA256, gcr4ctl.sha256((repo / gcr4ctl.TRIGGER_PATH).read_bytes()))
+        self.assertEqual(
+            gcr4ctl.GCR3_LEDGER_SHA256,
+            gcr4ctl.sha256((repo / gcr4ctl.GCR3_LEDGER_PATH).read_bytes()),
+        )
+
+        packet = json.loads((repo / gcr4ctl.PACKET_PATH).read_bytes())
+        changed = gcr4ctl.changed_paths(repo, gcr4ctl.APPROVAL_COMMIT, candidate)
+        evidence_relative = gcr4ctl.evidence_path("R01")
+        self.write_json(
+            repo,
+            evidence_relative,
+            {
+                "schemaVersion": "4.0-control-recovery-evidence",
+                "documentType": "governance-control-recovery-bootstrap-evidence",
+                "controlRecoveryId": gcr4ctl.GCR_ID,
+                "bootstrapUnit": gcr4ctl.BOOTSTRAP_ID,
+                "attemptId": "R01",
+                "commit": candidate,
+                "baseCommit": gcr4ctl.APPROVAL_COMMIT,
+                "branch": gcr4ctl.BRANCH,
+                "triggerWitness": gcr4ctl.trigger_witness(),
+                "adverseLedger": gcr4ctl.adverse_ledger_reference(),
+                "changedFiles": changed,
+                "checks": [
+                    {
+                        "id": "exact-real-git-bridge",
+                        "command": "fixture exact real-Git GCR-0004 bridge lifecycle",
+                        "exitCode": 0,
+                        "result": "passed",
+                    }
+                ],
+                "acceptanceCriteria": [
+                    {
+                        "index": index,
+                        "statement": statement,
+                        "evidence": ["Exercised by the disposable exact-authority lifecycle."],
+                    }
+                    for index, statement in enumerate(packet["acceptanceCriteria"], start=1)
+                ],
+                "findingClosures": [],
+                "unverifiedItems": [],
+                "verificationSelection": {
+                    "riskAnalysis": "Exact authority, review projection, durable bridge, and successor-reader risk.",
+                    "selectedChecks": ["exact-real-git-bridge"],
+                    "deferredChecks": ["Full repository qualification remains at the Wave boundary."],
+                },
+            },
+        )
+        self.run_python(
+            repo,
+            "tools/gcr4ctl.py",
+            "--repo",
+            ".",
+            "submit",
+            gcr4ctl.GCR_ID,
+            "--agent",
+            gcr4ctl.ACTOR,
+            "--approval-commit",
+            gcr4ctl.APPROVAL_COMMIT,
+            "--implementation-commit",
+            candidate,
+            "--evidence",
+            evidence_relative,
+        )
+        self.git(repo, "add", "--", evidence_relative, gcr4ctl.STATE_PATH)
+        self.git(repo, "commit", "-m", "fixture: freeze exact GCR-0004 R01")
+        reviewed_state = self.git(repo, "rev-parse", "HEAD")
+        frozen_state = json.loads((repo / gcr4ctl.STATE_PATH).read_bytes())
+        submission = frozen_state["currentSubmission"]
+        review_relative = gcr4ctl.review_path("R01")
+        self.write_json(
+            repo,
+            review_relative,
+            {
+                "schemaVersion": "4.0-control-recovery-review",
+                "documentType": "governance-control-recovery-bootstrap-review",
+                "controlRecoveryId": gcr4ctl.GCR_ID,
+                "bootstrapUnit": gcr4ctl.BOOTSTRAP_ID,
+                "attemptId": "R01",
+                "candidateCommit": candidate,
+                "reviewedStateCommit": reviewed_state,
+                "reviewer": "independent-gcr4-bridge-fixture-reviewer",
+                "result": "approved",
+                "evidence": submission["evidence"],
+                "findings": [],
+                "closures": [],
+                "notes": "Independent disposable exact-authority approval.",
+            },
+        )
+        self.run_python(
+            repo,
+            "tools/gcr4ctl.py",
+            "--repo",
+            ".",
+            "review",
+            gcr4ctl.GCR_ID,
+            "--reviewer",
+            "independent-gcr4-bridge-fixture-reviewer",
+            "--from",
+            review_relative,
+        )
+        self.git(repo, "add", "--", review_relative, gcr4ctl.STATE_PATH)
+        self.git(repo, "commit", "-m", "fixture: independently approve exact GCR-0004 R01")
+        approved_state = self.git(repo, "rev-parse", "HEAD")
+        approved_document = json.loads((repo / gcr4ctl.STATE_PATH).read_bytes())
+        self.assertEqual("APPROVED", approved_document["status"])
+
+        application_relative = gcr4ctl.APPLICATION_EVIDENCE_PATH
+        self.write_json(
+            repo,
+            application_relative,
+            {
+                "schemaVersion": "4.0-control-recovery-application-evidence",
+                "documentType": "governance-control-recovery-review-transition-evidence",
+                "controlRecoveryId": gcr4ctl.GCR_ID,
+                "bootstrapUnit": gcr4ctl.BOOTSTRAP_ID,
+                "approvedStateCommit": approved_state,
+                "reviewedStateCommit": gcr4ctl.GCR3_REVIEWED_STATE_COMMIT,
+                "triggerWitness": gcr4ctl.trigger_witness(),
+                "adverseLedger": {
+                    "path": gcr4ctl.GCR3_LEDGER_PATH,
+                    "sha256": gcr4ctl.GCR3_LEDGER_SHA256,
+                    "bytePreserved": True,
+                },
+                "predecessorStateSha256": gcr4ctl.GCR3_STATE_SHA256,
+                "successorStatus": "CHANGES_REQUESTED",
+                "controlRevision": 9,
+                "expectedChangedFiles": [gcr4ctl.GCR3_LEDGER_PATH, gcr4ctl.GCR3_STATE_PATH],
+                "checks": [
+                    {
+                        "id": "application-preflight",
+                        "command": "fixture exact GCR-0004 application preflight",
+                        "exitCode": 0,
+                        "result": "passed",
+                    }
+                ],
+                "unverifiedItems": [],
+            },
+        )
+        self.git(repo, "add", "--", application_relative)
+        self.git(repo, "commit", "-m", "fixture: bind exact GCR-0004 application evidence")
+        application_commit = self.git(repo, "rev-parse", "HEAD")
+        applied = self.run_python(
+            repo,
+            "tools/gcr4ctl.py",
+            "--repo",
+            ".",
+            "apply",
+            gcr4ctl.GCR_ID,
+            "--agent",
+            gcr4ctl.ACTOR,
+            "--approved-state-commit",
+            approved_state,
+            "--evidence",
+            application_relative,
+        )
+        self.assertIn("Prepared exact GCR-0003 R01 CHANGES_REQUESTED projection", applied.stdout)
+        recovered = self.run_python(
+            repo,
+            "tools/gcr4ctl.py",
+            "--repo",
+            ".",
+            "recover",
+            gcr4ctl.GCR_ID,
+            "--agent",
+            gcr4ctl.ACTOR,
+        )
+        self.assertIn("ABSENT", recovered.stdout)
+        self.git(repo, "add", "--", gcr4ctl.GCR3_LEDGER_PATH, gcr4ctl.GCR3_STATE_PATH)
+        self.git(repo, "commit", "-m", "fixture: finalize exact GCR-0004 bridge pair")
+        finalization = self.git(repo, "rev-parse", "HEAD")
+        self.assertEqual(application_commit, self.git(repo, "rev-parse", f"{finalization}^"))
+        self.assertEqual(
+            [f"A\t{gcr4ctl.GCR3_LEDGER_PATH}", f"M\t{gcr4ctl.GCR3_STATE_PATH}"],
+            self.git(repo, "diff-tree", "--no-commit-id", "--name-status", "-r", finalization).splitlines(),
+        )
+        self.run_python(repo, "tools/gcr4ctl.py", "--repo", ".", "validate", gcr4ctl.GCR_ID)
+        self.run_python(repo, "tools/gcr3ctl.py", "--repo", ".", "validate", gcr3ctl.GCR_ID)
+        return repo, reviewed_state, approved_state, application_commit, finalization
 
     def test_runtime_schema_selection_is_exactly_versioned(self) -> None:
         with patch.object(gcr3ctl, "validate_schema") as validate:
@@ -152,6 +418,247 @@ class Gcr3ctlTests(unittest.TestCase):
                     {},
                     bridge_state={"schemaVersion": "3.1-control-recovery-state"},
                 )
+
+    def test_real_git_gcr4_bridge_to_strict_descendant_gcr3_r02_and_authority_denials(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            (
+                bridge_repo,
+                _gcr4_reviewed_state,
+                gcr4_approved_state,
+                _application_commit,
+                bridge_finalization,
+            ) = self.create_exact_gcr4_bridge(temporary)
+            self.assertTrue(
+                taskctl.git_is_ancestor(
+                    bridge_repo,
+                    gcr4ctl.GCR3_REVIEWED_STATE_COMMIT,
+                    bridge_finalization,
+                )
+            )
+
+            r02_repo = Path(temporary) / "gcr3-r02"
+            cloned = subprocess.run(
+                [
+                    "git",
+                    "clone",
+                    "--no-local",
+                    "-b",
+                    gcr3ctl.BRANCH,
+                    str(bridge_repo),
+                    str(r02_repo),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(0, cloned.returncode, cloned.stdout + cloned.stderr)
+            self.git(r02_repo, "config", "user.email", "gcr3-r02@example.test")
+            self.git(r02_repo, "config", "user.name", "GCR3 R02 Fixture")
+            trigger = r02_repo / gcr3ctl.TRIGGER_PATH
+            trigger.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(REPO / gcr3ctl.TRIGGER_PATH, trigger)
+            remediation_path = r02_repo / "tests/foundation/test_gcr3ctl.py"
+            remediation_path.write_bytes(
+                remediation_path.read_bytes() + b"\n# fixture strict-descendant GCR-0003 R02 remediation\n"
+            )
+            self.git(r02_repo, "add", "--", "tests/foundation/test_gcr3ctl.py")
+            self.git(r02_repo, "commit", "-m", "fixture: strict-descendant GCR-0003 R02 remediation")
+            r02_candidate = self.git(r02_repo, "rev-parse", "HEAD")
+            r01_candidate = "a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873"
+            self.assertNotEqual(r01_candidate, r02_candidate)
+            self.assertTrue(taskctl.git_is_ancestor(r02_repo, r01_candidate, r02_candidate))
+
+            gcr3_packet = json.loads((r02_repo / gcr3ctl.PACKET_PATH).read_bytes())
+            patterns = [str(item) for item in (gcr3_packet.get("bootstrapUnit") or {}).get("authorizedPaths", [])]
+            actual = gcr3ctl.changed_paths(r02_repo, gcr3ctl.APPROVAL_COMMIT, r02_candidate)
+            bridge_paths = set(gcr3ctl.changed_paths(r02_repo, gcr3ctl.APPROVAL_COMMIT, bridge_finalization))
+            bridge_only = {relative for relative in bridge_paths if not gcr3ctl.path_authorized(relative, patterns)}
+            effective_actual = [relative for relative in actual if relative not in bridge_only]
+            bridged_state = json.loads((r02_repo / gcr3ctl.STATE_PATH).read_bytes())
+            open_findings = gcr3ctl.open_findings(bridged_state)
+            r02_evidence = gcr3ctl.evidence_path("R02")
+            self.write_json(
+                r02_repo,
+                r02_evidence,
+                {
+                    "schemaVersion": "3.0-control-recovery-evidence",
+                    "documentType": "governance-control-recovery-bootstrap-evidence",
+                    "controlRecoveryId": gcr3ctl.GCR_ID,
+                    "bootstrapUnit": gcr3ctl.BOOTSTRAP_ID,
+                    "attemptId": "R02",
+                    "commit": r02_candidate,
+                    "baseCommit": gcr3ctl.APPROVAL_COMMIT,
+                    "branch": gcr3ctl.BRANCH,
+                    "triggerWitness": gcr3ctl.trigger_witness(),
+                    "changedFiles": effective_actual,
+                    "checks": [
+                        {
+                            "id": "real-git-gcr4-lineage",
+                            "command": "fixture real-Git GCR-0004 lineage and GCR-0003 R02 eligibility",
+                            "exitCode": 0,
+                            "result": "passed",
+                        }
+                    ],
+                    "acceptanceCriteria": [
+                        {
+                            "index": index,
+                            "statement": statement,
+                            "evidence": ["Exercised through the exact finalized GCR-0004 bridge."],
+                        }
+                        for index, statement in enumerate(gcr3_packet["acceptanceCriteria"], start=1)
+                    ],
+                    "findingClosures": [
+                        {
+                            "findingId": finding_id,
+                            "disposition": "fixed",
+                            "evidence": "The strict-descendant fixture candidate closes the exact R01 finding.",
+                        }
+                        for finding_id in sorted(open_findings)
+                    ],
+                    "unverifiedItems": [],
+                    "verificationSelection": {
+                        "riskAnalysis": (
+                            "Exact successor schema, bridge authority, history, lineage, and remediation scope."
+                        ),
+                        "selectedChecks": ["real-git-gcr4-lineage"],
+                        "deferredChecks": ["Full repository qualification remains at the Wave boundary."],
+                    },
+                },
+            )
+            self.run_python(
+                r02_repo,
+                "tools/gcr3ctl.py",
+                "--repo",
+                ".",
+                "resubmit",
+                gcr3ctl.GCR_ID,
+                "--agent",
+                gcr3ctl.ACTOR,
+                "--implementation-commit",
+                r02_candidate,
+                "--evidence",
+                r02_evidence,
+            )
+            submitted = json.loads((r02_repo / gcr3ctl.STATE_PATH).read_bytes())
+            self.assertEqual("REVIEW", submitted["status"])
+            self.assertEqual("R02", submitted["currentSubmission"]["attemptId"])
+            self.assertEqual(r02_candidate, submitted["currentSubmission"]["candidateCommit"])
+            self.assertEqual(bridged_state["attempts"], submitted["attempts"])
+
+            watched = [
+                gcr3ctl.BACKLOG_PATH,
+                gcr3ctl.STATE_PATH,
+                gcr3ctl.TRIGGER_PATH,
+                gcr4ctl.GCR3_LEDGER_PATH,
+                gcr4ctl.PACKET_PATH,
+                "planning/governance-control-recovery/GCR-0004.review-R01.json",
+                gcr4ctl.APPROVAL_PATH,
+                gcr4ctl.STATE_PATH,
+                gcr4ctl.APPLICATION_EVIDENCE_PATH,
+                gcr4ctl.GCR3_SUCCESSOR_SCHEMA_PATH,
+                "tools/gcr4ctl.py",
+            ]
+
+            def snapshot(repo: Path) -> tuple[str, str, dict[str, bytes | None]]:
+                return (
+                    self.git(repo, "rev-parse", "HEAD"),
+                    self.git(repo, "status", "--short"),
+                    {
+                        relative: ((repo / relative).read_bytes() if (repo / relative).is_file() else None)
+                        for relative in watched
+                    },
+                )
+
+            scenarios = (
+                "missing-packet",
+                "substituted-packet-review",
+                "substituted-approval",
+                "forked-b00",
+                "adverse-b00",
+                "stale-application-evidence",
+                "substituted-application-evidence",
+                "post-finalization-mutated-ledger",
+            )
+            for scenario in scenarios:
+                with self.subTest(scenario=scenario):
+                    variant = Path(temporary) / f"denial-{scenario}"
+                    cloned = subprocess.run(
+                        [
+                            "git",
+                            "clone",
+                            "--no-local",
+                            "-b",
+                            gcr3ctl.BRANCH,
+                            str(bridge_repo),
+                            str(variant),
+                        ],
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                    self.assertEqual(0, cloned.returncode, cloned.stdout + cloned.stderr)
+                    self.git(variant, "config", "user.email", "gcr4-denial@example.test")
+                    self.git(variant, "config", "user.name", "GCR4 Denial Fixture")
+                    variant_trigger = variant / gcr3ctl.TRIGGER_PATH
+                    variant_trigger.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(REPO / gcr3ctl.TRIGGER_PATH, variant_trigger)
+
+                    if scenario == "missing-packet":
+                        self.git(variant, "rm", "--", gcr4ctl.PACKET_PATH)
+                    elif scenario == "substituted-packet-review":
+                        packet_review = variant / "planning/governance-control-recovery/GCR-0004.review-R01.json"
+                        packet_review.write_bytes(packet_review.read_bytes() + b" ")
+                        self.git(variant, "add", "--", packet_review.relative_to(variant).as_posix())
+                    elif scenario == "substituted-approval":
+                        approval = variant / gcr4ctl.APPROVAL_PATH
+                        approval.write_bytes(approval.read_bytes() + b" ")
+                        self.git(variant, "add", "--", gcr4ctl.APPROVAL_PATH)
+                    elif scenario in {"forked-b00", "adverse-b00"}:
+                        side_branch = f"fixture-{scenario}"
+                        self.git(variant, "checkout", "-b", side_branch, gcr4_approved_state)
+                        if scenario == "adverse-b00":
+                            adverse_state = json.loads((variant / gcr4ctl.STATE_PATH).read_bytes())
+                            adverse_state["status"] = "CHANGES_REQUESTED"
+                            adverse_state["attempts"][-1]["review"]["result"] = "changes-requested"
+                            self.write_json(variant, gcr4ctl.STATE_PATH, adverse_state)
+                            self.git(variant, "add", "--", gcr4ctl.STATE_PATH)
+                            self.git(variant, "commit", "-m", "fixture: adverse forked GCR-0004 state")
+                        else:
+                            self.git(variant, "commit", "--allow-empty", "-m", "fixture: fork GCR-0004 state")
+                        side_commit = self.git(variant, "rev-parse", "HEAD")
+                        self.git(variant, "checkout", gcr3ctl.BRANCH)
+                        bridge_state = json.loads((variant / gcr3ctl.STATE_PATH).read_bytes())
+                        bridge_state["reviewTransitionRecovery"]["approvedGcr4StateCommit"] = side_commit
+                        self.write_json(variant, gcr3ctl.STATE_PATH, bridge_state)
+                        self.git(variant, "add", "--", gcr3ctl.STATE_PATH)
+                    elif scenario == "stale-application-evidence":
+                        bridge_state = json.loads((variant / gcr3ctl.STATE_PATH).read_bytes())
+                        bridge_state["reviewTransitionRecovery"]["applicationEvidence"]["commit"] = gcr4_approved_state
+                        self.write_json(variant, gcr3ctl.STATE_PATH, bridge_state)
+                        self.git(variant, "add", "--", gcr3ctl.STATE_PATH)
+                    elif scenario == "substituted-application-evidence":
+                        application = variant / gcr4ctl.APPLICATION_EVIDENCE_PATH
+                        application.write_bytes(application.read_bytes() + b" ")
+                        self.git(variant, "add", "--", gcr4ctl.APPLICATION_EVIDENCE_PATH)
+                    else:
+                        ledger = json.loads((variant / gcr4ctl.GCR3_LEDGER_PATH).read_bytes())
+                        ledger["notes"] = "Post-finalization substitution is not authority."
+                        self.write_json(variant, gcr4ctl.GCR3_LEDGER_PATH, ledger)
+                        self.git(variant, "add", "--", gcr4ctl.GCR3_LEDGER_PATH)
+
+                    self.git(variant, "commit", "-m", f"fixture: {scenario} bridge authority")
+                    before = snapshot(variant)
+                    denied = self.run_python(
+                        variant,
+                        "tools/gcr3ctl.py",
+                        "--repo",
+                        ".",
+                        "validate",
+                        gcr3ctl.GCR_ID,
+                        expected=1,
+                    )
+                    self.assertTrue((denied.stdout + denied.stderr).strip())
+                    self.assertEqual(before, snapshot(variant))
 
     def fixture(self, temporary: str) -> tuple[Path, str, str, dict]:
         repo = Path(temporary)
