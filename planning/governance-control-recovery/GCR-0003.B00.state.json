@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0003",
   "bootstrapUnit": "GCR-0003.B00",
-  "status": "APPROVED",
+  "status": "ADOPTION_FINALIZATION",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0003.approval.json",
     "sha256": "82a6187fa47e55c286ef3ae60bd185c94dfcdf5ba87c1283391d315988528ca7",
@@ -217,7 +217,19 @@
     }
   ],
   "currentSubmission": null,
-  "adoption": null,
+  "adoption": {
+    "adoptedBy": "codex",
+    "adoptedAt": "2026-08-25T23:25:46+00:00",
+    "predecessorRevision": 9,
+    "successorRevision": 10,
+    "supportedControlCeiling": 11,
+    "reviewedStateCommit": "eb10e880aec3ddf26e9311f4de7ee1370029a0d6",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.adoption.json",
+      "sha256": "ad62646c833c2beb72e53e99fb51dce57e26737cb2676ded671f3741654e0721",
+      "commit": "53def2e1b3ffe29860ed2209ebdf4230ce8e4bf8"
+    }
+  },
   "reviewTransitionRecovery": {
     "controlRecoveryId": "GCR-0004",
     "bootstrapUnit": "GCR-0004.B00",
