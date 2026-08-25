@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "3.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0003",
+  "bootstrapUnit": "GCR-0003.B00",
+  "attemptId": "R01",
+  "candidateCommit": "a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873",
+  "reviewedStateCommit": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5",
+  "reviewer": "independent-gcr3-b00-control-security-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.R01.json",
+    "sha256": "381a54d41594072cd66c78d50e13ad822926c218d2df1e1ad80d60838c19815a",
+    "commit": "a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873"
+  },
+  "findings": [
+    {
+      "id": "GCR-0003.B00-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 6,
+      "title": "Version-4 S02 can self-assert the mandatory independent packet review inside the human approval",
+      "reproduction": "At exact candidate a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873, governance-recovery-supplement-approval.v4.schema.json represents independentPacketReview only as reviewer, attempt, candidate, packet hash, result, and finding-ID strings embedded in the human approval document; it contains no immutable review-ledger path, hash, or introduction commit. tools/recoveryctl.py load_supplement_authority authenticates the packet and approval introduction, then accepts the embedded review when result is APPROVED, candidateCommit and packetSha256 match, reviewer differs textually from approvedBy, and openFindingIds is empty. No distinct review document, independent commit, review schema, ledger blob, finding content, closure content, or approval-descends-from-review edge is required. The independently replayed test_real_git_revision_nine_to_gcr3_then_separately_approved_v4_s02 demonstrates the gap: after committing the S02 packet it creates no review ledger or review transition, writes `independent-fixture-s02-reviewer` and APPROVED directly into the human approval, commits that approval, and recoveryctl accepts it and installs S02 to revision 11. Thus one approval record can claim both the independent review outcome and human authorization without repository evidence that the separate review occurred, violating the AGENTS.md supplement lane, the packet's required separate version-4 packet/review/human-approval chain, and criterion 6's exact independently reviewed authority requirement.",
+      "requiredRemediation": "In a strict-descendant R02 candidate, give version-4 S02 packet review a canonical append-only ledger whose schema records the exact packet commit/hash, normalized independent reviewer, disposition, severity-ranked findings, closures, and prior-attempt chain. Make the human approval reference that ledger by canonical path, SHA-256, and unique immutable introduction commit, and require the approval introduction to strictly descend from the approved review ledger. In recoveryctl and every older/current reader that accepts v4, load and schema-validate the exact ledger Git blob; bind its candidate and packet hash to the approved packet; require an approved disposition, no new finding, no unresolved blocking finding, truthful closures, and reviewer independence from the approver; reject missing, embedded-only, stale, forked, substituted, adverse, or internally inconsistent review authority before any mutation. Update the unmocked real-Git lifecycle to commit a real independent review ledger before the human approval and add byte-stable denial cases for the absent ledger, fabricated reviewer/result strings, wrong ledger commit/hash/candidate, adverse review, open blockers, stale/forked history, and substituted findings or closures. Preserve the exact 9-to-10 GCR-0003 adoption, v3 immutability, 10-to-11 sequencing, hold, witness, historic-retry denial, and all crash-recovery guarantees."
+    },
+    {
+      "id": "GCR-0003.B00-R01-F02",
+      "severity": "low",
+      "blocking": false,
+      "criterionIndex": 10,
+      "title": "The exact candidate fails Git whitespace hygiene in both new version-4 schemas",
+      "reproduction": "Run `git diff --check d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873`. Git reports `planning/governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json:67: new blank line at EOF` and `planning/governance-recovery-requests/governance-recovery-supplement.v4.schema.json:168: new blank line at EOF`. The governed Python quality command does not inspect this JSON EOF condition, so its passing result does not establish clean diff hygiene for criterion 10.",
+      "requiredRemediation": "Remove the extra blank line at EOF from both new version-4 schema files without changing their JSON semantics, rerun `git diff --check` from the immutable approval base to the remediation candidate, and record the passing result in fresh evidence."
+    }
+  ],
+  "closures": [],
+  "notes": "CHANGES_REQUESTED at exact frozen reviewed-state commit 702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5, whose sole parent is candidate a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873. The immutable approval has the unique introduction/base commit d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c, and the approval-to-candidate delta is exactly the ten evidence-declared, packet-authorized controller/schema/test/quality paths. The frozen reviewed-state delta adds only exact R01 evidence and canonical state; evidence SHA-256 381a54d41594072cd66c78d50e13ad822926c218d2df1e1ad80d60838c19815a, submission, branch, candidate, base, criteria, and witness bindings reproduce. The full GCR3 focused suite passed 12 tests in 356.959 seconds, including semantic review-history mismatch denial, coherent alternate authority denial, valid and invalid transaction recovery, real child-process interruption boundaries, older-reader denial, and the real-Git 9-to-10 then v4 10-to-11 lifecycle. Four predecessor/v3 compatibility tests passed in 10.245 seconds, and governed Python formatting, lint, and type quality passed for 125 files. The immutable v3 supplement and approval schema hashes remain exact, the current revision-9 hold/W1/T03/G1/W1.A04 boundary is unchanged, and the witness remains exact, untracked, unstaged, nonsymlinked, and non-authoritative at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. Those passing checks do not close F01 because the E2E test positively exercises an approval with no independent review ledger. No gcr3ctl review, adopt, or recover command, backlog/state transition, S02/B02 action, amendment/task/Wave/gate action, stage, commit, merge, or witness mutation was performed."
+}
