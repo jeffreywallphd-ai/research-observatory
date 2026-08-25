@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "3.0-control-recovery-review",
+  "documentType": "governance-control-recovery-packet-review",
+  "controlRecoveryId": "GCR-0003",
+  "attemptId": "R01",
+  "candidateCommit": "f062cff48036bce9f094b86370a9499837f4b358",
+  "packetSha256": "dc6055395a409fe4a9753657522cf54181bf881c15c72ba65aa3cccd32d2a666",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "independent-gcr3-packet-reviewer",
+  "result": "approved",
+  "findings": [],
+  "closures": [],
+  "verified": [
+    "HEAD and the packet-review candidate both resolve to exact commit f062cff48036bce9f094b86370a9499837f4b358; its parent is 72e2989440292ca30f8b5d4717aa61c56c5b9f48, the exact GCR-0002 revision-9 adoption commit, and its delta is exactly seven added inert GCR-0003 packet/schema/proposal/review files with no diff-check error.",
+    "The exact packet bytes hash to dc6055395a409fe4a9753657522cf54181bf881c15c72ba65aa3cccd32d2a666. Draft 2020-12 meta-schema validation passed for the request, runtime, and transaction v3 schemas; the packet validates against the request schema; all six packet-declared supporting-file hashes reproduce.",
+    "All eighteen packet references and all nineteen authority-manifest references with path and SHA-256 reproduce current immutable bytes; every reference that also declares a commit matches that exact Git blob. The approval, review, state, evidence, supplement, amendment, and adoption ancestry identities are internally consistent.",
+    "The live backlog raw SHA-256 is c7347d103cc1fc6cf54be319f96a8ca5dcf74eddbedd70a3d77a097d335b978d at control revision and minimum-tool revision 9. Its installed control generations are GCR-0001 6-to-7 and GCR-0002 8-to-9; HOLD-W1-GRR-0002 is ACTIVE with only approved S01 installed; W1 is PAUSED at wave scope; CAP-02.S04.T03 is BLOCKED; G1 is PENDING; and W1.A04 remains absent from backlog.",
+    "The independently audited off-by-one defect reproduces read-only against the live backlog: a schema-v3 S02 transition fixed at predecessor 8 and successor 9 passed to validate_preappend_supplement_boundary at live revision 9 exits with `Recovery supplement activation boundary differs from the stopped pre-append state`; command_supplement_start independently requires live revision and minimum to equal that predecessor before mutation.",
+    "The proposed authority is bounded to GCR-0003.B00: live revision 9 remains unchanged through implementation and B00 review; only independently approved adoption may durably append one 9-to-10 generation with reader/schema ceiling 11; supplement-v3 artifacts are outside the B00 mutation surface and remain immutable; a later version-4 GRR-0002.S02/B02 10-to-11 packet still requires its own independent review and exact human approval.",
+    "Neither this packet nor its approval grants S02 packet creation or approval, S02 start, B02 action, historic W1.A04 retry, amendment materialization, task mutation, hold release, W1 resume, G1 approval, local-main integration, remote push, rollback, same-revision transition, competing hold, or generic workspace/history bypass.",
+    "A complete synthetic transaction validates against both the standalone transaction-v3 schema and the runtime-v3 envelope. Both schemas reject swapped predecessor bindings, swapped successor bindings, and extra bindings; backlog bindings are constant to planning/backlog.yaml and state bindings are constant to planning/governance-control-recovery/GCR-0003.B00.state.json.",
+    "The packet requires raw and canonical compare-and-swap authority, exclusive durable write-ahead publication, Windows replace-existing/write-through behavior, file and directory flushes, exact-pair validation, idempotent recovery, cleanup only after a validated pair, direct-child two-path finalization, and real child-process interruption tests at every declared boundary.",
+    "The required end-to-end proof is unmocked and begins from the exact adopted revision-9 state, carries separately approved GCR-0003 B00 through 9-to-10 adoption, then separately reviews and exactly approves only version-4 S02 before a sequential 10-to-11 start. It explicitly forbids mocking either production supplement-boundary guard or synthesizing a revision-8 fixture.",
+    "The exact trigger witness remains SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c, present only as an untracked and unstaged nonsubmitted witness; it is not authority and no other untracked path exists before this review ledger.",
+    "Alternatives and rollback are decision-complete: bounded GCR-0003 is recommended, retaining the stopped revision-9 boundary is safe, and reinterpretation, rollback, in-place edits, reopened prior bootstrap, competing hold, and bypass are expressly rejected. Exact-commit human approval becomes legally available only after this no-finding APPROVED packet review and must authorize only GCR-0003.B00."
+  ],
+  "approvalAvailable": true
+}
