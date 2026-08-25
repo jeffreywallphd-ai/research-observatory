@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0002",
   "bootstrapUnit": "GCR-0002.B00",
-  "status": "CHANGES_REQUESTED",
+  "status": "REVIEW",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0002.approval.json",
     "sha256": "ae877459b2f6b2ad1e1ca0551f5efc80e7a096e86b562c4baa22fcd20d91ebe7",
@@ -161,6 +161,23 @@
       ]
     }
   ],
-  "currentSubmission": null,
+  "currentSubmission": {
+    "attemptId": "R04",
+    "submittedBy": "codex",
+    "candidateCommit": "38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7",
+    "baseCommit": "c029ba348a8bd0abee23e11c078aff4b8fd0b02b",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R04.json",
+      "sha256": "ffd49e1e9e89779c1c3f92e0ab22396c252705c6578abaae40152d60b44a3c2b",
+      "commit": "38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7"
+    },
+    "submittedAt": "2026-08-25T02:08:29+00:00",
+    "priorAttemptId": "R03",
+    "openFindingIds": [
+      "GCR-0002.B00-R03-F01"
+    ],
+    "rootCauseAnalysis": "R03 bound recovery to the unique ordered approval and review commits, but it authenticated the historical ledger only as an opaque hashed blob and then trusted the separate state-side disposition. The adversarial review proved that two individually schema-valid documents could disagree while retaining the expected commit shape. The continuing root cause was treating structural commit authentication as a substitute for semantic reconciliation across the authority boundary. R04 parses and validates every immutable ledger, reapplies the controlled-review invariants to its frozen submission, derives the exact state projection from that ledger, and tests each contradictory field before recovery can mutate or clean any protected artifact."
+  },
   "adoption": null
 }
