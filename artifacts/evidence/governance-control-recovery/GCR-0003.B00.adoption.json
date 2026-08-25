@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "3.0-control-recovery-adoption-evidence",
+  "documentType": "governance-control-recovery-adoption-evidence",
+  "controlRecoveryId": "GCR-0003",
+  "bootstrapUnit": "GCR-0003.B00",
+  "reviewedStateCommit": "eb10e880aec3ddf26e9311f4de7ee1370029a0d6",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "predecessorRevision": 9,
+  "successorRevision": 10,
+  "supportedControlCeiling": 11,
+  "expectedChangedFiles": [
+    "planning/backlog.yaml",
+    "planning/governance-control-recovery/GCR-0003.B00.state.json"
+  ],
+  "checks": [
+    {
+      "id": "approved-control-recovery-authority",
+      "command": ".venv\\Scripts\\python.exe tools/gcr3ctl.py --repo . validate GCR-0003 --require-approved",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "strict-history-and-adoption-boundaries",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_gcr3ctl.Gcr3ctlTests.test_real_git_gcr4_bridge_to_strict_descendant_gcr3_r02_and_authority_denials tests.foundation.test_gcr3ctl.Gcr3ctlTests.test_v3_schemas_remain_immutable_and_v4_is_exactly_ten_to_eleven tests.foundation.test_gcr3ctl.Gcr3ctlTests.test_v4_s02_packet_review_ledger_is_separate_immutable_and_fail_closed tests.foundation.test_gcr3ctl.Gcr3ctlTests.test_v4_s02_multi_round_review_history_is_recursive_and_cannot_erase_findings tests.foundation.test_gcr3ctl.Gcr3ctlTests.test_real_git_revision_nine_to_gcr3_then_separately_approved_v4_s02 -v",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "backlog-authority-validation",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "governed-python-quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "unverifiedItems": []
+}
