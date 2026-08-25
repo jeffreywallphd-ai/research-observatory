@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GCR-0003 review</title>
+<style>body{font-family:system-ui,sans-serif;max-width:980px;margin:0 auto;padding:2rem;color:#172033;background:#f6f8fb}main{background:#fff;padding:2rem;border:1px solid #d9e0ea;border-radius:12px}h1,h2{color:#102a43}code{background:#eef2f7;padding:.1rem .3rem;border-radius:4px}table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:1px solid #ccd6e0;padding:.65rem;text-align:left;vertical-align:top}.warn{border-left:5px solid #bd5b00;background:#fff5e8;padding:1rem}.safe{border-left:5px solid #237a3b;background:#edf9f0;padding:1rem}.deny{border-left:5px solid #a61b1b;background:#fff0f0;padding:1rem}</style></head>
+<body><main>
+<p><a href="../review-site/waves/W1.html">W1 review</a> · <a href="GCR-0003.md">Canonical proposal</a></p>
+<h1>GCR-0003 — Restore revision headroom for the exact S02 lane</h1>
+<div class="warn"><strong>Inert packet.</strong> No implementation, S02/B02, amendment, task, resume, gate, merge, or remote authority exists before independent packet review and exact-commit human approval.</div>
+
+<h2>Demonstrated contradiction</h2>
+<p>Exact adoption commit <code>72e2989440292ca30f8b5d4717aa61c56c5b9f48</code> moved the live control and minimum-tool revisions from 8 to 9. The mandatory post-adoption v3 S02 format nevertheless fixes its predecessor, successor, and activation boundary at 8→9. Both production start guards require live control to equal predecessor 8. The exact S02 can therefore start only before the approval gate that legally permits it.</p>
+<p>The command fails before backlog mutation, so the repository is safe but unavailable. The version-3 artifacts and all prior authority remain immutable evidence of the defect.</p>
+
+<h2>Current exact boundary</h2>
+<table><tr><th>Boundary</th><th>State</th></tr>
+<tr><td>Git authority</td><td><code>72e2989440292ca30f8b5d4717aa61c56c5b9f48</code>; exact GCR-0002 adoption</td></tr>
+<tr><td>Control</td><td>revision/minimum 9; supported ceiling 9</td></tr>
+<tr><td>Recovery</td><td><code>HOLD-W1-GRR-0002</code> ACTIVE; GCR-0002 and S01/B01 approved and adopted as applicable</td></tr>
+<tr><td>W1</td><td>PAUSED at ordinary Wave scope</td></tr>
+<tr><td>W1.A04</td><td>Approved authority exists but remains absent from backlog</td></tr>
+<tr><td>CAP-02.S04.T03 / G1</td><td>BLOCKED / PENDING</td></tr>
+<tr><td>Trigger witness</td><td>Exact, untracked, unstaged, non-authoritative</td></tr></table>
+
+<h2>Recommended bounded repair</h2>
+<ol>
+<li>Authorize only <code>GCR-0003.B00</code> under the existing hold.</li>
+<li>Add a new one-time <code>gcr3ctl</code> lifecycle, strict v3 GCR runtime/transaction schemas, and support through control revision 11.</li>
+<li>Keep live control at 9 throughout B00 implementation and independent review.</li>
+<li>Adopt one exact crash-safe 9→10 generation; revision-9 readers then fail closed.</li>
+<li>Preserve the failed supplement-v3 formats unchanged and add version-4 supplement/approval formats for only S02/B02 10→11.</li>
+<li>Independently review and exactly approve that future v4 S02 packet before starting B02.</li>
+</ol>
+
+<h2>Required unmocked proof</h2>
+<p>A real-Git lifecycle must begin at the exact live revision-9 adoption, execute and approve B00, adopt 9→10, then independently review and exactly approve a separate v4 S02 before its start raises 10→11. It may not mock <code>validate_supplement_boundary</code>, replace the live backlog with a synthetic revision-8 fixture, or treat packet review as execution authority.</p>
+<p>Wrong, stale, forked, adverse, non-sequential, unsupported, dirty, or witness-altered inputs must leave backlog, GCR state, transaction files, hold, Wave, task, amendment, and gate bytes unchanged.</p>
+
+<h2>Crash-safe adoption contract</h2>
+<p>GCR-0003 has versioned lock, manifest, successor, state, evidence, and review paths. Its runtime and standalone transaction schemas strictly bind raw and canonical backlog/state pairs, exact authority, Windows replace-existing/write-through publication, file and directory flushes, idempotent recovery, automatic mutation preflight, fail-closed partial states, cleanup only after exact-pair validation, and direct-child two-path finalization.</p>
+
+<h2>What approval does not authorize</h2>
+<div class="deny">No S02 packet approval or start, B02 action, W1.A04 append or bootstrap, amendment materialization, task mutation, T03 recovery, hold release, W1 resume, G1 approval, local-main integration, remote push, v3 edit, prior-history rewrite, witness use, same-revision transition, competing hold, or generic bypass.</div>
+
+<h2 id="decision-register">Alternatives</h2>
+<table><tr><th>Option</th><th>Disposition</th><th>Consequence</th></tr>
+<tr><td>A — Approve exact GCR-0003</td><td>Recommended</td><td>Restores one revision of headroom through an append-only 9→10 generation, enabling a separately approved v4 S02 10→11 later.</td></tr>
+<tr><td>B — Keep recovery stopped</td><td>Safe</td><td>No mutation occurs; S02/B02 and W1 remain unavailable.</td></tr>
+<tr><td>C — Reinterpret v3 at revision 9</td><td>Rejected</td><td>Would silently change approved semantics and cease making the supplement raise the minimum control revision.</td></tr>
+<tr><td>D — Roll back, edit, reopen, or bypass</td><td>Rejected</td><td>Would violate immutable append-only authority and recovery safety.</td></tr></table>
+
+<h2>Approval gate</h2>
+<div class="safe">Approval becomes legally available only after an independent APPROVED packet review at the exact packet commit with no open blocking finding. Human approval must name that commit and authorize only GCR-0003.B00. B00 then requires its own commit-bound evidence, independent review, and exact durable adoption before any separate S02 packet may be approved.</div>
+</main></body></html>

@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-recovery-authority-manifest",
+  "controlRecoveryId": "GCR-0003",
+  "targetWave": "W1",
+  "currentAdoption": {
+    "headCommit": "72e2989440292ca30f8b5d4717aa61c56c5b9f48",
+    "parentCommit": "aa3c276a69cb348bc40c239a1f061809ed19caee",
+    "commitSubject": "governance: adopt GCR-0002 control revision 9",
+    "backlogSha256": "c7347d103cc1fc6cf54be319f96a8ca5dcf74eddbedd70a3d77a097d335b978d",
+    "controlRevision": 9,
+    "minimumToolRevision": 9,
+    "exactChangedPaths": [
+      "planning/backlog.yaml",
+      "planning/governance-control-recovery/GCR-0002.B00.state.json"
+    ]
+  },
+  "activeHold": {
+    "id": "HOLD-W1-GRR-0002",
+    "status": "ACTIVE",
+    "recoveryPacket": {
+      "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+      "sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
+      "commit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e"
+    },
+    "approval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.json",
+      "sha256": "07f2e2da15d74c6a72e97e62a5f3d5a540f39898eb958eff7c92f42b80d6d893",
+      "commit": "0b450222ff569db356b84e413941aa2af585a64e"
+    },
+    "bootstrapReview": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B00.review-R01.json",
+      "sha256": "9a5efe9d7a9feabeb0a11829df4954a74f9d7a6d2d5089af92f4bfc337ccdfe2",
+      "commit": "5bc0b69130caf3f7e8ab96667687b4605d172279"
+    }
+  },
+  "installedControlGeneration": {
+    "id": "GCR-0002",
+    "predecessorRevision": 8,
+    "successorRevision": 9,
+    "packet": {
+      "path": "planning/governance-control-recovery/GCR-0002.packet.json",
+      "sha256": "590f5c3888cb9b65b8a7c2ac3f856f7d7a63e6804daf24b59ebc8a8d78155e5c",
+      "commit": "26003f7671e164327e8b1b6066bc82fbe8afed67"
+    },
+    "approval": {
+      "path": "planning/governance-control-recovery/GCR-0002.approval.json",
+      "sha256": "ae877459b2f6b2ad1e1ca0551f5efc80e7a096e86b562c4baa22fcd20d91ebe7",
+      "commit": "c029ba348a8bd0abee23e11c078aff4b8fd0b02b"
+    },
+    "latestApprovedReview": {
+      "path": "planning/governance-control-recovery/GCR-0002.B00.review-R04.json",
+      "sha256": "a5c2edad78fa17141a30240e1b3c6ab91129b720b80c6d0f74e385100c595087",
+      "commit": "b5a8d3f4d01b25a22dfd3d30a99398983fe1b186"
+    },
+    "adoptedState": {
+      "path": "planning/governance-control-recovery/GCR-0002.B00.state.json",
+      "sha256": "a87d4d6150f35e3898c3127bb0ea4e831ca8474980522ffa4b91bf5c969a8bb5",
+      "commit": "72e2989440292ca30f8b5d4717aa61c56c5b9f48"
+    },
+    "adoptionEvidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.adoption.json",
+      "sha256": "32e15d9ed4ef4b4c5b332453ae4666d9535673c391d9c6c545426f01f8b1a169",
+      "commit": "aa3c276a69cb348bc40c239a1f061809ed19caee"
+    }
+  },
+  "latestRecoverySupplement": {
+    "id": "GRR-0002.S01",
+    "bootstrapId": "GRR-0002.B01",
+    "packet": {
+      "path": "planning/governance-recovery-requests/GRR-0002.S01.packet.json",
+      "sha256": "bcb3b8fe42b8a091b22794a4c560b3d76989ebef0ee982a9d529a4a67cb1ee62",
+      "commit": "e4be6a4beaffd26f0f9011e7fe8b2ac8baabc3f2"
+    },
+    "approval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.S01.json",
+      "sha256": "792796d234a8d208d7e99acce32e575e3891b21b347b716c11be6c97a9d30f20",
+      "commit": "68e6df37b0f20dc5e89bdbfd708b24dfcd226240"
+    },
+    "bootstrapReview": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B01.review-R03.json",
+      "sha256": "7c2a547ac369cdfb63ccae1dd2a094ed2b3c8064a46a5e249a123a0633d55d1f",
+      "commit": "c80efb865a37b78df6f4a59b9d14c32c7b840abe"
+    },
+    "candidateCommit": "0b9f4a63e35dbd6163239b39f1ec5b9aa03156bf",
+    "reviewedStateCommit": "bacc5f9a6ff840c01749820e157856aaced2626e",
+    "approvedProjectionCommit": "c80efb865a37b78df6f4a59b9d14c32c7b840abe"
+  },
+  "approvedRepairAmendment": {
+    "changeRequestId": "ECR-0003",
+    "amendmentId": "W1.A04",
+    "packet": {
+      "path": "planning/enabler-change-requests/ECR-0003.packet.json",
+      "sha256": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+      "commit": "77896d26ddac0569e286fe8481c0676408c716b1"
+    },
+    "approval": {
+      "path": "planning/wave-amendment-approvals/W1.A04.json",
+      "sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+      "commit": "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+    },
+    "candidateCommit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6"
+  },
+  "defectSurface": {
+    "controller": {
+      "path": "tools/recoveryctl.py",
+      "sha256": "12fb7d48d00cb400661ceeb4741457ba111d7dfeae6ffb0ad25275b502c7ac5a"
+    },
+    "taskController": {
+      "path": "tools/taskctl.py",
+      "sha256": "ff81dec994c158807c66d726d32e48a37f5b2652781a24f0a16769e7f5d81e41"
+    },
+    "backlogSchema": {
+      "path": "planning/backlog.schema.json",
+      "sha256": "64a3ba543eda36026f61eb28e520d5e5d7d8e8672c212f65e54c4a3d8ba0325f"
+    },
+    "supplementV3Schema": {
+      "path": "planning/governance-recovery-requests/governance-recovery-supplement.v3.schema.json",
+      "sha256": "943c650120b32d3a2837e96c769f48c9c9afa4435ecb2fe1275c17d7f1cd1e7d"
+    },
+    "supplementApprovalV3Schema": {
+      "path": "planning/governance-recovery-requests/governance-recovery-supplement-approval.v3.schema.json",
+      "sha256": "9d3eaf942b6798a6dafc9d8fdbcc502c4068dc9d1b547b0be2e76b5b3b98052d"
+    },
+    "reproduction": "The exact v3 S02 format fixes predecessor/successor 8-to-9 and activation revision 8, while the adopted live state is already revision/minimum 9. Both pre-append validation and supplement-start require the live revision to equal predecessor 8, so a conforming S02 cannot start after its mandatory post-GCR-0002 approval gate."
+  },
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false,
+    "mayBecomeSubmittedEvidence": false
+  },
+  "stoppedBoundary": {
+    "backlogSha256": "c7347d103cc1fc6cf54be319f96a8ca5dcf74eddbedd70a3d77a097d335b978d",
+    "controlRevision": 9,
+    "minimumToolRevision": 9,
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "amendmentBacklogStatus": "ABSENT",
+    "blockedTaskId": "CAP-02.S04.T03",
+    "blockedTaskStatus": "BLOCKED",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  }
+}
