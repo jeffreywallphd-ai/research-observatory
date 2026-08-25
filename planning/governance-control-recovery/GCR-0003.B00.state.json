@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0003",
   "bootstrapUnit": "GCR-0003.B00",
-  "status": "REVIEW",
+  "status": "CHANGES_REQUESTED",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0003.approval.json",
     "sha256": "82a6187fa47e55c286ef3ae60bd185c94dfcdf5ba87c1283391d315988528ca7",
@@ -68,27 +68,65 @@
         }
       ],
       "closures": []
+    },
+    {
+      "submission": {
+        "attemptId": "R02",
+        "submittedBy": "codex",
+        "candidateCommit": "2ae96d92ecdc54ab43f637663b496f7afa8d1d71",
+        "baseCommit": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c",
+        "branch": "codex/w1-windows-local-runtime",
+        "evidence": {
+          "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.R02.json",
+          "sha256": "938eee86d60681ab5836f0d5000dbacada6a3ed74c2206fa14ccdd233ccc4617",
+          "commit": "2ae96d92ecdc54ab43f637663b496f7afa8d1d71"
+        },
+        "submittedAt": "2026-08-25T22:13:31+00:00",
+        "priorAttemptId": "R01",
+        "openFindingIds": [
+          "GCR-0003.B00-R01-F01",
+          "GCR-0003.B00-R01-F02"
+        ],
+        "rootCauseAnalysis": null
+      },
+      "review": {
+        "reviewer": "independent-gcr3-b00-control-security-reviewer",
+        "result": "changes-requested",
+        "reviewedAt": "2026-08-25T22:21:01+00:00",
+        "reviewedStateCommit": "26aafb5e7393799804e9f838dfba8aa1c9aa04ac",
+        "notes": "CHANGES_REQUESTED at exact frozen reviewed-state commit 26aafb5e7393799804e9f838dfba8aa1c9aa04ac, whose sole parent is candidate 2ae96d92ecdc54ab43f637663b496f7afa8d1d71. The GCR-0004 bridge finalization at 424ffabfd8eb19a78a5d6f0c699aa0c3b4aea2df is authenticated by the live GCR-0003 validator, and the strict-descendant remediation delta from that bridge changes exactly five paths: both version-4 supplement schemas, tests/foundation/test_gcr3ctl.py, tools/recoveryctl.py, and tools/taskctl.py. R02 evidence is exact at SHA-256 938eee86d60681ab5836f0d5000dbacada6a3ed74c2206fa14ccdd233ccc4617; the candidate-to-reviewed-state delta adds only that evidence and the canonical state submission. Independently, the two focused version-4 ledger/schema tests passed in 8.143 seconds, four predecessor/v3 compatibility tests passed in 11.056 seconds, backlog validation passed, live GCR-0003 validation reports REVIEW at control revision 9, and governed Python quality passed for 127 files. The exact approval-base and bridge-to-candidate diff checks pass. The immutable runtime-v3 and v3 supplement/approval schemas, backlog, R01 adverse ledger, and witness retain their approved hashes; the witness remains exact, untracked, unstaged, and non-authoritative. The broader evidence-declared GCR-0003 suite was not replayed after the independently reproduced HIGH defect became dispositive and is not relied upon for this disposition. No gcr3ctl review/adopt/recover command, canonical state/backlog transition, S02/B02 action, Wave/amendment/task/gate action, staging, commit, or protected-witness mutation was performed."
+      },
+      "ledger": {
+        "path": "planning/governance-control-recovery/GCR-0003.B00.review-R02.json",
+        "sha256": "693116fca3716bf7f14d308dc1a03d46c4627bca29931be7b1b9b5392e1db347",
+        "commit": "26aafb5e7393799804e9f838dfba8aa1c9aa04ac"
+      },
+      "findings": [
+        {
+          "id": "GCR-0003.B00-R02-F01",
+          "severity": "high",
+          "blocking": true,
+          "criterionIndex": 6,
+          "title": "Both version-4 readers accept a truncated packet-review history that erases an older blocking finding",
+          "reproduction": "At exact candidate 2ae96d92ecdc54ab43f637663b496f7afa8d1d71, construct a disposable real-Git S02 history with: R01 packet plus a changes-requested R01 ledger containing blocking `GRR-0002.S02-R01-F01`; a strict-descendant R02 packet plus a changes-requested R02 ledger containing `GRR-0002.S02-R02-F01` but schema-valid `priorAttempt: null`, thereby omitting R01 and leaving its blocker unclosed; and a strict-descendant R03 packet plus an approved R03 ledger whose priorAttempt references only R02 and whose sole closure fixes R02-F01. Commit the R03 ledger before a later approval marker and bind the approval projection exactly to R03. `recoveryctl.validate_v4_supplement_packet_review` returns successfully, and `taskctl.recovery_v4_supplement_packet_review_errors` returns an empty list. Both readers load and validate only the immediately referenced R02 ledger; neither recursively authenticates R02's priorAttempt or folds findings and closures from R01 through R03. The existing eight denial variants and valid case exercise only R01, so they pass while this append-only-history violation remains. An older unresolved blocking finding can therefore disappear from the authority chain, contrary to the R01 finding's required canonical append-only prior-attempt chain, truthful closures, no-unresolved-blocker rule, AGENTS.md append-only review history, and criterion 6.",
+          "requiredRemediation": "In a strict-descendant R03 candidate, make recoveryctl and taskctl recursively authenticate the complete version-4 packet-review chain from the approval-referenced attempt back to R01. At every round require the canonical attempt/path, exact SHA-256 and unique immutable introduction commit, schema-valid exact Git blob, exact packet candidate/blob/hash, normalized independent reviewer, adverse predecessor disposition, strictly sequential attempt IDs and strict candidate/review ancestry, and an exact priorAttempt reference; reject null priorAttempt after R01, missing/skipped/repeated/cyclic/forked/stale/substituted rounds. Fold findings and closures in chronological order, require each closure to target an actually open finding, forbid accepted-risk closure of a blocker, and permit approval only with no current finding and no accumulated unresolved blocking finding; bind the human approval's closed/open projection to that accumulated truth. Add unmocked real-Git tests through at least R01 adverse to R02 adverse to R03 approved for both readers, including the reproduced truncated-R02 case plus substituted prior hash/commit/candidate/result/findings/closures, skipped and cyclic attempts, unresolved older blockers, and one valid complete multi-round chain. Preserve the exact GCR-0004 bridge, revision-9 boundary, v3 artifacts, 9-to-10 adoption, 10-to-11 S02 sequencing, hold, witness, historic-retry denial, crash recovery, and five-file remediation scope; submit fresh R03 evidence with an explicit closure for this finding and the required third-round root-cause analysis."
+        }
+      ],
+      "closures": [
+        {
+          "findingId": "GCR-0003.B00-R01-F01",
+          "disposition": "fixed",
+          "evidence": "The R02 schemas and both readers now require a separate immutable review ledger referenced by exact path, SHA-256, and unique introduction commit between packet and human approval; bind its candidate and packet hash; reject first-round embedded-only, wrong hash/commit/candidate, adverse, open-blocker, forked, and substituted-closure cases; and the unmocked successful lifecycle commits the ledger before approval. This closure is limited by new R02-F01: multi-round recursive history remains defective."
+        },
+        {
+          "findingId": "GCR-0003.B00-R01-F02",
+          "disposition": "fixed",
+          "evidence": "Both version-4 schema files end immediately after the JSON closing brace with one newline, are valid Draft 2020-12 schemas, and `git diff --check d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c..2ae96d92ecdc54ab43f637663b496f7afa8d1d71` passes with no output."
+        }
+      ]
     }
   ],
-  "currentSubmission": {
-    "attemptId": "R02",
-    "submittedBy": "codex",
-    "candidateCommit": "2ae96d92ecdc54ab43f637663b496f7afa8d1d71",
-    "baseCommit": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c",
-    "branch": "codex/w1-windows-local-runtime",
-    "evidence": {
-      "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.R02.json",
-      "sha256": "938eee86d60681ab5836f0d5000dbacada6a3ed74c2206fa14ccdd233ccc4617",
-      "commit": "2ae96d92ecdc54ab43f637663b496f7afa8d1d71"
-    },
-    "submittedAt": "2026-08-25T22:13:31+00:00",
-    "priorAttemptId": "R01",
-    "openFindingIds": [
-      "GCR-0003.B00-R01-F01",
-      "GCR-0003.B00-R01-F02"
-    ],
-    "rootCauseAnalysis": null
-  },
+  "currentSubmission": null,
   "adoption": null,
   "reviewTransitionRecovery": {
     "controlRecoveryId": "GCR-0004",
