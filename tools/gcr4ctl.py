@@ -394,6 +394,8 @@ def freeze_submission(args: argparse.Namespace, *, remediation: bool) -> None:
             raise SystemExit("GCR-0004 resubmission requires an adverse prior review")
     elif state is not None:
         raise SystemExit("GCR-0004 initial submission already exists")
+    if not remediation and str(args.approval_commit) != base:
+        raise SystemExit("GCR-0004 approval-commit argument differs from the immutable approval introduction")
     attempts = (state or {}).get("attempts", [])
     attempt_id = f"R{len(attempts) + 1:02d}"
     relative = str(args.evidence)
