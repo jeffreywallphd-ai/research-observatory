@@ -121,7 +121,11 @@ class Gcr2ctlTests(unittest.TestCase):
         return repo, packet, base, candidate, evidence
 
     def recovery_fixture(
-        self, temporary: str, *, coherent_substitution: bool = False
+        self,
+        temporary: str,
+        *,
+        coherent_substitution: bool = False,
+        ledger_state_mismatch: str | None = None,
     ) -> tuple[Path, bytes, bytes, bytes, bytes, dict, dict, tuple[dict, dict, str]]:
         repo = Path(temporary)
         self.git(repo, "init")
@@ -218,28 +222,53 @@ class Gcr2ctlTests(unittest.TestCase):
             "closures": closures,
             "notes": "Synthetic canonical approval for recovery tests.",
         }
+        fixture_finding = {
+            "id": "GCR-0002.B00-R01-F99",
+            "severity": "high",
+            "blocking": True,
+            "criterionIndex": 8,
+            "title": "Synthetic mismatched finding",
+            "reproduction": "Synthetic mismatch",
+            "requiredRemediation": "Reconcile the immutable ledger and state.",
+        }
+        if ledger_state_mismatch == "adverse-ledger-approved-state":
+            ledger["result"] = "changes-requested"
+            ledger["findings"] = [fixture_finding]
+        elif ledger_state_mismatch == "evidence":
+            ledger["evidence"] = {**submission["evidence"], "commit": "f" * 40}
+        elif ledger_state_mismatch == "reviewer":
+            ledger["reviewer"] = "alternate-independent-test-reviewer"
+        elif ledger_state_mismatch == "candidate":
+            ledger["candidateCommit"] = "f" * 40
         ledger_payload = (json.dumps(ledger, indent=2) + "\n").encode()
         ledger_path = repo / ledger_relative
         ledger_path.write_bytes(ledger_payload)
-        state["attempts"].append(
-            {
-                "submission": submission,
-                "review": {
-                    "reviewer": "independent-test-reviewer",
-                    "result": "approved",
-                    "reviewedAt": "2026-08-25T00:00:00+00:00",
-                    "reviewedStateCommit": reviewed_state,
-                    "notes": "Synthetic canonical approval for recovery tests.",
-                },
-                "ledger": {
-                    "path": ledger_relative,
-                    "sha256": gcr2ctl.sha256(ledger_payload),
-                    "commit": reviewed_state,
-                },
-                "findings": [],
-                "closures": closures,
-            }
-        )
+        attempt: dict[str, Any] = {
+            "submission": submission,
+            "review": {
+                "reviewer": "independent-test-reviewer",
+                "result": "approved",
+                "reviewedAt": "2026-08-25T00:00:00+00:00",
+                "reviewedStateCommit": reviewed_state,
+                "notes": "Synthetic canonical approval for recovery tests.",
+            },
+            "ledger": {
+                "path": ledger_relative,
+                "sha256": gcr2ctl.sha256(ledger_payload),
+                "commit": reviewed_state,
+            },
+            "findings": [],
+            "closures": closures,
+        }
+        if ledger_state_mismatch == "approved-ledger-adverse-state":
+            attempt["review"]["result"] = "changes-requested"
+        elif ledger_state_mismatch == "findings":
+            attempt["findings"] = [fixture_finding]
+        elif ledger_state_mismatch == "closures":
+            attempt["closures"] = [
+                {"findingId": "synthetic-closed-item", "disposition": "fixed", "evidence": "mismatch"}
+            ]
+        state["attempts"].append(attempt)
         state["status"] = "APPROVED"
         state["currentSubmission"] = None
         state_path.write_bytes((json.dumps(state, indent=2) + "\n").encode())
@@ -336,7 +365,7 @@ class Gcr2ctlTests(unittest.TestCase):
             predecessor_backlog=predecessor_backlog,
             predecessor_state=predecessor_state,
         )
-        if not coherent_substitution:
+        if not coherent_substitution and ledger_state_mismatch is None:
             gcr2ctl.validate_recovery_anchor(repo, anchor, authority)
         gcr2ctl.validate_successor_pair(repo, successor_backlog, successor_state)
         return (
@@ -358,27 +387,27 @@ class Gcr2ctlTests(unittest.TestCase):
         _payload, backlog = gcr2ctl.current_boundary(REPO, packet, revision=8)
         self.assertEqual(8, backlog["control_plane"]["revision"])
 
-    def test_third_remediation_review_projection_requires_root_cause_analysis(self) -> None:
+    def test_late_remediation_review_projection_requires_current_root_cause_analysis(self) -> None:
         _approval, packet, _base = gcr2ctl.load_authority(REPO)
         state = json.loads((REPO / gcr2ctl.STATE_PATH).read_bytes())
-        self.assertEqual(2, len(state["attempts"]))
+        self.assertEqual(3, len(state["attempts"]))
         candidate = gcr2ctl.git(REPO, "rev-parse", "HEAD")
         state["status"] = "REVIEW"
         state["currentSubmission"] = {
-            "attemptId": "R03",
+            "attemptId": "R04",
             "submittedBy": gcr2ctl.ACTOR,
             "candidateCommit": candidate,
             "baseCommit": state["approval"]["commit"],
             "branch": gcr2ctl.BRANCH,
             "evidence": {
-                "path": gcr2ctl.evidence_path("R03"),
+                "path": gcr2ctl.evidence_path("R04"),
                 "sha256": "0" * 64,
                 "commit": candidate,
             },
             "submittedAt": "2026-08-25T00:00:00+00:00",
-            "priorAttemptId": "R02",
+            "priorAttemptId": "R03",
             "openFindingIds": sorted(gcr2ctl.open_findings(state)),
-            "rootCauseAnalysis": gcr2ctl.R03_ROOT_CAUSE_ANALYSIS,
+            "rootCauseAnalysis": gcr2ctl.R04_ROOT_CAUSE_ANALYSIS,
         }
         gcr2ctl.validate_history(REPO, state, packet)
         state["currentSubmission"]["rootCauseAnalysis"] = None
@@ -549,6 +578,51 @@ class Gcr2ctlTests(unittest.TestCase):
                 gcr2ctl.recover_transaction(repo, authority)
             after = {path: (repo / path).read_bytes() for path in protected}
             self.assertEqual(before, after)
+
+    def test_ledger_state_semantic_mismatches_fail_closed_without_cleanup(self) -> None:
+        scenarios = (
+            "adverse-ledger-approved-state",
+            "approved-ledger-adverse-state",
+            "findings",
+            "closures",
+            "evidence",
+            "reviewer",
+            "candidate",
+        )
+        for scenario in scenarios:
+            with self.subTest(scenario=scenario), tempfile.TemporaryDirectory() as temporary:
+                (
+                    repo,
+                    _predecessor_backlog,
+                    _predecessor_state,
+                    successor_backlog,
+                    successor_state,
+                    transaction,
+                    anchor,
+                    authority,
+                ) = self.recovery_fixture(temporary, ledger_state_mismatch=scenario)
+                artifacts = gcr2ctl.transaction_artifacts(repo)
+                gcr2ctl.write_new_durable(artifacts[gcr2ctl.LOCK_PATH], (json.dumps(anchor, indent=2) + "\n").encode())
+                gcr2ctl.write_new_durable(artifacts[gcr2ctl.BACKLOG_NEXT_PATH], successor_backlog)
+                gcr2ctl.write_new_durable(artifacts[gcr2ctl.STATE_NEXT_PATH], successor_state)
+                gcr2ctl.write_new_durable(
+                    artifacts[gcr2ctl.TRANSACTION_PATH], (json.dumps(transaction, indent=2) + "\n").encode()
+                )
+                (repo / gcr2ctl.BACKLOG_PATH).write_bytes(b"partial backlog\n")
+                (repo / gcr2ctl.STATE_PATH).write_bytes(b"partial state\n")
+                protected = [
+                    gcr2ctl.BACKLOG_PATH,
+                    gcr2ctl.STATE_PATH,
+                    gcr2ctl.LOCK_PATH,
+                    gcr2ctl.TRANSACTION_PATH,
+                    gcr2ctl.BACKLOG_NEXT_PATH,
+                    gcr2ctl.STATE_NEXT_PATH,
+                ]
+                before = {path: (repo / path).read_bytes() for path in protected}
+                with self.assertRaises(SystemExit):
+                    gcr2ctl.recover_transaction(repo, authority)
+                after = {path: (repo / path).read_bytes() for path in protected}
+                self.assertEqual(before, after)
 
     def test_taskctl_revision_eight_reader_fails_closed_on_revision_nine(self) -> None:
         backlog = yaml.safe_load((REPO / gcr2ctl.BACKLOG_PATH).read_text(encoding="utf-8"))

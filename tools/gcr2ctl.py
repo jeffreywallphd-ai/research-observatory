@@ -68,6 +68,15 @@ R03_ROOT_CAUSE_ANALYSIS = (
     "substitution directly. The packet-level precursor was likewise caused by generic content bindings and runtime "
     "subobjects; distinct constant bindings and one strict runtime shape remain enforced."
 )
+R04_ROOT_CAUSE_ANALYSIS = (
+    "R03 bound recovery to the unique ordered approval and review commits, but it authenticated the historical "
+    "ledger only as an opaque hashed blob and then trusted the separate state-side disposition. The adversarial "
+    "review proved that two individually schema-valid documents could disagree while retaining the expected commit "
+    "shape. The continuing root cause was treating structural commit authentication as a substitute for semantic "
+    "reconciliation across the authority boundary. R04 parses and validates every immutable ledger, reapplies the "
+    "controlled-review invariants to its frozen submission, derives the exact state projection from that ledger, "
+    "and tests each contradictory field before recovery can mutate or clean any protected artifact."
+)
 RESULT_STATUS = {"approved": "APPROVED", "changes-requested": "CHANGES_REQUESTED", "blocked": "BLOCKED"}
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 
@@ -297,6 +306,14 @@ def open_findings(state: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return opened
 
 
+def required_root_cause(attempt_index: int) -> str | None:
+    if attempt_index < 2:
+        return None
+    if attempt_index == 2:
+        return R03_ROOT_CAUSE_ANALYSIS
+    return R04_ROOT_CAUSE_ANALYSIS
+
+
 def validate_evidence(
     repo: Path,
     packet: dict[str, Any],
@@ -401,7 +418,7 @@ def freeze_submission(args: argparse.Namespace, *, remediation: bool) -> None:
         "submittedAt": taskctl.utc_now(),
         "priorAttemptId": (attempts[-1].get("submission") or {}).get("attemptId") if attempts else None,
         "openFindingIds": sorted(prior_open),
-        "rootCauseAnalysis": R03_ROOT_CAUSE_ANALYSIS if len(attempts) >= 2 else None,
+        "rootCauseAnalysis": required_root_cause(len(attempts)),
     }
     if state is None:
         state = {
@@ -443,6 +460,9 @@ def validate_review(
     ordering = [SEVERITY_ORDER.get(str(item.get("severity")), 99) for item in findings]
     finding_ids = [str(item.get("id") or "") for item in findings]
     prior_open = open_findings(state)
+    prior_finding_ids = {
+        str(finding.get("id") or "") for attempt in state.get("attempts", []) for finding in attempt.get("findings", [])
+    }
     closure_ids = [str(item.get("findingId") or "") for item in closures]
     if (
         relative != review_path(str(submission.get("attemptId") or ""))
@@ -456,6 +476,8 @@ def validate_review(
         or ordering != sorted(ordering)
         or any(value == 99 for value in ordering)
         or len(finding_ids) != len(set(finding_ids))
+        or bool(set(finding_ids) & prior_finding_ids)
+        or len(closure_ids) != len(set(closure_ids))
         or set(closure_ids) - set(prior_open)
     ):
         raise SystemExit("GCR-0002 review ledger differs from the frozen submission or review controls")
@@ -529,8 +551,7 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
         if (
             submission.get("baseCommit") != (state.get("approval") or {}).get("commit")
             or submission.get("branch") != BRANCH
-            or (index >= 2 and submission.get("rootCauseAnalysis") != R03_ROOT_CAUSE_ANALYSIS)
-            or (index < 2 and submission.get("rootCauseAnalysis") is not None)
+            or submission.get("rootCauseAnalysis") != required_root_cause(index)
         ):
             raise SystemExit(f"GCR-0002 {attempt_id} submission base or branch is invalid")
         if prior_candidate and (
@@ -549,6 +570,23 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
         evidence_payload = taskctl.git_blob(repo, reviewed_state, str(evidence.get("path") or ""))
         if evidence_payload is None or sha256(evidence_payload) != evidence.get("sha256"):
             raise SystemExit(f"GCR-0002 {attempt_id} evidence Git binding is invalid")
+        reviewed_state_payload = taskctl.git_blob(repo, reviewed_state, STATE_PATH)
+        if reviewed_state_payload is None:
+            raise SystemExit(f"GCR-0002 {attempt_id} reviewed state Git blob is absent")
+        try:
+            reviewed_state_document = json.loads(reviewed_state_payload)
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise SystemExit(f"GCR-0002 {attempt_id} reviewed state Git blob is malformed") from exc
+        validate_runtime(repo, reviewed_state_document, f"GCR-0002 {attempt_id} reviewed state")
+        if (
+            reviewed_state_document.get("status") != "REVIEW"
+            or reviewed_state_document.get("currentSubmission") != submission
+            or reviewed_state_document.get("attempts") != attempts[:index]
+            or reviewed_state_document.get("approval") != state.get("approval")
+            or reviewed_state_document.get("triggerWitness") != state.get("triggerWitness")
+            or reviewed_state_document.get("adoption") is not None
+        ):
+            raise SystemExit(f"GCR-0002 {attempt_id} reviewed-state projection is not exact")
         ledger_relative = str(ledger.get("path") or "")
         approval_projection = taskctl.approval_introduction_commit(repo, ledger_relative)
         if not approval_projection:
@@ -563,6 +601,48 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
         ledger_payload = taskctl.git_blob(repo, approval_projection, ledger_relative)
         if ledger_payload is None or sha256(ledger_payload) != ledger.get("sha256"):
             raise SystemExit(f"GCR-0002 {attempt_id} review ledger Git binding is invalid")
+        try:
+            ledger_document = json.loads(ledger_payload)
+            approval_state_document = json.loads(taskctl.git_blob(repo, approval_projection, STATE_PATH) or b"")
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise SystemExit(f"GCR-0002 {attempt_id} review projection is malformed") from exc
+        reviewer = str(ledger_document.get("reviewer") or "") if isinstance(ledger_document, dict) else ""
+        if not reviewer or reviewer != ledger_document.get("reviewer") or reviewer == ACTOR:
+            raise SystemExit(f"GCR-0002 {attempt_id} historical reviewer is not independent and normalized")
+        validate_review(
+            repo,
+            ledger_document,
+            reviewed_state_document,
+            ledger_relative,
+            reviewer,
+            reviewed_state,
+        )
+        expected_review = {
+            "reviewer": reviewer,
+            "result": ledger_document["result"],
+            "reviewedAt": review.get("reviewedAt"),
+            "reviewedStateCommit": reviewed_state,
+            "notes": ledger_document.get("notes"),
+        }
+        expected_ledger = {
+            "path": ledger_relative,
+            "sha256": sha256(ledger_payload),
+            "commit": reviewed_state,
+        }
+        if (
+            not isinstance(approval_state_document, dict)
+            or review != expected_review
+            or ledger != expected_ledger
+            or attempt.get("findings") != (ledger_document.get("findings") or [])
+            or attempt.get("closures") != (ledger_document.get("closures") or [])
+        ):
+            raise SystemExit(f"GCR-0002 {attempt_id} review ledger and state record disagree")
+        expected_approval_state = copy.deepcopy(reviewed_state_document)
+        expected_approval_state["attempts"].append(attempt)
+        expected_approval_state["status"] = RESULT_STATUS[str(ledger_document["result"])]
+        expected_approval_state["currentSubmission"] = None
+        if approval_state_document != expected_approval_state:
+            raise SystemExit(f"GCR-0002 {attempt_id} approval-state projection is not ledger-derived")
     current = state.get("currentSubmission")
     expected_status = RESULT_STATUS[str((attempts[-1].get("review") or {}).get("result"))] if attempts else "REVIEW"
     if current is not None:
@@ -583,8 +663,7 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
                     or not taskctl.git_is_ancestor(repo, latest_candidate, current_candidate)
                 )
             )
-            or (len(attempts) >= 2 and current.get("rootCauseAnalysis") != R03_ROOT_CAUSE_ANALYSIS)
-            or (len(attempts) < 2 and current.get("rootCauseAnalysis") is not None)
+            or current.get("rootCauseAnalysis") != required_root_cause(len(attempts))
         ):
             raise SystemExit("GCR-0002 current remediation submission is not the exact next REVIEW projection")
     elif attempts and state.get("status") not in {expected_status, "ADOPTION_FINALIZATION"}:
@@ -1046,7 +1125,7 @@ def recover_transaction(repo: Path, authority: tuple[dict[str, Any], dict[str, A
 def canonical_approved_state(
     repo: Path, state: dict[str, Any], state_payload: bytes
 ) -> tuple[str, str, dict[str, Any], bytes]:
-    if state.get("status") != "APPROVED" or not state.get("attempts"):
+    if state.get("status") != "APPROVED" or not state.get("attempts") or open_findings(state):
         raise SystemExit("GCR-0002 adoption requires an independently APPROVED latest review")
     latest = state["attempts"][-1]
     review = latest.get("review") or {}
