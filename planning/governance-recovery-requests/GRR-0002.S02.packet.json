@@ -1,0 +1,206 @@
+{
+  "$schema": "./governance-recovery-supplement.v4.schema.json",
+  "schemaVersion": "4.0-recovery-supplement-proposal",
+  "documentType": "governance-recovery-supplement-packet",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S02",
+  "title": "Restore the exact historic W1.A04 bootstrap retry lane",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "approved-bootstrap-latent-control-defect",
+  "controlTransition": {
+    "predecessorRevision": 10,
+    "successorRevision": 11,
+    "generationNeutral": true,
+    "olderReadersFailClosed": true
+  },
+  "baseRecoveryAuthority": {
+    "packet": {
+      "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+      "sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
+      "commit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e"
+    },
+    "approval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.json",
+      "sha256": "07f2e2da15d74c6a72e97e62a5f3d5a540f39898eb958eff7c92f42b80d6d893",
+      "introductionCommit": "0b450222ff569db356b84e413941aa2af585a64e"
+    },
+    "holdId": "HOLD-W1-GRR-0002",
+    "bootstrapUnit": "GRR-0002.B00",
+    "latestApprovedReview": {
+      "attemptId": "R01",
+      "path": "planning/governance-recovery-approvals/GRR-0002.B00.review-R01.json",
+      "sha256": "9a5efe9d7a9feabeb0a11829df4954a74f9d7a6d2d5089af92f4bfc337ccdfe2",
+      "candidateCommit": "af5c4260413cfa8490ca9540784bcecc12d81fac",
+      "reviewedStateCommit": "47ef6ed1b291d62e7be3875ed0558f04268e5e80"
+    }
+  },
+  "installedControlRecovery": {
+    "controlRecoveryId": "GCR-0003",
+    "bootstrapUnit": "GCR-0003.B00",
+    "adoptionCommit": "5a7aebd6ffd56441089a18bcd60a25f60ad96009",
+    "approval": {
+      "path": "planning/governance-control-recovery/GCR-0003.approval.json",
+      "sha256": "82a6187fa47e55c286ef3ae60bd185c94dfcdf5ba87c1283391d315988528ca7",
+      "commit": "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c"
+    },
+    "latestApprovedReview": {
+      "path": "planning/governance-control-recovery/GCR-0003.B00.review-R04.json",
+      "sha256": "663aeee91040ca39dec74f7846c6894c4c0530b13d2a8a5ceb466831491c3236",
+      "commit": "eb10e880aec3ddf26e9311f4de7ee1370029a0d6"
+    },
+    "adoptedState": {
+      "path": "planning/governance-control-recovery/GCR-0003.B00.state.json",
+      "sha256": "e0bcf054110d6e0921f585a82d9f4abd1d3b6f9a90b8ba9003cc9c38548cbd8b",
+      "commit": "5a7aebd6ffd56441089a18bcd60a25f60ad96009"
+    },
+    "adoptionEvidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.adoption.json",
+      "sha256": "ad62646c833c2beb72e53e99fb51dce57e26737cb2676ded671f3741654e0721",
+      "commit": "53def2e1b3ffe29860ed2209ebdf4230ce8e4bf8"
+    },
+    "controlTransition": {
+      "predecessorRevision": 9,
+      "successorRevision": 10,
+      "supportedControlCeiling": 11
+    }
+  },
+  "targetAmendmentAuthority": {
+    "changeRequestPacket": {
+      "id": "ECR-0003",
+      "path": "planning/enabler-change-requests/ECR-0003.packet.json",
+      "sha256": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+      "commit": "77896d26ddac0569e286fe8481c0676408c716b1"
+    },
+    "amendmentApproval": {
+      "id": "W1.A04",
+      "path": "planning/wave-amendment-approvals/W1.A04.json",
+      "sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+      "introductionCommit": "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+    },
+    "bootstrap": {
+      "id": "W1.A04.B00",
+      "candidateCommit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+      "evidence": {
+        "path": "artifacts/evidence/W1.A04.B00.json",
+        "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+        "commit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6"
+      }
+    },
+    "backlogPresence": false
+  },
+  "triggerEvidence": {
+    "discoveryCommit": "5a7aebd6ffd56441089a18bcd60a25f60ad96009",
+    "backlogSha256": "440e28754241e287666164f941cb47e7e67a5c29f91742dcf6c0061184d226f4",
+    "command": "Test-Path -LiteralPath planning/governance-recovery-approvals/GRR-0002.S02.json",
+    "diagnostic": "False; S02 approval, packet, and R01 review ledger were absent while the live control plane remained at exact revision 10.",
+    "atomicNoMutation": true
+  },
+  "activationBoundary": {
+    "controlRevision": 10,
+    "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "blockedTaskId": "CAP-02.S04.T03",
+    "blockedTaskStatus": "BLOCKED"
+  },
+  "supplementalBootstrap": {
+    "id": "GRR-0002.B02",
+    "kind": "append-only-approved-bootstrap-remediation",
+    "exceptionReason": "The independently adopted GCR-0003 generation restored version-4 10-to-11 headroom after immutable version-3 S02 authority proved impossible at live revision 9. This exact sequential B02 remains mandatory to qualify the historic-candidate retry guard before the original W1.A04.B00 submission can be retried.",
+    "authorizedPaths": [
+      "planning/backlog.yaml",
+      "planning/governance-recovery-approvals/GRR-0002.B02*",
+      "tests/foundation/test_recoveryctl.py",
+      "tools/recoveryctl.py"
+    ],
+    "requiredOutcomes": [
+      "Install exactly one sequential GRR-0002.S02/GRR-0002.B02 record under the existing HOLD-W1-GRR-0002 and advance control revision and minimum tool revision from 10 to 11 without creating, transferring, replacing, or releasing a hold.",
+      "Authenticate the exact GRR-0002 packet, approval, B00 review, adopted GCR-0003 revision-10 generation, ECR-0003 packet, W1.A04 approval, blocked W1.A04.B00 candidate, and witness bytes while W1.A04 remains absent.",
+      "Require the exact unchanged, unstaged, untracked, non-authoritative W1.A04.B00 witness at supplement start, submission, remediation, and review, rejecting every missing, changed, staged, tracked, redirected, duplicated, authority-bearing, or accompanied workspace state.",
+      "Freeze criterion-linked B02 evidence and independent severity-ranked review append-only, with no open blocking finding before B02 becomes APPROVED and strict-descendant remediation after every adverse review.",
+      "After B02 approval, permit only a retry of the original packet-bound W1.A04.B00 submission at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6; amendment append or materialization, task activation or claim, live T03 recovery, hold release, W1 resume, and gate approval remain separately gated.",
+      "Preserve product, privacy, approved-reference, task-acceptance, completed-task, release-gate, predecessor-authority, immutable version-3 supplement, and prior GCR/GRR/ECR evidence bytes and outcomes."
+    ],
+    "prohibitedOutcomes": [
+      "No new or competing hold, GRR-0002 B00/B01 reopening, prior attempt rewrite, arbitrary controller generation, direct backlog edit, force, override, bypass, or skip-review path.",
+      "No W1.A04 append, bootstrap submission or approval, amendment materialization, task activation or claim, CAP-02.S04.T03 recovery, hold release, ordinary W1 resume, G1 approval, local-main integration, or remote push before their own lawful gates.",
+      "No product/runtime, privacy policy, approved UI reference, UI evidence, task acceptance criterion, completed-task outcome, Wave approval, release gate, verification threshold, or predecessor Git-object change.",
+      "No use, staging, tracking, mutation, deletion, redirection, duplication, or authority promotion of the atomic-failure witness."
+    ]
+  },
+  "acceptanceCriteria": [
+    "The exact version-4 packet validates against Draft 2020-12, all declared hashes match, and the GRR-0002, adopted GCR-0003, ECR-0003/W1.A04, blocked bootstrap, and witness authority commits and blobs remain exact and ancestral.",
+    "The pre-install boundary is control revision 10 with one ACTIVE HOLD-W1-GRR-0002, adopted GCR-0003 at 5a7aebd6ffd56441089a18bcd60a25f60ad96009, PAUSED W1 at wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, and PENDING G1.",
+    "The packet-review ledger is separate from human approval, recursively authenticates every canonical prior attempt to R01, requires strict-descendant remediation candidates, folds findings and closures chronologically, and cannot approve with any open finding.",
+    "Supplement start atomically installs only the sequential GRR-0002.S02/GRR-0002.B02 record, advances revision and minimum tool revision to 11, and leaves W1, T03, W1.A04, the active hold, and all prior histories otherwise unchanged.",
+    "The exact witness-aware workspace contract is applied consistently to start, submit/resubmit, and review and denies every missing, changed, staged, tracked, redirected, duplicated, authority-bearing, or accompanied deviation without mutation.",
+    "B02 submission freezes the exact candidate, approval-to-candidate changed paths, criteria, checks, and evidence; independent review is append-only, severity-ranked, and cannot approve with an open blocking finding.",
+    "An independently APPROVED B02 validates a read-only projection of only the original W1.A04.B00 retry at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6 while amendment append/materialization, task execution, live T03 recovery, hold release, W1 resume, and G1 remain unauthorized.",
+    "Focused real-Git recovery, multi-round review, strict-ancestry, older-reader, historic-retry, atomicity, authority, quality, backlog/view, review-site, scope, and Git-hygiene checks pass with no protected product or reference change.",
+    "The packet receives independent exact-commit control/security review with no open finding before human approval, and B02 receives a separate independent commit-bound approval before W1.A04.B00 is retried."
+  ],
+  "verificationObligations": [
+    "Validate both version-4 schemas and every declared file hash, Git blob, introduction commit, ancestry edge, adopted control-generation record, base recovery authority, and target amendment authority.",
+    "Run the real-Git revision 9-to-10-to-11 lifecycle without mocking supplement boundary validation, plus recursive packet-review history denials including equality, truncation, substitution, skipped attempts, stale closure, unsafe accepted risk, and unresolved older findings.",
+    "Run the exact GRR-0002.S02 witness-deviation matrix through start, B02 submission/resubmission, and review without mocking workspace cleanliness.",
+    "Replay affected recoveryctl, taskctl schema/workflow, older-reader, stale-writer, transaction, historic-retry, and atomic-no-write checks selected by the shared control-plane risk surface.",
+    "Validate the read-only target materialization projection, canonical backlog, GRR-0002 and GCR-0003 authority, ECR-0003 approval, generated views, review site, governed Python quality, protected scope, and Git diff hygiene.",
+    "Bind B02 evidence to the exact approval-introduction-to-candidate diff, every required outcome and acceptance criterion, unique passing checks, deferred broader W1 qualification, and an empty unverified list.",
+    "Independently review this exact inert packet before human approval and independently review the exact B02 candidate before retrying only W1.A04.B00."
+  ],
+  "rollback": [
+    "Before packet approval, reject, defer, or retain the inert files while the revision-10 stopped state, active hold, absent amendment, blocked task, and exact witness remain unchanged.",
+    "Before B02 approval, an adverse review preserves the attempt, evidence, findings, and stopped boundary and requires a strict-descendant in-scope resubmission with explicit closures.",
+    "If any authority, witness, control generation, hold, W1 pause, amendment absence, task block, strict-ancestry, or atomicity condition fails, stop without installing, submitting, reviewing, or retrying anything.",
+    "Never delete, replace, rewrite, synthesize, or repurpose prior GRR, GCR, supplement, approval, attempt, ECR, amendment, task, evidence, finding, checkpoint, or Git history."
+  ],
+  "alternatives": [
+    {
+      "id": "A",
+      "title": "Approve bounded B02 supplement",
+      "disposition": "recommended",
+      "consequence": "Uses the reviewed version-4 lane under the existing hold and enables only the next independently reviewed bootstrap boundary."
+    },
+    {
+      "id": "B",
+      "title": "Keep recovery and W1 paused",
+      "disposition": "safe",
+      "consequence": "Makes no mutation, but W1.A04 and CAP-02.S04.T03 cannot progress."
+    },
+    {
+      "id": "C",
+      "title": "Defer or withdraw append-only",
+      "disposition": "safe-if-recorded",
+      "consequence": "Requires a governed disposition and provides no implicit authority to resume W1."
+    },
+    {
+      "id": "D",
+      "title": "Direct edit or immediate W1.A04 retry",
+      "disposition": "rejected",
+      "consequence": "Would bypass mandatory S02 packet, human approval, and independent B02 review gates."
+    }
+  ],
+  "files": [
+    {
+      "path": "planning/governance-recovery-requests/governance-recovery-supplement.v4.schema.json",
+      "sha256": "23f8e5b4185d546a4e5b8b7457b152fa74008bed6cd9d3c868248c0c8ae33858"
+    },
+    {
+      "path": "planning/governance-recovery-requests/governance-recovery-supplement-approval.v4.schema.json",
+      "sha256": "2b3f043e5e88d420b862909189f7ea959630e0efc664a729f363b6849dcf91ec"
+    },
+    {
+      "path": "planning/governance-recovery-requests/GRR-0002.S02.md",
+      "sha256": "c20feb33722a65e2ccdc211d7197583b7d88204cb83ca851002442776597658c"
+    },
+    {
+      "path": "planning/governance-recovery-requests/GRR-0002.S02-review.html",
+      "sha256": "29bccd87b6b59af8b13861dda4dc28c17d8a41b0bed3525351024f60286b25b8"
+    }
+  ],
+  "requiredApprovalStatement": "Approve GRR-0002.S02 at packet commit <40-character SHA>, authorizing only supplemental bootstrap GRR-0002.B02 and its hash-bound revision-10-to-11 scope under HOLD-W1-GRR-0002. Keep W1 paused, W1.A04 absent, CAP-02.S04.T03 blocked, G1 pending, the hold active, and the trigger witness untracked, unstaged, and non-authoritative through independent B02 approval; after B02 approval, retry only the original packet-bound W1.A04.B00 submission at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6."
+}
