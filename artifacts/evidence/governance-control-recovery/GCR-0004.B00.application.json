@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "4.0-control-recovery-application-evidence",
+  "documentType": "governance-control-recovery-review-transition-evidence",
+  "controlRecoveryId": "GCR-0004",
+  "bootstrapUnit": "GCR-0004.B00",
+  "approvedStateCommit": "e8a6288eaeaf9e0c5bf44fe74944c0fb2213b3af",
+  "reviewedStateCommit": "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "adverseLedger": {
+    "path": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+    "sha256": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b",
+    "bytePreserved": true
+  },
+  "predecessorStateSha256": "0828cb7a52ff5f739dcfbc49832e7b2437f997fced38bac917098081368328e4",
+  "successorStatus": "CHANGES_REQUESTED",
+  "controlRevision": 9,
+  "expectedChangedFiles": [
+    "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+    "planning/governance-control-recovery/GCR-0003.B00.state.json"
+  ],
+  "checks": [
+    {
+      "id": "independent-r02-review",
+      "command": "independent review of GCR-0004.B00 R02 at reviewed-state commit 48dfbbd",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "approved-state-validation",
+      "command": ".venv\\Scripts\\python.exe tools/gcr4ctl.py --repo . validate GCR-0004 --require-approved",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "exact-protected-boundary",
+      "command": "SHA-256 verification of witness, adverse ledger, runtime-v3 schema, and backlog",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "unverifiedItems": []
+}
