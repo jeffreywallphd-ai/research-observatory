@@ -51,6 +51,7 @@ APPROVAL_PATH = "planning/governance-control-recovery/GCR-0003.approval.json"
 APPROVAL_COMMIT = "d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c"
 REQUEST_SCHEMA_PATH = "planning/governance-control-recovery/governance-control-recovery-request.v3.schema.json"
 RUNTIME_SCHEMA_PATH = "planning/governance-control-recovery/governance-control-recovery-runtime.v3.schema.json"
+SUCCESSOR_RUNTIME_SCHEMA_PATH = "planning/governance-control-recovery/GCR-0004.B00.gcr3-runtime.schema.json"
 TRANSACTION_SCHEMA_PATH = "planning/governance-control-recovery/governance-control-recovery-transaction.v3.schema.json"
 STATE_PATH = "planning/governance-control-recovery/GCR-0003.B00.state.json"
 TRANSACTION_PATH = "planning/governance-control-recovery/GCR-0003.B00.adoption-transaction.json"
@@ -67,6 +68,24 @@ SUCCESSOR_REVISION = 10
 SUPPORTED_CONTROL_CEILING = 11
 RESULT_STATUS = {"approved": "APPROVED", "changes-requested": "CHANGES_REQUESTED", "blocked": "BLOCKED"}
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+GCR4_ID = "GCR-0004"
+GCR4_BOOTSTRAP_ID = "GCR-0004.B00"
+GCR4_PACKET_PATH = "planning/governance-control-recovery/GCR-0004.packet.json"
+GCR4_PACKET_COMMIT = "55cfb8ed74166398e387228a90b30365e78bf3cd"
+GCR4_PACKET_SHA256 = "274b0fc717691e909c7d05d1bf6411beca69749ed6d45ff30039ce6d33c57591"
+GCR4_PACKET_REVIEW_PATH = "planning/governance-control-recovery/GCR-0004.review-R01.json"
+GCR4_PACKET_REVIEW_COMMIT = "edac7c8bf30c9b29dfde3cf351894a9de3c3fa73"
+GCR4_PACKET_REVIEW_SHA256 = "12fcc12914d4e30d038fc8c3d4d8822247e2481e6b19877ac9bd21bc70af9e4e"
+GCR4_APPROVAL_PATH = "planning/governance-control-recovery/GCR-0004.approval.json"
+GCR4_APPROVAL_COMMIT = "e56218e5c0cc2823d78cfb855e66eb82d39c4cda"
+GCR4_APPROVAL_SHA256 = "a3d310939084de2b03f5f2980ace59a9680394f3d611f05d63fe9c9b4976ff5b"
+GCR4_STATE_PATH = "planning/governance-control-recovery/GCR-0004.B00.state.json"
+GCR4_APPLICATION_EVIDENCE_PATH = "artifacts/evidence/governance-control-recovery/GCR-0004.B00.application.json"
+GCR3_R01_CANDIDATE_COMMIT = "a0988d8d9cfde8cde5cc9cf148f9b37ae8e13873"
+GCR3_R01_REVIEWED_STATE_COMMIT = "702ffbc587cca2ec05567d86dc9fd0fa0a25b4a5"
+GCR3_R01_REVIEWED_STATE_SHA256 = "0828cb7a52ff5f739dcfbc49832e7b2437f997fced38bac917098081368328e4"
+GCR3_R01_LEDGER_PATH = "planning/governance-control-recovery/GCR-0003.B00.review-R01.json"
+GCR3_R01_LEDGER_SHA256 = "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b"
 
 
 def trigger_witness() -> dict[str, Any]:
@@ -119,7 +138,12 @@ def validate_schema(repo: Path, document: dict[str, Any], relative: str, label: 
 
 
 def validate_runtime(repo: Path, document: dict[str, Any], label: str) -> None:
-    validate_schema(repo, document, RUNTIME_SCHEMA_PATH, label)
+    schema = (
+        SUCCESSOR_RUNTIME_SCHEMA_PATH
+        if document.get("schemaVersion") == "3.1-control-recovery-state"
+        else RUNTIME_SCHEMA_PATH
+    )
+    validate_schema(repo, document, schema, label)
 
 
 def validate_transaction(repo: Path, document: dict[str, Any]) -> None:
@@ -340,24 +364,286 @@ def required_root_cause(attempt_index: int, supplied: object = None) -> str | No
     return supplied
 
 
-def validate_evidence(
+def _immutable_json(
+    repo: Path, *, path: str, commit: str, expected_sha256: str, label: str
+) -> tuple[dict[str, Any], bytes]:
+    document, payload = load_json(safe_path(repo, path, label=label), label)
+    if (
+        sha256(payload) != expected_sha256
+        or not taskctl.git_commit_exists(repo, commit)
+        or not taskctl.git_is_ancestor(repo, commit)
+        or taskctl.git_blob(repo, commit, path) != payload
+    ):
+        raise SystemExit(f"{label} differs from its exact immutable Git authority")
+    return document, payload
+
+
+def validate_gcr4_bridge(repo: Path, state: dict[str, Any]) -> str:
+    """Authenticate the sole GCR-0004 bridge and return its finalization commit."""
+    if state.get("schemaVersion") != "3.1-control-recovery-state":
+        raise SystemExit("GCR-0003 successor state does not select the GCR-0004 runtime envelope")
+    recovery = state.get("reviewTransitionRecovery") or {}
+    if (
+        recovery.get("controlRecoveryId") != GCR4_ID
+        or recovery.get("bootstrapUnit") != GCR4_BOOTSTRAP_ID
+        or recovery.get("reviewedStateCommit") != GCR3_R01_REVIEWED_STATE_COMMIT
+        or recovery.get("adverseLedger") != {"path": GCR3_R01_LEDGER_PATH, "sha256": GCR3_R01_LEDGER_SHA256}
+        or recovery.get("result") != "changes-requested"
+        or recovery.get("controlRevision") != PREDECESSOR_REVISION
+        or recovery.get("ordinaryExecutionAuthority") is not False
+    ):
+        raise SystemExit("GCR-0003 successor state lacks the exact GCR-0004 bridge record")
+
+    # Import lazily so the frozen v3 reader remains usable for its historical
+    # documents without implicitly selecting a newer controller generation.
+    import gcr4ctl
+
+    packet, packet_payload = _immutable_json(
+        repo,
+        path=GCR4_PACKET_PATH,
+        commit=GCR4_PACKET_COMMIT,
+        expected_sha256=GCR4_PACKET_SHA256,
+        label="GCR-0004 packet",
+    )
+    packet_review, packet_review_payload = _immutable_json(
+        repo,
+        path=GCR4_PACKET_REVIEW_PATH,
+        commit=GCR4_PACKET_REVIEW_COMMIT,
+        expected_sha256=GCR4_PACKET_REVIEW_SHA256,
+        label="GCR-0004 packet review",
+    )
+    approval, approval_payload = _immutable_json(
+        repo,
+        path=GCR4_APPROVAL_PATH,
+        commit=GCR4_APPROVAL_COMMIT,
+        expected_sha256=GCR4_APPROVAL_SHA256,
+        label="GCR-0004 approval",
+    )
+    gcr4ctl.validate_schema(repo, packet, gcr4ctl.REQUEST_SCHEMA_PATH, "GCR-0004 packet")
+    gcr4ctl.validate_runtime(repo, packet_review, "GCR-0004 packet review")
+    gcr4ctl.validate_runtime(repo, approval, "GCR-0004 approval")
+    if (
+        taskctl.approval_introduction_commit(repo, GCR4_APPROVAL_PATH) != GCR4_APPROVAL_COMMIT
+        or approval.get("status") != "APPROVED"
+        or approval.get("controlRecoveryId") != GCR4_ID
+        or approval.get("packet")
+        != {"path": GCR4_PACKET_PATH, "sha256": GCR4_PACKET_SHA256, "commit": GCR4_PACKET_COMMIT}
+        or ((approval.get("independentPacketReview") or {}).get("ledger") or {})
+        != {
+            "path": GCR4_PACKET_REVIEW_PATH,
+            "sha256": GCR4_PACKET_REVIEW_SHA256,
+            "commit": GCR4_PACKET_REVIEW_COMMIT,
+        }
+        or (approval.get("executionAuthority") or {}).get("bootstrapUnit") != GCR4_BOOTSTRAP_ID
+        or (approval.get("executionAuthority") or {}).get("ordinaryExecution") is not False
+        or approval.get("triggerWitness") != trigger_witness()
+        or packet_review.get("candidateCommit") != GCR4_PACKET_COMMIT
+        or packet_review.get("packetSha256") != GCR4_PACKET_SHA256
+        or packet_review.get("result") != "approved"
+        or packet_review.get("findings") != []
+        or packet_review.get("approvalAvailable") is not True
+        or not taskctl.git_is_ancestor(repo, GCR4_PACKET_COMMIT, GCR4_APPROVAL_COMMIT)
+        or not taskctl.git_is_ancestor(repo, GCR4_PACKET_REVIEW_COMMIT, GCR4_APPROVAL_COMMIT)
+        or taskctl.git_blob(repo, GCR4_APPROVAL_COMMIT, GCR4_APPROVAL_PATH) != approval_payload
+        or taskctl.git_blob(repo, GCR4_PACKET_COMMIT, GCR4_PACKET_PATH) != packet_payload
+        or taskctl.git_blob(repo, GCR4_PACKET_REVIEW_COMMIT, GCR4_PACKET_REVIEW_PATH) != packet_review_payload
+    ):
+        raise SystemExit("GCR-0004 packet review or approval authority is not exact")
+    for reference in packet.get("files", []):
+        relative = str(reference.get("path") or "")
+        payload = safe_path(repo, relative, label="GCR-0004 packet file", prefix="planning").read_bytes()
+        if (
+            sha256(payload) != reference.get("sha256")
+            or taskctl.git_blob(repo, GCR4_PACKET_COMMIT, relative) != payload
+        ):
+            raise SystemExit(f"GCR-0004 packet file binding differs: {relative}")
+
+    approved_state = str(recovery.get("approvedGcr4StateCommit") or "")
+    approved_payload = taskctl.git_blob(repo, approved_state, GCR4_STATE_PATH)
+    if approved_payload is None:
+        raise SystemExit("GCR-0004 approved B00 state is absent")
+    try:
+        approved_document = json.loads(approved_payload)
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise SystemExit("GCR-0004 approved B00 state is malformed") from exc
+    if not isinstance(approved_document, dict):
+        raise SystemExit("GCR-0004 approved B00 state must be an object")
+    gcr4ctl.validate_runtime(repo, approved_document, "GCR-0004 approved B00 state")
+    gcr4ctl.validate_history(repo, approved_document, packet)
+    latest = (approved_document.get("attempts") or [{}])[-1]
+    gcr4_review = latest.get("review") or {}
+    gcr4_ledger = latest.get("ledger") or {}
+    gcr4_reviewed_state = str(gcr4_review.get("reviewedStateCommit") or "")
+    gcr4_ledger_path = str(gcr4_ledger.get("path") or "")
+    if (
+        approved_document.get("status") != "APPROVED"
+        or gcr4_review.get("result") != "approved"
+        or gcr4ctl.open_findings(approved_document)
+        or taskctl.approval_introduction_commit(repo, gcr4_ledger_path) != approved_state
+        or taskctl.git_blob(repo, approved_state, GCR4_STATE_PATH) != approved_payload
+    ):
+        raise SystemExit("GCR-0004 B00 lacks an exact independently approved state")
+    require_exact_commit_delta(
+        repo,
+        parent=gcr4_reviewed_state,
+        commit=approved_state,
+        expected={gcr4_ledger_path: "A", GCR4_STATE_PATH: "M"},
+        label="GCR-0004 approved-state commit",
+    )
+
+    evidence = recovery.get("applicationEvidence") or {}
+    evidence_commit = str(evidence.get("commit") or "")
+    evidence_path = str(evidence.get("path") or "")
+    evidence_payload = taskctl.git_blob(repo, evidence_commit, evidence_path)
+    if evidence_path != GCR4_APPLICATION_EVIDENCE_PATH or evidence_payload is None:
+        raise SystemExit("GCR-0004 application evidence reference is not canonical")
+    try:
+        evidence_document = json.loads(evidence_payload)
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise SystemExit("GCR-0004 application evidence is malformed") from exc
+    if not isinstance(evidence_document, dict):
+        raise SystemExit("GCR-0004 application evidence must be an object")
+    gcr4ctl.validate_runtime(repo, evidence_document, "GCR-0004 application evidence")
+    require_exact_commit_delta(
+        repo,
+        parent=approved_state,
+        commit=evidence_commit,
+        expected={GCR4_APPLICATION_EVIDENCE_PATH: "A"},
+        label="GCR-0004 application-evidence commit",
+    )
+    if (
+        sha256(evidence_payload) != evidence.get("sha256")
+        or evidence_document.get("controlRecoveryId") != GCR4_ID
+        or evidence_document.get("bootstrapUnit") != GCR4_BOOTSTRAP_ID
+        or evidence_document.get("approvedStateCommit") != approved_state
+        or evidence_document.get("reviewedStateCommit") != GCR3_R01_REVIEWED_STATE_COMMIT
+        or evidence_document.get("triggerWitness") != trigger_witness()
+        or evidence_document.get("adverseLedger")
+        != {"path": GCR3_R01_LEDGER_PATH, "sha256": GCR3_R01_LEDGER_SHA256, "bytePreserved": True}
+        or evidence_document.get("predecessorStateSha256") != GCR3_R01_REVIEWED_STATE_SHA256
+        or evidence_document.get("successorStatus") != "CHANGES_REQUESTED"
+        or evidence_document.get("controlRevision") != PREDECESSOR_REVISION
+        or evidence_document.get("expectedChangedFiles") != [GCR3_R01_LEDGER_PATH, STATE_PATH]
+        or evidence_document.get("unverifiedItems") != []
+        or not evidence_document.get("checks")
+        or any(
+            check.get("exitCode") != 0 or check.get("result") != "passed"
+            for check in evidence_document.get("checks", [])
+        )
+    ):
+        raise SystemExit("GCR-0004 application evidence boundary is invalid")
+
+    finalization = taskctl.approval_introduction_commit(repo, GCR3_R01_LEDGER_PATH)
+    if not finalization or not taskctl.git_is_ancestor(repo, finalization):
+        raise SystemExit("GCR-0004 bridge finalization commit is absent or forked")
+    require_exact_commit_delta(
+        repo,
+        parent=evidence_commit,
+        commit=finalization,
+        expected={GCR3_R01_LEDGER_PATH: "A", STATE_PATH: "M"},
+        label="GCR-0004 bridge finalization commit",
+    )
+    ledger_payload = taskctl.git_blob(repo, finalization, GCR3_R01_LEDGER_PATH)
+    bridge_state_payload = taskctl.git_blob(repo, finalization, STATE_PATH)
+    frozen_payload = taskctl.git_blob(repo, GCR3_R01_REVIEWED_STATE_COMMIT, STATE_PATH)
+    if (
+        ledger_payload is None
+        or sha256(ledger_payload) != GCR3_R01_LEDGER_SHA256
+        or bridge_state_payload is None
+        or frozen_payload is None
+        or sha256(frozen_payload) != GCR3_R01_REVIEWED_STATE_SHA256
+    ):
+        raise SystemExit("GCR-0004 bridge ledger or predecessor state binding is invalid")
+    try:
+        ledger_document = json.loads(ledger_payload)
+        bridge_state = json.loads(bridge_state_payload)
+        frozen_state = json.loads(frozen_payload)
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise SystemExit("GCR-0004 bridge history is malformed") from exc
+    if not all(isinstance(item, dict) for item in (ledger_document, bridge_state, frozen_state)):
+        raise SystemExit("GCR-0004 bridge history documents must be objects")
+    validate_schema(repo, frozen_state, RUNTIME_SCHEMA_PATH, "GCR-0003 frozen R01 state")
+    validate_schema(repo, ledger_document, RUNTIME_SCHEMA_PATH, "GCR-0003 R01 adverse ledger")
+    validate_schema(repo, bridge_state, SUCCESSOR_RUNTIME_SCHEMA_PATH, "GCR-0003 bridged R01 state")
+    submission = frozen_state.get("currentSubmission") or {}
+    bridge_attempts = bridge_state.get("attempts") or []
+    bridge_attempt = bridge_attempts[0] if len(bridge_attempts) == 1 else {}
+    bridge_review = bridge_attempt.get("review") or {}
+    expected_ledger = {
+        "path": GCR3_R01_LEDGER_PATH,
+        "sha256": GCR3_R01_LEDGER_SHA256,
+        "commit": GCR3_R01_REVIEWED_STATE_COMMIT,
+    }
+    if (
+        frozen_state.get("status") != "REVIEW"
+        or frozen_state.get("attempts") != []
+        or submission.get("attemptId") != "R01"
+        or submission.get("candidateCommit") != GCR3_R01_CANDIDATE_COMMIT
+        or ledger_document.get("reviewedStateCommit") != GCR3_R01_REVIEWED_STATE_COMMIT
+        or ledger_document.get("candidateCommit") != GCR3_R01_CANDIDATE_COMMIT
+        or ledger_document.get("result") != "changes-requested"
+        or bridge_state.get("status") != "CHANGES_REQUESTED"
+        or bridge_state.get("currentSubmission") is not None
+        or bridge_state.get("adoption") is not None
+        or bridge_state.get("reviewTransitionRecovery") != recovery
+        or bridge_attempt.get("submission") != submission
+        or bridge_attempt.get("ledger") != expected_ledger
+        or bridge_attempt.get("findings") != (ledger_document.get("findings") or [])
+        or bridge_attempt.get("closures") != (ledger_document.get("closures") or [])
+        or bridge_review.get("reviewer") != ledger_document.get("reviewer")
+        or bridge_review.get("result") != ledger_document.get("result")
+        or bridge_review.get("reviewedStateCommit") != GCR3_R01_REVIEWED_STATE_COMMIT
+        or bridge_review.get("notes") != ledger_document.get("notes")
+        or not any(item.get("blocking") is True for item in bridge_attempt.get("findings") or [])
+        or state.get("reviewTransitionRecovery") != recovery
+        or (state.get("attempts") or [{}])[0] != bridge_attempt
+    ):
+        raise SystemExit("GCR-0004 bridge is not the exact ledger-derived one-time R01 projection")
+    return finalization
+
+
+def exact_gcr4_lineage_paths(
+    repo: Path, state: dict[str, Any], *, candidate: str, original_patterns: list[str]
+) -> set[str]:
+    finalization = validate_gcr4_bridge(repo, state)
+    if candidate == finalization or not taskctl.git_is_ancestor(repo, finalization, candidate):
+        raise SystemExit("GCR-0003 remediation candidate does not descend from the exact GCR-0004 bridge")
+    bridge_paths = set(changed_paths(repo, APPROVAL_COMMIT, finalization))
+    for relative in bridge_paths:
+        if not path_authorized(relative, original_patterns) and taskctl.git_blob(
+            repo, candidate, relative
+        ) != taskctl.git_blob(repo, finalization, relative):
+            raise SystemExit(f"GCR-0004 bridge-only path changed after finalization: {relative}")
+    return bridge_paths
+
+
+def validate_evidence_document(
     repo: Path,
     packet: dict[str, Any],
     relative: str,
+    document: dict[str, Any],
     candidate: str,
     base: str,
     attempt_id: str,
     prior_open: dict[str, dict[str, Any]],
-) -> tuple[dict[str, Any], bytes]:
+    *,
+    bridge_state: dict[str, Any] | None = None,
+) -> None:
     if relative != evidence_path(attempt_id):
         raise SystemExit(f"GCR-0003 evidence path must be {evidence_path(attempt_id)}")
-    document, payload = load_json(
-        safe_path(repo, relative, label="GCR-0003 evidence", prefix="artifacts/evidence/governance-control-recovery"),
-        "GCR-0003 evidence",
-    )
     validate_runtime(repo, document, "GCR-0003 evidence")
     actual = changed_paths(repo, base, candidate)
     patterns = [str(item) for item in (packet.get("bootstrapUnit") or {}).get("authorizedPaths", [])]
+    outside = [item for item in actual if not path_authorized(item, patterns)]
+    bridge_only: set[str] = set()
+    if outside:
+        if bridge_state is None:
+            bridge_state, _state_payload = load_state(repo, required=True)
+        assert bridge_state is not None
+        bridge_paths = exact_gcr4_lineage_paths(repo, bridge_state, candidate=candidate, original_patterns=patterns)
+        outside = [item for item in outside if item not in bridge_paths]
+        bridge_only = {item for item in bridge_paths if not path_authorized(item, patterns)}
+    effective_actual = [item for item in actual if item not in bridge_only]
     criteria = document.get("acceptanceCriteria") or []
     expected_criteria = packet.get("acceptanceCriteria") or []
     closures = document.get("findingClosures") or []
@@ -370,8 +656,8 @@ def validate_evidence(
         or document.get("baseCommit") != base
         or document.get("branch") != BRANCH
         or document.get("triggerWitness") != trigger_witness()
-        or sorted(document.get("changedFiles") or []) != actual
-        or any(not path_authorized(item, patterns) for item in actual)
+        or sorted(document.get("changedFiles") or []) != effective_actual
+        or outside
         or [item.get("index") for item in criteria] != list(range(1, len(expected_criteria) + 1))
         or [item.get("statement") for item in criteria] != expected_criteria
         or document.get("unverifiedItems") != []
@@ -396,6 +682,31 @@ def validate_evidence(
             or not str(closure.get("evidence") or "").strip()
         ):
             raise SystemExit("GCR-0003 finding closure is stale or incomplete")
+
+
+def validate_evidence(
+    repo: Path,
+    packet: dict[str, Any],
+    relative: str,
+    candidate: str,
+    base: str,
+    attempt_id: str,
+    prior_open: dict[str, dict[str, Any]],
+) -> tuple[dict[str, Any], bytes]:
+    document, payload = load_json(
+        safe_path(repo, relative, label="GCR-0003 evidence", prefix="artifacts/evidence/governance-control-recovery"),
+        "GCR-0003 evidence",
+    )
+    validate_evidence_document(
+        repo,
+        packet,
+        relative,
+        document,
+        candidate,
+        base,
+        attempt_id,
+        prior_open,
+    )
     return document, payload
 
 
@@ -565,6 +876,16 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
         f"R{index:02d}" for index in range(1, len(attempts) + 1)
     ]:
         raise SystemExit("GCR-0003 attempt history is not append-only and sequential")
+    bridge_finalization = (
+        validate_gcr4_bridge(repo, state) if state.get("schemaVersion") == "3.1-control-recovery-state" else None
+    )
+    if bridge_finalization is not None:
+        original_patterns = [str(item) for item in (packet.get("bootstrapUnit") or {}).get("authorizedPaths", [])]
+        for relative in changed_paths(repo, APPROVAL_COMMIT, bridge_finalization):
+            if not path_authorized(relative, original_patterns) and taskctl.git_blob(
+                repo, "HEAD", relative
+            ) != taskctl.git_blob(repo, bridge_finalization, relative):
+                raise SystemExit(f"GCR-0004 bridge-only history changed after finalization: {relative}")
     prior_candidate: str | None = None
     for index, attempt in enumerate(attempts):
         submission = attempt.get("submission") or {}
@@ -574,9 +895,15 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
         ledger = attempt.get("ledger") or {}
         review = attempt.get("review") or {}
         reviewed_state = str(review.get("reviewedStateCommit") or "")
+        prior_open = open_findings({"attempts": attempts[:index]})
         if (
             submission.get("baseCommit") != (state.get("approval") or {}).get("commit")
             or submission.get("branch") != BRANCH
+            or submission.get("submittedBy") != ACTOR
+            or evidence.get("commit") != candidate
+            or submission.get("priorAttemptId")
+            != (((attempts[index - 1].get("submission") or {}).get("attemptId")) if index else None)
+            or set(submission.get("openFindingIds") or []) != set(prior_open)
             or (index < 2 and submission.get("rootCauseAnalysis") is not None)
             or (
                 index >= 2
@@ -604,6 +931,23 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
         evidence_payload = taskctl.git_blob(repo, reviewed_state, str(evidence.get("path") or ""))
         if evidence_payload is None or sha256(evidence_payload) != evidence.get("sha256"):
             raise SystemExit(f"GCR-0003 {attempt_id} evidence Git binding is invalid")
+        try:
+            evidence_document = json.loads(evidence_payload)
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise SystemExit(f"GCR-0003 {attempt_id} evidence Git blob is malformed") from exc
+        if not isinstance(evidence_document, dict):
+            raise SystemExit(f"GCR-0003 {attempt_id} evidence Git blob must be an object")
+        validate_evidence_document(
+            repo,
+            packet,
+            str(evidence.get("path") or ""),
+            evidence_document,
+            candidate,
+            str(submission.get("baseCommit") or ""),
+            attempt_id,
+            prior_open,
+            bridge_state=state,
+        )
         reviewed_state_payload = taskctl.git_blob(repo, reviewed_state, STATE_PATH)
         if reviewed_state_payload is None:
             raise SystemExit(f"GCR-0003 {attempt_id} reviewed state Git blob is absent")
@@ -622,6 +966,42 @@ def validate_history(repo: Path, state: dict[str, Any], packet: dict[str, Any]) 
         ):
             raise SystemExit(f"GCR-0003 {attempt_id} reviewed-state projection is not exact")
         ledger_relative = str(ledger.get("path") or "")
+        if index == 0 and bridge_finalization is not None:
+            if ledger_relative != GCR3_R01_LEDGER_PATH or reviewed_state != GCR3_R01_REVIEWED_STATE_COMMIT:
+                raise SystemExit("GCR-0003 R01 does not identify the exact GCR-0004 bridge boundary")
+            ledger_payload = taskctl.git_blob(repo, bridge_finalization, ledger_relative)
+            if ledger_payload is None or sha256(ledger_payload) != GCR3_R01_LEDGER_SHA256:
+                raise SystemExit("GCR-0003 R01 exceptional review ledger Git binding is invalid")
+            try:
+                ledger_document = json.loads(ledger_payload)
+            except (UnicodeError, json.JSONDecodeError) as exc:
+                raise SystemExit("GCR-0003 R01 exceptional review ledger is malformed") from exc
+            reviewer = str(ledger_document.get("reviewer") or "") if isinstance(ledger_document, dict) else ""
+            if not reviewer or reviewer != ledger_document.get("reviewer") or reviewer == ACTOR:
+                raise SystemExit("GCR-0003 R01 exceptional reviewer is not independent and normalized")
+            validate_review(
+                repo,
+                ledger_document,
+                reviewed_state_document,
+                ledger_relative,
+                reviewer,
+                reviewed_state,
+            )
+            expected_review = {
+                "reviewer": reviewer,
+                "result": ledger_document["result"],
+                "reviewedAt": review.get("reviewedAt"),
+                "reviewedStateCommit": reviewed_state,
+                "notes": ledger_document.get("notes"),
+            }
+            if (
+                review != expected_review
+                or ledger != {"path": ledger_relative, "sha256": GCR3_R01_LEDGER_SHA256, "commit": reviewed_state}
+                or attempt.get("findings") != (ledger_document.get("findings") or [])
+                or attempt.get("closures") != (ledger_document.get("closures") or [])
+            ):
+                raise SystemExit("GCR-0003 R01 exceptional ledger and state record disagree")
+            continue
         approval_projection = taskctl.approval_introduction_commit(repo, ledger_relative)
         if not approval_projection:
             raise SystemExit(f"GCR-0003 {attempt_id} review projection commit is absent")
