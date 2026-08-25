@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "2.0-control-recovery-evidence",
+  "documentType": "governance-control-recovery-bootstrap-evidence",
+  "controlRecoveryId": "GCR-0002",
+  "bootstrapUnit": "GCR-0002.B00",
+  "attemptId": "R02",
+  "commit": "28ee69a90e51be3d704a73371c1613ae3b7c91c3",
+  "baseCommit": "c029ba348a8bd0abee23e11c078aff4b8fd0b02b",
+  "branch": "codex/w1-windows-local-runtime",
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "changedFiles": [
+    "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R01.json",
+    "planning/backlog.schema.json",
+    "planning/governance-control-recovery/GCR-0002.B00.review-R01.json",
+    "planning/governance-control-recovery/GCR-0002.B00.state.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement-approval.v3.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement.v3.schema.json",
+    "quality-scope.json",
+    "tests/foundation/test_gcr2ctl.py",
+    "tests/foundation/test_recoveryctl.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tools/gcr2ctl.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "id": "gcr2-windows-recovery-r02",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_gcr2ctl",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "affected-schema-and-v3-recovery",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_taskctl_schema tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v3_supplement_start_installs_only_exact_s02_eight_to_nine tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v2_supplement_start_uses_exact_seven_to_eight_transition tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v2_supplement_workspace_requires_exact_non_authoritative_witness",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "governed-python-quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "affected-python-static-quality",
+      "command": ".venv\\Scripts\\ruff.exe check tools/gcr2ctl.py tests/foundation/test_gcr2ctl.py; .venv\\Scripts\\mypy.exe tools/gcr2ctl.py tests/foundation/test_gcr2ctl.py",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "backlog-and-gcr-authority-validation",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/gcr2ctl.py --repo . validate GCR-0002",
+      "exitCode": 0,
+      "result": "passed"
+    },
+    {
+      "id": "historic-w1-a04-denial-byte-stability",
+      "command": "PowerShell: hash backlog and witness; run the exact historic W1.A04 bootstrap-submit; assert exit=1 and both hashes unchanged",
+      "exitCode": 0,
+      "result": "passed"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "index": 1,
+      "statement": "The v2 GCR packet, schemas, authority manifest, proposal, and review page are Draft 2020-12 valid, hash-bound, path-safe, exact-commit reviewable, and bootstrap-only.",
+      "evidence": ["backlog-and-gcr-authority-validation", "affected-schema-and-v3-recovery"]
+    },
+    {
+      "index": 2,
+      "statement": "All GRR-0002, GCR-0001, S01/B01, ECR-0003/W1.A04, hold, Wave, T03, G1, backlog, Git ancestry, and witness identities in the authority manifest reproduce current immutable state.",
+      "evidence": ["backlog-and-gcr-authority-validation", "historic-w1-a04-denial-byte-stability"]
+    },
+    {
+      "index": 3,
+      "statement": "GCR-0002 approval can be introduced only after an independent APPROVED packet review at the exact packet commit; its clean codex-branch introduction commit is the sole B00 base.",
+      "evidence": ["gcr2-windows-recovery-r02", "backlog-and-gcr-authority-validation"]
+    },
+    {
+      "index": 4,
+      "statement": "The B00 candidate changes only authorized controller/schema/test/governance paths, keeps live revision 8 during review, and cannot install or fabricate S02.",
+      "evidence": ["gcr2-windows-recovery-r02", "affected-schema-and-v3-recovery"]
+    },
+    {
+      "index": 5,
+      "statement": "After independent B00 approval, adoption uses the exact durable write-ahead protocol and finishes as a direct-child commit changing only backlog and GCR-0002 state, records one 8-to-9 generation, and makes unsupported revision-8 readers fail closed.",
+      "evidence": ["gcr2-windows-recovery-r02", "affected-schema-and-v3-recovery"]
+    },
+    {
+      "index": 6,
+      "statement": "Revision-9 recoveryctl accepts only independently reviewed and exactly approved sequential GRR-0002.S02/B02 authority and rejects stale, forked, wrong-hold, wrong-predecessor, non-increasing, unsupported, missing, or adverse authority byte-stably.",
+      "evidence": ["affected-schema-and-v3-recovery", "backlog-and-gcr-authority-validation"]
+    },
+    {
+      "index": 7,
+      "statement": "The original W1.A04 retry remains denied after GCR-0002 adoption and until independently approved B02; the trigger remains non-authoritative and no ordinary execution gate changes.",
+      "evidence": ["historic-w1-a04-denial-byte-stability", "backlog-and-gcr-authority-validation"]
+    },
+    {
+      "index": 8,
+      "statement": "Child-process abrupt termination at every preparation, manifest, publication, replacement, validation, flush, and cleanup boundary leaves a fail-closed recoverable state; repeated recovery yields only the exact predecessor pair or exact successor pair and never a split pair.",
+      "evidence": ["gcr2-windows-recovery-r02"]
+    },
+    {
+      "index": 9,
+      "statement": "Criterion-linked B00 evidence, real-Git denial coverage, governed Python quality, exact diff scope, and independent review pass with no unexplained unverified item.",
+      "evidence": [
+        "gcr2-windows-recovery-r02",
+        "governed-python-quality",
+        "affected-python-static-quality",
+        "backlog-and-gcr-authority-validation"
+      ]
+    }
+  ],
+  "findingClosures": [
+    {
+      "findingId": "GCR-0002.B00-R01-F01",
+      "disposition": "fixed",
+      "evidence": "The exclusive lock is now a durable authority-bound recovery anchor containing both exact raw predecessor preimages. Recovery authenticates its exact adoption-evidence HEAD and approved-state parent, exact one-file commit delta, adoption evidence, revision-8 backlog raw and canonical bindings, exact committed state bytes and strict runtime schema before any write. Missing/invalid manifests restore only those captured bytes; stale HEAD and substituted anchors fail byte-stably. Real-Git tests preserve the production CRLF backlog mismatch, remove BACKLOG_SHA256 and successor-validation patches, cover missing/invalid manifests, stale HEAD, substituted state, every child-process boundary, repeated recovery, cleanup, and exact terminal pairs."
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "R02 changes only GCR-0002 recovery anchoring and its focused tests. The HIGH R01 defect concerned raw Windows predecessor recovery, stale HEAD selection, and masked crash tests, so the selected matrix replays that full boundary with production CRLF bytes and unpatched validation, plus the affected shared schema/recovery compatibility, static quality, live authority validation, and historic W1.A04 denial. The full predecessor/full-repository suite is deferred because no product path, dependency, or ordinary execution state changed and the independently reviewed finding is covered directly.",
+    "selectedChecks": [
+      "gcr2-windows-recovery-r02",
+      "affected-schema-and-v3-recovery",
+      "governed-python-quality",
+      "affected-python-static-quality",
+      "backlog-and-gcr-authority-validation",
+      "historic-w1-a04-denial-byte-stability"
+    ],
+    "deferredCoverage": [
+      "GRR-0002.S02/B02 execution requires separate reviewed and human-approved authority.",
+      "Complete affected/full repository and Windows deployment qualification remains at W1 exit."
+    ]
+  }
+}

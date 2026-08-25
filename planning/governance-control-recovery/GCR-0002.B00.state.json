@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-bootstrap-state",
   "controlRecoveryId": "GCR-0002",
   "bootstrapUnit": "GCR-0002.B00",
-  "status": "CHANGES_REQUESTED",
+  "status": "REVIEW",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0002.approval.json",
     "sha256": "ae877459b2f6b2ad1e1ca0551f5efc80e7a096e86b562c4baa22fcd20d91ebe7",
@@ -61,6 +61,23 @@
       "closures": []
     }
   ],
-  "currentSubmission": null,
+  "currentSubmission": {
+    "attemptId": "R02",
+    "submittedBy": "codex",
+    "candidateCommit": "28ee69a90e51be3d704a73371c1613ae3b7c91c3",
+    "baseCommit": "c029ba348a8bd0abee23e11c078aff4b8fd0b02b",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R02.json",
+      "sha256": "7395e3d24b59cd9825fcefc28c51a6bb18c52dbfabaaa096f0a89b4852e867d9",
+      "commit": "28ee69a90e51be3d704a73371c1613ae3b7c91c3"
+    },
+    "submittedAt": "2026-08-25T01:22:36+00:00",
+    "priorAttemptId": "R01",
+    "openFindingIds": [
+      "GCR-0002.B00-R01-F01"
+    ],
+    "rootCauseAnalysis": null
+  },
   "adoption": null
 }
