@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "2.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0002",
+  "bootstrapUnit": "GCR-0002.B00",
+  "attemptId": "R03",
+  "candidateCommit": "e36f6f17193ff9a5615a77f8697e755529835eed",
+  "reviewedStateCommit": "868f1f3f04e18758ed9ec587fbb7655387282728",
+  "reviewer": "independent-repository-consistency-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R03.json",
+    "sha256": "4786c800dc375350e41cb4fe77af597c7890bcae3fee1c9eac9583828281f9c2",
+    "commit": "e36f6f17193ff9a5615a77f8697e755529835eed"
+  },
+  "findings": [
+    {
+      "id": "GCR-0002.B00-R03-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 8,
+      "title": "The canonical review projection trusts a ledger that contradicts its state record",
+      "reproduction": "At exact candidate e36f6f17193ff9a5615a77f8697e755529835eed, validate_history proves that each ledger path was introduced once in an exact two-file child commit and that its Git blob matches the hash recorded by the state, but it never parses or schema-validates that immutable ledger and never compares its reviewer, result, evidence, findings, or closures with the corresponding attempt projection in the state. canonical_approved_state then trusts only state.status, the state-side latest review result, the ledger Git blob equality, and the two-file commit shape. In a disposable real-Git fixture using the R03 controller, create the normal immutable approval, candidate, REVIEW submission, and direct-child review projection, but make the schema-valid immutable ledger result changes-requested with one blocking HIGH while making the state-side attempt result approved with no findings; record the exact adverse-ledger SHA-256 in the state. Both documents independently pass the v2 runtime schema, the projection changes exactly ledger plus state, and validate_history followed by canonical_approved_state accepts and derives that commit as canonical (`ADVERSE_LEDGER_ACCEPTED True`). The same unchecked boundary permits disagreement in findings, closures, evidence, reviewer, and notes. Recovery therefore can authenticate and restore a state that claims approval even though the unique immutable review document is adverse, contrary to the ordered-review authority required by R02-F01 and criterion 8.",
+      "requiredRemediation": "In a strict-descendant R04 candidate, make history validation load and v2-schema-validate every immutable ledger Git blob and require its complete review projection to match the corresponding state attempt: identity, attempt and candidate, reviewed-state commit, normalized independent reviewer, result, evidence, findings, closures, and notes. Reapply the controlled-review invariants to history: severity ordering and unique finding IDs, closures limited to the prior open set, exact open-finding evolution, and denial of approved whenever the ledger introduces any finding or any prior blocking finding remains unresolved. Derive canonical approval only from that reconciled latest ledger and state projection. Add real-Git tests for an adverse ledger paired with an approved state, an approved ledger paired with an adverse state, and individually substituted findings, closures, evidence, reviewer, and candidate; each recovery case must fail before changing or cleaning backlog, state, lock, manifest, or successor artifacts. Preserve the exact Windows CRLF predecessor restoration, unpatched successor validation, every child-process interruption boundary, immutable prior attempts, protected witness, and authorized scope, then submit fresh evidence explicitly closing this finding."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "GCR-0002.B00-R02-F01",
+      "disposition": "superseded",
+      "evidence": "R03 correctly binds the predecessor approval reference to the unique immutable GCR-0002 approval, replays the ordered Git introduction and exact two-file projection shape for each state-recorded review, requires the anchor to name the derived projection, preserves raw CRLF predecessor bytes, and rejects the R02 coherent altered-approval case byte-stably. The remaining authority defect is narrowed and reproduced as GCR-0002.B00-R03-F01: the ordered projection does not reconcile the immutable review document's adverse disposition and finding set with the state record that is used to derive approval."
+    }
+  ],
+  "notes": "The exact R03 candidate e36f6f17193ff9a5615a77f8697e755529835eed strictly descends from R02 candidate 28ee69a90e51be3d704a73371c1613ae3b7c91c3 and the sole approval-introduction commit remains c029ba348a8bd0abee23e11c078aff4b8fd0b02b. The approval-base-to-candidate delta is confined to the fifteen evidence-declared packet-authorized paths. Reviewed-state commit 868f1f3f04e18758ed9ec587fbb7655387282728 is the candidate's direct child and adds only exact R03 evidence plus the state submission transition; the evidence hash is 4786c800dc375350e41cb4fe77af597c7890bcae3fee1c9eac9583828281f9c2. R01 and R02 ledgers each have one ordered introduction commit, and the R03 state contains the required third-submission root-cause analysis and exact prior open finding. The recovery implementation and tests preserve raw Windows CRLF anchoring, exact predecessor-or-successor recovery, durable cleanup, and the declared child-process interruption matrix, but the broader replay was stopped after the independently reproduced HIGH review-authority mismatch became dispositive and is not relied on for approval. The protected W1.A04 witness remains exact, untracked, unstaged, and non-authoritative at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. No gcr2ctl review, adoption, recovery mutation, backlog/state transition, Wave/amendment/task/gate action, commit, or merge was performed."
+}
