@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "3.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0003",
+  "bootstrapUnit": "GCR-0003.B00",
+  "attemptId": "R04",
+  "candidateCommit": "4e541ee9f7e442c52ab742caf40863e58c95ab6a",
+  "reviewedStateCommit": "a14f65cf64f6d40584a6204177cb9d0bccdcec86",
+  "reviewer": "independent-gcr3-b00-control-security-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0003.B00.R04.json",
+    "sha256": "77d4f5a7fff408f864ea0e8caed8a92f34ea6ce821b3610eb5764fb23a0b8f81",
+    "commit": "4e541ee9f7e442c52ab742caf40863e58c95ab6a"
+  },
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GCR-0003.B00-R02-F01",
+      "disposition": "fixed",
+      "evidence": "Both version-4 readers recursively authenticate the complete canonical R01-to-latest review chain, bind every exact ledger path, hash, unique introduction commit, Git blob, candidate packet blob and hash, require adverse sequential predecessors, and fold findings and closures chronologically. The independent real-Git replay accepted the valid three-round chain and rejected the exact truncated R01-to-R02-to-R03 history plus wrong prior hash, commit, candidate, result, skipped/repeated attempt, stale closure, blocking accepted-risk closure, unresolved older blocker, and non-strict candidate variants in both readers."
+    },
+    {
+      "findingId": "GCR-0003.B00-R03-F01",
+      "disposition": "fixed",
+      "evidence": "recoveryctl and taskctl now reject equality between a predecessor review-ledger introduction commit and its successor candidate before applying the ancestry check. The independent unmocked real-Git candidate-equals-prior-review replay is denied by both readers while the valid strict-descendant three-round chain remains accepted."
+    }
+  ],
+  "notes": "APPROVED at exact frozen reviewed-state commit a14f65cf64f6d40584a6204177cb9d0bccdcec86, whose sole parent is candidate 4e541ee9f7e442c52ab742caf40863e58c95ab6a. R04 is a strict descendant of the recorded R03 adverse-review transition and changes only tests/foundation/test_gcr3ctl.py, tools/recoveryctl.py, and tools/taskctl.py beyond R03. The candidate-to-reviewed-state delta adds only exact R04 evidence and the canonical REVIEW submission. Independent risk-selected replay passed four tests in 198.244 seconds: recursive multi-round history including the exact truncation and equality bypass for both readers, first-round immutable-ledger denial, v3 byte immutability with exact v4 10-to-11 authority, and the unmocked revision 9-to-10-to-11 lifecycle. Backlog validation, live GCR-0003 authority validation at REVIEW/control revision 9, governed Python quality for 127 files, exact diff hygiene, and evidence/state bindings pass. GCR-0004 bridge lineage and all prior reviews remain recorded; the active HOLD-W1-GRR-0002, stopped W1/T03/G1 boundary, immutable v3 artifacts, historic W1.A04 retry denial, crash/recovery contract, and exact protected witness remain unchanged. The witness is exact, untracked, unstaged, and non-authoritative. No gcr3ctl review/adopt/recover, state/backlog mutation, S02/B02 action, Wave/amendment/task/gate action, staging, commit, or witness mutation was performed."
+}
