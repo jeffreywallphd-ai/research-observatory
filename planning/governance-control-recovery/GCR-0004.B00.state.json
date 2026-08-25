@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "4.0-control-recovery-state",
+  "documentType": "governance-control-recovery-bootstrap-state",
+  "controlRecoveryId": "GCR-0004",
+  "bootstrapUnit": "GCR-0004.B00",
+  "status": "REVIEW",
+  "approval": {
+    "path": "planning/governance-control-recovery/GCR-0004.approval.json",
+    "sha256": "a3d310939084de2b03f5f2980ace59a9680394f3d611f05d63fe9c9b4976ff5b",
+    "commit": "e56218e5c0cc2823d78cfb855e66eb82d39c4cda"
+  },
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "role": "atomic-failure-trigger-only",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "adverseLedger": {
+    "path": "planning/governance-control-recovery/GCR-0003.B00.review-R01.json",
+    "sha256": "cdfdb2f9fc122cb1a3be3d4546542dfc108a35c96995a340d32b5ae3510ba93b",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "attempts": [],
+  "currentSubmission": {
+    "attemptId": "R01",
+    "submittedBy": "codex",
+    "submittedAt": "2026-08-25T11:23:03+00:00",
+    "candidateCommit": "d1a377b341094eb5c92c22ad7099f51c5feeb80b",
+    "baseCommit": "e56218e5c0cc2823d78cfb855e66eb82d39c4cda",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0004.B00.R01.json",
+      "sha256": "b404e18865bc4ba67d1b1d1b3260bb07d49d2dacd732085ce9714b54940176d8",
+      "commit": "d1a377b341094eb5c92c22ad7099f51c5feeb80b"
+    },
+    "priorAttemptId": null,
+    "openFindingIds": [],
+    "rootCauseAnalysis": null
+  },
+  "application": null
+}
