@@ -20,7 +20,7 @@
 <body>
   <nav><a href="GRR-0002.S02.md">Canonical proposal</a> · <a href="GRR-0002.S02.packet.json">Hash-bound packet</a> · <a href="governance-recovery-supplement.v4.schema.json">v4 packet schema</a> · <a href="governance-recovery-supplement-approval.v4.schema.json">v4 review/approval schema</a> · <a href="GRR-0002-review.html">Base GRR review</a></nav>
   <h1>GRR-0002.S02: restore the exact historic W1.A04 bootstrap retry lane</h1>
-  <p class="status"><strong>Pending:</strong> independent exact-commit packet review and separate human approval. This page and packet are inert and grant no execution authority.</p>
+  <p class="status"><strong>R01 changes requested:</strong> the strict-descendant R02 packet must close the historic-candidate implementation-scope finding, pass independent exact-commit review, and then receive separate human approval. This page and packet are inert and grant no execution authority.</p>
 
   <h2>Decision requested</h2>
   <p>Authorize only <code>GRR-0002.B02</code> under the existing <code>HOLD-W1-GRR-0002</code>. The supplement advances control revision 10 to 11 and qualifies the already-adopted exact historic-candidate retry guard. It does not append W1.A04 or authorize any Wave task.</p>
@@ -39,6 +39,7 @@
     <ul>
       <li>Install exactly one sequential GRR-0002.S02/B02 record and advance revision 10→11.</li>
       <li>Collect exact B02 candidate evidence and an independent B02 review.</li>
+      <li>Within B02, add a fail-closed <code>taskctl</code> exception limited to the exact W1.A04/B00 authority, historic candidate, witness-only workspace, active hold, approved S02/B02, and revision 11; preserve current-HEAD denial everywhere else.</li>
       <li>After B02 is independently APPROVED, retry only the original hash-bound W1.A04.B00 submission at candidate <code>214ac1aac53b4396ee29f7a935ddcac2a34618b6</code>.</li>
     </ul>
   </div>
@@ -59,6 +60,7 @@
     <li>The only installed mutation is the sequential revision-11 B02 record under the existing hold.</li>
     <li>The witness-aware workspace guard denies every missing, altered, staged, tracked, redirected, duplicated, authority-bearing, or accompanied state.</li>
     <li>The packet review and B02 implementation review are separate, append-only, independent, severity-ranked, and commit-bound.</li>
+    <li>Real-Git tests deny the historic retry before B02 approval, allow one atomic exact-candidate submission only after B02 approval, and deny wrong authority, candidate, revision, hold, witness, stale writer, prohibited transitions, and replay.</li>
     <li>Only the original W1.A04.B00 retry becomes eligible after B02 approval; every later transition retains its own gate.</li>
   </ol>
 
