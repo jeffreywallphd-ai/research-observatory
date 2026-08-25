@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "2.0-control-recovery-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0002",
+  "bootstrapUnit": "GCR-0002.B00",
+  "attemptId": "R01",
+  "candidateCommit": "b3985b95003807bf14b88e6a09be6ca3e88e23c5",
+  "reviewedStateCommit": "24185cc42b5da841a244d331b2c37bb51171ffd2",
+  "reviewer": "independent-control-security-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0002.B00.R01.json",
+    "sha256": "a3fd508a46349b3f7236895a2153c406633d081c9e361b60d7fe948092af812b",
+    "commit": "b3985b95003807bf14b88e6a09be6ca3e88e23c5"
+  },
+  "findings": [
+    {
+      "id": "GCR-0002.B00-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 8,
+      "title": "Windows predecessor recovery cannot restore the exact pair and trusts an unbound HEAD state",
+      "reproduction": "At exact reviewed-state commit 24185cc42b5da841a244d331b2c37bb51171ffd2 on the release-authoritative Windows worktree, SHA-256 of the CRLF planning/backlog.yaml worktree bytes is the approved BACKLOG_SHA256 0b3d22f30d3a024e37b6c7b9b07d48f3a0b96dd2fc6c1968809a21d35a2977e7, while SHA-256 of `git show HEAD:planning/backlog.yaml` is the normalized LF blob 17aa5c98e5146c61786cacb1f27e0c0189cd806e51f5a600f53b7b71448c7526. tools/gcr2ctl.py restore_predecessor reads the backlog and state with taskctl.git_blob(repo, current HEAD, path), then requires the backlog Git-blob hash to equal the CRLF worktree constant. In a disposable real-Git clone of the frozen branch, preserve the exact witness, commit an unrelated GCR-0002 state while leaving the backlog unchanged, replace the live state with partial-publication bytes, create only GCR-0002.B00.adoption.lock, and run `python tools/gcr2ctl.py --repo . recover GCR-0002 --agent codex`. The command exits 1 with `GCR-0002 predecessor backlog Git blob is not the approved revision-8 boundary`, leaves the lock present, and leaves the partial state in place instead of producing either exact terminal pair. Independently, restore_predecessor selects both records from whatever current HEAD happens to be; require_recovery_workspace does not bind HEAD to the adoption-evidence commit or bind the selected state blob to the approved predecessor. A naive line-ending-only fix would therefore permit an unrelated committed state to become the restored canonical state. The passing recovery tests mask the production condition by setting core.autocrlf=false and patching BACKLOG_SHA256 to the fixture worktree hash in both the missing-manifest and crash loops; the crash loop also patches validate_successor_pair. The declared evidence therefore does not establish criterion 8's exact Windows predecessor-or-successor recovery boundary.",
+      "requiredRemediation": "In a strict-descendant candidate, make missing, invalid, stale, and partial-manifest recovery authenticate and restore the exact raw predecessor backlog and state independently of an unbound current HEAD. Bind the recovery base to the exact adoption-evidence/approved-state authority, preserve or otherwise deterministically reproduce both raw preimages across the CRLF Git/worktree boundary, validate both raw and canonical hashes plus the strict state schema before publication, and reject unrelated or stale HEAD/state sources without cleanup or mutation. Add real-Git Windows CRLF tests that do not patch BACKLOG_SHA256 or successor validation and cover missing and invalid manifests, stale/unrelated HEAD, substituted state, every declared child-process interruption boundary, repeated recovery, durable cleanup, and byte-exact predecessor-or-successor terminal pairs. Preserve this R01 ledger append-only and submit fresh R02 evidence with an explicit closure for GCR-0002.B00-R01-F01."
+    }
+  ],
+  "closures": [],
+  "notes": "The exact candidate b3985b95003807bf14b88e6a09be6ca3e88e23c5 strictly descends from approval-introduction commit c029ba348a8bd0abee23e11c078aff4b8fd0b02b; the approval descends from exact approved packet 26003f7671e164327e8b1b6066bc82fbe8afed67. The base-to-candidate delta is exactly the ten evidence-declared, packet-authorized implementation/schema/test/quality paths, and reviewed-state 24185cc42b5da841a244d331b2c37bb51171ffd2 is its direct child adding only the exact R01 evidence and canonical state. Packet, approval, state, evidence, authority hashes, ancestry, live revision-8 stopped boundary, v3 S02/B02 8-to-9 identities, old-reader ceiling, witness invariants, and absence of Wave/amendment/task/gate authority were reproduced. Seven focused gcr2 tests passed in 22.735 seconds; 26 affected taskctl-schema/v3/v2 recovery tests passed in 37.979 seconds; Python quality passed for 123 governed files; live backlog and GCR-0002 validation passed. The broader predecessor compatibility replay was stopped after the independently reproduced HIGH defect became dispositive and is not relied on for this review. The sole witness remains exact, untracked, unstaged, and non-authoritative at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c. No review transition, adoption, canonical state mutation, Wave action, or execution action was performed."
+}
