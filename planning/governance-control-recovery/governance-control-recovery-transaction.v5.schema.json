@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-control-recovery-transaction.v5.json",
+  "title": "GCR-0005 exact backlog review-projection transaction",
+  "type": "object",
+  "required": [
+    "schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "status", "branch",
+    "lockPath", "backlogPath", "backlogNextPath", "backlogBeforeSha256", "backlogAfterSha256",
+    "ledgerPath", "ledgerSha256", "applicationEvidence", "publicationOrder", "ordinaryExecutionAuthority"
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[A-Za-z0-9._*/-]+$"}
+  },
+  "properties": {
+    "schemaVersion": {"const": "5.0-control-recovery-transaction"},
+    "documentType": {"const": "governance-control-recovery-review-transition-transaction"},
+    "controlRecoveryId": {"const": "GCR-0005"}, "bootstrapUnit": {"const": "GCR-0005.B00"},
+    "status": {"enum": ["PREPARED", "BACKLOG_PUBLISHED", "VIEWS_GENERATED", "VALIDATED", "FINALIZED"]},
+    "branch": {"const": "codex/w1-windows-local-runtime"},
+    "lockPath": {"const": "planning/governance-control-recovery/GCR-0005.B00.application.lock"},
+    "backlogPath": {"const": "planning/backlog.yaml"},
+    "backlogNextPath": {"const": "planning/governance-control-recovery/GCR-0005.B00.backlog.next"},
+    "backlogBeforeSha256": {"const": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1"},
+    "backlogAfterSha256": {"$ref": "#/$defs/sha256"},
+    "ledgerPath": {"const": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json"},
+    "ledgerSha256": {"const": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09"},
+    "applicationEvidence": {
+      "type": "object", "required": ["path", "sha256"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/governance-control-recovery/GCR-0005.B00.application.json"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "publicationOrder": {
+      "const": ["exclusive-lock", "durable-successor", "durable-manifest", "replace-backlog", "generate-views", "validate-exact-state", "flush", "commit-direct-child", "cleanup"]
+    },
+    "ordinaryExecutionAuthority": {"const": false}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-recovery-authority-manifest",
+  "controlRecoveryId": "GCR-0005",
+  "targetWave": "W1",
+  "frozenSupplementReviewBoundary": {
+    "reviewedStateCommit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c",
+    "candidateCommit": "d363c04c385251a5d789a0313e173342e7e0ae3e",
+    "approvalBaseCommit": "106921c269942401bab4cc4f732f4d1fb97b8abe",
+    "backlog": {
+      "path": "planning/backlog.yaml",
+      "sha256": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1",
+      "status": "REVIEW",
+      "attemptId": "R01"
+    },
+    "evidence": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B02.evidence.json",
+      "sha256": "77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595",
+      "commit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c"
+    },
+    "adverseLedger": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json",
+      "sha256": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09",
+      "introductionCommit": "8b784cabc5d5d996c00fd2fbcc8f22a1ad05b5bb",
+      "reviewedStateCommit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c",
+      "result": "changes-requested",
+      "executionAuthority": false
+    }
+  },
+  "supplementAuthority": {
+    "packet": {
+      "path": "planning/governance-recovery-requests/GRR-0002.S02.packet.json",
+      "sha256": "14452cb6e6f3959996458d7b84df0105a7f6e4bbf3f4c5fc36e9d0f0506d43c8",
+      "commit": "070f408ed257b3c1345a29c3be2c2f882952b856"
+    },
+    "approval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.S02.json",
+      "sha256": "389d9f5595faf8a1a8de233783ac122e34d6b2d61c011cef58203764b6dfe7a1",
+      "commit": "106921c269942401bab4cc4f732f4d1fb97b8abe"
+    },
+    "scopeAddendumPacket": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.packet.json",
+      "sha256": "5223a0c944abf40ad98ec7b34143ea98712c92a92c5a6503416ab9b99a013605",
+      "commit": "49b1cf6a8935e96d73491e4961063143574fce30"
+    },
+    "scopeAddendumReview": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.review-R01.json",
+      "sha256": "52bc6eec8348ca00d41ec9e765a5c4795d469293cb361738f210c4fde1f2a818",
+      "commit": "f7ede70281af7f0cbe7c5b70d2af3aedebe732b3"
+    },
+    "scopeAddendumApproval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.approval.json",
+      "sha256": "bb8dece91dd28cfe69cadfd0d4bb69d54fac1d62b31905ce8c4b683926dde3f5",
+      "commit": "f6f0f640e9acd0da74a1ff73afe85f09db797a8e"
+    },
+    "defectiveController": {
+      "path": "tools/recoveryctl.py",
+      "sha256": "7fa2cd327b461cf994abc209351ecdc701859c96a3e5e6bfe79f0fd0d2151cb8",
+      "commit": "fa8ea7053ee278b8f2b6f5182c2e136378dafd55"
+    }
+  },
+  "failedTransition": {
+    "command": ".venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . supplement-review GRR-0002.S02 --reviewer independent-b02-control-security-reviewer --from planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json",
+    "exitCode": 1,
+    "diagnostic": "B02 scope-addendum base authority, candidates, backlog, or witness differs",
+    "atomicNoMutation": true,
+    "backlogSha256AfterFailure": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1",
+    "ledgerSha256AfterFailure": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09"
+  },
+  "activeHold": {
+    "id": "HOLD-W1-GRR-0002",
+    "status": "ACTIVE",
+    "recoveryRequestId": "GRR-0002",
+    "installedControlGeneration": "GCR-0003",
+    "latestSupplement": "GRR-0002.S02",
+    "latestBootstrap": "GRR-0002.B02",
+    "latestBootstrapStatus": "REVIEW"
+  },
+  "stoppedBoundary": {
+    "backlogSha256": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1",
+    "controlRevision": 11,
+    "minimumToolRevision": 11,
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "blockedTaskId": "CAP-02.S04.T03",
+    "blockedTaskStatus": "BLOCKED",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "triggerWitness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false,
+    "mayBecomeSubmittedEvidence": false
+  }
+}
