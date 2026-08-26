@@ -23030,35 +23030,26 @@ control_plane:
         introduction_commit: 106921c269942401bab4cc4f732f4d1fb97b8abe
       bootstrap:
         id: GRR-0002.B02
-        status: CHANGES_REQUESTED
+        status: REVIEW
         implementer: codex
-        implementation_commit: d363c04c385251a5d789a0313e173342e7e0ae3e
+        implementation_commit: 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6
         submission_branch: codex/w1-windows-local-runtime
         evidence:
           type: governance-recovery-supplement-evidence
-          path: planning/governance-recovery-approvals/GRR-0002.B02.evidence.json
-          sha256: 77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595
-          commit: d363c04c385251a5d789a0313e173342e7e0ae3e
-          recorded_at: '2026-08-26T01:34:38+00:00'
-        review: &id091
-          reviewer: independent-b02-control-security-reviewer
-          result: changes-requested
-          reviewed_at: '2026-08-26T02:15:00+00:00'
-          notes: CHANGES_REQUESTED after independent commit-bound R01 control/security review. The exact candidate and sole-child
-            frozen REVIEW state, evidence hash and schema, 17-path approval-base-to-candidate scope, ordered required-outcome
-            and acceptance-criterion mappings, approved S02 and deterministic-output addendum authority, revision-11 canonical
-            backlog, active sole hold, PAUSED W1 wave boundary, absent W1.A04, BLOCKED CAP-02.S04.T03, PENDING G1, exact untracked
-            and unstaged witness, base GRR authority, and Git diff hygiene are exact. Canonical backlog validation and base
-            GRR-0002 approval validation pass. Approval is withheld because the B02 scope-addendum loader requires the live
-            planning/backlog.yaml bytes and raw hash to remain identical to the installed-candidate IN_PROGRESS backlog after
-            the lawful supplement-submit transition has changed only B02 to REVIEW and frozen its exact R01 submission. Both
-            supplement-status and supplement-validate therefore fail at the required frozen review state, and the focused
-            addendum tests fail for the same attempt-insensitive backlog assumption. Preserve this R01 submission, evidence,
-            and ledger append-only; repair the loader and lifecycle tests in a strict descendant, bind fresh remediation evidence
-            with an explicit closure, and use supplement-resubmit for R02. No B02 approval, historic W1.A04.B00 retry, amendment
-            materialization, task action, hold release, W1 resume, gate action, merge, or remote action is authorized by this
-            adverse ledger.
-        current_submission: null
+          path: planning/governance-recovery-approvals/GRR-0002.B02.remediation-01.evidence.json
+          sha256: d5e31ad12e10bed9e5cf87b4c795cc390a534ea5ca833645f95f08e85b5bcf20
+          commit: 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6
+          recorded_at: '2026-08-26T13:46:51+00:00'
+        review:
+          reviewer: null
+          result: null
+          reviewed_at: null
+          notes: null
+        current_submission:
+          attempt_id: R02
+          candidate_commit: 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6
+          evidence_sha256: d5e31ad12e10bed9e5cf87b4c795cc390a534ea5ca833645f95f08e85b5bcf20
+          acceptance_criteria_sha256: c5db985ade2a804292b2323385584ec9d86977ec429c04641b036d1f82cd7741
         attempts:
         - id: R01
           implementer: codex
@@ -23070,7 +23061,24 @@ control_plane:
             sha256: 77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595
             commit: d363c04c385251a5d789a0313e173342e7e0ae3e
             recorded_at: '2026-08-26T01:34:38+00:00'
-          review: *id091
+          review:
+            reviewer: independent-b02-control-security-reviewer
+            result: changes-requested
+            reviewed_at: '2026-08-26T02:15:00+00:00'
+            notes: CHANGES_REQUESTED after independent commit-bound R01 control/security review. The exact candidate and sole-child
+              frozen REVIEW state, evidence hash and schema, 17-path approval-base-to-candidate scope, ordered required-outcome
+              and acceptance-criterion mappings, approved S02 and deterministic-output addendum authority, revision-11 canonical
+              backlog, active sole hold, PAUSED W1 wave boundary, absent W1.A04, BLOCKED CAP-02.S04.T03, PENDING G1, exact
+              untracked and unstaged witness, base GRR authority, and Git diff hygiene are exact. Canonical backlog validation
+              and base GRR-0002 approval validation pass. Approval is withheld because the B02 scope-addendum loader requires
+              the live planning/backlog.yaml bytes and raw hash to remain identical to the installed-candidate IN_PROGRESS
+              backlog after the lawful supplement-submit transition has changed only B02 to REVIEW and frozen its exact R01
+              submission. Both supplement-status and supplement-validate therefore fail at the required frozen review state,
+              and the focused addendum tests fail for the same attempt-insensitive backlog assumption. Preserve this R01 submission,
+              evidence, and ledger append-only; repair the loader and lifecycle tests in a strict descendant, bind fresh remediation
+              evidence with an explicit closure, and use supplement-resubmit for R02. No B02 approval, historic W1.A04.B00
+              retry, amendment materialization, task action, hold release, W1 resume, gate action, merge, or remote action
+              is authorized by this adverse ledger.
           ledger:
             path: planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json
             sha256: 4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09
@@ -23425,7 +23433,7 @@ wave_amendments:
       commit: 4f256763401772298bf75c634f2c7b2355882f10
       recorded_at: '2026-08-21T01:30:59+00:00'
     verification_state: passed
-    review: &id092
+    review: &id091
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T01:37:41+00:00'
@@ -23697,7 +23705,7 @@ wave_amendments:
           - W1.A02.T01-R01-F02
           root_cause_analysis: null
           packet_sha256: 8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd
-        review: *id092
+        review: *id091
         ledger:
           path: artifacts/evidence/W1.A02.T01.review-R02.json
           sha256: f8913f680808ba3119935de66d170305a94e61b7818941154cbbc654745e5ac5
@@ -23758,7 +23766,7 @@ wave_amendments:
       commit: aa714b7c16def6add4662e0d1c44d0bc89e7c349
       recorded_at: '2026-08-21T02:50:29+00:00'
     verification_state: passed
-    review: &id093
+    review: &id092
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T02:59:03+00:00'
@@ -24043,7 +24051,7 @@ wave_amendments:
           - foundation:quality
           - foundation:backlog
           packet_sha256: c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03
-        review: *id093
+        review: *id092
         ledger:
           path: artifacts/evidence/W1.A02.T02.review-R02.json
           sha256: 2700fd6eff428b03a257f22e7acc511d11ef9196e9224dfa188ab9357c2cc117
@@ -24522,7 +24530,7 @@ wave_amendments:
       commit: 0362cfe72c84f167338329490f6799ba9f84a808
       recorded_at: '2026-08-22T20:04:57+00:00'
     verification_state: passed
-    review: &id094
+    review: &id093
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-22T20:13:45+00:00'
@@ -24750,7 +24758,7 @@ wave_amendments:
           - foundation:quality
           - foundation:backlog
           packet_sha256: 15eaaa895273188e63a333cf5cb2f9a359a2b879764d6a7b5c850ddc6955ac22
-        review: *id094
+        review: *id093
         ledger:
           path: artifacts/evidence/W1.A03.T01.review-R02.json
           sha256: cd9e363e474d9d2d957c8fcc9049b631f441553e8a0e8c36a5fb1b98d883ef02
