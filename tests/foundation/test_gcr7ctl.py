@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import base64
 import copy
 import json
@@ -360,6 +361,61 @@ class Gcr7ctlTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(SystemExit, "attempt is invalid"):
             gcr7ctl.adoption_evidence_path("R3")
+
+    def test_failed_pre_activation_resubmit_denies_every_partial_boundary(self) -> None:
+        failed_evidence_commit = "78fe299fefbee1eaea406e53fed7a5f05a4c18ab"
+
+        def resubmit_args(repo: Path) -> argparse.Namespace:
+            return argparse.Namespace(
+                repo=repo,
+                agent=gcr7ctl.ACTOR,
+                implementation_commit="f" * 40,
+                evidence=gcr7ctl.evidence_path("R03"),
+            )
+
+        mutations = ("backlog-only", "state-only", "transaction-present", "substituted-evidence", "wrong-path")
+        for mutation in mutations:
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                repo = self.clone_authority_repo(Path(temporary), commit=failed_evidence_commit)
+                backlog_path = repo / gcr7ctl.BACKLOG_PATH
+                state_path = repo / gcr7ctl.STATE_PATH
+                evidence_path = repo / gcr7ctl.ADOPTION_EVIDENCE_PATH
+
+                if mutation == "backlog-only":
+                    successor = yaml.safe_dump(
+                        self.successor_backlog(), sort_keys=False, allow_unicode=True, width=120
+                    ).encode()
+                    self.write(repo, gcr7ctl.BACKLOG_PATH, successor)
+                    self.git(repo, "add", gcr7ctl.BACKLOG_PATH)
+                    self.git(repo, "commit", "-m", "partial backlog publication")
+                    gcr7ctl.load_authority(repo)
+                elif mutation == "state-only":
+                    state = json.loads(state_path.read_bytes())
+                    state_path.write_bytes((json.dumps(state, indent=4) + "\n").encode())
+                    self.git(repo, "add", gcr7ctl.STATE_PATH)
+                    self.git(repo, "commit", "-m", "partial state publication")
+                elif mutation == "transaction-present":
+                    self.write(repo, gcr7ctl.LOCK_PATH, b"partial transaction\n")
+                elif mutation == "substituted-evidence":
+                    evidence = json.loads(evidence_path.read_bytes())
+                    evidence["checks"][0]["evidence"] = "Substituted after the immutable failed attempt."
+                    self.write_json(repo, gcr7ctl.ADOPTION_EVIDENCE_PATH, evidence)
+                    self.git(repo, "add", gcr7ctl.ADOPTION_EVIDENCE_PATH)
+                    self.git(repo, "commit", "-m", "substitute failed adoption evidence")
+                else:
+                    self.git(
+                        repo,
+                        "mv",
+                        gcr7ctl.ADOPTION_EVIDENCE_PATH,
+                        gcr7ctl.adoption_evidence_path("R03"),
+                    )
+                    self.git(repo, "commit", "-m", "move evidence to wrong attempt path")
+
+                before = {"backlog": backlog_path.read_bytes(), "state": state_path.read_bytes()}
+                with self.assertRaises(SystemExit):
+                    gcr7ctl.freeze_submission(resubmit_args(repo), remediation=True)
+                self.assertEqual(before["backlog"], backlog_path.read_bytes())
+                self.assertEqual(before["state"], state_path.read_bytes())
 
     def test_redirected_parent_is_denied_for_all_controller_reads(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

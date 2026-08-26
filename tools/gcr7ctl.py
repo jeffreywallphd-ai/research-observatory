@@ -966,6 +966,19 @@ def authenticated_failed_pre_activation_adoption(
 ) -> bool:
     if state.get("status") != "APPROVED" or state.get("activation") is not None:
         return False
+    if present_transaction_artifacts(repo):
+        return False
+    head = git(repo, "rev-parse", "HEAD")
+    live_backlog = guard_repo_path(repo, BACKLOG_PATH).read_bytes()
+    canonical_backlog = taskctl.git_blob(repo, AUTHORITY_BASE_COMMIT, BACKLOG_PATH)
+    if (
+        sha256(live_backlog) != BACKLOG_PREDECESSOR_RAW_SHA256
+        or canonical_backlog is None
+        or sha256(canonical_backlog) != BACKLOG_PREDECESSOR_CANONICAL_SHA256
+        or taskctl.git_blob(repo, head, BACKLOG_PATH) != canonical_backlog
+        or taskctl.git_blob(repo, head, STATE_PATH) != state_payload
+    ):
+        return False
     attempts = _attempt_keys(state)
     if not attempts:
         return False
@@ -988,7 +1001,7 @@ def authenticated_failed_pre_activation_adoption(
         evidence_commit=evidence_commit,
         evidence_relative=evidence_relative,
     )
-    return True
+    return taskctl.git_blob(repo, head, evidence_relative) == evidence_payload
 
 
 def generation_record(
