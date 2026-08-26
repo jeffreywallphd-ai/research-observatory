@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "7.0-control-recovery-review",
+  "documentType": "governance-control-recovery-successor-packet-review",
+  "controlRecoveryId": "GCR-0007",
+  "attemptId": "R01",
+  "candidateCommit": "b92f90d8139166aa690bfc2f924106f5e5ed37a8",
+  "packetSha256": "e17826eb1b8c4c1a05f0daefb0f4dc20bcd1d51669bda25b4785c85e9c69f163",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "independent-gcr7-packet-reviewer",
+  "result": "approved",
+  "findings": [],
+  "closures": [],
+  "verified": [
+    "Exact candidate b92f90d8139166aa690bfc2f924106f5e5ed37a8 is the current codex/w1-windows-local-runtime HEAD, directly descends from immutable boundary 2eea1d0c67eb57d53e88f6717de3cfcd96fcf282, and adds exactly the packet plus seven declared supporting files with no other delta.",
+    "Packet SHA-256 e17826eb1b8c4c1a05f0daefb0f4dc20bcd1d51669bda25b4785c85e9c69f163 and every declared supporting-file SHA-256 reproduce from both working bytes and the exact candidate Git blobs.",
+    "The request, runtime, and transaction v7 schemas are valid Draft 2020-12 schemas with exact declared hashes; the packet validates against request v7 with no error, and runtime v7 enforces an approved packet result only with zero findings and approvalAvailable true.",
+    "All declared GCR-0006 authority, packet, review, approval, runtime-schema, transaction-schema, and feasibility references reproduce from their immutable commits and ordered Git history. The feasibility ledger remains BLOCKED with its HIGH self-reference finding, and no GCR-0006 B00 controller, state, evidence, transaction, or adopted generation exists.",
+    "The packet supersedes only infeasible GCR-0006.B00 execution, authorizes only GCR-0007.B00 paths, preserves revision and minimum-tool revision 11, installs only neutral GCR-0007 reader ceiling 12 after B00 approval, and explicitly prohibits GCR-0006 implementation, S03/B03, W1.A04, ordinary task/Wave/gate, hold release, product, main, and remote action.",
+    "A disposable Git repository constructed a schema-valid approved P state, a schema-valid adoption-evidence blob containing approvedStateCommit=P and no A or F, A as P's unique direct child changing only artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption.json, a schema-valid transaction and successor state binding A by path, SHA-256, and commit after A existed, and F as A's unique direct child changing exactly planning/backlog.yaml and planning/governance-control-recovery/GCR-0007.B00.state.json.",
+    "The disposable lifecycle proved A and F are externally derived: the evidence blob does not contain A, the canonical successor backlog/state do not contain F, and the transaction binds A without requiring F in canonical content.",
+    "Runtime v7 rejected adoptionEvidenceCommit and finalizationCommit injected into adoption evidence. Transaction v7 rejected top-level adoptionEvidenceCommit, top-level finalizationCommit, and successor finalizationCommit. Extra-path A, extra-path F, and wrong-parent F variants all failed the exact topology checks.",
+    "The transaction contract requires authenticated P and A before publication, raw and canonical CAS, exclusive locking, durable successor and manifest writes, replace-existing/write-through publication, exact predecessor-or-successor recovery, validation before cleanup, and Git-derived F with exact two-path finalization.",
+    "The current backlog raw and Git-content hashes match the packet boundary; control revision and minimum-tool revision are 11, HOLD-W1-GRR-0002 is the sole active hold, W1 is PAUSED in wave scope, CAP-02.S04.T03 is BLOCKED, W1.A04 is absent, and G1 is PENDING.",
+    "The protected artifacts/evidence/W1.A04.B00.json witness exists with exact SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and remains untracked and unstaged; it grants no execution authority.",
+    "No GCR-0007 approval, B00 artifact, GRR-0002.S03/B03 authority, amendment, or execution state exists. The packet is inert, makes future S03 a separate independently reviewed and exactly human-approved gate, requires old-reader fail-closed and exact historic W1.A04 denial tests during B00, and grants no ordinary execution authority."
+  ],
+  "approvalAvailable": true
+}
