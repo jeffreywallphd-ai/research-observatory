@@ -763,6 +763,123 @@ class BacklogSchemaTests(unittest.TestCase):
         missing["control_plane"]["control_generations"].pop()
         self.assertTrue(taskctl.governance_control_generation_errors(missing, None))
 
+    def test_revision_twelve_headroom_requires_exact_neutral_gcr7_and_s03(self) -> None:
+        data = copy.deepcopy(self.canonical)
+        generation = {
+            "id": "GCR-0007",
+            "bootstrap_id": "GCR-0007.B00",
+            "hold_id": "HOLD-W1-GRR-0002",
+            "predecessor_revision": 11,
+            "successor_revision": 11,
+            "supported_control_ceiling": 12,
+            "generation_neutral": True,
+            "approval_reference": {
+                "path": "planning/governance-control-recovery/GCR-0007.approval.json",
+                "sha256": "a" * 64,
+                "introduction_commit": "b" * 40,
+            },
+            "review_reference": {
+                "path": "planning/governance-control-recovery/GCR-0007.B00.review-R01.json",
+                "sha256": "c" * 64,
+                "reviewed_state_commit": "d" * 40,
+                "approved_state_commit": "e" * 40,
+            },
+            "adopted_by": "codex",
+            "adopted_at": "2026-08-26T00:00:00+00:00",
+        }
+        data["control_plane"]["control_generations"].append(generation)
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+        self.assertEqual([], taskctl.governance_control_generation_errors(data, None))
+        self.assertEqual([], taskctl.recovery_hold_errors(data, None))
+
+        old_schema = json.loads(
+            subprocess.check_output(
+                ["git", "show", "8babc35d0d82607a7301bc30189167dd4c0622c9:planning/backlog.schema.json"],
+                cwd=REPO,
+                text=True,
+            )
+        )
+        self.assertTrue(list(Draft202012Validator(old_schema).iter_errors(data)))
+
+        substituted = copy.deepcopy(data)
+        substituted["control_plane"]["control_generations"][-1]["id"] = "GCR-0006"
+        self.assertTrue(backlog_schema_errors(substituted, schema_path=self.schema))
+        self.assertTrue(taskctl.governance_control_generation_errors(substituted, None))
+
+        revision_twelve = copy.deepcopy(data)
+        revision_twelve["control_plane"]["revision"] = 12
+        revision_twelve["control_plane"]["minimum_tool_revision"] = 12
+        self.assertIn(
+            "control revision differs from the latest explicit generation transition",
+            taskctl.governance_control_generation_errors(revision_twelve, None),
+        )
+        hold = next(
+            item for item in revision_twelve["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
+        )
+        supplement = copy.deepcopy(hold["supplements"][-1])
+        supplement["id"] = "GRR-0002.S03"
+        supplement["predecessor_control_revision"] = 11
+        supplement["successor_control_revision"] = 12
+        supplement["packet_reference"]["path"] = "planning/governance-recovery-requests/GRR-0002.S03.packet.json"
+        supplement["approval_reference"]["path"] = "planning/governance-recovery-approvals/GRR-0002.S03.json"
+        supplement["bootstrap"]["id"] = "GRR-0002.B03"
+        hold["supplements"].append(supplement)
+        self.assertEqual([], backlog_schema_errors(revision_twelve, schema_path=self.schema))
+        self.assertEqual([], taskctl.governance_control_generation_errors(revision_twelve, None))
+        self.assertEqual([], taskctl.recovery_hold_errors(revision_twelve, None))
+
+    def test_neutral_gcr7_does_not_change_the_w1_a04_postappend_denial(self) -> None:
+        before = copy.deepcopy(self.canonical)
+        before.setdefault("wave_amendments", []).append({"id": "W1.A04"})
+        before_hold = next(
+            item for item in before["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
+        )
+        before_s02 = next(item for item in before_hold["supplements"] if item["id"] == "GRR-0002.S02")
+        before_errors, _packet = taskctl.recovery_supplement_authority_errors(
+            before,
+            REPO,
+            before_hold,
+            before_s02,
+        )
+
+        after = copy.deepcopy(before)
+        after["control_plane"]["control_generations"].append(
+            {
+                "id": "GCR-0007",
+                "bootstrap_id": "GCR-0007.B00",
+                "hold_id": "HOLD-W1-GRR-0002",
+                "predecessor_revision": 11,
+                "successor_revision": 11,
+                "supported_control_ceiling": 12,
+                "generation_neutral": True,
+                "approval_reference": {
+                    "path": "planning/governance-control-recovery/GCR-0007.approval.json",
+                    "sha256": "a" * 64,
+                    "introduction_commit": "b" * 40,
+                },
+                "review_reference": {
+                    "path": "planning/governance-control-recovery/GCR-0007.B00.review-R01.json",
+                    "sha256": "c" * 64,
+                    "reviewed_state_commit": "d" * 40,
+                    "approved_state_commit": "e" * 40,
+                },
+                "adopted_by": "codex",
+                "adopted_at": "2026-08-26T00:00:00+00:00",
+            }
+        )
+        after_hold = next(item for item in after["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
+        after_s02 = next(item for item in after_hold["supplements"] if item["id"] == "GRR-0002.S02")
+        after_errors, _packet = taskctl.recovery_supplement_authority_errors(
+            after,
+            REPO,
+            after_hold,
+            after_s02,
+        )
+
+        expected = ["GRR-0002.S02: pre-append target amendment was fabricated in backlog state"]
+        self.assertEqual(expected, before_errors)
+        self.assertEqual(before_errors, after_errors)
+
 
 if __name__ == "__main__":
     unittest.main()
