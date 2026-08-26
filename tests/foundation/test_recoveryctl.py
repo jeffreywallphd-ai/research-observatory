@@ -825,7 +825,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
             "B01_SCOPE_APPROVAL_SHA256": hashlib.sha256(approval_payload).hexdigest(),
         }
 
-    def b02_scope_clone(self, temporary: str) -> Path:
+    def b02_scope_clone(self, temporary: str, *, revision: str = "HEAD") -> Path:
         repo = Path(temporary) / "b02-scope-authority-fixture"
         bundle = Path(temporary) / "b02-scope-authority-fixture.bundle"
         subprocess.run(
@@ -845,8 +845,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.git(repo, "config", "user.name", "Fixture Reviewer")
         self.git(repo, "config", "commit.gpgsign", "false")
         self.git(repo, "config", "core.autocrlf", "false")
-        if not self.git(repo, "branch", "--show-current"):
-            self.git(repo, "switch", "-c", "codex/b02-scope-fixture")
+        self.git(repo, "switch", "-C", "codex/w1-windows-local-runtime", revision)
         witness = repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH
         witness.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(REPO / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH, witness)
@@ -1844,8 +1843,9 @@ class GovernanceRecoveryTests(unittest.TestCase):
 
     def test_b02_post_gcr_adverse_state_and_exact_r02_lineage_bridge(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            repo = self.b02_scope_clone(temporary)
+            repo = self.b02_scope_clone(temporary, revision=recoveryctl.GCR5_FINALIZATION_COMMIT)
             _approval, _packet, hold, supplement = recoveryctl.validate_supplement(repo, "GRR-0002.S02")
+            self.assertEqual(recoveryctl.GCR5_FINALIZATION_COMMIT, self.git(repo, "rev-parse", "HEAD"))
             self.assertEqual("ACTIVE", hold["status"])
             self.assertEqual("CHANGES_REQUESTED", supplement["bootstrap"]["status"])
             self.assertEqual(
@@ -1855,7 +1855,14 @@ class GovernanceRecoveryTests(unittest.TestCase):
 
             controller = repo / "tools/recoveryctl.py"
             controller.write_bytes(controller.read_bytes() + b"\n# exact B02 R02 fixture remediation\n")
-            self.git(repo, "add", "--", "tools/recoveryctl.py")
+            shutil.copy2(REPO / "tests/foundation/test_recoveryctl.py", repo / "tests/foundation/test_recoveryctl.py")
+            self.git(
+                repo,
+                "add",
+                "--",
+                "tests/foundation/test_recoveryctl.py",
+                "tools/recoveryctl.py",
+            )
             self.git(repo, "commit", "-m", "fixture: remediate B02 R01 finding")
             candidate = self.git(repo, "rev-parse", "HEAD")
             relative, lawful_payload = self.write_b02_remediation_evidence(repo, candidate)
@@ -1884,16 +1891,15 @@ class GovernanceRecoveryTests(unittest.TestCase):
             forged["baseCommit"] = recoveryctl.B02_R01_CANDIDATE
             evidence_path.write_bytes((json.dumps(forged, indent=2) + "\n").encode())
             snapshot = self.b02_control_snapshot(repo)
+            resubmit = argparse.Namespace(
+                repo=repo,
+                supplement="GRR-0002.S02",
+                agent="codex",
+                implementation_commit=candidate,
+                evidence=relative,
+            )
             with self.assertRaisesRegex(SystemExit, "base/candidate binding mismatch"):
-                recoveryctl.supplement_evidence_document(
-                    repo,
-                    "GRR-0002.S02",
-                    packet,
-                    approval,
-                    relative,
-                    candidate,
-                    lineage_base=recoveryctl.B02_R01_CANDIDATE,
-                )
+                recoveryctl.freeze_supplement_submission(resubmit, remediation=True)
             self.assertEqual(snapshot, self.b02_control_snapshot(repo))
             evidence_path.write_bytes(lawful_payload)
 
@@ -1913,6 +1919,21 @@ class GovernanceRecoveryTests(unittest.TestCase):
                     candidate,
                 ),
             )
+
+            recoveryctl.freeze_supplement_submission(resubmit, remediation=True)
+            submitted = yaml.safe_load((repo / "planning/backlog.yaml").read_text(encoding="utf-8"))
+            submitted_bootstrap = submitted["control_plane"]["recovery_holds"][1]["supplements"][1]["bootstrap"]
+            self.assertEqual("REVIEW", submitted_bootstrap["status"])
+            self.assertEqual("R02", submitted_bootstrap["current_submission"]["attempt_id"])
+            self.assertEqual(candidate, submitted_bootstrap["current_submission"]["candidate_commit"])
+            self.git(repo, "add", "--", "planning/backlog.yaml", relative)
+            self.git(repo, "commit", "-m", "fixture: freeze B02 R02 review state")
+            with patch("builtins.print") as status_output:
+                recoveryctl.command_supplement_status(argparse.Namespace(repo=repo, supplement="GRR-0002.S02"))
+            self.assertTrue(status_output.called)
+            _approval, _packet, _hold, frozen = recoveryctl.validate_supplement(repo, "GRR-0002.S02")
+            self.assertEqual("REVIEW", frozen["bootstrap"]["status"])
+            self.assertEqual("R02", frozen["bootstrap"]["current_submission"]["attempt_id"])
 
             packet_path = repo / "planning/governance-control-recovery/GCR-0005.packet.json"
             packet_path.write_bytes(packet_path.read_bytes() + b" ")
