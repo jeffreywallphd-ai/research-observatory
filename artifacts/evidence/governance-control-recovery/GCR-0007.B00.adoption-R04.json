@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "7.0-control-recovery-adoption-evidence",
+  "documentType": "governance-control-recovery-noncircular-adoption-evidence",
+  "controlRecoveryId": "GCR-0007",
+  "bootstrapUnit": "GCR-0007.B00",
+  "approvedStateCommit": "913be52be25080b51b26885bf7e881a76a2f2b97",
+  "predecessorRevision": 11,
+  "successorRevision": 11,
+  "supportedControlCeiling": 12,
+  "generationNeutral": true,
+  "expectedFinalizationPaths": [
+    "planning/backlog.yaml",
+    "planning/governance-control-recovery/GCR-0007.B00.state.json"
+  ],
+  "checks": [
+    {
+      "command": "independent GCR-0007.B00 R04 review at d37740c7323c78c594c2077713e39c867a61832e",
+      "result": "passed",
+      "evidence": "Review ledger 8229006ec657137e5fd35ff3793909317e2ed7dd5e6dfecc751d151656887136 is approved with no findings and closes GCR-0007.B00-R03-F01."
+    },
+    {
+      "command": "python -m unittest targeted GCR-0007 and revision-12/v5 regressions",
+      "result": "passed",
+      "evidence": "Implementation replay passed 22 tests at the R04 candidate; independent review repeated the lawful boundary, the original exploit, and all five partial-boundary denials."
+    },
+    {
+      "command": "Ruff format/lint, mypy, schema, scope, history, and witness verification",
+      "result": "passed",
+      "evidence": "Independent R04 review reports static, schema, scope, append-only history, stopped-boundary, and protected-witness checks passing."
+    }
+  ],
+  "unverifiedItems": [],
+  "ordinaryExecutionAuthority": false
+}
