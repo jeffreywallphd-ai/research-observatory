@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/schemas/governance-control-recovery-request.v6.json",
+  "title": "Governance control-recovery request packet v6",
+  "type": "object",
+  "required": [
+    "$schema", "schemaVersion", "documentType", "controlRecoveryId", "title", "targetWave",
+    "status", "executionState", "classification", "rootAuthority", "predecessorAuthority",
+    "triggerEvidence", "activationBoundary", "generationTransition", "lifecycle", "bootstrapUnit",
+    "acceptanceCriteria", "verificationObligations", "rollback", "alternatives", "files",
+    "requiredApprovalStatement"
+  ],
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[A-Za-z0-9._*/-]+$"},
+    "strings": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "reference": {
+      "type": "object", "required": ["path", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}},
+      "additionalProperties": false
+    },
+    "witness": {
+      "type": "object",
+      "required": ["path", "sha256", "role", "mustRemainUntrackedAndUnstaged", "neverExecutionAuthority"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/W1.A04.B00.json"},
+        "sha256": {"const": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"},
+        "role": {"const": "atomic-failure-trigger-only"},
+        "mustRemainUntrackedAndUnstaged": {"const": true},
+        "neverExecutionAuthority": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "file": {
+      "type": "object", "required": ["path", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "sha256": {"$ref": "#/$defs/sha256"}},
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "$schema": {"const": "./governance-control-recovery-request.v6.schema.json"},
+    "schemaVersion": {"const": "6.0-control-recovery-proposal"},
+    "documentType": {"const": "governance-control-recovery-request-packet"},
+    "controlRecoveryId": {"const": "GCR-0006"},
+    "title": {"const": "Install revision-11 reader headroom for a separately governed GRR-0002.S03/B03"},
+    "targetWave": {"const": "W1"},
+    "status": {"const": "pending-human-approval"},
+    "executionState": {"const": "non-executable"},
+    "classification": {"const": "recovery-supplement-reader-ceiling-defect"},
+    "rootAuthority": {
+      "type": "object",
+      "required": ["basis", "exceptionScope", "packetReviewHistory", "approvalSchema", "approvalPath", "authorityManifest", "triggerRecord", "untrackedTriggerWitness", "approvalIntroduction"],
+      "properties": {
+        "basis": {"const": "repository-owner-governance-mismatch-protocol"},
+        "exceptionScope": {"const": "one-time-exact-packet-bootstrap-only"},
+        "packetReviewHistory": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/reference"}},
+        "approvalSchema": {"$ref": "#/$defs/file"},
+        "approvalPath": {"const": "planning/governance-control-recovery/GCR-0006.approval.json"},
+        "authorityManifest": {"$ref": "#/$defs/file"},
+        "triggerRecord": {"$ref": "#/$defs/file"},
+        "untrackedTriggerWitness": {"$ref": "#/$defs/witness"},
+        "approvalIntroduction": {
+          "type": "object",
+          "required": ["exclusiveCreate", "trackedCleanExactBranchHead", "permittedUntracked", "packetReviewApproved", "introductionCommitIsExecutionBase"],
+          "properties": {
+            "exclusiveCreate": {"const": true},
+            "trackedCleanExactBranchHead": {"const": true},
+            "permittedUntracked": {"const": "exact-trigger-witness-only"},
+            "packetReviewApproved": {"const": true},
+            "introductionCommitIsExecutionBase": {"const": true}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "predecessorAuthority": {
+      "type": "object",
+      "required": ["headCommit", "parentCommit", "backlogRawSha256", "backlogGitContentSha256", "backlogGitBlob", "activeRecovery", "installedReaderGeneration", "latestApprovedSupplementReview", "approvedRepairAmendment"],
+      "properties": {
+        "headCommit": {"const": "b6c0366ef165a4ebeb3c10042d5ecc5379833a8c"},
+        "parentCommit": {"const": "80e34d7f9b6b3b4eb36417ae27e8f53a826ea40a"},
+        "backlogRawSha256": {"const": "aae3947377e06d9c752a7eae9b5d586c600b7e66016e41d95e753b100d9a93b7"},
+        "backlogGitContentSha256": {"const": "667225c669c393215b1b884e2cdc28fea6651bfd3b7d96b4bf93d161046487d4"},
+        "backlogGitBlob": {"const": "e68bc5ae8a676a3b04be535163242a9cb997b52a"},
+        "activeRecovery": {"$ref": "#/$defs/reference"},
+        "installedReaderGeneration": {"$ref": "#/$defs/reference"},
+        "latestApprovedSupplementReview": {"$ref": "#/$defs/reference"},
+        "approvedRepairAmendment": {"$ref": "#/$defs/reference"}
+      },
+      "additionalProperties": false
+    },
+    "triggerEvidence": {
+      "type": "object",
+      "required": ["record", "failedCommand", "diagnostics", "rootCause", "atomicNoMutation", "independentAudit"],
+      "properties": {
+        "record": {"$ref": "#/$defs/file"},
+        "failedCommand": {"type": "string", "minLength": 1},
+        "diagnostics": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "rootCause": {"type": "string", "minLength": 1},
+        "atomicNoMutation": {"const": true},
+        "independentAudit": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "activationBoundary": {
+      "type": "object",
+      "required": ["controlRevision", "minimumToolRevision", "holdId", "holdStatus", "waveStatus", "waveScope", "taskId", "taskStatus", "amendmentId", "amendmentBacklogStatus", "releaseGate", "releaseGateStatus"],
+      "properties": {
+        "controlRevision": {"const": 11}, "minimumToolRevision": {"const": 11},
+        "holdId": {"const": "HOLD-W1-GRR-0002"}, "holdStatus": {"const": "ACTIVE"},
+        "waveStatus": {"const": "PAUSED"}, "waveScope": {"const": "wave"},
+        "taskId": {"const": "CAP-02.S04.T03"}, "taskStatus": {"const": "BLOCKED"},
+        "amendmentId": {"const": "W1.A04"}, "amendmentBacklogStatus": {"const": "ABSENT"},
+        "releaseGate": {"const": "G1"}, "releaseGateStatus": {"const": "PENDING"}
+      },
+      "additionalProperties": false
+    },
+    "generationTransition": {
+      "type": "object",
+      "required": ["predecessorControlRevision", "successorControlRevision", "supportedControlCeiling", "generationNeutral", "existingHoldPreserved", "newHoldCreated", "installationMode", "postBootstrapGate"],
+      "properties": {
+        "predecessorControlRevision": {"const": 11}, "successorControlRevision": {"const": 11},
+        "supportedControlCeiling": {"const": 12}, "generationNeutral": {"const": true},
+        "existingHoldPreserved": {"const": true}, "newHoldCreated": {"const": false},
+        "installationMode": {"const": "exact-packet-neutral-reader-generation"},
+        "postBootstrapGate": {"const": "independently-reviewed-and-exactly-approved-v5-GRR-0002.S03"}
+      },
+      "additionalProperties": false
+    },
+    "lifecycle": {
+      "type": "object",
+      "required": ["branch", "actor", "workspaceInvariant", "canonicalPaths", "submission", "review", "remediation", "adoption", "commands"],
+      "properties": {
+        "branch": {"const": "codex/w1-windows-local-runtime"}, "actor": {"const": "codex"},
+        "workspaceInvariant": {"type": "object", "required": ["triggerWitness", "denyOtherUntracked", "denyWitnessStagingOrMutation", "appliesAtEveryTransition"], "properties": {"triggerWitness": {"$ref": "#/$defs/witness"}, "denyOtherUntracked": {"const": true}, "denyWitnessStagingOrMutation": {"const": true}, "appliesAtEveryTransition": {"const": true}}, "additionalProperties": false},
+        "canonicalPaths": {"type": "object", "minProperties": 8, "additionalProperties": {"$ref": "#/$defs/path"}},
+        "submission": {"type": "object", "required": ["base", "candidateAncestry", "trackedCleanBranchAndHead", "pathComparison", "staleWriter", "atomicFailure", "liveRevisionDuringReview"], "properties": {"base": {"const": "approval-introduction-commit"}, "candidateAncestry": {"const": "strict-descendant"}, "trackedCleanBranchAndHead": {"const": true}, "pathComparison": {"const": "approval-base-to-candidate-exact-allowlist"}, "staleWriter": {"const": "compare-and-swap"}, "atomicFailure": {"const": "byte-stable"}, "liveRevisionDuringReview": {"const": 11}}, "additionalProperties": false},
+        "review": {"type": "object", "required": ["independent", "severityRanked", "reviewedStateBinding", "immutableAttempts", "blockingFindingDenial", "selfReviewDenied"], "properties": {"independent": {"const": true}, "severityRanked": {"const": true}, "reviewedStateBinding": {"const": true}, "immutableAttempts": {"const": true}, "blockingFindingDenial": {"const": true}, "selfReviewDenied": {"const": true}}, "additionalProperties": false},
+        "remediation": {"type": "object", "required": ["candidateAncestry", "freshEvidence", "explicitClosures", "priorAttemptsPreserved"], "properties": {"candidateAncestry": {"const": "strict-descendant-of-prior-candidate"}, "freshEvidence": {"const": true}, "explicitClosures": {"const": true}, "priorAttemptsPreserved": {"const": true}}, "additionalProperties": false},
+        "adoption": {"type": "object", "required": ["requiresApprovedB00", "predecessorRevision", "successorRevision", "supportedControlCeiling", "generationNeutral", "directChildTopology", "exactChangedPaths", "olderReadersFailClosed", "postAdoptionGate", "transaction"], "properties": {"requiresApprovedB00": {"const": true}, "predecessorRevision": {"const": 11}, "successorRevision": {"const": 11}, "supportedControlCeiling": {"const": 12}, "generationNeutral": {"const": true}, "directChildTopology": {"const": "P-to-A-to-F"}, "exactChangedPaths": {"const": ["planning/backlog.yaml", "planning/governance-control-recovery/GCR-0006.B00.state.json"]}, "olderReadersFailClosed": {"const": true}, "postAdoptionGate": {"const": "separate-v5-GRR-0002.S03-review-and-exact-approval"}, "transaction": {"type": "object", "required": ["writeAhead", "exclusiveLock", "rawAndCanonicalCas", "windowsReplaceExistingWriteThrough", "flushSuccessorsManifestPublishedFilesAndDirectories", "idempotentRecovery", "automaticRecoveryPreflight", "failClosedPartialStates", "cleanupAfterValidatedPair", "abruptTerminationBoundaryTests"], "properties": {"writeAhead": {"const": true}, "exclusiveLock": {"const": true}, "rawAndCanonicalCas": {"const": true}, "windowsReplaceExistingWriteThrough": {"const": true}, "flushSuccessorsManifestPublishedFilesAndDirectories": {"const": true}, "idempotentRecovery": {"const": true}, "automaticRecoveryPreflight": {"const": true}, "failClosedPartialStates": {"const": true}, "cleanupAfterValidatedPair": {"const": true}, "abruptTerminationBoundaryTests": {"const": true}}, "additionalProperties": false}}, "additionalProperties": false},
+        "commands": {"type": "object", "required": ["submit", "review", "resubmit", "adopt", "recover", "validate"], "additionalProperties": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
+    "bootstrapUnit": {
+      "type": "object",
+      "required": ["id", "kind", "exceptionReason", "authorizedPaths", "requiredOutcomes", "forbiddenOutcomes"],
+      "properties": {
+        "id": {"const": "GCR-0006.B00"}, "kind": {"const": "one-time-recovery-reader-generation"},
+        "exceptionReason": {"type": "string", "minLength": 1},
+        "authorizedPaths": {"$ref": "#/$defs/strings"},
+        "requiredOutcomes": {"$ref": "#/$defs/strings"},
+        "forbiddenOutcomes": {"$ref": "#/$defs/strings"}
+      },
+      "additionalProperties": false
+    },
+    "acceptanceCriteria": {"$ref": "#/$defs/strings"},
+    "verificationObligations": {"$ref": "#/$defs/strings"},
+    "rollback": {"$ref": "#/$defs/strings"},
+    "alternatives": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "object", "required": ["id", "title", "disposition", "rationale"], "properties": {"id": {"type": "string", "minLength": 1}, "title": {"type": "string", "minLength": 1}, "disposition": {"enum": ["recommended", "safe", "rejected"]}, "rationale": {"type": "string", "minLength": 1}}, "additionalProperties": false}},
+    "files": {"type": "array", "minItems": 7, "uniqueItems": true, "items": {"$ref": "#/$defs/file"}},
+    "requiredApprovalStatement": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

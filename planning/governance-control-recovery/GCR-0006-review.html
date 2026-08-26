@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GCR-0006 review</title>
+<style>body{font-family:system-ui,sans-serif;max-width:980px;margin:0 auto;padding:2rem;color:#172033;background:#f6f8fb}main{background:#fff;padding:2rem;border:1px solid #d9e0ea;border-radius:12px}h1,h2{color:#102a43}code{background:#eef2f7;padding:.1rem .3rem;border-radius:4px}table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:1px solid #ccd6e0;padding:.65rem;text-align:left;vertical-align:top}.warn{border-left:5px solid #bd5b00;background:#fff5e8;padding:1rem}.safe{border-left:5px solid #237a3b;background:#edf9f0;padding:1rem}.deny{border-left:5px solid #a61b1b;background:#fff0f0;padding:1rem}</style></head>
+<body><main>
+<p><a href="../review-site/waves/W1.html">W1 review</a> · <a href="GCR-0006.md">Canonical proposal</a></p>
+<h1>GCR-0006 — Install revision-11 reader headroom for a separately governed S03/B03</h1>
+<div class="warn"><strong>Inert packet.</strong> It grants no controller change, S03/B03, W1.A04, Wave, task, gate, hold-release, merge, or remote authority before independent packet review and exact-commit human approval.</div>
+
+<h2>What failed</h2>
+<p>The first lawful historic <code>W1.A04.B00</code> submission after independent B02 approval failed atomically. Both installed S01 and S02 validators treated the newly constructed, authorized amendment as a fabricated pre-append target. The current reader has no version headroom for another supplement.</p>
+<table><tr><th>Frozen boundary</th><th>Exact value</th></tr>
+<tr><td>Discovery commit</td><td><code>b6c0366ef165a4ebeb3c10042d5ecc5379833a8c</code></td></tr>
+<tr><td>Backlog raw / Git-content SHA-256</td><td><code>aae39473…</code> / <code>667225c6…</code></td></tr>
+<tr><td>B02 approved ledger</td><td><code>30865832e32d6416d06b2020d2efb71e5b998c7e2abbf985a4e810e89ea13823</code></td></tr>
+<tr><td>Control / W1</td><td>revision/minimum 11; sole active hold; W1 PAUSED; T03 BLOCKED; W1.A04 ABSENT; G1 PENDING</td></tr>
+<tr><td>Witness</td><td><code>4a9d944f…</code>; untracked, unstaged, non-authoritative</td></tr></table>
+
+<h2>Recommended bounded prerequisite</h2>
+<ol><li>Implement and independently review only <code>GCR-0006.B00</code>.</li><li>Add reader/schema support through ceiling 12 while live revision/minimum remains 11.</li><li>Adopt one exact generation-neutral <code>GCR-0006</code> 11→11 record after independent B00 approval.</li><li>Prove old readers fail closed on the adopted fourth-generation state.</li><li>Prepare and approve S03/B03 separately; only it may move 11→12 and repair post-append semantics.</li></ol>
+
+<h2>Safety boundary</h2>
+<div class="deny">No taskctl post-append fix, S03 packet or approval, B03 execution, B02 reopening, W1.A04 append, control revision change, task claim, hold release, W1 resume, G1 approval, product/reference change, local-main integration, or remote action.</div>
+
+<h2 id="decision-register">Alternatives</h2>
+<table><tr><th>Option</th><th>Disposition</th><th>Consequence</th></tr>
+<tr><td>A — Approve bounded GCR-0006</td><td>Recommended</td><td>Restores one reader generation of headroom while preserving separate authority for the actual repair.</td></tr>
+<tr><td>B — Keep stopped</td><td>Safe</td><td>No mutation; W1.A04 and W1 remain unavailable.</td></tr>
+<tr><td>C — Patch B02/taskctl directly</td><td>Rejected</td><td>Would alter immutable authority or execute without a governing lane.</td></tr>
+<tr><td>D — Reuse v4, same-revision supplement, or direct 12</td><td>Rejected</td><td>Breaks sequential recovery authority or older-reader fail-closed behavior.</td></tr></table>
+
+<h2>Approval gate</h2>
+<div class="safe">After an independent APPROVED packet review at the exact packet commit, human approval may authorize only GCR-0006.B00 reader headroom. Independent B00 approval and adoption remain mandatory; S03/B03 requires a separate packet review and exact human approval.</div>
+</main></body></html>

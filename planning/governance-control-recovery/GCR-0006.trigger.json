@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-recovery-trigger-record",
+  "controlRecoveryId": "GCR-0006",
+  "discoveryCommit": "b6c0366ef165a4ebeb3c10042d5ecc5379833a8c",
+  "discoveryParentCommit": "80e34d7f9b6b3b4eb36417ae27e8f53a826ea40a",
+  "branch": "codex/w1-windows-local-runtime",
+  "command": "python tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-submit W1.A04 --agent codex --approval-commit 4f92ba991fd19a2c0ae413b34416a2901d7f84b9 --implementation-commit 214ac1aac53b4396ee29f7a935ddcac2a34618b6 --evidence artifacts/evidence/W1.A04.B00.json",
+  "exitStatus": "nonzero",
+  "diagnostics": [
+    "GRR-0002.S01: pre-append target amendment was fabricated in backlog state",
+    "GRR-0002.S02: pre-append target amendment was fabricated in backlog state"
+  ],
+  "before": {
+    "backlogRawSha256": "aae3947377e06d9c752a7eae9b5d586c600b7e66016e41d95e753b100d9a93b7",
+    "backlogGitContentSha256": "667225c669c393215b1b884e2cdc28fea6651bfd3b7d96b4bf93d161046487d4",
+    "backlogGitBlob": "e68bc5ae8a676a3b04be535163242a9cb997b52a",
+    "authoredDiffPaths": [],
+    "stagedPaths": [],
+    "untrackedPaths": ["artifacts/evidence/W1.A04.B00.json"]
+  },
+  "after": {
+    "backlogRawSha256": "aae3947377e06d9c752a7eae9b5d586c600b7e66016e41d95e753b100d9a93b7",
+    "backlogGitContentSha256": "667225c669c393215b1b884e2cdc28fea6651bfd3b7d96b4bf93d161046487d4",
+    "backlogGitBlob": "e68bc5ae8a676a3b04be535163242a9cb997b52a",
+    "authoredDiffPaths": [],
+    "stagedPaths": [],
+    "untrackedPaths": ["artifacts/evidence/W1.A04.B00.json"]
+  },
+  "stoppedBoundary": {
+    "controlRevision": 11,
+    "minimumToolRevision": 11,
+    "activeHoldId": "HOLD-W1-GRR-0002",
+    "activeHoldStatus": "ACTIVE",
+    "waveId": "W1",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "taskId": "CAP-02.S04.T03",
+    "taskStatus": "BLOCKED",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "witness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "transactionArtifactsPresent": false,
+  "atomicNoMutation": true
+}
