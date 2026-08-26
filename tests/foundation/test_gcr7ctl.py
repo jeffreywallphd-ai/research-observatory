@@ -52,7 +52,7 @@ class Gcr7ctlTests(unittest.TestCase):
         self.write(repo, gcr7ctl.APPROVAL_PATH, (REPO / gcr7ctl.APPROVAL_PATH).read_bytes())
         return repo
 
-    def clone_authority_repo(self, root: Path) -> Path:
+    def clone_authority_repo(self, root: Path, *, commit: str = gcr7ctl.APPROVAL_COMMIT) -> Path:
         repo = root / "authority"
         bundle = root / "authority.bundle"
         subprocess.run(
@@ -80,6 +80,7 @@ class Gcr7ctlTests(unittest.TestCase):
         self.git(repo, "config", "user.email", "gcr7@example.test")
         self.git(repo, "config", "user.name", "GCR7 Test")
         self.git(repo, "config", "core.autocrlf", "true")
+        self.git(repo, "checkout", "-B", gcr7ctl.BRANCH, commit)
         (repo / gcr7ctl.BACKLOG_PATH).write_bytes((REPO / gcr7ctl.BACKLOG_PATH).read_bytes())
         self.write(repo, gcr7ctl.TRIGGER_PATH, (REPO / gcr7ctl.TRIGGER_PATH).read_bytes())
         return repo
@@ -424,6 +425,17 @@ class Gcr7ctlTests(unittest.TestCase):
             self.git(repo, "commit", "-m", "substitute predecessor")
             with self.assertRaisesRegex(SystemExit, "neither the exact predecessor nor successor"):
                 gcr7ctl.load_authority(repo)
+
+    def test_status_boundary_accepts_exact_frozen_review_state(self) -> None:
+        reviewed_state_commit = "04296b53573e940e046259fea589d3c351368cf7"
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = self.clone_authority_repo(Path(temporary), commit=reviewed_state_commit)
+            _approval, packet, _base = gcr7ctl.load_authority(repo)
+            state, finalization = gcr7ctl.validate_current_boundary(repo, packet, state_required=True)
+
+        self.assertIsNotNone(state)
+        self.assertEqual("REVIEW", (state or {}).get("status"))
+        self.assertIsNone(finalization)
 
     def test_child_process_no_manifest_rollback_faults_are_repeat_recoverable(self) -> None:
         boundaries = (
