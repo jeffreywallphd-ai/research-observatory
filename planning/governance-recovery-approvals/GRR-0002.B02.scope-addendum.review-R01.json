@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0-b02-scope-addendum-review",
+  "documentType": "governance-recovery-supplement-bootstrap-scope-addendum-review",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S02",
+  "bootstrapUnit": "GRR-0002.B02",
+  "attemptId": "R01",
+  "candidateCommit": "49b1cf6a8935e96d73491e4961063143574fce30",
+  "packetSha256": "5223a0c944abf40ad98ec7b34143ea98712c92a92c5a6503416ab9b99a013605",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "independent-b02-scope-addendum-reviewer",
+  "result": "approved",
+  "findings": [],
+  "verified": [
+    "The exact packet commit 49b1cf6a8935e96d73491e4961063143574fce30 is the direct child of implementation candidate 3c87c36aa930e39b14bc5e2eb779cee69dc56261 on codex/w1-windows-local-runtime. Its complete delta adds exactly the inert scope-addendum packet, its one-off schema, and its static review page; no backlog, approval, evidence, controller, test, generated output, product, reference, task, hold, Wave, or gate byte changed.",
+    "The packet SHA-256 is 5223a0c944abf40ad98ec7b34143ea98712c92a92c5a6503416ab9b99a013605. The schema SHA-256 076a1651eea6f0cf1950472be1ddc3ecda46b865052e1ecec51ec519b6f99805 and review-page SHA-256 3b98997592d89e74e3a08f20b17af915f1e503a1ac0b641bbb570bfbb8afd2cf match the packet, current bytes, and exact packet-commit Git blobs. Draft 2020-12 meta-schema and proposal validation have zero errors, and Git diff hygiene passes.",
+    "The approved S02 packet SHA-256 14452cb6e6f3959996458d7b84df0105a7f6e4bbf3f4c5fc36e9d0f0506d43c8 at 070f408ed257b3c1345a29c3be2c2f882952b856 and approval SHA-256 389d9f5595faf8a1a8de233783ac122e34d6b2d61c011cef58203764b6dfe7a1 introduced at 106921c269942401bab4cc4f732f4d1fb97b8abe match immutable Git objects, remain ancestral, and revalidate through the production supplement-authority reader.",
+    "Installed candidate db28eb20fff4865cf4685b82c199db10705a74ea contains the unchanged canonical backlog Git blob, and current release-authoritative Windows backlog bytes retain exact packet-bound SHA-256 b671614b9889bb46456cd9ce6a7ee70ed158b11ad4d3dac28a90b304a680b8ec. Implementation candidate 3c87c36aa930e39b14bc5e2eb779cee69dc56261 is a strict descendant of the installed candidate, and the addendum packet is a strict descendant of that implementation candidate.",
+    "The live boundary remains control/minimum revision 11, GRR-0002.B02 IN_PROGRESS and unsubmitted, HOLD-W1-GRR-0002 ACTIVE, W1 PAUSED at wave scope with no lease, W1.A04 absent, CAP-02.S04.T03 BLOCKED, and G1 PENDING. The sole untracked and unstaged path remains artifacts/evidence/W1.A04.B00.json with exact SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and no execution authority.",
+    "The demonstrated omission reproduces without mutation: backlog_views.py --check reports only stale docs/planning-implementation-plan.md and planning/status-summary.md, and plan_review_check.py reports that the GRR-0002 recovery supplement manifest differs from the append-only hold ledger.",
+    "In a disposable archive of exact implementation candidate 3c87c36aa930e39b14bc5e2eb779cee69dc56261 initialized as an isolated Git repository, the two canonical generators changed 118 tracked paths. Every changed path was exactly docs/planning-implementation-plan.md, planning/status-summary.md, or within planning/review-site/**; all three requested families were represented and no fourth tracked family appeared. A second generator run produced an identical byte patch.",
+    "The three generated path families are therefore the complete minimum extension at the repository-generator boundary. The review-site wildcard is confined to the canonical planning review-site tree and further bounded by exact generator commands, repeat-generation cleanliness, exact evidence diff, extra-path denial, original S02 criteria, and independent B02 review; no arbitrary generated, product, runtime, privacy, or approved-reference path is authorized.",
+    "The addendum is decision-complete and fail-closed: future recognition must require its exact immutable packet, this independent APPROVED review, separate exact human approval, hash/blob/ancestry bindings, installed and implementation candidates, strict-descendant enforcement candidate, exact branch/identities, and unchanged witness. Missing, altered, stale, forked, self-reviewed, wrong-candidate, wrong-path, extra-path, witness-deviating, or unapproved authority must be denied without scope expansion or state mutation.",
+    "The original S02 packet already authorizes only recoveryctl and its focused test to enforce this addendum, while the packet/schema/review/approval artifacts fit within the approved GRR-0002.B02* namespace. Generated outputs become eligible only after exact review and human approval are enforced in a strict descendant; B02 remains IN_PROGRESS and still requires criterion-linked evidence, first submission, and separate independent B02 review.",
+    "The approval schema grants scopeExtensionOnly=true and explicitly grants no B02 submission, amendment append, task execution, Wave resume, hold release, or gate approval. The packet and review page additionally deny B02 approval, W1.A04 submission, T03 recovery, main integration, remote action, product/reference change, force, override, and bypass.",
+    "Backlog validation, approved GRR-0002 validation, approved ECR-0003 validation, governed Python quality across 127 files, exact authority/hash/ancestry checks, and diff hygiene pass. The two expected generated-artifact checks remain adverse only because this inert addendum has not yet granted or implemented their deterministic output scope."
+  ],
+  "approvalAvailable": true
+}
