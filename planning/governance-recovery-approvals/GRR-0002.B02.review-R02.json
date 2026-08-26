@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-review",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S02",
+  "bootstrapUnit": "GRR-0002.B02",
+  "attemptId": "R02",
+  "candidateCommit": "2419dc2e5d1f96d845c394f447b1dd554ec0e6a6",
+  "reviewedStateCommit": "9ad3d4e7ff8ae6f5698c0845ea3fb69c188dcb64",
+  "reviewer": "independent-b02-control-security-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0002.B02.remediation-01.evidence.json",
+    "sha256": "d5e31ad12e10bed9e5cf87b4c795cc390a534ea5ca833645f95f08e85b5bcf20"
+  },
+  "notes": "CHANGES_REQUESTED after independent commit-bound R02 control/security review. The exact frozen REVIEW state is the sole direct child of candidate 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6. R01 candidate d363c04c385251a5d789a0313e173342e7e0ae3e strictly precedes exact GCR-0005 application finalization ce17f78a2e139285bf2e50a654999ddc42e5d8ae, which strictly precedes the R02 candidate. The ce17f78..2419dc2 implementation delta is confined to tools/recoveryctl.py and tests/foundation/test_recoveryctl.py, matches the evidence, and passes Git whitespace checks. The exact live R02 REVIEW projection passes supplement-status, supplement-validate, and canonical backlog validation; it retains the sole ACTIVE HOLD-W1-GRR-0002, revision 11, PAUSED W1 wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, PENDING G1, and the exact unstaged/untracked witness. Three existing B02 authority, stale/fork, and semantic-substitution tests pass, and both exact taskctl historic-retry guards pass. Approval is withheld because the newly added post-GCR lifecycle/lineage test fails before exercising its assertions, contradicting the evidence claim that all 32 recovery tests pass, and it does not execute the required real supplement-resubmit lifecycle. GRR-0002.B02-R01-F01 therefore remains open and no closure is recorded. This adverse review grants no B02 approval, historic retry, amendment/task execution, hold release, W1 resume, gate action, merge, or remote authority.",
+  "findings": [
+    {
+      "id": "GRR-0002.B02-R02-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 8,
+      "title": "The claimed R02 lifecycle qualification is failing and does not exercise the governed resubmission transition",
+      "reproduction": "At exact reviewed state 9ad3d4e7ff8ae6f5698c0845ea3fb69c188dcb64, run `.venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_b02_scope_addendum_is_exact_commit_bound_and_fail_closed tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_b02_scope_addendum_rejects_stale_forked_and_wrong_candidates_without_mutation tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_b02_scope_addendum_rejects_semantic_authority_substitutions_without_mutation tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_b02_post_gcr_adverse_state_and_exact_r02_lineage_bridge`. The first three tests pass, but `test_b02_post_gcr_adverse_state_and_exact_r02_lineage_bridge` errors in its initial `validate_supplement` call with `Supplemental recovery evidence must name the current codex branch`. `b02_scope_clone` creates a bundle containing HEAD, the clone is detached, and the fixture creates branch `codex/b02-scope-fixture`; immutable R01 evidence and submission history are bound to `codex/w1-windows-local-runtime`. In addition, the new test calls `supplement_evidence_document` directly and never invokes the real `supplement-resubmit` transition required by R01 remediation. This disproves the evidence statements that all 32 recovery tests pass and that the required adverse-R01-to-R02 lifecycle is covered.",
+      "requiredRemediation": "Preserve R01, R02, both evidence documents, this ledger, and the frozen states append-only. In a strict-descendant R03, make the disposable B02 fixture use the exact canonical branch required by the immutable submission history, then execute the real recoveryctl supplement-resubmit path from the authenticated GCR-0005 CHANGES_REQUESTED projection with the exact one-time ce17f78 base. Validate the resulting frozen R03 REVIEW state through status/validate, preserve R01 lineage and finding history, and exercise the required byte-stable denials rather than only calling the evidence parser. Rerun the complete affected recovery suite and report its result truthfully in fresh evidence. Freeze R03 only through supplement-resubmit and explicitly close both GRR-0002.B02-R01-F01 and GRR-0002.B02-R02-F01 only when the source behavior and executable lifecycle proof pass."
+    }
+  ],
+  "closures": []
+}
