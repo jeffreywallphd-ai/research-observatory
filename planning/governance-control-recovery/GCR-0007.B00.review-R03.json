@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "7.0-control-recovery-bootstrap-review",
+  "documentType": "governance-control-recovery-successor-bootstrap-review",
+  "controlRecoveryId": "GCR-0007",
+  "bootstrapUnit": "GCR-0007.B00",
+  "attemptId": "R03",
+  "candidateCommit": "cbeafd8be2a94d0cdf172feabe722810cba8451d",
+  "reviewedStateCommit": "e91549dbf91e991a76cbf8b7708782b897e5fd98",
+  "reviewer": "independent-gcr7-b00-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.R03.json",
+    "sha256": "e1d31046b5499186764d87c00cb71b48ac78948d9a6d7388b9827946026ac663",
+    "commit": "cd0470bf0914962eb28efbf5546b1f7dfa77b8dc"
+  },
+  "notes": "CHANGES_REQUESTED after independent incremental R03 control/security review. The candidate, evidence-only child, and state-only child bind exactly to cbeafd8be2a94d0cdf172feabe722810cba8451d, cd0470bf0914962eb28efbf5546b1f7dfa77b8dc, and e91549dbf91e991a76cbf8b7708782b897e5fd98. The four-file implementation delta is confined to tools/gcr7ctl.py, tools/taskctl.py, tools/recoveryctl.py, and tests/foundation/test_gcr7ctl.py; evidence SHA-256 and the exact witness reproduce. Deep-copy indexing prevents the reported private-index schema contamination, and attempt-scoped evidence-path changes are present. Approval is withheld because the new failed-pre-activation predicate does not require planning/backlog.yaml to remain the exact predecessor. A disposable exact-A1 clone accepted a committed backlog-only successor with unchanged APPROVED state, no transaction artifact, and the witness as the sole untracked file, then classified it as an authenticated failed pre-activation adoption. No controller review application, adoption, backlog mutation, W1.A04 action, hold release, Wave/gate action, or ordinary execution authority is granted by this ledger.",
+  "findings": [
+    {
+      "id": "GCR-0007.B00-R03-F01",
+      "severity": "HIGH",
+      "criterion": "APPROVED-to-REVIEW resubmission after failed adoption must be permitted only when the immutable failed evidence is exact and neither transaction artifacts nor either canonical file has been mutated.",
+      "description": "authenticated_failed_pre_activation_adoption authenticates the APPROVED state and attempt-scoped evidence but never requires the live backlog to equal the exact predecessor. load_authority accepts either a predecessor or structurally plausible successor backlog. Consequently, a committed partial publication that changes only planning/backlog.yaml can retain the exact APPROVED state and no transaction artifacts yet still satisfy the new retry predicate. This permits remediation submission on top of an inconsistent canonical pair and violates the packet's fail-closed recovery boundary.",
+      "reproduction": "Create a disposable clone at failed adoption-evidence commit 78fe299fefbee1eaea406e53fed7a5f05a4c18ab on codex/w1-windows-local-runtime and copy only the exact untracked witness. Load planning/backlog.yaml, append a GCR-0007 record with id GCR-0007, bootstrap_id GCR-0007.B00, hold_id HOLD-W1-GRR-0002, predecessor_revision 11, successor_revision 11, supported_control_ceiling 12, and generation_neutral true, then commit only planning/backlog.yaml. Leave planning/governance-control-recovery/GCR-0007.B00.state.json byte-identical and create no transaction artifacts. With candidate cbeafd8be2a94d0cdf172feabe722810cba8451d code, `gcr7ctl.load_authority(repo)` succeeds and `gcr7ctl.authenticated_failed_pre_activation_adoption(repo, state, state_payload)` returns true. In the reproduced run, partial commit fb87cf2738f633bdc8df697088dbf0ec02d32d1a had parent 78fe299fefbee1eaea406e53fed7a5f05a4c18ab and exactly one changed path, planning/backlog.yaml. Remediate in a strict descendant by requiring exact predecessor raw and canonical backlog bytes plus exact approved-state bytes and no transaction artifacts before the failed-adoption retry predicate can return true; add public resubmission denials for backlog-only, state-only, transaction-present, stale/substituted evidence, and wrong-attempt paths with byte-stable canonical files and state, then bind fresh evidence and close this finding in R04.",
+      "blocking": true
+    }
+  ],
+  "closures": []
+}
