@@ -50,6 +50,26 @@ B01_SCOPE_GENERATED_PATHS = [
     "planning/review-site/**",
 ]
 B01_SCOPE_ENFORCEMENT_PATHS = ["tests/foundation/test_recoveryctl.py", "tools/recoveryctl.py"]
+B02_SCOPE_PACKET_PATH = "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.packet.json"
+B02_SCOPE_SCHEMA_PATH = "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.schema.json"
+B02_SCOPE_REVIEW_PAGE_PATH = "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum-review.html"
+B02_SCOPE_REVIEW_LEDGER_PATH = "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.review-R01.json"
+B02_SCOPE_APPROVAL_PATH = "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.approval.json"
+B02_SCOPE_INSTALLED_CANDIDATE = "db28eb20fff4865cf4685b82c199db10705a74ea"
+B02_SCOPE_IMPLEMENTATION_CANDIDATE = "3c87c36aa930e39b14bc5e2eb779cee69dc56261"
+B02_SCOPE_PACKET_COMMIT = "49b1cf6a8935e96d73491e4961063143574fce30"
+B02_SCOPE_PACKET_SHA256 = "5223a0c944abf40ad98ec7b34143ea98712c92a92c5a6503416ab9b99a013605"
+B02_SCOPE_REVIEW_COMMIT = "f7ede70281af7f0cbe7c5b70d2af3aedebe732b3"
+B02_SCOPE_REVIEW_SHA256 = "52bc6eec8348ca00d41ec9e765a5c4795d469293cb361738f210c4fde1f2a818"
+B02_SCOPE_APPROVAL_COMMIT = "f6f0f640e9acd0da74a1ff73afe85f09db797a8e"
+B02_SCOPE_APPROVAL_SHA256 = "bb8dece91dd28cfe69cadfd0d4bb69d54fac1d62b31905ce8c4b683926dde3f5"
+B02_SCOPE_BACKLOG_SHA256 = "b671614b9889bb46456cd9ce6a7ee70ed158b11ad4d3dac28a90b304a680b8ec"
+B02_SCOPE_GENERATED_PATHS = [
+    "docs/planning-implementation-plan.md",
+    "planning/status-summary.md",
+    "planning/review-site/**",
+]
+B02_SCOPE_ENFORCEMENT_PATHS = ["tests/foundation/test_recoveryctl.py", "tools/recoveryctl.py"]
 
 
 def sha256(payload: bytes) -> str:
@@ -1788,6 +1808,221 @@ def approved_b01_scope_addendum_paths(repo: Path, supplement_id: str, candidate:
     return list(B01_SCOPE_GENERATED_PATHS)
 
 
+def approved_b02_scope_addendum_paths(repo: Path, supplement_id: str, candidate: str) -> list[str]:
+    """Return only the exact human-approved B02 deterministic-output extension."""
+
+    if supplement_id != "GRR-0002.S02":
+        return []
+
+    artifact_paths = [
+        B02_SCOPE_PACKET_PATH,
+        B02_SCOPE_SCHEMA_PATH,
+        B02_SCOPE_REVIEW_PAGE_PATH,
+        B02_SCOPE_REVIEW_LEDGER_PATH,
+        B02_SCOPE_APPROVAL_PATH,
+    ]
+    present = [(repo / relative).is_file() for relative in artifact_paths]
+    if not any(present):
+        return []
+    if not all(present):
+        raise SystemExit("B02 scope-addendum authority is partial")
+    for relative in artifact_paths:
+        safe_repo_path(repo, relative, label="B02 scope addendum")
+
+    schema_path = repo / B02_SCOPE_SCHEMA_PATH
+    packet, packet_payload = load_json(repo / B02_SCOPE_PACKET_PATH, "B02 scope-addendum packet")
+    approval, approval_payload = load_json(repo / B02_SCOPE_APPROVAL_PATH, "B02 scope-addendum approval")
+    ledger, ledger_payload = load_json(repo / B02_SCOPE_REVIEW_LEDGER_PATH, "B02 scope-addendum review")
+    failures = schema_errors(packet, schema_path)
+    failures.extend(schema_errors(approval, schema_path))
+    if failures:
+        raise SystemExit("B02 scope-addendum schema validation failed:\n- " + "\n- ".join(failures))
+
+    for commit, label in (
+        (B02_SCOPE_INSTALLED_CANDIDATE, "B02 installed candidate"),
+        (B02_SCOPE_IMPLEMENTATION_CANDIDATE, "B02 implementation candidate"),
+        (B02_SCOPE_PACKET_COMMIT, "B02 scope-addendum packet commit"),
+        (B02_SCOPE_REVIEW_COMMIT, "B02 scope-addendum review commit"),
+        (B02_SCOPE_APPROVAL_COMMIT, "B02 scope-addendum approval commit"),
+    ):
+        require_commit(repo, commit, label=label)
+    require_commit(
+        repo,
+        B02_SCOPE_INSTALLED_CANDIDATE,
+        ancestor_of=B02_SCOPE_IMPLEMENTATION_CANDIDATE,
+        label="B02 installed candidate",
+    )
+    if candidate in {B02_SCOPE_IMPLEMENTATION_CANDIDATE, B02_SCOPE_APPROVAL_COMMIT}:
+        raise SystemExit("B02 scope-addendum candidate must strictly descend from the approved authority")
+    require_commit(
+        repo,
+        B02_SCOPE_IMPLEMENTATION_CANDIDATE,
+        ancestor_of=candidate,
+        label="B02 implementation candidate",
+    )
+    require_commit(repo, B02_SCOPE_APPROVAL_COMMIT, ancestor_of=candidate, label="B02 scope-addendum approval")
+
+    packet_delta = taskctl.git_name_status_delta(repo, B02_SCOPE_IMPLEMENTATION_CANDIDATE, B02_SCOPE_PACKET_COMMIT)
+    review_delta = taskctl.git_name_status_delta(repo, B02_SCOPE_PACKET_COMMIT, B02_SCOPE_REVIEW_COMMIT)
+    approval_delta = taskctl.git_name_status_delta(repo, B02_SCOPE_REVIEW_COMMIT, B02_SCOPE_APPROVAL_COMMIT)
+    if (
+        taskctl.git_commit_parents(repo, B02_SCOPE_PACKET_COMMIT) != [B02_SCOPE_IMPLEMENTATION_CANDIDATE]
+        or packet_delta
+        != {
+            B02_SCOPE_PACKET_PATH: "A",
+            B02_SCOPE_SCHEMA_PATH: "A",
+            B02_SCOPE_REVIEW_PAGE_PATH: "A",
+        }
+        or taskctl.git_commit_parents(repo, B02_SCOPE_REVIEW_COMMIT) != [B02_SCOPE_PACKET_COMMIT]
+        or review_delta != {B02_SCOPE_REVIEW_LEDGER_PATH: "A"}
+        or taskctl.git_commit_parents(repo, B02_SCOPE_APPROVAL_COMMIT) != [B02_SCOPE_REVIEW_COMMIT]
+        or approval_delta != {B02_SCOPE_APPROVAL_PATH: "A"}
+    ):
+        raise SystemExit("B02 scope-addendum authority is not the exact direct-child history")
+
+    immutable_blobs = {
+        B02_SCOPE_PACKET_PATH: (B02_SCOPE_PACKET_COMMIT, packet_payload),
+        B02_SCOPE_SCHEMA_PATH: (B02_SCOPE_PACKET_COMMIT, (repo / B02_SCOPE_SCHEMA_PATH).read_bytes()),
+        B02_SCOPE_REVIEW_PAGE_PATH: (
+            B02_SCOPE_PACKET_COMMIT,
+            (repo / B02_SCOPE_REVIEW_PAGE_PATH).read_bytes(),
+        ),
+        B02_SCOPE_REVIEW_LEDGER_PATH: (B02_SCOPE_REVIEW_COMMIT, ledger_payload),
+        B02_SCOPE_APPROVAL_PATH: (B02_SCOPE_APPROVAL_COMMIT, approval_payload),
+    }
+    if any(
+        taskctl.git_blob(repo, commit, relative) != payload for relative, (commit, payload) in immutable_blobs.items()
+    ):
+        raise SystemExit("B02 scope-addendum artifact differs from its immutable Git blob")
+    if (
+        sha256(packet_payload) != B02_SCOPE_PACKET_SHA256
+        or sha256(ledger_payload) != B02_SCOPE_REVIEW_SHA256
+        or sha256(approval_payload) != B02_SCOPE_APPROVAL_SHA256
+        or taskctl.approval_introduction_commit(repo, B02_SCOPE_REVIEW_LEDGER_PATH) != B02_SCOPE_REVIEW_COMMIT
+        or taskctl.approval_introduction_commit(repo, B02_SCOPE_APPROVAL_PATH) != B02_SCOPE_APPROVAL_COMMIT
+    ):
+        raise SystemExit("B02 scope-addendum hashes or immutable introductions differ")
+
+    authority = packet.get("authority") or {}
+    base_approval, base_packet, base_approval_payload, base_packet_payload = load_supplement_authority(
+        repo, "GRR-0002.S02"
+    )
+    supplement_packet = authority.get("supplementPacket") or {}
+    supplement_approval = authority.get("supplementApproval") or {}
+    installed = authority.get("installedCandidate") or {}
+    implementation = authority.get("implementationCandidate") or {}
+    installed_backlog = taskctl.git_blob(repo, B02_SCOPE_INSTALLED_CANDIDATE, "planning/backlog.yaml")
+    current_backlog = (repo / "planning/backlog.yaml").read_bytes()
+    witness = authority.get("triggerWitness") or {}
+    if (
+        packet.get("recoveryRequestId") != "GRR-0002"
+        or packet.get("supplementId") != "GRR-0002.S02"
+        or packet.get("bootstrapUnit") != "GRR-0002.B02"
+        or packet.get("branch") != "codex/w1-windows-local-runtime"
+        or supplement_packet
+        != {
+            "path": "planning/governance-recovery-requests/GRR-0002.S02.packet.json",
+            "sha256": sha256(base_packet_payload),
+            "commit": (base_approval.get("packet") or {}).get("commit"),
+        }
+        or supplement_approval
+        != {
+            "path": "planning/governance-recovery-approvals/GRR-0002.S02.json",
+            "sha256": sha256(base_approval_payload),
+            "introductionCommit": taskctl.approval_introduction_commit(
+                repo, "planning/governance-recovery-approvals/GRR-0002.S02.json"
+            ),
+        }
+        or installed
+        != {
+            "commit": B02_SCOPE_INSTALLED_CANDIDATE,
+            "backlogPath": "planning/backlog.yaml",
+            "backlogSha256": B02_SCOPE_BACKLOG_SHA256,
+        }
+        or installed_backlog is None
+        or installed_backlog != current_backlog.replace(b"\r\n", b"\n")
+        or sha256(current_backlog) != B02_SCOPE_BACKLOG_SHA256
+        or implementation
+        != {
+            "commit": B02_SCOPE_IMPLEMENTATION_CANDIDATE,
+            "strictDescendantOfInstalledCandidate": True,
+        }
+        or witness
+        != {
+            "path": CONTROL_RECOVERY_TRIGGER_PATH,
+            "sha256": CONTROL_RECOVERY_TRIGGER_SHA256,
+            "untracked": True,
+            "unstaged": True,
+            "executionAuthority": False,
+        }
+        or base_packet.get("supplementalBootstrap", {}).get("id") != "GRR-0002.B02"
+    ):
+        raise SystemExit("B02 scope-addendum base authority, candidates, backlog, or witness differs")
+
+    files = {str(item.get("path")): str(item.get("sha256")) for item in packet.get("files", [])}
+    if files != {
+        B02_SCOPE_SCHEMA_PATH: sha256((repo / B02_SCOPE_SCHEMA_PATH).read_bytes()),
+        B02_SCOPE_REVIEW_PAGE_PATH: sha256((repo / B02_SCOPE_REVIEW_PAGE_PATH).read_bytes()),
+    }:
+        raise SystemExit("B02 scope-addendum file ledger is incomplete or substituted")
+    scope = packet.get("scopeExtension") or {}
+    if (
+        scope.get("deterministicGeneratedPaths") != B02_SCOPE_GENERATED_PATHS
+        or scope.get("enforcementPaths") != B02_SCOPE_ENFORCEMENT_PATHS
+        or scope.get("exactSupplementOnly") is not True
+        or scope.get("strictDescendantRequired") is not True
+    ):
+        raise SystemExit("B02 scope-addendum extension differs from the exact approved paths")
+    for pattern in B02_SCOPE_GENERATED_PATHS:
+        validate_scope_pattern(repo, pattern)
+
+    review = approval.get("independentReview") or {}
+    ledger_reference = review.get("ledger") or {}
+    packet_reference = approval.get("packet") or {}
+    execution = approval.get("executionAuthority") or {}
+    if (
+        approval.get("status") != "APPROVED"
+        or approval.get("approvedBy") == review.get("reviewer")
+        or packet_reference.get("path") != B02_SCOPE_PACKET_PATH
+        or packet_reference.get("sha256") != B02_SCOPE_PACKET_SHA256
+        or packet_reference.get("commit") != B02_SCOPE_PACKET_COMMIT
+        or packet_reference.get("schemaPath") != B02_SCOPE_SCHEMA_PATH
+        or packet_reference.get("schemaSha256") != files[B02_SCOPE_SCHEMA_PATH]
+        or packet_reference.get("reviewPath") != B02_SCOPE_REVIEW_PAGE_PATH
+        or packet_reference.get("reviewSha256") != files[B02_SCOPE_REVIEW_PAGE_PATH]
+        or review.get("candidateCommit") != B02_SCOPE_PACKET_COMMIT
+        or review.get("packetSha256") != B02_SCOPE_PACKET_SHA256
+        or review.get("result") != "APPROVED"
+        or review.get("openFindingIds") != []
+        or ledger_reference
+        != {
+            "path": B02_SCOPE_REVIEW_LEDGER_PATH,
+            "sha256": B02_SCOPE_REVIEW_SHA256,
+            "commit": B02_SCOPE_REVIEW_COMMIT,
+        }
+        or ledger.get("candidateCommit") != B02_SCOPE_PACKET_COMMIT
+        or ledger.get("packetSha256") != B02_SCOPE_PACKET_SHA256
+        or ledger.get("reviewer") != review.get("reviewer")
+        or ledger.get("result") != "approved"
+        or ledger.get("findings") != []
+        or ledger.get("approvalAvailable") is not True
+        or execution.get("scopeExtensionOnly") is not True
+        or any(
+            execution.get(field) is not False
+            for field in (
+                "b02Submission",
+                "amendmentAppend",
+                "taskExecution",
+                "waveResume",
+                "holdRelease",
+                "gateApproval",
+            )
+        )
+    ):
+        raise SystemExit("B02 scope-addendum approval or independent review is invalid")
+    return list(B02_SCOPE_GENERATED_PATHS)
+
+
 def supplement_evidence_document(
     repo: Path,
     supplement_id: str,
@@ -1842,6 +2077,7 @@ def supplement_evidence_document(
         raise SystemExit("Supplemental recovery evidence changedPaths differs from the exact Git diff")
     patterns = [str(item) for item in bootstrap.get("authorizedPaths", [])]
     patterns.extend(approved_b01_scope_addendum_paths(repo, supplement_id, candidate))
+    patterns.extend(approved_b02_scope_addendum_paths(repo, supplement_id, candidate))
     for changed in actual_paths:
         safe_repo_path(repo, changed, label="Changed supplemental recovery path", require_exists=False)
         if not path_authorized(changed, patterns):
