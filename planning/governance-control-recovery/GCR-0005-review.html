@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GCR-0005 review</title>
+<style>body{font-family:system-ui,sans-serif;max-width:980px;margin:0 auto;padding:2rem;color:#172033;background:#f6f8fb}main{background:#fff;padding:2rem;border:1px solid #d9e0ea;border-radius:12px}h1,h2{color:#102a43}code{background:#eef2f7;padding:.1rem .3rem;border-radius:4px}table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:1px solid #ccd6e0;padding:.65rem;text-align:left;vertical-align:top}.warn{border-left:5px solid #bd5b00;background:#fff5e8;padding:1rem}.safe{border-left:5px solid #237a3b;background:#edf9f0;padding:1rem}.deny{border-left:5px solid #a61b1b;background:#fff0f0;padding:1rem}</style></head>
+<body><main>
+<p><a href="../review-site/waves/W1.html">W1 review</a> · <a href="GCR-0005.md">Canonical proposal</a></p>
+<h1>GCR-0005 — Recover the exact GRR-0002.B02 R01 adverse-review projection</h1>
+<div class="warn"><strong>Inert packet.</strong> It grants no B02 review projection, remediation, W1.A04, Wave, task, gate, hold-release, merge, or remote authority before independent packet review and exact-commit human approval.</div>
+
+<h2>What failed</h2>
+<p>Independent B02 R01 review produced an exact <code>CHANGES_REQUESTED</code> ledger. The approved controller cannot record it because its B02 addendum loader requires the lawful live <code>REVIEW</code> backlog to equal the earlier <code>IN_PROGRESS</code> installed-candidate bytes. No backlog write occurred.</p>
+<table><tr><th>Frozen boundary</th><th>Exact value</th></tr>
+<tr><td>Reviewed-state commit</td><td><code>962f92ff831c9a3d87a7d6ba796c8194e70b6c2c</code></td></tr>
+<tr><td>Candidate</td><td><code>d363c04c385251a5d789a0313e173342e7e0ae3e</code></td></tr>
+<tr><td>Backlog SHA-256</td><td><code>431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1</code></td></tr>
+<tr><td>Adverse ledger SHA-256</td><td><code>4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09</code></td></tr>
+<tr><td>Control / W1</td><td>revision/minimum 11; active hold; W1 PAUSED; T03 BLOCKED; W1.A04 ABSENT; G1 PENDING</td></tr></table>
+
+<h2>Why ordinary remediation cannot start</h2>
+<p><code>supplement-resubmit</code> requires a recorded adverse state, but the controller cannot record it. Another supplement would create two non-approved supplements and is rejected. Editing the backlog, running uncommitted controller logic, changing the reviewed-state binding, or skipping R01 would bypass the governed history.</p>
+
+<h2>Recommended exact projection</h2>
+<ol><li>Implement and independently review only <code>GCR-0005.B00</code>.</li><li>Authenticate the frozen backlog, candidate, evidence, unchanged ledger, S02/addendum authority, hold, stopped Wave boundary, and witness.</li><li>Use a crash-safe one-time controller to derive only the ledger's adverse B02 projection.</li><li>Finalize one direct-child commit changing the backlog and its six deterministic views.</li><li>Resume ordinary strict-descendant B02 R02 remediation; do not close the R01 finding in the bridge.</li></ol>
+
+<h2>Safety boundary</h2>
+<div class="deny">No ledger edit, finding closure, B02 R02 submission/approval, control revision change, W1.A04 action, task claim, hold release, W1 resume, G1 approval, product/reference change, local-main integration, or remote action.</div>
+
+<h2 id="decision-register">Alternatives</h2>
+<table><tr><th>Option</th><th>Disposition</th><th>Consequence</th></tr>
+<tr><td>A — Approve exact GCR-0005</td><td>Recommended</td><td>Preserves R01 and restores the approved remediation lane through explicit recovery authority.</td></tr>
+<tr><td>B — Keep stopped</td><td>Safe</td><td>No mutation; B02, W1.A04, and W1 remain unavailable.</td></tr>
+<tr><td>C — Patch before projection</td><td>Rejected</td><td>Changes the reviewed boundary or bypasses the failed review transition.</td></tr>
+<tr><td>D — Start S03/B03 or skip R01</td><td>Rejected</td><td>Violates the single-nonapproved-supplement or append-only-review controls.</td></tr></table>
+
+<h2>Approval gate</h2>
+<div class="safe">After an independent APPROVED packet review at the exact packet commit, human approval may authorize only GCR-0005.B00. A separate independent B00 approval remains mandatory before the review projection may be applied.</div>
+</main></body></html>

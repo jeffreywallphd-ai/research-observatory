@@ -1,0 +1,269 @@
+{
+  "$schema": "./governance-control-recovery-request.v5.schema.json",
+  "schemaVersion": "5.0-control-recovery-proposal",
+  "documentType": "governance-control-recovery-request-packet",
+  "controlRecoveryId": "GCR-0005",
+  "title": "Recover the exact GRR-0002.B02 R01 adverse-review projection",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "approved-supplement-review-transition-defect",
+  "rootAuthority": {
+    "basis": "repository-owner-governance-mismatch-protocol",
+    "exceptionScope": "one-time-exact-supplement-review-transition-recovery-only",
+    "packetReviewHistory": [],
+    "approvalSchema": {
+      "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v5.schema.json",
+      "sha256": "54f280faf9810811801fc4a405caee0bdb29d7c4231ae91e9b4b85efd7235ac8"
+    },
+    "approvalPath": "planning/governance-control-recovery/GCR-0005.approval.json",
+    "authorityManifest": {
+      "path": "planning/governance-control-recovery/GCR-0005.authority.json",
+      "sha256": "b6a3470ddb0980d28dcf20ea6b78e664713d03d3261ac50e15917d5ada2a75b3"
+    },
+    "untrackedTriggerWitness": {
+      "path": "artifacts/evidence/W1.A04.B00.json",
+      "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+      "role": "atomic-failure-trigger-only",
+      "mustRemainUntrackedAndUnstaged": true,
+      "neverExecutionAuthority": true
+    },
+    "approvalIntroduction": {
+      "exclusiveCreate": true,
+      "trackedCleanExactBranchHead": true,
+      "permittedUntracked": "exact-witness-only",
+      "packetReviewApproved": true,
+      "introductionCommitIsExecutionBase": true
+    }
+  },
+  "predecessorAuthority": {
+    "supplementPacket": {
+      "path": "planning/governance-recovery-requests/GRR-0002.S02.packet.json",
+      "sha256": "14452cb6e6f3959996458d7b84df0105a7f6e4bbf3f4c5fc36e9d0f0506d43c8",
+      "commit": "070f408ed257b3c1345a29c3be2c2f882952b856"
+    },
+    "supplementApproval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.S02.json",
+      "sha256": "389d9f5595faf8a1a8de233783ac122e34d6b2d61c011cef58203764b6dfe7a1",
+      "commit": "106921c269942401bab4cc4f732f4d1fb97b8abe"
+    },
+    "scopeAddendumApproval": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.approval.json",
+      "sha256": "bb8dece91dd28cfe69cadfd0d4bb69d54fac1d62b31905ce8c4b683926dde3f5",
+      "commit": "f6f0f640e9acd0da74a1ff73afe85f09db797a8e"
+    },
+    "candidateCommit": "d363c04c385251a5d789a0313e173342e7e0ae3e",
+    "evidence": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B02.evidence.json",
+      "sha256": "77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595",
+      "commit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c"
+    },
+    "frozenReviewedState": {
+      "path": "planning/backlog.yaml",
+      "sha256": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1",
+      "commit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c",
+      "status": "REVIEW",
+      "attemptId": "R01"
+    },
+    "adverseLedger": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json",
+      "sha256": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09",
+      "commit": "8b784cabc5d5d996c00fd2fbcc8f22a1ad05b5bb",
+      "reviewedStateCommit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c",
+      "result": "changes-requested",
+      "executionAuthority": false
+    },
+    "defectiveController": {
+      "path": "tools/recoveryctl.py",
+      "defect": "live-backlog-equality-to-pre-submit-installed-candidate",
+      "mustRemainReviewCandidateBound": true
+    }
+  },
+  "triggerEvidence": {
+    "failedCommand": ".venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . supplement-review GRR-0002.S02 --reviewer independent-b02-control-security-reviewer --from planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json",
+    "exitCode": 1,
+    "diagnostic": "The exact frozen REVIEW state is rejected with `B02 scope-addendum base authority, candidates, backlog, or witness differs` before any backlog write because the addendum loader compares the live REVIEW backlog with its earlier installed-candidate IN_PROGRESS bytes.",
+    "atomicNoMutation": true,
+    "backlogSha256AfterFailure": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1",
+    "ledgerSha256AfterFailure": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09",
+    "independentAudit": "An independent control/security reviewer reproduced both supplement-status and supplement-validate failures at the exact frozen REVIEW state, confirmed one consolidated HIGH blocking finding, and created only the immutable adverse ledger without touching the backlog or witness."
+  },
+  "activationBoundary": {
+    "controlRevision": 11,
+    "minimumToolRevision": 11,
+    "holdId": "HOLD-W1-GRR-0002",
+    "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "taskId": "CAP-02.S04.T03",
+    "taskStatus": "BLOCKED",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING",
+    "supplementId": "GRR-0002.S02",
+    "bootstrapStatus": "REVIEW"
+  },
+  "reviewTransition": {
+    "kind": "one-time-exact-grr-0002-b02-r01-adverse-projection-recovery",
+    "reviewedStateCommit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c",
+    "result": "changes-requested",
+    "controlRevisionBefore": 11,
+    "controlRevisionAfter": 11,
+    "normalProjectionUnavailable": true,
+    "explicitRecoveryAuthority": true,
+    "exactFinalChangedPaths": [
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/status-summary.md",
+      "planning/review-site/manifest.json",
+      "planning/review-site/recoveries/GRR-0002.html",
+      "planning/review-site/recoveries/index.html",
+      "planning/review-site/waves/W1.html"
+    ],
+    "postRecoveryState": "CHANGES_REQUESTED",
+    "ordinaryExecutionStillDenied": true
+  },
+  "lifecycle": {
+    "branch": "codex/w1-windows-local-runtime",
+    "actor": "codex",
+    "workspaceInvariant": {
+      "triggerWitness": {
+        "path": "artifacts/evidence/W1.A04.B00.json",
+        "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+        "role": "atomic-failure-trigger-only",
+        "mustRemainUntrackedAndUnstaged": true,
+        "neverExecutionAuthority": true
+      },
+      "adverseLedger": "exact-tracked-unchanged-GRR-0002.B02.review-R01",
+      "denyOtherUntracked": true,
+      "denyStagingOrMutation": true,
+      "appliesAtEveryTransition": true
+    },
+    "canonicalPaths": {
+      "controller": "tools/gcr5ctl.py",
+      "state": "planning/governance-control-recovery/GCR-0005.B00.state.json",
+      "evidencePattern": "artifacts/evidence/governance-control-recovery/GCR-0005.B00.RNN.json",
+      "reviewPattern": "planning/governance-control-recovery/GCR-0005.B00.review-RNN.json",
+      "applicationEvidence": "artifacts/evidence/governance-control-recovery/GCR-0005.B00.application.json",
+      "transactionSchema": "planning/governance-control-recovery/governance-control-recovery-transaction.v5.schema.json",
+      "transaction": "planning/governance-control-recovery/GCR-0005.B00.application-transaction.json",
+      "lock": "planning/governance-control-recovery/GCR-0005.B00.application.lock",
+      "backlogNext": "planning/governance-control-recovery/GCR-0005.B00.backlog.next"
+    },
+    "implementation": {
+      "base": "GCR-0005-approval-introduction-commit",
+      "candidateAncestry": "strict-descendant",
+      "exactAllowlist": true,
+      "liveRevision": 11,
+      "noProjectionBeforeApproval": true
+    },
+    "review": {
+      "independent": true,
+      "commitBound": true,
+      "severityRanked": true,
+      "blockingFindingDenial": true,
+      "appendOnly": true
+    },
+    "application": {
+      "requiresApprovedB00": true,
+      "ledgerBytePreserved": true,
+      "backlogLedgerDerived": true,
+      "explicitRecoveryRecord": true,
+      "crashSafe": true,
+      "directChildFinalization": true,
+      "exactChangedPaths": [
+        "docs/planning-implementation-plan.md",
+        "planning/backlog.yaml",
+        "planning/status-summary.md",
+        "planning/review-site/manifest.json",
+        "planning/review-site/recoveries/GRR-0002.html",
+        "planning/review-site/recoveries/index.html",
+        "planning/review-site/waves/W1.html"
+      ],
+      "postApplicationGate": "ordinary-GRR-0002.B02-R02-strict-descendant-resubmission"
+    },
+    "commands": {
+      "submit": "python tools/gcr5ctl.py --repo . submit GCR-0005 --agent codex --approval-commit <sha> --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0005.B00.RNN.json",
+      "review": "python tools/gcr5ctl.py --repo . review GCR-0005 --reviewer <independent-reviewer> --from planning/governance-control-recovery/GCR-0005.B00.review-RNN.json",
+      "resubmit": "python tools/gcr5ctl.py --repo . resubmit GCR-0005 --agent codex --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0005.B00.RNN.json",
+      "apply": "python tools/gcr5ctl.py --repo . apply GCR-0005 --agent codex --approved-state-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0005.B00.application.json",
+      "recover": "python tools/gcr5ctl.py --repo . recover GCR-0005 --agent codex",
+      "validate": "python tools/gcr5ctl.py --repo . validate GCR-0005"
+    }
+  },
+  "bootstrapUnit": {
+    "id": "GCR-0005.B00",
+    "kind": "one-time-supplement-review-transition-recovery-controller",
+    "exceptionReason": "The independently reviewed B02 R01 adverse result cannot be represented by the approved recoveryctl path because the new scope-addendum authority incorrectly compares the lawful live REVIEW backlog with the pre-submit installed-candidate bytes, while ordinary B02 remediation and a sequential supplement are both fail-closed until the adverse projection exists.",
+    "authorizedPaths": [
+      "artifacts/evidence/governance-control-recovery/GCR-0005.B00*",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/governance-control-recovery/GCR-0005.B00*",
+      "planning/review-site/manifest.json",
+      "planning/review-site/recoveries/GRR-0002.html",
+      "planning/review-site/recoveries/index.html",
+      "planning/review-site/waves/W1.html",
+      "planning/status-summary.md",
+      "quality-scope.json",
+      "tests/foundation/test_gcr5ctl.py",
+      "tools/gcr5ctl.py"
+    ],
+    "requiredOutcomes": [
+      "Bind all authority to exact B02 reviewed-state commit 962f92ff831c9a3d87a7d6ba796c8194e70b6c2c, candidate d363c04c385251a5d789a0313e173342e7e0ae3e, evidence SHA-256 77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595, backlog SHA-256 431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1, adverse ledger SHA-256 4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09, active hold, stopped W1 boundary, and protected witness.",
+      "Preserve the S02 packet/approval, B02 candidate/evidence, deterministic-output addendum authority, R01 reviewed-state binding, adverse ledger, finding, and all prior GCR/GRR/ECR histories byte-for-byte.",
+      "Implement a separate exact gcr5ctl B00 lifecycle with commit-bound evidence, append-only attempts, independent review, third-round root-cause analysis, and no ordinary execution authority.",
+      "After independent GCR-0005 B00 approval, derive the exact B02 R01 attempt, review, finding, and CHANGES_REQUESTED projection only from the unchanged ledger and frozen submission.",
+      "Apply the exact backlog transition and six deterministic view updates through a crash-safe compare-and-swap protocol that denies stale, forked, dirty, substituted, redirected, or accompanied state before mutation.",
+      "Finalize the projection as a direct-child commit changing exactly the seven declared derived-state paths, while control revision remains 11 and the original R01 ledger remains unchanged.",
+      "Leave GRR-0002.B02-R01-F01 open and require ordinary strict-descendant B02 R02 remediation, fresh evidence, explicit closure, and independent approval after the bridge.",
+      "Keep HOLD-W1-GRR-0002 ACTIVE, W1 PAUSED, CAP-02.S04.T03 BLOCKED, W1.A04 absent, G1 PENDING, and the witness untracked, unstaged, unchanged, and non-authoritative."
+    ],
+    "prohibitedOutcomes": [
+      "No edit, replacement, deletion, staging, reinterpretation, or synthesis of the B02 R01 ledger, candidate, evidence, reviewed-state binding, S02/addendum authority, prior evidence/reviews/findings, or protected witness.",
+      "No representation of the delayed projection as the original command's successful direct transition, no skipped R01, no finding closure, and no weakening of exact history validation outside the singular approved bridge.",
+      "No B02 remediation/resubmission/approval, control revision change, W1.A04 append or submission, amendment/task mutation, hold release, W1 resume, G1 approval, main integration, remote push, or product/reference change.",
+      "No generic recovery command, arbitrary reviewed-state/candidate/ledger selector, dirty-worktree exception, competing hold or supplement, force, override, rollback, or bypass."
+    ]
+  },
+  "acceptanceCriteria": [
+    "The GCR-0005 packet, request/runtime/transaction schemas, authority manifest, proposal, and review page are Draft 2020-12 valid where applicable, path-safe, internally hash-bound, exact-commit reviewable, and inert.",
+    "Every S02 packet/approval, B02 addendum approval chain, candidate, evidence, reviewed backlog, adverse ledger, active-hold, W1, T03, W1.A04, G1, Git ancestry, and witness identity reproduces the exact frozen boundary and immutable bytes.",
+    "The failed supplement-review command is reproducible and byte-stable: it fails only at the installed-versus-live backlog assumption and leaves backlog and ledger hashes unchanged.",
+    "GCR-0005 approval can be introduced only after an independent APPROVED packet review at the exact packet commit; its clean codex-branch introduction commit is the sole B00 implementation base.",
+    "B00 implementation changes only authorized controller/test/evidence/state paths, cannot edit the adverse ledger or reviewed backlog projection, keeps revision 11, and cannot apply the bridge before independent B00 approval.",
+    "The GCR-0005 authority reader accepts only the exact independently approved packet, B00 review, active hold, frozen B02 R01 boundary, and witness, rejecting missing, stale, forked, adverse, substituted, dirty, or internally inconsistent authority byte-stably.",
+    "Application derives the exact B02 R01 attempt and CHANGES_REQUESTED state from the unchanged ledger, records explicit GCR-0005 recovery authority in its application evidence, and closes no finding.",
+    "Application and repeated recovery can yield only the exact frozen predecessor or exact ledger-derived successor, including abrupt child-process termination at every durable boundary and deterministic-view generation failure.",
+    "The finalization commit is the direct child of application evidence and changes exactly the backlog and six declared deterministic views; revision 11 and every ordinary execution gate remain closed.",
+    "Criterion-linked evidence, adversarial real-Git coverage, governed Python quality, exact diff scope, protected hashes, generated-view integrity, and independent review pass with no unexplained unverified item."
+  ],
+  "verificationObligations": [
+    "Validate all schemas and exact file/hash/Git bindings, S02 and B02 authority, scope-addendum chain, candidate/evidence/reviewed state/adverse ledger, active hold, backlog, W1/T03/W1.A04/G1 boundary, and witness invariants.",
+    "Run a real-Git test from exact frozen commit 962f92ff through GCR-0005 approval, B00 review, crash-safe projection application, exact seven-path finalization, and ordinary B02 R02 eligibility without direct backlog edits or mocked authority boundaries.",
+    "Cover missing/mutated/staged/tracked/symlinked witness; missing/mutated ledger; wrong hashes/commits/candidate/evidence/state/result/reviewer/findings/closures; adverse GCR-0005 review; dirty workspace; forked authority; stale CAS; transaction substitution; generation failure; abrupt termination; repeated recovery; and old-reader denial.",
+    "Prove byte-identical denial for backlog, ledger, witness, hold, W1, task, amendment, gate, product, references, prior authority, and transaction artifacts on every failed check.",
+    "Run governed Python quality, backlog and generated-view validation, review-site validation, and Git diff/check/status hygiene selected by the exact changed-path risk surface."
+  ],
+  "rollback": [
+    "Before approved application, delete only uncommitted GCR-0005 transaction artifacts; the frozen backlog, ledger, and witness remain exact.",
+    "During an interrupted application, gcr5ctl recover must restore the exact frozen predecessor or complete the exact ledger-derived successor from the authenticated manifest; no manual partial cleanup is permitted.",
+    "After finalization, do not rewrite or roll back history; corrective work uses append-only GCR-0005 B00 review remediation or ordinary B02 R02 review as applicable."
+  ],
+  "alternatives": [
+    {"id": "A", "title": "Approve exact GCR-0005 projection", "disposition": "recommended", "consequence": "Preserves the adverse review and lawfully restores ordinary strict-descendant B02 remediation."},
+    {"id": "B", "title": "Keep recovery stopped", "disposition": "safe", "consequence": "No mutation occurs; B02, W1.A04, and W1 remain unavailable."},
+    {"id": "C", "title": "Patch before recording R01", "disposition": "rejected", "consequence": "Changes the reviewed boundary or bypasses the failed review transition."},
+    {"id": "D", "title": "Start S03/B03 or skip R01", "disposition": "rejected", "consequence": "Violates the single-nonapproved-supplement or append-only-review controls."}
+  ],
+  "files": [
+    {"path": "planning/governance-control-recovery/GCR-0005.md", "sha256": "aa1b5cc5538a48a1112aa13a0fe0d012e3badc29afe59917d90d7ba05434d949"},
+    {"path": "planning/governance-control-recovery/GCR-0005-review.html", "sha256": "10192096f8bb56535464d93800918815a447b50ff734d018852434b69225a13f"},
+    {"path": "planning/governance-control-recovery/GCR-0005.authority.json", "sha256": "b6a3470ddb0980d28dcf20ea6b78e664713d03d3261ac50e15917d5ada2a75b3"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-request.v5.schema.json", "sha256": "94c3a600974c8e96fc4233aad43f732e33c4112cc199a33edcbb91f03df619ee"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v5.schema.json", "sha256": "54f280faf9810811801fc4a405caee0bdb29d7c4231ae91e9b4b85efd7235ac8"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-transaction.v5.schema.json", "sha256": "1e1e5faabf6c9060d8dab176adca00b41a41da204e437f430599ccfe664ef82a"}
+  ],
+  "requiredApprovalStatement": "Approve only GCR-0005.B00 for the exact independently reviewed packet commit, preserving the GRR-0002.B02 R01 candidate, evidence, reviewed-state binding, adverse ledger, and open finding byte-for-byte and authorizing no review projection before independent B00 approval."
+}
