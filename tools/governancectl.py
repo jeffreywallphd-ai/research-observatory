@@ -14,11 +14,14 @@ import copy
 import hashlib
 import io
 import json
+import os
+import stat
 from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any
 
 import taskctl
+import yaml
 
 SCHEMA_VERSION = "1.0"
 DOCUMENT_TYPE = "governance-next-action-shadow"
@@ -26,9 +29,38 @@ DEFAULT_PROFILE = "LOC"
 DEFAULT_PLATFORM = "windows-x64"
 
 
+def is_redirected_path(path: Path) -> bool:
+    if path.is_symlink() or getattr(os.path, "isjunction", lambda _path: False)(path):
+        return True
+    try:
+        attributes = os.lstat(path).st_file_attributes
+    except AttributeError, OSError:
+        return False
+    return bool(attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+
+
+def guarded_repository_path(root: Path, relative: str) -> Path:
+    current = root
+    for part in Path(relative).parts:
+        current /= part
+        if is_redirected_path(current):
+            raise SystemExit(f"Repository path is redirected outside the canonical tree: {relative}")
+    try:
+        resolved = current.resolve(strict=True)
+        resolved.relative_to(root)
+    except (OSError, ValueError) as exc:
+        raise SystemExit(f"Repository path is absent or escapes the canonical tree: {relative}") from exc
+    return resolved
+
+
 def repository_root(value: str) -> Path:
     root = Path(value).resolve()
-    if not (root / ".git").exists() or not (root / "planning" / "backlog.yaml").is_file():
+    try:
+        git_path = guarded_repository_path(root, ".git")
+        backlog_path = guarded_repository_path(root, "planning/backlog.yaml")
+    except SystemExit as exc:
+        raise SystemExit(f"Not a safe Research Observatory repository: {root}: {exc}") from exc
+    if not git_path.exists() or not backlog_path.is_file():
         raise SystemExit(f"Not a Research Observatory repository: {root}")
     return root
 
@@ -286,14 +318,31 @@ def legacy_category(output: str) -> str:
     if first.startswith("WAVE IMPLEMENTATION COMPLETE") or first.startswith("No READY task in active Wave"):
         return "wave"
     try:
-        document = taskctl.yaml.safe_load(output)
-    except taskctl.yaml.YAMLError:
+        document = yaml.safe_load(output)
+    except yaml.YAMLError:
         return "unknown"
     if isinstance(document, dict) and document.get("id"):
         return "task"
     if isinstance(document, dict) and document.get("wave"):
         return "wave"
     return "unknown"
+
+
+def stable_legacy_document(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {key: stable_legacy_document(item) for key, item in sorted(value.items()) if key != "updated_at"}
+    if isinstance(value, list):
+        return [stable_legacy_document(item) for item in value]
+    return value
+
+
+def normalized_legacy_payload(output: str) -> bytes:
+    try:
+        document = yaml.safe_load(output)
+    except yaml.YAMLError:
+        document = output
+    normalized = stable_legacy_document(document)
+    return json.dumps(normalized, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
 def legacy_projection(
@@ -318,7 +367,8 @@ def legacy_projection(
     return {
         "category": legacy_category(output),
         "summary": first,
-        "outputSha256": hashlib.sha256(output.encode("utf-8")).hexdigest(),
+        "normalizedOutputSha256": hashlib.sha256(normalized_legacy_payload(output)).hexdigest(),
+        "normalization": ["remove-derived-updated_at"],
     }
 
 
@@ -326,7 +376,7 @@ def command_next(args: argparse.Namespace) -> None:
     if not args.shadow or not args.json_output:
         raise SystemExit("The first governancectl increment is advisory only; use `next --shadow --json`.")
     root = repository_root(args.repo)
-    backlog_path = root / "planning" / "backlog.yaml"
+    backlog_path = guarded_repository_path(root, "planning/backlog.yaml")
     before = backlog_path.read_bytes()
     before_stat = backlog_path.stat()
     indexed = taskctl.load(str(backlog_path))
