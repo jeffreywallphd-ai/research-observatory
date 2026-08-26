@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "7.0-control-recovery-state",
+  "documentType": "governance-control-recovery-successor-bootstrap-state",
+  "controlRecoveryId": "GCR-0007",
+  "bootstrapUnit": "GCR-0007.B00",
+  "status": "REVIEW",
+  "approval": {
+    "path": "planning/governance-control-recovery/GCR-0007.approval.json",
+    "sha256": "4f0059f3c01740973328daa9e510f23a16fb4dfa54111538f5ae90fdc27f9d54",
+    "commit": "8babc35d0d82607a7301bc30189167dd4c0622c9"
+  },
+  "attempts": {},
+  "currentSubmission": {
+    "attemptId": "R01",
+    "agent": "codex",
+    "approvalCommit": "8babc35d0d82607a7301bc30189167dd4c0622c9",
+    "baseCommit": "8babc35d0d82607a7301bc30189167dd4c0622c9",
+    "candidateCommit": "5b6f37944c06dfed25c136a248d54c39bf0e9496",
+    "branch": "codex/w1-windows-local-runtime",
+    "evidence": {
+      "path": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.R01.json",
+      "sha256": "a748914e050711baa9cde62b992422c4916f2c34496888cdfd0b3717ba3fff99",
+      "commit": "a8f8ff829f4fd2cedf6269916683e3e25e1651d8"
+    },
+    "changedPaths": [
+      "planning/backlog.schema.json",
+      "planning/governance-recovery-requests/governance-recovery-supplement-approval.v5.schema.json",
+      "planning/governance-recovery-requests/governance-recovery-supplement.v5.schema.json",
+      "quality-scope.json",
+      "tests/foundation/test_gcr7ctl.py",
+      "tests/foundation/test_recoveryctl.py",
+      "tests/foundation/test_taskctl_schema.py",
+      "tools/gcr7ctl.py",
+      "tools/recoveryctl.py",
+      "tools/taskctl.py"
+    ]
+  },
+  "latestReviewResult": null,
+  "openFindingIds": [],
+  "activation": null
+}
