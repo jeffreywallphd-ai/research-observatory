@@ -51,6 +51,31 @@ class Gcr5ctlTests(unittest.TestCase):
         self.git(repo, "commit", "-m", message)
         return self.git(repo, "rev-parse", "HEAD")
 
+    def protected_snapshot(self, repo: Path) -> dict[str, bytes]:
+        return {
+            relative: (repo / relative).read_bytes()
+            for relative in [*gcr5ctl.FINAL_PATHS, gcr5ctl.LEDGER_PATH, gcr5ctl.TRIGGER_PATH]
+        }
+
+    def install_junction(self, repo: Path, relative: str, tag: str) -> tuple[Path, Path]:
+        source = repo.joinpath(*Path(relative).parts)
+        target = repo / ".git" / f"gcr5-junction-{tag}"
+        source.rename(target)
+        result = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(source), str(target)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            target.rename(source)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        return source, target
+
+    def remove_junction(self, source: Path, target: Path) -> None:
+        source.rmdir()
+        target.rename(source)
+
     def valid_evidence(
         self,
         *,
@@ -580,6 +605,66 @@ class Gcr5ctlTests(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "snapshot or application tree differs"):
                 gcr5ctl.validate_anchor(repo, substituted_successor)
 
+    def test_public_apply_and_recover_reject_real_parent_junctions_byte_stably(self) -> None:
+        families = (
+            ("docs", "docs"),
+            ("planning", "planning"),
+            ("review-site", "planning/review-site"),
+            ("recoveries", "planning/review-site/recoveries"),
+            ("waves", "planning/review-site/waves"),
+        )
+        for tag, relative in families:
+            with self.subTest(family=tag), tempfile.TemporaryDirectory() as temporary:
+                repo, approved, _application, _predecessor = self.approved_application_fixture(temporary)
+                apply_arguments = Namespace(
+                    repo=repo,
+                    approved_state_commit=approved,
+                    agent=gcr5ctl.ACTOR,
+                    evidence=gcr5ctl.APPLICATION_EVIDENCE_PATH,
+                )
+                protected_before = self.protected_snapshot(repo)
+                source, target = self.install_junction(repo, relative, f"apply-{tag}")
+                try:
+                    with self.assertRaisesRegex(SystemExit, "destination component is redirected"):
+                        gcr5ctl.command_apply(apply_arguments)
+                    self.assertEqual([], gcr5ctl.present_transaction_artifacts(repo))
+                    for _attempt in range(2):
+                        with self.assertRaisesRegex(SystemExit, "destination component is redirected"):
+                            gcr5ctl.command_status(Namespace(repo=repo))
+                    self.assertEqual(protected_before, self.protected_snapshot(repo))
+                finally:
+                    self.remove_junction(source, target)
+
+                def interrupt(label: str) -> None:
+                    if label == "gcr5-transaction-durable":
+                        raise RuntimeError("prepared recovery junction fixture")
+
+                with (
+                    patch.object(gcr5ctl, "adoption_fault_boundary", side_effect=interrupt),
+                    self.assertRaisesRegex(RuntimeError, "prepared recovery junction fixture"),
+                ):
+                    gcr5ctl.command_apply(apply_arguments)
+                artifacts_before = {
+                    relative_path: path.read_bytes()
+                    for relative_path, path in gcr5ctl.transaction_artifacts(repo).items()
+                }
+                protected_before = self.protected_snapshot(repo)
+                source, target = self.install_junction(repo, relative, f"recover-{tag}")
+                try:
+                    for _attempt in range(2):
+                        with self.assertRaisesRegex(SystemExit, "destination component is redirected"):
+                            gcr5ctl.command_recover(Namespace(repo=repo, agent=gcr5ctl.ACTOR))
+                    self.assertEqual(protected_before, self.protected_snapshot(repo))
+                    self.assertEqual(
+                        artifacts_before,
+                        {
+                            relative_path: path.read_bytes()
+                            for relative_path, path in gcr5ctl.transaction_artifacts(repo).items()
+                        },
+                    )
+                finally:
+                    self.remove_junction(source, target)
+
     def test_recovery_denies_manifest_dirt_and_redirects_without_mutating_protected_bytes(self) -> None:
         scenarios = ("manifest", "untracked", "tracked", "staged", "redirected")
         for scenario in scenarios:
@@ -902,6 +987,33 @@ class Gcr5ctlTests(unittest.TestCase):
                 gcr5ctl._publish_snapshot(repo, successor, label="test")
             self.assertEqual(successor["planning/backlog.yaml"], backlog.read_bytes())
             self.assertEqual(successor["planning/status-summary.md"], status.read_bytes())
+
+    def test_snapshot_post_publication_verification_rechecks_destination_components(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = self.init_repo(temporary)
+            relative = "planning/backlog.yaml"
+            destination = repo / relative
+            destination.parent.mkdir(parents=True)
+            destination.write_bytes(b"before\n")
+            self.commit_all(repo, "predecessor")
+            original_guard = gcr5ctl.guard_final_destination
+            calls = 0
+
+            def redirect_after_publication(guard_repo: Path, guard_relative: str) -> Path:
+                nonlocal calls
+                calls += 1
+                if calls == 2:
+                    raise SystemExit("redirected during publication verification")
+                return original_guard(guard_repo, guard_relative)
+
+            with (
+                patch.object(gcr5ctl, "FINAL_PATHS", [relative]),
+                patch.object(gcr5ctl, "guard_final_destination", side_effect=redirect_after_publication),
+                self.assertRaisesRegex(SystemExit, "redirected during publication verification"),
+            ):
+                gcr5ctl._publish_snapshot(repo, {relative: b"after\n"}, label="verification")
+            self.assertEqual(2, calls)
+            self.assertEqual(b"after\n", destination.read_bytes())
 
     def test_snapshot_validation_rejects_substitution_before_mutation(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
