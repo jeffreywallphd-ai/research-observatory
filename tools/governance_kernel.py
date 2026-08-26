@@ -11,6 +11,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import math
 import re
 from collections.abc import Iterable, Mapping
 from typing import Any, TypedDict
@@ -30,6 +31,34 @@ SUPPORTED_CAPABILITIES = frozenset(
     }
 )
 REQUIRED_EVENT_CAPABILITIES = SUPPORTED_CAPABILITIES
+DECISION_FIELDS = {
+    "action",
+    "approvalRequired",
+    "category",
+    "command",
+    "effect",
+    "executableNow",
+    "riskTier",
+    "summary",
+    "target",
+}
+DECISION_ACTIONS = {
+    "amendment": {"inspect-amendment"},
+    "complete": {"none"},
+    "recovery-hold": {"inspect-recovery"},
+    "release-gate": {"review-gate"},
+    "task": {"claim-amendment-task", "claim-wave-task"},
+    "wave": {"inspect-active-wave", "qualify-wave", "start-wave"},
+    "wave-approval": {"review-wave"},
+}
+PROGRAM_FIELDS = {"blockedWave", "currentWave", "nextGate", "state"}
+PROGRAM_STATES = {
+    "ACTIVE_WAVE",
+    "AMENDMENT_INTERRUPTED",
+    "COMPLETE",
+    "GATE_PENDING",
+    "RECOVERY_INTERRUPTED",
+}
 HEX_SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
 
@@ -69,7 +98,28 @@ class KernelValidationError(ValueError):
     """Raised when an event, checkpoint, or tail fails closed."""
 
 
+def _validate_json_domain(value: Any, path: str = "$") -> None:
+    if value is None or type(value) in {bool, int, str}:
+        return
+    if type(value) is float:
+        if not math.isfinite(value):
+            raise KernelValidationError(f"Governance document contains a non-finite number at {path}")
+        return
+    if type(value) is list:
+        for index, item in enumerate(value):
+            _validate_json_domain(item, f"{path}[{index}]")
+        return
+    if type(value) is dict:
+        for key, item in value.items():
+            if type(key) is not str:
+                raise KernelValidationError(f"Governance document contains a non-string key at {path}")
+            _validate_json_domain(item, f"{path}.{key}")
+        return
+    raise KernelValidationError(f"Governance document contains a non-JSON value at {path}: {type(value).__name__}")
+
+
 def canonical_bytes(value: Any) -> bytes:
+    _validate_json_domain(value)
     try:
         return json.dumps(
             value,
@@ -114,17 +164,43 @@ def _validate_capabilities(values: Any, supported: frozenset[str], label: str) -
 def _validate_decision(decision: Any) -> None:
     if not isinstance(decision, dict):
         raise KernelValidationError("Governance next-action decision is invalid")
+    _require_exact_fields(decision, DECISION_FIELDS, "Governance next-action decision")
+    category = decision.get("category")
+    action = decision.get("action")
     risk_tier = decision.get("riskTier")
     if (
-        not isinstance(decision.get("category"), str)
-        or not isinstance(decision.get("action"), str)
-        or not isinstance(decision.get("summary"), str)
-        or not isinstance(risk_tier, int)
-        or isinstance(risk_tier, bool)
+        type(category) is not str
+        or category not in DECISION_ACTIONS
+        or type(action) is not str
+        or action not in DECISION_ACTIONS[category]
+        or type(decision.get("summary")) is not str
+        or not decision.get("summary")
+        or not (
+            decision.get("target") is None or (type(decision.get("target")) is str and bool(decision.get("target")))
+        )
+        or not (
+            decision.get("command") is None or (type(decision.get("command")) is str and bool(decision.get("command")))
+        )
+        or type(risk_tier) is not int
         or risk_tier not in range(4)
-        or not isinstance(decision.get("approvalRequired"), bool)
+        or type(decision.get("executableNow")) is not bool
+        or type(decision.get("approvalRequired")) is not bool
+        or decision.get("effect") not in {"read-only", "mutation-template"}
+        or (risk_tier == 0) != (decision.get("effect") == "read-only")
     ):
         raise KernelValidationError("Governance next-action decision is invalid")
+
+
+def _validate_program(program: Any) -> None:
+    if not isinstance(program, dict):
+        raise KernelValidationError("Governance program position is invalid")
+    _require_exact_fields(program, PROGRAM_FIELDS, "Governance program position")
+    if type(program.get("state")) is not str or program.get("state") not in PROGRAM_STATES:
+        raise KernelValidationError("Governance program position is invalid")
+    for field in ("blockedWave", "currentWave", "nextGate"):
+        value = program.get(field)
+        if value is not None and (type(value) is not str or not value):
+            raise KernelValidationError("Governance program position is invalid")
 
 
 def validate_event(
@@ -170,8 +246,7 @@ def validate_event(
         or not HEX_SHA256.fullmatch(str(event.get("previousEventHash")))
         or not isinstance(source, dict)
         or set(source) != {"path", "sha256"}
-        or not isinstance(source.get("path"), str)
-        or not source.get("path")
+        or source.get("path") != "planning/backlog.yaml"
         or not isinstance(source.get("sha256"), str)
         or not HEX_SHA256.fullmatch(str(source.get("sha256")))
         or not isinstance(payload, dict)
@@ -184,6 +259,7 @@ def validate_event(
         raise KernelValidationError("Governance event identity, authority, source, or payload is invalid")
     _validate_capabilities(event.get("capabilities"), supported_capabilities, "Event")
     _validate_decision(payload["decision"])
+    _validate_program(payload["program"])
     if event.get("eventHash") != document_hash(event, "eventHash"):
         raise KernelValidationError("Governance event hash differs")
 
@@ -299,8 +375,7 @@ def validate_projection(projection: Mapping[str, Any]) -> None:
         projection.get("throughEventHash") == GENESIS_HASH
         or not isinstance(source, dict)
         or set(source) != {"path", "sha256"}
-        or not isinstance(source.get("path"), str)
-        or not source.get("path")
+        or source.get("path") != "planning/backlog.yaml"
         or not isinstance(source.get("sha256"), str)
         or not HEX_SHA256.fullmatch(str(source.get("sha256")))
         or not isinstance(projection.get("program"), dict)
@@ -309,6 +384,7 @@ def validate_projection(projection: Mapping[str, Any]) -> None:
     ):
         raise KernelValidationError("Governance projection source or payload is invalid")
     _validate_decision(projection.get("decision"))
+    _validate_program(projection.get("program"))
 
 
 def validate_checkpoint(
