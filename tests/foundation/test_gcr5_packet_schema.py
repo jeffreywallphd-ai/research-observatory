@@ -72,6 +72,22 @@ class Gcr5PacketSchemaTests(unittest.TestCase):
         }
 
     def valid_state(self) -> dict[str, Any]:
+        current_submission: dict[str, Any] = {
+            "attemptId": "R01",
+            "submittedBy": "codex",
+            "submittedAt": "2026-08-26T02:15:00+00:00",
+            "candidateCommit": ONE_COMMIT,
+            "baseCommit": ZERO_COMMIT,
+            "branch": "codex/w1-windows-local-runtime",
+            "evidence": {
+                "path": "artifacts/evidence/governance-control-recovery/GCR-0005.B00.R01.json",
+                "sha256": ZERO_SHA,
+                "commit": ONE_COMMIT,
+            },
+            "priorAttemptId": None,
+            "openFindingIds": [],
+            "rootCauseAnalysis": None,
+        }
         return {
             "schemaVersion": "5.0-control-recovery-state",
             "documentType": "governance-control-recovery-bootstrap-state",
@@ -83,32 +99,31 @@ class Gcr5PacketSchemaTests(unittest.TestCase):
                 "sha256": ZERO_SHA,
                 "commit": ZERO_COMMIT,
             },
-            "attempts": [
-                {
-                    "submission": {
-                        "attemptId": "R01",
-                        "submittedBy": "codex",
-                        "submittedAt": "2026-08-26T02:15:00+00:00",
-                        "candidateCommit": ONE_COMMIT,
-                        "baseCommit": ZERO_COMMIT,
-                        "branch": "codex/w1-windows-local-runtime",
-                        "evidence": {
-                            "path": "artifacts/evidence/governance-control-recovery/GCR-0005.B00.R01.json",
-                            "sha256": ZERO_SHA,
-                            "commit": ONE_COMMIT,
-                        },
-                        "priorAttemptId": None,
-                        "openFindingIds": [],
-                        "rootCauseAnalysis": None,
-                    },
-                    "review": None,
-                    "ledger": None,
-                    "findings": [],
-                    "closures": [],
-                }
-            ],
-            "currentSubmission": {"attemptId": "R01", "candidateCommit": ONE_COMMIT, "evidenceSha256": ZERO_SHA},
+            "attempts": {},
+            "currentSubmission": current_submission,
+            "latestReviewResult": None,
+            "openFindingIds": [],
             "application": None,
+        }
+
+    def reviewed_attempt(self, result: str = "changes-requested") -> dict[str, Any]:
+        submission = copy.deepcopy(self.valid_state()["currentSubmission"])
+        return {
+            "submission": submission,
+            "review": {
+                "reviewer": "independent-reviewer",
+                "result": result,
+                "reviewedAt": "2026-08-26T03:00:00+00:00",
+                "reviewedStateCommit": ONE_COMMIT,
+                "notes": "fixture",
+            },
+            "ledger": {
+                "path": "planning/governance-control-recovery/GCR-0005.B00.review-R01.json",
+                "sha256": ZERO_SHA,
+                "commit": ONE_COMMIT,
+            },
+            "findings": [],
+            "closures": [],
         }
 
     def valid_transaction(self) -> dict[str, Any]:
@@ -211,10 +226,28 @@ class Gcr5PacketSchemaTests(unittest.TestCase):
         state = self.valid_state()
         self.assertFalse(list(self.runtime.iter_errors(state)))
         forged = copy.deepcopy(state)
-        forged["attempts"] = [{"forged": True}]
+        forged["attempts"] = [self.reviewed_attempt(), self.reviewed_attempt()]
         self.assert_rejected(self.runtime, forged)
         forged = copy.deepcopy(state)
         forged["currentSubmission"] = {"candidateCommit": "wrong"}
+        self.assert_rejected(self.runtime, forged)
+        forged = copy.deepcopy(state)
+        forged["currentSubmission"] = None
+        self.assert_rejected(self.runtime, forged)
+        forged = copy.deepcopy(state)
+        forged["status"] = "CHANGES_REQUESTED"
+        forged["attempts"] = {"R01": self.reviewed_attempt()}
+        forged["currentSubmission"] = None
+        forged["latestReviewResult"] = "changes-requested"
+        forged["openFindingIds"] = ["GCR-0005.B00-R01-F01"]
+        forged["attempts"]["R01"].pop("ledger")
+        self.assert_rejected(self.runtime, forged)
+        forged = copy.deepcopy(state)
+        forged["status"] = "APPROVED"
+        forged["attempts"] = {"R01": self.reviewed_attempt("approved")}
+        forged["currentSubmission"] = None
+        forged["latestReviewResult"] = "approved"
+        forged["openFindingIds"] = ["GCR-0005.B00-R01-F01"]
         self.assert_rejected(self.runtime, forged)
         forged = copy.deepcopy(state)
         forged["application"] = {"ordinaryExecutionAuthority": True}
