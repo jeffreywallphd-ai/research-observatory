@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "5.0-control-recovery-approval",
+  "documentType": "governance-control-recovery-approval",
+  "controlRecoveryId": "GCR-0005",
+  "status": "APPROVED",
+  "approvedBy": "repository-owner",
+  "approvedAt": "2026-08-26T09:59:47Z",
+  "packet": {
+    "path": "planning/governance-control-recovery/GCR-0005.packet.json",
+    "sha256": "41a6f4778d23c510b2353d80756a463ee6ebc53a83b281d709b7840257e28a05",
+    "commit": "86e0393595809ccff589e1793970e38536ec4116"
+  },
+  "independentReview": {
+    "reviewer": "independent-gcr5-packet-reviewer",
+    "result": "APPROVED",
+    "ledger": {
+      "path": "planning/governance-control-recovery/GCR-0005.review-R03.json",
+      "sha256": "7dd60c2a59fad659f3e90e8e8d7c4f044fff2ead176c7918afe2fa91194d5f0b",
+      "commit": "f443575b1eb2fee6935ea9fcc4541958c4a510b6"
+    },
+    "openFindingIds": []
+  },
+  "executionAuthority": {
+    "bootstrapOnly": true,
+    "reviewProjection": false,
+    "b02Remediation": false,
+    "amendment": false,
+    "task": false,
+    "waveResume": false,
+    "holdRelease": false,
+    "gateApproval": false
+  }
+}
