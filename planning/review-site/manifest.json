@@ -672,7 +672,7 @@
           "wave": "W5",
           "title": "Windows installation and update channels",
           "plan_path": "planning/slice-plans/CAP-01/CAP-01.S05-windows-installation-and-update-channels.md",
-          "plan_sha256": "252ff3abf403663fe3ce6ad716e9b01b637f970cdb22c72d987ee6f299e8d0db",
+          "plan_sha256": "dcad92cc8d56488757dcd022ea29ede447f7d5411c045e9bc70b78dfec511604",
           "page": "CAP-01/CAP-01.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -1291,7 +1291,7 @@
           "wave": "W5",
           "title": "Backup, restore, relocation, and lab portability",
           "plan_path": "planning/slice-plans/CAP-02/CAP-02.S05-backup-restore-relocation-and-lab-portability.md",
-          "plan_sha256": "fc01d2834fbf410bf46e6fbc09df26cb1af917b90d7f21fbd581ad6dba42def3",
+          "plan_sha256": "e01c2dc1590e16eef5eaad906ede095eb31cde66d86c3f74a0d2ecbd6f03d090",
           "page": "CAP-02/CAP-02.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -1687,7 +1687,7 @@
       "capability_alias": "CAP-scholarly-ingestion",
       "title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
       "plan_path": "planning/capability-plans/CAP-04.md",
-      "plan_sha256": "5a996c8d7803ea682ef03e588f0c80be42c405ab9b20edeae42fe682bc5ae5d6",
+      "plan_sha256": "a38473795ff18f921f4986a85731df1c59bc6b6e7b52a164c6d19712af3c2d10",
       "page": "CAP-04/index.html",
       "decision_count": 4,
       "slice_count": 5,
@@ -1698,7 +1698,7 @@
           "wave": "W2",
           "title": "Reference-library and file imports",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S01-reference-library-and-file-imports.md",
-          "plan_sha256": "b3c2194c0b97f7b1658162090413853ff47932df679055dd3277dfcccfb9731f",
+          "plan_sha256": "d5295c884bbee0f3b494abdda087d836f1825697d1efa39496fc0611ade268a1",
           "page": "CAP-04/CAP-04.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -1749,7 +1749,7 @@
           "wave": "W2",
           "title": "Open scholarly source adapters",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S02-open-scholarly-source-adapters.md",
-          "plan_sha256": "032cd0f50b332aca97b9c49821a51ddc95a6c37a9665cf341af5f6481f93f6ce",
+          "plan_sha256": "ca2a8af21e69d34ae10e36fd9ad9602fcec00b024e2d109e841103aaf8c2c062",
           "page": "CAP-04/CAP-04.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -1800,7 +1800,7 @@
           "wave": "W2",
           "title": "Canonical work, version, and identity reconciliation",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S03-canonical-work-version-and-identity-reconciliation.md",
-          "plan_sha256": "53cbdf74f2bea9c22466b93f4109dc5de89336b01cae88db2cc1271503034f1e",
+          "plan_sha256": "696445b6c7cfe6baf4d3b959c41f0e8f8a9b17bb3a031dfc9ed557eef18b29fa",
           "page": "CAP-04/CAP-04.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -1851,7 +1851,7 @@
           "wave": "W2",
           "title": "Corpus membership, discovery path, and rights governance",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S04-corpus-membership-discovery-path-and-rights-governance.md",
-          "plan_sha256": "1ceafcccbe40064341f497c8871a18611270dbfa3ffc96feb340830ef2626d97",
+          "plan_sha256": "dacb5d6a3b4bc9aed3208c97b75de50a028d51756af2f8f9c8c137478fdacf5e",
           "page": "CAP-04/CAP-04.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -1902,7 +1902,7 @@
           "wave": "W2",
           "title": "Connector SDK and controlled extensibility",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S05-connector-sdk-and-controlled-extensibility.md",
-          "plan_sha256": "38126b03a34ff8e10d933852c0ed0e33a10387026ff123978248928e3df1091f",
+          "plan_sha256": "bdb6752d0ad6d33b5cb94d961b114c539facaf67ac4efe82a22a971e8f13e3b1",
           "page": "CAP-04/CAP-04.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -1954,7 +1954,7 @@
       "capability_alias": "CAP-document-inspection",
       "title": "Document acquisition, parsing, source inspection, and page anchors",
       "plan_path": "planning/capability-plans/CAP-05.md",
-      "plan_sha256": "24093d1107ad3f94653a17ea0ef97ac37008a9212b07d26004e7398506ef7042",
+      "plan_sha256": "e10e72d7d87efd05c9eb2f5cd99e68955699fb463ef9d8c152bcc3bd35e9d8bc",
       "page": "CAP-05/index.html",
       "decision_count": 3,
       "slice_count": 6,
@@ -1965,7 +1965,7 @@
           "wave": "W2",
           "title": "Rights-aware document acquisition",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
-          "plan_sha256": "72b570929cd485b4338df641e9738558a3fe67d21d6f7f1d4b039c9e6f74f57d",
+          "plan_sha256": "410ed342095d133b2527b2fd34e31c465e318bc045e4dc507f8e00270065d709",
           "page": "CAP-05/CAP-05.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -2016,7 +2016,7 @@
           "wave": "W2",
           "title": "Structured and PDF parsing pipeline",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S02-structured-and-pdf-parsing-pipeline.md",
-          "plan_sha256": "c118fe46d6f30c8461f09e281e009978dbf1257a40719e3b24cd369cd7973c25",
+          "plan_sha256": "245b3af0621496796fc71bbf12a6af1d47c9881b3b10be2efd2fb938aaa6ce8f",
           "page": "CAP-05/CAP-05.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -2067,7 +2067,7 @@
           "wave": "W2",
           "title": "Immutable document revisions and source anchors",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S03-immutable-document-revisions-and-source-anchors.md",
-          "plan_sha256": "02d13b4f70693226d94d1e634430ad7be88f78f12f749bd32861b4469be70ddf",
+          "plan_sha256": "2f4baf9c99e6bf6a5a8b366a1c685a5a4b77aa881b117a9cf65864718844e6ce",
           "page": "CAP-05/CAP-05.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -2118,7 +2118,7 @@
           "wave": "W2",
           "title": "Source viewer and evidence inspection experience",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md",
-          "plan_sha256": "4932ca925e0364c8b68ed7948343f5868b433838ed5556ea502dce0c4effab5a",
+          "plan_sha256": "e7fea55364c51e43947aa6e9c7fd37c48b1a42aff66da408bb59b3524d5f72d1",
           "page": "CAP-05/CAP-05.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -2169,7 +2169,7 @@
           "wave": "W2",
           "title": "References, citation contexts, tables, and figures",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S05-references-citation-contexts-tables-and-figures.md",
-          "plan_sha256": "33ee9ad3111e5d9683bce5451343b944794f3bb7b4a939eba5c179469f1947a5",
+          "plan_sha256": "250de57737636054756e2add5a35729b17063b7cfe8fa6b5abda3c19c331e1b6",
           "page": "CAP-05/CAP-05.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -2220,7 +2220,7 @@
           "wave": "W2",
           "title": "Parsing quality, correction, and reprocessing",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S06-parsing-quality-correction-and-reprocessing.md",
-          "plan_sha256": "3bb69d66e7b2155ef1356e4f466b0d49de41738eae7957cd80b1d7f69f6ae61f",
+          "plan_sha256": "aa9897115ef3200c7d601cebb1f343562cb94d0d49e867283f15913181adeaaf",
           "page": "CAP-05/CAP-05.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -2272,7 +2272,7 @@
       "capability_alias": "CAP-search-screening",
       "title": "Local search, discovery, corpus diagnostics, and screening",
       "plan_path": "planning/capability-plans/CAP-06.md",
-      "plan_sha256": "d2feb55ff3b9d42f74900304aa6df2b918960875e6f9441d03d4bcbecb1c5684",
+      "plan_sha256": "f8eeeaec7fbcde78ae4b9d4e2a1e45e73bb43e9b649d0013ea8f1991db8e3e2f",
       "page": "CAP-06/index.html",
       "decision_count": 23,
       "slice_count": 6,
@@ -2283,7 +2283,7 @@
           "wave": "W3",
           "title": "Fielded lexical search and local indexing",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S01-fielded-lexical-search-and-local-indexing.md",
-          "plan_sha256": "c8db5dad40ccea9131a45a3ac69b86e0286bf0a48df499c0225596af88848d74",
+          "plan_sha256": "4af6a1225757f27aad5757d0b9f026c6da51fb310710e9c097d2241d362c07a9",
           "page": "CAP-06/CAP-06.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -2334,7 +2334,7 @@
           "wave": "W3",
           "title": "Semantic representations and vector retrieval",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S02-semantic-representations-and-vector-retrieval.md",
-          "plan_sha256": "fe0200803db76883c9331a7fe7cf4828a3a38967a8cf38c9ba76e8dd23ffc129",
+          "plan_sha256": "6c6923d4a220fd1070e34da9ba275aa40e883d10f7fc27aef3d41797dd6dd053",
           "page": "CAP-06/CAP-06.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -2385,7 +2385,7 @@
           "wave": "W3",
           "title": "Hybrid retrieval and reranking",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S03-hybrid-retrieval-and-reranking.md",
-          "plan_sha256": "9af6c08fc36277707267a4ed72c3627a3643434139d8b19c526c04b48776d56d",
+          "plan_sha256": "70bab7aac1307ff03c39ea5ef1e85bd6dd7556c627ac7bc2141c9fc891251706",
           "page": "CAP-06/CAP-06.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -2436,7 +2436,7 @@
           "wave": "W3",
           "title": "Search Studio and transparent expansion",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S04-search-studio-and-transparent-expansion.md",
-          "plan_sha256": "3219bb6a998f9ab2168e668a2c8cf7c290149327b0c3b414c43750a4dd0b5815",
+          "plan_sha256": "a0d5ad91ab4c9a3c192a62dc56110563e7cf00a245c056f56268688ff8ba7286",
           "page": "CAP-06/CAP-06.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -2487,7 +2487,7 @@
           "wave": "W3",
           "title": "Corpus canvas, coverage, and reflexivity diagnostics",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S05-corpus-canvas-coverage-and-reflexivity-diagnostics.md",
-          "plan_sha256": "fac90388745b410c6ff880ed9f30530d93234a28c96cf4ed803f10b6b86e3730",
+          "plan_sha256": "a32ddc473cfbc5b3f3d72da10660ddf16e82d523696942a0a03269e5fd613327",
           "page": "CAP-06/CAP-06.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -2538,7 +2538,7 @@
           "wave": "W3",
           "title": "Transparent screening and active-learning governance",
           "plan_path": "planning/slice-plans/CAP-06/CAP-06.S06-transparent-screening-and-active-learning-governance.md",
-          "plan_sha256": "6e369bef0b7d4dd21a44d6e7ae86d567c69c14c8a828a322a08588e4ac298710",
+          "plan_sha256": "1cbc0d7597f95b609f6230bd0788a17e27a5736858efa4c80eaf12bf7949f9b6",
           "page": "CAP-06/CAP-06.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -2652,7 +2652,7 @@
           "wave": "W3",
           "title": "Local model runtime and model management",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S02-local-model-runtime-and-model-management.md",
-          "plan_sha256": "686dbbe7e21fca6f256f4f9590f231215a556382de769981a02f466e55211945",
+          "plan_sha256": "553b03713d2d570d4acdc3d281c6253ac9199738a3f502469a9396ca2dfe53a5",
           "page": "CAP-07/CAP-07.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -2703,7 +2703,7 @@
           "wave": "W3",
           "title": "Approved remote model providers",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S03-approved-remote-model-providers.md",
-          "plan_sha256": "eea09e207224f26a129d0162006a01ee25ac143051db15d768bea56671130f22",
+          "plan_sha256": "e2fc97be28ae1455d2ab8e65d3d50da67e1ba5a46a3fa6ff79026f66d5c58c93",
           "page": "CAP-07/CAP-07.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -2754,7 +2754,7 @@
           "wave": "W3",
           "title": "Prompt, schema, and structured-output registry",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S04-prompt-schema-and-structured-output-registry.md",
-          "plan_sha256": "dce5c9bf9d3cf0171729849776ae14d55b47db49b0fe78680c2fcfd31e5d4759",
+          "plan_sha256": "66f4d65bba908975dc5654d35856a4b3f8b8fb996c2f79375899cf9a79ce838b",
           "page": "CAP-07/CAP-07.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -2805,7 +2805,7 @@
           "wave": "W3",
           "title": "AI observability, budgets, and evaluation operations",
           "plan_path": "planning/slice-plans/CAP-07/CAP-07.S05-ai-observability-budgets-and-evaluation-operations.md",
-          "plan_sha256": "428c9514fe535894f297aadfa2998e48acb940b66880b59fdbfdb1ad1be09228",
+          "plan_sha256": "7010fc281485f009af739ce5d18dbeb5401c92240447f30e79e122776d5bf53c",
           "page": "CAP-07/CAP-07.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -2857,7 +2857,7 @@
       "capability_alias": "CAP-evidence-verification",
       "title": "Evidence schemas, extraction, verification, and adjudication",
       "plan_path": "planning/capability-plans/CAP-08.md",
-      "plan_sha256": "cea372463cea43a29d2ef5176f8818577918910a8a69b2b1953ef29628c63705",
+      "plan_sha256": "ddf910493846d24572db880ad5dc1c6109eda4f4e7d03bc8774a0d46c9f4d084",
       "page": "CAP-08/index.html",
       "decision_count": 23,
       "slice_count": 6,
@@ -2868,7 +2868,7 @@
           "wave": "W3",
           "title": "Core ontology and schema-pack registry",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S01-core-ontology-and-schema-pack-registry.md",
-          "plan_sha256": "6dbc0575b70df71f3bbbad84999c8b7fa9fffbd17871978fff69ac984c8e1bb2",
+          "plan_sha256": "2c786153da331d34392421284cd6770fc2b381a437b0ff6cba3eca2f69122bad",
           "page": "CAP-08/CAP-08.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -2919,7 +2919,7 @@
           "wave": "W3",
           "title": "Source-grounded extraction pipeline",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S02-source-grounded-extraction-pipeline.md",
-          "plan_sha256": "7e433329647b418dfcff47817707ce738c03ddb60a1f5c39508ecc7365bc6bb6",
+          "plan_sha256": "bca4989a56008691e29b06f62f66a93dacabc904145ac38db015bda8fc0dceab",
           "page": "CAP-08/CAP-08.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -2970,7 +2970,7 @@
           "wave": "W3",
           "title": "Evidence record, status, confidence, and uncertainty model",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S03-evidence-record-status-confidence-and-uncertainty-model.md",
-          "plan_sha256": "ce490c474b1037e626efd7cd0c7ae10f0de19d539ab96b0f099ebd832d15633c",
+          "plan_sha256": "a9e96ba15db4e814b0a50ce8169091cc63608a97b427b4260cc079a9b4b374bb",
           "page": "CAP-08/CAP-08.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -3021,7 +3021,7 @@
           "wave": "W3",
           "title": "Independent evidence verification",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S04-independent-evidence-verification.md",
-          "plan_sha256": "7cbf1531b534919a91bc0c0af5247a2506391ac817d5a731cc707dfbe3aba970",
+          "plan_sha256": "4bb7ec95be99235559a7e8a2cef7cf52293ee64cd9a4509b40c98748c11b486c",
           "page": "CAP-08/CAP-08.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -3072,7 +3072,7 @@
           "wave": "W3",
           "title": "Evidence matrix and source-first analysis UI",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S05-evidence-matrix-and-source-first-analysis-ui.md",
-          "plan_sha256": "e3f3da62e470bb0e6bcfc789c6dcfd2814a5ecab9e220da05b244e6ad3b434b1",
+          "plan_sha256": "9cfd207dcb8da3be73cfb1cd1654116f5920b420093dd6c4e09947abf34f5726",
           "page": "CAP-08/CAP-08.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -3123,7 +3123,7 @@
           "wave": "W3",
           "title": "Coder comparison, adjudication, and evidence export",
           "plan_path": "planning/slice-plans/CAP-08/CAP-08.S06-coder-comparison-adjudication-and-evidence-export.md",
-          "plan_sha256": "09e6644e1fdb92b80eb532b4611c28c5b88a0754cc6a7bba453627529a69d612",
+          "plan_sha256": "09c0aaae8cc5e908775a57e252dd6f8e85ecd42e15b59654f91363efe12c7b5e",
           "page": "CAP-08/CAP-08.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -3175,7 +3175,7 @@
       "capability_alias": "CAP-scholarly-graph-synthesis",
       "title": "Scholarly graph, comparison sets, synthesis, and reproducibility",
       "plan_path": "planning/capability-plans/CAP-09.md",
-      "plan_sha256": "f68bc0ad2a0bedf2ae8b782bb7eebabcbee4ab68ab209dd5c532374cf5472f46",
+      "plan_sha256": "a09e141db088e142dcdf80131a5ae8d63f381ffb13d5642be0da3309f42817a0",
       "page": "CAP-09/index.html",
       "decision_count": 23,
       "slice_count": 6,
@@ -3186,7 +3186,7 @@
           "wave": "W4",
           "title": "Local graph domain and replaceable graph storage",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S01-local-graph-domain-and-replaceable-graph-storage.md",
-          "plan_sha256": "17c32c3981e76b2fc62050d4e3819eb757c293fefcc400850df3a0683b3761cf",
+          "plan_sha256": "2d0a87e09726cf7cf46b21c7e565097f1d4f63d8105fa1440b9f1325bea31f36",
           "page": "CAP-09/CAP-09.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -3237,7 +3237,7 @@
           "wave": "W4",
           "title": "Claim, theory, construct, method, and context relations",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S02-claim-theory-construct-method-and-context-relations.md",
-          "plan_sha256": "668332e52a791454a39005b125d0fe1845525e23f9dc39d7d3ea07d2ab0387ce",
+          "plan_sha256": "82bb3f9764a1dc19d021ca1423d41869fb7b11bd230fed2efef7a55806e03cba",
           "page": "CAP-09/CAP-09.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -3288,7 +3288,7 @@
           "wave": "W4",
           "title": "Comparability sets and contradiction candidates",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S03-comparability-sets-and-contradiction-candidates.md",
-          "plan_sha256": "b0f7acc04812e46931f60ba83d2328dffe0584481e45b2ad94ef08cff8cc7177",
+          "plan_sha256": "d3349417ec9719b2b4cf2efd99ca643e74fe686171f521f945a108c4475b8648",
           "page": "CAP-09/CAP-09.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -3339,7 +3339,7 @@
           "wave": "W4",
           "title": "Graph, theory, construct, and lineage workspaces",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S04-graph-theory-construct-and-lineage-workspaces.md",
-          "plan_sha256": "d6288d13601925be0995a8c1a409987bf556cdccbc0d585e1e31c073521c014e",
+          "plan_sha256": "74d650afbfcc6a56b9bbabcd6dd44e61f8f848e1a032a946b7e19a22e906a73a",
           "page": "CAP-09/CAP-09.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -3390,7 +3390,7 @@
           "wave": "W4",
           "title": "Evidence-grounded synthesis and citation audit",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S05-evidence-grounded-synthesis-and-citation-audit.md",
-          "plan_sha256": "41b4d85703f7fa7260b585476b8c4930f776b3523ef0166ce91b77962d50ffd9",
+          "plan_sha256": "495168e204d3ea6db8d403d39e85b226a9735b1ece69e3b2643537f268fcbf32",
           "page": "CAP-09/CAP-09.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -3441,7 +3441,7 @@
           "wave": "W4",
           "title": "Reproducibility packages and scholarly exports",
           "plan_path": "planning/slice-plans/CAP-09/CAP-09.S06-reproducibility-packages-and-scholarly-exports.md",
-          "plan_sha256": "85d1b21a8482524914552d48db0189085c2c5e497fa05d375f88cac637765e7e",
+          "plan_sha256": "42c1431709bbb20558379b26a65cb35947873b6a5139c615ba3a0af344585d80",
           "page": "CAP-09/CAP-09.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -3493,7 +3493,7 @@
       "capability_alias": "CAP-novelty-opportunities",
       "title": "Novelty auditing, research opportunities, and plural research modes",
       "plan_path": "planning/capability-plans/CAP-10.md",
-      "plan_sha256": "933509875d77824fac3c4357cbef9f0bb485d9cc3e876e2746b6dc3694f8a7af",
+      "plan_sha256": "77b41628903e08cc55695dbc9ff4580c875f590be3382eab3bf64322238898bd",
       "page": "CAP-10/index.html",
       "decision_count": 26,
       "slice_count": 7,
@@ -3504,7 +3504,7 @@
           "wave": "W4",
           "title": "Nearest-prior novelty workspace MVP",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S01-nearest-prior-novelty-workspace-mvp.md",
-          "plan_sha256": "1bc299ecce1bf9a632df84cabf6eca5adb818e9ef6c2284d8f9eec96e3405213",
+          "plan_sha256": "71ee2f5cfcbd51c6d56cdf1bf53f7ea1b94b48f0c8ae8ab06de255a9e52fe8ca",
           "page": "CAP-10/CAP-10.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -3555,7 +3555,7 @@
           "wave": "W4",
           "title": "Independent adversarial novelty challenge",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S02-independent-adversarial-novelty-challenge.md",
-          "plan_sha256": "25ff5d05253a54f35f17f284c7f7513b134b76f20159582d60c6cf660b10c6bb",
+          "plan_sha256": "fe68081272af7960feeade26cb54181850ae05b8244269c902f6d3f89dbfbc56",
           "page": "CAP-10/CAP-10.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -3606,7 +3606,7 @@
           "wave": "W4",
           "title": "Research opportunity dossier and decision ledger",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S03-research-opportunity-dossier-and-decision-ledger.md",
-          "plan_sha256": "8474b6dedde4b7c3a744fa3864feaa33dcb866877444a0a4d9068c8d704cdfdf",
+          "plan_sha256": "16987476ae25b2f3c257e71429d8c1d4c955705809f32e78e44d8d4a82f2920e",
           "page": "CAP-10/CAP-10.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -3657,7 +3657,7 @@
           "wave": "W9",
           "title": "Plural opportunity detector ensemble",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S04-plural-opportunity-detector-ensemble.md",
-          "plan_sha256": "e298dd06224d470abd87d1d299932667abf3ee75edfb081edaa5ef3fb5fb5d9e",
+          "plan_sha256": "1921403107bbb9b00a12f424da2f3c5aa6c8535c348faadd648ee21efb0aeee2",
           "page": "CAP-10/CAP-10.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -3708,7 +3708,7 @@
           "wave": "W7",
           "title": "Critical and hermeneutic research support",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S05-critical-and-hermeneutic-research-support.md",
-          "plan_sha256": "a90b72bc391333dc706233ea0e959f598b8a5d46f6a465e7af775b13fe429c6d",
+          "plan_sha256": "d0f85e5536c97036a0aa590dae7d252dfa2f98d50b4c0b4caf7bbe66c8f15018",
           "page": "CAP-10/CAP-10.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -3759,7 +3759,7 @@
           "wave": "W9",
           "title": "Opportunity radar, ranking, and portfolio governance",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S06-opportunity-radar-ranking-and-portfolio-governance.md",
-          "plan_sha256": "731ad8fbbfe38052c08b8e55366c438637c517563943c76b5e9fdf29954e6680",
+          "plan_sha256": "d2db213b594fb21c03e8477cef52081fca5264b38a9f1362220864334a8333ab",
           "page": "CAP-10/CAP-10.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -3810,7 +3810,7 @@
           "wave": "W9",
           "title": "Living monitor and impact-aware research memory",
           "plan_path": "planning/slice-plans/CAP-10/CAP-10.S07-living-monitor-and-impact-aware-research-memory.md",
-          "plan_sha256": "caeab7471c136fc30526932810406d5e51f273846434e54c020d086cf79863c5",
+          "plan_sha256": "ae5f2946a7d75f2f0d7b9119c96f0366ca547378388d30c39062dd84d1109762",
           "page": "CAP-10/CAP-10.S07.html",
           "task_count": 3,
           "task_reviews": [
@@ -3862,7 +3862,7 @@
       "capability_alias": "CAP-windows-release",
       "title": "Windows PC/lab product hardening, validation, packaging, and release",
       "plan_path": "planning/capability-plans/CAP-11.md",
-      "plan_sha256": "521912c5050c0004402f3b244463cfaaa2ecb59da6fce6581595c58a0f5c46e6",
+      "plan_sha256": "76ec74905dac9fe538a55bb55da9e7225fde6416e3be1bed67f7bcf346b72884",
       "page": "CAP-11/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -3873,7 +3873,7 @@
           "wave": "W5",
           "title": "Performance profiles, scale targets, and resource governance",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S01-performance-profiles-scale-targets-and-resource-governance.md",
-          "plan_sha256": "2f6f49510e47a8e3c430392bd21e026ce116637137dedae7f12d209cccf93e55",
+          "plan_sha256": "f10b744ff0339a0febcff5a4cd8efdc4888583fb313a9e9b9905badb5b05bfc7",
           "page": "CAP-11/CAP-11.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -3924,7 +3924,7 @@
           "wave": "W5",
           "title": "Reliability, crash recovery, upgrade, and rollback",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S02-reliability-crash-recovery-upgrade-and-rollback.md",
-          "plan_sha256": "47e4d28ea6e81233225d097e9b049d2f567fe741900773a33d0ca74473b5a2b2",
+          "plan_sha256": "0561b64edd8fa5bceb0f3d00874a67f3829d4ae2c0070b22ef05a18cb8262940",
           "page": "CAP-11/CAP-11.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -3975,7 +3975,7 @@
           "wave": "W5",
           "title": "Offline, privacy, and local security acceptance",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S03-offline-privacy-and-local-security-acceptance.md",
-          "plan_sha256": "af3cd9ab0c265ef8ae8e268f0a48bb5c0164bdf5d10cf0064d9a559f85411197",
+          "plan_sha256": "e9a18c000ad8dc2e8d9c46cdc45744ed1cc618275af770ca363a3aeff0beca3a",
           "page": "CAP-11/CAP-11.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -4026,7 +4026,7 @@
           "wave": "W5",
           "title": "Accessibility, usability, onboarding, and help",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S04-accessibility-usability-onboarding-and-help.md",
-          "plan_sha256": "6b2679fb0238e84a07778dee8f22b1407bc2c87b76fda2ea21b200856bf0e6fb",
+          "plan_sha256": "3c9ecb3fb30a6b93403ae77e8f236f6ba28dccc1ab98e3868a13928c9981ddb4",
           "page": "CAP-11/CAP-11.S04.html",
           "task_count": 4,
           "task_reviews": [
@@ -4090,7 +4090,7 @@
           "wave": "W5",
           "title": "Lab deployment, policy, maintenance, and support",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S05-lab-deployment-policy-maintenance-and-support.md",
-          "plan_sha256": "f17764b844e4f2ceb5090d81a1baa7af36f05b7e9c3137bbad3f0614ead81619",
+          "plan_sha256": "1b35b2af614f8d03a10e61fa0b3b899c837ba7ce948ae81705ad2be5a60d2c3a",
           "page": "CAP-11/CAP-11.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -4141,7 +4141,7 @@
           "wave": "W5",
           "title": "Local release candidate and acceptance gate",
           "plan_path": "planning/slice-plans/CAP-11/CAP-11.S06-local-release-candidate-and-acceptance-gate.md",
-          "plan_sha256": "cb5a97d4908b4f9d1db6fa751bced2f571e55314edf9d407865a82fbb5f2747c",
+          "plan_sha256": "716325f6cef98f9b1fb69618c53a2cab3ed561307a34f76e6756d9a4ff57724d",
           "page": "CAP-11/CAP-11.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -4193,7 +4193,7 @@
       "capability_alias": "CAP-university-hosting",
       "title": "University-hosted deployment, institutional identity, collaboration, and operations",
       "plan_path": "planning/capability-plans/CAP-12.md",
-      "plan_sha256": "d7f08ee19cd6b7677d31ec580da31dd750d7feff78f047db2c1bf6a5928f4b44",
+      "plan_sha256": "b99c97f37e74675b84fe3c42f2e1eda6100e63567fcef40ad3f316a698f05c5a",
       "page": "CAP-12/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -4204,7 +4204,7 @@
           "wave": "W10",
           "title": "Desktop remote connection mode and API abstraction",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S01-desktop-remote-connection-mode-and-api-abstraction.md",
-          "plan_sha256": "9b60d6c25fd8b307312379b095a9c1da6e9373b8e154717cbe0f597fe705ea7a",
+          "plan_sha256": "7a48562fd73a00effeeda8bb731e70c1e9bd11b3cf4c57a4a6f039b259ee413f",
           "page": "CAP-12/CAP-12.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -4255,7 +4255,7 @@
           "wave": "W10",
           "title": "Institutional service and data-plane foundation",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S02-institutional-service-and-data-plane-foundation.md",
-          "plan_sha256": "3cd20ad16136d08d80c8097ede36b1f206962ddb48e83c6a4319d8796bfd74c3",
+          "plan_sha256": "52a356af8ef06b292449424edf7a806379dbf5945241728c053151ca0b6f48a3",
           "page": "CAP-12/CAP-12.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -4306,7 +4306,7 @@
           "wave": "W10",
           "title": "Institutional identity, authorization, and project isolation",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S03-institutional-identity-authorization-and-project-isolation.md",
-          "plan_sha256": "0204ced428786c295eb54ee888883c45d751319afb1dc2b3519f6425a5332043",
+          "plan_sha256": "325fcd54452a1e2d5faf685bb9bdb0b5f5430198e00f8ba1dda85652d2561e12",
           "page": "CAP-12/CAP-12.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -4357,7 +4357,7 @@
           "wave": "W10",
           "title": "Team collaboration and scholarly adjudication",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S04-team-collaboration-and-scholarly-adjudication.md",
-          "plan_sha256": "d98adf76a31121e79be07110dc69338563e745d1196c8e13c0ca8779127de59a",
+          "plan_sha256": "b533315d51a563ba85d286018a5e9cf5b8eea02b6d194e457cadb0175a543d20",
           "page": "CAP-12/CAP-12.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -4408,7 +4408,7 @@
           "wave": "W10",
           "title": "Licensed sources, institutional rights, retention, and compute policy",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S05-licensed-sources-institutional-rights-retention-and-compute-policy.md",
-          "plan_sha256": "32c300dd72aeeb0b14ad92b8781bcfb52a2168354566e2fd4382e4be09b0cd78",
+          "plan_sha256": "241dde279ad7add9a9dc3e3de86ca566f5dffd019d10d12c23580f7db735138d",
           "page": "CAP-12/CAP-12.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -4459,7 +4459,7 @@
           "wave": "W10",
           "title": "Institutional operations, disaster recovery, and pilot acceptance",
           "plan_path": "planning/slice-plans/CAP-12/CAP-12.S06-institutional-operations-disaster-recovery-and-pilot-acceptance.md",
-          "plan_sha256": "aba0858678caa22e1fb53e5ff8f60b9c6ae79cf1de04c70d50ce86f0f5215f80",
+          "plan_sha256": "c6892478bf6a30f54622dbd33d6becb4e26893072e5f145da4681e54903647bb",
           "page": "CAP-12/CAP-12.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -4511,7 +4511,7 @@
       "capability_alias": "CAP-cloud-platform",
       "title": "Managed cloud control plane, tenant data planes, governance, and SaaS operations",
       "plan_path": "planning/capability-plans/CAP-13.md",
-      "plan_sha256": "add501149881c293eca382c3aaa872e2f20f22b4e5766c294509d842bd0ddf23",
+      "plan_sha256": "fa039ef4af91a2ba491c8d8f343f9833c7524741825dfb11bcb7feac5c8e9086",
       "page": "CAP-13/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -4522,7 +4522,7 @@
           "wave": "W11",
           "title": "SaaS organization and tenant control plane",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S01-saas-organization-and-tenant-control-plane.md",
-          "plan_sha256": "fc06bcd6e732e66aeb773713e2a2510853baaa6b705e14e138bad6bf2b05fe71",
+          "plan_sha256": "b9d5eada047de0aeff8e74dbaabf44bde2a5ee0f8f0c4b665ee3fe4aca89a19c",
           "page": "CAP-13/CAP-13.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -4573,7 +4573,7 @@
           "wave": "W11",
           "title": "Regional tenant data planes and isolation tiers",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S02-regional-tenant-data-planes-and-isolation-tiers.md",
-          "plan_sha256": "9fc24d6e38f2e31532fbeef9767f0f5bfbec1ee66c429aa24d7fee260733ef32",
+          "plan_sha256": "64d262419cd54a0cdee89cddb3a5489f5e9b93de3c0279b0a0969ffa14cff991",
           "page": "CAP-13/CAP-13.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -4624,7 +4624,7 @@
           "wave": "W11",
           "title": "Cloud identity, entitlement, metering, and billing",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S03-cloud-identity-entitlement-metering-and-billing.md",
-          "plan_sha256": "d18723d5db2dce7097e35368d4e97db70a10169ddbdff07c09390521f3bc0eb0",
+          "plan_sha256": "22babd4b8e9cd07a21774b90cd9270eedba257e51d1f95e6f7205b0937ebce4b",
           "page": "CAP-13/CAP-13.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -4675,7 +4675,7 @@
           "wave": "W11",
           "title": "Elastic workers, models, search, and cost governance",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S04-elastic-workers-models-search-and-cost-governance.md",
-          "plan_sha256": "ef05ebd36198649a431341709cbe1e75d2986a3838364c99f401c17359c99f39",
+          "plan_sha256": "539dde52a97fe31af51489282e3da1817f06df2fe5e5b6ddcd59f00ff25f121f",
           "page": "CAP-13/CAP-13.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -4726,7 +4726,7 @@
           "wave": "W11",
           "title": "Cloud security, privacy, residency, and compliance operations",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S05-cloud-security-privacy-residency-and-compliance-operations.md",
-          "plan_sha256": "370d4457acc2eaddb504a39c8f44b88d7124c501989ab95f6b6acb8fda1a96df",
+          "plan_sha256": "453ea989e44bec4bee780f0c57d2aa0bc0b6d8413f8b459500cdbab2d87dedd8",
           "page": "CAP-13/CAP-13.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -4777,7 +4777,7 @@
           "wave": "W11",
           "title": "Desktop-cloud experience, service reliability, and launch gate",
           "plan_path": "planning/slice-plans/CAP-13/CAP-13.S06-desktop-cloud-experience-service-reliability-and-launch-gate.md",
-          "plan_sha256": "05004492de8d24695230fae0447b2c41d27583c3fa7374e68b9a2469d2d4c11a",
+          "plan_sha256": "4aae7b9e94b7ffcc8898e0651a3dde964a541d928cf257841c9cc27d75838a46",
           "page": "CAP-13/CAP-13.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -4829,7 +4829,7 @@
       "capability_alias": "CAP-cross-platform-desktop",
       "title": "Cross-platform desktop qualification and release",
       "plan_path": "planning/capability-plans/CAP-14.md",
-      "plan_sha256": "009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55",
+      "plan_sha256": "c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7",
       "page": "CAP-14/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -4840,7 +4840,7 @@
           "wave": "W6",
           "title": "Platform abstraction and build matrix",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S01-platform-abstraction-and-build-matrix.md",
-          "plan_sha256": "0f4401b0e51a321a38f5be1b9ff4d66dfdfe45e6db69dcc34d614f69502f68cd",
+          "plan_sha256": "04ad91285525cd7c5eee0abcba88a5646d3a7a5cbb504a3b66500629022b82c1",
           "page": "CAP-14/CAP-14.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -4891,7 +4891,7 @@
           "wave": "W6",
           "title": "Apple Silicon macOS product qualification",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S02-apple-silicon-macos-product-qualification.md",
-          "plan_sha256": "35c187bb6b09280cde76970a0b64fd93682613c615ea6e11321c4d89d7510d79",
+          "plan_sha256": "c062cfea0c48b8d85ac34a82dad888b234b5fca9b95cd2c2583efdf2372e8c07",
           "page": "CAP-14/CAP-14.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -4942,7 +4942,7 @@
           "wave": "W6",
           "title": "Linux x86_64 and ARM64 product qualification",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S03-linux-x86-64-and-arm64-product-qualification.md",
-          "plan_sha256": "a4bec6e05aec7196230e4990ab71e9edc6401f2fbd3e0b40e76b7fc2cc5d200b",
+          "plan_sha256": "8d7e5f565dd7c4f077b293902e604803cd9687746dbf6de21655186b4c2773d6",
           "page": "CAP-14/CAP-14.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -4993,7 +4993,7 @@
           "wave": "W6",
           "title": "Cross-platform scientific and AI runtime",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S04-cross-platform-scientific-and-ai-runtime.md",
-          "plan_sha256": "fc5324cfc70296c11812e4703d144f7352b99fe5eb879349307cb96f9f208f98",
+          "plan_sha256": "92102b8a8cb66614a07a51367deaf02671bf584848af5c2ccdece798a37bd26a",
           "page": "CAP-14/CAP-14.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -5044,7 +5044,7 @@
           "wave": "W6",
           "title": "Cross-platform project compatibility and recovery",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S05-cross-platform-project-compatibility-and-recovery.md",
-          "plan_sha256": "58f2589ae477926bc8b4689d1ba464375833ebc4277659b87d56584a8af07d73",
+          "plan_sha256": "ad35dc3cdc7d226a2ce7a7ccb757f25ae7d2e7c51cd8eabbe049d5fb90d2ea72",
           "page": "CAP-14/CAP-14.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -5095,7 +5095,7 @@
           "wave": "W6",
           "title": "Cross-platform desktop release gate",
           "plan_path": "planning/slice-plans/CAP-14/CAP-14.S06-cross-platform-desktop-release-gate.md",
-          "plan_sha256": "c4e299c83dedb19b7e38b03c20a9310b9aa239a7e664c6644ce49b72efdf0ab1",
+          "plan_sha256": "a35bcbf2e3a7ef5582620f926e964c00c418596dc5295d4a412cab049ba66637",
           "page": "CAP-14/CAP-14.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -5147,7 +5147,7 @@
       "capability_alias": "CAP-study-design",
       "title": "Empirical study design and protocol development",
       "plan_path": "planning/capability-plans/CAP-15.md",
-      "plan_sha256": "7906eaa090945d4ce205080a46c0e5f04b9ba3ab45ca34eaeae382eaaa4b4fae",
+      "plan_sha256": "8d349195487d01e11f9303e86df47f550e61fa708f9969bd31c49cdb97c3adda",
       "page": "CAP-15/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -5158,7 +5158,7 @@
           "wave": "W7",
           "title": "Study-design domain and evidence foundation",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S01-study-design-domain-and-evidence-foundation.md",
-          "plan_sha256": "c7e55a9c357a8d8a8ee57367189b10388f25cb42b9a7e2194916ad26b4108678",
+          "plan_sha256": "833fafc51a47d46ee08b14cf1841543e60326454cf8f30e59d309ae615854c4e",
           "page": "CAP-15/CAP-15.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -5209,7 +5209,7 @@
           "wave": "W7",
           "title": "Research logic and design alternatives",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S02-research-logic-and-design-alternatives.md",
-          "plan_sha256": "245ccc6dfe9989d0a365b87310b3ad51361bf7df688dabbb6af618582b38054b",
+          "plan_sha256": "71850e4eb8ac063a34d52d0a02642c86140cec3692f0ea46eb7e0e3a37c5f2c3",
           "page": "CAP-15/CAP-15.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -5260,7 +5260,7 @@
           "wave": "W7",
           "title": "Sampling, measurement, and data collection",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S03-sampling-measurement-and-data-collection.md",
-          "plan_sha256": "03667a0eb892cdf07112eb4dd9017f1f28c45fabd3d5b25137aa1527fe5ed608",
+          "plan_sha256": "f12363110c33f0da51375c0c1897b5ed5ace2d617e1c70bb25c6bec915417f5f",
           "page": "CAP-15/CAP-15.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -5311,7 +5311,7 @@
           "wave": "W7",
           "title": "Analysis, validity, ethics, and reproducibility",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S04-analysis-validity-ethics-and-reproducibility.md",
-          "plan_sha256": "2272ce58c102da26c6560d09fc7fcf58c6c25f204379e6b5ab56a46a6d6ef864",
+          "plan_sha256": "a5577035c8a3da6ba822f5fca8bf98e48bf84f2667761d43015962bc9ba606c3",
           "page": "CAP-15/CAP-15.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -5362,7 +5362,7 @@
           "wave": "W7",
           "title": "Study Design Studio and protocol exports",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S05-study-design-studio-and-protocol-exports.md",
-          "plan_sha256": "6e29e140a2ef5eee2de87fd852b64aed3fb60f992df952c7e8626fd7e62db4af",
+          "plan_sha256": "e168c7c0aa8d1f847d236e81686e6d507d75fff79b24bf8a29332b27d60576c6",
           "page": "CAP-15/CAP-15.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -5413,7 +5413,7 @@
           "wave": "W7",
           "title": "Study-design production acceptance",
           "plan_path": "planning/slice-plans/CAP-15/CAP-15.S06-study-design-production-acceptance.md",
-          "plan_sha256": "cf3aa582a13ec8b9f3787d6c00a2d63ecc592996bf9810182674e8efe8c3ec6d",
+          "plan_sha256": "8ffe15255d853d9a66fa7eabec2610f4896218999ea28e9b6806bb31ca13f42f",
           "page": "CAP-15/CAP-15.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -5465,7 +5465,7 @@
       "capability_alias": "CAP-manuscript-blueprints",
       "title": "Manuscript blueprint, venue profiles, and article architecture",
       "plan_path": "planning/capability-plans/CAP-16.md",
-      "plan_sha256": "d17eb447d75e3906d6325580ed9ce14337599f42e5bde88a0d5eb9435b4d4928",
+      "plan_sha256": "4682fcd2244309de8aa621482ecde60e4a1b7c383d0d0bd1012535dcde0949f5",
       "page": "CAP-16/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -5476,7 +5476,7 @@
           "wave": "W7",
           "title": "Manuscript domain and template governance",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S01-manuscript-domain-and-template-governance.md",
-          "plan_sha256": "cf85c99ea2914b5146bb827703725aa8d2a57422222a74cb02835190bb2ef822",
+          "plan_sha256": "9651438b22b55bd3d8cdf813443bc698b17c5349979ee75a7fee18332c8fce22",
           "page": "CAP-16/CAP-16.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -5527,7 +5527,7 @@
           "wave": "W7",
           "title": "Empirical article blueprints",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S02-empirical-article-blueprints.md",
-          "plan_sha256": "10b6cbd68eaaf46a535f035367d59b495d0413d145a6f006588f7eafb47717cb",
+          "plan_sha256": "8945ae1678bf3ea0d362bae17051b60df3bcea4d319b62f623ef4c417def2b9f",
           "page": "CAP-16/CAP-16.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -5578,7 +5578,7 @@
           "wave": "W7",
           "title": "Theory article blueprints",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S03-theory-article-blueprints.md",
-          "plan_sha256": "f7d729d47a85d52b90b0213bfec279be5a185d47fb3e58a813bdc121ea76ca63",
+          "plan_sha256": "3a1bb27153adbff247c584f0a2ffc15fc65aee6c5158c99e6a72f9e2c4b5b87e",
           "page": "CAP-16/CAP-16.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -5629,7 +5629,7 @@
           "wave": "W7",
           "title": "Critical scholarship blueprints",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S04-critical-scholarship-blueprints.md",
-          "plan_sha256": "370ebd92120e6555f85590fbbf2674b9151f9886fd4d03494e8e4e4d66cac5a6",
+          "plan_sha256": "d0449faadb3d71d3f3c9ccbf8e5f25cafae755745ae71c89c244c41f65bee8b8",
           "page": "CAP-16/CAP-16.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -5680,7 +5680,7 @@
           "wave": "W7",
           "title": "Manuscript Blueprint and venue adaptation",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S05-manuscript-blueprint-and-venue-adaptation.md",
-          "plan_sha256": "d9928aed01716433198614544a383cbbd8d283638a53b6e892374c79fc9f047b",
+          "plan_sha256": "3ec759a8695ecf2a17c12eab4b19e1940ba04ff4a693835f5cec16e959fe8f7e",
           "page": "CAP-16/CAP-16.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -5731,7 +5731,7 @@
           "wave": "W7",
           "title": "Manuscript blueprint production acceptance",
           "plan_path": "planning/slice-plans/CAP-16/CAP-16.S06-manuscript-blueprint-production-acceptance.md",
-          "plan_sha256": "73b6a1b3a24fcf201a20329a6eddce6119388026abf88919c4b31feb31fa0234",
+          "plan_sha256": "9d6fe82b3cde05ceca0b84965bb45507c4e01997be1f804209672a700b1880e8",
           "page": "CAP-16/CAP-16.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -5783,7 +5783,7 @@
       "capability_alias": "CAP-results-integration",
       "title": "Technical report and study-results integration",
       "plan_path": "planning/capability-plans/CAP-17.md",
-      "plan_sha256": "dec74cde90a6537d81a18e6e3ead9f478fc7cbf2fd489551609b28afd2343690",
+      "plan_sha256": "20ea14d0a4fa5a1ed6dcba4f30f92b3419727927bbb0aa0507e2174c5c65fda0",
       "page": "CAP-17/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -5794,7 +5794,7 @@
           "wave": "W8",
           "title": "Private technical-report and study-artifact intake",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S01-private-technical-report-and-study-artifact-intake.md",
-          "plan_sha256": "f70dde9136b0f7c083678eed78e56b8f274dfe4a5ba601428bbfeacabd418527",
+          "plan_sha256": "6de2e5b1c5f831340f6ef14abc7dbb0061c1e38a5a8900ebe87ec6f2c6fa14e4",
           "page": "CAP-17/CAP-17.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -5845,7 +5845,7 @@
           "wave": "W8",
           "title": "Technical-report parsing and result extraction",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S02-technical-report-parsing-and-result-extraction.md",
-          "plan_sha256": "31b5e6b9ca16e7a7943e7d68117edb83b10f4385df915ca2b0f403eb4ec026f5",
+          "plan_sha256": "031f08f1039e26a86680945b18dde840b98427c5e5d681d97c5c39f174f3fd1e",
           "page": "CAP-17/CAP-17.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -5896,7 +5896,7 @@
           "wave": "W8",
           "title": "Study-plan and result reconciliation",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S03-study-plan-and-result-reconciliation.md",
-          "plan_sha256": "75bc1db4e469c596f909e54275612873cee3ad040b1b7eb84229cd3f16c5c561",
+          "plan_sha256": "d6c3aebf1ec409961f02efe4fd35e314636aef5327b35a8ddb494c24f2ad0280",
           "page": "CAP-17/CAP-17.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -5947,7 +5947,7 @@
           "wave": "W8",
           "title": "Results evidence graph and dependency propagation",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S04-results-evidence-graph-and-dependency-propagation.md",
-          "plan_sha256": "02ed2181beba63bfc1c637e40ca4be43c8880f2e137bc39ad48a3a1955fb0e46",
+          "plan_sha256": "7fc7f752792d9bdc6950aa0d24e409006bb2f1fde534f6afc2a83b4a801f69b8",
           "page": "CAP-17/CAP-17.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -5998,7 +5998,7 @@
           "wave": "W8",
           "title": "Technical Reports & Results workspace",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S05-technical-reports-and-results-workspace.md",
-          "plan_sha256": "e76c22262bb548e72090aa4c0b07b02cc16fde2f1cb27ba771c8c0d3ed0cbc71",
+          "plan_sha256": "3bc2c22120d6abd78e9aecd56e0287e5168acb1c16d72323b2da4809b14bbea6",
           "page": "CAP-17/CAP-17.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -6049,7 +6049,7 @@
           "wave": "W8",
           "title": "Results integration production acceptance",
           "plan_path": "planning/slice-plans/CAP-17/CAP-17.S06-results-integration-production-acceptance.md",
-          "plan_sha256": "819e736d5990ba10d1ac0aba5732c81f1cfc902de7f1a93f3e0b2bd5e401633c",
+          "plan_sha256": "538f473a3a5862936a415ad44b9b3f08451045a5636edb75a9dbafb9b08e7d3a",
           "page": "CAP-17/CAP-17.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -6101,7 +6101,7 @@
       "capability_alias": "CAP-manuscript-drafting",
       "title": "Source-grounded manuscript drafting and publication artifacts",
       "plan_path": "planning/capability-plans/CAP-18.md",
-      "plan_sha256": "8e745e6a42a8b2a844c1be16c2caf6c1a4e0e936cdd0c34301b2a3ea82ab15ba",
+      "plan_sha256": "04ca5faf83511b1c0ac49ac80c9c0c6b97d4c33b00e8d964a8d369399f2563d8",
       "page": "CAP-18/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -6112,7 +6112,7 @@
           "wave": "W8",
           "title": "Manuscript project and section workflow",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S01-manuscript-project-and-section-workflow.md",
-          "plan_sha256": "a011f7eb03614e3a0f64085bfc988c4f8b873dd1877cb068cdc7f22f14a594e1",
+          "plan_sha256": "9683a6ad0f74561bc533f53b70a892c3628cc1d947ec3ef38fac948cc011eb5c",
           "page": "CAP-18/CAP-18.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -6163,7 +6163,7 @@
           "wave": "W8",
           "title": "Evidence-aware drafting engine",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S02-evidence-aware-drafting-engine.md",
-          "plan_sha256": "3dcfeb922568757e325114b7227e37f3a3b4e2357b0df1143c63fd082fb49047",
+          "plan_sha256": "94178d15fda6a7a8687c0c5a3cfc11f38244d084d83a24170634018e496fc665",
           "page": "CAP-18/CAP-18.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -6214,7 +6214,7 @@
           "wave": "W8",
           "title": "Empirical manuscript drafting",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S03-empirical-manuscript-drafting.md",
-          "plan_sha256": "9d704a3788c34b6c65f8b8c12b93df5feba5ab68012d01de1aaeff91fb9bb124",
+          "plan_sha256": "f3f78e8820be30f2a0ee4b4de9e85bc7f15cd0579d1e63fce5cb8718386c1ce5",
           "page": "CAP-18/CAP-18.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -6265,7 +6265,7 @@
           "wave": "W8",
           "title": "Theory and critical manuscript drafting",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S04-theory-and-critical-manuscript-drafting.md",
-          "plan_sha256": "9bb79e69e14cb66c7530880476b15720e1b004b4d9014bf6a01c877d5102bed7",
+          "plan_sha256": "31e14503340f559b054dcca453f9ad1d37be5006f09a34cf30a56aa39a081263",
           "page": "CAP-18/CAP-18.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -6316,7 +6316,7 @@
           "wave": "W8",
           "title": "Manuscript Studio and publication exports",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S05-manuscript-studio-and-publication-exports.md",
-          "plan_sha256": "b7fe59446e9a630de910a5db851c49d0e662198fc3ef9ec64e1920fb35074f8a",
+          "plan_sha256": "8f8e2f12ca434ceadf971547f5380747da8dbb8c9ec82485c52620b0eb85369c",
           "page": "CAP-18/CAP-18.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -6367,7 +6367,7 @@
           "wave": "W8",
           "title": "Source-grounded manuscript production acceptance",
           "plan_path": "planning/slice-plans/CAP-18/CAP-18.S06-source-grounded-manuscript-production-acceptance.md",
-          "plan_sha256": "9885a17483c34483a8863412f660e21a74e34a8340017a58acf7ca5fa70dbbfa",
+          "plan_sha256": "230717d3a8e9e1adc652a9ee9f45683bd9efb9b67ffe7cac66e7573a6cebb77a",
           "page": "CAP-18/CAP-18.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -6419,7 +6419,7 @@
       "capability_alias": "CAP-review-revision",
       "title": "Reviewer simulation, editorial synthesis, and revision",
       "plan_path": "planning/capability-plans/CAP-19.md",
-      "plan_sha256": "35b4a024df8447b4686e3f5c28a23caa831b0a102da5af168c94692a4f09fa66",
+      "plan_sha256": "2a754c5cb0bcb0774263bfd9efcb307565ba207991aceb90385f0c9a1aa12245",
       "page": "CAP-19/index.html",
       "decision_count": 18,
       "slice_count": 6,
@@ -6430,7 +6430,7 @@
           "wave": "W8",
           "title": "Reviewer protocol, roles, and independence",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S01-reviewer-protocol-roles-and-independence.md",
-          "plan_sha256": "e5f5b36a2f7e34c324ca408220a7783df73b4eab8d3c6f27479911b75070ee2c",
+          "plan_sha256": "e2f5bee64a01c9bcb530bfdac3104fcfb6f5dac74a85a50f0fbc3c5dbf48736b",
           "page": "CAP-19/CAP-19.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -6481,7 +6481,7 @@
           "wave": "W8",
           "title": "Extended independent reviewer panel",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S02-extended-independent-reviewer-panel.md",
-          "plan_sha256": "108f652bb48e046144816214557d2ee9c1a0d8414c59d8464d6317cda131c86b",
+          "plan_sha256": "20ae1f54835bff48c86c62fe692560f20508c0e2fa1d55bd3b857eb19865d98a",
           "page": "CAP-19/CAP-19.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -6532,7 +6532,7 @@
           "wave": "W8",
           "title": "Generated and uploaded draft intake",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S03-generated-and-uploaded-draft-intake.md",
-          "plan_sha256": "599e01bc91f55abd54fcd7912de892ebacb88638803e13c2b2b175318aea75de",
+          "plan_sha256": "4aa96bdac78bf8ec4703aeb058f5ac056df23ea901aa28d66c1d9dd3918fad3b",
           "page": "CAP-19/CAP-19.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -6583,7 +6583,7 @@
           "wave": "W8",
           "title": "Reviewer reports and editorial synthesis",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S04-reviewer-reports-and-editorial-synthesis.md",
-          "plan_sha256": "c29a716ee50b85bba333ef0469e7b1562e6822f1c92baf8f44ab8fe6f7366bde",
+          "plan_sha256": "4b27e075bb7c025253aa5e4dfbb42f533c2df8a2a0660e55703e4853097aab2e",
           "page": "CAP-19/CAP-19.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -6634,7 +6634,7 @@
           "wave": "W8",
           "title": "Revision and response workflow",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S05-revision-and-response-workflow.md",
-          "plan_sha256": "f2954045e7ea5d303c87a3a01b93b1e90adff307c89224c6885b1bd9d8f157fa",
+          "plan_sha256": "2d396f24366d982192f8cf2d9ed9d4b241d8213220ad9df3eab9703b86171111",
           "page": "CAP-19/CAP-19.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -6685,7 +6685,7 @@
           "wave": "W8",
           "title": "Reviewer simulation and research-production acceptance",
           "plan_path": "planning/slice-plans/CAP-19/CAP-19.S06-reviewer-simulation-and-research-production-acceptance.md",
-          "plan_sha256": "2fd1491f01887f1d39fcd5049be6db29dcfd3fe952072b1753b410ac5ade167a",
+          "plan_sha256": "41c0eea8a5c9bdf43acd88f723ad93a25058ce8818785514d934f349e468b406",
           "page": "CAP-19/CAP-19.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -8268,7 +8268,7 @@
         {
           "id": "GRR-0002.S02",
           "bootstrap_id": "GRR-0002.B02",
-          "bootstrap_status": "IN_PROGRESS",
+          "bootstrap_status": "CHANGES_REQUESTED",
           "packet_path": "planning/governance-recovery-requests/GRR-0002.S02.packet.json",
           "packet_sha256": "14452cb6e6f3959996458d7b84df0105a7f6e4bbf3f4c5fc36e9d0f0506d43c8",
           "packet_commit": "070f408ed257b3c1345a29c3be2c2f882952b856",
