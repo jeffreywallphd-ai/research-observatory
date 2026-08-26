@@ -1,0 +1,289 @@
+{
+  "$schema": "./governance-control-recovery-request.v6.schema.json",
+  "schemaVersion": "6.0-control-recovery-proposal",
+  "documentType": "governance-control-recovery-request-packet",
+  "controlRecoveryId": "GCR-0006",
+  "title": "Install revision-11 reader headroom for a separately governed GRR-0002.S03/B03",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "recovery-supplement-reader-ceiling-defect",
+  "rootAuthority": {
+    "basis": "repository-owner-governance-mismatch-protocol",
+    "exceptionScope": "one-time-exact-packet-bootstrap-only",
+    "packetReviewHistory": [],
+    "approvalSchema": {
+      "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v6.schema.json",
+      "sha256": "802320a950a2e201f6b82ad855e1dc5b771e661b91d0d7755117012a95ce26ea"
+    },
+    "approvalPath": "planning/governance-control-recovery/GCR-0006.approval.json",
+    "authorityManifest": {
+      "path": "planning/governance-control-recovery/GCR-0006.authority.json",
+      "sha256": "482926af1c1f3b9d881257fb348c732e50c0c7ee4de01c35c1e172da84030ffa"
+    },
+    "triggerRecord": {
+      "path": "planning/governance-control-recovery/GCR-0006.trigger.json",
+      "sha256": "76832cde14ba19f4631221de5ae6bb329637dab93da7fd3e256399b3974566ca"
+    },
+    "untrackedTriggerWitness": {
+      "path": "artifacts/evidence/W1.A04.B00.json",
+      "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+      "role": "atomic-failure-trigger-only",
+      "mustRemainUntrackedAndUnstaged": true,
+      "neverExecutionAuthority": true
+    },
+    "approvalIntroduction": {
+      "exclusiveCreate": true,
+      "trackedCleanExactBranchHead": true,
+      "permittedUntracked": "exact-trigger-witness-only",
+      "packetReviewApproved": true,
+      "introductionCommitIsExecutionBase": true
+    }
+  },
+  "predecessorAuthority": {
+    "headCommit": "b6c0366ef165a4ebeb3c10042d5ecc5379833a8c",
+    "parentCommit": "80e34d7f9b6b3b4eb36417ae27e8f53a826ea40a",
+    "backlogRawSha256": "aae3947377e06d9c752a7eae9b5d586c600b7e66016e41d95e753b100d9a93b7",
+    "backlogGitContentSha256": "667225c669c393215b1b884e2cdc28fea6651bfd3b7d96b4bf93d161046487d4",
+    "backlogGitBlob": "e68bc5ae8a676a3b04be535163242a9cb997b52a",
+    "activeRecovery": {
+      "path": "planning/governance-recovery-requests/GRR-0002.packet.json",
+      "sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
+      "commit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e"
+    },
+    "installedReaderGeneration": {
+      "path": "planning/governance-control-recovery/GCR-0003.B00.review-R04.json",
+      "sha256": "663aeee91040ca39dec74f7846c6894c4c0530b13d2a8a5ceb466831491c3236",
+      "commit": "eb10e880aec3ddf26e9311f4de7ee1370029a0d6"
+    },
+    "latestApprovedSupplementReview": {
+      "path": "planning/governance-recovery-approvals/GRR-0002.B02.review-R03.json",
+      "sha256": "30865832e32d6416d06b2020d2efb71e5b998c7e2abbf985a4e810e89ea13823",
+      "commit": "b6c0366ef165a4ebeb3c10042d5ecc5379833a8c"
+    },
+    "approvedRepairAmendment": {
+      "path": "planning/wave-amendment-approvals/W1.A04.json",
+      "sha256": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+      "commit": "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+    }
+  },
+  "triggerEvidence": {
+    "record": {
+      "path": "planning/governance-control-recovery/GCR-0006.trigger.json",
+      "sha256": "76832cde14ba19f4631221de5ae6bb329637dab93da7fd3e256399b3974566ca"
+    },
+    "failedCommand": "python tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-submit W1.A04 --agent codex --approval-commit 4f92ba991fd19a2c0ae413b34416a2901d7f84b9 --implementation-commit 214ac1aac53b4396ee29f7a935ddcac2a34618b6 --evidence artifacts/evidence/W1.A04.B00.json",
+    "diagnostics": [
+      "GRR-0002.S01: pre-append target amendment was fabricated in backlog state",
+      "GRR-0002.S02: pre-append target amendment was fabricated in backlog state"
+    ],
+    "rootCause": "tools/taskctl.py selects the target-amendment absence rule from the installed supplement schema version rather than from a validated pre-append or post-append phase. The lawful bootstrap command constructs W1.A04 and then the shared save validator applies the pre-append rule to that authorized successor.",
+    "atomicNoMutation": true,
+    "independentAudit": "Read-only inspection at exact commit b6c0366ef165a4ebeb3c10042d5ecc5379833a8c confirmed the command failed before persistence, the authored and staged path sets remained empty, the exact witness remained the sole untracked path, and the canonical backlog, revision-11 hold, paused Wave boundary, absent W1.A04, blocked T03, and pending G1 were unchanged. B02 is immutable and the revision-11 reader/schema ceiling makes a new sequential supplement unrepresentable without a separately governed reader-generation bootstrap."
+  },
+  "activationBoundary": {
+    "controlRevision": 11,
+    "minimumToolRevision": 11,
+    "holdId": "HOLD-W1-GRR-0002",
+    "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "taskId": "CAP-02.S04.T03",
+    "taskStatus": "BLOCKED",
+    "amendmentId": "W1.A04",
+    "amendmentBacklogStatus": "ABSENT",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "generationTransition": {
+    "predecessorControlRevision": 11,
+    "successorControlRevision": 11,
+    "supportedControlCeiling": 12,
+    "generationNeutral": true,
+    "existingHoldPreserved": true,
+    "newHoldCreated": false,
+    "installationMode": "exact-packet-neutral-reader-generation",
+    "postBootstrapGate": "independently-reviewed-and-exactly-approved-v5-GRR-0002.S03"
+  },
+  "lifecycle": {
+    "branch": "codex/w1-windows-local-runtime",
+    "actor": "codex",
+    "workspaceInvariant": {
+      "triggerWitness": {
+        "path": "artifacts/evidence/W1.A04.B00.json",
+        "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+        "role": "atomic-failure-trigger-only",
+        "mustRemainUntrackedAndUnstaged": true,
+        "neverExecutionAuthority": true
+      },
+      "denyOtherUntracked": true,
+      "denyWitnessStagingOrMutation": true,
+      "appliesAtEveryTransition": true
+    },
+    "canonicalPaths": {
+      "controller": "tools/gcr6ctl.py",
+      "state": "planning/governance-control-recovery/GCR-0006.B00.state.json",
+      "evidencePattern": "artifacts/evidence/governance-control-recovery/GCR-0006.B00.RNN.json",
+      "reviewPattern": "planning/governance-control-recovery/GCR-0006.B00.review-RNN.json",
+      "adoptionEvidence": "artifacts/evidence/governance-control-recovery/GCR-0006.B00.adoption.json",
+      "transactionSchema": "planning/governance-control-recovery/governance-control-recovery-transaction.v6.schema.json",
+      "transaction": "planning/governance-control-recovery/GCR-0006.B00.adoption-transaction.json",
+      "lock": "planning/governance-control-recovery/GCR-0006.B00.adoption.lock",
+      "backlogNext": "planning/governance-control-recovery/GCR-0006.B00.adoption-backlog.next",
+      "stateNext": "planning/governance-control-recovery/GCR-0006.B00.adoption-state.next"
+    },
+    "submission": {
+      "base": "approval-introduction-commit",
+      "candidateAncestry": "strict-descendant",
+      "trackedCleanBranchAndHead": true,
+      "pathComparison": "approval-base-to-candidate-exact-allowlist",
+      "staleWriter": "compare-and-swap",
+      "atomicFailure": "byte-stable",
+      "liveRevisionDuringReview": 11
+    },
+    "review": {
+      "independent": true,
+      "severityRanked": true,
+      "reviewedStateBinding": true,
+      "immutableAttempts": true,
+      "blockingFindingDenial": true,
+      "selfReviewDenied": true
+    },
+    "remediation": {
+      "candidateAncestry": "strict-descendant-of-prior-candidate",
+      "freshEvidence": true,
+      "explicitClosures": true,
+      "priorAttemptsPreserved": true
+    },
+    "adoption": {
+      "requiresApprovedB00": true,
+      "predecessorRevision": 11,
+      "successorRevision": 11,
+      "supportedControlCeiling": 12,
+      "generationNeutral": true,
+      "directChildTopology": "P-to-A-to-F",
+      "exactChangedPaths": [
+        "planning/backlog.yaml",
+        "planning/governance-control-recovery/GCR-0006.B00.state.json"
+      ],
+      "olderReadersFailClosed": true,
+      "postAdoptionGate": "separate-v5-GRR-0002.S03-review-and-exact-approval",
+      "transaction": {
+        "writeAhead": true,
+        "exclusiveLock": true,
+        "rawAndCanonicalCas": true,
+        "windowsReplaceExistingWriteThrough": true,
+        "flushSuccessorsManifestPublishedFilesAndDirectories": true,
+        "idempotentRecovery": true,
+        "automaticRecoveryPreflight": true,
+        "failClosedPartialStates": true,
+        "cleanupAfterValidatedPair": true,
+        "abruptTerminationBoundaryTests": true
+      }
+    },
+    "commands": {
+      "submit": "python tools/gcr6ctl.py --repo . submit GCR-0006 --agent codex --approval-commit <sha> --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0006.B00.RNN.json",
+      "review": "python tools/gcr6ctl.py --repo . review GCR-0006 --reviewer <independent-reviewer> --from planning/governance-control-recovery/GCR-0006.B00.review-RNN.json",
+      "resubmit": "python tools/gcr6ctl.py --repo . resubmit GCR-0006 --agent codex --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0006.B00.RNN.json",
+      "adopt": "python tools/gcr6ctl.py --repo . adopt GCR-0006 --agent codex --approved-state-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0006.B00.adoption.json",
+      "recover": "python tools/gcr6ctl.py --repo . recover GCR-0006 --agent codex",
+      "validate": "python tools/gcr6ctl.py --repo . validate GCR-0006 --require-approved"
+    }
+  },
+  "bootstrapUnit": {
+    "id": "GCR-0006.B00",
+    "kind": "one-time-recovery-reader-generation",
+    "exceptionReason": "B02 is independently approved and the exact historic W1.A04 bootstrap submission is now legally available, but shared supplement validation rejects its own authorized post-append successor. B02 is immutable, current supplement schemas stop at v4, CONTROL_TOOL_REVISION and the backlog schema stop at 11, and no sequential S03/B03 can be represented. A generation-neutral reader bootstrap is required before the defect can be repaired through a separately approved supplement.",
+    "authorizedPaths": [
+      "artifacts/evidence/governance-control-recovery/GCR-0006.B00*",
+      "planning/backlog.schema.json",
+      "planning/backlog.yaml",
+      "planning/governance-control-recovery/GCR-0006.B00*",
+      "planning/governance-recovery-requests/governance-recovery-supplement.v5.schema.json",
+      "planning/governance-recovery-requests/governance-recovery-supplement-approval.v5.schema.json",
+      "quality-scope.json",
+      "tests/foundation/test_gcr6ctl.py",
+      "tests/foundation/test_recoveryctl.py",
+      "tests/foundation/test_taskctl_schema.py",
+      "tools/gcr6ctl.py",
+      "tools/recoveryctl.py",
+      "tools/taskctl.py"
+    ],
+    "requiredOutcomes": [
+      "Bind GCR-0006 approval and append-only B00 review history to exact discovery commit b6c0366ef165a4ebeb3c10042d5ecc5379833a8c, raw and Git-content backlog bytes, active HOLD-W1-GRR-0002, approved B02 R03, approved ECR-0003/W1.A04 authority, the stopped W1/T03/G1 boundary, and exact trigger bytes.",
+      "Raise only the supported reader/schema ceiling from 11 to 12 during B00 implementation; keep live control revision and minimum-tool revision 11 through implementation and independent B00 review.",
+      "Add identity-specific version-5 packet and approval schemas for only future GRR-0002.S03/GRR-0002.B03, predecessor 11, successor 12, existing hold, and exact adopted GCR-0006 authority.",
+      "Leave version-1 through version-4 supplement schemas and behavior byte-preserved and semantically unchanged.",
+      "Leave the taskctl post-append target-amendment logic and historic W1.A04 bootstrap command semantics unchanged; prove the exact failed command remains denied with the same two diagnostics before and after adoption.",
+      "Authenticate the complete C-to-E-to-S-to-L-to-P-to-A-to-F Git topology, exact parentage, exact path deltas, evidence, independent review, approved projection, adoption evidence, and finalization.",
+      "After independent B00 approval only, append one exact fourth GCR-0006 generation record with 11-to-11, supported ceiling 12, and generation_neutral true while preserving revision/minimum 11.",
+      "Permit the same-revision generation exception only for the exact authenticated GCR-0006 neutral record; never permit an arbitrary same-revision generation or supplement.",
+      "Require exact GCR-0006 adoption before recognizing any v5 S03 authority and require the fourth generation before accepting revision/minimum 12.",
+      "Make revision-11 predecessor readers fail closed on the adopted fourth-generation backlog while new readers accept both the exact pre-adoption and exact adopted revision-11 states.",
+      "Use a durable two-file raw-and-canonical compare-and-swap transaction with exclusive lock, write-ahead manifest, Windows replace/write-through publication, flushes, exact-pair validation, idempotent recovery, and cleanup only after validation.",
+      "Keep HOLD-W1-GRR-0002 ACTIVE, W1 PAUSED, CAP-02.S04.T03 BLOCKED, W1.A04 absent, G1 PENDING, and the exact witness untracked, unstaged, and non-authoritative.",
+      "Reject stale, forked, adverse, self-reviewed, open-finding, wrong-hold, wrong-generation, wrong-revision, wrong-witness, dirty, redirected, substituted, partial, replayed, and unsupported authority without mutation."
+    ],
+    "forbiddenOutcomes": [
+      "Do not fix, weaken, bypass, or phase-switch taskctl post-append amendment validation in GCR-0006.",
+      "Do not create, approve, install, submit, review, or execute GRR-0002.S03/GRR-0002.B03.",
+      "Do not reopen B02, edit any prior GCR/GRR/ECR packet, approval, evidence, ledger, candidate, state, or schema, or reinterpret v4 authority.",
+      "Do not append or materialize W1.A04, submit or review W1.A04.B00, mutate CAP-02.S04.T03, release the hold, resume W1, act on G1, or claim any ordinary task.",
+      "Do not create a competing hold, change live revision/minimum from 11, permit generic same-revision transitions, jump directly to revision 12, or use the witness as authority.",
+      "Do not change product, experience-reference, capability-plan, slice-plan, local-main, remote, or release state."
+    ]
+  },
+  "acceptanceCriteria": [
+    "The GCR-0006 packet, request/runtime/transaction schemas, authority manifest, trigger record, proposal, and review page are Draft 2020-12 valid where applicable, path-safe, internally hash-bound, exact-commit reviewable, and inert.",
+    "Every active-hold, GCR-0003, S01, S02/B02, ECR-0003/W1.A04, candidate, evidence, ledger, Git, backlog, stopped-boundary, and witness identity reproduces exact immutable bytes and ancestry.",
+    "The failed historic W1.A04 command reproduces at the exact discovery boundary, reports both S01 and S02 pre-append fabrication diagnostics, and leaves backlog, Git path inventory, hold, Wave, task, gate, amendment absence, and witness byte-identical.",
+    "GCR-0006 approval can be introduced only after an independent APPROVED packet review at the exact packet commit; its clean codex-branch introduction commit is the sole B00 execution base.",
+    "B00 implementation changes only authorized reader/schema/controller/test/evidence/state paths, keeps revision/minimum 11, and cannot activate headroom before independent B00 approval.",
+    "The new reader accepts the exact three-generation revision-11 predecessor and exact authenticated four-generation neutral successor, while the predecessor reader rejects the successor and all readers reject revision 12 without exact GCR-0006 plus separately approved S03 authority.",
+    "The only neutral transition is authenticated GCR-0006 11-to-11 with ceiling 12; generic same-revision generations and every same-revision supplement are rejected.",
+    "Version-5 formats are exact to GRR-0002.S03/B03 11-to-12 and fail closed until GCR-0006 adoption; versions 1 through 4 remain unchanged.",
+    "The exact taskctl post-append defect is intentionally retained and the historic W1.A04 command has identical byte-stable denial before and after GCR-0006 adoption.",
+    "Independent B00 review validates exact append-only attempts, evidence truth, severity-ranked findings and closures, candidate ancestry, and the C-E-S-L-P-A-F commit topology with no open blocker.",
+    "Adoption is a durable direct-child P-to-A-to-F sequence and finalizes exactly backlog plus GCR-0006 state, appending only the fourth neutral generation and preserving all ordinary gates.",
+    "Crash injection and recovery cover every preparation, durable-write, marker, replacement, validation, flush, commit, and cleanup boundary and yield only the exact predecessor or successor pair.",
+    "Criterion-linked evidence, risk-selected tests, governed Python quality, exact diff scope, protected hashes, and independent review pass with no unexplained unverified item.",
+    "GCR-0006 supplies no S03/B03, W1.A04, task, hold-release, Wave-resume, gate, product, main, or remote authority."
+  ],
+  "verificationObligations": [
+    "Validate all three GCR-0006 schemas against Draft 2020-12 and validate every packet/runtime/transaction document against its exact schema.",
+    "Verify every packet and authority reference by path, raw SHA-256, Git blob where declared, introduction commit, ancestry, and exact branch/head.",
+    "Run real-Git C-E-S-L-P-A-F lifecycle tests with independent reviewer identity and immutable RNN attempt history.",
+    "Run old-reader/new-reader compatibility tests before and after neutral adoption and prove revision-12 denial without exact S03 authority.",
+    "Run supplement v5 schema and recovery tests for exact S03/B03 identity, 11-to-12 sequence, GCR-0006 activation, active hold, and stopped boundary; do not install live S03.",
+    "Prove all v1-v4 supplement schemas and their installed authority bytes are unchanged.",
+    "Run the exact historic W1.A04 command before and after adoption and compare diagnostics plus raw/canonical backlog, authored/staged/untracked paths, stopped boundary, and witness.",
+    "Exercise stale, forked, wrong-parent, wrong-generation, generic-neutral, direct-12, wrong-hold, wrong-witness, dirty, redirected, substituted, partial, adverse-review, open-finding, and self-review denials byte-stably.",
+    "Exercise child-process termination and deterministic recovery at every declared durable transaction boundary on Windows.",
+    "Run affected Ruff format/lint, mypy, focused controller/schema tests, backlog validation, review-site integrity, generated-view checks where changed, Git whitespace/diff hygiene, and exact witness checks.",
+    "Record why broader product and Wave qualification are deferred: this packet and B00 alter only governance readers and cannot authorize ordinary W1 execution."
+  ],
+  "rollback": [
+    "Before human approval, remove only uncommitted GCR-0006 packet-remediation changes; the committed inert packet and adverse reviews remain append-only.",
+    "Before B00 submission, abandon only uncommitted authorized implementation changes and preserve the approval introduction, active hold, and witness.",
+    "After an adverse B00 review, retain the attempt and ledger and use only a strict-descendant resubmission with fresh evidence and explicit closures.",
+    "During adoption, recover only through gcr6ctl to the exact predecessor pair or exact successor pair; never manually edit either canonical file.",
+    "After HEADROOM_ACTIVE finalization, do not rewrite or remove GCR-0006; any defect requires a new append-only control-recovery request while W1 remains stopped."
+  ],
+  "alternatives": [
+    {"id": "A", "title": "Approve bounded GCR-0006 reader headroom", "disposition": "recommended", "rationale": "Preserves immutable B02 authority and creates exactly one governed reader generation before separately approving the semantic repair."},
+    {"id": "B", "title": "Keep the repository stopped", "disposition": "safe", "rationale": "Preserves all current fail-closed controls indefinitely but leaves W1.A04 and W1 unavailable."},
+    {"id": "C", "title": "Reopen B02 or patch taskctl directly", "disposition": "rejected", "rationale": "Would alter approved history or execute a consequential fix without an authority lane."},
+    {"id": "D", "title": "Reuse v4, allow an 11-to-11 supplement, or jump to 12", "disposition": "rejected", "rationale": "Breaks sequential supplement semantics, strict revision increase, or older-reader fail-closed behavior."},
+    {"id": "E", "title": "Append W1.A04 manually", "disposition": "rejected", "rationale": "Bypasses the active recovery hold, immutable supplement review chain, and commit-bound historic-candidate checks."}
+  ],
+  "files": [
+    {"path": "planning/governance-control-recovery/GCR-0006.authority.json", "sha256": "482926af1c1f3b9d881257fb348c732e50c0c7ee4de01c35c1e172da84030ffa"},
+    {"path": "planning/governance-control-recovery/GCR-0006.md", "sha256": "1086e4784aa599646a562a37f9fd9c7eee24355c57314e1140494dcf57a78b8b"},
+    {"path": "planning/governance-control-recovery/GCR-0006-review.html", "sha256": "305d5854933ed2ff38a6b9c58178f54e8691c7d2f5ace64d7d3b4708a48e5e80"},
+    {"path": "planning/governance-control-recovery/GCR-0006.trigger.json", "sha256": "76832cde14ba19f4631221de5ae6bb329637dab93da7fd3e256399b3974566ca"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-request.v6.schema.json", "sha256": "5366e0470efdfba64968b40abefbfae384e362fbb18dcf8b98014aefc8db379d"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v6.schema.json", "sha256": "802320a950a2e201f6b82ad855e1dc5b771e661b91d0d7755117012a95ce26ea"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-transaction.v6.schema.json", "sha256": "fcfbb77ccc1e9070aa87970d047cfadef908cdcc2ba02d35ca8dd31458c594c5"}
+  ],
+  "requiredApprovalStatement": "Approve only GCR-0006.B00 for exact independently reviewed packet commit <40-character SHA>, authorizing solely revision-11 reader/schema/controller headroom required to recognize—but not create, approve, install, submit, review, or execute—a future separately reviewed and exactly approved GRR-0002.S03/GRR-0002.B03 11-to-12 supplement under existing HOLD-W1-GRR-0002. Keep live revision/minimum 11, HOLD-W1-GRR-0002 ACTIVE, W1 PAUSED, W1.A04 absent, CAP-02.S04.T03 BLOCKED, G1 PENDING, and the witness exact/untracked/unstaged/non-authoritative; do not repair postappend semantics or authorize ordinary execution."
+}
