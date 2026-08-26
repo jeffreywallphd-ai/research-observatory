@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "5.0-control-recovery-application-evidence",
+  "documentType": "governance-control-recovery-review-transition-evidence",
+  "controlRecoveryId": "GCR-0005",
+  "bootstrapUnit": "GCR-0005.B00",
+  "approvedStateCommit": "7e79776e3565ce9bd551cf18728b8f800ed70837",
+  "applicationBaseCommit": "7e79776e3565ce9bd551cf18728b8f800ed70837",
+  "projectionTimestamp": "2026-08-26T02:15:00+00:00",
+  "backlogBeforeRawSha256": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1",
+  "backlogBeforeCanonicalSha256": "3ffa93f894b5b63cbefd11d8b058eddf4deda96069aa03c9bb15bc116bc691cb",
+  "backlogAfterRawSha256": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798",
+  "backlogAfterCanonicalSha256": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798",
+  "ledger": {
+    "path": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json",
+    "sha256": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09",
+    "commit": "8b784cabc5d5d996c00fd2fbcc8f22a1ad05b5bb",
+    "reviewedStateCommit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c",
+    "candidateCommit": "d363c04c385251a5d789a0313e173342e7e0ae3e",
+    "evidenceSha256": "77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595",
+    "result": "changes-requested"
+  },
+  "ledgerBytePreserved": true,
+  "openFindingIds": [
+    "GRR-0002.B02-R01-F01"
+  ],
+  "changedPaths": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/status-summary.md",
+    "planning/review-site/manifest.json",
+    "planning/review-site/recoveries/GRR-0002.html",
+    "planning/review-site/recoveries/index.html",
+    "planning/review-site/waves/W1.html"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/gcr5ctl.py --repo . validate GCR-0005 --require-approved",
+      "result": "passed",
+      "summary": "The exact R02 state projection is independently approved with no open GCR-0005 finding; control revision remains 11 and ordinary execution remains denied."
+    },
+    {
+      "command": "independent GCR-0005.B00 R02 review at state a21bcec83e4d50a293bb9db8d0c7ef2be1aeb0d5 and ledger commit a50012c",
+      "result": "passed",
+      "summary": "Independent review approved the strict-descendant remediation, closed GCR-0005.B00-R01-F01, and preserved the original GRR-0002.B02-R01-F01 open."
+    },
+    {
+      "command": "exact-candidate junction, post-publication, recovery, and finalization matrix at 5c9bb0b79350c4c38bb2e1b97312314e8a4f8211",
+      "result": "passed",
+      "summary": "Five Windows parent-junction families, post-publication revalidation, normal interrupted recovery/finalization, and both durable crash matrices passed without redirected writes."
+    },
+    {
+      "command": "Get-FileHash -Algorithm SHA256 planning/backlog.yaml,planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json,artifacts/evidence/W1.A04.B00.json",
+      "result": "passed",
+      "summary": "The predecessor backlog, adverse B02 ledger, and protected witness reproduce their exact approved hashes; the witness remains untracked, unstaged, and non-authoritative."
+    }
+  ],
+  "unverifiedItems": [],
+  "ordinaryExecutionAuthority": false
+}
