@@ -23030,34 +23030,26 @@ control_plane:
         introduction_commit: 106921c269942401bab4cc4f732f4d1fb97b8abe
       bootstrap:
         id: GRR-0002.B02
-        status: CHANGES_REQUESTED
+        status: REVIEW
         implementer: codex
-        implementation_commit: 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6
+        implementation_commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
         submission_branch: codex/w1-windows-local-runtime
         evidence:
           type: governance-recovery-supplement-evidence
-          path: planning/governance-recovery-approvals/GRR-0002.B02.remediation-01.evidence.json
-          sha256: d5e31ad12e10bed9e5cf87b4c795cc390a534ea5ca833645f95f08e85b5bcf20
-          commit: 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6
-          recorded_at: '2026-08-26T13:46:51+00:00'
-        review: &id091
-          reviewer: independent-b02-control-security-reviewer
-          result: changes-requested
-          reviewed_at: '2026-08-26T13:59:38+00:00'
-          notes: CHANGES_REQUESTED after independent commit-bound R02 control/security review. The exact frozen REVIEW state
-            is the sole direct child of candidate 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6. R01 candidate d363c04c385251a5d789a0313e173342e7e0ae3e
-            strictly precedes exact GCR-0005 application finalization ce17f78a2e139285bf2e50a654999ddc42e5d8ae, which strictly
-            precedes the R02 candidate. The ce17f78..2419dc2 implementation delta is confined to tools/recoveryctl.py and
-            tests/foundation/test_recoveryctl.py, matches the evidence, and passes Git whitespace checks. The exact live R02
-            REVIEW projection passes supplement-status, supplement-validate, and canonical backlog validation; it retains
-            the sole ACTIVE HOLD-W1-GRR-0002, revision 11, PAUSED W1 wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, PENDING
-            G1, and the exact unstaged/untracked witness. Three existing B02 authority, stale/fork, and semantic-substitution
-            tests pass, and both exact taskctl historic-retry guards pass. Approval is withheld because the newly added post-GCR
-            lifecycle/lineage test fails before exercising its assertions, contradicting the evidence claim that all 32 recovery
-            tests pass, and it does not execute the required real supplement-resubmit lifecycle. GRR-0002.B02-R01-F01 therefore
-            remains open and no closure is recorded. This adverse review grants no B02 approval, historic retry, amendment/task
-            execution, hold release, W1 resume, gate action, merge, or remote authority.
-        current_submission: null
+          path: planning/governance-recovery-approvals/GRR-0002.B02.remediation-02.evidence.json
+          sha256: 21d06572051bb0271c541d0588c7f9935b14b70348320799652d0f6c73f8b3dd
+          commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
+          recorded_at: '2026-08-26T15:09:54+00:00'
+        review:
+          reviewer: null
+          result: null
+          reviewed_at: null
+          notes: null
+        current_submission:
+          attempt_id: R03
+          candidate_commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
+          evidence_sha256: 21d06572051bb0271c541d0588c7f9935b14b70348320799652d0f6c73f8b3dd
+          acceptance_criteria_sha256: c5db985ade2a804292b2323385584ec9d86977ec429c04641b036d1f82cd7741
         attempts:
         - id: R01
           implementer: codex
@@ -23100,7 +23092,23 @@ control_plane:
             sha256: d5e31ad12e10bed9e5cf87b4c795cc390a534ea5ca833645f95f08e85b5bcf20
             commit: 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6
             recorded_at: '2026-08-26T13:46:51+00:00'
-          review: *id091
+          review:
+            reviewer: independent-b02-control-security-reviewer
+            result: changes-requested
+            reviewed_at: '2026-08-26T13:59:38+00:00'
+            notes: CHANGES_REQUESTED after independent commit-bound R02 control/security review. The exact frozen REVIEW state
+              is the sole direct child of candidate 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6. R01 candidate d363c04c385251a5d789a0313e173342e7e0ae3e
+              strictly precedes exact GCR-0005 application finalization ce17f78a2e139285bf2e50a654999ddc42e5d8ae, which strictly
+              precedes the R02 candidate. The ce17f78..2419dc2 implementation delta is confined to tools/recoveryctl.py and
+              tests/foundation/test_recoveryctl.py, matches the evidence, and passes Git whitespace checks. The exact live
+              R02 REVIEW projection passes supplement-status, supplement-validate, and canonical backlog validation; it retains
+              the sole ACTIVE HOLD-W1-GRR-0002, revision 11, PAUSED W1 wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03,
+              PENDING G1, and the exact unstaged/untracked witness. Three existing B02 authority, stale/fork, and semantic-substitution
+              tests pass, and both exact taskctl historic-retry guards pass. Approval is withheld because the newly added
+              post-GCR lifecycle/lineage test fails before exercising its assertions, contradicting the evidence claim that
+              all 32 recovery tests pass, and it does not execute the required real supplement-resubmit lifecycle. GRR-0002.B02-R01-F01
+              therefore remains open and no closure is recorded. This adverse review grants no B02 approval, historic retry,
+              amendment/task execution, hold release, W1 resume, gate action, merge, or remote authority.
           ledger:
             path: planning/governance-recovery-approvals/GRR-0002.B02.review-R02.json
             sha256: 6882b8f7a0fe14957abe747cc522c372b1e00cc16eccc167515fe14ad43dec45
@@ -23455,7 +23463,7 @@ wave_amendments:
       commit: 4f256763401772298bf75c634f2c7b2355882f10
       recorded_at: '2026-08-21T01:30:59+00:00'
     verification_state: passed
-    review: &id092
+    review: &id091
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T01:37:41+00:00'
@@ -23727,7 +23735,7 @@ wave_amendments:
           - W1.A02.T01-R01-F02
           root_cause_analysis: null
           packet_sha256: 8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd
-        review: *id092
+        review: *id091
         ledger:
           path: artifacts/evidence/W1.A02.T01.review-R02.json
           sha256: f8913f680808ba3119935de66d170305a94e61b7818941154cbbc654745e5ac5
@@ -23788,7 +23796,7 @@ wave_amendments:
       commit: aa714b7c16def6add4662e0d1c44d0bc89e7c349
       recorded_at: '2026-08-21T02:50:29+00:00'
     verification_state: passed
-    review: &id093
+    review: &id092
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T02:59:03+00:00'
@@ -24073,7 +24081,7 @@ wave_amendments:
           - foundation:quality
           - foundation:backlog
           packet_sha256: c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03
-        review: *id093
+        review: *id092
         ledger:
           path: artifacts/evidence/W1.A02.T02.review-R02.json
           sha256: 2700fd6eff428b03a257f22e7acc511d11ef9196e9224dfa188ab9357c2cc117
@@ -24552,7 +24560,7 @@ wave_amendments:
       commit: 0362cfe72c84f167338329490f6799ba9f84a808
       recorded_at: '2026-08-22T20:04:57+00:00'
     verification_state: passed
-    review: &id094
+    review: &id093
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-22T20:13:45+00:00'
@@ -24780,7 +24788,7 @@ wave_amendments:
           - foundation:quality
           - foundation:backlog
           packet_sha256: 15eaaa895273188e63a333cf5cb2f9a359a2b879764d6a7b5c850ddc6955ac22
-        review: *id094
+        review: *id093
         ledger:
           path: artifacts/evidence/W1.A03.T01.review-R02.json
           sha256: cd9e363e474d9d2d957c8fcc9049b631f441553e8a0e8c36a5fb1b98d883ef02
