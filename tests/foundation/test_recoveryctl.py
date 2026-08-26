@@ -845,7 +845,11 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.git(repo, "config", "user.name", "Fixture Reviewer")
         self.git(repo, "config", "commit.gpgsign", "false")
         self.git(repo, "config", "core.autocrlf", "false")
-        shutil.copy2(REPO / "planning/backlog.yaml", repo / "planning/backlog.yaml")
+        if not self.git(repo, "branch", "--show-current"):
+            self.git(repo, "switch", "-c", "codex/b02-scope-fixture")
+        witness = repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH
+        witness.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(REPO / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH, witness)
         return repo
 
     @staticmethod
@@ -930,6 +934,48 @@ class GovernanceRecoveryTests(unittest.TestCase):
             "B02_SCOPE_APPROVAL_COMMIT": approval_commit,
             "B02_SCOPE_APPROVAL_SHA256": hashlib.sha256(approval_payload).hexdigest(),
         }
+
+    def write_b02_remediation_evidence(self, repo: Path, candidate: str) -> tuple[str, bytes]:
+        approval, packet, _approval_payload, _packet_payload = recoveryctl.load_supplement_authority(
+            repo, "GRR-0002.S02"
+        )
+        relative = "planning/governance-recovery-approvals/GRR-0002.B02.remediation-01.evidence.json"
+        changed_paths = self.git(
+            repo,
+            "diff",
+            "--name-only",
+            f"{recoveryctl.GCR5_FINALIZATION_COMMIT}..{candidate}",
+            "--",
+        ).splitlines()
+        document = {
+            "schemaVersion": "1.0",
+            "documentType": "governance-recovery-supplement-bootstrap-evidence",
+            "recoveryRequestId": "GRR-0002",
+            "supplementId": "GRR-0002.S02",
+            "bootstrapUnit": "GRR-0002.B02",
+            "branch": self.git(repo, "branch", "--show-current"),
+            "baseCommit": recoveryctl.GCR5_FINALIZATION_COMMIT,
+            "candidateCommit": candidate,
+            "changedPaths": changed_paths,
+            "riskAnalysis": (
+                "Fixture authenticates the exact GCR-0005 lineage bridge and bounded B02 remediation delta."
+            ),
+            "requiredOutcomes": [
+                {"criterion": criterion, "evidence": ["The exact post-GCR B02 remediation fixture passed."]}
+                for criterion in packet["supplementalBootstrap"]["requiredOutcomes"]
+            ],
+            "acceptanceCriteria": [
+                {"criterion": criterion, "evidence": ["The exact post-GCR B02 remediation fixture passed."]}
+                for criterion in packet["acceptanceCriteria"]
+            ],
+            "checks": [{"id": "b02-r02-lineage", "command": "fixture:b02-r02-lineage", "result": "passed"}],
+            "deferredCoverage": ["Full W1 qualification remains at Wave exit."],
+            "unverifiedItems": [],
+        }
+        payload = (json.dumps(document, indent=2) + "\n").encode()
+        (repo / relative).write_bytes(payload)
+        self.assertEqual("APPROVED", approval["status"])
+        return relative, payload
 
     def install_v2_supplement_authority(self, repo: Path) -> tuple[dict[str, Any], str]:
         """Freeze and approve an exact GRR-0002.S01 fixture packet in Git."""
@@ -1795,6 +1841,90 @@ class GovernanceRecoveryTests(unittest.TestCase):
                                 candidate,
                             )
                     self.assertEqual(snapshot, self.b02_control_snapshot(repo))
+
+    def test_b02_post_gcr_adverse_state_and_exact_r02_lineage_bridge(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = self.b02_scope_clone(temporary)
+            _approval, _packet, hold, supplement = recoveryctl.validate_supplement(repo, "GRR-0002.S02")
+            self.assertEqual("ACTIVE", hold["status"])
+            self.assertEqual("CHANGES_REQUESTED", supplement["bootstrap"]["status"])
+            self.assertEqual(
+                "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798",
+                hashlib.sha256((repo / "planning/backlog.yaml").read_bytes()).hexdigest(),
+            )
+
+            controller = repo / "tools/recoveryctl.py"
+            controller.write_bytes(controller.read_bytes() + b"\n# exact B02 R02 fixture remediation\n")
+            self.git(repo, "add", "--", "tools/recoveryctl.py")
+            self.git(repo, "commit", "-m", "fixture: remediate B02 R01 finding")
+            candidate = self.git(repo, "rev-parse", "HEAD")
+            relative, lawful_payload = self.write_b02_remediation_evidence(repo, candidate)
+            approval, packet, _approval_payload, _packet_payload = recoveryctl.load_supplement_authority(
+                repo, "GRR-0002.S02"
+            )
+            document, payload, actual_relative = recoveryctl.supplement_evidence_document(
+                repo,
+                "GRR-0002.S02",
+                packet,
+                approval,
+                relative,
+                candidate,
+                lineage_base=recoveryctl.B02_R01_CANDIDATE,
+            )
+            self.assertEqual(recoveryctl.GCR5_FINALIZATION_COMMIT, document["baseCommit"])
+            self.assertEqual(["tools/recoveryctl.py"], document["changedPaths"])
+            self.assertEqual(lawful_payload, payload)
+            self.assertEqual(relative, actual_relative)
+
+            evidence_path = repo / relative
+            forged = json.loads(lawful_payload)
+            forged["baseCommit"] = recoveryctl.B02_R01_CANDIDATE
+            evidence_path.write_bytes((json.dumps(forged, indent=2) + "\n").encode())
+            snapshot = self.b02_control_snapshot(repo)
+            with self.assertRaisesRegex(SystemExit, "base/candidate binding mismatch"):
+                recoveryctl.supplement_evidence_document(
+                    repo,
+                    "GRR-0002.S02",
+                    packet,
+                    approval,
+                    relative,
+                    candidate,
+                    lineage_base=recoveryctl.B02_R01_CANDIDATE,
+                )
+            self.assertEqual(snapshot, self.b02_control_snapshot(repo))
+            evidence_path.write_bytes(lawful_payload)
+
+            with self.assertRaisesRegex(SystemExit, "strictly descend"):
+                recoveryctl.b02_remediation_lineage_base(
+                    repo,
+                    "GRR-0002.S02",
+                    recoveryctl.B02_R01_CANDIDATE,
+                    recoveryctl.GCR5_FINALIZATION_COMMIT,
+                )
+            self.assertEqual(
+                candidate,
+                recoveryctl.b02_remediation_lineage_base(
+                    repo,
+                    "GRR-0002.S02",
+                    candidate,
+                    candidate,
+                ),
+            )
+
+            packet_path = repo / "planning/governance-control-recovery/GCR-0005.packet.json"
+            packet_path.write_bytes(packet_path.read_bytes() + b" ")
+            self.git(repo, "add", "--", packet_path.relative_to(repo).as_posix())
+            self.git(repo, "commit", "-m", "fixture: substitute GCR-0005 packet")
+            substituted_candidate = self.git(repo, "rev-parse", "HEAD")
+            substituted_snapshot = self.b02_control_snapshot(repo)
+            with self.assertRaisesRegex(SystemExit, "lineage bridge authority differs"):
+                recoveryctl.b02_remediation_lineage_base(
+                    repo,
+                    "GRR-0002.S02",
+                    recoveryctl.B02_R01_CANDIDATE,
+                    substituted_candidate,
+                )
+            self.assertEqual(substituted_snapshot, self.b02_control_snapshot(repo))
 
     def test_grr_0002_s01_v2_real_git_witness_aware_lifecycle(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

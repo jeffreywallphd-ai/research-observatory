@@ -64,6 +64,11 @@ B02_SCOPE_REVIEW_SHA256 = "52bc6eec8348ca00d41ec9e765a5c4795d469293cb361738f210c
 B02_SCOPE_APPROVAL_COMMIT = "f6f0f640e9acd0da74a1ff73afe85f09db797a8e"
 B02_SCOPE_APPROVAL_SHA256 = "bb8dece91dd28cfe69cadfd0d4bb69d54fac1d62b31905ce8c4b683926dde3f5"
 B02_SCOPE_BACKLOG_SHA256 = "b671614b9889bb46456cd9ce6a7ee70ed158b11ad4d3dac28a90b304a680b8ec"
+B02_SCOPE_BACKLOG_CANONICAL_SHA256 = "63f1a2f51738683156ab8a718ff5990b5129dd2716ebf580bf53e2069e43668b"
+B02_R01_CANDIDATE = "d363c04c385251a5d789a0313e173342e7e0ae3e"
+GCR5_APPROVED_STATE_COMMIT = "7e79776e3565ce9bd551cf18728b8f800ed70837"
+GCR5_APPLICATION_COMMIT = "2977ed2b9beb95b6d1f60146961173bb0f969f94"
+GCR5_FINALIZATION_COMMIT = "ce17f78a2e139285bf2e50a654999ddc42e5d8ae"
 B02_SCOPE_GENERATED_PATHS = [
     "docs/planning-implementation-plan.md",
     "planning/status-summary.md",
@@ -1808,6 +1813,170 @@ def approved_b01_scope_addendum_paths(repo: Path, supplement_id: str, candidate:
     return list(B01_SCOPE_GENERATED_PATHS)
 
 
+def validate_b02_scope_lifecycle_backlog(repo: Path, installed_backlog: bytes) -> None:
+    """Authenticate immutable B02 installation separately from its live lifecycle."""
+
+    if (
+        b"\r\n" in installed_backlog
+        or sha256(installed_backlog) != B02_SCOPE_BACKLOG_CANONICAL_SHA256
+        or sha256(installed_backlog.replace(b"\n", b"\r\n")) != B02_SCOPE_BACKLOG_SHA256
+    ):
+        raise SystemExit("B02 scope-addendum installed backlog Git blob differs")
+
+    backlog_path = repo / "planning/backlog.yaml"
+    current_backlog = backlog_path.read_bytes()
+    head = git_output(repo, "rev-parse", "HEAD")
+    head_backlog = taskctl.git_blob(repo, head, "planning/backlog.yaml")
+    if head_backlog is None or current_backlog.replace(b"\r\n", b"\n") != head_backlog:
+        raise SystemExit("B02 scope-addendum live backlog is not the exact current Git projection")
+
+    installed_data = yaml.safe_load(installed_backlog)
+    _data, _capabilities, _slices, _tasks, _gates = taskctl.load(str(backlog_path))
+    data = _data
+    errors = taskctl.recovery_hold_errors(data, repo)
+    if errors:
+        raise SystemExit("B02 scope-addendum live recovery history is invalid:\n- " + "\n- ".join(errors))
+
+    installed_hold = recovery_hold(installed_data, "GRR-0002")
+    installed_supplement = recovery_supplement(installed_hold, "GRR-0002.S02")
+    hold = recovery_hold(data, "GRR-0002")
+    supplement = recovery_supplement(hold, "GRR-0002.S02")
+    control = data.get("control_plane") or {}
+    wave = taskctl.wave_map(data).get("W1") or {}
+    task = _tasks.get("CAP-02.S04.T03") or {}
+    gate = _gates.get("G1") or {}
+    active_holds = taskctl.active_recovery_holds(data)
+    static_fields = (
+        "id",
+        "predecessor_control_revision",
+        "packet_reference",
+        "approval_reference",
+        "created_at",
+        "successor_control_revision",
+    )
+    bootstrap = supplement.get("bootstrap") or {}
+    installed_bootstrap = installed_supplement.get("bootstrap") or {}
+    if (
+        any(supplement.get(field) != installed_supplement.get(field) for field in static_fields)
+        or control.get("revision") != 11
+        or control.get("minimum_tool_revision") != 11
+        or [item.get("id") for item in active_holds] != ["HOLD-W1-GRR-0002"]
+        or hold.get("status") != "ACTIVE"
+        or (hold.get("bootstrap") or {}).get("status") != "APPROVED"
+        or (wave.get("campaign") or {}).get("status") != "PAUSED"
+        or (wave.get("campaign") or {}).get("scope") != "wave"
+        or "W1.A04" in taskctl.wave_amendment_map(data)
+        or task.get("status") != "BLOCKED"
+        or gate.get("status") != "PENDING"
+        or bootstrap.get("id") != installed_bootstrap.get("id")
+        or bootstrap.get("id") != "GRR-0002.B02"
+        or bootstrap.get("implementer") != installed_bootstrap.get("implementer")
+    ):
+        raise SystemExit("B02 scope-addendum live stopped boundary differs")
+
+    status = str(bootstrap.get("status") or "")
+    if status not in {"IN_PROGRESS", "REVIEW", "CHANGES_REQUESTED", "BLOCKED", "APPROVED"}:
+        raise SystemExit("B02 scope-addendum live lifecycle status is invalid")
+    projection_errors = taskctl.recovery_bootstrap_projection_errors("GRR-0002.B02", bootstrap)
+    if projection_errors:
+        raise SystemExit(
+            "B02 scope-addendum live lifecycle projection is invalid:\n- " + "\n- ".join(projection_errors)
+        )
+    if status == "IN_PROGRESS" and current_backlog.replace(b"\r\n", b"\n") != installed_backlog:
+        raise SystemExit("B02 scope-addendum IN_PROGRESS projection differs from its immutable installation")
+    if status == "REVIEW":
+        attempts = bootstrap.get("attempts") or []
+        current = bootstrap.get("current_submission") or {}
+        evidence = bootstrap.get("evidence") or {}
+        expected_attempt = f"R{len(attempts) + 1:02d}"
+        review = bootstrap.get("review") or {}
+        if (
+            current.get("attempt_id") != expected_attempt
+            or current.get("candidate_commit") != bootstrap.get("implementation_commit")
+            or current.get("evidence_sha256") != evidence.get("sha256")
+            or not current.get("acceptance_criteria_sha256")
+            or any(review.get(field) is not None for field in ("reviewer", "result", "reviewed_at", "notes"))
+        ):
+            raise SystemExit("B02 scope-addendum frozen REVIEW projection differs")
+
+    witness = safe_repo_path(
+        repo,
+        CONTROL_RECOVERY_TRIGGER_PATH,
+        label="B02 scope-addendum witness",
+        designated_prefix="artifacts/evidence",
+    )
+    staged = set(git_output(repo, "diff", "--cached", "--name-only", "--").splitlines())
+    untracked = set(git_output(repo, "ls-files", "--others", "--exclude-standard").splitlines())
+    if (
+        sha256(witness.read_bytes()) != CONTROL_RECOVERY_TRIGGER_SHA256
+        or CONTROL_RECOVERY_TRIGGER_PATH in staged
+        or CONTROL_RECOVERY_TRIGGER_PATH not in untracked
+    ):
+        raise SystemExit("B02 scope-addendum witness is not exact, untracked, and unstaged")
+
+
+def b02_remediation_lineage_base(
+    repo: Path,
+    supplement_id: str,
+    lineage_base: str | None,
+    candidate: str,
+) -> str | None:
+    """Apply the one-time, exact GCR-0005 post-application R01-to-R02 bridge."""
+
+    if supplement_id != "GRR-0002.S02" or lineage_base != B02_R01_CANDIDATE:
+        return lineage_base
+
+    import gcr5ctl
+
+    require_commit(repo, B02_R01_CANDIDATE, ancestor_of=GCR5_FINALIZATION_COMMIT, label="B02 R01 candidate")
+    require_commit(repo, GCR5_APPLICATION_COMMIT, ancestor_of=GCR5_FINALIZATION_COMMIT, label="GCR-0005 application")
+    require_commit(repo, GCR5_FINALIZATION_COMMIT, ancestor_of=candidate, label="GCR-0005 finalization")
+    if candidate == GCR5_FINALIZATION_COMMIT:
+        raise SystemExit("B02 R02 candidate must strictly descend from the exact GCR-0005 finalization")
+    if (
+        taskctl.git_commit_parents(repo, GCR5_FINALIZATION_COMMIT) != [GCR5_APPLICATION_COMMIT]
+        or taskctl.git_name_status_delta(repo, GCR5_APPLICATION_COMMIT, GCR5_FINALIZATION_COMMIT)
+        != {relative: "M" for relative in gcr5ctl.FINAL_PATHS}
+        or taskctl.approval_introduction_commit(repo, gcr5ctl.APPLICATION_EVIDENCE_PATH) != GCR5_APPLICATION_COMMIT
+    ):
+        raise SystemExit("GCR-0005 lineage bridge is not the exact application finalization")
+    application, _application_payload = gcr5ctl._git_document(
+        repo,
+        GCR5_APPLICATION_COMMIT,
+        gcr5ctl.APPLICATION_EVIDENCE_PATH,
+        "GCR-0005 application evidence",
+    )
+    gcr5ctl.validate_application_evidence(
+        repo,
+        application,
+        approved_state=GCR5_APPROVED_STATE_COMMIT,
+        application_commit=GCR5_APPLICATION_COMMIT,
+    )
+    immutable_references = (
+        (gcr5ctl.PACKET_PATH, gcr5ctl.PACKET_COMMIT),
+        (gcr5ctl.APPROVAL_PATH, gcr5ctl.APPROVAL_COMMIT),
+        (gcr5ctl.STATE_PATH, GCR5_APPROVED_STATE_COMMIT),
+        (gcr5ctl.APPLICATION_EVIDENCE_PATH, GCR5_APPLICATION_COMMIT),
+        (gcr5ctl.LEDGER_PATH, gcr5ctl.LEDGER_COMMIT),
+    )
+    for relative, authority_commit in immutable_references:
+        authority_blob = taskctl.git_blob(repo, authority_commit, relative)
+        if (
+            authority_blob is None
+            or taskctl.git_blob(repo, GCR5_FINALIZATION_COMMIT, relative) != authority_blob
+            or taskctl.git_blob(repo, candidate, relative) != authority_blob
+        ):
+            raise SystemExit(f"GCR-0005 lineage bridge authority differs: {relative}")
+    ledger_blob = taskctl.git_blob(repo, gcr5ctl.LEDGER_COMMIT, gcr5ctl.LEDGER_PATH)
+    if ledger_blob is None or sha256(ledger_blob) != gcr5ctl.LEDGER_SHA256:
+        raise SystemExit("GCR-0005 lineage bridge adverse ledger differs")
+    final_backlog = taskctl.git_blob(repo, GCR5_FINALIZATION_COMMIT, "planning/backlog.yaml")
+    if final_backlog is None or sha256(final_backlog) != gcr5ctl.BACKLOG_AFTER:
+        raise SystemExit("GCR-0005 lineage bridge backlog differs from the exact adverse projection")
+    gcr5ctl.validate_boundary(yaml.safe_load(final_backlog), expected_status="CHANGES_REQUESTED")
+    return GCR5_FINALIZATION_COMMIT
+
+
 def approved_b02_scope_addendum_paths(repo: Path, supplement_id: str, candidate: str) -> list[str]:
     """Return only the exact human-approved B02 deterministic-output extension."""
 
@@ -1912,7 +2081,6 @@ def approved_b02_scope_addendum_paths(repo: Path, supplement_id: str, candidate:
     installed = authority.get("installedCandidate") or {}
     implementation = authority.get("implementationCandidate") or {}
     installed_backlog = taskctl.git_blob(repo, B02_SCOPE_INSTALLED_CANDIDATE, "planning/backlog.yaml")
-    current_backlog = (repo / "planning/backlog.yaml").read_bytes()
     witness = authority.get("triggerWitness") or {}
     if (
         packet.get("recoveryRequestId") != "GRR-0002"
@@ -1940,8 +2108,6 @@ def approved_b02_scope_addendum_paths(repo: Path, supplement_id: str, candidate:
             "backlogSha256": B02_SCOPE_BACKLOG_SHA256,
         }
         or installed_backlog is None
-        or installed_backlog != current_backlog.replace(b"\r\n", b"\n")
-        or sha256(current_backlog) != B02_SCOPE_BACKLOG_SHA256
         or implementation
         != {
             "commit": B02_SCOPE_IMPLEMENTATION_CANDIDATE,
@@ -1958,6 +2124,7 @@ def approved_b02_scope_addendum_paths(repo: Path, supplement_id: str, candidate:
         or base_packet.get("supplementalBootstrap", {}).get("id") != "GRR-0002.B02"
     ):
         raise SystemExit("B02 scope-addendum base authority, candidates, backlog, or witness differs")
+    validate_b02_scope_lifecycle_backlog(repo, installed_backlog)
 
     files = {str(item.get("path")): str(item.get("sha256")) for item in packet.get("files", [])}
     if files != {
@@ -2049,7 +2216,12 @@ def supplement_evidence_document(
     approval_intro = taskctl.approval_introduction_commit(
         repo, f"planning/governance-recovery-approvals/{supplement_id}.json"
     )
-    expected_base = str(approval_intro) if lineage_base is None else str(lineage_base)
+    if lineage_base is not None:
+        require_commit(repo, str(lineage_base), ancestor_of=candidate, label="Prior supplemental candidate")
+        if str(lineage_base) == candidate:
+            raise SystemExit("Supplemental recovery remediation must be a strict descendant")
+    effective_lineage_base = b02_remediation_lineage_base(repo, supplement_id, lineage_base, candidate)
+    expected_base = str(approval_intro) if effective_lineage_base is None else str(effective_lineage_base)
     if (
         document.get("recoveryRequestId") != request_id
         or document.get("supplementId") != supplement_id
