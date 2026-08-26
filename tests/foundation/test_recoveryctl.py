@@ -2546,6 +2546,11 @@ class GovernanceRecoveryTests(unittest.TestCase):
 
     def test_v3_s02_is_byte_stably_denied_after_revision_nine_adoption(self) -> None:
         payload, data, _capabilities, _slices, tasks, _gates = recoveryctl.backlog_state(REPO)
+        data["control_plane"]["revision"] = 9
+        data["control_plane"]["minimum_tool_revision"] = 9
+        data["control_plane"]["control_generations"] = data["control_plane"]["control_generations"][:2]
+        projected_hold = recoveryctl.recovery_hold(data, "GRR-0002")
+        projected_hold["supplements"] = projected_hold["supplements"][:1]
         self.assertEqual(9, data["control_plane"]["revision"])
         hold = recoveryctl.recovery_hold(data, "GRR-0002")
         wave = taskctl.wave_map(data)["W1"]
