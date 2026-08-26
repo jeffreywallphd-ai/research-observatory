@@ -1,0 +1,160 @@
+{
+  "$schema": "./governance-control-recovery-request.v7.schema.json",
+  "schemaVersion": "7.0-control-recovery-proposal",
+  "documentType": "governance-control-recovery-successor-packet",
+  "controlRecoveryId": "GCR-0007",
+  "title": "Replace infeasible GCR-0006 adoption binding",
+  "targetWave": "W1",
+  "status": "pending-human-approval",
+  "executionState": "non-executable",
+  "classification": "approved-control-recovery-self-reference-defect",
+  "rootAuthority": {
+    "basis": "repository-owner-governance-mismatch-protocol",
+    "exceptionScope": "one-time-exact-successor-bootstrap-only",
+    "packetReviewHistory": [],
+    "approvalSchema": {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v7.schema.json", "sha256": "97ae00929477f69582ba2d89c85d2a98b4c9a4d8086667900ad35674e1bc6f01"},
+    "approvalPath": "planning/governance-control-recovery/GCR-0007.approval.json",
+    "authorityManifest": {"path": "planning/governance-control-recovery/GCR-0007.authority.json", "sha256": "51beecba8cd751b04e95e7f103d23d4b9cf8929da5fa894bee794d59cffcc752"},
+    "triggerRecord": {"path": "planning/governance-control-recovery/GCR-0007.trigger.json", "sha256": "7898533765513b392a197c5a27c68f8307cb68420fa33889b4649eea99b55825"},
+    "untrackedTriggerWitness": {"path": "artifacts/evidence/W1.A04.B00.json", "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c", "role": "atomic-failure-trigger-only", "mustRemainUntrackedAndUnstaged": true, "neverExecutionAuthority": true},
+    "approvalIntroduction": {"exclusiveCreate": true, "trackedCleanExactBranchHead": true, "permittedUntracked": "exact-trigger-witness-only", "packetReviewApproved": true, "introductionCommitIsExecutionBase": true, "supersedesOnlyGcr6Execution": true}
+  },
+  "predecessorAuthority": {
+    "headCommit": "2eea1d0c67eb57d53e88f6717de3cfcd96fcf282",
+    "parentCommit": "655e1a0e2451ced7fc26642f9fa16f775d5c0ddb",
+    "backlogRawSha256": "aae3947377e06d9c752a7eae9b5d586c600b7e66016e41d95e753b100d9a93b7",
+    "backlogGitContentSha256": "667225c669c393215b1b884e2cdc28fea6651bfd3b7d96b4bf93d161046487d4",
+    "inheritedAuthority": {"path": "planning/governance-control-recovery/GCR-0006.authority.json", "sha256": "482926af1c1f3b9d881257fb348c732e50c0c7ee4de01c35c1e172da84030ffa", "commit": "175f0edf344346a76a5e1aa09ef0f22ab473edae"},
+    "gcr6Packet": {"path": "planning/governance-control-recovery/GCR-0006.packet.json", "sha256": "508c3d0b61b083ae617eeea218f0baca71b7d190bffad8ef65b329d152c59469", "commit": "175f0edf344346a76a5e1aa09ef0f22ab473edae"},
+    "gcr6Approval": {"path": "planning/governance-control-recovery/GCR-0006.approval.json", "sha256": "f6ac82c61e7ad70cdbe5ef26fb251968822f5a66e8452b5e29d3c1b14906be9a", "commit": "655e1a0e2451ced7fc26642f9fa16f775d5c0ddb"},
+    "gcr6Feasibility": {"path": "planning/governance-control-recovery/GCR-0006.feasibility-R01.json", "sha256": "5986bd0371831f83ba7da0a01ead8bc50669e5e370c5294cb9e7101907085ca3", "commit": "2eea1d0c67eb57d53e88f6717de3cfcd96fcf282"}
+  },
+  "triggerEvidence": {
+    "record": {"path": "planning/governance-control-recovery/GCR-0007.trigger.json", "sha256": "7898533765513b392a197c5a27c68f8307cb68420fa33889b4649eea99b55825"},
+    "findingId": "GCR-0006-FEASIBILITY-R01-F01",
+    "severity": "HIGH",
+    "impossibleBinding": "Runtime-v6 requires adoptionEvidenceCommit inside the evidence blob committed at A while approved P-to-A-to-F semantics require that value to be A. Because A commits to the blob, the value is a cryptographic self-reference. No alternate approved meaning exists.",
+    "atomicNoImplementationMutation": true,
+    "independentAudit": "An independent post-approval feasibility review reproduced the contradiction across runtime-v6, packet-v6, and transaction-v6, found no truthful non-self-referential value, confirmed that no GCR-0006 implementation/state/evidence/transaction/generation exists, and required GCR-0007 exact packet review and human approval before any execution."
+  },
+  "activationBoundary": {
+    "controlRevision": 11, "minimumToolRevision": 11, "holdId": "HOLD-W1-GRR-0002", "holdStatus": "ACTIVE",
+    "waveStatus": "PAUSED", "waveScope": "wave", "taskId": "CAP-02.S04.T03", "taskStatus": "BLOCKED",
+    "amendmentId": "W1.A04", "amendmentBacklogStatus": "ABSENT", "releaseGate": "G1", "releaseGateStatus": "PENDING"
+  },
+  "generationTransition": {
+    "id": "GCR-0007", "predecessorControlRevision": 11, "successorControlRevision": 11, "supportedControlCeiling": 12,
+    "generationNeutral": true, "existingHoldPreserved": true, "newHoldCreated": false, "gcr6GenerationForbidden": true,
+    "postBootstrapGate": "independently-reviewed-and-exactly-approved-v5-GRR-0002.S03"
+  },
+  "evidenceTopology": {
+    "sequence": "P-to-A-to-F", "evidenceBlobBinds": "approvedStateCommit-P", "evidenceBlobMayContainA": false, "evidenceBlobMayContainF": false,
+    "deriveA": "unique-direct-child-of-P-with-exact-evidence-only-delta", "bindAAfterExistence": "transaction-and-successor-state-path-sha256-commit-reference",
+    "deriveF": "unique-direct-child-of-A-with-exact-backlog-and-state-delta", "canonicalContentMayContainF": false
+  },
+  "lifecycle": {
+    "branch": "codex/w1-windows-local-runtime",
+    "actor": "codex",
+    "workspaceInvariant": {"triggerWitness": {"path": "artifacts/evidence/W1.A04.B00.json", "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c", "role": "atomic-failure-trigger-only", "mustRemainUntrackedAndUnstaged": true, "neverExecutionAuthority": true}, "denyOtherUntracked": true, "denyWitnessStagingOrMutation": true},
+    "canonicalPaths": {
+      "controller": "tools/gcr7ctl.py", "state": "planning/governance-control-recovery/GCR-0007.B00.state.json",
+      "evidencePattern": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.RNN.json", "reviewPattern": "planning/governance-control-recovery/GCR-0007.B00.review-RNN.json",
+      "adoptionEvidence": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption.json", "transactionSchema": "planning/governance-control-recovery/governance-control-recovery-transaction.v7.schema.json",
+      "transaction": "planning/governance-control-recovery/GCR-0007.B00.adoption-transaction.json", "lock": "planning/governance-control-recovery/GCR-0007.B00.adoption.lock",
+      "backlogNext": "planning/governance-control-recovery/GCR-0007.B00.adoption-backlog.next", "stateNext": "planning/governance-control-recovery/GCR-0007.B00.adoption-state.next"
+    },
+    "submission": {"base": "approval-introduction-commit", "candidateAncestry": "strict-descendant", "trackedCleanBranchAndHead": true, "exactAllowlist": true, "staleWriterDenied": true},
+    "review": {"independent": true, "severityRanked": true, "appendOnly": true, "blockingFindingDenial": true, "selfReviewDenied": true},
+    "adoption": {
+      "requiresApprovedB00": true, "topology": "P-to-A-to-F",
+      "exactFinalizationPaths": ["planning/backlog.yaml", "planning/governance-control-recovery/GCR-0007.B00.state.json"],
+      "olderReadersFailClosed": true, "postAdoptionGate": "separate-v5-GRR-0002.S03-review-and-exact-approval",
+      "transaction": {"writeAhead": true, "exclusiveLock": true, "rawAndCanonicalCas": true, "windowsReplaceExistingWriteThrough": true, "durableFlush": true, "idempotentRecovery": true, "failClosedPartialStates": true, "cleanupAfterValidatedPair": true, "faultInjection": true}
+    },
+    "commands": {
+      "submit": "python tools/gcr7ctl.py --repo . submit GCR-0007 --agent codex --approval-commit <sha> --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0007.B00.RNN.json",
+      "review": "python tools/gcr7ctl.py --repo . review GCR-0007 --reviewer <independent-reviewer> --from planning/governance-control-recovery/GCR-0007.B00.review-RNN.json",
+      "resubmit": "python tools/gcr7ctl.py --repo . resubmit GCR-0007 --agent codex --implementation-commit <sha> --evidence artifacts/evidence/governance-control-recovery/GCR-0007.B00.RNN.json",
+      "adopt": "python tools/gcr7ctl.py --repo . adopt GCR-0007 --agent codex --approved-state-commit <P> --evidence artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption.json",
+      "recover": "python tools/gcr7ctl.py --repo . recover GCR-0007 --agent codex",
+      "validate": "python tools/gcr7ctl.py --repo . validate GCR-0007 --require-approved"
+    }
+  },
+  "bootstrapUnit": {
+    "id": "GCR-0007.B00",
+    "kind": "one-time-noncircular-reader-generation",
+    "exceptionReason": "The exact approved GCR-0006 adoption evidence is mathematically unconstructible, yet no implementation mutation occurred and the revision-11 stopped boundary remains safe. GCR-0007 must replace only GCR-0006 B00 execution using an explicit non-circular P-to-A-to-F binding before reader headroom can be installed.",
+    "authorizedPaths": [
+      "artifacts/evidence/governance-control-recovery/GCR-0007.B00*", "planning/backlog.schema.json", "planning/backlog.yaml",
+      "planning/governance-control-recovery/GCR-0007.B00*", "planning/governance-recovery-requests/governance-recovery-supplement.v5.schema.json",
+      "planning/governance-recovery-requests/governance-recovery-supplement-approval.v5.schema.json", "quality-scope.json",
+      "tests/foundation/test_gcr7ctl.py", "tests/foundation/test_recoveryctl.py", "tests/foundation/test_taskctl_schema.py",
+      "tools/gcr7ctl.py", "tools/recoveryctl.py", "tools/taskctl.py"
+    ],
+    "requiredOutcomes": [
+      "Bind all authority to exact base 2eea1d0c67eb57d53e88f6717de3cfcd96fcf282, GCR-0006 immutable packet/review/approval/schemas/feasibility bytes, current backlog, active hold, stopped W1 boundary, and witness.",
+      "Supersede only GCR-0006.B00 execution authority; preserve every GCR-0006 artifact and its historical approval and HIGH feasibility finding unchanged.",
+      "Before human approval, construct a complete disposable synthetic P-to-A-to-F Git lifecycle proving that the evidence blob contains only P, A is externally derived, state/transaction truthfully bind A after it exists, and F is externally derived without self-reference.",
+      "Raise only reader/schema ceiling 11-to-12 during implementation while live revision/minimum and the canonical three-generation backlog remain 11 through B00 review.",
+      "After independent B00 approval, append only exact GCR-0007 neutral 11-to-11 ceiling-12 generation; never append GCR-0006.",
+      "Require exact adopted GCR-0007 P-to-A-to-F authority before any future v5 S03/B03 can be recognized; reject GCR-0006 substitution.",
+      "Leave the post-append validator, exact historic W1.A04 denial, and v1-v4 supplement bytes and behavior unchanged.",
+      "Make old readers reject the adopted four-generation state and make new readers accept only exact authenticated predecessor/successor states; require GCR-0007 plus separate S03 at revision 12.",
+      "Use exact append-only evidence/review history and durable raw/canonical two-file CAS with Windows publication, flush, crash recovery, and cleanup controls.",
+      "Keep the hold active, W1 paused, T03 blocked, W1.A04 absent, G1 pending, and witness untracked/unstaged/non-authoritative."
+    ],
+    "forbiddenOutcomes": [
+      "Do not edit, reinterpret, implement, adopt, or append a generation for GCR-0006.",
+      "Do not put A or F inside the GCR-0007 adoption-evidence blob or F inside any canonical successor content.",
+      "Do not repair or bypass post-append amendment validation in GCR-0007.",
+      "Do not create, approve, install, submit, review, or execute S03/B03 or append/materialize W1.A04.",
+      "Do not permit generic neutral generations, neutral supplements, direct revision 12, a competing hold, hold release, T03/W1/G1/product/main/remote mutation."
+    ]
+  },
+  "acceptanceCriteria": [
+    "All seven GCR-0007 supporting files and this packet are valid, path-safe, exact-hash-bound, and inert; every declared predecessor reference reproduces its immutable Git blob.",
+    "The HIGH GCR-0006 self-reference finding is reproducible and GCR-0006 remains approved-but-inert with no implementation/state/evidence/transaction/generation artifact.",
+    "Independent packet review builds and validates an actual disposable P-to-A-to-F Git sequence before human approval, proving A and F are constructible and externally derived with exact parentage and deltas.",
+    "GCR-0007 approval can be introduced only after no-finding independent packet approval at the exact packet commit and becomes the sole B00 implementation base.",
+    "B00 implementation remains inside the exact allowlist, keeps live revision/minimum 11, and cannot adopt before independent B00 approval.",
+    "Runtime-v7 adoption evidence requires only approvedStateCommit P and explicitly rejects adoptionEvidenceCommit and finalizationCommit fields.",
+    "Transaction and state bind A only after A exists; F is derived from Git as A's exact two-path child and is absent from canonical content.",
+    "Only exact GCR-0007 is the fourth neutral generation; old/new reader behavior, revision-12 gating, GCR-0006 substitution denial, and generic-neutral denial are proven.",
+    "Version-5 formats are exact to future S03/B03 and adopted GCR-0007, while v1-v4 and the W1.A04 denial remain unchanged.",
+    "Crash/replay/redirection/substitution/partial/dirty/stale/fork/adverse/open-finding/self-review cases yield only exact predecessor or successor and otherwise fail byte-stably.",
+    "No ordinary execution authority is created and all stopped-boundary and witness invariants remain exact."
+  ],
+  "verificationObligations": [
+    "Validate request/runtime/transaction v7 schemas against Draft 2020-12 and all packet/runtime documents against them.",
+    "Verify every file/reference hash, Git blob, branch, commit, ancestry edge, backlog raw/Git-content hash, hold, Wave/task/gate boundary, and witness.",
+    "Perform pre-approval disposable Git constructibility proof for P-to-A-to-F with explicit negative self-reference and extra-path cases.",
+    "Run real controller C-to-E-to-S-to-L-to-P-to-A-to-F lifecycle, independent review, and exact finalization tests during B00.",
+    "Run old/new reader, exact-neutral-generation, GCR-0006 substitution, direct-12, and future-v5 authority tests.",
+    "Re-run exact historic W1.A04 submission before and after adoption and compare diagnostics and all protected bytes/state.",
+    "Exercise every durable fault boundary and recovery terminal state on Windows.",
+    "Run governed Ruff/format/mypy, focused controller/schema/recovery tests, backlog validation, review-site integrity, generated-view checks when changed, and Git diff/witness hygiene."
+  ],
+  "rollback": [
+    "Before approval, retain committed inert packet/reviews append-only; discard only uncommitted remediation.",
+    "After adverse B00 review, preserve the attempt and use strict-descendant resubmission with fresh evidence and closures.",
+    "During adoption, only gcr7ctl recovery may restore the exact predecessor pair or complete the exact successor pair.",
+    "After finalization, never rewrite GCR-0007; new material evidence requires another explicit append-only recovery decision while W1 stays stopped."
+  ],
+  "alternatives": [
+    {"id": "A", "title": "Approve bounded GCR-0007", "disposition": "recommended", "rationale": "Corrects only the impossible evidence binding while preserving all recovery and separate-repair gates."},
+    {"id": "B", "title": "Keep stopped", "disposition": "safe", "rationale": "Preserves the current fail-closed state indefinitely but leaves W1 unavailable."},
+    {"id": "C", "title": "Reinterpret or edit GCR-0006", "disposition": "rejected", "rationale": "Would invent semantics or mutate exact approved authority."},
+    {"id": "D", "title": "Implement GCR-0006 with a placeholder commit", "disposition": "rejected", "rationale": "Would create false evidence and violate the approved topology."},
+    {"id": "E", "title": "Patch taskctl or append W1.A04 directly", "disposition": "rejected", "rationale": "Bypasses the active hold and recovery chain."}
+  ],
+  "files": [
+    {"path": "planning/governance-control-recovery/GCR-0007.authority.json", "sha256": "51beecba8cd751b04e95e7f103d23d4b9cf8929da5fa894bee794d59cffcc752"},
+    {"path": "planning/governance-control-recovery/GCR-0007.md", "sha256": "64bf6c1956d37b4da241939a0a3365693300b418cd73bf2534ddc3d56eef8317"},
+    {"path": "planning/governance-control-recovery/GCR-0007-review.html", "sha256": "fa88c0b905ba66d227e9e4773d23b6a804ac5a057d51490fb0d2b6054cfd89ed"},
+    {"path": "planning/governance-control-recovery/GCR-0007.trigger.json", "sha256": "7898533765513b392a197c5a27c68f8307cb68420fa33889b4649eea99b55825"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-request.v7.schema.json", "sha256": "0bc57359be962613f4eff08e1db43dfaf620cd298945475556f851fad3ac1bf0"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v7.schema.json", "sha256": "97ae00929477f69582ba2d89c85d2a98b4c9a4d8086667900ad35674e1bc6f01"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-transaction.v7.schema.json", "sha256": "487385ed3fd8c3b0b8bcf25e7c54d340c6b67846ad29109c81c0fd6be3850afb"}
+  ],
+  "requiredApprovalStatement": "Approve only GCR-0007.B00 for exact independently reviewed packet commit <40-character SHA>, superseding only the infeasible GCR-0006.B00 execution authority and authorizing solely the non-circular revision-11 reader/schema/controller headroom bootstrap under existing HOLD-W1-GRR-0002. Preserve GCR-0006 and all prior authority immutable and inert; keep live revision/minimum 11, the hold ACTIVE, W1 PAUSED, W1.A04 absent, CAP-02.S04.T03 BLOCKED, G1 PENDING, and the witness exact/untracked/unstaged/non-authoritative. Do not repair postappend semantics or authorize S03/B03, W1.A04, ordinary execution, hold release, Wave resume, gate, product, main, or remote action."
+}

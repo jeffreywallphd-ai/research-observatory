@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-recovery-successor-trigger",
+  "controlRecoveryId": "GCR-0007",
+  "baseCommit": "2eea1d0c67eb57d53e88f6717de3cfcd96fcf282",
+  "baseParentCommit": "655e1a0e2451ced7fc26642f9fa16f775d5c0ddb",
+  "branch": "codex/w1-windows-local-runtime",
+  "failedAuthority": {
+    "controlRecoveryId": "GCR-0006",
+    "packetCommit": "175f0edf344346a76a5e1aa09ef0f22ab473edae",
+    "approvalCommit": "655e1a0e2451ced7fc26642f9fa16f775d5c0ddb",
+    "implementationStarted": false,
+    "generationAdopted": false
+  },
+  "feasibilityLedger": {
+    "path": "planning/governance-control-recovery/GCR-0006.feasibility-R01.json",
+    "sha256": "5986bd0371831f83ba7da0a01ead8bc50669e5e370c5294cb9e7101907085ca3",
+    "commit": "2eea1d0c67eb57d53e88f6717de3cfcd96fcf282",
+    "result": "blocked",
+    "findingId": "GCR-0006-FEASIBILITY-R01-F01",
+    "severity": "HIGH"
+  },
+  "impossibleBinding": {
+    "runtimeField": "adoptionEvidenceCommit",
+    "evidenceCommitRole": "A",
+    "topology": "P-to-A-to-F",
+    "reason": "A cannot truthfully appear inside a blob whose tree determines A's Git commit identifier."
+  },
+  "correctedBinding": {
+    "evidenceBlobField": "approvedStateCommit",
+    "evidenceBlobValueRole": "P",
+    "deriveA": "unique direct child of P changing only the adoption-evidence path",
+    "bindAAfterExistence": "successor state and transaction reference path, SHA-256, and commit A",
+    "deriveF": "unique direct child of A changing only backlog and GCR-0007 state",
+    "embedFInCanonicalContent": false
+  },
+  "stoppedBoundary": {
+    "backlogRawSha256": "aae3947377e06d9c752a7eae9b5d586c600b7e66016e41d95e753b100d9a93b7",
+    "backlogGitContentSha256": "667225c669c393215b1b884e2cdc28fea6651bfd3b7d96b4bf93d161046487d4",
+    "controlRevision": 11,
+    "minimumToolRevision": 11,
+    "activeHoldId": "HOLD-W1-GRR-0002",
+    "activeHoldStatus": "ACTIVE",
+    "waveStatus": "PAUSED",
+    "taskStatus": "BLOCKED",
+    "amendmentBacklogStatus": "ABSENT",
+    "releaseGateStatus": "PENDING"
+  },
+  "witness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "atomicNoImplementationMutation": true
+}

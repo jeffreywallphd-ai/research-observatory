@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GCR-0007 review</title>
+<style>body{font-family:system-ui,sans-serif;max-width:980px;margin:0 auto;padding:2rem;color:#172033;background:#f6f8fb}main{background:#fff;padding:2rem;border:1px solid #d9e0ea;border-radius:12px}h1,h2{color:#102a43}code{background:#eef2f7;padding:.1rem .3rem;border-radius:4px}table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:1px solid #ccd6e0;padding:.65rem;text-align:left;vertical-align:top}.warn{border-left:5px solid #bd5b00;background:#fff5e8;padding:1rem}.safe{border-left:5px solid #237a3b;background:#edf9f0;padding:1rem}.deny{border-left:5px solid #a61b1b;background:#fff0f0;padding:1rem}</style></head>
+<body><main>
+<p><a href="../review-site/waves/W1.html">W1 review</a> · <a href="GCR-0007.md">Canonical proposal</a> · <a href="GCR-0006-review.html">GCR-0006 review</a></p>
+<h1>GCR-0007 — Replace infeasible GCR-0006 adoption binding</h1>
+<div class="warn"><strong>Inert packet.</strong> GCR-0006 remains immutable and unimplemented. This page grants no controller, S03/B03, W1.A04, Wave, gate, merge, or remote authority.</div>
+
+<h2>Why GCR-0006 cannot execute</h2>
+<p>Runtime-v6 requires the evidence file committed at A to contain <code>adoptionEvidenceCommit=A</code>. Because A's SHA commits to that file, the approved P→A→F topology requires a Git commit to contain its own identifier. An independent HIGH feasibility audit blocked implementation before any implementation file changed.</p>
+
+<h2>Corrected binding</h2>
+<table><tr><th>Commit</th><th>Truthful binding</th></tr>
+<tr><td>P</td><td>Independently APPROVED B00 state.</td></tr>
+<tr><td>A</td><td>Evidence blob contains only <code>approvedStateCommit=P</code>. A is derived externally as P's unique evidence-only child.</td></tr>
+<tr><td>F</td><td>Transaction and state bind A after it exists. F is derived externally as A's unique backlog/state child and is never embedded in itself.</td></tr></table>
+
+<h2>Bounded outcome</h2>
+<p>Only GCR-0007 may become the fourth generation: neutral 11→11, ceiling 12. Revision/minimum remains 11. A separately reviewed and approved S03/B03 remains required for 11→12 and the actual post-append repair.</p>
+
+<h2>Safety boundary</h2>
+<div class="deny">No GCR-0006 edit or implementation, post-append fix, S03/B03, W1.A04, revision change, hold release, task/Wave/gate action, product/reference change, local-main integration, or remote action.</div>
+
+<h2 id="decision-register">Alternatives</h2>
+<table><tr><th>Option</th><th>Disposition</th><th>Consequence</th></tr>
+<tr><td>A — Approve GCR-0007</td><td>Recommended</td><td>Removes the cryptographic impossibility while retaining all recovery gates.</td></tr>
+<tr><td>B — Keep stopped</td><td>Safe</td><td>GCR-0006 remains inert and W1 stays unavailable.</td></tr>
+<tr><td>C — Reinterpret/edit v6</td><td>Rejected</td><td>Invents unapproved semantics or rewrites immutable authority.</td></tr>
+<tr><td>D — Direct repair/append</td><td>Rejected</td><td>Bypasses the active hold and exact recovery chain.</td></tr></table>
+
+<h2>Approval gate</h2>
+<div class="safe">Only after an independent APPROVED review at the exact GCR-0007 packet commit may human approval authorize GCR-0007.B00. B00 review/adoption and a separate S03/B03 approval remain mandatory.</div>
+</main></body></html>
