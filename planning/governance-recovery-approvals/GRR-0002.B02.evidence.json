@@ -1,0 +1,207 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-evidence",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S02",
+  "bootstrapUnit": "GRR-0002.B02",
+  "branch": "codex/w1-windows-local-runtime",
+  "baseCommit": "106921c269942401bab4cc4f732f4d1fb97b8abe",
+  "candidateCommit": "d363c04c385251a5d789a0313e173342e7e0ae3e",
+  "changedPaths": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum-review.html",
+    "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.approval.json",
+    "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.packet.json",
+    "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.review-R01.json",
+    "planning/governance-recovery-approvals/GRR-0002.B02.scope-addendum.schema.json",
+    "planning/review-site/manifest.json",
+    "planning/review-site/recoveries/GRR-0002.html",
+    "planning/review-site/recoveries/index.html",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "tests/foundation/test_recoveryctl.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "riskAnalysis": "B02 changes generation-sensitive recovery and amendment controllers at an ACTIVE hold boundary and introduces a narrowly approved historic-candidate exception. Credible failures include accepting substituted addendum or supplement authority, treating the protected witness as authority, allowing a non-exact historic candidate, rewriting prior attempts, generating files outside the approved deterministic families, submitting with an open finding, releasing the hold, or enabling ordinary W1 work prematurely. The selected checks therefore cover exact authority blobs and direct ancestry, raw Windows backlog bytes, strict-descendant addendum enforcement, missing/altered/stale/forked/self-reviewed/wrong-path/extra-path denials, real-Git witness and multi-round review lifecycles, historic retry atomicity and replay denial, older-reader behavior, canonical backlog and planning validation, deterministic generation, governed Python quality, review-site integrity, and Git diff hygiene. Product execution and full W1 qualification remain deferred to the separately gated amendment, task, slice, checkpoint, and Wave-exit controls.",
+  "requiredOutcomes": [
+    {
+      "criterion": "Install exactly one sequential GRR-0002.S02/GRR-0002.B02 record under the existing HOLD-W1-GRR-0002 and advance control revision and minimum tool revision from 10 to 11 without creating, transferring, replacing, or releasing a hold.",
+      "evidence": [
+        "planning/backlog.yaml contains one sequential GRR-0002.S02/GRR-0002.B02 record under the existing ACTIVE HOLD-W1-GRR-0002 at control and minimum revision 11.",
+        "Canonical backlog and supplement validation pass while B02 remains IN_PROGRESS, W1 remains PAUSED, and the hold remains ACTIVE."
+      ]
+    },
+    {
+      "criterion": "Authenticate the exact GRR-0002 packet, approval, B00 review, adopted GCR-0003 revision-10 generation, ECR-0003 packet, W1.A04 approval, blocked W1.A04.B00 candidate, and witness bytes while W1.A04 remains absent.",
+      "evidence": [
+        "GRR-0002, GRR-0002.S02, ECR-0003, canonical backlog, and the read-only W1.A04.B00 materialization projection validate against their immutable authority chains.",
+        "The 31-test recovery suite and 84-test taskctl suite pass exact hash, Git blob, ancestry, approval-introduction, absent-amendment, blocked-task, and witness bindings."
+      ]
+    },
+    {
+      "criterion": "Require the exact unchanged, unstaged, untracked, non-authoritative W1.A04.B00 witness at supplement start, submission, remediation, and review, rejecting every missing, changed, staged, tracked, redirected, duplicated, authority-bearing, or accompanied workspace state.",
+      "evidence": [
+        "The witness remains the sole untracked and unstaged path with exact SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c.",
+        "The exact-candidate recovery and taskctl suites pass the real-Git witness deviation, accompanied-workspace, pre-approval denial, atomic no-mutation, and replay-denial cases."
+      ]
+    },
+    {
+      "criterion": "Freeze criterion-linked B02 evidence and independent severity-ranked review append-only, with no open blocking finding before B02 becomes APPROVED and strict-descendant remediation after every adverse review.",
+      "evidence": [
+        "tools/recoveryctl.py validates exact candidate/evidence/scope/check bindings and uses the append-only supplemental review controller.",
+        "The 31-test recovery suite passes independent review, severity ranking, open-finding denial, immutable prior-attempt history, and strict-descendant remediation scenarios."
+      ]
+    },
+    {
+      "criterion": "After B02 approval, implement one fail-closed amendment bootstrap-submit exception limited to exact W1.A04/W1.A04.B00, candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6, evidence SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c, approved ECR-0003/W1.A04 authority, the sole active HOLD-W1-GRR-0002, sequential independently approved GRR-0002.S02/B02 at revision 11, and the exact witness-only workspace; preserve current-HEAD denial for every other candidate, amendment, command, hold, revision, evidence, and workspace, while amendment append or materialization, task activation or claim, live T03 recovery, hold release, W1 resume, and gate approval remain separately gated.",
+      "evidence": [
+        "tools/taskctl.py implements a single exact historic-submission guard requiring the named amendment, candidate, witness, ECR authority, revision-11 S02/B02 approval, sole active hold, and witness-only workspace.",
+        "The 84-test taskctl suite passes direct fail-closed substitutions plus a real clean-Git denial before B02 approval, accompanied-workspace denial, one atomic allowed submission, and replay denial."
+      ]
+    },
+    {
+      "criterion": "Preserve product, privacy, approved-reference, task-acceptance, completed-task, release-gate, predecessor-authority, immutable version-3 supplement, and prior GCR/GRR/ECR evidence bytes and outcomes.",
+      "evidence": [
+        "The exact approval-introduction-to-candidate diff is limited to the installed backlog record, B02/addendum control artifacts, authorized controller/tests, and the three approved deterministic generated path families.",
+        "No product/runtime, privacy, approved-reference, task-acceptance, completed-task, release-gate, predecessor-authority, or prior evidence path changed."
+      ]
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion": "The exact version-4 packet validates against Draft 2020-12, all declared hashes match, and the GRR-0002, adopted GCR-0003, ECR-0003/W1.A04, blocked bootstrap, and witness authority commits and blobs remain exact and ancestral.",
+      "evidence": [
+        "recoveryctl supplement-validate GRR-0002.S02 and the approved GRR/ECR validators pass against the immutable packet, approval, GCR-0003, amendment, and witness chains.",
+        "The recovery and taskctl suites pass schema, hash, blob, ancestry, exact-candidate, and older-reader scenarios at candidate d363c04c385251a5d789a0313e173342e7e0ae3e."
+      ]
+    },
+    {
+      "criterion": "The pre-install boundary is control revision 10 with one ACTIVE HOLD-W1-GRR-0002, adopted GCR-0003 at 5a7aebd6ffd56441089a18bcd60a25f60ad96009, PAUSED W1 at wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, and PENDING G1.",
+      "evidence": [
+        "The immutable S02 packet and approval bind the exact revision-10 predecessor boundary and adopted GCR-0003 authority.",
+        "The installed revision-11 backlog and recovery tests preserve W1 PAUSED, W1.A04 absent, T03 BLOCKED, G1 PENDING, and the sole hold ACTIVE."
+      ]
+    },
+    {
+      "criterion": "The packet-review ledger is separate from human approval, recursively authenticates every canonical prior attempt to R01, requires strict-descendant remediation candidates, folds findings and closures chronologically, and cannot approve with any open finding.",
+      "evidence": [
+        "GRR-0002.S02.review-R01.json remains adverse and append-only; R02 independently closes its finding before the separate human approval record is introduced.",
+        "The recovery suite passes recursive review-history, strict ancestry, finding/closure ordering, and open-finding approval-denial cases."
+      ]
+    },
+    {
+      "criterion": "Supplement start atomically installs only the sequential GRR-0002.S02/GRR-0002.B02 record, advances revision and minimum tool revision to 11, and leaves W1, T03, W1.A04, the active hold, and all prior histories otherwise unchanged.",
+      "evidence": [
+        "The installed backlog validates with exactly the sequential S02/B02 record at revision/minimum 11 and no W1.A04 ledger entry.",
+        "Recovery atomicity and frozen-predecessor tests pass, and the current stopped boundary remains W1 PAUSED, T03 BLOCKED, hold ACTIVE, and G1 PENDING."
+      ]
+    },
+    {
+      "criterion": "The exact witness-aware workspace contract is applied consistently to start, submit/resubmit, and review and denies every missing, changed, staged, tracked, redirected, duplicated, authority-bearing, or accompanied deviation without mutation.",
+      "evidence": [
+        "tools/recoveryctl.py applies the version-4 witness workspace validator across supplement transitions and authenticates the adopted GCR-0003 witness binding.",
+        "The 31 recovery tests and taskctl historic-retry tests pass all named workspace deviations and byte-stable no-mutation assertions."
+      ]
+    },
+    {
+      "criterion": "B02 submission freezes the exact candidate, approval-to-candidate changed paths, criteria, checks, and evidence; independent review is append-only, severity-ranked, and cannot approve with an open blocking finding.",
+      "evidence": [
+        "This manifest binds base 106921c269942401bab4cc4f732f4d1fb97b8abe, candidate d363c04c385251a5d789a0313e173342e7e0ae3e, all 17 exact changed paths, six outcomes, nine criteria, unique passing checks, and no unverified item.",
+        "The recovery lifecycle tests pass frozen submission, independent actor, severity, finding, closure, prior-attempt, and open-blocker controls."
+      ]
+    },
+    {
+      "criterion": "An independently APPROVED B02 enables one atomic submission of only the original W1.A04.B00 retry at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6 under exact candidate, evidence, ECR/amendment, supplement/B02, revision, hold, and witness guards, while ordinary current-HEAD denial and every amendment append/materialization, task execution, live T03 recovery, hold release, W1 resume, and G1 gate remain unauthorized.",
+      "evidence": [
+        "The exact historic-submission guard validates every named identity and authority boundary and denies adverse/unapproved B02, wrong candidate, evidence, revision, hold, approval, or workspace.",
+        "The real-Git taskctl test proves pre-approval denial, one atomic post-approval submission, and replay denial while downstream execution remains outside the command."
+      ]
+    },
+    {
+      "criterion": "Focused real-Git recovery, multi-round review, strict-ancestry, older-reader, historic-retry, atomicity, authority, quality, backlog/view, review-site, scope, and Git-hygiene checks pass with no protected product or reference change.",
+      "evidence": [
+        "All 31 recovery tests and all 84 taskctl schema/workflow tests pass at exact candidate d363c04c385251a5d789a0313e173342e7e0ae3e.",
+        "Governed Python quality, capability/slice plans, backlog, GRR/S02/ECR authority, repeat-clean generators, backlog views, 150-page review site, witness hash, and diff hygiene pass."
+      ]
+    },
+    {
+      "criterion": "The packet receives independent exact-commit control/security review with no open finding before human approval, and B02 receives a separate independent commit-bound approval before W1.A04.B00 is retried.",
+      "evidence": [
+        "GRR-0002.S02 R02 and the B02 deterministic-output addendum each have independent exact-commit APPROVED review ledgers with no open finding followed by separate exact human approvals.",
+        "This evidence freezes B02 for its separate independent commit-bound review; the controller continues to deny the W1.A04.B00 retry until B02 itself is APPROVED."
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "recovery-controller",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_recoveryctl -v (31 tests at d363c04c385251a5d789a0313e173342e7e0ae3e)",
+      "result": "passed"
+    },
+    {
+      "id": "taskctl-control-plane",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_taskctl_schema tests.foundation.test_taskctl_workflow -v (84 tests at d363c04c385251a5d789a0313e173342e7e0ae3e)",
+      "result": "passed"
+    },
+    {
+      "id": "python-quality",
+      "command": ".venv/Scripts/python.exe tools/quality_check.py --repo . (127 governed files)",
+      "result": "passed"
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "passed"
+    },
+    {
+      "id": "recovery-authority",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . validate GRR-0002 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "supplement-authority",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . supplement-validate GRR-0002.S02",
+      "result": "passed"
+    },
+    {
+      "id": "target-amendment-authority",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0003 --require-approved",
+      "result": "passed"
+    },
+    {
+      "id": "capability-plans",
+      "command": ".venv/Scripts/python.exe tools/capability_plan_check.py --repo .",
+      "result": "passed"
+    },
+    {
+      "id": "slice-plans",
+      "command": ".venv/Scripts/python.exe tools/slice_plan_check.py --repo .",
+      "result": "passed"
+    },
+    {
+      "id": "generated-backlog-views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "passed"
+    },
+    {
+      "id": "planning-review-site",
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo . (150 HTML pages)",
+      "result": "passed"
+    },
+    {
+      "id": "diff-hygiene",
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "deferredCoverage": [
+    "The exact W1.A04.B00 retry, its independent bootstrap review, amendment materialization, W1.A04.T01 execution/review, exit review, adoption checkpoint, and recovery-hold release remain separately gated after B02 independent approval.",
+    "CAP-02.S04.T03 recovery and ordinary W1 task/slice verification remain blocked until W1.A04 is adopted, the hold is released, and W1 is explicitly resumed.",
+    "The complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification matrix remains at the ordinary Wave-exit gate."
+  ],
+  "unverifiedItems": []
+}
