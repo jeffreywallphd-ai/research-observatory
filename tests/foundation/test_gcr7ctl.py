@@ -328,6 +328,39 @@ class Gcr7ctlTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 gcr7ctl.exact_generation(substituted)
 
+    def test_successor_validation_does_not_schema_check_index_metadata(self) -> None:
+        successor = self.successor_backlog()
+        state = self.successor_state("a" * 40, "b" * 40)
+
+        gcr7ctl.validate_successor_documents(
+            REPO,
+            yaml.safe_dump(successor, sort_keys=False).encode(),
+            gcr7ctl.json_bytes(state),
+        )
+
+        for amendment in successor["wave_amendments"]:
+            for task in amendment.get("tasks", []):
+                self.assertFalse(any(key.startswith("_") for key in task))
+
+    def test_failed_pre_activation_adoption_is_immutable_and_attempt_scoped(self) -> None:
+        failed_evidence_commit = "78fe299fefbee1eaea406e53fed7a5f05a4c18ab"
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = self.clone_authority_repo(Path(temporary), commit=failed_evidence_commit)
+            _approval, packet, _base = gcr7ctl.load_authority(repo)
+            state, payload = gcr7ctl.load_state(repo, packet, required=True)
+
+            self.assertIsNotNone(state)
+            self.assertIsNotNone(payload)
+            self.assertTrue(gcr7ctl.authenticated_failed_pre_activation_adoption(repo, state or {}, payload or b""))
+
+        self.assertEqual(gcr7ctl.ADOPTION_EVIDENCE_PATH, gcr7ctl.adoption_evidence_path("R02"))
+        self.assertEqual(
+            "artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption-R03.json",
+            gcr7ctl.adoption_evidence_path("R03"),
+        )
+        with self.assertRaisesRegex(SystemExit, "attempt is invalid"):
+            gcr7ctl.adoption_evidence_path("R3")
+
     def test_redirected_parent_is_denied_for_all_controller_reads(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             repo = Path(temporary)

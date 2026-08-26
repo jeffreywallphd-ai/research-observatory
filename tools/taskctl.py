@@ -2792,7 +2792,6 @@ def recovery_v5_installed_control_errors(
     expected_paths = {
         "approval": "planning/governance-control-recovery/GCR-0007.approval.json",
         "state": "planning/governance-control-recovery/GCR-0007.B00.state.json",
-        "evidence": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption.json",
     }
     approved_state = str(topology.get("approvedStateCommit") or "")
     evidence_commit = str(topology.get("adoptionEvidenceCommit") or "")
@@ -2849,6 +2848,16 @@ def recovery_v5_installed_control_errors(
         ):
             errors.append(f"{supplement_id}: installed GCR-0007 review path is not canonical")
             continue
+        if (
+            label == "evidence"
+            and re.fullmatch(
+                r"artifacts/evidence/governance-control-recovery/GCR-0007\.B00\.adoption(?:-R[0-9]{2})?\.json",
+                relative,
+            )
+            is None
+        ):
+            errors.append(f"{supplement_id}: installed GCR-0007 evidence path is not canonical")
+            continue
         commit = str(reference.get("commit") or "")
         try:
             path = safe_control_path(
@@ -2885,8 +2894,14 @@ def recovery_v5_installed_control_errors(
     evidence = documents.get("evidence") or {}
     activation = state.get("activation") or {}
     attempts = state.get("attempts") or {}
-    latest_attempt_value = attempts.get(sorted(attempts)[-1]) if isinstance(attempts, dict) and attempts else {}
+    latest_attempt_id = sorted(attempts)[-1] if isinstance(attempts, dict) and attempts else ""
+    latest_attempt_value = attempts.get(latest_attempt_id) if isinstance(attempts, dict) and latest_attempt_id else {}
     latest_attempt: dict[str, Any] = latest_attempt_value if isinstance(latest_attempt_value, dict) else {}
+    expected_evidence_relative = (
+        "artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption.json"
+        if latest_attempt_id == "R02"
+        else f"artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption-{latest_attempt_id}.json"
+    )
     if (
         approval.get("controlRecoveryId") != "GCR-0007"
         or approval.get("documentType") != "governance-control-recovery-successor-approval"
@@ -2902,6 +2917,7 @@ def recovery_v5_installed_control_errors(
         or (latest_attempt.get("ledger") or {}).get("sha256") != references["review"].get("sha256")
         or activation.get("approvedStateCommit") != approved_state
         or activation.get("adoptionEvidence") != references["evidence"]
+        or references["evidence"].get("path") != expected_evidence_relative
         or activation.get("predecessorRevision") != 11
         or activation.get("successorRevision") != 11
         or activation.get("supportedControlCeiling") != 12
@@ -2920,7 +2936,7 @@ def recovery_v5_installed_control_errors(
         errors.append(f"{supplement_id}: installed GCR-0007 state/evidence authority is invalid")
 
     state_relative = expected_paths["state"]
-    evidence_relative = expected_paths["evidence"]
+    evidence_relative = str(references["evidence"].get("path") or "")
     review_relative = str(references["review"].get("path") or "")
     reviewed_state = str(generation_review.get("reviewed_state_commit") or "")
     ledger_commit = approval_introduction_commit(repo, review_relative)
@@ -4245,8 +4261,14 @@ def governance_control_v4_generation_errors(repo: Path, generation: dict[str, An
     except UnicodeError, json.JSONDecodeError:
         approved_document = {}
     attempts = approved_document.get("attempts") or {}
-    latest_value = attempts.get(sorted(attempts)[-1]) if isinstance(attempts, dict) and attempts else {}
+    latest_attempt_id = sorted(attempts)[-1] if isinstance(attempts, dict) and attempts else ""
+    latest_value = attempts.get(latest_attempt_id) if isinstance(attempts, dict) and latest_attempt_id else {}
     latest: dict[str, Any] = latest_value if isinstance(latest_value, dict) else {}
+    expected_evidence_relative = (
+        "artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption.json"
+        if latest_attempt_id == "R02"
+        else f"artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption-{latest_attempt_id}.json"
+    )
     if (
         approved_document.get("controlRecoveryId") != "GCR-0007"
         or approved_document.get("bootstrapUnit") != "GCR-0007.B00"
@@ -4290,7 +4312,12 @@ def governance_control_v4_generation_errors(repo: Path, generation: dict[str, An
         or activation.get("supportedControlCeiling") != 12
         or activation.get("generationNeutral") is not True
         or activation.get("ordinaryExecutionAuthority") is not False
-        or evidence_relative != "artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption.json"
+        or re.fullmatch(
+            r"artifacts/evidence/governance-control-recovery/GCR-0007\.B00\.adoption(?:-R[0-9]{2})?\.json",
+            evidence_relative,
+        )
+        is None
+        or evidence_relative != expected_evidence_relative
         or hashlib.sha256(evidence_payload).hexdigest() != evidence.get("sha256")
         or not git_commit_exists(repo, evidence_commit)
         or not git_is_ancestor(repo, evidence_commit)

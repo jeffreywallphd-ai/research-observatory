@@ -604,7 +604,6 @@ def validate_v5_installed_control_recovery(repo: Path, packet: dict[str, Any], p
     expected_paths = {
         "approval": "planning/governance-control-recovery/GCR-0007.approval.json",
         "state": "planning/governance-control-recovery/GCR-0007.B00.state.json",
-        "evidence": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption.json",
     }
     documents: dict[str, dict[str, Any]] = {}
     payloads: dict[str, bytes] = {}
@@ -621,6 +620,15 @@ def validate_v5_installed_control_recovery(repo: Path, packet: dict[str, Any], p
             is None
         ):
             raise SystemExit("Version-5 supplement GCR-0007 review path is not canonical")
+        if (
+            label == "evidence"
+            and re.fullmatch(
+                r"artifacts/evidence/governance-control-recovery/GCR-0007\.B00\.adoption(?:-R[0-9]{2})?\.json",
+                relative,
+            )
+            is None
+        ):
+            raise SystemExit("Version-5 supplement GCR-0007 evidence path is not canonical")
         commit = str(reference.get("commit") or "")
         require_commit(repo, commit, label=f"Version-5 GCR-0007 {label}")
         payload = exact_file_reference(repo, reference, commit=commit, label=f"Version-5 GCR-0007 {label}")
@@ -648,11 +656,17 @@ def validate_v5_installed_control_recovery(repo: Path, packet: dict[str, Any], p
     evidence = documents["evidence"]
     activation = state.get("activation") or {}
     attempts = state.get("attempts") or {}
-    latest_attempt_value = attempts.get(sorted(attempts)[-1]) if isinstance(attempts, dict) and attempts else {}
+    latest_attempt_id = sorted(attempts)[-1] if isinstance(attempts, dict) and attempts else ""
+    latest_attempt_value = attempts.get(latest_attempt_id) if isinstance(attempts, dict) and latest_attempt_id else {}
     latest_attempt: dict[str, Any] = latest_attempt_value if isinstance(latest_attempt_value, dict) else {}
+    expected_evidence_relative = (
+        "artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption.json"
+        if latest_attempt_id == "R02"
+        else f"artifacts/evidence/governance-control-recovery/GCR-0007.B00.adoption-{latest_attempt_id}.json"
+    )
     reviewed_state = str(review.get("reviewedStateCommit") or "")
     review_relative = str(references["review"].get("path") or "")
-    evidence_relative = expected_paths["evidence"]
+    evidence_relative = str(references["evidence"].get("path") or "")
     state_relative = expected_paths["state"]
     ledger_commit = taskctl.approval_introduction_commit(repo, review_relative)
     approved_payload = taskctl.git_blob(repo, approved_state, state_relative)
@@ -683,6 +697,7 @@ def validate_v5_installed_control_recovery(repo: Path, packet: dict[str, Any], p
         or (latest_attempt.get("ledger") or {}).get("sha256") != references["review"].get("sha256")
         or activation.get("approvedStateCommit") != approved_state
         or activation.get("adoptionEvidence") != references["evidence"]
+        or evidence_relative != expected_evidence_relative
         or activation.get("predecessorRevision") != 11
         or activation.get("successorRevision") != 11
         or activation.get("supportedControlCeiling") != 12
