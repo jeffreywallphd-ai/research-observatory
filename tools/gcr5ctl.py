@@ -14,6 +14,7 @@ import copy
 import io
 import json
 import os
+import stat
 import subprocess
 import sys
 import tarfile
@@ -130,6 +131,45 @@ def canonical_sha(document: Any) -> str:
 
 def git_worktree_equivalent(payload: bytes, blob: bytes | None) -> bool:
     return blob is not None and blob in {payload, payload.replace(b"\r\n", b"\n")}
+
+
+def guard_final_destination(repo: Path, relative: str) -> Path:
+    if relative not in FINAL_PATHS:
+        raise SystemExit(f"GCR-0005 destination is outside the exact seven-path scope: {relative}")
+    root = repo.resolve(strict=True)
+    candidate = root.joinpath(*PurePosixPath(relative).parts)
+    try:
+        candidate.relative_to(root)
+    except ValueError as exc:
+        raise SystemExit(f"GCR-0005 destination escapes the canonical repository: {relative}") from exc
+    ordered = [root]
+    current = root
+    for part in PurePosixPath(relative).parts:
+        current /= part
+        ordered.append(current)
+    for index, component in enumerate(ordered):
+        if not os.path.lexists(component):
+            raise SystemExit(f"GCR-0005 destination component is absent: {relative}: {component}")
+        metadata = component.lstat()
+        attributes = int(getattr(metadata, "st_file_attributes", 0))
+        reparse = bool(attributes & int(getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)))
+        junction = bool(getattr(os.path, "isjunction", lambda _path: False)(component))
+        if component.is_symlink() or junction or reparse:
+            raise SystemExit(f"GCR-0005 destination component is redirected: {relative}: {component}")
+        try:
+            component.resolve(strict=True).relative_to(root)
+        except (OSError, ValueError) as exc:
+            raise SystemExit(f"GCR-0005 destination component escapes the repository: {relative}") from exc
+        leaf = index == len(ordered) - 1
+        if leaf and not stat.S_ISREG(metadata.st_mode):
+            raise SystemExit(f"GCR-0005 destination leaf is not a regular file: {relative}")
+        if not leaf and not stat.S_ISDIR(metadata.st_mode):
+            raise SystemExit(f"GCR-0005 destination parent is not a directory: {relative}: {component}")
+    return candidate
+
+
+def guard_all_final_destinations(repo: Path) -> dict[str, Path]:
+    return {relative: guard_final_destination(repo, relative) for relative in FINAL_PATHS}
 
 
 def schema_document(repo: Path, relative: str, label: str) -> dict[str, Any]:
@@ -1415,9 +1455,7 @@ def load_anchor(repo: Path) -> tuple[dict[str, bytes], dict[str, bytes], str, st
 
 def _validate_live_pair(repo: Path, predecessor: dict[str, bytes], successor: dict[str, bytes]) -> None:
     for relative in FINAL_PATHS:
-        path = repo / relative
-        if not path.is_file() or path.is_symlink() or getattr(os.path, "isjunction", lambda _path: False)(path):
-            raise SystemExit(f"GCR-0005 protected path is absent or redirected: {relative}")
+        path = guard_final_destination(repo, relative)
         if path.read_bytes() not in {predecessor[relative], successor[relative]}:
             raise SystemExit(f"GCR-0005 protected path is stale or substituted: {relative}")
 
@@ -1428,7 +1466,7 @@ def _publish_snapshot(repo: Path, target: dict[str, bytes], *, label: str, lock_
 
     def publish() -> None:
         for relative in FINAL_PATHS:
-            destination = repo / relative
+            destination = guard_final_destination(repo, relative)
             if destination.read_bytes() == target[relative]:
                 continue
             if os.path.lexists(scratch):
@@ -1440,7 +1478,7 @@ def _publish_snapshot(repo: Path, target: dict[str, bytes], *, label: str, lock_
             fsync_directory(destination.parent)
             adoption_fault_boundary(f"gcr5-{label}-{PurePosixPath(relative).name}")
         for relative in FINAL_PATHS:
-            if (repo / relative).read_bytes() != target[relative]:
+            if guard_final_destination(repo, relative).read_bytes() != target[relative]:
                 raise SystemExit(f"GCR-0005 {label} publication differs: {relative}")
 
     if lock_held:
@@ -1515,6 +1553,7 @@ def recover_transaction(repo: Path) -> str:
     if not present:
         return "ABSENT"
     with taskctl.exclusive_backlog_lock(repo / BACKLOG_PATH):
+        guard_all_final_destinations(repo)
         require_workspace(repo, transaction=True)
         with transaction_lock(repo, recover=True):
             predecessor, successor, approved, application = load_anchor(repo)
@@ -1545,6 +1584,7 @@ def command_apply(args: argparse.Namespace) -> None:
         raise SystemExit(f"GCR-0005 application evidence path must be {APPLICATION_EVIDENCE_PATH}")
     application = git(args.repo, "rev-parse", "HEAD")
     with taskctl.exclusive_backlog_lock(args.repo / BACKLOG_PATH):
+        destinations = guard_all_final_destinations(args.repo)
         require_workspace(args.repo)
         _state, state_payload, approved, _evidence, evidence_payload = authenticate_application_authority(
             args.repo,
@@ -1554,7 +1594,7 @@ def command_apply(args: argparse.Namespace) -> None:
             raise SystemExit("GCR-0005 approved-state argument differs from the canonical projection commit")
         successor_backlog = derive_successor_backlog(args.repo)
         successor = stage_successor_files(args.repo, application, successor_backlog)
-        predecessor = {relative: (args.repo / relative).read_bytes() for relative in FINAL_PATHS}
+        predecessor = {relative: destinations[relative].read_bytes() for relative in FINAL_PATHS}
         if any(
             sha256(payload) != PREDECESSOR_RAW_SHA256[relative]
             or not git_worktree_equivalent(payload, taskctl.git_blob(args.repo, application, relative))
@@ -1576,6 +1616,7 @@ def command_apply(args: argparse.Namespace) -> None:
             successor=successor,
         )
         artifacts = transaction_artifacts(args.repo)
+        guard_all_final_destinations(args.repo)
         with transaction_lock(args.repo, anchor=anchor):
             write_new_durable(artifacts[BACKLOG_NEXT_PATH], successor[BACKLOG_PATH])
             adoption_fault_boundary("gcr5-successor-durable")
@@ -1604,7 +1645,7 @@ def validate_finalization(repo: Path) -> str:
     authenticate_application_authority(repo, expected_application=application)
     expected = stage_successor_files(repo, application, derive_successor_backlog(repo))
     for relative in FINAL_PATHS:
-        worktree = safe_path(repo, relative, label="GCR-0005 finalized path").read_bytes()
+        worktree = guard_final_destination(repo, relative).read_bytes()
         blob = taskctl.git_blob(repo, final, relative)
         if worktree != expected[relative] or blob != expected[relative].replace(b"\r\n", b"\n"):
             raise SystemExit(f"GCR-0005 finalized Git/worktree bytes differ: {relative}")
@@ -1626,9 +1667,7 @@ def validate_finalization(repo: Path) -> str:
 def validate_exact_predecessor(repo: Path) -> None:
     head = git(repo, "rev-parse", "HEAD")
     for relative in FINAL_PATHS:
-        path = safe_path(repo, relative, label="GCR-0005 predecessor path")
-        if path.is_symlink() or getattr(os.path, "isjunction", lambda _path: False)(path):
-            raise SystemExit(f"GCR-0005 predecessor path is redirected: {relative}")
+        path = guard_final_destination(repo, relative)
         payload = path.read_bytes()
         if sha256(payload) != PREDECESSOR_RAW_SHA256[relative] or not git_worktree_equivalent(
             payload, taskctl.git_blob(repo, head, relative)
