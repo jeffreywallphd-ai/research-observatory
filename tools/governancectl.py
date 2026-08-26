@@ -20,6 +20,7 @@ from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any
 
+import governance_kernel
 import taskctl
 import yaml
 
@@ -396,7 +397,7 @@ def command_next(args: argparse.Namespace) -> None:
     after_stat = backlog_path.stat()
     if before != after or before_stat.st_mtime_ns != after_stat.st_mtime_ns:
         raise SystemExit("Shadow projection changed the canonical backlog; refusing output")
-    output = {
+    output: dict[str, Any] = {
         "schemaVersion": SCHEMA_VERSION,
         "documentType": DOCUMENT_TYPE,
         "mode": "shadow",
@@ -413,6 +414,36 @@ def command_next(args: argparse.Namespace) -> None:
         "decision": action,
         "legacy": legacy,
         "shadowAgreement": {"category": action["category"] == legacy["category"]},
+    }
+    subject_target = action.get("target") or program.get("currentWave") or "roadmap"
+    event = governance_kernel.build_next_action_event(
+        sequence=1,
+        previous_event_hash=governance_kernel.GENESIS_HASH,
+        subject=f"{action['category']}/{subject_target}",
+        source={"path": output["source"]["path"], "sha256": output["source"]["sha256"]},
+        program=program,
+        decision=action,
+        legacy_category=str(legacy["category"]),
+        shadow_agreement=bool(output["shadowAgreement"]["category"]),
+    )
+    projection = governance_kernel.verify_and_project([event])
+    checkpoint = governance_kernel.build_checkpoint(projection)
+    if (
+        governance_kernel.verify_and_project(
+            [],
+            checkpoint=checkpoint,
+            trusted_checkpoint_hash=checkpoint["checkpointHash"],
+        )
+        != projection
+    ):
+        raise SystemExit("Shadow governance checkpoint replay differs from the event projection")
+    output["kernel"] = {
+        "mode": "shadow",
+        "event": event,
+        "projection": projection,
+        "checkpoint": checkpoint,
+        "checkpointTrust": "self-check-only",
+        "checkpointTailVerified": True,
     }
     print(json.dumps(output, indent=2, sort_keys=True))
 

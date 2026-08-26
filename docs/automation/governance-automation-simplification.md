@@ -72,6 +72,17 @@ Introduce versioned event envelopes, invariant capabilities, checkpoint-plus-tai
 verification, and deterministic projections. Dual-run the event projection
 beside the backlog without changing current authority.
 
+The shadow implementation uses `tools/governance_kernel.py`, a pure module with
+no filesystem, Git, clock, or process operations. `governancectl next` now wraps
+its decision in a deterministic `next-action-observed` event, verifies the hash
+chain from a fixed genesis, projects the event, builds an integrity-bound
+checkpoint, and verifies an empty tail from that checkpoint. Protocol capability
+names replace another integer reader ceiling. The complete event, projection,
+and checkpoint remain output-only; no event journal is written in this increment.
+The emitted checkpoint is explicitly marked `self-check-only`: its hash proves
+internal consistency, not external authority. Persisted replay will require the
+checkpoint hash from a separately trusted anchor.
+
 ### 3. Generic mutation receipts
 
 Replace hand-built evidence packets for routine transitions with automatic
@@ -111,3 +122,13 @@ retained histories. Historical evidence is never rewritten.
   leaves the backlog byte-for-byte unchanged.
 - CLI tests prove shadow and JSON flags are mandatory.
 - Ruff, mypy, and the governed quality-scope check include the new tool and test.
+
+## Verification for the event-kernel increment
+
+- Identical inputs produce identical event and projection hashes.
+- Full replay equals checkpoint-plus-tail replay.
+- Payload tampering, checkpoint tampering, sequence gaps, forks, unknown or
+  missing required capabilities, and execution-authority substitution fail
+  closed.
+- The live shadow command validates its emitted event/checkpoint and still leaves
+  backlog bytes and modification time unchanged.

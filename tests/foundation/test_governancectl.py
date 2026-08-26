@@ -13,6 +13,7 @@ from unittest.mock import patch
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
+import governance_kernel  # noqa: E402
 import governancectl  # noqa: E402
 
 
@@ -177,6 +178,21 @@ class GovernancectlTests(unittest.TestCase):
         self.assertTrue(document["source"]["unchanged"])
         self.assertIn(document["decision"]["riskTier"], range(4))
         self.assertIn("category", document["shadowAgreement"])
+        event = document["kernel"]["event"]
+        checkpoint = document["kernel"]["checkpoint"]
+        governance_kernel.validate_event(event)
+        governance_kernel.validate_checkpoint(checkpoint)
+        self.assertEqual(
+            document["kernel"]["projection"],
+            governance_kernel.verify_and_project(
+                [],
+                checkpoint=checkpoint,
+                trusted_checkpoint_hash=checkpoint["checkpointHash"],
+            ),
+        )
+        self.assertEqual(document["source"]["sha256"], event["source"]["sha256"])
+        self.assertEqual("self-check-only", document["kernel"]["checkpointTrust"])
+        self.assertTrue(document["kernel"]["checkpointTailVerified"])
         self.assertEqual(before, backlog.read_bytes())
         self.assertEqual(before_mtime, backlog.stat().st_mtime_ns)
 
