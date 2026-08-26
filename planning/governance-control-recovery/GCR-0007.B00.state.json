@@ -3,7 +3,7 @@
   "documentType": "governance-control-recovery-successor-bootstrap-state",
   "controlRecoveryId": "GCR-0007",
   "bootstrapUnit": "GCR-0007.B00",
-  "status": "REVIEW",
+  "status": "APPROVED",
   "approval": {
     "path": "planning/governance-control-recovery/GCR-0007.approval.json",
     "sha256": "4f0059f3c01740973328daa9e510f23a16fb4dfa54111538f5ae90fdc27f9d54",
@@ -58,39 +58,59 @@
         "sha256": "0d8594dfe3a3ae96e288d3c0f9aeb2f33389ebb600d82180ac6c7f32da868b4e",
         "commit": "e0ba60301b5ba57bb6434795c4eb15f22f4655dc"
       }
+    },
+    "R02": {
+      "submission": {
+        "attemptId": "R02",
+        "agent": "codex",
+        "approvalCommit": "8babc35d0d82607a7301bc30189167dd4c0622c9",
+        "baseCommit": "8babc35d0d82607a7301bc30189167dd4c0622c9",
+        "candidateCommit": "dda01ac8d568e59214eb65224503eb04db030f5b",
+        "branch": "codex/w1-windows-local-runtime",
+        "evidence": {
+          "path": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.R02.json",
+          "sha256": "c5374dfc282c700cad8eb469fa364ecce9ca421c6810d18dfba95b54ad5bb36a",
+          "commit": "583f628943f935d13b64fa6868b9a593fced72dd"
+        },
+        "changedPaths": [
+          "artifacts/evidence/governance-control-recovery/GCR-0007.B00.R01.json",
+          "planning/backlog.schema.json",
+          "planning/governance-control-recovery/GCR-0007.B00.review-R01.json",
+          "planning/governance-control-recovery/GCR-0007.B00.state.json",
+          "planning/governance-recovery-requests/governance-recovery-supplement-approval.v5.schema.json",
+          "planning/governance-recovery-requests/governance-recovery-supplement.v5.schema.json",
+          "quality-scope.json",
+          "tests/foundation/test_gcr7ctl.py",
+          "tests/foundation/test_recoveryctl.py",
+          "tests/foundation/test_taskctl_schema.py",
+          "tools/gcr7ctl.py",
+          "tools/recoveryctl.py",
+          "tools/taskctl.py"
+        ]
+      },
+      "reviewedStateCommit": "543dddbba46ff2c72dce23dcf583c8f349004b6c",
+      "review": {
+        "reviewer": "independent-gcr7-b00-reviewer",
+        "result": "approved",
+        "notes": "APPROVED after bounded independent R02 remediation review. Candidate dda01ac8d568e59214eb65224503eb04db030f5b strictly descends from R01 candidate 5b6f37944c06dfed25c136a248d54c39bf0e9496 and changes only tests/foundation/test_gcr7ctl.py beyond the append-only R01 review projection. Evidence commit 583f628943f935d13b64fa6868b9a593fced72dd is the candidate's evidence-only child, and frozen REVIEW state 543dddbba46ff2c72dce23dcf583c8f349004b6c is its state-only child. The fixture now checks out the explicit approval boundary before asserting state absence, and a separate test authenticates immutable REVIEW state 04296b53573e940e046259fea589d3c351368cf7. Independent replay passes all 19 targeted topology, schema, old/new reader, W1.A04 denial, GCR-0006 substitution, S03 gate, transaction, redirection, dirt, and child-process fault/recovery tests in 44.424 seconds. Ruff formatting/lint, mypy, diff hygiene, evidence/state schemas, exact approval-bound scope, append-only R01 ledger hash, stopped boundary, and protected witness checks pass. No new finding remains. This ledger grants no controller review transition, adoption, GCR-0006 or S03/B03 action, postappend repair, W1.A04 action, backlog mutation, hold release, Wave/gate action, product action, main integration, remote action, or ordinary execution authority.",
+        "findings": [],
+        "closures": [
+          {
+            "findingId": "GCR-0007.B00-R01-F01",
+            "disposition": "closed",
+            "evidence": "The R02 test helper checks out immutable approval boundary 8babc35d0d82607a7301bc30189167dd4c0622c9 before the state-absent assertion, a separate test checks exact REVIEW commit 04296b53573e940e046259fea589d3c351368cf7, and independent replay of the evidence command passes 19/19 at frozen R02 state 543dddbba46ff2c72dce23dcf583c8f349004b6c."
+          }
+        ]
+      },
+      "ledger": {
+        "path": "planning/governance-control-recovery/GCR-0007.B00.review-R02.json",
+        "sha256": "05c2bded4fd6083902bc29815af542aec117909a76d718e1701d3bb9a39d3a8b",
+        "commit": "eb437d2bcd48613fe24ba6f40f111342f8d58c91"
+      }
     }
   },
-  "currentSubmission": {
-    "attemptId": "R02",
-    "agent": "codex",
-    "approvalCommit": "8babc35d0d82607a7301bc30189167dd4c0622c9",
-    "baseCommit": "8babc35d0d82607a7301bc30189167dd4c0622c9",
-    "candidateCommit": "dda01ac8d568e59214eb65224503eb04db030f5b",
-    "branch": "codex/w1-windows-local-runtime",
-    "evidence": {
-      "path": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.R02.json",
-      "sha256": "c5374dfc282c700cad8eb469fa364ecce9ca421c6810d18dfba95b54ad5bb36a",
-      "commit": "583f628943f935d13b64fa6868b9a593fced72dd"
-    },
-    "changedPaths": [
-      "artifacts/evidence/governance-control-recovery/GCR-0007.B00.R01.json",
-      "planning/backlog.schema.json",
-      "planning/governance-control-recovery/GCR-0007.B00.review-R01.json",
-      "planning/governance-control-recovery/GCR-0007.B00.state.json",
-      "planning/governance-recovery-requests/governance-recovery-supplement-approval.v5.schema.json",
-      "planning/governance-recovery-requests/governance-recovery-supplement.v5.schema.json",
-      "quality-scope.json",
-      "tests/foundation/test_gcr7ctl.py",
-      "tests/foundation/test_recoveryctl.py",
-      "tests/foundation/test_taskctl_schema.py",
-      "tools/gcr7ctl.py",
-      "tools/recoveryctl.py",
-      "tools/taskctl.py"
-    ]
-  },
-  "latestReviewResult": null,
-  "openFindingIds": [
-    "GCR-0007.B00-R01-F01"
-  ],
+  "currentSubmission": null,
+  "latestReviewResult": "approved",
+  "openFindingIds": [],
   "activation": null
 }
