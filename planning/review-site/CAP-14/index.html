@@ -40,7 +40,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-14 · immutable evidence key</span><h1>CAP-cross-platform-desktop</h1><p>Cross-platform desktop qualification and release</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>18</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>009a7ed092e6</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>18</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>c40a413689a9</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
@@ -59,7 +59,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-14-D01" data-recommendation="Use one shared desktop/core codebase with narrow platform adapter ports and no feature forks" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D01" data-recommendation="Use one shared desktop/core codebase with narrow platform adapter ports and no feature forks" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D01</span><h3>Codebase strategy</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -86,7 +86,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>ADR-DESKTOP-PLATFORM-PORTS</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D02" data-recommendation="Qualify Windows x64, Apple Silicon macOS, Linux x86_64 and Linux ARM64 as explicit targets" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D02" data-recommendation="Qualify Windows x64, Apple Silicon macOS, Linux x86_64 and Linux ARM64 as explicit targets" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D02</span><h3>Qualification matrix</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -113,7 +113,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D03" data-recommendation="Use Developer ID signing, hardened runtime, notarization and stapled DMG/PKG artifacts" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D03" data-recommendation="Use Developer ID signing, hardened runtime, notarization and stapled DMG/PKG artifacts" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D03</span><h3>macOS distribution</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -140,7 +140,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>ADR-MACOS-PACKAGING</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D04" data-recommendation="Provide AppImage plus Debian package baseline, with signed/checksummed metadata" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D04" data-recommendation="Provide AppImage plus Debian package baseline, with signed/checksummed metadata" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D04</span><h3>Linux packaging</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -167,7 +167,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>ADR-LINUX-PACKAGING</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D05" data-recommendation="Use Credential Manager, Keychain and Secret Service through one secrets port" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D05" data-recommendation="Use Credential Manager, Keychain and Secret Service through one secrets port" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D05</span><h3>Credential storage</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -194,7 +194,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D06" data-recommendation="Use platform-native data/config/cache directories and architecture-neutral project-relative paths" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D06" data-recommendation="Use platform-native data/config/cache directories and architecture-neutral project-relative paths" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D06</span><h3>Filesystem layout</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -221,7 +221,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D07" data-recommendation="Build and sign target-triple-specific Rust/Python/native sidecars from pinned manifests" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D07" data-recommendation="Build and sign target-triple-specific Rust/Python/native sidecars from pinned manifests" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D07</span><h3>Sidecar packaging</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -248,7 +248,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D08" data-recommendation="Bundle a reproducible target-specific Python runtime and wheel set" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D08" data-recommendation="Bundle a reproducible target-specific Python runtime and wheel set" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D08</span><h3>Python runtime</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -275,7 +275,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D09" data-recommendation="Use CPU as the semantic baseline; expose ONNX Runtime/llama.cpp backends and optional acceleration ports" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D09" data-recommendation="Use CPU as the semantic baseline; expose ONNX Runtime/llama.cpp backends and optional acceleration ports" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D09</span><h3>AI portability</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -302,7 +302,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D10" data-recommendation="Treat DGX Spark as Linux ARM64 with native builds, CUDA qualification, unified-memory limits and CPU fallback" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D10" data-recommendation="Treat DGX Spark as Linux ARM64 with native builds, CUDA qualification, unified-memory limits and CPU fallback" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D10</span><h3>DGX Spark support</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -329,7 +329,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>ADR-DGX-SPARK-RUNTIME</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D11" data-recommendation="Pin target-specific artifacts, qualify equivalent behavior and declare a supported fallback" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D11" data-recommendation="Pin target-specific artifacts, qualify equivalent behavior and declare a supported fallback" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D11</span><h3>Parser/vector portability</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -356,7 +356,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D12" data-recommendation="Keep canonical project structures architecture-neutral; treat indexes and model caches as rebuildable derivatives" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D12" data-recommendation="Keep canonical project structures architecture-neutral; treat indexes and model caches as rebuildable derivatives" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D12</span><h3>Project interchange</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -383,7 +383,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D13" data-recommendation="Use checksummed BagIt payloads plus RO-Crate metadata and PROV links for transfers" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D13" data-recommendation="Use checksummed BagIt payloads plus RO-Crate metadata and PROV links for transfers" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D13</span><h3>Portable package</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -410,7 +410,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D14" data-recommendation="Detect case collisions, invalid names, symlinks, permissions and length limits before transfer" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D14" data-recommendation="Detect case collisions, invalid names, symlinks, permissions and length limits before transfer" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D14</span><h3>Path safety</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -437,7 +437,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D15" data-recommendation="Repeat keyboard, screen-reader, scaling and contrast qualification on each OS" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D15" data-recommendation="Repeat keyboard, screen-reader, scaling and contrast qualification on each OS" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D15</span><h3>Accessibility parity</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -464,7 +464,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D16" data-recommendation="Sign and qualify target-specific update artifacts while sharing one release manifest model" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D16" data-recommendation="Sign and qualify target-specific update artifacts while sharing one release manifest model" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D16</span><h3>Update channels</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -491,7 +491,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D17" data-recommendation="Compare canonical records, evidence, graphs, workflows and exported hashes across OS fixtures" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D17" data-recommendation="Compare canonical records, evidence, graphs, workflows and exported hashes across OS fixtures" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D17</span><h3>Semantic equivalence</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -518,7 +518,7 @@ python tools/planctl.py --repo . ready CAP-14 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>Classification required</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-14-D18" data-recommendation="Approve each platform independently and publish exact supported versions/limitations" data-plan-hash="009a7ed092e67d6bba2d04a12668c3131fb77088808713bebbb9cb625c885d55">
+<section class="decision-card" data-decision-id="CAP-14-D18" data-recommendation="Approve each platform independently and publish exact supported versions/limitations" data-plan-hash="c40a413689a936e9079894a0af23762ae5b5887422a7dda8e3f90e9faa35dfd7">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-14-D18</span><h3>G6 authority</h3></div>
     <span class="status status-accepted">Accepted</span>
