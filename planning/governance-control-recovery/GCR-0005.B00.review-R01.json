@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "5.0-control-recovery-bootstrap-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0005",
+  "bootstrapUnit": "GCR-0005.B00",
+  "attemptId": "R01",
+  "candidateCommit": "764f7d86a2559d1f99db74bdd7af24148c2962a0",
+  "reviewedStateCommit": "2928975eca979f76456e955663a26a5c229c4ba2",
+  "reviewer": "independent-gcr5-b00-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0005.B00.R01.json",
+    "sha256": "3a83addde110584d16100731a4ba9e8b32dc2ac42b4ae90b5ad9c4cf6a7cb735",
+    "commit": "d98e310cbe2d733f886577e25cd7f2d0ea0d45e0"
+  },
+  "notes": "CHANGES_REQUESTED. The approval-to-candidate-to-evidence-to-REVIEW topology, three-path implementation scope, exact frozen authority and hashes, runtime documents, history/finding controls, ledger-derived successor, deterministic generator, ordinary-authority denial, formatting, lint, and typing all reproduced. Thirteen focused tests passed. One HIGH control failure remains: the public application path accepts a clean worktree whose protected output directory is a Windows junction and writes successor bytes outside the repository, contrary to the packet's redirected-path denial and repository-confined seven-path application contract.",
+  "findings": [
+    {
+      "id": "GCR-0005.B00-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 8,
+      "title": "Seven-path application follows a clean directory junction outside the repository",
+      "reproduction": "In a disposable real-Git approved-application fixture, move planning/review-site/recoveries aside, copy its exact predecessor bytes to an external temporary directory, and create a Windows directory junction at the canonical recoveries path targeting that external directory. `git diff --name-only HEAD --` remains empty; os.path.isjunction reports true for the directory but false for its GRR-0002.html leaf. Invoke the public command_apply with the exact canonical approved state and application evidence. The controller prints `Applied exact seven-path B02 R01 CHANGES_REQUESTED projection`, removes its transaction artifacts, and changes the external GRR-0002.html hash. `_validate_live_pair` checks redirection only on each leaf, while command_apply and `_publish_snapshot` construct final destinations with `repo / relative`; none rejects a redirected ancestor. The later finalization validator uses safe_path and would reject the escaped path, so the accepted application both writes outside repository scope and cannot lawfully finalize. This directly violates acceptance criterion 8's substituted/redirected-path denial and exact seven-path recovery contract.",
+      "requiredRemediation": "Create a strict-descendant R02 candidate and fresh evidence. Before creating any transaction artifact, and again under the application/recovery lock immediately before publication, validate every component of every FINAL_PATHS destination: reject any symlink or junction/reparse redirection at the leaf or an ancestor and require the resolved destination to remain within the canonical repository. Reuse that invariant in apply, recover, live-pair validation, snapshot publication, predecessor validation, and finalization. Add public command_apply and recover tests using a real Windows parent-directory junction for each affected path family; prove the command fails before changing either the external target or any protected repository byte and that repeated status/recovery remains fail-closed. Preserve this R01 ledger append-only and close the finding only with exact R02 evidence and independent review."
+    }
+  ],
+  "closures": []
+}
