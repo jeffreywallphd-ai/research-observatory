@@ -2993,6 +2993,99 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.assertEqual(payload, before)
         self.assertEqual(before, (REPO / "planning/backlog.yaml").read_bytes())
 
+    def test_v5_schema_is_exact_to_s03_b03_and_gcr7(self) -> None:
+        packet_schema = json.loads(
+            (REPO / "planning/governance-recovery-requests/governance-recovery-supplement.v5.schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        approval_schema = json.loads(
+            (
+                REPO / "planning/governance-recovery-requests/governance-recovery-supplement-approval.v5.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        Draft202012Validator.check_schema(packet_schema)
+        Draft202012Validator.check_schema(approval_schema)
+        properties = packet_schema["properties"]
+        self.assertEqual("GRR-0002.S03", properties["supplementId"]["const"])
+        self.assertEqual("GRR-0002.B03", properties["supplementalBootstrap"]["properties"]["id"]["const"])
+        self.assertEqual(
+            "GCR-0007",
+            properties["installedControlRecovery"]["properties"]["controlRecoveryId"]["const"],
+        )
+        self.assertEqual(11, properties["controlTransition"]["properties"]["predecessorRevision"]["const"])
+        self.assertEqual(12, properties["controlTransition"]["properties"]["successorRevision"]["const"])
+
+    def test_v5_preappend_boundary_requires_gcr7_and_preserves_backlog(self) -> None:
+        payload, data, _capabilities, _slices, tasks, _gates = recoveryctl.backlog_state(REPO)
+        data["control_plane"]["control_generations"].append(
+            {
+                "id": "GCR-0007",
+                "bootstrap_id": "GCR-0007.B00",
+                "hold_id": "HOLD-W1-GRR-0002",
+                "predecessor_revision": 11,
+                "successor_revision": 11,
+                "supported_control_ceiling": 12,
+                "generation_neutral": True,
+                "approval_reference": {
+                    "path": "planning/governance-control-recovery/GCR-0007.approval.json",
+                    "sha256": "a" * 64,
+                    "introduction_commit": "b" * 40,
+                },
+                "review_reference": {
+                    "path": "planning/governance-control-recovery/GCR-0007.B00.review-R01.json",
+                    "sha256": "c" * 64,
+                    "reviewed_state_commit": "d" * 40,
+                    "approved_state_commit": "e" * 40,
+                },
+                "adopted_by": "codex",
+                "adopted_at": "2026-08-26T00:00:00+00:00",
+            }
+        )
+        packet = json.loads(
+            (REPO / "planning/governance-recovery-requests/GRR-0002.S02.packet.json").read_text(encoding="utf-8")
+        )
+        packet["$schema"] = "./governance-recovery-supplement.v5.schema.json"
+        packet["schemaVersion"] = "5.0-recovery-supplement-proposal"
+        packet["supplementId"] = "GRR-0002.S03"
+        packet["controlTransition"] = {
+            "predecessorRevision": 11,
+            "successorRevision": 12,
+            "generationNeutral": False,
+            "olderReadersFailClosed": True,
+        }
+        packet["activationBoundary"]["controlRevision"] = 11
+        packet["supplementalBootstrap"]["id"] = "GRR-0002.B03"
+        packet["triggerEvidence"]["backlogSha256"] = hashlib.sha256(payload).hexdigest()
+        hold = recoveryctl.recovery_hold(data, "GRR-0002")
+        wave = taskctl.wave_map(data)["W1"]
+        blocked_task = tasks["CAP-02.S04.T03"]
+        recoveryctl.validate_preappend_supplement_boundary(
+            REPO,
+            packet,
+            data,
+            hold=hold,
+            wave=wave,
+            blocked_task=blocked_task,
+            installed=[],
+            require_installed=False,
+        )
+        self.assertEqual(payload, (REPO / "planning/backlog.yaml").read_bytes())
+
+        data["control_plane"]["control_generations"][-1]["id"] = "GCR-0006"
+        with self.assertRaisesRegex(SystemExit, "exact adopted GCR-0007"):
+            recoveryctl.validate_preappend_supplement_boundary(
+                REPO,
+                packet,
+                data,
+                hold=hold,
+                wave=wave,
+                blocked_task=blocked_task,
+                installed=[],
+                require_installed=False,
+            )
+        self.assertEqual(payload, (REPO / "planning/backlog.yaml").read_bytes())
+
 
 if __name__ == "__main__":
     unittest.main()
