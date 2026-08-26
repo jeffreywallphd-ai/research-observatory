@@ -16,16 +16,21 @@
         "path": "planning/governance-control-recovery/GCR-0005.review-R01.json",
         "sha256": "75e226bf85671869de5130e33cae6b6d8fa64bfafd386d9669a1a2c2d42b6da0",
         "commit": "7abc2ecfa4d5449ab19dc93216eabf7d5ef15576"
+      },
+      {
+        "path": "planning/governance-control-recovery/GCR-0005.review-R02.json",
+        "sha256": "4258bce50b8e2c9c1ff3e4a555e3f2af4e6b57c6c471718376531fe8e507a110",
+        "commit": "5105e4257d4374553a94253be223c94cc6874433"
       }
     ],
     "approvalSchema": {
       "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v5.schema.json",
-      "sha256": "0a287b00236c7651831a9d1a2c78db4f1fbfaaab3c6857403dcb9221f508957c"
+      "sha256": "b0685d284c1c5abc6af9861d4492c70d9cfb594b31c695d9299bd652ba914bd0"
     },
     "approvalPath": "planning/governance-control-recovery/GCR-0005.approval.json",
     "authorityManifest": {
       "path": "planning/governance-control-recovery/GCR-0005.authority.json",
-      "sha256": "c1bfaa2dbe991dc0635c0dfa5b51af4da31fc55123e675b14ff693b7163ed35a"
+      "sha256": "1f0f1a393653dca117e9ed14402cfc88e0d9ba03835fb229a5ac0463aa212f6a"
     },
     "untrackedTriggerWitness": {
       "path": "artifacts/evidence/W1.A04.B00.json",
@@ -174,7 +179,21 @@
       "commitBound": true,
       "severityRanked": true,
       "blockingFindingDenial": true,
-      "appendOnly": true
+      "appendOnly": true,
+      "repeatedFindingRootCause": "R02 treated gross JSON-shape rejection as proof of append-only history semantics. It left pending and completed attempts in one array, used non-relational contains checks, and did not make the controller's RNN chronology, binding, finding-fold, or approval-denial algorithm part of the immutable packet contract.",
+      "historyValidation": {
+        "representation": "completed-attempt-map-plus-single-pending-submission",
+        "chronologicalRnnFromR01": true,
+        "noDuplicatesOrGaps": true,
+        "completedKeyMatchesSubmission": true,
+        "pendingIsExactNextRnn": true,
+        "reviewLedgerCommitHashBinding": true,
+        "latestResultProjection": true,
+        "chronologicalFindingFold": true,
+        "validClosureTargetOnly": true,
+        "approvedWithOpenBlockingDenied": true,
+        "everyReadAndMutation": true
+      }
     },
     "application": {
       "requiresApprovedB00": true,
@@ -244,16 +263,16 @@
     "The failed supplement-review command is reproducible and byte-stable: it fails only at the installed-versus-live backlog assumption and leaves backlog and ledger hashes unchanged.",
     "GCR-0005 approval can be introduced only after an independent APPROVED packet review at the exact packet commit; its clean codex-branch introduction commit is the sole B00 implementation base.",
     "B00 implementation changes only authorized controller/test/evidence/state paths, cannot edit the adverse ledger or reviewed backlog projection, keeps revision 11, and cannot apply the bridge before independent B00 approval.",
-    "The GCR-0005 authority reader accepts only the exact independently approved packet, B00 review, active hold, frozen B02 R01 boundary, and witness, rejecting missing, stale, forked, adverse, substituted, dirty, or internally inconsistent authority byte-stably.",
+    "The GCR-0005 authority reader accepts only the exact independently approved packet, B00 review, active hold, frozen B02 R01 boundary, and witness. On every read and mutation it sorts the completed-attempt map by numeric RNN, requires the unique gapless sequence from R01, requires every key to equal its submission attemptId, requires the sole pending submission to be the exact next RNN, commit/hash-binds every submission, evidence, review, and ledger, projects status from the latest review, folds findings and valid closures chronologically, and denies APPROVED while any blocking finding remains open; missing, stale, forked, adverse, substituted, dirty, or internally inconsistent authority is rejected byte-stably.",
     "Application derives the exact B02 R01 attempt and CHANGES_REQUESTED state from the unchanged ledger, records explicit GCR-0005 recovery authority in its application evidence, and closes no finding.",
-    "Application and repeated recovery can yield only the exact frozen predecessor or exact ledger-derived successor, including abrupt child-process termination at every durable boundary and deterministic-view generation failure; focused Draft 2020-12 negative tests reject substituted state, evidence, raw/canonical hashes, paths, hold, witness, safety duties, and finalization records.",
+    "Application and repeated recovery can yield only the exact frozen predecessor or exact ledger-derived successor, including abrupt child-process termination at every durable boundary and deterministic-view generation failure; focused Draft 2020-12 and controller tests reject duplicate, reordered, skipped, orphaned, candidate/evidence-mismatched, review-without-ledger, ledger-without-review, stale-result, invalid-closure, approved-with-open-blocker, substituted state/evidence/hash/path/hold/witness, safety-duty, and finalization records.",
     "The finalization commit is the direct child of application evidence and changes exactly the backlog and six declared deterministic views; revision 11 and every ordinary execution gate remain closed.",
     "Criterion-linked evidence, adversarial real-Git coverage, governed Python quality, exact diff scope, protected hashes, generated-view integrity, and independent review pass with no unexplained unverified item."
   ],
   "verificationObligations": [
     "Validate all schemas and exact file/hash/Git bindings, S02 and B02 authority, scope-addendum chain, candidate/evidence/reviewed state/adverse ledger, active hold, backlog, W1/T03/W1.A04/G1 boundary, and witness invariants.",
     "Run a real-Git test from exact frozen commit 962f92ff through GCR-0005 approval, B00 review, crash-safe projection application, exact seven-path finalization, and ordinary B02 R02 eligibility without direct backlog edits or mocked authority boundaries.",
-    "Cover missing/mutated/staged/tracked/symlinked witness; missing/mutated ledger; wrong hashes/commits/candidate/evidence/state/result/reviewer/findings/closures; adverse GCR-0005 review; dirty workspace; forked authority; stale CAS; transaction substitution; generation failure; abrupt termination; repeated recovery; and old-reader denial.",
+    "Cover missing/mutated/staged/tracked/symlinked witness; missing/mutated ledger; duplicate/reordered/skipped/orphaned attempts; mismatched attempt keys, candidate, evidence, review, or ledger; review/ledger pair violations; stale projected result; invalid closure; approval with an open blocker; wrong hashes/commits/state/result/reviewer/findings/closures; adverse GCR-0005 review; dirty workspace; forked authority; stale CAS; transaction substitution; generation failure; abrupt termination; repeated recovery; and old-reader denial.",
     "Prove byte-identical denial for backlog, ledger, witness, hold, W1, task, amendment, gate, product, references, prior authority, and transaction artifacts on every failed check.",
     "Run governed Python quality, backlog and generated-view validation, review-site validation, and Git diff/check/status hygiene selected by the exact changed-path risk surface."
   ],
@@ -269,13 +288,13 @@
     {"id": "D", "title": "Start S03/B03 or skip R01", "disposition": "rejected", "consequence": "Violates the single-nonapproved-supplement or append-only-review controls."}
   ],
   "files": [
-    {"path": "planning/governance-control-recovery/GCR-0005.md", "sha256": "35fa4df8f0bf85ef055de910a8f6063e11aca5d2ede7ba521f6dbbabfcd88c99"},
-    {"path": "planning/governance-control-recovery/GCR-0005-review.html", "sha256": "80038b382f2f04c02e3c5861ea45e62c23daa16c6e30d002b98fcf05347a0200"},
-    {"path": "planning/governance-control-recovery/GCR-0005.authority.json", "sha256": "c1bfaa2dbe991dc0635c0dfa5b51af4da31fc55123e675b14ff693b7163ed35a"},
-    {"path": "planning/governance-control-recovery/governance-control-recovery-request.v5.schema.json", "sha256": "8d13960d484b526edb00c4b7ce3c787a31e73f0742048a04fbac3111b67a9ef1"},
-    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v5.schema.json", "sha256": "0a287b00236c7651831a9d1a2c78db4f1fbfaaab3c6857403dcb9221f508957c"},
+    {"path": "planning/governance-control-recovery/GCR-0005.md", "sha256": "e552ae41610bbfe612cb7dac065b93e74a3ee558512e1839db4885b28ddbd630"},
+    {"path": "planning/governance-control-recovery/GCR-0005-review.html", "sha256": "2b7fee4463aff1f1998ccdb57f744456b4e2f3a3233b485c1b71f57531ba3248"},
+    {"path": "planning/governance-control-recovery/GCR-0005.authority.json", "sha256": "1f0f1a393653dca117e9ed14402cfc88e0d9ba03835fb229a5ac0463aa212f6a"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-request.v5.schema.json", "sha256": "afb8999a8b53ca212fdc4a878ca7b90361a2613e1c27bc6507d541af60326184"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v5.schema.json", "sha256": "b0685d284c1c5abc6af9861d4492c70d9cfb594b31c695d9299bd652ba914bd0"},
     {"path": "planning/governance-control-recovery/governance-control-recovery-transaction.v5.schema.json", "sha256": "14164a9cb90a59e0c825d78b7a8a940550fd99c3bc9d49b861411d8401cd2f03"},
-    {"path": "tests/foundation/test_gcr5_packet_schema.py", "sha256": "ba9634da97d6c36282fed75d11b70ac999c8db0006663ee05c55b015f3ef0d28"}
+    {"path": "tests/foundation/test_gcr5_packet_schema.py", "sha256": "c2720c4446f660733ccabba7630d9ae59b840ee40e1b4a8af70a73b919a96b1b"}
   ],
   "requiredApprovalStatement": "Approve only GCR-0005.B00 for the exact independently reviewed packet commit, preserving the GRR-0002.B02 R01 candidate, evidence, reviewed-state binding, adverse ledger, and open finding byte-for-byte and authorizing no review projection before independent B00 approval."
 }

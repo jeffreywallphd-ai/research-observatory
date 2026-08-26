@@ -208,10 +208,24 @@
           "additionalProperties": false
         },
         "review": {
-          "type": "object", "required": ["independent", "commitBound", "severityRanked", "blockingFindingDenial", "appendOnly"],
+          "type": "object", "required": ["independent", "commitBound", "severityRanked", "blockingFindingDenial", "appendOnly", "repeatedFindingRootCause", "historyValidation"],
           "properties": {
             "independent": {"const": true}, "commitBound": {"const": true}, "severityRanked": {"const": true},
-            "blockingFindingDenial": {"const": true}, "appendOnly": {"const": true}
+            "blockingFindingDenial": {"const": true}, "appendOnly": {"const": true},
+            "repeatedFindingRootCause": {"type": "string", "minLength": 1},
+            "historyValidation": {
+              "type": "object",
+              "required": ["representation", "chronologicalRnnFromR01", "noDuplicatesOrGaps", "completedKeyMatchesSubmission", "pendingIsExactNextRnn", "reviewLedgerCommitHashBinding", "latestResultProjection", "chronologicalFindingFold", "validClosureTargetOnly", "approvedWithOpenBlockingDenied", "everyReadAndMutation"],
+              "properties": {
+                "representation": {"const": "completed-attempt-map-plus-single-pending-submission"},
+                "chronologicalRnnFromR01": {"const": true}, "noDuplicatesOrGaps": {"const": true},
+                "completedKeyMatchesSubmission": {"const": true}, "pendingIsExactNextRnn": {"const": true},
+                "reviewLedgerCommitHashBinding": {"const": true}, "latestResultProjection": {"const": true},
+                "chronologicalFindingFold": {"const": true}, "validClosureTargetOnly": {"const": true},
+                "approvedWithOpenBlockingDenied": {"const": true}, "everyReadAndMutation": {"const": true}
+              },
+              "additionalProperties": false
+            }
           },
           "additionalProperties": false
         },

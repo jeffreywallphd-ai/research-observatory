@@ -5,7 +5,7 @@
 <p><a href="../review-site/waves/W1.html">W1 review</a> · <a href="GCR-0005.md">Canonical proposal</a></p>
 <h1>GCR-0005 — Recover the exact GRR-0002.B02 R01 adverse-review projection</h1>
 <div class="warn"><strong>Inert packet.</strong> It grants no B02 review projection, remediation, W1.A04, Wave, task, gate, hold-release, merge, or remote authority before independent packet review and exact-commit human approval.</div>
-<p><strong>R02 packet revision:</strong> R01 review is preserved append-only. The single blocking packet finding is remediated by exact runtime/transaction structures and negative schema tests. R02 still requires independent approval before human approval is available.</p>
+<p><strong>R03 packet revision:</strong> R01 and R02 reviews are preserved append-only. R03 replaces the loose array history with a completed-attempt map plus one pending submission and makes the relational chronology, authority-binding, finding-fold, and approval-denial algorithm mandatory on every controller read and mutation. R03 still requires independent approval before human approval is available.</p>
 
 <h2>What failed</h2>
 <p>Independent B02 R01 review produced an exact <code>CHANGES_REQUESTED</code> ledger. The approved controller cannot record it because its B02 addendum loader requires the lawful live <code>REVIEW</code> backlog to equal the earlier <code>IN_PROGRESS</code> installed-candidate bytes. No backlog write occurred.</p>
@@ -23,7 +23,7 @@
 
 <h2>Recommended exact projection</h2>
 <ol><li>Implement and independently review only <code>GCR-0005.B00</code>.</li><li>Authenticate the frozen backlog, candidate, evidence, unchanged ledger, S02/addendum authority, hold, stopped Wave boundary, and witness.</li><li>Use a crash-safe one-time controller to derive only the ledger's adverse B02 projection.</li><li>Finalize one direct-child commit changing the backlog and its six deterministic views.</li><li>Resume ordinary strict-descendant B02 R02 remediation; do not close the R01 finding in the bridge.</li></ol>
-<p>The R02 schemas bind full attempt/review/application records, the still-open finding, exact ledger and evidence identities, the exact seven changed paths, fixed raw/canonical predecessor and successor hashes, active hold and witness, Windows durability duties, allowed terminal states, cleanup, and direct-child finalization. Focused negative tests reject the R01 substitution cases.</p>
+<p>The R03 schemas bind completed reviews and ledgers jointly, isolate the sole pending submission, project the latest result and open findings explicitly, and deny approval with any projected open finding. Because Draft 2020-12 cannot express every cross-record equality or chronological fold, the immutable packet separately requires the controller to reject duplicate, reordered, skipped, orphaned, candidate/evidence-mismatched, unpaired review/ledger, stale-result, invalid-closure, and approved-with-open-blocker histories on every read and mutation. Exact ledger/evidence identities, seven-path scope, fixed raw/canonical predecessor and successor hashes, active hold and witness, Windows durability duties, recovery states, cleanup, and direct-child finalization remain bound.</p>
 
 <h2>Safety boundary</h2>
 <div class="deny">No ledger edit, finding closure, B02 R02 submission/approval, control revision change, W1.A04 action, task claim, hold release, W1 resume, G1 approval, product/reference change, local-main integration, or remote action.</div>

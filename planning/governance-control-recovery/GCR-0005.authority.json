@@ -11,6 +11,14 @@
       "commit": "7abc2ecfa4d5449ab19dc93216eabf7d5ef15576",
       "result": "changes-requested",
       "openFindingIds": ["GCR-0005-R01-F01"]
+    },
+    {
+      "attemptId": "R02",
+      "path": "planning/governance-control-recovery/GCR-0005.review-R02.json",
+      "sha256": "4258bce50b8e2c9c1ff3e4a555e3f2af4e6b57c6c471718376531fe8e507a110",
+      "commit": "5105e4257d4374553a94253be223c94cc6874433",
+      "result": "changes-requested",
+      "openFindingIds": ["GCR-0005-R01-F01", "GCR-0005-R02-F01"]
     }
   ],
   "frozenSupplementReviewBoundary": {
