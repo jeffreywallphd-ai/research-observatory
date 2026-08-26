@@ -13,6 +13,7 @@ import base64
 import copy
 import json
 import os
+import re
 import stat
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -220,8 +221,9 @@ def validate_boundary(data: dict[str, Any], *, successor: bool = False) -> None:
     control = data.get("control_plane") or {}
     hold = _hold(data)
     wave = taskctl.wave_map(data).get("W1") or {}
-    task = taskctl.index_backlog(data)[3].get("CAP-02.S04.T03") or {}
-    gate = taskctl.index_backlog(data)[4].get("G1") or {}
+    _capabilities, _slices, _slice_tasks, tasks, gates = taskctl.index_backlog(copy.deepcopy(data))
+    task = tasks.get("CAP-02.S04.T03") or {}
+    gate = gates.get("G1") or {}
     supplements = hold.get("supplements") or []
     b02 = (supplements[-1] if supplements else {}).get("bootstrap") or {}
     attempts = b02.get("attempts") or []
@@ -369,6 +371,14 @@ def evidence_path(attempt_id: str) -> str:
 
 def review_path(attempt_id: str) -> str:
     return f"planning/governance-control-recovery/{BOOTSTRAP_ID}.review-{attempt_id}.json"
+
+
+def adoption_evidence_path(attempt_id: str) -> str:
+    if not re.fullmatch(r"R[0-9]{2}", attempt_id):
+        raise SystemExit("GCR-0007 adoption evidence attempt is invalid")
+    if attempt_id == "R02":
+        return ADOPTION_EVIDENCE_PATH
+    return f"artifacts/evidence/governance-control-recovery/{BOOTSTRAP_ID}.adoption-{attempt_id}.json"
 
 
 def _attempt_keys(state: dict[str, Any]) -> list[str]:
@@ -761,10 +771,19 @@ def freeze_submission(args: argparse.Namespace, *, remediation: bool) -> None:
     _approval, packet, base = load_authority(args.repo)
     if present_transaction_artifacts(args.repo):
         raise SystemExit("GCR-0007 adoption transaction requires explicit recovery")
-    state, _payload = load_state(args.repo, packet, required=False)
+    state, state_payload = load_state(args.repo, packet, required=False)
     if remediation:
-        if state is None or state.get("status") not in {"CHANGES_REQUESTED", "BLOCKED"}:
-            raise SystemExit("GCR-0007 resubmission requires an adverse review")
+        adverse_review = state is not None and state.get("status") in {"CHANGES_REQUESTED", "BLOCKED"}
+        failed_pre_activation_adoption = (
+            state is not None
+            and state_payload is not None
+            and authenticated_failed_pre_activation_adoption(args.repo, state, state_payload)
+        )
+        if not adverse_review and not failed_pre_activation_adoption:
+            raise SystemExit(
+                "GCR-0007 resubmission requires an adverse review or a failed pre-activation adoption "
+                "with immutable attempt-scoped evidence"
+            )
     elif state is not None:
         raise SystemExit("GCR-0007 initial submission already exists")
     if not remediation and str(args.approval_commit) != base:
@@ -910,6 +929,7 @@ def validate_adoption_evidence(
     *,
     approved_state: str,
     evidence_commit: str,
+    evidence_relative: str = ADOPTION_EVIDENCE_PATH,
 ) -> None:
     validate_runtime(repo, document, "GCR-0007 adoption evidence")
     if (
@@ -927,16 +947,48 @@ def validate_adoption_evidence(
         or document.get("ordinaryExecutionAuthority") is not False
         or not document.get("checks")
         or any(item.get("result") != "passed" for item in document.get("checks") or [])
-        or taskctl.git_blob(repo, evidence_commit, ADOPTION_EVIDENCE_PATH) != payload
+        or taskctl.git_blob(repo, evidence_commit, evidence_relative) != payload
     ):
         raise SystemExit("GCR-0007 adoption evidence is circular, stale, adverse, or misbound")
     _exact_parent(
         repo,
         approved_state,
         evidence_commit,
-        {ADOPTION_EVIDENCE_PATH: "A"},
+        {evidence_relative: "A"},
         "GCR-0007 adoption evidence A",
     )
+
+
+def authenticated_failed_pre_activation_adoption(
+    repo: Path,
+    state: dict[str, Any],
+    state_payload: bytes,
+) -> bool:
+    if state.get("status") != "APPROVED" or state.get("activation") is not None:
+        return False
+    attempts = _attempt_keys(state)
+    if not attempts:
+        return False
+    evidence_relative = adoption_evidence_path(attempts[-1])
+    evidence_commit = taskctl.approval_introduction_commit(repo, evidence_relative)
+    if not evidence_commit:
+        return False
+    _reviewed_state, approved_state, _ledger_ref, _ledger_payload = canonical_approved_state(repo, state, state_payload)
+    evidence, evidence_payload = _git_document(
+        repo,
+        evidence_commit,
+        evidence_relative,
+        "GCR-0007 failed pre-activation adoption evidence",
+    )
+    validate_adoption_evidence(
+        repo,
+        evidence,
+        evidence_payload,
+        approved_state=approved_state,
+        evidence_commit=evidence_commit,
+        evidence_relative=evidence_relative,
+    )
+    return True
 
 
 def generation_record(
@@ -1195,9 +1247,18 @@ def validate_anchor(
     approved_state = str(anchor.get("approvedStateCommit") or "")
     evidence_ref = anchor.get("adoptionEvidence") or {}
     evidence_commit = str(evidence_ref.get("commit") or "")
-    _exact_parent(repo, approved_state, evidence_commit, {ADOPTION_EVIDENCE_PATH: "A"}, "GCR-0007 anchor A")
+    evidence_relative = str(evidence_ref.get("path") or "")
+    if (
+        re.fullmatch(
+            r"artifacts/evidence/governance-control-recovery/GCR-0007\.B00\.adoption(?:-R[0-9]{2})?\.json",
+            evidence_relative,
+        )
+        is None
+    ):
+        raise SystemExit("GCR-0007 anchor adoption evidence path is invalid")
+    _exact_parent(repo, approved_state, evidence_commit, {evidence_relative: "A"}, "GCR-0007 anchor A")
     evidence, evidence_payload = _git_document(
-        repo, evidence_commit, ADOPTION_EVIDENCE_PATH, "GCR-0007 anchor adoption evidence"
+        repo, evidence_commit, evidence_relative, "GCR-0007 anchor adoption evidence"
     )
     if sha256(evidence_payload) != evidence_ref.get("sha256"):
         raise SystemExit("GCR-0007 anchor adoption evidence hash differs")
@@ -1207,6 +1268,7 @@ def validate_anchor(
         evidence_payload,
         approved_state=approved_state,
         evidence_commit=evidence_commit,
+        evidence_relative=evidence_relative,
     )
     payloads = anchor.get("payloads") or {}
     predecessor = {
@@ -1236,6 +1298,9 @@ def validate_anchor(
     if not isinstance(predecessor_state_doc, dict):
         raise SystemExit("GCR-0007 predecessor state snapshot is malformed")
     validate_history(repo, predecessor_state_doc, packet)
+    predecessor_attempts = _attempt_keys(predecessor_state_doc)
+    if not predecessor_attempts or evidence_relative != adoption_evidence_path(predecessor_attempts[-1]):
+        raise SystemExit("GCR-0007 anchor adoption evidence does not match the approved attempt")
     if predecessor_state_doc.get("status") != "APPROVED":
         raise SystemExit("GCR-0007 recovery predecessor is not independently approved")
     validate_successor_documents(repo, successor["backlog"], successor["state"])
@@ -1484,8 +1549,10 @@ def command_adopt(args: argparse.Namespace) -> None:
     if args.agent != ACTOR:
         raise SystemExit(f"GCR-0007 adopter must be exact actor {ACTOR}")
     evidence_relative = str(args.evidence)
-    if evidence_relative != ADOPTION_EVIDENCE_PATH:
-        raise SystemExit(f"GCR-0007 adoption evidence path must be {ADOPTION_EVIDENCE_PATH}")
+    attempts = _attempt_keys(state)
+    expected_evidence_relative = adoption_evidence_path(attempts[-1])
+    if evidence_relative != expected_evidence_relative:
+        raise SystemExit(f"GCR-0007 adoption evidence path must be {expected_evidence_relative}")
     evidence_commit = git(args.repo, "rev-parse", "HEAD")
     evidence, evidence_payload = _git_document(
         args.repo, evidence_commit, evidence_relative, "GCR-0007 adoption evidence"
@@ -1496,6 +1563,7 @@ def command_adopt(args: argparse.Namespace) -> None:
         evidence_payload,
         approved_state=approved_state,
         evidence_commit=evidence_commit,
+        evidence_relative=evidence_relative,
     )
     require_workspace(args.repo)
     predecessor_backlog = guard_repo_path(args.repo, BACKLOG_PATH).read_bytes()
