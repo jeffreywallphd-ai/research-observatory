@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "7.0-control-recovery-bootstrap-review",
+  "documentType": "governance-control-recovery-successor-bootstrap-review",
+  "controlRecoveryId": "GCR-0007",
+  "bootstrapUnit": "GCR-0007.B00",
+  "attemptId": "R01",
+  "candidateCommit": "5b6f37944c06dfed25c136a248d54c39bf0e9496",
+  "reviewedStateCommit": "04296b53573e940e046259fea589d3c351368cf7",
+  "reviewer": "independent-gcr7-b00-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.R01.json",
+    "sha256": "a748914e050711baa9cde62b992422c4916f2c34496888cdfd0b3717ba3fff99",
+    "commit": "a8f8ff829f4fd2cedf6269916683e3e25e1651d8"
+  },
+  "notes": "CHANGES_REQUESTED after independent commit-bound R01 control/security review. The exact approval-to-candidate ten-path allowlist, C-to-E-to-S direct-child lineage, packet/approval/evidence/state bindings, GCR-0006 inert predecessor, non-circular P-to-A-to-F design, revision-11 stopped boundary, and exact untracked/unstaged witness were inspected. The evidence's exact targeted 18-test command is not reproducible at frozen REVIEW state 04296b53573e940e046259fea589d3c351368cf7: 17 tests pass and test_status_boundary_denies_dirt_transaction_and_substituted_predecessor fails because its authority clone inherits the committed REVIEW state while the assertion requires an absent state. This is a blocking evidence-reproducibility and test-isolation defect. No controller review transition, adoption, GCR-0006 action, postappend repair, W1.A04 action, backlog mutation, or ordinary execution is authorized.",
+  "findings": [
+    {
+      "id": "GCR-0007.B00-R01-F01",
+      "severity": "HIGH",
+      "criterion": "Targeted verification claims must reproduce at the exact frozen REVIEW state, and the status-boundary test must deterministically isolate the lifecycle state it asserts.",
+      "description": "The evidence records the exact targeted command as 18 tests passed with no unverified item, but independent replay at reviewedStateCommit 04296b53573e940e046259fea589d3c351368cf7 completes 17/18. The failing test clones the current canonical branch and therefore imports GCR-0007.B00.state.json in REVIEW; it nevertheless asserts validate_current_boundary(..., state_required=False) returns (None, None), an absent-state precondition. The test is ambient-HEAD dependent and the submitted verification claim is false at the immutable review boundary.",
+      "reproduction": "At exact HEAD 04296b53573e940e046259fea589d3c351368cf7 on codex/w1-windows-local-runtime, run `.venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_gcr7ctl tests.foundation.test_taskctl_schema.BacklogSchemaTests.test_revision_twelve_headroom_requires_exact_neutral_gcr7_and_s03 tests.foundation.test_taskctl_schema.BacklogSchemaTests.test_neutral_gcr7_does_not_change_the_w1_a04_postappend_denial tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v5_schema_is_exact_to_s03_b03_and_gcr7 tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v5_preappend_boundary_requires_gcr7_and_preserves_backlog`. Observe `FAILED (failures=1)` after 17 passing tests. The failure is tests.foundation.test_gcr7ctl.Gcr7ctlTests.test_status_boundary_denies_dirt_transaction_and_substituted_predecessor at the assertion expecting `(None, None)`; the actual first tuple element is the committed REVIEW state copied by clone_authority_repo. Preserve R01 append-only, make a strict-descendant R02 test remediation that constructs or checks out an explicit state-absent authority boundary rather than ambient branch HEAD, add a separate assertion for the frozen REVIEW-state boundary, bind fresh evidence with this finding's closure, and resubmit through gcr7ctl.",
+      "blocking": true
+    }
+  ],
+  "closures": []
+}
