@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-review",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S02",
+  "bootstrapUnit": "GRR-0002.B02",
+  "attemptId": "R01",
+  "candidateCommit": "d363c04c385251a5d789a0313e173342e7e0ae3e",
+  "reviewedStateCommit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c",
+  "reviewer": "independent-b02-control-security-reviewer",
+  "result": "changes-requested",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0002.B02.evidence.json",
+    "sha256": "77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595"
+  },
+  "notes": "CHANGES_REQUESTED after independent commit-bound R01 control/security review. The exact candidate and sole-child frozen REVIEW state, evidence hash and schema, 17-path approval-base-to-candidate scope, ordered required-outcome and acceptance-criterion mappings, approved S02 and deterministic-output addendum authority, revision-11 canonical backlog, active sole hold, PAUSED W1 wave boundary, absent W1.A04, BLOCKED CAP-02.S04.T03, PENDING G1, exact untracked and unstaged witness, base GRR authority, and Git diff hygiene are exact. Canonical backlog validation and base GRR-0002 approval validation pass. Approval is withheld because the B02 scope-addendum loader requires the live planning/backlog.yaml bytes and raw hash to remain identical to the installed-candidate IN_PROGRESS backlog after the lawful supplement-submit transition has changed only B02 to REVIEW and frozen its exact R01 submission. Both supplement-status and supplement-validate therefore fail at the required frozen review state, and the focused addendum tests fail for the same attempt-insensitive backlog assumption. Preserve this R01 submission, evidence, and ledger append-only; repair the loader and lifecycle tests in a strict descendant, bind fresh remediation evidence with an explicit closure, and use supplement-resubmit for R02. No B02 approval, historic W1.A04.B00 retry, amendment materialization, task action, hold release, W1 resume, gate action, merge, or remote action is authorized by this adverse ledger.",
+  "findings": [
+    {
+      "id": "GRR-0002.B02-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterionIndex": 6,
+      "title": "The approved scope-addendum authority becomes unusable after the lawful B02 submission transition",
+      "reproduction": "At exact frozen REVIEW state 962f92ff831c9a3d87a7d6ba796c8194e70b6c2c, run `.venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . supplement-status GRR-0002.S02` and `.venv\\Scripts\\python.exe tools\\recoveryctl.py --repo . supplement-validate GRR-0002.S02`; both exit nonzero with `B02 scope-addendum base authority, candidates, backlog, or witness differs`. The only candidate-to-reviewed-state backlog delta is the lawful GRR-0002.B02 IN_PROGRESS-to-REVIEW transition with exact candidate d363c04c385251a5d789a0313e173342e7e0ae3e, evidence SHA-256 77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595, and R01 current submission. In tools/recoveryctl.py, approved_b02_scope_addendum_paths authenticates the installed-candidate backlog blob but then also requires that blob to equal the current working backlog after CRLF normalization and requires the current raw SHA-256 to equal the pre-submit installed backlog hash. Those conditions necessarily become false after supplement-submit. A bounded replay of the three B02 addendum tests at the frozen state produces one error and five failures/subtest failures: the valid strict-descendant case reaches this same authority error, while the remaining fixtures copy the REVIEW backlog over an older commit and become dirty before their checkout. This contradicts acceptance criterion 6's frozen-submission and independent-review lifecycle, acceptance criterion 8's focused real-Git lifecycle coverage, and required outcome 4; the controller cannot validate or independently review the exact state it just lawfully created.",
+      "requiredRemediation": "After recording and committing this adverse R01 append-only, create a strict-descendant candidate that keeps the approved addendum's installed backlog binding immutable by validating the exact planning/backlog.yaml Git blob and declared raw hash at db28eb20fff4865cf4685b82c199db10705a74ea, but validates the live backlog against the exact permitted supplement lifecycle state rather than requiring it forever to equal the pre-submit bytes. At minimum, accept only authenticated IN_PROGRESS, exact frozen REVIEW submission, append-only adverse-review/resubmission, and eventual exact approved projections as appropriate to the invoked transition, while continuing to require control/minimum revision 11, the sole ACTIVE HOLD-W1-GRR-0002, W1 PAUSED at wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, PENDING G1, exact S02/addendum authority and ancestry, and the exact witness-only workspace. Add disposable real-Git tests that start from the immutable installed backlog, exercise submit then status/validate and adverse R01 then strict-descendant R02 resubmit, and prove byte-stable denial for altered, stale, forked, substituted, wrong-revision, wrong-hold, wrong-wave/task/gate/amendment, and witness-deviating live states. Fixtures must derive packet-time backlog proof from the installed Git blob rather than copying the mutable REVIEW backlog over older commits. Rerun the affected recovery/taskctl checks, create fresh canonical remediation evidence that explicitly closes GRR-0002.B02-R01-F01, and freeze R02 only through `recoveryctl supplement-resubmit`; do not rewrite R01."
+    }
+  ],
+  "closures": []
+}
