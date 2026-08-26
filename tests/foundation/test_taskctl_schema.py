@@ -695,6 +695,11 @@ class BacklogSchemaTests(unittest.TestCase):
 
     def test_revision_nine_schema_requires_the_exact_second_gcr_generation(self) -> None:
         data = copy.deepcopy(self.canonical)
+        data["control_plane"]["revision"] = 9
+        data["control_plane"]["minimum_tool_revision"] = 9
+        data["control_plane"]["control_generations"] = data["control_plane"]["control_generations"][:2]
+        hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
+        hold["supplements"] = hold["supplements"][:1]
         self.assertEqual(9, data["control_plane"]["revision"])
         self.assertEqual(
             ["GCR-0001", "GCR-0002"], [item["id"] for item in data["control_plane"]["control_generations"]]
