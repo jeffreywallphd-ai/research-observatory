@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "5.0-control-recovery-evidence",
+  "documentType": "governance-control-recovery-bootstrap-evidence",
+  "controlRecoveryId": "GCR-0005",
+  "bootstrapUnit": "GCR-0005.B00",
+  "attemptId": "R02",
+  "agent": "codex",
+  "approvalCommit": "c23a823aadc915400884c3827f7f6feef879cf8b",
+  "baseCommit": "c23a823aadc915400884c3827f7f6feef879cf8b",
+  "candidateCommit": "5c9bb0b79350c4c38bb2e1b97312314e8a4f8211",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedPaths": [
+    "artifacts/evidence/governance-control-recovery/GCR-0005.B00.R01.json",
+    "planning/governance-control-recovery/GCR-0005.B00.review-R01.json",
+    "planning/governance-control-recovery/GCR-0005.B00.state.json",
+    "quality-scope.json",
+    "tests/foundation/test_gcr5ctl.py",
+    "tools/gcr5ctl.py"
+  ],
+  "requiredOutcomes": [
+    {
+      "criterion": "Bind all authority to exact B02 reviewed-state commit 962f92ff831c9a3d87a7d6ba796c8194e70b6c2c, candidate d363c04c385251a5d789a0313e173342e7e0ae3e, evidence SHA-256 77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595, backlog SHA-256 431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1, adverse ledger SHA-256 4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09, active hold, stopped W1 boundary, and protected witness.",
+      "evidence": "R02 controller validation reauthenticates the exact frozen authority and CHANGES_REQUESTED R01 history. Protected backlog, adverse ledger, and witness hashes remain exact after remediation."
+    },
+    {
+      "criterion": "Preserve the S02 packet/approval, B02 candidate/evidence, deterministic-output addendum authority, R01 reviewed-state binding, adverse ledger, finding, and all prior GCR/GRR/ECR histories byte-for-byte.",
+      "evidence": "The remediation commit changes only tools/gcr5ctl.py and tests/foundation/test_gcr5ctl.py relative to the append-only R01 projection; all prior authority/evidence/review paths are inherited unchanged."
+    },
+    {
+      "criterion": "Implement a separate exact gcr5ctl B00 lifecycle with commit-bound evidence, append-only attempts, independent review, third-round root-cause analysis, and no ordinary execution authority.",
+      "evidence": "The existing C-E-S-L-P controls remain intact, R01 is preserved append-only, R02 is a strict descendant with fresh evidence, and controller validation continues to deny ordinary authority."
+    },
+    {
+      "criterion": "After independent GCR-0005 B00 approval, derive the exact B02 R01 attempt, review, finding, and CHANGES_REQUESTED projection only from the unchanged ledger and frozen submission.",
+      "evidence": "The exact-candidate real authority/finalization test passes with the component guard active, while the bridge remains unavailable until independent R02 approval."
+    },
+    {
+      "criterion": "Apply the exact backlog transition and six deterministic view updates through a crash-safe compare-and-swap protocol that denies stale, forked, dirty, substituted, redirected, or accompanied state before mutation.",
+      "evidence": "Five real Windows parent-junction families now fail before apply artifacts, status fails repeatedly, and prepared recovery artifacts and all protected/external bytes remain unchanged. Forward and rollback crash matrices still pass."
+    },
+    {
+      "criterion": "Finalize the projection as a direct-child commit changing exactly the seven declared derived-state paths, while control revision remains 11 and the original R01 ledger remains unchanged.",
+      "evidence": "The exact-candidate real authority recovery/finalization test passes with component-aware reads and publication verification; current validation remains at revision 11 and the ledger hash is unchanged."
+    },
+    {
+      "criterion": "Leave GRR-0002.B02-R01-F01 open and require ordinary strict-descendant B02 R02 remediation, fresh evidence, explicit closure, and independent approval after the bridge.",
+      "evidence": "GCR-0005 remediation closes only GCR-0005.B00-R01-F01. The distinct GRR-0002.B02-R01-F01 remains untouched and will require later ordinary B02 remediation after this bridge is independently approved and applied."
+    },
+    {
+      "criterion": "Keep HOLD-W1-GRR-0002 ACTIVE, W1 PAUSED, CAP-02.S04.T03 BLOCKED, W1.A04 absent, G1 PENDING, and the witness untracked, unstaged, unchanged, and non-authoritative.",
+      "evidence": "Controller validation reports CHANGES_REQUESTED at control revision 11 with ordinary execution denied, and exact protected hashes prove the backlog, adverse ledger, and witness remain unchanged."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion": "The GCR-0005 packet, request/runtime/transaction schemas, authority manifest, proposal, and review page are Draft 2020-12 valid where applicable, path-safe, internally hash-bound, exact-commit reviewable, and inert.",
+      "evidence": "The immutable packet/schema authority proved by R01 is unchanged; R02 controller validation and focused real-Git tests pass at candidate 5c9bb0b79350c4c38bb2e1b97312314e8a4f8211."
+    },
+    {
+      "criterion": "Every S02 packet/approval, B02 addendum approval chain, candidate, evidence, reviewed backlog, adverse ledger, active-hold, W1, T03, W1.A04, G1, Git ancestry, and witness identity reproduces the exact frozen boundary and immutable bytes.",
+      "evidence": "R02 validation authenticates the complete R01 and predecessor chain; SHA-256 checks reproduce backlog 431ac039..., ledger 4b92f7b3..., and witness 4a9d944f...."
+    },
+    {
+      "criterion": "The failed supplement-review command is reproducible and byte-stable: it fails only at the installed-versus-live backlog assumption and leaves backlog and ledger hashes unchanged.",
+      "evidence": "The R01 evidence contains the passing disposable-clone reproduction; R02 does not alter recoveryctl, backlog, or the adverse B02 ledger, and their protected hashes remain exact."
+    },
+    {
+      "criterion": "GCR-0005 approval can be introduced only after an independent APPROVED packet review at the exact packet commit; its clean codex-branch introduction commit is the sole B00 implementation base.",
+      "evidence": "R02 remains based on approval introduction c23a823aadc915400884c3827f7f6feef879cf8b and strictly descends from R01 candidate 764f7d86a2559d1f99db74bdd7af24148c2962a0 through the append-only adverse-review chain."
+    },
+    {
+      "criterion": "B00 implementation changes only authorized controller/test/evidence/state paths, cannot edit the adverse ledger or reviewed backlog projection, keeps revision 11, and cannot apply the bridge before independent B00 approval.",
+      "evidence": "The approval-base-to-candidate path set is exactly the six authorized controller/test/R01 history paths declared above. The R02 remediation delta itself changes only the controller and its focused tests."
+    },
+    {
+      "criterion": "The GCR-0005 authority reader accepts only the exact independently approved packet, B00 review, active hold, frozen B02 R01 boundary, and witness. On every read and mutation it sorts the completed-attempt map by numeric RNN, requires the unique gapless sequence from R01, requires every key to equal its submission attemptId, requires the sole pending submission to be the exact next RNN, commit/hash-binds every submission, evidence, review, and ledger, projects status from the latest review, folds findings and valid closures chronologically, and denies APPROVED while any blocking finding remains open; missing, stale, forked, adverse, substituted, dirty, or internally inconsistent authority is rejected byte-stably.",
+      "evidence": "R02 preserves all reviewed history controls and adds a shared root-to-leaf guard that rejects symlink, junction, and Windows reparse components, non-contained resolution, non-directory parents, and non-regular leaves on reads and mutations."
+    },
+    {
+      "criterion": "Application derives the exact B02 R01 attempt and CHANGES_REQUESTED state from the unchanged ledger, records explicit GCR-0005 recovery authority in its application evidence, and closes no finding.",
+      "evidence": "The exact-candidate real authority test reaches the unchanged fixed successor only on normal confined paths. This R02 evidence closes the GCR-0005 review finding, not the later B02 finding."
+    },
+    {
+      "criterion": "Application and repeated recovery can yield only the exact frozen predecessor or exact ledger-derived successor, including abrupt child-process termination at every durable boundary and deterministic-view generation failure; focused Draft 2020-12 and controller tests reject duplicate, reordered, skipped, orphaned, candidate/evidence-mismatched, review-without-ledger, ledger-without-review, stale-result, invalid-closure, approved-with-open-blocker, substituted state/evidence/hash/path/hold/witness, safety-duty, and finalization records.",
+      "evidence": "At the exact R02 candidate, the five-family public junction denial, post-publication recheck, real finalization, 13-boundary forward matrix, and 9-case rollback matrix all pass. The broader R01 adversarial suite remains immutable evidence for unchanged history/schema controls."
+    },
+    {
+      "criterion": "The finalization commit is the direct child of application evidence and changes exactly the backlog and six declared deterministic views; revision 11 and every ordinary execution gate remain closed.",
+      "evidence": "The exact-candidate real lifecycle proves direct-child seven-path finalization under the new guard; controller validation still reports CHANGES_REQUESTED, revision 11, and ordinary execution denied."
+    },
+    {
+      "criterion": "Criterion-linked evidence, adversarial real-Git coverage, governed Python quality, exact diff scope, protected hashes, generated-view integrity, and independent review pass with no unexplained unverified item.",
+      "evidence": "All remediation-selected checks below pass at the exact R02 candidate with no suppression. They replay the prior HIGH finding and the adjacent publication/recovery boundary rather than restarting unchanged audits; independent R02 review is the next gate."
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_gcr5ctl.Gcr5ctlTests.test_public_apply_and_recover_reject_real_parent_junctions_byte_stably tests.foundation.test_gcr5ctl.Gcr5ctlTests.test_snapshot_post_publication_verification_rechecks_destination_components tests.foundation.test_gcr5ctl.Gcr5ctlTests.test_real_authority_transaction_recovery_and_exact_finalization tests.foundation.test_gcr5ctl.Gcr5ctlTests.test_child_process_fault_matrix_recovers_only_exact_terminal_snapshots tests.foundation.test_gcr5ctl.Gcr5ctlTests.test_child_process_no_manifest_rollback_fault_matrix_is_repeat_recoverable",
+      "result": "passed",
+      "summary": "Five exact-candidate remediation tests passed in 718.068 seconds, replaying the parent-junction finding, post-publication guard, real finalization, and both durable crash matrices."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check -- tools/gcr5ctl.py tests/foundation/test_gcr5ctl.py",
+      "result": "passed",
+      "summary": "Both changed Python files remain formatter-clean."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m ruff check -- tools/gcr5ctl.py tests/foundation/test_gcr5ctl.py",
+      "result": "passed",
+      "summary": "Ruff reports no lint finding in the remediated controller or focused tests."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml -- tools/gcr5ctl.py tests/foundation/test_gcr5ctl.py",
+      "result": "passed",
+      "summary": "Mypy reports no issue under the repository configuration."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/gcr5ctl.py --repo . validate GCR-0005",
+      "result": "passed",
+      "summary": "The strict-descendant candidate authenticates the append-only R01 projection and reports CHANGES_REQUESTED at control revision 11 with ordinary execution denied."
+    },
+    {
+      "command": "git diff --check d7ff8c2..5c9bb0b",
+      "result": "passed",
+      "summary": "The exact two-path R02 remediation delta has no whitespace error."
+    },
+    {
+      "command": "git diff --name-only c23a823aadc915400884c3827f7f6feef879cf8b..5c9bb0b79350c4c38bb2e1b97312314e8a4f8211",
+      "result": "passed",
+      "summary": "The approval-base-to-candidate scope equals the six authorized changedPaths recorded in this evidence."
+    },
+    {
+      "command": "Get-FileHash -Algorithm SHA256 planning/backlog.yaml,planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json,artifacts/evidence/W1.A04.B00.json",
+      "result": "passed",
+      "summary": "Protected backlog, adverse B02 ledger, and witness reproduce their exact expected hashes; the witness remains untracked and unstaged."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "GCR-0005.B00-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Candidate 5c9bb0b79350c4c38bb2e1b97312314e8a4f8211 adds root-to-leaf symlink/junction/reparse and resolved-containment enforcement before artifacts, under recovery/publication locks, before every write, and during post-publication verification. The exact five-family public apply/status/recover matrix proves no external/protected/artifact byte changes on denial."
+    }
+  ],
+  "unverifiedItems": [],
+  "rootCauseAnalysis": null
+}
