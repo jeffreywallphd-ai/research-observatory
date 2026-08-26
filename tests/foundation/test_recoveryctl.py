@@ -1872,7 +1872,10 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 lineage_base=recoveryctl.B02_R01_CANDIDATE,
             )
             self.assertEqual(recoveryctl.GCR5_FINALIZATION_COMMIT, document["baseCommit"])
-            self.assertEqual(["tools/recoveryctl.py"], document["changedPaths"])
+            self.assertEqual(
+                ["tests/foundation/test_recoveryctl.py", "tools/recoveryctl.py"],
+                document["changedPaths"],
+            )
             self.assertEqual(lawful_payload, payload)
             self.assertEqual(relative, actual_relative)
 
