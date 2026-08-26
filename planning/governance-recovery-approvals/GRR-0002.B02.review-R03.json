@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-review",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S02",
+  "bootstrapUnit": "GRR-0002.B02",
+  "attemptId": "R03",
+  "candidateCommit": "7e0c6c61918c4ed1b860b0125a7e8591b967b341",
+  "reviewedStateCommit": "80e34d7f9b6b3b4eb36417ae27e8f53a826ea40a",
+  "reviewer": "independent-b02-control-security-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "planning/governance-recovery-approvals/GRR-0002.B02.remediation-02.evidence.json",
+    "sha256": "21d06572051bb0271c541d0588c7f9935b14b70348320799652d0f6c73f8b3dd"
+  },
+  "notes": "APPROVED after bounded independent R03 remediation review. Exact candidate 7e0c6c61918c4ed1b860b0125a7e8591b967b341 strictly descends from R02 candidate 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6. Its six-path scope contains only append-only B02 backlog/evidence/review history, the focused recovery test, and the two authorized deterministic backlog summaries. Direct child 170825c5f94bc4646a10dc23dd511b3f8049c6db freezes the governed R03 backlog and exact evidence, and direct child reviewed state 80e34d7f9b6b3b4eb36417ae27e8f53a826ea40a adds only deterministic planning/review-site regeneration; backlog views and all 150 review pages validate with no unauthorized product, runtime, controller, packet, approval, prior-ledger, or control mutation. The mandatory third-submission RCA identifies the ambient-HEAD/noncanonical-branch/parser-only fixture defect and establishes immutable-boundary, canonical-identity, public-transition, and committed-post-transition prevention rules. Exact R01/R02 candidates, evidence, reviewed states, adverse ledgers, findings, and hashes remain append-only. The live R03 REVIEW projection passes status, supplement validation, backlog validation, revision-11/sole-active-hold/stopped-W1 boundary checks, and retains the exact untracked and unstaged witness. Submitted evidence records the exact final 32/32 recovery run; independent risk-selected replay passed the corrected real resubmission/lineage test in 332.254 seconds, the three surrounding B02 authority/stale/fork/substitution tests in 79.596 seconds, and both historic-retry guards in 3.863 seconds. Ruff, formatting, mypy, generated views, review-site, scope, ancestry, hashes, and diff hygiene pass. Both prior findings are closed with no new finding. B02 approval remains a controller transition after this ledger is recorded; the historic W1.A04.B00 retry, its review, amendment materialization/execution, hold release, W1 resume, gate action, main integration, and remote action remain separately gated.",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GRR-0002.B02-R01-F01",
+      "notes": "Closed. The immutable installed-candidate backlog proof remains bound to db28eb20fff4865cf4685b82c199db10705a74ea, while recoveryctl now separately validates only authenticated live IN_PROGRESS, frozen REVIEW, append-only adverse, and APPROVED supplement projections. The exact live R03 REVIEW state passes supplement-status and supplement-validate with revision 11, the sole ACTIVE HOLD-W1-GRR-0002, PAUSED W1 wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, PENDING G1, exact authority history, and protected witness intact. The surrounding B02 authority and denial tests plus the corrected real transition replay pass independently."
+    },
+    {
+      "findingId": "GRR-0002.B02-R02-F01",
+      "notes": "Closed. The disposable test now pins exact GCR-0005 finalization ce17f78a2e139285bf2e50a654999ddc42e5d8ae, switches to canonical branch codex/w1-windows-local-runtime, constructs the exact two-path remediation candidate, invokes the real freeze_supplement_submission remediation path, proves forged base evidence is denied with canonical control bytes unchanged, performs the lawful transition, commits the frozen REVIEW state, and validates status/history afterward. Independent replay passes in 332.254 seconds, and the submitted exact-final evidence records the complete 32/32 recovery run."
+    }
+  ]
+}

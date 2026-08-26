@@ -23030,7 +23030,7 @@ control_plane:
         introduction_commit: 106921c269942401bab4cc4f732f4d1fb97b8abe
       bootstrap:
         id: GRR-0002.B02
-        status: REVIEW
+        status: APPROVED
         implementer: codex
         implementation_commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
         submission_branch: codex/w1-windows-local-runtime
@@ -23040,16 +23040,29 @@ control_plane:
           sha256: 21d06572051bb0271c541d0588c7f9935b14b70348320799652d0f6c73f8b3dd
           commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
           recorded_at: '2026-08-26T15:09:54+00:00'
-        review:
-          reviewer: null
-          result: null
-          reviewed_at: null
-          notes: null
-        current_submission:
-          attempt_id: R03
-          candidate_commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
-          evidence_sha256: 21d06572051bb0271c541d0588c7f9935b14b70348320799652d0f6c73f8b3dd
-          acceptance_criteria_sha256: c5db985ade2a804292b2323385584ec9d86977ec429c04641b036d1f82cd7741
+        review: &id091
+          reviewer: independent-b02-control-security-reviewer
+          result: approved
+          reviewed_at: '2026-08-26T15:26:55+00:00'
+          notes: APPROVED after bounded independent R03 remediation review. Exact candidate 7e0c6c61918c4ed1b860b0125a7e8591b967b341
+            strictly descends from R02 candidate 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6. Its six-path scope contains only
+            append-only B02 backlog/evidence/review history, the focused recovery test, and the two authorized deterministic
+            backlog summaries. Direct child 170825c5f94bc4646a10dc23dd511b3f8049c6db freezes the governed R03 backlog and
+            exact evidence, and direct child reviewed state 80e34d7f9b6b3b4eb36417ae27e8f53a826ea40a adds only deterministic
+            planning/review-site regeneration; backlog views and all 150 review pages validate with no unauthorized product,
+            runtime, controller, packet, approval, prior-ledger, or control mutation. The mandatory third-submission RCA identifies
+            the ambient-HEAD/noncanonical-branch/parser-only fixture defect and establishes immutable-boundary, canonical-identity,
+            public-transition, and committed-post-transition prevention rules. Exact R01/R02 candidates, evidence, reviewed
+            states, adverse ledgers, findings, and hashes remain append-only. The live R03 REVIEW projection passes status,
+            supplement validation, backlog validation, revision-11/sole-active-hold/stopped-W1 boundary checks, and retains
+            the exact untracked and unstaged witness. Submitted evidence records the exact final 32/32 recovery run; independent
+            risk-selected replay passed the corrected real resubmission/lineage test in 332.254 seconds, the three surrounding
+            B02 authority/stale/fork/substitution tests in 79.596 seconds, and both historic-retry guards in 3.863 seconds.
+            Ruff, formatting, mypy, generated views, review-site, scope, ancestry, hashes, and diff hygiene pass. Both prior
+            findings are closed with no new finding. B02 approval remains a controller transition after this ledger is recorded;
+            the historic W1.A04.B00 retry, its review, amendment materialization/execution, hold release, W1 resume, gate
+            action, main integration, and remote action remain separately gated.
+        current_submission: null
         attempts:
         - id: R01
           implementer: codex
@@ -23112,6 +23125,20 @@ control_plane:
           ledger:
             path: planning/governance-recovery-approvals/GRR-0002.B02.review-R02.json
             sha256: 6882b8f7a0fe14957abe747cc522c372b1e00cc16eccc167515fe14ad43dec45
+        - id: R03
+          implementer: codex
+          implementation_commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
+          submission_branch: codex/w1-windows-local-runtime
+          evidence:
+            type: governance-recovery-supplement-evidence
+            path: planning/governance-recovery-approvals/GRR-0002.B02.remediation-02.evidence.json
+            sha256: 21d06572051bb0271c541d0588c7f9935b14b70348320799652d0f6c73f8b3dd
+            commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
+            recorded_at: '2026-08-26T15:09:54+00:00'
+          review: *id091
+          ledger:
+            path: planning/governance-recovery-approvals/GRR-0002.B02.review-R03.json
+            sha256: 30865832e32d6416d06b2020d2efb71e5b998c7e2abbf985a4e810e89ea13823
       created_at: '2026-08-25T23:53:48+00:00'
       successor_control_revision: 11
     post_bootstrap:
@@ -23463,7 +23490,7 @@ wave_amendments:
       commit: 4f256763401772298bf75c634f2c7b2355882f10
       recorded_at: '2026-08-21T01:30:59+00:00'
     verification_state: passed
-    review: &id091
+    review: &id092
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T01:37:41+00:00'
@@ -23735,7 +23762,7 @@ wave_amendments:
           - W1.A02.T01-R01-F02
           root_cause_analysis: null
           packet_sha256: 8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd
-        review: *id091
+        review: *id092
         ledger:
           path: artifacts/evidence/W1.A02.T01.review-R02.json
           sha256: f8913f680808ba3119935de66d170305a94e61b7818941154cbbc654745e5ac5
@@ -23796,7 +23823,7 @@ wave_amendments:
       commit: aa714b7c16def6add4662e0d1c44d0bc89e7c349
       recorded_at: '2026-08-21T02:50:29+00:00'
     verification_state: passed
-    review: &id092
+    review: &id093
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T02:59:03+00:00'
@@ -24081,7 +24108,7 @@ wave_amendments:
           - foundation:quality
           - foundation:backlog
           packet_sha256: c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03
-        review: *id092
+        review: *id093
         ledger:
           path: artifacts/evidence/W1.A02.T02.review-R02.json
           sha256: 2700fd6eff428b03a257f22e7acc511d11ef9196e9224dfa188ab9357c2cc117
@@ -24560,7 +24587,7 @@ wave_amendments:
       commit: 0362cfe72c84f167338329490f6799ba9f84a808
       recorded_at: '2026-08-22T20:04:57+00:00'
     verification_state: passed
-    review: &id093
+    review: &id094
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-22T20:13:45+00:00'
@@ -24788,7 +24815,7 @@ wave_amendments:
           - foundation:quality
           - foundation:backlog
           packet_sha256: 15eaaa895273188e63a333cf5cb2f9a359a2b879764d6a7b5c850ddc6955ac22
-        review: *id093
+        review: *id094
         ledger:
           path: artifacts/evidence/W1.A03.T01.review-R02.json
           sha256: cd9e363e474d9d2d957c8fcc9049b631f441553e8a0e8c36a5fb1b98d883ef02
