@@ -4,9 +4,12 @@
   "title": "GCR-0005 exact backlog review-projection transaction",
   "type": "object",
   "required": [
-    "schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "status", "branch",
-    "lockPath", "backlogPath", "backlogNextPath", "backlogBeforeSha256", "backlogAfterSha256",
-    "ledgerPath", "ledgerSha256", "applicationEvidence", "publicationOrder", "ordinaryExecutionAuthority"
+    "schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "status", "actor", "branch",
+    "packetAuthority", "approvalAuthority", "approvedStateAuthority", "applicationEvidenceAuthority",
+    "hold", "witness", "reviewedSubmission", "lockPath", "transactionPath", "backlogPath", "backlogNextPath",
+    "backlogBeforeRawSha256", "backlogBeforeCanonicalSha256", "backlogAfterRawSha256",
+    "backlogAfterCanonicalSha256", "ledger", "projectionTimestamp", "generatedPaths", "cas",
+    "durability", "recovery", "finalization", "publicationOrder", "ordinaryExecutionAuthority"
   ],
   "$defs": {
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -17,21 +20,111 @@
     "documentType": {"const": "governance-control-recovery-review-transition-transaction"},
     "controlRecoveryId": {"const": "GCR-0005"}, "bootstrapUnit": {"const": "GCR-0005.B00"},
     "status": {"enum": ["PREPARED", "BACKLOG_PUBLISHED", "VIEWS_GENERATED", "VALIDATED", "FINALIZED"]},
-    "branch": {"const": "codex/w1-windows-local-runtime"},
-    "lockPath": {"const": "planning/governance-control-recovery/GCR-0005.B00.application.lock"},
-    "backlogPath": {"const": "planning/backlog.yaml"},
-    "backlogNextPath": {"const": "planning/governance-control-recovery/GCR-0005.B00.backlog.next"},
-    "backlogBeforeSha256": {"const": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1"},
-    "backlogAfterSha256": {"$ref": "#/$defs/sha256"},
-    "ledgerPath": {"const": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json"},
-    "ledgerSha256": {"const": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09"},
-    "applicationEvidence": {
-      "type": "object", "required": ["path", "sha256"],
+    "actor": {"const": "codex"}, "branch": {"const": "codex/w1-windows-local-runtime"},
+    "packetAuthority": {
+      "type": "object", "required": ["path", "sha256", "commit"],
+      "properties": {
+        "path": {"const": "planning/governance-control-recovery/GCR-0005.packet.json"},
+        "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }, "additionalProperties": false
+    },
+    "approvalAuthority": {
+      "type": "object", "required": ["path", "sha256", "commit"],
+      "properties": {
+        "path": {"const": "planning/governance-control-recovery/GCR-0005.approval.json"},
+        "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }, "additionalProperties": false
+    },
+    "approvedStateAuthority": {
+      "type": "object", "required": ["path", "sha256", "commit", "status"],
+      "properties": {
+        "path": {"const": "planning/governance-control-recovery/GCR-0005.B00.state.json"},
+        "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "status": {"const": "APPROVED"}
+      }, "additionalProperties": false
+    },
+    "applicationEvidenceAuthority": {
+      "type": "object", "required": ["path", "sha256", "commit"],
       "properties": {
         "path": {"const": "artifacts/evidence/governance-control-recovery/GCR-0005.B00.application.json"},
-        "sha256": {"$ref": "#/$defs/sha256"}
-      },
-      "additionalProperties": false
+        "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }, "additionalProperties": false
+    },
+    "hold": {
+      "type": "object", "required": ["id", "status", "controlRevision", "minimumToolRevision"],
+      "properties": {
+        "id": {"const": "HOLD-W1-GRR-0002"}, "status": {"const": "ACTIVE"},
+        "controlRevision": {"const": 11}, "minimumToolRevision": {"const": 11}
+      }, "additionalProperties": false
+    },
+    "witness": {
+      "type": "object", "required": ["path", "sha256", "untracked", "unstaged", "executionAuthority"],
+      "properties": {
+        "path": {"const": "artifacts/evidence/W1.A04.B00.json"},
+        "sha256": {"const": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"},
+        "untracked": {"const": true}, "unstaged": {"const": true}, "executionAuthority": {"const": false}
+      }, "additionalProperties": false
+    },
+    "reviewedSubmission": {
+      "type": "object", "required": ["reviewedStateCommit", "candidateCommit", "evidenceSha256", "attemptId", "status"],
+      "properties": {
+        "reviewedStateCommit": {"const": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c"},
+        "candidateCommit": {"const": "d363c04c385251a5d789a0313e173342e7e0ae3e"},
+        "evidenceSha256": {"const": "77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595"},
+        "attemptId": {"const": "R01"}, "status": {"const": "REVIEW"}
+      }, "additionalProperties": false
+    },
+    "lockPath": {"const": "planning/governance-control-recovery/GCR-0005.B00.application.lock"},
+    "transactionPath": {"const": "planning/governance-control-recovery/GCR-0005.B00.application-transaction.json"},
+    "backlogPath": {"const": "planning/backlog.yaml"},
+    "backlogNextPath": {"const": "planning/governance-control-recovery/GCR-0005.B00.backlog.next"},
+    "backlogBeforeRawSha256": {"const": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1"},
+    "backlogBeforeCanonicalSha256": {"const": "3ffa93f894b5b63cbefd11d8b058eddf4deda96069aa03c9bb15bc116bc691cb"},
+    "backlogAfterRawSha256": {"const": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798"},
+    "backlogAfterCanonicalSha256": {"const": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798"},
+    "ledger": {
+      "type": "object", "required": ["path", "sha256", "commit", "reviewedStateCommit", "result", "openFindingIds", "bytePreserved"],
+      "properties": {
+        "path": {"const": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json"},
+        "sha256": {"const": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09"},
+        "commit": {"const": "8b784cabc5d5d996c00fd2fbcc8f22a1ad05b5bb"},
+        "reviewedStateCommit": {"const": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c"},
+        "result": {"const": "changes-requested"}, "openFindingIds": {"const": ["GRR-0002.B02-R01-F01"]},
+        "bytePreserved": {"const": true}
+      }, "additionalProperties": false
+    },
+    "projectionTimestamp": {"const": "2026-08-26T02:15:00+00:00"},
+    "generatedPaths": {"const": ["docs/planning-implementation-plan.md", "planning/status-summary.md", "planning/review-site/manifest.json", "planning/review-site/recoveries/GRR-0002.html", "planning/review-site/recoveries/index.html", "planning/review-site/waves/W1.html"]},
+    "cas": {
+      "type": "object", "required": ["rawBytes", "canonicalContent", "staleWriterDenied", "exactSuccessorOnly"],
+      "properties": {
+        "rawBytes": {"const": true}, "canonicalContent": {"const": true},
+        "staleWriterDenied": {"const": true}, "exactSuccessorOnly": {"const": true}
+      }, "additionalProperties": false
+    },
+    "durability": {
+      "type": "object", "required": ["exclusiveLock", "flushSuccessor", "flushManifest", "replaceExistingWriteThrough", "flushBacklog", "flushGeneratedFiles", "flushDirectories"],
+      "properties": {
+        "exclusiveLock": {"const": true}, "flushSuccessor": {"const": true}, "flushManifest": {"const": true},
+        "replaceExistingWriteThrough": {"const": true}, "flushBacklog": {"const": true},
+        "flushGeneratedFiles": {"const": true}, "flushDirectories": {"const": true}
+      }, "additionalProperties": false
+    },
+    "recovery": {
+      "type": "object", "required": ["allowedTerminalStates", "dirtyWorkspaceDenied", "staleOrSubstitutedDenied", "idempotent", "cleanupAfterValidationOnly"],
+      "properties": {
+        "allowedTerminalStates": {"const": ["EXACT_PREDECESSOR", "EXACT_SUCCESSOR"]},
+        "dirtyWorkspaceDenied": {"const": true}, "staleOrSubstitutedDenied": {"const": true},
+        "idempotent": {"const": true}, "cleanupAfterValidationOnly": {"const": true}
+      }, "additionalProperties": false
+    },
+    "finalization": {
+      "type": "object", "required": ["directChildOfApplicationEvidence", "exactChangedPaths", "ledgerUnchanged", "ordinaryExecutionStillDenied"],
+      "properties": {
+        "directChildOfApplicationEvidence": {"const": true},
+        "exactChangedPaths": {"const": ["docs/planning-implementation-plan.md", "planning/backlog.yaml", "planning/status-summary.md", "planning/review-site/manifest.json", "planning/review-site/recoveries/GRR-0002.html", "planning/review-site/recoveries/index.html", "planning/review-site/waves/W1.html"]},
+        "ledgerUnchanged": {"const": true}, "ordinaryExecutionStillDenied": {"const": true}
+      }, "additionalProperties": false
     },
     "publicationOrder": {
       "const": ["exclusive-lock", "durable-successor", "durable-manifest", "replace-backlog", "generate-views", "validate-exact-state", "flush", "commit-direct-child", "cleanup"]

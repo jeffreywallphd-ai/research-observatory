@@ -145,12 +145,17 @@
     },
     "reviewTransition": {
       "type": "object",
-      "required": ["kind", "reviewedStateCommit", "result", "controlRevisionBefore", "controlRevisionAfter", "normalProjectionUnavailable", "explicitRecoveryAuthority", "exactFinalChangedPaths", "postRecoveryState", "ordinaryExecutionStillDenied"],
+      "required": ["kind", "reviewedStateCommit", "result", "projectionTimestamp", "controlRevisionBefore", "controlRevisionAfter", "backlogBeforeRawSha256", "backlogBeforeCanonicalSha256", "backlogAfterRawSha256", "backlogAfterCanonicalSha256", "normalProjectionUnavailable", "explicitRecoveryAuthority", "exactFinalChangedPaths", "postRecoveryState", "ordinaryExecutionStillDenied"],
       "properties": {
         "kind": {"const": "one-time-exact-grr-0002-b02-r01-adverse-projection-recovery"},
         "reviewedStateCommit": {"const": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c"},
         "result": {"const": "changes-requested"},
+        "projectionTimestamp": {"const": "2026-08-26T02:15:00+00:00"},
         "controlRevisionBefore": {"const": 11}, "controlRevisionAfter": {"const": 11},
+        "backlogBeforeRawSha256": {"const": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1"},
+        "backlogBeforeCanonicalSha256": {"const": "3ffa93f894b5b63cbefd11d8b058eddf4deda96069aa03c9bb15bc116bc691cb"},
+        "backlogAfterRawSha256": {"const": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798"},
+        "backlogAfterCanonicalSha256": {"const": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798"},
         "normalProjectionUnavailable": {"const": true}, "explicitRecoveryAuthority": {"const": true},
         "exactFinalChangedPaths": {
           "const": [
@@ -260,7 +265,7 @@
         "additionalProperties": false
       }
     },
-    "files": {"type": "array", "minItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/file"}},
+    "files": {"type": "array", "minItems": 7, "uniqueItems": true, "items": {"$ref": "#/$defs/file"}},
     "requiredApprovalStatement": {"type": "string", "minLength": 1}
   },
   "additionalProperties": false
