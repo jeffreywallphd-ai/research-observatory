@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0-governance-control-recovery-feasibility",
+  "documentType": "governance-control-recovery-feasibility-ledger",
+  "controlRecoveryId": "GCR-0006",
+  "reviewId": "GCR-0006.feasibility-R01",
+  "reviewer": "independent-gcr6-feasibility-reviewer",
+  "branch": "codex/w1-windows-local-runtime",
+  "packet": {
+    "path": "planning/governance-control-recovery/GCR-0006.packet.json",
+    "commit": "175f0edf344346a76a5e1aa09ef0f22ab473edae",
+    "sha256": "508c3d0b61b083ae617eeea218f0baca71b7d190bffad8ef65b329d152c59469"
+  },
+  "packetReview": {
+    "path": "planning/governance-control-recovery/GCR-0006.review-R01.json",
+    "commit": "b7bc08ae1d2298c2df52cfeaba75ab9a6923ef38",
+    "sha256": "78bd30a7695b0618afe404cce4ade3c2d157aef55074d44e1c8761208f0badf8"
+  },
+  "humanApproval": {
+    "path": "planning/governance-control-recovery/GCR-0006.approval.json",
+    "commit": "655e1a0e2451ced7fc26642f9fa16f775d5c0ddb",
+    "sha256": "f6ac82c61e7ad70cdbe5ef26fb251968822f5a66e8452b5e29d3c1b14906be9a"
+  },
+  "runtimeSchema": {
+    "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v6.schema.json",
+    "commit": "175f0edf344346a76a5e1aa09ef0f22ab473edae",
+    "sha256": "802320a950a2e201f6b82ad855e1dc5b771e661b91d0d7755117012a95ce26ea"
+  },
+  "transactionSchema": {
+    "path": "planning/governance-control-recovery/governance-control-recovery-transaction.v6.schema.json",
+    "commit": "175f0edf344346a76a5e1aa09ef0f22ab473edae",
+    "sha256": "fcfbb77ccc1e9070aa87970d047cfadef908cdcc2ba02d35ca8dd31458c594c5"
+  },
+  "topology": {
+    "packetSequence": "P-to-A-to-F",
+    "transactionSequence": "approved-state-P to adoption-evidence-A to finalization-F",
+    "adoptionEvidencePath": "artifacts/evidence/governance-control-recovery/GCR-0006.B00.adoption.json",
+    "requiredField": "adoptionEvidenceCommit",
+    "requiredRelationship": "A is the direct child of P and contains the adoption-evidence file"
+  },
+  "result": "blocked",
+  "findings": [
+    {
+      "id": "GCR-0006-FEASIBILITY-R01-F01",
+      "severity": "HIGH",
+      "blocking": true,
+      "title": "Mandatory adoptionEvidenceCommit makes the approved P-to-A-to-F adoption topology self-referential",
+      "acceptanceBoundary": "The approved packet requires a durable direct-child P-to-A-to-F sequence, and runtime v6 requires adoptionEvidenceCommit inside the adoption-evidence file committed at A.",
+      "reproduction": [
+        "Inspect the adoption-evidence branch of governance-control-recovery-runtime.v6.schema.json: adoptionEvidenceCommit is required and accepts only a commit-shaped value, but has no explicit alternative semantic definition.",
+        "Inspect GCR-0006.packet.json: the canonical adoption evidence is artifacts/evidence/governance-control-recovery/GCR-0006.B00.adoption.json and adoption uses direct-child topology P-to-A-to-F.",
+        "Inspect governance-control-recovery-transaction.v6.schema.json: the finalization topology is fixed as approved-state-P to adoption-evidence-A to finalization-F.",
+        "Attempt to construct A truthfully: the adoption-evidence blob in A must contain adoptionEvidenceCommit equal to A, while A's commit object identifier depends on its tree and therefore on that blob. The required value cannot be known without already knowing the commit identifier whose computation includes that value.",
+        "Substituting P, F, the implementation candidate, or another existing commit satisfies only the field shape; none has an explicit approved meaning as adoptionEvidenceCommit in the immutable packet or schemas."
+      ],
+      "impact": "The required adoption artifact and commit cannot be constructed with a truthful, non-self-referential binding. Controller implementation or execution would have to omit the required field, invent a meaning, or violate the approved topology.",
+      "minimumRemediation": "Keep GCR-0006 immutable and inert. Establish GCR-0007 through exact packet review and human approval with an explicit non-self-referential adoption binding, such as binding A externally through the state/transaction evidence reference and finalization parentage."
+    }
+  ],
+  "closures": [],
+  "implementationMustStop": true,
+  "ordinaryExecutionAuthority": false,
+  "lawfulSuccessor": "GCR-0007 exact packet review and human approval"
+}
