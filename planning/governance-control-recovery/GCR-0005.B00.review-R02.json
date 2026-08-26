@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "5.0-control-recovery-bootstrap-review",
+  "documentType": "governance-control-recovery-bootstrap-review",
+  "controlRecoveryId": "GCR-0005",
+  "bootstrapUnit": "GCR-0005.B00",
+  "attemptId": "R02",
+  "candidateCommit": "5c9bb0b79350c4c38bb2e1b97312314e8a4f8211",
+  "reviewedStateCommit": "a21bcec83e4d50a293bb9db8d0c7ef2be1aeb0d5",
+  "reviewer": "independent-gcr5-b00-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0005.B00.R02.json",
+    "sha256": "c4fce1146947fa4dee3af648acba9956123dc499f55d81fb1facb2d1aa6e22c5",
+    "commit": "4b0a515daeac66cc479ab6380b6d35db533bdaed"
+  },
+  "notes": "APPROVED. R02 is a strict-descendant, two-path remediation whose evidence-only and frozen REVIEW commits are exact. The R01 ledger, evidence, state projection, finding, protected backlog, adverse B02 ledger, and witness remain append-only and byte-exact. The shared guard now validates every root-to-leaf component of all seven final destinations for canonical scope, presence, directory/regular-file type, symlink, junction, Windows reparse metadata, and resolved repository containment. It is enforced before application artifacts, under recovery and publication locks, before each write, after publication, and during predecessor and finalization reads. The exact external-junction exploit is denied before mutation, the five-family public Windows apply/recover matrix and post-publication recheck pass, and the normal interrupted recovery and exact finalization lifecycle remains valid. No new finding remains.",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GCR-0005.B00-R01-F01",
+      "disposition": "fixed",
+      "evidence": "At candidate 5c9bb0b79350c4c38bb2e1b97312314e8a4f8211, guard_final_destination walks the repository root through every component of each FINAL_PATHS destination and rejects symlink, junction, reparse, escaped, absent, non-directory-parent, and non-regular-leaf states. command_apply invokes the full guard under the backlog lock before authority/evidence staging and again immediately before transaction creation; recover_transaction invokes it under the lock; live-pair validation, each publication write, post-publication verification, predecessor validation, and finalization all reuse it. Independent replay of the original clean planning/review-site/recoveries junction to an external directory produced the component-redirection denial, left every external byte unchanged, and created no transaction artifact. The real five-family public apply/status/recover junction matrix plus post-publication recheck passed in 129.009 seconds, and the interrupted normal application/recovery/direct-child finalization test passed in 92.033 seconds. The immutable R01 ledger still hashes to 850e5e1c186e2de50cfc5f59d671d435945670234b98d3e5857e2089f0a8222a."
+    }
+  ]
+}
