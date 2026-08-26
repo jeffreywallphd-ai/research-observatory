@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "6.0-control-recovery-review",
+  "documentType": "governance-control-recovery-packet-review",
+  "controlRecoveryId": "GCR-0006",
+  "attemptId": "R01",
+  "candidateCommit": "175f0edf344346a76a5e1aa09ef0f22ab473edae",
+  "packetSha256": "508c3d0b61b083ae617eeea218f0baca71b7d190bffad8ef65b329d152c59469",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "independent-gcr6-packet-reviewer",
+  "result": "approved",
+  "findings": [],
+  "closures": [],
+  "verified": [
+    "Exact packet commit 175f0edf344346a76a5e1aa09ef0f22ab473edae is the direct child of discovery/authority commit b6c0366ef165a4ebeb3c10042d5ecc5379833a8c and adds exactly the packet, authority manifest, trigger record, proposal, review page, and three version-6 schemas. The eight-file delta has no product, runtime-controller, backlog, prior-authority, Wave, task, gate, hold, main, or remote mutation and passes Git whitespace checks.",
+    "Packet SHA-256 is exactly 508c3d0b61b083ae617eeea218f0baca71b7d190bffad8ef65b329d152c59469. All seven files declared by the packet reproduce their raw SHA-256 values and exact Git blobs at the packet commit; the authority and trigger hashes embedded in rootAuthority match those same immutable bytes.",
+    "The request, runtime, and transaction schemas are valid Draft 2020-12 schemas, and the packet validates against the request schema. In-memory adversarial validation rejects a direct revision-12 transition, false generation-neutral marker, wrong supported ceiling, wrong witness hash, non-absent W1.A04 boundary, approved packet review with findings or approvalAvailable false, and adverse packet review without a finding.",
+    "All sixteen commit-bearing predecessor references in GCR-0006.authority.json match their declared SHA-256 values and exact Git blobs, including base GRR-0002, B00 approval, GCR-0003 approval/review/adoption evidence, S01 and S02 packet/approval/review authority, B02 scope addendum, R03 evidence and approved ledger, ECR-0003, and W1.A04 approval.",
+    "Discovery commit b6c0366ef165a4ebeb3c10042d5ecc5379833a8c is the direct child of reviewed state 80e34d7f9b6b3b4eb36417ae27e8f53a826ea40a and introduces the exact approved GRR-0002.B02 R03 ledger plus its governed projection. The raw backlog SHA-256 aae3947377e06d9c752a7eae9b5d586c600b7e66016e41d95e753b100d9a93b7, Git-content SHA-256 667225c669c393215b1b884e2cdc28fea6651bfd3b7d96b4bf93d161046487d4, and Git blob e68bc5ae8a676a3b04be535163242a9cb997b52a reproduce exactly.",
+    "The exact historic W1.A04 bootstrap-submit command was replayed in a disposable repository checked out at b6c0366ef165a4ebeb3c10042d5ecc5379833a8c on the canonical codex branch with only the exact witness untracked. It failed with both declared S01 and S02 pre-append-fabrication diagnostics and left the backlog content hash, Git blob, authored/staged path sets, amendment absence, and witness-only workspace byte-identical.",
+    "Current canonical backlog validation and GRR-0002.S02 validation with independently APPROVED B02 pass. The boundary remains control/minimum revision 11, sole ACTIVE HOLD-W1-GRR-0002, W1 PAUSED at wave scope, W1.A04 absent, CAP-02.S04.T03 BLOCKED, G1 PENDING, and exact witness SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c untracked and unstaged.",
+    "The generation-neutral topology is decision-complete and bounded: B00 may raise only the reader/schema ceiling to 12 while live revision/minimum stays 11; adoption may append only the exact authenticated fourth GCR-0006 11-to-11 generation; generic neutral generations, every neutral supplement, and direct revision 12 are denied. A separately reviewed and exactly approved identity-specific v5 GRR-0002.S03/B03 remains mandatory for the later 11-to-12 semantic repair.",
+    "The revision-11 predecessor reader currently accepts the exact three-generation backlog but rejects an otherwise structurally complete fourth GCR-0006 neutral record through both its max-three generation ceiling and identity-specific oneOf schema. The packet requires the successor reader to accept only exact predecessor and authenticated successor states while continuing to deny revision 12 without adopted GCR-0006 and separate S03 authority.",
+    "B00 scope is confined to GCR-0006 evidence/state/controller, backlog schema/state, exact future S03 v5 schemas, recovery/task readers, focused tests, and governed quality scope. Versions 1 through 4, prior packets/approvals/evidence/ledgers, product/reference/planning sources, ordinary W1 execution, W1.A04 append, hold release, Wave resume, gate action, local main, and remote state are expressly forbidden.",
+    "The adoption contract requires approved B00, direct-child P-to-A-to-F topology, exactly backlog plus GCR-0006 state finalization, raw-and-canonical compare-and-swap, exclusive lock, durable successor and manifest flushes, Windows replace-existing/write-through publication, published-file and directory flushes, exact-pair validation, automatic idempotent recovery, dirty/substituted/partial-state denial, child-process crash injection at every durable boundary, and cleanup only after validated finalization.",
+    "GCR-0006 remains inert: no approval, controller, B00 state, S03/B03 authority, W1.A04 transition, or ordinary execution exists. After this exact-commit independent APPROVED ledger is committed, exact-commit human approval is legally available only for GCR-0006.B00 reader headroom; B00 implementation, independent review, adoption, and the separate S03/B03 packet review and human approval remain mandatory later gates."
+  ],
+  "approvalAvailable": true
+}
