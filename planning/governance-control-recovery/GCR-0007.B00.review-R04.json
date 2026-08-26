@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "7.0-control-recovery-bootstrap-review",
+  "documentType": "governance-control-recovery-successor-bootstrap-review",
+  "controlRecoveryId": "GCR-0007",
+  "bootstrapUnit": "GCR-0007.B00",
+  "attemptId": "R04",
+  "candidateCommit": "60d12cb301197f6f7e5e3befdfa1cb54ec93c228",
+  "reviewedStateCommit": "d37740c7323c78c594c2077713e39c867a61832e",
+  "reviewer": "independent-gcr7-b00-reviewer",
+  "result": "approved",
+  "evidence": {
+    "path": "artifacts/evidence/governance-control-recovery/GCR-0007.B00.R04.json",
+    "sha256": "48c35fa2e7023b59ba8b1fe7da242e8363601291bf571f3dd9c2a175001ac729",
+    "commit": "26edf56e7d2a9d4fb23e40e0d0c33e974092e1cd"
+  },
+  "notes": "APPROVED after bounded independent incremental R04 control/security review. Candidate 60d12cb301197f6f7e5e3befdfa1cb54ec93c228 is the direct child of the R03 adverse state projection and changes only tools/gcr7ctl.py and tests/foundation/test_gcr7ctl.py; evidence-only commit 26edf56e7d2a9d4fb23e40e0d0c33e974092e1cd and frozen REVIEW state d37740c7323c78c594c2077713e39c867a61832e are exact direct children. The retry predicate now requires the exact live raw predecessor backlog, the authority-base canonical predecessor backlog at HEAD, the exact approved-state blob at HEAD, no transaction artifact, and the unchanged expected-attempt evidence blob at HEAD. Independent replay of the original backlog-only exploit now fails closed. The lawful failed-adoption case and the five-case public denial matrix pass: backlog-only, state-only, transaction-present, substituted-evidence, and wrong-attempt-path boundaries all deny with canonical backlog and state bytes unchanged. The two focused unit tests pass in 58.671 seconds; an additional direct public-controller replay confirms the intended denial reason and byte stability for all five variants. Ruff format, Ruff lint, mypy, diff hygiene, exact evidence/history/schema validation, append-only R01-R03 state and ledger history, unchanged revision-11 three-generation backlog, active recovery hold, and protected witness checks pass. No finding remains. This ledger grants no adoption, backlog/W1/amendment/hold/gate mutation, product execution, main integration, remote action, or ordinary execution authority.",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GCR-0007.B00-R03-F01",
+      "disposition": "closed",
+      "evidence": "At exact R04 frozen state d37740c7323c78c594c2077713e39c867a61832e, the original A1 backlog-only partial-publication reproduction no longer authenticates as a retryable failed adoption. authenticated_failed_pre_activation_adoption requires exact raw and canonical predecessor backlog bytes, the exact committed approved-state blob, no transaction artifact, and the immutable R02 adoption-evidence blob at its expected path. Independent public freeze_submission replay denies backlog-only, state-only, transaction-present, substituted-evidence, and wrong-attempt-path variants with backlog and state bytes unchanged; the lawful exact A1 boundary remains accepted."
+    }
+  ]
+}
