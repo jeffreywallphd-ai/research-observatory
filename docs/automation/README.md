@@ -11,6 +11,7 @@
 - `fixture-corpus.md` - synthetic scholarly test assets, CC0 licensing and provenance, edge-case coverage, integrity validation, and safe update procedure.
 - `benchmark-registry.md` - golden outputs, benchmark metadata and execution, deterministic reports, and explicit human-approved baseline changes.
 - `build-manifests.md` - single-source product versions, compatible component manifests, changelog policy, and reproducible clean/dirty build provenance.
+- `governance-automation-simplification.md` - migration from incident-specific controllers to a small event/projection kernel, beginning with read-only next-action shadowing.
 - `ui-reference-validation.md` - approved-reference hashes, offline link and scope checks, generator reproducibility, and deterministic reports.
 - `design-first-ui-changes.md` - task/PR contracts, human reference approval, reference-before-code ordering, and defect restoration.
 - `ui-conformance-verification.md` - activated desktop checks, fixture boundary, controlled Playwright rendering, and baseline approval rules.
