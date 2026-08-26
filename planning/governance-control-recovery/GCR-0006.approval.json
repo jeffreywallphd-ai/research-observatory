@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "6.0-control-recovery-approval",
+  "documentType": "governance-control-recovery-approval",
+  "controlRecoveryId": "GCR-0006",
+  "packetCommit": "175f0edf344346a76a5e1aa09ef0f22ab473edae",
+  "packetSha256": "508c3d0b61b083ae617eeea218f0baca71b7d190bffad8ef65b329d152c59469",
+  "packetReview": {
+    "path": "planning/governance-control-recovery/GCR-0006.review-R01.json",
+    "sha256": "78bd30a7695b0618afe404cce4ade3c2d157aef55074d44e1c8761208f0badf8",
+    "commit": "b7bc08ae1d2298c2df52cfeaba75ab9a6923ef38"
+  },
+  "authorityManifest": {
+    "path": "planning/governance-control-recovery/GCR-0006.authority.json",
+    "sha256": "482926af1c1f3b9d881257fb348c732e50c0c7ee4de01c35c1e172da84030ffa",
+    "commit": "175f0edf344346a76a5e1aa09ef0f22ab473edae"
+  },
+  "witness": {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "untracked": true,
+    "unstaged": true,
+    "executionAuthority": false
+  },
+  "approver": "repository-owner",
+  "approvedAt": "2026-08-26T16:10:39.1935170Z",
+  "scope": "GCR-0006.B00 reader-headroom bootstrap only",
+  "ordinaryExecutionAuthority": false
+}
