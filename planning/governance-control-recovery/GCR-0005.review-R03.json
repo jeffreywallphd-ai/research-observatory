@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "5.0-control-recovery-review",
+  "documentType": "governance-control-recovery-packet-review",
+  "controlRecoveryId": "GCR-0005",
+  "attemptId": "R03",
+  "candidateCommit": "86e0393595809ccff589e1793970e38536ec4116",
+  "packetSha256": "41a6f4778d23c510b2353d80756a463ee6ebc53a83b281d709b7840257e28a05",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewer": "independent-gcr5-packet-reviewer",
+  "result": "approved",
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "GCR-0005-R01-F01",
+      "disposition": "fixed",
+      "evidence": "R03 retains R02's exact application-evidence and transaction remediation: fixed raw and canonical predecessor/successor backlog hashes, exact adverse-ledger/open-finding bindings, packet/approval/approved-state/application-evidence authority structures, active hold and witness, canonical paths, deterministic view set, CAS and Windows durability duties, predecessor-or-successor recovery, exact seven-path direct-child finalization, and ordinaryExecutionAuthority=false. The focused application/transaction negative matrix passes and rejects the R01 arbitrary state, ledger, scope, hash, hold, witness, safety-duty, and finalization substitutions."
+    },
+    {
+      "findingId": "GCR-0005-R02-F01",
+      "disposition": "fixed",
+      "evidence": "R03 replaces the ambiguous attempt array with a map containing only completed reviewed attempts and a separate sole pending submission; the schema jointly requires every completed review and ledger, projects latestReviewResult and openFindingIds explicitly, and denies APPROVED/APPLIED with any projected open finding. The immutable packet records the repeated-omission root cause and requires, on every controller read and mutation, numeric gapless RNN chronology, key/submission equality, exact-next pending identity, commit/hash-bound submission/evidence/review/ledger records, chronological finding/closure folding, latest-result projection, valid closure targets, and approval denial while a blocking finding remains open. Criterion 8 and the verification matrix require the complete duplicate/reordered/skipped/orphaned/mismatch/pairing/stale-result/invalid-closure/open-blocker controller denial matrix before independent B00 approval; the updated focused schema tests pass."
+    }
+  ],
+  "verified": [
+    "HEAD and candidateCommit resolve to exact R03 packet commit 86e0393595809ccff589e1793970e38536ec4116 on codex/w1-windows-local-runtime. Its sole parent is R02-ledger introduction commit 5105e4257d4374553a94253be223c94cc6874433; R01 and R02 ledgers remain byte-identical to their declared hashes and Git blobs. The R03 delta modifies only the proposal, review page, authority manifest, packet, request/runtime schemas, and focused test; transaction-v5 remains unchanged and git diff --check passes.",
+    "The exact packet SHA-256 is 41a6f4778d23c510b2353d80756a463ee6ebc53a83b281d709b7840257e28a05. Request-v5, runtime-v5, and transaction-v5 pass Draft 2020-12 meta-schema validation; the packet validates without error against request-v5; all seven declared packet file hashes reproduce; and packetReviewHistory binds the exact R01 and R02 ledger commits and hashes in order.",
+    "All twenty distinct packet and authority references reproduce from current bytes and their named Git blobs or the explicitly separated Windows raw/canonical backlog binding. The S02 packet/approval, B02 deterministic-output addendum packet/review/approval, candidate, evidence, frozen REVIEW backlog, adverse ledger, defective controller, active hold, prior GCR-0005 reviews, and ancestry remain exact and immutable.",
+    "The exact stopped boundary remains revision/minimum 11, sole ACTIVE HOLD-W1-GRR-0002, GRR-0002.S02/B02 REVIEW with candidate d363c04c385251a5d789a0313e173342e7e0ae3e and evidence SHA-256 77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595, W1 PAUSED at wave scope, CAP-02.S04.T03 BLOCKED, W1.A04 absent, and G1 PENDING. The witness remains the sole untracked and unstaged path at SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c and is never execution authority.",
+    "The predecessor Windows raw backlog SHA-256 431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1 and normalized canonical SHA-256 3ffa93f894b5b63cbefd11d8b058eddf4deda96069aa03c9bb15bc116bc691cb are distinct and fixed. Independent focused derivation from the exact submission and unchanged adverse ledger reproduces the sole successor raw/canonical SHA-256 86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798, CHANGES_REQUESTED status, and still-open GRR-0002.B02-R01-F01 finding.",
+    "All four focused tests in tests/foundation/test_gcr5_packet_schema.py pass. They replay R01's forged runtime/application/transaction records, exact successor derivation, fixed authority/scope/hash substitutions, R02's array history, malformed or missing pending submission, completed review without ledger, approval with projected open finding, and ordinary-execution application substitution.",
+    "R03's completed-attempt map makes duplicate object keys non-representable after strict parsing and requires every completed entry to carry its submission, review, ledger, findings, and closures. The separate pending submission removes the R02 redundant current-summary mismatch. Status-conditioned latestReviewResult/openFindingIds/application rules structurally reject the prior gross contradictions and nonempty-open-finding approval.",
+    "The remaining cross-record rules are decision-complete in the immutable packet rather than falsely claimed as Draft 2020-12 equality: every future gcr5ctl read and mutation must sort numeric RNN keys, require a unique gapless R01 sequence, bind keys and pending identity, authenticate every commit/hash/evidence/review/ledger, fold findings and valid closures chronologically, project the latest result, and deny approval with any open blocker. The named adversarial matrix is mandatory B00 evidence and independent-review scope, so this packet approval cannot authorize a projection before executable enforcement is separately proven.",
+    "GCR-0005 remains a necessary, inert, one-time bridge. It preserves the B02 R01 ledger and finding, changes no control revision or ordinary authority, and prohibits B02 remediation, W1.A04, task/Wave/gate actions, hold release, product/reference changes, main integration, and remote action. Exact-commit human approval is legally available only for GCR-0005.B00; implementation, B00 review, and application remain separate mandatory gates."
+  ],
+  "approvalAvailable": true
+}
