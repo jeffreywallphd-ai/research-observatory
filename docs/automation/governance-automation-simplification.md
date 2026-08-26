@@ -130,5 +130,8 @@ retained histories. Historical evidence is never rewritten.
 - Payload tampering, checkpoint tampering, sequence gaps, forks, unknown or
   missing required capabilities, and execution-authority substitution fail
   closed.
+- Canonical hashing rejects Python-only containers and non-string object keys;
+  decision and program subcontracts reject missing, extra, or invalid fields
+  even when an attacker recomputes every enclosing hash.
 - The live shadow command validates its emitted event/checkpoint and still leaves
   backlog bytes and modification time unchanged.

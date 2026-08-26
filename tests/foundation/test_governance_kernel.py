@@ -19,22 +19,29 @@ class GovernanceKernelTests(unittest.TestCase):
         *,
         category: str = "task",
     ) -> governance_kernel.GovernanceEvent:
+        action = "claim-wave-task" if category == "task" else "inspect-active-wave"
+        risk_tier = 1 if category == "task" else 0
         return governance_kernel.build_next_action_event(
             sequence=sequence,
             previous_event_hash=previous_hash,
             subject=f"{category}/fixture",
             source={"path": "planning/backlog.yaml", "sha256": "1" * 64},
-            program={"state": "ACTIVE_WAVE", "currentWave": "W1"},
+            program={
+                "state": "ACTIVE_WAVE",
+                "currentWave": "W1",
+                "blockedWave": None,
+                "nextGate": "G1",
+            },
             decision={
                 "category": category,
-                "action": "inspect",
+                "action": action,
                 "target": "fixture",
                 "summary": "Inspect the deterministic fixture.",
                 "command": None,
-                "riskTier": 0,
+                "riskTier": risk_tier,
                 "executableNow": True,
                 "approvalRequired": False,
-                "effect": "read-only",
+                "effect": "read-only" if risk_tier == 0 else "mutation-template",
             },
             legacy_category=category,
             shadow_agreement=True,
@@ -50,6 +57,16 @@ class GovernanceKernelTests(unittest.TestCase):
         self.assertEqual(1, projection["throughSequence"])
         self.assertEqual(first["eventHash"], projection["throughEventHash"])
         self.assertEqual(first["payload"]["decision"], projection["decision"])
+
+    def test_canonical_domain_rejects_python_key_and_container_aliases(self) -> None:
+        self.assertNotEqual(
+            governance_kernel.canonical_bytes({"1": "string-key"}),
+            governance_kernel.canonical_bytes({"1": "different-value"}),
+        )
+        with self.assertRaisesRegex(governance_kernel.KernelValidationError, "non-string key"):
+            governance_kernel.canonical_bytes({1: "integer-key"})
+        with self.assertRaisesRegex(governance_kernel.KernelValidationError, "non-JSON value"):
+            governance_kernel.canonical_bytes({"items": ("tuple",)})
 
     def test_checkpoint_plus_tail_matches_full_replay(self) -> None:
         first = self.event(1, governance_kernel.GENESIS_HASH)
@@ -93,6 +110,44 @@ class GovernanceKernelTests(unittest.TestCase):
         fork = self.event(2, "f" * 64)
         with self.assertRaisesRegex(governance_kernel.KernelValidationError, "ancestry differs"):
             governance_kernel.verify_and_project([first, fork])
+
+    def test_rehashed_nested_contract_substitution_fails_closed(self) -> None:
+        event = self.event(1, governance_kernel.GENESIS_HASH)
+
+        malformed_decision = copy.deepcopy(event)
+        malformed_decision["payload"]["decision"].pop("target")
+        malformed_decision["payload"]["decision"]["ordinaryExecutionAuthority"] = True
+        malformed_decision["eventHash"] = governance_kernel.document_hash(malformed_decision, "eventHash")
+        with self.assertRaisesRegex(governance_kernel.KernelValidationError, "decision fields differ"):
+            governance_kernel.validate_event(malformed_decision)
+
+        malformed_program = copy.deepcopy(event)
+        malformed_program["payload"]["program"]["executionAuthority"] = "ordinary"
+        malformed_program["eventHash"] = governance_kernel.document_hash(malformed_program, "eventHash")
+        with self.assertRaisesRegex(governance_kernel.KernelValidationError, "program position fields differ"):
+            governance_kernel.validate_event(malformed_program)
+
+        invalid_action = copy.deepcopy(event)
+        invalid_action["payload"]["decision"]["action"] = "execute-with-ordinary-authority"
+        invalid_action["eventHash"] = governance_kernel.document_hash(invalid_action, "eventHash")
+        with self.assertRaisesRegex(governance_kernel.KernelValidationError, "decision is invalid"):
+            governance_kernel.validate_event(invalid_action)
+
+        alternate_source = copy.deepcopy(event)
+        alternate_source["source"]["path"] = "planning/untrusted-authority.json"
+        alternate_source["eventHash"] = governance_kernel.document_hash(alternate_source, "eventHash")
+        with self.assertRaisesRegex(governance_kernel.KernelValidationError, "source"):
+            governance_kernel.validate_event(alternate_source)
+
+        checkpoint = governance_kernel.build_checkpoint(governance_kernel.verify_and_project([event]))
+        checkpoint["projection"]["decision"].pop("effect")
+        checkpoint["projection"]["decision"]["unexpectedNestedContract"] = True
+        checkpoint["projectionSha256"] = governance_kernel.sha256(
+            governance_kernel.canonical_bytes(checkpoint["projection"])
+        )
+        checkpoint["checkpointHash"] = governance_kernel.document_hash(checkpoint, "checkpointHash")
+        with self.assertRaisesRegex(governance_kernel.KernelValidationError, "decision fields differ"):
+            governance_kernel.validate_checkpoint(checkpoint)
 
     def test_checkpoint_and_advisory_authority_tamper_fail_closed(self) -> None:
         event = self.event(1, governance_kernel.GENESIS_HASH)
