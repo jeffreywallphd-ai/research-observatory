@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-recovery-supplement-bootstrap-evidence",
+  "recoveryRequestId": "GRR-0002",
+  "supplementId": "GRR-0002.S02",
+  "bootstrapUnit": "GRR-0002.B02",
+  "branch": "codex/w1-windows-local-runtime",
+  "baseCommit": "2419dc2e5d1f96d845c394f447b1dd554ec0e6a6",
+  "candidateCommit": "7e0c6c61918c4ed1b860b0125a7e8591b967b341",
+  "changedPaths": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/governance-recovery-approvals/GRR-0002.B02.remediation-01.evidence.json",
+    "planning/governance-recovery-approvals/GRR-0002.B02.review-R02.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_recoveryctl.py"
+  ],
+  "riskAnalysis": "Mandatory third-submission root-cause analysis: R01 correctly found that the B02 controller authenticated immutable installation bytes as though every later lifecycle state had to retain them. R02 corrected that source defect and added a one-time exact GCR-0005 lineage bridge, but its new lifecycle test derived its disposable repository from moving HEAD, created the noncanonical codex/b02-scope-fixture branch, and called the evidence parser directly instead of the governed supplement-resubmit transition. That fixture happened to support the pre-freeze run recorded in R02 evidence but was not stable at the frozen REVIEW state, where independent replay failed before the asserted lifecycle behavior and disproved the 32/32 claim. The systemic root cause was coupling a transition test to ambient repository state and a helper-local identity while testing below the command boundary. Corrective action: the fixture now pins exact GCR-0005 finalization ce17f78a2e139285bf2e50a654999ddc42e5d8ae, switches to the immutable submission branch codex/w1-windows-local-runtime, builds the exact two-path remediation candidate, exercises the real freeze_supplement_submission remediation path for both a forged-evidence byte-stable denial and the lawful R02 transition, commits the frozen state, and validates it through both supplement status and validation. Preventive action: recovery transition fixtures must pin an immutable authority boundary, use canonical frozen identities, invoke the public transition layer, and replay the committed post-transition state; evidence is rerun at the exact final candidate after deterministic view regeneration. Credible residual risks are altered prior attempts, substituted GCR authority, a noncanonical branch, a parser-only false positive, mutation on denial, wrong base/candidate scope, stale generated views, changed witness, or premature historic retry. The selected checks cover all of those boundaries. Full W1 product qualification remains deferred to the ordinary Wave exit.",
+  "requiredOutcomes": [
+    {
+      "criterion": "Install exactly one sequential GRR-0002.S02/GRR-0002.B02 record under the existing HOLD-W1-GRR-0002 and advance control revision and minimum tool revision from 10 to 11 without creating, transferring, replacing, or releasing a hold.",
+      "evidence": [
+        "Exact-final supplement validation passes at control/minimum revision 11 with the sole HOLD-W1-GRR-0002 ACTIVE and B02 truthfully CHANGES_REQUESTED; R03 changes no hold identity, ownership, or release state."
+      ]
+    },
+    {
+      "criterion": "Authenticate the exact GRR-0002 packet, approval, B00 review, adopted GCR-0003 revision-10 generation, ECR-0003 packet, W1.A04 approval, blocked W1.A04.B00 candidate, and witness bytes while W1.A04 remains absent.",
+      "evidence": [
+        "The exact-final 32-test recovery suite and live supplement validation authenticate the complete GRR/S02/GCR/ECR/amendment chain, retain absent W1.A04, and preserve the exact blocked historic candidate and witness binding."
+      ]
+    },
+    {
+      "criterion": "Require the exact unchanged, unstaged, untracked, non-authoritative W1.A04.B00 witness at supplement start, submission, remediation, and review, rejecting every missing, changed, staged, tracked, redirected, duplicated, authority-bearing, or accompanied workspace state.",
+      "evidence": [
+        "The witness remains the sole pre-evidence untracked path, is unstaged, and reproduces SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c; recovery and taskctl tests pass the witness/workspace denial matrix."
+      ]
+    },
+    {
+      "criterion": "Freeze criterion-linked B02 evidence and independent severity-ranked review append-only, with no open blocking finding before B02 becomes APPROVED and strict-descendant remediation after every adverse review.",
+      "evidence": [
+        "R01 and R02 candidates, evidence, frozen states, adverse ledgers, and findings remain immutable. Candidate 7e0c6c6 strictly descends from R02 candidate 2419dc2, and this R03 evidence includes the mandatory root-cause analysis. Independent R03 review must close both open findings before approval."
+      ]
+    },
+    {
+      "criterion": "After B02 approval, implement one fail-closed amendment bootstrap-submit exception limited to exact W1.A04/W1.A04.B00, candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6, evidence SHA-256 4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c, approved ECR-0003/W1.A04 authority, the sole active HOLD-W1-GRR-0002, sequential independently approved GRR-0002.S02/B02 at revision 11, and the exact witness-only workspace; preserve current-HEAD denial for every other candidate, amendment, command, hold, revision, evidence, and workspace, while amendment append or materialization, task activation or claim, live T03 recovery, hold release, W1 resume, and gate approval remain separately gated.",
+      "evidence": [
+        "Both exact taskctl historic-submission tests pass at the final candidate in 3.565 seconds, retaining pre-approval denial, one exact disposable-repository success only after approval, replay denial, and downstream execution denial."
+      ]
+    },
+    {
+      "criterion": "Preserve product, privacy, approved-reference, task-acceptance, completed-task, release-gate, predecessor-authority, immutable version-3 supplement, and prior GCR/GRR/ECR evidence bytes and outcomes.",
+      "evidence": [
+        "The exact 2419dc2..7e0c6c6 delta contains only append-only B02 backlog/evidence/review history, the focused recovery test, and two authorized deterministic views; it changes no product, privacy, reference, task, gate, predecessor-authority, or prior evidence bytes."
+      ]
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion": "The exact version-4 packet validates against Draft 2020-12, all declared hashes match, and the GRR-0002, adopted GCR-0003, ECR-0003/W1.A04, blocked bootstrap, and witness authority commits and blobs remain exact and ancestral.",
+      "evidence": [
+        "Exact-final supplement validation and all 32 recovery tests pass v4 schema, hash, Git blob, ancestry, approval-introduction, blocked-bootstrap, and witness authority checks at candidate 7e0c6c6."
+      ]
+    },
+    {
+      "criterion": "The pre-install boundary is control revision 10 with one ACTIVE HOLD-W1-GRR-0002, adopted GCR-0003 at 5a7aebd6ffd56441089a18bcd60a25f60ad96009, PAUSED W1 at wave scope, absent W1.A04, BLOCKED CAP-02.S04.T03, and PENDING G1.",
+      "evidence": [
+        "The immutable packet-time boundary remains authenticated, and the live revision-11 projection retains the same sole ACTIVE hold, PAUSED W1 wave scope, absent W1.A04, BLOCKED T03, and PENDING G1."
+      ]
+    },
+    {
+      "criterion": "The packet-review ledger is separate from human approval, recursively authenticates every canonical prior attempt to R01, requires strict-descendant remediation candidates, folds findings and closures chronologically, and cannot approve with any open finding.",
+      "evidence": [
+        "The complete recovery suite recursively validates the packet and R01/R02 review history. Both GRR-0002.B02-R01-F01 and GRR-0002.B02-R02-F01 remain open, so B02 remains CHANGES_REQUESTED pending independent R03 closure."
+      ]
+    },
+    {
+      "criterion": "Supplement start atomically installs only the sequential GRR-0002.S02/GRR-0002.B02 record, advances revision and minimum tool revision to 11, and leaves W1, T03, W1.A04, the active hold, and all prior histories otherwise unchanged.",
+      "evidence": [
+        "Backlog and supplement validation pass with exactly one sequential S02/B02 record at revision 11, while the 32-test suite passes supplement-start atomicity and predecessor-preservation cases."
+      ]
+    },
+    {
+      "criterion": "The exact witness-aware workspace contract is applied consistently to start, submit/resubmit, and review and denies every missing, changed, staged, tracked, redirected, duplicated, authority-bearing, or accompanied deviation without mutation.",
+      "evidence": [
+        "The recovery suite passes the real-Git witness-aware lifecycle and denial matrix, the corrected B02 test proves the forged resubmit leaves both canonical control files byte-stable, and the protected witness remains exact, untracked, and unstaged."
+      ]
+    },
+    {
+      "criterion": "B02 submission freezes the exact candidate, approval-to-candidate changed paths, criteria, checks, and evidence; independent review is append-only, severity-ranked, and cannot approve with an open blocking finding.",
+      "evidence": [
+        "This manifest freezes candidate 7e0c6c6 against prior candidate 2419dc2, the exact six authorized changed paths, every ordered criterion, unique passing checks, the mandatory root-cause analysis, and no unverified item; R03 remains independently review-gated."
+      ]
+    },
+    {
+      "criterion": "An independently APPROVED B02 enables one atomic submission of only the original W1.A04.B00 retry at candidate 214ac1aac53b4396ee29f7a935ddcac2a34618b6 under exact candidate, evidence, ECR/amendment, supplement/B02, revision, hold, and witness guards, while ordinary current-HEAD denial and every amendment append/materialization, task execution, live T03 recovery, hold release, W1 resume, and G1 gate remain unauthorized.",
+      "evidence": [
+        "The two exact taskctl historic-retry tests pass, while live supplement validation reports authorizationGate=latest supplemental bootstrap must be independently APPROVED and appendOrExecutionPerformed=false."
+      ]
+    },
+    {
+      "criterion": "Focused real-Git recovery, multi-round review, strict-ancestry, older-reader, historic-retry, atomicity, authority, quality, backlog/view, review-site, scope, and Git-hygiene checks pass with no protected product or reference change.",
+      "evidence": [
+        "All 32 recovery tests pass at exact final candidate 7e0c6c6 in 1471.765 seconds; both taskctl guards pass in 3.565 seconds; Ruff, formatting, mypy, backlog, deterministic views, the 150-page review site, exact scope, diff hygiene, and witness checks pass."
+      ]
+    },
+    {
+      "criterion": "The packet receives independent exact-commit control/security review with no open finding before human approval, and B02 receives a separate independent commit-bound approval before W1.A04.B00 is retried.",
+      "evidence": [
+        "The S02 packet and deterministic-output addendum retain their independent approvals. This evidence freezes R03 for a new independent B02 review; the historic retry remains denied until that review approves and explicitly closes both open findings."
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "recovery-controller",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.foundation.test_recoveryctl (32 tests at 7e0c6c61918c4ed1b860b0125a7e8591b967b341; 1471.765 seconds)",
+      "result": "passed"
+    },
+    {
+      "id": "taskctl-historic-retry",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_w1_a04_historic_submission_guard_is_exact_and_fail_closed tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_w1_a04_historic_submit_uses_real_clean_git_workspace_once (2 tests at 7e0c6c61918c4ed1b860b0125a7e8591b967b341; 3.565 seconds)",
+      "result": "passed"
+    },
+    {
+      "id": "python-quality",
+      "command": ".venv/Scripts/python.exe -m ruff format --check and ruff check and mypy for tests/foundation/test_recoveryctl.py plus tools/recoveryctl.py at 7e0c6c61918c4ed1b860b0125a7e8591b967b341",
+      "result": "passed"
+    },
+    {
+      "id": "supplement-authority",
+      "command": ".venv/Scripts/python.exe tools/recoveryctl.py --repo . supplement-validate GRR-0002.S02 --require-approved at 7e0c6c61918c4ed1b860b0125a7e8591b967b341",
+      "result": "passed"
+    },
+    {
+      "id": "backlog-and-generated-views",
+      "command": "taskctl backlog validate; backlog_views.py --check; plan_review_check.py --repo . (150 HTML pages) at 7e0c6c61918c4ed1b860b0125a7e8591b967b341",
+      "result": "passed"
+    },
+    {
+      "id": "scope-and-witness",
+      "command": "git diff --name-only and --check 2419dc2e5d1f96d845c394f447b1dd554ec0e6a6..7e0c6c61918c4ed1b860b0125a7e8591b967b341; Get-FileHash W1.A04.B00 witness",
+      "result": "passed"
+    }
+  ],
+  "deferredCoverage": [
+    "Independent R03 review, the exact W1.A04.B00 historic retry, its independent bootstrap review, amendment materialization, W1.A04.T01 execution/review, exit review, adoption checkpoint, and recovery-hold release remain separately gated.",
+    "CAP-02.S04.T03 recovery and ordinary W1 task/slice verification remain blocked until W1.A04 is adopted, the hold is released, and W1 is explicitly resumed.",
+    "The complete W1 happy, failure, denial, cancellation, migration, restart, recovery, security, accessibility, performance, packaging, and Windows x64 qualification matrix remains at the ordinary Wave-exit gate."
+  ],
+  "unverifiedItems": []
+}
