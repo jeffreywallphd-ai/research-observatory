@@ -6267,6 +6267,129 @@ def command_amendment_status(args, data, capabilities, slices, tasks, gates) -> 
         )
 
 
+def exact_w1_a04_historic_submission_errors(
+    repo: Path,
+    data: dict[str, Any],
+    hold: dict[str, Any],
+    args: argparse.Namespace,
+    approval: dict[str, Any],
+    packet: dict[str, Any],
+    approval_payload: bytes,
+    *,
+    approval_commit: str,
+    implementation_commit: str,
+    evidence_relative: str,
+    evidence_payload: bytes,
+) -> list[str]:
+    """Authenticate the sole post-B02 historic W1.A04 bootstrap submission."""
+    errors: list[str] = []
+    control = data.get("control_plane") or {}
+    expected_candidate = "214ac1aac53b4396ee29f7a935ddcac2a34618b6"
+    expected_evidence = "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+    expected_approval_commit = "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+    expected_approval_sha = "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab"
+    expected_packet = {
+        "path": "planning/enabler-change-requests/ECR-0003.packet.json",
+        "sha256": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+        "commit": "77896d26ddac0569e286fe8481c0676408c716b1",
+    }
+    expected_s02_packet = {
+        "path": "planning/governance-recovery-requests/GRR-0002.S02.packet.json",
+        "sha256": "14452cb6e6f3959996458d7b84df0105a7f6e4bbf3f4c5fc36e9d0f0506d43c8",
+        "commit": "070f408ed257b3c1345a29c3be2c2f882952b856",
+    }
+    expected_s02_approval = {
+        "path": "planning/governance-recovery-approvals/GRR-0002.S02.json",
+        "sha256": "389d9f5595faf8a1a8de233783ac122e34d6b2d61c011cef58203764b6dfe7a1",
+        "introduction_commit": "106921c269942401bab4cc4f732f4d1fb97b8abe",
+    }
+    packet_reference = approval.get("packet") or {}
+    active_holds = active_recovery_holds(data)
+    supplements = hold.get("supplements") or []
+    supplement = supplements[-1] if supplements else {}
+    bootstrap = supplement.get("bootstrap") or {}
+    attempts = bootstrap.get("attempts") or []
+    latest_attempt = attempts[-1] if attempts else {}
+    if (
+        args.amendment != "W1.A04"
+        or approval_commit != expected_approval_commit
+        or implementation_commit != expected_candidate
+        or evidence_relative != "artifacts/evidence/W1.A04.B00.json"
+        or hashlib.sha256(evidence_payload).hexdigest() != expected_evidence
+        or hashlib.sha256(approval_payload).hexdigest() != expected_approval_sha
+        or approval.get("amendmentId") != "W1.A04"
+        or approval.get("changeRequestId") != "ECR-0003"
+        or approval.get("targetWave") != "W1"
+        or approval.get("status") != "APPROVED"
+        or packet_reference.get("path") != expected_packet["path"]
+        or packet_reference.get("sha256") != expected_packet["sha256"]
+        or packet_reference.get("commit") != expected_packet["commit"]
+        or packet.get("changeRequestId") != "ECR-0003"
+        or packet.get("proposedAmendmentId") != "W1.A04"
+        or (packet.get("bootstrapUnit") or {}).get("id") != "W1.A04.B00"
+    ):
+        errors.append("historic amendment, candidate, evidence, or ECR authority is not exact")
+    if (
+        control.get("revision") != 11
+        or control.get("minimum_tool_revision") != 11
+        or len(active_holds) != 1
+        or active_holds[0] != hold
+        or hold.get("id") != "HOLD-W1-GRR-0002"
+        or hold.get("recovery_request_id") != "GRR-0002"
+        or hold.get("target_wave") != "W1"
+        or hold.get("status") != "ACTIVE"
+        or (hold.get("bootstrap") or {}).get("status") != "APPROVED"
+        or (hold.get("post_bootstrap") or {}).get("required_change_request_id") != "ECR-0003"
+        or (hold.get("post_bootstrap") or {}).get("required_amendment_id") != "W1.A04"
+        or [item.get("id") for item in supplements] != ["GRR-0002.S01", "GRR-0002.S02"]
+        or supplement.get("predecessor_control_revision") != 10
+        or supplement.get("successor_control_revision") != 11
+        or supplement.get("packet_reference") != expected_s02_packet
+        or supplement.get("approval_reference") != expected_s02_approval
+    ):
+        errors.append("historic submission lacks the exact active revision-11 S02 authority")
+    if (
+        bootstrap.get("id") != "GRR-0002.B02"
+        or bootstrap.get("status") != "APPROVED"
+        or bootstrap.get("current_submission") is not None
+        or (bootstrap.get("review") or {}).get("result") != "approved"
+        or not attempts
+        or (latest_attempt.get("review") or {}).get("result") != "approved"
+        or latest_attempt.get("implementation_commit") != bootstrap.get("implementation_commit")
+        or latest_attempt.get("evidence") != bootstrap.get("evidence")
+    ):
+        errors.append("historic submission requires an independently approved exact B02 attempt")
+    try:
+        s02_relative = expected_s02_approval["path"]
+        s02_path = safe_control_path(
+            repo,
+            s02_relative,
+            prefix="planning/governance-recovery-approvals",
+            label="GRR-0002.S02 approval",
+        )
+        s02_payload = s02_path.read_bytes()
+    except (OSError, ValueError) as exc:
+        errors.append(f"historic submission cannot authenticate the S02 approval: {exc}")
+    else:
+        introduction = expected_s02_approval["introduction_commit"]
+        if (
+            hashlib.sha256(s02_payload).hexdigest() != expected_s02_approval["sha256"]
+            or approval_introduction_commit(repo, s02_relative) != introduction
+            or git_blob(repo, introduction, s02_relative) != s02_payload
+        ):
+            errors.append("historic submission S02 approval bytes or introduction are not exact")
+    untracked = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if untracked.returncode != 0 or untracked.stdout.splitlines() != [evidence_relative]:
+        errors.append("historic submission requires the witness as the sole untracked path")
+    return errors
+
+
 def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, tasks, gates) -> None:
     """Append a later approved amendment without replacing any predecessor."""
     repo = discover_repository(args.file)
@@ -6340,8 +6463,6 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
     if implementation_commit == approval_commit or not git_is_ancestor(repo, approval_commit, implementation_commit):
         raise SystemExit("Amendment bootstrap implementation must strictly descend from the approval commit")
     head, current_branch = git_head_branch(repo)
-    if implementation_commit != head:
-        raise SystemExit("Amendment bootstrap implementation commit must equal current HEAD")
     evidence_relative, evidence_path = canonical_control_artifact_path(
         repo,
         str(args.evidence),
@@ -6354,6 +6475,25 @@ def command_amendment_append_bootstrap_submit(args, data, capabilities, slices, 
         parse_evidence_payload(evidence_payload, evidence_path.suffix)
     except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
         raise SystemExit(f"Invalid bootstrap evidence: {exc}") from exc
+    if implementation_commit != head:
+        historic_errors = exact_w1_a04_historic_submission_errors(
+            repo,
+            data,
+            hold,
+            args,
+            approval,
+            packet,
+            approval_payload,
+            approval_commit=approval_commit,
+            implementation_commit=implementation_commit,
+            evidence_relative=evidence_relative,
+            evidence_payload=evidence_payload,
+        )
+        if historic_errors:
+            raise SystemExit(
+                "Amendment bootstrap implementation commit must equal current HEAD; "
+                f"historic recovery exception denied: {historic_errors[0]}"
+            )
     agent = normalized_identity(args.agent, "Bootstrap implementer")
     bootstrap_unit = packet.get("bootstrapUnit") or {}
     scope_addenda, addendum_references = load_bootstrap_scope_addenda(

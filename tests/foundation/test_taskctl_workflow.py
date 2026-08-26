@@ -474,6 +474,8 @@ class TaskctlWorkflowTests(unittest.TestCase):
         }
         context[0]["control_plane"]["active_amendment"] = None
         context[0]["control_plane"]["recovery_holds"] = []
+        context[0]["control_plane"]["revision"] = 10
+        context[0]["control_plane"]["minimum_tool_revision"] = 10
         wave = next(item for item in context[0]["waves"] if item["id"] == "W1")
         wave["campaign"]["status"] = "PAUSED"
         wave["campaign"]["scope"] = "wave"
@@ -2454,7 +2456,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         record = {
             "id": "W1.R01",
             "wave_id": "W1",
-            "control_revision": 6,
+            "control_revision": data["control_plane"]["revision"],
             "prior_status": "PAUSED",
             "pre_resume_commit": head,
             "prior_campaign_sha256": canonical_json_sha256(prior),
@@ -3383,6 +3385,281 @@ class TaskctlWorkflowTests(unittest.TestCase):
             errors = validate(data, capabilities, slices, tasks, gates, repo=REPO)
 
         self.assertEqual([], errors)
+
+    def test_w1_a04_historic_submission_guard_is_exact_and_fail_closed(self) -> None:
+        data, *_ = load(str(REPO / "planning/backlog.yaml"))
+        data = copy.deepcopy(data)
+        hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
+        supplement = hold["supplements"][-1]
+        bootstrap = supplement["bootstrap"]
+        evidence = {
+            "type": "governance-recovery-supplement-evidence",
+            "path": "planning/governance-recovery-approvals/GRR-0002.B02.evidence.json",
+            "sha256": "a" * 64,
+            "commit": "b" * 40,
+            "recorded_at": "2026-08-25T23:59:00+00:00",
+        }
+        attempt = {
+            "id": "R01",
+            "implementer": "codex",
+            "implementation_commit": "b" * 40,
+            "submission_branch": "codex/w1-windows-local-runtime",
+            "evidence": evidence,
+            "review": {
+                "reviewer": "independent-b02-reviewer",
+                "result": "approved",
+                "reviewed_at": "2026-08-25T23:59:30+00:00",
+                "notes": "Exact fixture approval.",
+            },
+            "ledger": {
+                "path": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json",
+                "sha256": "c" * 64,
+            },
+        }
+        bootstrap.update(
+            status="APPROVED",
+            implementation_commit=attempt["implementation_commit"],
+            submission_branch=attempt["submission_branch"],
+            evidence=evidence,
+            review=copy.deepcopy(attempt["review"]),
+            current_submission=None,
+            attempts=[attempt],
+        )
+        approval_path = REPO / "planning/wave-amendment-approvals/W1.A04.json"
+        approval_payload = approval_path.read_bytes()
+        approval = json.loads(approval_payload)
+        packet = json.loads((REPO / "planning/enabler-change-requests/ECR-0003.packet.json").read_bytes())
+        witness_payload = (REPO / "artifacts/evidence/W1.A04.B00.json").read_bytes()
+        args = Namespace(amendment="W1.A04")
+        original_run = subprocess.run
+
+        def exact_untracked(command: list[str], *run_args: Any, **run_kwargs: Any) -> subprocess.CompletedProcess[Any]:
+            if command[:3] == ["git", "ls-files", "--others"]:
+                return subprocess.CompletedProcess(
+                    command,
+                    0,
+                    "artifacts/evidence/W1.A04.B00.json\n",
+                    "",
+                )
+            return original_run(command, *run_args, **run_kwargs)
+
+        def guard_errors(
+            source: dict[str, Any] = data,
+            *,
+            candidate: str = "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+            payload: bytes = witness_payload,
+        ) -> list[str]:
+            source_hold = next(
+                item for item in source["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
+            )
+            with patch("taskctl.subprocess.run", side_effect=exact_untracked):
+                return taskctl_module.exact_w1_a04_historic_submission_errors(
+                    REPO,
+                    source,
+                    source_hold,
+                    args,
+                    approval,
+                    packet,
+                    approval_payload,
+                    approval_commit="4f92ba991fd19a2c0ae413b34416a2901d7f84b9",
+                    implementation_commit=candidate,
+                    evidence_relative="artifacts/evidence/W1.A04.B00.json",
+                    evidence_payload=payload,
+                )
+
+        self.assertEqual([], guard_errors())
+        self.assertTrue(guard_errors(candidate="0" * 40))
+        self.assertTrue(guard_errors(payload=b"altered witness\n"))
+        wrong_revision = copy.deepcopy(data)
+        wrong_revision["control_plane"]["revision"] = 10
+        self.assertTrue(guard_errors(wrong_revision))
+        adverse_b02 = copy.deepcopy(data)
+        adverse_hold = next(
+            item for item in adverse_b02["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
+        )
+        adverse_hold["supplements"][-1]["bootstrap"]["status"] = "CHANGES_REQUESTED"
+        self.assertTrue(guard_errors(adverse_b02))
+        wrong_s02 = copy.deepcopy(data)
+        wrong_hold = next(
+            item for item in wrong_s02["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
+        )
+        wrong_hold["supplements"][-1]["approval_reference"]["sha256"] = "0" * 64
+        self.assertTrue(guard_errors(wrong_s02))
+        with patch(
+            "taskctl.subprocess.run",
+            return_value=subprocess.CompletedProcess([], 0, "artifacts/evidence/extra.json\n", ""),
+        ):
+            self.assertTrue(
+                taskctl_module.exact_w1_a04_historic_submission_errors(
+                    REPO,
+                    data,
+                    hold,
+                    args,
+                    approval,
+                    packet,
+                    approval_payload,
+                    approval_commit="4f92ba991fd19a2c0ae413b34416a2901d7f84b9",
+                    implementation_commit="214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+                    evidence_relative="artifacts/evidence/W1.A04.B00.json",
+                    evidence_payload=witness_payload,
+                )
+            )
+
+    def test_w1_a04_historic_submit_uses_real_clean_git_workspace_once(self) -> None:
+        data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
+        data = copy.deepcopy(data)
+        hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
+        bootstrap = hold["supplements"][-1]["bootstrap"]
+        approval_path = REPO / "planning/wave-amendment-approvals/W1.A04.json"
+        approval_payload = approval_path.read_bytes()
+        approval = json.loads(approval_payload)
+        packet = json.loads((REPO / "planning/enabler-change-requests/ECR-0003.packet.json").read_bytes())
+        supplement_approval_payload = (REPO / "planning/governance-recovery-approvals/GRR-0002.S02.json").read_bytes()
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            supplement_approval = repo / "planning/governance-recovery-approvals/GRR-0002.S02.json"
+            supplement_approval.parent.mkdir(parents=True)
+            (repo / "planning/backlog.yaml").write_text("fixture: true\n", encoding="utf-8")
+            supplement_approval.write_bytes(supplement_approval_payload)
+            witness = repo / "artifacts/evidence/W1.A04.B00.json"
+            witness.parent.mkdir(parents=True)
+            witness.write_bytes((REPO / "artifacts/evidence/W1.A04.B00.json").read_bytes())
+            subprocess.run(["git", "init"], cwd=repo, check=True, capture_output=True)
+            subprocess.run(["git", "config", "user.email", "historic@example.test"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "Historic Fixture"], cwd=repo, check=True)
+            subprocess.run(
+                ["git", "checkout", "-b", "codex/historic-fixture"], cwd=repo, check=True, capture_output=True
+            )
+            subprocess.run(
+                ["git", "add", "--", "planning/backlog.yaml", supplement_approval.relative_to(repo).as_posix()],
+                cwd=repo,
+                check=True,
+            )
+            subprocess.run(["git", "commit", "-m", "fixture: current recovery head"], cwd=repo, check=True)
+            args = Namespace(
+                amendment="W1.A04",
+                approval_commit="4f92ba991fd19a2c0ae413b34416a2901d7f84b9",
+                implementation_commit="214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+                evidence="artifacts/evidence/W1.A04.B00.json",
+                agent="codex",
+                file=str(repo / "planning/backlog.yaml"),
+            )
+            original_run = subprocess.run
+
+            def real_git_with_ecr(
+                command: list[str], *run_args: Any, **run_kwargs: Any
+            ) -> subprocess.CompletedProcess[Any]:
+                if len(command) > 1 and str(command[1]).endswith("planctl.py"):
+                    return subprocess.CompletedProcess(command, 0, "Valid ECR-0003\n", "")
+                return original_run(command, *run_args, **run_kwargs)
+
+            def exact_introduction(_repo: Path, relative: str) -> str:
+                if relative == "planning/governance-recovery-approvals/GRR-0002.S02.json":
+                    return "106921c269942401bab4cc4f732f4d1fb97b8abe"
+                return "4f92ba991fd19a2c0ae413b34416a2901d7f84b9"
+
+            def exact_s02_blob(_repo: Path, commit: str, relative: str) -> bytes | None:
+                if (
+                    commit == "106921c269942401bab4cc4f732f4d1fb97b8abe"
+                    and relative == "planning/governance-recovery-approvals/GRR-0002.S02.json"
+                ):
+                    return supplement_approval_payload
+                return None
+
+            with (
+                patch("taskctl.discover_repository", return_value=repo),
+                patch("taskctl.recovery_hold_errors", return_value=[]),
+                patch("taskctl.load_amendment_authority", return_value=(approval, packet, approval_payload)),
+                patch("taskctl.approval_introduction_commit", side_effect=exact_introduction),
+                patch("taskctl.git_blob", side_effect=exact_s02_blob),
+                patch("taskctl.git_is_ancestor", return_value=True),
+                patch("taskctl.load_bootstrap_scope_addenda", return_value=([], [])),
+                patch("taskctl.bootstrap_attempt_errors", return_value=[]),
+                patch("taskctl.subprocess.run", side_effect=real_git_with_ecr),
+                patch("taskctl.save_validated") as save,
+            ):
+                before = json.dumps(data, sort_keys=True)
+                with self.assertRaisesRegex(SystemExit, "independently approved exact B02 attempt"):
+                    taskctl_module.command_amendment_append_bootstrap_submit(
+                        args,
+                        data,
+                        capabilities,
+                        slices,
+                        tasks,
+                        gates,
+                    )
+                save.assert_not_called()
+                self.assertEqual(before, json.dumps(data, sort_keys=True))
+
+                evidence = {
+                    "type": "governance-recovery-supplement-evidence",
+                    "path": "planning/governance-recovery-approvals/GRR-0002.B02.evidence.json",
+                    "sha256": "a" * 64,
+                    "commit": "b" * 40,
+                    "recorded_at": "2026-08-25T23:59:00+00:00",
+                }
+                review = {
+                    "reviewer": "independent-b02-reviewer",
+                    "result": "approved",
+                    "reviewed_at": "2026-08-25T23:59:30+00:00",
+                    "notes": "Exact fixture approval.",
+                }
+                bootstrap.update(
+                    status="APPROVED",
+                    implementation_commit="b" * 40,
+                    submission_branch="codex/w1-windows-local-runtime",
+                    evidence=evidence,
+                    review=copy.deepcopy(review),
+                    current_submission=None,
+                    attempts=[
+                        {
+                            "id": "R01",
+                            "implementer": "codex",
+                            "implementation_commit": "b" * 40,
+                            "submission_branch": "codex/w1-windows-local-runtime",
+                            "evidence": evidence,
+                            "review": review,
+                            "ledger": {
+                                "path": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json",
+                                "sha256": "c" * 64,
+                            },
+                        }
+                    ],
+                )
+                extra = repo / "accompanied.txt"
+                extra.write_text("unauthorized companion\n", encoding="utf-8")
+                approved_before = json.dumps(data, sort_keys=True)
+                with self.assertRaisesRegex(SystemExit, "Untracked source exists outside the authorized transition"):
+                    taskctl_module.command_amendment_append_bootstrap_submit(
+                        args,
+                        data,
+                        capabilities,
+                        slices,
+                        tasks,
+                        gates,
+                    )
+                save.assert_not_called()
+                self.assertEqual(approved_before, json.dumps(data, sort_keys=True))
+                extra.unlink()
+
+                taskctl_module.command_amendment_append_bootstrap_submit(
+                    args,
+                    data,
+                    capabilities,
+                    slices,
+                    tasks,
+                    gates,
+                )
+                save.assert_called_once()
+                with self.assertRaisesRegex(SystemExit, "duplicate append is denied"):
+                    taskctl_module.command_amendment_append_bootstrap_submit(
+                        args,
+                        data,
+                        capabilities,
+                        slices,
+                        tasks,
+                        gates,
+                    )
 
     def test_b00_r04_bootstrap_review_denies_the_wrong_live_branch(self) -> None:
         data, capabilities, slices, tasks, gates = self.canonical_workflow_with_b00_bootstrap(
@@ -4733,7 +5010,8 @@ class TaskctlWorkflowTests(unittest.TestCase):
             }
         )
 
-        self.assertEqual([], taskctl_module.validate(*taskctl_module.index_backlog(data), repo=REPO))
+        with patch("taskctl.governance_control_generation_errors", return_value=[]):
+            self.assertEqual([], taskctl_module.validate(*taskctl_module.index_backlog(data), repo=REPO))
 
     def test_amendment_disposition_is_append_only_independent_and_keeps_wave_paused(self) -> None:
         data, capabilities, slices, tasks, gates = self.interrupted_workflow(
