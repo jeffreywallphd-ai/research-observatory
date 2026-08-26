@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "7.0-control-recovery-evidence",
+  "documentType": "governance-control-recovery-successor-bootstrap-evidence",
+  "controlRecoveryId": "GCR-0007",
+  "bootstrapUnit": "GCR-0007.B00",
+  "attemptId": "R02",
+  "agent": "codex",
+  "approvalCommit": "8babc35d0d82607a7301bc30189167dd4c0622c9",
+  "baseCommit": "8babc35d0d82607a7301bc30189167dd4c0622c9",
+  "candidateCommit": "dda01ac8d568e59214eb65224503eb04db030f5b",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedPaths": [
+    "artifacts/evidence/governance-control-recovery/GCR-0007.B00.R01.json",
+    "planning/backlog.schema.json",
+    "planning/governance-control-recovery/GCR-0007.B00.review-R01.json",
+    "planning/governance-control-recovery/GCR-0007.B00.state.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement-approval.v5.schema.json",
+    "planning/governance-recovery-requests/governance-recovery-supplement.v5.schema.json",
+    "quality-scope.json",
+    "tests/foundation/test_gcr7ctl.py",
+    "tests/foundation/test_recoveryctl.py",
+    "tests/foundation/test_taskctl_schema.py",
+    "tools/gcr7ctl.py",
+    "tools/recoveryctl.py",
+    "tools/taskctl.py"
+  ],
+  "requiredOutcomes": [
+    {
+      "criterion": "Bind all authority to exact base 2eea1d0c67eb57d53e88f6717de3cfcd96fcf282, GCR-0006 immutable packet/review/approval/schemas/feasibility bytes, current backlog, active hold, stopped W1 boundary, and witness.",
+      "evidence": "The R02 replay authenticates the exact approval base, predecessor references, live stopped boundary, and witness while explicitly isolating the state-absent authority fixture from ambient branch HEAD."
+    },
+    {
+      "criterion": "Supersede only GCR-0006.B00 execution authority; preserve every GCR-0006 artifact and its historical approval and HIGH feasibility finding unchanged.",
+      "evidence": "No GCR-0006 path changed; the exact-authority test passes again from the R02 descendant."
+    },
+    {
+      "criterion": "Before human approval, construct a complete disposable synthetic P-to-A-to-F Git lifecycle proving that the evidence blob contains only P, A is externally derived, state/transaction truthfully bind A after it exists, and F is externally derived without self-reference.",
+      "evidence": "The approved packet review remains immutable, and the R02 suite repeats the stronger C-E-S-L-P-A-F construction with exact direct-child deltas and P distinct from L."
+    },
+    {
+      "criterion": "Raise only reader/schema ceiling 11-to-12 during implementation while live revision/minimum and the canonical three-generation backlog remain 11 through B00 review.",
+      "evidence": "R02 changes only the test fixture; planning/backlog.yaml remains unchanged at live revision/minimum 11."
+    },
+    {
+      "criterion": "After independent B00 approval, append only exact GCR-0007 neutral 11-to-11 ceiling-12 generation; never append GCR-0006.",
+      "evidence": "The unchanged controller remains approval-gated and its neutral-generation negative tests pass."
+    },
+    {
+      "criterion": "Require exact adopted GCR-0007 P-to-A-to-F authority before any future v5 S03/B03 can be recognized; reject GCR-0006 substitution.",
+      "evidence": "The taskctl/recoveryctl v5 authority tests pass in the exact R02 replay."
+    },
+    {
+      "criterion": "Leave the post-append validator, exact historic W1.A04 denial, and v1-v4 supplement bytes and behavior unchanged.",
+      "evidence": "The W1.A04 denial regression passes at R02; no post-append or v1-v4 path changed."
+    },
+    {
+      "criterion": "Make old readers reject the adopted four-generation state and make new readers accept only exact authenticated predecessor/successor states; require GCR-0007 plus separate S03 at revision 12.",
+      "evidence": "Old-reader and revision-12 focused tests pass; the new frozen-REVIEW test also proves the reader accepts the exact committed S state without confusing it with a state-absent predecessor."
+    },
+    {
+      "criterion": "Use exact append-only evidence/review history and durable raw/canonical two-file CAS with Windows publication, flush, crash recovery, and cleanup controls.",
+      "evidence": "All lifecycle and 15 child-process fault-boundary tests pass after remediation."
+    },
+    {
+      "criterion": "Keep the hold active, W1 paused, T03 blocked, W1.A04 absent, G1 pending, and witness untracked/unstaged/non-authoritative.",
+      "evidence": "R02 changes only test isolation; all stopped-boundary and witness invariants remain exact."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion": "All seven GCR-0007 supporting files and this packet are valid, path-safe, exact-hash-bound, and inert; every declared predecessor reference reproduces its immutable Git blob.",
+      "evidence": "Exact-authority, schema, and redirected-path tests pass at R02."
+    },
+    {
+      "criterion": "The HIGH GCR-0006 self-reference finding is reproducible and GCR-0006 remains approved-but-inert with no implementation/state/evidence/transaction/generation artifact.",
+      "evidence": "The inert GCR-0006 regression passes and no GCR-0006 path changed."
+    },
+    {
+      "criterion": "Independent packet review builds and validates an actual disposable P-to-A-to-F Git sequence before human approval, proving A and F are constructible and externally derived with exact parentage and deltas.",
+      "evidence": "The immutable packet review remains approved; the R02 C-E-S-L-P-A-F test passes."
+    },
+    {
+      "criterion": "GCR-0007 approval can be introduced only after no-finding independent packet approval at the exact packet commit and becomes the sole B00 implementation base.",
+      "evidence": "The controller reauthenticates approval introduction 8babc35d0d82607a7301bc30189167dd4c0622c9 and its reviewed packet chain."
+    },
+    {
+      "criterion": "B00 implementation remains inside the exact allowlist, keeps live revision/minimum 11, and cannot adopt before independent B00 approval.",
+      "evidence": "The R02 descendant adds only an allowlisted test remediation and append-only R01 history; the controller still denies adoption while the latest state is adverse."
+    },
+    {
+      "criterion": "Runtime-v7 adoption evidence requires only approvedStateCommit P and explicitly rejects adoptionEvidenceCommit and finalizationCommit fields.",
+      "evidence": "The runtime-v7 negative-field test passes at R02."
+    },
+    {
+      "criterion": "Transaction and state bind A only after A exists; F is derived from Git as A's exact two-path child and is absent from canonical content.",
+      "evidence": "The full C-E-S-L-P-A-F and transaction tests pass at R02."
+    },
+    {
+      "criterion": "Only exact GCR-0007 is the fourth neutral generation; old/new reader behavior, revision-12 gating, GCR-0006 substitution denial, and generic-neutral denial are proven.",
+      "evidence": "Neutral-generation, old-reader, and revision-12 tests pass at R02."
+    },
+    {
+      "criterion": "Version-5 formats are exact to future S03/B03 and adopted GCR-0007, while v1-v4 and the W1.A04 denial remain unchanged.",
+      "evidence": "Both v5 focused tests and the unchanged W1.A04 denial regression pass at R02."
+    },
+    {
+      "criterion": "Crash/replay/redirection/substitution/partial/dirty/stale/fork/adverse/open-finding/self-review cases yield only exact predecessor or successor and otherwise fail byte-stably.",
+      "evidence": "All 15 GCR-0007 controller tests pass, including the newly separated exact state-absent and frozen-REVIEW boundaries."
+    },
+    {
+      "criterion": "No ordinary execution authority is created and all stopped-boundary and witness invariants remain exact.",
+      "evidence": "No authority-bearing production path changed in R02; the hold and witness remain unchanged."
+    }
+  ],
+  "checks": [
+    {
+      "command": "python -m unittest -v tests.foundation.test_gcr7ctl tests.foundation.test_taskctl_schema.BacklogSchemaTests.test_revision_twelve_headroom_requires_exact_neutral_gcr7_and_s03 tests.foundation.test_taskctl_schema.BacklogSchemaTests.test_neutral_gcr7_does_not_change_the_w1_a04_postappend_denial tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v5_schema_is_exact_to_s03_b03_and_gcr7 tests.foundation.test_recoveryctl.GovernanceRecoveryTests.test_v5_preappend_boundary_requires_gcr7_and_preserves_backlog",
+      "result": "passed",
+      "evidence": "19 tests passed in 34.742 seconds at the adverse R01 state projection plus the strict-descendant R02 remediation."
+    },
+    {
+      "command": ".venv\\Scripts\\ruff.exe format --check tests/foundation/test_gcr7ctl.py",
+      "result": "passed",
+      "evidence": "The remediated test file is formatted."
+    },
+    {
+      "command": ".venv\\Scripts\\ruff.exe check tests/foundation/test_gcr7ctl.py",
+      "result": "passed",
+      "evidence": "The remediated test file passes lint."
+    },
+    {
+      "command": ".venv\\Scripts\\mypy.exe tools/gcr7ctl.py tests/foundation/test_gcr7ctl.py",
+      "result": "passed",
+      "evidence": "The controller and remediated test pass type checking."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence": "No whitespace errors."
+    }
+  ],
+  "closures": [
+    {
+      "findingId": "GCR-0007.B00-R01-F01",
+      "disposition": "closed",
+      "evidence": "clone_authority_repo now checks out the explicit approval boundary instead of ambient branch HEAD, a separate test proves the exact frozen REVIEW state, and the independent-review command now passes 19/19 from the adverse R01 projection."
+    }
+  ],
+  "unverifiedItems": [],
+  "rootCauseAnalysis": null
+}
