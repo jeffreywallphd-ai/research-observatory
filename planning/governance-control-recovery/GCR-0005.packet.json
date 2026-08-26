@@ -11,15 +11,21 @@
   "rootAuthority": {
     "basis": "repository-owner-governance-mismatch-protocol",
     "exceptionScope": "one-time-exact-supplement-review-transition-recovery-only",
-    "packetReviewHistory": [],
+    "packetReviewHistory": [
+      {
+        "path": "planning/governance-control-recovery/GCR-0005.review-R01.json",
+        "sha256": "75e226bf85671869de5130e33cae6b6d8fa64bfafd386d9669a1a2c2d42b6da0",
+        "commit": "7abc2ecfa4d5449ab19dc93216eabf7d5ef15576"
+      }
+    ],
     "approvalSchema": {
       "path": "planning/governance-control-recovery/governance-control-recovery-runtime.v5.schema.json",
-      "sha256": "54f280faf9810811801fc4a405caee0bdb29d7c4231ae91e9b4b85efd7235ac8"
+      "sha256": "0a287b00236c7651831a9d1a2c78db4f1fbfaaab3c6857403dcb9221f508957c"
     },
     "approvalPath": "planning/governance-control-recovery/GCR-0005.approval.json",
     "authorityManifest": {
       "path": "planning/governance-control-recovery/GCR-0005.authority.json",
-      "sha256": "b6a3470ddb0980d28dcf20ea6b78e664713d03d3261ac50e15917d5ada2a75b3"
+      "sha256": "c1bfaa2dbe991dc0635c0dfa5b51af4da31fc55123e675b14ff693b7163ed35a"
     },
     "untrackedTriggerWitness": {
       "path": "artifacts/evidence/W1.A04.B00.json",
@@ -108,8 +114,13 @@
     "kind": "one-time-exact-grr-0002-b02-r01-adverse-projection-recovery",
     "reviewedStateCommit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c",
     "result": "changes-requested",
+    "projectionTimestamp": "2026-08-26T02:15:00+00:00",
     "controlRevisionBefore": 11,
     "controlRevisionAfter": 11,
+    "backlogBeforeRawSha256": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1",
+    "backlogBeforeCanonicalSha256": "3ffa93f894b5b63cbefd11d8b058eddf4deda96069aa03c9bb15bc116bc691cb",
+    "backlogAfterRawSha256": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798",
+    "backlogAfterCanonicalSha256": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798",
     "normalProjectionUnavailable": true,
     "explicitRecoveryAuthority": true,
     "exactFinalChangedPaths": [
@@ -235,7 +246,7 @@
     "B00 implementation changes only authorized controller/test/evidence/state paths, cannot edit the adverse ledger or reviewed backlog projection, keeps revision 11, and cannot apply the bridge before independent B00 approval.",
     "The GCR-0005 authority reader accepts only the exact independently approved packet, B00 review, active hold, frozen B02 R01 boundary, and witness, rejecting missing, stale, forked, adverse, substituted, dirty, or internally inconsistent authority byte-stably.",
     "Application derives the exact B02 R01 attempt and CHANGES_REQUESTED state from the unchanged ledger, records explicit GCR-0005 recovery authority in its application evidence, and closes no finding.",
-    "Application and repeated recovery can yield only the exact frozen predecessor or exact ledger-derived successor, including abrupt child-process termination at every durable boundary and deterministic-view generation failure.",
+    "Application and repeated recovery can yield only the exact frozen predecessor or exact ledger-derived successor, including abrupt child-process termination at every durable boundary and deterministic-view generation failure; focused Draft 2020-12 negative tests reject substituted state, evidence, raw/canonical hashes, paths, hold, witness, safety duties, and finalization records.",
     "The finalization commit is the direct child of application evidence and changes exactly the backlog and six declared deterministic views; revision 11 and every ordinary execution gate remain closed.",
     "Criterion-linked evidence, adversarial real-Git coverage, governed Python quality, exact diff scope, protected hashes, generated-view integrity, and independent review pass with no unexplained unverified item."
   ],
@@ -258,12 +269,13 @@
     {"id": "D", "title": "Start S03/B03 or skip R01", "disposition": "rejected", "consequence": "Violates the single-nonapproved-supplement or append-only-review controls."}
   ],
   "files": [
-    {"path": "planning/governance-control-recovery/GCR-0005.md", "sha256": "aa1b5cc5538a48a1112aa13a0fe0d012e3badc29afe59917d90d7ba05434d949"},
-    {"path": "planning/governance-control-recovery/GCR-0005-review.html", "sha256": "10192096f8bb56535464d93800918815a447b50ff734d018852434b69225a13f"},
-    {"path": "planning/governance-control-recovery/GCR-0005.authority.json", "sha256": "b6a3470ddb0980d28dcf20ea6b78e664713d03d3261ac50e15917d5ada2a75b3"},
-    {"path": "planning/governance-control-recovery/governance-control-recovery-request.v5.schema.json", "sha256": "94c3a600974c8e96fc4233aad43f732e33c4112cc199a33edcbb91f03df619ee"},
-    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v5.schema.json", "sha256": "54f280faf9810811801fc4a405caee0bdb29d7c4231ae91e9b4b85efd7235ac8"},
-    {"path": "planning/governance-control-recovery/governance-control-recovery-transaction.v5.schema.json", "sha256": "1e1e5faabf6c9060d8dab176adca00b41a41da204e437f430599ccfe664ef82a"}
+    {"path": "planning/governance-control-recovery/GCR-0005.md", "sha256": "35fa4df8f0bf85ef055de910a8f6063e11aca5d2ede7ba521f6dbbabfcd88c99"},
+    {"path": "planning/governance-control-recovery/GCR-0005-review.html", "sha256": "80038b382f2f04c02e3c5861ea45e62c23daa16c6e30d002b98fcf05347a0200"},
+    {"path": "planning/governance-control-recovery/GCR-0005.authority.json", "sha256": "c1bfaa2dbe991dc0635c0dfa5b51af4da31fc55123e675b14ff693b7163ed35a"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-request.v5.schema.json", "sha256": "8d13960d484b526edb00c4b7ce3c787a31e73f0742048a04fbac3111b67a9ef1"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-runtime.v5.schema.json", "sha256": "0a287b00236c7651831a9d1a2c78db4f1fbfaaab3c6857403dcb9221f508957c"},
+    {"path": "planning/governance-control-recovery/governance-control-recovery-transaction.v5.schema.json", "sha256": "14164a9cb90a59e0c825d78b7a8a940550fd99c3bc9d49b861411d8401cd2f03"},
+    {"path": "tests/foundation/test_gcr5_packet_schema.py", "sha256": "ba9634da97d6c36282fed75d11b70ac999c8db0006663ee05c55b015f3ef0d28"}
   ],
   "requiredApprovalStatement": "Approve only GCR-0005.B00 for the exact independently reviewed packet commit, preserving the GRR-0002.B02 R01 candidate, evidence, reviewed-state binding, adverse ledger, and open finding byte-for-byte and authorizing no review projection before independent B00 approval."
 }

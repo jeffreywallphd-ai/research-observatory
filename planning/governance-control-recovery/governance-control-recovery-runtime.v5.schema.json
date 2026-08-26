@@ -36,6 +36,63 @@
         "summary": {"type": "string", "minLength": 1}
       },
       "additionalProperties": false
+    },
+    "submission": {
+      "type": "object",
+      "required": ["attemptId", "submittedBy", "submittedAt", "candidateCommit", "baseCommit", "branch", "evidence", "priorAttemptId", "openFindingIds", "rootCauseAnalysis"],
+      "properties": {
+        "attemptId": {"type": "string", "pattern": "^R[0-9]{2}$"},
+        "submittedBy": {"const": "codex"}, "submittedAt": {"type": "string", "format": "date-time"},
+        "candidateCommit": {"$ref": "#/$defs/commit"}, "baseCommit": {"$ref": "#/$defs/commit"},
+        "branch": {"const": "codex/w1-windows-local-runtime"},
+        "evidence": {
+          "type": "object", "required": ["path", "sha256", "commit"],
+          "properties": {
+            "path": {"type": "string", "pattern": "^artifacts/evidence/governance-control-recovery/GCR-0005\\.B00\\.R[0-9]{2}\\.json$"},
+            "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}
+          },
+          "additionalProperties": false
+        },
+        "priorAttemptId": {"type": ["string", "null"], "pattern": "^R[0-9]{2}$"},
+        "openFindingIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "rootCauseAnalysis": {"type": ["object", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "bootstrapReview": {
+      "type": "object",
+      "required": ["reviewer", "result", "reviewedAt", "reviewedStateCommit", "notes"],
+      "properties": {
+        "reviewer": {"type": "string", "minLength": 1},
+        "result": {"enum": ["approved", "changes-requested", "blocked"]},
+        "reviewedAt": {"type": "string", "format": "date-time"},
+        "reviewedStateCommit": {"$ref": "#/$defs/commit"}, "notes": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "attempt": {
+      "type": "object",
+      "required": ["submission", "review", "ledger", "findings", "closures"],
+      "properties": {
+        "submission": {"$ref": "#/$defs/submission"},
+        "review": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/bootstrapReview"}]},
+        "ledger": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object", "required": ["path", "sha256", "commit"],
+              "properties": {
+                "path": {"type": "string", "pattern": "^planning/governance-control-recovery/GCR-0005\\.B00\\.review-R[0-9]{2}\\.json$"},
+                "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+        "closures": {"type": "array", "items": {"$ref": "#/$defs/closure"}}
+      },
+      "additionalProperties": false
     }
   },
   "oneOf": [
@@ -116,9 +173,71 @@
         "controlRecoveryId": {"const": "GCR-0005"}, "bootstrapUnit": {"const": "GCR-0005.B00"},
         "status": {"enum": ["READY", "REVIEW", "CHANGES_REQUESTED", "BLOCKED", "APPROVED", "APPLICATION_FINALIZATION", "APPLIED"]},
         "approval": {"$ref": "#/$defs/reference"},
-        "attempts": {"type": "array"}, "currentSubmission": {"type": ["object", "null"]},
-        "application": {"type": ["object", "null"]}
+        "attempts": {"type": "array", "items": {"$ref": "#/$defs/attempt"}},
+        "currentSubmission": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object", "required": ["attemptId", "candidateCommit", "evidenceSha256"],
+              "properties": {
+                "attemptId": {"type": "string", "pattern": "^R[0-9]{2}$"},
+                "candidateCommit": {"$ref": "#/$defs/commit"}, "evidenceSha256": {"$ref": "#/$defs/sha256"}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "application": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "required": ["approvedStateCommit", "applicationEvidence", "projectionTimestamp", "backlogBeforeRawSha256", "backlogBeforeCanonicalSha256", "backlogAfterRawSha256", "backlogAfterCanonicalSha256", "ledger", "changedPaths", "ordinaryExecutionAuthority"],
+              "properties": {
+                "approvedStateCommit": {"$ref": "#/$defs/commit"},
+                "applicationEvidence": {
+                  "type": "object", "required": ["path", "sha256", "commit"],
+                  "properties": {
+                    "path": {"const": "artifacts/evidence/governance-control-recovery/GCR-0005.B00.application.json"},
+                    "sha256": {"$ref": "#/$defs/sha256"}, "commit": {"$ref": "#/$defs/commit"}
+                  },
+                  "additionalProperties": false
+                },
+                "projectionTimestamp": {"const": "2026-08-26T02:15:00+00:00"},
+                "backlogBeforeRawSha256": {"const": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1"},
+                "backlogBeforeCanonicalSha256": {"const": "3ffa93f894b5b63cbefd11d8b058eddf4deda96069aa03c9bb15bc116bc691cb"},
+                "backlogAfterRawSha256": {"const": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798"},
+                "backlogAfterCanonicalSha256": {"const": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798"},
+                "ledger": {
+                  "type": "object", "required": ["path", "sha256", "commit", "reviewedStateCommit", "result", "openFindingIds"],
+                  "properties": {
+                    "path": {"const": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json"},
+                    "sha256": {"const": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09"},
+                    "commit": {"const": "8b784cabc5d5d996c00fd2fbcc8f22a1ad05b5bb"},
+                    "reviewedStateCommit": {"const": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c"},
+                    "result": {"const": "changes-requested"},
+                    "openFindingIds": {"const": ["GRR-0002.B02-R01-F01"]}
+                  },
+                  "additionalProperties": false
+                },
+                "changedPaths": {
+                  "const": ["docs/planning-implementation-plan.md", "planning/backlog.yaml", "planning/status-summary.md", "planning/review-site/manifest.json", "planning/review-site/recoveries/GRR-0002.html", "planning/review-site/recoveries/index.html", "planning/review-site/waves/W1.html"]
+                },
+                "ordinaryExecutionAuthority": {"const": false}
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
       },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "READY"}}}, "then": {"properties": {"attempts": {"maxItems": 0}, "currentSubmission": {"type": "null"}, "application": {"type": "null"}}}},
+        {"if": {"properties": {"status": {"const": "REVIEW"}}}, "then": {"properties": {"currentSubmission": {"type": "object"}, "application": {"type": "null"}, "attempts": {"contains": {"properties": {"review": {"type": "null"}, "ledger": {"type": "null"}}, "required": ["review", "ledger"]}}}}},
+        {"if": {"properties": {"status": {"const": "CHANGES_REQUESTED"}}}, "then": {"properties": {"currentSubmission": {"type": "null"}, "application": {"type": "null"}, "attempts": {"contains": {"properties": {"review": {"properties": {"result": {"const": "changes-requested"}}, "required": ["result"]}}, "required": ["review"]}}}}},
+        {"if": {"properties": {"status": {"const": "BLOCKED"}}}, "then": {"properties": {"currentSubmission": {"type": "null"}, "application": {"type": "null"}, "attempts": {"contains": {"properties": {"review": {"properties": {"result": {"const": "blocked"}}, "required": ["result"]}}, "required": ["review"]}}}}},
+        {"if": {"properties": {"status": {"const": "APPROVED"}}}, "then": {"properties": {"currentSubmission": {"type": "null"}, "application": {"type": "null"}, "attempts": {"contains": {"properties": {"review": {"properties": {"result": {"const": "approved"}}, "required": ["result"]}}, "required": ["review"]}}}}},
+        {"if": {"properties": {"status": {"enum": ["APPLICATION_FINALIZATION", "APPLIED"]}}}, "then": {"properties": {"currentSubmission": {"type": "null"}, "application": {"type": "object"}, "attempts": {"contains": {"properties": {"review": {"properties": {"result": {"const": "approved"}}, "required": ["result"]}}, "required": ["review"]}}}}}
+      ],
       "additionalProperties": false
     },
     {
@@ -139,16 +258,35 @@
     },
     {
       "type": "object",
-      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "approvedStateCommit", "applicationBaseCommit", "backlogBeforeSha256", "backlogAfterSha256", "ledger", "changedPaths", "checks", "ordinaryExecutionAuthority"],
+      "required": ["schemaVersion", "documentType", "controlRecoveryId", "bootstrapUnit", "approvedStateCommit", "applicationBaseCommit", "projectionTimestamp", "backlogBeforeRawSha256", "backlogBeforeCanonicalSha256", "backlogAfterRawSha256", "backlogAfterCanonicalSha256", "ledger", "ledgerBytePreserved", "openFindingIds", "changedPaths", "checks", "unverifiedItems", "ordinaryExecutionAuthority"],
       "properties": {
         "schemaVersion": {"const": "5.0-control-recovery-application-evidence"},
         "documentType": {"const": "governance-control-recovery-review-transition-evidence"},
         "controlRecoveryId": {"const": "GCR-0005"}, "bootstrapUnit": {"const": "GCR-0005.B00"},
         "approvedStateCommit": {"$ref": "#/$defs/commit"}, "applicationBaseCommit": {"$ref": "#/$defs/commit"},
-        "backlogBeforeSha256": {"const": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1"},
-        "backlogAfterSha256": {"$ref": "#/$defs/sha256"}, "ledger": {"$ref": "#/$defs/reference"},
-        "changedPaths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/path"}},
+        "projectionTimestamp": {"const": "2026-08-26T02:15:00+00:00"},
+        "backlogBeforeRawSha256": {"const": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1"},
+        "backlogBeforeCanonicalSha256": {"const": "3ffa93f894b5b63cbefd11d8b058eddf4deda96069aa03c9bb15bc116bc691cb"},
+        "backlogAfterRawSha256": {"const": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798"},
+        "backlogAfterCanonicalSha256": {"const": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798"},
+        "ledger": {
+          "type": "object", "required": ["path", "sha256", "commit", "reviewedStateCommit", "candidateCommit", "evidenceSha256", "result"],
+          "properties": {
+            "path": {"const": "planning/governance-recovery-approvals/GRR-0002.B02.review-R01.json"},
+            "sha256": {"const": "4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09"},
+            "commit": {"const": "8b784cabc5d5d996c00fd2fbcc8f22a1ad05b5bb"},
+            "reviewedStateCommit": {"const": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c"},
+            "candidateCommit": {"const": "d363c04c385251a5d789a0313e173342e7e0ae3e"},
+            "evidenceSha256": {"const": "77cdc545de58ef9d7237a8ba1c32969a449a87216479fd104e5649e6b5958595"},
+            "result": {"const": "changes-requested"}
+          },
+          "additionalProperties": false
+        },
+        "ledgerBytePreserved": {"const": true},
+        "openFindingIds": {"const": ["GRR-0002.B02-R01-F01"]},
+        "changedPaths": {"const": ["docs/planning-implementation-plan.md", "planning/backlog.yaml", "planning/status-summary.md", "planning/review-site/manifest.json", "planning/review-site/recoveries/GRR-0002.html", "planning/review-site/recoveries/index.html", "planning/review-site/waves/W1.html"]},
         "checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/check"}},
+        "unverifiedItems": {"type": "array", "maxItems": 0},
         "ordinaryExecutionAuthority": {"const": false}
       },
       "additionalProperties": false

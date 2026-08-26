@@ -3,6 +3,16 @@
   "documentType": "governance-control-recovery-authority-manifest",
   "controlRecoveryId": "GCR-0005",
   "targetWave": "W1",
+  "packetReviewHistory": [
+    {
+      "attemptId": "R01",
+      "path": "planning/governance-control-recovery/GCR-0005.review-R01.json",
+      "sha256": "75e226bf85671869de5130e33cae6b6d8fa64bfafd386d9669a1a2c2d42b6da0",
+      "commit": "7abc2ecfa4d5449ab19dc93216eabf7d5ef15576",
+      "result": "changes-requested",
+      "openFindingIds": ["GCR-0005-R01-F01"]
+    }
+  ],
   "frozenSupplementReviewBoundary": {
     "reviewedStateCommit": "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c",
     "candidateCommit": "d363c04c385251a5d789a0313e173342e7e0ae3e",
@@ -78,6 +88,7 @@
   },
   "stoppedBoundary": {
     "backlogSha256": "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1",
+    "backlogCanonicalSha256": "3ffa93f894b5b63cbefd11d8b058eddf4deda96069aa03c9bb15bc116bc691cb",
     "controlRevision": 11,
     "minimumToolRevision": 11,
     "waveStatus": "PAUSED",
@@ -88,6 +99,14 @@
     "blockedTaskStatus": "BLOCKED",
     "releaseGate": "G1",
     "releaseGateStatus": "PENDING"
+  },
+  "exactLedgerDerivedSuccessor": {
+    "projectionTimestamp": "2026-08-26T02:15:00+00:00",
+    "backlogRawSha256": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798",
+    "backlogCanonicalSha256": "86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798",
+    "bootstrapStatus": "CHANGES_REQUESTED",
+    "openFindingIds": ["GRR-0002.B02-R01-F01"],
+    "ordinaryExecutionAuthority": false
   },
   "triggerWitness": {
     "path": "artifacts/evidence/W1.A04.B00.json",

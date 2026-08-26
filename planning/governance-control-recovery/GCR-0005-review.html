@@ -5,6 +5,7 @@
 <p><a href="../review-site/waves/W1.html">W1 review</a> · <a href="GCR-0005.md">Canonical proposal</a></p>
 <h1>GCR-0005 — Recover the exact GRR-0002.B02 R01 adverse-review projection</h1>
 <div class="warn"><strong>Inert packet.</strong> It grants no B02 review projection, remediation, W1.A04, Wave, task, gate, hold-release, merge, or remote authority before independent packet review and exact-commit human approval.</div>
+<p><strong>R02 packet revision:</strong> R01 review is preserved append-only. The single blocking packet finding is remediated by exact runtime/transaction structures and negative schema tests. R02 still requires independent approval before human approval is available.</p>
 
 <h2>What failed</h2>
 <p>Independent B02 R01 review produced an exact <code>CHANGES_REQUESTED</code> ledger. The approved controller cannot record it because its B02 addendum loader requires the lawful live <code>REVIEW</code> backlog to equal the earlier <code>IN_PROGRESS</code> installed-candidate bytes. No backlog write occurred.</p>
@@ -13,6 +14,8 @@
 <tr><td>Candidate</td><td><code>d363c04c385251a5d789a0313e173342e7e0ae3e</code></td></tr>
 <tr><td>Backlog SHA-256</td><td><code>431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1</code></td></tr>
 <tr><td>Adverse ledger SHA-256</td><td><code>4b92f7b3a6a621e25c919f8571d7a87617966ae76a7dcbc4f3dcdd05af563e09</code></td></tr>
+<tr><td>Predecessor raw / canonical</td><td><code>431ac039…</code> / <code>3ffa93f8…</code></td></tr>
+<tr><td>Exact successor raw / canonical</td><td><code>86c40fde359bd64f0979e0a5e982fdfa13de3823b5b77afd1e5341abcc726798</code></td></tr>
 <tr><td>Control / W1</td><td>revision/minimum 11; active hold; W1 PAUSED; T03 BLOCKED; W1.A04 ABSENT; G1 PENDING</td></tr></table>
 
 <h2>Why ordinary remediation cannot start</h2>
@@ -20,6 +23,7 @@
 
 <h2>Recommended exact projection</h2>
 <ol><li>Implement and independently review only <code>GCR-0005.B00</code>.</li><li>Authenticate the frozen backlog, candidate, evidence, unchanged ledger, S02/addendum authority, hold, stopped Wave boundary, and witness.</li><li>Use a crash-safe one-time controller to derive only the ledger's adverse B02 projection.</li><li>Finalize one direct-child commit changing the backlog and its six deterministic views.</li><li>Resume ordinary strict-descendant B02 R02 remediation; do not close the R01 finding in the bridge.</li></ol>
+<p>The R02 schemas bind full attempt/review/application records, the still-open finding, exact ledger and evidence identities, the exact seven changed paths, fixed raw/canonical predecessor and successor hashes, active hold and witness, Windows durability duties, allowed terminal states, cleanup, and direct-child finalization. Focused negative tests reject the R01 substitution cases.</p>
 
 <h2>Safety boundary</h2>
 <div class="deny">No ledger edit, finding closure, B02 R02 submission/approval, control revision change, W1.A04 action, task claim, hold release, W1 resume, G1 approval, product/reference change, local-main integration, or remote action.</div>
