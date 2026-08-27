@@ -4730,20 +4730,13 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile security-local
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-22T04:51:13+00:00'
-      updated_at: '2026-08-22T05:32:32+00:00'
+      updated_at: '2026-08-27T21:49:49+00:00'
       completed_at: null
-      blocker:
-        reason: The revised UI change gate rejects a valid additive pre-UI quality inventory unless the task also contains
-          an unrelated independently reviewed late gate-hardening envelope; required desktop evidence cannot pass without
-          changing approved workflow controls.
-        next_action: Pause W1 at this quiescent boundary and approve a bounded ECR/amendment correcting the cumulative gate
-          condition with focused regression tests; adopt the amendment, resume W1, reopen T03, and rerun exact-commit qualification.
-        recorded_at: '2026-08-22T05:32:32+00:00'
-        owner: codex
+      blocker: null
       implementation_notes: ''
       evidence: []
       review:
@@ -4751,12 +4744,106 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: bfb8797398707bece9e0662c0d995fabaced9979
-      lease: null
+      base_sha: 8f23c995aeddb9009359298ae8009646ed284227
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-27T21:49:49+00:00'
+        expires_at: '2026-08-28T05:49:49+00:00'
       verification_state: null
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
+      recovery_control:
+        version: 1
+        id: CAP-02.S04.T03.RCV01
+        manifest:
+          path: artifacts/evidence/task-recovery/CAP-02.S04.T03.json
+          sha256: f29c7cec3cdb2273c081e284ccbdf762393c03e1adc352ce859b4a9f1bc23dac
+        authority:
+          amendment_id: W1.A03
+          hold_id: HOLD-W1-GRR-0001
+          checkpoint_id: W1.CP02
+        historical:
+          base: bfb8797398707bece9e0662c0d995fabaced9979
+          foundation: 461faf2870786609dea5a8e5214df380843329bb
+          candidate: 59079efccc122a7d56a9f18efc20030851bf32a9
+          block_record: 1c1d9ba427a55024687a62ca0c364acaccdbb7e2
+          pause_record: c7d543136fcd75c8f93dc8e669e59d54de433c02
+          block_task_sha256: dfafcb2ff9193ead171756c3e461d10a8f4df805024f9995930193b95d576c80
+          pause_task_sha256: dfafcb2ff9193ead171756c3e461d10a8f4df805024f9995930193b95d576c80
+        original_blocked_state:
+          id: CAP-02.S04.T03
+          capability_id: CAP-02
+          slice_id: CAP-02.S04
+          title: Create privacy, telemetry, retention, and secure-deletion settings
+          objective: Default-off telemetry, local log retention, provider egress choices, document retention, cache clearing,
+            and best-effort secure deletion disclosures.
+          deliverables:
+          - Default-off telemetry, local log retention, provider egress choices, document retention, cache clearing, and best-effort
+            secure deletion disclosures.
+          acceptance_criteria:
+          - Defaults keep research content local; changing egress requires informed consent; deletion accurately reports guarantees
+            and filesystem limitations.
+          - Automated tests cover the expected path and at least one material failure or boundary condition.
+          - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope
+            expansion.
+          dependencies:
+          - CAP-02.S04.T02
+          priority: P0
+          wave: W1
+          deployment_profiles:
+          - LOC
+          - LAB
+          - ALL
+          estimate: M
+          risk: high
+          review_gate: privacy-review
+          experience_change:
+            kind: approved-reference-implementation
+            contract_path: artifacts/evidence/ui-change/CAP-02.S04.T03.json
+            reference_id: RO-UI-ACADEMIC-MINIMAL-1.3
+            reference_version: '1.3'
+            reference_package_sha256: db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2
+            reference_approval_commit: 7e625150c57f518327d8dcce430371902ecaed10
+            previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.2
+            implementation_agent: agent:codex
+          verification_profiles:
+          - desktop
+          - security-local
+          verification_commands:
+          - python tools/verify.py --profile desktop
+          - python tools/verify.py --profile security-local
+          status: BLOCKED
+          owner: codex
+          branch: codex/w1-windows-local-runtime
+          started_at: '2026-08-22T04:51:13+00:00'
+          updated_at: '2026-08-22T05:32:32+00:00'
+          completed_at: null
+          blocker:
+            reason: The revised UI change gate rejects a valid additive pre-UI quality inventory unless the task also contains
+              an unrelated independently reviewed late gate-hardening envelope; required desktop evidence cannot pass without
+              changing approved workflow controls.
+            next_action: Pause W1 at this quiescent boundary and approve a bounded ECR/amendment correcting the cumulative
+              gate condition with focused regression tests; adopt the amendment, resume W1, reopen T03, and rerun exact-commit
+              qualification.
+            recorded_at: '2026-08-22T05:32:32+00:00'
+            owner: codex
+          implementation_notes: ''
+          evidence: []
+          review:
+            reviewer: null
+            result: null
+            reviewed_at: null
+            notes: null
+          base_sha: bfb8797398707bece9e0662c0d995fabaced9979
+          lease: null
+          verification_state: null
+          worktree: C:/workspace/research-observatory
+          platform_targets:
+          - windows-x64
+        recovered_by: codex
+        recovered_at: '2026-08-27T21:49:49+00:00'
+        new_base_sha: 8f23c995aeddb9009359298ae8009646ed284227
     - id: CAP-02.S04.T04
       capability_id: CAP-02
       slice_id: CAP-02.S04
