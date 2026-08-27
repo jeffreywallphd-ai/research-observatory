@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "reviewId": "GOV-MAINT-0001.R01",
+  "maintenanceId": "GOV-MAINT-0001",
+  "reviewedCommit": "1697616c11150e6fea97b0ed7b609d89210e4ba7",
+  "predecessorCommit": "d8adf48e9c2e0319e4ece573a9381f6ec305310e",
+  "reviewer": {
+    "identity": "Nash",
+    "role": "independent-control-security-reviewer",
+    "agentTask": "/root/grr2_b00_review"
+  },
+  "reviewedAt": "2026-08-27T17:32:40-04:00",
+  "disposition": "APPROVED",
+  "findings": [],
+  "verification": {
+    "scope": "The reviewed delta is exactly the maintenance record, the focused task-workflow tests, and taskctl; its parent is the adopted governance-migration boundary.",
+    "authorityBoundary": "W1 remains PAUSED; CAP-02.S04.T03 remains BLOCKED; G1 remains PENDING; no resume, task, gate, external, product, or experience authority is granted.",
+    "witnessBoundary": "The W1-only compatibility path requires control revision and minimum revision 11 or later, exact RELEASED HOLD-W1-GRR-0002 authority targeting W1, a safe nonredirected regular canonical witness, exact raw SHA-256, and exact schema, document, task, and candidate identities. Every additional untracked source remains denied.",
+    "persistenceBoundary": "The existing validated atomic persistence path continues to perform full schema and semantic immutable-recovery validation before any state write.",
+    "tests": "All 62 tests in tests.foundation.test_taskctl_workflow passed independently, including the focused witness denial cases; canonical backlog validation passed.",
+    "quality": "Independent py_compile and git diff --check passed. The candidate's governed Ruff formatting, Ruff lint, and mypy evidence was confirmed.",
+    "diagnosticDisclosure": "The maintenance record truthfully identifies the two ambient historical-fixture diagnostic errors as non-passing baseline findings and does not use them as approval evidence.",
+    "protectedWitness": {
+      "path": "artifacts/evidence/W1.A04.B00.json",
+      "tracked": false,
+      "staged": false,
+      "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+    }
+  },
+  "filesEditedByReviewer": false
+}

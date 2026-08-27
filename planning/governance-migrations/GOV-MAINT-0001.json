@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0001",
   "title": "Authenticate the retained W1.A04 witness during ordinary W1 resume",
-  "status": "implemented-pending-independent-review",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "predecessor": {
@@ -60,5 +60,14 @@
     ]
   },
   "rollback": "Do not use the repaired resume path or integrate the candidate if affected checks or independent review fail. Revert only this strict descendant to the reviewed d8adf48 predecessor; W1 remains PAUSED and the witness remains untracked and byte-exact.",
-  "review": null
+  "review": {
+    "reviewId": "GOV-MAINT-0001.R01",
+    "reviewedCommit": "1697616c11150e6fea97b0ed7b609d89210e4ba7",
+    "reviewer": "Nash",
+    "reviewedAt": "2026-08-27T17:32:40-04:00",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0001.review-R01.json",
+    "sha256": "89f665470212b554af492349b0d59217d432832f2a1b99934056bdfce300b408"
+  }
 }
