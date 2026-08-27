@@ -99,9 +99,11 @@ not an exception and never execution authority. Git state is sampled before and
 after generation to reject a racing producer-state change. The protocol requires
 a nonempty, internally consistent check selection but deliberately does not
 prescribe one universal checklist; callers select checks from the affected risk
-surface and reviewers judge adequacy. No receipt journal or mutation route exists
-in this increment; routing routine transitions through the receipt protocol
-remains a later cutover step.
+surface and reviewers judge adequacy. Overall status also derives from bound
+facts, so omitting a check cannot turn dirty producer state, source divergence,
+or shadow disagreement into a passing receipt. No receipt journal or mutation
+route exists in this increment; routing routine transitions through the receipt
+protocol remains a later cutover step.
 
 ### 4. Generic recovery and maintenance
 
