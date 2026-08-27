@@ -1256,7 +1256,7 @@
             {
               "task_id": "CAP-02.S04.T03",
               "title": "Create privacy, telemetry, retention, and secure-deletion settings",
-              "status": "IN_PROGRESS",
+              "status": "REVIEW",
               "mode": "append-only",
               "latest_review": {
                 "reviewer": "nash-independent-reviewer",
@@ -1372,7 +1372,59 @@
                     }
                   }
                 ],
-                "current_submission": null
+                "current_submission": {
+                  "id": "R02",
+                  "submitted_by": "codex",
+                  "submitted_at": "2026-08-27T22:27:27+00:00",
+                  "candidate_commit": "4c2579a71e043477bf4c025959bbf88c43f412d1",
+                  "base_commit": "a86c723905d9493efee4610c7513a1cfc9c124eb",
+                  "branch": "codex/w1-windows-local-runtime",
+                  "evidence_reference": {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/CAP-02.S04.T03.R02.json",
+                    "sha256": "bf0e839f411cd6d42d714c2a8db3757f714952866389986c69de3c8a478fca2a",
+                    "commit": "4c2579a71e043477bf4c025959bbf88c43f412d1",
+                    "recorded_at": "2026-08-27T22:27:27+00:00"
+                  },
+                  "acceptance_criteria_sha256": "b06d42b31c1ea4423ab56c4fa4f57a2f23e89c995e8bc1cd6afd8089e0ad8976",
+                  "changed_paths": [
+                    "artifacts/evidence/CAP-02.S04.T03.json",
+                    "artifacts/evidence/CAP-02.S04.T03.review-R01.json",
+                    "docs/planning-implementation-plan.md",
+                    "planning/backlog.yaml",
+                    "planning/review-site/CAP-02/CAP-02.S04.html",
+                    "planning/review-site/manifest.json",
+                    "planning/status-summary.md",
+                    "services/core-api/src/research_observatory_core/privacy.py",
+                    "tests/security/test_privacy_controls.py"
+                  ],
+                  "selected_checks": [
+                    ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-R02.json",
+                    ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py -v",
+                    ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_privacy_policy_contract",
+                    ".venv\\Scripts\\python.exe tools/quality_check.py",
+                    ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+                    ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check"
+                  ],
+                  "deferred_checks": [
+                    "Supply-chain and dependency scanning are deferred because the remediation changes no dependency or toolchain input. SQLCipher, database migration/rekey/recovery/performance, packaging, and full deployment qualification remain mandatory in T04, CAP-02.S04 integration review, risk-cluster checkpoints, and the W1 exit matrix."
+                  ],
+                  "selection_rationale": "CAP-02.S04.T03-R01-F01 identified a high-risk destructive TOCTOU boundary capable of applying cache-deletion authority to substituted canonical data. The remediation therefore selects exact Windows handle-bound swap and redirect adversarial cases, the full local-security suite, strict privacy contracts, the complete desktop verifier, governed Python quality, unchanged approved-reference lineage, and canonical workflow integrity. Dependency scanning, SQLCipher/database protection, performance, packaging, and complete cross-capability qualification are deferred because this strict-descendant fix changes no dependencies, database engine, packaging input, UI reference, or performance contract and those surfaces belong to T04, the CAP-02.S04 slice review, checkpoints, and W1 exit.",
+                  "selection_sha256": "dcbd3e9b501f4915f524582cd67d65741b5d5cb36f083ced56723856a628b308",
+                  "prior_attempt_id": "R01",
+                  "open_finding_ids": [
+                    "CAP-02.S04.T03-R01-F01"
+                  ],
+                  "root_cause_analysis": null,
+                  "selected_command_ids": [
+                    "desktop:application",
+                    "security-local:unit",
+                    "foundation:ui-change",
+                    "foundation:backlog",
+                    "foundation:backlog-views"
+                  ],
+                  "packet_sha256": "43432204c3bc2cac9804572b517c7ff084044970f206efff2ae25f224dd179f5"
+                }
               }
             },
             {
