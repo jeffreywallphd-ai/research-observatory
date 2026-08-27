@@ -105,6 +105,20 @@ or shadow disagreement into a passing receipt. No receipt journal or mutation
 route exists in this increment; routing routine transitions through the receipt
 protocol remains a later cutover step.
 
+The next increment adds the append/recovery mechanism without activating it.
+`tools/governance_store.py` has no CLI and no live-backlog path. It writes only
+three fixed files inside an existing caller-supplied fixture directory: an
+authenticated journal, one pending append transaction, and an operating-system
+lock. Fixture roots nested in any Git worktree are rejected. Preparation is
+inert; commit uses the caller's expected state and
+transaction hashes as compare-and-swap boundaries. A single generic recovery
+operation can complete or roll back either crash boundary. Receipts are built
+automatically from the event transition. Stored hashes prove internal
+consistency; CAS and recovery trust comes from the expected hash retained by the
+caller, not from accepting the store's own current hash. Live governance
+authority, maintenance operations, and legacy-controller retirement remain
+outside this increment.
+
 ### 4. Generic recovery and maintenance
 
 Use one `recover` protocol for interrupted appends. Add bounded `maintenance
@@ -161,3 +175,14 @@ retained histories. Historical evidence is never rewritten.
   receipts; they cannot be converted into execution authority.
 - The live command independently validates its receipt while preserving backlog
   bytes and modification time.
+
+## Verification for the fixture append/recovery increment
+
+- Preparation leaves journal state unchanged; commit appends exactly one event
+  and its automatically generated receipt.
+- Stale state hashes, competing pending transactions, substituted transaction
+  hashes, rewritten transaction contents, and off-boundary recovery fail closed.
+- Recovery completes a prepared append or rolls back a materialized successor
+  after a simulated crash between state replacement and transaction cleanup.
+- Static tests prove the store exposes no CLI and contains no live-backlog path;
+  every write is confined to temporary fixture directories.
