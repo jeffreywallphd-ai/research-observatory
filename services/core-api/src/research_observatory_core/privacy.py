@@ -38,7 +38,7 @@ from .ports.repositories import (
     RepositoryConflict,
     RepositoryProblem,
 )
-from .projects import ProjectLifecycleService
+from .projects import ProjectLifecycleService, _held_directory_renamer, _stable_directories
 
 _SETTING_KEYS = (
     "privacy.cache-retention-days",
@@ -88,6 +88,7 @@ class PrivacyPolicyProblem(Exception):
 
 @dataclass(frozen=True, slots=True)
 class _CacheInventory:
+    root_identity: tuple[int, int]
     fingerprint: str
     item_count: int
     byte_count: int
@@ -300,11 +301,26 @@ def _reparse(status: os.stat_result) -> bool:
     return bool(getattr(status, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0))
 
 
+def _directory_identity(path: Path) -> tuple[int, int] | None:
+    try:
+        status = path.stat(follow_symlinks=False)
+    except OSError:
+        return None
+    if not stat.S_ISDIR(status.st_mode) or _reparse(status):
+        return None
+    return (status.st_dev, status.st_ino)
+
+
+def _cache_clear_boundary(_name: str) -> None:
+    """Deterministic adversarial-test seam at destructive cache boundaries."""
+
+
 def _inventory(cache: Path) -> _CacheInventory:
     try:
         root_status = cache.stat(follow_symlinks=False)
         if not stat.S_ISDIR(root_status.st_mode) or _reparse(root_status):
             raise OSError("cache root is redirected")
+        root_identity = (root_status.st_dev, root_status.st_ino)
         digest = hashlib.sha256()
         items = 0
         byte_count = 0
@@ -339,7 +355,9 @@ def _inventory(cache: Path) -> _CacheInventory:
                 digest.update(b"\0")
                 digest.update(str(status.st_mtime_ns).encode("ascii"))
                 digest.update(b"\n")
-        return _CacheInventory(digest.hexdigest(), items, byte_count)
+        if _directory_identity(cache) != root_identity:
+            raise OSError("cache root identity changed during inventory")
+        return _CacheInventory(root_identity, digest.hexdigest(), items, byte_count)
     except (OSError, UnicodeError, ValueError) as error:
         raise _problem(
             status=409,
@@ -350,10 +368,17 @@ def _inventory(cache: Path) -> _CacheInventory:
         ) from error
 
 
-def _remove_tree_no_follow(path: Path) -> None:
+def _remove_tree_no_follow(
+    path: Path,
+    *,
+    expected_root_identity: tuple[int, int] | None = None,
+    remove_root: bool = True,
+) -> None:
     status = path.stat(follow_symlinks=False)
     if not stat.S_ISDIR(status.st_mode) or _reparse(status):
         raise OSError("cleanup root is redirected")
+    if expected_root_identity is not None and (status.st_dev, status.st_ino) != expected_root_identity:
+        raise OSError("cleanup root identity changed")
     with os.scandir(path) as entries:
         ordered = list(entries)
     for entry in ordered:
@@ -365,7 +390,8 @@ def _remove_tree_no_follow(path: Path) -> None:
             candidate.rmdir()
         else:
             candidate.unlink()
-    path.rmdir()
+    if remove_root:
+        path.rmdir()
 
 
 class ProjectPrivacyObjectAccessPolicy(ObjectAccessPolicy):
@@ -506,21 +532,9 @@ class ProjectPrivacyService:
                 detail="Cache clearing requires the exact current project-specific preview and confirmation.",
                 remediation="Preview the cache again, review the deletion limitations, and reconfirm.",
             )
-        repository = self._repository(path, project_id)
-        policy = _read_policy(repository, project_id)
-        inventory = _inventory(path / "cache")
-        if policy.revision != preview.policy_revision or inventory != preview.inventory:
-            with self._mutex:
-                self._previews.pop(command.preview_token, None)
-            raise _problem(
-                status=409,
-                code="RO-CORE-CACHE-PREVIEW-STALE",
-                title="Cache cleanup preview is stale",
-                detail="The project policy or cache inventory changed after the preview.",
-                remediation="Preview the cache again and review the updated scope before clearing.",
-            )
         cache = path / "cache"
-        tombstone = path / ".tmp" / f"{_CACHE_TOMBSTONE_PREFIX}{command.preview_token}"
+        temporary = path / ".tmp"
+        tombstone = temporary / f"{_CACHE_TOMBSTONE_PREFIX}{command.preview_token}"
         if tombstone.exists() or tombstone.is_symlink():
             raise _problem(
                 status=409,
@@ -529,41 +543,83 @@ class ProjectPrivacyService:
                 detail="A cache cleanup staging identity already exists.",
                 remediation="Run project health recovery before retrying cache cleanup.",
             )
+        repository = self._repository(path, project_id)
+        policy = _read_policy(repository, project_id)
+        cleanup_pending = False
         try:
-            cache.rename(tombstone)
-            try:
-                cache.mkdir(mode=0o700)
-            except OSError:
-                tombstone.rename(cache)
-                raise
-            try:
-                now = _timestamp()
-                record_sha256 = hashlib.sha256(
-                    json.dumps(
-                        {
-                            "byteCount": inventory.byte_count,
-                            "fingerprint": inventory.fingerprint,
-                            "itemCount": inventory.item_count,
-                            "projectId": project_id,
-                            "scope": "project-cache-only",
-                        },
-                        sort_keys=True,
-                        separators=(",", ":"),
-                    ).encode("utf-8")
-                ).hexdigest()
-                repository.append_event(
-                    PrivacyAuditEvent(
-                        event_id=new_uuid_v7(),
-                        event_type="privacy.cache.cleared",
-                        occurred_at=now,
-                        trace_id=trace_id,
-                        record_sha256=record_sha256,
-                    )
-                )
-            except BaseException:
-                cache.rmdir()
-                tombstone.rename(cache)
-                raise
+            with _stable_directories([path, temporary]):
+                with _held_directory_renamer(cache) as rename_cache:
+                    inventory = _inventory(cache)
+                    if policy.revision != preview.policy_revision or inventory != preview.inventory:
+                        with self._mutex:
+                            self._previews.pop(command.preview_token, None)
+                        raise _problem(
+                            status=409,
+                            code="RO-CORE-CACHE-PREVIEW-STALE",
+                            title="Cache cleanup preview is stale",
+                            detail="The project policy or cache inventory changed after the preview.",
+                            remediation="Preview the cache again and review the updated scope before clearing.",
+                        )
+                    _cache_clear_boundary("before-held-cache-rename")
+                    rename_cache(tombstone)
+                    replacement_identity: tuple[int, int] | None = None
+                    try:
+                        _cache_clear_boundary("after-held-cache-rename")
+                        if _directory_identity(tombstone) != inventory.root_identity:
+                            raise OSError("staged cache identity does not match the confirmed inventory")
+                        if _inventory(tombstone) != inventory:
+                            raise OSError("staged cache contents changed before deletion")
+                        cache.mkdir(mode=0o700)
+                        replacement_identity = _directory_identity(cache)
+                        if replacement_identity is None:
+                            raise OSError("replacement cache identity is invalid")
+                        now = _timestamp()
+                        record_sha256 = hashlib.sha256(
+                            json.dumps(
+                                {
+                                    "byteCount": inventory.byte_count,
+                                    "fingerprint": inventory.fingerprint,
+                                    "itemCount": inventory.item_count,
+                                    "projectId": project_id,
+                                    "scope": "project-cache-only",
+                                },
+                                sort_keys=True,
+                                separators=(",", ":"),
+                            ).encode("utf-8")
+                        ).hexdigest()
+                        repository.append_event(
+                            PrivacyAuditEvent(
+                                event_id=new_uuid_v7(),
+                                event_type="privacy.cache.cleared",
+                                occurred_at=now,
+                                trace_id=trace_id,
+                                record_sha256=record_sha256,
+                            )
+                        )
+                    except BaseException as error:
+                        if replacement_identity is not None:
+                            if _directory_identity(cache) != replacement_identity:
+                                raise OSError("replacement cache changed before rollback") from error
+                            cache.rmdir()
+                        if _directory_identity(tombstone) != inventory.root_identity:
+                            raise OSError("staged cache changed before rollback") from error
+                        rename_cache(cache)
+                        raise
+                    try:
+                        _remove_tree_no_follow(
+                            tombstone,
+                            expected_root_identity=inventory.root_identity,
+                            remove_root=False,
+                        )
+                    except OSError:
+                        cleanup_pending = True
+                if not cleanup_pending:
+                    try:
+                        if _directory_identity(tombstone) != inventory.root_identity:
+                            raise OSError("empty cleanup root identity changed")
+                        tombstone.rmdir()
+                    except OSError:
+                        cleanup_pending = True
         except PrivacyPolicyProblem:
             raise
         except (OSError, RepositoryProblem, TypeError, ValueError) as error:
@@ -575,11 +631,6 @@ class ProjectPrivacyService:
                 remediation="Run project health checks and preview the cache again.",
                 retryable=True,
             ) from error
-        cleanup_pending = False
-        try:
-            _remove_tree_no_follow(tombstone)
-        except OSError:
-            cleanup_pending = True
         with self._mutex:
             self._previews.pop(command.preview_token, None)
         state = CacheClearState.CLEARED_CLEANUP_PENDING if cleanup_pending else CacheClearState.CLEARED

@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
@@ -258,6 +259,99 @@ class PrivacyControlTests(unittest.TestCase):
         finally:
             connection.close()
         self.assertEqual(count, 1)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
+    def test_cache_clear_holds_exact_root_identity_across_the_rename_boundary(self) -> None:
+        self.open()
+        cache = self.root / "cache"
+        cached = cache / "derived.bin"
+        cached.write_bytes(b"rebuildable")
+        canonical = self.root / "config" / "project-profile.json"
+        canonical_before = canonical.read_bytes()
+        preview = self.privacy.preview_cache(str(self.root))
+        displaced = self.parent / "adversarial-cache-swap"
+        boundaries: list[str] = []
+
+        def attempt_swap(boundary: str) -> None:
+            boundaries.append(boundary)
+            if boundary != "before-held-cache-rename":
+                return
+            try:
+                cache.rename(displaced)
+            except OSError:
+                raise
+            else:
+                displaced.rename(cache)
+                raise AssertionError("the held cache directory allowed a path substitution")
+
+        with (
+            patch("research_observatory_core.privacy._cache_clear_boundary", side_effect=attempt_swap),
+            self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-PATH-INVALID"),
+        ):
+            self.privacy.clear_cache(
+                CacheClearRequest(
+                    root=str(self.root),
+                    preview_token=preview.preview_token,
+                    confirmation=preview.confirmation,
+                ),
+                trace_id=TRACE,
+            )
+
+        self.assertEqual(boundaries, ["before-held-cache-rename"])
+        self.assertEqual(cached.read_bytes(), b"rebuildable")
+        self.assertEqual(canonical.read_bytes(), canonical_before)
+        self.assertFalse(displaced.exists())
+        self.assertEqual(list((self.root / ".tmp").glob("cache-clear-*")), [])
+        connection = sqlite3.connect(self.root / "state" / "project.sqlite3")
+        try:
+            count = connection.execute(
+                "SELECT COUNT(*) FROM provenance_events WHERE event_type='privacy.cache.cleared'"
+            ).fetchone()[0]
+        finally:
+            connection.close()
+        self.assertEqual(count, 0)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
+    def test_cache_clear_rejects_a_post_preview_redirect_without_touching_its_target(self) -> None:
+        self.open()
+        cache = self.root / "cache"
+        target = self.parent / "post-preview-cache-target"
+        (cache / "derived.bin").write_bytes(b"rebuildable")
+        preview = self.privacy.preview_cache(str(self.root))
+        cache.rename(target)
+        protected = target / "must-remain.txt"
+        protected.write_text("outside", encoding="utf-8")
+        created = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(cache), str(target)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if created.returncode != 0:
+            target.rename(cache)
+            self.skipTest(f"directory junctions are unavailable: {created.stderr.strip()}")
+        try:
+            with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-PATH-INVALID"):
+                self.privacy.clear_cache(
+                    CacheClearRequest(
+                        root=str(self.root),
+                        preview_token=preview.preview_token,
+                        confirmation=preview.confirmation,
+                    ),
+                    trace_id=TRACE,
+                )
+            self.assertEqual(protected.read_text(encoding="utf-8"), "outside")
+            connection = sqlite3.connect(self.root / "state" / "project.sqlite3")
+            try:
+                count = connection.execute(
+                    "SELECT COUNT(*) FROM provenance_events WHERE event_type='privacy.cache.cleared'"
+                ).fetchone()[0]
+            finally:
+                connection.close()
+            self.assertEqual(count, 0)
+        finally:
+            os.rmdir(cache)
+            target.rename(cache)
 
     @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
     def test_cache_preview_rejects_a_redirect_without_touching_its_target(self) -> None:
