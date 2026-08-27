@@ -14,6 +14,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 import governance_kernel  # noqa: E402
+import governance_receipt  # noqa: E402
 import governancectl  # noqa: E402
 
 
@@ -193,6 +194,21 @@ class GovernancectlTests(unittest.TestCase):
         self.assertEqual(document["source"]["sha256"], event["source"]["sha256"])
         self.assertEqual("self-check-only", document["kernel"]["checkpointTrust"])
         self.assertTrue(document["kernel"]["checkpointTailVerified"])
+        receipt = document["kernel"]["receipt"]
+        git_binding = governancectl.current_git_binding(REPO)
+        governance_receipt.validate_receipt(
+            receipt,
+            event=event,
+            before_projection=governance_kernel.initial_projection(),
+            after_projection=document["kernel"]["projection"],
+            expected_git_binding=git_binding,
+        )
+        self.assertEqual("evidence-only", receipt["authority"])
+        self.assertFalse(receipt["mutationPerformed"])
+        expected_status = (
+            "passed" if git_binding["trackedWorktreeClean"] and document["shadowAgreement"]["category"] else "failed"
+        )
+        self.assertEqual(expected_status, receipt["verification"]["overallStatus"])
         self.assertEqual(before, backlog.read_bytes())
         self.assertEqual(before_mtime, backlog.stat().st_mtime_ns)
 

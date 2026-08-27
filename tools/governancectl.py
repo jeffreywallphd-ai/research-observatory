@@ -16,11 +16,13 @@ import io
 import json
 import os
 import stat
+import subprocess
 from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any
 
 import governance_kernel
+import governance_receipt
 import taskctl
 import yaml
 
@@ -28,6 +30,36 @@ SCHEMA_VERSION = "1.0"
 DOCUMENT_TYPE = "governance-next-action-shadow"
 DEFAULT_PROFILE = "LOC"
 DEFAULT_PLATFORM = "windows-x64"
+
+
+def current_git_binding(root: Path) -> governance_receipt.GitBinding:
+    head = subprocess.run(
+        ["git", "rev-parse", "--verify", "HEAD"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    branch = subprocess.run(
+        ["git", "branch", "--show-current"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    tracked = subprocess.run(["git", "diff", "--quiet", "HEAD", "--"], cwd=root, check=False)
+    if head.returncode != 0 or branch.returncode != 0 or tracked.returncode not in {0, 1}:
+        raise SystemExit("Cannot resolve the exact Git producer state for the shadow receipt")
+    binding: governance_receipt.GitBinding = {
+        "commit": head.stdout.strip(),
+        "branch": branch.stdout.strip(),
+        "trackedWorktreeClean": tracked.returncode == 0,
+    }
+    try:
+        governance_receipt.validate_git_binding(binding)
+    except governance_receipt.ReceiptValidationError as exc:
+        raise SystemExit(f"Shadow receipt Git producer state is invalid: {exc}") from exc
+    return binding
 
 
 def is_redirected_path(path: Path) -> bool:
@@ -377,6 +409,7 @@ def command_next(args: argparse.Namespace) -> None:
     if not args.shadow or not args.json_output:
         raise SystemExit("The first governancectl increment is advisory only; use `next --shadow --json`.")
     root = repository_root(args.repo)
+    git_before = current_git_binding(root)
     backlog_path = guarded_repository_path(root, "planning/backlog.yaml")
     before = backlog_path.read_bytes()
     before_stat = backlog_path.stat()
@@ -426,6 +459,7 @@ def command_next(args: argparse.Namespace) -> None:
         legacy_category=str(legacy["category"]),
         shadow_agreement=bool(output["shadowAgreement"]["category"]),
     )
+    initial_projection = governance_kernel.initial_projection()
     projection = governance_kernel.verify_and_project([event])
     checkpoint = governance_kernel.build_checkpoint(projection)
     if (
@@ -437,6 +471,21 @@ def command_next(args: argparse.Namespace) -> None:
         != projection
     ):
         raise SystemExit("Shadow governance checkpoint replay differs from the event projection")
+    receipt = governance_receipt.build_receipt(
+        event=event,
+        before_projection=initial_projection,
+        after_projection=projection,
+        git_binding=git_before,
+        check_results={
+            "event-envelope": True,
+            "legacy-category-agreement": bool(output["shadowAgreement"]["category"]),
+            "producer-git-binding": git_before["trackedWorktreeClean"],
+            "projection-transition": True,
+            "source-byte-stability": True,
+        },
+    )
+    if current_git_binding(root) != git_before:
+        raise SystemExit("Git producer state changed during shadow receipt generation")
     output["kernel"] = {
         "mode": "shadow",
         "event": event,
@@ -444,6 +493,7 @@ def command_next(args: argparse.Namespace) -> None:
         "checkpoint": checkpoint,
         "checkpointTrust": "self-check-only",
         "checkpointTailVerified": True,
+        "receipt": receipt,
     }
     print(json.dumps(output, indent=2, sort_keys=True))
 
