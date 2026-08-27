@@ -128,7 +128,7 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -137,13 +137,12 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-27T21:34:26+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-08-27T21:34:26+00:00'
-      expires_at: '2026-08-28T21:34:26+00:00'
+    updated_at: '2026-08-27T21:37:53+00:00'
+    pause_reason: Exact CAP-02.S04.T03 recovery is atomically denied because immutable GRR history requires the retained W1.A04
+      witness while the recovery cleanliness gate rejects that same byte-exact untracked witness; pause at the committed dc17b55
+      resume boundary for one bounded Tier-2 compatibility maintenance increment.
+    pause_category: infeasible
+    lease: null
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -183,7 +182,7 @@ waves:
     notes: Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001
       release and explicit ordinary Wave resume.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
