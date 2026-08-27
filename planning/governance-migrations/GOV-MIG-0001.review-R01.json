@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-automation-migration-review",
+  "reviewId": "GOV-MIG-0001.R01",
+  "migrationId": "GOV-MIG-0001",
+  "reviewedCommit": "bba0fb54725a20255dfc0140cd87ad086d357fcd",
+  "predecessorCommit": "174174d6b276d7e2f7606cda7555441170efcb3f",
+  "reviewer": {
+    "identity": "Nash",
+    "role": "independent-control-security-reviewer",
+    "agentTask": "/root/grr2_b00_review"
+  },
+  "reviewedAt": "2026-08-27T16:38:40-04:00",
+  "disposition": "APPROVED",
+  "findings": [],
+  "verification": {
+    "authorityBoundary": "W1 PAUSED with no lease; CAP-02.S04.T03 BLOCKED; G1 PENDING; no product, reference, application, service, package, resume, claim, or task-recovery mutation.",
+    "migrationBoundary": "HOLD-W1-GRR-0002 alone is RELEASED through the exact predecessor- and backlog-hash-bound GOV-MIG-0001 transition; prior ECR, GRR, GCR, amendment, review, and evidence history is preserved.",
+    "resumeRecoveryBoundary": "The future T03 recovery requires the real clean direct child of the immutable pre-resume commit and exactly five modification-only generated resume paths; missing, extra, wrong, stale, dirty, substitution, and atomicity cases fail closed.",
+    "quality": "Governed formatting, Ruff, and mypy passed 140 files; an independent missing-import probe remained a failure after --no-namespace-packages.",
+    "tests": "151 risk-selected control, schema, UI, and quality-controller tests passed in the independent replay.",
+    "projection": "Shadow and legacy next-action categories agree; the evidence-only receipt passed and is bound to the clean reviewed commit.",
+    "generatedViews": "Backlog validation, generated views, and all 150 planning review pages passed.",
+    "protectedWitness": {
+      "path": "artifacts/evidence/W1.A04.B00.json",
+      "tracked": false,
+      "staged": false,
+      "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+    }
+  },
+  "filesEditedByReviewer": false
+}

@@ -3,7 +3,7 @@
   "documentType": "governance-automation-migration",
   "migrationId": "GOV-MIG-0001",
   "title": "Adopt the stable governance kernel and retire incident-specific controller escalation",
-  "status": "implemented-pending-independent-review",
+  "status": "adopted",
   "riskTier": 2,
   "authorizedBy": "repository-owner",
   "authorizedAt": "2026-08-27T16:03:47-04:00",
@@ -61,5 +61,14 @@
     "No release gate, approved experience reference, product source, privacy policy, acceptance criterion, completed task, or remote state changes in this migration."
   ],
   "rollback": "Do not integrate the candidate into main if independent review or affected verification fails. The predecessor commit retains the active hold and the exact stopped state; no remote state is changed.",
-  "review": null
+  "review": {
+    "reviewId": "GOV-MIG-0001.R01",
+    "reviewedCommit": "bba0fb54725a20255dfc0140cd87ad086d357fcd",
+    "reviewer": "Nash",
+    "reviewedAt": "2026-08-27T16:38:40-04:00",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MIG-0001.review-R01.json",
+    "sha256": "984c220f5e9d69c5d749da5c9c2868f7b36250dfaa74c4f13f224cfa507de463"
+  }
 }
