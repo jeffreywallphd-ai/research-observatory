@@ -111,6 +111,54 @@ class PrivacyControlTests(unittest.TestCase):
     def open(self) -> None:
         self.lifecycle.open(root=str(self.root), trace_id=TRACE)
 
+    def privacy_cache_clear_audit_count(self) -> int:
+        connection = sqlite3.connect(self.root / "state" / "project.sqlite3")
+        try:
+            return int(
+                connection.execute(
+                    "SELECT COUNT(*) FROM provenance_events WHERE event_type='privacy.cache.cleared'"
+                ).fetchone()[0]
+            )
+        finally:
+            connection.close()
+
+    def assert_staged_canonical_substitution_is_denied(self, boundary_name: str) -> None:
+        self.open()
+        cache = self.root / "cache"
+        cached = cache / "derived.bin"
+        cached.write_bytes(b"rebuildable")
+        canonical_directory = self.root / "config"
+        canonical = canonical_directory / "project-profile.json"
+        canonical_before = canonical.read_bytes()
+        preview = self.privacy.preview_cache(str(self.root))
+        tombstone = self.root / ".tmp" / f"cache-clear-{preview.preview_token}"
+        boundaries: list[str] = []
+
+        def attempt_substitution(boundary: str) -> None:
+            boundaries.append(boundary)
+            if boundary == boundary_name:
+                canonical_directory.rename(tombstone / "config")
+
+        with (
+            patch("research_observatory_core.privacy._cache_clear_boundary", side_effect=attempt_substitution),
+            self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-PATH-INVALID"),
+        ):
+            self.privacy.clear_cache(
+                CacheClearRequest(
+                    root=str(self.root),
+                    preview_token=preview.preview_token,
+                    confirmation=preview.confirmation,
+                ),
+                trace_id=TRACE,
+            )
+
+        self.assertIn(boundary_name, boundaries)
+        self.assertEqual(canonical.read_bytes(), canonical_before)
+        self.assertEqual(cached.read_bytes(), b"rebuildable")
+        self.assertFalse(tombstone.exists())
+        self.assertEqual(self.privacy_cache_clear_audit_count(), 0)
+        (cache / "acl-restored.bin").write_bytes(b"writable")
+
     def test_defaults_are_local_only_and_project_session_authority_is_retained(self) -> None:
         with self.assertRaisesRegex(ProjectLifecycleProblem, "RO-CORE-PROJECT-NOT-OPEN"):
             self.privacy.get(str(self.root))
@@ -310,6 +358,84 @@ class PrivacyControlTests(unittest.TestCase):
         finally:
             connection.close()
         self.assertEqual(count, 0)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
+    def test_cache_clear_denies_canonical_insertion_after_the_held_rename(self) -> None:
+        self.assert_staged_canonical_substitution_is_denied("after-held-cache-rename")
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
+    def test_cache_clear_denies_canonical_insertion_after_staged_validation(self) -> None:
+        self.assert_staged_canonical_substitution_is_denied("after-staged-cache-validation")
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
+    def test_cache_clear_keeps_the_staged_tree_protected_after_audit(self) -> None:
+        self.open()
+        cache = self.root / "cache"
+        (cache / "derived.bin").write_bytes(b"rebuildable")
+        canonical_directory = self.root / "config"
+        canonical = canonical_directory / "project-profile.json"
+        canonical_before = canonical.read_bytes()
+        preview = self.privacy.preview_cache(str(self.root))
+        tombstone = self.root / ".tmp" / f"cache-clear-{preview.preview_token}"
+        denied: list[str] = []
+
+        def attempt_substitution(boundary: str) -> None:
+            if boundary != "after-cache-audit-before-cleanup":
+                return
+            try:
+                canonical_directory.rename(tombstone / "config")
+            except OSError:
+                denied.append(boundary)
+            else:
+                (tombstone / "config").rename(canonical_directory)
+                raise AssertionError("the protected staged tree accepted canonical project data")
+
+        with patch("research_observatory_core.privacy._cache_clear_boundary", side_effect=attempt_substitution):
+            result = self.privacy.clear_cache(
+                CacheClearRequest(
+                    root=str(self.root),
+                    preview_token=preview.preview_token,
+                    confirmation=preview.confirmation,
+                ),
+                trace_id=TRACE,
+            )
+
+        self.assertEqual(denied, ["after-cache-audit-before-cleanup"])
+        self.assertEqual(canonical.read_bytes(), canonical_before)
+        self.assertFalse(tombstone.exists())
+        self.assertEqual(result.state.value, "cleared")
+        self.assertEqual(self.privacy_cache_clear_audit_count(), 1)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
+    def test_cleanup_pending_tombstone_remains_protected_from_canonical_insertion(self) -> None:
+        self.open()
+        cache = self.root / "cache"
+        (cache / "derived.bin").write_bytes(b"rebuildable")
+        canonical_directory = self.root / "config"
+        canonical = canonical_directory / "project-profile.json"
+        canonical_before = canonical.read_bytes()
+        preview = self.privacy.preview_cache(str(self.root))
+        tombstone = self.root / ".tmp" / f"cache-clear-{preview.preview_token}"
+
+        with patch(
+            "research_observatory_core.privacy._remove_tree_no_follow",
+            side_effect=OSError("forced cleanup interruption"),
+        ):
+            result = self.privacy.clear_cache(
+                CacheClearRequest(
+                    root=str(self.root),
+                    preview_token=preview.preview_token,
+                    confirmation=preview.confirmation,
+                ),
+                trace_id=TRACE,
+            )
+
+        self.assertEqual(result.state.value, "cleared-cleanup-pending")
+        self.assertTrue(tombstone.is_dir())
+        with self.assertRaises(OSError):
+            canonical_directory.rename(tombstone / "config")
+        self.assertEqual(canonical.read_bytes(), canonical_before)
+        self.assertEqual(self.privacy_cache_clear_audit_count(), 1)
 
     @unittest.skipUnless(sys.platform == "win32", "Windows release-authority path boundary")
     def test_cache_clear_rejects_a_post_preview_redirect_without_touching_its_target(self) -> None:

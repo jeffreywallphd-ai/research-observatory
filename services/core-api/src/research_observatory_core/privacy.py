@@ -7,10 +7,12 @@ import json
 import os
 import secrets
 import stat
+import sys
 import threading
 import time
-from collections.abc import Callable
-from dataclasses import dataclass
+from collections.abc import Callable, Iterator
+from contextlib import ExitStack, contextmanager
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -92,6 +94,18 @@ class _CacheInventory:
     fingerprint: str
     item_count: int
     byte_count: int
+    directories: tuple[tuple[str, tuple[int, int]], ...]
+
+
+@dataclass(slots=True)
+class _CacheTreeProtection:
+    _preserve_callbacks: list[Callable[[], None]] = field(default_factory=list)
+
+    def preserve_for_cleanup(self) -> None:
+        """Retain deny-add ACLs while a staged tree is physically removed."""
+
+        for preserve in self._preserve_callbacks:
+            preserve()
 
 
 @dataclass(frozen=True, slots=True)
@@ -315,6 +329,216 @@ def _cache_clear_boundary(_name: str) -> None:
     """Deterministic adversarial-test seam at destructive cache boundaries."""
 
 
+@contextmanager
+def _deny_directory_additions(
+    path: Path,
+    expected_identity: tuple[int, int],
+) -> Iterator[Callable[[], None]]:
+    """Temporarily deny same-user child insertion while retaining exact ACL restoration."""
+
+    if os.name != "nt":
+        yield lambda: None
+        return
+
+    import ctypes
+    from ctypes import wintypes
+
+    class SidAndAttributes(ctypes.Structure):
+        _fields_ = (("sid", ctypes.c_void_p), ("attributes", wintypes.DWORD))
+
+    class TokenUser(ctypes.Structure):
+        _fields_ = (("user", SidAndAttributes),)
+
+    class Trustee(ctypes.Structure):
+        _fields_ = (
+            ("multiple_trustee", ctypes.c_void_p),
+            ("multiple_trustee_operation", wintypes.DWORD),
+            ("trustee_form", wintypes.DWORD),
+            ("trustee_type", wintypes.DWORD),
+            ("name", wintypes.LPWSTR),
+        )
+
+    class ExplicitAccess(ctypes.Structure):
+        _fields_ = (
+            ("permissions", wintypes.DWORD),
+            ("access_mode", wintypes.DWORD),
+            ("inheritance", wintypes.DWORD),
+            ("trustee", Trustee),
+        )
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    advapi32 = ctypes.WinDLL("advapi32", use_last_error=True)
+    create_file = kernel32.CreateFileW
+    create_file.argtypes = (
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.LPVOID,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        wintypes.HANDLE,
+    )
+    create_file.restype = wintypes.HANDLE
+    close_handle = kernel32.CloseHandle
+    close_handle.argtypes = (wintypes.HANDLE,)
+    close_handle.restype = wintypes.BOOL
+    open_process_token = advapi32.OpenProcessToken
+    open_process_token.argtypes = (wintypes.HANDLE, wintypes.DWORD, ctypes.POINTER(wintypes.HANDLE))
+    open_process_token.restype = wintypes.BOOL
+    get_token_information = advapi32.GetTokenInformation
+    get_token_information.argtypes = (
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        wintypes.DWORD,
+        ctypes.POINTER(wintypes.DWORD),
+    )
+    get_token_information.restype = wintypes.BOOL
+    get_security_info = advapi32.GetSecurityInfo
+    get_security_info.argtypes = (
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_void_p),
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_void_p),
+    )
+    get_security_info.restype = wintypes.DWORD
+    set_entries_in_acl = advapi32.SetEntriesInAclW
+    set_entries_in_acl.argtypes = (
+        wintypes.ULONG,
+        ctypes.POINTER(ExplicitAccess),
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_void_p),
+    )
+    set_entries_in_acl.restype = wintypes.DWORD
+    set_security_info = advapi32.SetSecurityInfo
+    set_security_info.argtypes = (
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        wintypes.DWORD,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+    )
+    set_security_info.restype = wintypes.DWORD
+    local_free = kernel32.LocalFree
+    local_free.argtypes = (ctypes.c_void_p,)
+    local_free.restype = ctypes.c_void_p
+
+    file_read_attributes = 0x00000080
+    read_control = 0x00020000
+    write_dac = 0x00040000
+    file_share_read = 0x00000001
+    file_share_write = 0x00000002
+    open_existing = 3
+    file_flag_open_reparse_point = 0x00200000
+    file_flag_backup_semantics = 0x02000000
+    invalid_handle = wintypes.HANDLE(-1).value
+    dacl_security_information = 0x00000004
+    file_add_file = 0x0002
+    file_add_subdirectory = 0x0004
+
+    handle = create_file(
+        str(path),
+        file_read_attributes | read_control | write_dac,
+        file_share_read | file_share_write,
+        None,
+        open_existing,
+        file_flag_open_reparse_point | file_flag_backup_semantics,
+        None,
+    )
+    if handle == invalid_handle:
+        raise ctypes.WinError(ctypes.get_last_error())
+    token = wintypes.HANDLE()
+    security_descriptor = ctypes.c_void_p()
+    original_acl = ctypes.c_void_p()
+    updated_acl = ctypes.c_void_p()
+    updated = False
+    restore = True
+    try:
+        if _directory_identity(path) != expected_identity:
+            raise OSError("cache directory identity changed before namespace protection")
+        if not open_process_token(kernel32.GetCurrentProcess(), 0x0008, ctypes.byref(token)):
+            raise ctypes.WinError(ctypes.get_last_error())
+        required = wintypes.DWORD()
+        get_token_information(token, 1, None, 0, ctypes.byref(required))
+        if not required.value:
+            raise ctypes.WinError(ctypes.get_last_error())
+        token_buffer = ctypes.create_string_buffer(required.value)
+        if not get_token_information(token, 1, token_buffer, required, ctypes.byref(required)):
+            raise ctypes.WinError(ctypes.get_last_error())
+        current_sid = ctypes.cast(token_buffer, ctypes.POINTER(TokenUser)).contents.user.sid
+        status = get_security_info(
+            handle,
+            1,
+            dacl_security_information,
+            None,
+            None,
+            ctypes.byref(original_acl),
+            None,
+            ctypes.byref(security_descriptor),
+        )
+        if status:
+            raise OSError(status, "GetSecurityInfo failed")
+        entry = ExplicitAccess(
+            file_add_file | file_add_subdirectory,
+            3,
+            0,
+            Trustee(None, 0, 0, 1, ctypes.cast(current_sid, wintypes.LPWSTR)),
+        )
+        status = set_entries_in_acl(1, ctypes.byref(entry), original_acl, ctypes.byref(updated_acl))
+        if status:
+            raise OSError(status, "SetEntriesInAclW failed")
+        status = set_security_info(handle, 1, dacl_security_information, None, None, updated_acl, None)
+        if status:
+            raise OSError(status, "SetSecurityInfo failed")
+        updated = True
+        if _directory_identity(path) != expected_identity:
+            raise OSError("cache directory identity changed while namespace protection was installed")
+
+        def preserve() -> None:
+            nonlocal restore
+            restore = False
+
+        yield preserve
+    finally:
+        active_error = sys.exc_info()[1]
+        restore_error: OSError | None = None
+        if updated and restore:
+            status = set_security_info(handle, 1, dacl_security_information, None, None, original_acl, None)
+            if status:
+                restore_error = OSError(status, "cache directory ACL restoration failed")
+        if updated_acl.value:
+            local_free(updated_acl)
+        if security_descriptor.value:
+            local_free(security_descriptor)
+        if token.value:
+            close_handle(token)
+        close_handle(handle)
+        if restore_error is not None:
+            if active_error is not None:
+                raise restore_error from active_error
+            raise restore_error
+
+
+@contextmanager
+def _protect_cache_tree(cache: Path, inventory: _CacheInventory) -> Iterator[_CacheTreeProtection]:
+    with ExitStack() as stack:
+        preserve_callbacks: list[Callable[[], None]] = []
+        for relative, identity in sorted(
+            inventory.directories,
+            key=lambda item: (len(Path(item[0]).parts), item[0]),
+        ):
+            preserve_callbacks.append(stack.enter_context(_deny_directory_additions(cache / relative, identity)))
+        if _inventory(cache) != inventory:
+            raise OSError("cache tree changed while namespace protection was installed")
+        yield _CacheTreeProtection(preserve_callbacks)
+
+
 def _inventory(cache: Path) -> _CacheInventory:
     try:
         root_status = cache.stat(follow_symlinks=False)
@@ -324,6 +548,7 @@ def _inventory(cache: Path) -> _CacheInventory:
         digest = hashlib.sha256()
         items = 0
         byte_count = 0
+        directories = [("", root_identity)]
         stack = [cache]
         while stack:
             directory = stack.pop()
@@ -338,6 +563,7 @@ def _inventory(cache: Path) -> _CacheInventory:
                     else ("directory" if stat.S_ISDIR(status.st_mode) else "file")
                 )
                 if kind == "directory":
+                    directories.append((relative, (status.st_dev, status.st_ino)))
                     stack.append(Path(entry.path))
                 else:
                     items += 1
@@ -355,9 +581,10 @@ def _inventory(cache: Path) -> _CacheInventory:
                 digest.update(b"\0")
                 digest.update(str(status.st_mtime_ns).encode("ascii"))
                 digest.update(b"\n")
-        if _directory_identity(cache) != root_identity:
-            raise OSError("cache root identity changed during inventory")
-        return _CacheInventory(root_identity, digest.hexdigest(), items, byte_count)
+        ordered_directories = tuple(sorted(directories, key=lambda item: item[0]))
+        if any(_directory_identity(cache / relative) != identity for relative, identity in ordered_directories):
+            raise OSError("cache directory identity changed during inventory")
+        return _CacheInventory(root_identity, digest.hexdigest(), items, byte_count, ordered_directories)
     except (OSError, UnicodeError, ValueError) as error:
         raise _problem(
             status=409,
@@ -560,59 +787,67 @@ class ProjectPrivacyService:
                             detail="The project policy or cache inventory changed after the preview.",
                             remediation="Preview the cache again and review the updated scope before clearing.",
                         )
-                    _cache_clear_boundary("before-held-cache-rename")
-                    rename_cache(tombstone)
-                    replacement_identity: tuple[int, int] | None = None
-                    try:
-                        _cache_clear_boundary("after-held-cache-rename")
-                        if _directory_identity(tombstone) != inventory.root_identity:
-                            raise OSError("staged cache identity does not match the confirmed inventory")
-                        if _inventory(tombstone) != inventory:
-                            raise OSError("staged cache contents changed before deletion")
-                        cache.mkdir(mode=0o700)
-                        replacement_identity = _directory_identity(cache)
-                        if replacement_identity is None:
-                            raise OSError("replacement cache identity is invalid")
-                        now = _timestamp()
-                        record_sha256 = hashlib.sha256(
-                            json.dumps(
-                                {
-                                    "byteCount": inventory.byte_count,
-                                    "fingerprint": inventory.fingerprint,
-                                    "itemCount": inventory.item_count,
-                                    "projectId": project_id,
-                                    "scope": "project-cache-only",
-                                },
-                                sort_keys=True,
-                                separators=(",", ":"),
-                            ).encode("utf-8")
-                        ).hexdigest()
-                        repository.append_event(
-                            PrivacyAuditEvent(
-                                event_id=new_uuid_v7(),
-                                event_type="privacy.cache.cleared",
-                                occurred_at=now,
-                                trace_id=trace_id,
-                                record_sha256=record_sha256,
+                    with _protect_cache_tree(cache, inventory) as tree_protection:
+                        _cache_clear_boundary("before-held-cache-rename")
+                        rename_cache(tombstone)
+                        replacement_identity: tuple[int, int] | None = None
+                        try:
+                            _cache_clear_boundary("after-held-cache-rename")
+                            if _directory_identity(tombstone) != inventory.root_identity:
+                                raise OSError("staged cache identity does not match the confirmed inventory")
+                            if _inventory(tombstone) != inventory:
+                                raise OSError("staged cache contents changed before deletion")
+                            cache.mkdir(mode=0o700)
+                            replacement_identity = _directory_identity(cache)
+                            if replacement_identity is None:
+                                raise OSError("replacement cache identity is invalid")
+                            _cache_clear_boundary("after-staged-cache-validation")
+                            now = _timestamp()
+                            record_sha256 = hashlib.sha256(
+                                json.dumps(
+                                    {
+                                        "byteCount": inventory.byte_count,
+                                        "fingerprint": inventory.fingerprint,
+                                        "itemCount": inventory.item_count,
+                                        "projectId": project_id,
+                                        "scope": "project-cache-only",
+                                    },
+                                    sort_keys=True,
+                                    separators=(",", ":"),
+                                ).encode("utf-8")
+                            ).hexdigest()
+                            repository.append_event(
+                                PrivacyAuditEvent(
+                                    event_id=new_uuid_v7(),
+                                    event_type="privacy.cache.cleared",
+                                    occurred_at=now,
+                                    trace_id=trace_id,
+                                    record_sha256=record_sha256,
+                                )
                             )
-                        )
-                    except BaseException as error:
-                        if replacement_identity is not None:
-                            if _directory_identity(cache) != replacement_identity:
-                                raise OSError("replacement cache changed before rollback") from error
-                            cache.rmdir()
-                        if _directory_identity(tombstone) != inventory.root_identity:
-                            raise OSError("staged cache changed before rollback") from error
-                        rename_cache(cache)
-                        raise
-                    try:
-                        _remove_tree_no_follow(
-                            tombstone,
-                            expected_root_identity=inventory.root_identity,
-                            remove_root=False,
-                        )
-                    except OSError:
-                        cleanup_pending = True
+                        except BaseException as error:
+                            if replacement_identity is not None:
+                                if _directory_identity(cache) != replacement_identity:
+                                    raise OSError("replacement cache changed before rollback") from error
+                                cache.rmdir()
+                            if _directory_identity(tombstone) != inventory.root_identity:
+                                raise OSError("staged cache changed before rollback") from error
+                            rename_cache(cache)
+                            raise
+                        try:
+                            _cache_clear_boundary("after-cache-audit-before-cleanup")
+                        except OSError:
+                            cleanup_pending = True
+                        tree_protection.preserve_for_cleanup()
+                    if not cleanup_pending:
+                        try:
+                            _remove_tree_no_follow(
+                                tombstone,
+                                expected_root_identity=inventory.root_identity,
+                                remove_root=False,
+                            )
+                        except OSError:
+                            cleanup_pending = True
                 if not cleanup_pending:
                     try:
                         if _directory_identity(tombstone) != inventory.root_identity:
