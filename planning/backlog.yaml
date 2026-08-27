@@ -128,22 +128,35 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/workspace/research-observatory
-    base_sha: bf27fddd8e1732feadc698cd77f540ea9e1c7a0e
+    base_sha: 4115d2ea4552664af1634c736395f58099dd8813
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-27T16:03:47-04:00'
-    pause_reason: 'Governance migration GOV-MIG-0001 retired the incident-specific recovery interruption and repaired the
-      committed resume boundary without changing product scope. W1 remains deliberately paused for user handoff. The next
-      session must explicitly resume W1, commit the exact generated resume transition, recover CAP-02.S04.T03 against that
-      committed boundary, and then continue ordinary task evidence and independent review.'
-    pause_category: user-handoff
-    lease: null
+    updated_at: '2026-08-27T21:34:26+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-08-27T21:34:26+00:00'
+      expires_at: '2026-08-28T21:34:26+00:00'
+    resume_records:
+    - id: W1.R01
+      wave_id: W1
+      control_revision: 11
+      prior_status: PAUSED
+      pre_resume_commit: 4115d2ea4552664af1634c736395f58099dd8813
+      prior_campaign_sha256: 3680c3b322bd15a50d5839fdea32e62aca2024e7f55a69fcf78b883391953362
+      branch: codex/w1-windows-local-runtime
+      worktree: C:/workspace/research-observatory
+      profile: LOC
+      platform: windows-x64
+      actor: codex
+      resumed_at: '2026-08-27T21:34:26+00:00'
   checkpoints:
   - id: W1.CP01
     kind: security
@@ -170,7 +183,7 @@ waves:
     notes: Adopt independently approved W1.A03 through the R02-bound control/security checkpoint; keep W1 paused pending GRR-0001
       release and explicit ordinary Wave resume.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
