@@ -99,6 +99,12 @@ EXACT_T03_RESUME_COMMIT_PATHS = {
     "planning/review-site/waves/W1.html": "M",
     "planning/status-summary.md": "M",
 }
+HISTORICAL_W1_A04_WITNESS = {
+    "path": "artifacts/evidence/W1.A04.B00.json",
+    "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c",
+    "task_id": "W1.A04.B00",
+    "commit": "214ac1aac53b4396ee29f7a935ddcac2a34618b6",
+}
 TASK_RECOVERY_CONTRACT_FIELDS = (
     "id",
     "capability_id",
@@ -5895,6 +5901,44 @@ def require_clean_repository(repo: Path, *, allowed_untracked: set[str] | None =
         raise SystemExit(f"Untracked source exists outside the authorized transition: {unexpected[0]}")
 
 
+def wave_resume_allowed_untracked(data: dict[str, Any], wave_id: str, repo: Path) -> set[str]:
+    """Authenticate the one retained historic witness required by released W1 recovery history."""
+    if wave_id != "W1":
+        return set()
+    control = data.get("control_plane") or {}
+    holds = control.get("recovery_holds") or []
+    hold: dict[str, Any] = next((item for item in holds if item.get("id") == "HOLD-W1-GRR-0002"), {})
+    if (
+        int(control.get("revision") or 0) < 11
+        or int(control.get("minimum_tool_revision") or 0) < 11
+        or hold.get("recovery_request_id") != "GRR-0002"
+        or hold.get("target_wave") != "W1"
+        or hold.get("status") != "RELEASED"
+    ):
+        return set()
+    relative = HISTORICAL_W1_A04_WITNESS["path"]
+    try:
+        witness_path = safe_control_path(
+            repo,
+            relative,
+            prefix="artifacts/evidence",
+            label="Historical W1.A04 recovery witness",
+        )
+        payload = witness_path.read_bytes()
+        document = json.loads(payload)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Historical W1.A04 recovery witness is unavailable or invalid: {exc}") from exc
+    if (
+        hashlib.sha256(payload).hexdigest() != HISTORICAL_W1_A04_WITNESS["sha256"]
+        or document.get("schemaVersion") != "1.0"
+        or document.get("documentType") != "task-criterion-evidence"
+        or document.get("taskId") != HISTORICAL_W1_A04_WITNESS["task_id"]
+        or document.get("commit") != HISTORICAL_W1_A04_WITNESS["commit"]
+    ):
+        raise SystemExit("Historical W1.A04 recovery witness bytes or authority identity are not exact")
+    return {relative}
+
+
 def git_head_branch(repo: Path) -> tuple[str, str]:
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
     branch = subprocess.run(["git", "branch", "--show-current"], cwd=repo, capture_output=True, text=True, check=False)
@@ -8099,7 +8143,11 @@ def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
         base_sha=args.base_sha,
         worktree=args.worktree,
     )
-    require_clean_repository(Path(worktree))
+    repo = Path(worktree)
+    require_clean_repository(
+        repo,
+        allowed_untracked=wave_resume_allowed_untracked(data, str(wave["id"]), repo),
+    )
     if campaign.get("owner") != agent:
         raise SystemExit(f"Paused Wave is owned by {campaign.get('owner')}, not {agent}")
     if campaign.get("branch") and campaign.get("branch") != branch:
