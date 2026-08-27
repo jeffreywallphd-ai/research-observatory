@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "reviewId": "GOV-MAINT-0002.R01",
+  "maintenanceId": "GOV-MAINT-0002",
+  "reviewedCommit": "3cd915d676bf71a35956199084f50603d78fed9b",
+  "predecessorCommit": "2a6978e333dc1615c09b51ef1fc9e90e775fcf22",
+  "reviewer": {
+    "identity": "Nash",
+    "role": "independent-control-security-reviewer",
+    "agentTask": "/root/grr2_b00_review"
+  },
+  "reviewedAt": "2026-08-27T17:45:25-04:00",
+  "disposition": "APPROVED",
+  "findings": [],
+  "verification": {
+    "scope": "The reviewed delta is exactly the maintenance record, the exact task-recovery test, and taskctl; the sole executable change passes the already reviewed exact-witness allowlist into command_recover's existing clean-repository check.",
+    "authorityBoundary": "W1 remains PAUSED; CAP-02.S04.T03 remains BLOCKED; G1 remains PENDING; no resume, task, product, gate, experience, or external authority is granted.",
+    "witnessBoundary": "Exact witness bytes and identity, released GRR-0002 authority targeting W1, and revision/minimum 11 or later remain mandatory. Tracked dirt and every additional untracked path remain denied.",
+    "recoveryBoundary": "Full semantic preflight, exact blocked task and immutable contract, W1.A03 authority, released GRR-0001, explicit ACTIVE W1 lease, exact direct-child five-path resume commit, bound checkpoint, committed manifest, protected bytes, recomputed product checks, compare-and-swap, schema validation, and atomic persistence remain mandatory.",
+    "tests": "All 12 exact task-recovery tests passed independently. Canonical backlog validation and the exact dc17b55 five-path direct-child resume boundary passed.",
+    "diagnosticDisclosure": "The disclosed resume-history fixture failure reproduced exactly: canonical W1.R01 causes an earlier truthful append-only-history denial than the fixture's expected later message. It is not represented as passing evidence.",
+    "quality": "git diff --check passed; the candidate's governed Ruff formatting, Ruff lint, and mypy evidence was confirmed.",
+    "protectedWitness": {
+      "path": "artifacts/evidence/W1.A04.B00.json",
+      "tracked": false,
+      "staged": false,
+      "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+    }
+  },
+  "filesEditedByReviewer": false
+}

@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0002",
   "title": "Reuse the authenticated W1.A04 witness boundary during exact T03 recovery",
-  "status": "implemented-pending-independent-review",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "predecessor": {
@@ -61,5 +61,14 @@
     ]
   },
   "rollback": "Do not adopt, integrate, or resume W1 if affected checks or independent review fail. Revert only this strict descendant to the committed 2a6978e pause boundary; T03 remains BLOCKED, W1 remains PAUSED, and the witness remains untracked and byte-exact.",
-  "review": null
+  "review": {
+    "reviewId": "GOV-MAINT-0002.R01",
+    "reviewedCommit": "3cd915d676bf71a35956199084f50603d78fed9b",
+    "reviewer": "Nash",
+    "reviewedAt": "2026-08-27T17:45:25-04:00",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0002.review-R01.json",
+    "sha256": "4b39da73dc434b52563782a8a4068afcf86a15e7eff604541ba7b7b4128d6902"
+  }
 }
