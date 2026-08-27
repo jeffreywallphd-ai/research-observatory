@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 10e0d04310c4ce3781d4c6414edb951c70c053bd8c0ae8576f292f3cc2e7b453
+source_sha256: db6377c43965ca1d4e0cf23ff7ac1596bcb4c4831f50cfc24d362e89071b80ad
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3043,7 +3043,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3072,6 +3072,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - `artifacts/evidence/CAP-02.S04.T03.json` at `a86c723905d9493efee4610c7513a1cfc9c124eb`
 - `artifacts/evidence/CAP-02.S04.T03.R02.json` at `4c2579a71e043477bf4c025959bbf88c43f412d1`
+- `artifacts/evidence/CAP-02.S04.T03.R03.json` at `aeface5a01ec6b78ff9bb9c24468466b1ff51698`
 
 ##### Review history — CAP-02.S04.T03
 
@@ -3137,7 +3138,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R03` / packet SHA-256 `327efd1cca5d9f82837706b4f0cb5a91acdf3f7426faa36e5ba89783709cd440`
+
+- Candidate / base / branch: `aeface5a01ec6b78ff9bb9c24468466b1ff51698` / `4c2579a71e043477bf4c025959bbf88c43f412d1` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-27T22:42:16+00:00`
+- Evidence: `artifacts/evidence/CAP-02.S04.T03.R03.json` / `cd9a8a60718964588da9556837bd7090bbe19b750eaaa8574091e0cce5b12624` / `aeface5a01ec6b78ff9bb9c24468466b1ff51698`
+- Acceptance-criteria SHA-256: `b06d42b31c1ea4423ab56c4fa4f57a2f23e89c995e8bc1cd6afd8089e0ad8976`
+- Verification-selection SHA-256: `be255c4aac6042e69523c8dc7665753223bb5cb242efc49739699f52804f5997`
+- Changed paths: `artifacts/evidence/CAP-02.S04.T03.R02.json`, `artifacts/evidence/CAP-02.S04.T03.review-R02.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-02/CAP-02.S04.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/privacy.py`, `tests/security/test_privacy_controls.py`
+- Selected checks: `.venv\Scripts\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-R03.json`, `.venv\Scripts\python.exe -m unittest discover -s tests/security -p test_*.py -v`, `.venv\Scripts\python.exe -m unittest -v tests.contracts.test_privacy_policy_contract`, `.venv\Scripts\python.exe tools/quality_check.py`, `.venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; git diff --check`
+- Deferred checks: `Supply-chain scanning is deferred because no dependency or toolchain input changed. SQLCipher, database migration/rekey/recovery/performance, packaging, and complete deployment qualification remain mandatory in T04, CAP-02.S04 integration review, risk-cluster checkpoints, and W1 exit.`
+- Selection rationale: CAP-02.S04.T03-R01-F01 showed that path inventory without a stable root handle could redirect destructive authority; CAP-02.S04.T03-R02-F01 showed that root binding alone still allowed child namespace insertion into the staged tree and could defeat rollback. R03 therefore expands coverage to per-directory identity and reversible deny-add ACL installation, post-install re-inventory, pre-rename/root substitution, post-move child insertion, post-validation insertion, post-audit insertion, rollback ACL restoration, audit ordering, protected cleanup-pending quarantine, full local security, strict privacy contracts, the complete desktop verifier, governed Python quality, unchanged UI-reference lineage, and canonical workflow integrity. Dependency scanning, SQLCipher/database protection, performance, packaging, and full cross-capability qualification remain deferred because this remediation changes no dependency, database engine, packaging input, UI reference, or performance contract and those surfaces belong to T04, CAP-02.S04 review, checkpoints, and W1 exit.
+- Prior round / replayed open findings: `R02` / `CAP-02.S04.T03-R01-F01`, `CAP-02.S04.T03-R02-F01`
+- Root-cause escalation: R01 treated inventory equality plus path-based rename as sufficient destructive authority, overlooking root replacement. R02 corrected the root handoff with a stable Windows handle but still assumed the staged tree's child namespace remained unchanged, so an inserted canonical directory could make rollback fail. R03 makes namespace immutability explicit: it binds every confirmed directory identity, installs reversible deny-add ACLs under held handles before rename, revalidates the fully protected tree, carries those ACLs through audit and cleanup, restores them on rollback, and retains them on cleanup-pending quarantine.
 
 **Current latest-review projection:** `changes-requested` by nash-independent-reviewer at `2026-08-27T22:31:57+00:00`
 
