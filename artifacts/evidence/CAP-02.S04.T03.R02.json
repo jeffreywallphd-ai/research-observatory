@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S04.T03",
+  "commit": "4c2579a71e043477bf4c025959bbf88c43f412d1",
+  "baseCommit": "a86c723905d9493efee4610c7513a1cfc9c124eb",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S04.T03.json",
+    "artifacts/evidence/CAP-02.S04.T03.review-R01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-02/CAP-02.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/privacy.py",
+    "tests/security/test_privacy_controls.py"
+  ],
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S04.T03.json",
+    "sha256": "9925d97e3e90ab7b088a38ebf04009e4573aa8e011d2ca03c76d802e2bef7d5e",
+    "commit": "a86c723905d9493efee4610c7513a1cfc9c124eb",
+    "reason": "Remediates CAP-02.S04.T03-R01-F01 with an identity-bound cache cleanup boundary and adversarial tests."
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-R02.json",
+      "exitCode": 0,
+      "result": "The pinned Windows desktop verifier passed the UI component package, renderer lint/typecheck/tests/build, Rust format/clippy/tests/build, and compiled browser aggregate. The privacy settings workflow, application lock, accessibility, responsive light/dark cases, zero unexpected requests, and CAP-02.S04.T03 implementation marker passed. Report SHA-256: 0a0f041c55b2221aaa38d3ddd7f40d7f4694170d656bd1366f6051b8cebb2e55."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 39 local-security tests passed with one expected Windows-token directory-symlink skip. The suite includes the new release-authoritative cache rename-boundary substitution denial and post-preview redirect denial, plus privacy defaults, exact consent, restart persistence, canonical exclusion, audit redaction, Windows credentials, application lock, and security-policy behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_privacy_policy_contract",
+      "exitCode": 0,
+      "result": "All three strict portable privacy-policy contract tests passed, covering canonical schema validity, offline/default-off behavior, and truthful egress/deletion authority."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py",
+      "exitCode": 0,
+      "result": "All 140 governed Python files passed format, lint, and type checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+      "exitCode": 0,
+      "result": "The unchanged approved-reference UI implementation remains bound to exactly four governed desktop files under RO-UI-ACADEMIC-MINIMAL-1.3 with no gate errors."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "The canonical backlog validated with 20 capabilities, 117 slices, 359 tasks, and 12 release gates; generated backlog views had no drift; and patch hygiene passed at the exact remediation commit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Cache inventory now records and rechecks the non-following directory identity. During confirmation, the Windows release path opens the exact cache directory with DELETE and read-attribute authority while denying delete sharing, then renames through SetFileInformationByHandle rather than resolving the pathname again.",
+        "After the handle-bound move, the staged tombstone must match both the confirmed root identity and full inventory before the replacement cache is created, the success audit is appended, or any bytes are deleted. Rollback uses the same held directory handle and refuses to remove or restore a substituted identity.",
+        "The project root and local .tmp staging root remain stable across the operation; cleanup verifies the exact staged root, does not follow redirects, and reports cleanup-pending if identity-safe physical removal cannot finish. Canonical project data remains outside the deletion scope and physical-erasure limitations remain explicit."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The new Windows adversarial boundary test attempts to rename the cache after confirmation while the destructive handle is held. The swap is denied, the request returns no cleared result, cached and canonical bytes remain stable, no tombstone remains, and no privacy.cache.cleared audit is recorded.",
+        "A second test replaces the cache with a junction after preview and before confirmation. Clear fails closed through project path authority, the target bytes remain unchanged, and no success audit is recorded.",
+        "The full 39-test security suite, strict contract tests, compiled desktop verifier, and 140-file quality checks pass on the exact candidate."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The strict-descendant remediation changes only the privacy cache-clear implementation and its security tests beyond the immutable R01 submission/review records and generated workflow projections.",
+        "No provider, telemetry, retention, public route, portable schema, database profile, dependency, UI reference, or unrelated capability changed. Existing privacy policy, audit-redaction, consent, session, disclosure, and approved-reference behavior remains green.",
+        "The append-only R01 review ledger remains committed and CAP-02.S04.T03-R01-F01 is replayed explicitly for independent closure; broader protected-database and full-profile work remains assigned to T04, slice review, checkpoints, and W1 exit."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-02.S04.T03-R01-F01 identified a high-risk destructive TOCTOU boundary capable of applying cache-deletion authority to substituted canonical data. The remediation therefore selects exact Windows handle-bound swap and redirect adversarial cases, the full local-security suite, strict privacy contracts, the complete desktop verifier, governed Python quality, unchanged approved-reference lineage, and canonical workflow integrity. Dependency scanning, SQLCipher/database protection, performance, packaging, and complete cross-capability qualification are deferred because this strict-descendant fix changes no dependencies, database engine, packaging input, UI reference, or performance contract and those surfaces belong to T04, the CAP-02.S04 slice review, checkpoints, and W1 exit.",
+    "selectedCommandIds": [
+      "desktop:application",
+      "security-local:unit",
+      "foundation:ui-change",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": "Supply-chain and dependency scanning are deferred because the remediation changes no dependency or toolchain input. SQLCipher, database migration/rekey/recovery/performance, packaging, and full deployment qualification remain mandatory in T04, CAP-02.S04 integration review, risk-cluster checkpoints, and the W1 exit matrix."
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "privacy-review",
+    "openFindingIds": [
+      "CAP-02.S04.T03-R01-F01"
+    ],
+    "note": "Independently review exact remediation candidate 4c2579a71e043477bf4c025959bbf88c43f412d1 against CAP-02.S04.T03-R01-F01. Reproduce the cache-root substitution and post-preview redirect denials; verify stable handle identity, staged containment/inventory checks, rollback and cleanup behavior, byte-stable canonical data, absence of a success audit or cleared result on denial, unchanged privacy/UI contracts, and exact evidence scope before closing the finding."
+  }
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2e26a09cb8491576fda94694ef499337e6d52d22c6881fe7d4f1cd88e9765131
+source_sha256: 40187708f575f51951b46f8d35d54e3a38ca2ff08fa1f075061367bef5290b37
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3043,7 +3043,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3071,6 +3071,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/CAP-02.S04.T03.json` at `a86c723905d9493efee4610c7513a1cfc9c124eb`
+- `artifacts/evidence/CAP-02.S04.T03.R02.json` at `4c2579a71e043477bf4c025959bbf88c43f412d1`
 
 ##### Review history — CAP-02.S04.T03
 
@@ -3106,7 +3107,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `43432204c3bc2cac9804572b517c7ff084044970f206efff2ae25f224dd179f5`
+
+- Candidate / base / branch: `4c2579a71e043477bf4c025959bbf88c43f412d1` / `a86c723905d9493efee4610c7513a1cfc9c124eb` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-27T22:27:27+00:00`
+- Evidence: `artifacts/evidence/CAP-02.S04.T03.R02.json` / `bf0e839f411cd6d42d714c2a8db3757f714952866389986c69de3c8a478fca2a` / `4c2579a71e043477bf4c025959bbf88c43f412d1`
+- Acceptance-criteria SHA-256: `b06d42b31c1ea4423ab56c4fa4f57a2f23e89c995e8bc1cd6afd8089e0ad8976`
+- Verification-selection SHA-256: `dcbd3e9b501f4915f524582cd67d65741b5d5cb36f083ced56723856a628b308`
+- Changed paths: `artifacts/evidence/CAP-02.S04.T03.json`, `artifacts/evidence/CAP-02.S04.T03.review-R01.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-02/CAP-02.S04.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/privacy.py`, `tests/security/test_privacy_controls.py`
+- Selected checks: `.venv\Scripts\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-R02.json`, `.venv\Scripts\python.exe -m unittest discover -s tests/security -p test_*.py -v`, `.venv\Scripts\python.exe -m unittest -v tests.contracts.test_privacy_policy_contract`, `.venv\Scripts\python.exe tools/quality_check.py`, `.venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; git diff --check`
+- Deferred checks: `Supply-chain and dependency scanning are deferred because the remediation changes no dependency or toolchain input. SQLCipher, database migration/rekey/recovery/performance, packaging, and full deployment qualification remain mandatory in T04, CAP-02.S04 integration review, risk-cluster checkpoints, and the W1 exit matrix.`
+- Selection rationale: CAP-02.S04.T03-R01-F01 identified a high-risk destructive TOCTOU boundary capable of applying cache-deletion authority to substituted canonical data. The remediation therefore selects exact Windows handle-bound swap and redirect adversarial cases, the full local-security suite, strict privacy contracts, the complete desktop verifier, governed Python quality, unchanged approved-reference lineage, and canonical workflow integrity. Dependency scanning, SQLCipher/database protection, performance, packaging, and complete cross-capability qualification are deferred because this strict-descendant fix changes no dependencies, database engine, packaging input, UI reference, or performance contract and those surfaces belong to T04, the CAP-02.S04 slice review, checkpoints, and W1 exit.
+- Prior round / replayed open findings: `R01` / `CAP-02.S04.T03-R01-F01`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by nash-independent-reviewer at `2026-08-27T22:17:29+00:00`
 
