@@ -141,7 +141,8 @@ def _validate_verification(
         "passed" if event["payload"]["shadowAgreement"] else "failed"
     ):
         raise ReceiptValidationError("Receipt legacy agreement result contradicts its event")
-    overall = "passed" if all(status == "passed" for status in statuses.values()) else "failed"
+    bound_facts_pass = not source_changed and tracked_worktree_clean and event["payload"]["shadowAgreement"]
+    overall = "passed" if bound_facts_pass and all(status == "passed" for status in statuses.values()) else "failed"
     if verification.get("overallStatus") != overall or verification.get("trust") != "producer-asserted":
         raise ReceiptValidationError("Receipt verification status or trust is invalid")
 
@@ -309,7 +310,16 @@ def build_receipt(
         "verification": {
             "selectedChecks": sorted(check_results),
             "results": results,
-            "overallStatus": "passed" if all(check_results.values()) else "failed",
+            "overallStatus": (
+                "passed"
+                if (
+                    not source_changed
+                    and binding["trackedWorktreeClean"]
+                    and event["payload"]["shadowAgreement"]
+                    and all(check_results.values())
+                )
+                else "failed"
+            ),
             "trust": "producer-asserted",
         },
         "receiptHash": "",

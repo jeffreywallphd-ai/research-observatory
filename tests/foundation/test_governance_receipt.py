@@ -120,6 +120,69 @@ class GovernanceReceiptTests(unittest.TestCase):
                 self.assertEqual("evidence-only", receipt["authority"])
                 self.assertFalse(receipt["mutationPerformed"])
 
+    def test_omitted_bound_fact_checks_cannot_turn_adverse_facts_into_pass(self) -> None:
+        for tracked_clean, agreement, adverse_fact in (
+            (False, True, "dirty producer"),
+            (True, False, "shadow disagreement"),
+        ):
+            with self.subTest(adverse_fact=adverse_fact):
+                event, before, after, binding, checks = self.transition(
+                    tracked_clean=tracked_clean,
+                    agreement=agreement,
+                )
+                receipt = governance_receipt.build_receipt(
+                    event=event,
+                    before_projection=before,
+                    after_projection=after,
+                    git_binding=binding,
+                    check_results=checks,
+                )
+                receipt["verification"] = {
+                    "selectedChecks": ["event-envelope"],
+                    "results": [{"id": "event-envelope", "status": "passed"}],
+                    "overallStatus": "passed",
+                    "trust": "producer-asserted",
+                }
+                receipt["receiptHash"] = governance_kernel.document_hash(receipt, "receiptHash")
+                with self.assertRaisesRegex(governance_receipt.ReceiptValidationError, "status or trust"):
+                    governance_receipt.validate_receipt(
+                        receipt,
+                        event=event,
+                        before_projection=before,
+                        after_projection=after,
+                        expected_git_binding=binding,
+                    )
+
+                receipt["verification"]["overallStatus"] = "failed"
+                receipt["receiptHash"] = governance_kernel.document_hash(receipt, "receiptHash")
+                governance_receipt.validate_receipt(
+                    receipt,
+                    event=event,
+                    before_projection=before,
+                    after_projection=after,
+                    expected_git_binding=binding,
+                )
+
+    def test_source_divergence_is_rejected_before_receipt_status(self) -> None:
+        event, before, after, binding, checks = self.transition()
+        receipt = governance_receipt.build_receipt(
+            event=event,
+            before_projection=before,
+            after_projection=after,
+            git_binding=binding,
+            check_results=checks,
+        )
+        divergent_after = copy.deepcopy(after)
+        divergent_after["source"]["sha256"] = "9" * 64
+        with self.assertRaisesRegex(governance_receipt.ReceiptValidationError, "transition differs"):
+            governance_receipt.validate_receipt(
+                receipt,
+                event=event,
+                before_projection=before,
+                after_projection=divergent_after,
+                expected_git_binding=binding,
+            )
+
     def test_rehashed_projection_check_and_git_substitution_fail_closed(self) -> None:
         event, before, after, binding, checks = self.transition()
         receipt = governance_receipt.build_receipt(
