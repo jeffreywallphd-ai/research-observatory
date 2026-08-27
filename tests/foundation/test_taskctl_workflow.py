@@ -56,6 +56,7 @@ from taskctl import (  # noqa: E402
     save_atomic,
     save_validated,
     validate,
+    wave_resume_allowed_untracked,
     wave_resume_history_snapshot,
     wave_resume_record_errors,
 )
@@ -2397,6 +2398,40 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self.assertEqual("a" * 40, wave["campaign"]["base_sha"])
         self.assertEqual("W1", args.authorized_wave_resume_append)
         persisted.assert_called_once()
+
+    def test_wave_resume_allows_only_the_exact_required_historical_witness(self) -> None:
+        data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
+        witness_relative = "artifacts/evidence/W1.A04.B00.json"
+        witness_payload = (REPO / witness_relative).read_bytes()
+
+        self.assertEqual({witness_relative}, wave_resume_allowed_untracked(data, "W1", REPO))
+        self.assertEqual(set(), wave_resume_allowed_untracked(data, "W2", REPO))
+
+        unreleased = copy.deepcopy(data)
+        unreleased_hold = next(
+            item for item in unreleased["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
+        )
+        unreleased_hold["status"] = "ACTIVE"
+        self.assertEqual(set(), wave_resume_allowed_untracked(unreleased, "W1", REPO))
+
+        old_reader = copy.deepcopy(data)
+        old_reader["control_plane"]["revision"] = 10
+        self.assertEqual(set(), wave_resume_allowed_untracked(old_reader, "W1", REPO))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture_repo = Path(temporary)
+            fixture_witness = fixture_repo / witness_relative
+            fixture_witness.parent.mkdir(parents=True)
+            fixture_witness.write_bytes(witness_payload)
+            self.assertEqual({witness_relative}, wave_resume_allowed_untracked(data, "W1", fixture_repo))
+
+            fixture_witness.write_text("{}\n", encoding="utf-8", newline="\n")
+            with self.assertRaisesRegex(SystemExit, "bytes or authority identity are not exact"):
+                wave_resume_allowed_untracked(data, "W1", fixture_repo)
+
+            fixture_witness.unlink()
+            with self.assertRaisesRegex(SystemExit, "unavailable or invalid"):
+                wave_resume_allowed_untracked(data, "W1", fixture_repo)
 
     def test_wave_resume_wrong_identity_fails_without_mutation(self) -> None:
         context = self.workflow()

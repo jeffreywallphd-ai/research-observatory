@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0001",
+  "title": "Authenticate the retained W1.A04 witness during ordinary W1 resume",
+  "status": "implemented-pending-independent-review",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "predecessor": {
+    "commit": "d8adf48e9c2e0319e4ece573a9381f6ec305310e",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "blockedTask": "CAP-02.S04.T03",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "trigger": {
+    "firstDenial": "wave resume rejected artifacts/evidence/W1.A04.B00.json as untracked source outside the authorized transition",
+    "secondDenial": "with the witness quarantined, immutable GRR-0002.S01 and GRR-0002.S02 validation rejected the missing target bootstrap evidence",
+    "diagnosis": "The compatibility adapter simultaneously required the same historical witness to be absent for the clean transition and present for immutable recovery-history validation. Both denials were atomic and left W1 PAUSED."
+  },
+  "authority": "This maintenance preserves the already approved W1 authority. It does not resume W1, recover or claim a task, change product or experience scope, modify a release gate, authorize external effects, weaken other untracked-source denials, or rewrite historical evidence.",
+  "intendedDelta": {
+    "implementation": "Before an ordinary W1 resume, authenticate the exact retained W1.A04.B00 witness by canonical path, SHA-256, document type, task identity, candidate commit, released GRR-0002 hold, target Wave, and minimum control revision; then allow only that path through the existing clean-repository untracked allowlist.",
+    "failClosed": [
+      "Any other untracked path remains denied.",
+      "A missing, non-regular, redirected, malformed, rehashed, identity-substituted, or commit-substituted witness is denied.",
+      "The exception is unavailable outside W1, before control revision 11, or unless HOLD-W1-GRR-0002 is RELEASED for W1.",
+      "Existing full semantic validation still authenticates the immutable GRR supplement authority before persistence."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0001.json",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tools/taskctl.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The change touches shared Wave-resume cleanliness and immutable recovery-history compatibility. Selected coverage includes exact witness positive and denial cases, ordinary resume identity/history tests, the full affected task workflow and task-recovery suites, historical recovery-controller tests, backlog validation, and governed Python quality. Product, UI, packaging, storage, and performance suites are deferred because no product or public runtime contract changes.",
+    "results": [
+      {
+        "check": "affected task workflow, exact recovery, schema, and witness-aware historical recovery tests",
+        "result": "passed",
+        "detail": "103 selected tests passed, including authentic/missing/forged witness cases, released-hold and old-reader denials, append-only resume history, real-Git resume/recovery separation, atomic persistence, canonical recovery authority, and non-authoritative witness handling."
+      },
+      {
+        "check": "governed Python quality",
+        "result": "passed",
+        "detail": "Ruff formatting, Ruff lint, and mypy passed for all 140 governed Python files."
+      },
+      {
+        "check": "canonical backlog validation",
+        "result": "passed",
+        "detail": "The canonical backlog validated with 20 capabilities, 117 slices, 359 tasks, and 12 release gates."
+      },
+      {
+        "check": "broader historical recovery diagnostic replay",
+        "result": "diagnostic-baseline-findings",
+        "detail": "131 of 133 tests passed. test_b02_scope_addendum_is_exact_commit_bound_and_fail_closed and test_v5_preappend_boundary_requires_gcr7_and_preserves_backlog still expect the pre-GOV-MIG stopped live boundary and reject the intentionally released current boundary. This maintenance changes neither tests/foundation/test_recoveryctl.py nor tools/recoveryctl.py; the two ambient historical-fixture errors are outside this exact resume-witness delta and are not used as passing evidence."
+      }
+    ]
+  },
+  "rollback": "Do not use the repaired resume path or integrate the candidate if affected checks or independent review fail. Revert only this strict descendant to the reviewed d8adf48 predecessor; W1 remains PAUSED and the witness remains untracked and byte-exact.",
+  "review": null
+}
