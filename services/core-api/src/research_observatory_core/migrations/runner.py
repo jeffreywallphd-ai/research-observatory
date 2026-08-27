@@ -216,14 +216,56 @@ def _sha256_descriptor(descriptor: int) -> str:
     return digest.hexdigest()
 
 
-def _logical_database_sha256(connection: sqlite3.Connection) -> str:
-    """Hash the complete deterministic logical database, not file layout."""
+def _logical_value_bytes(value: Any) -> bytes:
+    if value is None:
+        return b"n"
+    if isinstance(value, bytes):
+        return b"b" + value
+    if isinstance(value, str):
+        return b"s" + value.encode("utf-8")
+    if isinstance(value, int):
+        return b"i" + str(value).encode("ascii")
+    if isinstance(value, float):
+        return b"f" + value.hex().encode("ascii")
+    raise MigrationProblem("migration-logical-backup-value-invalid")
+
+
+def _logical_database_sha256(connection: Any) -> str:
+    """Hash deterministic schema and row values without relying on wrapper-specific dump APIs."""
 
     digest = hashlib.sha256()
-    for statement in connection.iterdump():
-        payload = statement.encode("utf-8")
+
+    def add(value: Any) -> None:
+        payload = _logical_value_bytes(value)
         digest.update(len(payload).to_bytes(8, "big"))
         digest.update(payload)
+
+    add(int(connection.execute("PRAGMA application_id").fetchone()[0]))
+    add(int(connection.execute("PRAGMA user_version").fetchone()[0]))
+    schema_rows = tuple(
+        tuple(row)
+        for row in connection.execute(
+            """
+            SELECT type, name, tbl_name, sql
+              FROM sqlite_schema
+             WHERE name NOT LIKE 'sqlite_%'
+             ORDER BY type, name, tbl_name, sql
+            """
+        )
+    )
+    for row in schema_rows:
+        for value in row:
+            add(value)
+    tables = tuple(str(row[1]) for row in schema_rows if row[0] == "table")
+    for table in sorted(tables):
+        quoted_table = table.replace('"', '""')
+        columns = tuple(str(row[1]) for row in connection.execute(f'PRAGMA table_xinfo("{quoted_table}")'))
+        if not columns:
+            raise MigrationProblem("migration-logical-backup-table-invalid")
+        ordering = ", ".join(f'"{column.replace(chr(34), chr(34) * 2)}"' for column in columns)
+        for row in connection.execute(f'SELECT * FROM "{quoted_table}" ORDER BY {ordering}'):
+            for value in row:
+                add(value)
     return digest.hexdigest()
 
 
@@ -435,9 +477,13 @@ def plan_database_migration(path: Path, *, expected_project_id: str) -> Migratio
 
     expected_project_id, _ = storage._project_identity(expected_project_id)
     database = storage._canonical_database_path(Path(path), must_exist=True)
-    connection = storage._connect_held(database)
+    connection = storage._connect_held(database, project_id=expected_project_id)
     try:
-        storage._configure_connection(connection, initialize=False)
+        storage._configure_connection(
+            connection,
+            initialize=False,
+            protected=storage.database_protection_profile() == storage.SQLCIPHER_PROFILE,
+        )
         source = _source_profile(connection, expected_project_id)
         migration_ids = _migration_ids(source.schema_version)
         return MigrationPlan(
@@ -897,8 +943,8 @@ def _create_verified_backup(
             backup_authority: _HeldFileAuthority | None = None
             manifest_authority: _HeldFileAuthority | None = None
             directory_authorities: list[_HeldDirectoryAuthority] = []
-            target: sqlite3.Connection | None = None
-            backup_source: sqlite3.Connection | None = None
+            target: Any | None = None
+            backup_source: Any | None = None
             try:
                 created = os.fstat(working_descriptor)
                 visible = working.stat(follow_symlinks=False)
@@ -910,9 +956,14 @@ def _create_verified_backup(
                 ):
                     raise MigrationProblem("migration-backup-file-invalid")
                 working_identity = (created.st_dev, created.st_ino)
-                backup_source = storage._connect_held(database)
-                target = sqlite3.connect(working.as_uri() + "?mode=rw", uri=True, autocommit=True)
-                storage._configure_connection(backup_source, initialize=False)
+                protected = storage.database_protection_profile() == storage.SQLCIPHER_PROFILE
+                backup_source = storage._connect_held(database, project_id=expected_project_id)
+                if protected:
+                    target = storage._connect_held(working, project_id=expected_project_id)
+                else:
+                    target = sqlite3.connect(working.as_uri() + "?mode=rw", uri=True, autocommit=True)
+                storage._configure_connection(backup_source, initialize=False, protected=protected)
+                storage._configure_connection(target, initialize=True, protected=protected)
                 if _source_profile(backup_source, expected_project_id) != source_profile:
                     raise MigrationProblem("migration-source-changed-before-backup")
                 backup_source.set_authorizer(storage._initialization_authorizer)
@@ -1157,12 +1208,16 @@ def migrate_database(path: Path, *, expected_project_id: str) -> MigrationResult
         )
 
     started_at = datetime.now(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
-    connection = storage._connect_held(database)
+    connection = storage._connect_held(database, project_id=expected_project_id)
     verified_backup: _VerifiedBackup | None = None
     engine = create_engine("sqlite://", creator=lambda: connection, poolclass=StaticPool)
     sqlalchemy_connection: Connection | None = None
     try:
-        storage._configure_connection(connection, initialize=False)
+        storage._configure_connection(
+            connection,
+            initialize=False,
+            protected=storage.database_protection_profile() == storage.SQLCIPHER_PROFILE,
+        )
         source = _source_profile(connection, expected_project_id)
         if source.schema_version != initial_plan.source_schema_version:
             raise MigrationProblem("migration-source-changed-before-lock")

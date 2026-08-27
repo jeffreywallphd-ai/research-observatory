@@ -25,8 +25,11 @@
       "research_observatory_core.migrations.runner",
       "research_observatory_core.object_store",
       "research_observatory_core.ports.credential_store",
+      "research_observatory_core.ports.database_keys",
       "research_observatory_core.repositories",
-      "research_observatory_core.windows_credentials"
+      "research_observatory_core.windows_credentials",
+      "sqlcipher3",
+      "sqlcipher3._sqlite3"
     ]
   },
   "entrypoint": "research-observatory-core-x86_64-pc-windows-msvc.exe",
@@ -39,7 +42,15 @@
     "pydantic_settings",
     "research_observatory_core",
     "sqlalchemy",
+    "sqlcipher3",
+    "sqlcipher3._sqlite3",
     "uvicorn"
+  ],
+  "noticeFiles": [
+    {
+      "source": "services/core-api/THIRD_PARTY_NOTICES.txt",
+      "destination": "THIRD_PARTY_NOTICES.txt"
+    }
   ],
   "maximumBytes": 134217728
 }

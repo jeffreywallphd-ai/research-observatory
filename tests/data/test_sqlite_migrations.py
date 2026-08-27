@@ -297,6 +297,8 @@ def create_version_4_fixture(database: Path) -> None:
 
 class SqliteMigrationTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = storage.development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-sqlite-migrations-")
         self.project = Path(self.temporary.name).resolve(strict=True) / "project"
         self.state = self.project / "state"
@@ -317,7 +319,10 @@ class SqliteMigrationTests(unittest.TestCase):
                 check=False,
                 timeout=30,
             )
-        self.temporary.cleanup()
+        try:
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def create_v1(self) -> None:
         create_version_1_fixture(self.database)

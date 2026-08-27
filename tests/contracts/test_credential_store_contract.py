@@ -46,6 +46,7 @@ class CredentialStoreContractTests(unittest.TestCase):
                 "connector-authentication",
                 "signing-verification",
                 "object-encryption",
+                "database-encryption",
             ],
             self.profile["purposeCodes"],
         )

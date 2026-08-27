@@ -26,6 +26,7 @@ from research_observatory_core.storage import (  # noqa: E402
     CanonicalConnection,
     StorageProblem,
     database_integrity_report,
+    development_plaintext_database_fixture,
     initialize_database,
     open_canonical_database,
     storage_profile_document,
@@ -71,12 +72,17 @@ def insert_revision(connection: sqlite3.Connection | CanonicalConnection) -> Non
 
 class SqliteSchemaTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-sqlite-schema-")
         self.root = Path(self.temporary.name).resolve(strict=True)
         self.database = self.root / "project.sqlite3"
 
     def tearDown(self) -> None:
-        self.temporary.cleanup()
+        try:
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def initialize(self) -> None:
         report = initialize_database(

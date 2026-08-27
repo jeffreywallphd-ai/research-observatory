@@ -24,6 +24,7 @@ from research_observatory_core.projects import ProjectLifecycleProblem, ProjectL
 from research_observatory_core.storage import (  # noqa: E402
     APPLICATION_ID,
     database_integrity_report,
+    development_plaintext_database_fixture,
     open_canonical_database,
 )
 
@@ -34,12 +35,17 @@ TRACE = "a" * 32
 
 class ProjectLifecycleTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-project-lifecycle-")
         self.parent = Path(self.temporary.name).resolve(strict=True)
         self.service = ProjectLifecycleService()
 
     def tearDown(self) -> None:
-        self.temporary.cleanup()
+        try:
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def create(self, name: str = "study-one"):
         return self.service.create(

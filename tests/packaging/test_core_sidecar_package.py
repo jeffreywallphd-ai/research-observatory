@@ -52,8 +52,11 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.migrations.runner",
                     "research_observatory_core.object_store",
                     "research_observatory_core.ports.credential_store",
+                    "research_observatory_core.ports.database_keys",
                     "research_observatory_core.repositories",
                     "research_observatory_core.windows_credentials",
+                    "sqlcipher3",
+                    "sqlcipher3._sqlite3",
                 ],
             },
         )
@@ -61,6 +64,16 @@ class CoreSidecarPackageTests(unittest.TestCase):
         self.assertIn("alembic", contract["requiredModules"])
         self.assertIn("nacl", contract["requiredModules"])
         self.assertIn("sqlalchemy", contract["requiredModules"])
+        self.assertIn("sqlcipher3", contract["requiredModules"])
+        self.assertEqual(
+            contract["noticeFiles"],
+            [
+                {
+                    "source": "services/core-api/THIRD_PARTY_NOTICES.txt",
+                    "destination": "THIRD_PARTY_NOTICES.txt",
+                }
+            ],
+        )
         self.assertEqual(contract["componentVersion"], "0.1.0")
 
     def test_build_contract_rejects_a_redirected_governed_file(self) -> None:
@@ -145,6 +158,8 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 self.assertTrue(any(f"{field} does not match the governed build contract" in error for error in errors))
             self.assertLessEqual(manifest["totalBytes"], 134_217_728)
             packaged_paths = tuple(item["path"].casefold() for item in manifest["files"])
+            self.assertIn("third_party_notices.txt", packaged_paths)
+            self.assertTrue(any(path.endswith("/sqlcipher3/_sqlite3.pyd") for path in packaged_paths))
             for excluded_module in ("mypy", "pip", "pytest", "setuptools", "yaml"):
                 self.assertFalse(
                     any(f"/{excluded_module}/" in f"/{path}/" for path in packaged_paths),
@@ -177,10 +192,12 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "research_observatory_core.migrations.versions.v0005_object_creation_source",
                 "research_observatory_core.object_store",
                 "research_observatory_core.ports.credential_store",
+                "research_observatory_core.ports.database_keys",
                 "research_observatory_core.ports.object_store",
                 "research_observatory_core.ports.repositories",
                 "research_observatory_core.repositories",
                 "research_observatory_core.windows_credentials",
+                "sqlcipher3",
                 "sqlalchemy.engine",
             ):
                 self.assertIn(f"'{required_module}'", archive.stdout)

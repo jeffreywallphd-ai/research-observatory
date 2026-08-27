@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/storage/protected-database-profile.schema.json",
+  "title": "Research Observatory protected database profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "documentType", "profileId", "logicalDatabaseProfile", "engine",
+    "engineCompatibility", "pythonBinding", "keyProfile", "connectionControls", "plaintextPolicy",
+    "migration", "backup", "restore", "rekey", "keyLoss", "corruption", "licensing", "residualProtection"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "documentType": {"const": "research-observatory-protected-database-profile"},
+    "profileId": {"const": "sqlcipher-4.12-community-wal-v1"},
+    "logicalDatabaseProfile": {"const": "sqlite-wal-v1"},
+    "engine": {"const": "sqlcipher-community"},
+    "engineCompatibility": {"const": "4.12.x"},
+    "pythonBinding": {"const": "sqlcipher3-0.6.2"},
+    "keyProfile": {
+      "const": {
+        "material": "random-raw-256-bit",
+        "authority": "windows-current-user-dpapi-profile-vault",
+        "namespace": "project-database-distinct-from-object-and-export-keys",
+        "delivery": "callback-lease-zeroed-on-close",
+        "forbiddenDestinations": ["project-files", "exports", "logs", "environment", "process-arguments"]
+      }
+    },
+    "connectionControls": {
+      "const": {
+        "plaintextHeaderBytes": 0,
+        "loadableExtensions": false,
+        "trustedSchema": false,
+        "integrityChecks": ["cipher_integrity_check", "quick_check", "foreign_key_check"]
+      }
+    },
+    "plaintextPolicy": {"const": "production-create-and-write-open-denied-development-fixture-only"},
+    "migration": {"const": "explicit-consent-validated-copy-on-write-export-atomic-publication"},
+    "backup": {"const": "encrypted-sqlite-backup-verified-before-return"},
+    "restore": {"const": "quiescent-verified-copy-on-write-atomic-publication-with-rollback"},
+    "rekey": {"const": "encrypted-backup-staged-vault-key-verify-before-cas-activation"},
+    "keyLoss": {"const": "fail-closed-retain-ciphertext-no-silent-replacement"},
+    "corruption": {"const": "fail-closed-retain-ciphertext-for-recovery"},
+    "licensing": {"const": "sqlcipher-bsd-3-clause-and-sqlcipher3-zlib-notices-in-binary-distribution"},
+    "residualProtection": {"const": "os-sign-in-full-disk-encryption-and-endpoint-security-still-required"}
+  }
+}

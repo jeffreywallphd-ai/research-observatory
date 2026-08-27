@@ -3,8 +3,36 @@
 The local Core service is the sole authority that opens
 `state/project.sqlite3`. The desktop renderer, native shell, workers, and
 business modules do not receive filesystem paths or SQLite connection objects.
-ADR-0014 governs the first database profile; the portable machine record is
-[`sqlite-profile.v1.json`](../../packages/contracts/storage/sqlite-profile.v1.json).
+ADR-0014 governs the logical database profile; ADR-0020 adds the mandatory W1
+Windows production protection profile. The portable machine records are
+[`sqlite-profile.v1.json`](../../packages/contracts/storage/sqlite-profile.v1.json)
+and [`protected-database-profile.v1.json`](../../packages/contracts/storage/protected-database-profile.v1.json).
+
+## W1 protected production profile
+
+Production Core uses SQLCipher 4.12 Community through the pinned `sqlcipher3`
+binding. Every project receives a distinct random raw 256-bit database key from
+the Windows current-user DPAPI profile vault. Core rejects a plaintext SQLite
+header before opening an existing production project and cannot initialize a
+database until the key authority is configured. The explicit
+`development_plaintext_database_fixture()` scope is the sole plaintext
+exception and is never selected by runtime composition.
+
+Compatibility level 4, a zero-byte plaintext header, 4096-byte cipher pages,
+HMAC-SHA-512, extensions off, trusted schema off, and the canonical authorizer
+are verified for every protected connection. Integrity reports now expose the
+content-free protection profile, SQLCipher version, and cipher-integrity result.
+Missing keys, incompatible profiles, or corruption fail closed and retain the
+original bytes.
+
+Legacy plaintext conversion is an explicit-consent, validated copy-on-write
+operation. Protected backup uses SQLite's online backup API into a keyed,
+checkpointed, independently verified SQLCipher file. Restore verifies a
+quiescent copy-on-write candidate before atomic publication and rolls back the
+displaced encrypted database on failure. Rekey stages a new vault record,
+retains an encrypted rollback copy, verifies the staged key after restart, and
+only then activates it with compare-and-swap. Schema migrations use the same
+protected connection and create encrypted migration backups.
 
 ## Current version-5 authority
 
@@ -115,7 +143,8 @@ while a WAL transaction may be pending. Profile mismatch, corruption, redirect,
 hardlink, or wrong project identity fails closed and preserves the source for
 backup-first repair.
 
-The first profile does not claim encryption at rest. The approved W1 protection
-slice must add SQLCipher or an approved equivalent, OS-vault key acquisition,
-permissions qualification, and protected backups before sensitive projects are
-production-qualified.
+The W1 Windows profile now claims SQLCipher encryption at rest within the
+ADR-0020 threat boundary. Same-user malware, unlocked-process memory, OS or
+kernel compromise, and loss of all vault/recovery material remain explicit
+residual risks; OS sign-in, full-disk encryption, endpoint protection, and
+physical security remain required.

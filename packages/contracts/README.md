@@ -40,6 +40,10 @@ schema identity, UUID/timestamp representation, scalar-only STRICT table
 inventory, connection controls, checkpoint authority, and integrity checks.
 The profile is not a SQL or filesystem API; only Core's governed storage
 adapter opens the project database.
+The companion `sqlcipher-4.12-community-wal-v1` protection profile fixes the
+Windows W1 production encryption, vault-key, plaintext-denial, migration,
+backup/restore, rekey, integrity, licensing, and residual OS-protection boundary
+without exposing database handles or secret material.
 It also defines the `project-object-store-v1` policy: project-scoped plaintext
 content identity, opaque physical identity, complete-file publication,
 metadata/reference authority, verified controlled streams, rights states, and

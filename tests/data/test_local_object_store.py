@@ -40,6 +40,7 @@ from research_observatory_core.ports.repositories import (  # noqa: E402
 from research_observatory_core.repositories import create_sqlite_unit_of_work_factory  # noqa: E402
 from research_observatory_core.storage import (  # noqa: E402
     CanonicalConnection,
+    development_plaintext_database_fixture,
     initialize_database,
     open_canonical_database,
 )
@@ -119,6 +120,8 @@ def event(index: int) -> AtomicRepositoryEvent:
 
 class LocalObjectStoreTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.database_profile = development_plaintext_database_fixture()
+        self.database_profile.__enter__()
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-object-store-")
         self.project = Path(self.temporary.name).resolve() / "project"
         for relative in ("state", "objects", ".tmp"):
@@ -128,7 +131,10 @@ class LocalObjectStoreTests(unittest.TestCase):
         self.store = create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)
 
     def tearDown(self) -> None:
-        self.temporary.cleanup()
+        try:
+            self.temporary.cleanup()
+        finally:
+            self.database_profile.__exit__(None, None, None)
 
     def object_files(self) -> tuple[Path, ...]:
         return tuple(path for path in (self.project / "objects").rglob("*") if path.is_file())

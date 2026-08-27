@@ -33,6 +33,7 @@ ALLOWED_CONTRACT_KEYS = {
     "builder",
     "entrypoint",
     "requiredModules",
+    "noticeFiles",
     "maximumBytes",
 }
 ALLOWED_BUILDER_KEYS = {
@@ -121,8 +122,11 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.migrations.runner",
             "research_observatory_core.object_store",
             "research_observatory_core.ports.credential_store",
+            "research_observatory_core.ports.database_keys",
             "research_observatory_core.repositories",
             "research_observatory_core.windows_credentials",
+            "sqlcipher3",
+            "sqlcipher3._sqlite3",
         ],
     }:
         raise SidecarBuildError("sidecar builder must be the approved PyInstaller 6.21.0 onedir/no-UPX profile")
@@ -133,6 +137,14 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
         or not all(isinstance(item, str) and item for item in modules)
     ):
         raise SidecarBuildError("requiredModules must be a sorted unique non-empty string list")
+    notices = contract.get("noticeFiles")
+    if notices != [
+        {
+            "source": "services/core-api/THIRD_PARTY_NOTICES.txt",
+            "destination": "THIRD_PARTY_NOTICES.txt",
+        }
+    ]:
+        raise SidecarBuildError("noticeFiles must contain the approved user-accessible third-party notice")
     maximum = contract.get("maximumBytes")
     if not isinstance(maximum, int) or isinstance(maximum, bool) or not 1 <= maximum <= 134_217_728:
         raise SidecarBuildError("maximumBytes must be an integer between 1 and 134217728")
@@ -335,6 +347,12 @@ def build_sidecar(repo: Path, output_root: Path) -> tuple[Path, dict[str, Any]]:
     artifact_root = dist_root / contract["entrypoint"].removesuffix(".exe")
     if not artifact_root.is_dir() or _is_redirect(artifact_root):
         raise SidecarBuildError("PyInstaller did not produce the expected canonical onedir artifact")
+    for notice in contract["noticeFiles"]:
+        source = _fixed_file(repo, Path(notice["source"]))
+        destination = artifact_root / notice["destination"]
+        if destination.exists() or _is_redirect(destination):
+            raise SidecarBuildError("third-party notice destination already exists or is redirected")
+        shutil.copyfile(source, destination)
     inventory, errors = _inventory(artifact_root)
     if errors:
         raise SidecarBuildError("; ".join(errors))
