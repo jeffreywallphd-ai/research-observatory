@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "reviewId": "GOV-MAINT-0003.R01",
+  "maintenanceId": "GOV-MAINT-0003",
+  "reviewedCommit": "fe53e879a18ffd6feabc713e856911049b088acc",
+  "predecessorCommit": "bbc448b663258c3e21e37798d539cf7863313ef4",
+  "reviewer": {
+    "identity": "Nash",
+    "role": "independent-control-security-reviewer",
+    "agentTask": "/root/grr2_b00_review"
+  },
+  "reviewedAt": "2026-08-27T18:09:40-04:00",
+  "disposition": "APPROVED",
+  "findings": [],
+  "verification": {
+    "scope": "The reviewed delta is exactly the maintenance record, task-workflow fixture, exact-recovery fixture, and taskctl. The executable change only threads the optional exact untracked allowance into task evidence preparation.",
+    "authorityBoundary": "W1 remains ACTIVE; CAP-02.S04.T03 remains IN_PROGRESS with no evidence or current submission; G1 remains PENDING; no task, product, review, gate, experience, or external authority is granted.",
+    "witnessBoundary": "Outside W1 the allowance is empty. Within W1 it delegates to the already reviewed exact historical-witness authenticator; the criterion manifest is the only other allowed untracked path. Tracked dirt and every additional untracked path remain denied.",
+    "evidenceBoundary": "Task, exact base/current HEAD/branch, changed paths, passing checks, all acceptance criteria, zero unverified items, canonical selected command IDs, open findings, leases, compare-and-swap, schema validation, and semantic atomic persistence remain mandatory.",
+    "fixtureBoundary": "Exact-recovery tests derive the unrecovered task from the immutable pause commit. Resume append tests preserve existing history and mutate only the newly appended fixture record; assertion strength is unchanged.",
+    "tests": "Five selected workflow tests and all 12 exact task-recovery tests passed independently. Canonical backlog validation and git diff --check passed.",
+    "diagnosticDisclosure": "The broader workflow suite reproduced the recorded 59/62 live-state fixture result with exactly the three named diagnostics and no additional failures; none is represented as passing evidence.",
+    "untrackedArtifacts": [
+      {
+        "path": "artifacts/evidence/CAP-02.S04.T03.json",
+        "staged": false,
+        "sha256": "26dc8513f5f2d28d7294bd7b6c55f5870d62d4eace8a086d4007a547ca54fea1"
+      },
+      {
+        "path": "artifacts/evidence/W1.A04.B00.json",
+        "staged": false,
+        "sha256": "4a9d944ff95972b449b617bc384306c7023e79d31d6b427e6b6f4678cd58b22c"
+      }
+    ]
+  },
+  "filesEditedByReviewer": false
+}
