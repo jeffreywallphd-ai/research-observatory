@@ -1,0 +1,22 @@
+{
+  "task_id": "CAP-02.S04.T03",
+  "attempt_id": "R03",
+  "candidate_commit": "aeface5a01ec6b78ff9bb9c24468466b1ff51698",
+  "submission_record_commit": "f6da84f79a6a911295e7cff15d10399552dfa1db",
+  "reviewer": "nash-independent-reviewer",
+  "result": "approved",
+  "notes": "R03 closes both prior cache-cleanup blockers. Exact root-handle binding plus per-directory identity and deny-add protection, post-install and post-move inventory validation, deterministic pre-audit rollback with exact ACL restoration, truthful audit ordering, and protected cleanup-pending quarantine prevent root or child namespace substitution from expanding deletion authority. Windows adversarial, full security, privacy-contract, lineage, evidence-binding, and backlog checks pass. The non-Windows ACL fallback remains outside W1's Windows x64 release authority and is deferred to W6 platform qualification.",
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-02.S04.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/CAP-02.S04.T03.R03.json"
+    },
+    {
+      "finding_id": "CAP-02.S04.T03-R02-F01",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/CAP-02.S04.T03.R03.json"
+    }
+  ]
+}
