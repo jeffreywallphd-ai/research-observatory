@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S04.T03",
+  "commit": "aeface5a01ec6b78ff9bb9c24468466b1ff51698",
+  "baseCommit": "4c2579a71e043477bf4c025959bbf88c43f412d1",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/CAP-02.S04.T03.R02.json",
+    "artifacts/evidence/CAP-02.S04.T03.review-R02.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-02/CAP-02.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/privacy.py",
+    "tests/security/test_privacy_controls.py"
+  ],
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-02.S04.T03.R02.json",
+    "sha256": "bf0e839f411cd6d42d714c2a8db3757f714952866389986c69de3c8a478fca2a",
+    "commit": "4c2579a71e043477bf4c025959bbf88c43f412d1",
+    "reason": "Remediates both open cache-cleanup findings with full staged-tree namespace protection and protected cleanup quarantine."
+  },
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-R03.json",
+      "exitCode": 0,
+      "result": "The pinned Windows desktop verifier passed the UI component package, renderer lint/typecheck/tests/build, Rust format/clippy/tests/build, and compiled browser aggregate. Privacy settings, application lock, accessibility, responsive light/dark cases, zero unexpected requests, and the CAP-02.S04.T03 implementation marker passed. Report SHA-256: 0a0f041c55b2221aaa38d3ddd7f40d7f4694170d656bd1366f6051b8cebb2e55."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 43 local-security tests passed with one expected Windows-token directory-symlink skip. The suite includes root substitution, post-preview redirect, post-move canonical insertion, post-validation insertion, post-audit insertion, rollback ACL restoration, audit denial, and protected cleanup-pending quarantine cases."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.contracts.test_privacy_policy_contract",
+      "exitCode": 0,
+      "result": "All three strict portable privacy-policy contract tests passed, covering canonical schema validity, offline/default-off behavior, and truthful egress/deletion authority."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py",
+      "exitCode": 0,
+      "result": "All 140 governed Python files passed format, lint, and type checks."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+      "exitCode": 0,
+      "result": "The unchanged approved-reference UI implementation remains bound to exactly four governed desktop files under RO-UI-ACADEMIC-MINIMAL-1.3 with no errors."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; git diff --check",
+      "exitCode": 0,
+      "result": "The canonical backlog validated with 20 capabilities, 117 slices, 359 tasks, and 12 release gates; generated backlog views had no drift; and patch hygiene passed at the exact R03 commit."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The Windows release path still holds and renames the exact cache root by handle. R03 additionally records every directory identity in the confirmed inventory, opens stable no-delete-share handles for the entire tree, and installs reversible same-user deny-add ACLs before the destructive rename.",
+        "After all namespace guards are installed, the complete inventory is recomputed. The deny-add ACLs then move with the exact cache tree and remain active across post-move validation, replacement-cache creation, audit commit, and physical cleanup, preventing canonical directories or substituted children from entering deletion authority.",
+        "On any pre-audit denial, rollback uses the held cache handle while ACL guards remain active, restores the exact cache path, restores original ACLs, preserves canonical paths and bytes, and records no success audit. After a successful audit, incomplete physical cleanup leaves a protected cleanup-pending tombstone that rejects later canonical insertion instead of risking deletion."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Windows adversarial tests now attack the exact pre-rename, post-move, post-validation, and post-audit boundaries. Root and child substitutions are denied; pre-audit requests return no cleared result or success audit; canonical and cache bytes remain at their exact paths; rollback restores ordinary cache write access; and no unsafe tombstone remains.",
+        "The post-audit case proves the staged tree remains protected until identity-bound cleanup. Because the attempted external namespace mutation is denied and does not alter the operation, the valid clear completes with exact canonical bytes and one truthful audit.",
+        "A forced cleanup interruption proves the cleanup-pending tombstone retains deny-add protection and rejects a subsequent attempt to move canonical config beneath it. The full 43-test security suite, strict contract suite, desktop verifier, and 140-file quality checks pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The strict descendant changes only the privacy cache-clear implementation and its acceptance-bound security tests beyond immutable R02 evidence/review records and generated workflow projections.",
+        "No provider, telemetry, retention, public route, portable schema, database profile, dependency, UI reference, or unrelated capability changed. Existing consent, session, audit redaction, deletion disclosure, and approved UI behavior remain green.",
+        "Both prior high-severity finding IDs are replayed for independent closure. Protected-database selection and broader migration, performance, packaging, and cross-capability qualification remain assigned to T04, slice review, checkpoints, and W1 exit."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "CAP-02.S04.T03-R01-F01 showed that path inventory without a stable root handle could redirect destructive authority; CAP-02.S04.T03-R02-F01 showed that root binding alone still allowed child namespace insertion into the staged tree and could defeat rollback. R03 therefore expands coverage to per-directory identity and reversible deny-add ACL installation, post-install re-inventory, pre-rename/root substitution, post-move child insertion, post-validation insertion, post-audit insertion, rollback ACL restoration, audit ordering, protected cleanup-pending quarantine, full local security, strict privacy contracts, the complete desktop verifier, governed Python quality, unchanged UI-reference lineage, and canonical workflow integrity. Dependency scanning, SQLCipher/database protection, performance, packaging, and full cross-capability qualification remain deferred because this remediation changes no dependency, database engine, packaging input, UI reference, or performance contract and those surfaces belong to T04, CAP-02.S04 review, checkpoints, and W1 exit.",
+    "selectedCommandIds": [
+      "desktop:application",
+      "security-local:unit",
+      "foundation:ui-change",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": "Supply-chain scanning is deferred because no dependency or toolchain input changed. SQLCipher, database migration/rekey/recovery/performance, packaging, and complete deployment qualification remain mandatory in T04, CAP-02.S04 integration review, risk-cluster checkpoints, and W1 exit."
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "privacy-review",
+    "openFindingIds": [
+      "CAP-02.S04.T03-R01-F01",
+      "CAP-02.S04.T03-R02-F01"
+    ],
+    "rootCauseAnalysis": "R01 treated inventory equality plus path-based rename as sufficient destructive authority, overlooking root replacement. R02 corrected the root handoff with a stable Windows handle but still assumed the staged tree's child namespace remained unchanged, so an inserted canonical directory could make rollback fail. R03 makes namespace immutability explicit: it binds every confirmed directory identity, installs reversible deny-add ACLs under held handles before rename, revalidates the fully protected tree, carries those ACLs through audit and cleanup, restores them on rollback, and retains them on cleanup-pending quarantine.",
+    "note": "Independently review exact R03 candidate aeface5a01ec6b78ff9bb9c24468466b1ff51698 and replay CAP-02.S04.T03-R01-F01 plus CAP-02.S04.T03-R02-F01. Reproduce root and child substitutions at pre-rename, post-move, post-validation, and post-audit boundaries; verify exact ACL restoration, canonical/cache path and byte stability, audit ordering, protected cleanup-pending recovery, unchanged privacy/UI contracts, and exact evidence scope before closing either finding."
+  }
+}
