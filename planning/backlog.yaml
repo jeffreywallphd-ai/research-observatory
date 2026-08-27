@@ -4730,15 +4730,20 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex
       branch: codex/w1-windows-local-runtime
       started_at: '2026-08-22T04:51:13+00:00'
-      updated_at: '2026-08-27T21:49:49+00:00'
+      updated_at: '2026-08-27T22:12:10+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Recovered immutable privacy-controls candidate qualified for independent privacy review.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-02.S04.T03.json
+        sha256: 9925d97e3e90ab7b088a38ebf04009e4573aa8e011d2ca03c76d802e2bef7d5e
+        commit: a86c723905d9493efee4610c7513a1cfc9c124eb
+        recorded_at: '2026-08-27T22:12:10+00:00'
       review:
         reviewer: null
         result: null
@@ -4749,7 +4754,7 @@ capabilities:
         claimed_by: codex
         claimed_at: '2026-08-27T21:49:49+00:00'
         expires_at: '2026-08-28T05:49:49+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
@@ -4844,6 +4849,67 @@ capabilities:
         recovered_by: codex
         recovered_at: '2026-08-27T21:49:49+00:00'
         new_base_sha: 8f23c995aeddb9009359298ae8009646ed284227
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex
+          submitted_at: '2026-08-27T22:12:10+00:00'
+          candidate_commit: a86c723905d9493efee4610c7513a1cfc9c124eb
+          base_commit: 8f23c995aeddb9009359298ae8009646ed284227
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-02.S04.T03.json
+            sha256: 9925d97e3e90ab7b088a38ebf04009e4573aa8e011d2ca03c76d802e2bef7d5e
+            commit: a86c723905d9493efee4610c7513a1cfc9c124eb
+            recorded_at: '2026-08-27T22:12:10+00:00'
+          acceptance_criteria_sha256: b06d42b31c1ea4423ab56c4fa4f57a2f23e89c995e8bc1cd6afd8089e0ad8976
+          changed_paths:
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/governance-migrations/GOV-MAINT-0003.json
+          - planning/governance-migrations/GOV-MAINT-0003.review-R01.json
+          - planning/review-site/CAP-02/CAP-02.S04.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - tests/foundation/test_task_recovery.py
+          - tests/foundation/test_taskctl_workflow.py
+          - tools/taskctl.py
+          selected_checks:
+          - .venv\Scripts\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-recovery.json
+          - .venv\Scripts\python.exe -m unittest discover -s tests/security -p test_*.py -v
+          - .venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract
+          - .venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head
+            59079efccc122a7d56a9f18efc20030851bf32a9
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py
+            --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave validate W1; git diff --check
+          deferred_checks:
+          - Supply-chain scanning is deferred because the immutable candidate changes no dependency or toolchain input. CAP-02.S04
+            slice review will exercise T01-T04 together across secret storage, application lock, privacy policy, protected
+            database, failure/restart/recovery, accessibility, and downstream handoffs. Complete repository, packaging, performance,
+            security, and Windows deployment qualification remains mandatory at the W1 checkpoint and exit review.
+          selection_rationale: This high-risk privacy and approved-reference task controls research-content egress, consent,
+            retention, cache deletion, project/session authority, redacted auditing, and truthful physical-erasure disclosure
+            across Core contracts and the compiled desktop. Selected coverage therefore includes the full desktop application
+            verifier, full local-security unit suite, focused privacy/portable-contract tests, exact approved-reference lineage,
+            canonical planning/backlog integrity, and the recovery controller's immutable-candidate and atomic-persistence
+            checks. Dependency scanning, SQLCipher/database protection, storage performance, and complete cross-capability
+            deployment qualification are deferred because this recovered immutable candidate changes no dependencies, database
+            engine, packaging inputs, or performance contract and those surfaces belong to T04, slice review, checkpoints,
+            and W1 exit.
+          selection_sha256: f1de4d6920eb957055ff18351b554ed196c524d9c006852694da7e2b4b588b4b
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - desktop:application
+          - security-local:unit
+          - foundation:ui-change
+          - foundation:backlog
+          - foundation:backlog-views
+          packet_sha256: 0f4cae567fead9baff9622f3795030f40d33ca7dacf3a4e6c0fe0a9b0a891eeb
     - id: CAP-02.S04.T04
       capability_id: CAP-02
       slice_id: CAP-02.S04

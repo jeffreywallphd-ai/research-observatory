@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d146c24ce00c71bb211c6b0aea1eb787712bc7b1ca1fca0336d05b32a1210f44
+source_sha256: 5969546af62a7b673fa3771529d00595c35e0cee6f278d79ac2f1123f2f03c33
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3043,7 +3043,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3068,13 +3068,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-02.S04.T03.json` at `a86c723905d9493efee4610c7513a1cfc9c124eb`
+
 ##### Review history — CAP-02.S04.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `0f4cae567fead9baff9622f3795030f40d33ca7dacf3a4e6c0fe0a9b0a891eeb`
+
+- Candidate / base / branch: `a86c723905d9493efee4610c7513a1cfc9c124eb` / `8f23c995aeddb9009359298ae8009646ed284227` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-08-27T22:12:10+00:00`
+- Evidence: `artifacts/evidence/CAP-02.S04.T03.json` / `9925d97e3e90ab7b088a38ebf04009e4573aa8e011d2ca03c76d802e2bef7d5e` / `a86c723905d9493efee4610c7513a1cfc9c124eb`
+- Acceptance-criteria SHA-256: `b06d42b31c1ea4423ab56c4fa4f57a2f23e89c995e8bc1cd6afd8089e0ad8976`
+- Verification-selection SHA-256: `f1de4d6920eb957055ff18351b554ed196c524d9c006852694da7e2b4b588b4b`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/governance-migrations/GOV-MAINT-0003.json`, `planning/governance-migrations/GOV-MAINT-0003.review-R01.json`, `planning/review-site/CAP-02/CAP-02.S04.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_task_recovery.py`, `tests/foundation/test_taskctl_workflow.py`, `tools/taskctl.py`
+- Selected checks: `.venv\Scripts\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-recovery.json`, `.venv\Scripts\python.exe -m unittest discover -s tests/security -p test_*.py -v`, `.venv\Scripts\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract`, `.venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\Scripts\python.exe tools/backlog_views.py --repo . --check; .venv\Scripts\python.exe tools/planctl.py --repo . wave validate W1; git diff --check`
+- Deferred checks: `Supply-chain scanning is deferred because the immutable candidate changes no dependency or toolchain input. CAP-02.S04 slice review will exercise T01-T04 together across secret storage, application lock, privacy policy, protected database, failure/restart/recovery, accessibility, and downstream handoffs. Complete repository, packaging, performance, security, and Windows deployment qualification remains mandatory at the W1 checkpoint and exit review.`
+- Selection rationale: This high-risk privacy and approved-reference task controls research-content egress, consent, retention, cache deletion, project/session authority, redacted auditing, and truthful physical-erasure disclosure across Core contracts and the compiled desktop. Selected coverage therefore includes the full desktop application verifier, full local-security unit suite, focused privacy/portable-contract tests, exact approved-reference lineage, canonical planning/backlog integrity, and the recovery controller's immutable-candidate and atomic-persistence checks. Dependency scanning, SQLCipher/database protection, storage performance, and complete cross-capability deployment qualification are deferred because this recovered immutable candidate changes no dependencies, database engine, packaging inputs, or performance contract and those surfaces belong to T04, slice review, checkpoints, and W1 exit.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-02.S04.T04 - Select and implement the protected local project-database profile
 
