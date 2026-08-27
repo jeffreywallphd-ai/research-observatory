@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-02.S04.T03",
+  "commit": "a86c723905d9493efee4610c7513a1cfc9c124eb",
+  "baseCommit": "8f23c995aeddb9009359298ae8009646ed284227",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/governance-migrations/GOV-MAINT-0003.json",
+    "planning/governance-migrations/GOV-MAINT-0003.review-R01.json",
+    "planning/review-site/CAP-02/CAP-02.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_task_recovery.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-02.S04.T03-desktop-check-recovery.json",
+      "exitCode": 0,
+      "result": "The pinned Windows desktop verifier passed the UI component package, renderer lint/typecheck/tests/build, Rust format/clippy/tests/build, and compiled browser aggregate. The browser frame confirmed the privacy settings workflow, application lock, accessible focus/live-region/keyboard behavior, responsive and light/dark design-system cases, zero unexpected requests, and CAP-02.S04.T03 as an implemented capability. Report SHA-256: 0a0f041c55b2221aaa38d3ddd7f40d7f4694170d656bd1366f6051b8cebb2e55."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -s tests/security -p test_*.py -v",
+      "exitCode": 0,
+      "result": "All 37 local-security unit tests passed with one expected Windows-token directory-symlink skip. Coverage includes local/off privacy defaults, exact egress consent, append-only restart-safe policy revisions, cache preview/confirmation, redirect denial, canonical-data exclusion, redacted audit events, Windows credential containment, application-lock source boundaries, and fail-closed security-policy behavior."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.security.test_privacy_controls tests.contracts.test_privacy_policy_contract",
+      "exitCode": 0,
+      "result": "Nine focused privacy and strict portable-contract tests passed. They cover authenticated consent and cache confirmation, deterministic local defaults, project/session authority, append-only restart persistence, stale preview and redirect denial, canonical-data exclusion, strict offline defaults, and deletion/egress non-overclaim."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base bfb8797398707bece9e0662c0d995fabaced9979 --head 59079efccc122a7d56a9f18efc20030851bf32a9",
+      "exitCode": 0,
+      "result": "The approved-reference implementation gate passed for the immutable historical product candidate. It bound exactly the four governed desktop UI files to RO-UI-ACADEMIC-MINIMAL-1.3 and reference package SHA-256 db13c8d5eeee71c890ca8530d7355a7fa95ca17630e8d53adba4fc7724d609e2 with no errors."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate; .venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check; .venv\\Scripts\\python.exe tools/planctl.py --repo . wave validate W1; git diff --check",
+      "exitCode": 0,
+      "result": "The canonical backlog validated with 20 capabilities, 117 slices, 359 tasks, and 12 release gates; generated backlog views had no drift; all 150 planning review pages and every W1 plan passed; and patch hygiene passed. The exact recovery controller separately recomputed UI and privacy checks before changing only T03's recovery execution projection."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The strict project privacy policy defaults to offline-only provider egress, remote telemetry disabled, local diagnostic retention, manual document retention, and explicit cache-deletion limitations. Non-offline policy requires the exact project, provider mode, disclosure revision, and informed acknowledgement before an append-only compare-and-swap update.",
+        "Project-session authority is required for reads and mutations. Cache clear uses a current one-time preview, rechecks stable file identity and containment, excludes canonical documents and durable database state, denies redirected roots, and reports logical removal separately from best-effort physical erasure.",
+        "The approved Project Settings workflow states what will and will not leave the device, requires explicit acknowledgement for egress, offers task-specific provider preview, keeps telemetry off, avoids automatic document deletion, and discloses filesystem limitations without overclaiming secure deletion."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The 37-test security suite and nine focused privacy/contract cases exercise expected policy and cache-clear paths plus consent denial, stale revisions, restart persistence, cross-project/session denial, redirected cache roots, stale preview, canonical-data exclusion, audit redaction, and physical-erasure non-overclaim.",
+        "The compiled desktop verifier covers renderer and native unit/build boundaries plus the functional privacy workflow, keyboard/focus/live-region semantics, responsive light/dark behavior, offline execution, and zero unexpected network requests.",
+        "The exact recovery transition reran the approved UI gate and privacy/contract tests before atomic persistence and bound the immutable product candidate, task contract, manifest, W1.A03 authority, and direct-child resume commit. The final candidate also contains independently approved GOV-MAINT-0003, which permits only the already authenticated W1.A04 witness during task submission and leaves all protected product bytes unchanged."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The immutable historical product candidate includes the strict privacy-policy schema and fixture, Core API/OpenAPI/generated client, append-only local policy store, desktop settings workflow, privacy/security tests, ADR-0019, privacy architecture, contracts documentation, and approved UI-change evidence.",
+        "Recovery validation proved every protected app, Core, contract, privacy test, ADR, architecture, and UI-evidence byte still equals the implemented candidate; later commits changed only governed execution/recovery projections, reviewed submission-control fixtures, and control evidence.",
+        "No provider, remote telemetry, automatic document deletion, hosted service, new route, governed reference revision, or unrelated product capability was introduced. Full cross-task storage/secrets integration and complete deployment-profile qualification remain at the CAP-02.S04 slice and W1 exit boundaries."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "This high-risk privacy and approved-reference task controls research-content egress, consent, retention, cache deletion, project/session authority, redacted auditing, and truthful physical-erasure disclosure across Core contracts and the compiled desktop. Selected coverage therefore includes the full desktop application verifier, full local-security unit suite, focused privacy/portable-contract tests, exact approved-reference lineage, canonical planning/backlog integrity, and the recovery controller's immutable-candidate and atomic-persistence checks. Dependency scanning, SQLCipher/database protection, storage performance, and complete cross-capability deployment qualification are deferred because this recovered immutable candidate changes no dependencies, database engine, packaging inputs, or performance contract and those surfaces belong to T04, slice review, checkpoints, and W1 exit.",
+    "selectedCommandIds": [
+      "desktop:application",
+      "security-local:unit",
+      "foundation:ui-change",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": "Supply-chain scanning is deferred because the immutable candidate changes no dependency or toolchain input. CAP-02.S04 slice review will exercise T01-T04 together across secret storage, application lock, privacy policy, protected database, failure/restart/recovery, accessibility, and downstream handoffs. Complete repository, packaging, performance, security, and Windows deployment qualification remains mandatory at the W1 checkpoint and exit review."
+  },
+  "reviewerDisposition": {
+    "status": "pending-independent-review",
+    "requiredGate": "privacy-review",
+    "openFindingIds": [],
+    "note": "Independently review exact candidate a86c723905d9493efee4610c7513a1cfc9c124eb and immutable product candidate 59079efccc122a7d56a9f18efc20030851bf32a9. Prioritize local/off defaults, consent identity and stale revisions, project/session boundaries, provider preview truth, retention semantics, cache preview/TOCTOU/redirect/canonical-data safety, audit redaction, deletion non-overclaim, approved-reference conformance, accessibility, recovery authority, exact evidence scope, and clean candidate provenance."
+  }
+}
