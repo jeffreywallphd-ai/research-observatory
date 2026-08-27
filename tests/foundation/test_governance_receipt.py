@@ -4,6 +4,7 @@ import copy
 import sys
 import unittest
 from pathlib import Path
+from typing import Any, cast
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
@@ -172,7 +173,7 @@ class GovernanceReceiptTests(unittest.TestCase):
             git_binding=binding,
             check_results=checks,
         )
-        divergent_after = copy.deepcopy(after)
+        divergent_after = cast(dict[str, Any], copy.deepcopy(after))
         divergent_after["source"]["sha256"] = "9" * 64
         with self.assertRaisesRegex(governance_receipt.ReceiptValidationError, "transition differs"):
             governance_receipt.validate_receipt(
