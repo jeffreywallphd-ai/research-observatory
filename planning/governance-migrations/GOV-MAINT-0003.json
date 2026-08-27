@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0003",
   "title": "Authenticate the retained W1.A04 witness during exact W1 task evidence submission",
-  "status": "implemented-pending-independent-review",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "predecessor": {
@@ -67,5 +67,14 @@
     ]
   },
   "rollback": "Do not adopt, integrate, or use the repaired submission path if affected checks or independent review fail. Revert only this strict descendant to bbc448b; T03 remains IN_PROGRESS without attached evidence or a frozen submission, W1 remains ACTIVE, and both untracked manifests remain byte-preserved.",
-  "review": null
+  "review": {
+    "reviewId": "GOV-MAINT-0003.R01",
+    "reviewedCommit": "fe53e879a18ffd6feabc713e856911049b088acc",
+    "reviewer": "Nash",
+    "reviewedAt": "2026-08-27T18:09:40-04:00",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0003.review-R01.json",
+    "sha256": "38618bfe5b5b15ece1f00fad081c37fdc7e326c4aa9a9f05d073cd2694b15a78"
+  }
 }
