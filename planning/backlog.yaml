@@ -137,13 +137,12 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-08-22T21:05:41+00:00'
-    pause_reason: 'Paused at unrecovered CAP-02.S04.T03 after the adopted recovery controller demonstrated an impossible resume-boundary
-      condition: recovery requires campaign.base_sha while git execution identity simultaneously requires current HEAD after
-      the resume-state commit; both attempted command shapes failed closed without task mutation. Prepare a bounded append-only
-      ECR/amendment that separates the immutable resume-record boundary from current-HEAD compare-and-swap identity and adds
-      a real end-to-end resume-commit-recover regression.'
-    pause_category: infeasible
+    updated_at: '2026-08-27T16:03:47-04:00'
+    pause_reason: 'Governance migration GOV-MIG-0001 retired the incident-specific recovery interruption and repaired the
+      committed resume boundary without changing product scope. W1 remains deliberately paused for user handoff. The next
+      session must explicitly resume W1, commit the exact generated resume transition, recover CAP-02.S04.T03 against that
+      committed boundary, and then continue ordinary task evidence and independent review.'
+    pause_category: user-handoff
     lease: null
   checkpoints:
   - id: W1.CP01
@@ -22846,7 +22845,7 @@ control_plane:
   - id: HOLD-W1-GRR-0002
     recovery_request_id: GRR-0002
     target_wave: W1
-    status: ACTIVE
+    status: RELEASED
     approval_reference:
       path: planning/governance-recovery-approvals/GRR-0002.json
       sha256: 07f2e2da15d74c6a72e97e62a5f3d5a540f39898eb958eff7c92f42b80d6d893
@@ -23155,7 +23154,7 @@ control_plane:
     - W1.A04 adoption records a bound control/security checkpoint before HOLD-W1-GRR-0002 is released.
     - After release, W1 is explicitly resumed before the corrected exact T03 recovery is invoked.
     created_at: '2026-08-22T22:06:24+00:00'
-    released_at: null
+    released_at: '2026-08-27T16:03:47-04:00'
   control_generations:
   - id: GCR-0001
     bootstrap_id: GCR-0001.B00

@@ -73,42 +73,41 @@ Approve that entire packet once at one immutable commit. Approval of one Wave
 never authorizes a later Wave.
 
 An `APPROVED` Wave is immutable and must never be approved again or edited in
-place. Consequential new evidence discovered during execution uses the
-append-only enabler change-request lane. Pause the Wave at a quiescent boundary,
-freeze and independently review an ECR packet, obtain explicit human approval
-in a new immutable amendment record, then execute only the packet's authorized
-bootstrap/tasks through `taskctl amendment`. The original approval remains the
-base; ordered `WN.ANN` records form the authority chain. Ordinary Wave claim,
-resume, submission, review, and exit-gate approval remain denied until the
-interrupting amendment is adopted through an independent exit review and a
-control/security checkpoint, or receives an explicit append-only deferred or
-withdrawn safe-resume disposition. Never use `planctl wave approve` to amend an
-already approved Wave.
-Bootstrap changes-requested/blocked dispositions are append-only. Remediation
-must use `taskctl amendment bootstrap-resubmit` to freeze a strict-descendant
-candidate and new evidence without overwriting the prior attempt.
+place. Consequential evidence that changes product scope, security authority,
+migration guarantees, a governed experience reference, or release criteria uses
+one append-only enabler amendment. Pause at a quiescent boundary, bind the
+decision and exact affected scope, obtain independent review, and obtain human
+approval only when authority expands. The original approval plus ordered
+`WN.ANN` records remains the authority chain. Routine debugging, verification,
+and corrections that preserve already approved authority do not require a new
+human approval.
 
-If a demonstrated defect prevents the ordinary ECR lane from representing or
-enforcing its own next amendment, do not improvise a direct edit or resume. Use
-the Governance Recovery Request (GRR) lane. A GRR is an exceptional,
-bootstrap-only, hash-bound authority: independently review the inert packet,
-obtain explicit exact-commit human approval, install an ACTIVE recovery hold,
-and execute only its named `GRR-NNNN.B00` through `recoveryctl`. The hold denies
-all ordinary Wave/task/amendment/gate mutations and older-reader paths. After
-independent B00 approval, the actual repair still requires a separate ordinary
-ECR/amendment approval. Release the hold only after that amendment is adopted
-with a bound control/security checkpoint; the Wave remains PAUSED until an
-explicit ordinary resume. GRR packets, adverse reviews, evidence, and
-dispositions are append-only and never grant a bypass or emergency override.
+### Governance automation after GOV-MIG-0001
 
-If an independently approved B00 later exposes a latent defect that prevents
-the exact separately approved repair amendment from materializing, keep the
-same hold active and use an append-only `GRR-NNNN.SNN` supplement. The
-supplement requires independent packet review and exact-commit human approval,
-authorizes only its sequential `GRR-NNNN.BNN`, raises the minimum control
-revision, and denies the repair amendment until that supplemental bootstrap is
-independently approved. Never reopen B00, create a competing active hold, or
-treat supplement approval as amendment/task/resume authority.
+`GOV-MIG-0001` replaces incident-specific controller escalation with the stable
+governance kernel described in
+`docs/automation/governance-automation-simplification.md`. Use one bounded
+maintenance increment for a defect in automation or evidence controls:
+
+1. stop the affected mutation at a quiescent, recoverable boundary;
+2. bind the exact predecessor bytes, intended projection delta, risk tier, and
+   authority that must not expand;
+3. implement the smallest generic correction rather than a new identity-specific
+   controller;
+4. run risk-selected checks, including real persistence or Git boundaries when
+   those are affected; and
+5. obtain independent review before integration when security, migration,
+   evidence, public contracts, or control authority are affected.
+
+Human approval remains mandatory for expanded product authority, destructive or
+irreversible action, external effects, substantial spend, governed experience
+changes, and release decisions. It is not required merely because a maintenance
+increment repairs the workflow itself. Existing ECR, GRR, GCR, amendment,
+finding, review, and evidence records are immutable historical inputs and their
+controllers remain historical validators. Do not create a new GRR, GCR, control
+revision, or bespoke controller to repair another controller. Never weaken a
+substantive safety invariant or rewrite adverse history in the name of
+simplification.
 
 "One run" means one durable Wave campaign, not one operating-system process.
 Resume it after an ordinary tool, app, or session interruption. Claim and finish

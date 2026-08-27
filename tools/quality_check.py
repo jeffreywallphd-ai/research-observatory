@@ -62,7 +62,19 @@ def execute_quality(
     checks = [
         ("format", [sys.executable, "-m", "ruff", "format", "--check", "--config", "pyproject.toml", "--", *files]),
         ("lint", [sys.executable, "-m", "ruff", "check", "--config", "pyproject.toml", "--", *files]),
-        ("types", [sys.executable, "-m", "mypy", "--config-file", "pyproject.toml", "--", *files]),
+        (
+            "types",
+            [
+                sys.executable,
+                "-m",
+                "mypy",
+                "--config-file",
+                "pyproject.toml",
+                "--no-namespace-packages",
+                "--",
+                *files,
+            ],
+        ),
     ]
     results: list[dict[str, Any]] = []
     exit_code = 0

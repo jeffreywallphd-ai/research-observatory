@@ -62,11 +62,46 @@ class GovernancectlTests(unittest.TestCase):
             "STOPPED AT RELEASE GATE G1": "release-gate",
             "STOPPED AT PRE-WAVE APPROVAL: W1": "wave-approval",
             "WAVE IMPLEMENTATION COMPLETE: W1": "wave",
+            "WAVE PAUSED AND READY TO RESUME: W1": "wave",
             "id: CAP-02.S04.T03\nstatus: READY": "task",
         }
         for output, expected in cases.items():
             with self.subTest(output=output):
                 self.assertEqual(expected, governancectl.legacy_category(output))
+
+    def test_paused_approved_wave_projects_resume_without_new_approval(self) -> None:
+        data = {
+            "control_plane": {"recovery_holds": []},
+            "wave_amendments": [],
+            "waves": [
+                {
+                    "id": "W1",
+                    "activation_gate": None,
+                    "approval": {"status": "APPROVED"},
+                    "campaign": {"status": "PAUSED"},
+                    "completion": {"status": "PAUSED"},
+                }
+            ],
+            "release_gates": [],
+            "capabilities": [],
+        }
+
+        action, program = governancectl.project_next_action(
+            data,
+            {},
+            {},
+            {},
+            {},
+            profile="LOC",
+            platform="windows-x64",
+        )
+
+        self.assertEqual("ACTIVE_WAVE", program["state"])
+        self.assertEqual("resume-wave", action["action"])
+        self.assertEqual(1, action["riskTier"])
+        self.assertTrue(action["executableNow"])
+        self.assertFalse(action["approvalRequired"])
+        self.assertIn("wave resume W1", action["command"])
 
     def test_stale_derived_timestamp_does_not_change_legacy_fingerprint(self) -> None:
         task = {

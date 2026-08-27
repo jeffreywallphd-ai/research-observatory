@@ -259,6 +259,24 @@ def wave_decision(
             executable_now=bool(wave_id),
             approval_required=True,
         )
+    campaign = wave.get("campaign") or {}
+    if campaign.get("status") == "PAUSED":
+        return decision(
+            category="wave",
+            action="resume-wave",
+            target=wave_id or None,
+            summary=f"Resume the approved, paused {wave_id} campaign from an exact clean Git boundary.",
+            command=(
+                f"python tools/taskctl.py --file planning/backlog.yaml wave resume {wave_id} --agent <agent> "
+                "--branch <codex-branch> --base-sha <HEAD> --worktree <absolute-repository-path> "
+                f"--profile {profile} --platform {platform}"
+                if wave_id
+                else None
+            ),
+            risk_tier=1,
+            executable_now=bool(wave_id),
+            approval_required=False,
+        )
     return decision(
         category="wave",
         action="start-wave",
@@ -348,7 +366,11 @@ def legacy_category(output: str) -> str:
         return "release-gate"
     if first.startswith("STOPPED AT PRE-WAVE APPROVAL"):
         return "wave-approval"
-    if first.startswith("WAVE IMPLEMENTATION COMPLETE") or first.startswith("No READY task in active Wave"):
+    if (
+        first.startswith("WAVE IMPLEMENTATION COMPLETE")
+        or first.startswith("No READY task in active Wave")
+        or first.startswith("WAVE PAUSED AND READY TO RESUME")
+    ):
         return "wave"
     try:
         document = yaml.safe_load(output)

@@ -3,8 +3,11 @@
 ## Status and purpose
 
 This is the migration design for replacing incident-specific deterministic
-controllers with a small, stable governance kernel. The first implementation is
-shadow-only and grants no execution authority.
+controllers with a small, stable governance kernel. The kernel and generic
+store remain evidence-only while live W1 mutations use the existing `taskctl`
+compatibility adapter. `GOV-MIG-0001` retires new incident-numbered controller
+escalation without rewriting historical evidence or granting W1 execution
+authority.
 
 The existing controls preserved source history and prevented unsafe mutation,
 but recovery growth made the control system a competing product: `taskctl`,
@@ -134,6 +137,21 @@ stable. Freeze old controllers as historical validators, route new transitions
 through the kernel, and remove duplicated mutation paths only after replaying all
 retained histories. Historical evidence is never rewritten.
 
+The first bounded live cutover is `planning/governance-migrations/GOV-MIG-0001.json`.
+It releases the obsolete `HOLD-W1-GRR-0002` interruption, leaves W1 explicitly
+PAUSED, and repairs the already implemented durable resume-record boundary in
+the compatibility adapter. The record's pre-resume commit is immutable
+transition authority; the later clean current `HEAD` is the compare-and-swap
+identity. Recovery requires that `HEAD` be the direct child of the recorded
+pre-resume commit and that it modify exactly the five generated resume paths.
+This prevents the prior self-contradictory equality while denying hidden source,
+product, policy, evidence, or controller changes in the resume commit.
+
+The old ECR, GRR, GCR, amendment, review, and evidence files remain historical
+authority and validation input. No new incident-numbered controller should be
+created. Until the generic journal becomes live authority, `taskctl` remains the
+bounded compatibility mutation adapter for ordinary W1 transitions.
+
 ## Invariants retained
 
 - Exact source hashes and compare-and-swap publication.
@@ -186,3 +204,19 @@ retained histories. Historical evidence is never rewritten.
   after a simulated crash between state replacement and transaction cleanup.
 - Static tests prove the store exposes no CLI and contains no live-backlog path;
   every write is confined to temporary fixture directories.
+
+## Verification for the W1 compatibility cutover
+
+- The live backlog validates with every retained recovery/control generation
+  unchanged, `HOLD-W1-GRR-0002` terminally released, W1 PAUSED, and T03 still
+  BLOCKED until an explicit later resume.
+- Shadow and legacy next-action readers agree that the legal next transition is
+  W1 resume and require no new Wave approval.
+- T03 recovery rejects a missing or rewritten resume record, an uncommitted or
+  non-direct-child `HEAD`, and every added, deleted, renamed, copied,
+  type-changed, substituted, extra, or omitted resume path.
+- A real Git fixture proves the pre-resume authority and committed current
+  `HEAD` are distinct and the exact five-path modification-only transition is
+  accepted.
+- Independent control/security review precedes integration into local `main`;
+  W1 is not resumed or claimed during the cutover.

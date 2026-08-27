@@ -92,6 +92,13 @@ EXACT_T03_RECOVERY = {
     "block_record": "1c1d9ba427a55024687a62ca0c364acaccdbb7e2",
     "pause_record": "c7d543136fcd75c8f93dc8e669e59d54de433c02",
 }
+EXACT_T03_RESUME_COMMIT_PATHS = {
+    "docs/planning-implementation-plan.md": "M",
+    "planning/backlog.yaml": "M",
+    "planning/review-site/manifest.json": "M",
+    "planning/review-site/waves/W1.html": "M",
+    "planning/status-summary.md": "M",
+}
 TASK_RECOVERY_CONTRACT_FIELDS = (
     "id",
     "capability_id",
@@ -5747,6 +5754,18 @@ def command_next(args, data, capabilities, slices, tasks, gates) -> None:
         return
     active = active_wave_campaigns(data)
     if not active:
+        program = global_program_position(data, slices, tasks, gates)
+        wave = wave_map(data).get(str(program.get("current_wave") or "")) or {}
+        campaign = wave.get("campaign") or {}
+        if program.get("state") == "ACTIVE_WAVE" and campaign.get("status") == "PAUSED":
+            print(
+                f"WAVE PAUSED AND READY TO RESUME: {wave['id']}. Commit any completed control migration, then run "
+                f"`python tools/taskctl.py --file planning/backlog.yaml wave resume {wave['id']} --agent <agent> "
+                "--branch <codex-branch> --base-sha <HEAD> --worktree <absolute-repository-path> "
+                f"--profile {campaign.get('profile') or args.profile} "
+                f"--platform {campaign.get('platform') or args.platform}`."
+            )
+            return
         command_next_capability(args, data, capabilities, slices, tasks, gates)
         return
     wave = active[0]
@@ -6353,6 +6372,32 @@ def exact_recovery_manifest_errors(
             if git_blob(repo, str(commits.get("candidate")), path) != git_blob(repo, "HEAD", path):
                 errors.append(f"protected T03 candidate bytes changed after implementation: {path}")
                 break
+    return errors
+
+
+def exact_t03_resume_commit_errors(
+    data: dict[str, Any],
+    wave: dict[str, Any],
+    repo: Path,
+    current_head: str,
+) -> list[str]:
+    """Bind T03 recovery to the committed result of one exact Wave resume."""
+    campaign = wave.get("campaign") or {}
+    errors = wave_resume_record_errors(data, str(wave.get("id") or ""), campaign, repo)
+    records = campaign.get("resume_records") or []
+    if not records or not isinstance(records[-1], dict):
+        return [*errors, "Exact T03 recovery requires a durable Wave resume record"]
+    resume = records[-1]
+    pre_resume = str(resume.get("pre_resume_commit") or "")
+    if pre_resume == current_head:
+        errors.append("Exact T03 recovery current HEAD must contain the committed resume transition")
+    if git_commit_parents(repo, current_head) != [pre_resume]:
+        errors.append("Exact T03 recovery HEAD is not the direct child of the recorded pre-resume commit")
+    delta = git_name_status_delta(repo, pre_resume, current_head)
+    if delta != EXACT_T03_RESUME_COMMIT_PATHS:
+        errors.append("Exact T03 recovery resume commit must modify only the five generated Wave-resume paths")
+    if campaign.get("base_sha") != pre_resume:
+        errors.append("Exact T03 recovery campaign base differs from the durable pre-resume authority")
     return errors
 
 
@@ -8702,10 +8747,11 @@ def command_recover(args, data, capabilities, slices, tasks, gates) -> None:
     require_active_lease(wave, agent, "Wave W1")
     if campaign.get("branch") != branch or campaign.get("worktree") != worktree:
         raise SystemExit("Exact T03 recovery branch/worktree must match the resumed W1 campaign")
-    if campaign.get("base_sha") != base_sha:
-        raise SystemExit("Exact T03 recovery base must match the resumed W1 compare-and-swap boundary")
     if campaign.get("profile") != args.profile or campaign.get("platform") != args.platform:
         raise SystemExit("Exact T03 recovery profile/platform must match the resumed W1 campaign")
+    resume_errors = exact_t03_resume_commit_errors(data, wave, repo, base_sha)
+    if resume_errors:
+        raise SystemExit("Exact T03 committed resume boundary failed:\n- " + "\n- ".join(resume_errors))
     checkpoints = [
         checkpoint
         for checkpoint in wave.get("checkpoints", [])

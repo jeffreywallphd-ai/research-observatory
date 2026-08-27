@@ -2447,11 +2447,14 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
     def test_wave_resume_records_validate_historical_binding_and_fail_closed(self) -> None:
         data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
-        wave = next(item for item in data["waves"] if item["id"] == "W1")
-        prior = copy.deepcopy(wave["campaign"])
         head = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
         ).stdout.strip()
+        historical = taskctl_module.historical_backlog_document(REPO, head)
+        self.assertIsNotNone(historical)
+        assert historical is not None
+        wave = next(item for item in historical["waves"] if item["id"] == "W1")
+        prior = copy.deepcopy(wave["campaign"])
         resumed_at = "2026-08-24T00:00:00+00:00"
         record = {
             "id": "W1.R01",
@@ -3390,6 +3393,8 @@ class TaskctlWorkflowTests(unittest.TestCase):
         data, *_ = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
         hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
+        hold["status"] = "ACTIVE"
+        hold["released_at"] = None
         supplement = hold["supplements"][-1]
         bootstrap = supplement["bootstrap"]
         evidence = {
@@ -3509,7 +3514,10 @@ class TaskctlWorkflowTests(unittest.TestCase):
         data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
         data = copy.deepcopy(data)
         hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
+        hold["status"] = "ACTIVE"
+        hold["released_at"] = None
         bootstrap = hold["supplements"][-1]["bootstrap"]
+        bootstrap["status"] = "CHANGES_REQUESTED"
         approval_path = REPO / "planning/wave-amendment-approvals/W1.A04.json"
         approval_payload = approval_path.read_bytes()
         approval = json.loads(approval_payload)
