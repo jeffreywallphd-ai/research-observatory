@@ -1,0 +1,21 @@
+{
+  "task_id": "CAP-02.S04.T03",
+  "attempt_id": "R02",
+  "candidate_commit": "4c2579a71e043477bf4c025959bbf88c43f412d1",
+  "submission_record_commit": "54bffb7ba2c57c6a76909a7d765f9e974ddd595c",
+  "reviewer": "nash-independent-reviewer",
+  "result": "changes-requested",
+  "notes": "R02 binds the cache root across confirmation and handle-based rename, but it does not complete CAP-02.S04.T03-R01-F01's canonical-data and rollback requirement. A post-move child substitution can displace canonical config into the tombstone; rollback then fails and leaves the canonical path absent. Root substitution coverage passes, but staged-tree mutation, rollback safety, and canonical-location preservation require a strict-descendant remediation.",
+  "findings": [
+    {
+      "id": "CAP-02.S04.T03-R02-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Post-move staged-tree substitution can displace canonical project data and defeat rollback",
+      "reproduction": "At the after-held-cache-rename boundary, move project/config to tombstone/config. The staged inventory check detects the added directory, but rollback through the held cache handle fails with WinError 5. The request denies with RO-CORE-PROJECT-PATH-INVALID while project/config/project-profile.json is absent and the byte-exact profile remains displaced under .tmp/cache-clear-<token>/config/project-profile.json.",
+      "required_remediation": "In a strict-descendant candidate, prevent namespace mutation of the staged tree across post-move validation, audit, rollback, and cleanup, or implement a deterministic transaction that restores every displaced canonical path before denial. Add adversarial tests at the post-move, pre-audit, and pre-cleanup boundaries proving canonical paths and bytes remain exact, no success audit or cleared result is produced on denial, and any tombstone state is safely recoverable."
+    }
+  ],
+  "closures": []
+}

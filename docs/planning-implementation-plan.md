@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 40187708f575f51951b46f8d35d54e3a38ca2ff08fa1f075061367bef5290b37
+source_sha256: 10e0d04310c4ce3781d4c6414edb951c70c053bd8c0ae8576f292f3cc2e7b453
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3043,7 +3043,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -3075,7 +3075,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-02.S04.T03
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -3107,7 +3107,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `43432204c3bc2cac9804572b517c7ff084044970f206efff2ae25f224dd179f5`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `43432204c3bc2cac9804572b517c7ff084044970f206efff2ae25f224dd179f5`
 
 - Candidate / base / branch: `4c2579a71e043477bf4c025959bbf88c43f412d1` / `a86c723905d9493efee4610c7513a1cfc9c124eb` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-27T22:27:27+00:00`
@@ -3121,11 +3123,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `CAP-02.S04.T03-R01-F01`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by nash-independent-reviewer at `2026-08-27T22:17:29+00:00`
+**Disposition / reviewer / time:** `changes-requested` / nash-independent-reviewer / `2026-08-27T22:31:57+00:00`
 
-**Latest notes:** Exact-commit scope, recovery provenance, privacy defaults, consent, session, audit, UI, and evidence bindings pass, but destructive cache cleanup lacks stable root-identity binding across inventory-to-rename and can delete substituted canonical project data; remediation and independent rereview are required.
+**Immutable review ledger:** `artifacts/evidence/CAP-02.S04.T03.review-R02.json` / `9995ab6b9de51475598abc422d67581928e062d208f562e95ed3772d330e06fb`
 
-**Currently open findings:** `CAP-02.S04.T03-R01-F01`
+**Review notes:** R02 binds the cache root across confirmation and handle-based rename, but it does not complete CAP-02.S04.T03-R01-F01's canonical-data and rollback requirement. A post-move child substitution can displace canonical config into the tombstone; rollback then fails and leaves the canonical path absent. Root substitution coverage passes, but staged-tree mutation, rollback safety, and canonical-location preservation require a strict-descendant remediation.
+
+**Findings opened:**
+
+- `CAP-02.S04.T03-R02-F01` `high` blocking=`True` criterion=`1` — Post-move staged-tree substitution can displace canonical project data and defeat rollback; reproduce: At the after-held-cache-rename boundary, move project/config to tombstone/config. The staged inventory check detects the added directory, but rollback through the held cache handle fails with WinError 5. The request denies with RO-CORE-PROJECT-PATH-INVALID while project/config/project-profile.json is absent and the byte-exact profile remains displaced under .tmp/cache-clear-<token>/config/project-profile.json.; remediate: In a strict-descendant candidate, prevent namespace mutation of the staged tree across post-move validation, audit, rollback, and cleanup, or implement a deterministic transaction that restores every displaced canonical path before denial. Add adversarial tests at the post-move, pre-audit, and pre-cleanup boundaries proving canonical paths and bytes remain exact, no success audit or cleared result is produced on denial, and any tombstone state is safely recoverable.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by nash-independent-reviewer at `2026-08-27T22:31:57+00:00`
+
+**Latest notes:** R02 binds the cache root across confirmation and handle-based rename, but it does not complete CAP-02.S04.T03-R01-F01's canonical-data and rollback requirement. A post-move child substitution can displace canonical config into the tombstone; rollback then fails and leaves the canonical path absent. Root substitution coverage passes, but staged-tree mutation, rollback safety, and canonical-location preservation require a strict-descendant remediation.
+
+**Currently open findings:** `CAP-02.S04.T03-R01-F01`, `CAP-02.S04.T03-R02-F01`
 
 #### - [ ] CAP-02.S04.T04 - Select and implement the protected local project-database profile
 
