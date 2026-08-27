@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: db6377c43965ca1d4e0cf23ff7ac1596bcb4c4831f50cfc24d362e89071b80ad
+source_sha256: 44ea1bbd59a993b5b11f91b6784773c084faeceb79263c8aaa7a1800a20fb088
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3041,15 +3041,15 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-#### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
+#### - [x] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S04.T02`
 
-**Owner / review:** codex / nash-independent-reviewer (`changes-requested`)
+**Owner / review:** codex / nash-independent-reviewer (`approved`)
 
 **Objective:** Default-off telemetry, local log retention, provider egress choices, document retention, cache clearing, and best-effort secure deletion disclosures.
 
@@ -3076,7 +3076,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-02.S04.T03
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ###### Round R01
 
@@ -3138,7 +3138,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R03` / packet SHA-256 `327efd1cca5d9f82837706b4f0cb5a91acdf3f7426faa36e5ba89783709cd440`
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `327efd1cca5d9f82837706b4f0cb5a91acdf3f7426faa36e5ba89783709cd440`
 
 - Candidate / base / branch: `aeface5a01ec6b78ff9bb9c24468466b1ff51698` / `4c2579a71e043477bf4c025959bbf88c43f412d1` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-27T22:42:16+00:00`
@@ -3152,11 +3154,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R02` / `CAP-02.S04.T03-R01-F01`, `CAP-02.S04.T03-R02-F01`
 - Root-cause escalation: R01 treated inventory equality plus path-based rename as sufficient destructive authority, overlooking root replacement. R02 corrected the root handoff with a stable Windows handle but still assumed the staged tree's child namespace remained unchanged, so an inserted canonical directory could make rollback fail. R03 makes namespace immutability explicit: it binds every confirmed directory identity, installs reversible deny-add ACLs under held handles before rename, revalidates the fully protected tree, carries those ACLs through audit and cleanup, restores them on rollback, and retains them on cleanup-pending quarantine.
 
-**Current latest-review projection:** `changes-requested` by nash-independent-reviewer at `2026-08-27T22:31:57+00:00`
+**Disposition / reviewer / time:** `approved` / nash-independent-reviewer / `2026-08-27T22:48:39+00:00`
 
-**Latest notes:** R02 binds the cache root across confirmation and handle-based rename, but it does not complete CAP-02.S04.T03-R01-F01's canonical-data and rollback requirement. A post-move child substitution can displace canonical config into the tombstone; rollback then fails and leaves the canonical path absent. Root substitution coverage passes, but staged-tree mutation, rollback safety, and canonical-location preservation require a strict-descendant remediation.
+**Immutable review ledger:** `artifacts/evidence/CAP-02.S04.T03.review-R03.json` / `d6bee288eb8c4782bf0172fbd86991cb53256e5022d2bedf180685a35dcccb3b`
 
-**Currently open findings:** `CAP-02.S04.T03-R01-F01`, `CAP-02.S04.T03-R02-F01`
+**Review notes:** R03 closes both prior cache-cleanup blockers. Exact root-handle binding plus per-directory identity and deny-add protection, post-install and post-move inventory validation, deterministic pre-audit rollback with exact ACL restoration, truthful audit ordering, and protected cleanup-pending quarantine prevent root or child namespace substitution from expanding deletion authority. Windows adversarial, full security, privacy-contract, lineage, evidence-binding, and backlog checks pass. The non-Windows ACL fallback remains outside W1's Windows x64 release authority and is deferred to W6 platform qualification.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-02.S04.T03-R01-F01` `fixed` — artifacts/evidence/CAP-02.S04.T03.R03.json
+- `CAP-02.S04.T03-R02-F01` `fixed` — artifacts/evidence/CAP-02.S04.T03.R03.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by nash-independent-reviewer at `2026-08-27T22:48:39+00:00`
+
+**Latest notes:** R03 closes both prior cache-cleanup blockers. Exact root-handle binding plus per-directory identity and deny-add protection, post-install and post-move inventory validation, deterministic pre-audit rollback with exact ACL restoration, truthful audit ordering, and protected cleanup-pending quarantine prevent root or child namespace substitution from expanding deletion authority. Windows adversarial, full security, privacy-contract, lineage, evidence-binding, and backlog checks pass. The non-Windows ACL fallback remains outside W1's Windows x64 release authority and is deferred to W6 platform qualification.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-02.S04.T04 - Select and implement the protected local project-database profile
 
