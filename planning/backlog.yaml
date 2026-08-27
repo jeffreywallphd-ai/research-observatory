@@ -5234,13 +5234,16 @@ capabilities:
       - python tools/verify.py --profile data
       - python tools/verify.py --profile security-local
       - python tools/verify.py --profile e2e-local
-      status: READY
-      owner: null
-      branch: null
-      base_sha: null
-      lease: null
-      started_at: null
-      updated_at: '2026-08-20T22:23:23+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      base_sha: 819e32185f7d1b6e914cee45b7bcc487d891f7c8
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-08-27T22:51:04+00:00'
+        expires_at: '2026-08-28T06:51:04+00:00'
+      started_at: '2026-08-27T22:51:04+00:00'
+      updated_at: '2026-08-27T22:51:04+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -5251,7 +5254,7 @@ capabilities:
         reviewed_at: null
         notes: null
       verification_state: null
-      worktree: null
+      worktree: C:/workspace/research-observatory
       platform_targets:
       - windows-x64
     platform_targets:

@@ -1600,7 +1600,7 @@
             {
               "task_id": "CAP-02.S04.T04",
               "title": "Select and implement the protected local project-database profile",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
