@@ -30,7 +30,12 @@ class ExactTaskRecoveryTests(unittest.TestCase):
     def load_context(self, *, base_sha: str = HEAD):
         data = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
         context = taskctl.index_backlog(data)
-        data, _capabilities, _slices, _tasks, _gates = context
+        data, _capabilities, _slices, tasks, _gates = context
+        paused_task = taskctl.historical_task(REPO, taskctl.EXACT_T03_RECOVERY["pause_record"], TASK_ID)
+        if paused_task is None:
+            raise AssertionError("immutable T03 pause boundary is unavailable")
+        tasks[TASK_ID].clear()
+        tasks[TASK_ID].update(copy.deepcopy(paused_task))
         amendment = taskctl.wave_amendment_map(data)["W1.A03"]
         amendment["lifecycle"]["status"] = "ADOPTED"
         amendment["completion"]["status"] = "APPROVED"

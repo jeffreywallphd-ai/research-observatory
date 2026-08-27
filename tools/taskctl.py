@@ -4531,6 +4531,7 @@ def committed_manifest_errors(
     expected_base_commit: str | None = None,
     evidence_path: Path | None = None,
     allow_disclosed_unverified: bool = False,
+    allowed_untracked: set[str] | None = None,
 ) -> list[str]:
     errors = validate_task_evidence(
         task,
@@ -4602,6 +4603,7 @@ def committed_manifest_errors(
             check=False,
         )
         allowed = {evidence_path.relative_to(repo).as_posix()} if evidence_path is not None else set()
+        allowed.update(allowed_untracked or set())
         unexpected = sorted(set(untracked.stdout.splitlines()) - allowed)
         if untracked.returncode != 0:
             errors.append(f"cannot inspect untracked files: {(untracked.stderr or untracked.stdout).strip()}")
@@ -4617,6 +4619,7 @@ def exact_commit_errors(
     *,
     evidence_path: Path | None = None,
     expected_base_commit: str | None = None,
+    allowed_untracked: set[str] | None = None,
 ) -> list[str]:
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=False)
     if head.returncode != 0:
@@ -4629,6 +4632,7 @@ def exact_commit_errors(
         expected_commit=current_commit,
         expected_base_commit=expected_base_commit or task.get("base_sha"),
         evidence_path=evidence_path,
+        allowed_untracked=allowed_untracked,
     )
 
 
@@ -5937,6 +5941,18 @@ def wave_resume_allowed_untracked(data: dict[str, Any], wave_id: str, repo: Path
     ):
         raise SystemExit("Historical W1.A04 recovery witness bytes or authority identity are not exact")
     return {relative}
+
+
+def task_evidence_allowed_untracked(
+    data: dict[str, Any],
+    task: dict[str, Any],
+    repo: Path,
+) -> set[str]:
+    """Admit the exact retained witness while freezing W1 task evidence."""
+    wave_id = task_wave(task)
+    if wave_id != "W1":
+        return set()
+    return wave_resume_allowed_untracked(data, wave_id, repo)
 
 
 def git_head_branch(repo: Path) -> tuple[str, str]:
@@ -8922,6 +8938,8 @@ def prepare_task_evidence(
     task: dict[str, Any],
     repo: Path,
     from_file: str,
+    *,
+    allowed_untracked: set[str] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     evidence_path = Path(from_file).resolve()
     try:
@@ -8977,6 +8995,7 @@ def prepare_task_evidence(
         repo,
         evidence_path=evidence_path,
         expected_base_commit=expected_base_commit,
+        allowed_untracked=allowed_untracked,
     )
     if errors:
         raise SystemExit("Invalid evidence:\n- " + "\n- ".join(errors))
@@ -9066,7 +9085,12 @@ def command_evidence(args, data, capabilities, slices, tasks, gates) -> None:
     if int((data.get("control_plane") or {}).get("minimum_tool_revision", 0)) >= 3:
         raise SystemExit("Use taskctl submit --from to attach evidence and enter REVIEW atomically")
     repo = discover_repository(args.file)
-    reference, _manifest = prepare_task_evidence(task, repo, args.from_file)
+    reference, _manifest = prepare_task_evidence(
+        task,
+        repo,
+        args.from_file,
+        allowed_untracked=task_evidence_allowed_untracked(data, task, repo),
+    )
     task.setdefault("evidence", []).append(reference)
     task["verification_state"] = "passed"
     task["updated_at"] = utc_now()
@@ -9084,7 +9108,12 @@ def command_submit(args, data, capabilities, slices, tasks, gates) -> None:
     require_active_lease(task, args.agent, f"Task {task['id']}")
     if getattr(args, "from_file", None):
         repo = discover_repository(args.file)
-        reference, manifest = prepare_task_evidence(task, repo, args.from_file)
+        reference, manifest = prepare_task_evidence(
+            task,
+            repo,
+            args.from_file,
+            allowed_untracked=task_evidence_allowed_untracked(data, task, repo),
+        )
         packet = build_task_submission_packet(task, manifest, reference, str(args.agent), repo)
         task.setdefault("evidence", []).append(reference)
         task["verification_state"] = "passed"

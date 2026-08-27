@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0003",
+  "title": "Authenticate the retained W1.A04 witness during exact W1 task evidence submission",
+  "status": "implemented-pending-independent-review",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "predecessor": {
+    "commit": "bbc448b663258c3e21e37798d539cf7863313ef4",
+    "wave": "W1",
+    "waveStatus": "ACTIVE",
+    "activeTask": "CAP-02.S04.T03",
+    "activeTaskStatus": "IN_PROGRESS",
+    "releaseGate": "G1",
+    "releaseGateStatus": "PENDING"
+  },
+  "trigger": {
+    "denial": "taskctl submit CAP-02.S04.T03 atomically rejected the exact criterion manifest because artifacts/evidence/W1.A04.B00.json was an untracked source outside that evidence manifest.",
+    "atomicity": "The denial occurred before persistence; T03 remained IN_PROGRESS with no evidence, verification state, or frozen review submission. The criterion manifest and historical witness remained untracked and unstaged.",
+    "diagnosis": "Exact-commit task evidence allowed only the submitted criterion manifest through its cleanliness check, while full immutable GRR semantic validation still requires the retained W1.A04 historical witness during persistence. GOV-MAINT-0001 independently authenticated that one safe W1 witness but the task-evidence path did not accept the authenticated result."
+  },
+  "authority": "This maintenance preserves the approved W1 and existing task evidence/review authority. It does not attach evidence, submit, review, approve, reopen, recover, or complete a task; change product or experience scope; modify a release gate; authorize external effects; weaken any other tracked or untracked-source denial; or rewrite historical evidence.",
+  "intendedDelta": {
+    "implementation": "Thread an optional authenticated untracked allowlist through exact-commit evidence validation and supply only GOV-MAINT-0001's exact W1 historical-witness result when freezing W1 task evidence. The submitted criterion manifest remains the only other allowed untracked path; all evidence schema, task/branch/base/current-HEAD, changed-path, check, criterion, lease, review-packet, compare-and-swap, and semantic persistence checks remain unchanged. Stabilize test fixtures after the real append-only W1.R01/R02 resume history and CAP-02.S04.T03 recovery by deriving their intended prior boundaries from the immutable history instead of assuming the live repository has never transitioned.",
+    "failClosed": [
+      "Only artifacts/evidence/W1.A04.B00.json can supplement the submitted criterion manifest, and only with the exact raw hash, schema, document type, W1.A04.B00 identity, candidate commit, released GRR-0002 hold, W1 target, and minimum control revision already independently reviewed in GOV-MAINT-0001.",
+      "The allowance is empty outside W1. Any additional untracked source, tracked modification, missing or forged witness, wrong Wave, old control revision, or unreleased hold remains denied.",
+      "The criterion manifest must still name current clean HEAD, exact task base and branch, exact base-to-commit changed paths, passing checks, every acceptance criterion, zero unverified items, canonical selected command IDs, and exact open-finding replay.",
+      "Atomic persistence still revalidates the complete backlog, immutable recovery history, evidence hashes, task review history, and compare-and-swap source identity before writing."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0003.json",
+      "tests/foundation/test_task_recovery.py",
+      "tests/foundation/test_taskctl_workflow.py",
+      "tools/taskctl.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "The change touches shared exact-commit task evidence cleanliness but admits only an already independently authenticated W1 witness. Selected coverage is the full task-workflow and exact task-recovery suites, canonical backlog validation, and governed Python quality. The test-only fixture updates must prove the same denial/transition semantics against immutable historical state after the live repository has lawfully resumed and recovered. Product and deployment suites are deferred because no runtime/product contract changes.",
+    "results": [
+      {
+        "check": "controlled task evidence, submission, and witness selection",
+        "result": "passed",
+        "detail": "Five focused workflow tests passed: exact current-HEAD evidence, atomic frozen submission, atomic failure without partial state, exact W1 historical-witness selection, and append-only resume-history mutation denial."
+      },
+      {
+        "check": "full exact task-recovery suite",
+        "result": "passed",
+        "detail": "All 12 exact recovery tests passed after deriving the intended unrecovered fixture from the immutable T03 pause commit; no recovery controller behavior changed."
+      },
+      {
+        "check": "governed Python quality",
+        "result": "passed",
+        "detail": "Ruff formatting, Ruff lint, and mypy passed for all 140 governed Python files."
+      },
+      {
+        "check": "canonical backlog validation",
+        "result": "passed",
+        "detail": "The active canonical backlog validated with 20 capabilities, 117 slices, 359 tasks, and 12 release gates."
+      },
+      {
+        "check": "broader task-workflow diagnostic replay",
+        "result": "diagnostic-live-state-fixtures",
+        "detail": "59 of 62 tests passed. test_approved_exit_can_reactivate_only_for_pre_adoption_remediation assumes no ordinary task is active; test_b00_r04_historical_bootstrap_validation_does_not_depend_on_live_branch assumes T03 has no recovery projection; and test_wave_resume_records_validate_historical_binding_and_fail_closed reuses the now-historical W1.R01 fixture against the later live boundary. These are post-transition fixture assumptions outside the exact evidence-witness delta, are not represented as passing evidence, and require stabilization before complete Wave-exit qualification."
+      }
+    ]
+  },
+  "rollback": "Do not adopt, integrate, or use the repaired submission path if affected checks or independent review fail. Revert only this strict descendant to bbc448b; T03 remains IN_PROGRESS without attached evidence or a frozen submission, W1 remains ACTIVE, and both untracked manifests remain byte-preserved.",
+  "review": null
+}

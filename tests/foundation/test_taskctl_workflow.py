@@ -55,6 +55,7 @@ from taskctl import (  # noqa: E402
     new_lease,
     save_atomic,
     save_validated,
+    task_evidence_allowed_untracked,
     validate,
     wave_resume_allowed_untracked,
     wave_resume_history_snapshot,
@@ -2400,12 +2401,17 @@ class TaskctlWorkflowTests(unittest.TestCase):
         persisted.assert_called_once()
 
     def test_wave_resume_allows_only_the_exact_required_historical_witness(self) -> None:
-        data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
+        data, _capabilities, _slices, tasks, _gates = load(str(REPO / "planning" / "backlog.yaml"))
         witness_relative = "artifacts/evidence/W1.A04.B00.json"
         witness_payload = (REPO / witness_relative).read_bytes()
 
         self.assertEqual({witness_relative}, wave_resume_allowed_untracked(data, "W1", REPO))
         self.assertEqual(set(), wave_resume_allowed_untracked(data, "W2", REPO))
+        self.assertEqual(
+            {witness_relative},
+            task_evidence_allowed_untracked(data, tasks["CAP-02.S04.T03"], REPO),
+        )
+        self.assertEqual(set(), task_evidence_allowed_untracked(data, {"wave": "W2"}, REPO))
 
         unreleased = copy.deepcopy(data)
         unreleased_hold = next(
@@ -2557,8 +2563,9 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def test_wave_resume_history_is_append_only_and_only_resume_may_append(self) -> None:
         data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
         wave = next(item for item in data["waves"] if item["id"] == "W1")
+        existing_records = copy.deepcopy(wave["campaign"].get("resume_records") or [])
         record = {
-            "id": "W1.R01",
+            "id": f"W1.R{len(existing_records) + 1:02d}",
             "wave_id": "W1",
             "control_revision": 6,
             "prior_status": "PAUSED",
@@ -2572,7 +2579,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             "resumed_at": wave["campaign"]["updated_at"],
         }
         snapshot = wave_resume_history_snapshot(data)
-        wave["campaign"]["resume_records"] = [record]
+        wave["campaign"]["resume_records"] = [*existing_records, record]
         with tempfile.TemporaryDirectory() as temporary:
             destination = Path(temporary) / "backlog.yaml"
             destination.write_text("sentinel: true\n", encoding="utf-8")
@@ -2585,7 +2592,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
             self.assertEqual("sentinel: true\n", destination.read_text(encoding="utf-8"))
 
         preserved = wave_resume_history_snapshot(data)
-        wave["campaign"]["resume_records"][0]["actor"] = "mallory"
+        wave["campaign"]["resume_records"][-1]["actor"] = "mallory"
         with tempfile.TemporaryDirectory() as temporary:
             destination = Path(temporary) / "backlog.yaml"
             destination.write_text("sentinel: true\n", encoding="utf-8")
