@@ -2455,7 +2455,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         assert historical is not None
         wave = next(item for item in historical["waves"] if item["id"] == "W1")
         prior = copy.deepcopy(wave["campaign"])
-        resumed_at = "2026-08-24T00:00:00+00:00"
+        resumed_at = prior["updated_at"]
         record = {
             "id": "W1.R01",
             "wave_id": "W1",
