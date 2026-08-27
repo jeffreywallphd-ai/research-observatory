@@ -72,7 +72,26 @@ One pre-Wave approval binds the complete Wave packet. The campaign remains the
 same across ordinary process or session interruptions and across capability
 boundaries. Later-Wave plans remain reviewable but do not expand the active Wave.
 
-### Controlled enabler change requests
+### Bounded enabler and control maintenance
+
+After `GOV-MIG-0001`, distinguish authority changes from controller
+maintenance. A change to approved product scope, security authority, migration
+guarantees, governed experience, or release criteria still requires an
+append-only Wave amendment and human approval. A correction to automation or
+evidence controls that preserves approved authority uses one bounded
+maintenance increment: freeze the predecessor, name the exact intended delta,
+run risk-selected checks, retain adverse history, and obtain independent review
+before integration when the change affects security, migration, evidence, or
+control authority.
+
+Do not create another incident-numbered GRR/GCR or bespoke controller to repair
+a controller. The retained ECR/GRR/GCR files and commands below validate
+historical authority only. New transition behavior should be expressed through
+the typed event/projection/receipt contracts in
+`../docs/automation/governance-automation-simplification.md`; compatibility
+adapters may continue to project the backlog during migration.
+
+### Historical controlled enabler change requests
 
 Never replace or repeat an `APPROVED` Wave approval. If consequential new
 evidence requires a bounded control/enabler change, pause the Wave with no
@@ -107,10 +126,12 @@ revalidates the exact approved review state. Missing, substituted, stale,
 forked, dirty, or unreviewed evidence fails closed. Legacy amendments remain
 readable without invented exit-review history.
 
-#### Governance recovery request fallback
+#### Historical governance recovery request fallback
 
-Use a GRR only when evidence demonstrates that the ordinary ECR controller or
-schema cannot represent or safely enforce its own next append-only amendment.
+Before `GOV-MIG-0001`, a GRR was used when evidence demonstrated that the
+ordinary ECR controller or schema could not represent or safely enforce its own
+next append-only amendment. These records remain authoritative history, but this
+fallback is retired for new work.
 The GRR packet freezes the complete predecessor authority chain, recovery hold,
 bootstrap-only path/outcome boundary, and the identity of the later ECR that
 must be approved separately. Independent packet review and exact-commit human

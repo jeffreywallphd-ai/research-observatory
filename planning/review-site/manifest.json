@@ -93,9 +93,7 @@
       "interrupting_change_request_ids": [
         "ECR-0003"
       ],
-      "interrupting_recovery_request_ids": [
-        "GRR-0002"
-      ]
+      "interrupting_recovery_request_ids": []
     },
     {
       "wave_id": "W2",
@@ -8235,7 +8233,7 @@
       "request_id": "GRR-0002",
       "hold_id": "HOLD-W1-GRR-0002",
       "target_wave": "W1",
-      "hold_status": "ACTIVE",
+      "hold_status": "RELEASED",
       "packet_path": "planning/governance-recovery-requests/GRR-0002.packet.json",
       "packet_sha256": "9caa10f6b75bcf7a0afe7c16703291fe55fc5405bbee3507323c63408d531e22",
       "packet_commit": "bc989c8a69e7de5e68f630af887ab4bd07d44a4e",

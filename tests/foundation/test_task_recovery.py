@@ -9,6 +9,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 import yaml
@@ -21,6 +22,7 @@ import taskctl  # noqa: E402
 
 TASK_ID = "CAP-02.S04.T03"
 HEAD = "8ad2b7a6ed8349d84380dbc36a73d586238a109a"
+PRE_RESUME = "7ad2b7a6ed8349d84380dbc36a73d586238a109a"
 MANIFEST_RELATIVE = "artifacts/evidence/task-recovery/CAP-02.S04.T03.json"
 
 
@@ -43,7 +45,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
             owner="codex",
             branch="codex/w1-windows-local-runtime",
             worktree=REPO.as_posix(),
-            base_sha=base_sha,
+            base_sha=PRE_RESUME,
             profile="LOC",
             platform="windows-x64",
             lease={
@@ -51,6 +53,22 @@ class ExactTaskRecoveryTests(unittest.TestCase):
                 "claimed_at": "2026-08-22T20:00:00+00:00",
                 "expires_at": "2099-08-23T20:00:00+00:00",
             },
+            resume_records=[
+                {
+                    "id": "W1.R01",
+                    "wave_id": "W1",
+                    "control_revision": data["control_plane"]["revision"],
+                    "prior_status": "PAUSED",
+                    "pre_resume_commit": PRE_RESUME,
+                    "prior_campaign_sha256": "a" * 64,
+                    "branch": "codex/w1-windows-local-runtime",
+                    "worktree": REPO.as_posix(),
+                    "profile": "LOC",
+                    "platform": "windows-x64",
+                    "actor": "codex",
+                    "resumed_at": "2026-08-22T20:00:00+00:00",
+                }
+            ],
         )
         wave.setdefault("checkpoints", []).append(
             {
@@ -106,6 +124,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
         args.source_amendment_history = taskctl.amendment_history_snapshot(document)
         args.source_task_review_history = taskctl.task_review_history_snapshot(document)
         args.source_wave_checkpoint_history = taskctl.wave_checkpoint_history_snapshot(document)
+        args.source_wave_resume_history = taskctl.wave_resume_history_snapshot(document)
         args.source_recovery_history = taskctl.recovery_history_snapshot(document)
         args.source_task_recovery_history = taskctl.task_recovery_history_snapshot(document)
         args.repo_root = REPO
@@ -133,6 +152,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
             "validate": [],
             "exact_recovery_manifest_errors": [],
             "run_exact_recovery_checks": [],
+            "exact_t03_resume_commit_errors": [],
         }
         defaults.update(patches)
         with (
@@ -155,6 +175,11 @@ class ExactTaskRecoveryTests(unittest.TestCase):
                 taskctl,
                 "run_exact_recovery_checks",
                 return_value=defaults["run_exact_recovery_checks"],
+            ),
+            patch.object(
+                taskctl,
+                "exact_t03_resume_commit_errors",
+                return_value=defaults["exact_t03_resume_commit_errors"],
             ),
             patch.object(taskctl, "persist") as persist,
         ):
@@ -179,6 +204,98 @@ class ExactTaskRecoveryTests(unittest.TestCase):
                 require_current_candidate_bytes=True,
             ),
         )
+
+    def test_real_git_resume_commit_separates_authority_from_execution_head(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init"], cwd=repo, capture_output=True, check=True)
+            subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "Fixture"], cwd=repo, check=True)
+            subprocess.run(["git", "checkout", "-b", "codex/test"], cwd=repo, capture_output=True, check=True)
+            prior_campaign: dict[str, Any] = {
+                "status": "PAUSED",
+                "scope": "wave",
+                "owner": "codex",
+                "branch": "codex/test",
+                "worktree": repo.as_posix(),
+                "base_sha": "0" * 40,
+                "profile": "LOC",
+                "platform": "windows-x64",
+                "started_at": "2026-08-27T12:00:00+00:00",
+                "updated_at": "2026-08-27T12:01:00+00:00",
+                "pause_reason": "fixture",
+                "pause_category": "fixture",
+                "lease": None,
+            }
+            data: dict[str, Any] = {
+                "control_plane": {"revision": 11},
+                "waves": [{"id": "W1", "campaign": prior_campaign}],
+            }
+            for relative in taskctl.EXACT_T03_RESUME_COMMIT_PATHS:
+                path = repo / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                if relative == "planning/backlog.yaml":
+                    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+                else:
+                    path.write_text("paused\n", encoding="utf-8")
+            subprocess.run(["git", "add", "."], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-m", "paused"], cwd=repo, capture_output=True, check=True)
+            pre_resume = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+
+            resumed_at = "2026-08-27T12:02:00+00:00"
+            resume_record = {
+                "id": "W1.R01",
+                "wave_id": "W1",
+                "control_revision": 11,
+                "prior_status": "PAUSED",
+                "pre_resume_commit": pre_resume,
+                "prior_campaign_sha256": taskctl.canonical_json_sha256(prior_campaign),
+                "branch": "codex/test",
+                "worktree": repo.as_posix(),
+                "profile": "LOC",
+                "platform": "windows-x64",
+                "actor": "codex",
+                "resumed_at": resumed_at,
+            }
+            campaign: dict[str, Any] = copy.deepcopy(prior_campaign)
+            campaign.update(
+                status="ACTIVE",
+                base_sha=pre_resume,
+                updated_at=resumed_at,
+                pause_reason=None,
+                pause_category=None,
+                resume_records=[resume_record],
+            )
+            data["waves"][0]["campaign"] = campaign
+            for relative in taskctl.EXACT_T03_RESUME_COMMIT_PATHS:
+                path = repo / relative
+                if relative == "planning/backlog.yaml":
+                    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+                else:
+                    path.write_text("active\n", encoding="utf-8")
+            subprocess.run(["git", "add", "."], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-m", "resume"], cwd=repo, capture_output=True, check=True)
+            current_head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+
+            self.assertNotEqual(pre_resume, current_head)
+            self.assertEqual(
+                [],
+                taskctl.exact_t03_resume_commit_errors(data, data["waves"][0], repo, current_head),
+            )
+
+            extra = repo / "unexpected.txt"
+            extra.write_text("hidden change\n", encoding="utf-8")
+            subprocess.run(["git", "add", "."], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-m", "extra"], cwd=repo, capture_output=True, check=True)
+            extra_head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True, check=True
+            ).stdout.strip()
+            self.assertTrue(taskctl.exact_t03_resume_commit_errors(data, data["waves"][0], repo, extra_head))
 
     def test_parser_exposes_recovery_without_bypassing_the_active_hold(self) -> None:
         parsed = taskctl.build_parser().parse_args(
@@ -251,6 +368,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
                 patch.object(taskctl, "require_clean_repository"),
                 patch.object(taskctl, "validate", return_value=[]),
                 patch.object(taskctl, "run_exact_recovery_checks", return_value=[]),
+                patch.object(taskctl, "exact_t03_resume_commit_errors", return_value=[]),
                 patch.object(taskctl, "save_atomic", wraps=real_save_atomic) as save_atomic,
             ):
                 taskctl.command_recover(args, *context)
@@ -298,6 +416,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
                 patch.object(taskctl, "require_clean_repository"),
                 patch.object(taskctl, "validate", return_value=[]),
                 patch.object(taskctl, "run_exact_recovery_checks", side_effect=competing_write),
+                patch.object(taskctl, "exact_t03_resume_commit_errors", return_value=[]),
                 patch.object(taskctl, "save_atomic", wraps=real_save_atomic) as save_atomic,
                 self.assertRaisesRegex(SystemExit, "Backlog changed after taskctl loaded it"),
             ):
@@ -354,6 +473,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
         for label, invoke_kwargs in (
             ("manifest mismatch", {"exact_recovery_manifest_errors": ["hash mismatch"]}),
             ("failed recomputation", {"run_exact_recovery_checks": ["privacy check failed"]}),
+            ("invalid resume commit", {"exact_t03_resume_commit_errors": ["extra path"]}),
         ):
             with self.subTest(label=label):
                 context = self.load_context()

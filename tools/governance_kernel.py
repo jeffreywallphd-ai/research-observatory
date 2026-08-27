@@ -48,7 +48,7 @@ DECISION_ACTIONS = {
     "recovery-hold": {"inspect-recovery"},
     "release-gate": {"review-gate"},
     "task": {"claim-amendment-task", "claim-wave-task"},
-    "wave": {"inspect-active-wave", "qualify-wave", "start-wave"},
+    "wave": {"inspect-active-wave", "qualify-wave", "resume-wave", "start-wave"},
     "wave-approval": {"review-wave"},
 }
 PROGRAM_FIELDS = {"blockedWave", "currentWave", "nextGate", "state"}

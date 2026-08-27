@@ -3,6 +3,8 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 from typing import Any, ClassVar
@@ -10,9 +12,11 @@ from typing import Any, ClassVar
 import yaml
 from jsonschema import Draft202012Validator
 
-from tools import taskctl
-
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tools"))
+
+import taskctl  # noqa: E402
+
 RUNTIME_PATH = ROOT / "planning/governance-control-recovery/governance-control-recovery-runtime.v5.schema.json"
 TRANSACTION_PATH = ROOT / "planning/governance-control-recovery/governance-control-recovery-transaction.v5.schema.json"
 SEVEN_PATHS = [
@@ -254,14 +258,23 @@ class Gcr5PacketSchemaTests(unittest.TestCase):
         self.assert_rejected(self.runtime, forged)
 
     def test_exact_ledger_derived_successor_hash_is_reproducible(self) -> None:
-        backlog_path = ROOT / "planning/backlog.yaml"
-        raw = backlog_path.read_bytes()
+        canonical = subprocess.run(
+            [
+                "git",
+                "show",
+                "962f92ff831c9a3d87a7d6ba796c8194e70b6c2c:planning/backlog.yaml",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            check=True,
+        ).stdout
+        raw = canonical.replace(b"\n", b"\r\n")
         self.assertEqual(
             hashlib.sha256(raw).hexdigest(),
             "431ac0390c7aa1b1be229f741cea0b00fb73cfd24713fdcb0e8cc6a13595c7a1",
         )
         self.assertEqual(
-            hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest(),
+            hashlib.sha256(canonical).hexdigest(),
             "3ffa93f894b5b63cbefd11d8b058eddf4deda96069aa03c9bb15bc116bc691cb",
         )
         data = yaml.safe_load(raw)

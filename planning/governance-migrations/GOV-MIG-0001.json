@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-automation-migration",
+  "migrationId": "GOV-MIG-0001",
+  "title": "Adopt the stable governance kernel and retire incident-specific controller escalation",
+  "status": "implemented-pending-independent-review",
+  "riskTier": 2,
+  "authorizedBy": "repository-owner",
+  "authorizedAt": "2026-08-27T16:03:47-04:00",
+  "authority": "The repository owner explicitly authorized implementing the recommended automation architecture and bypassing workflow mechanisms that repeatedly prevented repair of the workflow itself. This migration does not expand approved W1 product scope or authorize W1 resume, task recovery, release-gate approval, remote push, destructive action, or external effects.",
+  "predecessor": {
+    "commit": "174174d6b276d7e2f7606cda7555441170efcb3f",
+    "backlogSha256": "aae3947377e06d9c752a7eae9b5d586c600b7e66016e41d95e753b100d9a93b7",
+    "activeRecoveryHold": "HOLD-W1-GRR-0002",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "blockedTask": "CAP-02.S04.T03"
+  },
+  "reviewedMechanisms": [
+    {
+      "commit": "03788a6",
+      "capability": "read-only next-legal-action shadow projection",
+      "disposition": "independently-approved"
+    },
+    {
+      "commit": "2bdd459",
+      "capability": "typed event, projection, and checkpoint kernel",
+      "disposition": "independently-approved"
+    },
+    {
+      "commit": "06126cdccc47e2d1ba4960976698a332c0cc1259",
+      "capability": "evidence-only transition receipts with adverse-fact binding",
+      "disposition": "independently-approved"
+    },
+    {
+      "commit": "174174d6b276d7e2f7606cda7555441170efcb3f",
+      "capability": "generic fixture append, compare-and-swap, and recovery store",
+      "disposition": "independently-approved"
+    }
+  ],
+  "transition": {
+    "releaseHistoricalHold": "HOLD-W1-GRR-0002",
+    "leaveWavePaused": "W1",
+    "preserveBlockedTaskUntilOrdinaryResume": "CAP-02.S04.T03",
+    "repair": "Use the existing durable resume record as immutable pre-resume authority while the committed clean current HEAD remains the stale-writer boundary. Require that HEAD to be the modification-only direct child containing exactly the five generated resume paths.",
+    "freezeAsHistoricalValidators": [
+      "tools/recoveryctl.py",
+      "tools/gcrctl.py",
+      "tools/gcr2ctl.py",
+      "tools/gcr3ctl.py",
+      "tools/gcr4ctl.py",
+      "tools/gcr5ctl.py",
+      "tools/gcr7ctl.py"
+    ],
+    "futureControlRepair": "Use one bounded maintenance increment with exact predecessor state, affected checks, append-only evidence, and independent review. Do not create another incident-numbered controller to repair a controller."
+  },
+  "preservedInvariants": [
+    "Existing Wave, amendment, recovery, review, finding, evidence, and Git history remains byte-preserved.",
+    "W1 remains PAUSED with no lease and CAP-02.S04.T03 remains BLOCKED until an explicit later resume and exact recovery.",
+    "Task recovery still revalidates the approved W1.A03 authority, exact historic task boundary, privacy and UI evidence, clean Git state, and compare-and-swap persistence.",
+    "No release gate, approved experience reference, product source, privacy policy, acceptance criterion, completed task, or remote state changes in this migration."
+  ],
+  "rollback": "Do not integrate the candidate into main if independent review or affected verification fails. The predecessor commit retains the active hold and the exact stopped state; no remote state is changed.",
+  "review": null
+}
