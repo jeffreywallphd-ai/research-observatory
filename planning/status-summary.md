@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5969546af62a7b673fa3771529d00595c35e0cee6f278d79ac2f1123f2f03c33
+source_sha256: 2e26a09cb8491576fda94694ef499337e6d52d22c6881fe7d4f1cd88e9765131
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 274 |
 | `READY` | 2 |
-| `REVIEW` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 43 |
 | `DEFERRED` | 36 |
 
@@ -351,7 +351,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-02.S03.T03` | `legacy latest-review-only` | 0 | `-` | approved / independent-agent-t03-slice-remediation | - |
 | `CAP-02.S04.T01` | `legacy latest-review-only` | 0 | `-` | approved / cap02_s04_t01_security_review | - |
 | `CAP-02.S04.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
-| `CAP-02.S04.T03` | `append-only v1` | 0 | `R01` | - / - | - |
+| `CAP-02.S04.T03` | `append-only v1` | 1 | `-` | changes-requested / nash-independent-reviewer | `CAP-02.S04.T03-R01-F01` |
 | `CAP-03.S01.T01` | `legacy latest-review-only` | 0 | `-` | approved / agent:curie | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -419,4 +419,4 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-02.S04.T03` Create privacy, telemetry, retention, and secure-deletion settings | `REVIEW` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-02.S04.T03` Create privacy, telemetry, retention, and secure-deletion settings | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |

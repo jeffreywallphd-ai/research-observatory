@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5969546af62a7b673fa3771529d00595c35e0cee6f278d79ac2f1123f2f03c33
+source_sha256: 2e26a09cb8491576fda94694ef499337e6d52d22c6881fe7d4f1cd88e9765131
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3043,13 +3043,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### - [ ] CAP-02.S04.T03 - Create privacy, telemetry, retention, and secure-deletion settings
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-02.S04.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / nash-independent-reviewer (`changes-requested`)
 
 **Objective:** Default-off telemetry, local log retention, provider egress choices, document retention, cache clearing, and best-effort secure deletion disclosures.
 
@@ -3074,9 +3074,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ##### Review history — CAP-02.S04.T03
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `0f4cae567fead9baff9622f3795030f40d33ca7dacf3a4e6c0fe0a9b0a891eeb`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `0f4cae567fead9baff9622f3795030f40d33ca7dacf3a4e6c0fe0a9b0a891eeb`
 
 - Candidate / base / branch: `a86c723905d9493efee4610c7513a1cfc9c124eb` / `8f23c995aeddb9009359298ae8009646ed284227` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-08-27T22:12:10+00:00`
@@ -3090,11 +3092,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / nash-independent-reviewer / `2026-08-27T22:17:29+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-02.S04.T03.review-R01.json` / `dffdca12fa8dfde259dbf92d02ea434b827d527f2766f55b4c7e1059d8194b0b`
 
-**Currently open findings:** -
+**Review notes:** Exact-commit scope, recovery provenance, privacy defaults, consent, session, audit, UI, and evidence bindings pass, but destructive cache cleanup lacks stable root-identity binding across inventory-to-rename and can delete substituted canonical project data; remediation and independent rereview are required.
+
+**Findings opened:**
+
+- `CAP-02.S04.T03-R01-F01` `high` blocking=`True` criterion=`1` — Cache cleanup can delete substituted canonical project data; reproduce: After the confirmation inventory returns but before cache.rename(tombstone), replace the validated project cache pathname with another same-project directory such as config. The implementation renames, audits, and recursively deletes whichever directory now occupies the cache pathname because it does not bind or recheck the cache root identity across the destructive boundary. Existing tests cover changed contents and a redirect present before preview, but not this swap window.; remediate: In a strict-descendant candidate, capture a stable root identity during confirmation inventory, move with a no-follow platform-safe primitive, and verify the staged tombstone is the exact inventoried directory and remains inside the project-local staging root before audit commit or deletion. On mismatch, preserve or restore canonical data and fail closed. Add adversarial swap and redirect/substitution tests proving byte-stable canonical data, no success audit, no cleared result, and safe recovery.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by nash-independent-reviewer at `2026-08-27T22:17:29+00:00`
+
+**Latest notes:** Exact-commit scope, recovery provenance, privacy defaults, consent, session, audit, UI, and evidence bindings pass, but destructive cache cleanup lacks stable root-identity binding across inventory-to-rename and can delete substituted canonical project data; remediation and independent rereview are required.
+
+**Currently open findings:** `CAP-02.S04.T03-R01-F01`
 
 #### - [ ] CAP-02.S04.T04 - Select and implement the protected local project-database profile
 
