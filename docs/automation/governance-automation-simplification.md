@@ -90,6 +90,19 @@ receipts containing source hash, event hash, changed projection fields, selected
 checks, and exact Git binding. Review records findings against the receipt rather
 than requiring a new bespoke state machine.
 
+The first receipt increment is still shadow-only. `governancectl next` emits an
+output-only `governance-transition-receipt` that binds the event, observed source,
+exact projection delta, selected check results, and the producer commit/branch.
+Receipt trust is explicitly `producer-asserted` and authority is `evidence-only`.
+A dirty tracked worktree or legacy disagreement yields a truthful failed receipt,
+not an exception and never execution authority. Git state is sampled before and
+after generation to reject a racing producer-state change. The protocol requires
+a nonempty, internally consistent check selection but deliberately does not
+prescribe one universal checklist; callers select checks from the affected risk
+surface and reviewers judge adequacy. No receipt journal or mutation route exists
+in this increment; routing routine transitions through the receipt protocol
+remains a later cutover step.
+
 ### 4. Generic recovery and maintenance
 
 Use one `recover` protocol for interrupted appends. Add bounded `maintenance
@@ -135,3 +148,14 @@ retained histories. Historical evidence is never rewritten.
   even when an attacker recomputes every enclosing hash.
 - The live shadow command validates its emitted event/checkpoint and still leaves
   backlog bytes and modification time unchanged.
+
+## Verification for the receipt increment
+
+- Deterministic receipts bind the exact event, source observation, projection
+  delta, selected check results, and producer Git state.
+- Rehashed projection-delta, required-check, result, event, capability, and Git
+  substitutions fail closed against independently supplied transition inputs.
+- Dirty producer state and shadow disagreement remain evidence-only failed
+  receipts; they cannot be converted into execution authority.
+- The live command independently validates its receipt while preserving backlog
+  bytes and modification time.
